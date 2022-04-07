@@ -28,11 +28,21 @@ import com.joshtalks.joshskills.repository.server.points.SpokenMinutesHistoryRes
 import com.joshtalks.joshskills.repository.server.reminder.DeleteReminderRequest
 import com.joshtalks.joshskills.repository.server.reminder.ReminderRequest
 import com.joshtalks.joshskills.repository.server.reminder.ReminderResponse
+import com.joshtalks.joshskills.ui.userprofile.models.UserProfileSectionResponse
+import com.joshtalks.joshskills.ui.userprofile.models.FppStatusInProfileResponse
+import com.joshtalks.joshskills.ui.userprofile.models.UserProfileResponse
+import com.joshtalks.joshskills.ui.userprofile.models.AwardHeader
+import com.joshtalks.joshskills.ui.userprofile.models.GroupsHeader
+import com.joshtalks.joshskills.ui.userprofile.models.CourseHeader
+import com.joshtalks.joshskills.ui.userprofile.models.PictureHeader
 import com.joshtalks.joshskills.repository.server.translation.WordDetailsResponse
 import com.joshtalks.joshskills.repository.server.voip.RequestVoipRating
 import com.joshtalks.joshskills.repository.server.voip.SpeakingTopic
 import com.joshtalks.joshskills.repository.server.voip.VoipCallDetailModel
 import com.joshtalks.joshskills.track.CourseUsageSync
+import com.joshtalks.joshskills.ui.special_practice.model.SaveVideoModel
+import com.joshtalks.joshskills.ui.special_practice.model.SpecialPracticeModel
+import com.joshtalks.joshskills.ui.activity_feed.model.ActivityFeedList
 import kotlinx.coroutines.Deferred
 import retrofit2.Response
 import retrofit2.http.*
@@ -163,6 +173,10 @@ interface CommonNetworkService {
         @Query("mentor_id") mentorId: String
     ): Response<AnimatedLeaderBoardResponse>
 
+    @GET("$DIR/fpp/profile_favourite/{user_profile_mentor_id}/")
+    suspend fun getFppStatusInProfile(
+        @Path("user_profile_mentor_id") mentorId: String
+    ): Response<FppStatusInProfileResponse>
     @POST("$DIR/version/onboarding/")
     suspend fun getOnBoardingVersionDetails(@Body params: Map<String, String>): VersionResponse
 
@@ -204,10 +218,27 @@ interface CommonNetworkService {
     suspend fun getUserProfileDataV3(
         @Path("mentor_id") id: String,
         @Query("interval_type") intervalType: String? = null,
-        @Query("previous_page") previousPage: String? = null
+        @Query("previous_page") previousPage: String? = null,
+        @Query("?api_version=") apiVersion:Int = 2
     ): Response<UserProfileResponse>
+
+    @GET("$DIR/user/profile_awards/{mentor_id}/")
+    suspend fun getProfileAwards(@Path("mentor_id") id: String): Response<AwardHeader>
+
+    @GET("$DIR/user/profile_groups/{mentor_id}/")
+    suspend fun getProfileGroups(@Path("mentor_id") id: String): Response<GroupsHeader>
+
+    @GET("$DIR/user/profile_courses/{mentor_id}/")
+    suspend fun getProfileCourses(@Path("mentor_id") id: String): Response<CourseHeader>
+
+    @GET("$DIR/user/profile_pictures/{mentor_id}/")
+    suspend fun getPreviousProfilePics(@Path("mentor_id")id: String): Response<PictureHeader>
+
     @GET("$DIR/activity_feed/fetch_all/")
     suspend fun getActivityFeedData(): Response<ActivityFeedList>
+
+    @GET("$DIR/activity_feed/fetch_all/{time_stamp}")
+    suspend fun getActivityFeedData(@Path("time_stamp") id: String): Response<ActivityFeedList>
 
     @GET("$DIR/reputation/get_points_history_v2/")
     suspend fun getUserPointsHistory(
@@ -259,6 +290,13 @@ interface CommonNetworkService {
         @Path("user_profile_impression_id") userProfileImpressionId: String,
         @Body params: Map<String, Long>
     ): WordDetailsResponse
+
+    @POST("$DIR/impression/user_profile_section_impression/")
+    suspend fun userProfileSectionImpression(@Body params: Map<String, String>): UserProfileSectionResponse
+
+    @PATCH("$DIR/impression/user_profile_section_impression/")
+    suspend fun engageUserProfileSectionTime(@Body params: Map<String, String>): Any
+
     @PATCH("$DIR/impression/activity_feed_impression/{activity_feed_impression_id}/")
     suspend fun engageActivityFeedTime(
         @Path("activity_feed_impression_id") userProfileImpressionId: String,
@@ -341,4 +379,10 @@ interface CommonNetworkService {
 
     @POST("$DIR/impression/restart_course_track_impressions/")
     suspend fun restartCourseImpression(@Body params: Map<String, String>): Response<Void>
+
+    @POST("$DIR/question/special_practice_details/")
+    suspend fun getSpecialPracticeDetails(@Body params: Map<String, String>): Response<SpecialPracticeModel>
+
+    @POST("$DIR/question/special_practice_submit/")
+    suspend fun saveVideoOnServer(@Body params: SaveVideoModel): Response<SuccessResponse>
 }

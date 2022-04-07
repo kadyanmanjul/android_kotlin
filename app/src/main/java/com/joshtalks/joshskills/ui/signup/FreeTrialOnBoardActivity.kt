@@ -39,10 +39,6 @@ import com.joshtalks.joshskills.core.SignUpStepStatus
 import com.joshtalks.joshskills.core.ONLINE_TEST_LAST_LESSON_COMPLETED
 import com.joshtalks.joshskills.core.ONLINE_TEST_LAST_LESSON_ATTEMPTED
 import com.joshtalks.joshskills.core.IMPRESSION_TRUECALLER_FREETRIAL_LOGIN
-import com.joshtalks.joshskills.core.abTest.ABTestActivity
-import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
-import com.joshtalks.joshskills.core.abTest.CampaignKeys
-import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityFreeTrialOnBoardBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -61,13 +57,12 @@ import java.util.Locale
 
 const val SHOW_SIGN_UP_FRAGMENT = "SHOW_SIGN_UP_FRAGMENT"
 
-class FreeTrialOnBoardActivity : ABTestActivity() {
+class FreeTrialOnBoardActivity : CoreJoshActivity() {
 
     private lateinit var layout: ActivityFreeTrialOnBoardBinding
     private val viewModel: FreeTrialOnBoardViewModel by lazy {
         ViewModelProvider(this).get(FreeTrialOnBoardViewModel::class.java)
     }
-    private var is100PointsActive = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -87,13 +82,6 @@ class FreeTrialOnBoardActivity : ABTestActivity() {
         PrefManager.put(ONBOARDING_STAGE, OnBoardingStage.APP_INSTALLED.value)
     }
 
-    override fun onReceiveABTestData(abTestCampaignData: ABTestCampaignData?) {
-        is100PointsActive = (abTestCampaignData?.variantKey == VariantKeys.POINTS_HUNDRED_ENABLED.NAME) && (abTestCampaignData.variableMap?.isEnabled == true)
-    }
-
-    override fun initCampaigns() {
-        getCampaigns(CampaignKeys.HUNDRED_POINTS.NAME)
-    }
 
     override fun onStart() {
         super.onStart()
@@ -143,7 +131,7 @@ class FreeTrialOnBoardActivity : ABTestActivity() {
         }
     }
 
-    fun showStartTrialPopup(language: ChooseLanguages) {
+    fun showStartTrialPopup(language: ChooseLanguages, is100PointsActive : Boolean) {
         viewModel.saveImpression(IMPRESSION_START_FREE_TRIAL)
         PrefManager.put(ONBOARDING_STAGE, OnBoardingStage.START_NOW_CLICKED.value)
         PrefManager.put(FREE_TRIAL_TEST_ID, language.testId)

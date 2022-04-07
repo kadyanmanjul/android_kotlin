@@ -8,6 +8,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
+import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.CALL_RINGTONE_NOT_MUTE
 import com.joshtalks.joshskills.core.JoshSkillExecutors
 import com.joshtalks.joshskills.core.PrefManager
@@ -26,6 +27,7 @@ abstract class BaseWebRtcService : Service() { /*,SensorEventListener*/
     */
     protected var joshAudioManager: WebRtcAudioManager? = null
     private var ringtonePlayer: MediaPlayer? = null
+    private var mPlayer: MediaPlayer? = null
     private var ringingPlay = false
     private var vibrator: Vibrator? = null
     protected var compositeDisposable = CompositeDisposable()
@@ -130,6 +132,7 @@ abstract class BaseWebRtcService : Service() { /*,SensorEventListener*/
 */
     @SuppressLint("MissingPermission")
     protected fun startRingtoneAndVibration() {
+        stopPlaying()
         if (PrefManager.getBoolValue(CALL_RINGTONE_NOT_MUTE).not()) {
             return
         }
@@ -213,7 +216,9 @@ abstract class BaseWebRtcService : Service() { /*,SensorEventListener*/
                     .addUserDetails()
                     .push()
             }
-        } catch (ex:Exception) { ex.printStackTrace() }
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
     }
 
     /*   private fun showIncomingCallScreen(
@@ -239,6 +244,28 @@ abstract class BaseWebRtcService : Service() { /*,SensorEventListener*/
            else
                Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && JoshApplication.isAppVisible.not()
        }*/
+    fun startPlaying() {
+        try {
+            mPlayer = MediaPlayer.create(this, R.raw.fpp_ringtone)
+            mPlayer?.setVolume(0.5f, 0.5f)
+            mPlayer?.isLooping = true
+            mPlayer?.start()
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
+    }
+
+    fun stopPlaying() {
+        try {
+            mPlayer?.run {
+                stop()
+                release()
+                mPlayer = null
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
 
     override fun onDestroy() {
         super.onDestroy()

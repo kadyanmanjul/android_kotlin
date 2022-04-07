@@ -7,7 +7,7 @@
 
         <variable
             name="handler"
-            type="com.joshtalks.joshskills.ui.userprofile.PreviousProfilePicsFragment" />
+            type="com.joshtalks.joshskills.ui.userprofile.fragments.PreviousProfilePicsFragment" />
 
     </data>
 

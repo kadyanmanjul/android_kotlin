@@ -5,6 +5,7 @@ import java.util.Calendar;
 import java.util.Locale;
 
 public class Utils {
+    public static String DATE_FORMAT = "yyyyMMdd_HHmmsyyyyMMdd_HHmmss";
 
     public static String getDateId(long var0) {
         Calendar var2 = Calendar.getInstance(Locale.ENGLISH);

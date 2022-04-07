@@ -155,7 +155,7 @@ object DownloadUtils {
                             LESSON_QUESTION_TYPE_TOKEN
                         )
                     lessonQuestion.downloadStatus = DOWNLOAD_STATUS.DOWNLOADED
-                    if (lessonQuestion.type == LessonQuestionType.Q) {
+                    if (lessonQuestion.type == LessonQuestionType.Q || lessonQuestion.type == LessonQuestionType.PR) {
                         lessonQuestion?.let { question ->
                             when (question.materialType) {
                                 LessonMaterialType.IM ->
@@ -167,6 +167,14 @@ object DownloadUtils {
                                 LessonMaterialType.VI ->
                                     question.videoList?.get(0).let { videoType ->
                                         videoType?.downloadedLocalPath = filePath
+                                        appDatabase.chatDao().updateVideoObject(videoType!!)
+
+                                    }
+
+                                LessonMaterialType.OTHER ->
+                                    question.videoList?.get(0).let { videoType ->
+                                        videoType?.downloadedLocalPath = filePath
+                                        videoType?.downloadStatus = DOWNLOAD_STATUS.DOWNLOADED
                                         appDatabase.chatDao().updateVideoObject(videoType!!)
 
                                     }

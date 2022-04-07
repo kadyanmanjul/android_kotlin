@@ -6,14 +6,14 @@
 
         <variable
             name="fragment"
-            type="com.joshtalks.joshskills.ui.userprofile.ShowAwardFragment" />
+            type="com.joshtalks.joshskills.ui.userprofile.fragments.ShowAwardFragment" />
 
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#000000">
+        android:background="@color/pure_black">
 
         <FrameLayout
             android:id="@+id/circle_bg_container"

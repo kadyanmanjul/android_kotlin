@@ -74,6 +74,7 @@
         android:label="@string/app_name"
         android:largeHeap="true"
         android:persistent="true"
+        android:requestLegacyExternalStorage="true"
         android:preserveLegacyExternalStorage="true"
         android:resizeableActivity="false"
         android:roundIcon="@mipmap/ic_launcher_round"
@@ -82,6 +83,14 @@
         android:usesCleartextTraffic="true"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning,UnusedAttribute"
         tools:replace="android:allowBackup,android:supportsRtl,android:hardwareAccelerated">
+        <activity
+            android:name=".ui.fpp.SeeAllRequestsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.fpp.RecentCallActivity"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.inbox.ExtendFreeTrialActivity"
             android:exported="true" />
@@ -103,12 +112,10 @@
         <activity
             android:name=".ui.group.JoshGroupActivity"
             android:exported="true"
-            android:windowSoftInputMode="adjustResize">
-        </activity>
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.senior_student.SeniorStudentActivity"
-            android:exported="true">
-        </activity>
+            android:exported="true" />
         <activity
             android:name=".ui.payment.FreeTrialPaymentActivity"
             android:alwaysRetainTaskState="true"
@@ -440,7 +447,7 @@
             android:name=".ui.voip.favorite.FavoriteListActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/AppThemeNoAction" />
+            android:theme="@style/AppThemeNoAction"/>
         <activity
             android:name=".ui.voip.WebRtcActivity"
             android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
@@ -519,6 +526,7 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/AppNoBarTheme" />
+        <activity android:name=".ui.special_practice.SpecialPracticeActivity" />
 
         <meta-data
             android:name="CLEVERTAP_ACCOUNT_ID"

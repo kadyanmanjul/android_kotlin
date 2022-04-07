@@ -5,6 +5,8 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
+import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import androidx.core.content.ContextCompat
@@ -13,16 +15,23 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.BaseActivity
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.LESSON_COMPLETE_SNACKBAR_TEXT_STRING
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
+import com.joshtalks.joshskills.core.setRoundImage
+import com.joshtalks.joshskills.core.IS_COURSE_BOUGHT
+import com.joshtalks.joshskills.core.textDrawableBitmap
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.databinding.VoipCallFeedbackViewBinding
 import com.joshtalks.joshskills.repository.local.model.KFactor
-import com.joshtalks.joshskills.ui.group.repository.ABTestRepository
 import com.joshtalks.joshskills.ui.practise.PracticeViewModel
+import com.joshtalks.joshskills.ui.voip.SHOW_FPP_DIALOG
 import com.joshtalks.joshskills.ui.voip.share_call.ShareWithFriendsActivity
-import java.util.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
@@ -52,6 +61,7 @@ class VoipCallFeedbackActivity : BaseActivity(){
     private var currentId:Int= -1
     private var minute = 0
     private var callerImage: String = EMPTY
+    private var fppDialogFlag:String?=null
     private var p2pCallShareControl: Boolean = false
 
     private val practiceViewModel: PracticeViewModel by lazy {
@@ -135,7 +145,15 @@ class VoipCallFeedbackActivity : BaseActivity(){
             yourAgoraId = it.getIntExtra(ARG_YOUR_AGORA_ID, 0)
             callerName = it.getStringExtra(ARG_CALLER_NAME) ?: EMPTY
             yourName = it.getStringExtra(ARG_YOUR_NAME) ?: EMPTY
+            fppDialogFlag = it.getStringExtra(SHOW_FPP_DIALOG)
             binding.txtMessage.text = msz.replaceFirst("#", callerName)
+
+            Log.e("Sagar", "initFun: $fppDialogFlag", )
+            if (fppDialogFlag=="true"){
+                binding.rootView.visibility  = View.VISIBLE
+            }else{
+                binding.rootView.visibility = View.GONE
+            }
 
             binding.cImage.setImageResource(R.drawable.ic_call_placeholder)
             val image = it.getStringExtra(ARG_CALLER_IMAGE)
@@ -159,8 +177,13 @@ class VoipCallFeedbackActivity : BaseActivity(){
 
             if(totalSecond < 120 && PrefManager.getBoolValue(IS_COURSE_BOUGHT) ){
                 showReportDialog("REPORT"){
+                    closeActivity()
                 }
             }
+            if(totalSecond >1200 ){
+                submitFeedback("20_min_call")
+            }
+
             if (minute > 0) {
                 mTime.append(minute).append(getMinuteString(minute))
 
@@ -178,7 +201,7 @@ class VoipCallFeedbackActivity : BaseActivity(){
     }
 
     private fun showReportDialog(type:String,function: ()->Unit) {
-        ReportDialogFragment.newInstance(callerId,currentId, type,channelName,function = function)
+        ReportDialogFragment.newInstance(callerId,currentId, type,channelName,function = function,fppDialogFlag)
             .show(supportFragmentManager, "ReportDialogFragment")
 
     }
@@ -237,7 +260,6 @@ class VoipCallFeedbackActivity : BaseActivity(){
                     }
                     }
                 }
-
         }
     }
 
@@ -292,8 +314,10 @@ class VoipCallFeedbackActivity : BaseActivity(){
             activity: Activity,
             flags: Array<Int> = arrayOf(),
             callerId:Int,
-            currentUserId:Int
+            currentUserId:Int,
+            fppDialogFlag:String
         ) {
+            Log.e("Sagar", "callStatusNetworkApi: sagar $fppDialogFlag")
 
             Intent(activity, VoipCallFeedbackActivity::class.java).apply {
                 putExtra(ARG_CHANNEL_NAME, channelName)
@@ -305,6 +329,7 @@ class VoipCallFeedbackActivity : BaseActivity(){
                 putExtra(ARG_DIM_BACKGROUND, dimBg)
                 putExtra(ARG_CALLER_ID, callerId)
                 putExtra(ARG_CURRENT_ID, currentUserId)
+                putExtra(SHOW_FPP_DIALOG,fppDialogFlag)
                 flags.forEach { flag ->
                     this.addFlags(flag)
                 }

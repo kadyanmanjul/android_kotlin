@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="@dimen/_220sdp"
+    android:layout_height="@dimen/_102sdp"
+    android:layout_gravity="center_horizontal"
+    android:background="@drawable/rounded_rectangle_attach"
+    android:backgroundTint="@color/white"
+    android:elevation="@dimen/_5sdp"
+    app:cardCornerRadius="@dimen/_4sdp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginHorizontal="@dimen/_12sdp"
+            android:layout_marginTop="@dimen/_16sdp"
+            android:gravity="center"
+            android:lineSpacingExtra="0dp"
+            android:lines="2"
+            android:maxLines="2"
+            android:text="@string/harsh_has_requested_to_be_your_favorite_practice_partner"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H11_Semi_Bold"
+            android:textColor="@color/pure_black" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/confirm_button"
+            android:layout_width="@dimen/_91sdp"
+            android:layout_height="@dimen/_22sdp"
+            android:layout_below="@+id/text"
+            android:layout_marginVertical="@dimen/_16sdp"
+            android:layout_marginStart="@dimen/_15sdp"
+            android:layout_marginEnd="@dimen/_8sdp"
+            android:backgroundTint="@color/colorPrimary"
+            android:clickable="true"
+            android:elevation="0dp"
+            android:focusable="true"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:stateListAnimator="@null"
+            android:text="@string/confirm"
+            android:textAllCaps="false"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
+            android:textColor="@color/white"
+            app:cornerRadius="@dimen/_4sdp"
+            app:elevation="0dp"
+            app:rippleColor="@color/white" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/not_now"
+            android:layout_width="@dimen/_91sdp"
+            android:layout_height="@dimen/_22sdp"
+            android:layout_below="@+id/text"
+            android:layout_alignParentRight="true"
+            android:layout_marginVertical="@dimen/_16sdp"
+            android:layout_marginStart="@dimen/_8sdp"
+            android:layout_marginEnd="@dimen/_15sdp"
+            android:backgroundTint="@color/grey_button"
+            android:clickable="true"
+            android:focusable="true"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:elevation="0dp"
+            app:elevation="0dp"
+            android:stateListAnimator="@null"
+            android:text="@string/not_now"
+            android:textAllCaps="false"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
+            android:textColor="@color/pure_black"
+            android:visibility="visible"
+            app:cornerRadius="@dimen/_4sdp"
+            app:rippleColor="@color/white" />
+
+    </RelativeLayout>
+
+</com.google.android.material.card.MaterialCardView>

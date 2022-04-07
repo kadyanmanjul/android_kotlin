@@ -82,6 +82,8 @@ import org.json.JSONObject
 import retrofit2.HttpException
 
 const val TRANSACTION_ID = "TRANSACTION_ID"
+const val ENGLISH_COURSE_TEST_ID = "102"
+const val ENGLISH_FREE_TRIAL_1D_TEST_ID = "784"
 
 class PaymentSummaryActivity : CoreJoshActivity(),
     PaymentResultListener {
@@ -101,7 +103,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
     private var razorpayOrderId = EMPTY
     private var compositeDisposable = CompositeDisposable()
     private var is100PointsObtained = false
-    private val ENGLISH_COURSE_TEST_ID = 102
+    private var isHundredPointsActive = false
 
     companion object {
         fun startPaymentSummaryActivity(
@@ -109,7 +111,8 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             testId: String,
             hasFreeTrial: Boolean? = null,
             isFromNewFreeTrial: Boolean = false,
-            is100PointsObtained : Boolean? = false
+            is100PointsObtained : Boolean? = false,
+            isHundredPointsActive : Boolean = true
         ) {
             Intent(activity, PaymentSummaryActivity::class.java).apply {
                 putExtra(TEST_ID_PAYMENT, testId)
@@ -120,6 +123,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                 is100PointsObtained?.run {
                     putExtra(IS_100_POINTS_OBTAINED, is100PointsObtained)
                 }
+                putExtra(IS_HUNDRED_POINTS_ACTIVE, isHundredPointsActive)
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }.run {
                 activity.startActivity(this)
@@ -131,6 +135,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         const val HAS_FREE_7_DAY_TRIAL = "7 day free trial"
         const val IS_FROM_NEW_FREE_TRIAL = "IS_FROM_NEW_FREE_TRIAL"
         const val IS_100_POINTS_OBTAINED = "IS_100_POINTS_OBTAINED"
+        const val IS_HUNDRED_POINTS_ACTIVE = "IS_HUNDRED_POINTS_ACTIVE"
 
     }
 
@@ -156,6 +161,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         }
         isFromNewFreeTrial = intent.getBooleanExtra(IS_FROM_NEW_FREE_TRIAL, false)
         is100PointsObtained = intent.getBooleanExtra(IS_100_POINTS_OBTAINED, false)
+        isHundredPointsActive = intent.getBooleanExtra(IS_HUNDRED_POINTS_ACTIVE, false)
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_payment_summary)
         binding.lifecycleOwner = this
@@ -795,10 +801,17 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         alertDialog.window?.setLayout(width.toInt(), height)
         alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-        dialogView.findViewById<TextView>(R.id.e_g_motivat).text =
-            AppObjectController.getFirebaseRemoteConfig()
+        var popUpText = " "
+        if(isHundredPointsActive && testId == ENGLISH_FREE_TRIAL_1D_TEST_ID || testId == ENGLISH_COURSE_TEST_ID) {
+            popUpText = AppObjectController.getFirebaseRemoteConfig()
+                .getString(FirebaseRemoteConfigKey.FREE_TRIAL_POPUP_HUNDRED_POINTS_TEXT + testId)
+                .replace("\\n", "\n")
+        }else{
+            popUpText =   AppObjectController.getFirebaseRemoteConfig()
                 .getString(FirebaseRemoteConfigKey.FREE_TRIAL_POPUP_BODY_TEXT + testId)
                 .replace("\\n", "\n")
+        }
+        dialogView.findViewById<TextView>(R.id.e_g_motivat).text = popUpText
 
         dialogView.findViewById<TextView>(R.id.add_a_topic).text =
             AppObjectController.getFirebaseRemoteConfig()

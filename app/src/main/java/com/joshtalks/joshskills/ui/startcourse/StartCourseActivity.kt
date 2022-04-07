@@ -6,8 +6,6 @@ import android.os.Bundle
 import android.text.SpannableStringBuilder
 import android.view.View
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.commit
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.MultiTransformation
 import com.bumptech.glide.request.RequestOptions
@@ -20,17 +18,10 @@ import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.ActivityStartCourseBinding
 import com.joshtalks.joshskills.repository.local.model.User
-import com.joshtalks.joshskills.track.CONVERSATION_ID
-import com.joshtalks.joshskills.ui.assessment.fragment.TestSummaryFragment
-import com.joshtalks.joshskills.ui.group.GROUPS_STACK
-import com.joshtalks.joshskills.ui.group.GroupSearchFragment
-import com.joshtalks.joshskills.ui.group.SEARCH_FRAGMENT
 import com.joshtalks.joshskills.ui.payment.order_summary.TRANSACTION_ID
 import com.joshtalks.joshskills.ui.pdfviewer.COURSE_NAME
 import com.joshtalks.joshskills.ui.signup.FLOW_FROM
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
-import com.joshtalks.joshskills.ui.signup.SignUpOptionsFragment
-import com.joshtalks.joshskills.ui.signup.SignUpProfileFragment
 import com.joshtalks.joshskills.ui.view_holders.ROUND_CORNER
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 

@@ -21,6 +21,7 @@ import com.joshtalks.joshskills.databinding.ActivityJoshVoipGroupctivityBinding
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.group.*
 import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics
+import com.joshtalks.joshskills.ui.group.constants.*
 import com.joshtalks.joshskills.ui.group.model.GroupItemData
 import com.joshtalks.joshskills.ui.group.utils.getMemberCount
 import com.joshtalks.joshskills.ui.group.viewmodels.JoshGroupViewModel
@@ -59,12 +60,7 @@ class JoshVoipGroupActivity : BaseGroupActivity() {
         event.observe(this) {
             when (it.what) {
                 ON_BACK_PRESSED -> onBackPressed()
-                OPEN_GROUP -> {
-                    if (supportFragmentManager.backStackEntryCount == 0)
-                        startGroupCall(it.obj as? GroupItemData)
-                    else
-                        openGroupChat(it.obj as? GroupItemData)
-                }
+                OPEN_GROUP -> startGroupCall(it.obj as? GroupItemData)
                 SHOULD_REFRESH_GROUP_LIST -> vm.shouldRefreshGroupList = true
                 SEARCH_GROUP -> openGroupSearchFragment()
                 SHOW_PROGRESS_BAR -> showProgressDialog(it.obj as String)
@@ -166,26 +162,6 @@ class JoshVoipGroupActivity : BaseGroupActivity() {
                 arguments = bundle
             }
             replace(R.id.group_fragment_container, fragment, SEARCH_FRAGMENT)
-            addToBackStack(GROUPS_STACK)
-        }
-    }
-
-    private fun openGroupChat(data: GroupItemData?) {
-        supportFragmentManager.commit {
-            setReorderingAllowed(true)
-            val bundle = Bundle().apply {
-                putString(GROUPS_CREATED_TIME, data?.getCreatedTime())
-                putString(GROUPS_CREATOR, data?.getCreator())
-                putString(GROUPS_TITLE, data?.getTitle())
-                putString(GROUPS_CHAT_SUB_TITLE, data?.getSubTitle())
-                putString(GROUPS_IMAGE, data?.getImageUrl())
-                putString(GROUPS_ID, data?.getUniqueId())
-                putString(CONVERSATION_ID, vm.conversationId)
-                data?.hasJoined()?.let { putBoolean(HAS_JOINED_GROUP, it) }
-            }
-            val fragment = GroupChatFragment()
-            fragment.arguments = bundle
-            replace(R.id.group_fragment_container, fragment, CHAT_FRAGMENT)
             addToBackStack(GROUPS_STACK)
         }
     }

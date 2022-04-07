@@ -17,18 +17,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/lighter_grey"
+        android:background="@color/white"
         tools:context=".ui.group.NewGroupFragment">
-
-        <View
-            android:id="@+id/background_view"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:background="@color/white"
-            app:layout_constraintBottom_toBottomOf="@+id/tv_group_name_hint"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/appBarLayout" />
 
         <FrameLayout
             android:id="@+id/loading"
@@ -69,6 +59,77 @@
                 android:layout_height="match_parent" />
         </com.google.android.material.appbar.AppBarLayout>
 
+        <TextView
+            android:id="@+id/tv_group_name_hint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_14sdp"
+            android:layout_marginTop="@dimen/_18sdp"
+            android:text="Name"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Semi_Bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/appBarLayout" />
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/et_group_name"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/_44sdp"
+            android:layout_marginHorizontal="@dimen/_12sdp"
+            android:layout_marginTop="@dimen/_6sdp"
+            android:background="@drawable/white_rectangle_with_grey_stroke"
+            android:hint="Name your Group"
+            android:maxLength="25"
+            android:paddingHorizontal="@dimen/_14sdp"
+            android:paddingVertical="@dimen/_14sdp"
+            android:singleLine="true"
+            android:text="@{vm.isFromGroupInfo() ? vm.groupTitle : ``}"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_group_name_hint" />
+
+        <TextView
+            android:id="@+id/tv_group_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_14sdp"
+            android:layout_marginTop="@dimen/_18sdp"
+            android:text="Group Type"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Semi_Bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/et_group_name" />
+
+        <TextView
+            android:id="@+id/tv_select_group_type"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/_44sdp"
+            android:layout_marginHorizontal="@dimen/_12sdp"
+            android:layout_marginTop="@dimen/_6sdp"
+            android:background="@drawable/white_rectangle_with_grey_stroke"
+            android:enabled="@{!vm.isFromGroupInfo()}"
+            android:gravity="center_vertical"
+            android:hint="Choose group type"
+            android:onClick="@{vm::openTypeChooser}"
+            android:paddingHorizontal="@dimen/_14sdp"
+            android:text="@{vm.isFromGroupInfo() ? vm.groupType : ``}"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
+            app:drawableEndCompat="@drawable/ic_rounded_triangle"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_group_type" />
+
+        <TextView
+            android:id="@+id/tv_group_type_hint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_14sdp"
+            android:layout_marginTop="@dimen/_6sdp"
+            android:text="Now you can choose what type of group you want to make. You can make your group Open or Closed."
+            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_select_group_type" />
+
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/img_group"
             defaultImage="@{DefaultImage.NO_IMAGE}"
@@ -76,71 +137,43 @@
             android:layout_width="@dimen/_42sdp"
             android:layout_height="@dimen/_42sdp"
             android:layout_centerVertical="true"
-            android:layout_marginStart="@dimen/_8sdp"
-            android:layout_marginTop="@dimen/_8sdp"
+            android:layout_marginStart="@dimen/_12sdp"
+            android:layout_marginTop="@dimen/_14sdp"
             android:background="@drawable/white_button_round_enabled"
             android:elevation="1dp"
             android:gravity="center_vertical|start"
             android:onClick="@{vm::openImageChooser}"
             android:visibility="visible"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/appBarLayout"
-            tools:visibility="visible" />
-
-        <androidx.appcompat.widget.AppCompatEditText
-            android:id="@+id/et_group_name"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_16sdp"
-            android:layout_marginEnd="@dimen/_8sdp"
-            android:background="@color/transparent"
-            android:elevation="1dp"
-            android:hint="Enter Group Name"
-            android:maxLength="25"
-            android:singleLine="true"
-            android:text="@{vm.isFromGroupInfo() ? vm.groupTitle : ``}"
-            app:layout_constraintBottom_toBottomOf="@+id/img_group"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/img_group"
-            app:layout_constraintTop_toTopOf="@+id/img_group" />
-
-        <View
-            android:id="@+id/et_background_view"
-            android:layout_width="0dp"
-            android:layout_height="1dp"
-            android:background="@color/black"
-            android:elevation="1dp"
-            app:layout_constraintEnd_toEndOf="@+id/et_group_name"
-            app:layout_constraintStart_toStartOf="@+id/et_group_name"
-            app:layout_constraintTop_toBottomOf="@+id/et_group_name" />
+            app:layout_constraintTop_toBottomOf="@id/tv_group_type_hint" />
 
         <TextView
-            android:id="@+id/tv_group_name_hint"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_8sdp"
-            android:layout_marginTop="@dimen/_8sdp"
-            android:elevation="1dp"
-            android:paddingBottom="@dimen/_8sdp"
-            android:text="Provide a group name and optional group icon "
-            app:layout_constraintEnd_toStartOf="@+id/fab_add_group"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/img_group" />
+            android:layout_marginStart="@dimen/_14sdp"
+            android:layout_marginEnd="@dimen/_4sdp"
+            android:text="Provide an optional group icon "
+            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+            app:layout_constraintBottom_toBottomOf="@id/img_group"
+            app:layout_constraintStart_toEndOf="@id/img_group"
+            app:layout_constraintTop_toTopOf="@id/img_group" />
 
-        <com.melnykov.fab.FloatingActionButton
-            android:id="@+id/fab_add_group"
-            style="@style/Widget.MaterialComponents.FloatingActionButton"
-            android:layout_width="@dimen/_32sdp"
-            android:layout_height="@dimen/_32sdp"
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/submit_add_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_18sdp"
+            android:layout_marginBottom="@dimen/_16sdp"
+            android:background="@drawable/rounded_rectangle_grey"
             android:backgroundTint="@color/blue33"
             android:onClick="@{vm::saveGroupInfo}"
             android:scaleType="centerInside"
             android:src="@drawable/add_groups"
-            app:layout_constraintBottom_toBottomOf="@+id/background_view"
+            android:text="Submit"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.96"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_group_name_hint" />
+            app:layout_constraintStart_toStartOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
