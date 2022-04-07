@@ -62,7 +62,7 @@ class NewGroupFragment : BaseFragment() {
                     }
                 }
                 CREATE_GROUP_VALIDATION -> {
-                    val groupName = binding.etGroupName.text.toString()
+                    val groupName = binding.etGroupName.text.toString().trim()
                     var groupType = OPENED_GROUP
                     if (binding.tvSelectGroupType.text.toString().contains(CLOSED_GROUP, true))
                         groupType = CLOSED_GROUP
@@ -86,13 +86,14 @@ class NewGroupFragment : BaseFragment() {
                         showToast("Please enter group name")
                 }
                 SAVE_GROUP_INFO -> {
-                    val groupName = binding.etGroupName.text.toString()
+                    val groupName = binding.etGroupName.text.toString().trim()
                     if (vm.isImageChanged || (groupName != vm.groupTitle.get() && groupName.isNotEmpty() && groupName.length <= 25)) {
                         val request = EditGroupRequest(
                             groupId = groupId ?: "",
                             groupName = groupName,
                             groupIcon = imagePath ?: vm.groupImageUrl.get() ?: "",
-                            isImageChanged = vm.isImageChanged
+                            isImageChanged = vm.isImageChanged,
+                            groupType = vm.groupType.get()!!
                         )
                         vm.editGroup(request, groupName != vm.groupTitle.get())
                     } else if (groupName.length > 25)
@@ -115,15 +116,7 @@ class NewGroupFragment : BaseFragment() {
             vm.isFromGroupInfo.set(it.getBoolean(IS_FROM_GROUP_INFO, false))
             vm.groupTitle.set(it.getString(GROUPS_TITLE))
             vm.groupImageUrl.set(it.getString(GROUPS_IMAGE))
-            vm.groupType.apply {
-                this.set(
-                    when(it.getString(GROUP_TYPE, "")) {
-                        OPENED_GROUP -> "Open Group"
-                        CLOSED_GROUP -> "Closed Group"
-                        else -> ""
-                    }
-                )
-            }
+            vm.groupType.set(it.getString(GROUP_TYPE, ""))
             groupId = it.getString(GROUPS_ID)
         }
         vm.isImageChanged = false

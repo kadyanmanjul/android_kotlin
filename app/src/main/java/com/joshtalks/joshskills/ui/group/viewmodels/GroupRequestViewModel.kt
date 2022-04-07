@@ -5,9 +5,11 @@ import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.base.BaseViewModel
 import com.joshtalks.joshskills.constants.DISMISS_PROGRESS_BAR
 import com.joshtalks.joshskills.constants.ON_BACK_PRESSED
+import com.joshtalks.joshskills.constants.OPEN_PROFILE_PAGE
 import com.joshtalks.joshskills.constants.SHOW_PROGRESS_BAR
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.ui.group.adapters.GroupRequestAdapter
+import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics
 import com.joshtalks.joshskills.ui.group.constants.CLOSED_GROUP
 import com.joshtalks.joshskills.ui.group.model.GroupRequest
 import com.joshtalks.joshskills.ui.group.repository.GroupRepository
@@ -40,6 +42,15 @@ class GroupRequestViewModel : BaseViewModel() {
         message.what = DISMISS_PROGRESS_BAR
         singleLiveEvent.value = message
     }
+
+    fun openProfile(mentorId: String) {
+        message.what = OPEN_PROFILE_PAGE
+        message.obj = mentorId
+        singleLiveEvent.value = message
+        GroupAnalytics.push(GroupAnalytics.Event.OPENED_PROFILE)
+    }
+
+    val openProfileOnClick: (String) -> Unit = { openProfile(it) }
 
     val requestBtnResponse: (String, String, Boolean) -> Unit = { mentorId, name, allow ->
         showProgressDialog("Allowing to join group...")
