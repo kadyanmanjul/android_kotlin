@@ -1,11 +1,9 @@
 package com.joshtalks.badebhaiya.repository.model
 
 import com.google.gson.annotations.SerializedName
-import com.joshtalks.badebhaiya.core.API_TOKEN
 import com.joshtalks.badebhaiya.core.AppObjectController
 import com.joshtalks.badebhaiya.core.EMPTY
 import com.joshtalks.badebhaiya.core.PrefManager
-import com.joshtalks.badebhaiya.repository.service.RetrofitInstance
 
 const val USER_PERSISTENT_KEY = "USER_PERSISTENT_KEY"
 
@@ -48,6 +46,7 @@ data class User(
         this.firstName = user.firstName
         this.lastName = user.lastName
         this.mobile = user.mobile
+        this.isSpeaker = user.isSpeaker
         if (this.profilePicUrl.isNullOrEmpty()) this.profilePicUrl = user.profilePicUrl
         if (this.userId.isEmpty()) this.userId = user.userId
         if (this.token.isEmpty()) this.token = user.token

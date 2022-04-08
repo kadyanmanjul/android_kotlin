@@ -2,6 +2,7 @@ package com.joshtalks.badebhaiya.feed
 
 import android.os.Bundle
 import android.os.Message
+import android.util.Log
 import androidx.databinding.ObservableBoolean
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -28,12 +29,17 @@ class FeedViewModel : ViewModel() {
 
     val isRoomsAvailable = ObservableBoolean(true)
     val isLoading = ObservableBoolean(false)
-    val isBadeBhaiyaSpeaker = ObservableBoolean(true)
+    val isBadeBhaiyaSpeaker = ObservableBoolean(false)
 
     val feedAdapter = FeedAdapter()
     var message = Message()
     var singleLiveEvent: MutableLiveData<Message> = MutableLiveData()
     val repository = ConversationRoomRepository()
+
+    fun setIsBadeBhaiyaSpeaker(){
+        isBadeBhaiyaSpeaker.set(User.getInstance().isSpeaker)
+        isBadeBhaiyaSpeaker.notifyChange()
+    }
 
     /*val onFeedItemClicked: (RoomListResponseItem?, View?) -> Unit = { item, view ->
         message.what = OPEN_ROOM

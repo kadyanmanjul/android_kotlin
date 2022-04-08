@@ -7,7 +7,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/base_app_color"
-        tools:context=".conversationRoom.liveRooms.ConversationLiveRoomActivity">
+        tools:context=".liveroom.ConversationLiveRoomActivity">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/toolbar"
@@ -34,7 +34,7 @@
                 android:layout_height="match_parent"
                 android:layout_marginStart="@dimen/_16sdp"
                 android:text="@string/hallway"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7"
                 android:textColor="@color/pure_black"
                 app:layout_constraintBottom_toBottomOf="@id/down_arrow"
                 app:layout_constraintStart_toEndOf="@id/down_arrow"
@@ -53,7 +53,8 @@
                 app:layout_constraintHorizontal_bias="1"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:shapeAppearanceOverlay="@style/roundedCornersImageView_8dp" />
+                android:background="@color/black"
+                app:shapeAppearanceOverlay="@style/roundedCornersImageView_6dp" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -82,7 +83,7 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/_14sdp"
                     android:padding="@dimen/_2sdp"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7"
                     android:textColor="@color/pure_black"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0"
@@ -103,7 +104,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/topic"
                     app:layout_constraintVertical_chainStyle="packed"
-                    tools:visibility="visible" />
+                    tools:visibility="gone" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/speakers_recycler_view"
@@ -128,7 +129,8 @@
                     android:layout_marginStart="@dimen/_16sdp"
                     android:layout_marginTop="@dimen/_16sdp"
                     android:text="@string/audience"
-                    android:textAppearance="@style/BB_Typography_Nunito_Sans_Semi_Bold"
+                    android:textAppearance="@style/BB_Typography_Nunito_Sans_Bold"
+                    android:textSize="@dimen/_10ssp"
                     android:textColor="#E7E4D5"
                     app:layout_constraintBottom_toTopOf="@id/listener__recycler_view"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -173,7 +175,7 @@
                 android:paddingVertical="@dimen/_8sdp"
                 android:paddingStart="@dimen/_10sdp"
                 android:paddingEnd="@dimen/_14sdp"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7"
                 android:textColor="#D86464"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -185,8 +187,7 @@
                 android:layout_height="@dimen/_30sdp"
                 android:layout_marginEnd="@dimen/_16sdp"
                 android:layout_marginBottom="@dimen/_20sdp"
-                android:background="@drawable/circle2"
-                android:backgroundTint="#F2F2F2"
+                android:background="@drawable/circle_white"
                 android:padding="@dimen/_7sdp"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -200,14 +201,13 @@
                 android:layout_height="@dimen/_30sdp"
                 android:layout_marginEnd="@dimen/_16sdp"
                 android:layout_marginBottom="@dimen/_20sdp"
-                android:background="@drawable/circle2"
-                android:backgroundTint="#F2F2F2"
+                android:background="@drawable/circle_white"
                 android:padding="@dimen/_7sdp"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:srcCompat="@drawable/ic_mic_black_on"
-                tools:visibility="gone" />
+                tools:visibility="visible" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/raised_hands"
@@ -221,8 +221,9 @@
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:srcCompat="@drawable/raised_hand_list_icon"
-                tools:visibility="visible" />
+                app:srcCompat="@drawable/ic_plus"
+                android:tint="@color/black"
+                tools:visibility="gone" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/hand_raise_btn"
@@ -230,14 +231,14 @@
                 android:layout_height="@dimen/_30sdp"
                 android:layout_marginEnd="@dimen/_16sdp"
                 android:layout_marginBottom="@dimen/_20sdp"
-                android:background="@drawable/circle2"
-                android:backgroundTint="#F2F2F2"
+                android:background="@drawable/circle_white"
                 android:padding="@dimen/_7sdp"
                 android:visibility="gone"
+                android:elevation="@dimen/_4sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/mute_btn"
                 app:srcCompat="@drawable/ic_hand_raised_icon"
-                tools:visibility="gone" />
+                tools:visibility="visible" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/hand_unraise_btn"
@@ -245,14 +246,14 @@
                 android:layout_height="@dimen/_30sdp"
                 android:layout_marginEnd="@dimen/_16sdp"
                 android:layout_marginBottom="@dimen/_20sdp"
-                android:background="@drawable/circle2"
-                android:backgroundTint="#F2F2F2"
+                android:background="@drawable/circle_white"
                 android:padding="@dimen/_7sdp"
                 android:visibility="gone"
+                android:elevation="@dimen/_4sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/mute_btn"
                 app:srcCompat="@drawable/ic_unraise_hand_icon"
-                tools:visibility="gone" />
+                tools:visibility="visible" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <com.joshtalks.badebhaiya.feed.NotificationView

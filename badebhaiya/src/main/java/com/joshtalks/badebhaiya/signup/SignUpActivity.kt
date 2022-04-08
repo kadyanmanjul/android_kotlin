@@ -22,9 +22,13 @@ import com.joshtalks.badebhaiya.signup.fragments.SignUpEnterNameFragment
 import com.joshtalks.badebhaiya.signup.fragments.SignUpEnterOTPFragment
 import com.joshtalks.badebhaiya.signup.fragments.SignUpEnterPhoneFragment
 import com.joshtalks.badebhaiya.signup.viewmodel.SignUpViewModel
-import com.truecaller.android.sdk.*
-import kotlinx.android.synthetic.main.activity_sign_up.*
-import java.util.*
+import com.truecaller.android.sdk.ITrueCallback
+import com.truecaller.android.sdk.TrueError
+import com.truecaller.android.sdk.TrueProfile
+import com.truecaller.android.sdk.TruecallerSDK
+import com.truecaller.android.sdk.TruecallerSdkScope
+import java.util.Locale
+import kotlinx.android.synthetic.main.activity_sign_up.btnWelcome
 
 class SignUpActivity : AppCompatActivity() {
 
@@ -159,7 +163,11 @@ class SignUpActivity : AppCompatActivity() {
     }
 
     fun openTrueCallerBottomSheet() {
-        TruecallerSDK.getInstance().getUserProfile(this)
+        if (TruecallerSDK.getInstance().isUsable) {
+            TruecallerSDK.getInstance().getUserProfile(this)
+        } else
+        openEnterPhoneNumberFragment()
+
     }
 
     private val sdkCallback: ITrueCallback = object : ITrueCallback {
