@@ -30,9 +30,7 @@ interface UserActionData : OutgoingData {
     fun getCallingId() : Int
 }
 
-interface MessageData : IncomingData {
-    fun getMessage() : String
-}
+interface MessageData : IncomingData
 
 interface ChannelData : IncomingData {
     fun getCallingPartnerName() : String

@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.voip.notification
 
+import android.annotation.SuppressLint
 import android.app.*
 import android.content.Context
 import android.content.Intent
@@ -12,7 +13,7 @@ import com.joshtalks.joshskills.voip.R
 import com.joshtalks.joshskills.voip.Utils
 
 internal class NotificationGenerator {
-    private lateinit var notificationBuilder: NotificationCompat.Builder
+    private lateinit var notificationBuilder : NotificationCompat.Builder
     private val context: Application?= Utils.context
 
     init {
@@ -155,6 +156,28 @@ internal class NotificationGenerator {
 
     fun updateContent(content:String,notificationBuiltObj: NotificationBuiltObj){
         notificationBuiltObj.notificationBuilder.setContentText(content)
+        NotificationManagerCompat.from(context!!).notify(notificationBuiltObj.id, notificationBuiltObj.notificationBuilder.build())
+    }
+
+    fun connected(username : String, notificationBuiltObj: NotificationBuiltObj, onTap: PendingIntent, onNegativeAction : PendingIntent) {
+        notificationBuiltObj.notificationBuilder.setContentTitle(username)
+        notificationBuiltObj.notificationBuilder.setContentText("Ongoing p2p call")
+        notificationBuiltObj.notificationBuilder.setContentIntent(onTap)
+        notificationBuiltObj.notificationBuilder.setUsesChronometer(true)
+        notificationBuiltObj.notificationBuilder.setWhen(System.currentTimeMillis())
+        notificationBuiltObj.notificationBuilder.setShowWhen(true)
+        notificationBuiltObj.notificationBuilder.addAction(0, "Hang up", onNegativeAction)
+        NotificationManagerCompat.from(context!!).notify(notificationBuiltObj.id, notificationBuiltObj.notificationBuilder.build())
+    }
+
+    @SuppressLint("RestrictedApi")
+    fun idle(notificationBuiltObj: NotificationBuiltObj) {
+        notificationBuiltObj.notificationBuilder.setContentTitle("Josh Skills")
+        notificationBuiltObj.notificationBuilder.setContentText("Quickly Learn English")
+        notificationBuiltObj.notificationBuilder.setContentIntent(null)
+        notificationBuiltObj.notificationBuilder.setUsesChronometer(false)
+        notificationBuiltObj.notificationBuilder.setShowWhen(false)
+        notificationBuiltObj.notificationBuilder.mActions.clear()
         NotificationManagerCompat.from(context!!).notify(notificationBuiltObj.id, notificationBuiltObj.notificationBuilder.build())
     }
 

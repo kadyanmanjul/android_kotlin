@@ -1,14 +1,12 @@
 package com.joshtalks.joshskills.voip.data
 
-import android.annotation.SuppressLint
-import android.app.ActivityManager
+import android.app.PendingIntent
 import android.app.Service
 import android.content.ContentValues
 import android.content.Intent
 import android.net.Uri
 import android.os.IBinder
 import android.os.Messenger
-import android.os.Process
 import android.os.SystemClock
 import android.util.Log
 import com.joshtalks.joshskills.base.constants.CALL_ID
@@ -23,12 +21,14 @@ import com.joshtalks.joshskills.base.constants.REMOTE_USER_IMAGE
 import com.joshtalks.joshskills.base.constants.REMOTE_USER_NAME
 import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_STOP_SERVICE
 import com.joshtalks.joshskills.base.constants.CALL_DISCONNECTED_URI
-import com.joshtalks.joshskills.base.constants.INCOMING_CALL_ID
+import com.joshtalks.joshskills.base.constants.CHANNEL_NAME
+import com.joshtalks.joshskills.base.constants.CURRENT_USER_AGORA_ID
 import com.joshtalks.joshskills.base.constants.INCOMING_CALL_URI
-import com.joshtalks.joshskills.base.constants.PREF_KEY_MAIN_PROCESS_PID
+import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_DISCONNECT_CALL
 import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_MAIN_PROCESS_IN_BACKGROUND
 import com.joshtalks.joshskills.base.constants.START_CALL_TIME_COLUMN
 import com.joshtalks.joshskills.base.constants.START_CALL_TIME_URI
+import com.joshtalks.joshskills.base.constants.TOPIC_NAME
 import com.joshtalks.joshskills.base.constants.VOIP_STATE_URI
 import com.joshtalks.joshskills.base.constants.VOIP_STATE
 import com.joshtalks.joshskills.voip.Utils
@@ -38,8 +38,6 @@ import com.joshtalks.joshskills.voip.audiocontroller.AudioRouteConstants.Bluetoo
 import com.joshtalks.joshskills.voip.audiocontroller.AudioRouteConstants.EarpieceAudio
 import com.joshtalks.joshskills.voip.audiocontroller.AudioRouteConstants.HeadsetAudio
 import com.joshtalks.joshskills.voip.audiocontroller.AudioRouteConstants.SpeakerAudio
-import com.joshtalks.joshskills.voip.audiomanager.SOUND_TYPE_RINGTONE
-import com.joshtalks.joshskills.voip.audiomanager.SoundManager
 import com.joshtalks.joshskills.voip.calldetails.CallDetails
 import com.joshtalks.joshskills.voip.calldetails.IncomingCallData
 import com.joshtalks.joshskills.voip.communication.constants.ServerConstants
@@ -83,28 +81,30 @@ private const val TAG = "CallingRemoteService"
 const val SERVICE_ALONE_LIFE_TIME = 1 * 60 * 1000L
 
 class CallingRemoteService : Service() {
-    private val coroutineExceptionHandler = CoroutineExceptionHandler{_, e ->
+    private val coroutineExceptionHandler = CoroutineExceptionHandler { _, e ->
         Timber.tag("Coroutine Exception").d("Handled...")
         e.printStackTrace()
     }
     private val ioScope by lazy { CoroutineScope(Dispatchers.IO + coroutineExceptionHandler) }
     private val mediator by lazy<CallServiceMediator> { CallingMediator(ioScope) }
     private val handler by lazy { CallingRemoteServiceHandler.getInstance(ioScope) }
+    private var currentState = IDLE
     private var isMediatorInitialise = false
     private val pstnController by lazy {
         PSTNController(ioScope)
     }
-    private val audioController : AudioControllerInterface by lazy { AudioController(ioScope) }
+    private val audioController: AudioControllerInterface by lazy { AudioController(ioScope) }
 
     // For Testing Purpose
     private val notificationData = TestNotification()
     private val notification by lazy {
-      VoipNotification(notificationData,NotificationPriority.Low)
+        VoipNotification(notificationData, NotificationPriority.Low)
     }
-    private lateinit var serviceKillJob : Job
+    private lateinit var serviceKillJob: Job
 
     override fun onCreate() {
         super.onCreate()
+        stopServiceKillingTimer()
         updateStartCallTime(0)
         updateVoipState(IDLE)
         registerReceivers()
@@ -117,14 +117,20 @@ class CallingRemoteService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         voipLog?.log("StartService --- OnStartCommand")
         val shouldStopService = (intent?.action == SERVICE_ACTION_STOP_SERVICE)
-        if(shouldStopService) {
+        if (currentState == IDLE && shouldStopService) {
             stopSelf()
             return START_NOT_STICKY
         }
         val checkAppState = (intent?.action == SERVICE_ACTION_MAIN_PROCESS_IN_BACKGROUND)
         Log.d(TAG, "onStartCommand: In BackGround $checkAppState")
-        if(checkAppState) {
+        if (checkAppState) {
             startAutoServiceKillingTimer()
+            return START_NOT_STICKY
+        }
+        val hungUpCall = (intent?.action == SERVICE_ACTION_DISCONNECT_CALL)
+        Log.d(TAG, "onStartCommand: SERVICE_ACTION_DISCONNECT_CALL --> $hungUpCall")
+        if (hungUpCall) {
+            disconnectCall()
             return START_NOT_STICKY
         }
         Utils.apiHeader = intent?.getParcelableExtra(INTENT_DATA_API_HEADER)
@@ -132,20 +138,33 @@ class CallingRemoteService : Service() {
         voipLog?.log("API Header --> ${Utils.apiHeader}")
         voipLog?.log("Mentor Id --> ${Utils.uuid}")
         // TODO: Refactor Code {Maybe use Content Provider}
-        if(isMediatorInitialise.not()) {
+        if (isMediatorInitialise.not()) {
             isMediatorInitialise = true
             ioScope.launch {
                 mediator.observeEvents().collect {
-                    when(it) {
-                        CALL_CONNECTED_EVENT -> updateStartCallTime(
-                            SystemClock.elapsedRealtime(),
-                            remoteUserName = CallDetails.remoteUserName,
-                            remoteUserImage = CallDetails.remoteUserImageUrl,
-                            remoteUserAgoraId = CallDetails.remoteUserAgoraId,
-                            callId = CallDetails.callId,
-                            callType = CallDetails.callType
-                        )
-                        CALL_DISCONNECT_REQUEST -> updateLastCallDetails()
+                    when (it) {
+                        CALL_CONNECTED_EVENT -> {
+                            updateStartCallTime(
+                                SystemClock.elapsedRealtime(),
+                                remoteUserName = CallDetails.remoteUserName,
+                                remoteUserImage = CallDetails.remoteUserImageUrl,
+                                remoteUserAgoraId = CallDetails.remoteUserAgoraId,
+                                callId = CallDetails.callId,
+                                callType = CallDetails.callType,
+                                currentUserAgoraId = CallDetails.localUserAgoraId,
+                                channelName = CallDetails.agoraChannelName,
+                                topicName = CallDetails.topicName
+                            )
+                            notification.connected(
+                                CallDetails.remoteUserName,
+                                openCallScreen(),
+                                getHangUpIntent()
+                            )
+                        }
+                        CALL_DISCONNECT_REQUEST -> {
+                            notification.idle()
+                            updateLastCallDetails()
+                        }
 
                         INCOMING_CALL -> {
                             updateIncomingCallDetails()
@@ -154,12 +173,13 @@ class CallingRemoteService : Service() {
                         }
                     }
                     voipLog?.log("Sending Event to client")
-                        handler.sendMessageToRepository(it)
+                    handler.sendMessageToRepository(it)
                 }
             }
 
             ioScope.launch {
                 mediator.observeState().collect {
+                    currentState = it
                     updateVoipState(it)
                     voipLog?.log("State --> $it")
                 }
@@ -184,21 +204,21 @@ class CallingRemoteService : Service() {
         Log.d(TAG, "startAutoServiceKillingTimer: ")
         serviceKillJob = ioScope.launch {
             delay(SERVICE_ALONE_LIFE_TIME)
-            if(isActive)
+            if (isActive)
                 stopSelf()
         }
     }
 
     private fun stopServiceKillingTimer() {
         Log.d(TAG, "stopServiceKillingTimer: ")
-        if(::serviceKillJob.isInitialized)
+        if (::serviceKillJob.isInitialized)
             serviceKillJob.cancel()
     }
 
     private fun observeAudioRouteEvents() {
         ioScope.launch {
             audioController.observeAudioRoute().collectLatest {
-                when(it) {
+                when (it) {
                     BluetoothAudio, EarpieceAudio, HeadsetAudio -> {
                         handler.sendMessageToRepository(SWITCHED_TO_WIRED)
                     }
@@ -240,27 +260,18 @@ class CallingRemoteService : Service() {
         voipLog?.log("${handler}")
         ioScope.launch {
             handler.observerFlow().collect {
-                when(it.what) {
+                when (it.what) {
                     CALL_CONNECT_REQUEST -> {
                         val callData = it.obj as? HashMap<String, Any>
-                        if(callData != null) {
+                        if (callData != null) {
                             mediator.connectCall(PEER_TO_PEER, callData)
                             voipLog?.log("Connecting Call Data --> $callData")
-                        }
-                        else
+                        } else
                             voipLog?.log("Mediator is NULL")
                     }
                     CALL_DISCONNECT_REQUEST -> {
                         voipLog?.log("Disconnect Call")
-                        val networkAction = NetworkAction(
-                            callId = CallDetails.callId,
-                            uid = CallDetails.localUserAgoraId,
-                            type = ServerConstants.DISCONNECTED,
-                            duration = callDuration()
-                        )
-                        updateLastCallDetails()
-                        mediator.sendEventToServer(networkAction)
-                        mediator.disconnectCall()
+                        disconnectCall()
                     }
                     MUTE -> {
                         val userAction = UserAction(ServerConstants.MUTE, CallDetails.callId)
@@ -284,12 +295,28 @@ class CallingRemoteService : Service() {
         }
     }
 
+    private fun disconnectCall() {
+        Log.d(TAG, "disconnectCall: ")
+        val networkAction = NetworkAction(
+            callId = CallDetails.callId,
+            uid = CallDetails.localUserAgoraId,
+            type = ServerConstants.DISCONNECTED,
+            duration = callDuration()
+        )
+        notification.idle()
+        updateLastCallDetails()
+        mediator.sendEventToServer(networkAction)
+        mediator.disconnectCall()
+    }
+
     override fun onTaskRemoved(rootIntent: Intent?) {
         //showNotification()
-        if(::serviceKillJob.isInitialized.not())
-            startAutoServiceKillingTimer()
-        else if(serviceKillJob.isActive.not())
-            startAutoServiceKillingTimer()
+        if (currentState == IDLE) {
+            if (::serviceKillJob.isInitialized.not())
+                startAutoServiceKillingTimer()
+            else if (serviceKillJob.isActive.not())
+                startAutoServiceKillingTimer()
+        }
 
         voipLog?.log("onTaskRemoved --> ${rootIntent}")
         super.onTaskRemoved(rootIntent)
@@ -316,7 +343,10 @@ class CallingRemoteService : Service() {
     }
 
     private fun showNotification() {
-        startForeground(notification.getNotificationId(), notification.getNotificationObject().build())
+        startForeground(
+            notification.getNotificationId(),
+            notification.getNotificationObject().build()
+        )
     }
 
     private fun registerReceivers() {
@@ -329,10 +359,9 @@ class CallingRemoteService : Service() {
         audioController.unregisterAudioControllerReceivers()
     }
 
-    private fun callDuration() : Long {
+    private fun callDuration(): Long {
         val startTime = getStartCallTime()
         val currentTime = SystemClock.elapsedRealtime()
-        Log.d(TAG, "callDuration: ST -> $startTime  and CT -> $currentTime")
         return TimeUnit.MILLISECONDS.toSeconds(currentTime - startTime)
     }
 
@@ -342,16 +371,22 @@ class CallingRemoteService : Service() {
         remoteUserImage: String? = null,
         callId: Int = -1,
         callType: Int = -1,
-        remoteUserAgoraId: Int = -1
+        remoteUserAgoraId: Int = -1,
+        currentUserAgoraId: Int = -1,
+        channelName: String = "",
+        topicName: String = ""
     ) {
-        voipLog?.log("Timestamp -> $timestamp")
-        val values = ContentValues(6).apply {
+        voipLog?.log("QUERY")
+        val values = ContentValues(9).apply {
             put(CALL_START_TIME, timestamp)
             put(REMOTE_USER_NAME, remoteUserName)
             put(REMOTE_USER_IMAGE, remoteUserImage)
             put(REMOTE_USER_AGORA_ID, remoteUserAgoraId)
             put(CALL_ID, callId)
             put(CALL_TYPE, callType)
+            put(CHANNEL_NAME, channelName)
+            put(TOPIC_NAME, topicName)
+            put(CURRENT_USER_AGORA_ID, currentUserAgoraId)
         }
         val data = contentResolver.insert(
             Uri.parse(CONTENT_URI + START_CALL_TIME_URI),
@@ -360,7 +395,7 @@ class CallingRemoteService : Service() {
         voipLog?.log("Data --> $data")
     }
 
-    private fun getStartCallTime() : Long {
+    private fun getStartCallTime(): Long {
         val startCallTimeCursor = contentResolver.query(
             Uri.parse(CONTENT_URI + START_CALL_TIME_URI),
             null,
@@ -370,8 +405,11 @@ class CallingRemoteService : Service() {
         )
         Log.d(TAG, "query: ${startCallTimeCursor?.columnNames?.asList()}")
         startCallTimeCursor?.moveToFirst()
-        val startTime = startCallTimeCursor?.getLong(startCallTimeCursor.getColumnIndex(
-            START_CALL_TIME_COLUMN))
+        val startTime = startCallTimeCursor?.getLong(
+            startCallTimeCursor.getColumnIndex(
+                START_CALL_TIME_COLUMN
+            )
+        )
         startCallTimeCursor?.close()
         Log.d(TAG, "getStartCallTime: $startTime")
         return startTime ?: 0L
@@ -402,7 +440,7 @@ class CallingRemoteService : Service() {
         voipLog?.log("Data --> $data")
     }
 
-    private fun updateVoipState(state : Int) {
+    private fun updateVoipState(state: Int) {
         voipLog?.log("Setting Voip State --> $state")
         val values = ContentValues(1).apply {
             put(VOIP_STATE, state)
@@ -412,6 +450,34 @@ class CallingRemoteService : Service() {
             values
         )
         voipLog?.log("Data --> $data")
+    }
+
+    private fun openCallScreen(): PendingIntent {
+        val destination = "com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity"
+        val intent = Intent()
+        intent.apply {
+            setClassName(Utils.context!!.applicationContext, destination)
+            flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
+        }
+        return PendingIntent.getActivity(
+            Utils.context,
+            1102,
+            intent,
+            PendingIntent.FLAG_CANCEL_CURRENT
+        )
+    }
+
+    private fun getHangUpIntent(): PendingIntent {
+        val intent = Intent(this, CallingRemoteService::class.java).apply {
+            action = SERVICE_ACTION_DISCONNECT_CALL
+        }
+
+        return PendingIntent.getService(
+            Utils.context,
+            1103,
+            intent,
+            PendingIntent.FLAG_CANCEL_CURRENT
+        )
     }
 
 }
@@ -425,4 +491,7 @@ class TestNotification : NotificationData {
         return "Enjoy P2P Call"
     }
 
+    override fun setTapAction(): PendingIntent? {
+        return super.setTapAction()
+    }
 }
