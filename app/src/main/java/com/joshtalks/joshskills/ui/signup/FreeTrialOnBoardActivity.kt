@@ -64,6 +64,7 @@ import kotlinx.coroutines.CoroutineScope
 import java.util.Locale
 
 const val SHOW_SIGN_UP_FRAGMENT = "SHOW_SIGN_UP_FRAGMENT"
+const val HINDI_TO_ENGLISH_TEST_ID = "784"
 
 class FreeTrialOnBoardActivity : CoreJoshActivity() {
 
@@ -156,7 +157,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         alertDialog.window?.setLayout(width.toInt(), height)
         alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-        if(is100PointsActive){
+        if(is100PointsActive && language.testId == HINDI_TO_ENGLISH_TEST_ID){
             dialogView.findViewById<TextView>(R.id.e_g_motivat).text =
                 AppObjectController.getFirebaseRemoteConfig()
                     .getString(FREE_TRIAL_POPUP_HUNDRED_POINTS_TEXT + language.testId)
