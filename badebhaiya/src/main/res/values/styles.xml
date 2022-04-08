@@ -245,6 +245,11 @@
         <item name="cornerSize">@dimen/_8sdp</item>
     </style>
 
+    <style name="roundedCornersImageView_28dp" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">@dimen/_28sdp</item>
+    </style>
+
     <style name="full_dialog" parent="@android:style/Theme.Holo.Light.Dialog">
         <item name="android:windowFrame">@null</item>
         <item name="android:windowIsFloating">true</item>

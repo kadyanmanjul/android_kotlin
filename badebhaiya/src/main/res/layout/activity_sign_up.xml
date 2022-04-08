@@ -46,7 +46,7 @@
             android:layout_width="wrap_content"
             android:layout_height="@dimen/_38sdp"
             android:layout_marginBottom="@dimen/_42sdp"
-            android:background="@drawable/next_button_selector"
+            android:background="@drawable/welcome_button_selector"
             android:paddingHorizontal="@dimen/_25sdp"
             android:text="@string/welcome_in_string"
             android:textAppearance="@style/BB_Typography_Nunito_Sans_Bold"

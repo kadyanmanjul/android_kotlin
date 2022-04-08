@@ -65,7 +65,7 @@ class SignUpActivity : AppCompatActivity() {
                 SignUpStepStatus.NameMissing -> {
                     openEnterNameFragment()
                 }
-                SignUpStepStatus.ProfilePicMissing, SignUpStepStatus.NameEntered -> {
+                SignUpStepStatus.ProfilePicMissing-> {
                     openUploadProfilePicFragment()
                 }
                 SignUpStepStatus.ProfilePicSkipped, SignUpStepStatus.ProfileCompleted, SignUpStepStatus.ProfilePicUploaded -> {
