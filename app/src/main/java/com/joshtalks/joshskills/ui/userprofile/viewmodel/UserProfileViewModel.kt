@@ -33,6 +33,7 @@ import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.SaveProfileClickedEvent
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
 import com.joshtalks.joshskills.repository.server.AnimatedLeaderBoardResponse
 import com.joshtalks.joshskills.repository.server.LinkAttribution
@@ -179,15 +180,6 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
             uploadCompressedMedia(compressImagePath)
         }
     }
-
-    fun uploadSignupMedia(mediaPath: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            apiCallStatus.postValue(ApiCallStatus.START)
-            val compressImagePath = getCompressImage(mediaPath)
-            uploadSignupCompressedMedia(compressImagePath)
-        }
-    }
-
     private fun uploadCompressedMedia(
         mediaPath: String
     ) {
@@ -197,71 +189,40 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
                 val responseObj = userProfileRepo.requestMediaRequest(obj)
                 val statusCode: Int = uploadOnS3Server(responseObj, mediaPath)
                 if (statusCode in 200..210) {
-                    val url = responseObj.url.plus(File.separator).plus(responseObj.fields["key"])
+val url = responseObj.url.plus(File.separator).plus(responseObj.fields["key"])
                     var updateProfilePayload = UpdateProfilePayload()
                     var date: String? = null
-                    updateProfilePayload.apply {
-                        if (userData.value?.dateOfBirth!=null){
-                            date = DATE_FORMATTER.format(DD_MM_YYYY.parse(userData.value?.dateOfBirth))
+                    if(userData.value!=null) {
+                        updateProfilePayload.apply {
+                            if (userData.value?.dateOfBirth != null) {
+                                date =
+                                    DATE_FORMATTER.format(DD_MM_YYYY.parse(userData.value?.dateOfBirth))
+                            }
+                            basicDetails?.apply {
+                                photoUrl = url
+                                firstName = userData.value?.name
+                                dateOfBirth = date
+                                homeTown = userData.value?.hometown
+                                futureGoals = userData.value?.futureGoals
+                                favouriteJoshTalk = userData.value?.favouriteJoshTalk
+                            }
+                            educationDetails = null
+                            occupationDetails = null
                         }
-                        basicDetails?.apply {
-                            photoUrl = url
-                            firstName = userData.value?.name
-                            dateOfBirth = date
-                            homeTown = userData.value?.hometown
-                            futureGoals = userData.value?.futureGoals
-                            favouriteJoshTalk = userData.value?.favouriteJoshTalk
+                    }else{
+                        updateProfilePayload.apply {
+                            val user = User.getInstance()
+                            basicDetails?.apply {
+                                photoUrl = url
+                                firstName = user.firstName
+                                dateOfBirth = user.dateOfBirth
+                                homeTown = null
+                                futureGoals = null
+                                favouriteJoshTalk = null
+                            }
+                            educationDetails=null
+                            occupationDetails=null
                         }
-                        educationDetails=null
-                        occupationDetails=null
-//                        educationDetails?.apply {
-//                            degree = userData.value?.educationDetails?.degree
-//                            college = userData.value?.educationDetails?.college
-//                            year = userData.value?.educationDetails?.year
-//                        }
-//                        occupationDetails?.apply {
-//                            designation = userData.value?.occupationDetails?.designation
-//                            company = userData.value?.occupationDetails?.company
-//                        }
-                    }
-                    saveProfileInfo(updateProfilePayload)
-                } else {
-                    apiCallStatus.postValue(ApiCallStatus.FAILED)
-                }
-
-            } catch (ex: Exception) {
-                apiCallStatus.postValue(ApiCallStatus.FAILED)
-                ex.printStackTrace()
-            }
-        }
-    }
-
-    private fun uploadSignupCompressedMedia(
-        mediaPath: String
-    ) {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val obj = mapOf("media_path" to File(mediaPath).name)
-                val responseObj = userProfileRepo.requestMediaRequest(obj)
-                val statusCode: Int = uploadOnS3Server(responseObj, mediaPath)
-                if (statusCode in 200..210) {
-                    val url = responseObj.url.plus(File.separator).plus(responseObj.fields["key"])
-                    var updateProfilePayload = UpdateProfilePayload()
-                    var date: String? = null
-                    updateProfilePayload.apply {
-                        if (userData.value?.dateOfBirth!=null){
-                            date = DATE_FORMATTER.format(DD_MM_YYYY.parse(userData.value?.dateOfBirth))
-                        }
-                        basicDetails?.apply {
-                            photoUrl = url
-                            firstName = userData.value?.name
-                            dateOfBirth = date
-                            homeTown = userData.value?.hometown
-                            futureGoals = userData.value?.futureGoals
-                            favouriteJoshTalk = userData.value?.favouriteJoshTalk
-                        }
-                        educationDetails=null
-                        occupationDetails=null
                     }
                     saveProfileInfo(updateProfilePayload)
                 } else {
