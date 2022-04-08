@@ -20,6 +20,7 @@ const val INTENT_DATA_INCOMING_CALL_ID = "josh_intent_data_incoming_call_id"
 const val SERVICE_ACTION_STOP_SERVICE = "josh_service_action_stop_service"
 const val SERVICE_ACTION_MAIN_PROCESS_IN_BACKGROUND = "josh_service_action_main_process_in_background"
 const val SERVICE_ACTION_DISCONNECT_CALL = "josh_service_action_disconnect_call"
+const val SERVICE_ACTION_SAVE_CURRENT_STATE = "josh_service_action_save_current_state"
 
 // Content Provider UI
 const val CONTENT_URI = "content://com.joshtalks.joshskills.contentprovider"
@@ -27,7 +28,11 @@ const val START_CALL_TIME_URI = "/start_call_time"
 const val INCOMING_CALL_URI = "/incoming_call"
 const val VOIP_STATE_URI = "/voip_state"
 const val CALL_DISCONNECTED_URI = "/call_disconnect"
-const val CURRENT_STATE_URI = "/current_call_state"
+const val CURRENT_MUTE_STATE_URI = "/current_mute_state"
+const val CURRENT_SPEAKER_STATE_URI = "/current_speaker_state"
+const val CURRENT_HOLD_STATE_URI = "/current_hold_state"
+const val CURRENT_REMOTE_MUTE_STATE_URI = "/current_remote_mute_state"
+const val RESET_CURRENT_CALL_STATE_URI = "/reset_current_call_state"
 const val API_HEADER = "/api_header"
 
 // Content Values
@@ -42,6 +47,7 @@ const val CURRENT_USER_AGORA_ID = "josh_current_user_agora_id"
 const val TOPIC_NAME = "josh_topic_name"
 const val CHANNEL_NAME = "josh_channel_name"
 const val IS_MUTE = "josh_is_mute"
+const val IS_REMOTE_USER_MUTE = "josh_is_remote_user_mute"
 const val IS_SPEAKER_ON = "josh_is_speaker_on"
 const val IS_ON_HOLD = "josh_is_on_hold"
 
@@ -59,6 +65,10 @@ const val PREF_KEY_CURRENT_REMOTE_USER_AGORA_ID = "josh_current_remote_user_agor
 const val PREF_KEY_CURRENT_CHANNEL_NAME = "josh_current_channel_name"
 const val PREF_KEY_CURRENT_USER_AGORA_ID= "josh_current_user_id"
 const val PREF_KEY_CURRENT_TOPIC_NAME= "josh_current_topic_name"
+const val PREF_KEY_CURRENT_USER_ON_MUTE= "josh_current_user_on_mute"
+const val PREF_KEY_CURRENT_REMOTE_USER_ON_MUTE= "josh_current_remote_user_on_mute"
+const val PREF_KEY_CURRENT_USER_SPEAKER_ON= "josh_current_user_speaker_on"
+const val PREF_KEY_CURRENT_USER_ON_HOLD= "josh_current_user_on_hold"
 
 // Last Call Details
 const val PREF_KEY_LAST_CALL_START_TIME = "josh_last_call_start_time"

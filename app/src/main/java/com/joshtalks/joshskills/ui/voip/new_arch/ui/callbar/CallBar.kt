@@ -14,8 +14,12 @@ import com.joshtalks.joshskills.base.constants.PREF_KEY_CURRENT_CHANNEL_NAME
 import com.joshtalks.joshskills.base.constants.PREF_KEY_CURRENT_REMOTE_USER_AGORA_ID
 import com.joshtalks.joshskills.base.constants.PREF_KEY_CURRENT_REMOTE_USER_IMAGE
 import com.joshtalks.joshskills.base.constants.PREF_KEY_CURRENT_REMOTE_USER_NAME
+import com.joshtalks.joshskills.base.constants.PREF_KEY_CURRENT_REMOTE_USER_ON_MUTE
 import com.joshtalks.joshskills.base.constants.PREF_KEY_CURRENT_TOPIC_NAME
 import com.joshtalks.joshskills.base.constants.PREF_KEY_CURRENT_USER_AGORA_ID
+import com.joshtalks.joshskills.base.constants.PREF_KEY_CURRENT_USER_ON_HOLD
+import com.joshtalks.joshskills.base.constants.PREF_KEY_CURRENT_USER_ON_MUTE
+import com.joshtalks.joshskills.base.constants.PREF_KEY_CURRENT_USER_SPEAKER_ON
 import com.joshtalks.joshskills.base.constants.PREF_KEY_INCOMING_CALL_ID
 import com.joshtalks.joshskills.base.constants.PREF_KEY_INCOMING_CALL_TYPE
 import com.joshtalks.joshskills.base.constants.PREF_KEY_LAST_CALL_ID
@@ -26,12 +30,15 @@ import com.joshtalks.joshskills.base.constants.PREF_KEY_LAST_REMOTE_USER_AGORA_I
 import com.joshtalks.joshskills.base.constants.PREF_KEY_LAST_REMOTE_USER_IMAGE
 import com.joshtalks.joshskills.base.constants.PREF_KEY_LAST_REMOTE_USER_NAME
 import com.joshtalks.joshskills.base.constants.PREF_KEY_WEBRTC_CURRENT_STATE
+import com.joshtalks.joshskills.base.model.VoipUIState
 import com.joshtalks.joshskills.voip.constant.IDLE
 import com.joshtalks.joshskills.core.ActivityLifecycleCallback
 import com.joshtalks.joshskills.core.IS_COURSE_BOUGHT
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.feedback.FeedbackDialogFragment
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.report.ReportDialogFragment
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 /**
  * Require DataBinding in targeted xml with following instruction ->
@@ -62,9 +69,9 @@ class VoipPref {
             callId: Int = -1,
             callType: Int = -1,
             remoteUserAgoraId: Int = -1,
-            currentUserAgoraId:Int = -1,
-            channelName : String = "",
-            topicName : String = ""
+            currentUserAgoraId: Int = -1,
+            channelName: String = "",
+            topicName: String = ""
         ) {
             val editor = preferenceManager.edit()
             editor.putString(PREF_KEY_CURRENT_REMOTE_USER_NAME, remoteUserName)
@@ -77,6 +84,43 @@ class VoipPref {
             editor.putInt(PREF_KEY_CURRENT_USER_AGORA_ID, currentUserAgoraId)
             editor.putString(PREF_KEY_CURRENT_TOPIC_NAME, topicName)
             Log.d(TAG, "updateCallDetails: timestamp --> $timestamp")
+            editor.apply()
+        }
+
+        fun resetCurrentCallState() {
+            val editor = preferenceManager.edit()
+            editor.putBoolean(PREF_KEY_CURRENT_USER_ON_MUTE, false)
+            editor.putBoolean(PREF_KEY_CURRENT_USER_ON_HOLD, false)
+            editor.putBoolean(PREF_KEY_CURRENT_USER_SPEAKER_ON, false)
+            editor.putBoolean(PREF_KEY_CURRENT_REMOTE_USER_ON_MUTE, false)
+            editor.apply()
+        }
+
+        fun currentUserMuteState(userOnMute: Boolean = false) {
+            Log.d(TAG, "currentUserMuteState: $userOnMute")
+            val editor = preferenceManager.edit()
+            editor.putBoolean(PREF_KEY_CURRENT_USER_ON_MUTE, userOnMute)
+            editor.apply()
+        }
+
+        fun currentUserHoldState(userOnHold: Boolean = false) {
+            Log.d(TAG, "currentUserHoldState: $userOnHold")
+            val editor = preferenceManager.edit()
+            editor.putBoolean(PREF_KEY_CURRENT_USER_ON_HOLD, userOnHold)
+            editor.apply()
+        }
+
+        fun currentUserSpeakerState(userSpeakerOn: Boolean = false) {
+            Log.d(TAG, "currentUserSpeakerState: $userSpeakerOn")
+            val editor = preferenceManager.edit()
+            editor.putBoolean(PREF_KEY_CURRENT_USER_SPEAKER_ON, userSpeakerOn)
+            editor.apply()
+        }
+
+        fun currentRemoteUserMuteState(remoteUserOnMute: Boolean = false) {
+            Log.d(TAG, "currentRemoteUserMuteState: $remoteUserOnMute")
+            val editor = preferenceManager.edit()
+            editor.putBoolean(PREF_KEY_CURRENT_REMOTE_USER_ON_MUTE, remoteUserOnMute)
             editor.apply()
         }
 
@@ -132,14 +176,14 @@ class VoipPref {
             val callTime = getLastCallStartTime()
             val second: Int = (callTime / 1000 % 60).toInt()
             val minute = (callTime / (1000 * 60) % 60).toInt()
-            val totalSecond:Int=((minute*60)+second)
+            val totalSecond: Int = ((minute * 60) + second)
 
             val currentActivity = ActivityLifecycleCallback.currentActivity
             val fragmentActivity = currentActivity as FragmentActivity
 
-            if(totalSecond < 120 && PrefManager.getBoolValue(IS_COURSE_BOUGHT) ){
-                 showReportDialog(fragmentActivity)
-            }else{
+            if (totalSecond < 120 && PrefManager.getBoolValue(IS_COURSE_BOUGHT)) {
+                showReportDialog(fragmentActivity)
+            } else {
                 showFeedBackDialog(fragmentActivity)
             }
         }
@@ -155,60 +199,85 @@ class VoipPref {
             return preferenceManager.getInt(PREF_KEY_WEBRTC_CURRENT_STATE, IDLE)
         }
 
+        fun getVoipUIState(): VoipUIState {
+            return VoipUIState(
+                isMute = preferenceManager.getBoolean(PREF_KEY_CURRENT_USER_ON_MUTE, false),
+                isSpeakerOn = preferenceManager.getBoolean(PREF_KEY_CURRENT_USER_SPEAKER_ON, false),
+                isOnHold = preferenceManager.getBoolean(PREF_KEY_CURRENT_USER_ON_HOLD, false),
+                isRemoteUserMuted = preferenceManager.getBoolean(
+                    PREF_KEY_CURRENT_REMOTE_USER_ON_MUTE, false
+                )
+            )
+        }
+
         fun getStartTimeStamp(): Long {
             val startTime = preferenceManager.getLong(PREF_KEY_CURRENT_CALL_START_TIME, 0)
             Log.d(TAG, "getStartTimeStamp: $startTime")
             return startTime
         }
+
         fun getTopicName(): String {
-             return preferenceManager.getString(PREF_KEY_CURRENT_TOPIC_NAME,"").toString()
+            return preferenceManager.getString(PREF_KEY_CURRENT_TOPIC_NAME, "").toString()
         }
+
         fun getCallerName(): String {
-            return preferenceManager.getString(PREF_KEY_CURRENT_REMOTE_USER_NAME,"").toString()
+            return preferenceManager.getString(PREF_KEY_CURRENT_REMOTE_USER_NAME, "").toString()
         }
+
         fun getLastCallerName(): String {
-            return preferenceManager.getString(PREF_KEY_LAST_REMOTE_USER_NAME,"").toString()
+            return preferenceManager.getString(PREF_KEY_LAST_REMOTE_USER_NAME, "").toString()
         }
+
         fun getCallType(): Int {
-            return preferenceManager.getInt(PREF_KEY_CURRENT_CALL_TYPE,-1)
+            return preferenceManager.getInt(PREF_KEY_CURRENT_CALL_TYPE, -1)
         }
+
         fun getIncomingCallId(): Int {
-            return preferenceManager.getInt(PREF_KEY_INCOMING_CALL_ID,-1)
+            return preferenceManager.getInt(PREF_KEY_INCOMING_CALL_ID, -1)
         }
+
         fun getProfileImage(): String {
-            return preferenceManager.getString(PREF_KEY_CURRENT_REMOTE_USER_IMAGE,"").toString()
+            return preferenceManager.getString(PREF_KEY_CURRENT_REMOTE_USER_IMAGE, "").toString()
         }
-        fun getLastRemoteUserAgoraId():Int{
-            return preferenceManager.getInt(PREF_KEY_LAST_REMOTE_USER_AGORA_ID,-1)
+
+        fun getLastRemoteUserAgoraId(): Int {
+            return preferenceManager.getInt(PREF_KEY_LAST_REMOTE_USER_AGORA_ID, -1)
         }
-        fun getCurrentUserAgoraId():Int{
-            return preferenceManager.getInt(PREF_KEY_CURRENT_USER_AGORA_ID,-1)
+
+        fun getCurrentUserAgoraId(): Int {
+            return preferenceManager.getInt(PREF_KEY_CURRENT_USER_AGORA_ID, -1)
         }
-        fun getLastCallId():Int{
-           return preferenceManager.getInt(PREF_KEY_LAST_CALL_ID,-1)
+
+        fun getLastCallId(): Int {
+            return preferenceManager.getInt(PREF_KEY_LAST_CALL_ID, -1)
         }
-        fun getLastCallChannelName():String{
-            return preferenceManager.getString(PREF_KEY_LAST_CHANNEL_NAME,"").toString()
+
+        fun getLastCallChannelName(): String {
+            return preferenceManager.getString(PREF_KEY_LAST_CHANNEL_NAME, "").toString()
         }
-        fun getLastCallStartTime():Long{
-            return preferenceManager.getLong(PREF_KEY_LAST_CALL_START_TIME,0L)
+
+        fun getLastCallStartTime(): Long {
+            return preferenceManager.getLong(PREF_KEY_LAST_CALL_START_TIME, 0L)
         }
+
         fun setListener(callTimeStampListener: CallTimeStampListener) {
             preferenceManager.registerOnSharedPreferenceChangeListener(callTimeStampListener)
         }
 
         private fun showReportDialog(fragmentActivity: FragmentActivity) {
 
-            val function = fun(){
+            val function = fun() {
                 showFeedBackDialog(fragmentActivity)
             }
-            ReportDialogFragment.newInstance(getLastRemoteUserAgoraId(),
-                getCurrentUserAgoraId(),"REPORT", getLastCallChannelName(),function)
+            ReportDialogFragment.newInstance(
+                getLastRemoteUserAgoraId(),
+                getCurrentUserAgoraId(), "REPORT", getLastCallChannelName(), function
+            )
                 .show(fragmentActivity.supportFragmentManager, "ReportDialogFragment")
         }
 
         private fun showFeedBackDialog(fragmentActivity: FragmentActivity) {
-            val function = fun(){}
+            val function = fun() {}
             FeedbackDialogFragment.newInstance(function)
                 .show(fragmentActivity.supportFragmentManager, "FeedBackDialogFragment")
         }
@@ -229,9 +298,20 @@ class CallBar {
     fun observerVoipState(): LiveData<Int> {
         return prefListener.observerVoipState()
     }
+
+    fun observerVoipUIState(): StateFlow<VoipUIState> {
+        return prefListener.observerVoipUIState()
+    }
 }
 
 object CallTimeStampListener : SharedPreferences.OnSharedPreferenceChangeListener {
+    private val UI_STATE_UPDATED = setOf(
+        PREF_KEY_CURRENT_USER_ON_HOLD,
+        PREF_KEY_CURRENT_USER_ON_MUTE,
+        PREF_KEY_CURRENT_USER_SPEAKER_ON,
+        PREF_KEY_CURRENT_REMOTE_USER_ON_MUTE
+    )
+
     private val timerLiveData by lazy {
         MutableLiveData(checkTimestamp())
     }
@@ -240,8 +320,16 @@ object CallTimeStampListener : SharedPreferences.OnSharedPreferenceChangeListene
         MutableLiveData(checkVoipState())
     }
 
+    private val voipUIStateLiveData by lazy {
+        MutableStateFlow(checkUIState())
+    }
+
     fun observerVoipState(): LiveData<Int> {
         return voipStateLiveData
+    }
+
+    fun observerVoipUIState(): StateFlow<VoipUIState> {
+        return voipUIStateLiveData
     }
 
     fun observerStartTime(): LiveData<Long> {
@@ -252,7 +340,11 @@ object CallTimeStampListener : SharedPreferences.OnSharedPreferenceChangeListene
         Log.d(TAG, "onSharedPreferenceChanged: $key")
         when (key) {
             PREF_KEY_CURRENT_CALL_START_TIME -> timerLiveData.value = checkTimestamp()
-            PREF_KEY_WEBRTC_CURRENT_STATE -> voipStateLiveData.postValue(checkVoipState())
+            PREF_KEY_WEBRTC_CURRENT_STATE -> voipStateLiveData.value = checkVoipState()
+            in UI_STATE_UPDATED -> {
+                Log.d(TAG, "onSharedPreferenceChanged: $key")
+                voipUIStateLiveData.value = checkUIState()
+            }
         }
     }
 
@@ -263,6 +355,12 @@ object CallTimeStampListener : SharedPreferences.OnSharedPreferenceChangeListene
     private fun checkVoipState(): Int {
         val state = VoipPref.getVoipState()
         Log.d(TAG, "checkVoipState: $state")
+        return state
+    }
+
+    private fun checkUIState(): VoipUIState {
+        val state = VoipPref.getVoipUIState()
+        Log.d(TAG, "checkUIState: $state")
         return state
     }
 

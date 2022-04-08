@@ -15,7 +15,10 @@ import com.joshtalks.joshskills.base.constants.INCOMING_CALL_ID
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_COURSE_ID
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_INCOMING_CALL_ID
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_TOPIC_ID
+import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_MAIN_PROCESS_IN_BACKGROUND
+import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_SAVE_CURRENT_STATE
 import com.joshtalks.joshskills.base.constants.STARTING_POINT
+import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.databinding.ActivityVoiceCallBinding
 import com.joshtalks.joshskills.ui.group.data.GroupChatPagingSource
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.callbar.VoipPref
@@ -25,6 +28,7 @@ import com.joshtalks.joshskills.voip.constant.CALL_DISCONNECT_REQUEST
 import com.joshtalks.joshskills.voip.constant.CALL_INITIATED_EVENT
 import com.joshtalks.joshskills.voip.constant.CONNECTED
 import com.joshtalks.joshskills.voip.constant.IDLE
+import com.joshtalks.joshskills.voip.data.CallingRemoteService
 import com.joshtalks.joshskills.voip.voipLog
 
 private const val TAG = "VoiceCallActivity"
@@ -148,5 +152,10 @@ class VoiceCallActivity : BaseActivity() {
         super.onBackPressed()
         if(VoipPref.getVoipState() != CONNECTED)
             vm.disconnect()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d(TAG, "onDestroy: ")
     }
 }

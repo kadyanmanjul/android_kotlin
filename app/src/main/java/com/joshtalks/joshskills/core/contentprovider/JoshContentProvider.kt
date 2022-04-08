@@ -86,6 +86,29 @@ class JoshContentProvider : ContentProvider() {
                 Log.d(TAG, "insert: timestamp --> $callId ..... $callType")
                 VoipPref.updateIncomingCallData(callId, callType)
             }
+            CURRENT_MUTE_STATE_URI -> {
+                val state = values?.getAsBoolean(IS_MUTE) ?: false
+                Log.d(TAG, "insert: CURRENT_MUTE_STATE_URI --> $state")
+                VoipPref.currentUserMuteState(state)
+            }
+            CURRENT_REMOTE_MUTE_STATE_URI -> {
+                val state = values?.getAsBoolean(IS_REMOTE_USER_MUTE) ?: false
+                Log.d(TAG, "insert: CURRENT_REMOTE_MUTE_STATE_URI --> $state")
+                VoipPref.currentRemoteUserMuteState(state)
+            }
+            CURRENT_HOLD_STATE_URI -> {
+                val state = values?.getAsBoolean(IS_ON_HOLD) ?: false
+                Log.d(TAG, "insert: CURRENT_HOLD_STATE_URI --> $state")
+                VoipPref.currentUserHoldState(state)
+            }
+            CURRENT_SPEAKER_STATE_URI -> {
+                val state = values?.getAsBoolean(IS_SPEAKER_ON) ?: false
+                Log.d(TAG, "insert: CURRENT_SPEAKER_STATE_URI --> $state")
+                VoipPref.currentUserSpeakerState(state)
+            }
+            RESET_CURRENT_CALL_STATE_URI -> {
+                VoipPref.resetCurrentCallState()
+            }
         }
         return uri
     }
