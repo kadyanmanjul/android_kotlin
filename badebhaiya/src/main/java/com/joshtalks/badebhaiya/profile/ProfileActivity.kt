@@ -12,7 +12,6 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.text.HtmlCompat
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.core.*
