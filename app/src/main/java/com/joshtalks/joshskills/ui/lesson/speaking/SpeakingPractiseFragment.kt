@@ -13,27 +13,16 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.afollestad.materialdialogs.MaterialDialog
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.constants.*
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.CoreJoshFragment
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.HAS_SEEN_SPEAKING_TOOLTIP
-import com.joshtalks.joshskills.core.HOW_TO_SPEAK_TEXT_CLICKED
-import com.joshtalks.joshskills.core.IMPRESSION_TRUECALLER_P2P
-import com.joshtalks.joshskills.core.PermissionUtils
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.SPEAKING_POINTS
-import com.joshtalks.joshskills.core.isCallOngoing
-import com.joshtalks.joshskills.core.showToast
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.databinding.SpeakingPractiseFragmentBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
@@ -48,8 +37,12 @@ import com.joshtalks.joshskills.ui.lesson.LessonViewModel
 import com.joshtalks.joshskills.ui.lesson.SPEAKING_POSITION
 import com.joshtalks.joshskills.ui.senior_student.SeniorStudentActivity
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.callbar.VoipPref
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.feedback.FeedbackDialogFragment
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.report.ReportDialogFragment
+import com.joshtalks.joshskills.voip.constant.CONNECTED
 import com.joshtalks.joshskills.voip.constant.IDLE
+import com.joshtalks.joshskills.voip.constant.LEAVING
 import com.joshtalks.joshskills.voip.voipLog
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -74,8 +67,8 @@ class SpeakingPractiseFragment : CoreJoshFragment(),TimeAnimator.TimeListener {
     private var questionId: String? = null
     private var haveAnyFavCaller = false
     private var isAnimationShown = false
-    private val LEVEL_INCREMENT = 10
-    private val MAX_LEVEL = 10000
+    private var LEVEL_INCREMENT = 10
+    private val MAX_LEVEL = 1000
     private var mAnimator: TimeAnimator? = null
     private var mCurrentLevel = 0
     private var mClipDrawable: ClipDrawable? = null
@@ -117,6 +110,8 @@ class SpeakingPractiseFragment : CoreJoshFragment(),TimeAnimator.TimeListener {
         binding.rootView.layoutTransition?.setAnimateParentHierarchy(false)
         val layerDrawable = binding.btnStartTrialText.getBackground() as LayerDrawable
         mClipDrawable = layerDrawable.findDrawableByLayerId(R.id.clip_drawable) as ClipDrawable
+        beforeAnimation = layerDrawable.findDrawableByLayerId(R.id.before_animation) as GradientDrawable
+
         mAnimator = TimeAnimator()
         mAnimator!!.setTimeListener(this)
         addObservers()
@@ -135,18 +130,18 @@ class SpeakingPractiseFragment : CoreJoshFragment(),TimeAnimator.TimeListener {
     }
 
     private fun checkForVoipState() {
-        if (checkIfIdleState().not()){
-            Toast.makeText(activity,"Wait for a second!",Toast.LENGTH_LONG).show()
-            animateButton()
+        val voipState=getVoipState()
+        if(voipState == CONNECTED){
             binding.btnStartTrialText.isEnabled = false
-        }else{
-            fillButton()
+            beforeAnimation?.setTint(resources.getColor(R.color.grey))
+        }else if(voipState==IDLE || voipState == LEAVING){
             binding.btnStartTrialText.isEnabled = true
+            beforeAnimation?.setTint(resources.getColor(R.color.colorPrimary))
         }
     }
 
-    private fun checkIfIdleState():Boolean {
-        return VoipPref.getVoipState()==IDLE
+    private fun getVoipState():Int {
+        return VoipPref.getVoipState()
     }
 
     override fun onStop() {
@@ -201,20 +196,25 @@ class SpeakingPractiseFragment : CoreJoshFragment(),TimeAnimator.TimeListener {
             viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
             if(VoipPref.getVoipState()==IDLE) {
                 startPractise()
+            }else if(VoipPref.getVoipState()== LEAVING){
+                beforeAnimation?.setTint(resources.getColor(R.color.grey))
+                animateButton()
             }
         }
 
         viewModel.observerVoipState().observe(viewLifecycleOwner) {
             when(it){
                 IDLE -> {
-                    mCurrentLevel=MAX_LEVEL
                     binding.btnStartTrialText.isEnabled = true
-                }
-                else -> {
-                    if(mAnimator?.isRunning!=true) {
-                        animateButton()
-                        binding.btnStartTrialText.isEnabled = false
+                    mCurrentLevel=MAX_LEVEL
+                    beforeAnimation?.setTint(resources.getColor(R.color.colorPrimary))
+                    if(mAnimator?.isRunning==true) {
+                        startPractise()
                     }
+                }
+                LEAVING ->{
+                    beforeAnimation?.setTint(resources.getColor(R.color.colorPrimary))
+                    binding.btnStartTrialText.isEnabled = true
                 }
             }
             voipLog?.log("VOIP State --> $it")

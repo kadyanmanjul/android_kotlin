@@ -1,6 +1,8 @@
 package com.joshtalks.joshskills.voip.notification
 
 import android.app.*
+import android.app.Notification.DEFAULT_SOUND
+import android.app.Notification.DEFAULT_VIBRATE
 import android.content.Context
 import android.content.Intent
 import android.os.Build
@@ -31,8 +33,10 @@ internal class NotificationGenerator {
                 importance
             ).apply {
                 description = descriptionText
-                enableLights(false)
-                enableVibration(false)
+                enableLights(true)
+                enableVibration(true)
+                setShowBadge(true)
+                lockscreenVisibility = Notification.VISIBILITY_PUBLIC
             }
             val notificationManager: NotificationManager =
                 context?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -86,6 +90,8 @@ internal class NotificationGenerator {
                         .setCategory(NotificationCompat.CATEGORY_CALL)
                         .setFullScreenIntent(pendingIntent,true)
                         .setDefaults(NotificationCompat.FLAG_ONGOING_EVENT)
+                        .setDefaults(DEFAULT_SOUND)
+                        .setDefaults(DEFAULT_VIBRATE)
                         .setOngoing(true)
                         .setAutoCancel(false)
                         .setShowWhen(false)

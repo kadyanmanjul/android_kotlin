@@ -36,6 +36,9 @@ const val REMOTE_USER_IMAGE = "josh_remote_user_image"
 const val REMOTE_USER_AGORA_ID = "josh_remote_user_agora_id"
 const val CALL_ID = "josh_call_id"
 const val CALL_TYPE = "josh_call_type"
+const val CURRENT_USER_AGORA_ID = "josh_current_user_agora_id"
+const val TOPIC_NAME = "josh_topic_name"
+const val CHANNEL_NAME = "josh_channel_name"
 
 // Pref Keys
 const val PREF_KEY_WEBRTC_CURRENT_STATE = "josh_webrtc_current_state"
@@ -48,6 +51,9 @@ const val PREF_KEY_CURRENT_REMOTE_USER_IMAGE = "josh_current_remote_user_image"
 const val PREF_KEY_CURRENT_CALL_ID = "josh_current_call_id"
 const val PREF_KEY_CURRENT_CALL_TYPE = "josh_current_call_type"
 const val PREF_KEY_CURRENT_REMOTE_USER_AGORA_ID = "josh_current_remote_user_agora_id"
+const val PREF_KEY_CURRENT_CHANNEL_NAME = "josh_current_channel_name"
+const val PREF_KEY_CURRENT_USER_AGORA_ID= "josh_current_user_id"
+const val PREF_KEY_CURRENT_TOPIC_NAME= "josh_current_topic_name"
 
 // Last Call Details
 const val PREF_KEY_LAST_CALL_START_TIME = "josh_last_call_start_time"
@@ -56,6 +62,8 @@ const val PREF_KEY_LAST_REMOTE_USER_IMAGE = "josh_last_remote_user_image"
 const val PREF_KEY_LAST_CALL_ID = "josh_last_call_id"
 const val PREF_KEY_LAST_CALL_TYPE = "josh_last_call_type"
 const val PREF_KEY_LAST_REMOTE_USER_AGORA_ID = "josh_last_remote_user_agora_id"
+const val PREF_KEY_LAST_CHANNEL_NAME = "josh_last_channel_name"
+const val PREF_KEY_LAST_TOPIC_NAME= "josh_last_topic_name"
 
 // Recent Incoming Call Details
 const val PREF_KEY_INCOMING_CALL_ID = "josh_recent_incoming_call_id"

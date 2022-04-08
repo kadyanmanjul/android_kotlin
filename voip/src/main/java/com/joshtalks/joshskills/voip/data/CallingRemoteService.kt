@@ -143,7 +143,10 @@ class CallingRemoteService : Service() {
                             remoteUserImage = CallDetails.remoteUserImageUrl,
                             remoteUserAgoraId = CallDetails.remoteUserAgoraId,
                             callId = CallDetails.callId,
-                            callType = CallDetails.callType
+                            callType = CallDetails.callType,
+                            currentUserAgoraId = CallDetails.localUserAgoraId,
+                            channelName = CallDetails.agoraChannelName,
+                            topicName = CallDetails.topicName
                         )
                         CALL_DISCONNECT_REQUEST -> updateLastCallDetails()
 
@@ -332,7 +335,6 @@ class CallingRemoteService : Service() {
     private fun callDuration() : Long {
         val startTime = getStartCallTime()
         val currentTime = SystemClock.elapsedRealtime()
-        Log.d(TAG, "callDuration: ST -> $startTime  and CT -> $currentTime")
         return TimeUnit.MILLISECONDS.toSeconds(currentTime - startTime)
     }
 
@@ -342,16 +344,22 @@ class CallingRemoteService : Service() {
         remoteUserImage: String? = null,
         callId: Int = -1,
         callType: Int = -1,
-        remoteUserAgoraId: Int = -1
+        remoteUserAgoraId: Int = -1,
+        currentUserAgoraId:Int = -1,
+        channelName : String = "",
+        topicName : String = ""
     ) {
-        voipLog?.log("Timestamp -> $timestamp")
-        val values = ContentValues(6).apply {
+        voipLog?.log("QUERY")
+        val values = ContentValues(9).apply {
             put(CALL_START_TIME, timestamp)
             put(REMOTE_USER_NAME, remoteUserName)
             put(REMOTE_USER_IMAGE, remoteUserImage)
             put(REMOTE_USER_AGORA_ID, remoteUserAgoraId)
             put(CALL_ID, callId)
             put(CALL_TYPE, callType)
+            put(CHANNEL_NAME, channelName)
+            put(TOPIC_NAME, topicName)
+            put(CURRENT_USER_AGORA_ID, currentUserAgoraId)
         }
         val data = contentResolver.insert(
             Uri.parse(CONTENT_URI + START_CALL_TIME_URI),
