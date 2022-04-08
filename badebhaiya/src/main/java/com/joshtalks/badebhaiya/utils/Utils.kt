@@ -72,6 +72,7 @@ import com.bumptech.glide.load.MultiTransformation
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
@@ -855,8 +856,9 @@ fun loadJSONFromAsset(fileName: String): String? {
     }
 }
 
-fun ImageView.setImage(url: String, context: Context = AppObjectController.joshApplication) {
+fun ImageView.setImage(url: String, radius: Int = 16, context: Context = AppObjectController.joshApplication) {
     val requestOptions = RequestOptions().placeholder(R.drawable.ic_pic_placeholder)
+        .transform(RoundedCorners(radius))
         .error(R.drawable.ic_pic_placeholder)
         .format(DecodeFormat.PREFER_RGB_565)
         .disallowHardwareConfig().dontAnimate().encodeQuality(75)
@@ -938,13 +940,14 @@ fun ImageView.setUserImageOrInitials(
     url: String?,
     userName: String,
     dpToPx: Int = 16,
-    isRound: Boolean = false
+    isRound: Boolean = false,
+    radius: Int = 16
 ) {
     if (url.isNullOrEmpty()) {
         if (isRound)
-            setUserInitial(userName, dpToPx)
+            setUserInitial(userName)
         else
-            setUserInitialInRect(userName, dpToPx)
+            setUserInitialInRect(userName, dpToPx, radius)
     } else {
         if (isRound) {
             val requestOptions = RequestOptions().placeholder(R.drawable.ic_pic_placeholder)
@@ -962,7 +965,7 @@ fun ImageView.setUserImageOrInitials(
                 .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                 .into(this)
         } else {
-            this.setImage(url)
+            this.setImage(url, radius = radius)
         }
     }
 }

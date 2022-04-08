@@ -1,8 +1,8 @@
 package com.joshtalks.badebhaiya.profile
 
 import android.os.Message
-import android.util.Log
 import androidx.databinding.ObservableBoolean
+import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -22,6 +22,7 @@ class ProfileViewModel : ViewModel() {
     val isBadeBhaiyaSpeaker = ObservableBoolean(false)
     val repository = BBRepository()
     val userProfileData = MutableLiveData<ProfileResponse>()
+    val userFullName = ObservableField<String>()
     val isBioTextAvailable = ObservableBoolean(false)
     val speakerProfileRoomsAdapter = FeedAdapter()
     var message = Message()
@@ -30,17 +31,21 @@ class ProfileViewModel : ViewModel() {
     val isSelfProfile = ObservableBoolean(false)
 
     fun updateFollowStatus() {
-        viewModelScope.launch {
-            try {
-                val followRequest =
-                    FollowRequest(userIdForOpenedProfile.value ?: "", User.getInstance().userId)
-                val response = service.updateFollowStatus(followRequest)
-                Log.i("ayushg", "updateFollowStatus: response: $response , succ: ${response.isSuccessful}")
-                if (response.isSuccessful) {
-                    speakerFollowed.value = true
-                }
-            } catch (ex: Exception) {
+        speakerFollowed.value?.let {
+            if (it.not()) {
+                viewModelScope.launch {
+                    try {
+                        val followRequest =
+                            FollowRequest(userIdForOpenedProfile.value ?: "", User.getInstance().userId)
+                        val response = service.updateFollowStatus(followRequest)
+                        if (response.isSuccessful) {
+                            speakerFollowed.value = true
+                            userProfileData.value?.followersCount = userProfileData.value?.followersCount?.plus(1) ?: 0
+                        }
+                    } catch (ex: Exception) {
 
+                    }
+                }
             }
         }
     }
@@ -53,6 +58,7 @@ class ProfileViewModel : ViewModel() {
                 if (response.isSuccessful) {
                     response.body()?.let {
                         userProfileData.postValue(it)
+                        userFullName.set(it.firstName.plus(it.lastName))
                         isBadeBhaiyaSpeaker.set(it.isSpeaker)
                         isBadeBhaiyaSpeaker.notifyChange()
                         isBioTextAvailable.set(it.bioText.isNullOrEmpty().not())

@@ -12,11 +12,8 @@ import com.joshtalks.badebhaiya.feed.adapter.FeedAdapter
 import com.joshtalks.badebhaiya.feed.model.ConversationRoomType
 import com.joshtalks.badebhaiya.feed.model.ConversationRoomType.*
 import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
-import com.joshtalks.badebhaiya.feed.model.SpeakerData
 import com.joshtalks.badebhaiya.utils.DEFAULT_NAME
-import com.joshtalks.badebhaiya.utils.setImage
 import com.joshtalks.badebhaiya.utils.setUserImageOrInitials
-import de.hdodenhof.circleimageview.CircleImageView
 
 private const val TAG = "GroupBindingAdapter"
 
@@ -79,5 +76,8 @@ fun setConversationRoomCardActionButton(
         }
     }
 }
-@BindingAdapter("imageUrl", "userName", "isRound", requireAll = false)
-fun ImageView.setDPUrl(url: String?, userName: String?, ) = this.setUserImageOrInitials(url, userName ?: DEFAULT_NAME)
+@BindingAdapter("isImageRequired", "imageUrl", "userName", "isRoundImage", "initialsFontSize", "imageCornerRadius", requireAll = false)
+fun ImageView.setDPUrl(isImageRequired: Boolean, url: String?, userName: String?, isRound: Boolean = false, dpToPx: Int, radius: Float) {
+    if (isImageRequired)
+        this.setUserImageOrInitials(url, userName ?: DEFAULT_NAME, dpToPx, isRound, radius.toInt())
+}

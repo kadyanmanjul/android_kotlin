@@ -67,6 +67,7 @@
                 android:paddingTop="@dimen/_6sdp"
                 android:paddingBottom="@dimen/_6sdp"
                 android:digits="1234567890"
+                android:imeOptions="actionDone"
                 android:hint="@string/phone_number"
                 android:textAlignment="center"
                 android:inputType="phone"

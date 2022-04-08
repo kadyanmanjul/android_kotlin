@@ -56,9 +56,13 @@
             android:id="@+id/topic"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@null"
+            android:paddingTop="@dimen/_8sdp"
+            android:paddingBottom="@dimen/_8sdp"
             android:layout_marginTop="@dimen/_4sdp"
             android:hint="What do you want to talk about?"
-            android:textAppearance="@style/BB_Typography_Nunito_Regular" />
+            android:textSize="@dimen/_13sdp"
+            android:textAppearance="@style/BB_Typography_Nunito_Sans_Semi_Bold" />
 
 
         <com.google.android.material.switchmaterial.SwitchMaterial
@@ -66,11 +70,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_10sdp"
-            android:fontFamily="@font/nunito_sans_semi_bold"
             android:text="Start Right Now"
+            android:textAppearance="@style/BB_Typography_Nunito_Sans_ExtraBold"
             android:textSize="@dimen/_12sdp"
-            android:visibility="invisible"
             android:enabled="false"
+            android:textColor="@color/black"
             app:layout_constraintBottom_toBottomOf="@id/hand_raised_text"
             app:thumbTint="#FDF7F7"
             app:trackTint="#929292" />

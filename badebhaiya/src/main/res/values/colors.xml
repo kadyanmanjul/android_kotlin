@@ -15,7 +15,7 @@
     <color name="profile_feed_item_font_color">#1E1D1B</color>
     <color name="join_room_button_color">#EBA937</color>
     <color name="grey">#C4C4C4</color>
-    <color name="name_scree_text_color">#9F9F9F</color>
+    <color name="name_screen_text_color">#9F9F9F</color>
     <color name="next_button_disabled">#CDD0D7</color>
     <color name="next_button_enabled">#5576AB</color>
     <color name="skip_button_color">#838079</color>

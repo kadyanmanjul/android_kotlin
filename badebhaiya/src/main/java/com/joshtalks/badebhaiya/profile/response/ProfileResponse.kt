@@ -9,7 +9,7 @@ data class ProfileResponse(
     @SerializedName("date_of_birth") val date_of_birth: String?,
     @SerializedName("email") val email: String?,
     @SerializedName("first_name") val firstName: String,
-    @SerializedName("followers_count") val followersCount: Int,
+    @SerializedName("followers_count") var followersCount: Int,
     @SerializedName("gender") val gender: String?,
     @SerializedName("hometown") val hometown: String?,
     @SerializedName("id") val userId: String,

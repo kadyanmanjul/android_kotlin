@@ -31,7 +31,24 @@
             android:layout_height="match_parent"
             android:background="@color/conversation_room_color">
 
-
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="@+id/profile_iv"
+                app:layout_constraintEnd_toStartOf="@+id/profile_iv"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:tint="@color/black"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/profile_iv"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:visibility="visible"
+                android:focusable="true"
+                app:srcCompat="@drawable/ic_arrow_back"
+                android:gravity="center_vertical|start"
+                android:paddingTop="@dimen/_6sdp"
+                android:paddingBottom="@dimen/_6sdp"/>
 
 
             <com.google.android.material.imageview.ShapeableImageView
@@ -39,8 +56,7 @@
                 android:layout_width="@dimen/_20sdp"
                 android:layout_height="@dimen/_20sdp"
                 android:onClick="@{() -> viewModel.onProfileClicked()}"
-                imageUrl="@{User.getInstance().profilePicUrl}"
-                userName="@{User.getInstance().firstName}"
+                initialsFontSize="@{16}"
                 app:srcCompat="@drawable/ic_profile_header"
                 android:scaleType="centerCrop"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -103,7 +119,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:visibility="@{User.getInstance().isSpeaker}"
+                android:visibility="@{User.getInstance().isSpeaker ? View.VISIBLE : View.GONE}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent">

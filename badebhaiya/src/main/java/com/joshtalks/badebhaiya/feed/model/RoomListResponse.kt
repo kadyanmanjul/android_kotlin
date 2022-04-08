@@ -79,6 +79,10 @@ data class SpeakerData(
     val photoUrl: String?,
     @SerializedName("uuid")
     val uuid: String?,
+    @SerializedName("full_name")
+    val fullName: String?,
+    @SerializedName("short_name")
+    val shortName: String?
 )  : Parcelable
 
 @Parcelize
