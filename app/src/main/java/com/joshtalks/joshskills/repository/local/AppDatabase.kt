@@ -611,9 +611,11 @@ abstract class AppDatabase : RoomDatabase() {
                 database.execSQL("ALTER TABLE `group_list_table` ADD COLUMN `groupType` TEXT")
                 database.execSQL("ALTER TABLE `group_list_table` ADD COLUMN `groupStatus` TEXT")
                 database.execSQL("ALTER TABLE `group_list_table` ADD COLUMN `requestGroupText` TEXT")
-                database.execSQL("CREATE TABLE IF NOT EXISTS `special_table` (`special_id` INTEGER PRIMARY KEY NOT NULL, `chat_id` TEXT NOT NULL, `created` TEXT, `image_url` TEXT, `instruction_text` TEXT, `main_text` TEXT, `modified` TEXT, `practice_no` INTEGER, `sample_video_url` TEXT, `word_text` TEXT, `sentence_en` TEXT, `word_en` TEXT, `sentence_hi` TEXT, `word_hi` TEXT, `recorded_video` TEXT)")
+                database.execSQL("CREATE TABLE IF NOT EXISTS `special_table` (`special_id` INTEGER PRIMARY KEY NOT NULL, `chat_id` TEXT NOT NULL, `created` TEXT, `image_url` TEXT, `instruction_text` TEXT, `main_text` TEXT, `modified` TEXT, `practice_no` INTEGER, `sample_video_url` TEXT, `word_text` TEXT, `sentence_en` TEXT, `word_en` TEXT, `sentence_hi` TEXT, `word_hi` TEXT, `recorded_video` TEXT NOT NULL)")
                 database.execSQL("CREATE TABLE IF NOT EXISTS `reading_video` (`id` TEXT PRIMARY KEY NOT NULL, `path` TEXT NOT NULL, `isDownloaded` INTEGER NOT NULL )")
                 database.execSQL("CREATE TABLE IF NOT EXISTS `compressed_video` (`id` TEXT PRIMARY KEY NOT NULL, `path` TEXT NOT NULL)")
+                database.execSQL("ALTER TABLE `course` ADD COLUMN `is_extend_ft_applicable` INTEGER NOT NULL DEFAULT 0")
+                database.execSQL("ALTER TABLE `favorite_caller` ADD COLUMN `isOnline` INTEGER NOT NULL DEFAULT 0")
             }
         }
 
