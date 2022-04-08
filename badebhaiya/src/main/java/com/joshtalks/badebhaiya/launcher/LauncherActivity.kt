@@ -12,6 +12,7 @@ import com.joshtalks.badebhaiya.feed.FeedActivity
 import com.joshtalks.badebhaiya.profile.ProfileActivity
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.signup.SignUpActivity
+import com.joshtalks.badebhaiya.signup.SignUpActivity.Companion.REDIRECT_TO_ENTER_NAME
 import com.joshtalks.badebhaiya.signup.SignUpActivity.Companion.REDIRECT_TO_PROFILE_ACTIVITY
 import io.branch.referral.Branch
 import kotlinx.coroutines.Dispatchers
@@ -61,6 +62,10 @@ class LauncherActivity : AppCompatActivity() {
     private fun startActivityForState(viewUserId: String? = null) {
         val intent: Intent = when {
             User.getInstance().userId.isNotBlank() -> {
+                if (User.getInstance().firstName.isNullOrEmpty()) {
+                    SignUpActivity.start(this, REDIRECT_TO_ENTER_NAME)
+                    return
+                }
                 if (viewUserId == null) {
                     Intent(this@LauncherActivity, FeedActivity::class.java)
                 } else {

@@ -40,7 +40,7 @@
                 app:tint="@color/black"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/profile_iv"
-                android:layout_marginStart="@dimen/_10sdp"
+                android:layout_marginStart="@dimen/_16sdp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:visibility="visible"
@@ -64,7 +64,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintVertical_bias="0.02"
+                app:layout_constraintVertical_bias="0.019"
                 app:shapeAppearanceOverlay="@style/roundedCornersImageView_6dp" />
 
             <androidx.recyclerview.widget.RecyclerView

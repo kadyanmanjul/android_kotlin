@@ -43,8 +43,16 @@ class SignUpActivity : AppCompatActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_sign_up)
         binding.handler = this
         binding.viewModel = viewModel
+        handleIntent()
         addObservers()
         setOnClickListeners()
+    }
+
+    private fun handleIntent() {
+        if (intent.getStringExtra(REDIRECT) == REDIRECT_TO_ENTER_NAME) {
+            binding.btnWelcome.visibility = View.GONE
+            openEnterNameFragment()
+        }
     }
 
     private fun setOnClickListeners() {
@@ -187,6 +195,7 @@ class SignUpActivity : AppCompatActivity() {
     companion object {
         private const val REDIRECT = ""
         const val REDIRECT_TO_PROFILE_ACTIVITY = "redirect_to_profile_activity"
+        const val REDIRECT_TO_ENTER_NAME = "REDIRECT_TO_ENTER_NAME"
 
         @JvmStatic
         fun start(context: Context, redirect: String? = null, userId: String? = null) {
