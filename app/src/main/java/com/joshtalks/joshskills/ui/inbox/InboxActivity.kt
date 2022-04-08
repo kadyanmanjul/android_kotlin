@@ -97,7 +97,6 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         setContentView(R.layout.activity_inbox)
         initView()
         addLiveDataObservable()
-        initABTest()
         addAfterTime()
     }
 
@@ -302,7 +301,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
 
         }
         Runtime.getRuntime().gc()
-        viewModel.getRegisterCourses()
+        initABTest()
         viewModel.getProfileData(Mentor.getInstance().getId())
         viewModel.handleGroupTimeTokens()
     }

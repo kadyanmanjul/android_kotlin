@@ -69,14 +69,7 @@ import com.joshtalks.joshskills.ui.userprofile.fragments.ProfileImageShowFragmen
 import com.joshtalks.joshskills.ui.userprofile.fragments.PreviousProfilePicsFragment
 import com.joshtalks.joshskills.ui.userprofile.fragments.MyGroupsFragment
 import com.joshtalks.joshskills.ui.userprofile.fragments.UserPicChooserFragment
-import com.joshtalks.joshskills.ui.userprofile.models.UserProfileResponse
-import com.joshtalks.joshskills.ui.userprofile.models.AwardCategory
-import com.joshtalks.joshskills.ui.userprofile.models.FppDetails
-import com.joshtalks.joshskills.ui.userprofile.models.GroupInfo
-import com.joshtalks.joshskills.ui.userprofile.models.CourseEnrolled
-import com.joshtalks.joshskills.ui.userprofile.models.Award
-import com.joshtalks.joshskills.ui.userprofile.models.EnrolledCoursesList
-import com.joshtalks.joshskills.ui.userprofile.models.GroupsList
+import com.joshtalks.joshskills.ui.userprofile.models.*
 import com.joshtalks.joshskills.ui.userprofile.utils.MY_GROUP
 import com.joshtalks.joshskills.ui.userprofile.utils.ON_BACK_PRESS
 import com.joshtalks.joshskills.ui.userprofile.utils.COURSE_LIST_DATA
@@ -207,7 +200,6 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         binding.editPic.setOnClickListener {
             if (mentorId == Mentor.getInstance().getId()) {
                 openChooser()
-
             }
         }
         binding.labelViewMoreAwards.setOnClickListener {
@@ -950,7 +942,6 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             viewModel.getUserProfileUrl().isNullOrBlank(),
             isFromRegistration = false
         )
-
     }
 
     @SuppressLint("WrongViewCast")
@@ -1192,8 +1183,22 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                 .subscribe(
                     {
                         viewModel.userData.value?.photoUrl = it.url
+                        val date = DD_MM_YYYY.parse( viewModel.userData.value?.dateOfBirth)
                         if (it.url.isBlank()) {
-                            viewModel.saveProfileInfo(null)
+                            var updateProfilePayload = UpdateProfilePayload()
+                            updateProfilePayload.apply {
+                                basicDetails?.apply {
+                                    photoUrl = ""
+                                    firstName = viewModel.userData.value?.name
+                                    dateOfBirth =  DATE_FORMATTER.format(date)
+                                    homeTown = viewModel.userData.value?.hometown
+                                    futureGoals = viewModel.userData.value?.futureGoals
+                                    favouriteJoshTalk = viewModel.userData.value?.favouriteJoshTalk
+                                }
+                                educationDetails=null
+                                occupationDetails=null
+                            }
+                            viewModel.saveProfileInfo(updateProfilePayload)
                         }
                     },
                     {
@@ -1319,13 +1324,14 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
     }
 
     private fun showGroupList(myGroup: GroupsList) {
+        binding.grpShimmer.visibility = GONE
+        binding.grpShimmer.stopShimmer()
+
         if (myGroup.myGroupsList.isNullOrEmpty()) {
             binding.myGroupsLayout.visibility = GONE
             binding.myGroupsLl.visibility = GONE
         } else {
-            binding.grpShimmer.visibility = GONE
             binding.myGroupsLayout.visibility = VISIBLE
-            binding.grpShimmer.stopShimmer()
             binding.myGroupsLayout.visibility = VISIBLE
             binding.myGroupsLl.visibility = VISIBLE
             binding.labelMyGroups.text = getString(R.string.group_title)

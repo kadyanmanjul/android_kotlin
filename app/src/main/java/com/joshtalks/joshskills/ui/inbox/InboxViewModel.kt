@@ -42,6 +42,7 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
             repository.getCampaignData(campaign)?.let { campaign ->
                 extendFreeTrialAbTestLiveData.postValue(campaign)
             }
+            getRegisterCourses()
         }
     }
 

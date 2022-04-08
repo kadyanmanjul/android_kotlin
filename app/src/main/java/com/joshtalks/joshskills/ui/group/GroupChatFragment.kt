@@ -129,6 +129,7 @@ class GroupChatFragment : BaseFragment() {
             vm.conversationId = args.getString(CONVERSATION_ID, "") ?: ""
             vm.adminId = args.getString(ADMIN_ID, "")
             vm.groupType.set(args.getString(GROUP_TYPE, OPENED_GROUP))
+            vm.groupText = args.getString(CLOSED_GROUP_TEXT, "")
             vm.groupJoinStatus.set(vm.getGroupJoinText(args.getString(GROUP_STATUS, JOINED_GROUP)))
             vm.showRequestsTab.set(false)
             args.getInt(GROUP_CHAT_UNREAD, 0).let {

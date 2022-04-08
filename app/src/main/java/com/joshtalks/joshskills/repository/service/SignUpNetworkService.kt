@@ -32,6 +32,9 @@ interface SignUpNetworkService {
     @POST("$DIR/mentor/instance/")
     suspend fun getInstanceIdAsync(@Body params: Map<String, String?>): InstanceIdResponse
 
+    @POST("$DIR/mentor/device_gaid_id/")
+    suspend fun getGaid(@Body params: Map<String, String?>): Response<GaIdResponse>
+
     @GET("$DIR/user/login/")
     suspend fun getOtpForNumberAsync(@QueryMap params: Map<String, String>)
 
