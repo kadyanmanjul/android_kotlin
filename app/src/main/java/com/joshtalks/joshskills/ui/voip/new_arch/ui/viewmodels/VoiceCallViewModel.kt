@@ -2,11 +2,14 @@ package com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels
 
 import android.content.Intent
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseViewModel
+import com.joshtalks.joshskills.base.constants.FROM_INCOMING_CALL
+import com.joshtalks.joshskills.base.constants.STARTING_POINT
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.TAG
 import com.joshtalks.joshskills.core.showToast
@@ -16,6 +19,7 @@ import com.joshtalks.joshskills.ui.voip.new_arch.ui.callbar.VoipPref
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.models.CallData
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.CallFragment
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity
+import com.joshtalks.joshskills.voip.Utils.Companion.context
 import com.joshtalks.joshskills.voip.calldetails.CallDetails
 import com.joshtalks.joshskills.voip.constant.CALL_CONNECTED_EVENT
 import com.joshtalks.joshskills.voip.constant.CALL_DISCONNECT_REQUEST
@@ -123,8 +127,14 @@ class VoiceCallViewModel : BaseViewModel() {
         }
     }
 
-    fun initiateCall(v: View) {}
-
+    fun acceptCall(v: View) {
+        Intent(
+            AppObjectController.joshApplication.baseContext,
+            VoiceCallActivity::class.java
+        ).apply {
+            putExtra(STARTING_POINT, FROM_INCOMING_CALL)
+        }
+    }
     fun disconnectCall(v: View) {
         voipLog?.log("Disconnect Call")
         disconnect()
@@ -143,8 +153,6 @@ class VoiceCallViewModel : BaseViewModel() {
         voipLog?.log("unbound Service")
         repository.stopService()
     }
-
-    fun acceptCall(v: View) {}
 
     fun switchSpeaker(v: View) {
         if (isSpeakerOn.get()) {

@@ -6,18 +6,7 @@ import android.database.Cursor
 import android.database.MatrixCursor
 import android.net.Uri
 import android.util.Log
-import com.joshtalks.joshskills.base.constants.CALL_ID
-import com.joshtalks.joshskills.base.constants.CALL_START_TIME
-import com.joshtalks.joshskills.base.constants.CALL_TYPE
-import com.joshtalks.joshskills.base.constants.REMOTE_USER_AGORA_ID
-import com.joshtalks.joshskills.base.constants.REMOTE_USER_IMAGE
-import com.joshtalks.joshskills.base.constants.REMOTE_USER_NAME
-import com.joshtalks.joshskills.base.constants.CALL_DISCONNECTED_URI
-import com.joshtalks.joshskills.base.constants.INCOMING_CALL_URI
-import com.joshtalks.joshskills.base.constants.START_CALL_TIME_COLUMN
-import com.joshtalks.joshskills.base.constants.START_CALL_TIME_URI
-import com.joshtalks.joshskills.base.constants.VOIP_STATE_URI
-import com.joshtalks.joshskills.base.constants.VOIP_STATE
+import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.callbar.VoipPref
 import com.joshtalks.joshskills.voip.voipLog
 
@@ -66,13 +55,19 @@ class JoshContentProvider : ContentProvider() {
                     val remoteAgoraId = values?.getAsInteger(REMOTE_USER_AGORA_ID) ?: -1
                     val callId = values?.getAsInteger(CALL_ID) ?: -1
                     val callType = values?.getAsInteger(CALL_TYPE) ?: -1
+                    val topicName = values?.getAsString(TOPIC_NAME) ?: ""
+                    val channelName = values?.getAsString(CHANNEL_NAME) ?: ""
+                    val currentUserAgoraId = values?.getAsInteger(CURRENT_USER_AGORA_ID) ?: -1
                     VoipPref.updateCallDetails(
                         timestamp = startCallTimestamp,
                         remoteUserImage = remoteUserImage,
                         remoteUserName = remoteUserName,
                         remoteUserAgoraId = remoteAgoraId,
                         callId = callId,
-                        callType = callType
+                        callType = callType,
+                        currentUserAgoraId = currentUserAgoraId,
+                        channelName = channelName,
+                        topicName = topicName
                     )
                 }
 

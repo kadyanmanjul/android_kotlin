@@ -66,6 +66,7 @@ class ReportDialogFragment(val function: () -> Unit) : BaseDialogFragment() {
         vm.getReportOptionsListFromSharedPref(type1)
         binding.crossBtn.setOnClickListener {
             closeDialog()
+            function.invoke()
         }
     }
 

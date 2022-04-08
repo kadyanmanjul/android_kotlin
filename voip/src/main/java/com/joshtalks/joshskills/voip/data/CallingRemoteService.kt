@@ -9,24 +9,7 @@ import android.os.IBinder
 import android.os.Messenger
 import android.os.SystemClock
 import android.util.Log
-import com.joshtalks.joshskills.base.constants.CALL_ID
-import com.joshtalks.joshskills.base.constants.CALL_START_TIME
-import com.joshtalks.joshskills.base.constants.CALL_TYPE
-import com.joshtalks.joshskills.base.constants.CONTENT_URI
-import com.joshtalks.joshskills.base.constants.INTENT_DATA_API_HEADER
-import com.joshtalks.joshskills.base.constants.INTENT_DATA_MENTOR_ID
-import com.joshtalks.joshskills.base.constants.PEER_TO_PEER
-import com.joshtalks.joshskills.base.constants.REMOTE_USER_AGORA_ID
-import com.joshtalks.joshskills.base.constants.REMOTE_USER_IMAGE
-import com.joshtalks.joshskills.base.constants.REMOTE_USER_NAME
-import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_STOP_SERVICE
-import com.joshtalks.joshskills.base.constants.CALL_DISCONNECTED_URI
-import com.joshtalks.joshskills.base.constants.INCOMING_CALL_ID
-import com.joshtalks.joshskills.base.constants.INCOMING_CALL_URI
-import com.joshtalks.joshskills.base.constants.START_CALL_TIME_COLUMN
-import com.joshtalks.joshskills.base.constants.START_CALL_TIME_URI
-import com.joshtalks.joshskills.base.constants.VOIP_STATE_URI
-import com.joshtalks.joshskills.base.constants.VOIP_STATE
+import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.audiocontroller.AudioController
 import com.joshtalks.joshskills.voip.audiocontroller.AudioControllerInterface
@@ -121,7 +104,10 @@ class CallingRemoteService : Service() {
                             remoteUserImage = CallDetails.remoteUserImageUrl,
                             remoteUserAgoraId = CallDetails.remoteUserAgoraId,
                             callId = CallDetails.callId,
-                            callType = CallDetails.callType
+                            callType = CallDetails.callType,
+                            currentUserAgoraId = CallDetails.localUserAgoraId,
+                            channelName = CallDetails.agoraChannelName,
+                            topicName = CallDetails.topicName
                         )
                         CALL_DISCONNECT_REQUEST -> updateLastCallDetails()
 
@@ -275,7 +261,10 @@ class CallingRemoteService : Service() {
         remoteUserImage: String? = null,
         callId: Int = -1,
         callType: Int = -1,
-        remoteUserAgoraId: Int = -1
+        remoteUserAgoraId: Int = -1,
+        currentUserAgoraId:Int = -1,
+        channelName : String = "",
+        topicName : String = ""
     ) {
         voipLog?.log("QUERY")
         val values = ContentValues(1).apply {
@@ -285,6 +274,9 @@ class CallingRemoteService : Service() {
             put(REMOTE_USER_AGORA_ID, remoteUserAgoraId)
             put(CALL_ID, callId)
             put(CALL_TYPE, callType)
+            put(CHANNEL_NAME, channelName)
+            put(TOPIC_NAME, topicName)
+            put(CURRENT_USER_AGORA_ID, currentUserAgoraId)
         }
         val data = contentResolver.insert(
             Uri.parse(CONTENT_URI + START_CALL_TIME_URI),

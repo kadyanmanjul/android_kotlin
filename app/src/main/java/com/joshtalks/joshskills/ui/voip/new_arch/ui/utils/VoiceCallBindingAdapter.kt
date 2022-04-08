@@ -1,8 +1,6 @@
 package com.joshtalks.joshskills.ui.voip.new_arch.ui.utils
 
-import android.graphics.Color
 import android.os.SystemClock
-import android.view.View
 import android.widget.Chronometer
 import androidx.appcompat.widget.AppCompatImageButton
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -12,7 +10,6 @@ import androidx.databinding.ObservableBoolean
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.ui.voip.new_arch.ui.models.CallType
 import de.hdodenhof.circleimageview.CircleImageView
 
 @BindingAdapter("setProfileImage")
@@ -31,7 +28,6 @@ fun CircleImageView.setProfileImage(imageUrl: String?) {
 
 @BindingAdapter("setCallBackground")
 fun ConstraintLayout.setCallBackground(callType: Int) {
-    if (callType>0) {
         when (callType) {
              1 -> {
 //                 Normal Call
@@ -45,8 +41,10 @@ fun ConstraintLayout.setCallBackground(callType: Int) {
 //                 Group Call
                  this.setBackgroundColor(resources.getColor(R.color.colorPrimary))
             }
+            else ->{
+                this.setBackgroundColor(resources.getColor(R.color.colorPrimary))
+            }
         }
-    }
 }
 
 @BindingAdapter("setSpeakerImage")

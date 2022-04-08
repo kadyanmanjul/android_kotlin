@@ -3,25 +3,16 @@ package com.joshtalks.joshskills.ui.voip.new_arch.ui.callbar
 import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
-import androidx.databinding.ObservableBoolean
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.preference.PreferenceManager
-import com.joshtalks.joshskills.base.constants.PREF_KEY_CURRENT_CALL_ID
-import com.joshtalks.joshskills.base.constants.PREF_KEY_CURRENT_CALL_START_TIME
-import com.joshtalks.joshskills.base.constants.PREF_KEY_CURRENT_CALL_TYPE
-import com.joshtalks.joshskills.base.constants.PREF_KEY_CURRENT_REMOTE_USER_AGORA_ID
-import com.joshtalks.joshskills.base.constants.PREF_KEY_CURRENT_REMOTE_USER_IMAGE
-import com.joshtalks.joshskills.base.constants.PREF_KEY_CURRENT_REMOTE_USER_NAME
-import com.joshtalks.joshskills.base.constants.PREF_KEY_INCOMING_CALL_ID
-import com.joshtalks.joshskills.base.constants.PREF_KEY_INCOMING_CALL_TYPE
-import com.joshtalks.joshskills.base.constants.PREF_KEY_LAST_CALL_ID
-import com.joshtalks.joshskills.base.constants.PREF_KEY_LAST_CALL_START_TIME
-import com.joshtalks.joshskills.base.constants.PREF_KEY_LAST_CALL_TYPE
-import com.joshtalks.joshskills.base.constants.PREF_KEY_LAST_REMOTE_USER_AGORA_ID
-import com.joshtalks.joshskills.base.constants.PREF_KEY_LAST_REMOTE_USER_IMAGE
-import com.joshtalks.joshskills.base.constants.PREF_KEY_LAST_REMOTE_USER_NAME
-import com.joshtalks.joshskills.base.constants.PREF_KEY_WEBRTC_CURRENT_STATE
+import com.joshtalks.joshskills.base.constants.*
+import com.joshtalks.joshskills.core.ActivityLifecycleCallback
+import com.joshtalks.joshskills.core.IS_COURSE_BOUGHT
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.feedback.FeedbackDialogFragment
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.report.ReportDialogFragment
 import com.joshtalks.joshskills.voip.constant.IDLE
 
 /**
@@ -52,7 +43,10 @@ class VoipPref {
             remoteUserImage: String? = null,
             callId: Int = -1,
             callType: Int = -1,
-            remoteUserAgoraId: Int = -1
+            remoteUserAgoraId: Int = -1,
+            currentUserAgoraId:Int = -1,
+            channelName : String = "",
+            topicName : String = ""
         ) {
             val editor = preferenceManager.edit()
             editor.putString(PREF_KEY_CURRENT_REMOTE_USER_NAME, remoteUserName)
@@ -61,6 +55,10 @@ class VoipPref {
             editor.putInt(PREF_KEY_CURRENT_CALL_TYPE, callType)
             editor.putInt(PREF_KEY_CURRENT_REMOTE_USER_AGORA_ID, remoteUserAgoraId)
             editor.putLong(PREF_KEY_CURRENT_CALL_START_TIME, timestamp)
+            editor.putString(PREF_KEY_CURRENT_CHANNEL_NAME, channelName)
+            editor.putInt(PREF_KEY_CURRENT_USER_AGORA_ID, currentUserAgoraId)
+            editor.putString(PREF_KEY_CURRENT_TOPIC_NAME, topicName)
+            Log.d(TAG, "updateCallDetails: timestamp --> $timestamp")
             editor.apply()
         }
 
@@ -103,8 +101,29 @@ class VoipPref {
                     PREF_KEY_CURRENT_CALL_START_TIME, 0L
                 )
             )
-
+            editor.putString(
+                PREF_KEY_LAST_CHANNEL_NAME, preferenceManager.getString(
+                    PREF_KEY_CURRENT_CHANNEL_NAME, ""
+                )
+            )
             editor.apply()
+            getDuration()
+        }
+
+        private fun getDuration() {
+            val callTime = getLastCallStartTime()
+            val second: Int = (callTime / 1000 % 60).toInt()
+            val minute = (callTime / (1000 * 60) % 60).toInt()
+            val totalSecond:Int=((minute*60)+second)
+
+            val currentActivity = ActivityLifecycleCallback.currentActivity
+            val fragmentActivity = currentActivity as FragmentActivity
+
+            if(totalSecond < 120 && PrefManager.getBoolValue(IS_COURSE_BOUGHT) ){
+                 showReportDialog(fragmentActivity)
+            }else{
+                showFeedBackDialog(fragmentActivity)
+            }
         }
 
         fun updateVoipState(state: Int) {
@@ -119,13 +138,18 @@ class VoipPref {
         }
 
         fun getStartTimeStamp(): Long {
-            return preferenceManager.getLong(PREF_KEY_CURRENT_CALL_START_TIME, 0)
+            val startTime = preferenceManager.getLong(PREF_KEY_CURRENT_CALL_START_TIME, 0)
+            Log.d(TAG, "getStartTimeStamp: $startTime")
+            return startTime
         }
         fun getTopicName(): String {
-            return "Lets talks"
+             return preferenceManager.getString(PREF_KEY_CURRENT_TOPIC_NAME,"").toString()
         }
         fun getCallerName(): String {
             return preferenceManager.getString(PREF_KEY_CURRENT_REMOTE_USER_NAME,"").toString()
+        }
+        fun getLastCallerName(): String {
+            return preferenceManager.getString(PREF_KEY_LAST_REMOTE_USER_NAME,"").toString()
         }
         fun getCallType(): Int {
             return preferenceManager.getInt(PREF_KEY_CURRENT_CALL_TYPE,-1)
@@ -136,35 +160,62 @@ class VoipPref {
         fun getProfileImage(): String {
             return preferenceManager.getString(PREF_KEY_CURRENT_REMOTE_USER_IMAGE,"").toString()
         }
+        fun getLastRemoteUserAgoraId():Int{
+            return preferenceManager.getInt(PREF_KEY_LAST_REMOTE_USER_AGORA_ID,-1)
+        }
+        fun getCurrentUserAgoraId():Int{
+            return preferenceManager.getInt(PREF_KEY_CURRENT_USER_AGORA_ID,-1)
+        }
+        fun getLastCallId():Int{
+           return preferenceManager.getInt(PREF_KEY_LAST_CALL_ID,-1)
+        }
+        fun getLastCallChannelName():String{
+            return preferenceManager.getString(PREF_KEY_LAST_CHANNEL_NAME,"").toString()
+        }
+        fun getLastCallStartTime():Long{
+            return preferenceManager.getLong(PREF_KEY_LAST_CALL_START_TIME,0L)
+        }
         fun setListener(callTimeStampListener: CallTimeStampListener) {
             preferenceManager.registerOnSharedPreferenceChangeListener(callTimeStampListener)
+        }
+
+        private fun showReportDialog(fragmentActivity: FragmentActivity) {
+
+            val function = fun(){
+                showFeedBackDialog(fragmentActivity)
+            }
+            ReportDialogFragment.newInstance(getLastRemoteUserAgoraId(),
+                getCurrentUserAgoraId(),"REPORT", getLastCallChannelName(),function)
+                .show(fragmentActivity.supportFragmentManager, "ReportDialogFragment")
+        }
+
+        private fun showFeedBackDialog(fragmentActivity: FragmentActivity) {
+            val function = fun(){}
+            FeedbackDialogFragment.newInstance(function)
+                .show(fragmentActivity.supportFragmentManager, "FeedBackDialogFragment")
         }
     }
 }
 
 class CallBar {
-    val prefListener by lazy { CallTimeStampListener() }
+    val prefListener by lazy { CallTimeStampListener }
 
     init {
         VoipPref.setListener(prefListener)
     }
 
-    fun getCallObserver(): ObservableBoolean {
-        return prefListener.isCallOnGoing
+    fun getTimerLiveData(): LiveData<Long> {
+        return prefListener.observerStartTime()
     }
 
     fun observerVoipState(): LiveData<Int> {
         return prefListener.observerVoipState()
     }
-
-    fun intentToCallActivity() {
-//       TODO: INTENT TO CALL ACTIVITY
-    }
 }
 
-class CallTimeStampListener : SharedPreferences.OnSharedPreferenceChangeListener {
-    val isCallOnGoing by lazy {
-        ObservableBoolean(checkTimestamp())
+object CallTimeStampListener : SharedPreferences.OnSharedPreferenceChangeListener {
+    private val timerLiveData by lazy {
+        MutableLiveData(checkTimestamp())
     }
 
     private val voipStateLiveData by lazy {
@@ -175,23 +226,20 @@ class CallTimeStampListener : SharedPreferences.OnSharedPreferenceChangeListener
         return voipStateLiveData
     }
 
+    fun observerStartTime(): LiveData<Long> {
+        return timerLiveData
+    }
+
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
         Log.d(TAG, "onSharedPreferenceChanged: $key")
         when (key) {
-            PREF_KEY_CURRENT_CALL_START_TIME -> isCallOnGoing.set(checkTimestamp())
+            PREF_KEY_CURRENT_CALL_START_TIME -> timerLiveData.value = checkTimestamp()
             PREF_KEY_WEBRTC_CURRENT_STATE -> voipStateLiveData.postValue(checkVoipState())
         }
     }
 
-    private fun checkTimestamp(): Boolean {
-        val callStartTimestamp = VoipPref.getStartTimeStamp()
-        return if (callStartTimestamp != 0L) {
-            Log.d(TAG, "onSharedPreferenceChanged: $callStartTimestamp")
-            true
-        } else {
-            Log.d(TAG, "onSharedPreferenceChanged: $callStartTimestamp")
-            false
-        }
+    private fun checkTimestamp(): Long {
+        return VoipPref.getStartTimeStamp()
     }
 
     private fun checkVoipState(): Int {

@@ -28,8 +28,7 @@ class ReportViewModel : BaseViewModel() {
     fun getReportOptionsList(value: String) {
         CoroutineScope(Dispatchers.IO).launch(Dispatchers.IO) {
             try {
-//                TODO:UNCOMMENT WHEN THIS REPORT WOULD BE ESTABLISHED
-//                reportResponseModel = AppObjectController.p2pNetworkService.getP2pCallOptions(value)
+                reportResponseModel = AppObjectController.p2pNetworkService.getP2pCallOptions(value)
                 reportModel.postValue(reportResponseModel!!)
                 saveReportOptionsListToSharedPref(value)
             } catch (e: java.lang.Exception) {
@@ -59,7 +58,7 @@ class ReportViewModel : BaseViewModel() {
             }
             "BLOCK" -> {
                 if (PrefManager.getPrefObject(BLOCK_ISSUE) != null) {
-//                    reportModel.value = PrefManager.getPrefObject(BLOCK_ISSUE)
+                    reportModel.value = PrefManager.getPrefObject(BLOCK_ISSUE)
                 }
             }
         }
