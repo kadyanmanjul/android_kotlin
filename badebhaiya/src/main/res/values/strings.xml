@@ -56,7 +56,7 @@
 
     <string name="hallway">Hallway</string>
     <string name="speakers">Speakers</string>
-    <string name="audience">Audience</string>
+    <string name="audience">Others in the room</string>
     <string name="finding_conversation_partner">Finding Conversation Partners</string>
 
     <string name="something_went_wrong">Oops! Something Went Wrong</string>

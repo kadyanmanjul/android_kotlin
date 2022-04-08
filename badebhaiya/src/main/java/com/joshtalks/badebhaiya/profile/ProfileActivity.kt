@@ -14,7 +14,11 @@ import androidx.core.text.HtmlCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.badebhaiya.R
-import com.joshtalks.badebhaiya.core.*
+import com.joshtalks.badebhaiya.core.EMPTY
+import com.joshtalks.badebhaiya.core.Notification
+import com.joshtalks.badebhaiya.core.NotificationHelper
+import com.joshtalks.badebhaiya.core.NotificationType
+import com.joshtalks.badebhaiya.core.USER_ID
 import com.joshtalks.badebhaiya.databinding.ActivityProfileBinding
 import com.joshtalks.badebhaiya.feed.FeedViewModel
 import com.joshtalks.badebhaiya.feed.ROOM_DETAILS
@@ -48,6 +52,7 @@ class ProfileActivity: AppCompatActivity(), FeedAdapter.ConversationRoomItemCall
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        feedViewModel.setIsBadeBhaiyaSpeaker()
         binding.lifecycleOwner = this
         binding.handler = this
         binding.viewModel = viewModel
@@ -157,12 +162,10 @@ class ProfileActivity: AppCompatActivity(), FeedAdapter.ConversationRoomItemCall
     }
 
     override fun joinRoom(room: RoomListResponseItem, view: View) {
-        Log.d("Manjul", "joinRoom() called with: room = $room, view = $view")
         feedViewModel.joinRoom(room)
     }
 
     override fun setReminder(room: RoomListResponseItem, view: View) {
-        Log.d("Manjul", "setReminder() called with: room = $room, view = $view")
         val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
         val notificationIntent = NotificationHelper.getNotificationIntent(
             this, Notification(

@@ -1,5 +1,6 @@
 package com.joshtalks.badebhaiya.liveroom
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.NotificationManager
 import android.content.ComponentName
@@ -9,7 +10,11 @@ import android.content.ServiceConnection
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.NetworkInfo
-import android.os.*
+import android.os.Build
+import android.os.Bundle
+import android.os.Handler
+import android.os.IBinder
+import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.view.Window
@@ -22,10 +27,11 @@ import androidx.collection.arraySetOf
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
+import com.google.android.material.badge.BadgeDrawable
+import com.google.android.material.badge.BadgeUtils
 import com.google.gson.JsonObject
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.core.BaseActivity
-import com.joshtalks.badebhaiya.core.EMPTY
 import com.joshtalks.badebhaiya.core.LogException
 import com.joshtalks.badebhaiya.core.PermissionUtils
 import com.joshtalks.badebhaiya.core.setOnSingleClickListener
@@ -62,7 +68,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.ReplaySubject
-import kotlin.collections.ArrayList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -130,6 +135,9 @@ class ConversationLiveRoomActivity : BaseActivity(),
         vm.audienceList.observe(this, androidx.lifecycle.Observer {
             val list = it.sortedBy { it.sortOrder }
             audienceAdapter?.updateFullList(list)
+            if (vm.isModerator()){
+                setBadgeDrawable(vm.getRaisedHandAudienceSize())
+            }
         })
 
         vm.speakersList.observe(this, androidx.lifecycle.Observer {
@@ -234,6 +242,14 @@ class ConversationLiveRoomActivity : BaseActivity(),
                 }
             }
         })
+    }
+
+    @SuppressLint("UnsafeOptInUsageError")
+    private fun setBadgeDrawable(raisedHandAudienceSize: Int) {
+        val badgeDrawable: BadgeDrawable = BadgeDrawable.create(this)
+        badgeDrawable.setNumber(raisedHandAudienceSize)
+        badgeDrawable.setVisible(raisedHandAudienceSize>0)
+        BadgeUtils.attachBadgeDrawable(badgeDrawable, binding.raisedHands)
     }
 
 

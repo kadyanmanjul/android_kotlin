@@ -5,8 +5,13 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.joshtalks.badebhaiya.core.*
+import com.joshtalks.badebhaiya.core.API_TOKEN
+import com.joshtalks.badebhaiya.core.ApiCallStatus
+import com.joshtalks.badebhaiya.core.EMPTY
+import com.joshtalks.badebhaiya.core.PrefManager
+import com.joshtalks.badebhaiya.core.SignUpStepStatus
 import com.joshtalks.badebhaiya.core.io.AppDirectory
+import com.joshtalks.badebhaiya.core.showToast
 import com.joshtalks.badebhaiya.core.workers.WorkManagerAdmin
 import com.joshtalks.badebhaiya.repository.BBRepository
 import com.joshtalks.badebhaiya.repository.CommonRepository

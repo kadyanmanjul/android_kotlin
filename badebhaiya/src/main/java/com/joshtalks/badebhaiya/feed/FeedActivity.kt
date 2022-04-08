@@ -45,6 +45,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel.getRooms()
+        viewModel.setIsBadeBhaiyaSpeaker()
         binding.lifecycleOwner = this
         binding.handler = this
         binding.viewModel = viewModel
@@ -114,7 +115,6 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
 
                 override fun onError(error: String) {
                     showToast(error)
-                    Log.d("Manjul", "onError() called with: error = $error")
                     it.dismiss()
                 }
             })
@@ -123,12 +123,10 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
 
     override fun joinRoom(room: RoomListResponseItem, view: View) {
         //TODO : 01/04/2022 - @kadyanmanjul join conversation room here
-        Log.d("Manjul", "joinRoom() called with: room = $room, view = $view")
         viewModel.joinRoom(room)
     }
 
     override fun setReminder(room: RoomListResponseItem, view: View) {
-        Log.d("Manjul", "setReminder() called with: room = $room, view = $view")
         val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
         val notificationIntent = NotificationHelper.getNotificationIntent(
             this, Notification(
@@ -161,7 +159,6 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
 
     override fun viewRoom(room: RoomListResponseItem, view: View) {
         //TODO : 01/04/2022 - @kadyanmanjul join conversation room here
-        Log.d("Manjul", "viewRoom() called with: roomid = ${room.speakersData?.userId}, room = $room")
         room.speakersData?.userId?.let {
             ProfileActivity.openProfileActivity(this,it)
         }

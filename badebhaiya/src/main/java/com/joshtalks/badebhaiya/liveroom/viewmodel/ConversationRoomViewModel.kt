@@ -39,9 +39,7 @@ import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.utils.DEFAULT_NAME
 import com.pubnub.api.PNConfiguration
 import com.pubnub.api.PubNub
-import com.pubnub.api.callbacks.PNCallback
 import com.pubnub.api.callbacks.SubscribeCallback
-import com.pubnub.api.models.consumer.PNPublishResult
 import com.pubnub.api.models.consumer.PNStatus
 import com.pubnub.api.models.consumer.objects_api.channel.PNChannelMetadataResult
 import com.pubnub.api.models.consumer.objects_api.member.PNUUID
@@ -155,6 +153,8 @@ class ConversationRoomViewModel(application: Application) : AndroidViewModel(app
     fun updateAudienceList(audienceList: ArraySet<LiveRoomUser>) {
         this.audienceList.postValue(audienceList)
     }
+
+    fun getRaisedHandAudienceSize() :Int = this.audienceList.value?.filter { it.isSpeaker==false && it.isHandRaised  }?.size ?: 0
 
     fun joinRoom(item: RoomListResponseItem) {
         jobs += viewModelScope.launch(Dispatchers.IO) {
