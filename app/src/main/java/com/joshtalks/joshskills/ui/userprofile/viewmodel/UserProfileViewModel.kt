@@ -73,6 +73,8 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import org.json.JSONObject
 import timber.log.Timber
 import java.io.File
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 const val WHATSAPP_PACKAGE_STRING = "com.whatsapp"
 
@@ -178,6 +180,14 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
         }
     }
 
+    fun uploadSignupMedia(mediaPath: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            apiCallStatus.postValue(ApiCallStatus.START)
+            val compressImagePath = getCompressImage(mediaPath)
+            uploadSignupCompressedMedia(compressImagePath)
+        }
+    }
+
     private fun uploadCompressedMedia(
         mediaPath: String
     ) {
@@ -189,25 +199,69 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
                 if (statusCode in 200..210) {
                     val url = responseObj.url.plus(File.separator).plus(responseObj.fields["key"])
                     var updateProfilePayload = UpdateProfilePayload()
+                    var date: String? = null
                     updateProfilePayload.apply {
-                        val date = DD_MM_YYYY.parse(userData.value?.dateOfBirth)
+                        if (userData.value?.dateOfBirth!=null){
+                            date = DATE_FORMATTER.format(DD_MM_YYYY.parse(userData.value?.dateOfBirth))
+                        }
                         basicDetails?.apply {
                             photoUrl = url
                             firstName = userData.value?.name
-                            dateOfBirth = DATE_FORMATTER.format(date)
+                            dateOfBirth = date
                             homeTown = userData.value?.hometown
                             futureGoals = userData.value?.futureGoals
                             favouriteJoshTalk = userData.value?.favouriteJoshTalk
                         }
-                        educationDetails?.apply {
-                            degree = userData.value?.educationDetails?.degree
-                            college = userData.value?.educationDetails?.college
-                            year = userData.value?.educationDetails?.year
+                        educationDetails=null
+                        occupationDetails=null
+//                        educationDetails?.apply {
+//                            degree = userData.value?.educationDetails?.degree
+//                            college = userData.value?.educationDetails?.college
+//                            year = userData.value?.educationDetails?.year
+//                        }
+//                        occupationDetails?.apply {
+//                            designation = userData.value?.occupationDetails?.designation
+//                            company = userData.value?.occupationDetails?.company
+//                        }
+                    }
+                    saveProfileInfo(updateProfilePayload)
+                } else {
+                    apiCallStatus.postValue(ApiCallStatus.FAILED)
+                }
+
+            } catch (ex: Exception) {
+                apiCallStatus.postValue(ApiCallStatus.FAILED)
+                ex.printStackTrace()
+            }
+        }
+    }
+
+    private fun uploadSignupCompressedMedia(
+        mediaPath: String
+    ) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val obj = mapOf("media_path" to File(mediaPath).name)
+                val responseObj = userProfileRepo.requestMediaRequest(obj)
+                val statusCode: Int = uploadOnS3Server(responseObj, mediaPath)
+                if (statusCode in 200..210) {
+                    val url = responseObj.url.plus(File.separator).plus(responseObj.fields["key"])
+                    var updateProfilePayload = UpdateProfilePayload()
+                    var date: String? = null
+                    updateProfilePayload.apply {
+                        if (userData.value?.dateOfBirth!=null){
+                            date = DATE_FORMATTER.format(DD_MM_YYYY.parse(userData.value?.dateOfBirth))
                         }
-                        occupationDetails?.apply {
-                            designation = userData.value?.occupationDetails?.designation
-                            company = userData.value?.occupationDetails?.company
+                        basicDetails?.apply {
+                            photoUrl = url
+                            firstName = userData.value?.name
+                            dateOfBirth = date
+                            homeTown = userData.value?.hometown
+                            futureGoals = userData.value?.futureGoals
+                            favouriteJoshTalk = userData.value?.favouriteJoshTalk
                         }
+                        educationDetails=null
+                        occupationDetails=null
                     }
                     saveProfileInfo(updateProfilePayload)
                 } else {
