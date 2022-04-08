@@ -22,6 +22,7 @@ import android.widget.RemoteViews
 import androidx.annotation.ColorRes
 import androidx.annotation.StringRes
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.MutableLiveData
 import com.joshtalks.joshskills.BuildConfig
@@ -67,7 +68,6 @@ import java.lang.ref.WeakReference
 import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
-import kotlin.collections.HashMap
 import kotlin.collections.set
 
 
@@ -1902,7 +1902,8 @@ class WebRtcService : BaseWebRtcService() {
                             incomingCallNotification(data),
                             INCOMING_CALL_NOTIFICATION_ID
                         )
-                        startRingtoneAndVibration()
+                        if (NotificationManagerCompat.from(this).areNotificationsEnabled())
+                            startRingtoneAndVibration()
                     }
                 }
                 CallConnect().action -> {
