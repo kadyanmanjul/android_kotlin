@@ -18,6 +18,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.afollestad.materialdialogs.MaterialDialog
@@ -47,9 +48,14 @@ import com.joshtalks.joshskills.ui.lesson.LessonSpotlightState
 import com.joshtalks.joshskills.ui.lesson.LessonViewModel
 import com.joshtalks.joshskills.ui.lesson.SPEAKING_POSITION
 import com.joshtalks.joshskills.ui.senior_student.SeniorStudentActivity
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.callbar.CallBar
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.callbar.VoipPref
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.feedback.FeedbackDialogFragment
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.report.ReportDialogFragment
+import com.joshtalks.joshskills.voip.constant.CONNECTED
 import com.joshtalks.joshskills.voip.constant.IDLE
+import com.joshtalks.joshskills.voip.constant.LEAVING
 import com.joshtalks.joshskills.voip.voipLog
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -57,11 +63,8 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.util.*
 
 class SpeakingPractiseFragment : CoreJoshFragment(),TimeAnimator.TimeListener {
@@ -74,8 +77,8 @@ class SpeakingPractiseFragment : CoreJoshFragment(),TimeAnimator.TimeListener {
     private var questionId: String? = null
     private var haveAnyFavCaller = false
     private var isAnimationShown = false
-    private val LEVEL_INCREMENT = 10
-    private val MAX_LEVEL = 10000
+    private var LEVEL_INCREMENT = 10
+    private val MAX_LEVEL = 1000
     private var mAnimator: TimeAnimator? = null
     private var mCurrentLevel = 0
     private var mClipDrawable: ClipDrawable? = null
@@ -119,6 +122,8 @@ class SpeakingPractiseFragment : CoreJoshFragment(),TimeAnimator.TimeListener {
         binding.rootView.layoutTransition?.setAnimateParentHierarchy(false)
         val layerDrawable = binding.btnStartTrialText.getBackground() as LayerDrawable
         mClipDrawable = layerDrawable.findDrawableByLayerId(R.id.clip_drawable) as ClipDrawable
+        beforeAnimation = layerDrawable.findDrawableByLayerId(R.id.before_animation) as GradientDrawable
+
         mAnimator = TimeAnimator()
         mAnimator!!.setTimeListener(this)
         addObservers()
@@ -137,18 +142,18 @@ class SpeakingPractiseFragment : CoreJoshFragment(),TimeAnimator.TimeListener {
     }
 
     private fun checkForVoipState() {
-        if (checkIfIdleState().not()){
-            Toast.makeText(activity,"Wait for a second!",Toast.LENGTH_LONG).show()
-            animateButton()
+        val voipState=getVoipState()
+        if(voipState == CONNECTED){
             binding.btnStartTrialText.isEnabled = false
-        }else{
-            fillButton()
+            beforeAnimation?.setTint(resources.getColor(R.color.grey))
+        }else if(voipState==IDLE || voipState == LEAVING){
             binding.btnStartTrialText.isEnabled = true
+            beforeAnimation?.setTint(resources.getColor(R.color.colorPrimary))
         }
     }
 
-    private fun checkIfIdleState():Boolean {
-        return VoipPref.getVoipState()==IDLE
+    private fun getVoipState():Int {
+        return VoipPref.getVoipState()
     }
 
     override fun onStop() {
@@ -174,49 +179,52 @@ class SpeakingPractiseFragment : CoreJoshFragment(),TimeAnimator.TimeListener {
 
     private fun addObservers() {
         viewModel.lessonQuestionsLiveData.observe(
-            viewLifecycleOwner,
-            {
-                val spQuestion = it.filter { it.chatType == CHAT_TYPE.SP }.getOrNull(0)
-                questionId = spQuestion?.id
+            viewLifecycleOwner
+        ) {
+            val spQuestion = it.filter { it.chatType == CHAT_TYPE.SP }.getOrNull(0)
+            questionId = spQuestion?.id
 
-                spQuestion?.topicId?.let {
-                    this.topicId = it
-                    viewModel.getTopicDetail(it)
-                }
-                spQuestion?.lessonId?.let { viewModel.getCourseIdByLessonId(it) }
+            spQuestion?.topicId?.let {
+                this.topicId = it
+                viewModel.getTopicDetail(it)
             }
-        )
-        viewModel.lessonSpotlightStateLiveData.observe(requireActivity(), {
+            spQuestion?.lessonId?.let { viewModel.getCourseIdByLessonId(it) }
+        }
+        viewModel.lessonSpotlightStateLiveData.observe(requireActivity()) {
             when (it) {
                 LessonSpotlightState.SPEAKING_SPOTLIGHT_PART2 -> {
                     binding.nestedScrollView.scrollTo(0, binding.nestedScrollView.bottom)
                 }
             }
-        })
+        }
         viewModel.courseId.observe(
-            viewLifecycleOwner,
-            {
-                courseId = it
-            }
-        )
+            viewLifecycleOwner
+        ) {
+            courseId = it
+        }
         binding.btnStartTrialText.setOnClickListener {
             viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
             if(VoipPref.getVoipState()==IDLE) {
                 startPractise()
+            }else if(VoipPref.getVoipState()== LEAVING){
+                beforeAnimation?.setTint(resources.getColor(R.color.grey))
+                animateButton()
             }
         }
 
         viewModel.observerVoipState().observe(viewLifecycleOwner) {
             when(it){
                 IDLE -> {
-                    mCurrentLevel=MAX_LEVEL
                     binding.btnStartTrialText.isEnabled = true
-                }
-                else -> {
-                    if(mAnimator?.isRunning!=true) {
-                        animateButton()
-                        binding.btnStartTrialText.isEnabled = false
+                    mCurrentLevel=MAX_LEVEL
+                    beforeAnimation?.setTint(resources.getColor(R.color.colorPrimary))
+                    if(mAnimator?.isRunning==true) {
+                        startPractise()
                     }
+                }
+                LEAVING ->{
+                    beforeAnimation?.setTint(resources.getColor(R.color.colorPrimary))
+                    binding.btnStartTrialText.isEnabled = true
                 }
             }
             voipLog?.log("VOIP State --> $it")
@@ -232,106 +240,105 @@ class SpeakingPractiseFragment : CoreJoshFragment(),TimeAnimator.TimeListener {
             startActivity(intent)
         }
 
-        viewModel.speakingSpotlightClickLiveData.observe(viewLifecycleOwner, {
+        viewModel.speakingSpotlightClickLiveData.observe(viewLifecycleOwner) {
             startPractise()
-        })
+        }
 
         binding.btnContinue.setOnClickListener {
             lessonActivityListener?.onNextTabCall(SPEAKING_POSITION)
         }
 
         viewModel.speakingTopicLiveData.observe(
-            viewLifecycleOwner,
-            { response ->
-                binding.progressView.visibility = GONE
-                if (response == null) {
-                    showToast(AppObjectController.joshApplication.getString(R.string.generic_message_for_error))
-                } else {
-                    try {
-                        binding.tvTodayTopic.text = response.topicName
-                        binding.tvPractiseTime.text =
-                            response.alreadyTalked.toString().plus(" / ")
-                                .plus(response.duration.toString())
-                                .plus("\n Minutes")
-                        binding.progressBar.progress = response.alreadyTalked.toFloat()
-                        binding.progressBar.progressMax = response.duration.toFloat()
+            viewLifecycleOwner
+        ) { response ->
+            binding.progressView.visibility = GONE
+            if (response == null) {
+                showToast(AppObjectController.joshApplication.getString(R.string.generic_message_for_error))
+            } else {
+                try {
+                    binding.tvTodayTopic.text = response.topicName
+                    binding.tvPractiseTime.text =
+                        response.alreadyTalked.toString().plus(" / ")
+                            .plus(response.duration.toString())
+                            .plus("\n Minutes")
+                    binding.progressBar.progress = response.alreadyTalked.toFloat()
+                    binding.progressBar.progressMax = response.duration.toFloat()
 
-                        binding.textView.text = if (response.duration >= 10) {
-                            getString(R.string.pp_messages, response.duration.toString())
-                        } else {
-                            getString(R.string.pp_message, response.duration.toString())
-                        }
-                        /*binding.progressBar.visibility = GONE
-                        binding.tvPractiseTime.visibility = GONE
-                        binding.progressBarAnim.visibility = VISIBLE
-                        binding.progressBarAnim.playAnimation()*/
-                    } catch (ex: Exception) {
-                        ex.printStackTrace()
-                    }
-                    binding.groupTwo.visibility = VISIBLE
-                    if (response.alreadyTalked.toFloat() >= response.duration.toFloat()) {
-                        binding.progressBar.visibility = View.INVISIBLE
-                        binding.tvPractiseTime.visibility = GONE
-                        binding.progressBarAnim.visibility = VISIBLE
-                        if (!isAnimationShown) {
-                            binding.progressBarAnim.playAnimation()
-                            isAnimationShown = true
-                        }
-                    }
-
-                    val points = PrefManager.getStringValue(SPEAKING_POINTS, defaultValue = EMPTY)
-                    if (points.isNotEmpty()) {
-                        // showSnackBar(root_view, Snackbar.LENGTH_LONG, points)
-                        PrefManager.put(SPEAKING_POINTS, EMPTY)
-                    }
-
-                    if (response.alreadyTalked >= response.duration && response.isFromDb.not()) {
-                        binding.btnContinue.visibility = VISIBLE
-//                        binding.btnStart.pauseAnimation()
-                        binding.btnContinue.playAnimation()
-                        lessonActivityListener?.onQuestionStatusUpdate(
-                            QUESTION_STATUS.AT,
-                            questionId
-                        )
-                        lessonActivityListener?.onSectionStatusUpdate(SPEAKING_POSITION, true)
+                    binding.textView.text = if (response.duration >= 10) {
+                        getString(R.string.pp_messages, response.duration.toString())
                     } else {
-//                        binding.btnStart.playAnimation()
+                        getString(R.string.pp_message, response.duration.toString())
                     }
-
-                    if (response.isNewStudentCallsActivated) {
-                        binding.txtLabelNewStudentCalls.visibility = VISIBLE
-                        binding.progressNewStudentCalls.visibility = VISIBLE
-                        binding.progressNewStudentCalls.progress = response.totalNewStudentCalls
-                        binding.progressNewStudentCalls.max = response.requiredNewStudentCalls
-                        binding.txtProgressCount.visibility = VISIBLE
-                        binding.txtProgressCount.text =
-                            "${response.totalNewStudentCalls}/${response.requiredNewStudentCalls}"
-                        binding.txtCallsLeft.visibility = VISIBLE
-                        binding.txtCallsLeft.text = when (val dayOfWeek =
-                            Calendar.getInstance().get(Calendar.DAY_OF_WEEK)) {
-                            Calendar.SUNDAY ->
-                                "1 day left"
-                            else -> {
-                                "${7 - (dayOfWeek - 1)} days left"
-                            }
-                        }
-                        binding.txtLabelBecomeSeniorStudent.paintFlags =
-                            binding.txtLabelBecomeSeniorStudent.paintFlags or Paint.UNDERLINE_TEXT_FLAG
-                        binding.txtLabelBecomeSeniorStudent.visibility = VISIBLE
-                        binding.btnNewStudent.visibility = VISIBLE
-                        binding.infoContainer.visibility = GONE
-                    } else {
-                        binding.txtLabelNewStudentCalls.visibility = GONE
-                        binding.progressNewStudentCalls.visibility = GONE
-                        binding.txtProgressCount.visibility = GONE
-                        binding.txtCallsLeft.visibility = GONE
-                        binding.txtLabelBecomeSeniorStudent.visibility = GONE
-                        binding.btnNewStudent.visibility = GONE
-                        binding.infoContainer.visibility = VISIBLE
+                    /*binding.progressBar.visibility = GONE
+                    binding.tvPractiseTime.visibility = GONE
+                    binding.progressBarAnim.visibility = VISIBLE
+                    binding.progressBarAnim.playAnimation()*/
+                } catch (ex: Exception) {
+                    ex.printStackTrace()
+                }
+                binding.groupTwo.visibility = VISIBLE
+                if (response.alreadyTalked.toFloat() >= response.duration.toFloat()) {
+                    binding.progressBar.visibility = View.INVISIBLE
+                    binding.tvPractiseTime.visibility = GONE
+                    binding.progressBarAnim.visibility = VISIBLE
+                    if (!isAnimationShown) {
+                        binding.progressBarAnim.playAnimation()
+                        isAnimationShown = true
                     }
                 }
+
+                val points = PrefManager.getStringValue(SPEAKING_POINTS, defaultValue = EMPTY)
+                if (points.isNotEmpty()) {
+                    // showSnackBar(root_view, Snackbar.LENGTH_LONG, points)
+                    PrefManager.put(SPEAKING_POINTS, EMPTY)
+                }
+
+                if (response.alreadyTalked >= response.duration && response.isFromDb.not()) {
+                    binding.btnContinue.visibility = VISIBLE
+//                        binding.btnStart.pauseAnimation()
+                    binding.btnContinue.playAnimation()
+                    lessonActivityListener?.onQuestionStatusUpdate(
+                        QUESTION_STATUS.AT,
+                        questionId
+                    )
+                    lessonActivityListener?.onSectionStatusUpdate(SPEAKING_POSITION, true)
+                } else {
+//                        binding.btnStart.playAnimation()
+                }
+
+                if (response.isNewStudentCallsActivated) {
+                    binding.txtLabelNewStudentCalls.visibility = VISIBLE
+                    binding.progressNewStudentCalls.visibility = VISIBLE
+                    binding.progressNewStudentCalls.progress = response.totalNewStudentCalls
+                    binding.progressNewStudentCalls.max = response.requiredNewStudentCalls
+                    binding.txtProgressCount.visibility = VISIBLE
+                    binding.txtProgressCount.text =
+                        "${response.totalNewStudentCalls}/${response.requiredNewStudentCalls}"
+                    binding.txtCallsLeft.visibility = VISIBLE
+                    binding.txtCallsLeft.text = when (val dayOfWeek =
+                        Calendar.getInstance().get(Calendar.DAY_OF_WEEK)) {
+                        Calendar.SUNDAY ->
+                            "1 day left"
+                        else -> {
+                            "${7 - (dayOfWeek - 1)} days left"
+                        }
+                    }
+                    binding.txtLabelBecomeSeniorStudent.paintFlags =
+                        binding.txtLabelBecomeSeniorStudent.paintFlags or Paint.UNDERLINE_TEXT_FLAG
+                    binding.txtLabelBecomeSeniorStudent.visibility = VISIBLE
+                    binding.btnNewStudent.visibility = VISIBLE
+                    binding.infoContainer.visibility = GONE
+                } else {
+                    binding.txtLabelNewStudentCalls.visibility = GONE
+                    binding.progressNewStudentCalls.visibility = GONE
+                    binding.txtProgressCount.visibility = GONE
+                    binding.txtCallsLeft.visibility = GONE
+                    binding.txtLabelBecomeSeniorStudent.visibility = GONE
+                    binding.btnNewStudent.visibility = GONE
+                    binding.infoContainer.visibility = VISIBLE
+                }
             }
-        )
+        }
         binding.btnFavorite.setOnClickListener {
             viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
             if (haveAnyFavCaller) {
@@ -353,8 +360,8 @@ class SpeakingPractiseFragment : CoreJoshFragment(),TimeAnimator.TimeListener {
             showNextTooltip()
         }
 
-        viewModel.lessonLiveData.observe(viewLifecycleOwner, {
-            if(it.lessonNo == 1){
+        viewModel.lessonLiveData.observe(viewLifecycleOwner) {
+            if (it.lessonNo == 1) {
                 binding.btnCallDemo.visibility = View.GONE
                 binding.txtHowToSpeak.visibility = View.VISIBLE
                 binding.txtHowToSpeak.setOnClickListener {
@@ -363,26 +370,26 @@ class SpeakingPractiseFragment : CoreJoshFragment(),TimeAnimator.TimeListener {
                     viewModel.saveIntroVideoFlowImpression(HOW_TO_SPEAK_TEXT_CLICKED)
                 }
 
-                viewModel.callBtnHideShowLiveData.observe(viewLifecycleOwner, {
-                    if(it == 1){
+                viewModel.callBtnHideShowLiveData.observe(viewLifecycleOwner) {
+                    if (it == 1) {
                         binding.nestedScrollView.visibility = View.INVISIBLE
                         binding.btnCallDemo.visibility = View.VISIBLE
                     }
-                    if(it == 2){
+                    if (it == 2) {
                         binding.nestedScrollView.visibility = View.VISIBLE
                         binding.btnCallDemo.visibility = View.GONE
                     }
-                })
-            }else{
+                }
+            } else {
                 binding.btnCallDemo.visibility = View.GONE
             }
-        })
+        }
 
-        viewModel.introVideoCompleteLiveData.observe(viewLifecycleOwner, {
-            if(it == true){
+        viewModel.introVideoCompleteLiveData.observe(viewLifecycleOwner) {
+            if (it == true) {
                 binding.btnCallDemo.visibility = View.GONE
             }
-        })
+        }
     }
 
     private fun showTooltip() {

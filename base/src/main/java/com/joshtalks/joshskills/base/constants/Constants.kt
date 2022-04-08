@@ -67,8 +67,10 @@ const val PREF_KEY_LAST_REMOTE_USER_IMAGE = "josh_last_remote_user_image"
 const val PREF_KEY_LAST_CALL_ID = "josh_last_call_id"
 const val PREF_KEY_LAST_CALL_TYPE = "josh_last_call_type"
 const val PREF_KEY_LAST_REMOTE_USER_AGORA_ID = "josh_last_remote_user_agora_id"
-const val PREF_KEY_LAST_CHANNEL_NAME = "josh_last_channel_name"
 const val PREF_KEY_LAST_TOPIC_NAME= "josh_last_topic_name"
+const val PREF_KEY_LAST_CHANNEL_NAME = "josh_last_channel_name"
+const val PREF_KEY_LAST_CALL_DURATION= "josh_last_call_duration"
+
 
 // Recent Incoming Call Details
 const val PREF_KEY_INCOMING_CALL_ID = "josh_recent_incoming_call_id"

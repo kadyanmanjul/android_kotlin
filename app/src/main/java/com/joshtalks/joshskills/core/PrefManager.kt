@@ -14,7 +14,7 @@ import com.joshtalks.joshskills.base.constants.STOP_SERVICE
 import com.joshtalks.joshskills.core.io.LastSyncPrefManager
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.AppDatabase
-import com.joshtalks.joshskills.ui.voip.voip_rating.model.ReportModel
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.report.model.ReportModel
 
 const val USER_UNIQUE_ID = "user_unique_id"
 const val GID_SET_FOR_USER = "gid_set_for_user"

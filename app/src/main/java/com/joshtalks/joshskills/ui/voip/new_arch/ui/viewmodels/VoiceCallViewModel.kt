@@ -146,8 +146,6 @@ class VoiceCallViewModel : BaseViewModel() {
         repository.stopService()
     }
 
-    fun acceptCall(v: View) {}
-
     fun switchSpeaker(v: View) {
         if (isSpeakerOn.get()) {
             isSpeakerOn.set(false)
