@@ -107,17 +107,19 @@ fun setGroupMemberAdapter(
     adapter.setListener(function)
 }
 
-@BindingAdapter("groupRequestAdapter", "btnOnClick")
+@BindingAdapter("groupRequestAdapter", "btnOnClick", "profileClick")
 fun setGroupRequestAdapter(
     view: RecyclerView,
     adapter: GroupRequestAdapter,
-    function: (String, String, Boolean) -> Unit
+    function: (String, String, Boolean) -> Unit,
+    profileFunction: (String) -> Unit
 ) {
     view.layoutManager = LinearLayoutManager(view.context, RecyclerView.VERTICAL, false)
     view.setHasFixedSize(false)
     view.adapter = adapter
 
     adapter.setListener(function)
+    adapter.setProfileOpen(profileFunction)
 }
 
 @BindingAdapter("groupChatAdapter", "scrollToBottom", "onTitleClick")

@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 46,
-    "identityHash": "3d7eb0e5b2f9550b143fc37109332caf",
+    "identityHash": "0f33761fc8c742a663579929faf39873",
     "entities": [
       {
         "tableName": "course",
@@ -2772,7 +2772,7 @@
       },
       {
         "tableName": "group_list_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`groupIcon` TEXT, `groupId` TEXT NOT NULL, `createdAt` INTEGER, `lastMessage` TEXT, `lastMsgTime` INTEGER NOT NULL, `unreadCount` TEXT, `name` TEXT, `createdBy` TEXT, `totalCalls` TEXT, `adminId` TEXT, `groupType` TEXT, `groupStatus` TEXT, PRIMARY KEY(`groupId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`groupIcon` TEXT, `groupId` TEXT NOT NULL, `createdAt` INTEGER, `lastMessage` TEXT, `lastMsgTime` INTEGER NOT NULL, `unreadCount` TEXT, `name` TEXT, `createdBy` TEXT, `totalCalls` TEXT, `adminId` TEXT, `groupType` TEXT, `groupStatus` TEXT, `requestGroupText` TEXT, PRIMARY KEY(`groupId`))",
         "fields": [
           {
             "fieldPath": "groupIcon",
@@ -2843,6 +2843,12 @@
           {
             "fieldPath": "groupStatus",
             "columnName": "groupStatus",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "requestGroupText",
+            "columnName": "requestGroupText",
             "affinity": "TEXT",
             "notNull": false
           }
@@ -3225,7 +3231,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '3d7eb0e5b2f9550b143fc37109332caf')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '0f33761fc8c742a663579929faf39873')"
     ]
   }
 }

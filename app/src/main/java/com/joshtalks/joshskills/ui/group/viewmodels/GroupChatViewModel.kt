@@ -68,6 +68,7 @@ class GroupChatViewModel : BaseViewModel() {
     var groupId: String = ""
     var adminId: String = ""
     var conversationId: String = ""
+    var groupText: String = ""
     var chatSendText: String = ""
 
     val chatAdapter = GroupChatAdapter(GroupChatComparator).apply {
@@ -193,6 +194,7 @@ class GroupChatViewModel : BaseViewModel() {
                 } else
                     showToast("Error in sending request")
                 dismissProgressDialog()
+                GroupAnalytics.push(GroupAnalytics.Event.REQUEST_TO_JOIN, groupId)
             } catch (e: Exception) {
                 dismissProgressDialog()
                 showToast("Error in sending request")
@@ -273,6 +275,7 @@ class GroupChatViewModel : BaseViewModel() {
         message.what = OPEN_GROUP_REQUESTS_LIST
         message.obj = groupId
         singleLiveEvent.value = message
+        GroupAnalytics.push(GroupAnalytics.Event.OPEN_REQUESTS_LIST, groupId)
     }
 
     fun editGroupInfo() {
@@ -374,8 +377,8 @@ class GroupChatViewModel : BaseViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             val memberResult = repository.getGroupMemberList(groupId, adminId)
             val onlineAndRequestCount = repository.getOnlineAndRequestCount(groupId)
-            val onlineCount = (onlineAndRequestCount["online_count"] as Double).toInt()
-            val requestCnt = (onlineAndRequestCount["request_count"] as Double).toInt()
+            val onlineCount = (onlineAndRequestCount["online_count"] as? Double)?.toInt()
+            val requestCnt = (onlineAndRequestCount["request_count"] as? Double)?.toInt()
             memberCount.set(memberResult.size)
             requestCount.set("$requestCnt")
             groupSubHeader.set("${memberCount.get()} members, $onlineCount online")

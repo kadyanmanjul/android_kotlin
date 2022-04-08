@@ -5,9 +5,11 @@ import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.base.BaseViewModel
 import com.joshtalks.joshskills.constants.DISMISS_PROGRESS_BAR
 import com.joshtalks.joshskills.constants.ON_BACK_PRESSED
+import com.joshtalks.joshskills.constants.OPEN_PROFILE_PAGE
 import com.joshtalks.joshskills.constants.SHOW_PROGRESS_BAR
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.ui.group.adapters.GroupRequestAdapter
+import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics
 import com.joshtalks.joshskills.ui.group.constants.CLOSED_GROUP
 import com.joshtalks.joshskills.ui.group.model.GroupRequest
 import com.joshtalks.joshskills.ui.group.repository.GroupRepository
@@ -41,6 +43,15 @@ class GroupRequestViewModel : BaseViewModel() {
         singleLiveEvent.value = message
     }
 
+    fun openProfile(mentorId: String) {
+        message.what = OPEN_PROFILE_PAGE
+        message.obj = mentorId
+        singleLiveEvent.value = message
+        GroupAnalytics.push(GroupAnalytics.Event.OPEN_PROFILE_FROM_REQUEST, groupId, mentorId)
+    }
+
+    val openProfileOnClick: (String) -> Unit = { openProfile(it) }
+
     val requestBtnResponse: (String, String, Boolean) -> Unit = { mentorId, name, allow ->
         showProgressDialog("Allowing to join group...")
         viewModelScope.launch {
@@ -52,8 +63,11 @@ class GroupRequestViewModel : BaseViewModel() {
                     groupType = CLOSED_GROUP
                 )
                 val response = repository.sendRequestResponse(request)
-                if (response && allow)
+                if (response && allow) {
                     pushMetaMessage("${name.substringBefore(" ")} has joined the group", groupId, mentorId)
+                    GroupAnalytics.push(GroupAnalytics.Event.REQUEST_ACCEPTED, groupId, mentorId)
+                } else if (response && !allow)
+                    GroupAnalytics.push(GroupAnalytics.Event.REQUEST_DECLINED, groupId, mentorId)
                 else
                     showToast("Error responding to the request")
                 dismissProgressDialog()
