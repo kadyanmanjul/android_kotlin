@@ -19,6 +19,7 @@ const val INTENT_DATA_INCOMING_CALL_ID = "josh_intent_data_incoming_call_id"
 // Service Action
 const val SERVICE_ACTION_STOP_SERVICE = "josh_service_action_stop_service"
 const val SERVICE_ACTION_MAIN_PROCESS_IN_BACKGROUND = "josh_service_action_main_process_in_background"
+const val SERVICE_ACTION_DISCONNECT_CALL = "josh_service_action_disconnect_call"
 
 // Content Provider UI
 const val CONTENT_URI = "content://com.joshtalks.joshskills.contentprovider"
@@ -26,6 +27,7 @@ const val START_CALL_TIME_URI = "/start_call_time"
 const val INCOMING_CALL_URI = "/incoming_call"
 const val VOIP_STATE_URI = "/voip_state"
 const val CALL_DISCONNECTED_URI = "/call_disconnect"
+const val CURRENT_STATE_URI = "/current_call_state"
 const val API_HEADER = "/api_header"
 
 // Content Values
@@ -39,6 +41,9 @@ const val CALL_TYPE = "josh_call_type"
 const val CURRENT_USER_AGORA_ID = "josh_current_user_agora_id"
 const val TOPIC_NAME = "josh_topic_name"
 const val CHANNEL_NAME = "josh_channel_name"
+const val IS_MUTE = "josh_is_mute"
+const val IS_SPEAKER_ON = "josh_is_speaker_on"
+const val IS_ON_HOLD = "josh_is_on_hold"
 
 // Pref Keys
 const val PREF_KEY_WEBRTC_CURRENT_STATE = "josh_webrtc_current_state"

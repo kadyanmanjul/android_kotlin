@@ -9,9 +9,6 @@ data class Message(
 	@field:SerializedName("channel_name")
 	private val channelName: String? = null,
 
-	@field:SerializedName("message_text")
-	private val messageText: String? = null,
-
 	@field:SerializedName("type")
 	private val type: Int? = null
 ) : MessageData {
@@ -21,9 +18,5 @@ data class Message(
 
 	override fun getChannel(): String {
 		return channelName ?: throw IncorrectCommunicationDataException("Channel is NULL")
-	}
-
-	override fun getMessage(): String {
-		return messageText ?: throw IncorrectCommunicationDataException("Message is NULL")
 	}
 }

@@ -1,15 +1,19 @@
 package com.joshtalks.joshskills.voip.notification
 
+import android.app.PendingIntent
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 
-class VoipNotification : NotificationInterface{
+class VoipNotification : NotificationInterface {
 
     private lateinit var notificationBuiltObj: NotificationBuiltObj
     private var ifRemoteView: Boolean = false
     private var remoteView: RemoteViews?=null
     private var notificationPriority:NotificationPriority
     private var notificationData:NotificationData?=null
+    private val notificationHelper by lazy {
+        NotificationGenerator()
+    }
 
     constructor(_remoteView: RemoteViews,_notificationPriority:NotificationPriority){
          remoteView = _remoteView
@@ -24,14 +28,14 @@ class VoipNotification : NotificationInterface{
 
     private fun buildNotification() {
         if(remoteView!=null){
-            notificationBuiltObj = NotificationGenerator().initiateNotification(
+            notificationBuiltObj = notificationHelper.initiateNotification(
                 notificationData = null,
                 remoteView = remoteView,
                 notificationPriority = notificationPriority
             )
             ifRemoteView = true
         }else{
-            notificationBuiltObj = NotificationGenerator().initiateNotification(
+            notificationBuiltObj = notificationHelper.initiateNotification(
                 notificationData = notificationData,
                 remoteView = null,
                 notificationPriority = notificationPriority
@@ -41,7 +45,7 @@ class VoipNotification : NotificationInterface{
     }
 
     override fun removeNotification() {
-        NotificationGenerator().removeNotification(notificationBuiltObj.id)
+        notificationHelper.removeNotification(notificationBuiltObj.id)
     }
 
     override fun getNotificationObject(): NotificationCompat.Builder {
@@ -54,21 +58,30 @@ class VoipNotification : NotificationInterface{
 
     override fun updateTitle(title: String) {
         if (!ifRemoteView) {
-            NotificationGenerator().updateTitle(title,notificationBuiltObj)
+            notificationHelper.updateTitle(title,notificationBuiltObj)
         }
     }
 
     override fun updateContent(content: String) {
         if (!ifRemoteView) {
-            NotificationGenerator().updateContent(content,notificationBuiltObj)
+            notificationHelper.updateContent(content,notificationBuiltObj)
         }
     }
 
+    fun connected(username : String, onTap: PendingIntent, onNegativeAction: PendingIntent) {
+        notificationHelper.connected(username, notificationBuiltObj, onTap, onNegativeAction)
+    }
+
+    fun idle() {
+        notificationHelper.idle(notificationBuiltObj)
+    }
+
+
     override fun updateUI(remoteView: RemoteViews) {
-     NotificationGenerator().updateUI(remoteView, notificationBuiltObj)
+     notificationHelper.updateUI(remoteView, notificationBuiltObj)
     }
 
     override fun show() {
-        NotificationGenerator().show(notificationBuiltObj)
+        notificationHelper.show(notificationBuiltObj)
     }
 }
