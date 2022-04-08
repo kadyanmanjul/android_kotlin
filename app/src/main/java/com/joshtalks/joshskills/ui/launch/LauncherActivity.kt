@@ -369,10 +369,14 @@ class LauncherActivity : CoreJoshActivity() {
             } catch (ex: Throwable) {
             }
             try {
-                val response =
-                    AppObjectController.signUpNetworkService.getGaid(mapOf("device_id" to Utils.getDeviceId()))
-                if (response.isSuccessful && response.body() != null) {
-                    PrefManager.put(USER_UNIQUE_ID, response.body()!!.gaID)
+                if (PrefManager.hasKey(USER_UNIQUE_ID).not()) {
+                    val response =
+                        AppObjectController.signUpNetworkService.getGaid(mapOf("device_id" to Utils.getDeviceId()))
+                    if (response.isSuccessful && response.body() != null) {
+                        PrefManager.put(USER_UNIQUE_ID, response.body()!!.gaID)
+                    } else {
+                        return@launch
+                    }
                 } else {
                     return@launch
                 }
