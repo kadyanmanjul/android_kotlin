@@ -19,11 +19,11 @@ import com.joshtalks.joshskills.repository.local.model.assessment.Choice
 import com.joshtalks.joshskills.ui.chat.vh.EnableDisableGrammarButtonCallback
 import com.joshtalks.joshskills.util.ExoAudioPlayer2
 import com.muddzdev.styleabletoast.StyleableToast
-import kotlin.random.Random
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.random.Random
 
 class McqChoiceView : RadioGroup, AudioPlayerEventListener {
 
@@ -59,10 +59,10 @@ class McqChoiceView : RadioGroup, AudioPlayerEventListener {
                 val optionView = getOptionView(it)
                 mcqOptionsRadioGroup.addView(optionView)
             }
-        CoroutineScope(Dispatchers.IO).launch(Dispatchers.Main) {
-            delay(500)
-            if (assessmentQuestion.question.isAttempted) {
-                callback?.alreadyAttempted(isCorrectAnswer())
+        if (assessmentQuestion.question.isAttempted) {
+            CoroutineScope(Dispatchers.IO).launch(Dispatchers.Main) {
+                delay(500)
+                callback?.alreadyAttempted(assessmentQuestion.question.isCorrect)
             }
         }
     }
@@ -107,6 +107,7 @@ class McqChoiceView : RadioGroup, AudioPlayerEventListener {
                 }
             }
         }
+        assessmentQuestion?.question?.isCorrect = true
         return true
     }
 

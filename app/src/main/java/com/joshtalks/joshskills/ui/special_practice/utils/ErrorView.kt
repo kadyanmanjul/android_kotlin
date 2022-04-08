@@ -56,7 +56,6 @@ class ErrorView : ConstraintLayout {
         visibility = View.VISIBLE
         stopLoadingAnimation()
         enableRetryBtn()
-        retryBtn.visibility = View.GONE
         retryBtn.setOnClickListener {
             callback.onRetryButtonClicked()
             disableRetryBtn()

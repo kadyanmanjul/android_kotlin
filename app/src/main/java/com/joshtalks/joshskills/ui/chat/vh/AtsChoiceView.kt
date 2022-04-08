@@ -29,14 +29,12 @@ import com.joshtalks.joshskills.ui.lesson.grammar_new.CustomWord
 import com.joshtalks.joshskills.util.ExoAudioPlayer2
 import com.muddzdev.styleabletoast.StyleableToast
 import com.nex3z.flowlayout.FlowLayout
-import java.util.ArrayList
-import java.util.HashSet
-import java.util.LinkedList
-import kotlin.random.Random
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.util.*
+import kotlin.random.Random
 
 class AtsChoiceView : ConstraintLayout, AudioPlayerEventListener {
 
@@ -132,10 +130,10 @@ class AtsChoiceView : ConstraintLayout, AudioPlayerEventListener {
             it.changeViewGroup(customLayout, answerFlowLayout)
         }
 
-        CoroutineScope(Dispatchers.IO).launch(Dispatchers.Main) {
-            delay(500)
-            if (assessmentQuestion.question.isAttempted) {
-                callback?.alreadyAttempted(isCorrectAnswer())
+        if (assessmentQuestion.question.isAttempted) {
+            CoroutineScope(Dispatchers.IO).launch(Dispatchers.Main) {
+                delay(500)
+                callback?.alreadyAttempted(assessmentQuestion.question.isCorrect)
             }
         }
 
@@ -197,8 +195,10 @@ class AtsChoiceView : ConstraintLayout, AudioPlayerEventListener {
                 for (answer in it) {
                     if (userSelectedString.trim().toString()
                             .equals(answer.trim(), ignoreCase = true)
-                    )
+                    ) {
+                        assessmentQuestion?.question?.isCorrect = true
                         return true
+                    }
                 }
             }
             return false

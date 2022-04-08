@@ -21,11 +21,7 @@ import com.joshtalks.joshskills.engage_notification.AppUsageDao
 import com.joshtalks.joshskills.engage_notification.AppUsageModel
 import com.joshtalks.joshskills.quizgame.analytics.data.GameAnalyticsDao
 import com.joshtalks.joshskills.quizgame.analytics.data.GameAnalyticsEntity
-import com.joshtalks.joshskills.repository.local.dao.AssessmentDao
-import com.joshtalks.joshskills.repository.local.dao.ChatDao
-import com.joshtalks.joshskills.repository.local.dao.CommonDao
-import com.joshtalks.joshskills.repository.local.dao.LessonDao
-import com.joshtalks.joshskills.repository.local.dao.PendingTaskDao
+import com.joshtalks.joshskills.repository.local.dao.*
 import com.joshtalks.joshskills.repository.local.dao.reminder.ReminderDao
 import com.joshtalks.joshskills.repository.local.entity.AudioType
 import com.joshtalks.joshskills.repository.local.entity.AwardMentorModel
@@ -599,7 +595,7 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
-        private val MIGRATION_44_45:Migration = object : Migration(44, 45) {
+        private val MIGRATION_44_45: Migration = object : Migration(44, 45) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE course ADD COLUMN paid_test_id TEXT")
             }
@@ -616,6 +612,7 @@ abstract class AppDatabase : RoomDatabase() {
                 database.execSQL("CREATE TABLE IF NOT EXISTS `compressed_video` (`id` TEXT PRIMARY KEY NOT NULL, `path` TEXT NOT NULL)")
                 database.execSQL("ALTER TABLE `course` ADD COLUMN `is_extend_ft_applicable` INTEGER NOT NULL DEFAULT 0")
                 database.execSQL("ALTER TABLE `favorite_caller` ADD COLUMN `isOnline` INTEGER NOT NULL DEFAULT 0")
+                database.execSQL("ALTER TABLE `assessment_questions` ADD COLUMN `isCorrect` INTEGER NOT NULL DEFAULT 0")
             }
         }
 
@@ -662,7 +659,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun timeTokenDao(): TimeTokenDao
     abstract fun groupChatDao(): GroupChatDao
     abstract fun gameAnalyticsDao(): GameAnalyticsDao
-    abstract fun specialDao():SpecialDao
+    abstract fun specialDao(): SpecialDao
     abstract fun abCampaignDao(): ABTestCampaignDao
     abstract fun groupMemberDao(): GroupMemberDao
 }

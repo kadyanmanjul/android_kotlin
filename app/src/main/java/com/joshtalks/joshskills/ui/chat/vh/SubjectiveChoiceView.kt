@@ -10,11 +10,11 @@ import android.widget.FrameLayout
 import androidx.appcompat.widget.AppCompatEditText
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
-import java.util.Locale
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.util.*
 
 class SubjectiveChoiceView : FrameLayout {
 
@@ -73,10 +73,10 @@ class SubjectiveChoiceView : FrameLayout {
         answerText.text?.clear()
         unlockViews()
 
-        CoroutineScope(Dispatchers.IO).launch(Dispatchers.Main) {
-            delay(500)
-            if (assessmentQuestion.question.isAttempted) {
-                callback?.alreadyAttempted(isCorrectAnswer())
+        if (assessmentQuestion.question.isAttempted) {
+            CoroutineScope(Dispatchers.IO).launch(Dispatchers.Main) {
+                delay(500)
+                callback?.alreadyAttempted(assessmentQuestion.question.isCorrect)
             }
         }
     }
@@ -106,9 +106,11 @@ class SubjectiveChoiceView : FrameLayout {
         } else {
             val inputText = answerText.text.toString().lowercase(Locale.getDefault()).trim()
 //            return inputText.equals(assessmentQuestion?.choiceList?.get(0)?.text.toString().toLowerCase(Locale.getDefault()))
+            assessmentQuestion?.question?.isAttempted = true
             assessmentQuestion?.choiceList?.filter {
                 it.text.toString().trim().lowercase(Locale.getDefault()).equals(inputText, true)
             }.also {
+                assessmentQuestion?.question?.isCorrect = !it.isNullOrEmpty()
                 return it?.isNotEmpty() ?: false
             }
         }
