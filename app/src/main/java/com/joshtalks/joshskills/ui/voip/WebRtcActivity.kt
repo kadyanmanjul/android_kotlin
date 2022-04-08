@@ -570,10 +570,11 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
     private fun initCall() {
         val map: HashMap<String, String?> = HashMap()
         map["agora_channel_name"] = mBoundService?.channelName
-        CoroutineScope(Dispatchers.IO).launch {
-            val resp =
-                AppObjectController.p2pNetworkService.showFppDialog(map)
-            fppDialog = resp.body()?.get("show_fpp_dialog") ?: EMPTY
+
+        viewModel.checkShowFppDialog(map)
+
+        viewModel.fppDialogShow.observe(this){
+            fppDialog = it
         }
         if (isCallFavoritePP() || WebRtcService.isCallOnGoing.value == true) {
             if (intent.getSerializableExtra(CALL_USER_OBJ) == null) {

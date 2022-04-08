@@ -13,18 +13,20 @@ import com.joshtalks.joshskills.core.DEFAULT_COURSE_ID
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.group.repository.ABTestRepository
-import java.net.ProtocolException
 import java.util.HashMap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import retrofit2.HttpException
 import timber.log.Timber
+import java.net.ProtocolException
 
 
 class WebrtcViewModel(application: Application) : AndroidViewModel(application) {
     val apiCallStatusLiveData: MutableLiveData<ApiCallStatus> = MutableLiveData()
     val repository: ABTestRepository by lazy { ABTestRepository() }
+    val fppDialogShow :MutableLiveData<String> = MutableLiveData()
 
     fun initMissedCall(partnerId: String, aFunction: (String, String, Int) -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -92,5 +94,14 @@ class WebrtcViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-
+    fun checkShowFppDialog(map: HashMap<String, String?>){
+        var resp = EMPTY
+        viewModelScope.launch(Dispatchers.IO){
+            withContext(Dispatchers.Default) {
+                resp = AppObjectController.p2pNetworkService.showFppDialog(map).body()
+                    ?.get("show_fpp_dialog") ?: EMPTY
+                fppDialogShow.postValue(resp)
+            }
+       }
+    }
 }
