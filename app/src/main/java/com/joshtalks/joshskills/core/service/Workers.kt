@@ -1012,7 +1012,8 @@ class UpdateABTestCampaignsWorker(context: Context, workerParams: WorkerParamete
                     CampaignKeys.BUY_LAYOUT_CHANGED.name,
                     CampaignKeys.WHATSAPP_REMARKETING.name,
                     CampaignKeys.PEOPLE_HELP_COUNT.name,
-                    CampaignKeys.EXTEND_FREE_TRIAL.name
+                    CampaignKeys.EXTEND_FREE_TRIAL.name,
+                    CampaignKeys.ACTIVITY_FEED_V2.name
 
                 )
             )

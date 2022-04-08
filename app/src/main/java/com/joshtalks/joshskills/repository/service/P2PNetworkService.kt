@@ -76,7 +76,7 @@ interface P2PNetworkService {
         @Path("sender_mentor_id") mentorId: String,
         @Body params: Map<String, String>
     ):Response<Any>
-    @GET("$DIR/fpp/pending_requests")
+    @GET("$DIR/fpp/pending_requests/")
     suspend fun getPendingRequestsList() : Response<PendingRequestResponse>
 
     @POST("$DIR/fpp/check_already_on_call/")

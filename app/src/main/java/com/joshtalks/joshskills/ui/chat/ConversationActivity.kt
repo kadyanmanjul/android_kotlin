@@ -350,7 +350,7 @@ class ConversationActivity :
     }
 
     private fun initABTest() {
-        conversationViewModel.getCampaignData(CampaignKeys.ACTIVITY_FEED.name)
+        conversationViewModel.getCampaignData(CampaignKeys.ACTIVITY_FEED_V2.name)
     }
 
     private fun getAllPendingRequest() {
@@ -1294,10 +1294,8 @@ class ConversationActivity :
         conversationViewModel.abTestCampaignliveData.observe(this) { abTestCampaignData ->
             abTestCampaignData?.let { map ->
                 activityFeedControl =
-                    (map.variantKey == VariantKeys.ACTIVITY_FEED_ENABLED.name) && map.variableMap?.isEnabled == true
+                    (map.variantKey == VariantKeys.AF2_ENABLED.name) && map.variableMap?.isEnabled == true
             }
-            if (activityFeedControl) conversationBinding.imgActivityFeed .visibility =
-                VISIBLE else conversationBinding.imgActivityFeed.visibility = GONE
         }
     }
 
@@ -1320,7 +1318,8 @@ class ConversationActivity :
                 getAllPendingRequest()
                 conversationBinding.root.setOnClickListener {}
                 showBlurOrQuickView()
-                imgActivityFeed.visibility = VISIBLE
+                if (activityFeedControl) imgActivityFeed.visibility =
+                    VISIBLE else conversationBinding.imgActivityFeed.visibility = GONE
                 imgFppRequest.visibility = VISIBLE
 
                 if (userProfileData.isGameActive)
