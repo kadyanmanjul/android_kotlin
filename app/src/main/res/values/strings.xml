@@ -1186,5 +1186,8 @@
     <string name="extend_free_trial_subheading">हमने देखा की आपने lesson 1 पूरा नहीं किया है। यह app सिर्फ serious students के लिए है जो English सीखना चाहते हैं।</string>
     <string name="free_trial_can_not_be_extended">Free Trial can not be extended</string>
     <string name="unextendable_freetrial">Free Trial can\'t be extended</string>
+    <string name="year_format">YYYY</string>
+    <string name="allowed_name_characters">qwertyuiopasdfghjklzxcvbnm QWERTYUIOPASDFGHJKLZXCVBNM</string>
+
 
 </resources>
