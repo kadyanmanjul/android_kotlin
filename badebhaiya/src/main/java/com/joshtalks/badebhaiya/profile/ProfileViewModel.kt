@@ -1,6 +1,7 @@
 package com.joshtalks.badebhaiya.profile
 
 import android.os.Message
+import android.util.Log
 import androidx.databinding.ObservableBoolean
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -34,6 +35,7 @@ class ProfileViewModel : ViewModel() {
                 val followRequest =
                     FollowRequest(userIdForOpenedProfile.value ?: "", User.getInstance().userId)
                 val response = service.updateFollowStatus(followRequest)
+                Log.i("ayushg", "updateFollowStatus: response: $response , succ: ${response.isSuccessful}")
                 if (response.isSuccessful) {
                     speakerFollowed.value = true
                 }

@@ -79,5 +79,5 @@ fun setConversationRoomCardActionButton(
         }
     }
 }
-@BindingAdapter("imageUrl", "userName", requireAll = false)
-fun ImageView.setDPUrl(url: String?, userName: String?) = this.setUserImageOrInitials(url, userName ?: DEFAULT_NAME)
+@BindingAdapter("imageUrl", "userName", "isRound", requireAll = false)
+fun ImageView.setDPUrl(url: String?, userName: String?, ) = this.setUserImageOrInitials(url, userName ?: DEFAULT_NAME)

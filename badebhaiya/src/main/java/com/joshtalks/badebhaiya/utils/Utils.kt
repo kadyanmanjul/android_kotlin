@@ -941,7 +941,10 @@ fun ImageView.setUserImageOrInitials(
     isRound: Boolean = false
 ) {
     if (url.isNullOrEmpty()) {
-        setUserInitial(userName, dpToPx)
+        if (isRound)
+            setUserInitial(userName, dpToPx)
+        else
+            setUserInitialInRect(userName, dpToPx)
     } else {
         if (isRound) {
             val requestOptions = RequestOptions().placeholder(R.drawable.ic_pic_placeholder)

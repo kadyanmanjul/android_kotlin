@@ -15,7 +15,7 @@ interface ProfileNetworkService {
     suspend fun getProfileForUser(@Path("id") userId: String): Response<ProfileResponse>
 
     @POST("$DIR/user/follow/")
-    suspend fun updateFollowStatus(@Body followRequest: FollowRequest): Response<Any>
+    suspend fun updateFollowStatus(@Body followRequest: FollowRequest): Response<Void>
 
     @POST("$DIR/reminder/set_reminder/")
     suspend fun setReminderForRoom(@Body reminderRequest: ReminderRequest): Response<Any>

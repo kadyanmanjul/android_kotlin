@@ -28,6 +28,6 @@ interface ConversationRoomNetworkService {
     suspend fun getRoomList(): Response<RoomListResponse>
 
     @POST("$DIR/reminder/set_reminder/")
-    suspend fun setReminder(@Body reminderRequest: ReminderRequest): Response<Any>
+    suspend fun setReminder(@Body reminderRequest: ReminderRequest): Response<Void>
 
 }

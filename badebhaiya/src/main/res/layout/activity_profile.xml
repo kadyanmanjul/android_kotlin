@@ -54,7 +54,7 @@
             android:gravity="center"
             android:text="@string/follow"
             android:onClick="@{() -> handler.updateFollowStatus()}"
-            android:visibility="@{viewModel.isBadeBhaiyaSpeaker ? View.VISIBLE : View.GONE}"
+            android:visibility="@{(viewModel.isBadeBhaiyaSpeaker &amp;&amp; !viewModel.isSelfProfile) ? View.VISIBLE : View.GONE}"
             android:textColor="@color/follow_button_stroke"
             android:textAppearance="@style/BB_Typography_Nunito_Semi_Bold"
             android:textSize="@dimen/_12ssp"
