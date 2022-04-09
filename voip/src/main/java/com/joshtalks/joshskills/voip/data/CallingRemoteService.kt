@@ -12,6 +12,7 @@ import com.joshtalks.joshskills.base.constants.INTENT_DATA_MENTOR_ID
 import com.joshtalks.joshskills.base.constants.PEER_TO_PEER
 import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_STOP_SERVICE
 import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_DISCONNECT_CALL
+import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_INCOMING_CALL_DECLINE
 import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_MAIN_PROCESS_IN_BACKGROUND
 import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.audiocontroller.AudioController
@@ -57,6 +58,7 @@ import com.joshtalks.joshskills.voip.updateStartCallTime
 import com.joshtalks.joshskills.voip.updateUserHoldState
 import com.joshtalks.joshskills.voip.updateVoipState
 import com.joshtalks.joshskills.voip.voipLog
+import java.time.Duration
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
@@ -125,6 +127,13 @@ class CallingRemoteService : Service() {
             disconnectCall()
             return START_NOT_STICKY
         }
+        val isCallDecline = (intent?.action == SERVICE_ACTION_INCOMING_CALL_DECLINE)
+        Log.d(TAG, "onStartCommand: SERVICE_ACTION_INCOMING_CALL_DECLINE --> $hungUpCall")
+        if (isCallDecline) {
+            mediator.hideIncomingCall()
+            return START_NOT_STICKY
+        }
+
         Utils.apiHeader = intent?.getParcelableExtra(INTENT_DATA_API_HEADER)
         Utils.uuid = intent?.getStringExtra(INTENT_DATA_MENTOR_ID)
         voipLog?.log("API Header --> ${Utils.apiHeader}")
@@ -157,7 +166,9 @@ class CallingRemoteService : Service() {
                             Log.d(TAG, "onStartCommand: CALL_DISCONNECT_REQUEST")
                             notification.idle()
                             resetCallUIState()
-                            updateLastCallDetails()
+                            val duration = callDuration()
+                            if(duration > 0)
+                                updateLastCallDetails(duration)
                         }
 
                         INCOMING_CALL -> {
@@ -300,16 +311,18 @@ class CallingRemoteService : Service() {
 
     private fun disconnectCall() {
         Log.d(TAG, "disconnectCall: ")
+        val duration = callDuration()
         val networkAction = NetworkAction(
             callId = CallDetails.callId,
             uid = CallDetails.localUserAgoraId,
             type = ServerConstants.DISCONNECTED,
-            duration = callDuration()
+            duration = duration
         )
         notification.idle()
         resetCallUIState()
         Log.d(TAG, "disconnectCall: disconnectCall")
-        updateLastCallDetails()
+        if(duration > 0)
+            updateLastCallDetails(duration)
         mediator.sendEventToServer(networkAction)
         mediator.disconnectCall()
     }
@@ -366,6 +379,8 @@ class CallingRemoteService : Service() {
 
     fun callDuration(): Long {
         val startTime = getStartCallTime()
+        if(startTime == 0L)
+            return 0L
         val currentTime = SystemClock.elapsedRealtime()
         Log.d(TAG, "callDuration: ST -> $startTime  and CT -> $currentTime")
         return TimeUnit.MILLISECONDS.toSeconds(currentTime - startTime)

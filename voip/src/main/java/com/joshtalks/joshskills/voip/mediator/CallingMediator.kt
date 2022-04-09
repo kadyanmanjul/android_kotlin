@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.voip.mediator
 import android.media.RingtoneManager
 import android.util.Log
 import com.joshtalks.joshskills.base.constants.INCOMING
+import com.joshtalks.joshskills.base.constants.INTENT_DATA_INCOMING_CALL_ID
 import com.joshtalks.joshskills.base.constants.PEER_TO_PEER
 import com.joshtalks.joshskills.voip.audiomanager.SOUND_TYPE_RINGTONE
 import com.joshtalks.joshskills.voip.audiomanager.SoundManager
@@ -105,8 +106,14 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                         voipNotification.removeNotification()
                         stopAudio()
                     }
-                    stopUserNotFoundTimer()
-                    startUserNotFoundTimer()
+
+                    // TODO: Need to Fix Checking Incoming call two time
+                    if(callData.isIncomingCall()) {
+                        stopUserNotFoundTimer()
+                    } else {
+                        stopUserNotFoundTimer()
+                        startUserNotFoundTimer()
+                    }
                     calling.onPreCallConnect(callData)
                 } catch (e: Exception) {
                     flow.emit(ERROR)
@@ -115,6 +122,10 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                 }
             }
         }
+    }
+
+    private fun HashMap<String, Any>.isIncomingCall() : Boolean {
+        return get(INTENT_DATA_INCOMING_CALL_ID) != null
     }
     
     private fun startUserNotFoundTimer() {
@@ -158,6 +169,17 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
 
     override fun showIncomingCall(incomingCall : IncomingCall) {
         showIncomingNotification(incomingCall)
+    }
+
+    override fun hideIncomingCall() {
+        scope.launch {
+            val map = HashMap<String, Any>(1).apply {
+                put(INTENT_DATA_INCOMING_CALL_ID, IncomingCallData.callId)
+            }
+            calling.onCallDecline(map)
+            stopAudio()
+            voipNotification.removeNotification()
+        }
     }
 
     override fun switchAudio() {}

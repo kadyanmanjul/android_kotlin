@@ -11,6 +11,7 @@ internal interface CallServiceMediator {
     fun muteAudioStream(muteAudio : Boolean)
     fun sendEventToServer(data : OutgoingData)
     fun showIncomingCall(incomingCall : IncomingCall)
+    fun hideIncomingCall()
     fun switchAudio()
     fun disconnectCall()
 }

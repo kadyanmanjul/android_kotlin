@@ -121,8 +121,10 @@ class VoipPref {
             editor.apply()
         }
 
-        fun updateLastCallDetails() {
+        fun updateLastCallDetails(duration : Long) {
             val editor = preferenceManager.edit()
+            editor.putLong(PREF_KEY_LAST_CALL_DURATION,duration)
+
             editor.putString(
                 PREF_KEY_LAST_REMOTE_USER_NAME, preferenceManager.getString(
                     PREF_KEY_CURRENT_REMOTE_USER_NAME, ""
@@ -159,15 +161,10 @@ class VoipPref {
                 )
             )
 
-            val currentCallStartTime = preferenceManager.getLong(PREF_KEY_CURRENT_CALL_START_TIME, 0L).toInt()
-            val currentTime = SystemClock.elapsedRealtime()
-            val totalSecond = TimeUnit.MILLISECONDS.toSeconds(currentTime - currentCallStartTime)
-            Log.d(TAG, "updateLastCallDetails: $totalSecond")
-            editor.putLong(PREF_KEY_LAST_CALL_DURATION,totalSecond)
             editor.apply()
 
-            if( currentCallStartTime != 0) {
-                showDialogBox(totalSecond)
+            if( duration != 0L) {
+                showDialogBox(duration)
             }
         }
 

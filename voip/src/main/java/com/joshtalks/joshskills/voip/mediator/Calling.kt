@@ -20,7 +20,7 @@ interface Calling {
         // API Call
     }
 
-    fun onCallDisconnect() {
+    suspend fun onCallDecline(callData: HashMap<String, Any>) {
         // Report and Block
     }
 

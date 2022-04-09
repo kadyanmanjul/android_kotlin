@@ -7,6 +7,7 @@ import android.database.MatrixCursor
 import android.net.Uri
 import android.util.Log
 import com.joshtalks.joshskills.base.constants.*
+import com.joshtalks.joshskills.ui.video_player.DURATION
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.callbar.VoipPref
 import com.joshtalks.joshskills.voip.voipLog
 
@@ -73,7 +74,8 @@ class JoshContentProvider : ContentProvider() {
 
             }
             CALL_DISCONNECTED_URI -> {
-                VoipPref.updateLastCallDetails()
+                val duration = values?.getAsLong(CALL_DURATION) ?: 0L
+                VoipPref.updateLastCallDetails(duration)
                 VoipPref.updateCallDetails(0)
             }
             VOIP_STATE_URI -> {
