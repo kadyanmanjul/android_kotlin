@@ -568,10 +568,13 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
     }
 
     private fun initCall() {
-        val map: HashMap<String, String?> = HashMap()
-        map["agora_channel_name"] = mBoundService?.channelName
+        try {
+            val map: HashMap<String, String?> = HashMap()
+            map["agora_channel_name"] = mBoundService?.channelName
+            viewModel.checkShowFppDialog(map)
+        }catch (ex:Exception){
 
-        viewModel.checkShowFppDialog(map)
+        }
 
         viewModel.fppDialogShow.observe(this){
             fppDialog = it

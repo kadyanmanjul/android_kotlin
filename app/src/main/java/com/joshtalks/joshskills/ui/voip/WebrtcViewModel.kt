@@ -96,12 +96,16 @@ class WebrtcViewModel(application: Application) : AndroidViewModel(application) 
 
     fun checkShowFppDialog(map: HashMap<String, String?>){
         var resp = EMPTY
-        viewModelScope.launch(Dispatchers.IO){
-            withContext(Dispatchers.Default) {
-                resp = AppObjectController.p2pNetworkService.showFppDialog(map).body()
-                    ?.get("show_fpp_dialog") ?: EMPTY
-                fppDialogShow.postValue(resp)
+        try {
+            viewModelScope.launch(Dispatchers.IO){
+                withContext(Dispatchers.Default) {
+                    resp = AppObjectController.p2pNetworkService.showFppDialog(map).body()
+                        ?.get("show_fpp_dialog") ?: EMPTY
+                    fppDialogShow.postValue(resp)
+                }
             }
-       }
+        }catch (ex:Exception){
+            ex.printStackTrace()
+        }
     }
 }
