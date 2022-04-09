@@ -281,14 +281,6 @@
             app:constraint_referenced_ids="btn_mute,btn_speaker,txt_speaker,txt_mute,topic_name,topic_header,c_image"
             tools:visibility="visible" />
 
-        <FrameLayout
-            android:id="@+id/placeholder_bg"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#AA000000"
-            android:visibility="gone"
-            tools:visibility="gone" />
-
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline4"
             android:layout_width="wrap_content"

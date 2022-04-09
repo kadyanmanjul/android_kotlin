@@ -57,10 +57,10 @@ class VoiceCallViewModel : BaseViewModel() {
     private val callBar = CallBar()
     val isSpeakerOn = ObservableBoolean(false)
     val isMute = ObservableBoolean(false)
-    val callStatus = ObservableInt(getCallStatus())
     val callType = ObservableField("")
-    val callStatusTest = ObservableField("Timer")
-    val callData = HashMap<String, Any>()
+    val callStatusTest = ObservableField("Connecting...")
+    val callStatus = ObservableInt(getCallStatus())
+    val callData = HashMap<String,Any>()
 
     init {
         listenUIState()
@@ -69,10 +69,11 @@ class VoiceCallViewModel : BaseViewModel() {
 
     private fun getCallStatus() : Int {
         val status = VoipPref.getVoipState()
-        return if(status == CONNECTED)
+        return if (status == CONNECTED) {
             ONGOING
-        else
+        } else {
             CONNECTING
+        }
     }
 
     private fun listenRepositoryEvents() {
@@ -123,7 +124,8 @@ class VoiceCallViewModel : BaseViewModel() {
                     callStatusTest.set("User Muted the Call")
                     voipLog?.log("Mute")
                 } else {
-                    callStatusTest.set("Timer")
+                    if(VoipPref.getVoipState()== CONNECTED)
+                       callStatusTest.set("Timer")
                 }
 
                 if(uiState.isSpeakerOn) {
