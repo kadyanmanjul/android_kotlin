@@ -42,6 +42,9 @@ import com.bumptech.glide.request.RequestOptions
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
+import com.joshtalks.joshskills.constants.COURSE_LIST_DATA
+import com.joshtalks.joshskills.constants.MY_GROUP_LIST_DATA
+import com.joshtalks.joshskills.constants.ON_BACK_PRESS_PROFILE
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
@@ -71,9 +74,6 @@ import com.joshtalks.joshskills.ui.userprofile.fragments.MyGroupsFragment
 import com.joshtalks.joshskills.ui.userprofile.fragments.UserPicChooserFragment
 import com.joshtalks.joshskills.ui.userprofile.models.*
 import com.joshtalks.joshskills.ui.userprofile.utils.MY_GROUP
-import com.joshtalks.joshskills.ui.userprofile.utils.ON_BACK_PRESS
-import com.joshtalks.joshskills.ui.userprofile.utils.COURSE_LIST_DATA
-import com.joshtalks.joshskills.ui.userprofile.utils.MY_GROUP_LIST_DATA
 import com.joshtalks.joshskills.ui.userprofile.utils.USER_PROFILE_BACK_STACK
 import com.joshtalks.joshskills.ui.userprofile.utils.COURSE
 import com.joshtalks.joshskills.ui.userprofile.viewmodel.UserProfileViewModel
@@ -1285,7 +1285,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
 
         liveData.observe(this) {
             when (it.what) {
-                ON_BACK_PRESS -> {
+                ON_BACK_PRESS_PROFILE -> {
                     popBackStack()
                 }
                 COURSE_LIST_DATA -> {

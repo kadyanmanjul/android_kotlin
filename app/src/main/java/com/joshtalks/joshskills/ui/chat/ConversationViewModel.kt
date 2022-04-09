@@ -5,9 +5,10 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.os.Message
-import android.util.Log
 import androidx.lifecycle.*
 import com.joshtalks.joshskills.base.EventLiveData
+import com.joshtalks.joshskills.constants.COURSE_RESTART_FAILURE
+import com.joshtalks.joshskills.constants.COURSE_RESTART_SUCCESS
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
 import com.joshtalks.joshskills.core.custom_ui.recorder.AudioRecording
@@ -29,7 +30,6 @@ import com.joshtalks.joshskills.repository.service.NetworkRequestHelper
 import com.joshtalks.joshskills.repository.service.SyncChatService
 import com.joshtalks.joshskills.ui.fpp.model.PendingRequestResponse
 import com.joshtalks.joshskills.ui.group.repository.ABTestRepository
-import com.joshtalks.joshskills.util.showAppropriateMsg
 import id.zelory.compressor.Compressor
 import java.io.File
 import java.util.*

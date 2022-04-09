@@ -13,7 +13,10 @@ import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
+import com.joshtalks.joshskills.constants.COURSE_LIST_DATA
 import com.joshtalks.joshskills.constants.INVITE_FRIENDS_METHOD
+import com.joshtalks.joshskills.constants.MY_GROUP_LIST_DATA
+import com.joshtalks.joshskills.constants.ON_BACK_PRESS_PROFILE
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.ApiCallStatus
@@ -54,9 +57,6 @@ import com.joshtalks.joshskills.ui.userprofile.models.CourseEnrolled
 import com.joshtalks.joshskills.ui.userprofile.models.GroupInfo
 import com.joshtalks.joshskills.ui.userprofile.repository.ShareFromProfileRepository
 import com.joshtalks.joshskills.ui.userprofile.repository.UserProfileRepo
-import com.joshtalks.joshskills.ui.userprofile.utils.COURSE_LIST_DATA
-import com.joshtalks.joshskills.ui.userprofile.utils.MY_GROUP_LIST_DATA
-import com.joshtalks.joshskills.ui.userprofile.utils.ON_BACK_PRESS
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import id.zelory.compressor.Compressor
 import io.branch.indexing.BranchUniversalObject
@@ -626,7 +626,7 @@ val url = responseObj.url.plus(File.separator).plus(responseObj.fields["key"])
     }
 
     fun onBackPress(view: View) {
-        message.what = ON_BACK_PRESS
+        message.what = ON_BACK_PRESS_PROFILE
         singleLiveEvent.value = message
     }
 
