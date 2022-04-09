@@ -20,7 +20,7 @@ const val INTENT_DATA_INCOMING_CALL_ID = "josh_intent_data_incoming_call_id"
 const val SERVICE_ACTION_STOP_SERVICE = "josh_service_action_stop_service"
 const val SERVICE_ACTION_MAIN_PROCESS_IN_BACKGROUND = "josh_service_action_main_process_in_background"
 const val SERVICE_ACTION_DISCONNECT_CALL = "josh_service_action_disconnect_call"
-const val SERVICE_ACTION_SAVE_CURRENT_STATE = "josh_service_action_save_current_state"
+const val SERVICE_ACTION_INCOMING_CALL_DECLINE = "josh_service_action_incoming_call_decline"
 
 // Content Provider UI
 const val CONTENT_URI = "content://com.joshtalks.joshskills.contentprovider"
@@ -39,6 +39,7 @@ const val API_HEADER = "/api_header"
 // Content Values
 const val VOIP_STATE = "josh_voip_state"
 const val CALL_START_TIME = "josh_call_start_time"
+const val CALL_DURATION = "josh_call_duration"
 const val REMOTE_USER_NAME = "josh_remote_user_name"
 const val REMOTE_USER_IMAGE = "josh_remote_user_image"
 const val REMOTE_USER_AGORA_ID = "josh_remote_user_agora_id"

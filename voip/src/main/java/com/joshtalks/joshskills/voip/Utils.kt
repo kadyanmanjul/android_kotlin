@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import com.joshtalks.joshskills.base.constants.CALL_DISCONNECTED_URI
+import com.joshtalks.joshskills.base.constants.CALL_DURATION
 import com.joshtalks.joshskills.base.constants.CALL_ID
 import com.joshtalks.joshskills.base.constants.CALL_START_TIME
 import com.joshtalks.joshskills.base.constants.CALL_TYPE
@@ -27,6 +28,7 @@ import com.joshtalks.joshskills.base.constants.REMOTE_USER_IMAGE
 import com.joshtalks.joshskills.base.constants.REMOTE_USER_NAME
 import com.joshtalks.joshskills.base.constants.RESET_CURRENT_CALL_STATE_URI
 import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_DISCONNECT_CALL
+import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_INCOMING_CALL_DECLINE
 import com.joshtalks.joshskills.base.constants.START_CALL_TIME_COLUMN
 import com.joshtalks.joshskills.base.constants.START_CALL_TIME_URI
 import com.joshtalks.joshskills.base.constants.TOPIC_NAME
@@ -36,6 +38,7 @@ import com.joshtalks.joshskills.base.model.ApiHeader
 import com.joshtalks.joshskills.voip.calldetails.IncomingCallData
 import com.joshtalks.joshskills.voip.data.CallingRemoteService
 import com.joshtalks.joshskills.voip.log.JoshLog
+import java.time.Duration
 
 // TODO: Must Refactor
 val voipLog = JoshLog.getInstanceIfEnable(com.joshtalks.joshskills.voip.log.Feature.VOIP)
@@ -136,10 +139,10 @@ fun Context.getStartCallTime(): Long {
     return startTime ?: 0L
 }
 
-fun Context.updateLastCallDetails() {
+fun Context.updateLastCallDetails(duration: Long) {
     voipLog?.log("QUERY")
     val values = ContentValues(1).apply {
-        put(CALL_START_TIME, 0L)
+        put(CALL_DURATION, duration)
     }
     val data = contentResolver.insert(
         Uri.parse(CONTENT_URI + CALL_DISCONNECTED_URI),
@@ -205,6 +208,19 @@ fun Context.getHangUpIntent(): PendingIntent {
     return PendingIntent.getService(
         Utils.context,
         1103,
+        intent,
+        PendingIntent.FLAG_CANCEL_CURRENT
+    )
+}
+
+fun getDeclineCallIntent(): PendingIntent {
+    val intent = Intent(Utils.context, CallingRemoteService::class.java).apply {
+        action = SERVICE_ACTION_INCOMING_CALL_DECLINE
+    }
+
+    return PendingIntent.getService(
+        Utils.context,
+        1104,
         intent,
         PendingIntent.FLAG_CANCEL_CURRENT
     )
