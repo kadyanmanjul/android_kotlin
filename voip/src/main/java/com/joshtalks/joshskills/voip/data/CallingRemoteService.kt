@@ -75,6 +75,7 @@ private const val TAG = "CallingRemoteService"
 const val SERVICE_ALONE_LIFE_TIME = 1 * 60 * 1000L
 
 class CallingRemoteService : Service() {
+    private var isServiceInitialize = false
     private val coroutineExceptionHandler = CoroutineExceptionHandler { _, e ->
         Timber.tag("Coroutine Exception").d("Handled...")
         e.printStackTrace()
@@ -133,12 +134,23 @@ class CallingRemoteService : Service() {
             mediator.hideIncomingCall()
             return START_NOT_STICKY
         }
+        return if(isServiceInitialize)
+            START_STICKY
+        else
+            intent.initService()
+    }
 
-        Utils.apiHeader = intent?.getParcelableExtra(INTENT_DATA_API_HEADER)
-        Utils.uuid = intent?.getStringExtra(INTENT_DATA_MENTOR_ID)
+    private fun Intent?.initService() : Int {
+        Utils.apiHeader = this?.getParcelableExtra(INTENT_DATA_API_HEADER)
+        Utils.uuid = this?.getStringExtra(INTENT_DATA_MENTOR_ID)
         voipLog?.log("API Header --> ${Utils.apiHeader}")
         voipLog?.log("Mentor Id --> ${Utils.uuid}")
         // TODO: Refactor Code {Maybe use Content Provider}
+        observeMediatorEvents()
+        return START_REDELIVER_INTENT
+    }
+
+    private fun observeMediatorEvents() {
         if (isMediatorInitialise.not()) {
             isMediatorInitialise = true
             ioScope.launch {
@@ -194,7 +206,6 @@ class CallingRemoteService : Service() {
                 }
             }
         }
-        return START_REDELIVER_INTENT
     }
 
     override fun onBind(intent: Intent?): IBinder? {
@@ -394,7 +405,7 @@ class TestNotification : NotificationData {
     }
 
     override fun setContent(): String {
-        return "Enjoy P2P Call"
+        return "Quickly Learn English"
     }
 
     override fun setTapAction(): PendingIntent? {

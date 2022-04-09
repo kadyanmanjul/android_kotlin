@@ -260,7 +260,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
 
     private fun showIncomingNotification(incomingCall : IncomingCall) {
         val remoteView = calling.notificationLayout(incomingCall) ?: return // TODO: might throw error
-        voipNotification = VoipNotification(remoteView,NotificationPriority.High)
+        voipNotification = VoipNotification(remoteView , NotificationPriority.High)
         voipNotification.show()
         soundManager.playSound()
         scope.launch {

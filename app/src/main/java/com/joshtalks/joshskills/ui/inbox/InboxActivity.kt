@@ -10,12 +10,16 @@ import android.view.View
 import android.view.View.GONE
 import androidx.appcompat.widget.PopupMenu
 import androidx.lifecycle.*
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.base.constants.CALLING_SERVICE_ACTION
 import com.joshtalks.joshskills.base.constants.PREF_KEY_MAIN_PROCESS_PID
 import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_MAIN_PROCESS_IN_BACKGROUND
+import com.joshtalks.joshskills.base.constants.SERVICE_BROADCAST_KEY
+import com.joshtalks.joshskills.base.constants.START_SERVICE
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
@@ -199,9 +203,19 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         var haveFreeTrialCourse = false
         lifecycleScope.launch(Dispatchers.Default) {
             val temp: ArrayList<InboxEntity> = arrayListOf()
+            var isServiceStarted = false
             items.filter { it.isCapsuleCourse }.sortedByDescending { it.courseCreatedDate }
                 .let { courseList ->
                     courseList.forEach { inboxEntity ->
+                        // User is Free Trail
+                        if(isServiceStarted.not()) {
+                            isServiceStarted = true
+                            val broadcastIntent=Intent().apply {
+                                action = CALLING_SERVICE_ACTION
+                                putExtra(SERVICE_BROADCAST_KEY, START_SERVICE)
+                            }
+                            LocalBroadcastManager.getInstance(this@InboxActivity).sendBroadcast(broadcastIntent)
+                        }
                         if (inboxEntity.isCourseBought.not()) {
                             haveFreeTrialCourse = true
                         }

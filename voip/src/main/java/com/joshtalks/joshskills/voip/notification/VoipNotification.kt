@@ -27,14 +27,14 @@ class VoipNotification : NotificationInterface {
     }
 
     private fun buildNotification() {
-        if(remoteView!=null){
+        if(remoteView != null) {
             notificationBuiltObj = notificationHelper.initiateNotification(
                 notificationData = null,
                 remoteView = remoteView,
                 notificationPriority = notificationPriority
             )
             ifRemoteView = true
-        }else{
+        } else {
             notificationBuiltObj = notificationHelper.initiateNotification(
                 notificationData = notificationData,
                 remoteView = null,

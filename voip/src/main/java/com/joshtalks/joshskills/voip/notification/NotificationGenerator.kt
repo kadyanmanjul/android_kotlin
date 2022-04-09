@@ -17,6 +17,9 @@ import com.joshtalks.joshskills.voip.Utils
 internal class NotificationGenerator {
     private lateinit var notificationBuilder : NotificationCompat.Builder
     private val context: Application?= Utils.context
+    private val notificationManager by lazy {
+        context?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    }
 
     init {
         createNotificationChannel()
@@ -37,18 +40,18 @@ internal class NotificationGenerator {
                 enableLights(true)
                 enableVibration(true)
                 setShowBadge(true)
+                setBypassDnd(true)
                 lockscreenVisibility = Notification.VISIBILITY_PUBLIC
             }
-            val notificationManager: NotificationManager =
-                context?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
             notificationManager.createNotificationChannel(channel)
 
             //           creating channel for normal
-            val name1 = context.getString(R.string.channel_name_normal)
-            val descriptionText1 = context.getString(R.string.channel_others_description)
-            val importance1 = NotificationManager.IMPORTANCE_DEFAULT
+            val name1 = context?.getString(R.string.channel_name_normal)
+            val descriptionText1 = context?.getString(R.string.channel_others_description)
+            val importance1 = NotificationManager.IMPORTANCE_MIN
             val channel1 = NotificationChannel(
-                context.getString(R.string.CHANNEL_ID_OTHERS),
+                context?.getString(R.string.CHANNEL_ID_OTHERS),
                 name1,
                 importance1
             ).apply {
@@ -56,12 +59,8 @@ internal class NotificationGenerator {
                 setSound(null, null)
                 enableVibration(false)
                 enableLights(false)
-                setBypassDnd(true)
-                lockscreenVisibility = Notification.VISIBILITY_PUBLIC
             }
-            val notificationManager1: NotificationManager =
-                context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager1.createNotificationChannel(channel1)
+            notificationManager.createNotificationChannel(channel1)
         }
     }
 
@@ -80,8 +79,8 @@ internal class NotificationGenerator {
         }
         val pendingIntent=PendingIntent.getActivity(context,(System.currentTimeMillis() and 0xfffffff).toInt(),callingActivity, PendingIntent.FLAG_UPDATE_CURRENT)
 
-        when(notificationPriority){
-            NotificationPriority.High->{
+        when(notificationPriority) {
+            NotificationPriority.High-> {
                 notificationBuilder =
                     NotificationCompat.Builder(
                         context!!,
@@ -97,17 +96,12 @@ internal class NotificationGenerator {
                         .setAutoCancel(false)
                         .setShowWhen(false)
             }
-            NotificationPriority.Low->{
+            NotificationPriority.Low-> {
                 notificationBuilder =
-                    NotificationCompat.Builder(
-                        context!!,
-                        context.getString(R.string.CHANNEL_ID_OTHERS)
-                    )
-                        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                        .setCategory(NotificationCompat.CATEGORY_MISSED_CALL)
-                        .setDefaults(NotificationCompat.FLAG_SHOW_LIGHTS)
+                    NotificationCompat.Builder(context!!,
+                        context.getString(R.string.CHANNEL_ID_OTHERS))
+                        .setPriority(NotificationCompat.PRIORITY_MIN)
                         .setOngoing(false)
-                        .setAutoCancel(true)
                         .setShowWhen(true)
             }
         }
@@ -146,7 +140,14 @@ internal class NotificationGenerator {
         notificationPriority:NotificationPriority
     ): NotificationBuiltObj {
         val notificationId = System.currentTimeMillis().toInt()
-        return NotificationBuiltObj(notificationId,getNotificationBuiltObj(remoteView = remoteView,notificationObj = notificationData,notificationPriority=notificationPriority))
+        return NotificationBuiltObj(
+            notificationId,
+            getNotificationBuiltObj(
+                remoteView = remoteView,
+                notificationObj = notificationData,
+                notificationPriority=notificationPriority
+            )
+        )
     }
 
     fun removeNotification(notificationId: Int) {
@@ -155,12 +156,12 @@ internal class NotificationGenerator {
         notificationManager.cancel(notificationId)
     }
 
-    fun updateTitle(title:String,notificationBuiltObj: NotificationBuiltObj){
+    fun updateTitle(title:String,notificationBuiltObj: NotificationBuiltObj) {
         notificationBuiltObj.notificationBuilder.setContentTitle(title)
         NotificationManagerCompat.from(context!!).notify(notificationBuiltObj.id, notificationBuiltObj.notificationBuilder.build())
     }
 
-    fun updateContent(content:String,notificationBuiltObj: NotificationBuiltObj){
+    fun updateContent(content:String,notificationBuiltObj: NotificationBuiltObj) {
         notificationBuiltObj.notificationBuilder.setContentText(content)
         NotificationManagerCompat.from(context!!).notify(notificationBuiltObj.id, notificationBuiltObj.notificationBuilder.build())
     }
