@@ -13,7 +13,7 @@ import java.util.HashMap
 
 class FeedbackViewModel : BaseViewModel() {
 
-    var responseLiveData = MutableLiveData<Response<KFactor>>()
+    var responseLiveData = MutableLiveData<Response<KFactor>?>()
 
     fun getProfileImage():String {
        return VoipPref.getProfileImage()
@@ -25,7 +25,6 @@ class FeedbackViewModel : BaseViewModel() {
         val mTime = StringBuilder()
         var second = VoipPref.getLastCallDurationInSec()
         val minute = getDurationInMin()
-        Log.d("naman", "getCallDurationString 3 $minute  $second  ")
         if (minute > 0) {
             mTime.append(minute).append(getMinuteString(minute))
         }
@@ -37,14 +36,12 @@ class FeedbackViewModel : BaseViewModel() {
                 mTime.append(second).append(getSecondString(second))
             }
         }
-        Log.d("naman", "getCallDurationString 2:${mTime.toString()} ")
         return mTime.toString()
     }
 
     fun getDurationInMin(): Int {
         val second = VoipPref.getLastCallDurationInSec()
         val min = (second % 3600) / 60
-        Log.d("naman", "getCallDurationString 1:${min.toInt()} ")
         return min.toInt()
     }
 
@@ -62,8 +59,8 @@ class FeedbackViewModel : BaseViewModel() {
         return " second "
     }
 
-    fun closeDialog(function: (() -> Unit)?){
-        function?.invoke()
+    fun closeDialog(){
+        responseLiveData.postValue(null)
     }
 
     fun submitFeedback(response: String) {
@@ -80,6 +77,7 @@ class FeedbackViewModel : BaseViewModel() {
                     delay(250)
                 } catch (ex: Throwable) {
                     ex.printStackTrace()
+                    responseLiveData.postValue(null)
                 }
             }
         }
