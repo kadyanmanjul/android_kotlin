@@ -113,7 +113,7 @@ internal class NotificationGenerator {
         }
 
         notificationBuilder
-            .setSmallIcon(android.R.drawable.ic_btn_speak_now)
+            .setSmallIcon(R.drawable.ic_status_bar_notification)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setDefaults(NotificationCompat.DEFAULT_VIBRATE)
             .setDefaults(NotificationCompat.DEFAULT_SOUND)

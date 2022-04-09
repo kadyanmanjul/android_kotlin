@@ -121,6 +121,7 @@ class CallingRemoteService : Service() {
         val hungUpCall = (intent?.action == SERVICE_ACTION_DISCONNECT_CALL)
         Log.d(TAG, "onStartCommand: SERVICE_ACTION_DISCONNECT_CALL --> $hungUpCall")
         if (hungUpCall) {
+            Log.d(TAG, "onStartCommand: hungUpCall")
             disconnectCall()
             return START_NOT_STICKY
         }
@@ -153,6 +154,7 @@ class CallingRemoteService : Service() {
                             )
                         }
                         CALL_DISCONNECT_REQUEST -> {
+                            Log.d(TAG, "onStartCommand: CALL_DISCONNECT_REQUEST")
                             notification.idle()
                             resetCallUIState()
                             updateLastCallDetails()
@@ -269,6 +271,7 @@ class CallingRemoteService : Service() {
                             voipLog?.log("Mediator is NULL")
                     }
                     CALL_DISCONNECT_REQUEST -> {
+                        Log.d(TAG, "observeHandlerEvents: CALL_DISCONNECT_REQUEST")
                         voipLog?.log("Disconnect Call")
                         disconnectCall()
                     }
@@ -294,6 +297,7 @@ class CallingRemoteService : Service() {
         }
     }
 
+
     private fun disconnectCall() {
         Log.d(TAG, "disconnectCall: ")
         val networkAction = NetworkAction(
@@ -304,6 +308,7 @@ class CallingRemoteService : Service() {
         )
         notification.idle()
         resetCallUIState()
+        Log.d(TAG, "disconnectCall: disconnectCall")
         updateLastCallDetails()
         mediator.sendEventToServer(networkAction)
         mediator.disconnectCall()

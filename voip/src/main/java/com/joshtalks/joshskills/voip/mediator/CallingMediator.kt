@@ -105,6 +105,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                         voipNotification.removeNotification()
                         stopAudio()
                     }
+                    stopUserNotFoundTimer()
                     startUserNotFoundTimer()
                     calling.onPreCallConnect(callData)
                 } catch (e: Exception) {
@@ -163,6 +164,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
 
     override fun disconnectCall() {
         voipLog?.log("Disconnect Call")
+        stopUserNotFoundTimer()
         callingService.disconnectCall()
     }
 

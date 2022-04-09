@@ -5,9 +5,13 @@ import android.util.Log
 import android.view.View
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
+import androidx.databinding.ObservableInt
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseViewModel
+import com.joshtalks.joshskills.base.constants.FPP
+import com.joshtalks.joshskills.base.constants.GROUP
+import com.joshtalks.joshskills.base.constants.PEER_TO_PEER
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.TAG
 import com.joshtalks.joshskills.core.showToast
@@ -20,6 +24,7 @@ import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity
 import com.joshtalks.joshskills.voip.constant.CALL_CONNECTED_EVENT
 import com.joshtalks.joshskills.voip.constant.CALL_DISCONNECT_REQUEST
 import com.joshtalks.joshskills.voip.constant.CALL_INITIATED_EVENT
+import com.joshtalks.joshskills.voip.constant.CONNECTED
 import com.joshtalks.joshskills.voip.constant.ERROR
 import com.joshtalks.joshskills.voip.constant.HOLD
 import com.joshtalks.joshskills.voip.constant.IDLE
@@ -41,6 +46,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
+const val CONNECTING = 1
+const val ONGOING = 2
+
 
 class VoiceCallViewModel : BaseViewModel() {
     private var isConnectionRequestSent = false
@@ -49,7 +57,7 @@ class VoiceCallViewModel : BaseViewModel() {
     private val callBar = CallBar()
     val isSpeakerOn = ObservableBoolean(false)
     val isMute = ObservableBoolean(false)
-    val callStatus = ObservableField("show_progress_bar")
+    val callStatus = ObservableInt(getCallStatus())
     val callType = ObservableField("")
     val callStatusTest = ObservableField("Timer")
     val callData = HashMap<String, Any>()
@@ -57,6 +65,14 @@ class VoiceCallViewModel : BaseViewModel() {
     init {
         listenUIState()
         listenRepositoryEvents()
+    }
+
+    private fun getCallStatus() : Int {
+        val status = VoipPref.getVoipState()
+        return if(status == CONNECTED)
+            ONGOING
+        else
+            CONNECTING
     }
 
     private fun listenRepositoryEvents() {
@@ -70,25 +86,9 @@ class VoiceCallViewModel : BaseViewModel() {
                     }
                     CALL_CONNECTED_EVENT -> {
                         callStatusTest.set("Timer")
-                        callStatus.set("outgoing")
+                        callStatus.set(ONGOING)
                         voipLog?.log("CALL_CONNECTED_EVENT")
                     }
-//                    HOLD -> {
-//                        callStatusTest.set("Call on Hold")
-//                        voipLog?.log("HOLD")
-//                    }
-//                    UNHOLD -> {
-//                        callStatusTest.set("Timer")
-//                        voipLog?.log("UNHOLD")
-//                    }
-//                    MUTE -> {
-//                        callStatusTest.set("User Muted the Call")
-//                        voipLog?.log("Mute")
-//                    }
-//                    UNMUTE -> {
-//                        callStatusTest.set("Timer")
-//                        voipLog?.log("UNMUTE")
-//                    }
                     RECONNECTING -> {
                         callStatusTest.set("Reconnecting")
                         voipLog?.log("RECONNECTING")
@@ -104,12 +104,6 @@ class VoiceCallViewModel : BaseViewModel() {
                     IPC_CONNECTION_ESTABLISHED -> {
                         connectCall()
                     }
-//                    SWITCHED_TO_SPEAKER -> {
-//                        showToast("Speaker is ON")
-//                    }
-//                    SWITCHED_TO_WIRED, SWITCHED_TO_BLUETOOTH, SWITCHED_TO_HANDSET -> {
-//                        showToast("Speaker is Off")
-//                    }
                 }
                 withContext(Dispatchers.Main) {
                     singleLiveEvent.value = message
@@ -169,6 +163,7 @@ class VoiceCallViewModel : BaseViewModel() {
     }
 
     fun disconnect() {
+        Log.d(TAG, "disconnect: ")
         repository.disconnectCall()
     }
 
@@ -188,11 +183,6 @@ class VoiceCallViewModel : BaseViewModel() {
 
     fun switchMic(v: View) {
         VoipPref.currentUserMuteState(isMute.get().not())
-    }
-
-    fun observeCallStatus(v: View) {
-//        observe data and publsih status
-        callStatus.set("ongoing")
     }
 
     fun getCallData(): CallData {
@@ -219,18 +209,9 @@ object CallDataObj : CallData {
 
     override fun getCallTypeHeader(): String {
         return when(VoipPref.getCallType()) {
-            1 -> {
-    //                 Normal Call
-                "Practice with Partner"
-            }
-            2 -> {
-    //                 FPP
-                "Favorite Practice Partner"
-            }
-            3 -> {
-    //                 Group Call
-                "Group Call"
-            }
+            PEER_TO_PEER -> "Practice with Partner"
+            FPP -> "Favorite Practice Partner"
+            GROUP -> "Group Call"
             else -> ""
         }
     }

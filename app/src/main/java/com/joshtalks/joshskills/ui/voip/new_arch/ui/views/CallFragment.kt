@@ -104,7 +104,6 @@ class CallFragment : BaseFragment() {
     private fun startIncomingTimer() {
         stopAnimation()
         isAnimationCancled = false
-//        setIncomingText()
         var counter = 35
         progressAnimator.addListener(object : Animator.AnimatorListener {
             override fun onAnimationStart(animation: Animator?) {}
@@ -118,7 +117,7 @@ class CallFragment : BaseFragment() {
                 }
 
                 if (counter <= 0) {
-//                     TODO:TO FINISH ACTIVITY
+                    vm.disconnect()
                 }
             }
             override fun onAnimationCancel(animation: Animator?) {

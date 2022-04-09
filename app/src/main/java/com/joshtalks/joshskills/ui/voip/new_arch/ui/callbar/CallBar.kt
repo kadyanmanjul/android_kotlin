@@ -23,6 +23,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.withContext
 
 /**
  * Require DataBinding in targeted xml with following instruction ->
@@ -40,6 +42,10 @@ class VoipPref {
 
     companion object {
         lateinit var preferenceManager: SharedPreferences
+        val coroutineExceptionHandler = CoroutineExceptionHandler{_ , e ->
+            e.printStackTrace()
+        }
+        val scope = CoroutineScope(Dispatchers.IO + coroutineExceptionHandler)
 
         @Synchronized
         fun initVoipPref(context: Context) {
@@ -152,45 +158,47 @@ class VoipPref {
                     PREF_KEY_CURRENT_CHANNEL_NAME, ""
                 )
             )
+
+            val currentCallStartTime = preferenceManager.getLong(PREF_KEY_CURRENT_CALL_START_TIME, 0L).toInt()
+            val currentTime = SystemClock.elapsedRealtime()
+            val totalSecond = TimeUnit.MILLISECONDS.toSeconds(currentTime - currentCallStartTime)
+            Log.d(TAG, "updateLastCallDetails: $totalSecond")
+            editor.putLong(PREF_KEY_LAST_CALL_DURATION,totalSecond)
             editor.apply()
 
-            if(preferenceManager.getLong(PREF_KEY_CURRENT_CALL_START_TIME, 0L).toInt() != 0){
-                showDialogBox()
+            if( currentCallStartTime != 0) {
+                showDialogBox(totalSecond)
             }
         }
 
-        private fun showDialogBox() {
+        private fun showDialogBox(totalSecond: Long) {
             val currentActivity = ActivityLifecycleCallback.currentActivity
             val voiceCallClassName= "com.joshtalks.joshskills."+currentActivity.localClassName
-            val fragmentActivity = currentActivity as FragmentActivity
+            val fragmentActivity = currentActivity as? FragmentActivity
             if(currentActivity!=null) {
                 if (voiceCallClassName != "com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity") {
-                    getDuration(fragmentActivity)
+                    fragmentActivity?.showVoipDialog(totalSecond)
                 } else {
-                    CoroutineScope(Dispatchers.IO).launch {
+                    scope.launch {
                         delay(1000)
                         val newCurrentActivity = ActivityLifecycleCallback.currentActivity
-                        val newFragmentActivity = newCurrentActivity as FragmentActivity
-                        getDuration(newFragmentActivity)
+                        val newFragmentActivity = newCurrentActivity as? FragmentActivity
+                        withContext(Dispatchers.Main) {
+                            newFragmentActivity?.showVoipDialog(totalSecond)
+                        }
                     }
                 }
             }
         }
 
-        fun getDuration(fragmentActivity: FragmentActivity) {
-            val startTime =   getLastCallStartTime()
-            val currentTime = SystemClock.elapsedRealtime()
-            val totalSecond = TimeUnit.MILLISECONDS.toSeconds(currentTime - startTime).toInt()
-            val editor=preferenceManager.edit()
-            editor.putInt(PREF_KEY_LAST_CALL_DURATION,totalSecond)
-            editor.apply()
-
-            if(totalSecond < 120 && PrefManager.getBoolValue(IS_COURSE_BOUGHT) ){
-                showReportDialog(fragmentActivity)
+        private fun FragmentActivity.showVoipDialog(totalSecond : Long) {
+            if(totalSecond < 120L && PrefManager.getBoolValue(IS_COURSE_BOUGHT) ){
+                showReportDialog(this)
             }else{
-                showFeedBackDialog(fragmentActivity)
+                showFeedBackDialog(this)
             }
         }
+
         private fun showReportDialog(fragmentActivity: FragmentActivity) {
 
             val function = fun(){
@@ -266,8 +274,10 @@ class VoipPref {
         fun getLastCallStartTime():Long{
             return preferenceManager.getLong(PREF_KEY_LAST_CALL_START_TIME,0L)
         }
-        fun getLastCallDurationInSec():Int{
-            return preferenceManager.getInt(PREF_KEY_LAST_CALL_DURATION,0)
+        fun getLastCallDurationInSec(): Long{
+            val duration = preferenceManager.getLong(PREF_KEY_LAST_CALL_DURATION,0)
+            Log.d(TAG, "getLastCallDurationInSec: $duration")
+            return duration
         }
         fun setListener(callTimeStampListener: CallTimeStampListener) {
             preferenceManager.registerOnSharedPreferenceChangeListener(callTimeStampListener)

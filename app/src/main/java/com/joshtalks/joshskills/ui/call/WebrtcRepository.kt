@@ -9,6 +9,7 @@ import android.os.IBinder
 import android.os.Message
 import android.os.Messenger
 import android.os.RemoteException
+import android.util.Log
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_API_HEADER
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_CONNECT_CALL
@@ -35,6 +36,8 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+
+private const val TAG = "WebrtcRepository"
 
 class WebrtcRepository {
     private var mService : Messenger? = null
@@ -116,6 +119,7 @@ class WebrtcRepository {
     }
 
     fun disconnectCall() {
+        Log.d(TAG, "disconnectCall: ")
         voipLog?.log("Disconnect call")
         val msg = Message().apply {
             what = CALL_DISCONNECT_REQUEST

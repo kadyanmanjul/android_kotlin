@@ -55,8 +55,8 @@ class FeedbackViewModel : BaseViewModel() {
         return " minute "
     }
 
-    private fun getSecondString(sec: Int): String {
-        if (sec > 1) {
+    private fun getSecondString(sec: Long): String {
+        if (sec > 1L) {
             return " seconds "
         }
         return " second "

@@ -22,23 +22,6 @@
         android:orientation="vertical">
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/call_status"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/_4sdp"
-            android:gravity="center"
-            tools:text="Call Ongoing"
-            android:text="@{vm.callStatus}"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Semi_Bold"
-            android:textColor="@color/white"
-            android:visibility="invisible"
-            app:layout_constraintBottom_toTopOf="@+id/tv_group_name"
-            app:layout_constraintEnd_toEndOf="@+id/tv_group_name"
-            app:layout_constraintStart_toStartOf="@+id/tv_group_name"
-            tools:ignore="MissingPrefix"
-            tools:visibility="invisible" />
-
-        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tv_group_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -286,7 +269,7 @@
             android:id="@+id/group_for_incoming"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="@{vm.callStatus ==`show_progress_bar` ? View.VISIBLE : View.INVISIBLE }"
+            android:visibility="@{vm.callStatus == 1 ? View.VISIBLE : View.INVISIBLE }"
             app:constraint_referenced_ids="incoming_timer_container"
             tools:visibility="invisible" />
 
@@ -294,7 +277,7 @@
             android:id="@+id/group_for_outgoing"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="@{vm.callStatus ==`outgoing` ? View.VISIBLE : View.INVISIBLE }"
+            android:visibility="@{vm.callStatus == 2 ? View.VISIBLE : View.INVISIBLE }"
             app:constraint_referenced_ids="btn_mute,btn_speaker,txt_speaker,txt_mute,topic_name,topic_header,c_image"
             tools:visibility="visible" />
 
