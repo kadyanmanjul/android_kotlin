@@ -80,7 +80,6 @@ class CallFragment : BaseFragment() {
         callBinding.callTime1.base = base
         callBinding.callTime1.start()
         progressAnimator.cancel()
-        callBinding.incomingProgress.visibility = View.INVISIBLE
         callBinding.executePendingBindings()
     }
 
@@ -105,12 +104,6 @@ class CallFragment : BaseFragment() {
     private fun startIncomingTimer() {
         stopAnimation()
         isAnimationCancled = false
-        callBinding.incomingTimerContainer.visibility = View.VISIBLE
-        callBinding.cImage.visibility = View.INVISIBLE
-        callBinding.topicName.visibility = View.INVISIBLE
-        callBinding.topicHeader.visibility = View.INVISIBLE
-        callBinding.callerName.visibility = View.INVISIBLE
-        callBinding.callStatus.visibility = View.INVISIBLE
 //        setIncomingText()
         var counter = 35
         progressAnimator.addListener(object : Animator.AnimatorListener {
@@ -144,14 +137,6 @@ class CallFragment : BaseFragment() {
         isAnimationCancled = true
         run{
             progressAnimator.cancel()
-            callBinding.incomingTimerContainer.visibility = View.INVISIBLE
-            callBinding.groupForOutgoing.visibility = View.VISIBLE
-            callBinding.cImage.visibility = View.VISIBLE
-            callBinding.topicName.visibility = View.VISIBLE
-            callBinding.topicHeader.visibility = View.VISIBLE
-            callBinding.callerName.visibility = View.VISIBLE
-            callBinding.callStatus.visibility = View.VISIBLE
-
         }
     }
 
