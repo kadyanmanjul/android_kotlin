@@ -33,7 +33,7 @@ object PubNubChannelService : EventChannel {
     }
 
     private var pubnub: PubNub? = null
-    private val channelName = Utils.uuid
+    //private val channelName = Utils.uuid
 
     private val eventFlow = MutableSharedFlow<Communication>(replay = 0)
 
@@ -65,7 +65,7 @@ object PubNubChannelService : EventChannel {
                         pubnub = PubNub(config)
                         pubnub?.addListener(pubNubData.callback)
                         pubnub?.subscribe()
-                            ?.channels(listOf(channelName))
+                            ?.channels(listOf(Utils.uuid))
                             ?.execute()
                         observeIncomingMessage()
                     }
@@ -84,7 +84,7 @@ object PubNubChannelService : EventChannel {
                 }
 
                 pubnub?.publish()
-                    ?.channel(channelName)
+                    ?.channel(Utils.uuid)
                     ?.message(message)
                     ?.ttl(0)
                     ?.usePOST(true)

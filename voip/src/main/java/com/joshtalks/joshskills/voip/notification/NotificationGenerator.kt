@@ -101,6 +101,7 @@ internal class NotificationGenerator {
                     NotificationCompat.Builder(context!!,
                         context.getString(R.string.CHANNEL_ID_OTHERS))
                         .setPriority(NotificationCompat.PRIORITY_MIN)
+                        .setOnlyAlertOnce(true)
                         .setOngoing(false)
                         .setShowWhen(true)
             }
@@ -173,6 +174,7 @@ internal class NotificationGenerator {
         notificationBuiltObj.notificationBuilder.setUsesChronometer(true)
         notificationBuiltObj.notificationBuilder.setWhen(System.currentTimeMillis())
         notificationBuiltObj.notificationBuilder.setShowWhen(true)
+        notificationBuiltObj.notificationBuilder.setOnlyAlertOnce(true)
         notificationBuiltObj.notificationBuilder.addAction(0, "Hang up", onNegativeAction)
         NotificationManagerCompat.from(context!!).notify(notificationBuiltObj.id, notificationBuiltObj.notificationBuilder.build())
     }
@@ -184,6 +186,7 @@ internal class NotificationGenerator {
         notificationBuiltObj.notificationBuilder.setContentIntent(null)
         notificationBuiltObj.notificationBuilder.setUsesChronometer(false)
         notificationBuiltObj.notificationBuilder.setShowWhen(false)
+        notificationBuiltObj.notificationBuilder.setOnlyAlertOnce(true)
         notificationBuiltObj.notificationBuilder.mActions.clear()
         NotificationManagerCompat.from(context!!).notify(notificationBuiltObj.id, notificationBuiltObj.notificationBuilder.build())
     }
