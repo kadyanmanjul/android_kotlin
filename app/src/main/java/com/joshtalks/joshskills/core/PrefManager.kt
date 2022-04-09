@@ -129,6 +129,7 @@ const val CURRENT_COURSE_ID = "course_id"
 const val DEFAULT_COURSE_ID = "151"
 const val PAID_COURSE_TEST_ID = "PAID_COURSE_TEST_ID"
 const val IS_FREE_TRIAL_CAMPAIGN_ACTIVE = "is_free_trial_campaign_active"
+const val IS_EFT_VARIENT_ENABLED = "is_eft_varient_enabled"
 
 object PrefManager {
 

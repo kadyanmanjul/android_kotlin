@@ -9,6 +9,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
+import com.joshtalks.joshskills.core.IS_EFT_VARIENT_ENABLED
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
@@ -20,6 +22,7 @@ class ChooseLanguageOnBoardFragment: BaseFragment() {
     private lateinit var binding: FragmentChooseLanguageOnboardBinding
     private var languageAdapter = ChooseLanguageAdapter()
     private var is100PointsActive = false
+    private var eftActive = false
     lateinit var language: ChooseLanguages
 
     val viewModel by lazy {
@@ -69,6 +72,12 @@ class ChooseLanguageOnBoardFragment: BaseFragment() {
                 languageAdapter.setData(it)
             }
         }
+        viewModel.eftABtestLiveData.observe(requireActivity()){ abTestCampaignData ->
+            abTestCampaignData?.let { map ->
+                eftActive =(map.variantKey == VariantKeys.EFT_ENABLED.NAME) && map.variableMap?.isEnabled == true
+                PrefManager.put(IS_EFT_VARIENT_ENABLED, eftActive)
+            }
+        }
         viewModel.points100ABtestLiveData.observe(requireActivity()) { map ->
             if (map != null) {
                 is100PointsActive =
@@ -99,7 +108,7 @@ class ChooseLanguageOnBoardFragment: BaseFragment() {
 
     fun initABTest(language: ChooseLanguages) {
         this.language = language
-        viewModel.get100PCampaignData(CampaignKeys.HUNDRED_POINTS.NAME)
+        viewModel.get100PCampaignData(CampaignKeys.HUNDRED_POINTS.NAME, CampaignKeys.EXTEND_FREE_TRIAL.name)
     }
 
     fun onBackPressed() {

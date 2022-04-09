@@ -37,11 +37,15 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
     var isVerified: Boolean = false
     var isUserExist: Boolean = false
     val points100ABtestLiveData = MutableLiveData<ABTestCampaignData?>()
+    val eftABtestLiveData = MutableLiveData<ABTestCampaignData?>()
 
     val repository: ABTestRepository by lazy { ABTestRepository() }
-    fun get100PCampaignData(campaign: String) {
+    fun get100PCampaignData(campaign: String, campaignEft: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try{
+                repository.getCampaignData(campaignEft)?.let { campaign ->
+                    eftABtestLiveData.postValue(campaign)
+                }
                 val response = repository.getCampaignData(campaign)
                 if(response != null ){
                     points100ABtestLiveData.postValue(response)

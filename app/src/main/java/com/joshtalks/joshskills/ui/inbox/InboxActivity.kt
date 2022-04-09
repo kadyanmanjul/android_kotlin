@@ -61,6 +61,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import com.joshtalks.joshskills.core.IS_FREE_TRIAL_CAMPAIGN_ACTIVE
+import com.joshtalks.joshskills.core.IS_EFT_VARIENT_ENABLED
 
 
 const val REGISTER_INFO_CODE = 2001
@@ -72,7 +73,6 @@ const val USER_DETAILS_CODE = 1001
 const val TRIAL_COURSE_ID = "76"
 const val SUBSCRIPTION_COURSE_ID = "60"
 const val IS_FROM_NEW_ONBOARDING = "is_from_new_on_boarding_flow"
-const val HINDI_TO_ENGLISH_COURSE_ID = "151"
 
 class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListener {
 
@@ -218,6 +218,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
             abTestCampaignData?.let { map ->
                 isExtendFreeTrialActive =
                     (map.variantKey == VariantKeys.EFT_ENABLED.name) && map.variableMap?.isEnabled == true
+                PrefManager.put(IS_EFT_VARIENT_ENABLED, isExtendFreeTrialActive)
             }
         }
     }
@@ -385,10 +386,8 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
 
     override fun onClick(inboxEntity: InboxEntity) {
         PrefManager.put(ONBOARDING_STAGE, OnBoardingStage.COURSE_OPENED.value)
-
-
-        if (isExtendFreeTrialActive && inboxEntity.isFreeTrialExtendable
-        ) {
+        val check = PrefManager.getBoolValue(IS_EFT_VARIENT_ENABLED)
+        if (check && inboxEntity.isFreeTrialExtendable) {
             PrefManager.put(IS_FREE_TRIAL_CAMPAIGN_ACTIVE, true)
             ExtendFreeTrialActivity.startExtendFreeTrialActivity(this, inboxEntity)
         } else {
