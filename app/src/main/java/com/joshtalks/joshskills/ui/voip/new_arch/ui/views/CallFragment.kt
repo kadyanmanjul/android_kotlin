@@ -124,7 +124,6 @@ class CallFragment : BaseFragment() {
                 if (textAnimator.isStarted && textAnimator.isRunning)
                     textAnimator.cancel()
             }
-
             override fun onAnimationRepeat(animation: Animator?) {}
         })
         progressAnimator.start()
@@ -141,13 +140,12 @@ class CallFragment : BaseFragment() {
 
     override fun setArguments() {}
 
-    override fun onPause() {
+    override fun onResume() {
         if (callBinding.incomingTimerContainer.visibility == View.VISIBLE) {
-            isAnimationCancled = true
             CoroutineScope(Dispatchers.Main).launch{
-                progressAnimator.cancel()
+                progressAnimator.resume()
             }
         }
-        super.onPause()
+        super.onResume()
     }
 }
