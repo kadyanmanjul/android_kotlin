@@ -9,15 +9,18 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.preference.PreferenceManager
 import com.joshtalks.joshskills.base.constants.*
+import com.joshtalks.joshskills.base.model.VoipUIState
+import com.joshtalks.joshskills.voip.constant.IDLE
 import com.joshtalks.joshskills.core.ActivityLifecycleCallback
 import com.joshtalks.joshskills.core.IS_COURSE_BOUGHT
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.feedback.FeedbackDialogFragment
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.report.ReportDialogFragment
-import com.joshtalks.joshskills.voip.constant.IDLE
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
 
@@ -68,6 +71,43 @@ class VoipPref {
             editor.apply()
         }
 
+        fun resetCurrentCallState() {
+            val editor = preferenceManager.edit()
+            editor.putBoolean(PREF_KEY_CURRENT_USER_ON_MUTE, false)
+            editor.putBoolean(PREF_KEY_CURRENT_USER_ON_HOLD, false)
+            editor.putBoolean(PREF_KEY_CURRENT_USER_SPEAKER_ON, false)
+            editor.putBoolean(PREF_KEY_CURRENT_REMOTE_USER_ON_MUTE, false)
+            editor.apply()
+        }
+
+        fun currentUserMuteState(userOnMute: Boolean = false) {
+            Log.d(TAG, "currentUserMuteState: $userOnMute")
+            val editor = preferenceManager.edit()
+            editor.putBoolean(PREF_KEY_CURRENT_USER_ON_MUTE, userOnMute)
+            editor.apply()
+        }
+
+        fun currentUserHoldState(userOnHold: Boolean = false) {
+            Log.d(TAG, "currentUserHoldState: $userOnHold")
+            val editor = preferenceManager.edit()
+            editor.putBoolean(PREF_KEY_CURRENT_USER_ON_HOLD, userOnHold)
+            editor.apply()
+        }
+
+        fun currentUserSpeakerState(userSpeakerOn: Boolean = false) {
+            Log.d(TAG, "currentUserSpeakerState: $userSpeakerOn")
+            val editor = preferenceManager.edit()
+            editor.putBoolean(PREF_KEY_CURRENT_USER_SPEAKER_ON, userSpeakerOn)
+            editor.apply()
+        }
+
+        fun currentRemoteUserMuteState(remoteUserOnMute: Boolean = false) {
+            Log.d(TAG, "currentRemoteUserMuteState: $remoteUserOnMute")
+            val editor = preferenceManager.edit()
+            editor.putBoolean(PREF_KEY_CURRENT_REMOTE_USER_ON_MUTE, remoteUserOnMute)
+            editor.apply()
+        }
+
         fun updateIncomingCallData(callId: Int, callType: Int) {
             val editor = preferenceManager.edit()
             editor.putInt(PREF_KEY_INCOMING_CALL_TYPE, callType)
@@ -113,8 +153,10 @@ class VoipPref {
                 )
             )
             editor.apply()
-            showDialogBox()
 
+            if(preferenceManager.getLong(PREF_KEY_CURRENT_CALL_START_TIME, 0L).toInt() != 0){
+                showDialogBox()
+            }
         }
 
         private fun showDialogBox() {
@@ -142,8 +184,6 @@ class VoipPref {
             val editor=preferenceManager.edit()
             editor.putInt(PREF_KEY_LAST_CALL_DURATION,totalSecond)
             editor.apply()
-
-            Log.d(TAG, "getDuration: $totalSecond")
 
             if(totalSecond < 120 && PrefManager.getBoolValue(IS_COURSE_BOUGHT) ){
                 showReportDialog(fragmentActivity)
@@ -175,6 +215,17 @@ class VoipPref {
 
         fun getVoipState(): Int {
             return preferenceManager.getInt(PREF_KEY_WEBRTC_CURRENT_STATE, IDLE)
+        }
+
+        fun getVoipUIState(): VoipUIState {
+            return VoipUIState(
+                isMute = preferenceManager.getBoolean(PREF_KEY_CURRENT_USER_ON_MUTE, false),
+                isSpeakerOn = preferenceManager.getBoolean(PREF_KEY_CURRENT_USER_SPEAKER_ON, false),
+                isOnHold = preferenceManager.getBoolean(PREF_KEY_CURRENT_USER_ON_HOLD, false),
+                isRemoteUserMuted = preferenceManager.getBoolean(
+                    PREF_KEY_CURRENT_REMOTE_USER_ON_MUTE, false
+                )
+            )
         }
 
         fun getStartTimeStamp(): Long {
@@ -238,9 +289,20 @@ class CallBar {
     fun observerVoipState(): LiveData<Int> {
         return prefListener.observerVoipState()
     }
+
+    fun observerVoipUIState(): StateFlow<VoipUIState> {
+        return prefListener.observerVoipUIState()
+    }
 }
 
 object CallTimeStampListener : SharedPreferences.OnSharedPreferenceChangeListener {
+    private val UI_STATE_UPDATED = setOf(
+        PREF_KEY_CURRENT_USER_ON_HOLD,
+        PREF_KEY_CURRENT_USER_ON_MUTE,
+        PREF_KEY_CURRENT_USER_SPEAKER_ON,
+        PREF_KEY_CURRENT_REMOTE_USER_ON_MUTE
+    )
+
     private val timerLiveData by lazy {
         MutableLiveData(checkTimestamp())
     }
@@ -249,8 +311,16 @@ object CallTimeStampListener : SharedPreferences.OnSharedPreferenceChangeListene
         MutableLiveData(checkVoipState())
     }
 
+    private val voipUIStateLiveData by lazy {
+        MutableStateFlow(checkUIState())
+    }
+
     fun observerVoipState(): LiveData<Int> {
         return voipStateLiveData
+    }
+
+    fun observerVoipUIState(): StateFlow<VoipUIState> {
+        return voipUIStateLiveData
     }
 
     fun observerStartTime(): LiveData<Long> {
@@ -261,7 +331,11 @@ object CallTimeStampListener : SharedPreferences.OnSharedPreferenceChangeListene
         Log.d(TAG, "onSharedPreferenceChanged: $key")
         when (key) {
             PREF_KEY_CURRENT_CALL_START_TIME -> timerLiveData.value = checkTimestamp()
-            PREF_KEY_WEBRTC_CURRENT_STATE -> voipStateLiveData.postValue(checkVoipState())
+            PREF_KEY_WEBRTC_CURRENT_STATE -> voipStateLiveData.value = checkVoipState()
+            in UI_STATE_UPDATED -> {
+                Log.d(TAG, "onSharedPreferenceChanged: $key")
+                voipUIStateLiveData.value = checkUIState()
+            }
         }
     }
 
@@ -272,6 +346,12 @@ object CallTimeStampListener : SharedPreferences.OnSharedPreferenceChangeListene
     private fun checkVoipState(): Int {
         val state = VoipPref.getVoipState()
         Log.d(TAG, "checkVoipState: $state")
+        return state
+    }
+
+    private fun checkUIState(): VoipUIState {
+        val state = VoipPref.getVoipUIState()
+        Log.d(TAG, "checkUIState: $state")
         return state
     }
 

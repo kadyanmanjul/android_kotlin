@@ -74,12 +74,8 @@ class ReportViewModel : BaseViewModel() {
             "BLOCK"->{
                 reportModel.value?.let { PrefManager.putPrefObject(BLOCK_ISSUE, it) }
             }
-
-
         }
-
     }
-
 }
 
 

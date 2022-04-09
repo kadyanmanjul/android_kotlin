@@ -244,66 +244,58 @@
             tools:ignore="MissingPrefix"
             tools:visibility="visible" />
 
-        <androidx.appcompat.widget.AppCompatImageButton
-            android:id="@+id/btn_incoming_disconnect"
+        <RelativeLayout
+            android:id="@+id/incoming_timer_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/circle2"
-            android:backgroundTint="@color/checkbox_color"
-            android:padding="@dimen/_14sdp"
-            android:onClick="@{vm::disconnectCall}"
+            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.13"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.9"
-            app:srcCompat="@drawable/ic_baseline_call" />
+            app:layout_constraintVertical_bias="0.43">
 
-        <androidx.appcompat.widget.AppCompatImageButton
-            android:id="@+id/btn_incoming_connect"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/circle2"
-            android:backgroundTint="@color/green"
-            android:padding="@dimen/_14sdp"
-            android:rotation="225"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.87"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.9"
-            app:srcCompat="@drawable/ic_baseline_call" />
-        <com.google.android.material.progressindicator.CircularProgressIndicator
-            android:id="@+id/incoming_progress"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:progress="75"
-            app:indicatorColor="#0D5CB8"
-            app:indicatorSize="@dimen/_108sdp"
-            app:trackColor="#ffffff"
-            app:trackThickness="10dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.43"/>
+            <com.google.android.material.progressindicator.CircularProgressIndicator
+                android:id="@+id/incoming_progress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:progress="75"
+                app:indicatorColor="#0D5CB8"
+                app:indicatorSize="@dimen/_108sdp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.43"
+                app:trackColor="#ffffff"
+                app:trackThickness="10dp" />
+
+            <TextView
+                android:id="@+id/incoming_timer_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:gravity="center"
+                android:text="35"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Bold"
+                android:textColor="#ffffff"
+                android:textSize="42dp" />
+        </RelativeLayout>
 
         <androidx.constraintlayout.widget.Group
             android:id="@+id/group_for_incoming"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="@{vm.callStatus ==`incoming` ? View.VISIBLE : View.GONE }"
-            app:constraint_referenced_ids="btn_incoming_disconnect,btn_incoming_connect"
-            tools:visibility="gone" />
+            android:visibility="@{vm.callStatus ==`show_progress_bar` ? View.VISIBLE : View.INVISIBLE }"
+            app:constraint_referenced_ids="incoming_timer_container"
+            tools:visibility="invisible" />
 
         <androidx.constraintlayout.widget.Group
             android:id="@+id/group_for_outgoing"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="@{vm.callStatus ==`outgoing` ? View.VISIBLE : View.GONE }"
-            app:constraint_referenced_ids="btn_mute,btn_speaker,btn_action,txt_speaker,txt_mute"
+            android:visibility="@{vm.callStatus ==`outgoing` ? View.VISIBLE : View.INVISIBLE }"
+            app:constraint_referenced_ids="btn_mute,btn_speaker,txt_speaker,txt_mute,topic_name,topic_header,c_image"
             tools:visibility="visible" />
 
         <FrameLayout

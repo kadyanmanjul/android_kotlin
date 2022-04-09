@@ -34,10 +34,9 @@ import com.joshtalks.joshskills.voip.constant.SWITCHED_TO_WIRED
 import com.joshtalks.joshskills.voip.constant.UNHOLD
 import com.joshtalks.joshskills.voip.constant.UNMUTE
 import com.joshtalks.joshskills.voip.voipLog
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -50,12 +49,15 @@ class VoiceCallViewModel : BaseViewModel() {
     private val callBar = CallBar()
     val isSpeakerOn = ObservableBoolean(false)
     val isMute = ObservableBoolean(false)
-    val callStatus = ObservableField("outgoing")
+    val callStatus = ObservableField("show_progress_bar")
     val callType = ObservableField("")
     val callStatusTest = ObservableField("Timer")
     val callData = HashMap<String, Any>()
 
-    init { listenRepositoryEvents() }
+    init {
+        listenUIState()
+        listenRepositoryEvents()
+    }
 
     private fun listenRepositoryEvents() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -68,24 +70,25 @@ class VoiceCallViewModel : BaseViewModel() {
                     }
                     CALL_CONNECTED_EVENT -> {
                         callStatusTest.set("Timer")
+                        callStatus.set("outgoing")
                         voipLog?.log("CALL_CONNECTED_EVENT")
                     }
-                    HOLD -> {
-                        callStatusTest.set("Call on Hold")
-                        voipLog?.log("HOLD")
-                    }
-                    UNHOLD -> {
-                        callStatusTest.set("Timer")
-                        voipLog?.log("UNHOLD")
-                    }
-                    MUTE -> {
-                        callStatusTest.set("User Muted the Call")
-                        voipLog?.log("Mute")
-                    }
-                    UNMUTE -> {
-                        callStatusTest.set("Timer")
-                        voipLog?.log("UNMUTE")
-                    }
+//                    HOLD -> {
+//                        callStatusTest.set("Call on Hold")
+//                        voipLog?.log("HOLD")
+//                    }
+//                    UNHOLD -> {
+//                        callStatusTest.set("Timer")
+//                        voipLog?.log("UNHOLD")
+//                    }
+//                    MUTE -> {
+//                        callStatusTest.set("User Muted the Call")
+//                        voipLog?.log("Mute")
+//                    }
+//                    UNMUTE -> {
+//                        callStatusTest.set("Timer")
+//                        voipLog?.log("UNMUTE")
+//                    }
                     RECONNECTING -> {
                         callStatusTest.set("Reconnecting")
                         voipLog?.log("RECONNECTING")
@@ -101,15 +104,48 @@ class VoiceCallViewModel : BaseViewModel() {
                     IPC_CONNECTION_ESTABLISHED -> {
                         connectCall()
                     }
-                    SWITCHED_TO_SPEAKER -> {
-                        showToast("Speaker is ON")
-                    }
-                    SWITCHED_TO_WIRED, SWITCHED_TO_BLUETOOTH, SWITCHED_TO_HANDSET -> {
-                        showToast("Speaker is Off")
-                    }
+//                    SWITCHED_TO_SPEAKER -> {
+//                        showToast("Speaker is ON")
+//                    }
+//                    SWITCHED_TO_WIRED, SWITCHED_TO_BLUETOOTH, SWITCHED_TO_HANDSET -> {
+//                        showToast("Speaker is Off")
+//                    }
                 }
                 withContext(Dispatchers.Main) {
                     singleLiveEvent.value = message
+                }
+            }
+        }
+    }
+
+    private fun listenUIState() {
+        viewModelScope.launch(Dispatchers.IO) {
+            callBar.observerVoipUIState().collectLatest { uiState ->
+                Log.d(TAG, "listenUIState: $uiState")
+                if(uiState.isOnHold) {
+                    callStatusTest.set("Call on Hold")
+                    voipLog?.log("HOLD")
+                } else if(uiState.isRemoteUserMuted) {
+                    callStatusTest.set("User Muted the Call")
+                    voipLog?.log("Mute")
+                } else {
+                    callStatusTest.set("Timer")
+                }
+
+                if(uiState.isSpeakerOn) {
+                    isSpeakerOn.set(true)
+                    repository.turnOnSpeaker()
+                } else {
+                    isSpeakerOn.set(false)
+                    repository.turnOffSpeaker()
+                }
+
+                if(uiState.isMute) {
+                    isMute.set(true)
+                    repository.muteCall()
+                } else {
+                    isMute.set(false)
+                    repository.unmuteCall()
                 }
             }
         }
@@ -147,23 +183,11 @@ class VoiceCallViewModel : BaseViewModel() {
     }
 
     fun switchSpeaker(v: View) {
-        if (isSpeakerOn.get()) {
-            isSpeakerOn.set(false)
-            repository.turnOffSpeaker()
-        } else {
-            isSpeakerOn.set(true)
-            repository.turnOnSpeaker()
-        }
+        VoipPref.currentUserSpeakerState(isSpeakerOn.get().not())
     }
 
     fun switchMic(v: View) {
-        if (isMute.get()) {
-            repository.unmuteCall()
-            isMute.set(false)
-        } else {
-            repository.muteCall()
-            isMute.set(true)
-        }
+        VoipPref.currentUserMuteState(isMute.get().not())
     }
 
     fun observeCallStatus(v: View) {

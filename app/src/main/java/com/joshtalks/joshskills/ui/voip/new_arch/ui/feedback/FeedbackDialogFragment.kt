@@ -107,8 +107,6 @@ class FeedbackDialogFragment(val function: () -> Unit) : BaseDialogFragment() {
     }
 
     fun startShareActivity(apiResponse: Response<KFactor>) {
-        Log.d(TAG, "startShareActivity: ${vm.getDurationInMin()}")
-        vm.getDurationInMin()
         if (apiResponse.isSuccessful &&
             apiResponse.code() in 201..203 && apiResponse.body()?.duration_filter!!
         ) {

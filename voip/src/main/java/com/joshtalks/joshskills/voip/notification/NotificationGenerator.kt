@@ -71,7 +71,7 @@ internal class NotificationGenerator {
         notificationPriority: NotificationPriority
     ): NotificationCompat.Builder {
 
-        val destination="com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity"
+        val destination="com.joshtalks.joshskills.ui.voip.new_arch.ui.views.IncomingNotificationActivity"
         val callingActivity = Intent()
         callingActivity.apply {
             if (context != null) {
