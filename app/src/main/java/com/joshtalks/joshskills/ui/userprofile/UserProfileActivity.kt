@@ -238,6 +238,15 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                 viewModel.isCourseBought.get().not()
             )
         }
+
+        binding.viewAllFpp.setOnClickListener {
+            FavoriteListActivity.openFavoriteCallerActivity(
+                this,
+                CONVERSATION_ID,
+                viewModel.isCourseBought.get().not()
+            )
+        }
+
         binding.txtUserHometown.setOnClickListener {
             if (mentorId == Mentor.getInstance().getId()) {
                 binding.txtUserHometown.isClickable = true
@@ -1035,7 +1044,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
 
     fun setImage(imageView: ImageView, url: String?) {
         if (url.isNullOrEmpty()) {
-            imageView.setImageResource(R.drawable.ic_josh_course)
+            imageView.setImageResource(R.drawable.ic_call_placeholder)
             return
         }
 
