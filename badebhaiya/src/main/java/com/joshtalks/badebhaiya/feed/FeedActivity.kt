@@ -25,7 +25,7 @@ import com.joshtalks.badebhaiya.profile.ProfileActivity
 import com.joshtalks.badebhaiya.profile.request.ReminderRequest
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomResponse
 import com.joshtalks.badebhaiya.repository.model.User
-import com.joshtalks.badebhaiya.utils.Utils
+import com.joshtalks.badebhaiya.utils.setUserImageOrInitials
 
 class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallback {
 
@@ -50,6 +50,13 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         binding.handler = this
         binding.viewModel = viewModel
         addObserver()
+        initView()
+    }
+
+    private fun initView() {
+        User.getInstance()?.apply {
+            binding.profileIv.setUserImageOrInitials(profilePicUrl,firstName.toString())
+        }
     }
 
     private fun addObserver() {
@@ -84,8 +91,6 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                 }
             }
         })
-        if (User.getInstance().profilePicUrl.isNullOrEmpty().not())
-            Utils.setImage(binding.profileIv, User.getInstance().profilePicUrl.toString())
     }
 
     fun openCreateRoomDialog() {
@@ -122,7 +127,6 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
     }
 
     override fun joinRoom(room: RoomListResponseItem, view: View) {
-        //TODO : 01/04/2022 - @kadyanmanjul join conversation room here
         viewModel.joinRoom(room)
     }
 
@@ -158,7 +162,6 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
     }
 
     override fun viewRoom(room: RoomListResponseItem, view: View) {
-        //TODO : 01/04/2022 - @kadyanmanjul join conversation room here
         room.speakersData?.userId?.let {
             ProfileActivity.openProfileActivity(this,it)
         }
