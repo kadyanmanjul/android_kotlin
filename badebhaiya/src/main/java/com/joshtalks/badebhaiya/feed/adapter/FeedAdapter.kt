@@ -12,6 +12,9 @@ import com.joshtalks.badebhaiya.databinding.LiRoomEventBinding
 import com.joshtalks.badebhaiya.feed.model.ConversationRoomType
 import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
 import com.joshtalks.badebhaiya.feed.model.SpeakerData
+import com.joshtalks.badebhaiya.utils.Utils
+import com.joshtalks.badebhaiya.utils.datetimeutils.DateTimeStyle
+import java.util.Date
 
 class FeedAdapter :
     ListAdapter<RoomListResponseItem, FeedAdapter.FeedViewHolder>(DIFF_CALLBACK) {
@@ -41,13 +44,15 @@ class FeedAdapter :
         RecyclerView.ViewHolder(item.root) {
         fun onBind(room: RoomListResponseItem) {
             item.roomData = room
+            val name = room.speakersData?.shortName
+            val date = Utils.getMessageTime((room.startTime ?: 0L) * 1000L, false, DateTimeStyle.LONG)
+            val time = Utils.getMessageTimeInHours(Date((room.startTime ?: 0) * 1000L))
+            item.tvCardHeader.text = item.root.context.getString(R.string.room_card_top_title_header, name, date, time)
             item.root.setOnClickListener {
                 if (room.conversationRoomType == ConversationRoomType.LIVE) {
                     callback?.joinRoom(room, it)
-                } else if (room.isScheduled == true) {
+                } else  {
                     callback?.viewRoom(room, it)
-                } else {
-                    callback?.setReminder(room, it)
                 }
             }
             item.callback = callback

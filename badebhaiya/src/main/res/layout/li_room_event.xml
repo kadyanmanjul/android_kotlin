@@ -27,19 +27,22 @@
             android:layout_height="match_parent">
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvCardHeader"
-                android:text="@{roomData.speakersData.name}"
                 android:layout_width="wrap_content"
-                android:textSize="@dimen/_10ssp"
+                android:textSize="@dimen/_12ssp"
                 android:textAppearance="@style/BB_Typography_Nunito_Sans_Semi_Bold"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_16sdp"
                 android:layout_marginStart="@dimen/_8sdp"
+                android:layout_marginEnd="@dimen/_8sdp"
                 android:textColor="@color/profile_feed_item_font_color"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/circleImageView"
+                app:layout_constraintHorizontal_bias="0.0"
                 tools:text="Akhand...   Tomorrow at 10:30 am" />
 
             <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/circleImageView"
                 android:layout_width="@dimen/_40sdp"
                 android:layout_height="@dimen/_40sdp"
                 android:layout_marginTop="@dimen/_12sdp"

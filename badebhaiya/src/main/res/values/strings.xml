@@ -93,5 +93,6 @@
     <string name="welcome_in_string">🎉 Welcome in!</string>
     <string name="bb_tagline">Connect with your role models directly</string>
     <string name="unable_to_load">Unable to load, Please try again</string>
+    <string name="room_card_top_title_header">%s… %s at %s</string>
 
 </resources>

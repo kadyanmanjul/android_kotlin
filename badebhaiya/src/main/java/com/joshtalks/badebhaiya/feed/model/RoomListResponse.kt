@@ -27,6 +27,8 @@ data class RoomListResponseItem(
     val channelId: String?,
     @SerializedName("speaker_count")
     var speakerCount: String?,
+    @SerializedName("created")
+    val created: Long?,
     @SerializedName("started_by")
     val startedBy: Int?,
     @SerializedName("top_user_list")
@@ -34,7 +36,7 @@ data class RoomListResponseItem(
     @SerializedName("topic")
     val topic: String?,
     @SerializedName("start_time")
-    val startTime: String?,
+    var startTime: Long?,
     @SerializedName("ended")
     val endTime: String?,
     @SerializedName("is_scheduled")
@@ -44,8 +46,8 @@ data class RoomListResponseItem(
     var conversationRoomQuestionId: Int? = null,
     var conversationRoomType: ConversationRoomType? = null,
 ) : Parcelable {
-    val startTimeDate: Long
-        get() {
+    val startTimeDate: Long = startTime ?: 0
+        /*get() {
             return try {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     ZonedDateTime.parse(startTime).toEpochSecond() * 1000
@@ -58,7 +60,7 @@ data class RoomListResponseItem(
                 e.printStackTrace()
                 0
             }
-        }
+        }*/
 }
 
 enum class ConversationRoomType() {

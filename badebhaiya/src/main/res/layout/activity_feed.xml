@@ -76,6 +76,7 @@
                 android:paddingStart="@dimen/_8sdp"
                 android:paddingEnd="@dimen/_8sdp"
                 android:layout_marginTop="@dimen/_10sdp"
+                android:paddingBottom="@{viewModel.isBadeBhaiyaSpeaker ? bg.getHeight() : 0}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/profile_iv"

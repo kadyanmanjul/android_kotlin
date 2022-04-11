@@ -79,8 +79,9 @@ class ProfileActivity: AppCompatActivity(), FeedAdapter.ConversationRoomItemCall
                 handleSpeakerProfile(it)
                 if (it.profilePicUrl.isNullOrEmpty().not()) Utils.setImage(ivProfilePic, it.profilePicUrl.toString())
                 else
-                    Utils.setImage(ivProfilePic, it.firstName.toString())
-                tvUserName.text = getString(R.string.full_name_concatenated, it.firstName, it.lastName)
+                    Utils.setImage(ivProfilePic, it.firstName)
+                tvUserName.text = it.fullName ?:
+                        getString(R.string.full_name_concatenated, it.firstName, it.lastName)
             }
         }
         viewModel.speakerFollowed.observe(this) {

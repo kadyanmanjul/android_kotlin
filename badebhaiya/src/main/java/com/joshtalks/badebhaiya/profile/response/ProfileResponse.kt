@@ -26,5 +26,7 @@ data class ProfileResponse(
     @SerializedName("uuid") val uuid: String,
     @SerializedName("is_speaker_followed") val isSpeakerFollowed: Boolean,
     @SerializedName("live_room") val liveRoomList: List<RoomListResponseItem>?,
-    @SerializedName("scheduled_room") val scheduledRoomList: List<RoomListResponseItem>?
+    @SerializedName("scheduled_room") val scheduledRoomList: List<RoomListResponseItem>?,
+    @SerializedName("short_name") val shortName: String?,
+    @SerializedName("full_name") val fullName: String?
 )

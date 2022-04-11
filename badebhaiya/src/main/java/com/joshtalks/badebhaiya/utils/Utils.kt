@@ -199,6 +199,9 @@ object Utils {
             isYesterday(date) -> {
                 "Yesterday"
             }
+            isTomorrow(date) -> {
+                "Tomorrow"
+            }
             else -> {
                 DateTimeUtils.formatWithStyle(date, style)
             }

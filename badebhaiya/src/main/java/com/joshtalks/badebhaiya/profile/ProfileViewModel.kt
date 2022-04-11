@@ -58,7 +58,7 @@ class ProfileViewModel : ViewModel() {
                 if (response.isSuccessful) {
                     response.body()?.let {
                         userProfileData.postValue(it)
-                        userFullName.set(it.firstName.plus(it.lastName))
+                        userFullName.set(it.fullName)
                         isBadeBhaiyaSpeaker.set(it.isSpeaker)
                         isBadeBhaiyaSpeaker.notifyChange()
                         isBioTextAvailable.set(it.bioText.isNullOrEmpty().not())

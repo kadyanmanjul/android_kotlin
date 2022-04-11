@@ -14,6 +14,7 @@ import com.google.gson.JsonElement
 import com.google.gson.JsonParseException
 import com.joshtalks.badebhaiya.BuildConfig
 import com.joshtalks.badebhaiya.repository.service.initStethoLibrary
+import com.joshtalks.badebhaiya.utils.datetimeutils.DateTimeUtils
 import io.agora.rtc.IRtcEngineEventHandler
 import io.agora.rtc.RtcEngine
 import io.branch.referral.Branch
@@ -53,6 +54,7 @@ class AppObjectController {
             initNotificationChannels(context)
             initBranch(context)
             initRtcEngine(joshApplication)
+            initUtils()
         }
 
         private fun initNotificationChannels(context: Context) {
@@ -109,6 +111,10 @@ class AppObjectController {
                 ex.printStackTrace()
             }
             return mRtcEngine
+        }
+
+        private fun initUtils() {
+            DateTimeUtils.setTimeZone("UTC")
         }
     }
 
