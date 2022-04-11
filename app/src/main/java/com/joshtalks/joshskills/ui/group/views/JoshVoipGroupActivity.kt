@@ -15,6 +15,7 @@ import com.joshtalks.joshskills.constants.SHOULD_REFRESH_GROUP_LIST
 import com.joshtalks.joshskills.constants.SEARCH_GROUP
 import com.joshtalks.joshskills.constants.SHOW_PROGRESS_BAR
 import com.joshtalks.joshskills.constants.DISMISS_PROGRESS_BAR
+import com.joshtalks.joshskills.constants.OPEN_GROUP_REQUEST
 import com.joshtalks.joshskills.constants.REFRESH_GRP_LIST_HIDE_INFO
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.databinding.ActivityJoshVoipGroupctivityBinding
@@ -60,11 +61,17 @@ class JoshVoipGroupActivity : BaseGroupActivity() {
         event.observe(this) {
             when (it.what) {
                 ON_BACK_PRESSED -> onBackPressed()
-                OPEN_GROUP -> startGroupCall(it.obj as? GroupItemData)
+                OPEN_GROUP -> {
+                    if (supportFragmentManager.backStackEntryCount == 0)
+                        startGroupCall(it.obj as? GroupItemData)
+                    else
+                        openGroupChat(it.obj as? GroupItemData)
+                }
                 SHOULD_REFRESH_GROUP_LIST -> vm.shouldRefreshGroupList = true
                 SEARCH_GROUP -> openGroupSearchFragment()
                 SHOW_PROGRESS_BAR -> showProgressDialog(it.obj as String)
                 DISMISS_PROGRESS_BAR -> dismissProgressDialog()
+                OPEN_GROUP_REQUEST -> showToast("Open groups to send request for private groups")
                 REFRESH_GRP_LIST_HIDE_INFO -> {
                     vm.hasGroupData.set(it.data.getBoolean(SHOW_NEW_INFO))
                     vm.hasGroupData.notifyChange()
@@ -149,6 +156,30 @@ class JoshVoipGroupActivity : BaseGroupActivity() {
         )
         startActivity(intent)
         finish()
+    }
+
+    private fun openGroupChat(data: GroupItemData?) {
+        supportFragmentManager.commit {
+            setReorderingAllowed(true)
+            val bundle = Bundle().apply {
+                putString(GROUPS_CREATOR, data?.getCreator())
+                putString(GROUPS_TITLE, data?.getTitle())
+                putString(GROUPS_CHAT_SUB_TITLE, data?.getSubTitle())
+                putString(GROUPS_IMAGE, data?.getImageUrl())
+                putString(GROUPS_ID, data?.getUniqueId())
+                putString(CONVERSATION_ID, vm.conversationId)
+                putString(ADMIN_ID, data?.getCreatorId())
+                putString(GROUP_TYPE, data?.getGroupCategory())
+                putString(GROUP_STATUS, data?.getJoinedStatus())
+                putString(CLOSED_GROUP_TEXT, data?.getGroupText())
+                data?.hasJoined()?.let { putBoolean(HAS_JOINED_GROUP, it) }
+            }
+
+            val fragment = GroupChatFragment()
+            fragment.arguments = bundle
+            replace(R.id.group_fragment_container, fragment, CHAT_FRAGMENT)
+            addToBackStack(GROUPS_STACK)
+        }
     }
 
     private fun openGroupSearchFragment() {
