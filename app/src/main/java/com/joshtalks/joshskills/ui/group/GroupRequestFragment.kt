@@ -45,7 +45,7 @@ class GroupRequestFragment : BaseFragment() {
             when (it.what) {
                 REQUEST_GROUP_VALIDATION -> {
                     if (binding.rulesCheck.isChecked) {
-                        val answer = binding.answerText.text.toString()
+                        val answer = binding.answerText.text.toString().trim()
                         if (answer.isNotBlank()) {
                             val request = GroupJoinRequest(
                                 mentorId = Mentor.getInstance().getId(),
@@ -53,7 +53,8 @@ class GroupRequestFragment : BaseFragment() {
                                 answer = answer
                             )
                             vm.joinPrivateGroup(request)
-                        }
+                        } else
+                            showToast("Please answer the question")
                     } else {
                         showToast("Please accept the group rules")
                     }

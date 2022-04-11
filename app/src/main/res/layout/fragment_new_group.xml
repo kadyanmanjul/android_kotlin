@@ -111,7 +111,7 @@
             android:hint="Choose group type"
             android:onClick="@{vm::openTypeChooser}"
             android:paddingHorizontal="@dimen/_14sdp"
-            android:text="@{vm.isFromGroupInfo() ? vm.groupType : ``}"
+            android:text="@{vm.isFromGroupInfo() ? vm.groupType.equals(`open`) ? `Open Group` : `Closed Group` : `Open Group`}"
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
             app:drawableEndCompat="@drawable/ic_rounded_triangle"
             app:layout_constraintEnd_toEndOf="parent"

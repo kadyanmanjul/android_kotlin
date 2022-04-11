@@ -2,13 +2,21 @@ package com.joshtalks.joshskills.ui.userprofile.viewmodel
 
 import android.app.Application
 import android.os.Message
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.view.View
 import androidx.databinding.ObservableBoolean
+import androidx.databinding.ObservableField
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
+import com.joshtalks.joshskills.constants.COURSE_LIST_DATA
+import com.joshtalks.joshskills.constants.INVITE_FRIENDS_METHOD
+import com.joshtalks.joshskills.constants.MY_GROUP_LIST_DATA
+import com.joshtalks.joshskills.constants.ON_BACK_PRESS_PROFILE
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.ApiCallStatus
@@ -20,12 +28,20 @@ import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.IS_PROFILE_FEATURE_ACTIVE
 import com.joshtalks.joshskills.core.USER_SCORE
+import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
+import com.joshtalks.joshskills.core.abTest.CampaignKeys
+import com.joshtalks.joshskills.core.abTest.GoalKeys
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.SaveProfileClickedEvent
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
 import com.joshtalks.joshskills.repository.server.AnimatedLeaderBoardResponse
+import com.joshtalks.joshskills.repository.server.LinkAttribution
+import com.joshtalks.joshskills.ui.group.repository.ABTestRepository
+import com.joshtalks.joshskills.ui.referral.USER_SHARE_SHORT_URL
 import com.joshtalks.joshskills.ui.userprofile.adapters.EnrolledCoursesListAdapter
 import com.joshtalks.joshskills.ui.userprofile.adapters.MyGroupsListAdapter
 import com.joshtalks.joshskills.ui.userprofile.models.UserProfileResponse
@@ -39,12 +55,13 @@ import com.joshtalks.joshskills.ui.userprofile.models.EnrolledCoursesList
 import com.joshtalks.joshskills.ui.userprofile.models.UpdateProfilePayload
 import com.joshtalks.joshskills.ui.userprofile.models.CourseEnrolled
 import com.joshtalks.joshskills.ui.userprofile.models.GroupInfo
+import com.joshtalks.joshskills.ui.userprofile.repository.ShareFromProfileRepository
 import com.joshtalks.joshskills.ui.userprofile.repository.UserProfileRepo
-import com.joshtalks.joshskills.ui.userprofile.utils.COURSE_LIST_DATA
-import com.joshtalks.joshskills.ui.userprofile.utils.MY_GROUP_LIST_DATA
-import com.joshtalks.joshskills.ui.userprofile.utils.ON_BACK_PRESS
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import id.zelory.compressor.Compressor
+import io.branch.indexing.BranchUniversalObject
+import io.branch.referral.Defines
+import io.branch.referral.util.LinkProperties
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -54,7 +71,13 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
+import org.json.JSONObject
+import timber.log.Timber
 import java.io.File
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
+
+const val WHATSAPP_PACKAGE_STRING = "com.whatsapp"
 
 class UserProfileViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -82,6 +105,9 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
     val userProfileRepo = UserProfileRepo()
     val isCourseBought = ObservableBoolean(false)
 
+    val profileRepository: ShareFromProfileRepository by lazy { ShareFromProfileRepository() }
+    private var userReferralCode = Mentor.getInstance().referralCode
+
     val isProgressBarShow = ObservableBoolean(false)
     val enrolledAdapter = EnrolledCoursesListAdapter()
     val myGroupAdapter = MyGroupsListAdapter()
@@ -90,12 +116,22 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
     private var startTime = System.currentTimeMillis()
     private var impressionId: String? = null
 
-
-    private var message = Message()
-
-    private var singleLiveEvent = EventLiveData
+    var message = Message()
+    var singleLiveEvent = EventLiveData
 
     var context: JoshApplication = getApplication()
+
+    val helpCountAbTestliveData = MutableLiveData<ABTestCampaignData?>()
+    val repository: ABTestRepository by lazy { ABTestRepository() }
+    var count = ObservableField(0)
+    fun getHelpCountCampaignData(campaign: String, mentorId:String, intervalType: String?, previousPage: String?) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.getCampaignData(campaign)?.let { campaign ->
+                helpCountAbTestliveData.postValue(campaign)
+            }
+            getProfileData(mentorId, intervalType, previousPage)
+        }
+    }
 
     fun getMentorData(mentorId: String) {
         jobs += viewModelScope.launch(Dispatchers.IO) {
@@ -144,7 +180,6 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
             uploadCompressedMedia(compressImagePath)
         }
     }
-
     private fun uploadCompressedMedia(
         mediaPath: String
     ) {
@@ -154,26 +189,39 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
                 val responseObj = userProfileRepo.requestMediaRequest(obj)
                 val statusCode: Int = uploadOnS3Server(responseObj, mediaPath)
                 if (statusCode in 200..210) {
-                    val url = responseObj.url.plus(File.separator).plus(responseObj.fields["key"])
+val url = responseObj.url.plus(File.separator).plus(responseObj.fields["key"])
                     var updateProfilePayload = UpdateProfilePayload()
-                    updateProfilePayload.apply {
-                        val date = DD_MM_YYYY.parse(userData.value?.dateOfBirth)
-                        basicDetails?.apply {
-                            photoUrl = url
-                            firstName = userData.value?.name
-                            dateOfBirth = DATE_FORMATTER.format(date)
-                            homeTown = userData.value?.hometown
-                            futureGoals = userData.value?.futureGoals
-                            favouriteJoshTalk = userData.value?.favouriteJoshTalk
+                    var date: String? = null
+                    if(userData.value!=null) {
+                        updateProfilePayload.apply {
+                            if (userData.value?.dateOfBirth != null) {
+                                date =
+                                    DATE_FORMATTER.format(DD_MM_YYYY.parse(userData.value?.dateOfBirth))
+                            }
+                            basicDetails?.apply {
+                                photoUrl = url
+                                firstName = userData.value?.name
+                                dateOfBirth = date
+                                homeTown = userData.value?.hometown
+                                futureGoals = userData.value?.futureGoals
+                                favouriteJoshTalk = userData.value?.favouriteJoshTalk
+                            }
+                            educationDetails = null
+                            occupationDetails = null
                         }
-                        educationDetails?.apply {
-                            degree = userData.value?.educationDetails?.degree
-                            college = userData.value?.educationDetails?.college
-                            year = userData.value?.educationDetails?.year
-                        }
-                        occupationDetails?.apply {
-                            designation = userData.value?.occupationDetails?.designation
-                            company = userData.value?.occupationDetails?.company
+                    }else{
+                        updateProfilePayload.apply {
+                            val user = User.getInstance()
+                            basicDetails?.apply {
+                                photoUrl = url
+                                firstName = user.firstName
+                                dateOfBirth = user.dateOfBirth
+                                homeTown = null
+                                futureGoals = null
+                                favouriteJoshTalk = null
+                            }
+                            educationDetails=null
+                            occupationDetails=null
                         }
                     }
                     saveProfileInfo(updateProfilePayload)
@@ -578,7 +626,7 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
     }
 
     fun onBackPress(view: View) {
-        message.what = ON_BACK_PRESS
+        message.what = ON_BACK_PRESS_PROFILE
         singleLiveEvent.value = message
     }
 
@@ -601,4 +649,105 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
         }
     }
 
+    fun deepLink(deepLink: String, contentId: String){
+        viewModelScope.launch {
+            try {
+                val requestData = LinkAttribution(
+                    mentorId = Mentor.getInstance().getId(),
+                    contentId = contentId,
+                    sharedItem = "HELP_TIP",
+                    sharedItemType = "IM",
+                    deepLink = deepLink
+                )
+                profileRepository.getDeepLink(requestData)
+            } catch (ex: Exception) {
+                Timber.e(ex)
+            }
+        }
+    }
+
+    fun shareWithFriends() {
+        getDeepLinkAndInviteFriends(WHATSAPP_PACKAGE_STRING)
+    }
+
+    fun getDeepLinkAndInviteFriends(packageString: String? = null) {
+        val referralTimestamp = System.currentTimeMillis()
+        val branchUniversalObject = BranchUniversalObject()
+            .setCanonicalIdentifier(userReferralCode.plus(referralTimestamp))
+            .setTitle("Invite Friend")
+            .setContentIndexingMode(BranchUniversalObject.CONTENT_INDEX_MODE.PUBLIC)
+            .setLocalIndexMode(BranchUniversalObject.CONTENT_INDEX_MODE.PUBLIC)
+        val lp = LinkProperties()
+            .setChannel(userReferralCode)
+            .setFeature("sharing")
+            .setCampaign(userReferralCode.plus(referralTimestamp))
+            .addControlParameter(Defines.Jsonkey.ReferralCode.key, userReferralCode)
+            .addControlParameter(
+                Defines.Jsonkey.UTMCampaign.key,
+                userReferralCode.plus(referralTimestamp)
+            )
+            .addControlParameter(Defines.Jsonkey.UTMMedium.key, "referral")
+
+        branchUniversalObject
+            .generateShortUrl(AppObjectController.joshApplication, lp) { url, error ->
+                if (error == null)
+                    inviteFriends(
+                        packageString = packageString,
+                        dynamicLink = url
+                    )
+                else
+                    inviteFriends(
+                        packageString = packageString,
+                        dynamicLink = if (PrefManager.hasKey(USER_SHARE_SHORT_URL))
+                            PrefManager.getStringValue(USER_SHARE_SHORT_URL)
+                        else
+                            getAppShareUrl()
+                    )
+            }
+    }
+
+    fun inviteFriends(packageString: String? = null, dynamicLink: String) {
+        try {
+            deepLink(dynamicLink, userReferralCode.plus(System.currentTimeMillis()))
+
+            val waIntent = Intent(Intent.ACTION_SEND)
+            if (packageString.isNullOrEmpty().not()) {
+                waIntent.setPackage(packageString)
+            }
+
+            waIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            waIntent.putExtra(Intent.EXTRA_TEXT,
+                "Mai har roz angrezi mei baat karke angrezi seekh rha hu. Mai chahta hu aap bhi mere saath angrezi seekhe. Is link ko click karke yeh app download kare -\n$dynamicLink"
+            )
+            waIntent.type = "text/plain"
+            message.what = INVITE_FRIENDS_METHOD
+            message.obj = waIntent
+            singleLiveEvent.value = message
+            postGoal(GoalKeys.HELP_COUNT.name, CampaignKeys.PEOPLE_HELP_COUNT.name)
+
+        } catch (e: PackageManager.NameNotFoundException) {
+            showToast(AppObjectController.joshApplication.getString(R.string.whatsApp_not_installed))
+        }
+    }
+
+    private fun getAppShareUrl(): String {
+        return "https://play.google.com/store/apps/details?id=" + BuildConfig.APPLICATION_ID + "&referrer=utm_source%3D$userReferralCode"
+    }
+
+    fun postGoal(goal: String, campaign: String?) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.postGoal(goal)
+            if (campaign != null) {
+                val data = ABTestRepository().getCampaignData(campaign)
+                data?.let {
+                    val props = JSONObject()
+                    props.put("Variant", data?.variantKey ?: EMPTY)
+                    props.put("Variable", AppObjectController.gsonMapper.toJson(data?.variableMap))
+                    props.put("Campaign", campaign)
+                    props.put("Goal", goal)
+                    MixPanelTracker().publishEvent(goal, props)
+                }
+            }
+        }
+    }
 }

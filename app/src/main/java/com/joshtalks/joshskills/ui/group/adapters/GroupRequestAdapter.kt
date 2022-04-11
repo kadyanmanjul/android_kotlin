@@ -14,6 +14,7 @@ class GroupRequestAdapter(var requestList: List<GroupMemberRequest> = listOf()) 
     RecyclerView.Adapter<GroupRequestAdapter.RequestViewHolder>() {
 
     var itemClick: ((String, String, Boolean) -> Unit)? = null
+    var openProfileOnClick: ((String) -> Unit)? = null
 
     inner class RequestViewHolder(private val item: GroupRequestItemBinding) :
         RecyclerView.ViewHolder(item.root) {
@@ -31,6 +32,12 @@ class GroupRequestAdapter(var requestList: List<GroupMemberRequest> = listOf()) 
                 item.requestItemButtons.visibility = GONE
                 item.memberAnswer.text = "ACCEPTED"
                 item.memberAnswer.setTextColor(Color.parseColor("#107BE5"))
+            }
+            item.memberName.setOnClickListener {
+                openProfileOnClick?.invoke(request.mentorId)
+            }
+            item.memberIconImg.setOnClickListener {
+                openProfileOnClick?.invoke(request.mentorId)
             }
         }
     }
@@ -55,6 +62,10 @@ class GroupRequestAdapter(var requestList: List<GroupMemberRequest> = listOf()) 
 
     fun setListener(function: ((String, String, Boolean) -> Unit)?) {
         itemClick = function
+    }
+
+    fun setProfileOpen(function: (String) -> Unit) {
+        openProfileOnClick = function
     }
 
     fun addRequestsToList(requests: List<GroupMemberRequest>) {

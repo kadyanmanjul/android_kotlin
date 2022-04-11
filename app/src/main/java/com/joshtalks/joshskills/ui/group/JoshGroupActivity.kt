@@ -179,6 +179,7 @@ class JoshGroupActivity : BaseGroupActivity() {
                 putString(ADMIN_ID, data?.getCreatorId())
                 putString(GROUP_TYPE, data?.getGroupCategory())
                 putString(GROUP_STATUS, data?.getJoinedStatus())
+                putString(CLOSED_GROUP_TEXT, data?.getGroupText())
                 data?.hasJoined()?.let {
                     if (it) {
                         putString(GROUPS_CHAT_SUB_TITLE, "tap here for group info")
@@ -211,7 +212,7 @@ class JoshGroupActivity : BaseGroupActivity() {
             setReorderingAllowed(true)
 
             val fragment = GroupRequestFragment()
-            replace(R.id.group_fragment_container, fragment, GROUP_REQUEST_FRAGMENT)
+            add(R.id.group_fragment_container, fragment, GROUP_REQUEST_FRAGMENT)
             addToBackStack(GROUPS_STACK)
         }
     }

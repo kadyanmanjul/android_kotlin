@@ -9,6 +9,7 @@ import android.graphics.Typeface
 import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableString
+import android.text.SpannableStringBuilder
 import android.text.method.LinkMovementMethod
 import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
@@ -27,6 +28,7 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.appcompat.widget.PopupMenu
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.core.text.bold
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
@@ -40,7 +42,12 @@ import com.bumptech.glide.request.RequestOptions
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
+import com.joshtalks.joshskills.constants.COURSE_LIST_DATA
+import com.joshtalks.joshskills.constants.MY_GROUP_LIST_DATA
+import com.joshtalks.joshskills.constants.ON_BACK_PRESS_PROFILE
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.abTest.CampaignKeys
+import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.databinding.ActivityUserProfileBinding
 import com.joshtalks.joshskills.messaging.RxBus2
@@ -65,18 +72,8 @@ import com.joshtalks.joshskills.ui.userprofile.fragments.ProfileImageShowFragmen
 import com.joshtalks.joshskills.ui.userprofile.fragments.PreviousProfilePicsFragment
 import com.joshtalks.joshskills.ui.userprofile.fragments.MyGroupsFragment
 import com.joshtalks.joshskills.ui.userprofile.fragments.UserPicChooserFragment
-import com.joshtalks.joshskills.ui.userprofile.models.UserProfileResponse
-import com.joshtalks.joshskills.ui.userprofile.models.AwardCategory
-import com.joshtalks.joshskills.ui.userprofile.models.FppDetails
-import com.joshtalks.joshskills.ui.userprofile.models.GroupInfo
-import com.joshtalks.joshskills.ui.userprofile.models.CourseEnrolled
-import com.joshtalks.joshskills.ui.userprofile.models.Award
-import com.joshtalks.joshskills.ui.userprofile.models.EnrolledCoursesList
-import com.joshtalks.joshskills.ui.userprofile.models.GroupsList
+import com.joshtalks.joshskills.ui.userprofile.models.*
 import com.joshtalks.joshskills.ui.userprofile.utils.MY_GROUP
-import com.joshtalks.joshskills.ui.userprofile.utils.ON_BACK_PRESS
-import com.joshtalks.joshskills.ui.userprofile.utils.COURSE_LIST_DATA
-import com.joshtalks.joshskills.ui.userprofile.utils.MY_GROUP_LIST_DATA
 import com.joshtalks.joshskills.ui.userprofile.utils.USER_PROFILE_BACK_STACK
 import com.joshtalks.joshskills.ui.userprofile.utils.COURSE
 import com.joshtalks.joshskills.ui.userprofile.viewmodel.UserProfileViewModel
@@ -203,7 +200,6 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         binding.editPic.setOnClickListener {
             if (mentorId == Mentor.getInstance().getId()) {
                 openChooser()
-
             }
         }
         binding.labelViewMoreAwards.setOnClickListener {
@@ -242,6 +238,15 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                 viewModel.isCourseBought.get().not()
             )
         }
+
+        binding.viewAllFpp.setOnClickListener {
+            FavoriteListActivity.openFavoriteCallerActivity(
+                this,
+                CONVERSATION_ID,
+                viewModel.isCourseBought.get().not()
+            )
+        }
+
         binding.txtUserHometown.setOnClickListener {
             if (mentorId == Mentor.getInstance().getId()) {
                 binding.txtUserHometown.isClickable = true
@@ -646,34 +651,12 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                 .subscribe {
                     getProfileData(intervalType, previousPage)
                 })
-        viewModel.helpCountAbTestliveData.observe(this){helpCountAbTestliveData->
+        viewModel.helpCountAbTestliveData.observe(this){ helpCountAbTestliveData ->
             helpCountAbTestliveData?.let { map->
                 helpCountControl = (map.variantKey == VariantKeys.PHC_IS_ENABLED.name) && map.variableMap?.isEnabled == true
             }
         }
-        viewModel.singleLiveEvent.observe(this) {
-            when (it.what) {
-                ON_BACK_PRESS -> {
-                    popBackStack()
-                }
-            }
-        }
 
-    }
-    private fun popBackStack() {
-        if (isAnimationVisible) {
-            hideOverlayAnimation()
-            return
-        }
-        if (supportFragmentManager.backStackEntryCount > 1) {
-            try {
-                supportFragmentManager.popBackStackImmediate()
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-            }
-        } else{
-            onBackPressed()
-        }
     }
 
     private fun getOtherProfileData() {
@@ -968,7 +951,6 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             viewModel.getUserProfileUrl().isNullOrBlank(),
             isFromRegistration = false
         )
-
     }
 
     @SuppressLint("WrongViewCast")
@@ -1062,7 +1044,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
 
     fun setImage(imageView: ImageView, url: String?) {
         if (url.isNullOrEmpty()) {
-            imageView.setImageResource(R.drawable.ic_josh_course)
+            imageView.setImageResource(R.drawable.ic_call_placeholder)
             return
         }
 
@@ -1210,8 +1192,22 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                 .subscribe(
                     {
                         viewModel.userData.value?.photoUrl = it.url
+                        val date = DD_MM_YYYY.parse( viewModel.userData.value?.dateOfBirth)
                         if (it.url.isBlank()) {
-                            viewModel.saveProfileInfo(null)
+                            var updateProfilePayload = UpdateProfilePayload()
+                            updateProfilePayload.apply {
+                                basicDetails?.apply {
+                                    photoUrl = ""
+                                    firstName = viewModel.userData.value?.name
+                                    dateOfBirth =  DATE_FORMATTER.format(date)
+                                    homeTown = viewModel.userData.value?.hometown
+                                    futureGoals = viewModel.userData.value?.futureGoals
+                                    favouriteJoshTalk = viewModel.userData.value?.favouriteJoshTalk
+                                }
+                                educationDetails=null
+                                occupationDetails=null
+                            }
+                            viewModel.saveProfileInfo(updateProfilePayload)
                         }
                     },
                     {
@@ -1298,7 +1294,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
 
         liveData.observe(this) {
             when (it.what) {
-                ON_BACK_PRESS -> {
+                ON_BACK_PRESS_PROFILE -> {
                     popBackStack()
                 }
                 COURSE_LIST_DATA -> {
@@ -1337,13 +1333,14 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
     }
 
     private fun showGroupList(myGroup: GroupsList) {
+        binding.grpShimmer.visibility = GONE
+        binding.grpShimmer.stopShimmer()
+
         if (myGroup.myGroupsList.isNullOrEmpty()) {
             binding.myGroupsLayout.visibility = GONE
             binding.myGroupsLl.visibility = GONE
         } else {
-            binding.grpShimmer.visibility = GONE
             binding.myGroupsLayout.visibility = VISIBLE
-            binding.grpShimmer.stopShimmer()
             binding.myGroupsLayout.visibility = VISIBLE
             binding.myGroupsLl.visibility = VISIBLE
             binding.labelMyGroups.text = getString(R.string.group_title)

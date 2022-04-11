@@ -632,8 +632,12 @@ class AppObjectController {
 
 
                 DateTimeUtils.setTimeZone("UTC")
-                videoDownloadTracker = VideoDownloadController.getInstance().downloadTracker
-                Log.e("AppObjectController", "initObjectInThread: referrer")
+                try {
+                    if (VideoDownloadController.getInstance().downloadTracker!=null)
+                      videoDownloadTracker = VideoDownloadController.getInstance().downloadTracker
+                }catch (ex:Exception){
+                    Log.e("AppObjectController", "initObjectInThread: referrer")
+                }
                 InstallReferralUtil.installReferrer(context)
             }.start()
         }

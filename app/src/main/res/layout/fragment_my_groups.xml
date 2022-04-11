@@ -38,9 +38,10 @@
                 app:contentInsetLeft="0dp"
                 app:contentInsetRight="0dp"
                 app:contentInsetStart="0dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:theme="@style/Theme.GuidelinesCompat.Light.DarkToolbar"
-                tools:layout_editor_absoluteX="0dp">
+                app:theme="@style/Theme.GuidelinesCompat.Light.DarkToolbar">
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/iv_back"
@@ -49,12 +50,11 @@
                     android:layout_marginStart="@dimen/_8sdp"
                     android:layout_marginEnd="@dimen/_5sdp"
                     android:background="@color/colorPrimary"
-                    android:onClick="@{vm.onBackPress}"
+                    android:onClick="@{vm::onBackPress}"
                     android:paddingTop="@dimen/_5sdp"
                     android:paddingBottom="@dimen/_5sdp"
                     android:visibility="visible"
                     app:srcCompat="@drawable/ic_arrow_back" />
-
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/text_message_title"

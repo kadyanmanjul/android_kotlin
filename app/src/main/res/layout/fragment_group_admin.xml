@@ -54,9 +54,11 @@
             android:layout_marginHorizontal="@dimen/_12sdp"
             android:layout_marginTop="@dimen/_8sdp"
             android:button="@null"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Title_Group"
             android:drawableRight="?android:attr/listChoiceIndicatorMultiple"
+            android:foreground="?attr/selectableItemBackground"
+            android:foregroundTintMode="src_atop"
             android:text="I am ready to become the Group Admin"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Title_Group"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView11" />
@@ -83,8 +85,8 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="@dimen/_1sdp"
-            android:layout_marginTop="@dimen/_8sdp"
             android:layout_marginHorizontal="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_8sdp"
             android:background="@color/gray_e6"
             app:layout_constraintTop_toBottomOf="@id/textView12" />
 

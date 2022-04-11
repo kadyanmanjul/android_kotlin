@@ -6,13 +6,14 @@
     <data>
         <variable
             name="vm"
-            type="com.joshtalks.joshskills.ui.userprofile.UserProfileViewModel" />
+            type="com.joshtalks.joshskills.ui.userprofile.viewmodel.UserProfileViewModel" />
     </data>
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white">
+        android:background="@color/white"
+        android:clickable="true">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -57,7 +58,7 @@
                         android:clickable="true"
                         android:focusable="true"
                         android:gravity="center_vertical|start"
-                        android:onClick="@{()->vm.onBackPress()}"
+                        android:onClick="@{vm::onBackPress}"
                         android:paddingTop="@dimen/_4sdp"
                         android:paddingBottom="@dimen/_4sdp"
                         app:srcCompat="@drawable/ic_arrow_back"

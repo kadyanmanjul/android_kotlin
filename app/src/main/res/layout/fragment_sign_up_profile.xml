@@ -52,6 +52,7 @@
                     android:imeOptions="actionNext"
                     android:inputType="textCapWords"
                     android:lines="1"
+                    android:digits="@string/allowed_name_characters"
                     android:maxLength="24"
                     android:maxLines="1"
                     android:minLines="1"

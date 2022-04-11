@@ -26,7 +26,6 @@ import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.notification.HAS_LOCAL_NOTIFICATION
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
-import com.joshtalks.joshskills.core.service.getGoogleAdId
 import com.joshtalks.joshskills.repository.local.model.ExploreCardType
 import com.joshtalks.joshskills.repository.local.model.GaIDMentorModel
 import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel
@@ -77,7 +76,8 @@ class LauncherActivity : CoreJoshActivity() {
             val dateFormat = SimpleDateFormat("HH")
             val time: Int = dateFormat.format(Date()).toInt()
             val getCurrentTimeInMillis = Calendar.getInstance().timeInMillis
-            var lastFakeCallInMillis: Long = PrefManager.getLongValue(LAST_FAKE_CALL_INVOKE_TIME, true)
+            var lastFakeCallInMillis: Long =
+                PrefManager.getLongValue(LAST_FAKE_CALL_INVOKE_TIME, true)
             if ((time in 7..23) && isUserOnline(this@LauncherActivity) && getCurrentTimeInMillis - lastFakeCallInMillis >= 3600000) {
                 PrefManager.put(LAST_FAKE_CALL_INVOKE_TIME, getCurrentTimeInMillis, true)
                 WorkManagerAdmin.setFakeCallNotificationWorker()
@@ -390,17 +390,18 @@ class LauncherActivity : CoreJoshActivity() {
             } catch (ex: Throwable) {
             }
             try {
-                if (PrefManager.hasKey(USER_UNIQUE_ID).not()) {
-                    val id = getGoogleAdId(this@LauncherActivity)
-                    if (id.isNullOrBlank()) {
-                        return@launch
+                    val response =
+                        AppObjectController.signUpNetworkService.getGaid(mapOf("device_id" to Utils.getDeviceId()))
+                    if (response.isSuccessful && response.body() != null) {
+                        PrefManager.put(USER_UNIQUE_ID, response.body()!!.gaID)
                     } else {
-                        PrefManager.put(USER_UNIQUE_ID, id)
+                        return@launch
                     }
-                }
             } catch (ex: Exception) {
                 LogException.catchException(ex)
+                return@launch
             }
+
             obj.gaid = PrefManager.getStringValue(USER_UNIQUE_ID)
             InstallReferrerModel.getPrefObject()?.let {
                 obj.installOn = it.installOn

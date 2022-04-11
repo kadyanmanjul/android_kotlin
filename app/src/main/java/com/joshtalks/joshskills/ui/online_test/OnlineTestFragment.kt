@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +15,7 @@ import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.exoplayer2.ExoPlayer
+import com.google.android.material.textview.MaterialTextView
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
@@ -35,6 +37,7 @@ import com.joshtalks.joshskills.ui.chat.vh.*
 import com.joshtalks.joshskills.ui.lesson.LessonActivity
 import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
 import com.joshtalks.joshskills.ui.lesson.grammar_new.McqChoiceView
+import com.joshtalks.joshskills.ui.special_practice.utils.ErrorView
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -69,6 +72,7 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
     private var atsChoiceView: Stub<AtsChoiceView>? = null
     private var subjectiveChoiceView: Stub<SubjectiveChoiceView>? = null
     private var buttonView: Stub<GrammarButtonView>? = null
+    private var errorView: Stub<ErrorView>? = null
     private var isFirstTime: Boolean = true
     private var isTestCompleted: Boolean = false
     private var scoreText: Int? = 0
@@ -128,6 +132,7 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
         subjectiveChoiceView =
             Stub(binding.choiceContainer.findViewById(R.id.subjective_choice_view))
         buttonView = Stub(binding.container.findViewById(R.id.button_action_views))
+        errorView = Stub(binding.container.findViewById(R.id.error_view))
     }
 
     private fun setObservers() {
@@ -188,9 +193,30 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
             when (it) {
                 ApiCallStatus.START -> {
                     //binding.progressContainer.visibility = View.VISIBLE
-                }
-                ApiCallStatus.FAILED, ApiCallStatus.SUCCESS -> {
                     binding.progressContainer.visibility = View.GONE
+                }
+                ApiCallStatus.FAILED -> {
+                    errorView?.resolved()?.let {
+                        errorView!!.get().onFailure(object : ErrorView.ErrorCallback {
+                            override fun onRetryButtonClicked() {
+                                if (assessmentQuestions != null) {
+                                    viewModel.postAnswerAndGetNewQuestion(
+                                        assessmentQuestions!!,
+                                        ruleAssessmentQuestionId,
+                                        lessonId
+                                    )
+                                } else {
+                                    viewModel.fetchAssessmentDetails(lessonId)
+                                }
+                            }
+                        })
+                    }
+                }
+                ApiCallStatus.SUCCESS -> {
+                    binding.progressContainer.visibility = View.GONE
+                    errorView?.resolved()?.let {
+                        errorView!!.get().onSuccess()
+                    }
                 }
                 else -> {
                     binding.progressContainer.visibility = View.GONE

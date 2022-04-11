@@ -204,6 +204,50 @@
             app:layout_constraintStart_toStartOf="parent"
             tools:visibility="gone" />
 
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/closed_grp_bg"
+            android:visibility="@{!vm.hasJoinedGroup &amp;&amp; vm.groupType.equals(`closed`) ? View.VISIBLE : View.GONE}"
+            app:layout_constraintBottom_toTopOf="@+id/appCompatTextView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_40sdp"
+            android:visibility="@{!vm.hasJoinedGroup &amp;&amp; vm.groupType.equals(`closed`) ? View.VISIBLE : View.GONE}"
+            app:cardCornerRadius="@dimen/_6sdp"
+            app:layout_constraintBottom_toTopOf="@+id/appCompatTextView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/_15sdp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Closed Group"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Semi_Bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="@dimen/_8sdp"
+                    android:text="This group is a Closed group. To chat and call members of this group please send Request to join."
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular" />
+            </androidx.appcompat.widget.LinearLayoutCompat>
+        </androidx.cardview.widget.CardView>
+
         <FrameLayout
             android:id="@+id/anim_layout"
             android:layout_width="@dimen/_130sdp"

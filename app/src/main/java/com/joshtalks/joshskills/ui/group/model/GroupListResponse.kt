@@ -50,14 +50,16 @@ data class GroupsItem(
     val groupType: String? = OPENED_GROUP,
 
     @field:SerializedName("group_status")
-    val groupStatus: String? = null
+    val groupStatus: String? = null,
+
+    @field:SerializedName("closed_grp_text")
+    val requestGroupText: String? = null
 
 ) : GroupItemData {
 
     override fun getTitle() = name ?: ""
 
-    override fun getSubTitle() =
-        lastMessage ?: "$totalCalls"//"$totalCalls practise partner calls in last 24 hours"
+    override fun getSubTitle() = lastMessage ?: "$totalCalls"
 
     override fun getUniqueId() = groupId
 
@@ -78,8 +80,7 @@ data class GroupsItem(
         return if (time[0] == '0') time.substring(1) else time
     }
 
-    override fun getUnreadMsgCount() =
-        unreadCount ?: "0"
+    override fun getUnreadMsgCount() = unreadCount ?: "0"
 
     override fun getGroupCategory() = groupType ?: OPENED_GROUP
 
@@ -90,4 +91,6 @@ data class GroupsItem(
             else -> NOT_JOINED_GROUP
         }
     }
+
+    override fun getGroupText() = requestGroupText ?: ""
 }

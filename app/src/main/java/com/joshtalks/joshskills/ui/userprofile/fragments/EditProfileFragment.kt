@@ -340,7 +340,7 @@ class EditProfileFragment : DialogFragment(){
             return
         }
         if (editTxtJoshTalk.text.toString() != EMPTY){
-            if(!isYoutubeUrl(editTxtJoshTalk.text.toString())){
+            if(!isYoutubeUrl(editTxtJoshTalk.text.toString()) || !(editTxtJoshTalk.text.toString()).startsWith("https") || !(editTxtJoshTalk.text.toString()).startsWith("https")){
                 binding.seperator5.setBackgroundColor(resources.getColor(R.color.red))
                 editTxtJoshTalk.setHintTextColor(resources.getColor(R.color.red))
                 binding.basicDetailsContainer.visibility = View.VISIBLE

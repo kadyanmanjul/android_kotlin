@@ -7,6 +7,7 @@ const val FEED_SCROLL_TO_END = 4
 const val ON_ITEM_ADDED = 5
 const val PLAY_AUDIO=6
 const val ON_AUDIO_COMPLETE=7
+const val IS_USER_EXIST = 1001
 
 
 

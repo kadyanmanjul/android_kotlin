@@ -91,6 +91,10 @@ data class AssessmentQuestion(
     var isAttempted: Boolean = false,
 
     @ColumnInfo
+    @SerializedName("is_correct")
+    var isCorrect: Boolean = false,
+
+    @ColumnInfo
     @SerializedName("is_new_header")
     var isNewHeader: Boolean = false,
 
