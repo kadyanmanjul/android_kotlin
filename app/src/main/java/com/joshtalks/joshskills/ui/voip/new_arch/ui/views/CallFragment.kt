@@ -24,6 +24,8 @@ import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.VoiceCallViewMode
 import com.joshtalks.joshskills.util.DateUtils
 import com.joshtalks.joshskills.voip.communication.constants.CLOSE_CALLING_FRAGMENT
 import com.joshtalks.joshskills.voip.constant.CALL_CONNECTED_EVENT
+import com.joshtalks.joshskills.voip.constant.CONNECTED
+import com.joshtalks.joshskills.voip.constant.IDLE
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -69,7 +71,9 @@ class CallFragment : BaseFragment() {
 
     override fun initViewBinding() {
         callBinding.vm = vm
-        startIncomingTimer()
+        if(VoipPref.getVoipState() != CONNECTED){
+            startIncomingTimer()
+        }
         callBinding.executePendingBindings()
     }
 
@@ -79,7 +83,7 @@ class CallFragment : BaseFragment() {
         callBinding.callData = vm.getCallData()
         callBinding.callTime1.base = base
         callBinding.callTime1.start()
-        progressAnimator.cancel()
+        isAnimationCancled = true
         callBinding.executePendingBindings()
     }
 
