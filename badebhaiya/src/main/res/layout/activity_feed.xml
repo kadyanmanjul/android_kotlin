@@ -76,11 +76,11 @@
                 android:paddingStart="@dimen/_8sdp"
                 android:paddingEnd="@dimen/_8sdp"
                 android:layout_marginTop="@dimen/_10sdp"
-                android:paddingBottom="@{viewModel.isBadeBhaiyaSpeaker ? bg.getHeight() : 0}"
+                android:paddingBottom="@{viewModel.isBadeBhaiyaSpeaker ? @dimen/_80sdp : 0}"
+                android:clipToPadding="false"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/profile_iv"
-                app:layout_constraintVertical_bias="0.0"
                 tools:listitem="@layout/li_room_event" />
 
             <androidx.appcompat.widget.LinearLayoutCompat
