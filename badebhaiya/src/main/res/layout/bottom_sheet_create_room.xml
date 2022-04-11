@@ -52,11 +52,12 @@
             android:textAppearance="@style/BB_Typography_Nunito_Sans_Semi_Bold"
             android:textSize="@dimen/_12sdp" />
 
-        <com.google.android.material.textfield.TextInputEditText
+        <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/topic"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@null"
+            android:singleLine="true"
             android:imeOptions="actionDone"
             android:paddingTop="@dimen/_8sdp"
             android:paddingBottom="@dimen/_8sdp"
