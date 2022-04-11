@@ -40,5 +40,8 @@
     <color name="grey_E8">#E8E8E8</color>
     <color name="transparent_black">#a34b4949</color>
     <color name="retry_button_color">#E9E7E0</color>
+    <color name="schedule_room_track_checked">#17E06E</color>
+    <color name="schedule_room_track_unchecked">#929292</color>
+    <color name="check_thumb_color">#FDF7F7</color>
 
 </resources>

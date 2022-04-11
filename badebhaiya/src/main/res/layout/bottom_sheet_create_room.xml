@@ -57,6 +57,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@null"
+            android:imeOptions="actionDone"
             android:paddingTop="@dimen/_8sdp"
             android:paddingBottom="@dimen/_8sdp"
             android:layout_marginTop="@dimen/_4sdp"
@@ -73,11 +74,11 @@
             android:text="Start Right Now"
             android:textAppearance="@style/BB_Typography_Nunito_Sans_ExtraBold"
             android:textSize="@dimen/_12sdp"
-            android:enabled="false"
             android:textColor="@color/black"
+            android:checked="true"
             app:layout_constraintBottom_toBottomOf="@id/hand_raised_text"
-            app:thumbTint="#FDF7F7"
-            app:trackTint="#929292" />
+            app:trackTint="@color/schedule_room_track_checked"
+            app:thumbTint="@color/check_thumb_color"/>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/date_btn"
