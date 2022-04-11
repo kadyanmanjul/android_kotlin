@@ -1,12 +1,5 @@
 package com.joshtalks.badebhaiya.utils.datetimeutils;
 
-/**
- * DateTimeFormat
- * Patterns used to parse given date {@link DateTimeUtils} will use those pattern
- *
- * @author thunder413
- * @version 1.0
- */
 @SuppressWarnings("WeakerAccess")
 public class DateTimeFormat {
     /**

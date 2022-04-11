@@ -4,15 +4,6 @@ package com.joshtalks.badebhaiya.utils.datetimeutils;
 import android.content.Context;
 import java.util.Date;
 
-/**
- * DateTimeStyle
- * <p>
- * Defined style for parsing date into string used by {@link DateTimeUtils#formatWithStyle(Date, DateTimeStyle)}
- * and also {@link DateTimeUtils#getTimeAgo(Context, Date, DateTimeStyle)}
- *
- * @author thunder413
- * @version 1.0
- */
 public enum DateTimeStyle {
     /**
      * Style full e.g Tuesday, June 13, 2017

@@ -13,15 +13,6 @@ import java.util.Locale;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
-/**
- * DateTimeUtils
- * This class contains a bunch of function that can manipulate
- * Date object or Date String to achieve certain operations
- * e.g : Time difference, Time Ago, Date formatting
- *
- * @author thunder413
- * @version 1.5
- */
 @SuppressWarnings("WeakerAccess")
 public class DateTimeUtils {
     /**

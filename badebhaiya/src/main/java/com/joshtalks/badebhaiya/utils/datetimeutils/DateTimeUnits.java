@@ -1,15 +1,5 @@
 package com.joshtalks.badebhaiya.utils.datetimeutils;
 
-import java.util.Date;
-
-/**
- * DateTimeUnits
- * Define units used by {@link DateTimeUtils#getDateDiff(Date, Date, DateTimeUnits)}
- * and also {@link DateTimeUtils#formatDate(long, DateTimeUnits)}
- *
- * @author thunder413
- * @version 1.0
- */
 @SuppressWarnings("WeakerAccess")
 public enum DateTimeUnits {
     /**
