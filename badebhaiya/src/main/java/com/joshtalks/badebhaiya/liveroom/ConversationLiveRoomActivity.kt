@@ -548,8 +548,8 @@ class ConversationLiveRoomActivity : BaseActivity(),
         setLeaveEndButton(isRoomCreatedByUser)
         binding.userPhoto.clipToOutline = true
         binding.userPhoto.setUserImageRectOrInitials(
-            User.getInstance().userId,
-            User.getInstance().firstName ?: "JS", 16, true, 8,
+            User.getInstance().profilePicUrl,
+            User.getInstance().firstName ?: DEFAULT_NAME,
             textColor = R.color.black,
             bgColor = R.color.conversation_room_gray
         )
