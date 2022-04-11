@@ -53,7 +53,11 @@ class FeedbackDialogFragment(val function: () -> Unit) : BaseDialogFragment() {
 
     private fun addObserver() {
         vm.responseLiveData.observe(viewLifecycleOwner) {
-            startShareActivity(it)
+            if(it!=null){
+                startShareActivity(it)
+            }else{
+                closeDialog()
+            }
         }
         practiceViewModel.pointsSnackBarText.observe(
             this

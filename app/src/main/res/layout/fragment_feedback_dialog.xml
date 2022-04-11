@@ -7,9 +7,6 @@
         <variable
             name="vm"
             type="com.joshtalks.joshskills.ui.voip.new_arch.ui.feedback.FeedbackViewModel" />
-        <variable
-            name="fg"
-            type="com.joshtalks.joshskills.ui.voip.new_arch.ui.feedback.FeedbackDialogFragment" />
     </data>
 
     <androidx.cardview.widget.CardView
@@ -60,7 +57,7 @@
                     android:id="@+id/ic_close"
                     android:layout_width="@dimen/_16sdp"
                     android:layout_height="@dimen/_16sdp"
-                    android:onClick='@{()->vm.submitFeedback("CLOSED")}'
+                    android:onClick='@{()->vm.closeDialog()}'
                     app:layout_constraintBottom_toBottomOf="@id/txt_header"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@id/txt_header"
