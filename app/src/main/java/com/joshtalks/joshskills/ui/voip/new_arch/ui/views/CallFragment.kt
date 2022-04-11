@@ -145,6 +145,9 @@ class CallFragment : BaseFragment() {
     override fun setArguments() {}
 
     override fun onResume() {
+        if(VoipPref.getStartTimeStamp().toInt() ==0){
+            activity?.finish()
+        }
         if (callBinding.incomingTimerContainer.visibility == View.VISIBLE) {
             CoroutineScope(Dispatchers.Main).launch{
                 progressAnimator.resume()
