@@ -11,6 +11,7 @@ import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.core.setOnSingleClickListener
 import com.joshtalks.badebhaiya.databinding.LiSpeakersItemBinding
 import com.joshtalks.badebhaiya.feed.model.LiveRoomUser
+import com.joshtalks.badebhaiya.utils.DEFAULT_NAME
 import com.joshtalks.badebhaiya.utils.setUserImageRectOrInitials
 
 class SpeakerAdapter : RecyclerView.Adapter<SpeakerAdapter.SpeakerViewHolder>() {
@@ -47,7 +48,7 @@ class SpeakerAdapter : RecyclerView.Adapter<SpeakerAdapter.SpeakerViewHolder>() 
                 userImageIv.apply {
                     clipToOutline = true
                     setUserImageRectOrInitials(
-                        model.photoUrl, model.name!!, 24, true, 16,
+                        model.photoUrl, model.name?: DEFAULT_NAME, 24, true, 16,
                         textColor = R.color.black,
                         bgColor = R.color.conversation_room_gray
                     )
