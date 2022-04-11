@@ -238,7 +238,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/mute_btn"
                 app:srcCompat="@drawable/ic_hand_raised_icon"
-                tools:visibility="visible" />
+                tools:visibility="gone" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/hand_unraise_btn"
@@ -253,7 +253,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/mute_btn"
                 app:srcCompat="@drawable/ic_unraise_hand_icon"
-                tools:visibility="visible" />
+                tools:visibility="gone" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <com.joshtalks.badebhaiya.feed.NotificationView

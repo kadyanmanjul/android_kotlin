@@ -561,7 +561,8 @@ class ConversationLiveRoomActivity : BaseActivity(),
             binding.raisedHands.visibility = View.VISIBLE
         }
         else {
-            binding.handRaiseBtn.visibility = View.VISIBLE
+            binding.handRaiseBtn.visibility = View.GONE
+            binding.handUnraiseBtn.visibility = View.VISIBLE
             binding.raisedHands.visibility = View.GONE
         }
     }
@@ -666,7 +667,7 @@ class ConversationLiveRoomActivity : BaseActivity(),
             val customMessage = JsonObject()
             customMessage.addProperty("id", vm.getAgoraUid())
             customMessage.addProperty("is_hand_raised", isRaised)
-            customMessage.addProperty("name", vm.getCurrentUser()?.name ?: DEFAULT_NAME)
+            customMessage.addProperty("short_name", vm.getCurrentUser()?.name ?: DEFAULT_NAME)
             customMessage.addProperty("action", "IS_HAND_RAISED")
             vm.sendCustomMessage(customMessage, vm.getModeratorId().toString())
 
@@ -825,7 +826,7 @@ class ConversationLiveRoomActivity : BaseActivity(),
             customMessage.addProperty("id", vm.getAgoraUid())
             customMessage.addProperty("is_speaker", true)
             customMessage.addProperty("is_mic_on", false)
-            customMessage.addProperty("name", vm.getCurrentUser()?.name)
+            customMessage.addProperty("short_name", vm.getCurrentUser()?.name)
             customMessage.addProperty("action", "MOVE_TO_SPEAKER")
             vm.sendCustomMessage(customMessage, channelName)
             isInviteRequestComeFromModerator = true
@@ -839,10 +840,9 @@ class ConversationLiveRoomActivity : BaseActivity(),
             val customMessage = JsonObject()
             customMessage.addProperty("id", vm.getAgoraUid())
             customMessage.addProperty("is_hand_raised", false)
-            customMessage.addProperty("name", vm.getCurrentUser()?.name ?: DEFAULT_NAME)
+            customMessage.addProperty("short_name", vm.getCurrentUser()?.name ?: DEFAULT_NAME)
             customMessage.addProperty("action", "IS_HAND_RAISED")
             vm.sendCustomMessage(customMessage, vm.getModeratorId().toString())
-            binding.notificationBar.loadAnimationSlideUp()
             isHandRaised = !isHandRaised
             binding.apply {
                 handRaiseBtn.visibility = View.GONE
@@ -1159,6 +1159,7 @@ class ConversationLiveRoomActivity : BaseActivity(),
                 roomId ?: 0, vm.getModeratorId(), vm.getModeratorName(), channelName,
                 ArrayList(raisedHandList)
             )
+        binding.notificationBar.loadAnimationSlideUp()
         bottomSheet.show(supportFragmentManager, "Bottom sheet Hands Raised")
         bottomSheet.dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 

@@ -1,13 +1,9 @@
 package com.joshtalks.badebhaiya.feed.model
 
-import android.os.Build
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.badebhaiya.core.EMPTY
-import java.text.SimpleDateFormat
-import java.time.ZonedDateTime
 import kotlinx.android.parcel.Parcelize
-import java.util.*
 
 data class RoomListResponse(
     @SerializedName("live_room")
@@ -93,8 +89,10 @@ data class LiveRoomUser(
     var id: Int?,
     @SerializedName("is_speaker")
     var isSpeaker: Boolean?,
-    @SerializedName("name")
+    @SerializedName("short_name")
     var name: String?,
+    @SerializedName("full_name")
+    var fullName: String?,
     @SerializedName("photo_url")
     var photoUrl: String?,
     @SerializedName("sort_order")

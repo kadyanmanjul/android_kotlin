@@ -217,7 +217,7 @@ class ConversationRoomViewModel(application: Application) : AndroidViewModel(app
                     try {
                         if (msg != null) {
                             Log.d(
-                                "ABC",
+                                "ABCEvent",
                                 "message() called with: pubnub = $pubnub, pnMessageResult = $pnMessageResult"
                             )
                             replaySubject.toSerialized()
@@ -274,10 +274,10 @@ class ConversationRoomViewModel(application: Application) : AndroidViewModel(app
             ?.channel(channelName)
             ?.includeCustom(true)
             ?.sync()
-        Log.d("ABC2", "getLatestUserList() called with: memberList = $memberList ")
         val tempSpeakerList = ArraySet<LiveRoomUser>()
         val tempAudienceList = ArraySet<LiveRoomUser>()
         memberList?.data?.forEach {
+            Log.d("ABCEvent", "getLatestUserList() called with: memberList = $it ")
             refreshUsersList(it.uuid.id, it.custom)?.let { user ->
                 if (user.isSpeaker == true) {
                     tempSpeakerList.add(user)
@@ -337,7 +337,7 @@ class ConversationRoomViewModel(application: Application) : AndroidViewModel(app
             val state = mutableMapOf<String, Any>()
             state.put("id", user.id!!)
             state.put("is_speaker", user.isSpeaker.toString())
-            state.put("name", user.name ?: DEFAULT_NAME)
+            state.put("short_name", user.name ?: DEFAULT_NAME)
             state.put("photo_url", user.photoUrl ?: EMPTY)
             state.put("sort_order", user.sortOrder ?: 0)
             state.put("is_moderator", user.isModerator)
@@ -390,7 +390,7 @@ class ConversationRoomViewModel(application: Application) : AndroidViewModel(app
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 Log.d(
-                    "ABC2",
+                    "ABCEvent",
                     "inside disposable called ${it.action.name} ${it.data}  isPubNubObserverAdded: ${isPubNubUsersFetched}"
                 )
                 when (it.action) {
