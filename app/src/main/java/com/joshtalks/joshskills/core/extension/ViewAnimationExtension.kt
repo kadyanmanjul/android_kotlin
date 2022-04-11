@@ -5,7 +5,6 @@ import android.animation.AnimatorListenerAdapter
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.content.Context
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.*
@@ -185,15 +184,9 @@ fun View.transaltionAnimation(fromLocation: IntArray, toLocation: IntArray) {
 fun View.translationAnimationNew(
     toLocation: IntArray,
     customWord: CustomWord,
-    optionLayout: CustomLayout?
+    optionLayout: CustomLayout?,
+    doOnAnimationEnd: (() -> Unit)? = null
 ) {
-//    customWord.visibility = View.INVISIBLE
-    val finalLocation = IntArray(2)
-    customWord.getLocationOnScreen(finalLocation)
-    Log.d(
-        "Yash",
-        "beforeAnimationStart(): toLocation=>final (${toLocation[0]},${toLocation[1]}=>(${finalLocation[0]},${finalLocation[1]})"
-    )
     this@translationAnimationNew.visibility = View.VISIBLE
     val slideAnim = AnimatorSet()
     slideAnim.playTogether(
@@ -202,23 +195,18 @@ fun View.translationAnimationNew(
     )
     val slideSet = AnimatorSet()
     slideSet.play(slideAnim)
-    val interpolator = DecelerateInterpolator()
-    slideSet.interpolator = interpolator
-    slideSet.duration = 300
+    slideSet.interpolator = AccelerateDecelerateInterpolator()
+    slideSet.duration = 150
     slideSet.addListener(object : AnimatorListenerAdapter() {
         override fun onAnimationEnd(animation: Animator) {
             optionLayout?.let {
                 optionLayout.addViewAt(customWord, customWord.choice.sortOrder - 1)
+                customWord.updateView(isSelected = true)
             }
-//            this@translationAnimationNew.visibility = View.INVISIBLE
-//            customWord.visibility = View.VISIBLE
-
-            val finalLocation = IntArray(2)
-            customWord.getLocationOnScreen(finalLocation)
-            Log.d(
-                "Yash",
-                "onAnimationEnd(): toLocation=>final (${toLocation[0]},${toLocation[1]}=>(${finalLocation[0]},${finalLocation[1]})"
-            )
+            if (doOnAnimationEnd != null)
+                doOnAnimationEnd()
+            this@translationAnimationNew.visibility = View.GONE
+            customWord.visibility = View.VISIBLE
         }
     })
     slideSet.start()

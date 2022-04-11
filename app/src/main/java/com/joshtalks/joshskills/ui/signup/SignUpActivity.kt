@@ -58,7 +58,7 @@ import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.LoginViaEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.LoginViaStatus
 import com.joshtalks.joshskills.repository.local.model.User
-import com.joshtalks.joshskills.ui.userprofile.UserProfileViewModel
+import com.joshtalks.joshskills.ui.userprofile.viewmodel.UserProfileViewModel
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
@@ -80,6 +80,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.*
+import com.joshtalks.joshskills.core.IMPRESSION_ALREADY_NEWUSER_ENROLL
+import com.joshtalks.joshskills.core.IMPRESSION_ALREADY_ALREADYUSER
 
 private const val GOOGLE_SIGN_UP_REQUEST_CODE = 9001
 const val FLOW_FROM = "Flow"
@@ -124,7 +126,6 @@ class SignUpActivity : BaseActivity() {
                 AnalyticsEvent.FLOW_FROM_PARAM.NAME,
                 intent.getStringExtra(FLOW_FROM)
             )
-
         binding = DataBindingUtil.setContentView(this, R.layout.activity_sign_up_v2)
         binding.handler = this
         addViewModelObserver()
@@ -132,13 +133,18 @@ class SignUpActivity : BaseActivity() {
         setupTrueCaller()
         if (User.getInstance().isVerified && isUserProfileComplete()) {
             openProfileDetailFragment(false)
-        } else {
+        }
+        else if(User.getInstance().isVerified && !isRegProfileComplete()) {
+            openProfileDetailFragment(true)
+        }
+        else {
             openSignUpOptionsFragment()
         }
         window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
 
     private fun addViewModelObserver() {
+        var isFirstTime = false
         viewModel.signUpStatus.observe(this, Observer {
             hideProgressBar()
             when (it) {
@@ -152,6 +158,8 @@ class SignUpActivity : BaseActivity() {
                         PrefManager.put(ONLINE_TEST_LAST_LESSON_COMPLETED, 0)
                         PrefManager.put(ONLINE_TEST_LAST_LESSON_ATTEMPTED, 0)
                     }
+                    isFirstTime = true
+                    viewModel.saveTrueCallerImpression(IMPRESSION_ALREADY_NEWUSER_ENROLL)
                     openProfileDetailFragment(true)
                 }
                 SignUpStepStatus.ProfileCompleted -> {
@@ -165,6 +173,8 @@ class SignUpActivity : BaseActivity() {
                 }
                 SignUpStepStatus.StartAfterPicUploaded, SignUpStepStatus.ProfilePicSkipped, SignUpStepStatus.SignUpCompleted -> {
                     logLoginSuccessAnalyticsEvent(viewModel.loginViaStatus?.toString())
+                    if(!isFirstTime)
+                    viewModel.saveTrueCallerImpression(IMPRESSION_ALREADY_ALREADYUSER)
                     startActivity(getInboxActivityIntent())
                     this@SignUpActivity.finishAffinity()
                 }
@@ -777,6 +787,7 @@ class SignUpActivity : BaseActivity() {
         appAnalytics.push()
         super.onStop()
     }
+
 
     override fun onDestroy() {
         window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)

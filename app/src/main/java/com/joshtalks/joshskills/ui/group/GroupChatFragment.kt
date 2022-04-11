@@ -25,6 +25,7 @@ import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.hideKeyboard
 import com.joshtalks.joshskills.databinding.GroupChatFragmentBinding
 import com.joshtalks.joshskills.track.CONVERSATION_ID
+import com.joshtalks.joshskills.ui.group.constants.*
 import com.joshtalks.joshskills.ui.group.viewmodels.GroupChatViewModel
 
 import com.vanniktech.emoji.EmojiPopup
@@ -95,9 +96,7 @@ class GroupChatFragment : BaseFragment() {
     override fun initViewState() {
         liveData.observe(viewLifecycleOwner) {
             when (it.what) {
-                OPEN_EMOJI_KEYBOARD -> {
-                    openEmojiKeyboard(it.data)
-                }
+                OPEN_EMOJI_KEYBOARD -> openEmojiKeyboard(it.data)
                 CLEAR_CHAT_TEXT -> binding.groupChatSendMsg.setText("")
                 SEND_MSG -> vm.pushMessage(binding.groupChatSendMsg.text.toString().trim())
                 OPEN_GROUP_INFO -> hideKeyboard(requireContext())
@@ -126,10 +125,12 @@ class GroupChatFragment : BaseFragment() {
             vm.groupSubHeader.set(args.getString(GROUPS_CHAT_SUB_TITLE, ""))
             vm.groupId = args.getString(GROUPS_ID, "")
             vm.imageUrl.set(args.getString(GROUPS_IMAGE, ""))
-            vm.groupCreatedAt.set(args.getString(GROUPS_CREATED_TIME, ""))
             vm.groupCreator.set(args.getString(GROUPS_CREATOR, ""))
             vm.conversationId = args.getString(CONVERSATION_ID, "") ?: ""
             vm.adminId = args.getString(ADMIN_ID, "")
+            vm.groupType.set(args.getString(GROUP_TYPE, OPENED_GROUP))
+            vm.groupJoinStatus.set(vm.getGroupJoinText(args.getString(GROUP_STATUS, JOINED_GROUP)))
+            vm.showRequestsTab.set(false)
             args.getInt(GROUP_CHAT_UNREAD, 0).let {
                 vm.unreadCount = it
                 if (it != 0) {

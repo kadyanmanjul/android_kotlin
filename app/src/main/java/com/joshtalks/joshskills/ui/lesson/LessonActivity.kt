@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.ui.lesson
 
+import android.Manifest.*
 import android.animation.ValueAnimator
 import android.app.Activity
 import android.content.Context
@@ -10,7 +11,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.util.DisplayMetrics
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewOutlineProvider
@@ -35,6 +35,8 @@ import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.base.EventLiveData
+import com.joshtalks.joshskills.constants.PERMISSION_FROM_READING
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.core.extension.translationAnimationNew
@@ -67,6 +69,10 @@ import com.joshtalks.joshskills.ui.tooltip.JoshTooltip
 import com.joshtalks.joshskills.ui.video_player.IS_BATCH_CHANGED
 import com.joshtalks.joshskills.ui.video_player.LAST_LESSON_INTERVAL
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
+import com.karumi.dexter.MultiplePermissionsReport
+import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.PermissionRequest
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -84,9 +90,11 @@ const val ROOM_POSITION = 4
 const val DEFAULT_SPOTLIGHT_DELAY_IN_MS = 1300L
 private const val TAG = "LessonActivity"
 const val TOOLTIP_LESSON_GRAMMAR = "TOOLTIP_LESSON_GRAMMAR_"
+val STORAGE_GRAMMER_REQUEST_CODE = 3456
+private val STORAGE_READING_REQUEST_CODE = 3457
 
 class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, GrammarAnimation {
-
+    private val event = EventLiveData
     private lateinit var binding: LessonActivityBinding
     private val courseId = PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID)
 
@@ -104,7 +112,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
     private var testId = -1
     private var whatsappUrl = EMPTY
     private val compositeDisposable = CompositeDisposable()
-    private var customView: CustomWord? = null
+//    private var customView: CustomWord? = null
     var lesson: LessonModel? = null // Do not use this var
     private lateinit var tabs: ViewGroup
     val arrayFragment = arrayListOf<Fragment>()
@@ -114,6 +122,8 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
     private var ruleIdLeftList = ArrayList<Int>()
     private var ruleCompletedList: ArrayList<Int>? = arrayListOf()
     private var totalRuleList: ArrayList<Int>? = arrayListOf()
+    private var introVideoControl = false
+    private var isWhatsappRemarketingActive = false
     private val adapter: LessonPagerAdapter by lazy {
         LessonPagerAdapter(
             supportFragmentManager,
@@ -161,6 +171,13 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
             R.layout.lesson_activity
         )
         binding.viewbinding = this
+
+        event.observe(this) {
+            when(it.what) {
+                PERMISSION_FROM_READING -> requestStoragePermission(STORAGE_READING_REQUEST_CODE)
+            }
+        }
+
         PrefManager.put(LESSON_COMPLETE_SNACKBAR_TEXT_STRING, EMPTY, false)
         val lessonId = if (intent.hasExtra(LESSON_ID)) intent.getIntExtra(LESSON_ID, 0) else 0
         if (lessonId == 0) {
@@ -168,7 +185,8 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
             finish()
         }
         viewModel.isFreeTrail = if (intent.hasExtra(IS_FREE_TRAIL)) intent.getBooleanExtra(
-            IS_FREE_TRAIL, false
+            IS_FREE_TRAIL,
+            false
         ) else false
         isDemo = if (intent.hasExtra(IS_DEMO)) intent.getBooleanExtra(IS_DEMO, false) else false
         isNewGrammar = if (intent.hasExtra(IS_NEW_GRAMMAR)) intent.getBooleanExtra(
@@ -195,6 +213,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         titleView = findViewById(R.id.text_message_title)
 
         setObservers()
+        viewModel.getWhatsappRemarketingCampaign(CampaignKeys.WHATSAPP_REMARKETING.name)
         viewModel.getLesson(lessonId)
         viewModel.getQuestions(lessonId, isDemo)
 
@@ -215,69 +234,65 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         viewModel.saveImpression(IMPRESSION_OPEN_GRAMMAR_SCREEN)
     }
 
+    private fun requestStoragePermission(requestCode: Int) {
+        PermissionUtils.storageReadAndWritePermissionReading(
+            this,
+            object : MultiplePermissionsListener {
+                override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                    report?.areAllPermissionsGranted()?.let {
+                        if (report.areAllPermissionsGranted()) {
+                            if (requestCode == STORAGE_READING_REQUEST_CODE)
+                                viewModel.permissionGranted()
+                        } else if (report.isAnyPermissionPermanentlyDenied) {
+                            PermissionUtils.permissionPermanentlyDeniedDialog(
+                                this@LessonActivity,
+                                R.string.grant_storage_permission
+                            )
+                            return
+                        }
+                    }
+                }
+
+                override fun onPermissionRationaleShouldBeShown(
+                    permissions: MutableList<PermissionRequest>?,
+                    token: PermissionToken?
+                ) {
+                    token?.continuePermissionRequest()
+                }
+            }
+        )
+    }
+
     override fun onResume() {
         super.onResume()
         subscribeRxBus()
     }
 
     private fun subscribeRxBus() {
-        animateAtsOptionViewEvent.observe(this) { event ->
-            event?.let {
-                if (customView == null) {
-                    customView = CustomWord(this, it.customWord.choice)
-                } else {
-                    binding.rootView.removeView(customView)
-                    customView?.updateChoice(it.customWord.choice)
-                    //customView?.choice = event.customWord.choice
-                }
-                customView?.apply {
-                    binding.rootView.addView(this)
-                    this.text = it.customWord.choice.text
-                    post {
-                        this.x = it.fromLocation[0].toFloat()
-                        this.y = it.fromLocation[1].toFloat() - it.height.toFloat()
-                        val toLocation = IntArray(2)
-                        it.customWord.getLocationOnScreen(toLocation)
-                        toLocation[1] = toLocation[1] - (it.height) + CustomWord.mPaddingTop
-                        this.translationAnimationNew(
-                            toLocation,
-                            it.customWord,
-                            it.optionLayout
-                        )
-                        animateAtsOptionViewEvent.postValue(null)
-                    }
-                }
-            }
-        }
-        /* compositeDisposable.add(
+        compositeDisposable.add(
              RxBus2.listenWithoutDelay(AnimateAtsOtionViewEvent::class.java)
                  .subscribeOn(Schedulers.io())
                  .observeOn(AndroidSchedulers.mainThread())
                  .subscribe { event ->
-                     Log.d(TAG, "subscribeRxBus() returned: $event")
-                     if (customView == null) {
-                         customView = CustomWord(this, event.customWord.choice)
-                     } else {
- //                        binding.rootView.removeView(customView)
-                         customView?.updateChoice(event.customWord.choice)
-                         //customView?.choice = event.customWord.choice
-                     }
-                     customView?.apply {
- //                        binding.rootView.addView(this)
+                    CustomWord(this, event.customWord.choice).apply {
+                        binding.rootView.addView(this)
                          this.text = event.customWord.choice.text
                          this.x = event.fromLocation[0].toFloat()
                          this.y = event.fromLocation[1].toFloat() - event.height.toFloat()
                          val toLocation = IntArray(2)
                          event.customWord.getLocationOnScreen(toLocation)
-                         toLocation[1] = toLocation[1] - (event.height) + CustomWord.mPaddingTop
-                         this.transaltionAnimationNew(
+                        toLocation[1] = toLocation[1] - getStatusBarHeight()
+                        this.translationAnimationNew(
                              toLocation,
                              event.customWord,
-                             event.optionLayout
+                            event.optionLayout,
+                            doOnAnimationEnd = {
+                                binding.rootView.removeView(this)
+                            }
                          )
                      }
                  }
-         )*/
+        )
     }
 
     override fun getConversationId(): String? {
@@ -286,18 +301,14 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
 
     private fun setObservers() {
 
-        viewModel.lessonQuestionsLiveData.observe(this) {
+        viewModel.lessonQuestionsLiveData.observe(
+            this
+        ) {
             binding.progressView.visibility = View.GONE
             viewModel.lessonLiveData.value?.let {
                 titleView.text =
                     getString(R.string.lesson_no, it.lessonNo)
                 lessonNumber = it.lessonNo
-
-                if(it.lessonNo == 1){
-                    setUpVideoProgressListener()
-                    viewModel.getVideoData()
-                }
-
                 lessonIsNewGrammar = it.isNewGrammar
             }
             viewModel.lessonIsConvoRoomActive =
@@ -326,7 +337,9 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
             }
         }
 
-        viewModel.ruleListIds.observe(this) { ruleIds ->
+        viewModel.ruleListIds.observe(
+            this
+        ) { ruleIds ->
             if (ruleIds.totalRulesIds.isNullOrEmpty().not()) {
                 PrefManager.put(
                     ONLINE_TEST_LIST_OF_TOTAL_RULES,
@@ -340,7 +353,9 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
             }
         }
 
-        viewModel.updatedLessonResponseLiveData.observe(this) {
+        viewModel.updatedLessonResponseLiveData.observe(
+            this
+        ) {
             if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE)) {
                 if (it.pointsList.isNullOrEmpty().not()) {
                     showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, it.pointsList?.get(0))
@@ -355,7 +370,9 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
             }
         }
 
-        viewModel.pointsSnackBarText.observe(this) {
+        viewModel.pointsSnackBarText.observe(
+            this
+        ) {
             if (it.pointsList.isNullOrEmpty().not()) {
                 showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, it.pointsList!![0])
                 PrefManager.put(
@@ -543,11 +560,31 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                 }
 
                 LessonSpotlightState.SPEAKING_SPOTLIGHT_PART2 -> {
-                    if (introVideoUrl.isNullOrBlank().not()) {
+                    if(introVideoControl){
+                        if (introVideoUrl.isNullOrBlank().not()) {
                         viewModel.saveIntroVideoFlowImpression(SPEAKING_TAB_CLICKED_FOR_FIRST_TIME)
                         viewModel.showHideSpeakingFragmentCallButtons(1)
                         showIntroVideoUi()
+                        }
+                    }else{
+                        binding.overlayLayout.visibility = View.VISIBLE
+                        binding.spotlightTabGrammar.visibility = View.INVISIBLE
+                        binding.spotlightTabSpeaking.visibility = View.INVISIBLE
+                        binding.spotlightTabVocab.visibility = View.INVISIBLE
+                        binding.spotlightTabReading.visibility = View.INVISIBLE
+                        binding.lessonSpotlightTooltip.visibility = View.VISIBLE
+                        binding.lessonSpotlightTooltip.setTooltipText(
+                            resources.getText(R.string.label_speaking_spotlight_2).toString()
+                        )
+                        binding.lessonSpotlightTooltip.post {
+                            slideInAnimation(binding.lessonSpotlightTooltip)
+                        }
+                        binding.spotlightStartGrammarTest.visibility = View.GONE
+                        binding.spotlightCallBtn.visibility = View.VISIBLE
+                        binding.spotlightCallBtnText.visibility = View.VISIBLE
+                        binding.arrowAnimation.visibility = View.VISIBLE
                     }
+
                 }
 
                 LessonSpotlightState.CONVO_ROOM_SPOTLIGHT -> {
@@ -601,6 +638,12 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                 }
             }
         }
+        viewModel.whatsappRemarketingLiveData.observe(this) { abTestCampaignData ->
+            abTestCampaignData?.let { map ->
+                isWhatsappRemarketingActive =
+                    (map.variantKey == VariantKeys.WR_ENABLED.NAME) && map.variableMap?.isEnabled == true
+            }
+        }
     }
 
     private fun hideSpotlight() {
@@ -620,7 +663,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
     fun callPracticePartner() {
         viewModel.lessonSpotlightStateLiveData.postValue(null)
         viewModel.speakingSpotlightClickLiveData.postValue(Unit)
-        closeIntroVideoPopUpUi()
+        if(introVideoControl) closeIntroVideoPopUpUi()
     }
 
     private fun setUpNewGrammarLayouts(
@@ -735,10 +778,18 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         }
     }
 
+    override fun showIntroVideo() {
+            introVideoControl  = true
+            setUpVideoProgressListener()
+            viewModel.getVideoData()
+    }
+
     override fun showVideoToolTip(
         shouldShow: Boolean,
         wrongAnswerHeading: String?,
+        wrongAnswerSubHeading: String?,
         wrongAnswerText: String?,
+        wrongAnswerDescription: String?,
         videoClickListener: (() -> Unit)?
     ) {
         if (shouldShow.not()) PrefManager.put(HAS_SEEN_QUIZ_VIDEO_TOOLTIP, true)
@@ -754,7 +805,9 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                 }
             }
             wrongAnswerTitle.text = wrongAnswerHeading
+            explanationTitle.text = wrongAnswerSubHeading
             wrongAnswerDesc.text = wrongAnswerText
+            explanationText.text = wrongAnswerDescription
         }
     }
 
@@ -766,6 +819,9 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                     GRAMMAR_POSITION -> {
                         if (lesson.grammarStatus != LESSON_STATUS.CO && status == LESSON_STATUS.CO) {
                             MarketingAnalytics.logGrammarSectionCompleted()
+                            if(isWhatsappRemarketingActive){
+                                MarketingAnalytics.logWhatsappRemarketing()
+                            }
                         }
                         lesson.grammarStatus = status
                     }
@@ -1106,7 +1162,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
     }
 
     override fun onPause() {
-        binding.videoView.onPause()
+        if(introVideoControl) binding.videoView.onPause()
         super.onPause()
     }
 
@@ -1150,7 +1206,6 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         const val LAST_LESSON_STATUS = "last_lesson_status"
         const val LESSON_SECTION = "lesson_section"
         val isVideoVisible = MutableLiveData(false)
-        val animateAtsOptionViewEvent = MutableLiveData<AnimateAtsOtionViewEvent?>(null)
 
         fun getActivityIntent(
             context: Context,
@@ -1229,7 +1284,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         itemImageView.y = overlayItem.y.toFloat() - OFFSET
         itemImageView.setOnClickListener {
             binding.itemOverlay.visibility = View.INVISIBLE
-            viewModel.eventLiveData.postValue(Event(Unit))
+            viewModel.eventLiveData.postValue(Event(true))
         }
         itemImageView.requestLayout()
         itemImageView.post {
@@ -1246,7 +1301,9 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
             arrowView.visibility = View.VISIBLE
             itemImageView.visibility = View.VISIBLE
             tooltipView.setTooltipText(
-                AppObjectController.getFirebaseRemoteConfig().getString(TOOLTIP_LESSON_GRAMMAR + courseId)
+                AppObjectController.getFirebaseRemoteConfig()
+                    .getString(TOOLTIP_LESSON_GRAMMAR + courseId)
+
             )
             slideInAnimation(tooltipView)
             PrefManager.put(HAS_SEEN_GRAMMAR_ANIMATION, true)

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/root_view"
+    android:background="@color/white"
+    android:padding="@dimen/_12sdp">
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/retry_btn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:layout_width="@dimen/_200sdp"
+            android:layout_height="@dimen/_200sdp"
+            app:lottie_loop="false"
+            app:lottie_autoPlay="true"
+            app:lottie_fileName="lottie/network_error.json"
+            app:lottie_imageAssetsFolder="lottie"
+            tools:visibility="visible" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="हम इंटरनेट से कनेक्ट नहीं कर पा रहे हैं।"
+            android:layout_marginTop="@dimen/_48sdp"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5_Semi_Bold" />
+
+
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_18sdp"
+            android:text="कृपया अपना इंटरनेट चेक करें।"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5_Semi_Bold" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/retry_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/blue_new_btn_grammar_selector"
+        android:enabled="true"
+        android:gravity="center"
+        android:paddingVertical="@dimen/_12sdp"
+        android:text="Retry…"
+        android:textAllCaps="false"
+        android:textAppearance="@style/TextAppearance.JoshTypography.Button"
+        android:textColor="@color/white"
+        app:cornerRadius="@dimen/_10sdp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
@@ -14,16 +15,15 @@ import com.github.razir.progressbutton.hideProgress
 import com.github.razir.progressbutton.showProgress
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIAL_ENTER_NAME_TEXT
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.FragmentSignUpProfileForFreeTrialBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
-import kotlinx.android.synthetic.main.fragment_sign_up_profile.*
-import kotlinx.android.synthetic.main.instruction_top_view_holder.view.*
 import java.util.*
+import kotlinx.android.synthetic.main.fragment_sign_up_profile.*
 
-const val FREE_TRIAL_ENTER_NAME_TEXT = "FREE_TRIAL_ENTER_NAME_TEXT_"
 class SignUpProfileForFreeTrialFragment(name: String,isVerified:Boolean) : BaseSignUpFragment() {
 
     private lateinit var viewModel: SignUpViewModel
@@ -32,7 +32,7 @@ class SignUpProfileForFreeTrialFragment(name: String,isVerified:Boolean) : BaseS
     private var isUserVerified = isVerified
 
     companion object {
-        fun newInstance(name: String, isVerified:Boolean) = SignUpProfileForFreeTrialFragment(name, isVerified)
+        fun newInstance(name: String,isVerified:Boolean) = SignUpProfileForFreeTrialFragment(name,isVerified)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,8 +65,7 @@ class SignUpProfileForFreeTrialFragment(name: String,isVerified:Boolean) : BaseS
 
     private fun initUI() {
         binding.textViewName.text = AppObjectController.getFirebaseRemoteConfig()
-            .getString(FREE_TRIAL_ENTER_NAME_TEXT + requireArguments().getString(FREE_TRIAL_TEST_ID, FREE_TRIAL_DEFAULT_TEST_ID))
-
+            .getString(FREE_TRIAL_ENTER_NAME_TEXT + PrefManager.getStringValue(FREE_TRIAL_TEST_ID, defaultValue = FREE_TRIAL_DEFAULT_TEST_ID))
         binding.nameEditText.setText(username)
         binding.nameEditText.isEnabled = true
     }
@@ -94,12 +93,18 @@ class SignUpProfileForFreeTrialFragment(name: String,isVerified:Boolean) : BaseS
         })
         viewModel.apiStatus.observe(viewLifecycleOwner, {
             when (it) {
+                ApiCallStatus.START -> {
+                    startProgress()
+                    handleOnBackPressed(true)
+                }
                 ApiCallStatus.SUCCESS -> {
                     hideProgress()
                     moveToInboxScreen()
+                    handleOnBackPressed(false)
                 }
                 else -> {
                     hideProgress()
+                    handleOnBackPressed(false)
                 }
             }
         })
@@ -112,13 +117,13 @@ class SignUpProfileForFreeTrialFragment(name: String,isVerified:Boolean) : BaseS
     }
 
     fun submitProfile() {
+        handleOnBackPressed(true)
         activity?.let { hideKeyboard(it, binding.nameEditText) }
         if (binding.nameEditText.text.isNullOrEmpty()) {
             showToast(getString(R.string.name_error_toast))
             return
         }
-
-        startProgress()
+        binding.btnLogin.isEnabled = false
         viewModel.checkMentorIdPaid()
 
         val name = binding.nameEditText.text.toString()
@@ -172,4 +177,12 @@ class SignUpProfileForFreeTrialFragment(name: String,isVerified:Boolean) : BaseS
         (activity as BaseActivity).showWebViewDialog(url)
     }
 
+    private fun handleOnBackPressed(enabled: Boolean) {
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner,
+            object : OnBackPressedCallback(enabled){
+                override fun handleOnBackPressed() {
+
+                }
+            })
+    }
 }

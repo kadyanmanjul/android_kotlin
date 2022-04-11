@@ -130,10 +130,6 @@ class StartCourseActivity : CoreJoshActivity() {
         }
     }
 
-    override fun onBackPressed() {
-
-    }
-
     private fun setListeners() {
         binding.materialButton.setOnClickListener {
             if (isUserRegistered) {
@@ -143,8 +139,17 @@ class StartCourseActivity : CoreJoshActivity() {
                     .addParam(AnalyticsEvent.COURSE_NAME.NAME, courseName)
                     .addParam(AnalyticsEvent.TRANSACTION_ID.NAME, transactionId)
                     .push()
+                if(isRegProfileComplete())
                 startActivity(getInboxActivityIntent())
-                this.finish()
+                else {
+                    val intent = Intent(this, SignUpActivity::class.java).apply {
+                        addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        putExtra(FLOW_FROM, "payment journey")
+                    }
+                    startActivity(intent)
+                    this.finish()
+                }
             } else {
                 AppAnalytics.create(AnalyticsEvent.REGISTER_NOW_CLICKED.NAME)
                     .addUserDetails()

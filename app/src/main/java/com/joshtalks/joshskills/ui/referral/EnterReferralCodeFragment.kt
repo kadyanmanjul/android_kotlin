@@ -35,7 +35,7 @@ private const val IS_PROMO_CODE_FRAGMENT = "is_promo_code_fragment"
 class EnterReferralCodeFragment : BottomSheetDialogFragment() {
     private lateinit var binding: FragmentEnterReferralCodeBinding
     private lateinit var appAnalyticsP: AppAnalytics
-    private var is_promo_code_fragment: Boolean? = null
+    private var is_promo_code_fragment: Boolean = false
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -71,7 +71,7 @@ class EnterReferralCodeFragment : BottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.tvReferralCode.filters =
             arrayOf(InputFilter.AllCaps(), InputFilter.LengthFilter(10))
-        is_promo_code_fragment?.let {
+        is_promo_code_fragment.let {
             if(it){
                 binding.textviewNumber.text=getString(R.string.enter_promo_code)
             }
@@ -98,7 +98,7 @@ class EnterReferralCodeFragment : BottomSheetDialogFragment() {
         })
 
         binding.next.setOnClickListener {
-            if (is_promo_code_fragment!!) {
+            if (is_promo_code_fragment) {
                 RxBus2.publish(PromoCodeSubmitEventBus(binding.tvReferralCode.text.toString()))
                 requireActivity().supportFragmentManager.beginTransaction().remove(this).commit()
             } else {

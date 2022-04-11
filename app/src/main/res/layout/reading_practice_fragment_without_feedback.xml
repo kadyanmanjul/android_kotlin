@@ -467,31 +467,129 @@
                     android:layout_marginStart="@dimen/_6sdp"
                     android:layout_marginTop="@dimen/_6sdp"
                     android:layout_marginEnd="@dimen/_6sdp"
+                    android:layout_marginBottom="@dimen/_8sdp"
                     android:minHeight="@dimen/_56sdp"
                     android:orientation="vertical"
                     android:visibility="gone"
                     app:contentPadding="@dimen/_8sdp"
+                    app:layout_constraintBottom_toTopOf="@+id/feedback_layout"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/practise_text_info_layout"
+                    card_view:cardCornerRadius="@dimen/_8sdp"
                     card_view:cardElevation="0dp"
                     card_view:cardUseCompatPadding="false"
                     tools:visibility="visible">
 
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/your_sub_answer_tv"
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/sub_answer_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/your_sub_answer_tv"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="start|center"
+                            android:text="@string/your_answer"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
+                            android:textColor="@color/black"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/iv_close"
+                            android:layout_width="@dimen/_16sdp"
+                            android:layout_height="@dimen/_16sdp"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:foregroundGravity="right"
+                            android:onClick="@{()-> handler.closeRecordedView()}"
+                            android:tint="@color/reading_close_bg"
+                            android:visibility="gone"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:srcCompat="@drawable/ic_cross"
+                            tools:visibility="visible" />
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/iv_share"
+                            android:layout_width="@dimen/_16sdp"
+                            android:layout_height="@dimen/_16sdp"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:foregroundGravity="right"
+                            android:visibility="gone"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:srcCompat="@drawable/ic_share"
+                            tools:visibility="invisible" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/video_layout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="start|center"
-                        android:text="@string/your_answer"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
-                        android:textColor="@color/black" />
+                        android:layout_marginTop="@dimen/_28sdp"
+                        android:visibility="gone"
+                        tools:visibility="visible">
+
+                        <VideoView
+                            android:id="@+id/merged_video"
+                            android:layout_width="@dimen/_141sdp"
+                            android:layout_height="@dimen/_250sdp"
+                            android:layout_gravity="center"
+                            android:layout_marginHorizontal="@dimen/_24sdp"
+                            android:focusable="true"
+                            android:visibility="gone"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:visibility="visible" />
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/play_btn"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:elevation="@dimen/_10sdp"
+                            android:onClick="@{()->handler.playVideo()}"
+                            android:visibility="visible"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0.5"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintVertical_bias="0.5"
+                            app:srcCompat="@drawable/ic__play_video" />
+
+                        <com.pnikosis.materialishprogress.ProgressWheel
+                            android:id="@+id/progress_dialog"
+                            android:layout_width="@dimen/_28sdp"
+                            android:layout_height="@dimen/_28sdp"
+                            android:layout_gravity="center"
+                            android:visibility="gone"
+                            app:matProg_barWidth="@dimen/_2sdp"
+                            tools:visibility="invisible"
+                            wheel:matProg_barColor="@color/white"
+                            wheel:matProg_fillRadius="true"
+                            wheel:matProg_progressIndeterminate="true"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"/>
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <LinearLayout
                         android:id="@+id/sub_practise_submit_layout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/_16sdp"
+                        android:visibility="gone"
                         android:orientation="vertical">
 
                         <com.mindorks.placeholderview.PlaceHolderView
@@ -501,7 +599,7 @@
                             android:visibility="gone"
                             tools:itemCount="2"
                             tools:listitem="@layout/practice_audio_item"
-                            tools:visibility="visible" />
+                            tools:visibility="invisible" />
 
                     </LinearLayout>
 

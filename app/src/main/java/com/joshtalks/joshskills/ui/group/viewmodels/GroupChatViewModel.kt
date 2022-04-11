@@ -25,9 +25,10 @@ import com.joshtalks.joshskills.ui.group.*
 import com.joshtalks.joshskills.ui.group.adapters.GroupChatAdapter
 import com.joshtalks.joshskills.ui.group.adapters.GroupMemberAdapter
 import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics
-import com.joshtalks.joshskills.ui.group.constants.MESSAGE
+import com.joshtalks.joshskills.ui.group.constants.*
 import com.joshtalks.joshskills.ui.group.lib.ChatService
 import com.joshtalks.joshskills.ui.group.lib.PubNubService
+import com.joshtalks.joshskills.ui.group.model.GroupJoinRequest
 import com.joshtalks.joshskills.ui.group.model.GroupMember
 import com.joshtalks.joshskills.ui.group.model.LeaveGroupRequest
 import com.joshtalks.joshskills.ui.group.model.MessageItem
@@ -35,7 +36,6 @@ import com.joshtalks.joshskills.ui.group.repository.GroupRepository
 import com.joshtalks.joshskills.ui.group.utils.GroupChatComparator
 import com.joshtalks.joshskills.ui.group.utils.getMemberCount
 import com.joshtalks.joshskills.ui.group.utils.pushMetaMessage
-import com.joshtalks.joshskills.ui.group.utils.pushMetaRemoveMsg
 import com.pubnub.api.models.consumer.push.payload.PushPayloadHelper
 import de.hdodenhof.circleimageview.CircleImageView
 
@@ -52,12 +52,15 @@ class GroupChatViewModel : BaseViewModel() {
     val hasJoinedGroup = ObservableBoolean(false)
     var groupHeader = ObservableField("")
     var imageUrl = ObservableField("")
+    var groupType = ObservableField("")
     val groupCreator = ObservableField("")
-    val groupCreatedAt = ObservableField("")
+    val groupJoinStatus = ObservableField("")
     var memberCount = ObservableField(0)
+    var requestCount = ObservableField("")
     val memberAdapter = GroupMemberAdapter()
     val groupSubHeader = ObservableField("")
     val fetchingGrpInfo = ObservableBoolean(false)
+    val showRequestsTab = ObservableBoolean(false)
     var scrollToEnd = false
     var unreadCount = 0
     private val chatService : ChatService = PubNubService
@@ -135,6 +138,19 @@ class GroupChatViewModel : BaseViewModel() {
     }
 
     fun joinGroup(view: View) {
+        if (groupType.get() == CLOSED_GROUP && groupJoinStatus.get() == "REQUEST TO JOIN") {
+            message.what = OPEN_GROUP_REQUEST
+            singleLiveEvent.value = message
+        } else if (groupType.get() == OPENED_GROUP)
+            joinPublicGroup()
+    }
+
+    fun validateJoinRequest(view: View) {
+        message.what = REQUEST_GROUP_VALIDATION
+        singleLiveEvent.value = message
+    }
+
+    fun joinPublicGroup() {
         showProgressDialog("Joining Group...")
         viewModelScope.launch {
             try {
@@ -163,6 +179,28 @@ class GroupChatViewModel : BaseViewModel() {
         }
     }
 
+    fun joinPrivateGroup(request: GroupJoinRequest) {
+        showProgressDialog("Sending Request to join...")
+        viewModelScope.launch {
+            try {
+                val response = repository.sendJoinGroupRequest(request)
+                if (response) {
+                    onBackPress()
+                    onBackPress()
+                    message.what = CLEAR_SEARCH
+                    singleLiveEvent.value = message
+                    showToast("Request sent! Please wait for the admin to accept")
+                } else
+                    showToast("Error in sending request")
+                dismissProgressDialog()
+            } catch (e: Exception) {
+                dismissProgressDialog()
+                showToast("Error in sending request")
+                e.printStackTrace()
+            }
+        }
+    }
+
     fun showExitDialog(view: View) {
         showAlertDialog(
             view,
@@ -185,7 +223,7 @@ class GroupChatViewModel : BaseViewModel() {
                     dismissProgressDialog()
                     return@launch
                 }
-                pushMetaRemoveMsg("${Mentor.getInstance().getUser()?.firstName} removed $memberName", groupId, mentorId)
+                pushMetaMessage("${Mentor.getInstance().getUser()?.firstName} removed $memberName", groupId, mentorId)
                 getGroupInfo(false)
                 GroupAnalytics.push(GroupAnalytics.Event.MEMBER_REMOVED_FROM_GROUP, groupId, mentorId)
             } catch (e: Exception) {
@@ -231,12 +269,20 @@ class GroupChatViewModel : BaseViewModel() {
         }
     }
 
+    fun openRequestList(view: View) {
+        message.what = OPEN_GROUP_REQUESTS_LIST
+        message.obj = groupId
+        singleLiveEvent.value = message
+    }
+
     fun editGroupInfo() {
         message.what = EDIT_GROUP_INFO
         message.data = Bundle().apply {
+            putBoolean(IS_FROM_GROUP_INFO, true)
             putString(GROUPS_TITLE, groupHeader.get())
             putString(GROUPS_IMAGE, imageUrl.get())
             putString(GROUPS_ID, groupId)
+            putString(GROUP_TYPE, groupType.get())
         }
         singleLiveEvent.value = message
     }
@@ -327,15 +373,27 @@ class GroupChatViewModel : BaseViewModel() {
         if (showLoading) fetchingGrpInfo.set(true)
         viewModelScope.launch(Dispatchers.IO) {
             val memberResult = repository.getGroupMemberList(groupId, adminId)
-            val onlineCount = repository.getGroupOnlineCount(groupId)
-            memberCount.set(memberResult.memberCount)
+            val onlineAndRequestCount = repository.getOnlineAndRequestCount(groupId)
+            val onlineCount = (onlineAndRequestCount["online_count"] as Double).toInt()
+            val requestCnt = (onlineAndRequestCount["request_count"] as Double).toInt()
+            memberCount.set(memberResult.size)
+            requestCount.set("$requestCnt")
             groupSubHeader.set("${memberCount.get()} members, $onlineCount online")
-            withContext(Dispatchers.Main){
-                memberAdapter.addMembersToList(memberResult.list)
+            setRequestsTab()
+            withContext(Dispatchers.Main) {
+                memberAdapter.addMembersToList(memberResult)
                 if (showLoading) fetchingGrpInfo.set(false)
                 else showToast("Removed member from the group", Toast.LENGTH_LONG)
                 dismissProgressDialog()
             }
+        }
+    }
+
+    fun setRequestsTab() {
+        when {
+            groupType.get().equals(OPENED_GROUP) -> showRequestsTab.set(false)
+            adminId != Mentor.getInstance().getId() -> showRequestsTab.set(false)
+            else -> showRequestsTab.set(true)
         }
     }
 
@@ -370,8 +428,6 @@ class GroupChatViewModel : BaseViewModel() {
         singleLiveEvent.value = message
     }
 
-
-
     private fun getNotification(msg: String) : Map<String, Any?> {
         val pushPayloadHelper = PushPayloadHelper()
 
@@ -403,5 +459,14 @@ class GroupChatViewModel : BaseViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             repository.setUnreadChatLabel(count, groupId)
         }
+    }
+
+    fun getGroupJoinText(status: String): String {
+        return if (status == REQUESTED_GROUP)
+            "REQUEST SENT"
+        else if (status == NOT_JOINED_GROUP && groupType.get() == CLOSED_GROUP)
+            "REQUEST TO JOIN"
+        else
+            "JOIN GROUP"
     }
 }

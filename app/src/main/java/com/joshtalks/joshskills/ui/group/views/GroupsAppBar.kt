@@ -8,12 +8,13 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
 
-import androidx.appcompat.widget.LinearLayoutCompat
+import androidx.constraintlayout.widget.ConstraintLayout
 
 import com.bumptech.glide.Glide
 import de.hdodenhof.circleimageview.CircleImageView
 
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.ui.group.constants.CLOSED_GROUP
 import com.joshtalks.joshskills.ui.group.model.DefaultImage
 
 import java.lang.Exception
@@ -34,7 +35,7 @@ class GroupsAppBar @JvmOverloads constructor(
         this.findViewById(R.id.toolbar_title)
     }
 
-    val toolBarContainer: LinearLayoutCompat by lazy {
+    val toolBarContainer: ConstraintLayout by lazy {
         this.findViewById(R.id.title_container)
     }
 
@@ -54,6 +55,9 @@ class GroupsAppBar @JvmOverloads constructor(
         this.findViewById(R.id.second_right_icon)
     }
 
+    val closedGroupIcon: ImageView by lazy {
+        this.findViewById(R.id.closed_grp_img)
+    }
 
     init {
         try {
@@ -109,6 +113,13 @@ class GroupsAppBar @JvmOverloads constructor(
         imageView.setImageResource(drawableRes)
     }
 
+    fun setLockVisibility(groupType: String) {
+        if (groupType == CLOSED_GROUP)
+            closedGroupIcon.visibility = View.VISIBLE
+        else
+            closedGroupIcon.visibility = View.GONE
+    }
+
     // Listeners
     fun onBackPressed(function: () -> Unit) {
         backImageView.setOnClickListener {
@@ -133,5 +144,4 @@ class GroupsAppBar @JvmOverloads constructor(
             function.invoke()
         }
     }
-
 }

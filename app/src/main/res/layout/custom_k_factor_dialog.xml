@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="@dimen/_220sdp"
+    android:layout_height="@dimen/_69sdp"
+    android:layout_gravity="center_horizontal"
+    android:background="@drawable/rounded_rectangle_attach"
+    android:backgroundTint="@color/white"
+    android:elevation="@dimen/_5sdp"
+    app:cardCornerRadius="@dimen/_4sdp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_18sdp"
+            android:layout_marginTop="@dimen/_18sdp"
+            android:gravity="center"
+            android:lineSpacingExtra="0dp"
+            android:lines="1"
+            android:maxLines="1"
+            android:text="Your video is processing do you want to exit?"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
+            android:textColor="@color/pure_black" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/yes_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/text"
+            android:layout_marginTop="@dimen/_7sdp"
+            android:layout_toLeftOf="@+id/not_now"
+            android:layout_marginStart="@dimen/_15sdp"
+            android:layout_marginEnd="@dimen/_18sdp"
+            android:clickable="true"
+            android:elevation="0dp"
+            android:focusable="true"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:stateListAnimator="@null"
+            android:text="@string/yes"
+            android:textAllCaps="false"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
+            android:textColor="@color/red"
+            app:cornerRadius="@dimen/_4sdp"
+            app:elevation="0dp"
+            android:textStyle="bold"
+            app:rippleColor="@color/white" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/not_now"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/text"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="@dimen/_7sdp"
+            android:layout_marginStart="@dimen/_8sdp"
+            android:layout_marginEnd="@dimen/_22sdp"
+            android:backgroundTint="@color/dialog_no_color"
+            android:clickable="true"
+            android:focusable="true"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:elevation="0dp"
+            app:elevation="0dp"
+            android:stateListAnimator="@null"
+            android:text="@string/no"
+            android:textAllCaps="false"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
+            android:textColor="@color/colorAccent"
+            android:textStyle="bold"
+            android:visibility="visible"
+            app:cornerRadius="@dimen/_4sdp"
+            app:rippleColor="@color/white" />
+
+    </RelativeLayout>
+
+</com.google.android.material.card.MaterialCardView>

@@ -36,6 +36,7 @@
                 groupHeader="@{vm.groupHeader}"
                 groupImage="@{vm.imageUrl}"
                 groupSubHeader="@{vm.groupSubHeader}"
+                groupType="@{vm.groupType}"
                 onBackPressed="@{vm::onBackPress}"
                 onSecondIconPressed="@{vm::callGroup}"
                 onToolbarPressed="@{vm::openGroupInfo}"
@@ -44,55 +45,48 @@
                 android:layout_height="match_parent" />
         </com.google.android.material.appbar.AppBarLayout>
 
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/date_card"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_8sdp"
-            android:backgroundTint="#D5EAF5"
-            android:elevation="@dimen/_8sdp"
-            android:visibility="gone"
-            app:cardCornerRadius="@dimen/_4sdp"
+            android:background="@color/white"
+            android:elevation="@dimen/_2sdp"
+            android:onClick="@{vm::openRequestList}"
+            android:orientation="horizontal"
+            android:visibility="@{vm.showRequestsTab ? View.VISIBLE : View.GONE, default=gone}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/appBarLayout"
-            tools:visibility="gone">
+            app:layout_constraintTop_toBottomOf="@id/appBarLayout">
 
-            <androidx.appcompat.widget.AppCompatTextView
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingHorizontal="@dimen/_4sdp"
+                android:layout_marginVertical="@dimen/_5sdp"
+                android:layout_marginStart="@dimen/_12sdp"
+                android:background="@drawable/rounded_grey_button_bg"
+                android:backgroundTint="@color/colorPrimary"
+                android:paddingHorizontal="@dimen/_7sdp"
                 android:paddingVertical="@dimen/_2sdp"
-                android:text="@{vm.groupCreatedAt}"
-                android:textColor="@color/group_coming_soon" />
-        </com.google.android.material.card.MaterialCardView>
+                android:text="@{vm.requestCount}"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
+                android:textColor="@color/white"
+                android:visibility="@{vm.requestCount == `` ? View.INVISIBLE : View.VISIBLE, default=invisible}" />
 
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/group_creater"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_8sdp"
-            android:backgroundTint="#D5EAF5"
-            android:elevation="@dimen/_8sdp"
-            android:visibility="gone"
-            app:cardCornerRadius="@dimen/_4sdp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/date_card"
-            tools:visibility="gone">
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:layout_width="wrap_content"
+            <TextView
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingHorizontal="@dimen/_4sdp"
-                android:paddingVertical="@dimen/_2sdp"
-                android:text="@{vm.groupCreator}"
-                android:textColor="@color/group_coming_soon" />
-        </com.google.android.material.card.MaterialCardView>
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="Requests to join"
+                android:textAllCaps="true"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
+                android:textColor="@color/colorPrimary" />
+
+        </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/group_chat_rv"
             groupChatAdapter="@{vm.chatAdapter}"
+            onTitleClick="@{vm.openMemberPopup}"
             scrollToBottom="@{scrollToEndButton}"
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -201,7 +195,7 @@
             android:onClick="@{vm::joinGroup}"
             android:paddingHorizontal="@dimen/_4sdp"
             android:paddingVertical="@dimen/_2sdp"
-            android:text="JOIN GROUP"
+            android:text="@{vm.groupJoinStatus}"
             android:textColor="@color/join_group"
             android:textSize="@dimen/_14ssp"
             android:visibility="@{vm.hasJoinedGroup ? View.GONE : View.VISIBLE}"
@@ -287,7 +281,6 @@
                 android:text="Tap anywhere to continue"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
                 android:textColor="@color/white" />
-
         </FrameLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

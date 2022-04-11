@@ -16,47 +16,80 @@
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#20000000"
-        android:gravity="start|center"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorPrimary"
+        android:contentInsetStart="0dp"
+        android:contentInsetLeft="0dp"
+        android:contentInsetEnd="0dp"
+        android:contentInsetRight="0dp"
+        android:elevation="@dimen/_4sdp"
         android:minHeight="?attr/actionBarSize"
+        app:contentInsetEnd="0dp"
+        app:contentInsetEndWithActions="0dp"
+        app:contentInsetLeft="0dp"
+        app:contentInsetRight="0dp"
+        app:contentInsetStart="0dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:theme="@style/Theme.GuidelinesCompat.Light.DarkToolbar">
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/iv_back"
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:id="@+id/toolbar_parent_layout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="@dimen/_6sdp"
-            android:visibility="visible"
-            app:srcCompat="@drawable/ic_cross" />
+            android:paddingStart="@dimen/_6sdp">
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/text_message_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:ellipsize="marquee"
-            android:gravity="center_vertical|start"
-            android:singleLine="true"
-            android:text=""
-            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5"
-            android:textColor="@color/white"
-            tools:text="Spoken English Course" />
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="@dimen/_3sdp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_vertical|start"
+                android:paddingTop="@dimen/_4sdp"
+                android:paddingBottom="@dimen/_4sdp"
+                app:srcCompat="@drawable/ic_arrow_back"
+                tools:visibility="visible" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/text_message_title"
+                android:layout_width="@dimen/_180sdp"
+                android:layout_height="match_parent"
+                android:layout_centerVertical="true"
+                android:layout_marginHorizontal="@dimen/_6sdp"
+                android:layout_marginVertical="@dimen/_4sdp"
+                android:layout_toEndOf="@id/iv_back"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:gravity="start|center"
+                android:singleLine="true"
+                android:text="@string/photo"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Semi_Bold"
+                android:textColor="@color/white" />
+        </RelativeLayout>
+
     </com.google.android.material.appbar.MaterialToolbar>
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/big_image_view"
+    <LinearLayout
+        android:id="@+id/pager_root_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@android:color/black"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar"
-        tools:src="@drawable/josh_skill" />
+        app:layout_constraintTop_toBottomOf="@+id/toolbar">
+
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/viewPagerMain"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/parent_layout"
@@ -97,7 +130,7 @@
                 android:paddingBottom="@dimen/_11sdp"
                 android:textColor="@color/white"
                 android:gravity="center"
-                android:text="Delete" />
+                android:text="@string/delete" />
 
         </LinearLayout>
 
@@ -127,23 +160,7 @@
                 android:textColor="@color/white"
                 android:gravity="center"
                 android:paddingBottom="@dimen/_11sdp"
-                android:text="Set as profile photo" />
+                android:text="@string/set_as_profile_photo" />
         </LinearLayout>
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-    <!--    <com.joshtalks.joshskills.core.custom_ui.ZoomageView-->
-    <!--            android:id="@+id/big_image_view"-->
-    <!--            android:layout_width="match_parent"-->
-    <!--            android:layout_height="wrap_content"-->
-    <!--            app:zoomage_animateOnReset="true"-->
-    <!--            tools:src="@drawable/josh_skill"-->
-    <!--            app:zoomage_autoCenter="true"-->
-    <!--            app:zoomage_autoResetMode="UNDER"-->
-    <!--            app:zoomage_maxScale="8"-->
-    <!--            app:zoomage_minScale="0.6"-->
-    <!--            app:zoomage_restrictBounds="false"-->
-    <!--            app:zoomage_translatable="true"-->
-    <!--            app:zoomage_zoomable="true" />-->
-

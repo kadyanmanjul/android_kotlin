@@ -21,9 +21,11 @@ import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.databinding.ActivityJoshGroupBinding
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics
+import com.joshtalks.joshskills.ui.group.constants.*
+import com.joshtalks.joshskills.ui.group.model.AddGroupRequest
 import com.joshtalks.joshskills.ui.group.model.GroupItemData
 import com.joshtalks.joshskills.ui.group.viewmodels.JoshGroupViewModel
-import com.joshtalks.joshskills.ui.userprofile.UserPicChooserFragment
+import com.joshtalks.joshskills.ui.userprofile.fragments.UserPicChooserFragment
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
 import com.joshtalks.joshskills.ui.voip.SearchingUserActivity
 
@@ -66,8 +68,11 @@ class JoshGroupActivity : BaseGroupActivity() {
                 OPEN_NEW_GROUP -> openNewGroupFragment()
                 OPEN_GROUP_INFO -> openGroupInfoFragment()
                 EDIT_GROUP_INFO -> openEditGroupInfo(it.data)
+                OPEN_GROUP_REQUESTS_LIST -> openRequestsFragment(it.obj as String)
                 SEARCH_GROUP -> openGroupSearchFragment()
+                OPEN_ADMIN_RESPONSIBILITY -> openAdminResponseFragment(it.obj as AddGroupRequest)
                 OPEN_IMAGE_CHOOSER -> openImageChooser()
+                OPEN_GROUP_REQUEST -> openGroupRequestFragment()
                 OPEN_CALLING_ACTIVITY -> startGroupCall(it.data)
                 SHOULD_REFRESH_GROUP_LIST -> vm.shouldRefreshGroupList = true
                 REMOVE_GROUP_AND_CLOSE -> removeGroupFromDb(it.obj as String)
@@ -123,7 +128,9 @@ class JoshGroupActivity : BaseGroupActivity() {
     }
 
     fun openCallingActivity(bundle: Bundle) {
-        GroupAnalytics.push(GroupAnalytics.Event.CALL_PRACTICE_PARTNER_FROM_GROUP, bundle.getString(GROUPS_ID) ?: "")
+        GroupAnalytics.push(GroupAnalytics.Event.CALL_PRACTICE_PARTNER_FROM_GROUP, bundle.getString(
+            GROUPS_ID
+        ) ?: "")
         val intent = SearchingUserActivity.startUserForPractiseOnPhoneActivity(
             this,
             courseId = "151",
@@ -163,7 +170,6 @@ class JoshGroupActivity : BaseGroupActivity() {
         supportFragmentManager.commit {
             setReorderingAllowed(true)
             val bundle = Bundle().apply {
-                putString(GROUPS_CREATED_TIME, data?.getCreatedTime())
                 putString(GROUPS_CREATOR, data?.getCreator())
                 putString(GROUPS_TITLE, data?.getTitle())
                 putString(GROUPS_IMAGE, data?.getImageUrl())
@@ -171,6 +177,8 @@ class JoshGroupActivity : BaseGroupActivity() {
                 putString(GROUPS_ID, data?.getUniqueId())
                 putString(CONVERSATION_ID, vm.conversationId)
                 putString(ADMIN_ID, data?.getCreatorId())
+                putString(GROUP_TYPE, data?.getGroupCategory())
+                putString(GROUP_STATUS, data?.getJoinedStatus())
                 data?.hasJoined()?.let {
                     if (it) {
                         putString(GROUPS_CHAT_SUB_TITLE, "tap here for group info")
@@ -198,19 +206,41 @@ class JoshGroupActivity : BaseGroupActivity() {
         }
     }
 
+    private fun openGroupRequestFragment() {
+        supportFragmentManager.commit {
+            setReorderingAllowed(true)
+
+            val fragment = GroupRequestFragment()
+            replace(R.id.group_fragment_container, fragment, GROUP_REQUEST_FRAGMENT)
+            addToBackStack(GROUPS_STACK)
+        }
+    }
+
     private fun openEditGroupInfo(data: Bundle?) {
         supportFragmentManager.commit {
             setReorderingAllowed(true)
-            val bundle = Bundle().apply {
-                putBoolean(IS_FROM_GROUP_INFO, true)
-                putString(GROUPS_TITLE, data?.getString(GROUPS_TITLE))
-                putString(GROUPS_IMAGE, data?.getString(GROUPS_IMAGE))
-                putString(GROUPS_ID, data?.getString(GROUPS_ID))
-            }
+
             val fragment = NewGroupFragment()
-            fragment.arguments = bundle
+            fragment.arguments = data
 
             replace(R.id.group_fragment_container, fragment, EDIT_GROUP_INFO_FRAGMENT)
+            addToBackStack(GROUPS_STACK)
+        }
+    }
+
+    private fun openRequestsFragment(groupId: String) {
+        supportFragmentManager.commit {
+            setReorderingAllowed(true)
+
+            val bundle = Bundle().apply {
+                putString(GROUPS_ID, groupId)
+                putString(CONVERSATION_ID, vm.conversationId)
+            }
+            val fragment = RequestListFragment().apply {
+                arguments = bundle
+            }
+
+            replace(R.id.group_fragment_container, fragment, REQUEST_LIST_FRAGMENT)
             addToBackStack(GROUPS_STACK)
         }
     }
@@ -230,6 +260,19 @@ class JoshGroupActivity : BaseGroupActivity() {
             addToBackStack(GROUPS_STACK)
         }
         GroupAnalytics.push(GroupAnalytics.Event.CREATE_GROUP)
+    }
+
+    private fun openAdminResponseFragment(addGroupRequest: AddGroupRequest) {
+        supportFragmentManager.commit {
+            setReorderingAllowed(true)
+
+            val fragment = GroupAdminFragment()
+            fragment.arguments = Bundle().apply {
+                putParcelable(ADD_GROUP_REQUEST, addGroupRequest)
+            }
+            replace(R.id.group_fragment_container, fragment, ADMIN_RESPONSE_FRAGMENT)
+            addToBackStack(GROUPS_STACK)
+        }
     }
 
     private fun setNewGroupVisibility(data: Bundle) {

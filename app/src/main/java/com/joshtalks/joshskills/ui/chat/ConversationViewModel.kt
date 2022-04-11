@@ -4,8 +4,12 @@ import android.app.Application
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.os.Message
+import android.util.Log
 import androidx.lifecycle.*
+import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
 import com.joshtalks.joshskills.core.custom_ui.recorder.AudioRecording
 import com.joshtalks.joshskills.core.custom_ui.recorder.OnAudioRecordListener
 import com.joshtalks.joshskills.core.custom_ui.recorder.RecordingItem
@@ -16,12 +20,16 @@ import com.joshtalks.joshskills.repository.local.DatabaseUtils
 import com.joshtalks.joshskills.repository.local.entity.*
 import com.joshtalks.joshskills.repository.local.eventbus.MessageCompleteEventBus
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
+import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
-import com.joshtalks.joshskills.repository.server.UserProfileResponse
+import com.joshtalks.joshskills.ui.userprofile.models.UserProfileResponse
 import com.joshtalks.joshskills.repository.server.chat_message.BaseChatMessage
 import com.joshtalks.joshskills.repository.server.chat_message.BaseMediaMessage
 import com.joshtalks.joshskills.repository.service.NetworkRequestHelper
 import com.joshtalks.joshskills.repository.service.SyncChatService
+import com.joshtalks.joshskills.ui.fpp.model.PendingRequestResponse
+import com.joshtalks.joshskills.ui.group.repository.ABTestRepository
+import com.joshtalks.joshskills.util.showAppropriateMsg
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.callbar.CallBar
 import id.zelory.compressor.Compressor
 import java.io.File
@@ -32,6 +40,7 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
+import timber.log.Timber
 
 class ConversationViewModel(
     application: Application,
@@ -53,12 +62,23 @@ class ConversationViewModel(
     val pagingMessagesChat = MutableSharedFlow<List<ChatModel>>()
     val updateChatMessage = MutableSharedFlow<ChatModel?>()
     val newMessageAddFlow = MutableSharedFlow<Boolean>()
-
+    private val singleLiveEvent = EventLiveData
+    val msg = Message()
+    val dispatcher: CoroutineDispatcher by lazy { Dispatchers.Main }
     val refreshViewLiveData: MutableLiveData<ChatModel> = MutableLiveData()
     val userData: MutableLiveData<UserProfileResponse> = MutableLiveData()
     val unreadMessageCount: MutableLiveData<Int> = MutableLiveData()
     private val callbar = CallBar()
 
+    val abTestCampaignliveData = MutableLiveData<ABTestCampaignData?>()
+    val repository: ABTestRepository by lazy { ABTestRepository() }
+    fun getCampaignData(campaign: String) {
+        jobs += viewModelScope.launch(Dispatchers.IO) {
+            repository.getCampaignData(campaign)?.let { campaign ->
+                abTestCampaignliveData.postValue(campaign)
+            }
+        }
+    }
     inner class CheckConnectivity : BroadcastReceiver() {
         override fun onReceive(context: Context, arg1: Intent) {
             if (Utils.isInternetAvailable()) {
@@ -66,7 +86,37 @@ class ConversationViewModel(
             }
         }
     }
+    private val p2pNetworkService = AppObjectController.p2pNetworkService
+    val pendingRequestsList = MutableLiveData<PendingRequestResponse>()
+    val apiCallStatus = MutableLiveData<ApiCallStatus>()
 
+    fun getPendingRequestsList() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response = p2pNetworkService.getPendingRequestsList()
+                if (response.isSuccessful) {
+                    pendingRequestsList.postValue(response.body())
+                    return@launch
+                }
+                apiCallStatus.postValue(ApiCallStatus.SUCCESS)
+            } catch (ex: Throwable) {
+                apiCallStatus.postValue(ApiCallStatus.SUCCESS)
+                ex.printStackTrace()
+            }
+        }
+    }
+    fun confirmOrRejectFppRequest(senderMentorId:String,userStatus:String,pageType:String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val map: HashMap<String, String> = HashMap<String, String>()
+                map[userStatus] = "true"
+                map["page_type"] = pageType
+                p2pNetworkService.confirmOrRejectFppRequest(senderMentorId, map)
+            } catch (ex: Throwable) {
+                ex.printStackTrace()
+            }
+        }
+    }
     fun sendTextMessage(messageObject: BaseChatMessage, chatModel: ChatModel?) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -327,6 +377,49 @@ class ConversationViewModel(
         }
     }
 
+     fun restartCourse(mobile:String,inputDeleteUser:String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val requestParams: HashMap<String, String> = HashMap()
+                requestParams["input_delete_user"] = inputDeleteUser
+                requestParams["country_code"] = "+91"
+                requestParams["mobile"] = mobile
+                requestParams["course_id"] = inboxEntity.courseId
+                requestParams["is_api"] = true.toString()
+                AppObjectController.commonNetworkService.restartCourse(requestParams)
+                deleteConversationData(inboxEntity.courseId)
+                withContext(dispatcher) {
+                    msg.what = COURSE_RESTART_SUCCESS
+                    singleLiveEvent.value = msg
+                }
+            } catch (ex: Throwable) {
+                withContext(dispatcher) {
+                    msg.what = COURSE_RESTART_FAILURE
+                    singleLiveEvent.value = msg
+                }
+                ex.printStackTrace()
+            }
+        }
+    }
+
+    fun saveRestartCourseImpression(eventName: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val requestData = hashMapOf(
+                    Pair("mentor_id", Mentor.getInstance().getId()),
+                    Pair("event_name", eventName)
+                )
+                AppObjectController.commonNetworkService.restartCourseImpression(requestData)
+            } catch (ex: Exception) {
+                Timber.e(ex)
+            }
+        }
+    }
+
+    suspend fun getLastLessonForCourse():Int {
+        return AppObjectController.appDatabase.lessonDao().getLastLessonForCourse(inboxEntity.courseId.toInt())
+    }
+
     fun isRecordingStarted(): Boolean {
         return isRecordingStarted
     }
@@ -341,6 +434,25 @@ class ConversationViewModel(
         super.onCleared()
         if (isRecordingStarted) {
             mAudioRecording.stopRecording(true)
+        }
+    }
+
+    private fun deleteConversationData(courseId: String) {
+        try {
+            AppObjectController.appDatabase.run {
+                val conversationId = this.courseDao().getConversationIdFromCourseId(courseId)
+                conversationId?.let {
+                    PrefManager.removeKey(it)
+                    LastSyncPrefManager.removeKey(it)
+                }
+                val lessons = lessonDao().getLessonIdsForCourse(courseId.toInt())
+                lessons.forEach {
+                    LastSyncPrefManager.removeKey(it.toString())
+                }
+                commonDao().deleteConversationData(courseId.toInt())
+            }
+        } catch (ex: Exception) {
+            Timber.e(ex)
         }
     }
 }

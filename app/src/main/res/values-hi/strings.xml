@@ -10,6 +10,7 @@
     <string name="downloading_certificate">आपका सर्टिफिकेट डाउनलोड हो रहा है</string>
     <string name="downloading_complete">डाउनलोड पूर्ण हुआ</string>
     <string name="not_now">अभी नहीं</string>
+    <string name="not_now_underline"><u>अभी नहीं</u></string>
     <string name="settings">सेटिंग्स</string>
     <string name="header_congratulation">बधाई हो</string>
     <string name="name">नाम</string>
@@ -135,7 +136,8 @@
     <string name="feedback_sub_video">"कृपया इस वीडियो को रेट करें "</string>
     <string name="feedback_hint">कृपया अपना फीडबैक शेयर करेंं</string>
     <string name="cancel_button">"कैंसल बटन "</string>
-    <string name="permission_dialog_description">"रोजाना क्लास समय पर पाने के लिए अभी नोटिफिकेशन ऑन करें "</string>
+    <string name="permission_dialog_description"><![CDATA[अगर आप कोर्स को लेके serious हो और <b>Lesson reminder</b> और <b>Practice Partner</b> की कॉल नहीं मिस करना चाहते, <br><br><b>Settings</b> में जेक <b>Auto Start</b> को <b>ON</b> करे]]></string>
+    <string name="serious_student_ho">क्या आप Serious Student हो?</string>
     <string name="allow">"अनुमति दें "</string>
     <string name="do_not_ask_again">"दोबारा ना पूछें "</string>
     <string name="try_again">पुनः प्रयास करें</string>
@@ -348,12 +350,14 @@
     <string name="clear_all_downloads">सभी डाउनलोड साफ़ करें</string>
     <string name="sign_out">"लॉग आउट "</string>
     <string name="notifications">"नोटिफिकेशन्स "</string>
+    <string name="autostart">"ऑटो स्टार्ट की अनुमति"</string>
     <string name="language">भाषा</string>
     <string name="english">अंग्रेज़ी</string>
     <string name="low">कम</string>
     <string name="login_type">लॉगिन प्रकार</string>
     <string name="on">ऑन</string>
     <string name="off">ऑफ</string>
+    <string name="auto_start_prompt_message">ऐप के बैकग्राउंड में होने पर सूचनाएं प्राप्त करने के लिए कृपया ऑटोस्टार्ट को सक्षम करें</string>
     <string name="select_course_heading_btn">"में ये चीज़े प्राप्त करना चाहता हूँ "</string>
     <string name="start_course_free">मुफ्त के लिए मेरे पाठ्यक्रम शुरू करो</string>
     <string name="buy_pass">सभी कोर्स एक्सेस पास खरीदें</string>

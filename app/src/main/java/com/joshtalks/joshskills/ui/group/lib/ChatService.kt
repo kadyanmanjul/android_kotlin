@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.ui.group.lib
 
 import com.joshtalks.joshskills.ui.group.model.*
+import com.pubnub.api.models.consumer.objects_api.uuid.PNGetUUIDMetadataResult
 
 interface ChatService {
     fun initializeChatService()
@@ -16,6 +17,7 @@ interface ChatService {
     fun getUnreadMessages(groupId: String, startTime : Long) : List<ChatItem>
     fun getGroupMemberList(groupId: String, pageInfo: PageInfo? = null): MemberNetworkData?
     fun getPubNubOnlineMembers(groupId: String): List<String>?
+    fun getUserMetadata(mentorId: String): PNGetUUIDMetadataResult?
 }
 
 interface NetworkData {
@@ -24,7 +26,7 @@ interface NetworkData {
 }
 
 interface MemberNetworkData {
-    fun getMemberData(adminId: String) : MemberResult?
+    fun getMemberData(groupId: String, adminId: String) : List<GroupMember>?
     fun getPageInfo() : PageInfo
 }
 

@@ -110,11 +110,9 @@ class Mentor {
                 AppAnalytics.create(AnalyticsEvent.LOGOUT_CLICKED.NAME)
                     .addUserDetails()
                     .addParam(AnalyticsEvent.USER_LOGGED_OUT.NAME, true).push()
-                val intent =
-                    Intent(
-                        joshApplication,
-                        SignUpActivity::class.java
-                    )
+                AppObjectController.signUpNetworkService.signoutUser(getInstance().getId())
+
+                val intent = Intent(joshApplication, SignUpActivity::class.java)
                 intent.apply {
                     addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                     addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -123,10 +121,6 @@ class Mentor {
                 if (showNotification) {
                     showLogoutNotification()
                 }
-//                showToast(
-//                    AppObjectController.joshApplication.getString(R.string.auto_logout_message),
-//                    Toast.LENGTH_LONG
-//                )
             }
         }
 

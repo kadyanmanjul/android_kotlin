@@ -11,10 +11,15 @@ import com.joshtalks.joshskills.repository.server.signup.LoginResponse
 import com.joshtalks.joshskills.repository.server.signup.RequestSocialSignUp
 import com.joshtalks.joshskills.repository.server.signup.RequestUserVerification
 import com.joshtalks.joshskills.repository.server.signup.request.SocialSignUpRequest
+import com.joshtalks.joshskills.ui.lesson.speaking.VideoPopupItem
+import com.joshtalks.joshskills.ui.userprofile.models.PreviousProfilePictures
+import com.joshtalks.joshskills.ui.userprofile.models.UpdateProfilePayload
 import kotlinx.coroutines.Deferred
 import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.*
+
+const val DIR = "api/skill/v1"
 
 @JvmSuppressWildcards
 interface SignUpNetworkService {
@@ -50,6 +55,9 @@ interface SignUpNetworkService {
     @POST("$DIR/user/user_verification/")
     suspend fun userVerification(@Body requestUserVerification: RequestUserVerification): Response<LoginResponse>
 
+    @GET("$DIR/user/sign_out/")
+    suspend fun signoutUser(@Query("mentor_id") mentorId: String): Response<Void>
+
     @GET("$DIR/mentor/{id}/personal_profile/")
     suspend fun getPersonalProfileAsync(@Path("id") id: String): Mentor
 
@@ -60,6 +68,11 @@ interface SignUpNetworkService {
         @FieldMap params: Map<String, String?>
     ): Response<User>
 
+    @PATCH("$DIR/user/user_update/{id}/")
+    suspend fun updateUserProfileV2(
+        @Path("id") userId: String,
+        @Body params: UpdateProfilePayload
+    ): Response<Any>
     @PATCH("$DIR/user/profile_picture/{id}/")
     suspend fun updateProfilePicFromPreviousProfile(@Path("id") imageId: String): Response<Any>
 
@@ -100,6 +113,9 @@ interface SignUpNetworkService {
     @FormUrlEncoded
     @POST("$DIR/mentor/fcm/")
     suspend fun postFCMToken(@FieldMap params: Map<String, String>): Response<FCMResponse>
+
+    @POST("$DIR/mentor/fcm_verify/")
+    suspend fun checkFCMInServer(@Body params: Map<String, String>): Map<String, String>
 
     @POST("$DIR/mentor/install_source")
     suspend fun getInstallReferrerAsync(@Body installReferrerModel: InstallReferrerModel)
@@ -148,8 +164,8 @@ interface SignUpNetworkService {
     @POST("$DIR/engage/inbox/")
     suspend fun logInboxEngageEvent(@Body params: Map<String, String>)
 
-    @POST("$DIR/mentor/last-active")
-    suspend fun activeUser(@Body params: ActiveUserRequest): Response<Any>
+//    @POST("$DIR/mentor/last-active")
+//    suspend fun activeUser(@Body params: ActiveUserRequest): Response<Any>
 
     @POST("$DIR/course/buy_expired_course_v2/")
     suspend fun getFreeTrialPaymentData(@Body params: Map<String, Any>): FreeTrialPaymentResponse
@@ -158,7 +174,7 @@ interface SignUpNetworkService {
     suspend fun getPreviousProfilePics(): Response<PreviousProfilePictures>
 
     @GET("$DIR/course/course_syllabus/")
-    suspend fun getD2pSyllabusPdf() : Response<D2pSyllabusPdfResponse>
+    suspend fun getD2pSyllabusPdf() : Response<Map<String, String?>>
 
     @GET("$DIR/course/language/")
     suspend fun getAvailableLanguageCourses() : Response<List<ChooseLanguages>>

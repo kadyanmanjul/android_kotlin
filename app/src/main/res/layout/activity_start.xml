@@ -40,7 +40,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <com.google.android.material.card.MaterialCardView
-            android:onClick="@{vm.onItemClick}"
+            android:onClick="@{vm::onItemClick}"
             android:id="@+id/rectangle_9"
             android:layout_width="@dimen/_140sdp"
             android:layout_height="@dimen/_62sdp"

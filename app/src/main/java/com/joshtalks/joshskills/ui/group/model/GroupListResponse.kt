@@ -5,6 +5,10 @@ import androidx.room.PrimaryKey
 
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.ui.group.constants.JOINED_GROUP
+import com.joshtalks.joshskills.ui.group.constants.NOT_JOINED_GROUP
+import com.joshtalks.joshskills.ui.group.constants.OPENED_GROUP
+import com.joshtalks.joshskills.ui.group.constants.REQUESTED_GROUP
 
 data class GroupListResponse(
 
@@ -40,7 +44,13 @@ data class GroupsItem(
     @field:SerializedName("total_calls")
     val totalCalls: String? = null,
 
-    val adminId: String? = null
+    val adminId: String? = null,
+
+    @field:SerializedName("group_type")
+    val groupType: String? = OPENED_GROUP,
+
+    @field:SerializedName("group_status")
+    val groupStatus: String? = null
 
 ) : GroupItemData {
 
@@ -52,9 +62,6 @@ data class GroupsItem(
     override fun getUniqueId() = groupId
 
     override fun getImageUrl() = groupIcon ?: ""
-
-    override fun getCreatedTime() =
-        if (createdAt == null) "" else Utils.getMessageTime(createdAt * 1000L, timeNeeded = false)
 
     override fun getCreator() = createdBy ?: ""
 
@@ -73,4 +80,14 @@ data class GroupsItem(
 
     override fun getUnreadMsgCount() =
         unreadCount ?: "0"
+
+    override fun getGroupCategory() = groupType ?: OPENED_GROUP
+
+    override fun getJoinedStatus(): String {
+        return when {
+            groupStatus == REQUESTED_GROUP -> REQUESTED_GROUP
+            hasJoined() -> JOINED_GROUP
+            else -> NOT_JOINED_GROUP
+        }
+    }
 }

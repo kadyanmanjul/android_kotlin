@@ -67,6 +67,7 @@
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-sdk tools:overrideLibrary="com.truecaller.android.sdk"/> <!-- for API level below 22-->
+    <uses-sdk tools:overrideLibrary="com.truecaller.android.sdk"/>
     <application
         android:name=".core.JoshApplication"
         android:allowBackup="true"
@@ -76,6 +77,7 @@
         android:label="@string/app_name"
         android:largeHeap="true"
         android:persistent="true"
+        android:requestLegacyExternalStorage="true"
         android:preserveLegacyExternalStorage="true"
         android:resizeableActivity="false"
         android:roundIcon="@mipmap/ic_launcher_round"
@@ -84,6 +86,17 @@
         android:usesCleartextTraffic="true"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning,UnusedAttribute"
         tools:replace="android:allowBackup,android:supportsRtl,android:hardwareAccelerated">
+        <activity
+            android:name=".ui.fpp.SeeAllRequestsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.fpp.RecentCallActivity"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.inbox.ExtendFreeTrialActivity"
+            android:exported="true" />
         <activity
             android:name=".ui.activity_feed.ActivityFeedMainActivity"
             android:exported="false" />
@@ -105,16 +118,7 @@
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.senior_student.SeniorStudentActivity"
-            android:exported="true">
-        </activity>
-        <activity
-            android:name=".ui.voip.CallActivity"
-            android:exported="true">
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--            </intent-filter>-->
-        </activity>
+            android:exported="true" />
         <activity
             android:name=".ui.payment.FreeTrialPaymentActivity"
             android:alwaysRetainTaskState="true"
@@ -135,13 +139,6 @@
             android:screenOrientation="portrait"
             android:showOnLockScreen="true"
             android:showWhenLocked="true" />
-        <activity
-            android:name=".ui.introduction.IntroductionActivity"
-            android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppNoBarTheme"
-            android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".ui.introduction.ReadyForDemoClassActivity"
             android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
@@ -172,10 +169,6 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.Splash">
-            <intent-filter>
-                <action android:name="com.joshtalks.joshskills.voip.CallActivity"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-            </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -457,7 +450,7 @@
             android:name=".ui.voip.favorite.FavoriteListActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/AppThemeNoAction" />
+            android:theme="@style/AppThemeNoAction"/>
         <activity
             android:name=".ui.voip.WebRtcActivity"
             android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
@@ -536,6 +529,7 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/AppNoBarTheme" />
+        <activity android:name=".ui.special_practice.SpecialPracticeActivity" />
         <activity android:name=".ui.voip.new_arch.ui.views.VoiceCallActivity"
             android:showOnLockScreen="true"
             android:showWhenLocked="true"/>
@@ -610,16 +604,13 @@
             android:value="@bool/branch_test" />
         <meta-data
             android:name="com.truecaller.android.sdk.PartnerKey"
-            android:value="@string/partnerKey" />
+            android:value="@string/truecaller_key" />
         <meta-data
             android:name="CLEVERTAP_BACKGROUND_SYNC"
             android:value="1" /> <!-- replace below value with your FCM project number. -->
         <meta-data
             android:name="FCM_SENDER_ID"
             android:value="id:359106841538" />
-        <meta-data
-            android:name="io.sentry.auto-init"
-            android:value="false" />
 
         <receiver
             android:name=".core.chrome.BrowserActionsReceiver"
@@ -849,6 +840,12 @@
             android:foregroundServiceType="phoneCall"
             android:permission="android.permission.BIND_JOB_SERVICE"
             android:stopWithTask="true" />
+
+        <service
+            android:name=".core.service.BackgroundService"
+            android:enabled="true"
+            android:exported="false" />
+
     </application>
     <queries>
         <provider

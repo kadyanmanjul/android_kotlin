@@ -15,10 +15,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
-import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIAL_POPUP_BODY_TEXT
-import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIAL_POPUP_TITLE_TEXT
-import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIAL_POPUP_YES_BUTTON_TEXT
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.IMPRESSION_OPEN_FREE_TRIAL_SCREEN
@@ -26,9 +22,15 @@ import com.joshtalks.joshskills.core.IMPRESSION_START_FREE_TRIAL
 import com.joshtalks.joshskills.core.IMPRESSION_START_TRIAL_NO
 import com.joshtalks.joshskills.core.IMPRESSION_START_TRIAL_YES
 import com.joshtalks.joshskills.core.ONBOARDING_STAGE
+import com.joshtalks.joshskills.core.IS_LOGIN_VIA_TRUECALLER
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.OnBoardingStage
 import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.FREE_TRIAL_TEST_ID
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIAL_POPUP_BODY_TEXT
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIAL_POPUP_HUNDRED_POINTS_TEXT
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIAL_POPUP_TITLE_TEXT
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIAL_POPUP_YES_BUTTON_TEXT
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
@@ -37,26 +39,35 @@ import com.joshtalks.joshskills.core.SignUpStepStatus
 import com.joshtalks.joshskills.core.ONLINE_TEST_LAST_LESSON_COMPLETED
 import com.joshtalks.joshskills.core.ONLINE_TEST_LAST_LESSON_ATTEMPTED
 import com.joshtalks.joshskills.core.IMPRESSION_TRUECALLER_FREETRIAL_LOGIN
+import com.joshtalks.joshskills.core.IMPRESSION_ALREADY_NEWUSER
+import com.joshtalks.joshskills.core.IMPRESSION_TC_NOT_INSTALLED_JI_HAAN
+import com.joshtalks.joshskills.core.IMPRESSION_TC_NOT_INSTALLED
+import com.joshtalks.joshskills.core.IMPRESSION_TC_USER_ANOTHER
+import com.joshtalks.joshskills.core.abTest.ABTestActivity
+import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
+import com.joshtalks.joshskills.core.abTest.CampaignKeys
+import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityFreeTrialOnBoardBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.repository.server.ChooseLanguages
-import com.truecaller.android.sdk.*
-import kotlinx.coroutines.CoroutineScope
+import com.joshtalks.joshskills.repository.local.model.User
+import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.truecaller.android.sdk.TruecallerSDK
 import com.truecaller.android.sdk.TruecallerSdkScope
 import com.truecaller.android.sdk.ITrueCallback
 import com.truecaller.android.sdk.TrueError
 import com.truecaller.android.sdk.TrueProfile
+import com.joshtalks.joshskills.repository.server.ChooseLanguages
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.CoroutineScope
 import java.util.Locale
 
 const val SHOW_SIGN_UP_FRAGMENT = "SHOW_SIGN_UP_FRAGMENT"
 
 class FreeTrialOnBoardActivity : CoreJoshActivity() {
 
-    lateinit var layout: ActivityFreeTrialOnBoardBinding
+    private lateinit var layout: ActivityFreeTrialOnBoardBinding
     private val viewModel: FreeTrialOnBoardViewModel by lazy {
         ViewModelProvider(this).get(FreeTrialOnBoardViewModel::class.java)
     }
@@ -120,6 +131,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
                 .addUserDetails()
                 .addParam(AnalyticsEvent.FLOW_FROM_PARAM.NAME, this.javaClass.simpleName)
                 .push()
+            viewModel.saveTrueCallerImpression(IMPRESSION_ALREADY_NEWUSER)
             val intent = Intent(this@FreeTrialOnBoardActivity, SignUpActivity::class.java).apply {
                 putExtra(FLOW_FROM, "free trial onboarding journey")
             }
@@ -127,7 +139,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         }
     }
 
-    fun showStartTrialPopup(language: ChooseLanguages) {
+    fun showStartTrialPopup(language: ChooseLanguages, is100PointsActive : Boolean) {
         viewModel.saveImpression(IMPRESSION_START_FREE_TRIAL)
         PrefManager.put(ONBOARDING_STAGE, OnBoardingStage.START_NOW_CLICKED.value)
         PrefManager.put(FREE_TRIAL_TEST_ID, language.testId)
@@ -144,11 +156,18 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         alertDialog.window?.setLayout(width.toInt(), height)
         alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-        dialogView.findViewById<TextView>(R.id.e_g_motivat).text =
-            AppObjectController.getFirebaseRemoteConfig()
-                .getString(FREE_TRIAL_POPUP_BODY_TEXT + language.testId)
-                .replace("\\n", "\n")
-
+        if(is100PointsActive){
+            dialogView.findViewById<TextView>(R.id.e_g_motivat).text =
+                AppObjectController.getFirebaseRemoteConfig()
+                    .getString(FREE_TRIAL_POPUP_HUNDRED_POINTS_TEXT + language.testId)
+                    .replace("\\n", "\n")
+        }
+        else {
+            dialogView.findViewById<TextView>(R.id.e_g_motivat).text =
+                AppObjectController.getFirebaseRemoteConfig()
+                    .getString(FREE_TRIAL_POPUP_BODY_TEXT + language.testId)
+                    .replace("\\n", "\n")
+        }
         dialogView.findViewById<TextView>(R.id.add_a_topic).text =
             AppObjectController.getFirebaseRemoteConfig()
                 .getString(FREE_TRIAL_POPUP_TITLE_TEXT + language.testId)
@@ -163,8 +182,10 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
                 PrefManager.put(ONBOARDING_STAGE, OnBoardingStage.JI_HAAN_CLICKED.value)
                 if (TruecallerSDK.getInstance().isUsable)
                     openTrueCallerBottomSheet()
-                else
-                    openProfileDetailFragment(language.testId)
+                else {
+                    viewModel.saveTrueCallerImpression(IMPRESSION_TC_NOT_INSTALLED_JI_HAAN)
+                    openProfileDetailFragment()
+                }
                 alertDialog.dismiss()
             }
         }
@@ -187,7 +208,8 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         TruecallerSDK.init(trueScope)
         if (TruecallerSDK.getInstance().isUsable) {
             TruecallerSDK.getInstance().setLocale(Locale(PrefManager.getStringValue(USER_LOCALE)))
-        }
+        } else
+            viewModel.saveTrueCallerImpression(IMPRESSION_TC_NOT_INSTALLED)
     }
 
     private fun openTrueCallerBottomSheet() {
@@ -196,9 +218,14 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
     }
 
     private val sdkCallback: ITrueCallback = object : ITrueCallback {
+
         override fun onFailureProfileShared(trueError: TrueError) {
-            openProfileDetailFragment()
-            hideProgressBar()
+            if(TrueError.ERROR_TYPE_CONTINUE_WITH_DIFFERENT_NUMBER == trueError.errorType) {
+                hideProgressBar()
+                viewModel.saveTrueCallerImpression(IMPRESSION_TC_USER_ANOTHER)
+                openProfileDetailFragment()
+            }
+
             if (TrueError.ERROR_TYPE_NETWORK == trueError.errorType) {
                 showToast(application.getString(R.string.internet_not_available_msz))
             }
@@ -210,12 +237,48 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
 
         override fun onSuccessProfileShared(trueProfile: TrueProfile) {
             CoroutineScope(Dispatchers.IO).launch {
+                PrefManager.put(IS_LOGIN_VIA_TRUECALLER,true)
                 viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_FREETRIAL_LOGIN)
+                val user = User.getInstance()
+                user.firstName = trueProfile.firstName
+                user.phoneNumber = trueProfile.phoneNumber
+                user.email = trueProfile.email
+                user.gender = trueProfile.gender
+                User.update(user)
                 viewModel.userName = trueProfile.firstName
                 viewModel.verifyUserViaTrueCaller(trueProfile)
                 viewModel.isVerified = true
+                if(viewModel.isUserExist) {
+                    moveToInboxScreen()
+                }
                 openProfileDetailFragment()
             }
+        }
+    }
+
+    private fun moveToInboxScreen() {
+        AppAnalytics.create(AnalyticsEvent.FREE_TRIAL_ONBOARDING.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .addParam(AnalyticsEvent.FLOW_FROM_PARAM.NAME, this.javaClass.simpleName)
+            .push()
+        val intent = Intent(this, InboxActivity::class.java).apply {
+            putExtra(FLOW_FROM, "free trial onboarding journey")
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        startActivity(intent)
+    }
+
+    private fun openProfileDetailFragment() {
+        supportFragmentManager.commit(true) {
+            addToBackStack(null)
+            replace(
+                R.id.container,
+                SignUpProfileForFreeTrialFragment.newInstance(viewModel.userName ?: EMPTY,
+                    viewModel.isVerified),
+                SignUpProfileForFreeTrialFragment::class.java.name
+            )
         }
     }
 
@@ -228,22 +291,6 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
             return
         }
         hideProgressBar()
-    }
-
-    private fun openProfileDetailFragment(testId: String = FREE_TRIAL_DEFAULT_TEST_ID) {
-//        supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
-        supportFragmentManager.commit(true) {
-            addToBackStack(null)
-            replace(
-                R.id.container,
-                SignUpProfileForFreeTrialFragment.newInstance(viewModel.userName ?: EMPTY, viewModel.isVerified).apply {
-                    val bundle = Bundle()
-                    bundle.putString(FREE_TRIAL_TEST_ID, testId)
-                    arguments = bundle
-                },
-                SignUpProfileForFreeTrialFragment::class.java.name
-            )
-        }
     }
 
     fun showPrivacyPolicyDialog() {

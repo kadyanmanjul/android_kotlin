@@ -199,7 +199,7 @@ class CourseExploreActivity : CoreJoshActivity() {
                 val languageSet: LinkedHashSet<String> = linkedSetOf()
 
                 val listIterator =
-                    response.sortedBy { it.languageId }.toMutableList().listIterator()
+                    response.toMutableList().listIterator()
                 while (listIterator.hasNext()) {
                     val courseExploreModel = listIterator.next()
                     val resp = list?.find { it.courseId == courseExploreModel.course.toString() }
@@ -211,7 +211,7 @@ class CourseExploreActivity : CoreJoshActivity() {
                 tabName.addAll(languageSet)
 
                 val courseByMap: Map<Int, List<CourseExploreModel>> =
-                    response.groupBy { it.languageId }.toSortedMap(compareBy { it })
+                    response.groupBy { it.languageId }
 
                 withContext(Dispatchers.Main) {
                     courseExploreBinding.courseListingRv.adapter =

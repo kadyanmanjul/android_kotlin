@@ -6,7 +6,6 @@ import com.joshtalks.joshskills.conversationRoom.model.RoomListResponseItem
 import com.joshtalks.joshskills.core.VerificationVia
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.server.CertificateDetail
-import com.joshtalks.joshskills.repository.server.ChooseLanguages
 
 interface OnDismissDialog {
     fun onDismiss() {}
@@ -67,6 +66,8 @@ interface FileDownloadCallback : OnDismissWithDialog {
     fun webURL(path: String, localUrl: String) {}
 }
 
-interface OnChooseLanguage {
-    fun selectLanguageOnBoard(language: ChooseLanguages)
+interface OnClickUserProfile{
+    fun clickOnProfile(position: Int)
+    fun clickOnPhoneCall(position: Int)
+    fun clickLongPressDelete(position: Int)
 }

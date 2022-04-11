@@ -3,7 +3,11 @@ package com.joshtalks.joshskills.ui.leaderboard.search
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.ApiCallStatus
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.CURRENT_COURSE_ID
+import com.joshtalks.joshskills.core.DEFAULT_COURSE_ID
 import com.joshtalks.joshskills.repository.local.entity.leaderboard.RecentSearch
 import com.joshtalks.joshskills.repository.server.LeaderboardMentor
 import com.joshtalks.joshskills.repository.server.LeaderboardType
@@ -100,8 +104,7 @@ class LeaderBoardSearchViewModel : ViewModel() {
                 AppObjectController.commonNetworkService.searchLeaderboardMember(
                     key,
                     pageNo,
-                    intervalType,
-                    PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID)
+                    intervalType
                 )
             if (response.isSuccessful && response.body() != null) {
                 return response.body()

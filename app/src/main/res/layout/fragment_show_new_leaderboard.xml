@@ -7,7 +7,7 @@
 
         <variable
             name="fragment"
-            type="com.joshtalks.joshskills.ui.userprofile.ShowAnimatedLeaderBoardFragment" />
+            type="com.joshtalks.joshskills.ui.userprofile.fragments.ShowAnimatedLeaderBoardFragment" />
 
     </data>
 

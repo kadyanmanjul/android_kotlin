@@ -235,7 +235,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
             UserExperior.setUserIdentifier(Mentor.getInstance().getId())
             AppAnalytics.updateUser()
             fetchMentor()
-            WorkManagerAdmin.userActiveStatusWorker(true)
+//            WorkManagerAdmin.userActiveStatusWorker(true)
             WorkManagerAdmin.requiredTaskAfterLoginComplete()
             val isCourseBought = PrefManager.getBoolValue(IS_COURSE_BOUGHT,false)
             val courseExpiryTime =
@@ -327,9 +327,13 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val response = service.updateUserProfile(Mentor.getInstance().getUserId(), map)
+                val phoneNumberComingFromTrueCaller = User.getInstance().phoneNumber ?: EMPTY
                 if (response.isSuccessful) {
                     response.body()?.let {
                         it.isVerified = isUserVerified
+                        if(!phoneNumberComingFromTrueCaller.isNullOrEmpty() && it.phoneNumber.isNullOrEmpty()) {
+                            it.phoneNumber = phoneNumberComingFromTrueCaller
+                        }
                         User.getInstance().updateFromResponse(it)
                         _signUpStatus.postValue(SignUpStepStatus.ProfileCompleted)
                     }

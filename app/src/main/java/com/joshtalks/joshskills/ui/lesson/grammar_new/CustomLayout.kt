@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.ui.lesson.grammar_new
 
 import android.content.Context
 import android.view.View
+import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.repository.local.model.assessment.Choice
@@ -35,6 +36,9 @@ class CustomLayout(context: Context?) : FlowLayout(context) {
     fun addViewAt(view: View, index: Int) {
         if (getChildAt(index) != null) {
             removeViewAt(index)
+            if (view.getParent() != null) {
+                (view.getParent() as ViewGroup).removeView(view)
+            }
             addView(view, index)
         } else {
             addView(view, childCount)

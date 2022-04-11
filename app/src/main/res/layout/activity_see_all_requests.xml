@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="com.joshtalks.joshskills.R" />
+
+        <import type="android.view.View" />
+
+        <variable
+            name="vm"
+            type="com.joshtalks.joshskills.ui.fpp.viewmodels.SeeAllRequestsViewModel" />
+    </data>
+
+    <RelativeLayout
+        android:id="@+id/main_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:orientation="vertical">
+
+
+        <include
+            android:id="@+id/col"
+            layout="@layout/call_ongoing_layout" />
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/col"
+            android:orientation="vertical"
+            android:theme="@style/ThemeOverlay.AppCompat.DayNight.ActionBar">
+
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="@color/colorPrimary"
+                android:contentInsetStart="0dp"
+                android:contentInsetLeft="0dp"
+                android:contentInsetEnd="0dp"
+                android:contentInsetRight="0dp"
+                android:elevation="@dimen/_4sdp"
+                android:minHeight="?attr/actionBarSize"
+                app:contentInsetEnd="0dp"
+                app:contentInsetEndWithActions="0dp"
+                app:contentInsetLeft="0dp"
+                app:contentInsetRight="0dp"
+                app:contentInsetStart="0dp"
+                app:layout_scrollFlags="scroll|enterAlways"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+                app:theme="@style/ThemeOverlay.AppCompat.DayNight.ActionBar"
+                app:titleTextColor="@color/white">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="@dimen/_4sdp">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/iv_back"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="@dimen/_4sdp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center_vertical|start"
+                        android:onClick="@{vm::onBackPress}"
+                        android:paddingTop="@dimen/_6sdp"
+                        android:paddingBottom="@dimen/_6sdp"
+                        android:visibility="visible"
+                        app:srcCompat="@drawable/ic_arrow_back"
+                        tools:visibility="visible" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/text_message_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_centerVertical="true"
+                        android:layout_marginHorizontal="@dimen/_8sdp"
+                        android:layout_marginVertical="@dimen/_4sdp"
+                        android:layout_toEndOf="@id/iv_back"
+                        android:foreground="?android:attr/selectableItemBackground"
+                        android:gravity="start|center"
+                        android:singleLine="true"
+                        android:text="@string/favorite_requests"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
+                        android:textColor="@color/white"
+                        android:textStyle="bold" />
+                </RelativeLayout>
+
+            </com.google.android.material.appbar.MaterialToolbar>
+
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recent_list_rv"
+            onFppItemClick="@{vm.onItemClick}"
+            seeAllRequestAdapter="@{vm.adapter}"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/appbar"
+            android:clipToPadding="false"
+            android:paddingTop="@dimen/_8sdp"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            tools:itemCount="10"
+            tools:listitem="@layout/fpp_requests_list_item" />
+
+        <com.mikhaellopez.circularprogressbar.CircularProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="@dimen/_60sdp"
+            android:layout_height="@dimen/_60sdp"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"
+            android:elevation="@dimen/_5sdp"
+            android:visibility="@{vm.fetchingAllPendingRequestInfo ? View.VISIBLE : View.GONE}"
+            app:cpb_background_progressbar_color="@android:color/transparent"
+            app:cpb_background_progressbar_width="0dp"
+            app:cpb_indeterminate_mode="true"
+            app:cpb_progress_direction="to_left"
+            app:cpb_progressbar_color="@color/colorAccent"
+            app:cpb_progressbar_width="@dimen/_4sdp"
+            app:cpb_round_border="true" />
+
+        <ImageView
+            android:id="@+id/fpp_no_requests"
+            android:layout_width="@dimen/_217sdp"
+            android:layout_height="@dimen/_93sdp"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_quick_view_no_requests"
+            android:visibility="@{vm.hasSeeAllRequest ? View.GONE : View.VISIBLE}" />
+
+    </RelativeLayout>
+</layout>

@@ -22,5 +22,7 @@ data class LoginResponse(
     @SerializedName("is_verified")
     val isVerified: Boolean,
     @SerializedName("created_source")
-    val createdSource: String?
+    val createdSource: String?,
+    @SerializedName("is_user_exist")
+    val isUserExist : Boolean
 )

@@ -10,6 +10,10 @@
         <import type="com.joshtalks.joshskills.ui.group.model.DefaultImage" />
 
         <variable
+            name="constant"
+            type="com.joshtalks.joshskills.ui.group.constants.GroupsConstantsKt" />
+
+        <variable
             name="itemData"
             type="com.joshtalks.joshskills.ui.group.model.GroupItemData" />
     </data>
@@ -34,13 +38,11 @@
             android:layout_marginStart="@dimen/_11sdp"
             android:background="@drawable/white_button_round_enabled"
             android:gravity="center_vertical|start"
-            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="@id/title_container"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/title_container"
-            tools:visibility="visible" />
+            app:layout_constraintTop_toTopOf="@id/title_container" />
 
-        <androidx.appcompat.widget.LinearLayoutCompat
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/title_container"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -56,12 +58,26 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/_11sdp"
                 android:layout_marginTop="@dimen/_12sdp"
-                android:gravity="start"
                 android:singleLine="true"
                 android:text="@{itemData.title}"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Semi_Bold"
                 android:textColor="@color/black"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
                 tools:text="Hello" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/closed_grp_img"
+                android:layout_width="@dimen/_18sdp"
+                android:layout_height="0dp"
+                android:layout_marginStart="@dimen/_4sdp"
+                android:visibility="@{itemData.groupCategory.equals(constant.OPENED_GROUP) ? View.GONE : View.VISIBLE, default=gone}"
+                app:layout_constraintBottom_toBottomOf="@id/title"
+                app:layout_constraintStart_toEndOf="@id/title"
+                app:layout_constraintTop_toTopOf="@+id/title"
+                app:srcCompat="@drawable/ic_lock"
+                app:tint="@color/black"
+                tools:visibility="visible" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/sub_title"
@@ -78,9 +94,12 @@
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                 android:textColor="@color/grey_7A"
                 android:textSize="@dimen/_12sdp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/title"
                 tools:text="tap here for group info" />
 
-        </androidx.appcompat.widget.LinearLayoutCompat>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView
             android:id="@+id/grp_recent_msg_time"
@@ -116,6 +135,7 @@
             app:layout_constraintEnd_toEndOf="@id/grp_recent_msg_time"
             app:layout_constraintStart_toStartOf="@id/grp_recent_msg_time"
             app:layout_constraintTop_toBottomOf="@+id/grp_recent_msg_time"
+            tools:text="2"
             tools:visibility="visible" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

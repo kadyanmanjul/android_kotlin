@@ -176,4 +176,9 @@ interface ChatNetworkService {
     @POST("$DIR/assessment/rule/")
     suspend fun setListOfRuleIdsCompleted(@Body params: Map<String, Int>)
 
+    @PATCH("$DIR/course/extend_free_trial/")
+    suspend fun extendFreeTrial(
+        @Body id: Map<String, String>
+    ):Response<Any>
+
 }

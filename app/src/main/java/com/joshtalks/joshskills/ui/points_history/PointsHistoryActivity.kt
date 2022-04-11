@@ -19,7 +19,13 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.ApiCallStatus
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.WebRtcMiddlewareActivity
+import com.joshtalks.joshskills.core.CURRENT_COURSE_ID
+import com.joshtalks.joshskills.core.DEFAULT_COURSE_ID
 import com.joshtalks.joshskills.databinding.ActivityPointsHistoryBinding
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.leaderboard.ItemOverlay

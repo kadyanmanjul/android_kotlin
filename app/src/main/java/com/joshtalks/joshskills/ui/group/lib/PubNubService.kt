@@ -18,6 +18,7 @@ import com.pubnub.api.enums.PNPushType
 import com.pubnub.api.models.consumer.history.PNHistoryResult
 import com.pubnub.api.models.consumer.objects_api.member.PNGetChannelMembersResult
 import com.pubnub.api.models.consumer.objects_api.membership.PNGetMembershipsResult
+import com.pubnub.api.models.consumer.objects_api.uuid.PNGetUUIDMetadataResult
 import com.pubnub.api.models.consumer.presence.PNHereNowOccupantData
 import java.util.stream.Collectors
 import kotlinx.coroutines.CoroutineScope
@@ -25,7 +26,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.jetbrains.annotations.NotNull
 
-private const val TAG = "PubNub_Service"
+private const val TAG = "PubNubService"
 
 object PubNubService : ChatService {
 
@@ -35,6 +36,7 @@ object PubNubService : ChatService {
         config.uuid = Mentor.getInstance().getId()
         PubNub(config)
     }
+
     private val config by lazy {
         PNConfiguration().apply {
             logVerbosity = PNLogVerbosity.BODY
@@ -86,7 +88,6 @@ object PubNubService : ChatService {
                 pubnub.channelMembers
                     .channel(groupId)
                     .limit(100)
-                    .includeTotalCount(true)
                     .includeUUID(Include.PNUUIDDetailsLevel.UUID)
                     .sync()
             } else {
@@ -267,5 +268,11 @@ object PubNubService : ChatService {
     } catch (e: Exception) {
         null
     }
+
+    override fun getUserMetadata(mentorId: String): PNGetUUIDMetadataResult? =
+        pubnub.uuidMetadata
+            .uuid(mentorId)
+            .includeCustom(true)
+            .sync()
 }
 

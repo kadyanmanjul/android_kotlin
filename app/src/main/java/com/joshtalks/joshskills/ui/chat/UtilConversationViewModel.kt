@@ -15,7 +15,7 @@ import com.joshtalks.joshskills.core.USER_PROFILE_FLOW_FROM
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.MESSAGE_STATUS
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
-import com.joshtalks.joshskills.repository.server.UserProfileResponse
+import com.joshtalks.joshskills.ui.userprofile.models.UserProfileResponse
 import com.joshtalks.joshskills.repository.server.groupchat.GroupDetails
 import java.util.ConcurrentModificationException
 import kotlinx.coroutines.Dispatchers

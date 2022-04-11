@@ -12,24 +12,9 @@ import androidx.room.Transaction
 import androidx.room.Update
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.repository.local.entity.AudioType
-import com.joshtalks.joshskills.repository.local.entity.AwardMentorModel
-import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
-import com.joshtalks.joshskills.repository.local.entity.CertificationExamDetailModel
-import com.joshtalks.joshskills.repository.local.entity.ChatModel
-import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
-import com.joshtalks.joshskills.repository.local.entity.ImageType
-import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
-import com.joshtalks.joshskills.repository.local.entity.LessonModel
-import com.joshtalks.joshskills.repository.local.entity.MESSAGE_DELIVER_STATUS
-import com.joshtalks.joshskills.repository.local.entity.MESSAGE_STATUS
-import com.joshtalks.joshskills.repository.local.entity.OptionType
-import com.joshtalks.joshskills.repository.local.entity.PdfType
-import com.joshtalks.joshskills.repository.local.entity.PracticeEngagement
-import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
-import com.joshtalks.joshskills.repository.local.entity.Question
-import com.joshtalks.joshskills.repository.local.entity.VideoType
+import com.joshtalks.joshskills.repository.local.entity.*
 import com.joshtalks.joshskills.repository.local.minimalentity.CourseContentEntity
+import com.joshtalks.joshskills.ui.special_practice.model.SpecialPractice
 import java.util.Date
 
 @Dao
@@ -78,6 +63,21 @@ interface ChatDao {
 
     @Query(value = "SELECT * FROM chat_table where  is_sync= 0")
     suspend fun getUnSyncMessage(): List<ChatModel>
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertReadingVideoDownloadedPath(readingVideo: ReadingVideo)
+
+    @Query("SELECT path FROM reading_video where id= :questionId")
+    suspend fun getDownloadedVideoPath(questionId: String): String
+
+    @Query("SELECT isDownloaded FROM reading_video where id= :questionId")
+    suspend fun getDownloadedVideoStatus(questionId: String): Boolean
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertCompressedVideo(compressedVideo: CompressedVideo)
+
+    @Query("SELECT path FROM compressed_video where id= :questionId")
+    suspend fun getCompressedVideo(questionId: String): String
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertAMessage(chat: ChatModel): Long
@@ -156,6 +156,9 @@ interface ChatDao {
 
     @Query(value = "UPDATE PdfTable SET total_view = :total_view where id= :id ")
     suspend fun updateTotalViewForPdf(id: String, total_view: Int)
+
+    @Query(value = "UPDATE reading_video SET path = :new_path, isDownloaded = :downloaded where id= :questionId ")
+    suspend fun updateReadingTable(questionId: String, new_path: String, downloaded: Boolean)
 
     @Query(value = "SELECT * FROM chat_table where conversation_id= :conversationId ORDER BY ID DESC LIMIT 1")
     suspend fun getLastOneChat(conversationId: String): ChatModel?
@@ -242,7 +245,7 @@ interface ChatDao {
 
     @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
     @RewriteQueriesToDropUnusedColumns
-    @Query(value = "SELECT * FROM (SELECT *,qt.type AS 'question_type' FROM chat_table ct LEFT JOIN question_table qt ON ct.chat_id = qt.chatId where qt.type= :typeO AND  title IS NOT NULL ) inbox  where type= :typeO AND conversation_id= :conversationId  ORDER BY created ASC;")
+    @Query(value = "SELECT * FROM (SELECT *,qt.type AS 'question_type' FROM chat_table ct LEFT JOIN question_table qt ON ct.chat_id = qt.chatId where qt.type= :typeO AND  title IS NOT NULL ) inbox where type= :typeO AND conversation_id= :conversationId  ORDER BY created ASC;")
     suspend fun getRegisterCourseMinimal22(
         conversationId: String,
         typeO: BASE_MESSAGE_TYPE = BASE_MESSAGE_TYPE.Q
@@ -366,6 +369,8 @@ interface ChatDao {
 
             chatModel.lesson = getLesson(chatModel) // Add Lesson
 
+            chatModel.specialPractice = getSpecialPractice(chatModel) // Add Special
+
             chatModel.question = getQuestion(chatModel) // Add Question
         }
         return listOfChat
@@ -378,6 +383,8 @@ interface ChatDao {
             chatModel.awardMentorModel = getAwardMentor(chatModel)
 
             chatModel.lesson = getLesson(chatModel) // Add Lesson
+
+            chatModel.specialPractice = getSpecialPractice(chatModel) // Add Special practice
 
             chatModel.question = getQuestion(chatModel) // Add Question
         } catch (ex: Throwable) {
@@ -399,6 +406,13 @@ interface ChatDao {
             //  val courseId=getCourseId(chatModel.conversationId)
             return AppObjectController.appDatabase.lessonDao()
                 .getLessonFromChatId(chatModel.chatId)
+        }
+        return null
+    }
+
+    private fun getSpecialPractice(chatModel: ChatModel): SpecialPractice? {
+        if (chatModel.type == BASE_MESSAGE_TYPE.SPECIAL_PRACTICE) {
+            return AppObjectController.appDatabase.specialDao().getSpecialPractice(chatModel.chatId)
         }
         return null
     }

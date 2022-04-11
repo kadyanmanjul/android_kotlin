@@ -4,6 +4,7 @@ import androidx.annotation.NonNull
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.group.utils.getColorHexCode
 import java.util.Date
 
@@ -31,4 +32,11 @@ data class ChatItem(
     }
 
     fun getColorFromId() = getColorHexCode(messageId.substring(messageId.lastIndexOf("_") + 1))
+
+    fun getMentorId(): String? {
+        messageId.substringAfterLast("_", Mentor.getInstance().getId()).let {
+            return if (it.isBlank()) null
+            else it
+        }
+    }
 }

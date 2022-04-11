@@ -5,8 +5,9 @@
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView2"
-        android:layout_width="@dimen/_251sdp"
-        android:layout_height="@dimen/_39sdp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/_4sdp"
         android:layout_marginBottom="@dimen/_20sdp"
         app:cardCornerRadius="@dimen/_8sdp"
         card_view:cardElevation="0dp">
@@ -23,7 +24,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="start"
-                android:hint="Hindi (हिन्दी)"
                 app:layout_constraintHorizontal_bias="0"
                 android:imeOptions="actionNext"
                 android:inputType="textCapWords"
@@ -35,8 +35,8 @@
                 android:paddingTop="@dimen/_10sdp"
                 android:paddingBottom="@dimen/_10sdp"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
-                android:textColor="#7A7A7A"
-                android:textColorHint="#7A7A7A"
+                android:textColor="@color/language_item_bg"
+                android:textColorHint="@color/language_item_bg"
                 android:textCursorDrawable="@drawable/cursor_drawable"
                 android:textSize="@dimen/_14ssp"
                 app:layout_constraintBottom_toBottomOf="parent"

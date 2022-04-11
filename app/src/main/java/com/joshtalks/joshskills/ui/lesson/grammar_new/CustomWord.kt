@@ -1,7 +1,6 @@
 package com.joshtalks.joshskills.ui.lesson.grammar_new
 
 import android.content.Context
-import android.util.Log
 import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
@@ -11,9 +10,9 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.AnimateAtsOtionViewEvent
 import com.joshtalks.joshskills.repository.local.model.assessment.Choice
-import com.joshtalks.joshskills.ui.lesson.LessonActivity
 import com.nex3z.flowlayout.FlowLayout
 
 class CustomWord : AppCompatTextView {
@@ -34,68 +33,43 @@ class CustomWord : AppCompatTextView {
         invalidate()
     }
 
-    fun changeViewGroup(optionsLayout: CustomLayout, answerLayout: FlowLayout) {
+    fun changeViewGroup(
+        optionsLayout: CustomLayout,
+        answerLayout: FlowLayout,
+    ) {
         if (parent is CustomLayout) {
             /**
              * Answer Selected
              */
             val fromLocation = IntArray(2)
-            this.getLocationOnScreen(fromLocation)
-            val layoutParams = LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-            )
-            layoutParams.gravity = Gravity.CENTER
-            layoutParams.setMargins(
-                mPadding4F,
-                mPadding4F,
-                mPadding4F,
-                mPadding4F
-            )
-            setLayoutParams(layoutParams)
+            this.getLocationInWindow(fromLocation)
+            updateView(isSelected = true)
             optionsLayout.removeViewCustomLayout(this, choice)
             answerLayout.addView(this)
             //this.invalidate()
-
+            post {
             choice.apply {
                 this.userSelectedOrder = answerLayout.childCount
                 this.isSelectedByUser = true
             }
-            Log.i("Yash", "changeViewGroup: Answer Selected")
-            this.visibility = View.VISIBLE
-            LessonActivity.animateAtsOptionViewEvent.value =
-                AnimateAtsOtionViewEvent(
-                    fromLocation,
-                    this.height,
-                    this.width,
-                    this
-                )
-//            RxBus2.publish(AnimateAtsOtionViewEvent(fromLocation, this.height, this.width, this))
+            }
+            this.visibility = View.INVISIBLE
+            RxBus2.publish(AnimateAtsOtionViewEvent(fromLocation, this.height, this.width, this))
         } else {
             /**
              * Answer Unselected
              */
             val fromLocation = IntArray(2)
-            this.getLocationOnScreen(fromLocation)
-            val layoutParams = LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-            )
-            layoutParams.gravity = Gravity.CENTER
-            layoutParams.setMargins(
-                mPadding4F,
-                mPadding4F,
-                mPadding4F,
-                mPadding4F
-            )
-            setLayoutParams(layoutParams)
+            this.getLocationInWindow(fromLocation)
+            updateView(isSelected = false)
             answerLayout.removeView(this)
             optionsLayout.addViewAt(this, choice.sortOrder - 1)
             choice.apply {
                 this.userSelectedOrder = 100
                 this.isSelectedByUser = false
             }
-            LessonActivity.animateAtsOptionViewEvent.value =
+            this.visibility = View.VISIBLE
+            RxBus2.publish(
                 AnimateAtsOtionViewEvent(
                     fromLocation,
                     this.height,
@@ -103,17 +77,40 @@ class CustomWord : AppCompatTextView {
                     this,
                     optionsLayout
                 )
-            //RxBus2.publish(AnimateAtsOtionViewEvent(fromLocation, this.height, this.width, this))
-            /*RxBus2.publish(
-                AnimateAtsOtionViewEvent(
-                    fromLocation,
-                    this.height,
-                    this.width,
-                    this,
-                    optionsLayout
-                )
-            )*/
+            )
         }
+    }
+
+    fun updateView(isSelected: Boolean) {
+        this.background = ContextCompat.getDrawable(
+            context,
+            if (isSelected) R.drawable.rounded_rectangle_with_grey_border else R.drawable.rounded_rectangle_grey
+        )
+        this.setTextColor(
+            ContextCompat.getColor(
+                context,
+                if (isSelected) R.color.grammar_black_text_color else R.color.light_shade_of_gray
+            )
+        )
+        this.isEnabled = isSelected
+        val layoutParams = LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+        layoutParams.gravity = Gravity.CENTER
+        layoutParams.setMargins(
+            mPadding4F,
+            mPadding4F,
+            mPadding4F,
+            mPadding4F
+        )
+        setLayoutParams(layoutParams)
+        setPadding(
+            mPaddingLeft,
+            mPaddingTop,
+            mPaddingRight,
+            mPaddingBottom
+        )
     }
 
     fun updateChoice(choice: Choice) {

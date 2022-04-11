@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/user_pic"
+        android:layout_width="@dimen/_86sdp"
+        android:layout_height="@dimen/_86sdp"
+        android:src="@color/not_now"
+        android:layout_marginHorizontal="@dimen/_16sdp"
+        android:layout_marginVertical="@dimen/_18sdp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+         />
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/user_name"
+        android:layout_width="@dimen/_139sdp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_18sdp"
+        android:layout_marginTop="@dimen/_18sdp"
+        android:layout_marginEnd="@dimen/_4sdp"
+        android:background="@drawable/bg_rounded_corner"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toEndOf="@id/user_pic"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/user_age_text"
+        android:layout_width="@dimen/_49sdp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_4sdp"
+        android:layout_marginBottom="@dimen/_4sdp"
+        android:background="@drawable/bg_rounded_corner"
+        app:layout_constraintStart_toStartOf="@id/user_name"
+        app:layout_constraintTop_toBottomOf="@id/user_name" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/txt_label_hometown"
+        android:layout_width="@dimen/_110sdp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_4sdp"
+        android:layout_marginBottom="@dimen/_4sdp"
+        android:background="@drawable/bg_rounded_corner"
+        app:layout_constraintStart_toStartOf="@id/user_age_text"
+        app:layout_constraintTop_toBottomOf="@id/user_age_text" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/joined_on_text"
+        android:layout_width="@dimen/_139sdp"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="@dimen/_4sdp"
+        android:background="@drawable/bg_rounded_corner"
+        app:layout_constraintStart_toStartOf="@id/txt_label_hometown"
+        app:layout_constraintTop_toBottomOf="@id/txt_label_hometown" />
+
+    <RelativeLayout
+        android:id="@+id/highlights_layout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_28sdp"
+        android:layout_marginTop="@dimen/_22sdp"
+        android:background="@drawable/bg_profile_header"
+        android:gravity="center|start"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/user_pic">
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/point_layout"
+        android:layout_width="@dimen/_126sdp"
+        android:layout_height="@dimen/_61sdp"
+        android:layout_marginTop="@dimen/_16sdp"
+        android:layout_marginEnd="@dimen/_8ssp"
+        android:background="@drawable/bg_rounded_corner"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toStartOf="@id/minutes_layout"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/highlights_layout"
+        app:layout_constraintWidth_default="percent"
+        app:layout_constraintWidth_percent="0.33">
+
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/minutes_layout"
+        android:layout_width="@dimen/_126sdp"
+        android:layout_height="@dimen/_61sdp"
+        android:layout_marginStart="@dimen/_8ssp"
+        android:layout_marginTop="@dimen/_16sdp"
+        android:background="@drawable/bg_rounded_corner"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/point_layout"
+        app:layout_constraintTop_toBottomOf="@id/highlights_layout"
+        app:layout_constraintWidth_default="percent"
+        app:layout_constraintWidth_percent="0.36">
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

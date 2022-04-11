@@ -2,7 +2,6 @@ package com.joshtalks.joshskills.ui.voip
 
 import android.animation.Animator
 import android.animation.ValueAnimator
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.NotificationManager
 import android.app.Service
@@ -18,7 +17,11 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.media.AudioManager
-import android.os.*
+import android.os.Build
+import android.os.Bundle
+import android.os.IBinder
+import android.os.PowerManager
+import android.os.SystemClock
 import android.util.Log
 import android.view.View
 import android.view.WindowManager
@@ -26,6 +29,7 @@ import android.view.animation.BounceInterpolator
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatImageButton
 import androidx.core.content.ContextCompat
+import androidx.core.content.getSystemService
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
@@ -33,6 +37,8 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.abTest.CampaignKeys
+import com.joshtalks.joshskills.core.abTest.GoalKeys
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.PointSnackbar
@@ -59,12 +65,12 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.util.concurrent.TimeUnit
 
 const val AUTO_PICKUP_CALL = "auto_pickup_call"
 const val CALL_ACCEPT = "web_rtc_call_accept"
@@ -83,6 +89,7 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
     private lateinit var binding: ActivityCallingBinding
     private var mBoundService: WebRtcService? = null
     private var mServiceBound = false
+    var audioManager: AudioManager? = null
     private lateinit var sensorManager: SensorManager
     private var proximity: Sensor? = null
     private lateinit var scope: CoroutineScope
@@ -95,6 +102,7 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
     private var callType: CallType? = null
     private var callieId: String = ""
     private var callerId: String = ""
+    private var fppDialog:String = EMPTY
 
     val progressAnimator by lazy<ValueAnimator> {
         ValueAnimator.ofFloat(0f, 1f).apply {
@@ -318,6 +326,7 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
         // Get an instance of the sensor service, and use that to get an instance of
         // a particular sensor.
         sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        audioManager= getSystemService(Context.AUDIO_SERVICE) as AudioManager
         proximity = sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY)
         powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
         lock = powerManager.newWakeLock(PowerManager.PROXIMITY_SCREEN_OFF_WAKE_LOCK,"simplewakelock:wakelocktag")
@@ -432,7 +441,7 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
             {
                 onDisconnectCall(DISCONNECT.NO_USER_FOUND_FAILURE)
             },
-            20000
+            50000
         )
     }
 
@@ -559,30 +568,70 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
     }
 
     private fun initCall() {
-        if (isCallFavoritePP() || isCallOnGoing.value == true) {
-            intent= intent.apply {
-                putExtra(CALL_TYPE, WebRtcService.callType)
-                WebRtcService.callData?.apply {
-                    if (mBoundService?.isFavorite() == true) {
-                        put(RTC_IS_FAVORITE, "true")
+        val map: HashMap<String, String?> = HashMap()
+        map["agora_channel_name"] = mBoundService?.channelName
+        CoroutineScope(Dispatchers.IO).launch {
+            val resp =
+                AppObjectController.p2pNetworkService.showFppDialog(map)
+            fppDialog = resp.body()?.get("show_fpp_dialog") ?: EMPTY
+        }
+        if (isCallFavoritePP() || WebRtcService.isCallOnGoing.value == true) {
+            if (intent.getSerializableExtra(CALL_USER_OBJ) == null) {
+                intent = intent.apply {
+                    putExtra(CALL_TYPE, WebRtcService.callType)
+                    WebRtcService.callData?.apply {
+                        if (mBoundService?.isFavorite() == true) {
+                            put(RTC_IS_FAVORITE, "true")
+                        }
+                        if (mBoundService?.isGroupCall() == true) {
+                            put(RTC_IS_GROUP_CALL, "true")
+                        }
+                        if (isNewUserCall()) {
+                            put(RTC_IS_NEW_USER_CALL, "true")
+                        }
                     }
-                    if (mBoundService?.isGroupCall()==true) {
-                        put(RTC_IS_GROUP_CALL, "true")
-                    }
-                    if (isNewUserCall()) {
-                        put(RTC_IS_NEW_USER_CALL, "true")
-                    }
+                    putExtra(IS_CALL_CONNECTED, mBoundService?.isCallerJoined)
+                    putExtra(CALL_USER_OBJ, WebRtcService.callData)
                 }
-                putExtra(IS_CALL_CONNECTED, isCallOnGoing.value)
-                putExtra(CALL_USER_OBJ, WebRtcService.callData)
+                updateCallInfo()
+            }else if (isCallFavoritePP()){
+                updateCallInfo()
             }
-            updateCallInfo()
-        } /*else if (callType == CallType.INCOMING && WebRtcService.isCallWasOnGoing.value == true) {
-            updateCallInfo()
-        }*/
+        }
         setCallScreenBackground()
         updateButtonStatus()
         callType = intent.getSerializableExtra(CALL_TYPE) as CallType?
+
+//        if (isCallFavoritePP() || WebRtcService.isCallOnGoing.value == true) {
+//            updateCallInfo()
+//        }
+
+//        if (isCallFavoritePP() || isCallOnGoing.value == true) {
+//            intent= intent.apply {
+//                putExtra(CALL_TYPE, WebRtcService.callType)
+//                WebRtcService.callData?.apply {
+//                    if (mBoundService?.isFavorite() == true) {
+//                        put(RTC_IS_FAVORITE, "true")
+//                    }
+//                    if (mBoundService?.isGroupCall()==true) {
+//                        put(RTC_IS_GROUP_CALL, "true")
+//                    }
+//                    if (isNewUserCall()) {
+//                        put(RTC_IS_NEW_USER_CALL, "true")
+//                    }
+//                }
+//                putExtra(IS_CALL_CONNECTED, isCallOnGoing.value)
+//                putExtra(CALL_USER_OBJ, WebRtcService.callData)
+//            }
+//            updateCallInfo()
+//        } /*else if (callType == CallType.INCOMING && WebRtcService.isCallWasOnGoing.value == true) {
+         //   updateCallInfo()
+        //}*/
+
+        if (isCallFavoritePP() && WebRtcService.isCallOnGoing.value==false && callType!=CallType.INCOMING){
+            mBoundService?.startPlaying()
+        }
+
         callType?.run {
             updateStatusLabel()
             if (CallType.OUTGOING == this) {
@@ -634,7 +683,9 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
             if (WebRtcService.isCallOnGoing.value == true) {
                 binding.groupForIncoming.visibility = View.GONE
                 binding.groupForOutgoing.visibility = View.VISIBLE
-                startCallTimer()
+                if (mBoundService?.isCallerJoined==true){
+                    startCallTimer()
+                }
             }
         } catch (ex: Throwable) {
             ex.printStackTrace()
@@ -650,9 +701,11 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
             val callConnected = mBoundService?.isCallerJoined ?: false
             val callType = intent.getSerializableExtra(CALL_TYPE) as CallType?
             Log.d(TAG, "updateStatusLabel: ${map} callType ${callType}  isCallFavoritePP():${isCallFavoritePP()}  callConnected:${callConnected} isCallFromGroup:${isCallFromGroup}")
-            callerId = map?.get("caller_uid").toString()
-            callieId = CurrentCallDetails.callieUid
-
+            callerId = if (isCallFavoritePP())
+                intent.getIntExtra(RTC_PARTNER_ID,1).toString()
+            else
+                map?.get("caller_uid")?: mBoundService?.getOppositeCallerId().toString()
+            callieId = map?.get("uid") ?: mBoundService?.getUserAgoraId().toString()
             callType?.run {
                 if (CallType.FAVORITE_MISSED_CALL == this || CallType.OUTGOING == this) {
                     if (callConnected && isCallFavoritePP()) {
@@ -922,6 +975,7 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
     }
 
     fun onDisconnectCall(reason: VoipEvent) {
+        mBoundService?.stopPlaying()
         WebRtcService.disconnectCall(reason)
         AppObjectController.uiHandler.postDelayed(
             {
@@ -977,42 +1031,49 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
         if (time <= 0) {
             time = callTime
         }
-        if(PrefManager.getBoolValue(IS_CALL_BTN_CLICKED_FROM_NEW_SCREEN)){
-            viewModel.saveIntroVideoFlowImpression(CALL_DURATION_FROM_NEW_SCREEN, time)
-            PrefManager.put(IS_CALL_BTN_CLICKED_FROM_NEW_SCREEN, false)
-        }
+        Log.d(TAG, "showCallRatingScreen: ${time/1000}")
+        if((time/1000) in 121..1199 && mBoundService?.fppDialogeFlag ?: EMPTY=="false"){
+            this@WebRtcActivity.finish()
+        }else {
 
-        val channelName2 =
-            if (channelName.isNullOrBlank().not()) channelName else mBoundService?.channelName
-        if (time > 0 && channelName2.isNullOrEmpty().not()) {
-            runOnUiThread {
-                try {
-                    binding.placeholderBg.visibility = View.VISIBLE
-                    VoipCallFeedbackActivity.startPtoPFeedbackActivity(
-                        channelName = channelName2,
-                        callTime = time,
-                        callerName = userDetailLiveData.value?.get("name"),
-                        callerImage = userDetailLiveData.value?.get("profile_pic"),
-                        yourName = if (User.getInstance().firstName.isNullOrBlank()) "New User" else User.getInstance().firstName,
-                        yourAgoraId = mBoundService?.getUserAgoraId(),
-                        activity = this,
-                        flags = arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
-                        callerId = callerId.toInt(),
-                        currentUserId = callieId.toInt()
-                    )
-                } catch (ex: Exception) {
-                    ex.printStackTrace()
-                }
-                this.finish()
+            if (PrefManager.getBoolValue(IS_CALL_BTN_CLICKED_FROM_NEW_SCREEN)) {
+                viewModel.saveIntroVideoFlowImpression(CALL_DURATION_FROM_NEW_SCREEN, time)
+                PrefManager.put(IS_CALL_BTN_CLICKED_FROM_NEW_SCREEN, false)
             }
-            mBoundService?.setOppositeUserInfo(null)
-            return
+            val channelName2 =
+                if (channelName.isNullOrBlank().not()) channelName else mBoundService?.channelName
+            if (time > 0 && channelName2.isNullOrEmpty().not()) {
+                runOnUiThread {
+                    try {
+                        binding.placeholderBg.visibility = View.VISIBLE
+                        VoipCallFeedbackActivity.startPtoPFeedbackActivity(
+                            channelName = channelName2,
+                            callTime = time,
+                            callerName = userDetailLiveData.value?.get("name"),
+                            callerImage = userDetailLiveData.value?.get("profile_pic"),
+                            yourName = if (User.getInstance().firstName.isNullOrBlank()) "New User" else User.getInstance().firstName,
+                            yourAgoraId = mBoundService?.getUserAgoraId(),
+                            activity = this,
+                            flags = arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
+                            callerId = callerId.toInt(),
+                            currentUserId = callieId.toInt(),
+                            fppDialogFlag = fppDialog
+                        )
+                    } catch (ex: Exception) {
+                        ex.printStackTrace()
+                    }
+                    this.finish()
+                }
+                mBoundService?.setOppositeUserInfo(null)
+                return
+            }
+            this@WebRtcActivity.finishAndRemoveTask()
         }
-        this@WebRtcActivity.finishAndRemoveTask()
     }
 
     fun onStopCall() {
         //     SoundPoolManager.getInstance(this).release()
+        mBoundService?.stopPlaying()
         AppAnalytics.create(AnalyticsEvent.DISCONNECT_CALL_VOIP.NAME)
             .addBasicParam()
             .addUserDetails()
@@ -1148,12 +1209,10 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
             }
         }
     }
-
     override fun onSensorChanged(p0: SensorEvent?) {
-
         if (p0?.values?.get(0)?.compareTo(0.0) == 0) {
 //            face is near to sensor
-            if (mBoundService?.getSpeaker() == false) {
+            if (mBoundService?.getSpeaker() == false && mBoundService?.audioRoute==1 && !audioManager?.isBluetoothScoOn!!) {
                 turnScreenOff()
             }
         } else {

@@ -15,7 +15,7 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.databinding.FragmentTrialEndBottomsheetBinding
 import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
-import com.joshtalks.joshskills.ui.userprofile.UserPicChooserFragment
+import com.joshtalks.joshskills.ui.userprofile.fragments.UserPicChooserFragment
 
 const val TRIAL_TEST_ID = 13
 

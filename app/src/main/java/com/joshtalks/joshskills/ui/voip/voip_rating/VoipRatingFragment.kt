@@ -18,10 +18,10 @@ import com.joshtalks.joshskills.core.custom_ui.FullScreenProgressDialog
 import com.joshtalks.joshskills.core.custom_ui.PointSnackbar
 import com.joshtalks.joshskills.databinding.VoipRatingFragmentBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.repository.server.Award
+import com.joshtalks.joshskills.ui.userprofile.models.Award
 import com.joshtalks.joshskills.repository.server.voip.RequestVoipRating
 import com.joshtalks.joshskills.ui.practise.PracticeViewModel
-import com.joshtalks.joshskills.ui.userprofile.ShowAwardFragment
+import com.joshtalks.joshskills.ui.userprofile.fragments.ShowAwardFragment
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

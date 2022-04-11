@@ -68,6 +68,7 @@ import timber.log.Timber
 import java.lang.ref.WeakReference
 import java.util.*
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.collections.HashMap
 import kotlin.collections.set
 
@@ -89,6 +90,7 @@ const val RTC_WEB_GROUP_PHOTO = "group_url"
 const val RTC_PARTNER_ID = "partner_id"
 const val DEFAULT_NOTIFICATION_TITLE = "Josh Skills App Running"
 const val IS_CHANNEL_ACTIVE_KEY = "success"
+const val SHOW_FPP_DIALOG = "show_fpp_dialog"
 
 class WebRtcService : BaseWebRtcService() {
     private val TAG = "ABCWebRtcService"
@@ -96,8 +98,10 @@ class WebRtcService : BaseWebRtcService() {
     private val mBinder: IBinder = MyBinder()
     private val hangUpRtcOnDeviceCallAnswered: PhoneStateListener =
         HangUpRtcOnPstnCallAnsweredListener()
-
     private var callStartTime: Long = 0
+    var audioRoute: Int = 0
+    private var isForceConnect = AtomicBoolean(false)
+    private var forceConnectData = hashMapOf<String,String?>()
     private var callForceDisconnect = false
     private var mHandler: Handler? = null
     private val handlerThread: HandlerThread by lazy { CustomHandlerThread("WebrtcThread") }
@@ -112,6 +116,7 @@ class WebRtcService : BaseWebRtcService() {
     var speakingUsersNewList = arrayListOf<Int>()
     var speakingUsersOldList = arrayListOf<Int>()
     private val timber = Timber.tag(TAG)
+    var fppDialogeFlag:String?=null
     private val audioManager by lazy {
         getSystemService(Context.AUDIO_SERVICE) as AudioManager
     }
@@ -308,6 +313,16 @@ class WebRtcService : BaseWebRtcService() {
             serviceIntent.startServiceForWebrtc()
         }
 
+        fun declineDisconnect() {
+            val serviceIntent = Intent(
+                AppObjectController.joshApplication,
+                WebRtcService::class.java
+            ).apply {
+                action = CallDeclineDisconnect().action
+            }
+            serviceIntent.startServiceForWebrtc()
+        }
+
         fun noUserFoundCallDisconnect() {
             val serviceIntent = Intent(
                 AppObjectController.joshApplication,
@@ -425,6 +440,7 @@ class WebRtcService : BaseWebRtcService() {
 
         override fun onAudioRouteChanged(routing: Int) {
             super.onAudioRouteChanged(routing)
+            audioRoute=routing
             Timber.tag(TAG).e("onAudioRouteChanged=  $routing")
             executor.submit {
                 if (routing == AUDIO_ROUTE_HEADSET) {
@@ -533,6 +549,32 @@ class WebRtcService : BaseWebRtcService() {
 
             callData = null
             CurrentCallDetails.reset()
+            if(isForceConnect.get())
+                forceConnectCall()
+        }
+
+        fun forceConnectCall() {
+            Log.d(TAG, "forceConnectCall: Callback")
+            isForceConnect.set(false)
+            val data = forceConnectData
+            callData = data
+            CurrentCallDetails.fromMap(data)
+            if (data.containsKey(RTC_CHANNEL_KEY)) {
+                channelName = data[RTC_CHANNEL_KEY]
+            }
+            removeIncomingNotification()
+            if (WebRtcActivity.isIncomingCallHasNewChannel) {
+                joinCall(data, isNewChannelGiven = true)
+            } else if (callCallback != null && callCallback?.get() != null && !WebRtcActivity.isIncomingCallHasNewChannel) {
+                Log.d(TAG, "onStartCommand: ForceConnect Channel Data --> ${data}")
+                callCallback?.get()?.switchChannel(data)
+            } else {
+                Log.d(TAG, "onStartCommand: ")
+                startAutoPickCallActivity(
+                    false,
+                    isFromForceConnect = true
+                )
+            }
         }
 
         override fun onUserJoined(uid: Int, elapsed: Int) {
@@ -1199,6 +1241,7 @@ class WebRtcService : BaseWebRtcService() {
                                 }
                                 this == CallForceDisconnect().action -> {
                                     stopRing()
+                                    stopPlaying()
                                     callForceDisconnect = true
                                     if (JoshApplication.isAppVisible.not()) {
                                         addNotification(CallDisconnect().action, null)
@@ -1209,45 +1252,36 @@ class WebRtcService : BaseWebRtcService() {
                                     )
                                     RxBus2.publish(WebrtcEventBus(CallState.DISCONNECT))
                                 }
+                                this == CallDeclineDisconnect().action -> {
+                                    stopRing()
+                                    stopPlaying()
+                                    callForceDisconnect = true
+                                    if (JoshApplication.isAppVisible.not()) {
+                                        addNotification(CallDisconnect().action, null)
+                                    }
+                                    endCall(
+                                        apiCall = false,
+                                        reason = DISCONNECT.CALL_DECLINE_NOTIFICATION_FAILURE
+                                    )
+                                    RxBus2.publish(WebrtcEventBus(CallState.DISCONNECT))
+                                }
                                 this == CallForceConnect().action -> {
                                     stopRing()
+                                    stopPlaying()
                                     callStartTime = 0L
                                     cancelCallieDisconnectTimer()
                                     compositeDisposable.clear()
                                     switchChannel = true
                                     setOppositeUserInfo(null)
-                                    if (isCallOnGoing.value == true) {
-                                        mRtcEngine?.leaveChannel()
-                                    }
                                     resetConfig()
                                     addNotification(CallForceConnect().action, null)
                                     callData = null
                                     CurrentCallDetails.reset()
-                                    AppObjectController.uiHandler.postDelayed(
-                                        {
-                                            val data =
-                                                intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>
-                                            callData = data
-                                            CurrentCallDetails.fromMap(data)
-                                            if (data.containsKey(RTC_CHANNEL_KEY)) {
-                                                channelName = data[RTC_CHANNEL_KEY]
-                                            }
-                                            removeIncomingNotification()
-                                            if (WebRtcActivity.isIncomingCallHasNewChannel) {
-                                                joinCall(data, isNewChannelGiven = true)
-                                            } else if (callCallback != null && callCallback?.get() != null && !WebRtcActivity.isIncomingCallHasNewChannel) {
-                                                Log.d(TAG, "onStartCommand: CallForceConnect -->")
-                                                callCallback?.get()?.switchChannel(data)
-                                            } else {
-                                                Log.d(TAG, "onStartCommand: ")
-                                                startAutoPickCallActivity(
-                                                    false,
-                                                    isFromForceConnect = true
-                                                )
-                                            }
-                                        },
-                                        750
-                                    )
+                                    forceConnectData = intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>
+                                    isForceConnect.set(true)
+                                    if (isCallOnGoing.value == true) {
+                                        mRtcEngine?.leaveChannel() // TODO: Must listen the callback
+                                    }
                                 }
                                 this == HoldCall().action -> {
                                     val message = Message()
@@ -1328,6 +1362,7 @@ class WebRtcService : BaseWebRtcService() {
         addNotification(CallConnect().action, callData)
         joshAudioManager?.startCommunication()
         joshAudioManager?.stopConnectTone()
+        stopPlaying()
         audioFocus()
     }
 
@@ -1606,6 +1641,7 @@ class WebRtcService : BaseWebRtcService() {
     }
 
     private fun joinCall(data: HashMap<String, String?>, isNewChannelGiven: Boolean = false) {
+        Log.e(TAG, "joinCall: $data")
         if (!isNewChannelGiven && isTimeOutToPickCall) {
             isTimeOutToPickCall = false
             RxBus2.publish(WebrtcEventBus(CallState.DISCONNECT))
@@ -1837,6 +1873,7 @@ class WebRtcService : BaseWebRtcService() {
         }
         RtcEngine.destroy()
         stopRing()
+        stopPlaying()
         userDetailMap = null
         isEngineInitialized = false
         joshAudioManager?.quitEverything()
@@ -1917,6 +1954,7 @@ class WebRtcService : BaseWebRtcService() {
 
     private fun incomingCallNotification(incomingData: HashMap<String, String?>?): Notification {
         Timber.tag(TAG).e("incomingCallNotification   ")
+        stopPlaying()
         val uniqueInt = (System.currentTimeMillis() and 0xfffffff).toInt()
         val pendingIntent = PendingIntent.getActivity(
             this,
@@ -2375,9 +2413,11 @@ class WebRtcService : BaseWebRtcService() {
                                         val newChannel = response[RTC_CHANNEL_KEY]
                                         val token = response[RTC_TOKEN_KEY]
                                         val uid = response[RTC_UID_KEY]
+                                        fppDialogeFlag = response[SHOW_FPP_DIALOG]
                                         data[RTC_CHANNEL_KEY] = newChannel
                                         data[RTC_TOKEN_KEY] = token
                                         data[RTC_UID_KEY] = uid
+                                        Log.e("Sagar", "callStatusNetworkApi: sagar $fppDialogeFlag $newChannel $token")
                                         val oldState = CurrentCallDetails.state()
                                         VoipAnalytics.push(
                                             VoipAnalytics.Event.RECEIVE_TIMER_STOP,
@@ -2444,12 +2484,14 @@ data class NoUserFound(val action: String = "calling.action.no_user_found") :
 
 data class HoldCall(val action: String = "calling.action.hold_call") : WebRtcCalling()
 data class ResumeCall(val action: String = "calling.action.resume_call") : WebRtcCalling()
-data class UserJoined(val action: String = "calling.action.resume_call") : WebRtcCalling()
+data class UserJoined(val action: String = "calling.action.user_joined") : WebRtcCalling()
 data class ConversationRoomJoin(val action: String = "calling.action.conversation_room_joined") :
     WebRtcCalling()
 
 data class FavoriteIncomingCall(val action: String = "calling.action.favorite_incoming_call") :
     WebRtcCalling()
+
+data class CallDeclineDisconnect(val action:String = "calling.action.decline_disconnect"):WebRtcCalling()
 
 enum class CallState(val state: Int) {
     CALL_STATE_CONNECTED(0), CALL_STATE_IDLE(1), CALL_STATE_BUSY(2),

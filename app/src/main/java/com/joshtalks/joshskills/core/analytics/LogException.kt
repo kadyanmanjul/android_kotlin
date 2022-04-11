@@ -2,8 +2,6 @@ package com.joshtalks.joshskills.core.analytics
 
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.joshtalks.joshskills.BuildConfig
-import io.sentry.Sentry
-import io.sentry.SentryLevel
 import timber.log.Timber
 
 object LogException {
@@ -12,14 +10,8 @@ object LogException {
         if (BuildConfig.DEBUG) {
             Timber.e(throwable)
             throwable.printStackTrace()
-            //return
         }
       //  NewRelic.recordHandledException(throwable as Exception)
-        try {
-            Sentry.captureException(throwable)
-        } catch (ex:Exception){
-            ex.printStackTrace()
-        }
         FirebaseCrashlytics.getInstance().recordException(throwable)
     }
 
@@ -28,11 +20,6 @@ object LogException {
            //return
         }
         // NewRelic.recordCustomEvent(tag.name, mutableMapOf())
-        try {
-            Sentry.captureMessage(tag.name + error, SentryLevel.ERROR)
-        } catch (ex:Exception){
-            ex.printStackTrace()
-        }
         FirebaseCrashlytics.getInstance().log("(" + tag.NAME + ") - " + error)
 
     }

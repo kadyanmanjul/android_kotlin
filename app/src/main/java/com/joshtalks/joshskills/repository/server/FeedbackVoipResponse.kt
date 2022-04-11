@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.repository.server
 
 
 import com.google.gson.annotations.SerializedName
+import com.joshtalks.joshskills.ui.userprofile.models.Award
 
 data class FeedbackVoipResponse(
     @SerializedName("award_mentor_list")

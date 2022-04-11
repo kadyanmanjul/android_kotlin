@@ -1,48 +1,25 @@
 package com.joshtalks.joshskills.ui.group.repository
 
-import android.os.Message
 import android.text.format.DateUtils
 import android.util.Log
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
-import com.google.gson.Gson
-import com.joshtalks.joshskills.base.EventLiveData
-import com.joshtalks.joshskills.constants.REMOVE_GROUP_AND_CLOSE
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
-import com.joshtalks.joshskills.ui.group.FROM_BACKEND_MSG_TIME
 import com.joshtalks.joshskills.ui.group.analytics.data.local.GroupChatAnalyticsEntity
-import com.joshtalks.joshskills.ui.group.constants.RECEIVE_META_MESSAGE_LOCAL
-import com.joshtalks.joshskills.ui.group.constants.SENT_META_MESSAGE_LOCAL
 import com.joshtalks.joshskills.ui.group.constants.UNREAD_MESSAGE
 import com.joshtalks.joshskills.ui.group.data.GroupChatPagingSource
 import com.joshtalks.joshskills.ui.group.data.GroupPagingNetworkSource
-import com.joshtalks.joshskills.ui.group.lib.ChatEventObserver
-import com.joshtalks.joshskills.ui.group.lib.ChatService
-import com.joshtalks.joshskills.ui.group.lib.PubNubService
-import com.joshtalks.joshskills.ui.group.lib.PageInfo
+import com.joshtalks.joshskills.ui.group.lib.*
 import com.joshtalks.joshskills.ui.group.model.*
-import com.joshtalks.joshskills.ui.group.utils.getLastMessage
-import com.joshtalks.joshskills.ui.group.utils.getMessageType
 import com.joshtalks.joshskills.ui.group.utils.pushMetaMessage
-import com.pubnub.api.PubNub
 import com.pubnub.api.callbacks.SubscribeCallback
-import com.pubnub.api.models.consumer.PNStatus
-import com.pubnub.api.models.consumer.objects_api.channel.PNChannelMetadataResult
-import com.pubnub.api.models.consumer.objects_api.membership.PNMembershipResult
-import com.pubnub.api.models.consumer.objects_api.uuid.PNUUIDMetadataResult
-import com.pubnub.api.models.consumer.pubsub.PNMessageResult
-import com.pubnub.api.models.consumer.pubsub.PNPresenceEventResult
-import com.pubnub.api.models.consumer.pubsub.PNSignalResult
-import com.pubnub.api.models.consumer.pubsub.files.PNFileEventResult
-import com.pubnub.api.models.consumer.pubsub.message_actions.PNMessageActionResult
 import id.zelory.compressor.Compressor
-import java.io.File
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -52,6 +29,7 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import org.json.JSONArray
+import java.io.File
 
 private const val TAG = "GroupRepository"
 
@@ -62,80 +40,6 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
     private val mentorId = Mentor.getInstance().getId()
     private val chatService: ChatService = PubNubService
     private val database = AppObjectController.appDatabase
-
-    object ChatSubscriber : SubscribeCallback() {
-        private val database = AppObjectController.appDatabase
-        private var onNewMessageAdded : (() -> Unit)? = null
-
-        fun setNewMessageListener(onNewMessageAdded : (() -> Unit)) {
-            this.onNewMessageAdded = onNewMessageAdded
-        }
-
-        override fun status(pubnub: PubNub, pnStatus: PNStatus) {}
-
-        override fun message(pubnub: PubNub, pnMessageResult: PNMessageResult) {
-            CoroutineScope(Dispatchers.IO).launch {
-                try {
-                    val messageItem = Gson().fromJson(pnMessageResult.message, MessageItem::class.java)
-                    if (pnMessageResult.userMetadata.asString != FROM_BACKEND_MSG_TIME)
-                        database.groupListDao().updateGroupItem(
-                            lastMessage = messageItem.getLastMessage(pnMessageResult.userMetadata.asString, messageItem.msgType),
-                            lastMsgTime = pnMessageResult.timetoken,
-                            id = pnMessageResult.channel
-                        )
-                    // Meta + Sender
-                    database.groupChatDao().insertMessage(
-                        ChatItem(
-                            sender = pnMessageResult.userMetadata.asString,
-                            message = messageItem.msg,
-                            msgTime = pnMessageResult.timetoken,
-                            groupId = pnMessageResult.channel,
-                            msgType = messageItem.getMessageType(),
-                            messageId = "${pnMessageResult.timetoken}_${pnMessageResult.channel}_${messageItem.mentorId}"
-                        )
-                    )
-                    val message = messageItem.msg
-                    if (messageItem.getMessageType() == RECEIVE_META_MESSAGE_LOCAL && message.contains("changed")) {
-                        when (message.contains("changed the group icon")) {
-                            true -> {
-                                //TODO("UPDATE IMAGE ICON")
-                            }
-                            false -> {
-                                val newGroupName = message.substring(message.lastIndexOf("the group name to ") + 18)
-                                database.groupListDao().updateGroupName(pnMessageResult.channel, newGroupName)
-                            }
-                        }
-                    } else if (messageItem.getMessageType() == SENT_META_MESSAGE_LOCAL && message.contains("removed")) {
-                        if (messageItem.mentorId == Mentor.getInstance().getId()) {
-                            withContext(Dispatchers.Main) {
-                                val messageObj = Message()
-                                messageObj.what = REMOVE_GROUP_AND_CLOSE
-                                messageObj.obj = pnMessageResult.channel
-                                EventLiveData.value = messageObj
-                            }
-                        }
-                    }
-                    onNewMessageAdded?.invoke()
-                } catch (e : Exception) {
-                    e.printStackTrace()
-                }
-            }
-        }
-
-        override fun presence(pubnub: PubNub, pnPresenceEventResult: PNPresenceEventResult) {}
-
-        override fun signal(pubnub: PubNub, pnSignalResult: PNSignalResult) {}
-
-        override fun uuid(pubnub: PubNub, pnUUIDMetadataResult: PNUUIDMetadataResult) {}
-
-        override fun channel(pubnub: PubNub, pnChannelMetadataResult: PNChannelMetadataResult) {}
-
-        override fun membership(pubnub: PubNub, pnMembershipResult: PNMembershipResult) {}
-
-        override fun messageAction(pubnub: PubNub, pnMessageActionResult: PNMessageActionResult) {}
-
-        override fun file(pubnub: PubNub, pnFileEventResult: PNFileEventResult) {}
-    }
 
     fun getGroupSearchResult(query: String) =
         Pager(PagingConfig(10, enablePlaceholders = false, maxSize = 150)) {
@@ -149,6 +53,7 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
     fun getGroupListResult(onGroupsLoaded: ((Int) -> Unit)? = null): Pager<Int, GroupsItem> {
         CoroutineScope(Dispatchers.IO).launch {
             database.groupListDao().deleteAllGroupItems()
+            database.groupMemberDao().clearMemberTable()
             fetchGroupListFromNetwork()
             withContext(Dispatchers.Main) {
                 onGroupsLoaded?.invoke(database.groupListDao().getGroupsCount())
@@ -216,26 +121,33 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
         fetchGroupListFromNetwork(PageInfo(pubNubNext = nextPage))
     }
 
-    fun getGroupMemberList(groupId: String, adminId: String, pageInfo: PageInfo? = null): MemberResult {
-        val memberList = mutableListOf<GroupMember>()
-        var pubnubResponse = chatService.getGroupMemberList(groupId, pageInfo)
-        do {
-            val pageMembers = pubnubResponse?.getMemberData(adminId)?.list ?: listOf()
-            memberList.addAll(pageMembers)
-            val nextPage = pubnubResponse?.getPageInfo()?.pubNubNext
-            pubnubResponse = chatService.getGroupMemberList(groupId, PageInfo(pubNubNext = nextPage))
-        } while (pageMembers.isNotEmpty())
-        memberList.sortByDescending { it.isAdmin }
-        return MemberResult(memberList, memberList.size)
+    suspend fun fetchMembersFromNetwork(groupId: String, adminId: String, pageInfo: PageInfo? = null) {
+        val pubNubResponse = chatService.getGroupMemberList(groupId, pageInfo)
+        val memberList = pubNubResponse?.getMemberData(groupId, adminId) ?: listOf()
+        if (memberList.isEmpty())
+            return
+
+        database.groupMemberDao().insertMembers(memberList)
+
+        val nextPage = pubNubResponse?.getPageInfo()?.pubNubNext
+        fetchGroupListFromNetwork(PageInfo(pubNubNext = nextPage))
     }
 
-    suspend fun getGroupOnlineCount(groupId: String): Int? {
+    suspend fun getGroupMemberList(groupId: String, adminId: String): List<GroupMember> {
+        val memberList = database.groupMemberDao().getMembersFromGroup(groupId)
+        if (memberList.isNotEmpty())
+            return memberList
+        else
+            fetchMembersFromNetwork(groupId, adminId)
+        return database.groupMemberDao().getMembersFromGroup(groupId)
+    }
+
+    suspend fun getOnlineAndRequestCount(groupId: String): Map<String, Any?> {
         return try {
-            val response = apiService.getGroupOnlineCount(groupId)
-            return (response["online_count"] as Double).toInt()
+            return apiService.getGroupOnlineCount(groupId)
         } catch (e: Exception) {
             showToast("An error has occurred")
-            0
+            mapOf()
         }
     }
 
@@ -254,7 +166,8 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
                         name = response["group_name"] as String?,
                         createdBy = response["created_by"] as String?,
                         totalCalls = null,
-                        adminId = response["admin_id"] as String?
+                        adminId = response["admin_id"] as String?,
+                        groupType = response["group_type"] as String?
                     )
                 )
                 database.groupChatDao().insertMessage(ChatItem(
@@ -277,6 +190,10 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
             }
         }
         return false
+    }
+
+    suspend fun sendRequestResponse(request: GroupRequest): Boolean {
+        return apiService.joinGroup(request)["success"] as Boolean
     }
 
     suspend fun fetchUnreadMessage(startTime : Long, groupId: String) {
@@ -311,7 +228,8 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
                         name = request.groupName,
                         createdBy = response["created_by"] as String?,
                         totalCalls = null,
-                        adminId = Mentor.getInstance().getId()
+                        adminId = Mentor.getInstance().getId(),
+                        groupType = response["group_type"] as String?
                     )
                 )
                 database.groupChatDao().insertMessage(ChatItem(
@@ -496,9 +414,29 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
 
     suspend fun getGroupMembersCount(): Map<String, GroupMemberCount>? {
         return try {
-            apiService.getOnlineUserCount(JSONArray(database.groupListDao().getGroupIds()))
+            val groupIds = database.groupListDao().getGroupIds()
+            if (groupIds.isNotEmpty())
+                apiService.getOnlineUserCount(JSONArray(groupIds))
+            else
+                null
         } catch (e: Exception){
             showToast("An error has occurred")
+            null
+        }
+    }
+
+    suspend fun sendJoinGroupRequest(request: GroupJoinRequest): Boolean {
+        val response = apiService.sendJoinRequest(request)
+        if (response.isSuccessful)
+            return true
+        return false
+    }
+
+    suspend fun fetchRequestList(groupId: String): List<GroupMemberRequest>? {
+        return try {
+            apiService.getRequestsList(groupId).requestList
+        } catch (e: Exception) {
+            e.printStackTrace()
             null
         }
     }

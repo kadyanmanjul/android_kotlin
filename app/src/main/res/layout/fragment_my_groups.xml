@@ -5,20 +5,22 @@
 
     <data>
 
+        <import type="android.view.View" />
+
         <variable
-            name="handler"
-            type="com.joshtalks.joshskills.ui.userprofile.MyGroupsFragment" />
+            name="vm"
+            type="com.joshtalks.joshskills.ui.userprofile.viewmodel.UserProfileViewModel" />
 
     </data>
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/white">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="@dimen/_12sdp">
+            android:layout_height="match_parent">
 
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/toolbar"
@@ -47,6 +49,7 @@
                     android:layout_marginStart="@dimen/_8sdp"
                     android:layout_marginEnd="@dimen/_5sdp"
                     android:background="@color/colorPrimary"
+                    android:onClick="@{vm.onBackPress}"
                     android:paddingTop="@dimen/_5sdp"
                     android:paddingBottom="@dimen/_5sdp"
                     android:visibility="visible"
@@ -70,11 +73,15 @@
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvGroups"
+                groupListAdapter="@{vm.myGroupAdapter}"
+                onGroupItemClick="@{vm.onGroupItemClick}"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/_12sdp"
+                android:layout_height="0dp"
                 android:paddingBottom="?attr/actionBarSize"
                 app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/toolbar"
                 tools:itemCount="5"
                 tools:listitem="@layout/my_groups_row_item" />
@@ -86,6 +93,7 @@
             android:layout_width="@dimen/_72sdp"
             android:layout_height="@dimen/_72sdp"
             android:layout_gravity="center"
+            android:visibility="@{vm.isProgressBarShow ? View.VISIBLE : View.GONE}"
             app:matProg_barColor="@color/button_color"
             app:matProg_barWidth="@dimen/_4sdp"
             app:matProg_fillRadius="true"

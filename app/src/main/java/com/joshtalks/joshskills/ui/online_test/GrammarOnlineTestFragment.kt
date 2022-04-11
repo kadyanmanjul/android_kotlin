@@ -16,7 +16,17 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.CoreJoshFragment
+import com.joshtalks.joshskills.core.FREE_TRIAL_TEST_SCORE
+import com.joshtalks.joshskills.core.HAS_SEEN_GRAMMAR_TOOLTIP
+import com.joshtalks.joshskills.core.IS_FREE_TRIAL
+import com.joshtalks.joshskills.core.ONLINE_TEST_LAST_LESSON_ATTEMPTED
+import com.joshtalks.joshskills.core.ONLINE_TEST_LAST_LESSON_COMPLETED
+import com.joshtalks.joshskills.core.PermissionUtils
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.playSnackbarSound
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.GRAMMAR_CONTINUE_BUTTON_TEXT
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.GRAMMAR_START_BUTTON_TEXT
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.GRAMMAR_TEST_COMPLETE_DESCRIPTION
@@ -32,7 +42,14 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import com.joshtalks.joshskills.core.CURRENT_COURSE_ID
+import com.joshtalks.joshskills.core.DEFAULT_COURSE_ID
 
 private const val TAG = "GrammarOnlineTest"
 
@@ -216,8 +233,8 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
             startOnlineExamTest()
         })
 
-        viewModel.eventLiveData.observe(viewLifecycleOwner, {
-            it.getContentIfNotHandledOrReturnNull()?.let {
+        viewModel.eventLiveData.observe(viewLifecycleOwner, { event->
+            event?.getContentIfNotHandledOrReturnNull()?.let {
                 binding.startBtn.performClick()
             }
         })

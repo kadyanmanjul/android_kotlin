@@ -242,7 +242,7 @@ class CourseProgressActivityNew :
                 ) {
                     val nameArr = User.getInstance().firstName?.split(" ")
                     val firstName = if (nameArr != null) nameArr[0] else EMPTY
-                    showToast(getString(R.string.feature_locked, firstName))
+                    showToast(getFeatureLockedText(courseId.toString(), firstName))
                 } else if (lessonModel != null) {
                     activityListener.launch(
                         LessonActivity.getActivityIntent(

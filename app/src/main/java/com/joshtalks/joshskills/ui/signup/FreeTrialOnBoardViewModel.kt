@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
@@ -12,27 +13,47 @@ import com.joshtalks.joshskills.repository.local.model.DeviceDetailsResponse
 import com.joshtalks.joshskills.repository.local.model.FCMResponse
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
+import com.joshtalks.joshskills.repository.server.ChooseLanguages
 import com.joshtalks.joshskills.repository.server.TrueCallerLoginRequest
 import com.joshtalks.joshskills.repository.server.signup.LoginResponse
+import com.joshtalks.joshskills.ui.group.repository.ABTestRepository
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import com.truecaller.android.sdk.TrueProfile
 import com.userexperior.UserExperior
-import com.joshtalks.joshskills.repository.server.ChooseLanguages
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
-import java.util.*
 
 class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(application) {
 
     val signUpStatus: MutableLiveData<SignUpStepStatus> = MutableLiveData()
     val progressBarStatus: MutableLiveData<Boolean> = MutableLiveData()
-    val availableLanguages: MutableLiveData<List<ChooseLanguages>> = MutableLiveData()
     val service = AppObjectController.signUpNetworkService
+    val verificationStatus: MutableLiveData<VerificationStatus> = MutableLiveData()
+    val apiStatus: MutableLiveData<ApiCallStatus> = MutableLiveData()
+    val availableLanguages: MutableLiveData<List<ChooseLanguages>> = MutableLiveData()
     var userName: String? = null
     var isVerified: Boolean = false
+    var isUserExist: Boolean = false
+    val points100ABtestLiveData = MutableLiveData<ABTestCampaignData?>()
 
+    val repository: ABTestRepository by lazy { ABTestRepository() }
+    fun get100PCampaignData(campaign: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try{
+                val response = repository.getCampaignData(campaign)
+                if(response != null ){
+                    points100ABtestLiveData.postValue(response)
+                }else {
+                    points100ABtestLiveData.postValue(null)
+                }
+            }catch (ex : Exception){
+                ex.printStackTrace()
+                points100ABtestLiveData.postValue(null)
+            }
+        }
+    }
     fun saveImpression(eventName: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -73,6 +94,7 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
                 )
                 val response = service.verifyViaTrueCaller(trueCallerLoginRequest)
                 if (response.isSuccessful && response.body() != null) {
+                    isUserExist = response.body()!!.isUserExist
                     response.body()?.run {
                         MarketingAnalytics.completeRegistrationAnalytics(
                             this.newUser,
@@ -109,7 +131,7 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
             UserExperior.setUserIdentifier(Mentor.getInstance().getId())
             AppAnalytics.updateUser()
             fetchMentor()
-            WorkManagerAdmin.userActiveStatusWorker(true)
+//            WorkManagerAdmin.userActiveStatusWorker(true)
             WorkManagerAdmin.requiredTaskAfterLoginComplete()
         }
     }

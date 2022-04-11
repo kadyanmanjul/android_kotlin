@@ -7,7 +7,7 @@
 
         <variable
             name="handler"
-            type="com.joshtalks.joshskills.ui.userprofile.EditProfileFragment" />
+            type="com.joshtalks.joshskills.ui.userprofile.fragments.EditProfileFragment" />
 
     </data>
 
@@ -39,33 +39,72 @@
                 app:theme="@style/Theme.GuidelinesCompat.Light.DarkToolbar"
                 tools:layout_editor_absoluteX="0dp">
 
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/iv_back"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/_8sdp"
-                    android:layout_marginEnd="@dimen/_5sdp"
-                    android:background="@color/colorPrimary"
-                    android:paddingTop="@dimen/_5sdp"
-                    android:paddingBottom="@dimen/_5sdp"
-                    android:visibility="visible"
-                    app:srcCompat="@drawable/ic_cross" />
-
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/text_message_title"
-                    android:layout_width="wrap_content"
+                <RelativeLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/colorPrimary"
-                    android:ellipsize="end"
-                    android:gravity="center_vertical|start"
-                    android:lines="1"
-                    android:padding="@dimen/_5sdp"
-                    android:text="Edit Profile"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
-                    android:textColor="@color/white" />
+                    >
 
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/iv_back"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="@dimen/_8sdp"
+                        android:layout_marginEnd="@dimen/_5sdp"
+                        android:background="@color/colorPrimary"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:foreground="?android:attr/selectableItemBackground"
+                        android:gravity="center_vertical|start"
+                        android:paddingTop="@dimen/_5sdp"
+                        android:paddingBottom="@dimen/_5sdp"
+                        app:srcCompat="@drawable/ic_cross" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/text_message_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginHorizontal="@dimen/_6sdp"
+                        android:layout_marginVertical="@dimen/_4sdp"
+                        android:layout_toEndOf="@id/iv_back"
+                        android:background="@color/colorPrimary"
+                        android:ellipsize="end"
+                        android:gravity="center_vertical|start"
+                        android:lines="1"
+                        android:padding="@dimen/_5sdp"
+                        android:text="@string/edit_profile"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
+                        android:textColor="@color/white" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/iv_save"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="@dimen/_12sdp"
+                        android:background="@color/colorPrimary"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:foreground="?android:attr/selectableItemBackground"
+                        android:text="@string/save"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
+                        android:textColor="@color/white" />
+                </RelativeLayout>
             </com.google.android.material.appbar.MaterialToolbar>
+
+            <LinearLayout
+                android:id="@+id/edit_profile_bg"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_84sdp"
+                android:background="@color/edit_profile_bg"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/user_pic"
@@ -73,11 +112,12 @@
                 android:layout_height="@dimen/_86sdp"
                 android:layout_margin="@dimen/_18sdp"
                 android:layout_marginTop="16dp"
+                android:background="@color/transparent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.498"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/toolbar"
-                tools:background="@color/black"
+                tools:background="@color/transparent"
                 tools:src="@drawable/ic_josh_course" />
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -85,212 +125,642 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_10sdp"
-                android:text="Change Profile Photo"
+                android:text="@string/change_profile_photo"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:attr/selectableItemBackground"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
                 android:textColor="@color/colorPrimary"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/user_pic" />
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/txtLabelName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/_12sdp"
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
                 android:layout_marginTop="@dimen/_16sdp"
-                android:text="Name"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
-                android:textColor="@color/colorPrimary"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/txtChangePicture" />
-
-            <androidx.appcompat.widget.AppCompatEditText
-                android:id="@+id/editTxtName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/_12sdp"
-                android:layout_marginTop="@dimen/_2sdp"
-                android:background="@color/transparent"
-                android:hint="Your Full Name"
-                android:inputType="textPersonName"
-                android:lines="1"
-                android:maxLength="200"
-                android:maxLines="1"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
-                android:textColor="@color/black"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/txtLabelName"
-                tools:text="Param Sharma" />
-
-            <View
-                android:id="@+id/seperator1"
-                android:layout_width="match_parent"
-                android:layout_height="0.5dp"
-                android:layout_marginHorizontal="@dimen/_9sdp"
-                android:layout_marginTop="@dimen/_3sdp"
-                android:background="#687C90"
-                app:layout_constraintTop_toBottomOf="@+id/editTxtName"
-                tools:layout_editor_absoluteX="0dp" />
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/txtLabelDob"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/_12sdp"
-                android:layout_marginTop="@dimen/_8sdp"
-                android:text="Date of Birth"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
-                android:textColor="@color/colorPrimary"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/seperator1" />
-
-            <androidx.appcompat.widget.AppCompatEditText
-                android:id="@+id/editTxtDob"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/_12sdp"
-                android:layout_marginTop="@dimen/_2sdp"
-                android:background="@color/transparent"
-                android:focusable="false"
-                android:hint="DD/MM/YYYY"
-                android:inputType="date"
-                android:lines="1"
-                android:maxLength="15"
-                android:maxLines="1"
-                android:onClick="@{()->handler.selectDateOfBirth()}"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
-                android:textColor="@color/black"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/txtLabelDob"
-                tools:text="12/11/2001" />
-
-            <View
-                android:id="@+id/seperator2"
-                android:layout_width="match_parent"
-                android:layout_height="0.5dp"
-                android:layout_marginHorizontal="@dimen/_9sdp"
-                android:layout_marginTop="@dimen/_3sdp"
-                android:background="#687C90"
-                app:layout_constraintTop_toBottomOf="@+id/editTxtDob"
-                tools:layout_editor_absoluteX="0dp" />
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/txtLabelHometown"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/_12sdp"
-                android:layout_marginTop="@dimen/_8sdp"
-                android:text="Hometown"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
-                android:textColor="@color/colorPrimary"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/seperator2" />
-
-            <androidx.appcompat.widget.AppCompatEditText
-                android:id="@+id/editTxtHometown"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/_12sdp"
-                android:layout_marginTop="@dimen/_2sdp"
-                android:background="@color/transparent"
-                android:hint="Your Hometown"
-                android:inputType="textPersonName"
-                android:lines="1"
-                android:maxLength="100"
-                android:maxLines="1"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
-                android:textColor="@color/black"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/txtLabelHometown"
-                />
-
-            <View
-                android:id="@+id/seperator3"
-                android:layout_width="match_parent"
-                android:layout_height="0.5dp"
-                android:layout_marginHorizontal="@dimen/_9sdp"
-                android:layout_marginTop="@dimen/_3sdp"
-                android:background="#687C90"
-                app:layout_constraintTop_toBottomOf="@+id/editTxtHometown"
-                tools:layout_editor_absoluteX="0dp" />
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/txtLabelBatch"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/_12sdp"
-                android:layout_marginTop="@dimen/_8sdp"
-                android:text="Batch"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
-                android:textColor="#BCBCBC"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/seperator3" />
-
-            <androidx.appcompat.widget.AppCompatEditText
-                android:id="@+id/editTxtBatch"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/_12sdp"
-                android:layout_marginTop="@dimen/_2sdp"
-                android:background="@color/transparent"
-                android:enabled="false"
-                android:hint="DD MMM YY"
-                android:lines="1"
-                android:maxLength="50"
-                android:maxLines="1"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
-                android:textColor="#BCBCBC"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/txtLabelBatch"
-                tools:text="12/11/2001" />
-
-            <View
-                android:id="@+id/seperator4"
-                android:layout_width="match_parent"
-                android:layout_height="0.5dp"
-                android:layout_marginHorizontal="@dimen/_9sdp"
-                android:layout_marginTop="@dimen/_3sdp"
-                android:background="#687C90"
-                app:layout_constraintTop_toBottomOf="@+id/editTxtBatch"
-                tools:layout_editor_absoluteX="0dp" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnSave"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="168dp"
-                android:layout_marginBottom="@dimen/_40sdp"
-                android:backgroundTint="@color/button_color"
-                android:gravity="center"
-                android:paddingHorizontal="@dimen/_25sdp"
-                android:paddingVertical="@dimen/_10sdp"
-                android:text="Save Changes"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Button"
-                android:textColor="@color/white"
-                app:cornerRadius="@dimen/_50sdp"
+                android:elevation="@dimen/_2sdp"
+                android:fillViewport="true"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/editTxtBatch" />
+                app:layout_constraintTop_toBottomOf="@+id/txtChangePicture">
 
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <RelativeLayout
+                        android:id="@+id/basic_details_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/_34sdp"
+                        android:layout_marginLeft="@dimen/_11sdp"
+                        android:layout_marginRight="@dimen/_9sdp"
+                        android:background="#F2F2F2"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:foreground="?android:attr/selectableItemBackground"
+                        android:gravity="center|start"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/basic_details_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/_16sdp"
+                            android:layout_centerVertical="true"
+                            android:layout_marginStart="@dimen/_8sdp"
+                            android:background="@color/basic_details"
+                            android:gravity="center|start"
+                            android:text="@string/basic_details"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7"
+                            android:textColor="@color/black" />
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/arrow_down_img"
+                            android:layout_width="@dimen/_10sdp"
+                            android:layout_height="@dimen/_5sdp"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginEnd="@dimen/_12sdp"
+                            android:background="@color/basic_details"
+                            android:src="@drawable/ic_down_img" />
+                    </RelativeLayout>
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/basic_details_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/_11sdp"
+                        android:layout_marginRight="@dimen/_9sdp"
+                        android:visibility="gone"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/basic_details_layout"
+                        tools:visibility="visible">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/txtLabelName"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginHorizontal="@dimen/_12sdp"
+                                android:layout_marginTop="@dimen/_8sdp"
+                                android:text="@string/name"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.8_Caption_Normal"
+                                android:textColor="@color/colorPrimary"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                            <EditText
+                                android:id="@+id/editTxtName"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginHorizontal="@dimen/_12sdp"
+                                android:layout_marginTop="@dimen/_2sdp"
+                                android:digits="qwertyuiopasdfghjklzxcvbnm QWERTYUIOPASDFGHJKLZXCVBNM ₹&amp;@.?!$#*:;,"
+                                android:hint="@string/your_full_name"
+                                android:inputType="textPersonName"
+                                android:lines="1"
+                                android:maxLength="20"
+                                style="@style/myEditText"
+                                android:background="@color/transparent"
+                                android:textCursorDrawable="@drawable/color_cursor"
+                                android:maxLines="1"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                                android:textColor="@color/black"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@+id/txtLabelName"
+                                tools:ignore="RtlSymmetry"/>
+
+                            <View
+                                android:id="@+id/seperator1"
+                                android:layout_width="match_parent"
+                                android:layout_height="0.5dp"
+                                android:layout_marginHorizontal="@dimen/_9sdp"
+                                android:layout_marginTop="@dimen/_3sdp"
+                                android:background="#687C90"
+                                app:layout_constraintTop_toBottomOf="@+id/editTxtName"
+                                tools:layout_editor_absoluteX="0dp" />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/txtLabelDob"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginHorizontal="@dimen/_12sdp"
+                                android:layout_marginTop="@dimen/_8sdp"
+                                android:text="@string/date_of_birth"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.8_Caption_Normal"
+                                android:textColor="@color/colorPrimary"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@+id/seperator1" />
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/editTxtDob"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginHorizontal="@dimen/_12sdp"
+                                android:layout_marginTop="@dimen/_2sdp"
+                                android:background="@color/transparent"
+                                android:focusable="false"
+                                android:hint="@string/time_format"
+                                android:inputType="date"
+                                android:lines="1"
+                                android:maxLength="15"
+                                android:maxLines="1"
+                                android:onClick="@{()->handler.selectDateOfBirth()}"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                                android:textColor="@color/black"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@+id/txtLabelDob"
+                                tools:text="12/11/2001" />
+
+                            <View
+                                android:id="@+id/seperator2"
+                                android:layout_width="match_parent"
+                                android:layout_height="0.5dp"
+                                android:layout_marginHorizontal="@dimen/_9sdp"
+                                android:layout_marginTop="@dimen/_3sdp"
+                                android:background="@color/grey_68"
+                                app:layout_constraintTop_toBottomOf="@+id/editTxtDob"
+                                tools:layout_editor_absoluteX="0dp" />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/txtLabelHometown"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginHorizontal="@dimen/_12sdp"
+                                android:layout_marginTop="@dimen/_8sdp"
+                                android:text="Hometown"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.8_Caption_Normal"
+                                android:textColor="@color/colorPrimary"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@+id/seperator2" />
+
+                            <EditText
+                                android:id="@+id/editTxtHometown"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginHorizontal="@dimen/_12sdp"
+                                android:layout_marginTop="@dimen/_2sdp"
+                                android:hint="Your Hometown"
+                                android:digits="qwertyuiopasdfghjklzxcvbnm QWERTYUIOPASDFGHJKLZXCVBNM ₹&amp;@.?!$#*:;,"
+                                android:inputType="textPersonName"
+                                android:lines="1"
+                                android:maxLength="20"
+                                style="@style/myEditText"
+                                android:background="@color/transparent"
+                                android:textCursorDrawable="@drawable/color_cursor"
+                                android:maxLines="1"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                                android:textColor="@color/black"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@+id/txtLabelHometown"
+                                tools:ignore="RtlSymmetry"/>
+
+                            <View
+                                android:id="@+id/seperator3"
+                                android:layout_width="match_parent"
+                                android:layout_height="0.5dp"
+                                android:layout_marginHorizontal="@dimen/_9sdp"
+                                android:layout_marginTop="@dimen/_3sdp"
+                                android:background="#687C90"
+                                app:layout_constraintTop_toBottomOf="@+id/editTxtHometown"
+                                tools:layout_editor_absoluteX="0dp" />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/txtLabelFutureGoals"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginHorizontal="@dimen/_12sdp"
+                                android:layout_marginTop="@dimen/_8sdp"
+                                android:text="Future Goals"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.8_Caption_Normal"
+                                android:textColor="@color/colorPrimary"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@+id/seperator3" />
+
+                            <androidx.appcompat.widget.AppCompatEditText
+                                android:id="@+id/editTxtFutureGoals"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginHorizontal="@dimen/_12sdp"
+                                android:layout_marginTop="@dimen/_2sdp"
+                                android:background="@color/transparent"
+                                android:hint="@string/ex_aspiring_ias_officer"
+                                android:digits="qwertyuiopasdfghjklzxcvbnm QWERTYUIOPASDFGHJKLZXCVBNM ₹&amp;@.?!$#*:;,"
+                                android:inputType="textPersonName"
+                                android:lines="1"
+                                android:maxLength="100"
+                                style="@style/myEditText"
+                                android:textCursorDrawable="@drawable/color_cursor"
+                                android:maxLines="1"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                                android:textColor="@color/black"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@+id/txtLabelFutureGoals" />
+
+                            <View
+                                android:id="@+id/seperator4"
+                                android:layout_width="match_parent"
+                                android:layout_height="0.5dp"
+                                android:layout_marginHorizontal="@dimen/_9sdp"
+                                android:layout_marginTop="@dimen/_3sdp"
+                                android:background="#687C90"
+                                app:layout_constraintTop_toBottomOf="@+id/editTxtFutureGoals"
+                                tools:layout_editor_absoluteX="0dp" />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/txtLabelJoshTalk"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginHorizontal="@dimen/_12sdp"
+                                android:layout_marginTop="@dimen/_8sdp"
+                                android:text="Favourite Josh Talk"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.8_Caption_Normal"
+                                android:textColor="@color/colorPrimary"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@+id/seperator4" />
+
+                            <androidx.appcompat.widget.AppCompatEditText
+                                android:id="@+id/editTxtJoshTalk"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginHorizontal="@dimen/_12sdp"
+                                android:layout_marginTop="@dimen/_2sdp"
+                                android:digits="qwertyuiopasdfghjklzxcvbnm QWERTYUIOPASDFGHJKLZXCVBNM"
+                                android:hint="@string/paste_link_to_your_favourite_josh_talk_here"
+                                android:inputType="textPersonName"
+                                android:lines="1"
+                                style="@style/myEditText"
+                                android:background="@color/transparent"
+                                android:textCursorDrawable="@drawable/color_cursor"
+                                android:maxLines="1"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                                android:textColor="@color/black"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@+id/txtLabelJoshTalk" />
+
+                            <View
+                                android:id="@+id/seperator5"
+                                android:layout_width="match_parent"
+                                android:layout_height="0.5dp"
+                                android:layout_marginHorizontal="@dimen/_9sdp"
+                                android:layout_marginTop="@dimen/_3sdp"
+                                android:layout_marginBottom="@dimen/_14sdp"
+                                android:background="@color/grey_68"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintTop_toBottomOf="@+id/editTxtJoshTalk"
+                                tools:layout_editor_absoluteX="12dp" />
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+                    </androidx.cardview.widget.CardView>
+
+                    <RelativeLayout
+                        android:id="@+id/education_details_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/_34sdp"
+                        android:layout_marginLeft="@dimen/_11sdp"
+                        android:layout_marginTop="@dimen/_16sdp"
+                        android:layout_marginRight="@dimen/_9sdp"
+                        android:background="@color/basic_details"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:foreground="?android:attr/selectableItemBackground"
+                        android:gravity="center|start"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/basic_details_container">
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/education_details_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/_16sdp"
+                            android:layout_centerVertical="true"
+                            android:layout_marginStart="@dimen/_8sdp"
+                            android:background="#F2F2F2"
+                            android:gravity="center|start"
+                            android:text="@string/add_education_details"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7"
+                            android:textColor="@color/black" />
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/education_down_img"
+                            android:layout_width="@dimen/_10sdp"
+                            android:layout_height="@dimen/_5sdp"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginEnd="@dimen/_12sdp"
+                            android:background="@color/basic_details"
+                            android:src="@drawable/ic_down_img" />
+                    </RelativeLayout>
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/education_details_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/_11sdp"
+                        android:layout_marginRight="@dimen/_9sdp"
+                        android:visibility="gone"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/education_details_layout"
+                        tools:visibility="visible">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/educationName"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginHorizontal="@dimen/_12sdp"
+                                android:layout_marginTop="@dimen/_8sdp"
+                                android:text="@string/subject_degree"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.8_Caption_Normal"
+                                android:textColor="@color/colorPrimary"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                            <EditText
+                                android:id="@+id/txtEducationName"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginHorizontal="@dimen/_12sdp"
+                                android:layout_marginTop="@dimen/_2sdp"
+                                android:background="@color/transparent"
+                                android:digits="qwertyuiopasdfghjklzxcvbnm QWERTYUIOPASDFGHJKLZXCVBNM ₹&amp;@.?!$#*:;,"
+                                android:hint="@string/ex_arts_m_tech"
+                                android:inputType="textPersonName"
+                                android:lines="1"
+                                android:maxLength="30"
+                                style="@style/myEditText"
+                                android:textCursorDrawable="@drawable/color_cursor"
+                                android:maxLines="1"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                                android:textColor="@color/black"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@+id/educationName" />
+
+                            <View
+                                android:id="@+id/txtEducationNameSeperator"
+                                android:layout_width="match_parent"
+                                android:layout_height="0.5dp"
+                                android:layout_marginHorizontal="@dimen/_9sdp"
+                                android:layout_marginTop="@dimen/_3sdp"
+                                android:background="@color/grey_68"
+                                app:layout_constraintTop_toBottomOf="@+id/txtEducationName"
+                                tools:layout_editor_absoluteX="0dp" />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/txtCollegeName"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginHorizontal="@dimen/_12sdp"
+                                android:layout_marginTop="@dimen/_8sdp"
+                                android:text="@string/name_of_school_college"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.8_Caption_Normal"
+                                android:textColor="@color/colorPrimary"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@+id/txtEducationNameSeperator" />
+
+                            <androidx.appcompat.widget.AppCompatEditText
+                                android:id="@+id/editTxtCollegeName"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginHorizontal="@dimen/_12sdp"
+                                android:layout_marginTop="@dimen/_2sdp"
+                                android:digits="qwertyuiopasdfghjklzxcvbnm QWERTYUIOPASDFGHJKLZXCVBNM ₹&amp;@.?!$#*:;,"
+                                android:hint="@string/ex_dps_vit"
+                                android:inputType="textPersonName"
+                                android:lines="1"
+                                android:maxLength="30"
+                                style="@style/myEditText"
+                                android:background="@color/transparent"
+                                android:textCursorDrawable="@drawable/color_cursor"
+                                android:maxLines="1"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                                android:textColor="@color/black"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@+id/txtCollegeName" />
+
+                            <View
+                                android:id="@+id/editTxtCollegeNameSeperator"
+                                android:layout_width="match_parent"
+                                android:layout_height="0.5dp"
+                                android:layout_marginHorizontal="@dimen/_9sdp"
+                                android:layout_marginTop="@dimen/_3sdp"
+                                android:background="#687C90"
+                                app:layout_constraintTop_toBottomOf="@+id/editTxtCollegeName"
+                                tools:layout_editor_absoluteX="0dp" />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/txtCompletionDate"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginHorizontal="@dimen/_12sdp"
+                                android:layout_marginTop="@dimen/_8sdp"
+                                android:text="@string/completed_expected_to_complete_by"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.8_Caption_Normal"
+                                android:textColor="@color/colorPrimary"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@+id/editTxtCollegeNameSeperator" />
+
+                            <androidx.appcompat.widget.AppCompatEditText
+                                android:id="@+id/editTxtCompletionDate"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginHorizontal="@dimen/_12sdp"
+                                android:layout_marginTop="@dimen/_2sdp"
+                                android:background="@color/transparent"
+                                android:focusable="false"
+                                android:hint="@string/time_format"
+                                android:inputType="date"
+                                android:lines="1"
+                                android:maxLength="15"
+                                android:maxLines="1"
+                                android:onClick="@{()->handler.createDialogWithoutDateField()}"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                                android:textColor="@color/black"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@+id/txtCompletionDate" />
+                            <View
+                                android:id="@+id/completionDateSeperator"
+                                android:layout_width="match_parent"
+                                android:layout_height="0.5dp"
+                                android:layout_marginHorizontal="@dimen/_9sdp"
+                                android:layout_marginTop="@dimen/_3sdp"
+                                android:layout_marginBottom="@dimen/_14sdp"
+                                android:background="#687C90"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintTop_toBottomOf="@+id/editTxtCompletionDate"
+                                tools:layout_editor_absoluteX="0dp" />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+                    </androidx.cardview.widget.CardView>
+
+
+                    <RelativeLayout
+                        android:id="@+id/occupation_details_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/_34sdp"
+                        android:layout_marginLeft="@dimen/_11sdp"
+                        android:layout_marginTop="@dimen/_16sdp"
+                        android:layout_marginRight="@dimen/_9sdp"
+                        android:background="#F2F2F2"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:foreground="?android:attr/selectableItemBackground"
+                        android:gravity="center|start"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/education_details_container">
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/occupation_details_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/_16sdp"
+                            android:layout_centerVertical="true"
+                            android:layout_marginStart="@dimen/_8sdp"
+                            android:background="#F2F2F2"
+                            android:gravity="center|start"
+                            android:text="@string/add_occupation_details"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7"
+                            android:textColor="@color/black" />
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/occupation_down_img"
+                            android:layout_width="@dimen/_10sdp"
+                            android:layout_height="@dimen/_5sdp"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginEnd="@dimen/_12sdp"
+                            android:background="@color/basic_details"
+                            android:src="@drawable/ic_down_img" />
+                    </RelativeLayout>
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/occupation_details_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/_11sdp"
+                        android:layout_marginRight="@dimen/_9sdp"
+                        android:visibility="gone"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/occupation_details_layout"
+                        tools:visibility="visible">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/occupationName"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginHorizontal="@dimen/_12sdp"
+                                android:layout_marginTop="@dimen/_8sdp"
+                                android:text="Occupation"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.8_Caption_Normal"
+                                android:textColor="@color/colorPrimary"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
+
+                            <EditText
+                                android:id="@+id/txtOccupationName"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginHorizontal="@dimen/_12sdp"
+                                android:layout_marginTop="@dimen/_2sdp"
+                                android:digits="qwertyuiopasdfghjklzxcvbnm QWERTYUIOPASDFGHJKLZXCVBNM ₹&amp;@.?!$#*:;,"
+                                android:hint="@string/ex_manager_homemaker_etc"
+                                android:inputType="textPersonName"
+                                android:lines="1"
+                                android:maxLength="30"
+                                style="@style/myEditText"
+                                android:background="@color/transparent"
+                                android:textCursorDrawable="@drawable/color_cursor"
+                                android:maxLines="1"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                                android:textColor="@color/black"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@+id/occupationName" />
+
+                            <View
+                                android:id="@+id/txtoccupationNameSeperator"
+                                android:layout_width="match_parent"
+                                android:layout_height="0.5dp"
+                                android:layout_marginHorizontal="@dimen/_9sdp"
+                                android:layout_marginTop="@dimen/_3sdp"
+                                android:background="#687C90"
+                                app:layout_constraintTop_toBottomOf="@+id/txtOccupationName"
+                                tools:layout_editor_absoluteX="0dp" />
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/txtOccupationPlace"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginHorizontal="@dimen/_12sdp"
+                                android:layout_marginTop="@dimen/_8sdp"
+                                android:text="@string/company_business_name"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.8_Caption_Normal"
+                                android:textColor="@color/colorPrimary"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@+id/txtoccupationNameSeperator" />
+
+                            <androidx.appcompat.widget.AppCompatEditText
+                                android:id="@+id/editTxtOccupationPlace"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginHorizontal="@dimen/_12sdp"
+                                android:layout_marginTop="@dimen/_2sdp"
+                                android:digits="qwertyuiopasdfghjklzxcvbnm QWERTYUIOPASDFGHJKLZXCVBNM ₹&amp;@.?!$#*:;,"
+                                android:hint="@string/ex_josh_talks"
+                                android:inputType="textPersonName"
+                                android:lines="1"
+                                android:maxLength="30"
+                                style="@style/myEditText"
+                                android:background="@color/transparent"
+                                android:textCursorDrawable="@drawable/color_cursor"
+                                android:maxLines="1"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                                android:textColor="@color/black"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@+id/txtOccupationPlace" />
+
+                            <View
+                                android:id="@+id/editTxtOccupationPlaceSeperator"
+                                android:layout_width="match_parent"
+                                android:layout_height="0.5dp"
+                                android:layout_marginHorizontal="@dimen/_9sdp"
+                                android:layout_marginTop="@dimen/_3sdp"
+                                android:layout_marginBottom="@dimen/_14sdp"
+                                android:background="@color/grey_68"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintTop_toBottomOf="@+id/editTxtOccupationPlace"
+                                tools:layout_editor_absoluteX="0dp" />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+                    </androidx.cardview.widget.CardView>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </ScrollView>
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <com.pnikosis.materialishprogress.ProgressWheel
-            android:id="@+id/progress_bar"
-            android:layout_width="@dimen/_72sdp"
-            android:layout_height="@dimen/_72sdp"
-            android:layout_gravity="center"
-            app:matProg_barColor="@color/button_color"
-            app:matProg_barWidth="@dimen/_4sdp"
-            app:matProg_fillRadius="false"
-            app:matProg_linearProgress="false"
-            app:matProg_progressIndeterminate="false"
-            app:matProg_rimWidth="@dimen/_4sdp" />
-
     </FrameLayout>
 
 </layout>
+
+

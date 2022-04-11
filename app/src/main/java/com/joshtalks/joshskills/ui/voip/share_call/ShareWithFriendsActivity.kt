@@ -19,6 +19,8 @@ import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.abTest.CampaignKeys
+import com.joshtalks.joshskills.core.abTest.GoalKeys
 import com.joshtalks.joshskills.core.setRoundImage
 import com.joshtalks.joshskills.databinding.ActivityShareWithFriendsBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -108,6 +110,7 @@ class ShareWithFriendsActivity : AppCompatActivity() {
         try {
             saveBitMapToFile(bitmapCreated)
             shareFile(bitmapCreated, dynamicLink)
+            viewModel.postGoal(GoalKeys.P2P_IS_GT_20MIN.name, CampaignKeys.P2P_IMAGE_SHARING.name)
         } catch (e: Exception) {
             e.printStackTrace()
         }

@@ -11,6 +11,9 @@ import android.view.View.GONE
 import androidx.appcompat.widget.PopupMenu
 import androidx.lifecycle.*
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.BuildConfig
@@ -21,6 +24,21 @@ import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_MAIN_PROCESS_IN_BA
 import com.joshtalks.joshskills.base.constants.SERVICE_BROADCAST_KEY
 import com.joshtalks.joshskills.base.constants.START_SERVICE
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.abTest.CampaignKeys
+import com.joshtalks.joshskills.core.abTest.VariantKeys
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.COURSE_EXPLORER_NEW
+import com.joshtalks.joshskills.core.CURRENT_COURSE_ID
+import com.joshtalks.joshskills.core.PAID_COURSE_TEST_ID
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
+import com.joshtalks.joshskills.core.IMPRESSION_REFER_VIA_INBOX_ICON
+import com.joshtalks.joshskills.core.IMPRESSION_REFER_VIA_INBOX_MENU
+import com.joshtalks.joshskills.core.INBOX_SCREEN_VISIT_COUNT
+import com.joshtalks.joshskills.core.ONBOARDING_STAGE
+import com.joshtalks.joshskills.core.OnBoardingStage
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.Utils
+
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
@@ -42,14 +60,19 @@ import com.joshtalks.joshskills.util.FileUploadService
 import com.joshtalks.joshskills.voip.data.CallingRemoteService
 import io.agora.rtc.RtcEngine
 import io.reactivex.disposables.CompositeDisposable
-import kotlinx.android.synthetic.main.activity_inbox.*
-import kotlinx.android.synthetic.main.find_more_layout.*
-import kotlinx.android.synthetic.main.fragment_listen_practise.*
-import kotlinx.android.synthetic.main.inbox_toolbar.*
-import kotlinx.android.synthetic.main.top_free_trial_expire_time_tooltip_view.*
+import kotlinx.android.synthetic.main.activity_inbox.recycler_view_inbox
+import kotlinx.android.synthetic.main.find_more_layout.buy_english_course
+import kotlinx.android.synthetic.main.find_more_layout.find_more
+import kotlinx.android.synthetic.main.find_more_layout.find_more_new
+import kotlinx.android.synthetic.main.inbox_toolbar.iv_icon_referral
+import kotlinx.android.synthetic.main.inbox_toolbar.iv_reminder
+import kotlinx.android.synthetic.main.inbox_toolbar.iv_setting
+import kotlinx.android.synthetic.main.inbox_toolbar.text_message_title
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import com.joshtalks.joshskills.core.IS_FREE_TRIAL_CAMPAIGN_ACTIVE
+
 
 const val REGISTER_INFO_CODE = 2001
 const val COURSE_EXPLORER_CODE = 2002
@@ -60,6 +83,7 @@ const val USER_DETAILS_CODE = 1001
 const val TRIAL_COURSE_ID = "76"
 const val SUBSCRIPTION_COURSE_ID = "60"
 const val IS_FROM_NEW_ONBOARDING = "is_from_new_on_boarding_flow"
+const val HINDI_TO_ENGLISH_COURSE_ID = "151"
 
 class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListener {
 
@@ -69,6 +93,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
     var isPermissionRequired: Boolean = true
     private val courseListSet: MutableSet<InboxEntity> = hashSetOf()
     private val inboxAdapter: InboxAdapter by lazy { InboxAdapter(this, this) }
+    private var isExtendFreeTrialActive = false
 
     private val refViewModel: ReferralViewModel by lazy {
         ViewModelProvider(this).get(ReferralViewModel::class.java)
@@ -83,7 +108,12 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         setContentView(R.layout.activity_inbox)
         initView()
         addLiveDataObservable()
+        initABTest()
         addAfterTime()
+    }
+
+    private fun initABTest() {
+        viewModel.getEFTCampaignData(CampaignKeys.EXTEND_FREE_TRIAL.name)
     }
 
     private fun addAfterTime() {
@@ -102,7 +132,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
 
             ReferralActivity.startReferralActivity(this@InboxActivity)
         }
-        
+
         findMoreLayout = findViewById(R.id.parent_layout)
         recycler_view_inbox.apply {
             itemAnimator = null
@@ -122,6 +152,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         iv_setting.setOnClickListener {
             openPopupMenu(it)
         }
+
         find_more.setOnClickListener {
             courseExploreClick()
         }
@@ -194,6 +225,13 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                 addCourseInRecyclerView(it)
             }
         }
+
+        viewModel.extendFreeTrialAbTestLiveData.observe(this) { abTestCampaignData ->
+            abTestCampaignData?.let { map ->
+                isExtendFreeTrialActive =
+                    (map.variantKey == VariantKeys.EFT_ENABLED.name) && map.variableMap?.isEnabled == true
+            }
+        }
     }
 
     private fun addCourseInRecyclerView(items: List<InboxEntity>) {
@@ -242,13 +280,19 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
             lifecycleScope.launch(Dispatchers.Main) {
                 inboxAdapter.addItems(temp)
                 if (haveFreeTrialCourse) {
-                    findMoreLayout.findViewById<MaterialTextView>(R.id.find_more).visibility=View.GONE
-                    findMoreLayout.findViewById<MaterialTextView>(R.id.find_more_new).visibility=View.VISIBLE
-                    findMoreLayout.findViewById<MaterialTextView>(R.id.buy_english_course).visibility=View.VISIBLE
+                    findMoreLayout.findViewById<MaterialTextView>(R.id.find_more).visibility =
+                        View.GONE
+                    findMoreLayout.findViewById<MaterialTextView>(R.id.find_more_new).visibility =
+                        View.VISIBLE
+                    findMoreLayout.findViewById<MaterialTextView>(R.id.buy_english_course).visibility =
+                        View.VISIBLE
                 } else {
-                    findMoreLayout.findViewById<MaterialTextView>(R.id.find_more).visibility=View.VISIBLE
-                    findMoreLayout.findViewById<MaterialTextView>(R.id.find_more_new).visibility=View.GONE
-                    findMoreLayout.findViewById<MaterialTextView>(R.id.buy_english_course).visibility=View.GONE
+                    findMoreLayout.findViewById<MaterialTextView>(R.id.find_more).visibility =
+                        View.VISIBLE
+                    findMoreLayout.findViewById<MaterialTextView>(R.id.find_more_new).visibility =
+                        View.GONE
+                    findMoreLayout.findViewById<MaterialTextView>(R.id.buy_english_course).visibility =
+                        View.GONE
                 }
             }
         }
@@ -275,7 +319,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         try {
             inboxAdapter.notifyDataSetChanged()
 
-        } catch (ex:Exception){
+        } catch (ex: Exception) {
 
         }
         Runtime.getRuntime().gc()
@@ -363,7 +407,15 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
 
     override fun onClick(inboxEntity: InboxEntity) {
         PrefManager.put(ONBOARDING_STAGE, OnBoardingStage.COURSE_OPENED.value)
-        ConversationActivity.startConversionActivity(this, inboxEntity)
+
+
+        if (isExtendFreeTrialActive && inboxEntity.isFreeTrialExtendable
+        ) {
+            PrefManager.put(IS_FREE_TRIAL_CAMPAIGN_ACTIVE, true)
+            ExtendFreeTrialActivity.startExtendFreeTrialActivity(this, inboxEntity)
+        } else {
+            ConversationActivity.startConversionActivity(this, inboxEntity)
+        }
     }
 
     companion object {

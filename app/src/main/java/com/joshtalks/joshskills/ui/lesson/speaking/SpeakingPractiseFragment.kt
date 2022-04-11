@@ -25,16 +25,21 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.CoreJoshFragment
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.HAS_SEEN_SPEAKING_TOOLTIP
 import com.joshtalks.joshskills.core.HOW_TO_SPEAK_TEXT_CLICKED
 import com.joshtalks.joshskills.core.IMPRESSION_TRUECALLER_P2P
+import com.joshtalks.joshskills.core.IS_LOGIN_VIA_TRUECALLER
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.SPEAKING_POINTS
+import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
+import com.joshtalks.joshskills.core.abTest.ABTestFragment
+import com.joshtalks.joshskills.core.abTest.CampaignKeys
+import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.isCallOngoing
 import com.joshtalks.joshskills.core.showToast
+import com.joshtalks.joshskills.core.abTest.*
 import com.joshtalks.joshskills.databinding.SpeakingPractiseFragmentBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
@@ -42,9 +47,11 @@ import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.repository.local.eventbus.DBInsertion
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
+import com.joshtalks.joshskills.ui.fpp.RecentCallActivity
 import com.joshtalks.joshskills.ui.group.views.JoshVoipGroupActivity
 import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
 import com.joshtalks.joshskills.ui.lesson.LessonSpotlightState
+import com.joshtalks.joshskills.core.LESSON_ONE_TOPIC_ID
 import com.joshtalks.joshskills.ui.lesson.LessonViewModel
 import com.joshtalks.joshskills.ui.lesson.SPEAKING_POSITION
 import com.joshtalks.joshskills.ui.senior_student.SeniorStudentActivity
@@ -57,17 +64,26 @@ import com.joshtalks.joshskills.voip.constant.CONNECTED
 import com.joshtalks.joshskills.voip.constant.IDLE
 import com.joshtalks.joshskills.voip.constant.LEAVING
 import com.joshtalks.joshskills.voip.voipLog
+import com.joshtalks.joshskills.ui.voip.SearchingUserActivity
+import com.joshtalks.joshskills.ui.voip.favorite.FavoriteListActivity
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.*
+import java.util.Calendar
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
-import java.util.*
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import com.joshtalks.joshskills.core.IS_FREE_TRIAL_CAMPAIGN_ACTIVE
 
-class SpeakingPractiseFragment : CoreJoshFragment(),TimeAnimator.TimeListener {
+
+class SpeakingPractiseFragment : ABTestFragment(),TimeAnimator.TimeListener {
 
     private lateinit var binding: SpeakingPractiseFragmentBinding
     var lessonActivityListener: LessonActivityListener? = null
@@ -83,7 +99,11 @@ class SpeakingPractiseFragment : CoreJoshFragment(),TimeAnimator.TimeListener {
     private var mCurrentLevel = 0
     private var mClipDrawable: ClipDrawable? = null
     private var beforeAnimation: GradientDrawable? = null
-
+    private var isIntroVideoEnabled = true
+    private var lessonNo = 0
+    private var beforeTwoMinTalked = -1
+    private var afterTwoMinTalked = -1
+    private val twoMinutes: Int = 2
 
     private var openCallActivity: ActivityResultLauncher<Intent> = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -100,6 +120,17 @@ class SpeakingPractiseFragment : CoreJoshFragment(),TimeAnimator.TimeListener {
             "कोर्स का सबसे मज़ेदार हिस्सा।",
             "यहाँ हम एक प्रैक्टिस पार्टनर के साथ निडर होकर इंग्लिश बोलने का अभ्यास करेंगे"
         )
+    }
+
+    override fun onReceiveABTestData(abTestCampaignData: ABTestCampaignData?) {
+        abTestCampaignData?.let { map->
+            isIntroVideoEnabled = (map.variantKey == VariantKeys.SIV_ENABLED.name )&& map.variableMap?.isEnabled == true
+        }
+        initDemoViews(lessonNo)
+
+    }
+
+    override fun initCampaigns() {
     }
 
     override fun onAttach(context: Context) {
@@ -179,24 +210,25 @@ class SpeakingPractiseFragment : CoreJoshFragment(),TimeAnimator.TimeListener {
 
     private fun addObservers() {
         viewModel.lessonQuestionsLiveData.observe(
-            viewLifecycleOwner
-        ) {
-            val spQuestion = it.filter { it.chatType == CHAT_TYPE.SP }.getOrNull(0)
-            questionId = spQuestion?.id
+            viewLifecycleOwner,
+            {
+                val spQuestion = it.filter { it.chatType == CHAT_TYPE.SP }.getOrNull(0)
+                questionId = spQuestion?.id
 
-            spQuestion?.topicId?.let {
-                this.topicId = it
-                viewModel.getTopicDetail(it)
+                spQuestion?.topicId?.let {
+                    this.topicId = it
+                    viewModel.getTopicDetail(it)
+                }
+                spQuestion?.lessonId?.let { viewModel.getCourseIdByLessonId(it) }
             }
-            spQuestion?.lessonId?.let { viewModel.getCourseIdByLessonId(it) }
-        }
-        viewModel.lessonSpotlightStateLiveData.observe(requireActivity()) {
+        )
+        viewModel.lessonSpotlightStateLiveData.observe(requireActivity(), {
             when (it) {
                 LessonSpotlightState.SPEAKING_SPOTLIGHT_PART2 -> {
                     binding.nestedScrollView.scrollTo(0, binding.nestedScrollView.bottom)
                 }
             }
-        }
+        })
         viewModel.courseId.observe(
             viewLifecycleOwner
         ) {
@@ -231,8 +263,9 @@ class SpeakingPractiseFragment : CoreJoshFragment(),TimeAnimator.TimeListener {
         }
 
         binding.btnGroupCall.setOnClickListener {
+            if(PrefManager.getBoolValue(IS_LOGIN_VIA_TRUECALLER))
             viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
-            if(isCallOngoing(R.string.call_engage_initiate_call_message))
+            if (isCallOngoing(R.string.call_engage_initiate_call_message))
                 return@setOnClickListener
             val intent = Intent(requireActivity(), JoshVoipGroupActivity::class.java).apply {
                 putExtra(CONVERSATION_ID, getConversationId())
@@ -240,29 +273,47 @@ class SpeakingPractiseFragment : CoreJoshFragment(),TimeAnimator.TimeListener {
             startActivity(intent)
         }
 
-        viewModel.speakingSpotlightClickLiveData.observe(viewLifecycleOwner) {
-            startPractise()
-        }
+        viewModel.speakingSpotlightClickLiveData.observe(viewLifecycleOwner, {
+            startPractise(favoriteUserCall = false)
+        })
 
         binding.btnContinue.setOnClickListener {
             lessonActivityListener?.onNextTabCall(SPEAKING_POSITION)
         }
+        binding.imgRecentCallsHistory.setOnClickListener {
+            RecentCallActivity.openRecentCallActivity(requireActivity(), CONVERSATION_ID,viewModel.isFreeTrail)
+        }
 
         viewModel.speakingTopicLiveData.observe(
-            viewLifecycleOwner
-        ) { response ->
-            binding.progressView.visibility = GONE
-            if (response == null) {
-                showToast(AppObjectController.joshApplication.getString(R.string.generic_message_for_error))
-            } else {
-                try {
-                    binding.tvTodayTopic.text = response.topicName
-                    binding.tvPractiseTime.text =
-                        response.alreadyTalked.toString().plus(" / ")
-                            .plus(response.duration.toString())
-                            .plus("\n Minutes")
-                    binding.progressBar.progress = response.alreadyTalked.toFloat()
-                    binding.progressBar.progressMax = response.duration.toFloat()
+            viewLifecycleOwner,
+            { response ->
+                binding.progressView.visibility = GONE
+                if (response == null) {
+                    showToast(AppObjectController.joshApplication.getString(R.string.generic_message_for_error))
+                } else {
+                    try {
+                        if(response.alreadyTalked < twoMinutes){
+                            beforeTwoMinTalked = 0
+                            afterTwoMinTalked = 0
+                        }else if(response.alreadyTalked >= twoMinutes){
+                            beforeTwoMinTalked = afterTwoMinTalked
+                            afterTwoMinTalked = 1
+                        }
+
+                        if(beforeTwoMinTalked == 0 && afterTwoMinTalked == 1 && topicId != null && topicId == LESSON_ONE_TOPIC_ID && PrefManager.getBoolValue(
+                                IS_FREE_TRIAL_CAMPAIGN_ACTIVE
+                            )){
+                            viewModel.postGoal(GoalKeys.EFT_GT_2MIN.name, CampaignKeys.EXTEND_FREE_TRIAL.name)
+                            PrefManager.put(IS_FREE_TRIAL_CAMPAIGN_ACTIVE, false)
+                        }
+
+                        binding.tvTodayTopic.text = response.topicName
+                        binding.tvPractiseTime.text =
+                            response.alreadyTalked.toString().plus(" / ")
+                                .plus(response.duration.toString())
+                                .plus("\n Minutes")
+                        binding.progressBar.progress = response.alreadyTalked.toFloat()
+                        binding.progressBar.progressMax = response.duration.toFloat()
 
                     binding.textView.text = if (response.duration >= 10) {
                         getString(R.string.pp_messages, response.duration.toString())
@@ -340,15 +391,17 @@ class SpeakingPractiseFragment : CoreJoshFragment(),TimeAnimator.TimeListener {
             }
         }
         binding.btnFavorite.setOnClickListener {
+            FavoriteListActivity.openFavoriteCallerActivity(requireActivity(), CONVERSATION_ID,viewModel.isFreeTrail)
             viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
-            if (haveAnyFavCaller) {
-                startPractise()
-            } else {
-                showToast(getString(R.string.empty_favorite_list_message))
-            }
+//            if (haveAnyFavCaller) {
+//                startPractise(favoriteUserCall = true)
+//            } else {
+//                showToast(getString(R.string.empty_favorite_list_message))
+//            }
         }
         binding.btnNewStudent.setOnClickListener {
-            startPractise()
+
+            startPractise(favoriteUserCall = false, isNewUserCall = true)
         }
         lifecycleScope.launchWhenStarted {
             viewModel.favoriteCaller.collect {
@@ -360,35 +413,42 @@ class SpeakingPractiseFragment : CoreJoshFragment(),TimeAnimator.TimeListener {
             showNextTooltip()
         }
 
-        viewModel.lessonLiveData.observe(viewLifecycleOwner) {
-            if (it.lessonNo == 1) {
-                binding.btnCallDemo.visibility = View.GONE
-                binding.txtHowToSpeak.visibility = View.VISIBLE
-                binding.txtHowToSpeak.setOnClickListener {
-                    viewModel.isHowToSpeakClicked(true)
-                    binding.btnCallDemo.visibility = View.VISIBLE
-                    viewModel.saveIntroVideoFlowImpression(HOW_TO_SPEAK_TEXT_CLICKED)
-                }
+        viewModel.lessonLiveData.observe(viewLifecycleOwner, {
+            lessonNo = it.lessonNo
+            getCampaigns(CampaignKeys.SPEAKING_INTRODUCTION_VIDEO.name)
+        })
 
-                viewModel.callBtnHideShowLiveData.observe(viewLifecycleOwner) {
-                    if (it == 1) {
-                        binding.nestedScrollView.visibility = View.INVISIBLE
-                        binding.btnCallDemo.visibility = View.VISIBLE
-                    }
-                    if (it == 2) {
-                        binding.nestedScrollView.visibility = View.VISIBLE
-                        binding.btnCallDemo.visibility = View.GONE
-                    }
-                }
-            } else {
-                binding.btnCallDemo.visibility = View.GONE
-            }
-        }
-
-        viewModel.introVideoCompleteLiveData.observe(viewLifecycleOwner) {
+        viewModel.introVideoCompleteLiveData.observe(viewLifecycleOwner, {
             if (it == true) {
                 binding.btnCallDemo.visibility = View.GONE
             }
+        })
+    }
+
+    private fun initDemoViews(it: Int) {
+        if (it == 1 && isIntroVideoEnabled) {
+            lessonActivityListener?.showIntroVideo()
+            lessonNo = it
+            binding.btnCallDemo.visibility = View.GONE
+            binding.txtHowToSpeak.visibility = View.VISIBLE
+            binding.txtHowToSpeak.setOnClickListener {
+                viewModel.isHowToSpeakClicked(true)
+                binding.btnCallDemo.visibility = View.VISIBLE
+                viewModel.saveIntroVideoFlowImpression(HOW_TO_SPEAK_TEXT_CLICKED)
+            }
+
+            viewModel.callBtnHideShowLiveData.observe(viewLifecycleOwner, {
+                if (it == 1) {
+                    binding.nestedScrollView.visibility = View.INVISIBLE
+                    binding.btnCallDemo.visibility = View.VISIBLE
+                }
+                if (it == 2) {
+                    binding.nestedScrollView.visibility = View.VISIBLE
+                    binding.btnCallDemo.visibility = View.GONE
+                }
+            })
+        } else {
+            binding.btnCallDemo.visibility = View.GONE
         }
     }
 
@@ -429,9 +489,12 @@ class SpeakingPractiseFragment : CoreJoshFragment(),TimeAnimator.TimeListener {
         PrefManager.put(HAS_SEEN_SPEAKING_TOOLTIP, true)
     }
 
-    private fun startPractise() {
+    private fun startPractise(favoriteUserCall: Boolean = false, isNewUserCall: Boolean = false) {
         if (PermissionUtils.isCallingPermissionEnabled(requireContext())) {
-            startPractiseSearchScreen()
+            startPractiseSearchScreen(
+                favoriteUserCall = favoriteUserCall,
+                isNewUserCall = isNewUserCall
+            )
             return
         }
         PermissionUtils.callingFeaturePermission(
@@ -447,7 +510,10 @@ class SpeakingPractiseFragment : CoreJoshFragment(),TimeAnimator.TimeListener {
                             return
                         }
                         if (flag) {
-                            startPractiseSearchScreen()
+                            startPractiseSearchScreen(
+                                favoriteUserCall = favoriteUserCall,
+                                isNewUserCall = isNewUserCall
+                            )
                             return
                         } else {
                             MaterialDialog(requireActivity()).show {
@@ -476,15 +542,37 @@ class SpeakingPractiseFragment : CoreJoshFragment(),TimeAnimator.TimeListener {
         }
     }
 
+    private fun startPractiseSearchScreen(
+        favoriteUserCall: Boolean = false,
+        isNewUserCall: Boolean = false,
+    ) {
+        viewModel.speakingTopicLiveData.value?.run {
+            if (isCallOngoing(R.string.call_engage_initiate_call_message).not()) {
+                openCallActivity.launch(
+                    SearchingUserActivity.startUserForPractiseOnPhoneActivity(
+                        requireActivity(),
+                        courseId = courseId,
+                        topicId = id,
+                        topicName = topicName,
+                        favoriteUserCall = favoriteUserCall,
+                        isNewUserCall = isNewUserCall,
+                        conversationId = getConversationId()
+                    )
+                )
+            }
+        }
+        voipLog?.log("Course ID --> $courseId   Topic ID --> $topicId")
+        startActivity(callIntent)
+    }
+
     fun animateButton() {
-            mCurrentLevel = 0
-            mAnimator?.start()
+        mCurrentLevel = 0
+        mAnimator?.start()
     }
     fun fillButton() {
         mCurrentLevel = MAX_LEVEL
         mAnimator?.start()
     }
-
 
     private fun startPractiseSearchScreen() {
         val callIntent = Intent(requireContext(), VoiceCallActivity::class.java)

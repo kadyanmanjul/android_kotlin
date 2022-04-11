@@ -37,6 +37,8 @@ import com.bumptech.glide.request.target.Target
 import com.google.android.material.appbar.AppBarLayout
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.abTest.CampaignKeys
+import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.ActivityCourseDetailsBinding
@@ -66,6 +68,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+const val ENGLISH_COURSE_TEST_ID = 102
+const val ENGLISH_FREE_TRIAL_1D_TEST_ID = 784
+
 class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
 
     private lateinit var binding: ActivityCourseDetailsBinding
@@ -78,6 +83,11 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
     private var buySubscription: Boolean = false
     private var flowFrom: String? = null
     private var downloadID: Long = -1
+    private var is100PointsActive = false
+
+    var expiredTime: Long = 0L
+    var isPointsScoredMoreThanEqualTo100 = false
+
     private val appAnalytics by lazy { AppAnalytics.create(AnalyticsEvent.COURSE_OVERVIEW.NAME) }
 
 
@@ -114,11 +124,16 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
         if (intent.hasExtra(STARTED_FROM)) {
             flowFrom = intent.getStringExtra(STARTED_FROM)
         }
-        if (testId != 0) {
-            getCourseDetails(testId)
-        } else {
-            finish()
+        if(testId == ENGLISH_COURSE_TEST_ID || testId == ENGLISH_FREE_TRIAL_1D_TEST_ID){
+            initABTest()
+        }else{
+            if (testId != 0) {
+                getCourseDetails(testId)
+            } else {
+                finish()
+            }
         }
+
         AppAnalytics.create(AnalyticsEvent.LANDING_SCREEN.NAME)
             .addBasicParam()
             .addUserDetails()
@@ -146,6 +161,9 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
             binding.continueTip.visibility = View.GONE
         }
         subscribeLiveData()
+    }
+    private fun initABTest() {
+        viewModel.get100PCampaignData(CampaignKeys.HUNDRED_POINTS.NAME, testId.toString())
     }
 
     private fun showTooltip(remainingTrialDays: Int) {
@@ -233,6 +251,22 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
 
     private fun subscribeLiveData() {
         viewModel.courseDetailsLiveData.observe(this, { data ->
+            if(data.totalPoints > 100){
+                isPointsScoredMoreThanEqualTo100 = true
+            }
+
+            if(is100PointsActive && testId == ENGLISH_COURSE_TEST_ID ) {
+                expiredTime = data.expiredDate.time
+                if (isPointsScoredMoreThanEqualTo100  || expiredTime <= System.currentTimeMillis()) {
+                    binding.btnStartCourse.isEnabled = true
+                    binding.btnStartCourse.alpha = 1f
+                } else if (!isPointsScoredMoreThanEqualTo100 && expiredTime > System.currentTimeMillis()) {
+                    binding.btnStartCourse.text = getString(R.string.achieve_100_points_to_buy)
+                    binding.btnStartCourse.isEnabled = false
+                    binding.btnStartCourse.alpha = .5f
+                }
+            }
+
             isFromNewFreeTrial = data.isFreeTrial
             binding.txtActualPrice.text = data.paymentData.actualAmount
             binding.txtDiscountedPrice.text = data.paymentData.discountedAmount
@@ -305,6 +339,13 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
                 showMoveToInboxScreen()
             }
         })
+
+        viewModel.points100ABtestLiveData.observe(this) { abTestCampaignData ->
+            abTestCampaignData?.let { map ->
+                is100PointsActive =
+                    (map.variantKey == VariantKeys.POINTS_HUNDRED_ENABLED.NAME) && map.variableMap?.isEnabled == true
+            }
+        }
     }
 
     private fun showMoveToInboxScreen() {
@@ -669,7 +710,7 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
                 )
             } else {
                 logStartCourseAnalyticEvent(testId)
-                PaymentSummaryActivity.startPaymentSummaryActivity(this, testId.toString(),isFromNewFreeTrial = isFromNewFreeTrial)
+                PaymentSummaryActivity.startPaymentSummaryActivity(this, testId.toString(),isFromNewFreeTrial = isFromNewFreeTrial, is100PointsObtained = isPointsScoredMoreThanEqualTo100 && testId == ENGLISH_COURSE_TEST_ID && is100PointsActive, isHundredPointsActive = is100PointsActive)
             }
             appAnalytics.addParam(AnalyticsEvent.START_COURSE_NOW.NAME, "Clicked")
         }

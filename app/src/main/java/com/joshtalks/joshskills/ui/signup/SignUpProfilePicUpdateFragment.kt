@@ -11,7 +11,7 @@ import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.FragmentSignUpProfilePicUpdateBinding
-import com.joshtalks.joshskills.ui.userprofile.UserPicChooserFragment
+import com.joshtalks.joshskills.ui.userprofile.fragments.UserPicChooserFragment
 
 class SignUpProfilePicUpdateFragment : BaseSignUpFragment() {
 

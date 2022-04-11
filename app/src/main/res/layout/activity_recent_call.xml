@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="vm"
+            type="com.joshtalks.joshskills.ui.fpp.viewmodels.RecentCallViewModel" />
+
+    </data>
+
+    <RelativeLayout
+        android:id="@+id/main_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/tab_layout_"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <include layout="@layout/call_ongoing_layout" />
+
+            <com.google.android.material.appbar.AppBarLayout
+                android:id="@+id/appbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:theme="@style/ThemeOverlay.AppCompat.DayNight.ActionBar">
+
+                <com.google.android.material.appbar.MaterialToolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    android:background="@color/colorPrimary"
+                    android:contentInsetStart="0dp"
+                    android:contentInsetLeft="0dp"
+                    android:contentInsetEnd="0dp"
+                    android:contentInsetRight="0dp"
+                    android:elevation="@dimen/_4sdp"
+                    android:minHeight="?attr/actionBarSize"
+                    app:contentInsetEnd="0dp"
+                    app:contentInsetEndWithActions="0dp"
+                    app:contentInsetLeft="0dp"
+                    app:contentInsetRight="0dp"
+                    app:contentInsetStart="0dp"
+                    app:layout_scrollFlags="scroll|enterAlways"
+                    app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+                    app:theme="@style/ThemeOverlay.AppCompat.DayNight.ActionBar"
+                    app:titleTextColor="@color/white">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingHorizontal="@dimen/_4sdp">
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/iv_back"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentStart="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginStart="@dimen/_4sdp"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:gravity="center_vertical|start"
+                            android:onClick="@{vm::onBackPress}"
+                            android:paddingTop="@dimen/_6sdp"
+                            android:paddingBottom="@dimen/_6sdp"
+                            android:visibility="visible"
+                            app:srcCompat="@drawable/ic_arrow_back"
+                            tools:visibility="visible" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/text_message_title"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_centerVertical="true"
+                            android:layout_marginHorizontal="@dimen/_8sdp"
+                            android:layout_marginVertical="@dimen/_4sdp"
+                            android:layout_toEndOf="@id/iv_back"
+                            android:foreground="?android:attr/selectableItemBackground"
+                            android:gravity="start|center"
+                            android:singleLine="true"
+                            android:text="@string/recent_calls"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
+                            android:textColor="@color/white"
+                            android:textStyle="bold" />
+                    </RelativeLayout>
+
+                </com.google.android.material.appbar.MaterialToolbar>
+
+
+            </com.google.android.material.appbar.AppBarLayout>
+
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recent_list_rv"
+            onFppRecentItemClick="@{vm.onItemClick}"
+            recentAllRequestAdapter="@{vm.adapter}"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/tab_layout_"
+            android:clipToPadding="false"
+            android:paddingTop="@dimen/_8sdp"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            tools:listitem="@layout/fpp_recent_item_list" />
+
+
+        <com.mikhaellopez.circularprogressbar.CircularProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="@dimen/_60sdp"
+            android:layout_height="@dimen/_60sdp"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"
+            android:elevation="@dimen/_5sdp"
+            android:visibility="@{vm.fetchingAllRecentCall ? View.VISIBLE : View.GONE}"
+            app:cpb_background_progressbar_color="@android:color/transparent"
+            app:cpb_background_progressbar_width="0dp"
+            app:cpb_indeterminate_mode="true"
+            app:cpb_progress_direction="to_left"
+            app:cpb_progressbar_color="@color/colorAccent"
+            app:cpb_progressbar_width="@dimen/_4sdp"
+            app:cpb_round_border="true" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/empty_card"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_93sdp"
+            android:layout_centerInParent="true"
+            android:layout_marginHorizontal="@dimen/_41sdp"
+            android:clipToPadding="true"
+            android:visibility="@{vm.isListEmpty ? View.VISIBLE : View.GONE}"
+            app:cardCornerRadius="@dimen/_5sdp"
+            app:cardElevation="0dp"
+            tools:cardBackgroundColor="@color/white"
+            tools:cardPreventCornerOverlap="false">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/empty_card_bg_color">
+
+
+                <TextView
+                    android:id="@+id/norcy"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="@dimen/_17sdp"
+                    android:text="@string/no_recent_calls_yet"
+                    android:textAlignment="center"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H11_Semi_Bold"
+                    android:textColor="@color/pure_black"
+                    android:textStyle="bold" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/text"
+                    android:layout_width="@dimen/_166sdp"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/norcy"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginHorizontal="@dimen/_17sdp"
+                    android:layout_marginTop="@dimen/_12sdp"
+                    android:gravity="center"
+                    android:lineSpacingExtra="0dp"
+                    android:lines="2"
+                    android:maxLines="2"
+                    android:text="@string/start_a_practice_partner_call_from_recent"
+                    android:textAlignment="center"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
+                    android:textColor="@color/empty_text_color" />
+
+            </RelativeLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+    </RelativeLayout>
+</layout>

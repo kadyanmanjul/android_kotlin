@@ -40,17 +40,7 @@ fun MessageItem.getLastMessage(sender: String, msgType: Int) =
         else -> "$sender: $msg"
     }
 
-fun pushMetaMessage(msg: String, groupId: String) {
-    val chatService: ChatService = PubNubService
-    val message = MessageItem(
-        msg = msg,
-        msgType = META_MESSAGE,
-        mentorId = Mentor.getInstance().getId()
-    )
-    chatService.sendMessage(groupId, message)
-}
-
-fun pushMetaRemoveMsg(msg: String, groupId: String, mentorId: String) {
+fun pushMetaMessage(msg: String, groupId: String, mentorId: String = Mentor.getInstance().getId()) {
     val chatService: ChatService = PubNubService
     val message = MessageItem(
         msg = msg,

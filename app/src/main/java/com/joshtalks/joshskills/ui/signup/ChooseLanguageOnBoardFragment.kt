@@ -9,15 +9,18 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
-import com.joshtalks.joshskills.core.interfaces.OnChooseLanguage
+import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.abTest.CampaignKeys
+import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.databinding.FragmentChooseLanguageOnboardBinding
 import com.joshtalks.joshskills.repository.server.ChooseLanguages
 import com.joshtalks.joshskills.ui.signup.adapters.ChooseLanguageAdapter
 
-class ChooseLanguageOnBoardFragment : BaseFragment(), OnChooseLanguage {
-
+class ChooseLanguageOnBoardFragment: BaseFragment() {
     private lateinit var binding: FragmentChooseLanguageOnboardBinding
-    private var languageAdapter = ChooseLanguageAdapter(this)
+    private var languageAdapter = ChooseLanguageAdapter()
+    private var is100PointsActive = false
+    lateinit var language: ChooseLanguages
 
     val viewModel by lazy {
         ViewModelProvider(requireActivity()).get(FreeTrialOnBoardViewModel::class.java)
@@ -44,11 +47,7 @@ class ChooseLanguageOnBoardFragment : BaseFragment(), OnChooseLanguage {
     override fun setArguments() {}
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = DataBindingUtil.inflate(
-            inflater,
-            R.layout.fragment_choose_language_onboard,
-            container, false
-        )
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_choose_language_onboard, container, false)
         binding.lifecycleOwner = this
         return binding.root
     }
@@ -56,7 +55,12 @@ class ChooseLanguageOnBoardFragment : BaseFragment(), OnChooseLanguage {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         addObservers()
-        viewModel.getAvailableLanguages()
+        if (Utils.isInternetAvailable().not()) {
+            binding.noInternetContainer.visibility = View.VISIBLE
+        } else {
+            binding.noInternetContainer.visibility = View.GONE
+            viewModel.getAvailableLanguages()
+        }
     }
 
     private fun addObservers() {
@@ -65,19 +69,37 @@ class ChooseLanguageOnBoardFragment : BaseFragment(), OnChooseLanguage {
                 languageAdapter.setData(it)
             }
         }
+        viewModel.points100ABtestLiveData.observe(requireActivity()) { map ->
+            if (map != null) {
+                is100PointsActive =
+                    (map.variantKey == VariantKeys.POINTS_HUNDRED_ENABLED.NAME) && map.variableMap?.isEnabled == true
+
+                (requireActivity() as FreeTrialOnBoardActivity).showStartTrialPopup(
+                    language,
+                    is100PointsActive
+                )
+            }else{
+                (requireActivity() as FreeTrialOnBoardActivity).showStartTrialPopup(
+                    language,
+                    false
+                )
+            }
+        }
     }
 
     private fun initRV() {
-
         val linearLayoutManager = LinearLayoutManager(activity)
+        languageAdapter.setLanguageItemClickListener(this::initABTest)
         binding.rvChooseLanguage.apply {
             layoutManager = linearLayoutManager
             adapter = languageAdapter
         }
     }
 
-    override fun selectLanguageOnBoard(language: ChooseLanguages) {
-        (activity as FreeTrialOnBoardActivity).showStartTrialPopup(language)
+
+    fun initABTest(language: ChooseLanguages) {
+        this.language = language
+        viewModel.get100PCampaignData(CampaignKeys.HUNDRED_POINTS.NAME)
     }
 
     fun onBackPressed() {
