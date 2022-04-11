@@ -285,7 +285,7 @@ class SpeakingPractiseFragment : ABTestFragment(),TimeAnimator.TimeListener {
         }
 
         viewModel.speakingTopicLiveData.observe(
-            viewLifecycleOwner,
+            viewLifecycleOwner)
             { response ->
                 binding.progressView.visibility = GONE
                 if (response == null) {
@@ -561,8 +561,6 @@ class SpeakingPractiseFragment : ABTestFragment(),TimeAnimator.TimeListener {
                 )
             }
         }
-        voipLog?.log("Course ID --> $courseId   Topic ID --> $topicId")
-        startActivity(callIntent)
     }
 
     fun animateButton() {

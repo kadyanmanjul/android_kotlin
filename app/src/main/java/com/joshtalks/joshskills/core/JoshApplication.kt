@@ -46,8 +46,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import com.vanniktech.emoji.ios.IosEmojiProvider
-import com.vanniktech.emoji.EmojiManager
 
 const val TAG = "JoshSkill"
 

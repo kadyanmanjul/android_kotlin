@@ -67,7 +67,6 @@
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-sdk tools:overrideLibrary="com.truecaller.android.sdk"/> <!-- for API level below 22-->
-    <uses-sdk tools:overrideLibrary="com.truecaller.android.sdk"/>
     <application
         android:name=".core.JoshApplication"
         android:allowBackup="true"
