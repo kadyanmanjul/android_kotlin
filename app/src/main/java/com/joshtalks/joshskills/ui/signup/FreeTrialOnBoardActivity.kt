@@ -15,6 +15,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.IMPRESSION_OPEN_FREE_TRIAL_SCREEN
@@ -58,6 +59,7 @@ import com.truecaller.android.sdk.ITrueCallback
 import com.truecaller.android.sdk.TrueError
 import com.truecaller.android.sdk.TrueProfile
 import com.joshtalks.joshskills.repository.server.ChooseLanguages
+import com.joshtalks.joshskills.ui.activity_feed.utils.IS_USER_EXIST
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.CoroutineScope
@@ -72,6 +74,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
     private val viewModel: FreeTrialOnBoardViewModel by lazy {
         ViewModelProvider(this).get(FreeTrialOnBoardViewModel::class.java)
     }
+    private val liveEvent = EventLiveData
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -93,6 +96,11 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
 
     override fun onStart() {
         super.onStart()
+        liveEvent.observe(this) {
+            when(it.what) {
+                IS_USER_EXIST -> moveToInboxScreen()
+            }
+        }
         initTrueCallerUI()
         viewModel.saveImpression(IMPRESSION_OPEN_FREE_TRIAL_SCREEN)
     }
@@ -237,7 +245,6 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         }
 
         override fun onSuccessProfileShared(trueProfile: TrueProfile) {
-            CoroutineScope(Dispatchers.IO).launch {
                 PrefManager.put(IS_LOGIN_VIA_TRUECALLER,true)
                 viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_FREETRIAL_LOGIN)
                 val user = User.getInstance()
@@ -249,11 +256,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
                 viewModel.userName = trueProfile.firstName
                 viewModel.verifyUserViaTrueCaller(trueProfile)
                 viewModel.isVerified = true
-                if(viewModel.isUserExist) {
-                    moveToInboxScreen()
-                }
                 openProfileDetailFragment()
-            }
         }
     }
 

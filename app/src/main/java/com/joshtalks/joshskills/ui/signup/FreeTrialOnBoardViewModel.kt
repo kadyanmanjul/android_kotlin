@@ -1,9 +1,11 @@
 package com.joshtalks.joshskills.ui.signup
 
 import android.app.Application
+import android.os.Message
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
@@ -16,13 +18,13 @@ import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.ChooseLanguages
 import com.joshtalks.joshskills.repository.server.TrueCallerLoginRequest
 import com.joshtalks.joshskills.repository.server.signup.LoginResponse
+import com.joshtalks.joshskills.ui.activity_feed.utils.IS_USER_EXIST
 import com.joshtalks.joshskills.ui.group.repository.ABTestRepository
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import com.truecaller.android.sdk.TrueProfile
 import com.userexperior.UserExperior
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(application) {
@@ -33,6 +35,7 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
     val verificationStatus: MutableLiveData<VerificationStatus> = MutableLiveData()
     val apiStatus: MutableLiveData<ApiCallStatus> = MutableLiveData()
     val availableLanguages: MutableLiveData<List<ChooseLanguages>> = MutableLiveData()
+    val liveEvent = EventLiveData
     var userName: String? = null
     var isVerified: Boolean = false
     var isUserExist: Boolean = false
@@ -86,9 +89,9 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
         }
     }
 
-    suspend fun verifyUserViaTrueCaller(profile: TrueProfile) {
+     fun verifyUserViaTrueCaller(profile: TrueProfile) {
         progressBarStatus.postValue(true)
-        withContext(Dispatchers.IO) {
+         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val trueCallerLoginRequest = TrueCallerLoginRequest(
                     profile.payload,
@@ -98,7 +101,12 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
                 )
                 val response = service.verifyViaTrueCaller(trueCallerLoginRequest)
                 if (response.isSuccessful && response.body() != null) {
-                    isUserExist = response.body()!!.isUserExist
+                    isUserExist = response.body()?.isUserExist ?: false
+                    if(isUserExist) {
+                        val msg = Message()
+                        msg.what =  IS_USER_EXIST
+                        liveEvent.postValue(msg)
+                    }
                     response.body()?.run {
                         MarketingAnalytics.completeRegistrationAnalytics(
                             this.newUser,

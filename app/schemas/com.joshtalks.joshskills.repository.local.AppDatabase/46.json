@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 46,
-    "identityHash": "0f33761fc8c742a663579929faf39873",
+    "identityHash": "774673fae3dc169307bdd0e4242ac78a",
     "entities": [
       {
         "tableName": "course",
@@ -1227,7 +1227,7 @@
       },
       {
         "tableName": "assessment_questions",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`localId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `remoteId` INTEGER NOT NULL, `assessmentId` INTEGER NOT NULL, `text` TEXT, `subText` TEXT, `sortOrder` INTEGER NOT NULL, `mediaUrl` TEXT NOT NULL, `mediaType` TEXT NOT NULL, `mediaUrl2` TEXT, `mediaType2` TEXT NOT NULL, `videoThumbnailUrl` TEXT, `choiceType` TEXT NOT NULL, `isAttempted` INTEGER NOT NULL, `isNewHeader` INTEGER NOT NULL, `listOfAnswers` TEXT, `status` TEXT NOT NULL, FOREIGN KEY(`assessmentId`) REFERENCES `assessments`(`remoteId`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`localId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `remoteId` INTEGER NOT NULL, `assessmentId` INTEGER NOT NULL, `text` TEXT, `subText` TEXT, `sortOrder` INTEGER NOT NULL, `mediaUrl` TEXT NOT NULL, `mediaType` TEXT NOT NULL, `mediaUrl2` TEXT, `mediaType2` TEXT NOT NULL, `videoThumbnailUrl` TEXT, `choiceType` TEXT NOT NULL, `isAttempted` INTEGER NOT NULL, `isCorrect` INTEGER NOT NULL, `isNewHeader` INTEGER NOT NULL, `listOfAnswers` TEXT, `status` TEXT NOT NULL, FOREIGN KEY(`assessmentId`) REFERENCES `assessments`(`remoteId`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "localId",
@@ -1304,6 +1304,12 @@
           {
             "fieldPath": "isAttempted",
             "columnName": "isAttempted",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isCorrect",
+            "columnName": "isCorrect",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -3231,7 +3237,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '0f33761fc8c742a663579929faf39873')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '774673fae3dc169307bdd0e4242ac78a')"
     ]
   }
 }
