@@ -51,7 +51,7 @@
             android:text="@string/welcome_in_string"
             android:textAppearance="@style/BB_Typography_Nunito_Sans_Bold"
             android:textColor="@color/white"
-            android:textSize="@dimen/_17ssp"
+            android:textSize="@dimen/_15ssp"
             android:onClick="@{() -> handler.openTrueCallerBottomSheet()}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

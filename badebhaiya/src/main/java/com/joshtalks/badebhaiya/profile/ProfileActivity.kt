@@ -29,6 +29,8 @@ import com.joshtalks.badebhaiya.profile.request.ReminderRequest
 import com.joshtalks.badebhaiya.profile.response.ProfileResponse
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomResponse
 import com.joshtalks.badebhaiya.repository.model.User
+import com.joshtalks.badebhaiya.signup.UserPicChooserFragment
+import com.joshtalks.badebhaiya.signup.fragments.SignUpAddProfilePhotoFragment
 import com.joshtalks.badebhaiya.utils.Utils
 
 class ProfileActivity: AppCompatActivity(), FeedAdapter.ConversationRoomItemCallback {
@@ -62,6 +64,22 @@ class ProfileActivity: AppCompatActivity(), FeedAdapter.ConversationRoomItemCall
         findViewById<AppCompatImageView>(R.id.iv_back).setOnClickListener {
             super.onBackPressed()
         }
+        findViewById<AppCompatImageView>(R.id.iv_profile_pic).setOnClickListener {
+            openUploadProfilePicFragment()
+        }
+    }
+
+    private fun openUploadProfilePicFragment() {
+        supportFragmentManager.commit(true) {
+            replace(
+                R.id.container,
+                SignUpAddProfilePhotoFragment.newInstance(),
+                SignUpAddProfilePhotoFragment::class.java.name
+            )
+        }
+    }
+    fun submitProfilePic() {
+        UserPicChooserFragment.showDialog(supportFragmentManager, true)
     }
 
     private fun handleIntent() {

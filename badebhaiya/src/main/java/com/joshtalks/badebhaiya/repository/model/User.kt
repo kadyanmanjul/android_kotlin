@@ -44,7 +44,7 @@ data class User(
         return AppObjectController.gsonMapper.toJson(this)
     }
 
-    fun updateFromResponse(user: User) {
+    fun  updateFromResponse(user: User) {
         this.firstName = user.firstName
         this.lastName = user.lastName
         this.mobile = user.mobile

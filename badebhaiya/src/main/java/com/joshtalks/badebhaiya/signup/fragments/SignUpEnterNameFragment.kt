@@ -50,12 +50,12 @@ class SignUpEnterNameFragment: Fragment() {
         }
     }
 
-    fun submitProfile(view: View) {
+    fun submitProfile() {
         if (binding.etFirstName.text.isNullOrEmpty() || binding.etLastName.text.isNullOrEmpty()) {
             showToast(getString(R.string.empty_name))
             return
         }
-        startProgress()
+        //startProgress()
         val requestMap = mutableMapOf<String, String?>()
         requestMap["first_name"] = "${binding.etFirstName.text} ${binding.etLastName.text}"
         viewModel.completeProfile(requestMap)
