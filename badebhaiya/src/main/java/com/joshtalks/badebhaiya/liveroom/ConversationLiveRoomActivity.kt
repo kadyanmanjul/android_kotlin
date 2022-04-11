@@ -31,6 +31,7 @@ import com.google.android.material.badge.BadgeDrawable
 import com.google.android.material.badge.BadgeUtils
 import com.google.gson.JsonObject
 import com.joshtalks.badebhaiya.R
+import com.joshtalks.badebhaiya.core.AppSignatureHelper.TAG
 import com.joshtalks.badebhaiya.core.BaseActivity
 import com.joshtalks.badebhaiya.core.LogException
 import com.joshtalks.badebhaiya.core.PermissionUtils
@@ -72,6 +73,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import kotlin.math.log
 
 class ConversationLiveRoomActivity : BaseActivity(),
                                      NotificationView.NotificationViewAction,
@@ -1206,6 +1208,7 @@ class ConversationLiveRoomActivity : BaseActivity(),
     }
 
     override fun onStart() {
+        Log.i(TAG, "onStart: ")
         super.onStart()
         bindService(
             Intent(this, ConvoWebRtcService::class.java),
@@ -1215,18 +1218,21 @@ class ConversationLiveRoomActivity : BaseActivity(),
     }
 
     override fun onPause() {
+        Log.i(TAG, "onPause: ")
         super.onPause()
         compositeDisposable.clear()
         vm.setReplaySubject(ReplaySubject.create<Any>())
     }
 
     override fun onStop() {
+        Log.i(TAG, "onStop: ")
         super.onStop()
         compositeDisposable.clear()
         unbindService(myConnection)
     }
 
     override fun onResume() {
+        Log.i(TAG, "onResume: ")
         super.onResume()
         compositeDisposable.clear()
         observeNetwork()
@@ -1254,6 +1260,7 @@ class ConversationLiveRoomActivity : BaseActivity(),
     }
 
     override fun onDestroy() {
+        Log.i(TAG, "onDestroy: LEAVE API fired")
         if ((isBackPressed.or(isExitApiFired)).not()) {
             if (isRoomCreatedByUser) {
                 mBoundService?.endRoom(roomId, roomQuestionId)
