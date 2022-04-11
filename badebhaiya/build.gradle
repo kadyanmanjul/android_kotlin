@@ -97,17 +97,17 @@ android {
             buildConfigField "String", "BASE_URL", "\"http://bbapp-stg.joshtalks.org\""
             applicationVariants.all { variant ->
                 variant.outputs.all {
-                    outputFileName = "josh-dev${majorVersion}.${minorVersion}.${patchVersion}.apk"
+                    outputFileName = "josh-bade-bhaiya-dev${majorVersion}.${minorVersion}.${patchVersion}.apk"
                 }
             }
         }
         prod {
             buildConfigField "boolean", "PLAY_STORE_DISABLED", "false"
             manifestPlaceholders = [enableCrashReporting: "true"]
-            buildConfigField "String", "BASE_URL", "\"https://app.joshtalks.org\""
+            buildConfigField "String", "BASE_URL", "\"http://bbapp-prod.joshtalks.org\""
             applicationVariants.all { variant ->
                 variant.outputs.all {
-                    outputFileName = "josh-skills-release${majorVersion}.${minorVersion}.${patchVersion}.apk"
+                    outputFileName = "josh-bade-bhaiya-release${majorVersion}.${minorVersion}.${patchVersion}.apk"
                 }
             }
         }
