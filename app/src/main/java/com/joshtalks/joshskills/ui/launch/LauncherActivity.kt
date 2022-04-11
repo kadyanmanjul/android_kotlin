@@ -12,7 +12,6 @@ import android.telephony.TelephonyManager
 import android.util.Log
 import android.view.View
 import androidx.lifecycle.lifecycleScope
-import androidx.work.ListenableWorker
 import androidx.work.WorkManager
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
@@ -21,7 +20,6 @@ import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.notification.HAS_LOCAL_NOTIFICATION
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
-import com.joshtalks.joshskills.core.service.getGoogleAdId
 import com.joshtalks.joshskills.repository.local.model.ExploreCardType
 import com.joshtalks.joshskills.repository.local.model.GaIDMentorModel
 import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel
@@ -369,7 +367,6 @@ class LauncherActivity : CoreJoshActivity() {
             } catch (ex: Throwable) {
             }
             try {
-                if (PrefManager.hasKey(USER_UNIQUE_ID).not()) {
                     val response =
                         AppObjectController.signUpNetworkService.getGaid(mapOf("device_id" to Utils.getDeviceId()))
                     if (response.isSuccessful && response.body() != null) {
@@ -377,9 +374,6 @@ class LauncherActivity : CoreJoshActivity() {
                     } else {
                         return@launch
                     }
-                } else {
-                    return@launch
-                }
             } catch (ex: Exception) {
                 LogException.catchException(ex)
                 return@launch
