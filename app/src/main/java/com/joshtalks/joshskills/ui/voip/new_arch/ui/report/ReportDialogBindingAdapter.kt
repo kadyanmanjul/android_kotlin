@@ -8,15 +8,15 @@ import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.ui.voip.new_arch.ui.report.adapter.ReportAdapter
-import com.joshtalks.joshskills.ui.voip.new_arch.ui.report.model.OptionModel
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.report.adapter.VoipReportAdapter
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.report.model.VoipOptionModel
 
 @BindingAdapter("setIssueAdapter", "setBackgroundListener","setOptionListener", requireAll = false)
-fun RecyclerView.setIssueAdapter(items: List<OptionModel>?, function1: ((Boolean) -> Unit)?,function2: ((Int) -> Unit)?) {
+fun RecyclerView.setIssueAdapter(items: List<VoipOptionModel>?, function1: ((Boolean) -> Unit)?, function2: ((Int) -> Unit)?) {
     val manager = FlexboxLayoutManager(context)
     manager.flexDirection = FlexDirection.ROW
     manager.justifyContent = JustifyContent.FLEX_START
-    val adapter = items?.let { ReportAdapter(it, context) }
+    val adapter = items?.let { VoipReportAdapter(it, context) }
     this.adapter = adapter
     this.layoutManager = manager
     adapter?.setBackgroundListener(function1)

@@ -13,12 +13,9 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.afollestad.materialdialogs.MaterialDialog
@@ -55,11 +52,8 @@ import com.joshtalks.joshskills.core.LESSON_ONE_TOPIC_ID
 import com.joshtalks.joshskills.ui.lesson.LessonViewModel
 import com.joshtalks.joshskills.ui.lesson.SPEAKING_POSITION
 import com.joshtalks.joshskills.ui.senior_student.SeniorStudentActivity
-import com.joshtalks.joshskills.ui.voip.new_arch.ui.callbar.CallBar
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.callbar.VoipPref
-import com.joshtalks.joshskills.ui.voip.new_arch.ui.feedback.FeedbackDialogFragment
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity
-import com.joshtalks.joshskills.ui.voip.new_arch.ui.report.ReportDialogFragment
 import com.joshtalks.joshskills.voip.constant.CONNECTED
 import com.joshtalks.joshskills.voip.constant.IDLE
 import com.joshtalks.joshskills.voip.constant.LEAVING
@@ -76,8 +70,6 @@ import java.util.Calendar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import com.joshtalks.joshskills.core.IS_FREE_TRIAL_CAMPAIGN_ACTIVE
@@ -237,7 +229,7 @@ class SpeakingPractiseFragment : ABTestFragment(),TimeAnimator.TimeListener {
         binding.btnStartTrialText.setOnClickListener {
             viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
             if(VoipPref.getVoipState()==IDLE) {
-                startPractise()
+                startPractise(isNewArch = true)
             }else if(VoipPref.getVoipState()== LEAVING){
                 beforeAnimation?.setTint(resources.getColor(R.color.grey))
                 animateButton()
@@ -489,13 +481,19 @@ class SpeakingPractiseFragment : ABTestFragment(),TimeAnimator.TimeListener {
         PrefManager.put(HAS_SEEN_SPEAKING_TOOLTIP, true)
     }
 
-    private fun startPractise(favoriteUserCall: Boolean = false, isNewUserCall: Boolean = false) {
+    private fun startPractise(favoriteUserCall: Boolean = false, isNewUserCall: Boolean = false,isNewArch:Boolean = false) {
         if (PermissionUtils.isCallingPermissionEnabled(requireContext())) {
-            startPractiseSearchScreen(
-                favoriteUserCall = favoriteUserCall,
-                isNewUserCall = isNewUserCall
-            )
-            return
+            if (isNewArch){
+                startPracticeCall()
+                return
+            }else{
+                startPractiseSearchScreen(
+                    favoriteUserCall = favoriteUserCall,
+                    isNewUserCall = isNewUserCall
+                )
+                return
+            }
+
         }
         PermissionUtils.callingFeaturePermission(
             requireActivity(),
@@ -510,11 +508,16 @@ class SpeakingPractiseFragment : ABTestFragment(),TimeAnimator.TimeListener {
                             return
                         }
                         if (flag) {
-                            startPractiseSearchScreen(
-                                favoriteUserCall = favoriteUserCall,
-                                isNewUserCall = isNewUserCall
-                            )
-                            return
+                            if (isNewArch){
+                                startPracticeCall()
+                                return
+                            }else{
+                                startPractiseSearchScreen(
+                                    favoriteUserCall = favoriteUserCall,
+                                    isNewUserCall = isNewUserCall
+                                )
+                                return
+                            }
                         } else {
                             MaterialDialog(requireActivity()).show {
                                 message(R.string.call_start_permission_message)
@@ -572,7 +575,7 @@ class SpeakingPractiseFragment : ABTestFragment(),TimeAnimator.TimeListener {
         mAnimator?.start()
     }
 
-    private fun startPractiseSearchScreen() {
+    private fun startPracticeCall() {
         val callIntent = Intent(requireContext(), VoiceCallActivity::class.java)
         callIntent.apply {
             putExtra(INTENT_DATA_COURSE_ID, courseId)

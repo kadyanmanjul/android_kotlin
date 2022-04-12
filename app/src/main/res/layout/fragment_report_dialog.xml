@@ -5,10 +5,10 @@
     <data>
         <variable
             name="fragment"
-            type="com.joshtalks.joshskills.ui.voip.new_arch.ui.report.ReportDialogFragment" />
+            type="com.joshtalks.joshskills.ui.voip.new_arch.ui.report.VoipReportDialogFragment" />
         <variable
             name="vm"
-            type="com.joshtalks.joshskills.ui.voip.new_arch.ui.report.ReportViewModel" />
+            type="com.joshtalks.joshskills.ui.voip.new_arch.ui.report.VoipReportViewModel" />
     </data>
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
@@ -36,7 +36,7 @@
                     android:paddingEnd="@dimen/_32sdp"
                     android:gravity="center"
                     tools:text="Harsh, Is call ka etna chota hone ka reason kya tha?"
-                    android:text="@{vm.reportModel.message}"
+                    android:text="@{vm.voipReportModel.message}"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
                     android:textColor="@color/freshchat_black"
                     android:textSize="@dimen/_16ssp"
@@ -51,7 +51,7 @@
                     android:maxHeight="@dimen/_200sdp"
                     setBackgroundListener="@{vm.ifSubmitEnabled}"
                     setOptionListener="@{vm.setOptionId}"
-                    setIssueAdapter="@{vm.reportModel.options}"
+                    setIssueAdapter="@{vm.voipReportModel.voipOptions}"
                     android:layout_marginTop="8dp"
                     tools:listitem="@layout/item_report_layout"
                     app:layoutManager="com.google.android.flexbox.FlexboxLayoutManager"
