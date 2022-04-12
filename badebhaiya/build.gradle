@@ -7,7 +7,7 @@ apply plugin: 'com.google.gms.google-services'
 
 def majorVersion = 0
 def minorVersion = 0
-def patchVersion = 1
+def patchVersion = 2
 
 android {
     compileSdk 32
@@ -79,7 +79,7 @@ android {
         }
         release {
             resValue("string", "branch_id", "key_live_hk0NAoI7iiZt62YMAeLuZnakuuexFWqk")
-            resValue("string", "truecaller_key", "kVht21c4b4c0aa0f04e55aa76bac5b056ddd7")
+            resValue("string", "truecaller_key", "Uwwcd95a74fb4cdf8449b9d30c12c9cc43347")
             debuggable false
             minifyEnabled false
             shrinkResources false
