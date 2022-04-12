@@ -3,7 +3,7 @@
     <data>
         <variable
             name="issue"
-            type="com.joshtalks.joshskills.ui.voip.new_arch.ui.report.model.OptionModel" />
+            type="com.joshtalks.joshskills.ui.voip.new_arch.ui.report.model.VoipOptionModel" />
     </data>
 
     <TextView

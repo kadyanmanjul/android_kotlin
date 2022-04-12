@@ -5,15 +5,15 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.joshtalks.joshskills.base.BaseViewModel
 import com.joshtalks.joshskills.core.*
-import com.joshtalks.joshskills.ui.voip.new_arch.ui.report.model.ReportModel
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.report.model.VoipReportModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class ReportViewModel : BaseViewModel() {
+class VoipReportViewModel : BaseViewModel() {
 
-    private var reportResponseModel: ReportModel? = null
-    var reportModel: MutableLiveData<ReportModel> = MutableLiveData()
+    private var voipReportResponseModel: VoipReportModel? = null
+    var voipReportModel: MutableLiveData<VoipReportModel> = MutableLiveData()
     lateinit var tittle: LiveData<String>
     var submitEnabled = ObservableBoolean(false)
     var optionId: Int = 0
@@ -28,8 +28,8 @@ class ReportViewModel : BaseViewModel() {
     fun getReportOptionsList(value: String) {
         CoroutineScope(Dispatchers.IO).launch(Dispatchers.IO) {
             try {
-                reportResponseModel = AppObjectController.p2pNetworkService.getP2pCallOptions(value)
-                reportModel.postValue(reportResponseModel!!)
+                voipReportResponseModel = AppObjectController.p2pNetworkService.getVoipCallOptions(value)
+                voipReportModel.postValue(voipReportResponseModel!!)
                 saveReportOptionsListToSharedPref(value)
             } catch (e: java.lang.Exception) {
                 print(e.stackTrace)
@@ -51,14 +51,14 @@ class ReportViewModel : BaseViewModel() {
         when (value) {
             "REPORT" -> {
                 if (PrefManager.getPrefObject(REPORT_ISSUE) != null) {
-                    reportModel.value = PrefManager.getPrefObject(REPORT_ISSUE)
+                    voipReportModel.value = PrefManager.getVoipPrefObject(REPORT_ISSUE)
                 } else {
                     getReportOptionsList(value)
                 }
             }
             "BLOCK" -> {
                 if (PrefManager.getPrefObject(BLOCK_ISSUE) != null) {
-                    reportModel.value = PrefManager.getPrefObject(BLOCK_ISSUE)
+                    voipReportModel.value = PrefManager.getVoipPrefObject(BLOCK_ISSUE)
                 }
             }
         }
@@ -67,10 +67,10 @@ class ReportViewModel : BaseViewModel() {
     fun saveReportOptionsListToSharedPref(value: String) {
         when (value) {
             "REPORT" -> {
-                reportModel.value?.let { PrefManager.putPrefObject(REPORT_ISSUE, it) }
+                voipReportModel.value?.let { PrefManager.putPrefObject(REPORT_ISSUE, it) }
             }
             "BLOCK" -> {
-                reportModel.value?.let { PrefManager.putPrefObject(BLOCK_ISSUE, it) }
+                voipReportModel.value?.let { PrefManager.putPrefObject(BLOCK_ISSUE, it) }
             }
         }
     }

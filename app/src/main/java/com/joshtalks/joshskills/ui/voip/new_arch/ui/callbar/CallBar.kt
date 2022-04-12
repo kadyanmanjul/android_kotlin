@@ -2,7 +2,6 @@ package com.joshtalks.joshskills.ui.voip.new_arch.ui.callbar
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.os.SystemClock
 import android.util.Log
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LiveData
@@ -15,14 +14,13 @@ import com.joshtalks.joshskills.core.ActivityLifecycleCallback
 import com.joshtalks.joshskills.core.IS_COURSE_BOUGHT
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.feedback.FeedbackDialogFragment
-import com.joshtalks.joshskills.ui.voip.new_arch.ui.report.ReportDialogFragment
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.report.VoipReportDialogFragment
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.withContext
 
@@ -201,7 +199,7 @@ class VoipPref {
             val function = fun(){
                 showFeedBackDialog(fragmentActivity)
             }
-            ReportDialogFragment.newInstance(getLastRemoteUserAgoraId(),
+            VoipReportDialogFragment.newInstance(getLastRemoteUserAgoraId(),
                 getCurrentUserAgoraId(),"REPORT", getLastCallChannelName(),function)
                 .show(fragmentActivity.supportFragmentManager, "ReportDialogFragment")
         }

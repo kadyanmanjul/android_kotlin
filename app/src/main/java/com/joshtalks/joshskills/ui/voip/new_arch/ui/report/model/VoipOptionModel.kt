@@ -2,7 +2,7 @@ package com.joshtalks.joshskills.ui.voip.new_arch.ui.report.model
 
 import com.google.gson.annotations.SerializedName
 
-data class OptionModel(
+data class VoipOptionModel(
     @SerializedName("created")
     val created: String,
     @SerializedName("id")
