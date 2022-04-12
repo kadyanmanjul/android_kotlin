@@ -27,7 +27,8 @@ class PreviousLeaderBoardViewModel(application: Application) : AndroidViewModel(
                 val response =
                     AppObjectController.commonNetworkService.getPreviousLeaderboardData(
                         mentorId,
-                        type
+                        type,
+                        PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID)
                     )
                 if (response.isSuccessful && response.body() != null) {
                     previousLeaderBoardData.postValue(response.body())

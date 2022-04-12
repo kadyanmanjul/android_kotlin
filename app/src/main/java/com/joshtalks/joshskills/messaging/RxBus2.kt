@@ -20,5 +20,4 @@ object RxBus2 {
     fun <T> listenWithoutDelay(eventType: Class<T>): Observable<T> =
         publisher.ofType(eventType)
 
-
 }

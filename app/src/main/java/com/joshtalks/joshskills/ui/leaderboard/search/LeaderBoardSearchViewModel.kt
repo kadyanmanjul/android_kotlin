@@ -104,7 +104,8 @@ class LeaderBoardSearchViewModel : ViewModel() {
                 AppObjectController.commonNetworkService.searchLeaderboardMember(
                     key,
                     pageNo,
-                    intervalType
+                    intervalType,
+                    PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID)
                 )
             if (response.isSuccessful && response.body() != null) {
                 return response.body()
