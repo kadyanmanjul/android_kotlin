@@ -8,12 +8,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.textColorSet
 import com.joshtalks.joshskills.databinding.LayoutReportItemBinding
-import com.joshtalks.joshskills.ui.voip.new_arch.ui.report.model.OptionModel
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.report.model.VoipOptionModel
 
-class ReportAdapter(
-    private val optionList: List<OptionModel>,
+class VoipReportAdapter(
+    private val voipOptionList: List<VoipOptionModel>,
     private val context: Context,
-) : RecyclerView.Adapter<ReportAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<VoipReportAdapter.ViewHolder>() {
 
     var prevHolder: ViewHolder? = null
     var itemClick: ((Boolean) -> Unit)? = null
@@ -22,7 +22,7 @@ class ReportAdapter(
 
     inner class ViewHolder(val binding: LayoutReportItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: OptionModel) {
+        fun bind(item: VoipOptionModel) {
             binding.issue = item
         }
     }
@@ -34,9 +34,9 @@ class ReportAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(optionList[position])
+        holder.bind(voipOptionList[position])
         holder.itemView.setOnClickListener {
-            optionId=optionList[position].id
+            optionId=voipOptionList[position].id
             holder.binding.issueItem.textColorSet(R.color.white)
             holder.binding.issueItem.background =
                 getDrawable(context, R.drawable.black_button_round_enabled)
@@ -48,12 +48,12 @@ class ReportAdapter(
             }
             prevHolder = holder
             itemClick?.invoke(true)
-            optionIdUpdate?.invoke(optionList[position].id)
+            optionIdUpdate?.invoke(voipOptionList[position].id)
         }
     }
 
     override fun getItemCount(): Int {
-        return optionList.size
+        return voipOptionList.size
     }
 
     fun setBackgroundListener(function: ((Boolean) -> Unit)?) {

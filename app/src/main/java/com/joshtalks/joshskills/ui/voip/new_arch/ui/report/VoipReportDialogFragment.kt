@@ -9,9 +9,9 @@ import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.base.BaseDialogFragment
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.databinding.FragmentReportDialogBinding
-import com.joshtalks.joshskills.ui.voip.new_arch.ui.report.model.ReportModel
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.report.model.VoipReportModel
 
-class ReportDialogFragment(val function: () -> Unit) : BaseDialogFragment() {
+class VoipReportDialogFragment(val function: () -> Unit) : BaseDialogFragment() {
 
     private val FEEDBACK_OPTIONS = "feedback_option"
     private val REPORTED_BY_ID = "reported_by_id"
@@ -26,11 +26,11 @@ class ReportDialogFragment(val function: () -> Unit) : BaseDialogFragment() {
     val ARG_CALLER_ID = "caller_id"
     val ARG_CURRENT_ID = "current_id"
     val ARG_TYPE = "type"
-    val reportModel: ReportModel? = null
+    val voipReportModel: VoipReportModel? = null
     var submitReport: (() -> Unit)? = null
 
     val vm by lazy {
-        ViewModelProvider(this)[ReportViewModel::class.java]
+        ViewModelProvider(this)[VoipReportViewModel::class.java]
     }
 
     override fun onCreateView(
@@ -49,16 +49,16 @@ class ReportDialogFragment(val function: () -> Unit) : BaseDialogFragment() {
     }
 
     private fun addObserver() {
-        vm.reportModel.observe(viewLifecycleOwner) {
-            reportModel?.options = it.options
-            reportModel?.message = it.message
+        vm.voipReportModel.observe(viewLifecycleOwner) {
+            voipReportModel?.voipOptions = it.voipOptions
+            voipReportModel?.message = it.message
         }
     }
 
     private fun initView() {
         val mArgs = arguments
         binding.vm = vm
-        binding.fragment = this@ReportDialogFragment
+        binding.fragment = this@VoipReportDialogFragment
         type1 = mArgs?.getString(ARG_TYPE).toString()
         callerId1 = mArgs?.getInt(ARG_CALLER_ID)!!
         currentId1 = mArgs.getInt(ARG_CURRENT_ID)
@@ -83,7 +83,7 @@ class ReportDialogFragment(val function: () -> Unit) : BaseDialogFragment() {
             channelName: String,
             function: () -> Unit
         ) =
-            ReportDialogFragment(function).apply {
+            VoipReportDialogFragment(function).apply {
                 arguments = Bundle().apply {
                     putString(ARG_TYPE, type)
                     putInt(ARG_CALLER_ID, callerID)

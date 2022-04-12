@@ -10,7 +10,6 @@ import android.os.Build
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.core.content.ContextCompat
 import com.joshtalks.joshskills.voip.R
 import com.joshtalks.joshskills.voip.Utils
 
@@ -22,10 +21,11 @@ internal class NotificationGenerator {
     }
 
     init {
-        createNotificationChannel()
+        createChannelForCalls()
+        createChannelForService()
     }
 
-    private fun createNotificationChannel() {
+    private fun createChannelForCalls() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 //           creating channel for incoming calls
             val name = context?.getString(R.string.channel_name_calls)
@@ -43,9 +43,11 @@ internal class NotificationGenerator {
                 setBypassDnd(true)
                 lockscreenVisibility = Notification.VISIBILITY_PUBLIC
             }
-
             notificationManager.createNotificationChannel(channel)
-
+        }
+    }
+    private fun createChannelForService() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             //           creating channel for normal
             val name1 = context?.getString(R.string.channel_name_normal)
             val descriptionText1 = context?.getString(R.string.channel_others_description)
@@ -70,11 +72,11 @@ internal class NotificationGenerator {
         notificationPriority: NotificationPriority
     ): NotificationCompat.Builder {
 
-        val destination="com.joshtalks.joshskills.ui.voip.new_arch.ui.views.IncomingNotificationActivity"
+        val notificationActivity="com.joshtalks.joshskills.ui.voip.new_arch.ui.views.IncomingNotificationActivity"
         val callingActivity = Intent()
         callingActivity.apply {
             if (context != null) {
-                setClassName(context,destination)
+                setClassName(context,notificationActivity)
             }
         }
         val pendingIntent=PendingIntent.getActivity(context,(System.currentTimeMillis() and 0xfffffff).toInt(),callingActivity, PendingIntent.FLAG_UPDATE_CURRENT)

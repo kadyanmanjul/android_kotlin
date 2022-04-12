@@ -14,6 +14,7 @@ import com.joshtalks.joshskills.base.constants.STOP_SERVICE
 import com.joshtalks.joshskills.core.io.LastSyncPrefManager
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.AppDatabase
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.report.model.VoipReportModel
 import com.joshtalks.joshskills.ui.voip.voip_rating.model.ReportModel
 
 const val USER_UNIQUE_ID = "user_unique_id"
@@ -282,7 +283,11 @@ object PrefManager {
         val json: String = getStringValue(key=key, defaultValue = "") as String
         return gson.fromJson(json, ReportModel::class.java)
     }
-
+    fun getVoipPrefObject(key: String):VoipReportModel?{
+        val gson = Gson()
+        val json: String = getStringValue(key=key, defaultValue = "") as String
+        return gson.fromJson(json, VoipReportModel::class.java)
+    }
     fun getClientToken(): String {
         return BuildConfig.CLIENT_TOKEN
     }
