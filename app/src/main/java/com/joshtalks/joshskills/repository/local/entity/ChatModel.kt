@@ -315,7 +315,7 @@ data class Question(
 
     @Embedded(prefix = "cexam_")
     @Expose
-    var cexamDetail: @RawValue CertificationExamDetailModel? = null,
+    var cexamDetail: CertificationExamDetailModel? = null,
 
     @Expose
     @Ignore

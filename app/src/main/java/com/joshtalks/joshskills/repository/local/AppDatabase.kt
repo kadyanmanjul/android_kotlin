@@ -123,7 +123,7 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
         GroupsItem::class, TimeTokenRequest::class, ChatItem::class, GameAnalyticsEntity::class,
         ABTestCampaignData::class, GroupMember::class, SpecialPractice::class, ReadingVideo::class, CompressedVideo::class
     ],
-    version = 46,
+    version = 47,
     exportSchema = true
 )
 @TypeConverters(
@@ -216,7 +216,7 @@ abstract class AppDatabase : RoomDatabase() {
                                 MIGRATION_42_43,
                                 MIGRATION_43_44,
                                 MIGRATION_44_45,
-                                MIGRATION_45_46
+                                MIGRATION_45_47
                             )
                             .fallbackToDestructiveMigration()
                             .addCallback(sRoomDatabaseCallback)
@@ -601,7 +601,7 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
-        private val MIGRATION_45_46: Migration = object : Migration(45, 46) {
+        private val MIGRATION_45_47: Migration = object : Migration(45, 47) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("CREATE TABLE IF NOT EXISTS `group_member_table` (`mentorID` TEXT NOT NULL, `memberName` TEXT NOT NULL, `memberIcon` TEXT NOT NULL, `isAdmin` INTEGER NOT NULL, `isOnline` INTEGER NOT NULL, `groupId` TEXT NOT NULL, PRIMARY KEY (`mentorId`, `groupId`))")
                 database.execSQL("ALTER TABLE `group_list_table` ADD COLUMN `groupType` TEXT")

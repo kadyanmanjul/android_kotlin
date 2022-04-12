@@ -320,8 +320,6 @@ class JoshGroupActivity : BaseGroupActivity() {
         return vm.conversationId
     }
 
-
-
     fun openProfileActivity(mentorId: String) {
         UserProfileActivity.startUserProfileActivity(
             activity = this,

@@ -30,8 +30,6 @@ import com.joshtalks.joshskills.repository.service.NetworkRequestHelper
 import com.joshtalks.joshskills.repository.service.SyncChatService
 import com.joshtalks.joshskills.ui.fpp.model.PendingRequestResponse
 import com.joshtalks.joshskills.ui.group.repository.ABTestRepository
-import com.joshtalks.joshskills.util.showAppropriateMsg
-import com.joshtalks.joshskills.ui.voip.new_arch.ui.callbar.CallBar
 import id.zelory.compressor.Compressor
 import java.io.File
 import java.util.*
@@ -69,7 +67,6 @@ class ConversationViewModel(
     val refreshViewLiveData: MutableLiveData<ChatModel> = MutableLiveData()
     val userData: MutableLiveData<UserProfileResponse> = MutableLiveData()
     val unreadMessageCount: MutableLiveData<Int> = MutableLiveData()
-    private val callbar = CallBar()
 
     val abTestCampaignliveData = MutableLiveData<ABTestCampaignData?>()
     val repository: ABTestRepository by lazy { ABTestRepository() }

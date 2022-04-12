@@ -136,8 +136,9 @@ open class WebRtcMiddlewareActivity : CoreJoshActivity() {
         super.onStop()
     }
 
-    companion object {
+    companion object{
         var isScreenOpenByConversationRoom = false
+
     }
 
     override fun getConversationId(): String? {
