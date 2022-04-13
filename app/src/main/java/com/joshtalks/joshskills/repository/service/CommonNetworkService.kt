@@ -390,4 +390,6 @@ interface CommonNetworkService {
     @POST("$DIR/voicecall/invite/contacts/")
     suspend fun uploadContacts(@Body params: HashMap<String, Any>): Response<Any>
 
+    @POST("$DIR/impression/track_broadcast_event/")
+    suspend fun saveBroadcastEvent(@Body params: Map<String, String?>): Response<Unit>
 }
