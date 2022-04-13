@@ -446,23 +446,25 @@
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@id/user_pic" />
 
-                        <com.google.android.material.button.MaterialButton
+                        <ImageView
                             android:id="@+id/btn_send_message"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
+                            android:layout_height="@dimen/_24sdp"
                             android:layout_marginStart="@dimen/_20sdp"
                             android:layout_marginTop="@dimen/_20sdp"
-                            android:layout_marginEnd="@dimen/_10sdp"
+                            android:layout_marginEnd="@dimen/_20sdp"
+                            android:layout_marginBottom="@dimen/_15sdp"
+                            android:foreground="?android:attr/selectableItemBackground"
                             android:clickable="true"
-                            android:text="@string/send_message"
                             android:focusable="true"
-                            android:visibility="gone"
+                            android:visibility="visible"
                             android:paddingBottom="@dimen/_5sdp"
-                            android:textColor="@color/white"
                             android:textSize="@dimen/_10sdp"
+                            android:background="@drawable/ic_send_msg_btn"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@id/user_pic" />
+                            app:layout_constraintTop_toBottomOf="@id/referral_info_text"
+                            tools:visibility="visible"/>
 
                         <com.google.android.material.card.MaterialCardView
                             android:id="@+id/sent_request_card"
@@ -476,7 +478,7 @@
                             app:cardElevation="0dp"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/referral_info_text"
+                            app:layout_constraintTop_toBottomOf="@+id/btn_send_message"
                             tools:cardBackgroundColor="@color/profile_request_card"
                             tools:cardPreventCornerOverlap="false">
 
