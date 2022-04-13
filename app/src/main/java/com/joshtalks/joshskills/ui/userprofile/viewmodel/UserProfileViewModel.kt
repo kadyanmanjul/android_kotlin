@@ -631,10 +631,12 @@ val url = responseObj.url.plus(File.separator).plus(responseObj.fields["key"])
     }
 
     fun saveImpression() {
-        startTime = System.currentTimeMillis().minus(startTime).div(1000)
-        if (startTime > 0 && impressionId!!.isBlank().not()) {
-            engageUserProfileSectionTime(impressionId!!, startTime.toString())
-        }
+        try {
+            startTime = System.currentTimeMillis().minus(startTime).div(1000)
+            if (startTime > 0 && impressionId?.isBlank()?.not() == true) {
+                engageUserProfileSectionTime(impressionId!!, startTime.toString())
+            }
+        }catch (ex:Exception){ }
     }
 
     val onItemClick: (CourseEnrolled, Int) -> Unit = { it, type ->
