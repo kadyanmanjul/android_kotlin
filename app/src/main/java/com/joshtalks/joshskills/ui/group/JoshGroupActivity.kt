@@ -23,6 +23,7 @@ import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.databinding.ActivityJoshGroupBinding
+import com.joshtalks.joshskills.track.CHANNEL_ID
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics
@@ -62,7 +63,13 @@ class JoshGroupActivity : BaseGroupActivity() {
     }
 
     override fun onCreated() {
-        openGroupListFragment()
+        val channelId = intent.getStringExtra(CHANNEL_ID) ?: EMPTY
+        if (channelId.isEmpty())
+            openGroupListFragment()
+        else {
+            val chatData = intent.getParcelableExtra(DM_CHAT_DATA) as GroupItemData?
+            openGroupChat(chatData)
+        }
     }
 
     override fun initViewState() {
@@ -188,7 +195,10 @@ class JoshGroupActivity : BaseGroupActivity() {
                 putString(CLOSED_GROUP_TEXT, data?.getGroupText())
                 data?.hasJoined()?.let {
                     if (it) {
-                        putString(GROUPS_CHAT_SUB_TITLE, "tap here for group info")
+                        if (data.getGroupCategory() == DM_CHAT)
+                            putString(GROUPS_CHAT_SUB_TITLE, EMPTY)
+                        else
+                            putString(GROUPS_CHAT_SUB_TITLE, "tap here for group info")
                         putInt(GROUP_CHAT_UNREAD, Integer.valueOf(data.getUnreadMsgCount()))
                         GroupAnalytics.push(GroupAnalytics.Event.OPEN_GROUP, data.getUniqueId())
                         MixPanelTracker.publishEvent(MixPanelEvent.OPEN_GROUP_INBOX)

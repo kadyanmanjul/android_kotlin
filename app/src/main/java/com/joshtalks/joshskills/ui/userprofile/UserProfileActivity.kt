@@ -60,6 +60,7 @@ import com.joshtalks.joshskills.repository.local.eventbus.DeleteProfilePicEventB
 import com.joshtalks.joshskills.repository.local.eventbus.SaveProfileClickedEvent
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
+import com.joshtalks.joshskills.track.CHANNEL_ID
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.fpp.constants.IS_ACCEPTED
 import com.joshtalks.joshskills.ui.fpp.constants.IS_REJECTED
@@ -68,6 +69,11 @@ import com.joshtalks.joshskills.ui.fpp.constants.REQUESTED
 import com.joshtalks.joshskills.ui.fpp.constants.HAS_RECIEVED_REQUEST
 import com.joshtalks.joshskills.ui.fpp.constants.IS_ALREADY_FPP
 import com.joshtalks.joshskills.ui.inbox.mentor_id
+import com.joshtalks.joshskills.ui.fpp.constants.*
+import com.joshtalks.joshskills.ui.group.JoshGroupActivity
+import com.joshtalks.joshskills.ui.group.constants.DM_CHAT
+import com.joshtalks.joshskills.ui.group.constants.DM_CHAT_DATA
+import com.joshtalks.joshskills.ui.group.model.GroupsItem
 import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_PROFILE_ANIMATION
 import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
 import com.joshtalks.joshskills.ui.points_history.PointsInfoActivity
@@ -339,6 +345,25 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                     .show(supportFragmentManager, "EditProfile")
             }
         }
+
+        binding.btnSendMessage.setOnClickListener {
+            val intent = Intent(this, JoshGroupActivity::class.java).apply {
+                putExtra(CONVERSATION_ID, getConversationId())
+                putExtra(CHANNEL_ID, "12345")
+                putExtra(
+                    DM_CHAT_DATA, GroupsItem(
+                        groupIcon = viewModel.userData.value?.photoUrl,
+                        groupId = EMPTY,
+                        unreadCount = "0",
+                        name = viewModel.userData.value?.name,
+                        groupType = DM_CHAT,
+                        lastMessage = DM_CHAT
+                    )
+                )
+            }
+            startActivity(intent)
+        }
+
         binding.btnSentRequest.setOnClickListener {
             with(binding) {
                 if (btnSentRequest.text.toString() == getString(R.string.requested)) {
@@ -632,7 +657,8 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                             binding.btnSentRequest.visibility = VISIBLE
                             binding.profileText.text = it.text
                         }
-                        IS_ALREADY_FPP -> {
+                        ALREADY_FPP -> {
+                            binding.btnSendMessage.visibility = VISIBLE
                         }
                         REQUESTED -> {
                             with(binding) {
