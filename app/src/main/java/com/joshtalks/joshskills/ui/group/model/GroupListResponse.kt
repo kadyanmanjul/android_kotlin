@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.ui.group.model
 
+import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
@@ -9,6 +10,7 @@ import com.joshtalks.joshskills.ui.group.constants.JOINED_GROUP
 import com.joshtalks.joshskills.ui.group.constants.NOT_JOINED_GROUP
 import com.joshtalks.joshskills.ui.group.constants.OPENED_GROUP
 import com.joshtalks.joshskills.ui.group.constants.REQUESTED_GROUP
+import kotlinx.android.parcel.Parcelize
 
 data class GroupListResponse(
 
@@ -17,6 +19,7 @@ data class GroupListResponse(
 )
 
 @Entity(tableName = "group_list_table")
+@Parcelize
 data class GroupsItem(
 
     @field:SerializedName("group_icon")
@@ -55,7 +58,7 @@ data class GroupsItem(
     @field:SerializedName("closed_grp_text")
     val requestGroupText: String? = null
 
-) : GroupItemData {
+) : Parcelable, GroupItemData {
 
     override fun getTitle() = name ?: ""
 

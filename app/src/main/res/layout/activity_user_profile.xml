@@ -5,9 +5,15 @@
 
     <data>
 
+        <import type="android.view.View"/>
+
         <variable
             name="handler"
             type="com.joshtalks.joshskills.ui.userprofile.UserProfileActivity" />
+
+        <variable
+            name="vm"
+            type="com.joshtalks.joshskills.ui.userprofile.viewmodel.UserProfileViewModel" />
 
     </data>
 
@@ -436,6 +442,24 @@
                             android:textColor="@color/colorPrimary"
                             android:textSize="@dimen/_10sdp"
                             android:visibility="gone"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/user_pic" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_send_message"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_20sdp"
+                            android:layout_marginTop="@dimen/_20sdp"
+                            android:layout_marginEnd="@dimen/_10sdp"
+                            android:clickable="true"
+                            android:text="@string/send_message"
+                            android:focusable="true"
+                            android:visibility="gone"
+                            android:paddingBottom="@dimen/_5sdp"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/_10sdp"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@id/user_pic" />

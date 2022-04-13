@@ -6,6 +6,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
+import android.util.Log
 
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
@@ -19,6 +20,7 @@ import com.joshtalks.joshskills.constants.*
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.databinding.ActivityJoshGroupBinding
+import com.joshtalks.joshskills.track.CHANNEL_ID
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics
 import com.joshtalks.joshskills.ui.group.constants.*
@@ -57,7 +59,13 @@ class JoshGroupActivity : BaseGroupActivity() {
     }
 
     override fun onCreated() {
-        openGroupListFragment()
+        val channelId = intent.getStringExtra(CHANNEL_ID) ?: EMPTY
+        if (channelId.isEmpty())
+            openGroupListFragment()
+        else {
+            val chatData = intent.getParcelableExtra(DM_CHAT_DATA) as GroupItemData?
+            openGroupChat(chatData)
+        }
     }
 
     override fun initViewState() {
@@ -182,7 +190,10 @@ class JoshGroupActivity : BaseGroupActivity() {
                 putString(CLOSED_GROUP_TEXT, data?.getGroupText())
                 data?.hasJoined()?.let {
                     if (it) {
-                        putString(GROUPS_CHAT_SUB_TITLE, "tap here for group info")
+                        if (data.getGroupCategory() == DM_CHAT)
+                            putString(GROUPS_CHAT_SUB_TITLE, EMPTY)
+                        else
+                            putString(GROUPS_CHAT_SUB_TITLE, "tap here for group info")
                         putInt(GROUP_CHAT_UNREAD, Integer.valueOf(data.getUnreadMsgCount()))
                         GroupAnalytics.push(GroupAnalytics.Event.OPEN_GROUP, data.getUniqueId())
                     }
