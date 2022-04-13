@@ -414,7 +414,10 @@ class GroupChatViewModel : BaseViewModel() {
             val requestCnt = (onlineAndRequestCount["request_count"] as? Double)?.toInt()
             memberCount.set(memberResult.size)
             requestCount.set("$requestCnt")
-            groupSubHeader.set("${memberCount.get()} members, $onlineCount online")
+            if (groupType.get() == DM_CHAT && onlineCount == 2)
+                groupSubHeader.set("online")
+            else
+                groupSubHeader.set("${memberCount.get()} members, $onlineCount online")
             setRequestsTab()
             withContext(Dispatchers.Main) {
                 memberAdapter.addMembersToList(memberResult)
