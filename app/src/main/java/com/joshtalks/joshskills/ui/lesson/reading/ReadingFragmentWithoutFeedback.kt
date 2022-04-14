@@ -5,7 +5,10 @@ import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.DownloadManager
-import android.content.*
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -16,12 +19,17 @@ import android.media.MediaFormat
 import android.media.MediaMuxer
 import android.net.NetworkInfo
 import android.net.Uri
-import android.os.*
+import android.os.Build
+import android.os.Bundle
+import android.os.Environment
+import android.os.SystemClock
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
-import android.view.View.*
+import android.view.View.GONE
+import android.view.View.INVISIBLE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.animation.Animation
@@ -35,13 +43,19 @@ import androidx.core.text.HtmlCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
 import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.Player
 import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
+import com.joshtalks.joshskills.constants.PERMISSION_FROM_READING_GRANTED
+import com.joshtalks.joshskills.constants.SHARE_VIDEO
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
@@ -76,30 +90,24 @@ import com.tonyodev.fetch2.Download
 import com.tonyodev.fetch2.Error
 import com.tonyodev.fetch2.FetchListener
 import com.tonyodev.fetch2core.DownloadBlock
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.reading_practice_fragment_without_feedback.*
-import kotlinx.coroutines.*
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
-import java.util.concurrent.TimeUnit
-import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseDrawable
-import timber.log.Timber
 import java.io.File
-import java.lang.IllegalStateException
-import java.lang.Runnable
-import java.util.*
-import kotlin.collections.ArrayList
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
-import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
-import com.joshtalks.joshskills.constants.PERMISSION_FROM_READING_GRANTED
-import com.joshtalks.joshskills.constants.SHARE_VIDEO
-import io.reactivex.android.schedulers.AndroidSchedulers
-import kotlinx.android.synthetic.main.fragment_record_practise.view.*
 import java.io.IOException
 import java.nio.ByteBuffer
-
+import java.util.concurrent.TimeUnit
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
+import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseDrawable
+import timber.log.Timber
 
 private const val TAG = "ReadingFragmentWithoutFeedback"
 
@@ -134,7 +142,12 @@ class ReadingFragmentWithoutFeedback :
     private val mutex = Mutex(false)
     private var muxerJob: Job? = null
     private var internetAvailableFlag: Boolean = true
-
+    private var praticAudioAdapter: PracticeAudioAdapter? = null
+    private val layoutManager: LinearLayoutManager by lazy {
+        LinearLayoutManager(activity).apply {
+            isSmoothScrollbarEnabled = true
+        }
+    }
     private var onDownloadCompleteListener = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             val id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
@@ -548,9 +561,10 @@ class ReadingFragmentWithoutFeedback :
     }
 
     private fun pauseAllViewHolderAudio() {
-        val viewHolders = binding.audioList.allViewResolvers as List<PracticeAudioViewHolder>
-        viewHolders.forEach {
-            it.pauseAudio()
+        for (i in 0 until binding.audioListRv.getChildCount()) {
+            val holder: PracticeAudioAdapter.PracticeAudioViewHolder =
+                binding.audioListRv.findViewHolderForAdapterPosition(i) as PracticeAudioAdapter.PracticeAudioViewHolder
+            holder.pauseAudio()
         }
     }
 
@@ -561,7 +575,7 @@ class ReadingFragmentWithoutFeedback :
                 .subscribe(
                     {
                         AppObjectController.uiHandler.post {
-                            binding.audioList.removeView(it.practiceAudioViewHolder)
+                            binding.audioListRv.removeViewAt(it.index)
                             currentLessonQuestion?.run {
                                 if (this.practiceEngagement.isNullOrEmpty()) {
                                     showPracticeInputLayout()
@@ -766,8 +780,9 @@ class ReadingFragmentWithoutFeedback :
                                             .getDownloadedVideoStatus(currentLessonQuestion!!.questionId) != null && AppObjectController.appDatabase.chatDao()
                                             .getDownloadedVideoStatus(currentLessonQuestion!!.questionId)
                                     ) {
-                                        val submittedVideoPath = AppObjectController.appDatabase.chatDao()
-                                            .getDownloadedVideoPath(currentLessonQuestion!!.questionId)
+                                        val submittedVideoPath =
+                                            AppObjectController.appDatabase.chatDao()
+                                                .getDownloadedVideoPath(currentLessonQuestion!!.questionId)
                                         binding.mergedVideo.setVideoPath(submittedVideoPath)
                                     } else {
                                         getPermissionAndDownloadVideo(
@@ -869,21 +884,21 @@ class ReadingFragmentWithoutFeedback :
     }
 
     private fun fetchVideo() {
-            if (video.isNullOrEmpty().not()) {
-                scope.launch {
-                    AppObjectController.appDatabase.chatDao().insertReadingVideoDownloadedPath(
-                        ReadingVideo(currentLessonQuestion!!.questionId, " ", false)
-                    )
-                }
-                if (currentLessonQuestion?.videoList?.getOrNull(0)?.downloadStatus == DOWNLOAD_STATUS.DOWNLOADED) {
-                    scope.launch {
-                        videoDownPath = AppObjectController.appDatabase.chatDao()
-                            .getCompressedVideo(currentLessonQuestion!!.questionId)
-                    }
-                } else {
-                    download()
-                }
+        if (video.isNullOrEmpty().not()) {
+            scope.launch {
+                AppObjectController.appDatabase.chatDao().insertReadingVideoDownloadedPath(
+                    ReadingVideo(currentLessonQuestion!!.questionId, " ", false)
+                )
             }
+            if (currentLessonQuestion?.videoList?.getOrNull(0)?.downloadStatus == DOWNLOAD_STATUS.DOWNLOADED) {
+                scope.launch {
+                    videoDownPath = AppObjectController.appDatabase.chatDao()
+                        .getCompressedVideo(currentLessonQuestion!!.questionId)
+                }
+            } else {
+                download()
+            }
+        }
     }
 
     private fun download() {
@@ -1039,30 +1054,29 @@ class ReadingFragmentWithoutFeedback :
     }
 
     private fun updatePracticeFeedback(practiceEngagement: PracticeEngagement) {
-        val viewHolders = binding.audioList.allViewResolvers as List<PracticeAudioViewHolder>
-        viewHolders.forEach { it ->
-            it.let {
-                if (it.isEmpty()) {
-                    it.updatePracticeEngagement(practiceEngagement)
-                }
+        for (i in 0 until binding.audioListRv.getChildCount()) {
+            val holder: RecyclerView.ViewHolder =
+                binding.audioListRv.findViewHolderForAdapterPosition(i) as PracticeAudioAdapter.PracticeAudioViewHolder
+            if (holder is PracticeAudioAdapter.PracticeAudioViewHolder && holder.isEmpty()) {
+                holder.updatePracticeEngagement(practiceEngagement)
             }
         }
     }
 
     private fun hideCancelButtonInRV() {
-        val viewHolders = binding.audioList.allViewResolvers as List<PracticeAudioViewHolder>
-        viewHolders.forEach {
-            it.hideCancelButtons()
+        for (i in 0 until binding.audioListRv.getChildCount()) {
+            val holder: PracticeAudioAdapter.PracticeAudioViewHolder =
+                binding.audioListRv.findViewHolderForAdapterPosition(i) as PracticeAudioAdapter.PracticeAudioViewHolder
+            holder.hideCancelButtons()
         }
     }
 
     private fun removePreviousAddedViewHolder() {
-        val viewHolders = binding.audioList.allViewResolvers as List<PracticeAudioViewHolder>
-        viewHolders.forEach { it ->
-            it.let {
-                if (it.isEmpty()) {
-                    binding.audioList.removeView(it)
-                }
+        for (i in 0 until binding.audioListRv.getChildCount()) {
+            val holder: PracticeAudioAdapter.PracticeAudioViewHolder =
+                binding.audioListRv.findViewHolderForAdapterPosition(i) as PracticeAudioAdapter.PracticeAudioViewHolder
+            if (holder.isEmpty()) {
+                binding.audioListRv.removeViewAt(i)
             }
         }
     }
@@ -1107,10 +1121,6 @@ class ReadingFragmentWithoutFeedback :
     }
 
     private fun initRV() {
-        val linearLayoutManager = LinearLayoutManager(activity)
-        linearLayoutManager.isSmoothScrollbarEnabled = true
-        binding.audioList.builder.setHasFixedSize(true)
-            .setLayoutManager(linearLayoutManager)
         val divider = DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL)
         divider.setDrawable(
             ColorDrawable(
@@ -1120,8 +1130,11 @@ class ReadingFragmentWithoutFeedback :
                 )
             )
         )
-        binding.audioList.addItemDecoration(divider)
-        binding.audioList.enforceSingleScrollDirection()
+        binding.audioListRv.setHasFixedSize(true)
+        binding.audioListRv.layoutManager = layoutManager
+        binding.audioListRv.addItemDecoration(divider)
+        binding.audioListRv.enforceSingleScrollDirection()
+        binding.audioListRv.adapter = praticAudioAdapter
     }
 
     private fun addAudioListRV(practiceEngagement: List<PracticeEngagement>?) {
@@ -1134,26 +1147,17 @@ class ReadingFragmentWithoutFeedback :
             binding.mergedVideo.visibility = VISIBLE
             binding.ivShare.visibility = VISIBLE
         } else {
-            binding.audioList.visibility = VISIBLE
+            binding.audioListRv.visibility = VISIBLE
         }
         practiceEngagement?.let { practiceList ->
+            val list = arrayListOf<PracticeEngagementWrapper>()
             if (practiceList.isNullOrEmpty().not()) {
+                praticAudioAdapter = PracticeAudioAdapter( context)
+                binding.audioListRv.adapter = PracticeAudioAdapter( context)
                 practiceList.forEach { practice ->
-                    binding.audioList.addView(
-                        PracticeAudioViewHolder(
-                            practice,
-                            context,
-                            practice.answerUrl
-                        ) {
-                            binding.btnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
-                        }
-                    )
-                    if (practice.practiceFeedback != null) {
-                        // binding.feedbackLayout.visibility = VISIBLE
-                        // binding.feedbackGrade.text = practice.practiceFeedback!!.grade
-                        // binding.feedbackDescription.text = practice.practiceFeedback!!.text
-                    }
+                    list.add(PracticeEngagementWrapper(practice,practice.answerUrl))
                 }
+                praticAudioAdapter?.updateList(list)
             }
         }
     }
@@ -1177,13 +1181,11 @@ class ReadingFragmentWithoutFeedback :
                     audioManager?.seekTo(userSelectedPosition.toLong())
                 }
             })
-        val viewHolders = binding.audioList.allViewResolvers as List<*>
-        viewHolders.forEach {
-            it?.let {
-                if (it is PracticeAudioViewHolder && it.isSeekBaarInitialized()) {
-                    it.initializePractiseSeekBar()
-                    // it.setSeekToZero()
-                }
+        for (i in 0 until binding.audioListRv.getChildCount()) {
+            val holder: RecyclerView.ViewHolder =
+                binding.audioListRv.findViewHolderForAdapterPosition(i) as PracticeAudioAdapter.PracticeAudioViewHolder
+            if (holder is PracticeAudioAdapter.PracticeAudioViewHolder) {
+                holder.initializePractiseSeekBar()
             }
         }
     }
@@ -1196,18 +1198,15 @@ class ReadingFragmentWithoutFeedback :
             addVideoView()
         } else {
             binding.subPractiseSubmitLayout.visibility = VISIBLE
-            binding.audioList.visibility = VISIBLE
+            binding.audioListRv.visibility = VISIBLE
             removePreviousAddedViewHolder()
-            binding.audioList.addView(
-                PracticeAudioViewHolder(null, context, filePath) {
-                    binding.btnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
-                }
-            )
+            praticAudioAdapter?.addNewItem(PracticeEngagementWrapper(null,filePath))
             initializePractiseSeekBar()
         }
         enableSubmitButton()
     }
-    private fun addVideoView(){
+
+    private fun addVideoView() {
         binding.practiseSubmitLayout.visibility = VISIBLE
         binding.videoLayout.visibility = VISIBLE
         binding.mergedVideo.visibility = VISIBLE
@@ -1309,13 +1308,14 @@ class ReadingFragmentWithoutFeedback :
                             if (File(outputFile).exists()) {
                                 File(outputFile).delete()
                             }
-                             if(android.os.Build.VERSION.SDK_INT >= 29){
-                                if(isAdded){
-                                    outputFile = saveVideoQ(requireContext(), videoDownPath?: EMPTY)?: EMPTY
+                            if (android.os.Build.VERSION.SDK_INT >= 29) {
+                                if (isAdded) {
+                                    outputFile =
+                                        saveVideoQ(requireContext(), videoDownPath ?: EMPTY)
+                                            ?: EMPTY
                                 }
-                            }
-                            else{
-                                 outputFile = getVideoFilePath()
+                            } else {
+                                outputFile = getVideoFilePath()
                             }
 
                             filePath = AppDirectory.getAudioSentFile(null).absolutePath
@@ -1438,7 +1438,8 @@ class ReadingFragmentWithoutFeedback :
             Timber.e(e)
         }
     }
-    fun inviteFriends(waIntent: Intent){
+
+    fun inviteFriends(waIntent: Intent) {
         try {
             startActivity(Intent.createChooser(waIntent, "Share with"))
         } catch (e: Exception) {
@@ -1447,11 +1448,11 @@ class ReadingFragmentWithoutFeedback :
     }
 
     fun closeRecordedView() {
-            if (binding.mergedVideo.isPlaying) {
-                binding.mergedVideo.stopPlayback()
-            }
-            binding.practiseSubmitLayout.visibility = GONE
-            disableSubmitButton()
+        if (binding.mergedVideo.isPlaying) {
+            binding.mergedVideo.stopPlayback()
+        }
+        binding.practiseSubmitLayout.visibility = GONE
+        disableSubmitButton()
     }
 
     fun playVideo() {
@@ -1522,19 +1523,20 @@ class ReadingFragmentWithoutFeedback :
         audioManager?.play(coreJoshActivity?.currentAudio!!)
         audioManager?.setProgressUpdateListener(this)
         if (filePath.isNullOrEmpty().not() && coreJoshActivity?.currentAudio == filePath) {
-
-            val viewHolders = binding.audioList.allViewResolvers as List<*>
-            viewHolders.forEach {
-                if (it is PracticeAudioViewHolder) {
-                    it.playPauseBtn.state = MaterialPlayPauseDrawable.State.Pause
+            for (i in 0 until binding.audioListRv.getChildCount()) {
+                val holder: RecyclerView.ViewHolder =
+                    binding.audioListRv.findViewHolderForAdapterPosition(i) as PracticeAudioAdapter.PracticeAudioViewHolder
+                if (holder is PracticeAudioAdapter.PracticeAudioViewHolder) {
+                    holder.setPlayPauseBtnState(MaterialPlayPauseDrawable.State.Pause)
                     binding.btnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
                 }
             }
         } else {
-            val viewHolders = binding.audioList.allViewResolvers as List<*>
-            viewHolders.forEach {
-                if (it is PracticeAudioViewHolder) {
-                    it.playPauseBtn.state = MaterialPlayPauseDrawable.State.Play
+            for (i in 0 until binding.audioListRv.getChildCount()) {
+                val holder: RecyclerView.ViewHolder =
+                    binding.audioListRv.findViewHolderForAdapterPosition(i) as PracticeAudioAdapter.PracticeAudioViewHolder
+                if (holder is PracticeAudioAdapter.PracticeAudioViewHolder) {
+                    holder.setPlayPauseBtnState(MaterialPlayPauseDrawable.State.Play)
                 }
             }
             binding.btnPlayInfo.state = MaterialPlayPauseDrawable.State.Pause
@@ -1729,6 +1731,7 @@ class ReadingFragmentWithoutFeedback :
         @JvmStatic
         fun getInstance() = ReadingFragmentWithoutFeedback()
     }
+
     private fun observeNetwork() {
         compositeDisposable.add(
             ReactiveNetwork.observeNetworkConnectivity(requireContext())
@@ -1740,8 +1743,7 @@ class ReadingFragmentWithoutFeedback :
                     if (!internetAvailableFlag && videoDownPath == null) {
                         disableSubmitButton()
                         showToast("Internet not available")
-                    }
-                    else {
+                    } else {
                         enableSubmitButton()
                     }
                 }
