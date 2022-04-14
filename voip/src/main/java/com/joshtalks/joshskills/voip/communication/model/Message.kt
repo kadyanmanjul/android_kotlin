@@ -10,10 +10,29 @@ data class Message(
 	private val channelName: String? = null,
 
 	@field:SerializedName("type")
-	private val type: Int? = null
+	private val type: Int? = null,
+
+	@field:SerializedName("timetoken")
+	private val timeToken: Long? = null
+
 ) : MessageData {
+
+	companion object {
+		fun fromMap(map: Map<String, Any?>?) : Message {
+			return Message(
+				channelName = map?.get("channel_name")?.toString(),
+				type = map?.get("type") as? Int,
+				timeToken = map?.get("timetoken") as? Long,
+			)
+		}
+	}
+
 	override fun getType(): Int {
 		return type ?: throw IncorrectCommunicationDataException("Call Type is NULL")
+	}
+
+	override fun getEventTime(): Long? {
+		return timeToken
 	}
 
 	override fun getChannel(): String {

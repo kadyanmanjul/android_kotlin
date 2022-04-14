@@ -69,7 +69,7 @@
     <uses-sdk tools:overrideLibrary="com.truecaller.android.sdk"/> <!-- for API level below 22-->
     <application
         android:name=".core.JoshApplication"
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:hardwareAccelerated="@bool/useHardwareAcceleration"
         android:hasFragileUserData="true"
         android:icon="@mipmap/ic_launcher"

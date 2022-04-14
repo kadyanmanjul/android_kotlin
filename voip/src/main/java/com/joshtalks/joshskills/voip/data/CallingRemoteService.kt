@@ -7,6 +7,11 @@ import android.os.IBinder
 import android.os.Messenger
 import android.os.SystemClock
 import android.util.Log
+import com.google.firebase.FirebaseApp
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FirebaseFirestoreSettings
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_API_HEADER
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_MENTOR_ID
 import com.joshtalks.joshskills.base.constants.PEER_TO_PEER
@@ -87,6 +92,12 @@ class CallingRemoteService : Service() {
     private var isMediatorInitialise = false
     private val pstnController by lazy { PSTNController(ioScope) }
     private val audioController: AudioControllerInterface by lazy { AudioController(ioScope) }
+    private val settings = FirebaseFirestoreSettings.Builder()
+        .setPersistenceEnabled(false)
+        .build()
+    private val firestore by lazy {
+        Firebase.firestore.apply { firestoreSettings = settings }
+    }
 
     // For Testing Purpose
     private val notificationData = TestNotification()
@@ -103,6 +114,7 @@ class CallingRemoteService : Service() {
         resetCallUIState()
         registerReceivers()
         observerPstnService()
+        listenFirestore()
         //observeAudioRouteEvents()
         voipLog?.log("Creating Service")
         showNotification()
@@ -206,6 +218,25 @@ class CallingRemoteService : Service() {
                 }
             }
         }
+    }
+
+    private fun listenFirestore() {
+        Log.d(TAG, "listenFirestore: ")
+        
+        val data = hashMapOf(
+            "name" to "Testing",
+            "age" to "32"
+        )
+        //firestore.collection("p2p-testing").document("")
+        firestore.collection("p2p-testing")
+            .document("testing-1")
+            .set(data)
+            .addOnSuccessListener {
+                Log.d(TAG, "listenFirestore: $it")
+            }
+            .addOnCanceledListener {
+                Log.d(TAG, "listenFirestore: Error")
+            }
     }
 
     override fun onBind(intent: Intent?): IBinder? {

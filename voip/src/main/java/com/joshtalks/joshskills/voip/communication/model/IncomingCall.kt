@@ -9,13 +9,32 @@ class IncomingCall (
     private val callId: Int? = null,
 
     @field:SerializedName("type")
-    private val type: Int? = null
+    private val type: Int? = null,
+
+    @field:SerializedName("timetoken")
+    private val timeToken: Long? = null
+
 ) : IncomingCallData {
+
+    companion object {
+        fun fromMap(map: Map<String, Any?>?) : IncomingCall {
+            return IncomingCall(
+                callId = map?.get("call_id") as? Int,
+                type =  map?.get("type") as? Int,
+                timeToken = map?.get("timetoken") as? Long,
+            )
+        }
+    }
+
     override fun getCallId(): Int {
         return callId ?: throw IncorrectCommunicationDataException("Incoming Call CALL ID is NULL")
     }
 
     override fun getType(): Int {
         return type ?: throw IncorrectCommunicationDataException("Incoming Call TYPE is NULL")
+    }
+
+    override fun getEventTime(): Long? {
+        return timeToken
     }
 }

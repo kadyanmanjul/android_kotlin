@@ -2,11 +2,16 @@ package com.joshtalks.joshskills.voip.communication.model
 
 sealed interface Communication {
     fun getType() : Int
+    fun getEventTime() : Long?
 }
 
 class Error(val errorType : Int = -1) : Communication {
     override fun getType(): Int {
         return errorType
+    }
+
+    override fun getEventTime(): Long? {
+       return null
     }
 }
 

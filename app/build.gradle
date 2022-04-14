@@ -466,5 +466,5 @@ dependencies {
 
     //mixpanel
     implementation "com.mixpanel.android:mixpanel-android:6.0.0"
-
+    implementation group: 'org.slf4j', name: 'slf4j-android', version: '1.7.36'
 }

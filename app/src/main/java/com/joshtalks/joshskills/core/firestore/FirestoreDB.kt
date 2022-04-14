@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.core.firestore
 
 import android.util.Log
 import com.google.firebase.Timestamp
+import com.google.firebase.firestore.FirebaseFirestoreSettings
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -15,8 +16,14 @@ import timber.log.Timber
 const val COLLECTION_AGORA_NOTIFICATION = "Notifications"
 
 object FirestoreDB {
-
-    private val firestore by lazy { Firebase.firestore }
+//    private val settings = FirebaseFirestoreSettings.Builder()
+//        .setPersistenceEnabled(true)
+//        .build()
+    private val firestore by lazy {
+        Firebase.firestore.apply {
+            //firestoreSettings = settings
+        }
+    }
     private val notificationsCollection by lazy { firestore.collection(COLLECTION_AGORA_NOTIFICATION) }
     private var notificationListener: ListenerRegistration? = null
 

@@ -7,7 +7,6 @@ import com.joshtalks.joshskills.repository.local.model.KFactor
 import com.joshtalks.joshskills.repository.server.voip.AgoraTokenRequest
 import com.joshtalks.joshskills.repository.server.voip.RequestUserLocation
 import com.joshtalks.joshskills.ui.voip.voip_rating.model.ReportModel
-import com.joshtalks.joshskills.ui.voip.new_arch.ui.report.model.ReportModel
 import java.util.HashMap
 import com.joshtalks.joshskills.ui.fpp.model.PendingRequestResponse
 import com.joshtalks.joshskills.ui.fpp.model.RecentCallResponse

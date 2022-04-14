@@ -24,6 +24,7 @@ import androidx.multidex.MultiDexApplication
 import androidx.work.impl.background.greedy.GreedyScheduler
 import com.facebook.stetho.Stetho
 import com.freshchat.consumer.sdk.Freshchat
+import com.google.firebase.FirebaseApp
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.core.notification.LocalNotificationAlarmReciever
 import com.joshtalks.joshskills.core.service.BackgroundService
@@ -45,6 +46,8 @@ import java.util.Calendar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import timber.log.Timber
 
 const val TAG = "JoshSkill"
@@ -72,7 +75,7 @@ class JoshApplication :
 
     override fun onCreate() {
         super.onCreate()
-        enableLog(Feature.VOIP)
+        //enableLog(Feature.VOIP)
         Log.d(TAG, "onCreate: STARTING MAIN PROCESS CHECK ${this.hashCode()}")
             if(isMainProcess()) {
                 Log.d(TAG, "onCreate: END ...IS MAIN PROCESS")
@@ -83,6 +86,7 @@ class JoshApplication :
                 registerBroadcastReceiver()
                 initGroups()
             } else {
+                FirebaseApp.initializeApp(this)
                 Timber.plant(Timber.DebugTree())
                 Utils.initUtils(this)
                 Stetho.initializeWithDefaults(this);

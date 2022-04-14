@@ -57,7 +57,10 @@ internal class PubNubSubscriber : SubscribeCallback() {
     override fun message(pubnub: PubNub, pnMessageResult: PNMessageResult) {
         scope.launch {
             Log.d(TAG, "message: $pnMessageResult")
-            val messageJson = pnMessageResult.message
+            val messageJson = pnMessageResult.message.asJsonObject.apply {
+                addProperty("timetoken", pnMessageResult.timetoken)
+            }
+            Log.d(TAG, "message with Time : $messageJson")
             try {
                 // So that we will ignore our own message
                 if(pnMessageResult.userMetadata == null)

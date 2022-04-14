@@ -5,6 +5,7 @@ import android.util.Log
 import com.joshtalks.joshskills.base.constants.INCOMING
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_INCOMING_CALL_ID
 import com.joshtalks.joshskills.base.constants.PEER_TO_PEER
+import com.joshtalks.joshskills.voip.FirebaseChannelService
 import com.joshtalks.joshskills.voip.audiomanager.SOUND_TYPE_RINGTONE
 import com.joshtalks.joshskills.voip.audiomanager.SoundManager
 import com.joshtalks.joshskills.voip.calldetails.CallDetails
@@ -12,15 +13,7 @@ import com.joshtalks.joshskills.voip.calldetails.IncomingCallData
 import com.joshtalks.joshskills.voip.communication.EventChannel
 import com.joshtalks.joshskills.voip.communication.PubNubChannelService
 import com.joshtalks.joshskills.voip.communication.constants.ServerConstants
-import com.joshtalks.joshskills.voip.communication.model.ChannelData
-import com.joshtalks.joshskills.voip.communication.model.Error
-import com.joshtalks.joshskills.voip.communication.model.IncomingCall
-import com.joshtalks.joshskills.voip.communication.model.MessageData
-import com.joshtalks.joshskills.voip.communication.model.NetworkAction
-import com.joshtalks.joshskills.voip.communication.model.OutgoingData
-import com.joshtalks.joshskills.voip.communication.model.PeerToPeerCallRequest
-import com.joshtalks.joshskills.voip.communication.model.Timeout
-import com.joshtalks.joshskills.voip.communication.model.UserAction
+import com.joshtalks.joshskills.voip.communication.model.*
 import com.joshtalks.joshskills.voip.constant.CALL_CONNECTED_EVENT
 import com.joshtalks.joshskills.voip.constant.CALL_DISCONNECTED
 import com.joshtalks.joshskills.voip.constant.CALL_DISCONNECT_REQUEST
@@ -61,6 +54,7 @@ private const val TAG = "CallingMediator"
 class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
     private val callingService: CallingService by lazy { AgoraCallingService }
     private val networkEventChannel: EventChannel by lazy { PubNubChannelService }
+    private val fallbackEventChannel: EventChannel by lazy { FirebaseChannelService }
     private lateinit var callDirection: CallDirection
     private var calling = PeerToPeerCalling()
     private var callType = 0
@@ -69,12 +63,18 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
     private val soundManager by lazy { SoundManager(SOUND_TYPE_RINGTONE,20000) }
     private lateinit var voipNotification : VoipNotification
     private lateinit var userNotFoundJob : Job
+    private var latestEventTimestamp = 0L
+    private val Communication?.hasMainEventChannelFailed : Boolean
+        get() {
+            return latestEventTimestamp <= (this?.getEventTime() ?: 0)
+        }
 
     init {
         scope.launch {
             mutex.withLock {
                 callingService.initCallingService()
                 networkEventChannel.initChannel()
+                fallbackEventChannel.initChannel()
                 handleWebrtcEvent()
                 handlePubnubEvent()
             }
@@ -126,6 +126,72 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
 
     private fun HashMap<String, Any>.isIncomingCall() : Boolean {
         return get(INTENT_DATA_INCOMING_CALL_ID) != null
+    }
+
+    private fun handleFallbackEvents() {
+        Log.d(TAG, "handleFallbackEvents: Pubnub Channel Failed...")
+        scope.launch {
+            fallbackEventChannel.observeChannelEvents().collectLatest { event ->
+                if(event.hasMainEventChannelFailed) {
+                    when (event) {
+                        is Error -> {
+                            /**
+                             * Reset Webrtc
+                             */
+                            voipLog?.log("Error --> $event")
+                            // TODO: Should not handle this here
+                            callingService.disconnectCall()
+                            flow.emit(event.errorType)
+                        }
+                        is ChannelData -> {
+                            /**
+                             * Join Channel
+                             */
+                            stopUserNotFoundTimer()
+                            voipLog?.log("Channel Data -> ${event}")
+                            // TODO: Use Calling Service type
+                            val request = PeerToPeerCallRequest(
+                                channelName = event.getChannel(),
+                                callToken = event.getCallingToken(),
+                                agoraUId = event.getAgoraUid()
+                            )
+                            callingService.connectCall(request)
+                            CallDetails.reset()
+                            CallDetails.set(event, callType)
+                        }
+                        is MessageData -> {
+                            voipLog?.log("Message Data -> $event")
+                            if (event.isMessageForSameChannel()) {
+                                when (event.getType()) {
+                                    ServerConstants.ONHOLD -> {
+                                        // Transfer to Service
+                                        flow.emit(HOLD)
+                                    }
+                                    ServerConstants.RESUME -> {
+                                        flow.emit(UNHOLD)
+                                    }
+                                    ServerConstants.MUTE -> {
+                                        flow.emit(MUTE)
+                                    }
+                                    ServerConstants.UNMUTE -> {
+                                        flow.emit(UNMUTE)
+                                    }
+                                    ServerConstants.DISCONNECTED -> {
+                                        callingService.disconnectCall()
+                                        flow.emit(CALL_DISCONNECT_REQUEST)
+                                    }
+                                }
+                            }
+                        }
+                        is IncomingCall -> {
+                            voipLog?.log("Incoming Call -> $event")
+                            IncomingCallData.set(event.getCallId(), PEER_TO_PEER)
+                            flow.emit(INCOMING_CALL)
+                        }
+                    }
+                }
+            }
+        }
     }
     
     private fun startUserNotFoundTimer() {
@@ -198,6 +264,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
     private fun handlePubnubEvent() {
         scope.launch {
             networkEventChannel.observeChannelEvents().collectLatest {
+                latestEventTimestamp = it.getEventTime() ?: 0L
                 when (it) {
                     is Error -> {
                         /**

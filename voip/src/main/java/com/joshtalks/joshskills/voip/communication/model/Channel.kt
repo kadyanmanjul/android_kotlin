@@ -29,8 +29,30 @@ data class Channel(
 	private val agoraUId: Int? = null,
 
 	@field:SerializedName("partner_uid")
-	private val partnerUid: Int?
+	private val partnerUid: Int?,
+
+	@field:SerializedName("timetoken")
+	private val timeToken: Long? = null
+
 ) : ChannelData {
+
+	companion object {
+		fun fromMap(map: Map<String, Any?>?) : Channel{
+			return Channel(
+				channelName = map?.get("channel_name")?.toString(),
+				partnerName = map?.get("partner_name")?.toString(),
+				topicName = map?.get("topic_name").toString(),
+				partnerImage = map?.get("partner_image")?.toString(),
+				type = map?.get("type") as? Int,
+				token = map?.get("token")?.toString(),
+				callId = map?.get("call_id") as? Int,
+				agoraUId = map?.get("agora_uid") as? Int,
+				partnerUid = map?.get("partner_uid") as? Int,
+				timeToken = map?.get("timetoken") as? Long,
+			)
+		}
+	}
+
 	override fun getCallingPartnerName(): String {
 		return partnerName ?: "Unable to fetch Name"
 	}
@@ -61,6 +83,10 @@ data class Channel(
 
 	override fun getType(): Int {
 		return type ?: throw IncorrectCommunicationDataException("Call type is NULL")
+	}
+
+	override fun getEventTime(): Long? {
+		return timeToken
 	}
 
 	override fun getChannel(): String {

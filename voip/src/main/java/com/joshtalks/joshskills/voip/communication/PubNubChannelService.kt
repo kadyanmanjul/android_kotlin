@@ -15,9 +15,11 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import okhttp3.logging.HttpLoggingInterceptor
 import timber.log.Timber
 
 private const val TAG = "PubNubChannelService"
@@ -61,6 +63,7 @@ object PubNubChannelService : EventChannel {
                         config.publishKey = BuildConfig.PUBNUB_PUB_P2P_KEY
                         config.subscribeKey = BuildConfig.PUBNUB_SUB_P2P_KEY
                         config.reconnectionPolicy = PNReconnectionPolicy.LINEAR
+                        config.httpLoggingInterceptor = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
                         //config.uuid = "Mentor.getInstance().getId()"
                         pubnub = PubNub(config)
                         pubnub?.addListener(pubNubData.callback)
@@ -95,7 +98,7 @@ object PubNubChannelService : EventChannel {
         }
     }
 
-    override fun observeChannelEvents(): Flow<Communication> {
+    override fun observeChannelEvents(): SharedFlow<Communication> {
         voipLog?.log("observeChannelEvents: $pubnub")
         return eventFlow
     }
