@@ -30,6 +30,8 @@ public class DateTimeUtils {
      */
     private static String timeZone = "UTC";
 
+    private static final Calendar calendar = Calendar.getInstance();
+
     /**
      * Enable / Disable
      *
@@ -262,6 +264,8 @@ public class DateTimeUtils {
             pattern = "MMMM dd, yyyy";
         } else if (style.equals(DateTimeStyle.MEDIUM)) {
             pattern = "MMM dd, yyyy";
+        } else if (style.equals(DateTimeStyle.SEMI_MEDIUM)) {
+            pattern = "EEE, MMM dd";
         } else if (style.equals(DateTimeStyle.SHORT)) {
             pattern = "MM/dd/yy";
         } else {
@@ -692,4 +696,49 @@ public class DateTimeUtils {
         return getTimeAgo(context, date, DateTimeStyle.AGO_FULL_STRING);
     }
 
+    public static void setTimeInMillis(long timeInMillis) {
+        calendar.setTimeInMillis(timeInMillis);
+    }
+
+    public static int getYears() {
+        if (calendar.getTimeInMillis() == 0) {
+            calendar.setTimeInMillis(System.currentTimeMillis());
+        }
+        return calendar.get(Calendar.YEAR);
+    }
+
+    public static int getMonths() {
+        if (calendar.getTimeInMillis() == 0) {
+            calendar.setTimeInMillis(System.currentTimeMillis());
+        }
+        return calendar.get(Calendar.MONTH);
+    }
+
+    public static int getDay() {
+        if (calendar.getTimeInMillis() == 0) {
+            calendar.setTimeInMillis(System.currentTimeMillis());
+        }
+        return calendar.get(Calendar.DAY_OF_MONTH);
+    }
+
+    public static int getHours() {
+        if (calendar.getTimeInMillis() == 0) {
+            calendar.setTimeInMillis(System.currentTimeMillis());
+        }
+        return calendar.get(Calendar.HOUR_OF_DAY);
+    }
+
+    public static int getMinutes() {
+        if (calendar.getTimeInMillis() == 0) {
+            calendar.setTimeInMillis(System.currentTimeMillis());
+        }
+        return calendar.get(Calendar.MINUTE);
+    }
+
+    public static int getSeconds() {
+        if (calendar.getTimeInMillis() == 0) {
+            calendar.setTimeInMillis(System.currentTimeMillis());
+        }
+        return calendar.get(Calendar.SECOND);
+    }
 }

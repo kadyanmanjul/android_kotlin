@@ -5,6 +5,7 @@
 
     <data>
 
+        <import type="android.view.View"/>
         <variable
             name="viewModel"
             type="com.joshtalks.badebhaiya.feed.FeedViewModel" />
@@ -48,7 +49,7 @@
             android:id="@+id/name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_22sdp"
+            android:layout_marginTop="@dimen/_23sdp"
             android:text="@string/name_your_room"
             android:textAppearance="@style/BB_Typography_Nunito_Sans_Semi_Bold"
             app:layout_constraintStart_toStartOf="@id/create_room_text"
@@ -63,6 +64,7 @@
             android:singleLine="true"
             android:imeOptions="actionDone"
             android:paddingBottom="@dimen/_8sdp"
+            android:paddingTop="@dimen/_1sdp"
             android:layout_marginTop="@dimen/_3sdp"
             android:hint="What do you want to talk about?"
             android:textColorHint="@color/enter_room_hint_color"
@@ -99,13 +101,14 @@
             android:layout_marginHorizontal="@dimen/_2sdp"
             android:drawableLeft="@drawable/ic_calendar"
             android:drawablePadding="@dimen/_8sdp"
+            android:textAppearance="@style/BB_Typography_Nunito_Sans_ExtraBold"
             android:paddingHorizontal="@dimen/_8sdp"
             android:paddingVertical="@dimen/_8sdp"
             android:textAlignment="viewStart"
             android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/should_start_now"
+            app:layout_constraintTop_toBottomOf="@id/topic"
             tools:text="@tools:sample/date/ddmmyy" />
 
         <com.google.android.material.button.MaterialButton
@@ -119,6 +122,7 @@
             android:drawablePadding="@dimen/_8sdp"
             android:paddingHorizontal="@dimen/_8sdp"
             android:paddingVertical="@dimen/_8sdp"
+            android:textAppearance="@style/BB_Typography_Nunito_Sans_ExtraBold"
             android:textAlignment="viewStart"
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="@+id/date_btn"
@@ -139,8 +143,26 @@
             android:text="@string/start_room"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/time_btn"
+            android:visibility="visible"
+            app:layout_constraintTop_toBottomOf="@id/should_start_now"
             tools:text="Start Room" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/schedule_btn"
+            style="@style/GreenButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="5dp"
+            android:layout_marginTop="@dimen/_15sdp"
+            android:layout_marginBottom="@dimen/_26sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:onClick="@{()->viewModel.createRoom(topic.getText().toString(), callback)}"
+            android:text="@string/schedule_room"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/time_btn"
+            tools:text="Schedule Room" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

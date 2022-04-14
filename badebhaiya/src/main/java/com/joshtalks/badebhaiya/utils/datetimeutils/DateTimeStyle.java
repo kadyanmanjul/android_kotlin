@@ -18,6 +18,10 @@ public enum DateTimeStyle {
      */
     MEDIUM,
     /**
+     * Style for time e.g Sun, Mar 6
+     */
+    SEMI_MEDIUM,
+    /**
      * Style short e.g 06/13/17
      */
     SHORT,
