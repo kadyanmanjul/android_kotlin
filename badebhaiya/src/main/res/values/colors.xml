@@ -43,6 +43,7 @@
     <color name="schedule_room_track_checked">#17E06E</color>
     <color name="schedule_room_track_unchecked">#929292</color>
     <color name="check_thumb_color">#FDF7F7</color>
+    <color name="da_grey">#DADADA</color>
     <color name="enter_room_hint_color">#BCCDD4</color>
 
 </resources>

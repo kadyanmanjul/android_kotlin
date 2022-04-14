@@ -116,6 +116,36 @@ class ConversationRoomViewModel(application: Application) : AndroidViewModel(app
         this.currentUser = currentUser
     }
 
+    fun updateInviteSentToUserForAudience(userId: Int) {
+        val audienceList = getAudienceList()
+        if (audienceList.isNullOrEmpty()) {
+            return
+        }
+        val oldAudienceList: ArraySet<LiveRoomUser> = audienceList
+        val user = oldAudienceList?.filter { it.id == userId }
+        user?.get(0)?.let { it ->
+            oldAudienceList.remove(it)
+            it.isSpeakerAccepted = false
+            oldAudienceList.add(it)
+            this.audienceList.postValue(oldAudienceList)
+        }
+    }
+
+    fun updateInviteSentToUserForSpeaker(userId: Int) {
+        val audienceList = getAudienceList()
+        if (audienceList.isNullOrEmpty()) {
+            return
+        }
+        val oldAudienceList: ArraySet<LiveRoomUser> = audienceList
+        val user = oldAudienceList?.filter { it.id == userId }
+        user?.get(0)?.let { it ->
+            oldAudienceList.remove(it)
+            it.isSpeakerAccepted = true
+            oldAudienceList.add(it)
+            this.audienceList.postValue(oldAudienceList)
+        }
+    }
+
     fun updateInviteSentToUser(userId: Int) {
         val audienceList = getAudienceList()
         if (audienceList.isNullOrEmpty()) {
@@ -154,7 +184,7 @@ class ConversationRoomViewModel(application: Application) : AndroidViewModel(app
         this.audienceList.postValue(audienceList)
     }
 
-    fun getRaisedHandAudienceSize() :Int = this.audienceList.value?.filter { it.isSpeaker==false && it.isHandRaised  }?.size ?: 0
+    fun getRaisedHandAudienceSize() :Int = this.audienceList.value?.filter { it.isSpeaker==false && it.isHandRaised && it.isSpeakerAccepted.not() }?.size ?: 0
 
     fun joinRoom(item: RoomListResponseItem) {
         jobs += viewModelScope.launch(Dispatchers.IO) {
@@ -474,7 +504,7 @@ class ConversationRoomViewModel(application: Application) : AndroidViewModel(app
         if (msg.get("is_hand_raised").asBoolean) {
             message.what = SHOW_NOTIFICATION_FOR_INVITE_SPEAKER
             message.data = Bundle().apply {
-                putString(NOTIFICATION_NAME, msg.get("name").asString)
+                putString(NOTIFICATION_NAME, msg.get("short_name").asString)
                 putInt(NOTIFICATION_ID, msg.get("id").asInt)
                 putParcelable(
                     NOTIFICATION_TYPE,
@@ -498,6 +528,9 @@ class ConversationRoomViewModel(application: Application) : AndroidViewModel(app
             val oldUser = newList.filter { it.id == userId }
             newList.removeAll(oldUser)
             oldUser[0].isHandRaised = isHandRaised
+            if (isHandRaised){
+                oldUser[0].isSpeakerAccepted = false
+            }
             newList.add(oldUser[0])
         }
         setAudienceList(newList)
@@ -514,6 +547,7 @@ class ConversationRoomViewModel(application: Application) : AndroidViewModel(app
                 userToMove.isMicOn = false
                 userToMove.isHandRaised = false
                 userToMove.isInviteSent = true
+                updateInviteSentToUserForAudience(userToMove.id!!)
                 getSpeakerList().add(userToMove)
                 setSpeakerList(getSpeakerList())
                 message.what = MOVE_TO_SPEAKER
@@ -580,6 +614,10 @@ class ConversationRoomViewModel(application: Application) : AndroidViewModel(app
     private fun inviteUserToSpeaker() {
         message.what = SHOW_NOTIFICATION_FOR_USER_TO_JOIN
         singleLiveEvent.postValue(message)
+    }
+
+    fun moveUserToAcceptedState() {
+        TODO("Not yet implemented")
     }
 
 }

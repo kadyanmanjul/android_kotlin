@@ -188,8 +188,11 @@
                 android:layout_marginEnd="@dimen/_16sdp"
                 android:layout_marginBottom="@dimen/_20sdp"
                 android:background="@drawable/circle_white"
+                android:backgroundTint="@color/da_grey"
+                android:elevation="@dimen/_2sdp"
                 android:padding="@dimen/_7sdp"
-                android:visibility="gone"
+                android:visibility="visible"
+                app:backgroundTint="@drawable/mic_selector"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:srcCompat="@drawable/ic_mic_off"
@@ -202,12 +205,13 @@
                 android:layout_marginEnd="@dimen/_16sdp"
                 android:layout_marginBottom="@dimen/_20sdp"
                 android:background="@drawable/circle_white"
+                android:elevation="@dimen/_2sdp"
                 android:padding="@dimen/_7sdp"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:srcCompat="@drawable/ic_mic_black_on"
-                tools:visibility="visible" />
+                tools:visibility="gone" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/raised_hands"

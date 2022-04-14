@@ -107,5 +107,6 @@ data class LiveRoomUser(
     var isHandRaised: Boolean = false,
     @SerializedName("user_id")
     var userId: String = EMPTY,
-    var isInviteSent: Boolean = false
+    var isInviteSent: Boolean = false,
+    var isSpeakerAccepted: Boolean = false
 ) : Parcelable

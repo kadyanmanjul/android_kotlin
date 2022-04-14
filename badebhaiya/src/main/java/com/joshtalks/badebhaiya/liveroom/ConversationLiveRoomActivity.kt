@@ -104,6 +104,8 @@ class ConversationLiveRoomActivity : BaseActivity(),
     private val vm by lazy { ViewModelProvider(this).get(ConversationRoomViewModel::class.java) }
     val speakingListForGoldenRing: androidx.collection.ArraySet<Int?> = arraySetOf()
 
+    private val badgeDrawable: BadgeDrawable by lazy { BadgeDrawable.create(this) }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         ConvoWebRtcService.initLibrary()
@@ -136,7 +138,8 @@ class ConversationLiveRoomActivity : BaseActivity(),
             val list = it.sortedBy { it.sortOrder }
             audienceAdapter?.updateFullList(list)
             if (vm.isModerator()){
-                setBadgeDrawable(vm.getRaisedHandAudienceSize())
+                val int = vm.getRaisedHandAudienceSize()
+                setBadgeDrawable(int)
             }
         })
 
@@ -246,10 +249,14 @@ class ConversationLiveRoomActivity : BaseActivity(),
 
     @SuppressLint("UnsafeOptInUsageError")
     private fun setBadgeDrawable(raisedHandAudienceSize: Int) {
-        val badgeDrawable: BadgeDrawable = BadgeDrawable.create(this)
+        Log.d(
+            "Manjul",
+            "setBadgeDrawable() called with: raisedHandAudienceSize = $raisedHandAudienceSize"
+        )
         badgeDrawable.setNumber(raisedHandAudienceSize)
-        badgeDrawable.setVisible(raisedHandAudienceSize>0)
         BadgeUtils.attachBadgeDrawable(badgeDrawable, binding.raisedHands)
+        badgeDrawable.setVisible(raisedHandAudienceSize>0)
+
     }
 
 
@@ -278,7 +285,8 @@ class ConversationLiveRoomActivity : BaseActivity(),
         }
         else {
             binding.apply {
-                muteBtn.visibility = View.GONE
+                muteBtn.visibility = View.VISIBLE
+                muteBtn.isEnabled = false
                 unmuteBtn.visibility = View.GONE
                 handUnraiseBtn.visibility = View.VISIBLE
                 handRaiseBtn.visibility = View.GONE
@@ -523,6 +531,7 @@ class ConversationLiveRoomActivity : BaseActivity(),
             false -> {
                 binding.unmuteBtn.visibility = View.GONE
                 binding.muteBtn.visibility = View.VISIBLE
+                binding.muteBtn.isEnabled = true
                 mBoundService?.muteCall()
             }
         }
@@ -816,6 +825,7 @@ class ConversationLiveRoomActivity : BaseActivity(),
                 customMessage.addProperty("id", vm.getAgoraUid())
                 customMessage.addProperty("uid", it)
                 customMessage.addProperty("action", "INVITE_SPEAKER")
+                vm.updateInviteSentToUserForSpeaker(it)
                 vm.sendCustomMessage(customMessage, it.toString())
             }
             binding.notificationBar.loadAnimationSlideUp()
@@ -898,7 +908,8 @@ class ConversationLiveRoomActivity : BaseActivity(),
         mBoundService?.setClientRole(IRtcEngineEventHandler.ClientRole.CLIENT_ROLE_AUDIENCE)
         //mBoundService?.muteCall()
         binding.apply {
-            muteBtn.visibility = View.GONE
+            muteBtn.visibility = View.VISIBLE
+            muteBtn.isEnabled = false
             unmuteBtn.visibility = View.GONE
             handUnraiseBtn.visibility = View.VISIBLE
             handRaiseBtn.visibility = View.GONE
@@ -1122,6 +1133,7 @@ class ConversationLiveRoomActivity : BaseActivity(),
                             customMessage.addProperty("uid", userUid)
                             customMessage.addProperty("is_mic_on", false)
                             customMessage.addProperty("action", "INVITE_SPEAKER")
+                            vm.updateInviteSentToUserForSpeaker(userUid!!)
                             vm.sendCustomMessage(customMessage, userUid.toString())
                         }
                         else {
@@ -1172,7 +1184,10 @@ class ConversationLiveRoomActivity : BaseActivity(),
         customMessage.addProperty("id", vm.getAgoraUid())
         customMessage.addProperty("uid", user.id)
         customMessage.addProperty("action", "INVITE_SPEAKER")
-        vm.sendCustomMessage(customMessage, user.id.toString())
+        user.id?.let {
+            vm.updateInviteSentToUserForSpeaker(user.id!!)
+            vm.sendCustomMessage(customMessage, user.id.toString())
+        }
         //TODO("Not yet implemented")
     }
 
