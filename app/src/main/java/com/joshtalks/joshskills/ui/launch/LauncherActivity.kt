@@ -367,6 +367,7 @@ class LauncherActivity : CoreJoshActivity() {
             } catch (ex: Throwable) {
             }
             try {
+                if (PrefManager.getStringValue(USER_UNIQUE_ID).isBlank()) {
                     val response =
                         AppObjectController.signUpNetworkService.getGaid(mapOf("device_id" to Utils.getDeviceId()))
                     if (response.isSuccessful && response.body() != null) {
@@ -374,6 +375,7 @@ class LauncherActivity : CoreJoshActivity() {
                     } else {
                         return@launch
                     }
+                }
             } catch (ex: Exception) {
                 LogException.catchException(ex)
                 return@launch
