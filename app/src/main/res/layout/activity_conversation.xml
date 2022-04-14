@@ -880,7 +880,7 @@
                     app:layout_constraintTop_toTopOf="parent"
                     tools:visibility="gone" />
 
-                <ImageView
+                <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/img_group_chat_btn"
                     android:layout_width="@dimen/_47sdp"
                     android:layout_height="@dimen/_47sdp"

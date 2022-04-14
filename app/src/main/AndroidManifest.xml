@@ -67,7 +67,7 @@
 
     <application
         android:name=".core.JoshApplication"
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:hardwareAccelerated="@bool/useHardwareAcceleration"
         android:hasFragileUserData="true"
         android:icon="@mipmap/ic_launcher"
