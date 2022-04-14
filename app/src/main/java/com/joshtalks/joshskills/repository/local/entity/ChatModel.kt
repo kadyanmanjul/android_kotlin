@@ -1,7 +1,13 @@
 package com.joshtalks.joshskills.repository.local.entity
 
 import android.os.Parcelable
-import androidx.room.*
+import androidx.room.ColumnInfo
+import androidx.room.Embedded
+import androidx.room.Entity
+import androidx.room.Ignore
+import androidx.room.Index
+import androidx.room.PrimaryKey
+import androidx.room.TypeConverters
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.core.EMPTY
@@ -9,10 +15,10 @@ import com.joshtalks.joshskills.repository.local.ConvertorForEngagement
 import com.joshtalks.joshskills.repository.local.entity.practise.PracticeEngagementV2
 import com.joshtalks.joshskills.ui.special_practice.model.SpecialPractice
 import com.joshtalks.joshskills.util.RandomString
+import java.util.Date
 import kotlinx.android.parcel.IgnoredOnParcel
 import kotlinx.android.parcel.Parcelize
 import kotlinx.android.parcel.RawValue
-import java.util.*
 
 @Parcelize
 @Entity(tableName = "chat_table", indices = [Index(value = ["chat_id", "conversation_id"])])
@@ -490,7 +496,8 @@ data class PracticeEngagement(
     @SerializedName("practice_date") val practiceDate: String?,
     @SerializedName("transcript_id") val transcriptId: String?,
     @SerializedName("points_list") val pointsList: List<String>?,
-    @Expose var localPath: String? = null
+    @Expose var localPath: String? = null,
+    @Expose var filePath: String? = null
 
 ) : java.io.Serializable {
     constructor() : this(
