@@ -8,6 +8,7 @@ import androidx.preference.PreferenceManager
 const val API_TOKEN = "api_token"
 const val FCM_TOKEN = "fcmToken"
 const val INSTALL_REFERRER_SYNC = "install_referrer_sync"
+const val SKIP="Skip"
 
 
 object PrefManager {

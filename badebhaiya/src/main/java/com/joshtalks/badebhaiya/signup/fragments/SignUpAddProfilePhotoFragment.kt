@@ -1,21 +1,32 @@
 package com.joshtalks.badebhaiya.signup.fragments
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.github.razir.progressbutton.DrawableButton
 import com.github.razir.progressbutton.hideProgress
 import com.github.razir.progressbutton.showProgress
 import com.joshtalks.badebhaiya.R
-import com.joshtalks.badebhaiya.core.ApiCallStatus
+import com.joshtalks.badebhaiya.core.*
 import com.joshtalks.badebhaiya.databinding.FragmentSignupAddProfilePhotoBinding
+import com.joshtalks.badebhaiya.feed.FeedActivity
+import com.joshtalks.badebhaiya.profile.ProfileActivity
+import com.joshtalks.badebhaiya.repository.model.User
+import com.joshtalks.badebhaiya.signup.SignUpActivity
 import com.joshtalks.badebhaiya.signup.UserPicChooserFragment
 import com.joshtalks.badebhaiya.signup.viewmodel.SignUpViewModel
+import kotlinx.android.synthetic.main.activity_sign_up.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class SignUpAddProfilePhotoFragment: Fragment() {
     private lateinit var binding: FragmentSignupAddProfilePhotoBinding
@@ -33,7 +44,23 @@ class SignUpAddProfilePhotoFragment: Fragment() {
     ): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_signup_add_profile_photo, container, false)
         binding.handler = this
+        activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                (activity as SignUpActivity).btnWelcome.visibility=View.VISIBLE
+                //showToast("Back Pressed")
+                activity?.run {
+                    supportFragmentManager.beginTransaction().remove(this@SignUpAddProfilePhotoFragment)
+                        .commitAllowingStateLoss()
+                    SignUpActivity.start(requireContext(), SignUpActivity.REDIRECT_TO_ENTER_PROFILE_PIC)
+                }
+            }
+        })
         return binding.root
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        showToast("Detach is called")
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -49,13 +76,15 @@ class SignUpAddProfilePhotoFragment: Fragment() {
             }
         }
     }
-
     fun submitProfilePic() {
         UserPicChooserFragment.showDialog(childFragmentManager, true)
     }
 
     fun onSkipPressed() {
         viewModel.changeSignUpStepStatusToSkip()
+        //startActivityForState()
+        PrefManager.put(SKIP,true)
+        //SignUpActivity.start(requireContext(), SignUpActivity.REDIRECT_PROFILE_SKIPPED)
     }
 
     private fun startProgress() {

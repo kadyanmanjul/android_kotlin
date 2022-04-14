@@ -32,40 +32,41 @@
             android:background="@color/conversation_room_color">
 
             <androidx.appcompat.widget.AppCompatImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="37dp"
+                android:layout_height="43dp"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:id="@+id/search"
+                android:focusable="true"
+                android:gravity="center_vertical|start"
+                android:onClick="@{() -> handler.onSearchPressed()}"
+                android:paddingTop="@dimen/_6sdp"
+                android:paddingBottom="@dimen/_6sdp"
+                android:visibility="visible"
                 app:layout_constraintBottom_toBottomOf="@+id/profile_iv"
                 app:layout_constraintEnd_toStartOf="@+id/profile_iv"
                 app:layout_constraintHorizontal_bias="0.0"
-                app:tint="@color/black"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/profile_iv"
-                android:layout_marginStart="@dimen/_14sdp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:clickable="true"
-                android:visibility="visible"
-                android:onClick="@{() -> handler.onBackPressed()}"
-                android:focusable="true"
                 app:srcCompat="@drawable/ic_search"
-                android:gravity="center_vertical|start"
-                android:paddingTop="@dimen/_6sdp"
-                android:paddingBottom="@dimen/_6sdp"/>
+                app:tint="@color/black" />
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/profile_iv"
+                initialsFontSize="@{16}"
                 android:layout_width="@dimen/_20sdp"
                 android:layout_height="@dimen/_20sdp"
                 android:onClick="@{() -> viewModel.onProfileClicked()}"
-                initialsFontSize="@{16}"
-                app:srcCompat="@drawable/ic_profile_header"
                 android:scaleType="centerCrop"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.95"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintVertical_bias="0.019"
-                app:shapeAppearanceOverlay="@style/roundedCornersImageView_6dp" />
+                app:shapeAppearanceOverlay="@style/roundedCornersImageView_6dp"
+                app:srcCompat="@drawable/ic_profile_header" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerView"
@@ -73,10 +74,11 @@
                 onFeedItemClick="@{handler}"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:paddingStart="@dimen/_8sdp"
-                android:paddingEnd="@dimen/_8sdp"
                 android:layout_marginTop="@dimen/_10sdp"
                 android:clipToPadding="false"
+                android:paddingStart="@dimen/_8sdp"
+                android:paddingEnd="@dimen/_8sdp"
+                android:paddingBottom="@{viewModel.isBadeBhaiyaSpeaker ? @dimen/_80sdp : 0}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/profile_iv"
@@ -122,9 +124,7 @@
                 android:visibility="@{User.getInstance().isSpeaker ? View.VISIBLE : View.GONE}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintVertical_bias="1.0"
-                app:layout_constraintTop_toTopOf="parent">
+                app:layout_constraintStart_toStartOf="parent">
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/create_room"
@@ -150,6 +150,13 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:visibility="visible" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_begin="20dp" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

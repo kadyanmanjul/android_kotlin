@@ -4,24 +4,25 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.badebhaiya.R
-import com.joshtalks.badebhaiya.core.EMPTY
-import com.joshtalks.badebhaiya.core.SignUpStepStatus
-import com.joshtalks.badebhaiya.core.USER_ID
+import com.joshtalks.badebhaiya.core.*
 import com.joshtalks.badebhaiya.core.io.AppDirectory
 import com.joshtalks.badebhaiya.databinding.ActivitySignUpBinding
 import com.joshtalks.badebhaiya.feed.FeedActivity
 import com.joshtalks.badebhaiya.profile.ProfileActivity
+import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.signup.fragments.SignUpAddProfilePhotoFragment
 import com.joshtalks.badebhaiya.signup.fragments.SignUpEnterNameFragment
 import com.joshtalks.badebhaiya.signup.fragments.SignUpEnterOTPFragment
 import com.joshtalks.badebhaiya.signup.fragments.SignUpEnterPhoneFragment
 import com.joshtalks.badebhaiya.signup.viewmodel.SignUpViewModel
+import com.joshtalks.badebhaiya.utils.TAG
 import com.truecaller.android.sdk.ITrueCallback
 import com.truecaller.android.sdk.TrueError
 import com.truecaller.android.sdk.TrueProfile
@@ -53,12 +54,20 @@ class SignUpActivity : AppCompatActivity() {
             binding.btnWelcome.visibility = View.GONE
             openEnterNameFragment()
         }
+        if (intent.getStringExtra(REDIRECT) == REDIRECT_TO_ENTER_PROFILE_PIC) {
+            binding.btnWelcome.visibility = View.GONE
+            openUploadProfilePicFragment()
+        }
     }
 
     private fun setOnClickListeners() {
         binding.btnWelcome.setOnClickListener {
             binding.btnWelcome.visibility = View.GONE
+            if(User.getInstance().userId.isNullOrEmpty().not() && User.getInstance().firstName.isNullOrEmpty())
+                openEnterNameFragment()
+            else
             openTrueCallerBottomSheet()
+
         }
     }
 
@@ -175,7 +184,6 @@ class SignUpActivity : AppCompatActivity() {
             TruecallerSDK.getInstance().getUserProfile(this)
         } else
         openEnterPhoneNumberFragment()
-
     }
 
     private val sdkCallback: ITrueCallback = object : ITrueCallback {
@@ -196,6 +204,8 @@ class SignUpActivity : AppCompatActivity() {
         private const val REDIRECT = ""
         const val REDIRECT_TO_PROFILE_ACTIVITY = "redirect_to_profile_activity"
         const val REDIRECT_TO_ENTER_NAME = "REDIRECT_TO_ENTER_NAME"
+        const val REDIRECT_TO_ENTER_PROFILE_PIC = "REDIRECT_TO_ENTER_PROFILE_PIC"
+        const val REDIRECT_PROFILE_SKIPPED="REDIRECT_WHEN_PROFILE_SKIPPED"
 
         @JvmStatic
         fun start(context: Context, redirect: String? = null, userId: String? = null) {

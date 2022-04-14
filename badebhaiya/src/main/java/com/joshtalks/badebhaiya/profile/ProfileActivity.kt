@@ -4,7 +4,9 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.location.LocationManager
 import android.os.Bundle
+import android.provider.ContactsContract
 import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -13,12 +15,9 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.text.HtmlCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.material.imageview.ShapeableImageView
 import com.joshtalks.badebhaiya.R
-import com.joshtalks.badebhaiya.core.EMPTY
-import com.joshtalks.badebhaiya.core.Notification
-import com.joshtalks.badebhaiya.core.NotificationHelper
-import com.joshtalks.badebhaiya.core.NotificationType
-import com.joshtalks.badebhaiya.core.USER_ID
+import com.joshtalks.badebhaiya.core.*
 import com.joshtalks.badebhaiya.databinding.ActivityProfileBinding
 import com.joshtalks.badebhaiya.feed.FeedViewModel
 import com.joshtalks.badebhaiya.feed.ROOM_DETAILS
@@ -33,7 +32,8 @@ import com.joshtalks.badebhaiya.profile.response.ProfileResponse
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomResponse
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.utils.Utils
-
+import java.util.*
+import android.provider.Settings.Global
 class ProfileActivity: AppCompatActivity(), FeedAdapter.ConversationRoomItemCallback {
 
     private val binding by lazy<ActivityProfileBinding> {
@@ -65,6 +65,19 @@ class ProfileActivity: AppCompatActivity(), FeedAdapter.ConversationRoomItemCall
     private fun setOnClickListener() {
         findViewById<AppCompatImageView>(R.id.iv_back).setOnClickListener {
             super.onBackPressed()
+        }
+         findViewById<ShapeableImageView>(R.id.iv_profile_pic).setOnClickListener{
+             if(Global.getInt(getContentResolver(), Global.AUTO_TIME) == 1)
+             {
+                 // Enabled
+                 showToast("Auto Time Enabled")
+             }
+             else
+             {
+                 // Disabed
+                 showToast("Auto Time Disabled")
+             }
+            //setAutoTimeEnabled(boolean enabled)
         }
     }
 

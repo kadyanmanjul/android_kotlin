@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -16,12 +17,14 @@ import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.core.*
 import com.joshtalks.badebhaiya.databinding.FragmentSignupEnterOtpBinding
 import com.joshtalks.badebhaiya.repository.eventbus.OTPReceivedEventBus
+import com.joshtalks.badebhaiya.signup.SignUpActivity
 import com.joshtalks.badebhaiya.signup.viewmodel.SignUpViewModel
 import com.joshtalks.badebhaiya.utils.TAG
 import com.joshtalks.codeinputview.OTPListener
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.activity_sign_up.*
 import kotlinx.android.synthetic.main.fragment_signup_enter_otp.*
 import kotlinx.android.synthetic.main.fragment_signup_enter_otp.btnNext
 import kotlinx.android.synthetic.main.fragment_signup_enter_phone.*
@@ -43,6 +46,17 @@ class SignUpEnterOTPFragment: Fragment() {
     ): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_signup_enter_otp, container, false)
         binding.handler = this
+        activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                (activity as SignUpActivity).btnWelcome.visibility=View.VISIBLE
+                //showToast("Back Pressed")
+                activity?.run {
+                    supportFragmentManager.beginTransaction().remove(this@SignUpEnterOTPFragment)
+                        .commitAllowingStateLoss()
+                }
+
+            }
+        })
         return binding.root
     }
 

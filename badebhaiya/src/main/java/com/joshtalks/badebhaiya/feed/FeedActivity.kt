@@ -11,6 +11,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.badebhaiya.R
+import com.joshtalks.badebhaiya.SearchFragment
 import com.joshtalks.badebhaiya.core.EMPTY
 import com.joshtalks.badebhaiya.core.Notification
 import com.joshtalks.badebhaiya.core.NotificationHelper
@@ -28,6 +29,7 @@ import com.joshtalks.badebhaiya.profile.ProfileActivity
 import com.joshtalks.badebhaiya.profile.request.ReminderRequest
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomResponse
 import com.joshtalks.badebhaiya.repository.model.User
+import com.joshtalks.badebhaiya.signup.fragments.SignUpEnterPhoneFragment
 import com.joshtalks.badebhaiya.utils.setUserImageOrInitials
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -56,6 +58,18 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         binding.viewModel = viewModel
         addObserver()
         initView()
+        //setOnClickListener()
+    }
+
+
+    fun onSearchPressed()
+    {
+        showToast("search Initiated")
+        supportFragmentManager.findFragmentByTag(SearchFragment::class.java.simpleName)
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.root_view,SearchFragment(),SearchFragment::class.java.simpleName)
+            .commit()
+
     }
 
     private fun initView() {

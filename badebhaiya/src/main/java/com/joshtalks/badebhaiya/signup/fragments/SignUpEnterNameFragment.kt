@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.databinding.DataBindingUtil
@@ -16,7 +17,9 @@ import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.core.isValidFullNumber
 import com.joshtalks.badebhaiya.core.showToast
 import com.joshtalks.badebhaiya.databinding.FragmentSignupEnterNameBinding
+import com.joshtalks.badebhaiya.signup.SignUpActivity
 import com.joshtalks.badebhaiya.signup.viewmodel.SignUpViewModel
+import kotlinx.android.synthetic.main.activity_sign_up.*
 import kotlinx.android.synthetic.main.fragment_signup_enter_phone.*
 
 class SignUpEnterNameFragment: Fragment() {
@@ -27,7 +30,6 @@ class SignUpEnterNameFragment: Fragment() {
     companion object {
         fun newInstance() = SignUpEnterNameFragment()
     }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -35,6 +37,17 @@ class SignUpEnterNameFragment: Fragment() {
     ): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_signup_enter_name, container, false)
         binding.handler = this
+        activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                (activity as SignUpActivity).btnWelcome.visibility=View.VISIBLE
+                //showToast("Back Pressed")
+                activity?.run {
+                    supportFragmentManager.beginTransaction().remove(this@SignUpEnterNameFragment)
+                        .commitAllowingStateLoss()
+                    SignUpActivity.start(requireContext(), SignUpActivity.REDIRECT_TO_ENTER_NAME)
+                }
+            }
+        })
         return binding.root
     }
 

@@ -1,9 +1,11 @@
 package com.joshtalks.badebhaiya.repository.model
 
+import android.util.Log
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.badebhaiya.core.AppObjectController
 import com.joshtalks.badebhaiya.core.EMPTY
 import com.joshtalks.badebhaiya.core.PrefManager
+import com.joshtalks.badebhaiya.utils.TAG
 
 const val USER_PERSISTENT_KEY = "USER_PERSISTENT_KEY"
 
@@ -36,6 +38,7 @@ data class User(
 
     fun update() {
         PrefManager.put(USER_PERSISTENT_KEY, this.toString())
+        Log.i(TAG, "${this.userId}")
     }
 
     override fun toString(): String {
