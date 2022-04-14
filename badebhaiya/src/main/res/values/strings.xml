@@ -55,6 +55,7 @@
     <string name="retry">Retry</string>
 
     <string name="hallway">Hallway</string>
+    <string name="all_rooms">All rooms</string>
     <string name="speakers">Speakers</string>
     <string name="audience">Others in the room</string>
     <string name="finding_conversation_partner">Finding Conversation Partners</string>
