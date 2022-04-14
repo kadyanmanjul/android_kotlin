@@ -31,6 +31,7 @@ import com.joshtalks.badebhaiya.profile.request.DeleteReminderRequest
 import com.joshtalks.badebhaiya.profile.request.ReminderRequest
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomResponse
 import com.joshtalks.badebhaiya.repository.model.User
+import com.joshtalks.badebhaiya.signup.fragments.SignUpEnterPhoneFragment
 import com.joshtalks.badebhaiya.utils.setUserImageOrInitials
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -98,7 +99,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         viewModel.singleLiveEvent.observe(this, androidx.lifecycle.Observer {
             Log.d("ABC2", "Data class called with data message: ${it.what} bundle : ${it.data}")
             when (it.what) {
-                OPEN_PROFILE -> {
+                OPEN_PROFILE ->{
                     it.data?.let {
                         val userId = it.getString(USER_ID, EMPTY)
                         if (userId.isNullOrBlank().not()) {
