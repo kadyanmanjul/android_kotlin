@@ -60,6 +60,7 @@ class LauncherActivity : CoreJoshActivity() {
         initApp()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_launcher)
+        LogSaver.startSavingLog() // to save logs in external storage
         animatedProgressBar()
         initAppInFirstTime()
         handleIntent()
