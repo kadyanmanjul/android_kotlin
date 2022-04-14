@@ -8,6 +8,7 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.core.EMPTY
 import com.joshtalks.badebhaiya.core.Notification
@@ -38,12 +39,11 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         ViewModelProvider(this)[FeedViewModel::class.java]
     }
 
-    private val binding by lazy<ActivityFeedBinding> {
-        DataBindingUtil.setContentView(this, R.layout.activity_feed)
-    }
+    private lateinit var binding: ActivityFeedBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_feed)
         viewModel.getRooms()
         viewModel.setIsBadeBhaiyaSpeaker()
         binding.lifecycleOwner = this
@@ -57,6 +57,16 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         User.getInstance()?.apply {
             binding.profileIv.setUserImageOrInitials(profilePicUrl,firstName.toString())
         }
+
+        binding.recyclerView.addOnScrollListener(object: RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                if (recyclerView.canScrollVertically(1).not()) {
+                    recyclerView.setPadding(resources.getDimension(R.dimen._8sdp).toInt(), 0,
+                        resources.getDimension(R.dimen._8sdp).toInt(), binding.bg.height)
+                }
+            }
+        })
     }
 
     private fun addObserver() {

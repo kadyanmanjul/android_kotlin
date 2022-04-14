@@ -40,13 +40,13 @@
                 app:tint="@color/black"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/profile_iv"
-                android:layout_marginStart="@dimen/_16sdp"
+                android:layout_marginStart="@dimen/_14sdp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:visibility="visible"
                 android:onClick="@{() -> handler.onBackPressed()}"
                 android:focusable="true"
-                app:srcCompat="@drawable/ic_arrow_back"
+                app:srcCompat="@drawable/ic_search"
                 android:gravity="center_vertical|start"
                 android:paddingTop="@dimen/_6sdp"
                 android:paddingBottom="@dimen/_6sdp"/>
@@ -76,7 +76,6 @@
                 android:paddingStart="@dimen/_8sdp"
                 android:paddingEnd="@dimen/_8sdp"
                 android:layout_marginTop="@dimen/_10sdp"
-                android:paddingBottom="@{viewModel.isBadeBhaiyaSpeaker ? @dimen/_80sdp : 0}"
                 android:clipToPadding="false"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -118,12 +117,14 @@
                 android:id="@+id/bg"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
                 android:background="@drawable/start_room_button_background"
+                android:gravity="center"
                 android:visibility="@{User.getInstance().isSpeaker ? View.VISIBLE : View.GONE}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent">
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintVertical_bias="1.0"
+                app:layout_constraintTop_toTopOf="parent">
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/create_room"

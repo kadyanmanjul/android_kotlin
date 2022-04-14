@@ -14,19 +14,18 @@
             type="com.joshtalks.badebhaiya.liveroom.bottomsheet.CreateRoom.CreateRoomCallback" />
     </data>
 
-    <androidx.appcompat.widget.LinearLayoutCompat
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/background_bottomsheet"
-        android:orientation="vertical"
-        android:paddingHorizontal="@dimen/_20sdp">
+        android:paddingHorizontal="@dimen/_20sdp"
+        android:background="@drawable/background_bottomsheet">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/line"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_6sdp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -36,10 +35,12 @@
             android:id="@+id/create_room_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_24sdp"
+            android:layout_marginTop="@dimen/_20sdp"
             android:text="@string/create_your_room"
             android:textAppearance="@style/BB_Typography_Nunito_Sans_Bold"
             android:textColor="@color/black"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/line"
             android:textSize="@dimen/_18ssp" />
 
 
@@ -47,9 +48,11 @@
             android:id="@+id/name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_14sdp"
+            android:layout_marginTop="@dimen/_22sdp"
             android:text="@string/name_your_room"
             android:textAppearance="@style/BB_Typography_Nunito_Sans_Semi_Bold"
+            app:layout_constraintStart_toStartOf="@id/create_room_text"
+            app:layout_constraintTop_toBottomOf="@id/create_room_text"
             android:textSize="@dimen/_12sdp" />
 
         <androidx.appcompat.widget.AppCompatEditText
@@ -59,11 +62,14 @@
             android:background="@null"
             android:singleLine="true"
             android:imeOptions="actionDone"
-            android:paddingTop="@dimen/_8sdp"
             android:paddingBottom="@dimen/_8sdp"
-            android:layout_marginTop="@dimen/_4sdp"
+            android:layout_marginTop="@dimen/_3sdp"
             android:hint="What do you want to talk about?"
+            android:textColorHint="@color/enter_room_hint_color"
+            android:textColor="@color/black"
             android:textSize="@dimen/_13sdp"
+            app:layout_constraintStart_toStartOf="@id/create_room_text"
+            app:layout_constraintTop_toBottomOf="@id/name"
             android:textAppearance="@style/BB_Typography_Nunito_Sans_Semi_Bold" />
 
 
@@ -71,13 +77,15 @@
             android:id="@+id/should_start_now"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_22sdp"
             android:text="Start Right Now"
             android:textAppearance="@style/BB_Typography_Nunito_Sans_ExtraBold"
             android:textSize="@dimen/_12sdp"
             android:textColor="@color/black"
             android:checked="true"
-            app:layout_constraintBottom_toBottomOf="@id/hand_raised_text"
+            android:visibility="visible"
+            app:layout_constraintStart_toStartOf="@id/create_room_text"
+            app:layout_constraintTop_toBottomOf="@id/topic"
             app:trackTint="@color/schedule_room_track_checked"
             app:thumbTint="@color/check_thumb_color"/>
 
@@ -88,12 +96,16 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_10sdp"
             android:backgroundTint="#EFF3F2"
+            android:layout_marginHorizontal="@dimen/_2sdp"
             android:drawableLeft="@drawable/ic_calendar"
             android:drawablePadding="@dimen/_8sdp"
             android:paddingHorizontal="@dimen/_8sdp"
             android:paddingVertical="@dimen/_8sdp"
             android:textAlignment="viewStart"
             android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/should_start_now"
             tools:text="@tools:sample/date/ddmmyy" />
 
         <com.google.android.material.button.MaterialButton
@@ -101,7 +113,7 @@
             style="@style/GreyButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_15sdp"
             android:backgroundTint="#EFF3F2"
             android:drawableLeft="@drawable/ic_clock"
             android:drawablePadding="@dimen/_8sdp"
@@ -109,6 +121,9 @@
             android:paddingVertical="@dimen/_8sdp"
             android:textAlignment="viewStart"
             android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="@+id/date_btn"
+            app:layout_constraintStart_toStartOf="@+id/date_btn"
+            app:layout_constraintTop_toBottomOf="@id/date_btn"
             tools:text="@tools:sample/date/hhmm" />
 
         <com.google.android.material.button.MaterialButton
@@ -117,10 +132,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="5dp"
-            android:layout_marginVertical="@dimen/_17sdp"
+            android:layout_marginTop="@dimen/_28sdp"
+            android:layout_marginBottom="@dimen/_26sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
             android:onClick="@{()->viewModel.createRoom(topic.getText().toString(), callback)}"
             android:text="@string/start_room"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/time_btn"
             tools:text="Start Room" />
 
-    </androidx.appcompat.widget.LinearLayoutCompat>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
