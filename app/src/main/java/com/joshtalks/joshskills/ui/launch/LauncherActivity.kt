@@ -368,6 +368,7 @@ class LauncherActivity : CoreJoshActivity() {
             }
             try {
                 if (PrefManager.getStringValue(USER_UNIQUE_ID).isBlank()) {
+                    PrefManager.put(USER_UNIQUE_ID, EMPTY)
                     val response =
                         AppObjectController.signUpNetworkService.getGaid(mapOf("device_id" to Utils.getDeviceId()))
                     if (response.isSuccessful && response.body() != null) {
