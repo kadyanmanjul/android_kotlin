@@ -9,4 +9,5 @@ internal interface EventChannel {
     suspend fun initChannel()
     fun emitEvent(event : OutgoingData)
     fun observeChannelEvents() : SharedFlow<Communication>
+    fun reconnect()
 }

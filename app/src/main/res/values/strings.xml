@@ -1205,6 +1205,9 @@
     <string name="notification_content" >Notification Content</string>
     <string name="accept_call">Accept</string>
     <string name="reject_call">Reject</string>
-
     <string name="submit_report_btn">Submit</string>
+    
+   <!-- Voip Preference-->
+    
+    <string name="voip_shared_pref_file_name">com.joshtalks.joshskills.new_arch_voip_shared_pref_file</string>
 </resources>

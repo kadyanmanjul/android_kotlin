@@ -26,6 +26,7 @@ import com.joshtalks.joshskills.voip.constant.RECONNECTED
 import com.joshtalks.joshskills.voip.constant.RECONNECTING
 import com.joshtalks.joshskills.voip.constant.UNHOLD
 import com.joshtalks.joshskills.voip.constant.UNMUTE
+import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.mediator.CallDirection.*
 import com.joshtalks.joshskills.voip.notification.NotificationPriority
 import com.joshtalks.joshskills.voip.notification.VoipNotification
@@ -63,7 +64,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
     private val soundManager by lazy { SoundManager(SOUND_TYPE_RINGTONE,20000) }
     private lateinit var voipNotification : VoipNotification
     private lateinit var userNotFoundJob : Job
-    private var latestEventTimestamp = 0L
+    private var latestEventTimestamp = PrefManager.getLatestPubnubMessageTime()
     private val Communication?.hasMainEventChannelFailed : Boolean
         get() {
             return latestEventTimestamp <= (this?.getEventTime() ?: 0)
@@ -77,6 +78,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                 fallbackEventChannel.initChannel()
                 handleWebrtcEvent()
                 handlePubnubEvent()
+                handleFallbackEvents()
             }
         }
     }
@@ -133,6 +135,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
         scope.launch {
             fallbackEventChannel.observeChannelEvents().collectLatest { event ->
                 if(event.hasMainEventChannelFailed) {
+                    networkEventChannel.reconnect()
                     when (event) {
                         is Error -> {
                             /**
@@ -161,6 +164,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                         }
                         is MessageData -> {
                             voipLog?.log("Message Data -> $event")
+                            Log.d(TAG, "handleFallbackEvents: $event")
                             if (event.isMessageForSameChannel()) {
                                 when (event.getType()) {
                                     ServerConstants.ONHOLD -> {
@@ -265,6 +269,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
         scope.launch {
             networkEventChannel.observeChannelEvents().collectLatest {
                 latestEventTimestamp = it.getEventTime() ?: 0L
+                PrefManager.setLatestPubnubMessageTime(latestEventTimestamp)
                 when (it) {
                     is Error -> {
                         /**

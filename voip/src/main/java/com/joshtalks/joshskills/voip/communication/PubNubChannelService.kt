@@ -7,6 +7,7 @@ import com.joshtalks.joshskills.voip.communication.model.*
 import com.joshtalks.joshskills.voip.voipLog
 import com.pubnub.api.PNConfiguration
 import com.pubnub.api.PubNub
+import com.pubnub.api.callbacks.SubscribeCallback
 import com.pubnub.api.enums.PNLogVerbosity
 import com.pubnub.api.enums.PNReconnectionPolicy
 import java.sql.Time
@@ -18,21 +19,24 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import okhttp3.logging.HttpLoggingInterceptor
+import org.jetbrains.annotations.NotNull
 import timber.log.Timber
 
 private const val TAG = "PubNubChannelService"
 
 object PubNubChannelService : EventChannel {
-    private val coroutineExceptionHandler = CoroutineExceptionHandler{_, e ->
+    private val coroutineExceptionHandler = CoroutineExceptionHandler { _, e ->
         Timber.tag("Coroutine Exception").d("Handled...")
         e.printStackTrace()
     }
-    enum class State {
-        ACTIVE,
-        INACTIVE
-    }
+
+    var isReconnecting = false
+
+    private val mutex = Mutex(false)
 
     private var pubnub: PubNub? = null
     //private val channelName = Utils.uuid
@@ -51,6 +55,26 @@ object PubNubChannelService : EventChannel {
         }
     }
 
+    override fun reconnect() {
+        Log.d(TAG, "reconnect: Pubnub")
+        if (isReconnecting.not()) {
+            Log.d(TAG, "reconnect: Pubnub .....")
+            ioScope.launch {
+                mutex.withLock {
+                    isReconnecting = true
+                    pubnub?.removeListener(pubNubData.callback)
+                    pubnub?.unsubscribeAll()
+                    pubnub?.reconnect()
+                    pubnub?.addListener(pubNubData.callback)
+                    pubnub?.subscribe()
+                        ?.channels(listOf(Utils.uuid))
+                        ?.execute()
+                    isReconnecting = false
+                }
+            }
+        }
+    }
+
     override suspend fun initChannel() {
         voipLog?.log("Start PubNub Init")
         withContext(ioScope.coroutineContext) {
@@ -63,7 +87,8 @@ object PubNubChannelService : EventChannel {
                         config.publishKey = BuildConfig.PUBNUB_PUB_P2P_KEY
                         config.subscribeKey = BuildConfig.PUBNUB_SUB_P2P_KEY
                         config.reconnectionPolicy = PNReconnectionPolicy.LINEAR
-                        config.httpLoggingInterceptor = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
+                        config.httpLoggingInterceptor =
+                            HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
                         //config.uuid = "Mentor.getInstance().getId()"
                         pubnub = PubNub(config)
                         pubnub?.addListener(pubNubData.callback)
@@ -108,12 +133,12 @@ object PubNubChannelService : EventChannel {
             pubNubData.event.collect {
                 //if (state == State.ACTIVE)
                 Log.d(TAG, "observeIncomingMessage: $it")
-                    when (it) {
-                        is MessageData -> eventFlow.emit(it)
-                        is ChannelData -> eventFlow.emit(it)
-                        is IncomingCall -> eventFlow.emit(it)
-                        is Error -> eventFlow.emit(it)
-                    }
+                when (it) {
+                    is MessageData -> eventFlow.emit(it)
+                    is ChannelData -> eventFlow.emit(it)
+                    is IncomingCall -> eventFlow.emit(it)
+                    is Error -> eventFlow.emit(it)
+                }
             }
         }
     }

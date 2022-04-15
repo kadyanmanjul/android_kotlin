@@ -19,7 +19,9 @@ sealed interface IncomingData : Communication {
     fun getChannel() : String
 }
 
-sealed interface OutgoingData : Communication
+sealed interface OutgoingData : Communication {
+    override fun getEventTime(): Long? { return null }
+}
 
 sealed interface IncomingCallData : Communication {
     fun getCallId() : Int

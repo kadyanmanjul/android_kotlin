@@ -6,7 +6,7 @@ import android.util.Log
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.preference.PreferenceManager
+import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.base.model.VoipUIState
 import com.joshtalks.joshskills.voip.constant.IDLE
@@ -47,7 +47,10 @@ class VoipPref {
 
         @Synchronized
         fun initVoipPref(context: Context) {
-            preferenceManager = PreferenceManager.getDefaultSharedPreferences(context)
+            preferenceManager = context.getSharedPreferences(
+                context.getString(R.string.voip_shared_pref_file_name),
+                Context.MODE_PRIVATE
+            )
         }
 
         fun updateCallDetails(

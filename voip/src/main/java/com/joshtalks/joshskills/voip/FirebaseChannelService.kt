@@ -4,6 +4,7 @@ import android.util.Log
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.EventListener
 import com.google.firebase.firestore.FirebaseFirestoreException
+import com.google.firebase.firestore.FirebaseFirestoreSettings
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.joshtalks.joshskills.voip.communication.EventChannel
@@ -19,8 +20,12 @@ import timber.log.Timber
 import kotlin.Exception
 
 object FirebaseChannelService : EventChannel {
+    private val settings = FirebaseFirestoreSettings.Builder()
+        .setPersistenceEnabled(false)
+        .build()
+
     private val firestore by lazy {
-        Firebase.firestore
+        Firebase.firestore.apply { firestoreSettings = settings }
     }
     private val coroutineExceptionHandler = CoroutineExceptionHandler{_, e ->
         Timber.tag("Coroutine Exception").d("Handled...")
@@ -28,14 +33,13 @@ object FirebaseChannelService : EventChannel {
     }
     private val networkDb by lazy {
         firestore.collection("p2p-testing")
-            .document("${Utils.uuid}")
+            //.document("${Utils.uuid}")
+            .document("testing-1")
     }
     private val ioScope by lazy {
         CoroutineScope(Dispatchers.IO + coroutineExceptionHandler)
     }
-    private val listener by lazy {
-        FirebaseEventListener(ioScope)
-    }
+    private val listener by lazy { FirebaseEventListener(ioScope) }
     
     override suspend fun initChannel() {
             networkDb.addSnapshotListener(listener)
@@ -47,6 +51,10 @@ object FirebaseChannelService : EventChannel {
 
     override fun observeChannelEvents(): SharedFlow<Communication> {
         return listener.observerListener()
+    }
+
+    override fun reconnect() {
+        //TODO "Not yet implemented"
     }
 }
 
@@ -65,7 +73,9 @@ class FirebaseEventListener(val scope : CoroutineScope) : EventListener<Document
         scope.launch {
             try {
                 if (value != null) {
+                    Log.d(TAG, "onEvent: ${value.data} ... $value")
                     val message = getMessage(value.data)
+                    Log.d(TAG, "onEvent: $message")
                     dataFlow.emit(message)
                 } else {
                     Log.d(TAG, "onEvent: ERROR")

@@ -45,6 +45,7 @@ import com.joshtalks.joshskills.voip.constant.SWITCHED_TO_SPEAKER
 import com.joshtalks.joshskills.voip.constant.SWITCHED_TO_WIRED
 import com.joshtalks.joshskills.voip.constant.UNHOLD
 import com.joshtalks.joshskills.voip.constant.UNMUTE
+import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.getHangUpIntent
 import com.joshtalks.joshskills.voip.getStartCallTime
 import com.joshtalks.joshskills.voip.mediator.CallServiceMediator
@@ -92,12 +93,6 @@ class CallingRemoteService : Service() {
     private var isMediatorInitialise = false
     private val pstnController by lazy { PSTNController(ioScope) }
     private val audioController: AudioControllerInterface by lazy { AudioController(ioScope) }
-    private val settings = FirebaseFirestoreSettings.Builder()
-        .setPersistenceEnabled(false)
-        .build()
-    private val firestore by lazy {
-        Firebase.firestore.apply { firestoreSettings = settings }
-    }
 
     // For Testing Purpose
     private val notificationData = TestNotification()
@@ -108,13 +103,13 @@ class CallingRemoteService : Service() {
 
     override fun onCreate() {
         super.onCreate()
+        PrefManager.initServicePref(this)
         stopServiceKillingTimer()
         updateStartCallTime(0)
         updateVoipState(IDLE)
         resetCallUIState()
         registerReceivers()
         observerPstnService()
-        listenFirestore()
         //observeAudioRouteEvents()
         voipLog?.log("Creating Service")
         showNotification()
@@ -218,25 +213,6 @@ class CallingRemoteService : Service() {
                 }
             }
         }
-    }
-
-    private fun listenFirestore() {
-        Log.d(TAG, "listenFirestore: ")
-        
-        val data = hashMapOf(
-            "name" to "Testing",
-            "age" to "32"
-        )
-        //firestore.collection("p2p-testing").document("")
-        firestore.collection("p2p-testing")
-            .document("testing-1")
-            .set(data)
-            .addOnSuccessListener {
-                Log.d(TAG, "listenFirestore: $it")
-            }
-            .addOnCanceledListener {
-                Log.d(TAG, "listenFirestore: Error")
-            }
     }
 
     override fun onBind(intent: Intent?): IBinder? {

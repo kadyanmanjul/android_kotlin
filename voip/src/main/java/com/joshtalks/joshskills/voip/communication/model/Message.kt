@@ -21,8 +21,8 @@ data class Message(
 		fun fromMap(map: Map<String, Any?>?) : Message {
 			return Message(
 				channelName = map?.get("channel_name")?.toString(),
-				type = map?.get("type") as? Int,
-				timeToken = map?.get("timetoken") as? Long,
+				type = map?.get("type")?.toString()?.toInt(),
+				timeToken = map?.get("timetoken")?.toString()?.toLong(),
 			)
 		}
 	}
