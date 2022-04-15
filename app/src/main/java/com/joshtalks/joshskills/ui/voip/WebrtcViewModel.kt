@@ -27,6 +27,7 @@ class WebrtcViewModel(application: Application) : AndroidViewModel(application) 
     val apiCallStatusLiveData: MutableLiveData<ApiCallStatus> = MutableLiveData()
     val repository: ABTestRepository by lazy { ABTestRepository() }
     val fppDialogShow :MutableLiveData<String> = MutableLiveData()
+    var isApiFired = false
 
     fun initMissedCall(partnerId: String, aFunction: (String, String, Int) -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -95,13 +96,16 @@ class WebrtcViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     fun checkShowFppDialog(map: HashMap<String, String?>){
+        if (isApiFired)
+            return
+        isApiFired = true
         var resp = EMPTY
         try {
             viewModelScope.launch(Dispatchers.IO){
-                withContext(Dispatchers.Default) {
-                    resp = AppObjectController.p2pNetworkService.showFppDialog(map).body()
-                        ?.get("show_fpp_dialog") ?: EMPTY
-                    fppDialogShow.postValue(resp)
+                resp = AppObjectController.p2pNetworkService.showFppDialog(map).body()
+                    ?.get("show_fpp_dialog") ?: EMPTY
+                withContext(Dispatchers.Main){
+                    fppDialogShow.value = resp
                 }
             }
         }catch (ex:Exception){

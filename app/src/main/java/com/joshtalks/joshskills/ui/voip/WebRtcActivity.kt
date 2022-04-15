@@ -1036,7 +1036,7 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
             time = callTime
         }
         Log.d(TAG, "showCallRatingScreen: ${time/1000}")
-        if((time/1000) in 121..1199 && fppDialog =="false" || !PrefManager.getBoolValue(IS_COURSE_BOUGHT)){
+        if(((time/1000) in 121..1199 && fppDialog =="false") || !PrefManager.getBoolValue(IS_COURSE_BOUGHT)){
             this@WebRtcActivity.finish()
         }else {
 
