@@ -119,6 +119,23 @@
                     app:lottie_imageAssetsFolder="lottie"
                     app:lottie_loop="false" />
 
+                <com.airbnb.lottie.LottieAnimationView
+                    android:id="@+id/ftu_twenty_min_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/_175sdp"
+                    android:layout_marginVertical="@dimen/_26sdp"
+                    android:visibility="gone"
+                    android:scaleX="2"
+                    android:scaleY="2"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_today_topic"
+                    app:lottie_autoPlay="false"
+                    app:lottie_fileName="lottie/not_attempted.json"
+                    app:lottie_imageAssetsFolder="lottie"
+                    app:lottie_loop="true"
+                    tools:visibility="visible"/>
+
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tv_practise_time"
                     android:layout_width="wrap_content"
@@ -195,6 +212,24 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/image_view"
                         app:layout_constraintTop_toTopOf="@+id/image_view" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/twenty_min_ftu_text"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start|center"
+                        android:layout_marginHorizontal="@dimen/_3sdp"
+                        android:text="@string/twenty_min_call_incomplete"
+                        android:textAllCaps="false"
+                        android:gravity="center"
+                        android:visibility="gone"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
+                        android:textColor="@color/black"
+                        app:layout_constraintBottom_toBottomOf="@+id/image_view"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/image_view"
+                        app:layout_constraintTop_toTopOf="@+id/image_view" />
+
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <androidx.appcompat.widget.AppCompatTextView

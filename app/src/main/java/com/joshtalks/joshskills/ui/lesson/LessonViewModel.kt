@@ -51,6 +51,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import timber.log.Timber
+import androidx.databinding.ObservableField
+import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import java.io.File
 
 
@@ -102,6 +104,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     fun isHowToSpeakClicked(event: Boolean) = howToSpeakLiveData.postValue(event)
     fun showHideSpeakingFragmentCallButtons(event: Int) = callBtnHideShowLiveData.postValue(event)
     val whatsappRemarketingLiveData = MutableLiveData<ABTestCampaignData?>()
+    val twentyMinCallFtuAbTestLiveData = MutableLiveData<ABTestCampaignData?>()
 
     val repository: ABTestRepository by lazy { ABTestRepository() }
     fun getWhatsappRemarketingCampaign(campaign: String) {
@@ -109,6 +112,15 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
             repository.getCampaignData(campaign)?.let { campaign ->
                 whatsappRemarketingLiveData.postValue(campaign)
             }
+        }
+    }
+
+    fun getTwentyMinFtuCallCampaignData(campaign: String, lessonId: Int, isDemo: Boolean = false) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.getCampaignData(campaign)?.let { campaign ->
+                twentyMinCallFtuAbTestLiveData.postValue(campaign)
+            }
+            getQuestions(lessonId, isDemo)
         }
     }
 

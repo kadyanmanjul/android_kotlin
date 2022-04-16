@@ -126,6 +126,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
     private var totalRuleList: ArrayList<Int>? = arrayListOf()
     private var introVideoControl = false
     private var isWhatsappRemarketingActive = false
+    private var isTwentyMinFtuCallActive = false
     private val adapter: LessonPagerAdapter by lazy {
         LessonPagerAdapter(
             supportFragmentManager,
@@ -217,7 +218,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         setObservers()
         viewModel.getWhatsappRemarketingCampaign(CampaignKeys.WHATSAPP_REMARKETING.name)
         viewModel.getLesson(lessonId)
-        viewModel.getQuestions(lessonId, isDemo)
+        viewModel.getTwentyMinFtuCallCampaignData(CampaignKeys.TWENTY_MIN_TARGET.NAME, lessonId, isDemo)
 
         val helpIv: ImageView = findViewById(R.id.iv_help)
         helpIv.visibility = View.GONE
@@ -568,7 +569,8 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                         viewModel.showHideSpeakingFragmentCallButtons(1)
                         showIntroVideoUi()
                         }
-                    }else{
+                 //   }else if(PrefManager.getBoolValue(REMOVE_TOOLTIP_FOR_TWENTY_MIN_CALL) || !isTwentyMinFtuCallActive){
+                    }else if(PrefManager.getBoolValue(REMOVE_TOOLTIP_FOR_TWENTY_MIN_CALL)){
                         binding.overlayLayout.visibility = View.VISIBLE
                         binding.spotlightTabGrammar.visibility = View.INVISIBLE
                         binding.spotlightTabSpeaking.visibility = View.INVISIBLE
@@ -644,6 +646,16 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
             abTestCampaignData?.let { map ->
                 isWhatsappRemarketingActive =
                     (map.variantKey == VariantKeys.WR_ENABLED.NAME) && map.variableMap?.isEnabled == true
+            }
+        }
+
+        viewModel.twentyMinCallFtuAbTestLiveData.observe(this) { abTestCampaignData ->
+            abTestCampaignData?.let { map ->
+                isTwentyMinFtuCallActive =
+                    (map.variantKey == VariantKeys.TWENTY_MIN_ENABLED.NAME) && map.variableMap?.isEnabled == true
+                isTwentyMinFtuCallActive = true
+                PrefManager.put(IS_TWENTY_MIN_CALL_ENABLED, isTwentyMinFtuCallActive)
+            //    showToast(PrefManager.getBoolValue(IS_TWENTY_MIN_CALL_ENABLED).toString())
             }
         }
     }
@@ -1159,7 +1171,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
             val lessonId = if (intent.hasExtra(LESSON_ID)) intent.getIntExtra(LESSON_ID, 0) else 0
 
             viewModel.getLesson(lessonId)
-            viewModel.getQuestions(lessonId, isDemo)
+            viewModel.getTwentyMinFtuCallCampaignData(CampaignKeys.TWENTY_MIN_TARGET.NAME, lessonId, isDemo)
         }
     }
 

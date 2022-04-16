@@ -11,6 +11,7 @@ import androidx.room.PrimaryKey
 import androidx.room.Query
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
+import com.joshtalks.joshskills.core.EMPTY
 import kotlinx.android.parcel.IgnoredOnParcel
 import kotlinx.android.parcel.Parcelize
 
@@ -46,6 +47,10 @@ data class SpeakingTopic(
     @ColumnInfo(name = "is_new_student_calls_activated")
     @SerializedName("call_new_student")
     val isNewStudentCallsActivated: Boolean = false,
+
+    @ColumnInfo(name = "call_duration_status")
+    @SerializedName("call_duration_status")
+    val callDurationStatus: String = EMPTY,
 
     @IgnoredOnParcel
     @Expose
