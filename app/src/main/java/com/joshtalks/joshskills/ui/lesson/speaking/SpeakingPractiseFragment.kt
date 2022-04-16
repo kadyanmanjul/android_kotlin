@@ -2,7 +2,9 @@ package com.joshtalks.joshskills.ui.lesson.speaking
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.PorterDuff
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,12 +13,28 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.afollestad.materialdialogs.MaterialDialog
+import com.airbnb.lottie.LottieCompositionFactory
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.HAS_SEEN_SPEAKING_TOOLTIP
+import com.joshtalks.joshskills.core.HOW_TO_SPEAK_TEXT_CLICKED
+import com.joshtalks.joshskills.core.IMPRESSION_TRUECALLER_P2P
+import com.joshtalks.joshskills.core.IS_LOGIN_VIA_TRUECALLER
+import com.joshtalks.joshskills.core.PermissionUtils
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.SPEAKING_POINTS
+import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
+import com.joshtalks.joshskills.core.abTest.ABTestFragment
+import com.joshtalks.joshskills.core.abTest.CampaignKeys
+import com.joshtalks.joshskills.core.abTest.VariantKeys
+import com.joshtalks.joshskills.core.isCallOngoing
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.core.abTest.*
 import com.joshtalks.joshskills.databinding.SpeakingPractiseFragmentBinding
 import com.joshtalks.joshskills.messaging.RxBus2
@@ -61,11 +79,12 @@ class SpeakingPractiseFragment : ABTestFragment() {
     private var questionId: String? = null
     private var haveAnyFavCaller = false
     private var isAnimationShown = false
-    private var isIntroVideoEnabled = true
+    private var isIntroVideoEnabled = false
     private var lessonNo = 0
     private var beforeTwoMinTalked = -1
     private var afterTwoMinTalked = -1
     private val twoMinutes: Int = 2
+    private var isTwentyMinFtuCallActive = PrefManager.getBoolValue(IS_TWENTY_MIN_CALL_ENABLED)
 
     private var openCallActivity: ActivityResultLauncher<Intent> = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -234,36 +253,85 @@ class SpeakingPractiseFragment : ABTestFragment() {
                         PrefManager.put(IS_FREE_TRIAL_CAMPAIGN_ACTIVE, false)
                     }
 
-                    binding.tvTodayTopic.text = response.topicName
-                    binding.tvPractiseTime.text =
-                        response.alreadyTalked.toString().plus(" / ")
-                            .plus(response.duration.toString())
-                            .plus("\n Minutes")
-                    binding.progressBar.progress = response.alreadyTalked.toFloat()
-                    binding.progressBar.progressMax = response.duration.toFloat()
+                        binding.tvTodayTopic.text = response.topicName
 
-                    binding.textView.text = if (response.duration >= 10) {
-                        getString(R.string.pp_messages, response.duration.toString())
-                    } else {
-                        getString(R.string.pp_message, response.duration.toString())
+                        if(!isTwentyMinFtuCallActive || response.callDurationStatus == "NFT"){
+                            PrefManager.put(
+                                REMOVE_TOOLTIP_FOR_TWENTY_MIN_CALL, true)
+                            binding.tvPractiseTime.text =
+                                response.alreadyTalked.toString().plus(" / ")
+                                    .plus(response.duration.toString())
+                                    .plus("\n Minutes")
+                            binding.progressBar.progress = response.alreadyTalked.toFloat()
+                            binding.progressBar.progressMax = response.duration.toFloat()
+
+                            binding.textView.text = if (response.duration >= 10) {
+                                getString(R.string.pp_messages, response.duration.toString())
+                            } else {
+                                getString(R.string.pp_message, response.duration.toString())
+                            }
+                        }else{
+                            if(binding.txtHowToSpeak.visibility == VISIBLE) {
+                                val layoutParams: ConstraintLayout.LayoutParams =
+                                    binding.txtHowToSpeak.layoutParams as ConstraintLayout.LayoutParams
+                                layoutParams.topToBottom = binding.ftuTwentyMinStatus.id
+                            }
+
+                            val layoutParams: ConstraintLayout.LayoutParams =
+                                binding.infoContainer.layoutParams as ConstraintLayout.LayoutParams
+                            if(binding.txtHowToSpeak.visibility == VISIBLE) layoutParams.topToBottom = binding.txtHowToSpeak.id
+                            else {
+                                layoutParams.topToBottom = binding.ftuTwentyMinStatus.id
+                            }
+
+                            binding.ftuTwentyMinStatus.visibility = VISIBLE
+                            binding.twentyMinFtuText.visibility = VISIBLE
+                            binding.textView.visibility = GONE
+                            binding.tvPractiseTime.visibility = View.INVISIBLE
+                            binding.imageView.visibility = GONE
+                            binding.infoContainer.getBackground().setColorFilter(
+                                Color.parseColor("#ffffff"),
+                                PorterDuff.Mode.SRC_ATOP
+                            )
+                            when(response.callDurationStatus){
+                                "NA" -> {
+                                    binding.ftuTwentyMinStatus.pauseAnimation()
+                                    binding.twentyMinFtuText.text = getString(R.string.twenty_min_call_target)
+                                    showTwentyMinAnimation("lottie/not_attempted.json")
+                                    binding.ftuTwentyMinStatus.setMinAndMaxProgress(0.0f, 0.7f)
+                                }
+                                "CO" -> {
+                                    binding.ftuTwentyMinStatus.pauseAnimation()
+                                    binding.twentyMinFtuText.text = getString(R.string.twenty_min_call_completed)
+                                    showTwentyMinAnimation("lottie/twenty_min_call_completed.json")
+                                }
+                                "AT" -> {
+                                    binding.ftuTwentyMinStatus.pauseAnimation()
+                                    binding.twentyMinFtuText.text = getString(R.string.twenty_min_call_incomplete)
+                                    showTwentyMinAnimation("lottie/twenty_call_min_missed.json")
+                                }
+                            }
+                        }
+
+                        /*binding.progressBar.visibility = GONE
+                        binding.tvPractiseTime.visibility = GONE
+                        binding.progressBarAnim.visibility = VISIBLE
+                        binding.progressBarAnim.playAnimation()*/
+                    } catch (ex: Exception) {
+                        ex.printStackTrace()
                     }
-                    /*binding.progressBar.visibility = GONE
-                    binding.tvPractiseTime.visibility = GONE
-                    binding.progressBarAnim.visibility = VISIBLE
-                    binding.progressBarAnim.playAnimation()*/
-                } catch (ex: Exception) {
-                    ex.printStackTrace()
-                }
-                binding.groupTwo.visibility = VISIBLE
-                if (response.alreadyTalked.toFloat() >= response.duration.toFloat()) {
-                    binding.progressBar.visibility = View.INVISIBLE
-                    binding.tvPractiseTime.visibility = GONE
-                    binding.progressBarAnim.visibility = VISIBLE
-                    if (!isAnimationShown) {
-                        binding.progressBarAnim.playAnimation()
-                        isAnimationShown = true
+                    binding.groupTwo.visibility = VISIBLE
+                    if ((!isTwentyMinFtuCallActive || response.callDurationStatus == "NFT") && response.alreadyTalked.toFloat() >= response.duration.toFloat()) {
+                        binding.progressBar.visibility = View.INVISIBLE
+                        binding.tvPractiseTime.visibility = GONE
+                        binding.progressBarAnim.visibility = VISIBLE
+                        if (!isAnimationShown) {
+                            binding.progressBarAnim.playAnimation()
+                            isAnimationShown = true
+                        }
                     }
-                }
+                 //   if(response.callDurationStatus == "AT" || response.callDurationStatus == "CO" || response.callDurationStatus == "NA" && isTwentyMinFtuCallActive) binding.progressBar.visibility = View.INVISIBLE
+                    if(isTwentyMinFtuCallActive && response.callDurationStatus != "NFT") binding.progressBar.visibility = View.INVISIBLE
 
                 val points = PrefManager.getStringValue(SPEAKING_POINTS, defaultValue = EMPTY)
                 if (points.isNotEmpty()) {
@@ -271,18 +339,13 @@ class SpeakingPractiseFragment : ABTestFragment() {
                     PrefManager.put(SPEAKING_POINTS, EMPTY)
                 }
 
-                if (response.alreadyTalked >= response.duration && response.isFromDb.not()) {
-                    binding.btnContinue.visibility = VISIBLE
-                    binding.btnStart.pauseAnimation()
-                    binding.btnContinue.playAnimation()
-                    lessonActivityListener?.onQuestionStatusUpdate(
-                        QUESTION_STATUS.AT,
-                        questionId
-                    )
-                    lessonActivityListener?.onSectionStatusUpdate(SPEAKING_POSITION, true)
-                } else {
-                    binding.btnStart.playAnimation()
-                }
+                    if(isTwentyMinFtuCallActive && response.callDurationStatus == "CO"){
+                        speakingSectionComplete()
+                    }else if ((!isTwentyMinFtuCallActive || response.callDurationStatus == "NFT") && response.alreadyTalked >= response.duration && response.isFromDb.not()) {
+                        speakingSectionComplete()
+                    } else {
+                        binding.btnStart.playAnimation()
+                    }
 
                 if (response.isNewStudentCallsActivated) {
                     binding.txtLabelNewStudentCalls.visibility = VISIBLE
@@ -386,6 +449,13 @@ class SpeakingPractiseFragment : ABTestFragment() {
         }
     }
 
+    private fun showTwentyMinAnimation(jsonFileLottieAnimation : String){
+        LottieCompositionFactory.fromAsset(requireContext(), jsonFileLottieAnimation)
+            .addListener {
+                binding.ftuTwentyMinStatus.setComposition(it)
+                binding.ftuTwentyMinStatus.resumeAnimation()
+            }
+    }
     private fun initDemoViews(it: Int) {
         if (it == 1 && isIntroVideoEnabled) {
             lessonActivityListener?.showIntroVideo()
@@ -413,6 +483,16 @@ class SpeakingPractiseFragment : ABTestFragment() {
         }
     }
 
+    private fun speakingSectionComplete(){
+        binding.btnContinue.visibility = VISIBLE
+        binding.btnStart.pauseAnimation()
+        binding.btnContinue.playAnimation()
+        lessonActivityListener?.onQuestionStatusUpdate(
+            QUESTION_STATUS.AT,
+            questionId
+        )
+        lessonActivityListener?.onSectionStatusUpdate(SPEAKING_POSITION, true)
+    }
     private fun showTooltip() {
         lifecycleScope.launch(Dispatchers.IO) {
             if (PrefManager.getBoolValue(HAS_SEEN_SPEAKING_TOOLTIP, defValue = false)) {

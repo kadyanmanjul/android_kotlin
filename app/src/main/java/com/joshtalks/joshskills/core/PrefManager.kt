@@ -131,6 +131,8 @@ const val DEFAULT_COURSE_ID = "151"
 const val PAID_COURSE_TEST_ID = "PAID_COURSE_TEST_ID"
 const val IS_FREE_TRIAL_CAMPAIGN_ACTIVE = "is_free_trial_campaign_active"
 const val IS_EFT_VARIENT_ENABLED = "is_eft_varient_enabled"
+const val IS_TWENTY_MIN_CALL_ENABLED = "is_twenty_min_call_enabled"
+const val REMOVE_TOOLTIP_FOR_TWENTY_MIN_CALL = "remove_toolpit_for_twenty_min_call"
 
 const val MOENGAGE_USER_CREATED = "MOENGAGE_USER_CREATED"
 
