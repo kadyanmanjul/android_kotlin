@@ -1188,6 +1188,11 @@
     <string name="unextendable_freetrial">Free Trial can\'t be extended</string>
     <string name="year_format">YYYY</string>
     <string name="allowed_name_characters">qwertyuiopasdfghjklzxcvbnm QWERTYUIOPASDFGHJKLZXCVBNM</string>
+    <string name="permission_denied_contacts">Permission to access contacts is required to invite friends.</string>
+    <string name="invite_friend_call_info">Aap apne dost ko unki pehli call kara sakte hai aur unke english bolne ke darr khatam karne me madad kar sakte hai</string>
+    <string name="invite_friend_link_sent">aapke dost ko iss app ko download karne ka link bhej diya gaya hai. \naap unko ye app download karne ke liye bol sakte hai </string>
+    <string name="invite_friend_search_hint">Kisko call krrna hai?</string>
+    <string name="call_a_friend">Call a Friend</string>
 
 
 </resources>

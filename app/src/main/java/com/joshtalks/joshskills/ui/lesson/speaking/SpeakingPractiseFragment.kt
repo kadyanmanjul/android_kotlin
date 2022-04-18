@@ -16,21 +16,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.afollestad.materialdialogs.MaterialDialog
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.HAS_SEEN_SPEAKING_TOOLTIP
-import com.joshtalks.joshskills.core.HOW_TO_SPEAK_TEXT_CLICKED
-import com.joshtalks.joshskills.core.IMPRESSION_TRUECALLER_P2P
-import com.joshtalks.joshskills.core.IS_LOGIN_VIA_TRUECALLER
-import com.joshtalks.joshskills.core.PermissionUtils
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.SPEAKING_POINTS
-import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
-import com.joshtalks.joshskills.core.abTest.ABTestFragment
-import com.joshtalks.joshskills.core.abTest.CampaignKeys
-import com.joshtalks.joshskills.core.abTest.VariantKeys
-import com.joshtalks.joshskills.core.isCallOngoing
-import com.joshtalks.joshskills.core.showToast
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.abTest.*
 import com.joshtalks.joshskills.databinding.SpeakingPractiseFragmentBinding
 import com.joshtalks.joshskills.messaging.RxBus2
@@ -41,9 +27,9 @@ import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
 import com.joshtalks.joshskills.ui.fpp.RecentCallActivity
 import com.joshtalks.joshskills.ui.group.views.JoshVoipGroupActivity
+import com.joshtalks.joshskills.ui.invite_call.InviteFriendActivity
 import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
 import com.joshtalks.joshskills.ui.lesson.LessonSpotlightState
-import com.joshtalks.joshskills.core.LESSON_ONE_TOPIC_ID
 import com.joshtalks.joshskills.ui.lesson.LessonViewModel
 import com.joshtalks.joshskills.ui.lesson.SPEAKING_POSITION
 import com.joshtalks.joshskills.ui.senior_student.SeniorStudentActivity
@@ -51,17 +37,19 @@ import com.joshtalks.joshskills.ui.voip.SearchingUserActivity
 import com.joshtalks.joshskills.ui.voip.favorite.FavoriteListActivity
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.PermissionDeniedResponse
+import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import com.karumi.dexter.listener.single.PermissionListener
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import java.util.Calendar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import com.joshtalks.joshskills.core.IS_FREE_TRIAL_CAMPAIGN_ACTIVE
+import java.util.*
 
 class SpeakingPractiseFragment : ABTestFragment() {
 
@@ -84,6 +72,7 @@ class SpeakingPractiseFragment : ABTestFragment() {
     ) {
     }
 
+
     private val viewModel: LessonViewModel by lazy {
         ViewModelProvider(requireActivity()).get(LessonViewModel::class.java)
     }
@@ -97,8 +86,9 @@ class SpeakingPractiseFragment : ABTestFragment() {
     }
 
     override fun onReceiveABTestData(abTestCampaignData: ABTestCampaignData?) {
-        abTestCampaignData?.let { map->
-            isIntroVideoEnabled = (map.variantKey == VariantKeys.SIV_ENABLED.name )&& map.variableMap?.isEnabled == true
+        abTestCampaignData?.let { map ->
+            isIntroVideoEnabled =
+                (map.variantKey == VariantKeys.SIV_ENABLED.name) && map.variableMap?.isEnabled == true
         }
         initDemoViews(lessonNo)
 
@@ -162,40 +152,38 @@ class SpeakingPractiseFragment : ABTestFragment() {
 
     private fun addObservers() {
         viewModel.lessonQuestionsLiveData.observe(
-            viewLifecycleOwner,
-            {
-                val spQuestion = it.filter { it.chatType == CHAT_TYPE.SP }.getOrNull(0)
-                questionId = spQuestion?.id
+            viewLifecycleOwner
+        ) {
+            val spQuestion = it.filter { it.chatType == CHAT_TYPE.SP }.getOrNull(0)
+            questionId = spQuestion?.id
 
-                spQuestion?.topicId?.let {
-                    this.topicId = it
-                    viewModel.getTopicDetail(it)
-                }
-                spQuestion?.lessonId?.let { viewModel.getCourseIdByLessonId(it) }
+            spQuestion?.topicId?.let {
+                this.topicId = it
+                viewModel.getTopicDetail(it)
             }
-        )
-        viewModel.lessonSpotlightStateLiveData.observe(requireActivity(), {
+            spQuestion?.lessonId?.let { viewModel.getCourseIdByLessonId(it) }
+        }
+        viewModel.lessonSpotlightStateLiveData.observe(requireActivity()) {
             when (it) {
                 LessonSpotlightState.SPEAKING_SPOTLIGHT_PART2 -> {
                     binding.nestedScrollView.scrollTo(0, binding.nestedScrollView.bottom)
                 }
             }
-        })
+        }
         viewModel.courseId.observe(
-            viewLifecycleOwner,
-            {
-                courseId = it
-            }
-        )
+            viewLifecycleOwner
+        ) {
+            courseId = it
+        }
         binding.btnStart.setOnClickListener {
-            if(PrefManager.getBoolValue(IS_LOGIN_VIA_TRUECALLER))
-            viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
+            if (PrefManager.getBoolValue(IS_LOGIN_VIA_TRUECALLER))
+                viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
             startPractise(favoriteUserCall = false)
         }
 
         binding.btnGroupCall.setOnClickListener {
-            if(PrefManager.getBoolValue(IS_LOGIN_VIA_TRUECALLER))
-            viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
+            if (PrefManager.getBoolValue(IS_LOGIN_VIA_TRUECALLER))
+                viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
             if (isCallOngoing(R.string.call_engage_initiate_call_message))
                 return@setOnClickListener
             val intent = Intent(requireActivity(), JoshVoipGroupActivity::class.java).apply {
@@ -204,126 +192,137 @@ class SpeakingPractiseFragment : ABTestFragment() {
             startActivity(intent)
         }
 
-        viewModel.speakingSpotlightClickLiveData.observe(viewLifecycleOwner, {
+        viewModel.speakingSpotlightClickLiveData.observe(viewLifecycleOwner) {
             startPractise(favoriteUserCall = false)
-        })
+        }
 
         binding.btnContinue.setOnClickListener {
             lessonActivityListener?.onNextTabCall(SPEAKING_POSITION)
         }
         binding.imgRecentCallsHistory.setOnClickListener {
-            RecentCallActivity.openRecentCallActivity(requireActivity(), CONVERSATION_ID,viewModel.isFreeTrail)
+            RecentCallActivity.openRecentCallActivity(
+                requireActivity(),
+                CONVERSATION_ID,
+                viewModel.isFreeTrail
+            )
         }
 
         viewModel.speakingTopicLiveData.observe(
-            viewLifecycleOwner,
-            { response ->
-                binding.progressView.visibility = GONE
-                if (response == null) {
-                    showToast(AppObjectController.joshApplication.getString(R.string.generic_message_for_error))
-                } else {
-                    try {
-                        if(response.alreadyTalked < twoMinutes){
-                            beforeTwoMinTalked = 0
-                            afterTwoMinTalked = 0
-                        }else if(response.alreadyTalked >= twoMinutes){
-                            beforeTwoMinTalked = afterTwoMinTalked
-                            afterTwoMinTalked = 1
-                        }
-
-                        if(beforeTwoMinTalked == 0 && afterTwoMinTalked == 1 && topicId != null && topicId == LESSON_ONE_TOPIC_ID && PrefManager.getBoolValue(
-                                IS_FREE_TRIAL_CAMPAIGN_ACTIVE
-                            )){
-                            viewModel.postGoal(GoalKeys.EFT_GT_2MIN.name, CampaignKeys.EXTEND_FREE_TRIAL.name)
-                            PrefManager.put(IS_FREE_TRIAL_CAMPAIGN_ACTIVE, false)
-                        }
-
-                        binding.tvTodayTopic.text = response.topicName
-                        binding.tvPractiseTime.text =
-                            response.alreadyTalked.toString().plus(" / ")
-                                .plus(response.duration.toString())
-                                .plus("\n Minutes")
-                        binding.progressBar.progress = response.alreadyTalked.toFloat()
-                        binding.progressBar.progressMax = response.duration.toFloat()
-
-                        binding.textView.text = if (response.duration >= 10) {
-                            getString(R.string.pp_messages, response.duration.toString())
-                        } else {
-                            getString(R.string.pp_message, response.duration.toString())
-                        }
-                        /*binding.progressBar.visibility = GONE
-                        binding.tvPractiseTime.visibility = GONE
-                        binding.progressBarAnim.visibility = VISIBLE
-                        binding.progressBarAnim.playAnimation()*/
-                    } catch (ex: Exception) {
-                        ex.printStackTrace()
-                    }
-                    binding.groupTwo.visibility = VISIBLE
-                    if (response.alreadyTalked.toFloat() >= response.duration.toFloat()) {
-                        binding.progressBar.visibility = View.INVISIBLE
-                        binding.tvPractiseTime.visibility = GONE
-                        binding.progressBarAnim.visibility = VISIBLE
-                        if (!isAnimationShown) {
-                            binding.progressBarAnim.playAnimation()
-                            isAnimationShown = true
-                        }
+            viewLifecycleOwner
+        ) { response ->
+            binding.progressView.visibility = GONE
+            if (response == null) {
+                showToast(AppObjectController.joshApplication.getString(R.string.generic_message_for_error))
+            } else {
+                try {
+                    if (response.alreadyTalked < twoMinutes) {
+                        beforeTwoMinTalked = 0
+                        afterTwoMinTalked = 0
+                    } else if (response.alreadyTalked >= twoMinutes) {
+                        beforeTwoMinTalked = afterTwoMinTalked
+                        afterTwoMinTalked = 1
                     }
 
-                    val points = PrefManager.getStringValue(SPEAKING_POINTS, defaultValue = EMPTY)
-                    if (points.isNotEmpty()) {
-                        // showSnackBar(root_view, Snackbar.LENGTH_LONG, points)
-                        PrefManager.put(SPEAKING_POINTS, EMPTY)
-                    }
-
-                    if (response.alreadyTalked >= response.duration && response.isFromDb.not()) {
-                        binding.btnContinue.visibility = VISIBLE
-                        binding.btnStart.pauseAnimation()
-                        binding.btnContinue.playAnimation()
-                        lessonActivityListener?.onQuestionStatusUpdate(
-                            QUESTION_STATUS.AT,
-                            questionId
+                    if (beforeTwoMinTalked == 0 && afterTwoMinTalked == 1 && topicId != null && topicId == LESSON_ONE_TOPIC_ID && PrefManager.getBoolValue(
+                            IS_FREE_TRIAL_CAMPAIGN_ACTIVE
                         )
-                        lessonActivityListener?.onSectionStatusUpdate(SPEAKING_POSITION, true)
-                    } else {
-                        binding.btnStart.playAnimation()
+                    ) {
+                        viewModel.postGoal(
+                            GoalKeys.EFT_GT_2MIN.name,
+                            CampaignKeys.EXTEND_FREE_TRIAL.name
+                        )
+                        PrefManager.put(IS_FREE_TRIAL_CAMPAIGN_ACTIVE, false)
                     }
 
-                    if (response.isNewStudentCallsActivated) {
-                        binding.txtLabelNewStudentCalls.visibility = VISIBLE
-                        binding.progressNewStudentCalls.visibility = VISIBLE
-                        binding.progressNewStudentCalls.progress = response.totalNewStudentCalls
-                        binding.progressNewStudentCalls.max = response.requiredNewStudentCalls
-                        binding.txtProgressCount.visibility = VISIBLE
-                        binding.txtProgressCount.text =
-                            "${response.totalNewStudentCalls}/${response.requiredNewStudentCalls}"
-                        binding.txtCallsLeft.visibility = VISIBLE
-                        binding.txtCallsLeft.text = when (val dayOfWeek =
-                            Calendar.getInstance().get(Calendar.DAY_OF_WEEK)) {
-                            Calendar.SUNDAY ->
-                                "1 day left"
-                            else -> {
-                                "${7 - (dayOfWeek - 1)} days left"
-                            }
-                        }
-                        binding.txtLabelBecomeSeniorStudent.paintFlags =
-                            binding.txtLabelBecomeSeniorStudent.paintFlags or Paint.UNDERLINE_TEXT_FLAG
-                        binding.txtLabelBecomeSeniorStudent.visibility = VISIBLE
-                        binding.btnNewStudent.visibility = VISIBLE
-                        binding.infoContainer.visibility = GONE
+                    binding.tvTodayTopic.text = response.topicName
+                    binding.tvPractiseTime.text =
+                        response.alreadyTalked.toString().plus(" / ")
+                            .plus(response.duration.toString())
+                            .plus("\n Minutes")
+                    binding.progressBar.progress = response.alreadyTalked.toFloat()
+                    binding.progressBar.progressMax = response.duration.toFloat()
+
+                    binding.textView.text = if (response.duration >= 10) {
+                        getString(R.string.pp_messages, response.duration.toString())
                     } else {
-                        binding.txtLabelNewStudentCalls.visibility = GONE
-                        binding.progressNewStudentCalls.visibility = GONE
-                        binding.txtProgressCount.visibility = GONE
-                        binding.txtCallsLeft.visibility = GONE
-                        binding.txtLabelBecomeSeniorStudent.visibility = GONE
-                        binding.btnNewStudent.visibility = GONE
-                        binding.infoContainer.visibility = VISIBLE
+                        getString(R.string.pp_message, response.duration.toString())
+                    }
+                    /*binding.progressBar.visibility = GONE
+                    binding.tvPractiseTime.visibility = GONE
+                    binding.progressBarAnim.visibility = VISIBLE
+                    binding.progressBarAnim.playAnimation()*/
+                } catch (ex: Exception) {
+                    ex.printStackTrace()
+                }
+                binding.groupTwo.visibility = VISIBLE
+                if (response.alreadyTalked.toFloat() >= response.duration.toFloat()) {
+                    binding.progressBar.visibility = View.INVISIBLE
+                    binding.tvPractiseTime.visibility = GONE
+                    binding.progressBarAnim.visibility = VISIBLE
+                    if (!isAnimationShown) {
+                        binding.progressBarAnim.playAnimation()
+                        isAnimationShown = true
                     }
                 }
+
+                val points = PrefManager.getStringValue(SPEAKING_POINTS, defaultValue = EMPTY)
+                if (points.isNotEmpty()) {
+                    // showSnackBar(root_view, Snackbar.LENGTH_LONG, points)
+                    PrefManager.put(SPEAKING_POINTS, EMPTY)
+                }
+
+                if (response.alreadyTalked >= response.duration && response.isFromDb.not()) {
+                    binding.btnContinue.visibility = VISIBLE
+                    binding.btnStart.pauseAnimation()
+                    binding.btnContinue.playAnimation()
+                    lessonActivityListener?.onQuestionStatusUpdate(
+                        QUESTION_STATUS.AT,
+                        questionId
+                    )
+                    lessonActivityListener?.onSectionStatusUpdate(SPEAKING_POSITION, true)
+                } else {
+                    binding.btnStart.playAnimation()
+                }
+
+                if (response.isNewStudentCallsActivated) {
+                    binding.txtLabelNewStudentCalls.visibility = VISIBLE
+                    binding.progressNewStudentCalls.visibility = VISIBLE
+                    binding.progressNewStudentCalls.progress = response.totalNewStudentCalls
+                    binding.progressNewStudentCalls.max = response.requiredNewStudentCalls
+                    binding.txtProgressCount.visibility = VISIBLE
+                    binding.txtProgressCount.text =
+                        "${response.totalNewStudentCalls}/${response.requiredNewStudentCalls}"
+                    binding.txtCallsLeft.visibility = VISIBLE
+                    binding.txtCallsLeft.text = when (val dayOfWeek =
+                        Calendar.getInstance().get(Calendar.DAY_OF_WEEK)) {
+                        Calendar.SUNDAY ->
+                            "1 day left"
+                        else -> {
+                            "${7 - (dayOfWeek - 1)} days left"
+                        }
+                    }
+                    binding.txtLabelBecomeSeniorStudent.paintFlags =
+                        binding.txtLabelBecomeSeniorStudent.paintFlags or Paint.UNDERLINE_TEXT_FLAG
+                    binding.txtLabelBecomeSeniorStudent.visibility = VISIBLE
+                    binding.btnNewStudent.visibility = VISIBLE
+                    binding.infoContainer.visibility = GONE
+                } else {
+                    binding.txtLabelNewStudentCalls.visibility = GONE
+                    binding.progressNewStudentCalls.visibility = GONE
+                    binding.txtProgressCount.visibility = GONE
+                    binding.txtCallsLeft.visibility = GONE
+                    binding.txtLabelBecomeSeniorStudent.visibility = GONE
+                    binding.btnNewStudent.visibility = GONE
+                    binding.infoContainer.visibility = VISIBLE
+                }
             }
-        )
+        }
         binding.btnFavorite.setOnClickListener {
-            FavoriteListActivity.openFavoriteCallerActivity(requireActivity(), CONVERSATION_ID,viewModel.isFreeTrail)
+            FavoriteListActivity.openFavoriteCallerActivity(
+                requireActivity(),
+                CONVERSATION_ID,
+                viewModel.isFreeTrail
+            )
             viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
 //            if (haveAnyFavCaller) {
 //                startPractise(favoriteUserCall = true)
@@ -335,6 +334,33 @@ class SpeakingPractiseFragment : ABTestFragment() {
 
             startPractise(favoriteUserCall = false, isNewUserCall = true)
         }
+
+        binding.btnInviteFriend.setOnClickListener {
+            if (PermissionUtils.isReadContactPermissionEnabled(requireActivity())) {
+                InviteFriendActivity.start(requireActivity())
+            } else {
+                PermissionUtils.requestReadContactPermission(requireActivity(),
+                    object : PermissionListener {
+                        override fun onPermissionGranted(p0: PermissionGrantedResponse?) {
+                            InviteFriendActivity.start(requireActivity())
+                        }
+
+                        override fun onPermissionDenied(p0: PermissionDeniedResponse?) {
+                            PermissionUtils.permissionPermanentlyDeniedDialog(
+                                requireActivity(),
+                                R.string.permission_denied_contacts
+                            )
+                        }
+
+                        override fun onPermissionRationaleShouldBeShown(
+                            p0: PermissionRequest?,
+                            p1: PermissionToken?
+                        ) {
+                            p1?.continuePermissionRequest()
+                        }
+                    })
+            }
+        }
         lifecycleScope.launchWhenStarted {
             viewModel.favoriteCaller.collect {
                 haveAnyFavCaller = it
@@ -345,16 +371,16 @@ class SpeakingPractiseFragment : ABTestFragment() {
             showNextTooltip()
         }
 
-        viewModel.lessonLiveData.observe(viewLifecycleOwner, {
+        viewModel.lessonLiveData.observe(viewLifecycleOwner) {
             lessonNo = it.lessonNo
             getCampaigns(CampaignKeys.SPEAKING_INTRODUCTION_VIDEO.name)
-        })
+        }
 
-        viewModel.introVideoCompleteLiveData.observe(viewLifecycleOwner, {
+        viewModel.introVideoCompleteLiveData.observe(viewLifecycleOwner) {
             if (it == true) {
                 binding.btnCallDemo.visibility = View.GONE
             }
-        })
+        }
     }
 
     private fun initDemoViews(it: Int) {
@@ -369,7 +395,7 @@ class SpeakingPractiseFragment : ABTestFragment() {
                 viewModel.saveIntroVideoFlowImpression(HOW_TO_SPEAK_TEXT_CLICKED)
             }
 
-            viewModel.callBtnHideShowLiveData.observe(viewLifecycleOwner, {
+            viewModel.callBtnHideShowLiveData.observe(viewLifecycleOwner) {
                 if (it == 1) {
                     binding.nestedScrollView.visibility = View.INVISIBLE
                     binding.btnCallDemo.visibility = View.VISIBLE
@@ -378,7 +404,7 @@ class SpeakingPractiseFragment : ABTestFragment() {
                     binding.nestedScrollView.visibility = View.VISIBLE
                     binding.btnCallDemo.visibility = View.GONE
                 }
-            })
+            }
         } else {
             binding.btnCallDemo.visibility = View.GONE
         }
