@@ -23,7 +23,7 @@ class ServiceNotification : NotificationData {
 
 class ConnectedNotification {
     fun notificationLayout(data: IncomingCall): RemoteViews {
-        val remoteView = RemoteViews(Utils.context?.packageName, R.layout.call_notification)
+        val remoteView = RemoteViews(Utils.context?.packageName, R.layout.call_notification_new)
         val destination="com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity"
         val callingActivity = Intent()
         val bundle = Bundle().apply {
