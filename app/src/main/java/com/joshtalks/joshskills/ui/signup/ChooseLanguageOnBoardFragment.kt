@@ -72,13 +72,13 @@ class ChooseLanguageOnBoardFragment: BaseFragment() {
                 languageAdapter.setData(it)
             }
         }
-        viewModel.eftABtestLiveData.observe(requireActivity()){ abTestCampaignData ->
+        viewModel.eftABtestLiveData.observe(viewLifecycleOwner){ abTestCampaignData ->
             abTestCampaignData?.let { map ->
                 eftActive =(map.variantKey == VariantKeys.EFT_ENABLED.NAME) && map.variableMap?.isEnabled == true
                 PrefManager.put(IS_EFT_VARIENT_ENABLED, eftActive)
             }
         }
-        viewModel.points100ABtestLiveData.observe(requireActivity()) { map ->
+        viewModel.points100ABtestLiveData.observe(viewLifecycleOwner) { map ->
             if (map != null) {
                 is100PointsActive =
                     (map.variantKey == VariantKeys.POINTS_HUNDRED_ENABLED.NAME) && map.variableMap?.isEnabled == true
