@@ -65,11 +65,10 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
     private val soundManager by lazy { SoundManager(SOUND_TYPE_RINGTONE,20000) }
     private lateinit var voipNotification : VoipNotification
     private lateinit var userNotFoundJob : Job
-    private var latestEventTimestamp = PrefManager.getLatestPubnubMessageTime()
     private var isShowingIncomingCall = false
     private val Communication?.hasMainEventChannelFailed : Boolean
         get() {
-            return latestEventTimestamp < (this?.getEventTime() ?: 0)
+            return PrefManager.getLatestPubnubMessageTime() < (this?.getEventTime() ?: 0)
         }
 
     init {
@@ -274,7 +273,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
     private fun handlePubnubEvent() {
         scope.launch {
             networkEventChannel.observeChannelEvents().collectLatest {
-                latestEventTimestamp = it.getEventTime() ?: 0L
+                val latestEventTimestamp = it.getEventTime() ?: 0L
                 PrefManager.setLatestPubnubMessageTime(latestEventTimestamp)
                 when (it) {
                     is Error -> {

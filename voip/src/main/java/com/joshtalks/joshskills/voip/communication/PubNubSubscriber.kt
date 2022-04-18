@@ -9,6 +9,7 @@ import com.joshtalks.joshskills.voip.communication.model.Communication
 import com.joshtalks.joshskills.voip.communication.model.Error
 import com.joshtalks.joshskills.voip.communication.model.IncomingCall
 import com.joshtalks.joshskills.voip.communication.model.Message
+import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.voipLog
 import com.pubnub.api.PubNub
 import com.pubnub.api.callbacks.SubscribeCallback
@@ -82,6 +83,18 @@ internal class PubNubSubscriber : SubscribeCallback() {
         Log.d(TAG, "status: Category --> ${status.category}")
         Log.d(TAG, "status: Status --> ${status}")
         when(status.category) {
+            PNConnectedCategory -> {
+                scope.launch {
+                    val lastMessageTime = PrefManager.getLatestPubnubMessageTime()
+                    Log.d(TAG, "status: Last Msg Time -> $lastMessageTime")
+                    if(lastMessageTime == 0L) {
+                        PrefManager.setLatestPubnubMessageTime(pubnub.time().sync()?.timetoken ?: 0)
+                        val afterUpdate = PrefManager.getLatestPubnubMessageTime()
+                        Log.d(TAG, "status: After Update --> $afterUpdate")
+                    }
+                    
+                }
+            }
             PNUnexpectedDisconnectCategory -> {
                 // internet got lost
                 Log.d(TAG, "status: PNUnexpectedDisconnectCategory")

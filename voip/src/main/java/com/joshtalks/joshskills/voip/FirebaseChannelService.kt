@@ -10,14 +10,14 @@ import com.google.firebase.ktx.Firebase
 import com.joshtalks.joshskills.voip.communication.EventChannel
 import com.joshtalks.joshskills.voip.communication.constants.ServerConstants
 import com.joshtalks.joshskills.voip.communication.model.*
-import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import com.joshtalks.joshskills.voip.data.local.PrefManager
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.launch
 import timber.log.Timber
 import kotlin.Exception
+
+private const val TAG = "FirebaseChannelService"
 
 object FirebaseChannelService : EventChannel {
     private val settings = FirebaseFirestoreSettings.Builder()
@@ -76,6 +76,8 @@ class FirebaseEventListener(val scope : CoroutineScope) : EventListener<Document
                     Log.d(TAG, "onEvent: ${value.data} ... $value")
                     val message = getMessage(value.data)
                     Log.d(TAG, "onEvent: $message")
+                    // TODO: RED FLAG -- Must be removed
+                    waitForValueToGetUpdated()
                     dataFlow.emit(message)
                 } else {
                     Log.d(TAG, "onEvent: ERROR")
@@ -86,6 +88,12 @@ class FirebaseEventListener(val scope : CoroutineScope) : EventListener<Document
                 dataFlow.emit(Error())
             }
         }
+    }
+
+    private suspend fun waitForValueToGetUpdated() {
+        Log.d(TAG, "waitForValueToGetUpdated: ")
+        while (PrefManager.getLatestPubnubMessageTime() == 0L)
+            delay(200)
     }
 
     private fun getMessage(messageMap : Map<String, Any?>?) : Communication {
