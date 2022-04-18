@@ -26,7 +26,6 @@ import android.graphics.Rect
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
@@ -41,7 +40,6 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.conversationRoom.liveRooms.ConversationLiveRoomActivity
 import com.joshtalks.joshskills.core.API_TOKEN
@@ -109,6 +107,7 @@ import com.joshtalks.joshskills.ui.voip.RTC_WEB_GROUP_CALL_GROUP_NAME
 import com.joshtalks.joshskills.ui.voip.RTC_WEB_GROUP_PHOTO
 import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.joshtalks.joshskills.ui.voip.analytics.VoipAnalytics.pushIncomingCallAnalytics
+import com.joshtalks.joshskills.util.Utils.jsonToMap
 import com.moengage.firebase.MoEFireBaseHelper
 import com.moengage.pushbase.MoEPushHelper
 import java.io.IOException
@@ -200,54 +199,49 @@ class FirebaseNotificationService : FirebaseMessagingService() {
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
-        Timber.tag(FirebaseNotificationService::class.java.name).e("fcm")
+        Timber.tag(FirebaseNotificationService::class.java.name).e("fcm : ${remoteMessage.data}")
 
         try {
-            if (Freshchat.isFreshchatNotification(remoteMessage)) {
+            if (Freshchat.isFreshchatNotification(remoteMessage))
                 Freshchat.handleFcmMessage(this, remoteMessage)
-            } else if (MoEPushHelper.getInstance().isFromMoEngagePlatform(remoteMessage.data)) {
-                // TODO : Custom API key check
-//            if (remoteMessage.data.containsKey("custom"))
-//                sendNotification()
-                MoEFireBaseHelper.getInstance().passPushPayload(applicationContext, remoteMessage.data)
+            else if (MoEPushHelper.getInstance().isFromMoEngagePlatform(remoteMessage.data)) {
+//                MoEFireBaseHelper.getInstance().passPushPayload(applicationContext, remoteMessage.data)
+                val map = jsonToMap(JSONObject(remoteMessage.data["gcm_alert"]))
+                processRemoteMessage(map)
                 MoEPushHelper.getInstance().logNotificationReceived(this, remoteMessage.data)
-                incomingCallNotificationAction(remoteMessage.data["gcm_title"])
                 return
             } else {
-                if (BuildConfig.DEBUG) {
-                    Timber.tag(FirebaseNotificationService::class.java.simpleName).e(
-                        Gson().toJson(remoteMessage.data)
-                    )
-                }
-
-                if (remoteMessage.data.containsKey("nType")) {
-                    val notificationTypeToken: Type =
-                        object : TypeToken<ShortNotificationObject>() {}.type
-                    val shortNc: ShortNotificationObject = AppObjectController.gsonMapper.fromJson(
-                        AppObjectController.gsonMapper.toJson(remoteMessage.data),
-                        notificationTypeToken
-                    )
-                    FirestoreDB.getNotification {
-                        val nc = it.toNotificationObject(shortNc.id)
-                        if (remoteMessage.data["nType"] == "CR") {
-                            nc.actionData?.let {
-                                pushIncomingCallAnalytics(it)
-                            }
-                        }
-                        sendNotification(nc)
-                    }
-                } else {
-                    val notificationTypeToken: Type =
-                        object : TypeToken<NotificationObject>() {}.type
-                    val nc: NotificationObject = AppObjectController.gsonMapper.fromJson(
-                        AppObjectController.gsonMapper.toJson(remoteMessage.data),
-                        notificationTypeToken
-                    )
-                    sendNotification(nc)
-                }
+                processRemoteMessage(remoteMessage.data)
             }
         } catch (ex: Exception) {
             ex.printStackTrace()
+        }
+    }
+
+    private fun processRemoteMessage(remoteData: MutableMap<String, String>) {
+        if (remoteData.containsKey("nType")) {
+            val notificationTypeToken: Type = object : TypeToken<ShortNotificationObject>() {}.type
+            val shortNc: ShortNotificationObject = AppObjectController.gsonMapper.fromJson(
+                AppObjectController.gsonMapper.toJson(remoteData),
+                notificationTypeToken
+            )
+
+            FirestoreDB.getNotification {
+                val nc = it.toNotificationObject(shortNc.id)
+                if (remoteData["nType"] == "CR") {
+                    nc.actionData?.let {
+                        pushIncomingCallAnalytics(it)
+                    }
+                }
+                sendNotification(nc)
+            }
+        } else {
+            val notificationTypeToken: Type = object : TypeToken<NotificationObject>() {}.type
+            val nc: NotificationObject = AppObjectController.gsonMapper.fromJson(
+                AppObjectController.gsonMapper.toJson(remoteData),
+                notificationTypeToken
+            )
+            sendNotification(nc)
         }
     }
 
@@ -665,39 +659,6 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     putExtra(NOTIFICATION_ID, notificationObject.id)
                 }
             }
-//            NotificationAction.GROUP_CHAT_REPLY -> {
-//                if (Mentor.getInstance().hasId()) {
-//                    notificationChannelId = groupChatChannelId
-//                    Intent(applicationContext, InboxActivity::class.java).apply {
-//                        putExtra(NOTIFICATION_ID, 10112)
-//                        putExtra(HAS_NOTIFICATION, true)
-//                        putExtra(StringContract.IntentStrings.GUID, actionData)
-//                        addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-//                    }
-//                } else return null
-//            }
-//            NotificationAction.GROUP_CHAT_VOICE_NOTE_HEARD -> {
-//                if (Mentor.getInstance().hasId()) {
-//                    notificationChannelId = groupChatChannelId
-//                    Intent(applicationContext, InboxActivity::class.java).apply {
-//                        putExtra(NOTIFICATION_ID, 10122)
-//                        putExtra(HAS_NOTIFICATION, true)
-//                        putExtra(StringContract.IntentStrings.GUID, actionData)
-//                        addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-//                    }
-//                } else return null
-//            }
-//            NotificationAction.GROUP_CHAT_PIN_MESSAGE -> {
-//                if (Mentor.getInstance().hasId()) {
-//                    notificationChannelId = groupChatChannelId
-//                    Intent(applicationContext, InboxActivity::class.java).apply {
-//                        putExtra(NOTIFICATION_ID, 10132)
-//                        putExtra(HAS_NOTIFICATION, true)
-//                        putExtra(StringContract.IntentStrings.GUID, actionData)
-//                        addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-//                    }
-//                } else return null
-//            }
             else -> {
                 return null
             }
@@ -1497,9 +1458,8 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         ): Intent? {
             return when (action) {
                 NotificationAction.INCOMING_CALL_NOTIFICATION -> {
-                    if (!PrefManager.getBoolValue(
-                            PREF_IS_CONVERSATION_ROOM_ACTIVE
-                        ) && !PrefManager.getBoolValue(USER_ACTIVE_IN_GAME)
+                    if (!PrefManager.getBoolValue(PREF_IS_CONVERSATION_ROOM_ACTIVE)
+                        && !PrefManager.getBoolValue(USER_ACTIVE_IN_GAME)
                     ) {
                         incomingCallNotificationAction(notificationObject.actionData)
                     }
