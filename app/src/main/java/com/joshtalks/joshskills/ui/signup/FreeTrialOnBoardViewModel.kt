@@ -49,16 +49,13 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
                 repository.getCampaignData(campaignEft)?.let { campaign ->
                     eftABtestLiveData.postValue(campaign)
                 }
-                val response = repository.getCampaignData(campaign)
-                if(response != null ){
-                    points100ABtestLiveData.postValue(response)
-                }else {
-                    points100ABtestLiveData.postValue(null)
+                repository.getCampaignData(campaign)?.let { campaign ->
+                    points100ABtestLiveData.postValue(campaign)
                 }
             }catch (ex : Exception){
                 ex.printStackTrace()
-                points100ABtestLiveData.postValue(null)
             }
+            getAvailableLanguages()
         }
     }
     fun saveImpression(eventName: String) {
