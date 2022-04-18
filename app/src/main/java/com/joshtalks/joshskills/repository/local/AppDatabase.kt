@@ -569,6 +569,7 @@ abstract class AppDatabase : RoomDatabase() {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("CREATE TABLE IF NOT EXISTS `phonebook_contacts` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `phoneNumber` TEXT NOT NULL, `isSynchronized` INTEGER NOT NULL DEFAULT 0, PRIMARY KEY (`id`))")
                 database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_contacts_phone_number` ON `phonebook_contacts`(`phoneNumber`)")
+                database.execSQL("ALTER TABLE `SpeakingTopic` ADD COLUMN `call_duration_status` TEXT NOT NULL DEFAULT ''")
             }
         }
 
