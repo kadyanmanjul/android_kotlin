@@ -42,6 +42,7 @@ import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
+import androidx.annotation.ColorRes
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -137,8 +138,8 @@ const val IMPRESSION_ALREADY_NEWUSER = "ALREADY_NEWUSER_LOGIN"
 const val IMPRESSION_ALREADY_NEWUSER_ENROLL = "ALREADY_NEWUSER_ENROLL"
 const val IMPRESSION_ALREADY_NEWUSER_STARTED = "ALREADY_NEWUSER_STARTEDFT"
 const val IMPRESSION_ALREADY_ALREADYUSER = "ALREADY_ALREADYUSER"
-const val IMPRESSION_TC_NOT_INSTALLED_JI_HAAN= "TC_NOT_INSTALLED_JI_HAAN"
-const val IMPRESSION_TC_NOT_INSTALLED= "TC_NOT_INSTALLED"
+const val IMPRESSION_TC_NOT_INSTALLED_JI_HAAN = "TC_NOT_INSTALLED_JI_HAAN"
+const val IMPRESSION_TC_NOT_INSTALLED = "TC_NOT_INSTALLED"
 const val IMPRESSION_TC_USER_ANOTHER = "TC_USEANOTHER"
 
 const val SPEAKING_TAB_CLICKED_FOR_FIRST_TIME = "SPEAKING_TAB_CLICKED_FOR_FIRST_TIME"
@@ -226,11 +227,15 @@ object Utils {
         return descriptionString.toRequestBody(okhttp3.MultipartBody.FORM)
     }
 
-    fun getMessageTime(epoch: Long, timeNeeded : Boolean = true, style: DateTimeStyle = DateTimeStyle.SHORT): String {
+    fun getMessageTime(
+        epoch: Long,
+        timeNeeded: Boolean = true,
+        style: DateTimeStyle = DateTimeStyle.SHORT
+    ): String {
         val date = Date(epoch)
         return when {
             DateUtils.isToday(epoch) -> {
-                if(timeNeeded)
+                if (timeNeeded)
                     CHAT_TIME_FORMATTER.format(date.time).lowercase(Locale.getDefault())
                 else
                     "Today"
@@ -1044,7 +1049,11 @@ fun CircleImageView.setImage(url: String, context: Context = AppObjectController
         .into(this)
 }
 
-fun ImageView.setPreviousProfileImage(url: String, context: Context = AppObjectController.joshApplication,loader: LottieAnimationView) {
+fun ImageView.setPreviousProfileImage(
+    url: String,
+    context: Context = AppObjectController.joshApplication,
+    loader: LottieAnimationView
+) {
     val requestOptions = RequestOptions()
         .format(DecodeFormat.PREFER_RGB_565)
         .disallowHardwareConfig().dontAnimate().encodeQuality(75)
@@ -1059,11 +1068,18 @@ fun ImageView.setPreviousProfileImage(url: String, context: Context = AppObjectC
         .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
         .into(this)
 }
+
 fun imageLoadingListener(pendingImage: LottieAnimationView): RequestListener<Drawable?>? {
     return object : RequestListener<Drawable?> {
-        override fun onLoadFailed(e: GlideException?, model: Any?, target: com.bumptech.glide.request.target.Target<Drawable?>?, isFirstResource: Boolean): Boolean {
+        override fun onLoadFailed(
+            e: GlideException?,
+            model: Any?,
+            target: com.bumptech.glide.request.target.Target<Drawable?>?,
+            isFirstResource: Boolean
+        ): Boolean {
             return false
         }
+
         override fun onResourceReady(
             resource: Drawable?,
             model: Any?,
@@ -1078,7 +1094,11 @@ fun imageLoadingListener(pendingImage: LottieAnimationView): RequestListener<Dra
     }
 }
 
-fun ImageView.setUserInitial(userName: String, dpToPx: Int = 16) {
+fun ImageView.setUserInitial(
+    userName: String,
+    dpToPx: Int = 16,
+    @ColorRes background: Int = R.color.button_color,
+) {
     val font = Typeface.createFromAsset(
         AppObjectController.joshApplication.assets,
         "fonts/OpenSans-SemiBold.ttf"
@@ -1092,7 +1112,7 @@ fun ImageView.setUserInitial(userName: String, dpToPx: Int = 16) {
         .endConfig()
         .buildRound(
             getUserNameInShort(userName),
-            ContextCompat.getColor(AppObjectController.joshApplication, R.color.button_color)
+            ContextCompat.getColor(AppObjectController.joshApplication, background)
         )
     this.background = drawable
     this.setImageDrawable(drawable)
@@ -1539,4 +1559,7 @@ fun getDefaultCountryIso(context: Context): String {
     return if (simState == 5) telephoneManager.simCountryIso.uppercase(Locale.ROOT) else Locale.getDefault().country
 }
 
-fun getFeatureLockedText(courseId: String, name: String = EMPTY) = "$name ${AppObjectController.getFirebaseRemoteConfig().getString(FREE_TRIAL_ENDED_FEATURE_LOCKED.plus(courseId))}"
+fun getFeatureLockedText(courseId: String, name: String = EMPTY) = "$name ${
+    AppObjectController.getFirebaseRemoteConfig()
+        .getString(FREE_TRIAL_ENDED_FEATURE_LOCKED.plus(courseId))
+}"
