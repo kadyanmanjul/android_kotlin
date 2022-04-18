@@ -33,8 +33,8 @@ object FirebaseChannelService : EventChannel {
     }
     private val networkDb by lazy {
         firestore.collection("p2p-testing")
-            //.document("${Utils.uuid}")
-            .document("testing-1")
+            .document("${Utils.uuid}")
+            //.document("testing-23")
     }
     private val ioScope by lazy {
         CoroutineScope(Dispatchers.IO + coroutineExceptionHandler)
@@ -89,7 +89,7 @@ class FirebaseEventListener(val scope : CoroutineScope) : EventListener<Document
     }
 
     private fun getMessage(messageMap : Map<String, Any?>?) : Communication {
-        return when(messageMap?.get("type")) {
+        return when(messageMap?.get("type").toString().toInt()) {
             ServerConstants.CHANNEL -> Channel.fromMap(messageMap)
             ServerConstants.INCOMING_CALL -> IncomingCall.fromMap(messageMap)
             else -> Message.fromMap(messageMap)

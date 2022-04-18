@@ -39,13 +39,12 @@ import com.joshtalks.joshskills.voip.constant.SWITCHED_TO_WIRED
 import com.joshtalks.joshskills.voip.constant.UNHOLD
 import com.joshtalks.joshskills.voip.constant.UNMUTE
 import com.joshtalks.joshskills.voip.voipLog
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import kotlinx.coroutines.withContext
+
 const val CONNECTING = 1
 const val ONGOING = 2
 
@@ -61,6 +60,17 @@ class VoiceCallViewModel : BaseViewModel() {
     val callStatusTest = ObservableField("Connecting...")
     val callStatus = ObservableInt(getCallStatus())
     val callData = HashMap<String,Any>()
+    private val connectCallJob by lazy {
+        viewModelScope.launch(start = CoroutineStart.LAZY) {
+            mutex.withLock {
+                if (callBar.observerVoipState().value == IDLE && isConnectionRequestSent.not()) {
+                    voipLog?.log("$callData")
+                    repository.connectCall(callData)
+                    isConnectionRequestSent = true
+                }
+            }
+        }
+    }
 
     init {
         listenUIState()
@@ -129,32 +139,34 @@ class VoiceCallViewModel : BaseViewModel() {
                 }
 
                 if(uiState.isSpeakerOn) {
-                    isSpeakerOn.set(true)
-                    repository.turnOnSpeaker()
+                    if(isSpeakerOn.get().not()) {
+                        isSpeakerOn.set(true)
+                        repository.turnOnSpeaker()
+                    }
                 } else {
-                    isSpeakerOn.set(false)
-                    repository.turnOffSpeaker()
+                    if(isSpeakerOn.get()) {
+                        isSpeakerOn.set(false)
+                        repository.turnOffSpeaker()
+                    }
                 }
 
                 if(uiState.isMute) {
-                    isMute.set(true)
-                    repository.muteCall()
+                    if(isMute.get().not()) {
+                        isMute.set(true)
+                        repository.muteCall()
+                    }
                 } else {
-                    isMute.set(false)
-                    repository.unmuteCall()
+                    if(isMute.get()) {
+                        isMute.set(false)
+                        repository.unmuteCall()
+                    }
                 }
             }
         }
     }
 
-    private suspend fun connectCall() {
-        mutex.withLock {
-            if (callBar.observerVoipState().value == IDLE && isConnectionRequestSent.not()) {
-                voipLog?.log("$callData")
-                repository.connectCall(callData)
-                isConnectionRequestSent = true
-            }
-        }
+    private fun connectCall() {
+        connectCallJob.start()
     }
 
     fun initiateCall(v: View) {}

@@ -19,9 +19,9 @@ class IncomingCall (
     companion object {
         fun fromMap(map: Map<String, Any?>?) : IncomingCall {
             return IncomingCall(
-                callId = map?.get("call_id") as? Int,
-                type =  map?.get("type") as? Int,
-                timeToken = map?.get("timetoken") as? Long,
+                callId = map?.get("call_id").toString().toInt(),
+                type =  map?.get("type").toString().toInt(),
+                timeToken = map?.get("timetoken").toString().toLong(),
             )
         }
     }

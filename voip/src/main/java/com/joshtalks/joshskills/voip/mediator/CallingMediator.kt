@@ -61,13 +61,15 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
     private var callType = 0
     private val flow by lazy { MutableSharedFlow<Int>(replay = 0) }
     private val mutex = Mutex(false)
+    private val incomingCallMutex = Mutex(false)
     private val soundManager by lazy { SoundManager(SOUND_TYPE_RINGTONE,20000) }
     private lateinit var voipNotification : VoipNotification
     private lateinit var userNotFoundJob : Job
     private var latestEventTimestamp = PrefManager.getLatestPubnubMessageTime()
+    private var isShowingIncomingCall = false
     private val Communication?.hasMainEventChannelFailed : Boolean
         get() {
-            return latestEventTimestamp <= (this?.getEventTime() ?: 0)
+            return latestEventTimestamp < (this?.getEventTime() ?: 0)
         }
 
     init {
@@ -188,9 +190,12 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                             }
                         }
                         is IncomingCall -> {
-                            voipLog?.log("Incoming Call -> $event")
-                            IncomingCallData.set(event.getCallId(), PEER_TO_PEER)
-                            flow.emit(INCOMING_CALL)
+                            if(isShowingIncomingCall.not()) {
+                                updateIncomingCallState(true)
+                                voipLog?.log("Incoming Call -> $event")
+                                IncomingCallData.set(event.getCallId(), PEER_TO_PEER)
+                                flow.emit(INCOMING_CALL)
+                            }
                         }
                     }
                 }
@@ -249,6 +254,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
             calling.onCallDecline(map)
             stopAudio()
             voipNotification.removeNotification()
+            updateIncomingCallState(false)
         }
     }
 
@@ -321,9 +327,12 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                         }
                     }
                     is IncomingCall -> {
-                        voipLog?.log("Incoming Call -> $it")
-                        IncomingCallData.set(it.getCallId(), PEER_TO_PEER)
-                        flow.emit(INCOMING_CALL)
+                        if(isShowingIncomingCall.not()) {
+                            updateIncomingCallState(true)
+                            voipLog?.log("Incoming Call -> $it")
+                            IncomingCallData.set(it.getCallId(), PEER_TO_PEER)
+                            flow.emit(INCOMING_CALL)
+                        }
                     }
                 }
             }
@@ -331,14 +340,24 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
     }
 
     private fun showIncomingNotification(incomingCall : IncomingCall) {
-        val remoteView = calling.notificationLayout(incomingCall) ?: return // TODO: might throw error
-        voipNotification = VoipNotification(remoteView , NotificationPriority.High)
-        voipNotification.show()
-        soundManager.playSound()
+            val remoteView =
+                calling.notificationLayout(incomingCall) ?: return // TODO: might throw error
+            voipNotification = VoipNotification(remoteView, NotificationPriority.High)
+            voipNotification.show()
+            soundManager.playSound()
+            scope.launch {
+                delay(20000)
+                voipNotification.removeNotification()
+                updateIncomingCallState(false)
+                stopAudio()
+            }
+    }
+
+    private fun updateIncomingCallState(isShowingIncomingCall : Boolean) {
         scope.launch {
-            delay(20000)
-            voipNotification.removeNotification()
-            stopAudio()
+            incomingCallMutex.withLock {
+                this@CallingMediator.isShowingIncomingCall = isShowingIncomingCall
+            }
         }
     }
 

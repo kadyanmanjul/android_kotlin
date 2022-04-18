@@ -64,17 +64,11 @@ import com.joshtalks.joshskills.voip.updateStartCallTime
 import com.joshtalks.joshskills.voip.updateUserHoldState
 import com.joshtalks.joshskills.voip.updateVoipState
 import com.joshtalks.joshskills.voip.voipLog
+import kotlinx.coroutines.*
 import java.time.Duration
 import java.util.concurrent.TimeUnit
-import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
 import timber.log.Timber
 
 private const val TAG = "CallingRemoteService"

@@ -43,12 +43,12 @@ data class Channel(
 				partnerName = map?.get("partner_name")?.toString(),
 				topicName = map?.get("topic_name").toString(),
 				partnerImage = map?.get("partner_image")?.toString(),
-				type = map?.get("type") as? Int,
+				type = map?.get("type").toString().toInt(),
 				token = map?.get("token")?.toString(),
-				callId = map?.get("call_id") as? Int,
-				agoraUId = map?.get("agora_uid") as? Int,
-				partnerUid = map?.get("partner_uid") as? Int,
-				timeToken = map?.get("timetoken") as? Long,
+				callId = map?.get("call_id").toString().toInt(),
+				agoraUId = map?.get("agora_uid").toString().toInt(),
+				partnerUid = map?.get("partner_uid").toString().toInt(),
+				timeToken = map?.get("timetoken").toString().toLong(),
 			)
 		}
 	}
