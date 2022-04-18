@@ -1,11 +1,7 @@
 package com.joshtalks.joshskills.repository.local
 
 import android.content.Context
-import androidx.room.Database
-import androidx.room.Room
-import androidx.room.RoomDatabase
-import androidx.room.TypeConverter
-import androidx.room.TypeConverters
+import androidx.room.*
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.google.gson.reflect.TypeToken
@@ -23,63 +19,15 @@ import com.joshtalks.joshskills.quizgame.analytics.data.GameAnalyticsDao
 import com.joshtalks.joshskills.quizgame.analytics.data.GameAnalyticsEntity
 import com.joshtalks.joshskills.repository.local.dao.*
 import com.joshtalks.joshskills.repository.local.dao.reminder.ReminderDao
-import com.joshtalks.joshskills.repository.local.entity.AudioType
-import com.joshtalks.joshskills.repository.local.entity.AwardMentorModel
-import com.joshtalks.joshskills.repository.local.entity.AwardMentorModelDao
-import com.joshtalks.joshskills.repository.local.entity.AwardTypes
-import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
-import com.joshtalks.joshskills.repository.local.entity.CExamStatus
-import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
-import com.joshtalks.joshskills.repository.local.entity.ChatModel
-import com.joshtalks.joshskills.repository.local.entity.Course
-import com.joshtalks.joshskills.repository.local.entity.CourseDao
-import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
-import com.joshtalks.joshskills.repository.local.entity.EXPECTED_ENGAGE_TYPE
-import com.joshtalks.joshskills.repository.local.entity.FeedbackEngageModel
-import com.joshtalks.joshskills.repository.local.entity.FeedbackEngageModelDao
-import com.joshtalks.joshskills.repository.local.entity.ImageType
-import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
-import com.joshtalks.joshskills.repository.local.entity.LessonMaterialType
-import com.joshtalks.joshskills.repository.local.entity.LessonModel
-import com.joshtalks.joshskills.repository.local.entity.LessonQuestion
-import com.joshtalks.joshskills.repository.local.entity.LessonQuestionDao
-import com.joshtalks.joshskills.repository.local.entity.LessonQuestionType
-import com.joshtalks.joshskills.repository.local.entity.MESSAGE_DELIVER_STATUS
-import com.joshtalks.joshskills.repository.local.entity.MESSAGE_STATUS
-import com.joshtalks.joshskills.repository.local.entity.NPSEvent
-import com.joshtalks.joshskills.repository.local.entity.NPSEventModel
-import com.joshtalks.joshskills.repository.local.entity.NPSEventModelDao
-import com.joshtalks.joshskills.repository.local.entity.OptionType
-import com.joshtalks.joshskills.repository.local.entity.PdfType
-import com.joshtalks.joshskills.repository.local.entity.PendingTask
-import com.joshtalks.joshskills.repository.local.entity.PendingTaskModel
-import com.joshtalks.joshskills.repository.local.entity.PracticeEngagement
-import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
-import com.joshtalks.joshskills.repository.local.entity.Question
-import com.joshtalks.joshskills.repository.local.entity.User
-import com.joshtalks.joshskills.repository.local.entity.VideoEngage
-import com.joshtalks.joshskills.repository.local.entity.VideoEngageDao
-import com.joshtalks.joshskills.repository.local.entity.VideoType
-import com.joshtalks.joshskills.repository.local.entity.ReadingVideo
-import com.joshtalks.joshskills.repository.local.entity.CompressedVideo
+import com.joshtalks.joshskills.repository.local.entity.*
 import com.joshtalks.joshskills.repository.local.entity.leaderboard.RecentSearch
 import com.joshtalks.joshskills.repository.local.entity.leaderboard.RecentSearchDao
-import com.joshtalks.joshskills.repository.local.entity.practise.FavoriteCaller
-import com.joshtalks.joshskills.repository.local.entity.practise.FavoriteCallerDao
-import com.joshtalks.joshskills.repository.local.entity.practise.Phonetic
-import com.joshtalks.joshskills.repository.local.entity.practise.PracticeEngagementDao
-import com.joshtalks.joshskills.repository.local.entity.practise.PracticeEngagementV2
-import com.joshtalks.joshskills.repository.local.entity.practise.WrongWord
+import com.joshtalks.joshskills.repository.local.entity.practise.*
 import com.joshtalks.joshskills.repository.local.model.assessment.Assessment
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestion
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionFeedback
 import com.joshtalks.joshskills.repository.local.model.assessment.Choice
-import com.joshtalks.joshskills.repository.local.type_converter.TypeConverterAssessmentMediaType
-import com.joshtalks.joshskills.repository.local.type_converter.TypeConverterAssessmentStatus
-import com.joshtalks.joshskills.repository.local.type_converter.TypeConverterAssessmentType
-import com.joshtalks.joshskills.repository.local.type_converter.TypeConverterChoiceColumn
-import com.joshtalks.joshskills.repository.local.type_converter.TypeConverterChoiceType
-import com.joshtalks.joshskills.repository.local.type_converter.TypeConverterQuestionStatus
+import com.joshtalks.joshskills.repository.local.type_converter.*
 import com.joshtalks.joshskills.repository.server.RequestEngage
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentIntro
 import com.joshtalks.joshskills.repository.server.assessment.ReviseConcept
@@ -105,8 +53,7 @@ import com.joshtalks.joshskills.ui.special_practice.model.SpecialPractice
 import com.joshtalks.joshskills.ui.voip.analytics.data.local.VoipAnalyticsDao
 import com.joshtalks.joshskills.ui.voip.analytics.data.local.VoipAnalyticsEntity
 import java.math.BigDecimal
-import java.util.Collections
-import java.util.Date
+import java.util.*
 
 const val DATABASE_NAME = "JoshEnglishDB.db"
 
@@ -121,9 +68,10 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
         RecentSearch::class, FavoriteCaller::class, CourseUsageModel::class, AssessmentQuestionFeedback::class,
         VoipAnalyticsEntity::class, GroupsAnalyticsEntity::class, GroupChatAnalyticsEntity::class,
         GroupsItem::class, TimeTokenRequest::class, ChatItem::class, GameAnalyticsEntity::class,
-        ABTestCampaignData::class, GroupMember::class, SpecialPractice::class, ReadingVideo::class, CompressedVideo::class
+        ABTestCampaignData::class, GroupMember::class, SpecialPractice::class, ReadingVideo::class, CompressedVideo::class,
+        PhonebookContact::class,
     ],
-    version = 46,
+    version = 47,
     exportSchema = true
 )
 @TypeConverters(
@@ -216,7 +164,8 @@ abstract class AppDatabase : RoomDatabase() {
                                 MIGRATION_42_43,
                                 MIGRATION_43_44,
                                 MIGRATION_44_45,
-                                MIGRATION_45_46
+                                MIGRATION_45_46,
+                                MIGRATION_46_47,
                             )
                             .fallbackToDestructiveMigration()
                             .addCallback(sRoomDatabaseCallback)
@@ -616,6 +565,13 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        private val MIGRATION_46_47: Migration = object : Migration(46, 47) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("CREATE TABLE IF NOT EXISTS `phonebook_contacts` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `phoneNumber` TEXT NOT NULL, `isSynchronized` INTEGER NOT NULL DEFAULT 0, PRIMARY KEY (`id`))")
+                database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_contacts_phone_number` ON `phonebook_contacts`(`phoneNumber`)")
+            }
+        }
+
         fun clearDatabase() {
             INSTANCE?.clearAllTables()
         }
@@ -662,6 +618,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun specialDao(): SpecialDao
     abstract fun abCampaignDao(): ABTestCampaignDao
     abstract fun groupMemberDao(): GroupMemberDao
+    abstract fun phonebookDao(): PhonebookDao
 }
 
 class MessageTypeConverters {
