@@ -83,8 +83,8 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
 
     private fun stopAudio() {
         try {
-            soundManager.stopSound()
-        } catch (e: Exception) {
+            soundManager.stopPlaying()
+        } catch (e : Exception) {
             e.printStackTrace()
         }
     }
@@ -351,7 +351,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
             calling.notificationLayout(incomingCall) ?: return // TODO: might throw error
         voipNotification = VoipNotification(remoteView, NotificationPriority.High)
         voipNotification.show()
-        soundManager.playSound()
+        soundManager.startRingtoneAndVibration()
         scope.launch {
             delay(20000)
             voipNotification.removeNotification()

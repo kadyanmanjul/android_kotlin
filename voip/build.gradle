@@ -67,5 +67,7 @@ dependencies {
     implementation 'com.facebook.stetho:stetho-okhttp3:1.6.0'
     implementation 'androidx.preference:preference-ktx:1.1.1'
     implementation group: 'org.slf4j', name: 'slf4j-android', version: '1.7.36'
-    implementation 'com.google.firebase:firebase-firestore-ktx:24.0.0'
+    implementation 'com.google.firebase:firebase-firestore-ktx:24.1.0'
+    api 'com.intuit.sdp:sdp-android:1.0.6'
+    api 'com.intuit.ssp:ssp-android:1.0.6'
 }
