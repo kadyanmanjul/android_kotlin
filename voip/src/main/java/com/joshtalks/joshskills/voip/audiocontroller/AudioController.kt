@@ -79,6 +79,19 @@ class AudioController(val coroutineScope : CoroutineScope) : AudioControllerInte
         return audioRouteFlow
     }
 
+    override fun getCurrentAudioRoute(): AudioRouteConstants {
+        if (checkIfSpeakerOn()) {
+            return AudioRouteConstants.SpeakerAudio
+        }
+        if (checkIfBluetoothConnect()) {
+            return AudioRouteConstants.BluetoothAudio
+        }
+        if (checkIfHeadsetPluggedIn()) {
+            return AudioRouteConstants.HeadsetAudio
+        }
+        return AudioRouteConstants.EarpieceAudio
+    }
+
     override fun switchAudioToSpeaker() {
         audioManager?.mode = AudioManager.MODE_NORMAL
         audioManager?.isSpeakerphoneOn = true
@@ -102,20 +115,7 @@ class AudioController(val coroutineScope : CoroutineScope) : AudioControllerInte
     }
 
     internal fun checkAudioRoute() {
-        if (checkIfSpeakerOn()) {
-            emitAudioRoute(AudioRouteConstants.SpeakerAudio)
-            return
-        }
-        if (checkIfBluetoothConnect()) {
-            emitAudioRoute(AudioRouteConstants.BluetoothAudio)
-            return
-        }
-        if (checkIfHeadsetPluggedIn()) {
-            emitAudioRoute(AudioRouteConstants.HeadsetAudio)
-            return
-        }
-        emitAudioRoute(AudioRouteConstants.EarpieceAudio)
-
+        emitAudioRoute(getCurrentAudioRoute())
     }
 
     private fun emitAudioRoute(audioRoute: AudioRouteConstants) {

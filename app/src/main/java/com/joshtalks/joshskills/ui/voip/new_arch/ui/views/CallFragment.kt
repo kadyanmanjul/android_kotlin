@@ -2,47 +2,53 @@ package com.joshtalks.joshskills.ui.voip.new_arch.ui.views
 
 import android.animation.Animator
 import android.animation.ValueAnimator
+import android.content.Context
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.os.Bundle
-import android.util.Log
+import android.os.PowerManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.Animation
 import android.view.animation.BounceInterpolator
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
 import com.joshtalks.joshskills.databinding.FragmentCallBinding
-import com.joshtalks.joshskills.ui.voip.WebRtcActivity
-import com.joshtalks.joshskills.ui.voip.WebRtcService
-import com.joshtalks.joshskills.ui.voip.analytics.CurrentCallDetails
-import com.joshtalks.joshskills.ui.voip.analytics.VoipAnalytics
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.callbar.CallBar
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.callbar.VoipPref
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.VoiceCallViewModel
-import com.joshtalks.joshskills.util.DateUtils
+import com.joshtalks.joshskills.voip.audiocontroller.AudioController
+import com.joshtalks.joshskills.voip.audiocontroller.AudioRouteConstants
 import com.joshtalks.joshskills.voip.communication.constants.CLOSE_CALLING_FRAGMENT
 import com.joshtalks.joshskills.voip.constant.CALL_CONNECTED_EVENT
 import com.joshtalks.joshskills.voip.constant.CONNECTED
-import com.joshtalks.joshskills.voip.constant.IDLE
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 private const val TAG = "CallFragment"
 
-class CallFragment : BaseFragment() {
+class CallFragment : BaseFragment() , SensorEventListener {
 
     lateinit var callBinding: FragmentCallBinding
-    private val callbar = CallBar()
-    private var isAnimationCancled = false
-
+    private val callBar = CallBar()
+    private var isAnimationCanceled = false
+    private lateinit var sensorManager: SensorManager
+    private lateinit var proximity: Sensor
+    private lateinit var powerManager: PowerManager
+    private lateinit var lock: PowerManager.WakeLock
+    private val audioController by lazy {
+        AudioController(CoroutineScope((Dispatchers.IO)))
+    }
 
     val vm by lazy {
         ViewModelProvider(requireActivity())[VoiceCallViewModel::class.java]
     }
-    val progressAnimator by lazy<ValueAnimator> {
+    private val progressAnimator by lazy<ValueAnimator> {
         ValueAnimator.ofFloat(0f, 1f).apply {
             duration = 1000
             addUpdateListener {
@@ -50,7 +56,7 @@ class CallFragment : BaseFragment() {
             }
         }
     }
-    val textAnimator by lazy<ValueAnimator> {
+    private val textAnimator by lazy<ValueAnimator> {
         ValueAnimator.ofFloat(0.8f, 1.2f, 1f).apply {
             duration = 300
             interpolator = BounceInterpolator()
@@ -77,43 +83,49 @@ class CallFragment : BaseFragment() {
         callBinding.executePendingBindings()
     }
 
-    // TODO: Must be removed
-    private fun startTimer() {
+    private fun setCallStartedUI() {
         val base = VoipPref.getStartTimeStamp()
         callBinding.callData = vm.getCallData()
         callBinding.callTime1.base = base
         callBinding.callTime1.start()
-        isAnimationCancled = true
+        isAnimationCanceled = true
         callBinding.executePendingBindings()
     }
 
     override fun initViewState() {
+        setUpProximitySensor()
         liveData.observe(viewLifecycleOwner) {
             when (it.what) {
                 CLOSE_CALLING_FRAGMENT -> requireActivity().finish()
                 CALL_CONNECTED_EVENT -> {
-                    isAnimationCancled= true
+                    isAnimationCanceled= true
                 }
             }
         }
 
-        callbar.getTimerLiveData().observe(viewLifecycleOwner) {
-            Log.d(TAG, "initViewState: $it")
+        callBar.getTimerLiveData().observe(viewLifecycleOwner) {
             if (it > 0) {
-                startTimer()
+                setCallStartedUI()
             }
         }
     }
 
+    private fun setUpProximitySensor() {
+        sensorManager = context?.getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        proximity = sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY)
+        powerManager = context?.getSystemService(Context.POWER_SERVICE) as PowerManager
+        lock = powerManager.newWakeLock(PowerManager.PROXIMITY_SCREEN_OFF_WAKE_LOCK,"simplewakelock:wakelocktag")
+    }
+
     private fun startIncomingTimer() {
         stopAnimation()
-        isAnimationCancled = false
+        isAnimationCanceled = false
         var counter = 35
         progressAnimator.addListener(object : Animator.AnimatorListener {
             override fun onAnimationStart(animation: Animator?) {}
 
             override fun onAnimationEnd(animation: Animator?) {
-                if (counter != 0 && !isAnimationCancled) {
+                if (counter != 0 && !isAnimationCanceled) {
                     counter -= 1
                     callBinding.incomingTimerTv.text = "$counter"
                     textAnimator.start()
@@ -135,8 +147,7 @@ class CallFragment : BaseFragment() {
 
     @Synchronized
     private fun stopAnimation() {
-        Log.d(TAG, "stopAnimation: ")
-        isAnimationCancled = true
+        isAnimationCanceled = true
         run{
             progressAnimator.cancel()
         }
@@ -145,11 +156,39 @@ class CallFragment : BaseFragment() {
     override fun setArguments() {}
 
     override fun onResume() {
+        proximity.also { proximity ->
+            sensorManager.registerListener(this, proximity, SensorManager.SENSOR_DELAY_NORMAL)
+        }
         if (callBinding.incomingTimerContainer.visibility == View.VISIBLE) {
             CoroutineScope(Dispatchers.Main).launch{
                 progressAnimator.resume()
             }
         }
         super.onResume()
+    }
+
+    override fun onSensorChanged(p0: SensorEvent?) {
+        if (p0?.values?.get(0)?.compareTo(0.0) == 0) {
+            if (audioController.getCurrentAudioRoute() == AudioRouteConstants.EarpieceAudio) {
+                turnScreenOff()
+            }
+        } else {
+            turnScreenOn()
+        }
+    }
+    override fun onAccuracyChanged(p0: Sensor?, p1: Int) {}
+
+    private fun turnScreenOff() {
+        if (!lock.isHeld) lock.acquire(10 * 60 * 1000L /*10 minutes*/)
+    }
+
+    private fun turnScreenOn() {
+        if (lock.isHeld) lock.release()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        sensorManager.unregisterListener(this)
+        if(lock.isHeld) lock.release()
     }
 }
