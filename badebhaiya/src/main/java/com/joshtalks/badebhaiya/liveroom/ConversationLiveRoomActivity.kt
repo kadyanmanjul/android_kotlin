@@ -583,10 +583,7 @@ class ConversationLiveRoomActivity : BaseActivity(),
                 showEndRoomPopup()
             }
             else {
-                mBoundService?.leaveRoom(roomId, roomQuestionId)
-                isExitApiFired = true
-                vm.unSubscribePubNub()
-                finish()
+                showLeaveRoomPopup()
             }
         }
 
@@ -1218,7 +1215,34 @@ class ConversationLiveRoomActivity : BaseActivity(),
             vm.unSubscribePubNub()
             finish()
         }
+    }
 
+    private fun showLeaveRoomPopup() {
+        val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(this)
+        val inflater = this.layoutInflater
+        val dialogView: View = inflater.inflate(R.layout.alert_leave_room, null)
+        dialogBuilder.setView(dialogView)
+
+        val alertDialog: AlertDialog = dialogBuilder.create()
+        alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        alertDialog.show()
+
+        dialogView.findViewById<AppCompatTextView>(R.id.cancel_leave).setOnClickListener {
+            isBackPressed = false
+            alertDialog.dismiss()
+        }
+
+        dialogView.findViewById<AppCompatTextView>(R.id.leave_end_room_btn).setOnClickListener {
+            Log.d("ABC2", "activity showLeaveRoomPopup() called $mBoundService")
+            if (!internetAvailableFlag) {
+                finish()
+            }
+            mBoundService?.leaveRoom(roomId, roomQuestionId)
+            isExitApiFired = true
+            alertDialog.dismiss()
+            vm.unSubscribePubNub()
+            finish()
+        }
     }
 
     override fun onStart() {
@@ -1262,10 +1286,7 @@ class ConversationLiveRoomActivity : BaseActivity(),
             showEndRoomPopup()
         }
         else {
-            mBoundService?.leaveRoom(roomId, roomQuestionId)
-            isExitApiFired = true
-            vm.unSubscribePubNub()
-            super.onBackPressed()
+            showLeaveRoomPopup()
         }
     }
 

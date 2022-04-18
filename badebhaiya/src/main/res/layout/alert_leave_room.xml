@@ -14,7 +14,7 @@
         android:paddingHorizontal="@dimen/_40sdp"
         android:layout_marginTop="@dimen/_24sdp"
         android:gravity="center"
-        android:text="@string/alert_end_room_title"
+        android:text="@string/alert_leave_room_title"
         android:textAppearance="@style/BB_Typography_Nunito_Sans_Regular"
         android:textSize="@dimen/_12ssp"
         android:textColor="#1E1D1B"
@@ -24,7 +24,7 @@
 
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/end_room"
+        android:id="@+id/leave_room"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/_16sdp"
@@ -33,7 +33,7 @@
         android:backgroundTint="#F2F2F2"
         android:gravity="center"
         android:paddingVertical="@dimen/_10sdp"
-        android:text="@string/end_room"
+        android:text="@string/leave_room_button"
         android:textAppearance="@style/BB_Typography_Nunito_Sans_Regular"
         android:textSize="@dimen/_12ssp"
         android:textColor="#ED6362"
@@ -43,7 +43,7 @@
         app:layout_constraintTop_toBottomOf="@id/title" />
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/cancel"
+        android:id="@+id/cancel_leave"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/_16sdp"
@@ -60,6 +60,6 @@
         app:layout_constraintHorizontal_bias="0.487"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/end_room" />
+        app:layout_constraintTop_toBottomOf="@id/leave_room" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
