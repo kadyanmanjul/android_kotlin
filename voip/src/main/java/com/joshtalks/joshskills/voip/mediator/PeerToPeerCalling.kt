@@ -1,5 +1,9 @@
 package com.joshtalks.joshskills.voip.mediator
 
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Typeface
 import android.util.Log
 import android.widget.RemoteViews
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_COURSE_ID
@@ -19,8 +23,10 @@ private const val TAG = "PeerToPeerCalling"
 class PeerToPeerCalling : Calling {
     val voipNetwork = VoipNetwork.getVoipApi()
 
-    override fun notificationLayout(data: IncomingCall): RemoteViews? {
-        val remoteView = RemoteViews(Utils.context?.packageName, R.layout.call_notification)
+    override fun notificationLayout(data: IncomingCall): RemoteViews {
+        val remoteView = RemoteViews(Utils.context?.packageName, R.layout.call_notification_new)
+        val avatar: Bitmap? = getRandomName().textDrawableBitmap()
+        remoteView.setImageViewBitmap(R.id.photo, avatar)
         val acceptPendingIntent= openCallScreen()
         val declinePendingIntent= getDeclineCallIntent()
         remoteView.setOnClickPendingIntent(R.id.answer_text,acceptPendingIntent)
@@ -65,5 +71,40 @@ class PeerToPeerCalling : Calling {
         val response = voipNetwork.callAccept(request)
         if (response.isSuccessful)
             Log.d(TAG, "onCallDecline: Sucessfull")
+    }
+    private fun getRandomName(): String {
+        val name = "ABCDFGHIJKLMNOPRSTUVZ"
+        val ename = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        return name.random().toString().plus(ename.random().toString())
+    }
+    private fun String.textDrawableBitmap(
+        width: Int = 48,
+        height: Int = 48,
+        bgColor: Int = -1
+    ): Bitmap? {
+        val rnd = Random()
+        val color = if (bgColor == -1)
+            Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
+        else
+            bgColor
+
+        val font = Typeface.createFromAsset(
+            Utils.context?.assets,
+            "fonts/OpenSans-SemiBold.ttf"
+        )
+        val drawable = TextDrawable.builder()
+            .beginConfig()
+            .textColor(Color.WHITE)
+            .fontSize(20)
+            .useFont(font)
+            .toUpperCase()
+            .endConfig()
+            .buildRound(this, color)
+
+        val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+        drawable.setBounds(0, 0, canvas.width, canvas.height)
+        drawable.draw(canvas)
+        return bitmap
     }
 }
