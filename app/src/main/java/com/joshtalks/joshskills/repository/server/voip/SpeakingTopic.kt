@@ -50,7 +50,7 @@ data class SpeakingTopic(
 
     @ColumnInfo(name = "call_duration_status")
     @SerializedName("call_duration_status")
-    val callDurationStatus: String = EMPTY,
+    val callDurationStatus: String,
 
     @IgnoredOnParcel
     @Expose
