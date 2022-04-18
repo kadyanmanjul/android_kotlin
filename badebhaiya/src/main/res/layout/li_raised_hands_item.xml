@@ -10,8 +10,8 @@
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/user_photo"
-            android:layout_width="@dimen/_38sdp"
-            android:layout_height="@dimen/_38sdp"
+            android:layout_width="@dimen/_42sdp"
+            android:layout_height="@dimen/_42sdp"
             android:layout_marginVertical="@dimen/_10sdp"
             android:background="@color/red"
             android:scaleType="fitXY"

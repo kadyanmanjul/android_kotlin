@@ -62,7 +62,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_4sdp"
+            android:layout_marginTop="@dimen/_1sdp"
             android:padding="@dimen/_2sdp"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintEnd_toEndOf="@id/user_image"
@@ -95,7 +95,7 @@
                 android:maxLines="1"
                 android:singleLine="true"
                 android:textAppearance="@style/BB_Typography_Nunito_Semi_Bold"
-                android:textSize="@dimen/_12ssp"
+                android:textSize="@dimen/_10ssp"
                 android:textColor="@color/pure_black"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
