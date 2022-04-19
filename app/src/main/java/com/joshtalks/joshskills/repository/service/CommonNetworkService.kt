@@ -360,6 +360,9 @@ interface CommonNetworkService {
     @POST("$DIR/impression/tcflow_track_impressions/")
     suspend fun saveTrueCallerImpression(@Body params: Map<String, String>): Response<Void>
 
+    @POST("$DIR/impression/track_voicecall_impression/")
+    suspend fun saveVoiceCallImpression(@Body params: Map<String, String>): Response<Void>
+
     @POST("$DIR/payment/verify_payment/")
     suspend fun checkMentorPayStatus(@Body params: Map<String, String>): Map<String, Any>
 

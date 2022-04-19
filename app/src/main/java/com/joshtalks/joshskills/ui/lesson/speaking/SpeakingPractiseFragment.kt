@@ -336,16 +336,19 @@ class SpeakingPractiseFragment : ABTestFragment() {
         }
 
         binding.btnInviteFriend.setOnClickListener {
+            viewModel.saveVoiceCallImpression(IMPRESSION_CALL_MY_FRIEND_BTN_CLICKED)
             if (PermissionUtils.isReadContactPermissionEnabled(requireActivity())) {
                 InviteFriendActivity.start(requireActivity())
             } else {
                 PermissionUtils.requestReadContactPermission(requireActivity(),
                     object : PermissionListener {
                         override fun onPermissionGranted(p0: PermissionGrantedResponse?) {
+                            viewModel.saveVoiceCallImpression(IMPRESSION_CONTACT_PERM_ACCEPTED)
                             InviteFriendActivity.start(requireActivity())
                         }
 
                         override fun onPermissionDenied(p0: PermissionDeniedResponse?) {
+                            viewModel.saveVoiceCallImpression(IMPRESSION_CONTACT_PERM_DENIED)
                             PermissionUtils.permissionPermanentlyDeniedDialog(
                                 requireActivity(),
                                 R.string.permission_denied_contacts
