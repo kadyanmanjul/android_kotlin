@@ -6,6 +6,7 @@ import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.core.AppObjectController
@@ -201,6 +202,7 @@ class FeedViewModel : ViewModel() {
                 val res=repository.deleteReminder(deleteReminderRequest)
                 if (res.isSuccessful && res.code()==200){
                     showToast("Reminder Deleted")
+                    feedAdapter.notifyDataSetChanged()
                 } else showToast("Error while Deleting Reminder")
             } catch (ex:Exception){
                 ex.printStackTrace()
