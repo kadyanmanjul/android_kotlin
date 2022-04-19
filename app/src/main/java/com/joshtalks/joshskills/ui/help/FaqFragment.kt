@@ -13,6 +13,10 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.chip.Chip
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.CURRENT_COURSE_ID
+import com.joshtalks.joshskills.core.DEFAULT_COURSE_ID
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.USER_LOCALE
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.repository.server.FAQCategory
@@ -22,11 +26,15 @@ import kotlinx.android.synthetic.main.fragment_faq.txtCategoryName
 
 class FaqFragment : Fragment() {
 
+    var faqListMap:HashMap<String, String> = hashMapOf("151" to "hi","1203" to "bn", "1207" to "mr",
+        "1206" to "pa", "1209" to "ml", "1210" to "ta", "1211" to "te")
+
     private lateinit var categoryList: List<FAQCategory>
     private var selectedCategory: FAQCategory? = null
     private val viewModel by lazy { ViewModelProvider(this).get(HelpViewModel::class.java) }
     private val faqAdapter by lazy { FaqAdapter(ArrayList()) }
     private lateinit var appAnalytics: AppAnalytics
+    val courseId = PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,6 +61,7 @@ class FaqFragment : Fragment() {
         initRV()
         addObservers()
         renderView()
+        faqListMap.get(courseId)?.let { PrefManager.put(USER_LOCALE, it) }
         viewModel.getFaq()
     }
 
@@ -76,6 +85,7 @@ class FaqFragment : Fragment() {
             faqAdapter.updateList(it.filter {
                 it.categoryId == selectedCategory?.id
             })
+            PrefManager.put(USER_LOCALE, "en")
         })
 
         chipGroupCategory.setOnCheckedChangeListener { group, checkedId ->

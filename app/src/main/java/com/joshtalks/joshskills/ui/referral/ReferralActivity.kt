@@ -11,6 +11,7 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.core.text.HtmlCompat
@@ -35,6 +36,7 @@ import java.io.IOException
 
 const val REFERRAL_EARN_AMOUNT_KEY = "REFERRAL_EARN_AMOUNT"
 const val REFERRAL_SHARE_TEXT_KEY = "REFERRAL_SHARE_TEXT"
+const val REFERRAL_SHARE_TEXT = "REFERRAL_SHARE_TEXT_"
 const val REFERRAL_SHARE_TEXT_SHARABLE_VIDEO = "REFERRAL_SHARE_TEXT_SHARABLE_VIDEO"
 const val REFERRAL_IMAGE_URL_KEY = "REFERRAL_IMAGE_URL"
 const val VIDEO_URL = "https://www.youtube.com/watch?v=CMZohcIMQfc "
@@ -63,6 +65,7 @@ class ReferralActivity : BaseActivity() {
         ViewModelProvider(this).get(ReferralViewModel::class.java)
     }
     private var userReferralCode: String = EMPTY
+    val courseId = PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID)
 
     //    private var userReferralURL: String = EMPTY
     var flowFrom: String? = null
@@ -294,8 +297,9 @@ class ReferralActivity : BaseActivity() {
     }
 
     fun inviteFriends(packageString: String? = null, dynamicLink: String, referralTimestamp: Long) {
+        val string = AppObjectController.getFirebaseRemoteConfig().getString(REFERRAL_SHARE_TEXT + courseId)
         var referralText = VIDEO_URL.plus("\n").plus(
-            AppObjectController.getFirebaseRemoteConfig().getString(REFERRAL_SHARE_TEXT_KEY)
+            string
         )
         val refAmount =
             AppObjectController.getFirebaseRemoteConfig().getLong(REFERRAL_EARN_AMOUNT_KEY)

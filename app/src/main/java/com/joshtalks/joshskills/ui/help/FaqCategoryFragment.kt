@@ -11,7 +11,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.custom_ui.decorator.GridSpacingItemDecoration
 import com.joshtalks.joshskills.databinding.FragmentFaqCategoryBinding
 import com.joshtalks.joshskills.ui.help.viewholder.FaqCategoryViewHolder
@@ -19,8 +19,12 @@ import com.joshtalks.joshskills.ui.help.viewholder.FaqCategoryViewHolder
 
 class FaqCategoryFragment : Fragment() {
 
+    var faqCategoryMap:HashMap<String, String> = hashMapOf("151" to "hi","1203" to "bn", "1207" to "mr",
+                                                "1206" to "pa", "1209" to "ml", "1210" to "ta", "1211" to "te")
+
     private lateinit var faqCategoryBinding: FragmentFaqCategoryBinding
     private val viewModel by lazy { ViewModelProvider(requireActivity()).get(HelpViewModel::class.java) }
+    val courseId = PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID)
 
     companion object {
         @JvmStatic
@@ -44,6 +48,7 @@ class FaqCategoryFragment : Fragment() {
         addObservable()
         initRV()
         if (viewModel.faqCategoryLiveData.value.isNullOrEmpty()) {
+            faqCategoryMap.get(courseId)?.let { PrefManager.put(USER_LOCALE, it) }
             viewModel.getAllHelpCategory()
         }
     }
@@ -59,6 +64,7 @@ class FaqCategoryFragment : Fragment() {
                     )
                 )
             }
+            PrefManager.put(USER_LOCALE, "en")
         })
         viewModel.apiCallStatusLiveData.observe(viewLifecycleOwner, Observer {
             faqCategoryBinding.progressBar.visibility = View.GONE

@@ -9,6 +9,8 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.USER_LOCALE
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.FragmentFaqDetailBinding
@@ -71,6 +73,7 @@ class FaqDetailsFragment : Fragment() {
 
     private fun patchRequestForAnswer(isAnswerHelpful: Boolean) {
         viewModel.postFaqFeedback(faq.id.toString(), isAnswerHelpful)
+        PrefManager.put(USER_LOCALE, "en")
     }
 
     fun dismiss() {

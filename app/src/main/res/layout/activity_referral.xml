@@ -30,7 +30,7 @@
             android:layout_weight=".75"
             android:elevation="@dimen/_8sdp"
             app:arc_cropDirection="cropInside"
-            app:arc_height="@dimen/_32sdp"
+            app:arc_height="@dimen/_30sdp"
             app:arc_position="bottom">
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -89,7 +89,7 @@
                     android:id="@+id/image_view"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:layout_marginTop="@dimen/_50sdp"
+                    android:layout_marginTop="@dimen/_48sdp"
                     android:adjustViewBounds="true"
                     android:scaleType="fitCenter"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -104,7 +104,7 @@
                     android:id="@+id/text_view_1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_24sdp"
+                    android:layout_marginTop="@dimen/_20sdp"
                     android:gravity="center"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                     android:textColor="@color/white"
@@ -117,7 +117,7 @@
                     android:id="@+id/text_view_2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="18dp"
+                    android:layout_marginTop="16dp"
                     android:gravity="center"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7_Semi_Bold"
                     android:textColor="@color/black"
