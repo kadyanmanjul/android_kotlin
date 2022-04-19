@@ -18,9 +18,8 @@ import androidx.multidex.MultiDexApplication
 import com.freshchat.consumer.sdk.Freshchat
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.core.notification.LocalNotificationAlarmReciever
-import com.joshtalks.joshskills.core.service.BackgroundService
 import com.joshtalks.joshskills.core.service.NOTIFICATION_DELAY
-import com.joshtalks.joshskills.core.service.NetworkChangeReceiver
+import com.joshtalks.joshskills.core.service.ServiceStartReceiver
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.di.ApplicationComponent
 import com.joshtalks.joshskills.di.DaggerApplicationComponent
@@ -62,7 +61,6 @@ class JoshApplication :
         ProcessLifecycleOwner.get().lifecycle.addObserver(this)
         AppObjectController.init(this)
         registerBroadcastReceiver()
-//        initServices()
         initMoEngage()
         initGroups()
     }
@@ -112,10 +110,16 @@ class JoshApplication :
     }
 
     private fun registerBroadcastReceiver() {
-        registerReceiver(
-            NetworkChangeReceiver(),
-            IntentFilter("android.net.conn.CONNECTIVITY_CHANGE")
-        )
+        val intentFilter = IntentFilter()
+        intentFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE")
+        intentFilter.addAction(Intent.ACTION_USER_PRESENT)
+        intentFilter.addAction(Intent.ACTION_SCREEN_ON)
+        intentFilter.addAction(Intent.ACTION_SCREEN_OFF)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            intentFilter.addAction(Intent.ACTION_USER_UNLOCKED)
+        }
+        registerReceiver(ServiceStartReceiver(), intentFilter)
+
         JoshSkillExecutors.BOUNDED.submit {
             if (PrefManager.getStringValue(RESTORE_ID).isBlank()) {
                 val intentFilterRestoreID =
