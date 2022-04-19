@@ -8,7 +8,6 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.constants.PERMISSION_FROM_READING
@@ -29,7 +28,6 @@ import com.joshtalks.joshskills.repository.local.entity.practise.PointsListRespo
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentWithRelations
-import com.joshtalks.joshskills.repository.server.LinkAttribution
 import com.joshtalks.joshskills.repository.server.RequestEngage
 import com.joshtalks.joshskills.repository.server.UpdateLessonResponse
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentRequest
@@ -42,14 +40,10 @@ import com.joshtalks.joshskills.repository.server.voip.SpeakingTopic
 import com.joshtalks.joshskills.repository.service.NetworkRequestHelper
 import com.joshtalks.joshskills.ui.group.repository.ABTestRepository
 import com.joshtalks.joshskills.ui.lesson.speaking.VideoPopupItem
-import com.joshtalks.joshskills.ui.referral.USER_SHARE_SHORT_URL
 import com.joshtalks.joshskills.util.AudioRecording
+import com.joshtalks.joshskills.util.DeepLinkUtil
 import com.joshtalks.joshskills.util.FileUploadService
 import com.joshtalks.joshskills.util.showAppropriateMsg
-import io.branch.indexing.BranchUniversalObject
-import io.branch.referral.Defines
-import io.branch.referral.util.LinkProperties
-import java.io.File
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -57,7 +51,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import timber.log.Timber
-import androidx.databinding.ObservableField
+import java.io.File
 
 
 class LessonViewModel(application: Application) : AndroidViewModel(application) {
@@ -101,7 +95,9 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     val introVideoCompleteLiveData: MutableLiveData<Boolean> = MutableLiveData()
     val practicePartnerCallDurationLiveData: MutableLiveData<Long> = MutableLiveData()
 
-    fun practicePartnerCallDurationFromNewScreen(time: Long) = practicePartnerCallDurationLiveData.postValue(time)
+    fun practicePartnerCallDurationFromNewScreen(time: Long) =
+        practicePartnerCallDurationLiveData.postValue(time)
+
     fun isD2pIntroVideoComplete(event: Boolean) = introVideoCompleteLiveData.postValue(event)
     fun isHowToSpeakClicked(event: Boolean) = howToSpeakLiveData.postValue(event)
     fun showHideSpeakingFragmentCallButtons(event: Int) = callBtnHideShowLiveData.postValue(event)
@@ -810,7 +806,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    fun saveIntroVideoFlowImpression(eventName : String, eventDuration : Long = 0L) {
+    fun saveIntroVideoFlowImpression(eventName: String, eventDuration: Long = 0L) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val requestData = hashMapOf(
@@ -824,6 +820,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
             }
         }
     }
+
     fun saveTrueCallerImpression(eventName: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -837,6 +834,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
             }
         }
     }
+
     fun postGoal(goal: String, campaign: String?) {
         viewModelScope.launch(Dispatchers.IO) {
             repository.postGoal(goal)
@@ -854,63 +852,22 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    fun getDeepLink(deepLink: String, contentId: String) {
-        viewModelScope.launch {
-            try {
-                val requestData = LinkAttribution(
-                    mentorId = Mentor.getInstance().getId(),
-                    contentId = contentId,
-                    sharedItem = "READING_SECTION_VIDEO",
-                    sharedItemType = "VI",
-                    deepLink = deepLink
-                )
-                AppObjectController.commonNetworkService.getDeepLink(requestData)
-            } catch (ex: Exception) {
-                Timber.e(ex)
-            }
-        }
-    }
-
     fun shareVideoForAudio(path: String) {
-        userReferralCode = Mentor.getInstance().referralCode
-        val branchUniversalObject = BranchUniversalObject()
-            .setCanonicalIdentifier(userReferralCode.plus(System.currentTimeMillis()))
-            .setTitle("Invite Friend")
-            .setContentIndexingMode(BranchUniversalObject.CONTENT_INDEX_MODE.PUBLIC)
-            .setLocalIndexMode(BranchUniversalObject.CONTENT_INDEX_MODE.PUBLIC)
-        val lp = LinkProperties()
-            .setChannel(userReferralCode)
-            .setFeature("sharing")
-            .setCampaign("referral")
-            .addControlParameter(Defines.Jsonkey.ReferralCode.key, userReferralCode)
-            .addControlParameter(Defines.Jsonkey.UTMCampaign.key, "referral")
-            .addControlParameter(
-                Defines.Jsonkey.UTMMedium.key,
-                userReferralCode.plus(System.currentTimeMillis())
-            )
-        branchUniversalObject
-            .generateShortUrl(AppObjectController.joshApplication, lp) { url, error ->
-                if (error == null)
+        DeepLinkUtil(context = AppObjectController.joshApplication)
+            .setReferralCode(Mentor.getInstance().referralCode)
+            .setReferralCampaign()
+            .setListener(object : DeepLinkUtil.OnDeepLinkListener {
+                override fun onDeepLinkCreated(deepLink: String) {
                     inviteFriends(
-                        dynamicLink = url,
+                        dynamicLink = deepLink,
                         path = path
                     )
-                else
-                    inviteFriends(
-                        dynamicLink = (if (PrefManager.hasKey(USER_SHARE_SHORT_URL))
-                            PrefManager.getStringValue(USER_SHARE_SHORT_URL)
-                        else
-                            getAppShareUrl()),
-                        path = path
-                    )
-            }
+                }
+            })
+            .build()
     }
 
     fun inviteFriends(dynamicLink: String, path: String) {
-        getDeepLink(
-            dynamicLink,
-            userReferralCode.plus(System.currentTimeMillis())
-        )
         try {
             val destination = path
             val waIntent = Intent(Intent.ACTION_SEND)
@@ -928,9 +885,4 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
             e.printStackTrace()
         }
     }
-
-    private fun getAppShareUrl(): String {
-        return "https://play.google.com/store/apps/details?id=" + BuildConfig.APPLICATION_ID + "&referrer=utm_source%3D$userReferralCode"
-    }
-
 }

@@ -10,7 +10,6 @@ import androidx.databinding.ObservableField
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.constants.COURSE_LIST_DATA
@@ -39,9 +38,7 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
 import com.joshtalks.joshskills.repository.server.AnimatedLeaderBoardResponse
-import com.joshtalks.joshskills.repository.server.LinkAttribution
 import com.joshtalks.joshskills.ui.group.repository.ABTestRepository
-import com.joshtalks.joshskills.ui.referral.USER_SHARE_SHORT_URL
 import com.joshtalks.joshskills.ui.userprofile.adapters.EnrolledCoursesListAdapter
 import com.joshtalks.joshskills.ui.userprofile.adapters.MyGroupsListAdapter
 import com.joshtalks.joshskills.ui.userprofile.models.UserProfileResponse
@@ -55,13 +52,10 @@ import com.joshtalks.joshskills.ui.userprofile.models.EnrolledCoursesList
 import com.joshtalks.joshskills.ui.userprofile.models.UpdateProfilePayload
 import com.joshtalks.joshskills.ui.userprofile.models.CourseEnrolled
 import com.joshtalks.joshskills.ui.userprofile.models.GroupInfo
-import com.joshtalks.joshskills.ui.userprofile.repository.ShareFromProfileRepository
 import com.joshtalks.joshskills.ui.userprofile.repository.UserProfileRepo
+import com.joshtalks.joshskills.util.DeepLinkUtil
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import id.zelory.compressor.Compressor
-import io.branch.indexing.BranchUniversalObject
-import io.branch.referral.Defines
-import io.branch.referral.util.LinkProperties
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -72,7 +66,6 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import org.json.JSONObject
-import timber.log.Timber
 import java.io.File
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
@@ -104,9 +97,6 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
     private var previousPage: String? = EMPTY
     val userProfileRepo = UserProfileRepo()
     val isCourseBought = ObservableBoolean(false)
-
-    val profileRepository: ShareFromProfileRepository by lazy { ShareFromProfileRepository() }
-    private var userReferralCode = Mentor.getInstance().referralCode
 
     val isProgressBarShow = ObservableBoolean(false)
     val enrolledAdapter = EnrolledCoursesListAdapter()
@@ -651,67 +641,27 @@ val url = responseObj.url.plus(File.separator).plus(responseObj.fields["key"])
         }
     }
 
-    fun deepLink(deepLink: String, contentId: String){
-        viewModelScope.launch {
-            try {
-                val requestData = LinkAttribution(
-                    mentorId = Mentor.getInstance().getId(),
-                    contentId = contentId,
-                    sharedItem = "HELP_TIP",
-                    sharedItemType = "IM",
-                    deepLink = deepLink
-                )
-                profileRepository.getDeepLink(requestData)
-            } catch (ex: Exception) {
-                Timber.e(ex)
-            }
-        }
-    }
-
     fun shareWithFriends() {
         getDeepLinkAndInviteFriends(WHATSAPP_PACKAGE_STRING)
     }
 
     fun getDeepLinkAndInviteFriends(packageString: String? = null) {
-        val referralTimestamp = System.currentTimeMillis()
-        val branchUniversalObject = BranchUniversalObject()
-            .setCanonicalIdentifier(userReferralCode.plus(referralTimestamp))
-            .setTitle("Invite Friend")
-            .setContentIndexingMode(BranchUniversalObject.CONTENT_INDEX_MODE.PUBLIC)
-            .setLocalIndexMode(BranchUniversalObject.CONTENT_INDEX_MODE.PUBLIC)
-        val lp = LinkProperties()
-            .setChannel(userReferralCode)
-            .setFeature("sharing")
-            .setCampaign(userReferralCode.plus(referralTimestamp))
-            .addControlParameter(Defines.Jsonkey.ReferralCode.key, userReferralCode)
-            .addControlParameter(
-                Defines.Jsonkey.UTMCampaign.key,
-                userReferralCode.plus(referralTimestamp)
-            )
-            .addControlParameter(Defines.Jsonkey.UTMMedium.key, "referral")
-
-        branchUniversalObject
-            .generateShortUrl(AppObjectController.joshApplication, lp) { url, error ->
-                if (error == null)
+        DeepLinkUtil(AppObjectController.joshApplication)
+            .setReferralCode(Mentor.getInstance().referralCode)
+            .setReferralCampaign()
+            .setListener(object : DeepLinkUtil.OnDeepLinkListener {
+                override fun onDeepLinkCreated(deepLink: String) {
                     inviteFriends(
                         packageString = packageString,
-                        dynamicLink = url
+                        dynamicLink = deepLink
                     )
-                else
-                    inviteFriends(
-                        packageString = packageString,
-                        dynamicLink = if (PrefManager.hasKey(USER_SHARE_SHORT_URL))
-                            PrefManager.getStringValue(USER_SHARE_SHORT_URL)
-                        else
-                            getAppShareUrl()
-                    )
-            }
+                }
+            })
+            .build()
     }
 
     fun inviteFriends(packageString: String? = null, dynamicLink: String) {
         try {
-            deepLink(dynamicLink, userReferralCode.plus(System.currentTimeMillis()))
-
             val waIntent = Intent(Intent.ACTION_SEND)
             if (packageString.isNullOrEmpty().not()) {
                 waIntent.setPackage(packageString)
@@ -730,10 +680,6 @@ val url = responseObj.url.plus(File.separator).plus(responseObj.fields["key"])
         } catch (e: PackageManager.NameNotFoundException) {
             showToast(AppObjectController.joshApplication.getString(R.string.whatsApp_not_installed))
         }
-    }
-
-    private fun getAppShareUrl(): String {
-        return "https://play.google.com/store/apps/details?id=" + BuildConfig.APPLICATION_ID + "&referrer=utm_source%3D$userReferralCode"
     }
 
     fun postGoal(goal: String, campaign: String?) {
