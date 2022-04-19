@@ -453,6 +453,24 @@ class NPAQuestionViaEventWorker(
     }
 }
 
+class BackgroundNotificationWorker(context: Context, workerParams: WorkerParameters) :
+    CoroutineWorker(context, workerParams) {
+
+    override suspend fun doWork(): Result {
+        return try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                applicationContext.startForegroundService(Intent(applicationContext, BackgroundService::class.java))
+            else
+                applicationContext.startService(Intent(applicationContext, BackgroundService::class.java))
+
+            Result.success()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Result.failure()
+        }
+    }
+}
+
 class DeterminedNPSEvent(context: Context, private var workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {

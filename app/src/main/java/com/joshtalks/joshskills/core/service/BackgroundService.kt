@@ -38,12 +38,12 @@ class BackgroundService : Service() {
                 .setOngoing(true)
                 .setAutoCancel(false)
                 .setContentTitle(getString(R.string.app_name))
-                .setContentText("Service is running background")
+                .setContentText("Come back and complete your tasks to learn more!")
                 .setContentIntent(pendingIntent)
                 .setDefaults(Notification.FLAG_ONGOING_EVENT)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            notificationBuilder.priority = NotificationManager.IMPORTANCE_DEFAULT
+            notificationBuilder.priority = NotificationManager.IMPORTANCE_HIGH
         }
 
         val notificationManager =
@@ -53,7 +53,7 @@ class BackgroundService : Service() {
             val notificationChannel = NotificationChannel(
                 NOTIF_CHANNEL_ID,
                 NOTIF_CHANNEL_NAME,
-                NotificationManager.IMPORTANCE_DEFAULT
+                NotificationManager.IMPORTANCE_HIGH
             )
 
             notificationBuilder.setChannelId(NOTIF_CHANNEL_ID)
