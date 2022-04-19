@@ -25,9 +25,8 @@ import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.di.ApplicationComponent
 import com.joshtalks.joshskills.di.DaggerApplicationComponent
 import com.moengage.core.DataCenter
-import com.moengage.core.LogLevel
 import com.moengage.core.MoEngage
-import com.moengage.core.config.LogConfig
+import com.moengage.core.config.MiPushConfig
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
 import java.util.Calendar
 import kotlinx.coroutines.CoroutineScope
@@ -71,6 +70,7 @@ class JoshApplication :
     private fun initMoEngage() {
         val moEngage = MoEngage.Builder(this, "DU9ICNBN2A9TTT38BS59KEU6")
             .setDataCenter(DataCenter.DATA_CENTER_3)
+            .configureMiPush(MiPushConfig("2882303761518451933", "5761845183933", true))
             .build()
 //            .configureLogs(LogConfig(LogLevel.VERBOSE,true))
         MoEngage.initialiseDefaultInstance(moEngage)

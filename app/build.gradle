@@ -460,5 +460,5 @@ dependencies {
 
     //moengage
     implementation(moengage.core)
-
+    implementation(moengage.pushAmpPlus)
 }
