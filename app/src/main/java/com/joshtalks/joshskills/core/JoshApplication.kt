@@ -111,7 +111,7 @@ class JoshApplication :
 
     private fun registerBroadcastReceiver() {
         val intentFilter = IntentFilter()
-        intentFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE")
+//        intentFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE")
         intentFilter.addAction(Intent.ACTION_USER_PRESENT)
         intentFilter.addAction(Intent.ACTION_SCREEN_ON)
         intentFilter.addAction(Intent.ACTION_SCREEN_OFF)

@@ -161,27 +161,23 @@ object WorkManagerAdmin {
             )
     }
 
-//    fun refreshFcmToken() {
-//        val constraints = Constraints.Builder()
-//            .setRequiredNetworkType(NetworkType.CONNECTED)
-//            .build()
-//        val workRequest = PeriodicWorkRequest.Builder(
-//            RegenerateFCMTokenWorker::class.java,
-//            16,
-//            TimeUnit.MINUTES,
-//            PeriodicWorkRequest.MIN_PERIODIC_FLEX_MILLIS,
-//            TimeUnit.MILLISECONDS
-//        )
-//            .setConstraints(constraints)
-//            .setInitialDelay(5000, TimeUnit.MILLISECONDS)
-//            .build()
-//
-//        WorkManager.getInstance(AppObjectController.joshApplication).enqueueUniquePeriodicWork(
-//            RegenerateFCMTokenWorker::class.java.simpleName,
-//            ExistingPeriodicWorkPolicy.KEEP,
-//            workRequest
-//        )
-//    }
+    fun setBackgroundServiceWorker() {
+        val workRequest = PeriodicWorkRequest.Builder(
+            BackgroundNotificationWorker::class.java,
+            30,
+            TimeUnit.MINUTES,
+            PeriodicWorkRequest.MIN_PERIODIC_FLEX_MILLIS,
+            TimeUnit.MILLISECONDS
+        )
+            .setInitialDelay(5000, TimeUnit.MILLISECONDS)
+            .build()
+
+        WorkManager.getInstance(AppObjectController.joshApplication).enqueueUniquePeriodicWork(
+            BackgroundNotificationWorker::class.java.simpleName,
+            ExistingPeriodicWorkPolicy.REPLACE,
+            workRequest
+        )
+    }
 
     fun getQuestionNPA(eventName: String): UUID {
         val data = workDataOf("event" to eventName)
