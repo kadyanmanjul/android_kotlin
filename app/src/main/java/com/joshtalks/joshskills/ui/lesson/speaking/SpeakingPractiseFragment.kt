@@ -2,9 +2,7 @@ package com.joshtalks.joshskills.ui.lesson.speaking
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
 import android.graphics.Paint
-import android.graphics.PorterDuff
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -69,6 +67,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.*
 
+const val NOT_ATTEMPTED = "NA"
+const val COMPLETED = "CO"
+const val ATTEMPTED = "AT"
+const val UPGRADED_USER = "NFT"
 class SpeakingPractiseFragment : ABTestFragment() {
 
     private lateinit var binding: SpeakingPractiseFragmentBinding
@@ -255,7 +257,7 @@ class SpeakingPractiseFragment : ABTestFragment() {
 
                         binding.tvTodayTopic.text = response.topicName
 
-                        if(!isTwentyMinFtuCallActive || response.callDurationStatus == "NFT"){
+                        if(!isTwentyMinFtuCallActive || response.callDurationStatus == UPGRADED_USER){
                             PrefManager.put(
                                 REMOVE_TOOLTIP_FOR_TWENTY_MIN_CALL, true)
                             binding.tvPractiseTime.text =
@@ -289,19 +291,16 @@ class SpeakingPractiseFragment : ABTestFragment() {
                             binding.textView.visibility = GONE
                             binding.tvPractiseTime.visibility = View.INVISIBLE
                             binding.imageView.visibility = GONE
-                            binding.infoContainer.getBackground().setColorFilter(
-                                Color.parseColor("#ffffff"),
-                                PorterDuff.Mode.SRC_ATOP
-                            )
+                            binding.infoContainer.backgroundTintList = null
                             postSpeakingScreenSeenGoal()
                             when(response.callDurationStatus){
-                                "NA" -> {
+                                NOT_ATTEMPTED -> {
                                     binding.ftuTwentyMinStatus.pauseAnimation()
                                     binding.twentyMinFtuText.text = getString(R.string.twenty_min_call_target)
                                     showTwentyMinAnimation("lottie/not_attempted.json")
                                     binding.ftuTwentyMinStatus.setMinAndMaxProgress(0.0f, 0.7f)
                                 }
-                                "CO" -> {
+                                COMPLETED -> {
                                     binding.ftuTwentyMinStatus.pauseAnimation()
                                     binding.twentyMinFtuText.text = getString(R.string.twenty_min_call_completed)
                                     showTwentyMinAnimation("lottie/twenty_min_call_completed.json")
@@ -310,7 +309,7 @@ class SpeakingPractiseFragment : ABTestFragment() {
                                         PrefManager.put(TWENTY_MIN_CALL_GOAL_POSTED, true)
                                     }
                                 }
-                                "AT" -> {
+                                ATTEMPTED -> {
                                     binding.ftuTwentyMinStatus.pauseAnimation()
                                     binding.twentyMinFtuText.text = getString(R.string.twenty_min_call_incomplete)
                                     showTwentyMinAnimation("lottie/twenty_call_min_missed.json")
@@ -330,7 +329,7 @@ class SpeakingPractiseFragment : ABTestFragment() {
                         ex.printStackTrace()
                     }
                     binding.groupTwo.visibility = VISIBLE
-                    if ((!isTwentyMinFtuCallActive || response.callDurationStatus == "NFT") && response.alreadyTalked.toFloat() >= response.duration.toFloat()) {
+                    if ((!isTwentyMinFtuCallActive || response.callDurationStatus == UPGRADED_USER) && response.alreadyTalked.toFloat() >= response.duration.toFloat()) {
                         binding.progressBar.visibility = View.INVISIBLE
                         binding.tvPractiseTime.visibility = GONE
                         binding.progressBarAnim.visibility = VISIBLE
@@ -340,7 +339,7 @@ class SpeakingPractiseFragment : ABTestFragment() {
                         }
                     }
 
-                    if(isTwentyMinFtuCallActive && response.callDurationStatus != "NFT") binding.progressBar.visibility = View.INVISIBLE
+                    if(isTwentyMinFtuCallActive && response.callDurationStatus != UPGRADED_USER) binding.progressBar.visibility = View.INVISIBLE
 
                 val points = PrefManager.getStringValue(SPEAKING_POINTS, defaultValue = EMPTY)
                 if (points.isNotEmpty()) {
@@ -348,9 +347,9 @@ class SpeakingPractiseFragment : ABTestFragment() {
                     PrefManager.put(SPEAKING_POINTS, EMPTY)
                 }
 
-                    if(isTwentyMinFtuCallActive && response.callDurationStatus == "CO"){
+                    if(isTwentyMinFtuCallActive && response.callDurationStatus == COMPLETED){
                         speakingSectionComplete()
-                    }else if ((!isTwentyMinFtuCallActive || response.callDurationStatus == "NFT") && response.alreadyTalked >= response.duration && response.isFromDb.not()) {
+                    }else if ((!isTwentyMinFtuCallActive || response.callDurationStatus == UPGRADED_USER) && response.alreadyTalked >= response.duration && response.isFromDb.not()) {
                         speakingSectionComplete()
                     } else {
                         binding.btnStart.playAnimation()
