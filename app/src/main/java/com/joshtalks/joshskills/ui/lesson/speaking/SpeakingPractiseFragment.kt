@@ -293,6 +293,7 @@ class SpeakingPractiseFragment : ABTestFragment() {
                                 Color.parseColor("#ffffff"),
                                 PorterDuff.Mode.SRC_ATOP
                             )
+                            postSpeakingScreenSeenGoal()
                             when(response.callDurationStatus){
                                 "NA" -> {
                                     binding.ftuTwentyMinStatus.pauseAnimation()
@@ -304,11 +305,19 @@ class SpeakingPractiseFragment : ABTestFragment() {
                                     binding.ftuTwentyMinStatus.pauseAnimation()
                                     binding.twentyMinFtuText.text = getString(R.string.twenty_min_call_completed)
                                     showTwentyMinAnimation("lottie/twenty_min_call_completed.json")
+                                    if (PrefManager.getBoolValue(TWENTY_MIN_CALL_GOAL_POSTED).not() && PrefManager.getBoolValue(CALL_BTN_CLICKED)) {
+                                        viewModel.postGoal(GoalKeys.TWENTY_MIN_CALL.NAME, CampaignKeys.TWENTY_MIN_TARGET.NAME)
+                                        PrefManager.put(TWENTY_MIN_CALL_GOAL_POSTED, true)
+                                    }
                                 }
                                 "AT" -> {
                                     binding.ftuTwentyMinStatus.pauseAnimation()
                                     binding.twentyMinFtuText.text = getString(R.string.twenty_min_call_incomplete)
                                     showTwentyMinAnimation("lottie/twenty_call_min_missed.json")
+                                    if(PrefManager.getBoolValue(TWENTY_MIN_CALL_ATTEMPTED_GOAL_POSTED).not() && PrefManager.getBoolValue(CALL_BTN_CLICKED)) {
+                                        viewModel.postGoal(GoalKeys.CALL_ATTEMPTED.name, CampaignKeys.TWENTY_MIN_TARGET.NAME)
+                                        PrefManager.put(TWENTY_MIN_CALL_ATTEMPTED_GOAL_POSTED, true)
+                                    }
                                 }
                             }
                         }
@@ -330,7 +339,7 @@ class SpeakingPractiseFragment : ABTestFragment() {
                             isAnimationShown = true
                         }
                     }
-                 //   if(response.callDurationStatus == "AT" || response.callDurationStatus == "CO" || response.callDurationStatus == "NA" && isTwentyMinFtuCallActive) binding.progressBar.visibility = View.INVISIBLE
+
                     if(isTwentyMinFtuCallActive && response.callDurationStatus != "NFT") binding.progressBar.visibility = View.INVISIBLE
 
                 val points = PrefManager.getStringValue(SPEAKING_POINTS, defaultValue = EMPTY)
@@ -449,6 +458,12 @@ class SpeakingPractiseFragment : ABTestFragment() {
         }
     }
 
+    private  fun postSpeakingScreenSeenGoal(){
+        if(PrefManager.getBoolValue(SPEAKING_SCREEN_SEEN_GOAL_POSTED).not() && PrefManager.getBoolValue(IS_SPEAKING_SCREEN_CLICKED)) {
+            viewModel.postGoal(GoalKeys.P2P_SCREEN_SEEN.name, CampaignKeys.TWENTY_MIN_TARGET.NAME)
+            PrefManager.put(SPEAKING_SCREEN_SEEN_GOAL_POSTED, true)
+        }
+    }
     private fun showTwentyMinAnimation(jsonFileLottieAnimation : String){
         LottieCompositionFactory.fromAsset(requireContext(), jsonFileLottieAnimation)
             .addListener {
@@ -531,6 +546,8 @@ class SpeakingPractiseFragment : ABTestFragment() {
     }
 
     private fun startPractise(favoriteUserCall: Boolean = false, isNewUserCall: Boolean = false) {
+        PrefManager.put(CALL_BTN_CLICKED, true)
+
         if (PermissionUtils.isCallingPermissionEnabled(requireContext())) {
             startPractiseSearchScreen(
                 favoriteUserCall = favoriteUserCall,

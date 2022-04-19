@@ -569,7 +569,6 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                         viewModel.showHideSpeakingFragmentCallButtons(1)
                         showIntroVideoUi()
                         }
-                 //   }else if(PrefManager.getBoolValue(REMOVE_TOOLTIP_FOR_TWENTY_MIN_CALL) || !isTwentyMinFtuCallActive){
                     }else if(PrefManager.getBoolValue(REMOVE_TOOLTIP_FOR_TWENTY_MIN_CALL)){
                         binding.overlayLayout.visibility = View.VISIBLE
                         binding.spotlightTabGrammar.visibility = View.INVISIBLE
@@ -653,9 +652,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
             abTestCampaignData?.let { map ->
                 isTwentyMinFtuCallActive =
                     (map.variantKey == VariantKeys.TWENTY_MIN_ENABLED.NAME) && map.variableMap?.isEnabled == true
-                isTwentyMinFtuCallActive = true
                 PrefManager.put(IS_TWENTY_MIN_CALL_ENABLED, isTwentyMinFtuCallActive)
-            //    showToast(PrefManager.getBoolValue(IS_TWENTY_MIN_CALL_ENABLED).toString())
             }
         }
     }
@@ -1105,6 +1102,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                     tab.view.background =
                         ContextCompat.getDrawable(this, R.drawable.speaking_tab_bg)
                     viewModel.saveImpression(IMPRESSION_OPEN_SPEAKING_SCREEN)
+                    PrefManager.put(IS_SPEAKING_SCREEN_CLICKED, true)
                     if (PrefManager.getBoolValue(HAS_SEEN_SPEAKING_SPOTLIGHT)) {
                         hideSpotlight()
                     } else {
