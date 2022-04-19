@@ -12,7 +12,10 @@ data class ConversationRoomRequest(
     val roomId: Int? = null,
 
     @SerializedName("topic")
-    val topic: String? = null
+    val topic: String? = null,
+
+    @SerializedName("start_time")
+    val startTime: String? = null
 )
 @Parcelize
 data class ConversationRoomResponse(

@@ -1,6 +1,7 @@
 package com.joshtalks.badebhaiya.repository.service
 
 import com.joshtalks.badebhaiya.feed.model.RoomListResponse
+import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
 import com.joshtalks.badebhaiya.profile.request.ReminderRequest
 import com.joshtalks.badebhaiya.repository.model.ApiResponse
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomRequest
@@ -30,4 +31,6 @@ interface ConversationRoomNetworkService {
     @POST("$DIR/reminder/set_reminder/")
     suspend fun setReminder(@Body reminderRequest: ReminderRequest): Response<Void>
 
+    @POST("$DIR/conversation_room/schedule_room/")
+    suspend fun scheduleRoom(@Body scheduleRequest: ConversationRoomRequest): Response<RoomListResponseItem>
 }

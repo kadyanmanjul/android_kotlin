@@ -125,6 +125,7 @@ val YYYY_MM_DD = SimpleDateFormat("yyyy-MM-dd")
 val DD_MM_YYYY = SimpleDateFormat("dd/MM/yyyy")
 val DATE_FORMATTER = SimpleDateFormat("yyyy-MM-dd")
 val DATE_FORMATTER_2 = SimpleDateFormat("dd - MMM - yyyy")
+val TWENTY_FOUR_HOUR_CLOCK_TIME = SimpleDateFormat("kk:mm")
 
 const val IMPRESSION_OPEN_FREE_TRIAL_SCREEN = "OPEN_FREE_TRIAL_SCREEN"
 

@@ -156,7 +156,7 @@
             android:layout_marginTop="@dimen/_15sdp"
             android:layout_marginBottom="@dimen/_26sdp"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:onClick="@{()->viewModel.createRoom(topic.getText().toString(), callback)}"
+            android:onClick="@{()->viewModel.scheduleRoom(topic.getText().toString(), viewModel.scheduleRoomStartDate.concat(@string/date_time_separator).concat(viewModel.scheduleRoomStartTime), callback)}"
             android:text="@string/schedule_room"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

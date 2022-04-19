@@ -26,4 +26,6 @@ class ConversationRoomRepository {
 
     suspend fun setReminder(reminderRequest: ReminderRequest) =
         service.setReminder(reminderRequest)
+
+    suspend fun scheduleRoom(scheduleRequest: ConversationRoomRequest) = service.scheduleRoom(scheduleRequest)
 }

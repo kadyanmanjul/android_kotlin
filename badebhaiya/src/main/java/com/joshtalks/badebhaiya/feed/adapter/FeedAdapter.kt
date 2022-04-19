@@ -36,7 +36,12 @@ class FeedAdapter :
     }
     var speaker: SpeakerData?=null
 
-
+    fun addScheduleRoom(newScheduledRoom: RoomListResponseItem) {
+        newScheduledRoom.conversationRoomType = ConversationRoomType.NOT_SCHEDULED
+        val previousList = currentList.toMutableList()
+        previousList.add(newScheduledRoom)
+        submitList(previousList)
+    }
 
     var callback: ConversationRoomItemCallback? = null
 

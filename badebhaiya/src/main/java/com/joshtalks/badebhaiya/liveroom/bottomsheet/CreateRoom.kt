@@ -16,6 +16,8 @@ import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.databinding.BottomSheetCreateRoomBinding
 import com.joshtalks.badebhaiya.feed.FeedViewModel
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomResponse
+import com.joshtalks.badebhaiya.utils.DATE_FORMATTER
+import com.joshtalks.badebhaiya.utils.TWENTY_FOUR_HOUR_CLOCK_TIME
 import com.joshtalks.badebhaiya.utils.datetimeutils.DateTimeStyle
 import com.joshtalks.badebhaiya.utils.datetimeutils.DateTimeUtils
 import com.joshtalks.badebhaiya.utils.Utils
@@ -25,16 +27,19 @@ import java.util.Date
 class CreateRoom : BottomSheetDialogFragment() {
     interface CreateRoomCallback {
         fun onRoomCreated(conversationRoomResponse: ConversationRoomResponse, topic: String)
+        fun onRoomSchedule()
         fun onError(error: String)
     }
 
     private var callback: CreateRoomCallback? = null
     private lateinit var binding: BottomSheetCreateRoomBinding
     private val viewModel by activityViewModels<FeedViewModel>()
+
     private val dateSetListener = object: DatePickerDialog.OnDateSetListener {
         override fun onDateSet(p0: DatePicker?, p1: Int, p2: Int, p3: Int) {
             DateTimeUtils.setTimeInMillis(System.currentTimeMillis())
             val selectedDate = Date(p1 - YEAR_DIFFERENCE, p2, p3, DateTimeUtils.getHours(), DateTimeUtils.getMinutes(), DateTimeUtils.getSeconds())
+            viewModel.setScheduleStartDate(DATE_FORMATTER.format(selectedDate))
             binding.dateBtn.text = DateTimeUtils.formatWithStyle(selectedDate, DateTimeStyle.SEMI_MEDIUM)
         }
     }
@@ -42,6 +47,7 @@ class CreateRoom : BottomSheetDialogFragment() {
         override fun onTimeSet(p0: TimePicker?, p1: Int, p2: Int) {
             val todayDate = Date(System.currentTimeMillis())
             val selectedDate = Date(todayDate.year, todayDate.month, todayDate.date, p1, p2)
+            viewModel.setScheduleStartTime(TWENTY_FOUR_HOUR_CLOCK_TIME.format(selectedDate))
             binding.timeBtn.text = Utils.getMessageTimeInHours(selectedDate)
         }
     }
@@ -70,20 +76,17 @@ class CreateRoom : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initUI()
-        addObserver()
     }
 
     private fun initUI() {
         binding.apply {
             shouldStartNow.setOnCheckedChangeListener { switch, isChecked ->
                 if (isChecked) {
-                    createRoomText.text = getString(R.string.create_your_room)
                     createBtn.visibility = View.VISIBLE
                     scheduleBtn.visibility = View.GONE
                     dateBtn.visibility = View.GONE
                     timeBtn.visibility = View.GONE
                 } else {
-                    createRoomText.text = getText(R.string.schedule_your_room)
                     shouldStartNow.visibility = View.GONE
                     createBtn.visibility = View.GONE
                     scheduleBtn.visibility = View.VISIBLE
@@ -92,7 +95,9 @@ class CreateRoom : BottomSheetDialogFragment() {
                 }
             }
             dateBtn.apply {
-                text = DateTimeUtils.formatWithStyle(Date(System.currentTimeMillis()), DateTimeStyle.SEMI_MEDIUM)
+                val todayDate = Date(System.currentTimeMillis())
+                viewModel?.setScheduleStartDate(DATE_FORMATTER.format(todayDate))
+                text = DateTimeUtils.formatWithStyle(todayDate, DateTimeStyle.SEMI_MEDIUM)
                 setOnClickListener {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                         DateTimeUtils.setTimeInMillis(System.currentTimeMillis())
@@ -103,7 +108,9 @@ class CreateRoom : BottomSheetDialogFragment() {
                 }
             }
             timeBtn.apply {
-                text = Utils.getMessageTimeInHours(Date(System.currentTimeMillis()))
+                val todayDate = Date(System.currentTimeMillis())
+                viewModel?.setScheduleStartTime(TWENTY_FOUR_HOUR_CLOCK_TIME.format(todayDate))
+                text = Utils.getMessageTimeInHours(todayDate)
                 setOnClickListener {
                     DateTimeUtils.setTimeInMillis(System.currentTimeMillis())
                     val timePicker = TimePickerDialog(requireContext(), timeSetListener,
@@ -114,12 +121,8 @@ class CreateRoom : BottomSheetDialogFragment() {
         }
     }
 
-    fun addCallback(callback: CreateRoomCallback) {
+    fun addRoomCallbacks(callback: CreateRoomCallback) {
         this.callback = callback
-    }
-
-    private fun addObserver() {
-
     }
 
 }

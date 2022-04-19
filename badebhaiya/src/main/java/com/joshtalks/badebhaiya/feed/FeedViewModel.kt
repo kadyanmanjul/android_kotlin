@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.os.Message
 import android.util.Log
 import androidx.databinding.ObservableBoolean
+import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -35,6 +36,8 @@ class FeedViewModel : ViewModel() {
     var message = Message()
     var singleLiveEvent: MutableLiveData<Message> = MutableLiveData()
     val repository = ConversationRoomRepository()
+    val scheduleRoomStartDate = ObservableField<String>()
+    val scheduleRoomStartTime = ObservableField<String>()
 
     fun setIsBadeBhaiyaSpeaker(){
         isBadeBhaiyaSpeaker.set(User.getInstance().isSpeaker)
@@ -179,5 +182,45 @@ class FeedViewModel : ViewModel() {
                 isLoading.set(false)
             }
         }
+    }
+
+    fun scheduleRoom(topic: String, startTime: String, callback: CreateRoom.CreateRoomCallback) {
+        viewModelScope.launch {
+            try {
+                isLoading.set(true)
+                val response = repository.scheduleRoom(
+                    ConversationRoomRequest(
+                        userId = User.getInstance().userId,
+                        topic = topic,
+                        startTime = startTime
+                    )
+                )
+                Log.i("ayushg", "response: $response")
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        Log.i("ayushg", "response: $response")
+                        showToast("Room scheduled successfully")
+                        feedAdapter.addScheduleRoom(it)
+                        callback.onRoomSchedule()
+                    }
+                } else callback.onError("An error occurred!")
+            } catch (e: Exception) {
+                Log.i("ayushg", "exception: $e")
+                callback.onError(e.localizedMessage)
+                showToast("Error while creating room")
+            } finally {
+                isLoading.set(false)
+            }
+        }
+    }
+
+    fun setScheduleStartDate(date: String) {
+        Log.i("ayushg", "setScheduleStartDate: $date")
+        scheduleRoomStartDate.set(date)
+    }
+
+    fun setScheduleStartTime(time: String) {
+        Log.i("ayushg", "setScheduleStartTime: $time")
+        scheduleRoomStartTime.set(time)
     }
 }

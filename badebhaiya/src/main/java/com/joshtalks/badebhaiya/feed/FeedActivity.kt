@@ -106,7 +106,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
     fun openCreateRoomDialog() {
         CreateRoom.newInstance().also {
             it.show(supportFragmentManager, "createRoom")
-            it.addCallback(object : CreateRoom.CreateRoomCallback {
+            it.addRoomCallbacks(object : CreateRoom.CreateRoomCallback {
                 override fun onRoomCreated(
                     conversationRoomResponse: ConversationRoomResponse,
                     topic: String
@@ -125,6 +125,10 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
 
                         )
                     }
+                    it.dismiss()
+                }
+
+                override fun onRoomSchedule() {
                     it.dismiss()
                 }
 

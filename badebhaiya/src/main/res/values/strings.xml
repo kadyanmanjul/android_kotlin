@@ -2,8 +2,8 @@
     <string name="app_name">BadeBhaiya</string>
     <string name="follow">Follow</string>
     <string name="following">Following</string>
-    <string name="set_reminder">Set Reminder</string>
-    <string name="reminder_on">Reminder Set</string>
+    <string name="set_reminder">Set reminder</string>
+    <string name="reminder_on">Reminder set</string>
     <string name="upcoming_rooms">Upcoming Rooms</string>
     <string name="join_now">Join this room</string>
     <string name="log_out">Log Out</string>
@@ -96,5 +96,6 @@
     <string name="room_card_top_title_header">%s… %s at %s</string>
     <string name="schedule_your_room">Schedule your Room</string>
     <string name="schedule_room">Schedule Room</string>
+    <string name="date_time_separator">T</string>
 
 </resources>
