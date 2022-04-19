@@ -133,6 +133,11 @@ const val IS_FREE_TRIAL_CAMPAIGN_ACTIVE = "is_free_trial_campaign_active"
 const val IS_EFT_VARIENT_ENABLED = "is_eft_varient_enabled"
 const val IS_TWENTY_MIN_CALL_ENABLED = "is_twenty_min_call_enabled"
 const val REMOVE_TOOLTIP_FOR_TWENTY_MIN_CALL = "remove_toolpit_for_twenty_min_call"
+const val TWENTY_MIN_CALL_GOAL_POSTED = "twenty_min_call_goal_posted"
+const val SPEAKING_SCREEN_SEEN_GOAL_POSTED = "speaking_screen_seen_goal_posted"
+const val TWENTY_MIN_CALL_ATTEMPTED_GOAL_POSTED = "twenty_min_call_attempted_goal_posted"
+const val IS_SPEAKING_SCREEN_CLICKED = "is_speaking_screen_clicked"
+const val CALL_BTN_CLICKED = "call_btn_clicked"
 
 const val MOENGAGE_USER_CREATED = "MOENGAGE_USER_CREATED"
 
