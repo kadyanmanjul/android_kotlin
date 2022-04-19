@@ -835,6 +835,20 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
+    fun saveVoiceCallImpression(eventName: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val requestData = hashMapOf(
+                    Pair("mentor_id", Mentor.getInstance().getId()),
+                    Pair("event_name", eventName)
+                )
+                AppObjectController.commonNetworkService.saveVoiceCallImpression(requestData)
+            } catch (ex: Exception) {
+                Timber.e(ex)
+            }
+        }
+    }
+
     fun postGoal(goal: String, campaign: String?) {
         viewModelScope.launch(Dispatchers.IO) {
             repository.postGoal(goal)
