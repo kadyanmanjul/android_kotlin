@@ -34,6 +34,11 @@ import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.utils.Utils
 import java.util.*
 import android.provider.Settings.Global
+import com.joshtalks.badebhaiya.profile.request.DeleteReminderRequest
+import com.joshtalks.badebhaiya.utils.setUserImageOrInitials
+import kotlinx.android.synthetic.main.activity_feed.*
+import kotlinx.android.synthetic.main.activity_profile.*
+
 class ProfileActivity: AppCompatActivity(), FeedAdapter.ConversationRoomItemCallback {
 
     private val binding by lazy<ActivityProfileBinding> {
@@ -92,15 +97,17 @@ class ProfileActivity: AppCompatActivity(), FeedAdapter.ConversationRoomItemCall
                 handleSpeakerProfile(it)
                 if (it.profilePicUrl.isNullOrEmpty().not()) Utils.setImage(ivProfilePic, it.profilePicUrl.toString())
                 else
-                    Utils.setImage(ivProfilePic, it.firstName)
-                tvUserName.text = it.fullName ?:
-                        getString(R.string.full_name_concatenated, it.firstName, it.lastName)
+                    Utils.setImage(ivProfilePic, it.firstName.toString())
+               binding.ivProfilePic.setUserImageOrInitials(it.profilePicUrl,it.firstName.toString(),30)
+                tvUserName.text = getString(R.string.full_name_concatenated, it.firstName, it.lastName)
             }
         }
         viewModel.speakerFollowed.observe(this) {
             if (it == true) {
                 speakerFollowedUIChanges()
             }
+            else
+                speakerUnfollowedUIChanges()
         }
         viewModel.singleLiveEvent.observe(this) {
             Log.d("ABC2", "Data class called with data message: ${it.what} bundle : ${it.data}")
@@ -140,6 +147,8 @@ class ProfileActivity: AppCompatActivity(), FeedAdapter.ConversationRoomItemCall
                 if (profileResponse.isSpeakerFollowed) {
                     speakerFollowedUIChanges()
                 }
+                else
+                    speakerUnfollowedUIChanges()
             } else {
                 tvFollowers.text = HtmlCompat.fromHtml(getString(R.string.bb_following, profileResponse.followersCount.toString()),
                     HtmlCompat.FROM_HTML_MODE_LEGACY)
@@ -149,6 +158,7 @@ class ProfileActivity: AppCompatActivity(), FeedAdapter.ConversationRoomItemCall
 
     fun updateFollowStatus() {
         viewModel.updateFollowStatus()
+        viewModel.getProfileForUser(userId ?: (User.getInstance().userId))
     }
 
     private fun speakerFollowedUIChanges() {
@@ -157,6 +167,14 @@ class ProfileActivity: AppCompatActivity(), FeedAdapter.ConversationRoomItemCall
             btnFollow.setTextColor(resources.getColor(R.color.white))
             btnFollow.background = AppCompatResources.getDrawable(this@ProfileActivity,
                 R.drawable.following_button_background)
+        }
+    }
+    private fun speakerUnfollowedUIChanges() {
+        binding.apply {
+            btnFollow.text = getString(R.string.follow)
+            btnFollow.setTextColor(resources.getColor(R.color.follow_button_stroke))
+            btnFollow.background = AppCompatResources.getDrawable(this@ProfileActivity,
+                R.drawable.follow_button_background)
         }
     }
 
@@ -208,6 +226,17 @@ class ProfileActivity: AppCompatActivity(), FeedAdapter.ConversationRoomItemCall
                     )
                 )
             }
+    }
+
+    override fun deleteReminder(room: RoomListResponseItem, view: View) {
+        //showToast("Schedule Deleted")
+        room.isScheduled=false
+        feedViewModel.deleteReminder(
+            DeleteReminderRequest(
+                roomId=room.roomId.toString(),
+                userId=User.getInstance().userId
+            )
+        )
     }
 
     override fun viewRoom(room: RoomListResponseItem, view: View) {

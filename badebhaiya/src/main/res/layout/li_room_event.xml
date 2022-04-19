@@ -71,26 +71,28 @@
                 tools:text="Guide To Crack UPSC 2023 \nIn One Attempt?" />
 
             <com.google.android.material.button.MaterialButton
-                android:layout_width="0dp"
-                android:layout_height="@dimen/_48sdp"
-                setCardActionButton="@{roomData.conversationRoomType}"
                 roomListItem="@{roomData}"
                 setCallback="@{callback}"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvCardTopic"
-                tools:text="Set Reminder"
-                android:textAllCaps="false"
-                android:textColor="@color/white"
-                android:backgroundTint="@color/reminder_button_color"
-                android:layout_marginTop="@dimen/_25sdp"
-                android:layout_marginBottom="@dimen/_9sdp"
+                setCardActionButton="@{roomData.conversationRoomType}"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/_48sdp"
                 android:layout_marginStart="@dimen/_9sdp"
+                android:layout_marginTop="@dimen/_25sdp"
                 android:layout_marginEnd="@dimen/_9sdp"
+                android:layout_marginBottom="@dimen/_9sdp"
+                android:backgroundTint="@color/reminder_button_color"
+                android:textAllCaps="false"
                 android:textAppearance="@style/BB_Typography_Nunito_Sans_Bold"
+                android:textColor="@color/white"
                 android:textSize="@dimen/_16ssp"
+                app:cornerRadius="@dimen/_15sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:cornerRadius="@dimen/_15sdp" />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvCardTopic"
+                app:layout_constraintVertical_bias="0.0"
+                tools:text="Set Reminder" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </com.google.android.material.card.MaterialCardView>

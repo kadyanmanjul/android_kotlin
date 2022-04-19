@@ -1,5 +1,6 @@
 package com.joshtalks.badebhaiya.repository
 
+import com.joshtalks.badebhaiya.profile.request.DeleteReminderRequest
 import com.joshtalks.badebhaiya.profile.request.ReminderRequest
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomRequest
 import com.joshtalks.badebhaiya.repository.service.ConversationRoomNetworkService
@@ -28,4 +29,9 @@ class ConversationRoomRepository {
         service.setReminder(reminderRequest)
 
     suspend fun scheduleRoom(scheduleRequest: ConversationRoomRequest) = service.scheduleRoom(scheduleRequest)
+
+    suspend fun deleteReminder(deleteReminderRequest: DeleteReminderRequest)=
+        service.deleteReminder(deleteReminderRequest)
+
+    suspend fun searchRoom(parems:Map<String,String>)=service.searchRoom(parems)
 }

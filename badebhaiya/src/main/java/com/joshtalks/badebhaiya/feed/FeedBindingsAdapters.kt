@@ -54,7 +54,7 @@ fun setConversationRoomCardActionButton(
             view.setTextColor(ColorStateList.valueOf(view.context.resources.getColor(R.color.white)))
             view.backgroundTintList =
                 ColorStateList.valueOf(view.context.resources.getColor(R.color.reminder_on_button_color))
-            view.isEnabled = true
+            //view.isEnabled = true
             view.setOnClickListener { callback?.joinRoom(roomListResponseItem, view) }
         }
         NOT_SCHEDULED -> {
@@ -62,7 +62,7 @@ fun setConversationRoomCardActionButton(
             view.setTextColor(ColorStateList.valueOf(view.context.resources.getColor(R.color.white)))
             view.backgroundTintList =
                 ColorStateList.valueOf(view.context.resources.getColor(R.color.reminder_on_button_color))
-            view.isEnabled = true
+            //view.isEnabled = true
             view.setOnClickListener {
                 roomListResponseItem.conversationRoomType = SCHEDULED
                 view.text = view.context.getString(R.string.reminder_on)
@@ -78,8 +78,16 @@ fun setConversationRoomCardActionButton(
             view.setTextColor(ColorStateList.valueOf(view.context.resources.getColor(R.color.reminder_on_button_color)))
             view.backgroundTintList =
                 ColorStateList.valueOf(view.context.resources.getColor(R.color.base_app_color))
-            view.setOnClickListener { callback?.viewRoom(roomListResponseItem, view) }
-
+            //view.isEnabled = true
+            view.setOnClickListener {
+                roomListResponseItem.conversationRoomType = NOT_SCHEDULED
+                view.text = view.context.getString(R.string.set_reminder)
+                view.setTextColor(ColorStateList.valueOf(view.context.resources.getColor(R.color.white)))
+                view.backgroundTintList =
+                    ColorStateList.valueOf(view.context.resources.getColor(R.color.reminder_on_button_color))
+                callback?.deleteReminder(roomListResponseItem, view)
+                view.setOnClickListener { callback?.viewRoom(roomListResponseItem, view) }
+            }
         }
     }
 }

@@ -32,7 +32,7 @@
             android:scaleType="centerCrop"
             android:layout_marginTop="@dimen/_1sdp"
             tools:background="@drawable/user_profile_background"
-            isImageRequired="@{true}"
+
             userName="@{viewModel.userFullName}"
             imageUrl="@{viewModel.userProfileData.profilePicUrl}"
             initialsFontSize="@{24}"

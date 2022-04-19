@@ -17,6 +17,9 @@ interface ProfileNetworkService {
     @POST("$DIR/user/follow/")
     suspend fun updateFollowStatus(@Body followRequest: FollowRequest): Response<Void>
 
+    @POST("$DIR/user/unfollow/")
+    suspend fun updateUnfollowStatus(@Body followRequest: FollowRequest): Response<Void>
+
     @POST("$DIR/reminder/set_reminder/")
     suspend fun setReminderForRoom(@Body reminderRequest: ReminderRequest): Response<Any>
 }

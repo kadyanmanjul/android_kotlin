@@ -20,6 +20,7 @@ import com.joshtalks.badebhaiya.databinding.FragmentSignupEnterNameBinding
 import com.joshtalks.badebhaiya.signup.SignUpActivity
 import com.joshtalks.badebhaiya.signup.viewmodel.SignUpViewModel
 import kotlinx.android.synthetic.main.activity_sign_up.*
+import kotlinx.android.synthetic.main.fragment_signup_enter_name.*
 import kotlinx.android.synthetic.main.fragment_signup_enter_phone.*
 
 class SignUpEnterNameFragment: Fragment() {
@@ -37,6 +38,8 @@ class SignUpEnterNameFragment: Fragment() {
     ): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_signup_enter_name, container, false)
         binding.handler = this
+        //showToast("${binding.etFirstName.toString()}")
+
         activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 (activity as SignUpActivity).btnWelcome.visibility=View.VISIBLE
@@ -48,12 +51,16 @@ class SignUpEnterNameFragment: Fragment() {
                 }
             }
         })
+
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         addObservers()
+
+        if(binding.etFirstName.text.isNullOrEmpty().not())
+            binding.btnNext.isEnabled=true
     }
 
     private fun addObservers() {

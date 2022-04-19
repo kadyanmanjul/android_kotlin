@@ -6,6 +6,7 @@ import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.joshtalks.badebhaiya.core.showToast
 import com.joshtalks.badebhaiya.feed.adapter.FeedAdapter
 import com.joshtalks.badebhaiya.feed.model.ConversationRoomType
 import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
@@ -14,12 +15,14 @@ import com.joshtalks.badebhaiya.profile.response.ProfileResponse
 import com.joshtalks.badebhaiya.repository.BBRepository
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.repository.service.RetrofitInstance
+import com.joshtalks.badebhaiya.utils.setUserImageOrInitials
 import kotlinx.coroutines.launch
 
 class ProfileViewModel : ViewModel() {
     val userIdForOpenedProfile = MutableLiveData<String>()
     private val service = RetrofitInstance.profileNetworkService
     val isBadeBhaiyaSpeaker = ObservableBoolean(false)
+    var profileUrl=""
     val repository = BBRepository()
     val userProfileData = MutableLiveData<ProfileResponse>()
     val userFullName = ObservableField<String>()
@@ -29,7 +32,6 @@ class ProfileViewModel : ViewModel() {
     var singleLiveEvent: MutableLiveData<Message> = MutableLiveData()
     val speakerFollowed = MutableLiveData(false)
     val isSelfProfile = ObservableBoolean(false)
-
     fun updateFollowStatus() {
         speakerFollowed.value?.let {
             if (it.not()) {
@@ -47,6 +49,26 @@ class ProfileViewModel : ViewModel() {
                     }
                 }
             }
+            else
+            {
+
+                viewModelScope.launch {
+                    try {
+                        val followRequest =
+                            FollowRequest(userIdForOpenedProfile.value ?: "", User.getInstance().userId)
+                        val response=service.updateUnfollowStatus(followRequest)
+                        if(response.isSuccessful)
+                        {
+                            speakerFollowed.value=false
+                            userProfileData.value?.followersCount=userProfileData.value?.followersCount?.minus(1)?:0
+                        }
+                    }
+                    catch (ex:Exception){
+
+                    }
+
+                }
+            }
         }
     }
 
@@ -59,6 +81,8 @@ class ProfileViewModel : ViewModel() {
                     response.body()?.let {
                         userProfileData.postValue(it)
                         userFullName.set(it.fullName)
+                        profileUrl= it.profilePicUrl?: ""
+                        speakerFollowed.postValue(it.isSpeakerFollowed)
                         isBadeBhaiyaSpeaker.set(it.isSpeaker)
                         isBadeBhaiyaSpeaker.notifyChange()
                         isBioTextAvailable.set(it.bioText.isNullOrEmpty().not())

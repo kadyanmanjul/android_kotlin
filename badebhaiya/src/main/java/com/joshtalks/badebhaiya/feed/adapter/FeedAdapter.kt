@@ -85,6 +85,7 @@ class FeedAdapter :
     interface ConversationRoomItemCallback {
         fun joinRoom(room: RoomListResponseItem, view: View)
         fun setReminder(room: RoomListResponseItem, view: View)
+        fun deleteReminder(room: RoomListResponseItem,view: View)
         fun viewRoom(room: RoomListResponseItem, view: View)
     }
 }

@@ -55,13 +55,16 @@ class SignUpAddProfilePhotoFragment: Fragment() {
                 }
             }
         })
+        binding.btnNext.setOnClickListener(){
+            showToast("Please Upload a Profile Pic.")
+        }
         return binding.root
     }
 
-    override fun onDetach() {
-        super.onDetach()
-        showToast("Detach is called")
-    }
+//    override fun onDetach() {
+//        super.onDetach()
+//        showToast("Detach is called")
+//    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

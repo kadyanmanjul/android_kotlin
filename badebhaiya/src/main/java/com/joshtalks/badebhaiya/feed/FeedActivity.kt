@@ -26,6 +26,7 @@ import com.joshtalks.badebhaiya.liveroom.OPEN_PROFILE
 import com.joshtalks.badebhaiya.liveroom.OPEN_ROOM
 import com.joshtalks.badebhaiya.liveroom.bottomsheet.CreateRoom
 import com.joshtalks.badebhaiya.profile.ProfileActivity
+import com.joshtalks.badebhaiya.profile.request.DeleteReminderRequest
 import com.joshtalks.badebhaiya.profile.request.ReminderRequest
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomResponse
 import com.joshtalks.badebhaiya.repository.model.User
@@ -64,7 +65,6 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
 
     fun onSearchPressed()
     {
-        showToast("search Initiated")
         supportFragmentManager.findFragmentByTag(SearchFragment::class.java.simpleName)
         supportFragmentManager.beginTransaction()
             .replace(R.id.root_view,SearchFragment(),SearchFragment::class.java.simpleName)
@@ -73,7 +73,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
     }
 
     private fun initView() {
-        User.getInstance()?.apply {
+        User.getInstance().apply {
             binding.profileIv.setUserImageOrInitials(profilePicUrl,firstName.toString())
         }
 
@@ -201,34 +201,45 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
     }
 
     override fun setReminder(room: RoomListResponseItem, view: View) {
-        val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
-        val notificationIntent = NotificationHelper.getNotificationIntent(
-            this, Notification(
-                title = room.topic ?: "Conversation Room Reminder",
-                body = room.speakersData?.name ?: "Conversation Room Reminder",
-                id = room.startedBy ?: 0,
-                userId = room.speakersData?.userId ?: "",
-                type = NotificationType.REMINDER
+            val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
+            val notificationIntent = NotificationHelper.getNotificationIntent(
+                this, Notification(
+                    title = room.topic ?: "Conversation Room Reminder",
+                    body = room.speakersData?.name ?: "Conversation Room Reminder",
+                    id = room.startedBy ?: 0,
+                    userId = room.speakersData?.userId ?: "",
+                    type = NotificationType.REMINDER
+                )
+            )
+            val pendingIntent =
+                PendingIntent.getBroadcast(
+                    applicationContext,
+                    0,
+                    notificationIntent,
+                    PendingIntent.FLAG_UPDATE_CURRENT
+                )
+            alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 2000, pendingIntent)
+                .also {
+                    room.isScheduled = true
+                    viewModel.setReminder(
+                        ReminderRequest(
+                            roomId = room.roomId.toString(),
+                            userId = User.getInstance().userId,
+                            reminderTime = room.startTimeDate.minus(5 * 60 * 1000)
+                        )
+                    )
+                }
+        }
+
+     override fun deleteReminder(room: RoomListResponseItem, view: View) {
+        //showToast("Schedule Deleted")
+        room.isScheduled=false
+        viewModel.deleteReminder(
+            DeleteReminderRequest(
+                roomId=room.roomId.toString(),
+                userId=User.getInstance().userId
             )
         )
-        val pendingIntent =
-            PendingIntent.getBroadcast(
-                applicationContext,
-                0,
-                notificationIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT
-            )
-        alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 2000, pendingIntent)
-            .also {
-                room.isScheduled = true
-                viewModel.setReminder(
-                    ReminderRequest(
-                        roomId = room.roomId.toString(),
-                        userId = User.getInstance().userId,
-                        reminderTime = room.startTimeDate.minus(5 * 60 * 1000)
-                    )
-                )
-            }
     }
 
     override fun viewRoom(room: RoomListResponseItem, view: View) {

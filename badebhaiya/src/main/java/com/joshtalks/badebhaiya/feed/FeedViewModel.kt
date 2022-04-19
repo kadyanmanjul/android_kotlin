@@ -16,6 +16,7 @@ import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
 import com.joshtalks.badebhaiya.liveroom.OPEN_PROFILE
 import com.joshtalks.badebhaiya.liveroom.OPEN_ROOM
 import com.joshtalks.badebhaiya.liveroom.bottomsheet.CreateRoom
+import com.joshtalks.badebhaiya.profile.request.DeleteReminderRequest
 import com.joshtalks.badebhaiya.profile.request.ReminderRequest
 import com.joshtalks.badebhaiya.repository.ConversationRoomRepository
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomRequest
@@ -166,6 +167,38 @@ class FeedViewModel : ViewModel() {
                 feedAdapter.submitList(null)
                 isRoomsAvailable.set(false)
                 ex.printStackTrace()
+            } finally {
+                isLoading.set(false)
+            }
+        }
+    }
+    fun searchRoom(query:String) {
+        viewModelScope.launch {
+            try{
+                val parems= mutableMapOf<String,String>()
+                parems["query"]=query
+                val response=repository.searchRoom(parems)
+                if(response.isSuccessful)
+                showToast("Search API launched successfully")
+            }
+            catch (ex: Exception){
+
+            }
+         }
+    }
+
+    fun deleteReminder(deleteReminderRequest: DeleteReminderRequest)
+    {
+        viewModelScope.launch {
+            try{
+                isLoading.set(true)
+                val res=repository.deleteReminder(deleteReminderRequest)
+                if (res.isSuccessful && res.code()==200){
+                    showToast("Reminder Deleted")
+                } else showToast("Error while Deleting Reminder")
+            } catch (ex:Exception){
+                ex.printStackTrace()
+                showToast("Error while Deleting Reminder")
             } finally {
                 isLoading.set(false)
             }
