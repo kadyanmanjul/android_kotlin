@@ -75,6 +75,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         supportFragmentManager.beginTransaction()
             .replace(R.id.root_view, SearchFragment(), SearchFragment::class.java.simpleName)
             .commit()
+
     }
 
     private fun initView() {

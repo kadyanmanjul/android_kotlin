@@ -35,6 +35,7 @@ fun setFeedAdapter(
     view.adapter = adapter
     adapter.setListener(callback)
 }
+
 @BindingAdapter("onRefresh", "setRefreshing")
 fun setSwipeToRefreshAdapter(
     view: SwipeRefreshLayout,
