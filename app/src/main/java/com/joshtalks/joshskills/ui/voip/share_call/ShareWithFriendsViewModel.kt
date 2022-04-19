@@ -20,24 +20,6 @@ class ShareWithFriendsViewModel(application: Application) : AndroidViewModel(app
 
     val repository: ABTestRepository by lazy { ABTestRepository() }
 
-    fun getDeepLink(deepLink: String, contentId: String) {
-        viewModelScope.launch {
-            try {
-                val requestData = LinkAttribution(
-                    mentorId = Mentor.getInstance().getId(),
-                    contentId = contentId,
-                    sharedItem = "TWENTY_MINUTE_IMAGE",
-                    sharedItemType = "IM",
-                    deepLink = deepLink
-                )
-                val res = AppObjectController.commonNetworkService.getDeepLink(requestData)
-                Timber.i(res.body().toString())
-            } catch (ex: Exception) {
-                Timber.e(ex)
-            }
-        }
-    }
-
     fun postGoal(goal: String, campaign: String?) {
         viewModelScope.launch(Dispatchers.IO) {
             repository.postGoal(goal)
