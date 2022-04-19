@@ -58,8 +58,15 @@ class PracticeAudioAdapter(
     }
 
     fun addNewItem (practiceEngagementWrapper:PracticeEngagementWrapper) {
-        val list = ArrayList(list)
+        val list = ArrayList<PracticeEngagementWrapper>()
         list.add(practiceEngagementWrapper)
+        this.list = list
+        notifyDataSetChanged()
+    }
+
+    fun removeItem (practiceEngagementWrapper:PracticeEngagementWrapper) {
+        val list = ArrayList(list)
+        list.remove(practiceEngagementWrapper)
         this.list = list
         notifyDataSetChanged()
     }

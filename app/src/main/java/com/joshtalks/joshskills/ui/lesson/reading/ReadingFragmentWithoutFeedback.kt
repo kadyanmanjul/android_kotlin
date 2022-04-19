@@ -56,17 +56,41 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.constants.PERMISSION_FROM_READING_GRANTED
 import com.joshtalks.joshskills.constants.SHARE_VIDEO
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.CoreJoshFragment
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
+import com.joshtalks.joshskills.core.HAS_SEEN_READING_HAND_TOOLTIP
+import com.joshtalks.joshskills.core.HAS_SEEN_READING_PLAY_ANIMATION
+import com.joshtalks.joshskills.core.HAS_SEEN_READING_TOOLTIP
+import com.joshtalks.joshskills.core.LESSON_COMPLETE_SNACKBAR_TEXT_STRING
+import com.joshtalks.joshskills.core.PermissionUtils
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
 import com.joshtalks.joshskills.core.extension.setImageAndFitCenter
 import com.joshtalks.joshskills.core.io.AppDirectory
+import com.joshtalks.joshskills.core.isCallOngoing
 import com.joshtalks.joshskills.core.service.DownloadUtils
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.core.videotranscoder.enforceSingleScrollDirection
 import com.joshtalks.joshskills.databinding.ReadingPracticeFragmentWithoutFeedbackBinding
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.entity.*
+import com.joshtalks.joshskills.repository.local.entity.AudioType
+import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
+import com.joshtalks.joshskills.repository.local.entity.CompressedVideo
+import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
+import com.joshtalks.joshskills.repository.local.entity.EXPECTED_ENGAGE_TYPE
+import com.joshtalks.joshskills.repository.local.entity.LessonMaterialType
+import com.joshtalks.joshskills.repository.local.entity.LessonQuestion
+import com.joshtalks.joshskills.repository.local.entity.PendingTask
+import com.joshtalks.joshskills.repository.local.entity.PracticeEngagement
+import com.joshtalks.joshskills.repository.local.entity.PracticeEngagementWrapper
+import com.joshtalks.joshskills.repository.local.entity.PracticeFeedback2
+import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
+import com.joshtalks.joshskills.repository.local.entity.ReadingVideo
 import com.joshtalks.joshskills.repository.local.eventbus.RemovePracticeAudioEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.SnackBarEvent
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -142,7 +166,7 @@ class ReadingFragmentWithoutFeedback :
     private val mutex = Mutex(false)
     private var muxerJob: Job? = null
     private var internetAvailableFlag: Boolean = true
-    private var praticAudioAdapter: PracticeAudioAdapter? = null
+    private val praticAudioAdapter: PracticeAudioAdapter by lazy { PracticeAudioAdapter( context) }
     private val layoutManager: LinearLayoutManager by lazy {
         LinearLayoutManager(activity).apply {
             isSmoothScrollbarEnabled = true
@@ -1130,7 +1154,7 @@ class ReadingFragmentWithoutFeedback :
                 )
             )
         )
-        binding.audioListRv.setHasFixedSize(true)
+        binding.audioListRv.setHasFixedSize(false)
         binding.audioListRv.layoutManager = layoutManager
         binding.audioListRv.addItemDecoration(divider)
         binding.audioListRv.enforceSingleScrollDirection()
@@ -1152,8 +1176,6 @@ class ReadingFragmentWithoutFeedback :
         practiceEngagement?.let { practiceList ->
             val list = arrayListOf<PracticeEngagementWrapper>()
             if (practiceList.isNullOrEmpty().not()) {
-                praticAudioAdapter = PracticeAudioAdapter( context)
-                binding.audioListRv.adapter = PracticeAudioAdapter( context)
                 practiceList.forEach { practice ->
                     list.add(PracticeEngagementWrapper(practice,practice.answerUrl))
                 }
@@ -1199,6 +1221,7 @@ class ReadingFragmentWithoutFeedback :
         } else {
             binding.subPractiseSubmitLayout.visibility = VISIBLE
             binding.audioListRv.visibility = VISIBLE
+            initRV()
             removePreviousAddedViewHolder()
             praticAudioAdapter?.addNewItem(PracticeEngagementWrapper(null,filePath))
             initializePractiseSeekBar()
