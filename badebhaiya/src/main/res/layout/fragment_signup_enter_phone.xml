@@ -29,7 +29,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/phone_container"
-            android:layout_width="@dimen/_200sdp"
+            android:layout_width="@dimen/_253sdp"
             android:layout_height="wrap_content"
             android:background="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -50,7 +50,7 @@
                 android:id="@+id/country_code_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_36sdp"
+                android:layout_marginStart="@dimen/_26sdp"
                 android:text="@string/country_code"
                 android:textAppearance="@style/BB_Typography_Nunito_Sans_Regular"
                 android:textColor="@color/black"
@@ -58,7 +58,18 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.476" />
+                app:layout_constraintVertical_bias="0.476"
+                />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/ic_hallway_down_arrow"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toRightOf="@+id/country_code_text"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_margin="@dimen/_3sdp"/>
+
 
 
             <androidx.appcompat.widget.AppCompatEditText

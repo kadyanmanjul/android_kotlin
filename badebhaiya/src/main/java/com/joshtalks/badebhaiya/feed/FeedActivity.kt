@@ -62,14 +62,12 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         //setOnClickListener()
     }
 
-
     fun onSearchPressed()
     {
         supportFragmentManager.findFragmentByTag(SearchFragment::class.java.simpleName)
         supportFragmentManager.beginTransaction()
             .replace(R.id.root_view,SearchFragment(),SearchFragment::class.java.simpleName)
             .commit()
-
     }
 
     private fun initView() {

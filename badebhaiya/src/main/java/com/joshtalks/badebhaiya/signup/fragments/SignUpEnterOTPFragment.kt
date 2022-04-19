@@ -1,12 +1,14 @@
 package com.joshtalks.badebhaiya.signup.fragments
 
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -54,9 +56,9 @@ class SignUpEnterOTPFragment: Fragment() {
                     supportFragmentManager.beginTransaction().remove(this@SignUpEnterOTPFragment)
                         .commitAllowingStateLoss()
                 }
-
             }
         })
+
         return binding.root
     }
 
@@ -65,7 +67,16 @@ class SignUpEnterOTPFragment: Fragment() {
         binding.tvPhoneNumberText.text = getString(R.string.verify_otp_for_phone_text, viewModel.mobileNumber)
         processOTP()
         addOTPObserver()
+        Handler().postDelayed({
+              binding.resend.isVisible=true
+        },30000)
+
+        binding.resend.setOnClickListener{
+            showToast("OTP Resent Successfully on +91${viewModel.mobileNumber}")
+            viewModel.sendPhoneNumberForOTP(viewModel.mobileNumber.toString(), "+91")
+        }
     }
+
 
     private fun processOTP() {
         binding.otpView.otpListener = object : OTPListener {

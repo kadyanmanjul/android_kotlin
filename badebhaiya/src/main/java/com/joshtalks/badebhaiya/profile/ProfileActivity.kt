@@ -57,12 +57,12 @@ class ProfileActivity: AppCompatActivity(), FeedAdapter.ConversationRoomItemCall
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        handleIntent()
+        viewModel.getProfileForUser(userId ?: (User.getInstance().userId))
         feedViewModel.setIsBadeBhaiyaSpeaker()
         binding.lifecycleOwner = this
         binding.handler = this
         binding.viewModel = viewModel
-        handleIntent()
-        viewModel.getProfileForUser(userId ?: (User.getInstance().userId))
         addObserver()
         setOnClickListener()
     }
@@ -113,7 +113,6 @@ class ProfileActivity: AppCompatActivity(), FeedAdapter.ConversationRoomItemCall
             Log.d("ABC2", "Data class called with data message: ${it.what} bundle : ${it.data}")
             when (it.what) {
                 OPEN_PROFILE ->{
-
                 }
                 OPEN_ROOM ->{
                     it.data?.let {
