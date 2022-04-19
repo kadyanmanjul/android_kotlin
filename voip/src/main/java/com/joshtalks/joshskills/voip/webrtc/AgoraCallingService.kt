@@ -1,5 +1,7 @@
 package com.joshtalks.joshskills.voip.webrtc
 
+import android.app.Service
+import android.media.AudioManager
 import com.joshtalks.joshskills.voip.BuildConfig
 import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.constant.CONNECTED
@@ -139,6 +141,13 @@ internal object AgoraCallingService : CallingService {
 
     private fun joinChannel(request : CallRequest) : Int? {
         voipLog?.log("Joining Channel")
+//        agoraEngine?.apply {
+//            val audio = Utils.context?.getSystemService(Service.AUDIO_SERVICE) as AudioManager
+//            val maxVolume = audio.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL)
+//            val currentVolume = audio.getStreamVolume(AudioManager.STREAM_VOICE_CALL)
+//            adjustPlaybackSignalVolume((95 / maxVolume) * currentVolume)
+//            enableDeepLearningDenoise(true)
+//        }
         return agoraEngine?.joinChannel(
             request.getToken(),
             request.getChannel(),

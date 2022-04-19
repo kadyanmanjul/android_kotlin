@@ -78,7 +78,11 @@ internal class CallingRemoteServiceHandler private constructor(val scope : Corou
             data.obj = bundle?.getSerializable(INTENT_DATA_CONNECT_CALL) as? HashMap<String, Any>
         }
         scope.launch {
-            flowEvent.emit(data)
+            try {
+                flowEvent.emit(data)
+            } catch (e : Exception) {
+                e.printStackTrace()
+            }
         }
     }
 }

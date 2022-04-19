@@ -14,15 +14,23 @@ import com.joshtalks.joshskills.voip.data.local.PrefManager
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import timber.log.Timber
 import kotlin.Exception
 
 private const val TAG = "FirebaseChannelService"
+private const val PENDING = 0
+private const val PROCESSED = 1
 
 object FirebaseChannelService : EventChannel {
     private val settings = FirebaseFirestoreSettings.Builder()
         .setPersistenceEnabled(false)
         .build()
+
+    private val dataFlow by lazy {
+        MutableSharedFlow<Communication>(replay = 0)
+    }
 
     private val firestore by lazy {
         Firebase.firestore.apply { firestoreSettings = settings }
@@ -36,13 +44,43 @@ object FirebaseChannelService : EventChannel {
             .document("${Utils.uuid}")
             //.document("testing-23")
     }
+
+    private fun processEvent(timestamp : Long) {
+        firestore.runTransaction { transaction ->
+            Log.d(TAG, "processEvent: $timestamp")
+            val snapshot = transaction.get(networkDb)
+            if(snapshot.getString("timetoken")?.toLong() == timestamp)
+                transaction.update(networkDb, "status", PROCESSED)
+        }.addOnSuccessListener {
+            Log.d(TAG, "processEvent: Sucess")
+        }.addOnFailureListener {
+            Log.d(TAG, "processEvent: FAILED")
+            it.printStackTrace()
+        }
+    }
+
     private val ioScope by lazy {
         CoroutineScope(Dispatchers.IO + coroutineExceptionHandler)
     }
     private val listener by lazy { FirebaseEventListener(ioScope) }
     
     override suspend fun initChannel() {
+            observeFirestoreEvents()
             networkDb.addSnapshotListener(listener)
+    }
+
+    private fun observeFirestoreEvents() {
+        ioScope.launch {
+            try{
+                listener.observerListener().collect { it ->
+                    val timestamp = it.getEventTime()
+                    dataFlow.emit(it)
+                    timestamp?.let { processEvent(it) }
+                }
+            } catch (e : Exception) {
+                e.printStackTrace()
+            }
+        }
     }
 
     override fun emitEvent(event: OutgoingData) {
@@ -50,7 +88,7 @@ object FirebaseChannelService : EventChannel {
     }
 
     override fun observeChannelEvents(): SharedFlow<Communication> {
-        return listener.observerListener()
+        return dataFlow
     }
 
     override fun reconnect() {
@@ -74,7 +112,10 @@ class FirebaseEventListener(val scope : CoroutineScope) : EventListener<Document
             try {
                 if (value != null) {
                     Log.d(TAG, "onEvent: ${value.data} ... $value")
-                    val message = getMessage(value.data)
+                    val data = value.data
+                    if(data?.get("status").toString().toInt() == PROCESSED)
+                        return@launch
+                    val message = getMessage(data)
                     Log.d(TAG, "onEvent: $message")
                     // TODO: RED FLAG -- Must be removed
                     waitForValueToGetUpdated()

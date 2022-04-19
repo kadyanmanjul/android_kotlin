@@ -207,7 +207,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
             if(isActive) {
                 val timeout = Timeout(ServerConstants.TIMEOUT)
                 for(i in 1..12) {
-                    Log.d(TAG, "startUserNotFoundTimer: ")
+                    Log.d(TAG, "startUserNotFoundTimer: $i")
                     delay(PER_USER_TIMEOUT_IN_MILLIS)
                     if(isActive)
                         networkEventChannel.emitEvent(timeout)

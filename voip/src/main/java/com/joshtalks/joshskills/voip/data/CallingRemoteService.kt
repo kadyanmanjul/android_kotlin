@@ -155,55 +155,63 @@ class CallingRemoteService : Service() {
         if (isMediatorInitialise.not()) {
             isMediatorInitialise = true
             ioScope.launch {
-                mediator.observeEvents().collect {
-                    when (it) {
-                        CALL_CONNECTED_EVENT -> {
-                            updateStartCallTime(
-                                SystemClock.elapsedRealtime(),
-                                remoteUserName = CallDetails.remoteUserName,
-                                remoteUserImage = CallDetails.remoteUserImageUrl,
-                                remoteUserAgoraId = CallDetails.remoteUserAgoraId,
-                                callId = CallDetails.callId,
-                                callType = CallDetails.callType,
-                                currentUserAgoraId = CallDetails.localUserAgoraId,
-                                channelName = CallDetails.agoraChannelName,
-                                topicName = CallDetails.topicName
-                            )
-                            notification.connected(
-                                CallDetails.remoteUserName,
-                                openCallScreen(),
-                                getHangUpIntent()
-                            )
-                        }
-                        CALL_DISCONNECT_REQUEST -> {
-                            Log.d(TAG, "onStartCommand: CALL_DISCONNECT_REQUEST")
-                            notification.idle()
-                            resetCallUIState()
-                            val duration = callDuration()
-                            if(duration > 0)
-                                updateLastCallDetails(duration)
-                        }
+                try {
+                    mediator.observeEvents().collect {
+                        when (it) {
+                            CALL_CONNECTED_EVENT -> {
+                                updateStartCallTime(
+                                    SystemClock.elapsedRealtime(),
+                                    remoteUserName = CallDetails.remoteUserName,
+                                    remoteUserImage = CallDetails.remoteUserImageUrl,
+                                    remoteUserAgoraId = CallDetails.remoteUserAgoraId,
+                                    callId = CallDetails.callId,
+                                    callType = CallDetails.callType,
+                                    currentUserAgoraId = CallDetails.localUserAgoraId,
+                                    channelName = CallDetails.agoraChannelName,
+                                    topicName = CallDetails.topicName
+                                )
+                                notification.connected(
+                                    CallDetails.remoteUserName,
+                                    openCallScreen(),
+                                    getHangUpIntent()
+                                )
+                            }
+                            CALL_DISCONNECT_REQUEST -> {
+                                Log.d(TAG, "onStartCommand: CALL_DISCONNECT_REQUEST")
+                                notification.idle()
+                                resetCallUIState()
+                                val duration = callDuration()
+                                if(duration > 0)
+                                    updateLastCallDetails(duration)
+                            }
 
-                        INCOMING_CALL -> {
-                            updateIncomingCallDetails()
-                            val data = IncomingCall(callId = IncomingCallData.callId)
-                            mediator.showIncomingCall(data)
+                            INCOMING_CALL -> {
+                                updateIncomingCallDetails()
+                                val data = IncomingCall(callId = IncomingCallData.callId)
+                                mediator.showIncomingCall(data)
+                            }
+                            MUTE -> updateRemoteUserMuteState(true)
+                            UNMUTE -> updateRemoteUserMuteState(false)
+                            HOLD -> updateUserHoldState(true)
+                            UNHOLD -> updateUserHoldState(false)
                         }
-                        MUTE -> updateRemoteUserMuteState(true)
-                        UNMUTE -> updateRemoteUserMuteState(false)
-                        HOLD -> updateUserHoldState(true)
-                        UNHOLD -> updateUserHoldState(false)
+                        voipLog?.log("Sending Event to client $it")
+                        handler.sendMessageToRepository(it)
                     }
-                    voipLog?.log("Sending Event to client $it")
-                    handler.sendMessageToRepository(it)
+                } catch (e : Exception) {
+                    e.printStackTrace()
                 }
             }
 
             ioScope.launch {
-                mediator.observeState().collect {
-                    currentState = it
-                    updateVoipState(it)
-                    voipLog?.log("State --> $it")
+                try {
+                    mediator.observeState().collect {
+                        currentState = it
+                        updateVoipState(it)
+                        voipLog?.log("State --> $it")
+                    }
+                } catch (e : Exception) {
+                    e.printStackTrace()
                 }
             }
         }
@@ -224,9 +232,15 @@ class CallingRemoteService : Service() {
     private fun startAutoServiceKillingTimer() {
         Log.d(TAG, "startAutoServiceKillingTimer: ")
         serviceKillJob = ioScope.launch {
-            delay(SERVICE_ALONE_LIFE_TIME)
-            if (isActive)
-                stopSelf()
+            try {
+                delay(SERVICE_ALONE_LIFE_TIME)
+                if (isActive)
+                    stopSelf()
+            } catch (e : Exception) {
+                if(e is CancellationException)
+                    throw e
+                e.printStackTrace()
+            }
         }
     }
 
@@ -238,18 +252,22 @@ class CallingRemoteService : Service() {
 
     private fun observeAudioRouteEvents() {
         ioScope.launch {
-            audioController.observeAudioRoute().collectLatest {
-                when (it) {
-                    BluetoothAudio, EarpieceAudio, HeadsetAudio -> {
-                        // TODO: Need to check
+            try {
+                audioController.observeAudioRoute().collectLatest {
+                    when (it) {
+                        BluetoothAudio, EarpieceAudio, HeadsetAudio -> {
+                            // TODO: Need to check
                             //updateUserSpeakerState(false)
-                        handler.sendMessageToRepository(SWITCHED_TO_WIRED)
-                    }
-                    SpeakerAudio -> {
+                            handler.sendMessageToRepository(SWITCHED_TO_WIRED)
+                        }
+                        SpeakerAudio -> {
                             //updateUserSpeakerState(true)
-                        handler.sendMessageToRepository(SWITCHED_TO_SPEAKER)
+                            handler.sendMessageToRepository(SWITCHED_TO_SPEAKER)
+                        }
                     }
                 }
+            } catch (e : Exception) {
+                e.printStackTrace()
             }
         }
     }
@@ -257,25 +275,29 @@ class CallingRemoteService : Service() {
     private fun observerPstnService() {
         voipLog?.log("Listining PSTN")
         ioScope.launch {
-            pstnController.observePSTNState().collect {
-                when (it) {
-                    PSTNState.Idle -> {
-                        voipLog?.log("IDEL")
-                        val data =
-                            UserAction(type = ServerConstants.RESUME, callId = CallDetails.callId)
-                        mediator.sendEventToServer(data)
-                        updateUserHoldState(false)
-                    }
-                    PSTNState.OnCall, PSTNState.Ringing -> {
-                        voipLog?.log("ON CALL")
-                        val data = UserAction(
-                            type = ServerConstants.ONHOLD,
-                            callId = CallDetails.callId
-                        )
-                        mediator.sendEventToServer(data)
-                        updateUserHoldState(true)
+            try {
+                pstnController.observePSTNState().collect {
+                    when (it) {
+                        PSTNState.Idle -> {
+                            voipLog?.log("IDEL")
+                            val data =
+                                UserAction(type = ServerConstants.RESUME, callId = CallDetails.callId)
+                            mediator.sendEventToServer(data)
+                            updateUserHoldState(false)
+                        }
+                        PSTNState.OnCall, PSTNState.Ringing -> {
+                            voipLog?.log("ON CALL")
+                            val data = UserAction(
+                                type = ServerConstants.ONHOLD,
+                                callId = CallDetails.callId
+                            )
+                            mediator.sendEventToServer(data)
+                            updateUserHoldState(true)
+                        }
                     }
                 }
+            } catch (e : Exception) {
+                e.printStackTrace()
             }
         }
     }
@@ -283,39 +305,43 @@ class CallingRemoteService : Service() {
     private fun observeHandlerEvents(handler: CallingRemoteServiceHandler) {
         voipLog?.log("${handler}")
         ioScope.launch {
-            handler.observerFlow().collect {
-                when (it.what) {
-                    CALL_CONNECT_REQUEST -> {
-                        val callData = it.obj as? HashMap<String, Any>
-                        if (callData != null) {
-                            mediator.connectCall(PEER_TO_PEER, callData)
-                            voipLog?.log("Connecting Call Data --> $callData")
-                        } else
-                            voipLog?.log("Mediator is NULL")
+            try {
+                handler.observerFlow().collect {
+                    when (it.what) {
+                        CALL_CONNECT_REQUEST -> {
+                            val callData = it.obj as? HashMap<String, Any>
+                            if (callData != null) {
+                                mediator.connectCall(PEER_TO_PEER, callData)
+                                voipLog?.log("Connecting Call Data --> $callData")
+                            } else
+                                voipLog?.log("Mediator is NULL")
+                        }
+                        CALL_DISCONNECT_REQUEST -> {
+                            Log.d(TAG, "observeHandlerEvents: CALL_DISCONNECT_REQUEST")
+                            voipLog?.log("Disconnect Call")
+                            disconnectCall()
+                        }
+                        MUTE -> {
+                            val userAction = UserAction(ServerConstants.MUTE, CallDetails.callId)
+                            mediator.muteAudioStream(true)
+                            mediator.sendEventToServer(userAction)
+                        }
+                        UNMUTE -> {
+                            val userAction = UserAction(ServerConstants.UNMUTE, CallDetails.callId)
+                            mediator.muteAudioStream(false)
+                            mediator.sendEventToServer(userAction)
+                        }
+                        SPEAKER_ON_REQUEST -> {
+                            audioController.switchAudioToSpeaker()
+                        }
+                        SPEAKER_OFF_REQUEST -> {
+                            audioController.switchAudioToDefault()
+                        }
                     }
-                    CALL_DISCONNECT_REQUEST -> {
-                        Log.d(TAG, "observeHandlerEvents: CALL_DISCONNECT_REQUEST")
-                        voipLog?.log("Disconnect Call")
-                        disconnectCall()
-                    }
-                    MUTE -> {
-                        val userAction = UserAction(ServerConstants.MUTE, CallDetails.callId)
-                        mediator.muteAudioStream(true)
-                        mediator.sendEventToServer(userAction)
-                    }
-                    UNMUTE -> {
-                        val userAction = UserAction(ServerConstants.UNMUTE, CallDetails.callId)
-                        mediator.muteAudioStream(false)
-                        mediator.sendEventToServer(userAction)
-                    }
-                    SPEAKER_ON_REQUEST -> {
-                        audioController.switchAudioToSpeaker()
-                    }
-                    SPEAKER_OFF_REQUEST -> {
-                        audioController.switchAudioToDefault()
-                    }
+                    voipLog?.log("observeHandlerEvents: $it")
                 }
-                voipLog?.log("observeHandlerEvents: $it")
+            } catch (e : Exception) {
+                e.printStackTrace()
             }
         }
     }

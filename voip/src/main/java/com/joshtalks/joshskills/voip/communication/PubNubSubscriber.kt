@@ -92,7 +92,6 @@ internal class PubNubSubscriber : SubscribeCallback() {
                         val afterUpdate = PrefManager.getLatestPubnubMessageTime()
                         Log.d(TAG, "status: After Update --> $afterUpdate")
                     }
-                    
                 }
             }
             PNUnexpectedDisconnectCategory -> {
