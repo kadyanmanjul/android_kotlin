@@ -21,6 +21,7 @@ import com.joshtalks.joshskills.constants.INIT_LIST_TOOLTIP
 import com.joshtalks.joshskills.constants.OPEN_POPUP_MENU
 import com.joshtalks.joshskills.core.HAS_SEEN_GROUP_TOOLTIP
 import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.databinding.FragmentGroupListBinding
 import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics.Event.*
 import com.joshtalks.joshskills.ui.group.model.GroupItemData

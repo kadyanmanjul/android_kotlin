@@ -28,7 +28,6 @@ import com.userexperior.UserExperior
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.json.JSONObject
 import timber.log.Timber
 
 class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(application) {

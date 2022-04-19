@@ -13,6 +13,9 @@ import com.google.android.flexbox.JustifyContent
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseDialogFragment
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.databinding.LayoutReportDialogFragmentBinding
 import com.joshtalks.joshskills.ui.voip.SHOW_FPP_DIALOG
 import com.joshtalks.joshskills.ui.voip.voip_rating.adapter.ReportAdapter
@@ -106,6 +109,14 @@ class ReportDialogFragment(val function: () -> Unit) : BaseDialogFragment() {
             map[FEEDBACK_OPTIONS] = optionId
             map[REPORTED_BY_ID] = currentId1
             map[REPORTED_AGAINST_ID] = callerId1
+
+            MixPanelTracker.publishEvent(MixPanelEvent.CALL_END_REASON)
+                .addParam(ParamKeys.FEEDBACK_OPTION,optionId)
+                .addParam(ParamKeys.REPORTED_BY_ID,currentId1)
+                .addParam(ParamKeys.REPORTED_AGAINST_ID,callerId1)
+                .addParam(ParamKeys.CHANNEL_NAME,channelName)
+                .push()
+
             vm.submitReportOption(map)
             closeDialog()
         }

@@ -31,6 +31,8 @@ import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.core.interfaces.OnOpenCourseListener
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
@@ -119,6 +121,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
             refViewModel.saveImpression(IMPRESSION_REFER_VIA_INBOX_ICON)
 
             ReferralActivity.startReferralActivity(this@InboxActivity)
+            MixPanelTracker.publishEvent(MixPanelEvent.REFERRAL_OPENED).push()
         }
 
         findMoreLayout = findViewById(R.id.parent_layout)
@@ -138,6 +141,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         )
         recycler_view_inbox.adapter = inboxAdapter
         iv_setting.setOnClickListener {
+            MixPanelTracker.publishEvent(MixPanelEvent.THREE_DOTS).push()
             openPopupMenu(it)
         }
 
@@ -148,7 +152,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
             courseExploreClick()
         }
         buy_english_course.setOnClickListener {
-            viewModel.mixPanelEvent("buy english course")
+            MixPanelTracker.publishEvent(MixPanelEvent.BUY_ENGLISH_COURSE).push()
             FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
                 this,
                 AppObjectController.getFirebaseRemoteConfig().getString(
@@ -165,17 +169,17 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
             popupMenu?.setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.menu_referral -> {
-                        viewModel.mixPanelEvent("open referral")
+                        MixPanelTracker.publishEvent(MixPanelEvent.REFERRAL_OPENED).push()
                         refViewModel.saveImpression(IMPRESSION_REFER_VIA_INBOX_MENU)
                         ReferralActivity.startReferralActivity(this@InboxActivity)
                         return@setOnMenuItemClickListener true
                     }
                     R.id.menu_help -> {
-                        viewModel.mixPanelEvent("help")
+                        MixPanelTracker.publishEvent(MixPanelEvent.HELP).push()
                         openHelpActivity()
                     }
                     R.id.menu_settings -> {
-                        viewModel.mixPanelEvent("settings")
+                        MixPanelTracker.publishEvent(MixPanelEvent.SETTINGS).push()
                         openSettingActivity()
                     }
                 }
@@ -209,6 +213,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                 if (it.isNullOrEmpty()) {
                     openCourseExplorer()
                 } else {
+                    MixPanelTracker.publishEvent(MixPanelEvent.INBOX_OPENED).push()
                     addCourseInRecyclerView(it)
                 }
             }

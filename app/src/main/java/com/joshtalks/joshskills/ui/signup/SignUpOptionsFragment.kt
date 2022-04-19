@@ -28,6 +28,8 @@ import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.VerificationService
 import com.joshtalks.joshskills.core.VerificationStatus
 import com.joshtalks.joshskills.core.VerificationVia
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.getCountryIsoCode
 import com.joshtalks.joshskills.core.getDefaultCountryIso
 import com.joshtalks.joshskills.core.hideKeyboard
@@ -185,6 +187,7 @@ class SignUpOptionsFragment : BaseSignUpFragment() {
     }
 
     fun loginViaTrueCaller() {
+        MixPanelTracker.publishEvent(MixPanelEvent.TRUECALLER_VERIFICATION).push()
         viewModel.loginAnalyticsEvent(LoginViaStatus.TRUECALLER.name)
         RxBus2.publish(LoginViaEventBus(LoginViaStatus.TRUECALLER))
     }
@@ -208,7 +211,7 @@ class SignUpOptionsFragment : BaseSignUpFragment() {
             showToast(getString(R.string.please_enter_valid_number))
             return
         }
-        viewModel.mixPanelEvent("send otp")
+        MixPanelTracker.publishEvent(MixPanelEvent.SEND_OTP).push()
         startProgress()
         hideKeyboard(requireActivity(), binding.mobileEt)
         evaluateVerificationService()

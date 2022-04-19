@@ -13,6 +13,8 @@ import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.DD_MM_YYYY
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.DatabaseUtils
 import com.joshtalks.joshskills.repository.local.entity.CExamStatus
@@ -39,11 +41,13 @@ class CertificationExamViewHolder(view: View, userId: String) :
     init {
         messageView.also {
             it.setOnClickListener {
+                MixPanelTracker.publishEvent(MixPanelEvent.CERTIFICATION_EXAM_OPENED).push()
                 analyzeAction(cardClick = true)
             }
         }
         btnStartExam.also {
             it.setOnClickListener {
+                MixPanelTracker.publishEvent(MixPanelEvent.CERTIFICATION_EXAM_OPENED).push()
                 analyzeAction()
             }
         }

@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.userprofile.adapters
+package com.joshtalks.joshskills.ui.userprofile
 
 import android.view.LayoutInflater
 import android.view.View
@@ -7,12 +7,18 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.airbnb.lottie.LottieAnimationView
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.core.setPreviousProfileImage
 import com.joshtalks.joshskills.ui.userprofile.models.ProfilePicture
+import com.joshtalks.joshskills.repository.server.ProfilePicture
+import org.json.JSONObject
 
 class PreviousPicsAdapter(
     private val items: List<ProfilePicture> = emptyList(),
-    private val onPreviousPicClickListener: OnPreviousPicClickListener
+    private val onPreviousPicClickListener: OnPreviousPicClickListener,
+    private val mentorId: String
 ) : RecyclerView.Adapter<PreviousPicsAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -35,7 +41,12 @@ class PreviousPicsAdapter(
         fun bind(profilePicture: ProfilePicture,position: Int) {
             this.profilePicture = profilePicture
             imgPreviousPic.setPreviousProfileImage(profilePicture.photoUrl, view.context,previousPicShimmer)
-            view.setOnClickListener { onPreviousPicClickListener.onPreviousPicClick(profilePicture,position) }
+            view.setOnClickListener {
+                MixPanelTracker.publishEvent(MixPanelEvent.VIEW_PHOTO)
+                    .addParam(ParamKeys.MENTOR_ID,mentorId)
+                    .push()
+                onPreviousPicClickListener.onPreviousPicClick(profilePicture,position)
+            }
         }
 
     }

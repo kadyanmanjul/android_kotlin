@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.ui.explore
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
@@ -13,6 +14,9 @@ import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.databinding.ActivityCourseExploreBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
@@ -107,6 +111,9 @@ class CourseExploreActivity : CoreJoshActivity() {
                     MaterialDialog(this@CourseExploreActivity).show {
                         message(R.string.logout_message)
                         positiveButton(R.string.ok) {
+                            MixPanelTracker.publishEvent(MixPanelEvent.LOGOUT_CLICKED)
+                                .addParam(ParamKeys.LOGOUT,"ok")
+                                .push()
                             AppAnalytics.create(AnalyticsEvent.LOGOUT_CLICKED.NAME)
                                 .addUserDetails()
                                 .addParam(AnalyticsEvent.USER_LOGGED_OUT.NAME, true).push()
@@ -126,6 +133,9 @@ class CourseExploreActivity : CoreJoshActivity() {
                             }
                         }
                         negativeButton(R.string.cancel) {
+                            MixPanelTracker.publishEvent(MixPanelEvent.LOGOUT_CLICKED)
+                                .addParam(ParamKeys.LOGOUT,"cancel")
+                                .push()
                             AppAnalytics.create(AnalyticsEvent.LOGOUT_CLICKED.NAME)
                                 .addUserDetails()
                                 .addParam(AnalyticsEvent.USER_LOGGED_OUT.NAME, false).push()
@@ -140,9 +150,15 @@ class CourseExploreActivity : CoreJoshActivity() {
                 MaterialDialog(this@CourseExploreActivity).show {
                     message(R.string.logout_message)
                     positiveButton(R.string.ok) {
+                        MixPanelTracker.publishEvent(MixPanelEvent.LOGOUT_CLICKED)
+                            .addParam(ParamKeys.LOGOUT,"ok")
+                            .push()
                         logout()
                     }
                     negativeButton(R.string.cancel) {
+                        MixPanelTracker.publishEvent(MixPanelEvent.LOGOUT_CLICKED)
+                            .addParam(ParamKeys.LOGOUT,"cancel")
+                            .push()
                         AppAnalytics.create(AnalyticsEvent.LOGOUT_CLICKED.NAME)
                             .addUserDetails()
                             .addParam(AnalyticsEvent.USER_LOGGED_OUT.NAME, false).push()
@@ -275,6 +291,13 @@ class CourseExploreActivity : CoreJoshActivity() {
                 val extras: HashMap<String, String> = HashMap()
                 extras["test_id"] = courseExploreModel.id?.toString() ?: EMPTY
                 extras["course_name"] = courseExploreModel.courseName
+
+                MixPanelTracker.publishEvent(MixPanelEvent.SHOW_COURSE_DETAILS)
+                    .addParam(ParamKeys.TEST_ID,courseExploreModel.id)
+                    .addParam(ParamKeys.COURSE_NAME,courseExploreModel.courseName)
+                    .addParam(ParamKeys.COURSE_PRICE,courseExploreModel.amount)
+                    .push()
+
                 AppAnalytics.create(AnalyticsEvent.COURSE_THUMBNAIL_CLICKED.NAME)
                     .addBasicParam()
                     .addUserDetails()
@@ -337,6 +360,7 @@ class CourseExploreActivity : CoreJoshActivity() {
 
     override fun onBackPressed() {
         onCancelResult()
+        MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
         super.onBackPressed()
     }
 

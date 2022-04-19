@@ -17,6 +17,9 @@ import androidx.paging.cachedIn
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseViewModel
 import com.joshtalks.joshskills.constants.*
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.ui.group.constants.SHOW_NEW_INFO
 import com.joshtalks.joshskills.ui.group.adapters.GroupAdapter
@@ -94,11 +97,13 @@ class JoshGroupViewModel : BaseViewModel() {
     }
 
     fun onSearch() {
+        MixPanelTracker.publishEvent(MixPanelEvent.SEARCH_GROUPS).push()
         message.what = SEARCH_GROUP
         singleLiveEvent.value = message
     }
 
     fun onSearch(view: View) {
+        MixPanelTracker.publishEvent(MixPanelEvent.FIND_GROUPS_TO_JOIN).push()
         GroupAnalytics.push(GroupAnalytics.Event.FIND_GROUPS_TO_JOIN)
         message.what = SEARCH_GROUP
         singleLiveEvent.value = message
@@ -121,6 +126,9 @@ class JoshGroupViewModel : BaseViewModel() {
     }
 
     fun saveGroupInfo(view: View) {
+        MixPanelTracker.publishEvent(MixPanelEvent.NEW_GROUP_CREATED)
+            .addParam(ParamKeys.GROUP_ID,openedGroupId)
+            .push()
         if (isFromGroupInfo.get()) {
             message.what = SAVE_GROUP_INFO
             singleLiveEvent.value = message
@@ -252,4 +260,5 @@ class JoshGroupViewModel : BaseViewModel() {
     }
 
     suspend fun deleteExtraMessages() = repository.removeExtraMessages()
+
 }

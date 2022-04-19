@@ -14,7 +14,6 @@ import com.joshtalks.joshskills.ui.group.repository.ABTestRepository
 import com.joshtalks.joshskills.ui.group.repository.GroupRepository
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import org.json.JSONObject
 
 class InboxViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -155,8 +154,5 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun mixPanelEvent(eventName:String,obj: JSONObject?=null) {
-        MixPanelTracker().publishEvent(eventName,obj)
-    }
 
 }

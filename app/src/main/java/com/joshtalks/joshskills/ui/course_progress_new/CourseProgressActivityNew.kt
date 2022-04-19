@@ -12,6 +12,9 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.core.custom_ui.decorator.SmoothScrollingLinearLayoutManager
 import com.joshtalks.joshskills.core.custom_ui.decorator.StickHeaderItemDecoration
 import com.joshtalks.joshskills.core.extension.deepEquals
@@ -244,6 +247,11 @@ class CourseProgressActivityNew :
                     val firstName = if (nameArr != null) nameArr[0] else EMPTY
                     showToast(getFeatureLockedText(courseId.toString(), firstName))
                 } else if (lessonModel != null) {
+                    MixPanelTracker.publishEvent(MixPanelEvent.COURSE_OVERVIEW_LESSON_CLICKED)
+                        .addParam(ParamKeys.LESSON_ID,lessonModel?.id)
+                        .addParam(ParamKeys.LESSON_NUMBER,lessonModel?.lessonNo)
+                        .addParam(ParamKeys.IS_UNLOCKED,true)
+                        .push()
                     activityListener.launch(
                         LessonActivity.getActivityIntent(
                             this@CourseProgressActivityNew,
@@ -253,6 +261,11 @@ class CourseProgressActivityNew :
                         )
                     )
                 } else {
+                    MixPanelTracker.publishEvent(MixPanelEvent.COURSE_OVERVIEW_LESSON_CLICKED)
+                        .addParam(ParamKeys.LESSON_ID,lessonModel?.id)
+                        .addParam(ParamKeys.LESSON_NUMBER,lessonModel?.lessonNo)
+                        .addParam(ParamKeys.IS_UNLOCKED,false)
+                        .push()
                     showAlertMessage(
                         AppObjectController.getFirebaseRemoteConfig()
                             .getString(FirebaseRemoteConfigKey.INCOMPLETE_LESSONS_TITLE),
@@ -278,6 +291,11 @@ class CourseProgressActivityNew :
             val lessonModel = viewModel.getLesson(previousLesson.lessonId)
             runOnUiThread {
                 if (lessonModel == null) {
+                    MixPanelTracker.publishEvent(MixPanelEvent.COURSE_OVERVIEW_EXAM_CLICKED)
+                        .addParam(ParamKeys.LESSON_ID,lessonModel?.id)
+                        .addParam(ParamKeys.LESSON_NUMBER,lessonModel?.lessonNo)
+                        .addParam(ParamKeys.IS_UNLOCKED,false)
+                        .push()
                     courseOverviewResponse?.let {
                         ExamUnlockDialogFragment(
                             it[parentPosition].examInstructions,
@@ -293,6 +311,11 @@ class CourseProgressActivityNew :
                         )
                     }
                 } else {
+                    MixPanelTracker.publishEvent(MixPanelEvent.COURSE_OVERVIEW_EXAM_CLICKED)
+                        .addParam(ParamKeys.LESSON_ID,lessonModel?.id)
+                        .addParam(ParamKeys.LESSON_NUMBER,lessonModel?.lessonNo)
+                        .addParam(ParamKeys.IS_UNLOCKED,true)
+                        .push()
                     activityListener.launch(
                         CertificationBaseActivity.certificationExamIntent(
                             this@CourseProgressActivityNew,
@@ -328,6 +351,7 @@ class CourseProgressActivityNew :
     }
 
     override fun onBackPressed() {
+        MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
         val resultIntent = Intent()
         resultIntent.putExtra(COURSE_ID, courseId)
         setResult(RESULT_OK, resultIntent)

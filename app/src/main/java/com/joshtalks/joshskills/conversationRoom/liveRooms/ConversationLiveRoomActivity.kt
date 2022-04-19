@@ -35,6 +35,8 @@ import com.joshtalks.joshskills.conversationRoom.notification.NotificationView
 import com.joshtalks.joshskills.conversationRoom.roomsListing.ConversationRoomListingNavigation
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.LogException
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.interfaces.ConversationLiveRoomSpeakerClickAction
 import com.joshtalks.joshskills.core.notification.HeadsUpNotificationService
 import com.joshtalks.joshskills.databinding.ActivityConversationLiveRoomBinding
@@ -1238,6 +1240,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
     }
 
     override fun onBackPressed() {
+        MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
         isBackPressed = true
         if (!internetAvailableFlag) {
             mBoundService?.endService()

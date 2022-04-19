@@ -16,6 +16,9 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.core.custom_ui.spinnerdatepicker.DatePickerDialog
 import com.joshtalks.joshskills.core.custom_ui.spinnerdatepicker.SpinnerDatePickerDialogBuilder
 import com.joshtalks.joshskills.databinding.FragmentSignUpProfileBinding
@@ -84,6 +87,9 @@ class SignUpProfileFragment : BaseSignUpFragment() {
             .addBasicParam()
             .addUserDetails()
             .addParam(AnalyticsEvent.IS_REGISTRATION_FIRST_TIME.NAME,eventName)
+            .push()
+        MixPanelTracker.publishEvent(MixPanelEvent.IS_REGISTRATION_FOR_FIRST_TIME)
+            .addParam(ParamKeys.FIRST_NAME,eventName)
             .push()
     }
 
@@ -273,6 +279,7 @@ class SignUpProfileFragment : BaseSignUpFragment() {
         requestMap["gender"] = gender?.gValue ?: EMPTY
         requestMap["is_free_trial"] = "N"
         viewModel.completingProfile(requestMap)
+        MixPanelTracker.publishEvent(MixPanelEvent.REGISTER_WITH_INFO).push()
     }
 
     private fun startProgress() {

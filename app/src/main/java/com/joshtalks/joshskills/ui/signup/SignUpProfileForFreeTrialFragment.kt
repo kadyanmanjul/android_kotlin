@@ -18,12 +18,12 @@ import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIAL_ENTER_NAME_TEXT
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.databinding.FragmentSignUpProfileForFreeTrialBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
-import java.util.*
-import kotlinx.android.synthetic.main.fragment_sign_up_profile.*
-import org.json.JSONObject
 
 class SignUpProfileForFreeTrialFragment(name: String,isVerified:Boolean) : BaseSignUpFragment() {
 
@@ -31,7 +31,6 @@ class SignUpProfileForFreeTrialFragment(name: String,isVerified:Boolean) : BaseS
     private lateinit var binding: FragmentSignUpProfileForFreeTrialBinding
     private var username = name
     private var isUserVerified = isVerified
-    private val obj:JSONObject? = null
     private var isNameEntered = false
 
     companion object {
@@ -64,9 +63,6 @@ class SignUpProfileForFreeTrialFragment(name: String,isVerified:Boolean) : BaseS
         addObservers()
         binding.nameEditText.requestFocus()
         initUI()
-        if(binding.nameEditText.text.isNullOrEmpty()) {
-            isNameEntered = false
-        }
     }
 
     private fun initUI() {
@@ -139,11 +135,26 @@ class SignUpProfileForFreeTrialFragment(name: String,isVerified:Boolean) : BaseS
         viewModel.checkMentorIdPaid()
 
         val name = binding.nameEditText.text.toString()
-        if (!username.isNullOrEmpty() && username != name) {
-            obj?.put("name changed",true)
-            viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_NAMECHANGED)
+
+        if(username.isNullOrEmpty()) {
+            MixPanelTracker.publishEvent(MixPanelEvent.REGISTER_WITH_NAME)
+                .addParam(ParamKeys.NAME_ENTERED,true)
+                .push()
         }
-        viewModel.mixPanelEvent("register with name",obj)
+        if (!username.isNullOrEmpty() && username != name) {
+            if (!isNameEntered) {
+                MixPanelTracker.publishEvent(MixPanelEvent.REGISTER_WITH_NAME)
+                    .addParam(ParamKeys.NAME_CHANGED,true)
+                    .push()
+                viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_NAMECHANGED)
+            }
+        }
+        else if(!username.isNullOrEmpty() && username==name)
+        {
+            MixPanelTracker.publishEvent(MixPanelEvent.REGISTER_WITH_NAME)
+                .addParam(ParamKeys.NAME_CHANGED,false)
+                .push()
+        }
     }
 
     fun submitForFreeTrial() {

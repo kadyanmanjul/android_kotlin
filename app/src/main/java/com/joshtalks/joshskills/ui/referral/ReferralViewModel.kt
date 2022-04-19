@@ -14,7 +14,6 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.LinkAttribution
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.json.JSONObject
 import timber.log.Timber
 
 class ReferralViewModel(application: Application) : AndroidViewModel(application) {
@@ -50,7 +49,4 @@ class ReferralViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-    fun mixPanelEvent(eventName:String,obj: JSONObject?=null) {
-        MixPanelTracker().publishEvent(eventName,obj)
-    }
 }

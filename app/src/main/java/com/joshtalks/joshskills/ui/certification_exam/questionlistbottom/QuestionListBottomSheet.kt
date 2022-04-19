@@ -12,12 +12,17 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.core.custom_ui.decorator.GridSpacingItemDecoration
 import com.joshtalks.joshskills.core.interfaces.CertificationExamListener
 import com.joshtalks.joshskills.databinding.BottomsheetQuestionListBinding
 import com.joshtalks.joshskills.repository.server.certification_exam.CertificationQuestion
+import com.joshtalks.joshskills.repository.server.certification_exam.CertificationQuestionModel
 import com.joshtalks.joshskills.ui.certification_exam.CERTIFICATION_EXAM_QUESTION
 import com.joshtalks.joshskills.ui.certification_exam.CURRENT_QUESTION
+import org.json.JSONObject
 
 
 class QuestionListBottomSheet : BottomSheetDialogFragment(), Callback {
@@ -93,11 +98,19 @@ class QuestionListBottomSheet : BottomSheetDialogFragment(), Callback {
     }
 
     fun pauseAndExit() {
+        MixPanelTracker.publishEvent(MixPanelEvent.EXAM_PAUSED)
+            .addParam(ParamKeys.EXAM_ID,CertificationQuestionModel().type)
+            .addParam(ParamKeys.ATTEMPT_NUMBER,CertificationQuestionModel().attemptCount)
+            .push()
         dismissAllowingStateLoss()
         listener?.onPauseExit()
     }
 
     fun finishExam() {
+        MixPanelTracker.publishEvent(MixPanelEvent.EXAM_FINISHED)
+            .addParam(ParamKeys.EXAM_ID,CertificationQuestionModel().type)
+            .addParam(ParamKeys.ATTEMPT_NUMBER,CertificationQuestionModel().attemptCount)
+            .push()
         dismissAllowingStateLoss()
         listener?.onFinishExam()
     }

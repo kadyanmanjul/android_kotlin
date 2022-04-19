@@ -41,6 +41,9 @@ import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.GoalKeys
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.core.custom_ui.PointSnackbar
 import com.joshtalks.joshskills.core.custom_ui.TextDrawable
 import com.joshtalks.joshskills.databinding.ActivityCallingBinding
@@ -753,6 +756,11 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
                         "from group \"${WebRtcService.currentCallingGroupName}\""
                 }
             }
+            MixPanelTracker.publishEvent(MixPanelEvent.CALL_CONNECTED)
+                .addParam(ParamKeys.CALL_TYPE,callType.toString())
+                .addParam(ParamKeys.CALLIE_ID,callieId)
+                .addParam(ParamKeys.CALLER_ID,callerId)
+                .push()
         }
     }
 
@@ -885,6 +893,13 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
         } else if (!isTimerCanceled) {
             if (isUserPickUp) {
                 val state = CurrentCallDetails.state()
+
+                MixPanelTracker.publishEvent(MixPanelEvent.CALL_ACCEPTED)
+                    .addParam(ParamKeys.AGORA_MENTOR_UID,state.callieUid)
+                    .addParam(ParamKeys.AGORA_CALL_ID,state.callId)
+                    .addParam(ParamKeys.TIMESTAMP,DateUtils.getCurrentTimeStamp())
+                    .push()
+
                 VoipAnalytics.push(
                     VoipAnalytics.Event.CALL_ACCEPT,
                     agoraMentorUid = state.callieUid,
@@ -1031,6 +1046,12 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
     }
 
     private fun showCallRatingScreen(callTime: Long, channelName: String?) {
+        MixPanelTracker.publishEvent(MixPanelEvent.CALL_END)
+            .addParam(ParamKeys.CALL_ID,mBoundService?.getCallId())
+            .addParam(ParamKeys.CALLIE_ID,callieId)
+            .addParam(ParamKeys.CALLER_ID,callerId)
+            .addParam(ParamKeys.DURATION,callTime)
+            .push()
         var time = mBoundService?.getTimeOfTalk() ?: 0
         if (time <= 0) {
             time = callTime

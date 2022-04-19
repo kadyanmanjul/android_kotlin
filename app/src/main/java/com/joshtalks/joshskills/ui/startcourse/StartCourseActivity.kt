@@ -16,6 +16,9 @@ import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.databinding.ActivityStartCourseBinding
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.payment.order_summary.TRANSACTION_ID
@@ -24,9 +27,12 @@ import com.joshtalks.joshskills.ui.signup.FLOW_FROM
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.ui.view_holders.ROUND_CORNER
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
+import org.json.JSONObject
 
 const val TEACHER_NAME = "teacher_name"
 const val IMAGE_URL = "image_url"
+const val COURSE_PRICE = "course_price"
+const val TEST_ID = "test_id"
 
 class StartCourseActivity : CoreJoshActivity() {
 
@@ -35,6 +41,8 @@ class StartCourseActivity : CoreJoshActivity() {
     var teacherName: String = EMPTY
     var imageUrl: String = EMPTY
     var transactionId: String = EMPTY
+    var testId: String = EMPTY
+    var coursePrice: String = EMPTY
     private lateinit var binding: ActivityStartCourseBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -99,6 +107,8 @@ class StartCourseActivity : CoreJoshActivity() {
         teacherName = dataFromIntent(TEACHER_NAME)
         imageUrl = dataFromIntent(IMAGE_URL)
         transactionId = dataFromIntent(TRANSACTION_ID)
+        testId = dataFromIntent(TEST_ID)
+        coursePrice = dataFromIntent(COURSE_PRICE)
     }
 
     private fun dataFromIntent(courseName: String): String {
@@ -117,22 +127,36 @@ class StartCourseActivity : CoreJoshActivity() {
             courseName: String,
             teacherName: String,
             imageUrl: String,
-            transactionId: Int
+            transactionId: Int,
+            testId: String,
+            coursePrice: String
         ) {
             Intent(context, StartCourseActivity::class.java).apply {
                 putExtra(COURSE_NAME, courseName)
                 putExtra(TEACHER_NAME, teacherName)
                 putExtra(IMAGE_URL, imageUrl)
                 putExtra(TRANSACTION_ID, transactionId.toString())
+                putExtra(COURSE_PRICE,coursePrice)
+                putExtra(TEST_ID,testId)
             }.run {
                 context.startActivity(this)
             }
         }
     }
 
+    override fun onBackPressed() {
+        MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
+    }
+
     private fun setListeners() {
         binding.materialButton.setOnClickListener {
             if (isUserRegistered) {
+                MixPanelTracker.publishEvent(MixPanelEvent.PAYMENT_START_MY_COURSE)
+                    .addParam(ParamKeys.TEST_ID,testId)
+                    .addParam(ParamKeys.COURSE_NAME,courseName)
+                    .addParam(ParamKeys.COURSE_PRICE,coursePrice)
+                    .push()
+
                 AppAnalytics.create(AnalyticsEvent.COURSE_START_CLCIKED.NAME)
                     .addUserDetails()
                     .addBasicParam()
@@ -151,6 +175,11 @@ class StartCourseActivity : CoreJoshActivity() {
                     this.finish()
                 }
             } else {
+                MixPanelTracker.publishEvent(MixPanelEvent.PAYMENT_REGISTER_NOW)
+                    .addParam(ParamKeys.TEST_ID,testId)
+                    .addParam(ParamKeys.COURSE_NAME,courseName)
+                    .addParam(ParamKeys.COURSE_PRICE,coursePrice)
+                    .push()
                 AppAnalytics.create(AnalyticsEvent.REGISTER_NOW_CLICKED.NAME)
                     .addUserDetails()
                     .addBasicParam()

@@ -14,6 +14,7 @@ import android.text.method.LinkMovementMethod
 import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
 import android.view.Gravity
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -48,6 +49,9 @@ import com.joshtalks.joshskills.constants.ON_BACK_PRESS_PROFILE
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.databinding.ActivityUserProfileBinding
 import com.joshtalks.joshskills.messaging.RxBus2
@@ -55,6 +59,7 @@ import com.joshtalks.joshskills.repository.local.eventbus.AwardItemClickedEventB
 import com.joshtalks.joshskills.repository.local.eventbus.DeleteProfilePicEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.SaveProfileClickedEvent
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.fpp.constants.IS_ACCEPTED
 import com.joshtalks.joshskills.ui.fpp.constants.IS_REJECTED
@@ -94,6 +99,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.json.JSONObject
 import timber.log.Timber
 import java.text.DecimalFormat
 import java.util.Locale
@@ -150,6 +156,12 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         getProfileData(intervalType, previousPage)
         initABTest(mentorId, intervalType, previousPage)
         setOnClickListeners()
+        if(mentorId != Mentor.getInstance().getId())
+        {
+            MixPanelTracker.publishEvent(MixPanelEvent.VIEW_PROFILE)
+                .addParam(ParamKeys.MENTOR_ID,mentorId)
+                .push()
+        }
     }
 
     private fun initABTest(mentorId: String, intervalType: String?, previousPage: String?) {
@@ -163,10 +175,16 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
     private fun setOnClickListeners() {
         binding.pointLayout.setOnClickListener {
             hideOverlayAnimation()
+            MixPanelTracker.publishEvent(MixPanelEvent.VIEW_POINTS_HISTORY)
+                .addParam(ParamKeys.MENTOR_ID,mentorId)
+                .push()
             openPointHistory(mentorId, intent.getStringExtra(CONVERSATION_ID))
         }
 
         binding.minutesLayout.setOnClickListener {
+            MixPanelTracker.publishEvent(MixPanelEvent.VIEW_MINUTES_SPOKEN)
+                .addParam(ParamKeys.MENTOR_ID,mentorId)
+                .push()
             openSpokenMinutesHistory(mentorId, intent.getStringExtra(CONVERSATION_ID))
         }
 
@@ -181,6 +199,9 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                         null
                     )
                         .show(supportFragmentManager, "ImageShow")
+                    MixPanelTracker.publishEvent(MixPanelEvent.VIEW_PROFILE_PHOTO)
+                        .addParam(ParamKeys.MENTOR_ID,mentorId)
+                        .push()
                 } else {
                     openChooser()
                 }
@@ -194,22 +215,31 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                         null
                     )
                         .show(supportFragmentManager, "ImageShow")
+                    MixPanelTracker.publishEvent(MixPanelEvent.VIEW_PROFILE_PHOTO)
+                        .addParam(ParamKeys.MENTOR_ID,mentorId)
+                        .push()
                 }
             }
         }
         binding.editPic.setOnClickListener {
             if (mentorId == Mentor.getInstance().getId()) {
+                MixPanelTracker.publishEvent(MixPanelEvent.EDIT_PROFILE_PHOTO_CLICKED)
                 openChooser()
             }
         }
         binding.labelViewMoreAwards.setOnClickListener {
+            MixPanelTracker.publishEvent(MixPanelEvent.VIEW_AWARDS).push()
             showAllAwards()
         }
         binding.awardsLayout.setOnClickListener {
+            MixPanelTracker.publishEvent(MixPanelEvent.VIEW_AWARDS).push()
             showAllAwards()
         }
 
         binding.labelViewMoreDp.setOnClickListener {
+            MixPanelTracker.publishEvent(MixPanelEvent.VIEW_PROFILE_PHOTO)
+                .addParam(ParamKeys.MENTOR_ID,mentorId)
+                .push()
             openPreviousProfilePicsScreen()
         }
         binding.enrolledCoursesLayout.setOnClickListener {
@@ -221,14 +251,19 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             openEnrolledCoursesScreen()
         }
         binding.previousProfilePicLayout.setOnClickListener {
+            MixPanelTracker.publishEvent(MixPanelEvent.VIEW_PROFILE_PHOTO)
+                .addParam(ParamKeys.MENTOR_ID,mentorId)
+                .push()
             openPreviousProfilePicsScreen()
         }
         binding.labelViewMoreGroups.setOnClickListener {
             viewModel.userProfileSectionImpression(mentorId, "GROUP")
+            MixPanelTracker.publishEvent(MixPanelEvent.VIEW_GROUPS).push()
             openMyGroupsScreen()
         }
         binding.myGroupsLayout.setOnClickListener {
             viewModel.userProfileSectionImpression(mentorId, "GROUP")
+            MixPanelTracker.publishEvent(MixPanelEvent.VIEW_GROUPS).push()
             openMyGroupsScreen()
         }
         binding.fppListLayout.setOnClickListener {
@@ -363,6 +398,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             } else {
                 visibility = View.VISIBLE
                 setOnClickListener {
+                    MixPanelTracker.publishEvent(MixPanelEvent.HELP).push()
                     openHelpActivity()
                 }
             }
@@ -373,6 +409,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                 setOnClickListener {
                     EditProfileFragment.newInstance(FOR_EDIT_SCREEN)
                         .show(supportFragmentManager, "EditProfile")
+                    MixPanelTracker.publishEvent(MixPanelEvent.EDIT_PROFILE_CLICKED).push()
                 }
             } else {
                 visibility = View.GONE
@@ -402,12 +439,15 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         popupMenu.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.menu_points_history -> {
+                    MixPanelTracker.publishEvent(MixPanelEvent.VIEW_POINTS_HISTORY).push()
                     openPointHistory(mentorId, intent.getStringExtra(CONVERSATION_ID))
                 }
                 R.id.minutes_points_history -> {
+                    MixPanelTracker.publishEvent(MixPanelEvent.VIEW_MINUTES_SPOKEN).push()
                     openSpokenMinutesHistory(mentorId, intent.getStringExtra(CONVERSATION_ID))
                 }
                 R.id.how_to_get_points -> {
+                    MixPanelTracker.publishEvent(MixPanelEvent.HOW_TO_EARN_POINTS).push()
                     startActivity(
                         Intent(this, PointsInfoActivity::class.java).apply {
                             putExtra(CONVERSATION_ID, intent.getStringExtra(CONVERSATION_ID))

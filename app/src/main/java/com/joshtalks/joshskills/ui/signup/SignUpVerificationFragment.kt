@@ -23,6 +23,8 @@ import com.joshtalks.joshskills.core.TIMEOUT_TIME
 import com.joshtalks.joshskills.core.VerificationStatus
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentSignUpVerificationBinding
 import com.joshtalks.joshskills.messaging.RxBus2
@@ -200,7 +202,7 @@ class SignUpVerificationFragment : Fragment() {
     }
 
     fun verifyOTP() {
-        viewModel.mixPanelEvent("submit otp")
+        MixPanelTracker.publishEvent(MixPanelEvent.SUBMIT_OTP).push()
         if (binding.otpView2.otp.isNullOrEmpty().not() || viewModel.otpField.get().isNullOrEmpty()
                 .not()
         ) {
@@ -223,7 +225,7 @@ class SignUpVerificationFragment : Fragment() {
     }
 
     fun editNumber() {
-        viewModel.mixPanelEvent("edit number")
+        MixPanelTracker.publishEvent(MixPanelEvent.EDIT_NUMBER)
         requireActivity().onBackPressed()
     }
 

@@ -12,6 +12,9 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.target.Target
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.core.custom_ui.JoshRatingBar
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
 import com.joshtalks.joshskills.messaging.RxBus2
@@ -30,7 +33,10 @@ class CourseOverviewViewHolder(
     override val type: CardType,
     override val sequenceNumber: Int,
     private val data: CourseOverviewData,
-    private val context: Context = AppObjectController.joshApplication
+    private val context: Context = AppObjectController.joshApplication,
+    private val testId: Int,
+    private val coursePrice: String,
+    private val courseName: String
 ) : CourseDetailsBaseCell(type, sequenceNumber) {
 
     @com.mindorks.placeholderview.annotations.View(R.id.txtCourseName)
@@ -184,5 +190,11 @@ class CourseOverviewViewHolder(
     @Click(R.id.ratingView)
     fun onClickRatingView() {
         RxBus2.publish(CardType.REVIEWS)
+
+        MixPanelTracker.publishEvent(MixPanelEvent.COURSE_VIEW_RATING)
+            .addParam(ParamKeys.TEST_ID,testId)
+            .addParam(ParamKeys.COURSE_NAME,courseName)
+            .addParam(ParamKeys.COURSE_PRICE,coursePrice)
+            .push()
     }
 }

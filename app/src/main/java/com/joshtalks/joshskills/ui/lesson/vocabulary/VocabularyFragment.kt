@@ -19,6 +19,9 @@ import com.joshtalks.joshskills.core.HAS_SEEN_VOCAB_TOOLTIP
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.core.custom_ui.recorder.OnAudioRecordListener
 import com.joshtalks.joshskills.core.custom_ui.recorder.RecordingItem
 import com.joshtalks.joshskills.core.io.AppDirectory
@@ -81,6 +84,8 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
             "जैसे-जैसे कोर्स आगे बढ़ेगा हम यहां वाक्यांश और मुहावरे भी सीखेंगे"
         )
     }
+
+    private var lessonID = -1
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -158,6 +163,11 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
     }
 
     private fun addObserver() {
+        viewModel.lessonId.observe(
+            viewLifecycleOwner
+        ){
+            lessonID = it
+        }
 
         viewModel.lessonQuestionsLiveData.observe(
             viewLifecycleOwner,
@@ -294,6 +304,9 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
                 AppObjectController.uiHandler.post {
                     binding.vocabularyCompleteLayout.visibility = View.VISIBLE
                 }
+                MixPanelTracker.publishEvent(MixPanelEvent.VOCABULARY_COMPLETED)
+                    .addParam(ParamKeys.LESSON_ID,lessonID)
+                    .push()
             }
             lessonActivityListener?.onSectionStatusUpdate(VOCAB_POSITION, true)
         }
@@ -310,10 +323,16 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
     }
 
     fun onContinueClick() {
+        MixPanelTracker.publishEvent(MixPanelEvent.VOCAB_CONTINUE)
+            .addParam(ParamKeys.LESSON_ID,lessonID)
+            .push()
         lessonActivityListener?.onNextTabCall(VOCAB_POSITION)
     }
 
     fun onCloseDialog() {
+        MixPanelTracker.publishEvent(MixPanelEvent.VOCAB_CLOSE)
+            .addParam(ParamKeys.LESSON_ID,lessonID)
+            .push()
         binding.vocabularyCompleteLayout.visibility = View.GONE
     }
 
