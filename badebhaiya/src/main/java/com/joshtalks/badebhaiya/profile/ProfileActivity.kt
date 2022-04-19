@@ -216,7 +216,7 @@ class ProfileActivity: AppCompatActivity(), FeedAdapter.ConversationRoomItemCall
             )
         alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 2000, pendingIntent)
             .also {
-                room.isScheduled = true
+                //room.isScheduled = true
                 feedViewModel.setReminder(
                     ReminderRequest(
                         roomId = room.roomId.toString(),
@@ -229,7 +229,7 @@ class ProfileActivity: AppCompatActivity(), FeedAdapter.ConversationRoomItemCall
 
     override fun deleteReminder(room: RoomListResponseItem, view: View) {
         //showToast("Schedule Deleted")
-        room.isScheduled=false
+        //room.isScheduled=false
         feedViewModel.deleteReminder(
             DeleteReminderRequest(
                 roomId=room.roomId.toString(),

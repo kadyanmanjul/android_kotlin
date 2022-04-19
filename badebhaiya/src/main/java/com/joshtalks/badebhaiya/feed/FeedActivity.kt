@@ -57,6 +57,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         binding.lifecycleOwner = this
         binding.handler = this
         binding.viewModel = viewModel
+
         addObserver()
         initView()
         //setOnClickListener()
@@ -218,7 +219,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                 )
             alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 2000, pendingIntent)
                 .also {
-                    room.isScheduled = true
+                    //room.isScheduled = true
                     viewModel.setReminder(
                         ReminderRequest(
                             roomId = room.roomId.toString(),
@@ -226,18 +227,22 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                             reminderTime = room.startTimeDate.minus(5 * 60 * 1000)
                         )
                     )
+                    //viewModel.getRooms()
                 }
+        //viewModel.repository.getRoomList()
+
         }
 
      override fun deleteReminder(room: RoomListResponseItem, view: View) {
         //showToast("Schedule Deleted")
-        room.isScheduled=false
+        //room.isScheduled=false
         viewModel.deleteReminder(
             DeleteReminderRequest(
                 roomId=room.roomId.toString(),
                 userId=User.getInstance().userId
             )
         )
+         //viewModel.getRooms()
     }
 
     override fun viewRoom(room: RoomListResponseItem, view: View) {

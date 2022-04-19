@@ -1,8 +1,10 @@
 package com.joshtalks.badebhaiya.feed
 
 import android.content.res.ColorStateList
+import android.util.Log
 import android.widget.ImageView
 import androidx.databinding.BindingAdapter
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -28,7 +30,6 @@ fun setFeedAdapter(
     view.adapter = adapter
     adapter.setListener(callback)
 }
-
 @BindingAdapter("onRefresh", "setRefreshing")
 fun setSwipeToRefreshAdapter(
     view: SwipeRefreshLayout,
