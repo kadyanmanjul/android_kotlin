@@ -16,6 +16,7 @@ import com.joshtalks.joshskills.repository.local.eventbus.GotoCEQuestionEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.OpenReportQTypeEventBus
 import com.joshtalks.joshskills.repository.server.certification_exam.CertificateExamReportModel
 import com.joshtalks.joshskills.repository.server.certification_exam.CertificationQuestion
+import com.joshtalks.joshskills.repository.server.certification_exam.CertificationQuestionModel
 import com.joshtalks.joshskills.repository.server.certification_exam.QuestionReportType
 import com.joshtalks.joshskills.ui.certification_exam.CERTIFICATION_EXAM_QUESTION
 import com.joshtalks.joshskills.ui.certification_exam.CertificationExamViewModel

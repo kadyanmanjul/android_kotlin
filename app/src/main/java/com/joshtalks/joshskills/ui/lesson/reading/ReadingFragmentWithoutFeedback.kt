@@ -45,6 +45,9 @@ import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
 import com.joshtalks.joshskills.core.extension.setImageAndFitCenter
 import com.joshtalks.joshskills.core.io.AppDirectory
@@ -211,6 +214,8 @@ class ReadingFragmentWithoutFeedback :
             "और धीरे धीरे हम native speaker की तरह बोलना सीखेंगे"
         )
     }
+
+    private var lessonID = -1
 
     var openVideoPlayerActivity: ActivityResultLauncher<Intent> = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -562,6 +567,9 @@ class ReadingFragmentWithoutFeedback :
                     {
                         AppObjectController.uiHandler.post {
                             binding.audioList.removeView(it.practiceAudioViewHolder)
+                            MixPanelTracker.publishEvent(MixPanelEvent.READING_RECORDING_DELETE)
+                                .addParam(ParamKeys.LESSON_ID,lessonID)
+                                .push()
                             currentLessonQuestion?.run {
                                 if (this.practiceEngagement.isNullOrEmpty()) {
                                     showPracticeInputLayout()
@@ -865,6 +873,12 @@ class ReadingFragmentWithoutFeedback :
         )
         binding.btnNextStep.setOnClickListener {
             showNextTooltip()
+        }
+
+        viewModel.lessonId.observe(
+            viewLifecycleOwner
+        ) {
+            lessonID = it
         }
     }
 
@@ -1201,6 +1215,9 @@ class ReadingFragmentWithoutFeedback :
             binding.audioList.addView(
                 PracticeAudioViewHolder(null, context, filePath) {
                     binding.btnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
+                    MixPanelTracker.publishEvent(MixPanelEvent.READING_RECORDING_PLAY)
+                        .addParam(ParamKeys.LESSON_ID,lessonID)
+                        .push()
                 }
             )
             initializePractiseSeekBar()
@@ -1321,6 +1338,10 @@ class ReadingFragmentWithoutFeedback :
                             filePath = AppDirectory.getAudioSentFile(null).absolutePath
                             AppDirectory.copy(it.absolutePath, filePath!!)
                             audioAttachmentInit()
+                            MixPanelTracker.publishEvent(MixPanelEvent.READING_RECORD)
+                                .addParam(ParamKeys.LESSON_ID,lessonID)
+                                .addParam(ParamKeys.RECORD_DURATION,timeDifference)
+                                .push()
                             AppObjectController.uiHandler.postDelayed(
                                 {
                                     binding.submitAnswerBtn.parent.requestChildFocus(
@@ -1475,7 +1496,9 @@ class ReadingFragmentWithoutFeedback :
                     .solidBackground().show()
             }
             appAnalytics?.addParam(AnalyticsEvent.PRACTICE_EXTRA.NAME, "Audio Played")
-
+            MixPanelTracker.publishEvent(MixPanelEvent.READING_PLAY)
+                .addParam(ParamKeys.LESSON_ID,lessonID)
+                .push()
             if (audioManager?.currentPlayingUrl != null &&
                 audioManager?.currentPlayingUrl == currentLessonQuestion?.audioList?.getOrNull(0)?.audio_url
             ) {
@@ -1588,6 +1611,9 @@ class ReadingFragmentWithoutFeedback :
     }
 
     fun submitPractise() {
+        MixPanelTracker.publishEvent(MixPanelEvent.READING_SUBMIT)
+            .addParam(ParamKeys.LESSON_ID,lessonID)
+            .push()
         CoroutineScope(Dispatchers.IO).launch {
             currentLessonQuestion?.expectedEngageType?.let {
                 if (EXPECTED_ENGAGE_TYPE.AU == it && isAudioRecordDone.not()) {
@@ -1609,6 +1635,10 @@ class ReadingFragmentWithoutFeedback :
                         AnalyticsEvent.PRACTICE_SUBMITTED.NAME,
                         "Submit Practice $"
                     )
+
+                    MixPanelTracker.publishEvent(MixPanelEvent.READING_COMPLETED)
+                        .addParam(ParamKeys.LESSON_ID,lessonID)
+                        .push()
                     val requestEngage = RequestEngage()
                     if (it == EXPECTED_ENGAGE_TYPE.VI) {
                         requestEngage.localPath = outputFile
@@ -1654,6 +1684,9 @@ class ReadingFragmentWithoutFeedback :
     }
 
     fun onReadingContinueClick() {
+        MixPanelTracker.publishEvent(MixPanelEvent.READING_CONTINUE)
+            .addParam(ParamKeys.LESSON_ID,lessonID)
+            .push()
         lessonActivityListener?.onNextTabCall(READING_POSITION)
     }
 
@@ -1714,7 +1747,6 @@ class ReadingFragmentWithoutFeedback :
         var isAudioRecording = false
         private const val IMAGE_OR_VIDEO_SELECT_REQUEST_CODE = 1081
         private const val TEXT_FILE_ATTACHMENT_REQUEST_CODE = 1082
-        private const val DOWNLOAD_VIDEO_REQUEST_CODE = 1846
         private val DOCX_FILE_MIME_TYPE = arrayOf(
             "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
             "application/msword", "application/vnd.ms-excel",

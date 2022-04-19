@@ -19,6 +19,9 @@ import com.google.android.material.textview.MaterialTextView
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.core.custom_ui.JoshGrammarVideoPlayer
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.service.DownloadUtils
@@ -83,6 +86,7 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
     private var compositeDisposable = CompositeDisposable()
     private var previousId: Int = -1
     private var completed = false
+    private var questionId = -1
     override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is OnlineTestInterface)
@@ -141,6 +145,7 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
             this.reviseVideoObject = onlineTestResponse.videoObject
             this.totalQuestion = onlineTestResponse.totalQuestions
             this.totalAnsweredQuestions = onlineTestResponse.totalAnswered ?: 0
+            questionId = onlineTestResponse.question?.id?:-1
             animateProgress()
             if (onlineTestResponse.completed) {
                 PrefManager.put(ONLINE_TEST_LAST_LESSON_COMPLETED, lessonNumber)
@@ -562,6 +567,13 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
         }
         lessonActivityListener?.onLessonUpdate()
         setupViews(assessmentQuestions!!)
+
+        MixPanelTracker.publishEvent(MixPanelEvent.GRAMMAR_QUIZ_CONTINUE)
+            .addParam(ParamKeys.LESSON_ID,lessonId)
+            .addParam(ParamKeys.QUESTION_ID,questionId)
+            .addParam(ParamKeys.LESSON_NUMBER,lessonNumber)
+            .push()
+
     }
 
     override fun onPause() {

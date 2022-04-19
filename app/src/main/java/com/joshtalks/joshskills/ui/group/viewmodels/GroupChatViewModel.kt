@@ -18,6 +18,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseViewModel
 import com.joshtalks.joshskills.constants.*
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.core.isCallOngoing
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -167,6 +170,9 @@ class GroupChatViewModel : BaseViewModel() {
                         pushMetaMessage("${Mentor.getInstance().getUser()?.firstName} has joined this group", groupId)
                         onBackPress()
                         onBackPress()
+                        MixPanelTracker.publishEvent(MixPanelEvent.JOIN_GROUP)
+                            .addParam(ParamKeys.GROUP_ID,groupId)
+                            .push()
                     }
                 } else {
                     dismissProgressDialog()
@@ -265,6 +271,9 @@ class GroupChatViewModel : BaseViewModel() {
     }
 
     fun openGroupInfo() {
+        MixPanelTracker.publishEvent(MixPanelEvent.VIEW_GROUP_INFO)
+            .addParam(ParamKeys.GROUP_ID,groupId)
+            .push()
         if (hasJoinedGroup.get()) {
             message.what = OPEN_GROUP_INFO
             singleLiveEvent.value = message
@@ -279,6 +288,9 @@ class GroupChatViewModel : BaseViewModel() {
     }
 
     fun editGroupInfo() {
+        MixPanelTracker.publishEvent(MixPanelEvent.EDIT_GROUP_INFO_CLICKED)
+            .addParam(ParamKeys.GROUP_ID,groupId)
+            .push()
         message.what = EDIT_GROUP_INFO
         message.data = Bundle().apply {
             putBoolean(IS_FROM_GROUP_INFO, true)
@@ -322,6 +334,9 @@ class GroupChatViewModel : BaseViewModel() {
                     return@launch
                 }
                 pushMetaMessage("${Mentor.getInstance().getUser()?.firstName} has left the group", groupId)
+                MixPanelTracker.publishEvent(MixPanelEvent.EXIT_GROUP)
+                    .addParam(ParamKeys.GROUP_ID,groupId)
+                    .push()
                 GroupAnalytics.push(GroupAnalytics.Event.EXIT_GROUP, groupId)
                 withContext(Dispatchers.Main) {
                     message.what = REFRESH_GRP_LIST_HIDE_INFO
@@ -407,6 +422,9 @@ class GroupChatViewModel : BaseViewModel() {
 
     fun sendMessage(view: View) {
         GroupAnalytics.checkMsgTime(GroupAnalytics.Event.MESSAGE_SENT, groupId)
+        MixPanelTracker.publishEvent(MixPanelEvent.GROUP_MESSAGE_SENT)
+            .addParam(ParamKeys.GROUP_ID,groupId)
+            .push()
         message.what = SEND_MSG
         singleLiveEvent.value = message
     }

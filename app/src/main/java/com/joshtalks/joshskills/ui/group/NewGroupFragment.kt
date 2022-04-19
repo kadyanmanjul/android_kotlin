@@ -16,6 +16,9 @@ import com.joshtalks.joshskills.base.BaseFragment
 import com.joshtalks.joshskills.constants.CREATE_GROUP_VALIDATION
 import com.joshtalks.joshskills.constants.GROUP_IMAGE_SELECTED
 import com.joshtalks.joshskills.constants.SAVE_GROUP_INFO
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.databinding.FragmentNewGroupBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.group.constants.*
@@ -91,6 +94,9 @@ class NewGroupFragment : BaseFragment() {
                             groupType = vm.groupType.get()!!
                         )
                         vm.editGroup(request, groupName != vm.groupTitle.get())
+                        MixPanelTracker.publishEvent(MixPanelEvent.GROUP_INFO_EDITED)
+                            .addParam(ParamKeys.GROUP_ID,groupId)
+                            .push()
                     } else if (groupName.length > 25)
                         showToast("Group Name should be 25 character or less")
                     else if (groupName == vm.groupTitle.get() && !vm.isImageChanged)

@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.ui.lesson.reading
 
 import android.content.Context
+import android.util.Log
 import android.view.Gravity
 import android.widget.RelativeLayout
 import android.widget.SeekBar
@@ -12,6 +13,7 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.DD_MM_YYYY
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.messaging.RxBus2

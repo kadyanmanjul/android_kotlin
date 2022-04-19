@@ -25,6 +25,9 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.service.DownloadUtils
 import com.joshtalks.joshskills.core.service.video_download.VideoDownloadController
@@ -82,7 +85,8 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
     private var currentQuizQuestion: Int = 0
     private var correctAns = 0
     private var assessmentQuestions: ArrayList<AssessmentQuestionWithRelations> = ArrayList()
-
+    private var lessonID = -1
+    private var isVideoWatched = false
     private var currentTooltipIndex = 0
     private val lessonTooltipList by lazy {
         listOf(
@@ -143,6 +147,7 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
         }
         subscribeRxBus()
         setObservers()
+        isVideoWatched = false
         return binding.root
     }
 
@@ -347,6 +352,11 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
         binding.btnNextStep.setOnClickListener {
             showNextTooltip()
         }
+        viewModel.lessonId.observe(
+            viewLifecycleOwner
+        ) {
+            lessonID = it
+        }
     }
 
     private fun setQuizScore(assessmentQuestions: ArrayList<AssessmentQuestionWithRelations>) {
@@ -538,6 +548,14 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
                             updateVideoQuestionStatus(question, true)
                             question.isVideoWatchTimeSend = false
                         }
+//                        if (!isVideoWatched && percentVideoWatched>0) {
+//                        val obj = JSONObject()
+//                        obj.put("lesson id", lessonID)
+//                            obj.put("percent video watched",percentVideoWatched)
+//                            obj.put("video percent",videoPercent)
+//                        viewModel.mixPanelEvent("grammar play video",obj)
+//                            isVideoWatched= true
+//                        }
 
                         if (mediaProgressEvent.progress + 1000 >= question.videoList?.get(0)?.duration ?: 0) {
                             binding.quizShader.visibility = View.GONE
@@ -747,6 +765,12 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
             binding.continueBtn.visibility = View.VISIBLE
             binding.showExplanationBtn.visibility = View.VISIBLE
             requestFocus(binding.showExplanationBtn)
+
+            MixPanelTracker.publishEvent(MixPanelEvent.GRAMMAR_QUIZ_SUBMIT)
+                .addParam(ParamKeys.LESSON_ID,lessonID)
+                .addParam(ParamKeys.QUESTION_ID,selectedChoice.questionId)
+                .addParam(ParamKeys.ANSWER_SELECTED,selectedChoice.text)
+                .push()
         }
     }
 
@@ -761,6 +785,18 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
     }
 
     fun onContinueClick() {
+        val question = assessmentQuestions[currentQuizQuestion]
+        val selectedChoice = question.choiceList[
+                binding.quizRadioGroup.indexOfChild(
+                    binding.root.findViewById(binding.quizRadioGroup.checkedRadioButtonId)
+                )
+        ]
+        MixPanelTracker.publishEvent(MixPanelEvent.GRAMMAR_QUIZ_CONTINUE)
+            .addParam(ParamKeys.LESSON_ID,lessonID)
+            .addParam(ParamKeys.QUESTION_ID,selectedChoice.questionId)
+            .addParam(ParamKeys.ANSWER_SELECTED,selectedChoice.text)
+            .push()
+
         if (assessmentQuestions.size - 1 > currentQuizQuestion) {
             updateQuiz(assessmentQuestions[++currentQuizQuestion])
         } else {
@@ -770,6 +806,10 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
     }
 
     fun onGrammarContinueClick() {
+        MixPanelTracker.publishEvent(MixPanelEvent.GRAMMAR_CONTINUE)
+            .addParam(ParamKeys.LESSON_ID,lessonID)
+            .push()
+
         lessonActivityListener?.onNextTabCall(GRAMMAR_POSITION)
     }
 
@@ -787,9 +827,15 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
         currentQuizQuestion = 0
         updateQuiz(assessmentQuestions[0])
         binding.grammarCompleteLayout.visibility = View.GONE
+        MixPanelTracker.publishEvent(MixPanelEvent.GRAMMAR_QUIZ_REDO)
+            .addParam(ParamKeys.LESSON_ID,lessonID)
+            .push()
     }
 
     private fun showQuizCompleteLayout() {
+        MixPanelTracker.publishEvent(MixPanelEvent.GRAMMAR_COMPLETE)
+            .addParam(ParamKeys.LESSON_ID,lessonID)
+            .push()
         binding.grammarCompleteLayout.visibility = View.VISIBLE
         binding.submitAnswerBtn.isEnabled = false
         binding.continueBtn.visibility = View.GONE
@@ -809,12 +855,36 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
             binding.showExplanationBtn.text = getString(R.string.show_explanation)
             binding.explanationLbl.visibility = View.GONE
             binding.explanationTv.visibility = View.GONE
+            val question = assessmentQuestions[currentQuizQuestion]
+            val selectedChoice = question.choiceList[
+                    binding.quizRadioGroup.indexOfChild(
+                        binding.root.findViewById(binding.quizRadioGroup.checkedRadioButtonId)
+                    )
+            ]
+            MixPanelTracker.publishEvent(MixPanelEvent.GRAMMAR_QUIZ_SHOW_EXPLANATION)
+                .addParam(ParamKeys.LESSON_ID,lessonID)
+                .addParam(ParamKeys.QUESTION_ID,selectedChoice.questionId)
+                .addParam(ParamKeys.ANSWER_SELECTED,selectedChoice.text)
+                .push()
+
         } else {
             binding.showExplanationBtn.text = getString(R.string.hide_explanation)
             binding.explanationLbl.visibility = View.VISIBLE
             binding.explanationTv.visibility = View.VISIBLE
             binding.explanationTv.requestFocus()
             requestFocus(binding.explanationTv)
+            val question = assessmentQuestions[currentQuizQuestion]
+            val selectedChoice = question.choiceList[
+                    binding.quizRadioGroup.indexOfChild(
+                        binding.root.findViewById(binding.quizRadioGroup.checkedRadioButtonId)
+                    )
+            ]
+            MixPanelTracker.publishEvent(MixPanelEvent.GRAMMAR_QUIZ_HIDE_EXPLANATION)
+                .addParam(ParamKeys.LESSON_ID,lessonID)
+                .addParam(ParamKeys.QUESTION_ID,selectedChoice.questionId)
+                .addParam(ParamKeys.ANSWER_SELECTED,selectedChoice.text)
+                .push()
+
         }
     }
 
@@ -873,14 +943,23 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
     }
 
     fun showNextQuestion() {
+        MixPanelTracker.publishEvent(MixPanelEvent.GRAMMAR_QUIZ_NEXT_QUESTION)
+            .addParam(ParamKeys.LESSON_ID,lessonID)
+            .push()
         updateQuiz(assessmentQuestions[++currentQuizQuestion])
     }
 
     fun showPreviousQuestion() {
+        MixPanelTracker.publishEvent(MixPanelEvent.GRAMMAR_QUIZ_PREVIOUS_QUESTION)
+            .addParam(ParamKeys.LESSON_ID,lessonID)
+            .push()
         updateQuiz(assessmentQuestions[--currentQuizQuestion])
     }
 
     fun onClickPdfContainer() {
+        MixPanelTracker.publishEvent(MixPanelEvent.GRAMMAR_NOTES)
+            .addParam(ParamKeys.LESSON_ID,lessonID)
+            .push()
         if (PermissionUtils.isStoragePermissionEnabled(requireActivity())) {
             PermissionUtils.storageReadAndWritePermission(
                 requireActivity(),

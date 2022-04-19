@@ -25,6 +25,9 @@ import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.core.interfaces.FileDownloadCallback
 import com.joshtalks.joshskills.core.service.CONVERSATION_ID
 import com.joshtalks.joshskills.core.showToast
@@ -142,7 +145,31 @@ class CExamReportActivity : BaseActivity(), FileDownloadCallback {
         )
         val tabStrip: LinearLayout = binding.tabLayout.getChildAt(0) as LinearLayout
         for (i in 0 until tabStrip.childCount) {
-            tabStrip.getChildAt(i).setOnTouchListener { _, _ -> true }
+            tabStrip.getChildAt(i).setOnTouchListener { _, _ ->
+                when(i) {
+                    0->MixPanelTracker.publishEvent(MixPanelEvent.VIEW_ATTEMPT_1)
+                        .addParam(ParamKeys.EXAM_TYPE,certificationQuestionModel?.type)
+                        .addParam(ParamKeys.EXAM_ID,certificateExamId)
+                        .push()
+                    1->MixPanelTracker.publishEvent(MixPanelEvent.VIEW_ATTEMPT_2)
+                        .addParam(ParamKeys.EXAM_TYPE,certificationQuestionModel?.type)
+                        .addParam(ParamKeys.EXAM_ID,certificateExamId)
+                        .push()
+                    2->MixPanelTracker.publishEvent(MixPanelEvent.VIEW_ATTEMPT_3)
+                        .addParam(ParamKeys.EXAM_TYPE,certificationQuestionModel?.type)
+                        .addParam(ParamKeys.EXAM_ID,certificateExamId)
+                        .push()
+                    3->MixPanelTracker.publishEvent(MixPanelEvent.VIEW_ATTEMPT_4)
+                        .addParam(ParamKeys.EXAM_TYPE,certificationQuestionModel?.type)
+                        .addParam(ParamKeys.EXAM_ID,certificateExamId)
+                        .push()
+                    4->MixPanelTracker.publishEvent(MixPanelEvent.VIEW_ATTEMPT_5)
+                        .addParam(ParamKeys.EXAM_TYPE,certificationQuestionModel?.type)
+                        .addParam(ParamKeys.EXAM_ID,certificateExamId)
+                        .push()
+                }
+                true
+            }
         }
         binding.examReportList.registerOnPageChangeCallback(object :
                 ViewPager2.OnPageChangeCallback() {
@@ -218,6 +245,7 @@ class CExamReportActivity : BaseActivity(), FileDownloadCallback {
     }
 
     override fun onBackPressed() {
+        MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
         if (viewModel.isSAnswerUiShow) {
             viewModel.isSAnswerUiShow = false
             RxBus2.publish(OpenReportQTypeEventBus(QuestionReportType.UNKNOWN))

@@ -21,6 +21,8 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.databinding.ActivityReferralBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
@@ -328,10 +330,10 @@ class ReferralActivity : BaseActivity() {
             showToast(getString(R.string.whatsApp_not_installed))
         }
         if (packageString == WHATSAPP_PACKAGE_STRING) {
-            viewModel.mixPanelEvent("share referral whatsapp ")
+            MixPanelTracker.publishEvent(MixPanelEvent.SHARE_REFERRAL_WHATSAPP).push()
             viewModel.saveImpression(IMPRESSION_REFER_VIA_WHATSAPP_CLICKED)
         } else {
-            viewModel.mixPanelEvent("share referral others")
+            MixPanelTracker.publishEvent(MixPanelEvent.SHARE_REFERRAL_OTHERS).push()
             viewModel.saveImpression(IMPRESSION_REFER_VIA_OTHER_CLICKED)
         }
     }
@@ -357,7 +359,7 @@ class ReferralActivity : BaseActivity() {
 
     @Synchronized
     private fun copyCodeIntoClipBoard() {
-        viewModel.mixPanelEvent("copy referral")
+        MixPanelTracker.publishEvent(MixPanelEvent.COPY_REFERRAL).push()
         AppObjectController.uiHandler.removeCallbacksAndMessages(null)
         val cManager =
             application.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
@@ -377,6 +379,7 @@ class ReferralActivity : BaseActivity() {
     }
 
     override fun onBackPressed() {
+        MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
         if (intent.hasExtra(FROM_CLASS)) {
             intent.getStringExtra(FROM_CLASS)?.run {
                 if (this.equals(InboxActivity::class.java.name, ignoreCase = true)) {

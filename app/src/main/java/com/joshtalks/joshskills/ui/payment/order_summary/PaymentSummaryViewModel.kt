@@ -38,7 +38,6 @@ import java.net.UnknownHostException
 import java.util.HashMap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.json.JSONObject
 import retrofit2.HttpException
 import retrofit2.Response
 import timber.log.Timber
@@ -54,6 +53,7 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
     var responsePaymentSummary = MediatorLiveData<PaymentSummaryResponse>()
     var responseSubscriptionPaymentSummary = MediatorLiveData<PaymentSummaryResponse>()
     var mPaymentDetailsResponse = MediatorLiveData<OrderDetailResponse>()
+    var testId: MutableLiveData<String> = MutableLiveData()
     var viewState: MutableLiveData<ViewState>? = null
     val isRegisteredAlready by lazy { Mentor.getInstance().getId().isNotBlank() }
     var isFreeOrderCreated = MutableLiveData<Boolean>(false)
@@ -399,8 +399,5 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
     }
 
 
-    fun mixPanelEvent(eventName:String,obj:JSONObject?=null) {
-        MixPanelTracker().publishEvent(eventName,obj)
-    }
 
 }

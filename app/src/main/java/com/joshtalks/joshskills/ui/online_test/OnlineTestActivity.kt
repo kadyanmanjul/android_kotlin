@@ -4,6 +4,8 @@ import android.os.Bundle
 import androidx.databinding.DataBindingUtil
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.WebRtcMiddlewareActivity
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.extension.translationAnimationNew
 import com.joshtalks.joshskills.databinding.ActivityOnlineTestActivityBinding
 import com.joshtalks.joshskills.messaging.RxBus2
@@ -86,6 +88,7 @@ class OnlineTestActivity : WebRtcMiddlewareActivity() {
     }
 
     override fun onBackPressed() {
+        MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
         if (supportFragmentManager.backStackEntryCount == 1) {
             this.finish()
             return

@@ -19,19 +19,20 @@ import com.github.mikephil.charting.data.PieEntry
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.core.custom_ui.decorator.GridSpacingItemDecoration
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.OpenReportQTypeEventBus
-import com.joshtalks.joshskills.repository.server.certification_exam.CertificateExamReportModel
-import com.joshtalks.joshskills.repository.server.certification_exam.CertificationQuestion
-import com.joshtalks.joshskills.repository.server.certification_exam.QuestionReportType
-import com.joshtalks.joshskills.repository.server.certification_exam.UserSelectedAnswer
+import com.joshtalks.joshskills.repository.server.certification_exam.*
 import com.mindorks.placeholderview.annotations.Click
 import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.json.JSONObject
 import java.util.*
 
 
@@ -172,16 +173,28 @@ class ReportOverviewView2(
 
     @Click(R.id.ll_correct)
     fun onClickCorrectView() {
+        MixPanelTracker.publishEvent(MixPanelEvent.CHECK_EXAM_RESULTS_CORRECT)
+            .addParam(ParamKeys.EXAM_TYPE, CertificationQuestionModel().type)
+            .addParam(ParamKeys.ATTEMPT_NUMBER, CertificationQuestionModel().attemptCount)
+            .push()
         RxBus2.publish(OpenReportQTypeEventBus(QuestionReportType.RIGHT))
     }
 
     @Click(R.id.ll_unanswerd)
     fun onClickUnAnsweredView() {
+        MixPanelTracker.publishEvent(MixPanelEvent.CHECK_EXAM_RESULTS_INCORRECT)
+            .addParam(ParamKeys.EXAM_TYPE, CertificationQuestionModel().type)
+            .addParam(ParamKeys.ATTEMPT_NUMBER, CertificationQuestionModel().attemptCount)
+            .push()
         RxBus2.publish(OpenReportQTypeEventBus(QuestionReportType.UNANSWERED))
     }
 
     @Click(R.id.ll_incorrect)
     fun onClickInCorrectView() {
+        MixPanelTracker.publishEvent(MixPanelEvent.CHECK_EXAM_RESULTS_UNANSWERED)
+            .addParam(ParamKeys.EXAM_TYPE, CertificationQuestionModel().type)
+            .addParam(ParamKeys.ATTEMPT_NUMBER, CertificationQuestionModel().attemptCount)
+            .push()
         RxBus2.publish(OpenReportQTypeEventBus(QuestionReportType.WRONG))
     }
 }

@@ -19,6 +19,9 @@ import com.airbnb.lottie.LottieAnimationView
 import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.core.extension.slideUpAnimation
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.VideoShowEvent
@@ -312,7 +315,12 @@ class GrammarButtonView : FrameLayout {
     }
 
     fun setCorrectView() {
-
+        val lesson = 1
+        MixPanelTracker.publishEvent(MixPanelEvent.GRAMMAR_QUIZ_SUBMIT)
+            .addParam(ParamKeys.LESSON_NUMBER,lesson)
+            .addParam(ParamKeys.QUESTION_ID,questionFeedback?.questionId)
+            .addParam(ParamKeys.IS_CORRECT_ANSWER,true)
+            .push()
         wrongAnswerGroup.visibility = View.GONE
         rightAnswerGroup.visibility = View.VISIBLE
         setCorrectViewVisibility()
@@ -383,6 +391,12 @@ class GrammarButtonView : FrameLayout {
     }
 
     fun setWrongView() {
+        val lesson = 1
+        MixPanelTracker.publishEvent(MixPanelEvent.GRAMMAR_QUIZ_SUBMIT)
+            .addParam(ParamKeys.LESSON_NUMBER,lesson)
+            .addParam(ParamKeys.QUESTION_ID,questionFeedback?.questionId)
+            .addParam(ParamKeys.IS_CORRECT_ANSWER,false)
+            .push()
         wrongAnswerGroup.visibility = View.VISIBLE
         rightAnswerGroup.visibility = View.GONE
         setWrongViewVisibility()

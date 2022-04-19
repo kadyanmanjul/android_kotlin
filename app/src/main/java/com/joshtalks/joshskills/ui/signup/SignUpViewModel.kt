@@ -460,7 +460,4 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    fun mixPanelEvent(eventName:String,obj:JSONObject?=null) {
-        MixPanelTracker().publishEvent(eventName,obj)
-    }
 }

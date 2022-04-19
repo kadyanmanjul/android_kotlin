@@ -216,7 +216,12 @@ object MarketingAnalytics {
         }
     }
 
-    fun logLessonCompletedEvent(lessonNumber: Int) {
+    fun logLessonCompletedEvent(lessonNumber: Int,lessonId: Int) {
+        MixPanelTracker.publishEvent(MixPanelEvent.LESSON_COMPLETE)
+            .addParam(ParamKeys.LESSON_ID,lessonId)
+            .addParam(ParamKeys.LESSON_NUMBER,lessonNumber)
+            .push()
+
         JoshSkillExecutors.BOUNDED.submit {
             val context = AppObjectController.joshApplication
             val facebookEventLogger = AppEventsLogger.newLogger(context)

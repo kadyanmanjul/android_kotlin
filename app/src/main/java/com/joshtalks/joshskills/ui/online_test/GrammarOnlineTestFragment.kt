@@ -30,6 +30,9 @@ import com.joshtalks.joshskills.core.playSnackbarSound
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.GRAMMAR_CONTINUE_BUTTON_TEXT
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.GRAMMAR_START_BUTTON_TEXT
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.GRAMMAR_TEST_COMPLETE_DESCRIPTION
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.databinding.FragmentGrammarOnlineTestBinding
 import com.joshtalks.joshskills.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
 import com.joshtalks.joshskills.ui.leaderboard.ItemOverlay
@@ -60,6 +63,7 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
         ViewModelProvider(requireActivity()).get(LessonViewModel::class.java)
     }
     private var lessonNumber: Int = -1
+    private var lessonId : Int = -1
     private var scoreText: Int = -1
     private var pointsList: String? = null
 
@@ -238,6 +242,12 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
                 binding.startBtn.performClick()
             }
         })
+
+        viewModel.lessonId.observe(
+            viewLifecycleOwner
+        ) {
+            lessonId = it
+        }
     }
 
     override fun onResume() {
@@ -313,6 +323,10 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
     }
 
     fun startOnlineExamTest() {
+        MixPanelTracker.publishEvent(MixPanelEvent.GRAMMAR_QUIZ_START)
+            .addParam(ParamKeys.LESSON_ID,lessonId)
+            .addParam(ParamKeys.LESSON_NUMBER,lessonNumber)
+            .push()
 
         if (PermissionUtils.isStoragePermissionEnabled(AppObjectController.joshApplication).not()) {
             askStoragePermission()
@@ -375,6 +389,10 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
     }
 
     private fun showGrammarCompleteLayout() {
+        MixPanelTracker.publishEvent(MixPanelEvent.GRAMMAR_COMPLETE)
+            .addParam(ParamKeys.LESSON_ID,lessonId)
+            .addParam(ParamKeys.LESSON_NUMBER,lessonNumber)
+            .push()
         binding.parentContainer.visibility = View.GONE
         binding.startTestContainer.visibility = View.GONE
         if (PrefManager.hasKey(IS_FREE_TRIAL) && PrefManager.getBoolValue(
@@ -405,6 +423,7 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
     }
 
     fun onGrammarContinueClick() {
+        MixPanelTracker.publishEvent(MixPanelEvent.GRAMMAR_CONTINUE).push()
         lessonActivityListener?.onNextTabCall(GRAMMAR_POSITION)
     }
 

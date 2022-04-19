@@ -6,6 +6,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import androidx.annotation.NonNull
@@ -50,6 +51,9 @@ import com.joshtalks.joshskills.core.VerificationVia
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.LogException
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.core.getFBProfilePicture
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.showToast
@@ -249,7 +253,6 @@ class SignUpActivity : BaseActivity() {
     }
 
     private fun setupFacebookLogin() {
-        var isSuccess = false
         LoginManager.getInstance().logOut()
         LoginManager.getInstance().loginBehavior = LoginBehavior.NATIVE_WITH_FALLBACK
         LoginManager.getInstance().registerCallback(
@@ -257,7 +260,9 @@ class SignUpActivity : BaseActivity() {
             object : FacebookCallback<LoginResult> {
                 override fun onSuccess(loginResult: LoginResult) {
                     if (loginResult.accessToken != null) {
-                        isSuccess = true
+                        MixPanelTracker.publishEvent(MixPanelEvent.FACEBOOK_VERIFICATION)
+                            .addParam(ParamKeys.IS_SUCCESS,true)
+                            .push()
                         getUserDetailsFromFB(loginResult.accessToken)
                     } else {
                         showToast(getString(R.string.something_went_wrong))
@@ -266,6 +271,9 @@ class SignUpActivity : BaseActivity() {
                 }
 
                 override fun onCancel() {
+                    MixPanelTracker.publishEvent(MixPanelEvent.FACEBOOK_VERIFICATION)
+                        .addParam(ParamKeys.IS_SUCCESS,false)
+                        .push()
                     hideProgressBar()
                 }
 
@@ -273,11 +281,12 @@ class SignUpActivity : BaseActivity() {
                     exception.printStackTrace()
                     LogException.catchException(exception)
                     hideProgressBar()
+                    MixPanelTracker.publishEvent(MixPanelEvent.FACEBOOK_VERIFICATION)
+                        .addParam(ParamKeys.IS_SUCCESS,false)
+                        .push()
                 }
             })
-        val obj = JSONObject()
-        obj.put("is success","$isSuccess")
-        viewModel.mixPanelEvent("facebook verification",obj)
+
     }
 
     private fun setupTrueCaller() {
@@ -288,6 +297,14 @@ class SignUpActivity : BaseActivity() {
                 if (TrueError.ERROR_TYPE_NETWORK == trueError.errorType) {
                     showToast(application.getString(R.string.internet_not_available_msz))
                 }
+                if (TrueError.ERROR_TYPE_CONTINUE_WITH_DIFFERENT_NUMBER == trueError.errorType) {
+                    MixPanelTracker.publishEvent(MixPanelEvent.TRUECALLER_VERIFICATION_SKIP).push()
+                }
+                else {
+                    MixPanelTracker.publishEvent(MixPanelEvent.TRUECALLER_VERIFICATION_CONTD)
+                        .addParam(ParamKeys.IS_SUCCESS,false)
+                        .push()
+                }
             }
 
             override fun onVerificationRequired(p0: TrueError?) {
@@ -295,8 +312,10 @@ class SignUpActivity : BaseActivity() {
             }
 
             override fun onSuccessProfileShared(trueProfile: TrueProfile) {
-                isSuccess = true
                 viewModel.verifyUserViaTrueCaller(trueProfile)
+                MixPanelTracker.publishEvent(MixPanelEvent.TRUECALLER_VERIFICATION_CONTD)
+                    .addParam(ParamKeys.IS_SUCCESS,true)
+                    .push()
             }
         })
             .consentMode(TruecallerSdkScope.CONSENT_MODE_POPUP)
@@ -309,9 +328,7 @@ class SignUpActivity : BaseActivity() {
             val locale = Locale(PrefManager.getStringValue(USER_LOCALE))
             TruecallerSDK.getInstance().setLocale(locale)
         }
-        val obj = JSONObject()
-        obj.put("is success","$isSuccess")
-        viewModel.mixPanelEvent("truecaller verification",obj)
+
     }
 
     private fun openSignUpOptionsFragment() {
@@ -397,10 +414,16 @@ class SignUpActivity : BaseActivity() {
                 handleGoogleSignInResult(account)
             } catch (e: ApiException) {
                 hideProgressBar()
+                MixPanelTracker.publishEvent(MixPanelEvent.GOOGLE_VERIFICATION)
+                    .addParam(ParamKeys.IS_SUCCESS,false)
+                    .push()
                 if (BuildConfig.DEBUG) {
                     showToast(getString(R.string.gmail_login_error_message))
                 }
             } catch (e: Exception) {
+                MixPanelTracker.publishEvent(MixPanelEvent.GOOGLE_VERIFICATION)
+                    .addParam(ParamKeys.IS_SUCCESS,false)
+                    .push()
                 hideProgressBar()
                 LogException.catchException(e)
             }
@@ -434,6 +457,7 @@ class SignUpActivity : BaseActivity() {
     }
 
     fun onSkipPressed() {
+        MixPanelTracker.publishEvent(MixPanelEvent.SKIP_CLICKED).push()
         logSkipEvent()
         viewModel.changeSignupStatusToProfilePicSkipped()
     }
@@ -475,27 +499,31 @@ class SignUpActivity : BaseActivity() {
     }
 
     private fun handleGoogleSignInResult(account: GoogleSignInAccount) {
-        var isSuccess = false
         if (account.idToken.isNullOrEmpty().not()) {
             val credential = GoogleAuthProvider.getCredential(account.idToken!!, null)
             auth.signInWithCredential(credential)
                 .addOnCompleteListener(this) { task ->
                     if (task.isSuccessful) {
-                        isSuccess = true
                         val accountUser = auth.currentUser
                         handleFirebaseAuth(accountUser)
+                        MixPanelTracker.publishEvent(MixPanelEvent.GOOGLE_VERIFICATION)
+                            .addParam(ParamKeys.IS_SUCCESS,true)
+                            .push()
                     } else {
                         task.exception?.showAppropriateMsg()
 
                         showToast(getString(R.string.generic_message_for_error))
+                        MixPanelTracker.publishEvent(MixPanelEvent.GOOGLE_VERIFICATION)
+                            .addParam(ParamKeys.IS_SUCCESS,false)
+                            .push()
                     }
                 }
         } else {
+            MixPanelTracker.publishEvent(MixPanelEvent.GOOGLE_VERIFICATION)
+                .addParam(ParamKeys.IS_SUCCESS,false)
+                .push()
             showToast(getString(R.string.generic_message_for_error))
         }
-        val obj = JSONObject()
-        obj.put("is success","$isSuccess")
-        viewModel.mixPanelEvent("google verification",obj)
     }
 
     private fun handleFirebaseAuth(
@@ -549,7 +577,7 @@ class SignUpActivity : BaseActivity() {
     }
 
     override fun onBackPressed() {
-        viewModel.mixPanelEvent("back press")
+        MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
         supportFragmentManager.popBackStackImmediate()
         if (supportFragmentManager.backStackEntryCount == 0) {
             this@SignUpActivity.finish()

@@ -12,6 +12,8 @@ import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.BaseActivity
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.service.CONVERSATION_ID
 import com.joshtalks.joshskills.repository.local.entity.CExamStatus
 import com.joshtalks.joshskills.ui.certification_exam.examview.CExamMainActivity
@@ -179,6 +181,7 @@ class CertificationBaseActivity : BaseActivity() {
     }
 
     override fun onBackPressed() {
+        MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
         val resultIntent = Intent().apply {
             putExtra(CHAT_ROOM_ID, intent.getStringExtra(CHAT_ROOM_ID))
             putExtra(EXAM_LESSON_INTERVAL, intent.getIntExtra(EXAM_LESSON_INTERVAL, -1))

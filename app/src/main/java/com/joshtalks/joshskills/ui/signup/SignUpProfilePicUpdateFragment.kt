@@ -10,6 +10,8 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.databinding.FragmentSignUpProfilePicUpdateBinding
 import com.joshtalks.joshskills.ui.userprofile.fragments.UserPicChooserFragment
 
@@ -51,6 +53,7 @@ class SignUpProfilePicUpdateFragment : BaseSignUpFragment() {
     fun submitProfilePic() {
         //val requestMap = mutableMapOf<String, String?>()
         //viewModel.completingProfile(requestMap)
+        MixPanelTracker.publishEvent(MixPanelEvent.ADD_PROFILE_PHOTO).push()
         logAnalyticsEvent(AnalyticsEvent.UPLOAD_PROFILE_PIC.NAME)
         UserPicChooserFragment.showDialog(
             childFragmentManager,

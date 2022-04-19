@@ -13,6 +13,8 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.IS_PRACTISE_PARTNER_VIEWED
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.core.interfaces.OnDismissWithSuccess
 import com.joshtalks.joshskills.databinding.PractisePartnerLayoutBinding
@@ -32,6 +34,7 @@ class PractisePartnerDialogFragment : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return object : Dialog(requireActivity(), R.style.full_dialog) {
             override fun onBackPressed() {
+                MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
                 listener?.onDismiss()
             }
         }

@@ -22,6 +22,8 @@ import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics.logCallInitiated
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.databinding.ActivitySearchingUserBinding
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.voip.analytics.VoipAnalytics.Event.DISCONNECT
@@ -127,6 +129,7 @@ class SearchingUserActivity : BaseActivity(), ServiceConnection {
     private var callback: WebRtcCallback = object : WebRtcCallback {
 
         override fun onConnect(connectId: String) {
+            //call connect
             compositeDisposable.clear()
             Timber.tag("SearchingUserActivity").e("onConnect")
             outgoingCallData[RTC_CALLER_UID_KEY] = connectId
@@ -138,6 +141,7 @@ class SearchingUserActivity : BaseActivity(), ServiceConnection {
         }
 
         override fun switchChannel(data: HashMap<String, String?>) {
+            //call connect
             compositeDisposable.clear()
             val callActivityIntent =
                 Intent(this@SearchingUserActivity, WebRtcActivity::class.java).apply {
@@ -395,6 +399,7 @@ class SearchingUserActivity : BaseActivity(), ServiceConnection {
     }
 
     override fun onBackPressed() {
+        MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
         if(backPressMutex.isLocked) {
             Log.d(TAG, "onBackPressed: backPressMutex?.isLocked")
             viewModel.saveImpression(IMPRESSION_SEARCHING_SCREEN_BACK_PRESS)

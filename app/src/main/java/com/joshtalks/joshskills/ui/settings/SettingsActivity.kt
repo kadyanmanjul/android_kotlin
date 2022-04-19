@@ -25,7 +25,6 @@ class SettingsActivity : WebRtcMiddlewareActivity() {
         iv_help.visibility = View.GONE
         iv_back.visibility = View.VISIBLE
         iv_back.setOnClickListener {
-            MixPanelTracker().publishEvent("back press")
             onBackPressed()
         }
 

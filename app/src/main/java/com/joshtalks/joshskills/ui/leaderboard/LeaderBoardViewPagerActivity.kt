@@ -33,6 +33,8 @@ import com.airbnb.lottie.LottieAnimationView
 import com.google.android.material.tabs.TabLayoutMediator
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.videotranscoder.enforceSingleScrollDirection
 import com.joshtalks.joshskills.core.videotranscoder.recyclerView
 import com.joshtalks.joshskills.databinding.ActivityLeaderboardViewPagerBinding
@@ -146,12 +148,14 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity(), ViewBitmap {
         with(iv_back) {
             visibility = View.VISIBLE
             setOnClickListener {
+                MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
                 onBackPressed()
             }
         }
         with(iv_help) {
             visibility = View.VISIBLE
             setOnClickListener {
+                MixPanelTracker.publishEvent(MixPanelEvent.HELP).push()
                 openHelpActivity()
             }
         }
@@ -163,7 +167,10 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity(), ViewBitmap {
                     R.drawable.ic_search
                 )
             )
-            setOnClickListener { openSearchActivity() }
+            setOnClickListener {
+                MixPanelTracker.publishEvent(MixPanelEvent.SEARCH_LEADERBOARD_CLICKED).push()
+                openSearchActivity()
+            }
         }
         text_message_title.text = getString(R.string.leaderboard)
         lifecycleScope.launch(Dispatchers.Default) {
@@ -376,12 +383,15 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity(), ViewBitmap {
                         when (tabPosition) {
                             0 -> {
                                 type = "TODAY"
+                                MixPanelTracker.publishEvent(MixPanelEvent.YESTERDAY_STOD).push()
                             }
                             1 -> {
                                 type = "WEEK"
+                                MixPanelTracker.publishEvent(MixPanelEvent.PREV_WEEK_STOW).push()
                             }
                             2 -> {
                                 type = "MONTH"
+                                MixPanelTracker.publishEvent(MixPanelEvent.PREV_MONTH_STOM).push()
                             }
                         }
                         if (type.isNotBlank()) {
@@ -989,6 +999,7 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity(), ViewBitmap {
     }
 
     override fun onBackPressed() {
+        MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
         if (currentAimation == null) {
             super.onBackPressed()
         } else {
@@ -999,11 +1010,26 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity(), ViewBitmap {
     }
 
     fun getTabName(position: Int) = when (position) {
-        0 -> "TODAY"
-        1 -> "WEEK"
-        2 -> "MONTH"
-        3 -> "LIFETIME"
-        4 -> "BATCH"
+        0 -> {
+            MixPanelTracker.publishEvent(MixPanelEvent.LEADERBOARD_TODAY).push()
+            "TODAY"
+        }
+        1 -> {
+            MixPanelTracker.publishEvent(MixPanelEvent.LEADERBOARD_WEEK).push()
+            "WEEK"
+        }
+        2 -> {
+            MixPanelTracker.publishEvent(MixPanelEvent.LEADERBOARD_MONTH).push()
+            "MONTH"
+        }
+        3 -> {
+            MixPanelTracker.publishEvent(MixPanelEvent.LEADERBOARD_LIFETIME).push()
+            "LIFETIME"
+        }
+        4 -> {
+            MixPanelTracker.publishEvent(MixPanelEvent.LEADERBOARD_MY_BATCH).push()
+            "BATCH"
+        }
         else -> ""
     }
 }

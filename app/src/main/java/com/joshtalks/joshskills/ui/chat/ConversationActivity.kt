@@ -49,6 +49,9 @@ import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.core.countdowntimer.CountdownTimerBack
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.core.custom_ui.decorator.SmoothScrollingLinearLayoutManager
@@ -540,6 +543,7 @@ class ConversationActivity :
                 openCourseProgressListingScreen()
             }
             conversationBinding.textMessageTitle.setOnClickListener {
+                MixPanelTracker.publishEvent(MixPanelEvent.COURSE_OVERVIEW).push()
                 openCourseProgressListingScreen()
             }
 
@@ -555,6 +559,7 @@ class ConversationActivity :
                     this@ConversationActivity,
                     ConversationActivity::class.java.name
                 )
+                MixPanelTracker.publishEvent(MixPanelEvent.REFERRAL_OPENED).push()
             }
 
             conversationBinding.toolbar.inflateMenu(R.menu.conversation_menu)
@@ -566,16 +571,18 @@ class ConversationActivity :
                     R.id.menu_referral -> {
 
                         refViewModel.saveImpression(IMPRESSION_REFER_VIA_CONVERSATION_MENU)
-
+                        MixPanelTracker.publishEvent(MixPanelEvent.REFERRAL_OPENED).push()
                         ReferralActivity.startReferralActivity(
                             this@ConversationActivity,
                             ConversationActivity::class.java.name
                         )
                     }
                     R.id.menu_clear_media -> {
+                        MixPanelTracker.publishEvent(MixPanelEvent.CLEAR_ALL_MEDIA_CLICKED).push()
                         clearMediaFromInternal(inboxEntity.conversation_id)
                     }
                     R.id.menu_help -> {
+                        MixPanelTracker.publishEvent(MixPanelEvent.HELP).push()
                         openHelpActivity()
                     }
                     R.id.profile_setting -> {
@@ -585,9 +592,11 @@ class ConversationActivity :
                         )
                     }
                     R.id.leaderboard_setting -> {
+                        MixPanelTracker.publishEvent(MixPanelEvent.LEADERBOARD_OPENED).push()
                         openLeaderBoard(inboxEntity.conversation_id, inboxEntity.courseId)
                     }
                     R.id.menu_favorite_list -> {
+                        MixPanelTracker.publishEvent(MixPanelEvent.FAVORITE_LIST).push()
                         FavoriteListActivity.openFavoriteCallerActivity(
                             this,
                             inboxEntity.conversation_id,
@@ -776,6 +785,7 @@ class ConversationActivity :
                 val firstName = if (nameArr != null) nameArr[0] else EMPTY
                 showToast(getString(R.string.feature_locked, firstName))
             } else {
+                MixPanelTracker.publishEvent(MixPanelEvent.GROUP_ICON_CLICKED).push()
                 val intent = Intent(this, JoshGroupActivity::class.java).apply {
                     putExtra(CONVERSATION_ID, getConversationId())
                 }
@@ -800,6 +810,7 @@ class ConversationActivity :
         }
 
         conversationBinding.leaderboardBtnClose.setOnClickListener {
+            MixPanelTracker.publishEvent(MixPanelEvent.LEADERBOARD_CANCEL).push()
             conversationBinding.userPointContainer.slideOutAnimation(
                 conversationBinding.imgGroupChat,
                 conversationBinding.txtUnreadCount
@@ -808,14 +819,17 @@ class ConversationActivity :
         }
 
         conversationBinding.leaderboardTxt.setOnClickListener {
+            MixPanelTracker.publishEvent(MixPanelEvent.LEADERBOARD_OPENED).push()
             openLeaderBoard(inboxEntity.conversation_id, inboxEntity.courseId)
         }
         conversationBinding.overlayLeaderboardContainer.setOnClickListener {
+            MixPanelTracker.publishEvent(MixPanelEvent.LEADERBOARD_OPENED).push()
             PrefManager.put(HAS_SEEN_LEADERBOARD_ANIMATION, true)
             openLeaderBoard(inboxEntity.conversation_id, inboxEntity.courseId)
             hideLeaderBoardSpotlight()
         }
         conversationBinding.points.setOnClickListener {
+            MixPanelTracker.publishEvent(MixPanelEvent.CONVERSATION_POINTS_CLICKED).push()
             openUserProfileActivity(
                 Mentor.getInstance().getId(),
                 USER_PROFILE_FLOW_FROM.FLOATING_BAR.value
@@ -2002,6 +2016,9 @@ class ConversationActivity :
                             val firstName = if (nameArr != null) nameArr[0] else EMPTY
                             showToast(getFeatureLockedText(inboxEntity.courseId, firstName))
                         } else {
+                            MixPanelTracker.publishEvent(MixPanelEvent.LESSON_OPENED)
+                                .addParam(ParamKeys.LESSON_ID,it.lessonId)
+                                .push()
                             startActivityForResult(
                                 LessonActivity.getActivityIntent(
                                     this,
@@ -2076,6 +2093,11 @@ class ConversationActivity :
     }
 
     private fun logUnlockCardEvent() {
+        MixPanelTracker.publishEvent(MixPanelEvent.UNLOCK_NEXT_LESSON)
+            .addParam(ParamKeys.LESSON_NUMBER,conversationAdapter.getLastLesson()?.lessonNo?.plus(1))
+            .addParam(ParamKeys.COURSE_NAME,inboxEntity.course_name)
+            .push()
+
         AppAnalytics.create(AnalyticsEvent.UNLOCK_CARD_CLICKED.NAME)
             .addBasicParam()
             .addUserDetails()
@@ -2257,6 +2279,7 @@ class ConversationActivity :
     }
 
     override fun onBackPressed() {
+        MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
         audioPlayerManager?.onPause()
         if (conversationBinding.overlayLayout.visibility == VISIBLE) {
             hideLeaderBoardSpotlight()
@@ -2446,6 +2469,9 @@ class ConversationActivity :
             TChatMessage(conversationBinding.chatEdit.text.toString()),
             chatModel = message
         )
+        MixPanelTracker.publishEvent(MixPanelEvent.CHAT_ENTERED)
+            .addParam(ParamKeys.CHAT_TEXT,conversationBinding.chatEdit.text.toString())
+            .push()
         conversationBinding.chatEdit.setText(EMPTY)
         scrollToEnd()
         AppAnalytics.create(AnalyticsEvent.CHAT_ENTERED.NAME)

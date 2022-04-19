@@ -21,6 +21,8 @@ import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.DismissNotifEventReceiver
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.io.LastSyncPrefManager
 import com.joshtalks.joshskills.core.notification.HAS_NOTIFICATION
 import com.joshtalks.joshskills.core.notification.NOTIFICATION_ID
@@ -107,6 +109,7 @@ class Mentor {
         private fun logoutAndShowLoginScreen(showNotification: Boolean) {
             CoroutineScope(Dispatchers.IO).launch(Dispatchers.IO) {
                 delay(1000)
+                MixPanelTracker.publishEvent(MixPanelEvent.USER_LOGGED_OUT).push()
                 AppAnalytics.create(AnalyticsEvent.LOGOUT_CLICKED.NAME)
                     .addUserDetails()
                     .addParam(AnalyticsEvent.USER_LOGGED_OUT.NAME, true).push()

@@ -15,6 +15,8 @@ import static com.joshtalks.joshskills.core.PrefManagerKt.INSTANCE_ID;
 import static com.joshtalks.joshskills.core.PrefManagerKt.USER_UNIQUE_ID;
 import static com.joshtalks.joshskills.core.StaticConstantKt.EMPTY;
 import static com.joshtalks.joshskills.core.UtilsKt.getPhoneNumber;
+
+import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity;
 import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel;
 import com.joshtalks.joshskills.repository.local.model.Mentor;
 import com.joshtalks.joshskills.repository.local.model.User;
@@ -28,6 +30,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import timber.log.Timber;
 
 public class AppAnalytics {
@@ -137,6 +142,18 @@ public class AppAnalytics {
         profileUpdate.put("User Type", user.getUserType());
         profileUpdate.put("Gender", user.getGender());
         cleverTapAnalytics.pushProfile(profileUpdate);
+
+        MixPanelTracker.INSTANCE.getMixPanel().identify(Mentor.getInstance().getId());
+        MixPanelTracker.INSTANCE.getMixPanel().getPeople().set("$mentor id",Mentor.getInstance().getId());
+        MixPanelTracker.INSTANCE.getMixPanel().getPeople().set("user number",user.getPhoneNumber());
+
+//        JSONObject props = new JSONObject();
+//        try {
+//            props.put("user type",user.getUserType());
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//        MixPanelTracker.INSTANCE.getMixPanel().registerSuperProperties(props);
     }
 
     private static void updateFirebaseSdkUser() {

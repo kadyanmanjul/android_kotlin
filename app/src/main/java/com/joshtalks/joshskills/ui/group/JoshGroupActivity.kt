@@ -18,6 +18,9 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.constants.*
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.PermissionUtils
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.databinding.ActivityJoshGroupBinding
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics
@@ -131,6 +134,9 @@ class JoshGroupActivity : BaseGroupActivity() {
         GroupAnalytics.push(GroupAnalytics.Event.CALL_PRACTICE_PARTNER_FROM_GROUP, bundle.getString(
             GROUPS_ID
         ) ?: "")
+        MixPanelTracker.publishEvent(MixPanelEvent.CALL_PP_FROM_GROUP)
+            .addParam(ParamKeys.GROUP_ID,bundle.getString(GROUPS_ID))
+            .push()
         val intent = SearchingUserActivity.startUserForPractiseOnPhoneActivity(
             this,
             courseId = "151",
@@ -185,6 +191,9 @@ class JoshGroupActivity : BaseGroupActivity() {
                         putString(GROUPS_CHAT_SUB_TITLE, "tap here for group info")
                         putInt(GROUP_CHAT_UNREAD, Integer.valueOf(data.getUnreadMsgCount()))
                         GroupAnalytics.push(GroupAnalytics.Event.OPEN_GROUP, data.getUniqueId())
+                        MixPanelTracker.publishEvent(MixPanelEvent.NEW_GROUP_CLICKED)
+                            .addParam(ParamKeys.GROUP_ID,data?.getUniqueId())
+                            .push()
                     }
                     putBoolean(HAS_JOINED_GROUP, it)
                 }
@@ -261,6 +270,9 @@ class JoshGroupActivity : BaseGroupActivity() {
             addToBackStack(GROUPS_STACK)
         }
         GroupAnalytics.push(GroupAnalytics.Event.CREATE_GROUP)
+        MixPanelTracker.publishEvent(MixPanelEvent.NEW_GROUP_CLICKED)
+            .addParam(ParamKeys.GROUP_ID,vm.openedGroupId)
+            .push()
     }
 
     private fun openAdminResponseFragment(addGroupRequest: AddGroupRequest) {

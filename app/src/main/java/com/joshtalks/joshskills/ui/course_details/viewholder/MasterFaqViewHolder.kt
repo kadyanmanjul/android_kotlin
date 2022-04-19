@@ -10,6 +10,9 @@ import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.VERSION
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
 import com.joshtalks.joshskills.core.custom_ui.decorator.GridSpacingItemDecoration
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
@@ -32,7 +35,8 @@ import io.reactivex.schedulers.Schedulers
 class MasterFaqViewHolder(
     override val type: CardType,
     override val sequenceNumber: Int,
-    private val faqData: FAQData
+    private val faqData: FAQData,
+    private val testId : Int
 ) : CourseDetailsBaseCell(type, sequenceNumber) {
 
     @com.mindorks.placeholderview.annotations.View(R.id.txt_title)
@@ -80,7 +84,9 @@ class MasterFaqViewHolder(
             if (faq.categoryId == categoryId) {
                 expndableRV.addView(
                     ParentItemExpandableList(
-                        faq.question
+                        faq.question,
+                        testId,
+                        categoryId
                     )
                 )
                 expndableRV.addView(
@@ -99,6 +105,13 @@ class MasterFaqViewHolder(
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     logAnalyticsEvent()
+                    MixPanelTracker.publishEvent(MixPanelEvent.COURSE_QNA_CLICKED)
+                        .addParam(ParamKeys.TEST_ID,testId)
+                        .addParam(ParamKeys.CATEGORY_NAME,it.selectedCategory)
+                        .addParam(ParamKeys.CATEGORY_ID,it.categoryId)
+                        .addParam(ParamKeys.CATEGORY_POSITION,it.position)
+                        .push()
+
                     highlightAndShowFaq(it.position, it.categoryId)
                 }, {
                     it.printStackTrace()
