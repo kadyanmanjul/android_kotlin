@@ -18,6 +18,7 @@ import androidx.multidex.MultiDexApplication
 import com.freshchat.consumer.sdk.Freshchat
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.core.notification.LocalNotificationAlarmReciever
+import com.joshtalks.joshskills.core.service.BackgroundService
 import com.joshtalks.joshskills.core.service.NOTIFICATION_DELAY
 import com.joshtalks.joshskills.core.service.ServiceStartReceiver
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
@@ -26,14 +27,14 @@ import com.joshtalks.joshskills.di.DaggerApplicationComponent
 import com.moengage.core.DataCenter
 import com.moengage.core.MoEngage
 import com.moengage.core.config.MiPushConfig
+import com.vanniktech.emoji.EmojiManager
+import com.vanniktech.emoji.ios.IosEmojiProvider
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
 import java.util.Calendar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import com.vanniktech.emoji.ios.IosEmojiProvider
-import com.vanniktech.emoji.EmojiManager
 
 const val TAG = "JoshSkill"
 
