@@ -62,25 +62,26 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         //setOnClickListener()
     }
 
-    fun onSearchPressed()
-    {
+    fun onSearchPressed() {
         supportFragmentManager.findFragmentByTag(SearchFragment::class.java.simpleName)
         supportFragmentManager.beginTransaction()
-            .replace(R.id.root_view,SearchFragment(),SearchFragment::class.java.simpleName)
+            .replace(R.id.root_view, SearchFragment(), SearchFragment::class.java.simpleName)
             .commit()
     }
 
     private fun initView() {
         User.getInstance().apply {
-            binding.profileIv.setUserImageOrInitials(profilePicUrl,firstName.toString())
+            binding.profileIv.setUserImageOrInitials(profilePicUrl, firstName.toString())
         }
 
-        binding.recyclerView.addOnScrollListener(object: RecyclerView.OnScrollListener() {
+        binding.recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
                 if (recyclerView.canScrollVertically(1).not()) {
-                    recyclerView.setPadding(resources.getDimension(R.dimen._8sdp).toInt(), 0,
-                        resources.getDimension(R.dimen._8sdp).toInt(), binding.bg.height)
+                    recyclerView.setPadding(
+                        resources.getDimension(R.dimen._8sdp).toInt(), 0,
+                        resources.getDimension(R.dimen._8sdp).toInt(), binding.bg.height
+                    )
                 }
             }
         })
@@ -90,29 +91,29 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         viewModel.singleLiveEvent.observe(this, androidx.lifecycle.Observer {
             Log.d("ABC2", "Data class called with data message: ${it.what} bundle : ${it.data}")
             when (it.what) {
-                OPEN_PROFILE ->{
+                OPEN_PROFILE -> {
                     it.data?.let {
                         val userId = it.getString(USER_ID, EMPTY)
-                        if (userId.isNullOrBlank().not()){
-                            ProfileActivity.openProfileActivity(this,userId)
+                        if (userId.isNullOrBlank().not()) {
+                            ProfileActivity.openProfileActivity(this, userId)
                         }
                     }
                 }
-                OPEN_ROOM ->{
+                OPEN_ROOM -> {
                     it.data?.let {
-                        it.getParcelable<ConversationRoomResponse>(ROOM_DETAILS)?.let { room->
-                                ConversationLiveRoomActivity.startRoomActivity(
-                                    activity = this@FeedActivity,
-                                    channelName = room.channelName,
-                                    uid = room.uid,
-                                    token =room.token,
-                                    isRoomCreatedByUser = room.moderatorId == room.uid,
-                                    roomId = room.roomId,
-                                    moderatorId = room.moderatorId,
-                                    topicName = it.getString(TOPIC),
-                                    flags = arrayOf()
+                        it.getParcelable<ConversationRoomResponse>(ROOM_DETAILS)?.let { room ->
+                            ConversationLiveRoomActivity.startRoomActivity(
+                                activity = this@FeedActivity,
+                                channelName = room.channelName,
+                                uid = room.uid,
+                                token = room.token,
+                                isRoomCreatedByUser = room.moderatorId == room.uid,
+                                roomId = room.roomId,
+                                moderatorId = room.moderatorId,
+                                topicName = it.getString(TOPIC),
+                                flags = arrayOf()
 
-                                )
+                            )
                         }
                     }
                 }
@@ -133,8 +134,8 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                             activity = this@FeedActivity,
                             channelName = this.channelName,
                             uid = this.uid,
-                            token =this.token,
-                            isRoomCreatedByUser = true ,
+                            token = this.token,
+                            isRoomCreatedByUser = true,
                             roomId = this.roomId,
                             moderatorId = this.moderatorId,
                             topicName = topic,
@@ -161,12 +162,11 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         takePermissions(room)
     }
 
-    fun takePermissions(room: RoomListResponseItem? = null) {
+    private fun takePermissions(room: RoomListResponseItem? = null) {
         if (PermissionUtils.isCallingPermissionWithoutLocationEnabled(this)) {
-            if (room == null){
+            if (room == null) {
                 openCreateRoomDialog()
-            }
-            else viewModel.joinRoom(room)
+            } else viewModel.joinRoom(room)
             return
         }
 
@@ -176,10 +176,46 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                 override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                     report?.areAllPermissionsGranted()?.let { flag ->
                         if (flag) {
-                            if (room == null){
+                            if (room == null) {
                                 openCreateRoomDialog()
-                            }
-                            else viewModel.joinRoom(room)
+                            } else viewModel.joinRoom(room)
+                            return
+                        }
+                        if (report.isAnyPermissionPermanentlyDenied) {
+                            Toast.makeText(
+                                this@FeedActivity,
+                                "Permission Denied ",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            PermissionUtils.callingPermissionPermanentlyDeniedDialog(this@FeedActivity)
+                            return
+                        }
+                    }
+                }
+
+                override fun onPermissionRationaleShouldBeShown(
+                    p0: MutableList<com.karumi.dexter.listener.PermissionRequest>?,
+                    token: PermissionToken?
+                ) {
+                    token?.continuePermissionRequest()
+                }
+            }
+        )
+    }
+
+    fun takePermissionsXml() {
+        if (PermissionUtils.isCallingPermissionWithoutLocationEnabled(this)) {
+            openCreateRoomDialog()
+            return
+        }
+
+        PermissionUtils.onlyCallingFeaturePermission(
+            this,
+            object : MultiplePermissionsListener {
+                override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                    report?.areAllPermissionsGranted()?.let { flag ->
+                        if (flag) {
+                            openCreateRoomDialog()
                             return
                         }
                         if (report.isAnyPermissionPermanentlyDenied) {
@@ -205,49 +241,49 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
     }
 
     override fun setReminder(room: RoomListResponseItem, view: View) {
-            val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
-            val notificationIntent = NotificationHelper.getNotificationIntent(
-                this, Notification(
-                    title = room.topic ?: "Conversation Room Reminder",
-                    body = room.speakersData?.name ?: "Conversation Room Reminder",
-                    id = room.startedBy ?: 0,
-                    userId = room.speakersData?.userId ?: "",
-                    type = NotificationType.REMINDER
-                )
+        val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
+        val notificationIntent = NotificationHelper.getNotificationIntent(
+            this, Notification(
+                title = room.topic ?: "Conversation Room Reminder",
+                body = room.speakersData?.name ?: "Conversation Room Reminder",
+                id = room.startedBy ?: 0,
+                userId = room.speakersData?.userId ?: "",
+                type = NotificationType.REMINDER
             )
-            val pendingIntent =
-                PendingIntent.getBroadcast(
-                    applicationContext,
-                    0,
-                    notificationIntent,
-                    PendingIntent.FLAG_UPDATE_CURRENT
-                )
-            alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 2000, pendingIntent)
-                .also {
-                    //room.isScheduled = true
-                    viewModel.setReminder(
-                        ReminderRequest(
-                            roomId = room.roomId.toString(),
-                            userId = User.getInstance().userId,
-                            reminderTime = room.startTimeDate.minus(5 * 60 * 1000)
-                        )
+        )
+        val pendingIntent =
+            PendingIntent.getBroadcast(
+                applicationContext,
+                0,
+                notificationIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT
+            )
+        alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 2000, pendingIntent)
+            .also {
+                //room.isScheduled = true
+                viewModel.setReminder(
+                    ReminderRequest(
+                        roomId = room.roomId.toString(),
+                        userId = User.getInstance().userId,
+                        reminderTime = room.startTimeDate.minus(5 * 60 * 1000)
                     )
-                }
-        }
+                )
+            }
+    }
 
-     override fun deleteReminder(room: RoomListResponseItem, view: View) {
+    override fun deleteReminder(room: RoomListResponseItem, view: View) {
         //room.isScheduled=false
         viewModel.deleteReminder(
             DeleteReminderRequest(
-                roomId=room.roomId.toString(),
-                userId=User.getInstance().userId
+                roomId = room.roomId.toString(),
+                userId = User.getInstance().userId
             )
         )
     }
 
     override fun viewRoom(room: RoomListResponseItem, view: View) {
         room.speakersData?.userId?.let {
-            ProfileActivity.openProfileActivity(this,it)
+            ProfileActivity.openProfileActivity(this, it)
         }
     }
 }
