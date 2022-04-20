@@ -1232,7 +1232,7 @@ class ConversationLiveRoomActivity : BaseActivity(),
             alertDialog.dismiss()
         }
 
-        dialogView.findViewById<AppCompatTextView>(R.id.leave_end_room_btn).setOnClickListener {
+        dialogView.findViewById<AppCompatTextView>(R.id.leave_room).setOnClickListener {
             Log.d("ABC2", "activity showLeaveRoomPopup() called $mBoundService")
             if (!internetAvailableFlag) {
                 finish()
