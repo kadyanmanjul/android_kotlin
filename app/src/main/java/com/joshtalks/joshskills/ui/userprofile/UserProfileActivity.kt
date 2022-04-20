@@ -59,6 +59,7 @@ import com.joshtalks.joshskills.repository.local.eventbus.AwardItemClickedEventB
 import com.joshtalks.joshskills.repository.local.eventbus.DeleteProfilePicEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.SaveProfileClickedEvent
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.track.AGORA_UID
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.track.CHANNEL_ID
 import com.joshtalks.joshskills.track.CONVERSATION_ID
@@ -349,11 +350,12 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         binding.btnSendMessage.setOnClickListener {
             val intent = Intent(this, JoshGroupActivity::class.java).apply {
                 putExtra(CONVERSATION_ID, getConversationId())
-                putExtra(CHANNEL_ID, "12345")
+                putExtra(CHANNEL_ID, viewModel.fppRequest.value?.groupId)
+                putExtra(AGORA_UID, viewModel.fppRequest.value?.agoraUid)
                 putExtra(
                     DM_CHAT_DATA, GroupsItem(
                         groupIcon = viewModel.userData.value?.photoUrl,
-                        groupId = EMPTY,
+                        groupId = viewModel.fppRequest.value?.groupId?: EMPTY,
                         unreadCount = "0",
                         name = viewModel.userData.value?.name,
                         groupType = DM_CHAT,

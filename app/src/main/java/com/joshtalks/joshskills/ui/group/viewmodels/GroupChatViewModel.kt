@@ -21,6 +21,7 @@ import com.joshtalks.joshskills.constants.*
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.analytics.ParamKeys
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.isCallOngoing
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -123,20 +124,24 @@ class GroupChatViewModel : BaseViewModel() {
     fun callGroup() {
         if (isCallOngoing(R.string.call_engage_initiate_call_message))
             return
-        val memberText = groupSubHeader.get() ?: "0"
-        val memberCount = getMemberCount(memberText)
-        if (memberCount == 0) {
-            showToast("Unknown Error Occurred")
-            return
-        } else if (memberCount == 1) {
-            showToast("You are the only member, Can't Initiate a Call")
-            return
+
+        if (groupType.get() != DM_CHAT){
+            val memberText = groupSubHeader.get() ?: "0"
+            val memberCount = getMemberCount(memberText)
+            if (memberCount == 0) {
+                showToast("Unknown Error Occurred")
+                return
+            } else if (memberCount == 1) {
+                showToast("You are the only member, Can't Initiate a Call")
+                return
+            }
         }
 
         message.what = OPEN_CALLING_ACTIVITY
         message.data = Bundle().apply {
             putString(GROUPS_ID, groupId)
             putString(GROUPS_TITLE, groupHeader.get())
+            putString(GROUP_TYPE,groupType.get())
         }
         singleLiveEvent.value = message
     }
@@ -416,6 +421,8 @@ class GroupChatViewModel : BaseViewModel() {
             requestCount.set("$requestCnt")
             if (groupType.get() == DM_CHAT && onlineCount == 2)
                 groupSubHeader.set("online")
+            else if (groupType.get() == DM_CHAT && onlineCount == 1)
+                groupSubHeader.set(" ")
             else
                 groupSubHeader.set("${memberCount.get()} members, $onlineCount online")
             setRequestsTab()

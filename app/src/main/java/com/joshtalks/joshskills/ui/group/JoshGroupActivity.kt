@@ -23,6 +23,7 @@ import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.databinding.ActivityJoshGroupBinding
+import com.joshtalks.joshskills.track.AGORA_UID
 import com.joshtalks.joshskills.track.CHANNEL_ID
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.track.CONVERSATION_ID
@@ -34,6 +35,7 @@ import com.joshtalks.joshskills.ui.group.viewmodels.JoshGroupViewModel
 import com.joshtalks.joshskills.ui.userprofile.fragments.UserPicChooserFragment
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
 import com.joshtalks.joshskills.ui.voip.SearchingUserActivity
+import com.joshtalks.joshskills.ui.voip.WebRtcActivity
 
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -67,8 +69,9 @@ class JoshGroupActivity : BaseGroupActivity() {
         if (channelId.isEmpty())
             openGroupListFragment()
         else {
+            vm.agoraUid.set(intent.getIntExtra(AGORA_UID,0))
             val chatData = intent.getParcelableExtra(DM_CHAT_DATA) as GroupItemData?
-            openGroupChat(chatData)
+            openGroupChat(channelId, chatData)
         }
     }
 
@@ -76,7 +79,7 @@ class JoshGroupActivity : BaseGroupActivity() {
         event.observe(this) {
             when (it.what) {
                 ON_BACK_PRESSED -> popBackStack()
-                OPEN_GROUP -> openGroupChat(it.obj as? GroupItemData)
+                OPEN_GROUP -> openGroupChat(data = it.obj as? GroupItemData)
                 OPEN_NEW_GROUP -> openNewGroupFragment()
                 OPEN_GROUP_INFO -> openGroupInfoFragment()
                 EDIT_GROUP_INFO -> openEditGroupInfo(it.data)
@@ -102,7 +105,10 @@ class JoshGroupActivity : BaseGroupActivity() {
     // TODO: Need to refactor
     private fun startGroupCall(data: Bundle) {
         if (PermissionUtils.isCallingPermissionEnabled(this)) {
-            openCallingActivity(data)
+            if (data.get(GROUP_TYPE) == DM_CHAT)
+                openFppCallScreen(vm.agoraUid.get() ?: 0)
+            else
+                openCallingActivity(data)
             return
         }
         PermissionUtils.callingFeaturePermission(
@@ -118,7 +124,10 @@ class JoshGroupActivity : BaseGroupActivity() {
                             return
                         }
                         if (flag) {
-                            openCallingActivity(data)
+                            if (data.get(GROUP_TYPE) == DM_CHAT)
+                                openFppCallScreen(vm.agoraUid.get() ?: 0)
+                            else
+                                openCallingActivity(data)
                             return
                         } else {
                             MaterialDialog(this@JoshGroupActivity).show {
@@ -157,6 +166,15 @@ class JoshGroupActivity : BaseGroupActivity() {
         startActivity(intent)
     }
 
+    private fun openFppCallScreen(uid: Int) {
+        val intent =
+            WebRtcActivity.getFavMissedCallbackIntent(uid, this).apply {
+                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+        startActivity(intent)
+    }
+
     private fun openGroupListFragment() {
         supportFragmentManager.commit {
             setReorderingAllowed(true)
@@ -179,7 +197,7 @@ class JoshGroupActivity : BaseGroupActivity() {
         }
     }
 
-    private fun openGroupChat(data: GroupItemData?) {
+    private fun openGroupChat(groupId: String = EMPTY, data: GroupItemData?) {
         supportFragmentManager.commit {
             setReorderingAllowed(true)
             val bundle = Bundle().apply {
@@ -195,8 +213,10 @@ class JoshGroupActivity : BaseGroupActivity() {
                 putString(CLOSED_GROUP_TEXT, data?.getGroupText())
                 data?.hasJoined()?.let {
                     if (it) {
-                        if (data.getGroupCategory() == DM_CHAT)
+                        if (data.getGroupCategory() == DM_CHAT){
                             putString(GROUPS_CHAT_SUB_TITLE, EMPTY)
+                            vm.subscribeToChat(groupId)
+                        }
                         else
                             putString(GROUPS_CHAT_SUB_TITLE, "tap here for group info")
                         putInt(GROUP_CHAT_UNREAD, Integer.valueOf(data.getUnreadMsgCount()))
@@ -213,7 +233,8 @@ class JoshGroupActivity : BaseGroupActivity() {
             val fragment = GroupChatFragment()
             fragment.arguments = bundle
             replace(R.id.group_fragment_container, fragment, CHAT_FRAGMENT)
-            addToBackStack(GROUPS_STACK)
+            if (groupId == EMPTY)
+                addToBackStack(GROUPS_STACK)
         }
     }
 
@@ -395,9 +416,10 @@ class JoshGroupActivity : BaseGroupActivity() {
     override fun setIntentExtras() {}
 
     override fun onDestroy() {
-        super.onDestroy()
         CoroutineScope(Dispatchers.IO).launch {
             vm.deleteExtraMessages()
+            vm.unSubscribeToChat()
         }
+        super.onDestroy()
     }
 }

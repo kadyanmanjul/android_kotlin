@@ -65,6 +65,7 @@ class JoshGroupViewModel : BaseViewModel() {
     var openedGroupId: String? = null
     val groupListCount = ObservableField(0)
     var groupMemberCounts: Map<String, GroupMemberCount> = mapOf()
+    var agoraUid = ObservableField(0)
 
     val onItemClick: (GroupItemData) -> Unit = {
         message.what = OPEN_GROUP
@@ -273,6 +274,10 @@ class JoshGroupViewModel : BaseViewModel() {
             }
         }
     }
+
+    fun subscribeToChat(groupId: String) = repository.startChatEventListener(groupId)
+
+    fun unSubscribeToChat()  = repository.unSubscribeToChat()
 
     suspend fun deleteExtraMessages() = repository.removeExtraMessages()
 

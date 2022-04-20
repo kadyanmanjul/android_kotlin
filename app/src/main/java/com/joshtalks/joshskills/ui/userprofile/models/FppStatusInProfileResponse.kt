@@ -13,7 +13,11 @@ data class FppRequest (
     @SerializedName("text")
     val text:String?,
     @SerializedName("request_status")
-    val requestStatus:String?
+    val requestStatus:String?,
+    @SerializedName("group_id")
+    val groupId: String?,
+    @SerializedName("agora_uid")
+    val agoraUid: Int,
 )
 data class FppDetails(
     @SerializedName("mentor_id")
