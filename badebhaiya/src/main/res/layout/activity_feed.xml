@@ -136,7 +136,7 @@
                     android:drawableLeft="@drawable/ic_plus"
                     android:drawablePadding="@dimen/_3sdp"
                     android:focusable="true"
-                    android:onClick="@{()->handler.openCreateRoomDialog()}"
+                    android:onClick="@{()->handler.takePermissions()}"
                     android:text="@string/start_a_room"
                     android:textSize="@dimen/_12ssp" />
 

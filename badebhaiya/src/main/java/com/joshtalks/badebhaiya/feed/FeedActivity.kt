@@ -30,7 +30,6 @@ import com.joshtalks.badebhaiya.profile.request.DeleteReminderRequest
 import com.joshtalks.badebhaiya.profile.request.ReminderRequest
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomResponse
 import com.joshtalks.badebhaiya.repository.model.User
-import com.joshtalks.badebhaiya.signup.fragments.SignUpEnterPhoneFragment
 import com.joshtalks.badebhaiya.utils.setUserImageOrInitials
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -162,9 +161,12 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         takePermissions(room)
     }
 
-    private fun takePermissions(room: RoomListResponseItem) {
+    fun takePermissions(room: RoomListResponseItem? = null) {
         if (PermissionUtils.isCallingPermissionWithoutLocationEnabled(this)) {
-            viewModel.joinRoom(room)
+            if (room == null){
+                openCreateRoomDialog()
+            }
+            else viewModel.joinRoom(room)
             return
         }
 
@@ -174,7 +176,10 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                 override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                     report?.areAllPermissionsGranted()?.let { flag ->
                         if (flag) {
-                            viewModel.joinRoom(room)
+                            if (room == null){
+                                openCreateRoomDialog()
+                            }
+                            else viewModel.joinRoom(room)
                             return
                         }
                         if (report.isAnyPermissionPermanentlyDenied) {
