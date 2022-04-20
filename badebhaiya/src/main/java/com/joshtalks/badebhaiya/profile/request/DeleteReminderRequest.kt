@@ -8,9 +8,7 @@ class DeleteReminderRequest(
     @SerializedName("room")
     val roomId: String,
     @SerializedName("user")
-    val userId: String,
-
+    val userId: String
 ) {
-    constructor(roomId: String, userId: String, reminderTime: Long) :
-            this(roomId, userId)
+
 }

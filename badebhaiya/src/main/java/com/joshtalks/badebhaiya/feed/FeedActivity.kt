@@ -227,14 +227,10 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                             reminderTime = room.startTimeDate.minus(5 * 60 * 1000)
                         )
                     )
-                    //viewModel.getRooms()
                 }
-        //viewModel.repository.getRoomList()
-
         }
 
      override fun deleteReminder(room: RoomListResponseItem, view: View) {
-        //showToast("Schedule Deleted")
         //room.isScheduled=false
         viewModel.deleteReminder(
             DeleteReminderRequest(
@@ -242,7 +238,6 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                 userId=User.getInstance().userId
             )
         )
-         //viewModel.getRooms()
     }
 
     override fun viewRoom(room: RoomListResponseItem, view: View) {

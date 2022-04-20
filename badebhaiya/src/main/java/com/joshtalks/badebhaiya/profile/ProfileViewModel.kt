@@ -10,9 +10,12 @@ import com.joshtalks.badebhaiya.core.showToast
 import com.joshtalks.badebhaiya.feed.adapter.FeedAdapter
 import com.joshtalks.badebhaiya.feed.model.ConversationRoomType
 import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
+import com.joshtalks.badebhaiya.profile.request.DeleteReminderRequest
 import com.joshtalks.badebhaiya.profile.request.FollowRequest
+import com.joshtalks.badebhaiya.profile.request.ReminderRequest
 import com.joshtalks.badebhaiya.profile.response.ProfileResponse
 import com.joshtalks.badebhaiya.repository.BBRepository
+import com.joshtalks.badebhaiya.repository.ConversationRoomRepository
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.repository.service.RetrofitInstance
 import com.joshtalks.badebhaiya.utils.setUserImageOrInitials
@@ -25,6 +28,10 @@ class ProfileViewModel : ViewModel() {
     var profileUrl=""
     val repository = BBRepository()
     val userProfileData = MutableLiveData<ProfileResponse>()
+
+    val convoRepo = ConversationRoomRepository()
+    val isLoading = ObservableBoolean(false)
+
     val userFullName = ObservableField<String>()
     val isBioTextAvailable = ObservableBoolean(false)
     val speakerProfileRoomsAdapter = FeedAdapter()
@@ -110,6 +117,40 @@ class ProfileViewModel : ViewModel() {
                 }
             } catch(ex: Exception) {
                 speakerProfileRoomsAdapter.submitList(null)
+            }
+        }
+    }
+    fun deleteReminder(deleteReminderRequest: DeleteReminderRequest)
+    {
+        viewModelScope.launch {
+            try{
+                isLoading.set(true)
+                val res=convoRepo.deleteReminder(deleteReminderRequest)
+                if (res.isSuccessful && res.code()==200){
+                    speakerProfileRoomsAdapter.notifyDataSetChanged()
+                } else showToast("Error while Deleting Reminder")
+            } catch (ex:Exception){
+                ex.printStackTrace()
+                showToast("Error while Deleting Reminder")
+            } finally {
+                isLoading.set(false)
+            }
+        }
+    }
+
+    fun setReminder(reminderRequest: ReminderRequest) {
+        viewModelScope.launch {
+            try {
+                isLoading.set(true)
+                val res = convoRepo.setReminder(reminderRequest)
+                if (res.isSuccessful && res.code() == 201) {
+                    speakerProfileRoomsAdapter.notifyDataSetChanged()
+                } else showToast("Error while setting reminder")
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+                showToast("Error while setting reminder")
+            } finally {
+                isLoading.set(false)
             }
         }
     }
