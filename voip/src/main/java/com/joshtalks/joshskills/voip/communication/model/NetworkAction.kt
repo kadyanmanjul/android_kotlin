@@ -14,15 +14,19 @@ data class NetworkAction(
 	@field:SerializedName("type")
 	private val type: Int,
 
-	@field:SerializedName("call_id")
-	private val callId: Int
+	@field:SerializedName("channel_name")
+	private val channelName: String,
+
+
+	private val address : String
+
 ) : NetworkActionData {
 	override fun getType(): Int {
 		return type
 	}
 
-	override fun getCallingId(): Int {
-		return callId
+	override fun getChannelName(): String {
+		return channelName
 	}
 
 	override fun getUserId(): Int {
@@ -31,5 +35,9 @@ data class NetworkAction(
 
 	override fun getDuration(): Long {
 		return duration
+	}
+
+	override fun getAddress(): String {
+		return address
 	}
 }

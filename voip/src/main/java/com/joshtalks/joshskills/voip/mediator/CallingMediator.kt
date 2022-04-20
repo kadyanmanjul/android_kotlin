@@ -6,6 +6,7 @@ import com.joshtalks.joshskills.base.constants.INCOMING
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_INCOMING_CALL_ID
 import com.joshtalks.joshskills.base.constants.PEER_TO_PEER
 import com.joshtalks.joshskills.voip.FirebaseChannelService
+import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.audiomanager.SOUND_TYPE_RINGTONE
 import com.joshtalks.joshskills.voip.audiomanager.SoundManager
 import com.joshtalks.joshskills.voip.calldetails.CallDetails
@@ -215,10 +216,11 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                         break
                 }
                 val networkAction = NetworkAction(
-                    callId = -1,
+                    channelName = "No Channel",
                     uid = -1,
                     type = ServerConstants.DISCONNECTED,
-                    duration = 0
+                    duration = 0,
+                    address = Utils.uuid ?: ""
                 )
                 networkEventChannel.emitEvent(networkAction)
                 disconnectCall()

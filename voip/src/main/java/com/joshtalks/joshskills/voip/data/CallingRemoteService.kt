@@ -281,7 +281,11 @@ class CallingRemoteService : Service() {
                         PSTNState.Idle -> {
                             voipLog?.log("IDEL")
                             val data =
-                                UserAction(type = ServerConstants.RESUME, callId = CallDetails.callId)
+                                UserAction(
+                                    type = ServerConstants.RESUME,
+                                    channelName = CallDetails.agoraChannelName,
+                                    address = CallDetails.partnerMentorId ?: (Utils.uuid ?: "")
+                                )
                             mediator.sendEventToServer(data)
                             updateUserHoldState(false)
                         }
@@ -289,7 +293,8 @@ class CallingRemoteService : Service() {
                             voipLog?.log("ON CALL")
                             val data = UserAction(
                                 type = ServerConstants.ONHOLD,
-                                callId = CallDetails.callId
+                                channelName = CallDetails.agoraChannelName,
+                                address = CallDetails.partnerMentorId ?: (Utils.uuid ?: "")
                             )
                             mediator.sendEventToServer(data)
                             updateUserHoldState(true)
@@ -322,12 +327,20 @@ class CallingRemoteService : Service() {
                             disconnectCall()
                         }
                         MUTE -> {
-                            val userAction = UserAction(ServerConstants.MUTE, CallDetails.callId)
+                            val userAction = UserAction(
+                                ServerConstants.MUTE,
+                                CallDetails.agoraChannelName,
+                                address = CallDetails.partnerMentorId ?: (Utils.uuid ?: "")
+                            )
                             mediator.muteAudioStream(true)
                             mediator.sendEventToServer(userAction)
                         }
                         UNMUTE -> {
-                            val userAction = UserAction(ServerConstants.UNMUTE, CallDetails.callId)
+                            val userAction = UserAction(
+                                ServerConstants.UNMUTE,
+                                CallDetails.agoraChannelName,
+                                address = CallDetails.partnerMentorId ?: (Utils.uuid ?: "")
+                            )
                             mediator.muteAudioStream(false)
                             mediator.sendEventToServer(userAction)
                         }
@@ -351,10 +364,11 @@ class CallingRemoteService : Service() {
         Log.d(TAG, "disconnectCall: ")
         val duration = callDuration()
         val networkAction = NetworkAction(
-            callId = CallDetails.callId,
+            channelName = CallDetails.agoraChannelName,
             uid = CallDetails.localUserAgoraId,
             type = ServerConstants.DISCONNECTED,
-            duration = duration
+            duration = duration,
+            address = CallDetails.partnerMentorId ?: (Utils.uuid ?: "")
         )
         notification.idle()
         resetCallUIState()

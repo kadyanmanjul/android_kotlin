@@ -110,13 +110,15 @@ object PubNubChannelService : EventChannel {
                     is UserActionData -> event as UserAction
                     is Timeout -> event
                 }
-
+                Log.d(TAG, "emitEvent: Sending Message .... $message")
                 pubnub?.publish()
-                    ?.channel(Utils.uuid)
+                    ?.channel(event.getAddress())
+                    ?.meta(message.getType())
                     ?.message(message)
                     ?.ttl(0)
                     ?.usePOST(true)
                     ?.sync()
+                Log.d(TAG, "emitEvent: Message Sent .... $message")
             } catch (ex: Exception) {
                 ex.printStackTrace()
             }

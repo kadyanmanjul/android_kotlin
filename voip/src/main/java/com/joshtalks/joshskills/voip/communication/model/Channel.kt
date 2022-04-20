@@ -32,7 +32,10 @@ data class Channel(
 	private val partnerUid: Int?,
 
 	@field:SerializedName("timetoken")
-	private val timeToken: Long? = null
+	private val timeToken: Long? = null,
+
+	@field:SerializedName("partner_id")
+	private val partnerId: String? = null
 
 ) : ChannelData {
 
@@ -49,6 +52,7 @@ data class Channel(
 				agoraUId = map?.get("agora_uid").toString().toInt(),
 				partnerUid = map?.get("partner_uid").toString().toInt(),
 				timeToken = map?.get("timetoken").toString().toLong(),
+				partnerId = map?.get("partner_id").toString(),
 			)
 		}
 	}
@@ -79,6 +83,10 @@ data class Channel(
 
 	override fun getPartnerUid(): Int {
 		return partnerUid ?: throw IncorrectCommunicationDataException("Partner UID is NULL")
+	}
+
+	override fun getPartnerMentorId(): String {
+		return partnerId ?: throw IncorrectCommunicationDataException("Partner Mentor is NULL")
 	}
 
 	override fun getType(): Int {

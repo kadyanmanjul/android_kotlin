@@ -26,6 +26,8 @@ object CallDetails {
         private set
     var callDirection = -1
         private set
+    var partnerMentorId : String? = null
+        private set
 
     suspend fun reset() {
         mutex.withLock {
@@ -37,6 +39,7 @@ object CallDetails {
             remoteUserName = ""
             remoteUserImageUrl = null
             topicName = ""
+            partnerMentorId = ""
         }
     }
 
@@ -50,6 +53,7 @@ object CallDetails {
             remoteUserName = details.getCallingPartnerName()
             remoteUserImageUrl = details.getCallingPartnerImage()
             topicName = details.getCallingTopic()
+            partnerMentorId = details.getPartnerMentorId()
         }
     }
 }

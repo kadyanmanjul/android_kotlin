@@ -8,14 +8,20 @@ data class UserAction(
 	@field:SerializedName("type")
 	private val type: Int,
 
-	@field:SerializedName("call_id")
-	private val callId: Int
+	@field:SerializedName("channel_name")
+	private val channelName: String,
+
+	private val address : String
 ) : UserActionData {
 	override fun getType(): Int {
 		return type
 	}
 
-	override fun getCallingId(): Int {
-		return callId
+	override fun getChannelName(): String {
+		return channelName
+	}
+
+	override fun getAddress(): String {
+		return address
 	}
 }

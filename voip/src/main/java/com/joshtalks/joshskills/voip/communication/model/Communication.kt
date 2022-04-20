@@ -21,6 +21,7 @@ sealed interface IncomingData : Communication {
 
 sealed interface OutgoingData : Communication {
     override fun getEventTime(): Long? { return null }
+    fun getAddress(): String?
 }
 
 sealed interface IncomingCallData : Communication {
@@ -28,13 +29,13 @@ sealed interface IncomingCallData : Communication {
 }
 
 interface NetworkActionData : OutgoingData {
-    fun getCallingId() : Int
     fun getUserId() : Int
     fun getDuration() : Long
+    fun getChannelName() : String
 }
 
 interface UserActionData : OutgoingData {
-    fun getCallingId() : Int
+    fun getChannelName() : String
 }
 
 interface MessageData : IncomingData
@@ -47,6 +48,7 @@ interface ChannelData : IncomingData {
     fun getCallingToken() : String
     fun getAgoraUid() : Int
     fun getPartnerUid() : Int
+    fun getPartnerMentorId() : String
 }
 
 class IncorrectCommunicationDataException(message: String) : Exception(message)
