@@ -5,6 +5,7 @@ import android.app.PendingIntent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
@@ -14,6 +15,7 @@ import com.joshtalks.badebhaiya.core.EMPTY
 import com.joshtalks.badebhaiya.core.Notification
 import com.joshtalks.badebhaiya.core.NotificationHelper
 import com.joshtalks.badebhaiya.core.NotificationType
+import com.joshtalks.badebhaiya.core.PermissionUtils
 import com.joshtalks.badebhaiya.core.showToast
 import com.joshtalks.badebhaiya.databinding.ActivityFeedBinding
 import com.joshtalks.badebhaiya.feed.adapter.FeedAdapter
@@ -27,6 +29,9 @@ import com.joshtalks.badebhaiya.profile.request.ReminderRequest
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomResponse
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.utils.setUserImageOrInitials
+import com.karumi.dexter.MultiplePermissionsReport
+import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 
 class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallback {
 
@@ -141,7 +146,44 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
     }
 
     override fun joinRoom(room: RoomListResponseItem, view: View) {
-        viewModel.joinRoom(room)
+        takePermissions(room)
+    }
+
+    private fun takePermissions(room: RoomListResponseItem) {
+        if (PermissionUtils.isCallingPermissionWithoutLocationEnabled(this)) {
+            viewModel.joinRoom(room)
+            return
+        }
+
+        PermissionUtils.onlyCallingFeaturePermission(
+            this,
+            object : MultiplePermissionsListener {
+                override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                    report?.areAllPermissionsGranted()?.let { flag ->
+                        if (flag) {
+                            viewModel.joinRoom(room)
+                            return
+                        }
+                        if (report.isAnyPermissionPermanentlyDenied) {
+                            Toast.makeText(
+                                this@FeedActivity,
+                                "Permission Denied ",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            PermissionUtils.callingPermissionPermanentlyDeniedDialog(this@FeedActivity)
+                            return
+                        }
+                    }
+                }
+
+                override fun onPermissionRationaleShouldBeShown(
+                    p0: MutableList<com.karumi.dexter.listener.PermissionRequest>?,
+                    token: PermissionToken?
+                ) {
+                    token?.continuePermissionRequest()
+                }
+            }
+        )
     }
 
     override fun setReminder(room: RoomListResponseItem, view: View) {

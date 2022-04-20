@@ -7,6 +7,8 @@ import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.joshtalks.badebhaiya.R
+import com.joshtalks.badebhaiya.core.AppObjectController
 import com.joshtalks.badebhaiya.core.showToast
 import com.joshtalks.badebhaiya.feed.adapter.FeedAdapter
 import com.joshtalks.badebhaiya.feed.model.ConversationRoomType
@@ -38,7 +40,7 @@ class FeedViewModel : ViewModel() {
     val scheduleRoomStartDate = ObservableField<String>()
     val scheduleRoomStartTime = ObservableField<String>()
 
-    fun setIsBadeBhaiyaSpeaker(){
+    fun setIsBadeBhaiyaSpeaker() {
         isBadeBhaiyaSpeaker.set(User.getInstance().isSpeaker)
         isBadeBhaiyaSpeaker.notifyChange()
     }
@@ -67,23 +69,27 @@ class FeedViewModel : ViewModel() {
 
     fun createRoom(topic: String, callback: CreateRoom.CreateRoomCallback) {
         viewModelScope.launch {
-            try {
-                isLoading.set(true)
-                val response = repository.createRoom(
-                    ConversationRoomRequest(
-                        userId = User.getInstance().userId,
-                        topic = topic
+            if (topic.isNullOrBlank()) {
+                showToast(AppObjectController.joshApplication.getString(R.string.enter_topic_name))
+            } else {
+                try {
+                    isLoading.set(true)
+                    val response = repository.createRoom(
+                        ConversationRoomRequest(
+                            userId = User.getInstance().userId,
+                            topic = topic
+                        )
                     )
-                )
-                if (response.isSuccessful) {
-                    showToast("Room created successfully")
-                    callback.onRoomCreated(response.body()!!,topic)
-                } else callback.onError("An error occurred!")
-            } catch (e: Exception) {
-                callback.onError(e.localizedMessage)
-                showToast("Error while creating room")
-            } finally {
-                isLoading.set(false)
+                    if (response.isSuccessful) {
+                        showToast("Room created successfully")
+                        callback.onRoomCreated(response.body()!!, topic)
+                    } else callback.onError("An error occurred!")
+                } catch (e: Exception) {
+                    callback.onError(e.localizedMessage)
+                    showToast("Error while creating room")
+                } finally {
+                    isLoading.set(false)
+                }
             }
         }
     }
@@ -114,7 +120,7 @@ class FeedViewModel : ViewModel() {
                     singleLiveEvent.postValue(message)
                 }
             } catch (e: Exception) {
-                 showToast("Error while joining room")
+                showToast("Error while joining room")
             } finally {
                 isLoading.set(false)
             }
