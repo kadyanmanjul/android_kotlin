@@ -446,7 +446,7 @@
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@id/user_pic" />
 
-                        <ImageView
+                        <androidx.appcompat.widget.AppCompatImageView
                             android:id="@+id/btn_send_message"
                             android:layout_width="match_parent"
                             android:layout_height="@dimen/_24sdp"
@@ -457,14 +457,14 @@
                             android:foreground="?android:attr/selectableItemBackground"
                             android:clickable="true"
                             android:focusable="true"
-                            android:visibility="visible"
+                            android:visibility="gone"
                             android:paddingBottom="@dimen/_5sdp"
                             android:textSize="@dimen/_10sdp"
                             android:background="@drawable/ic_send_msg_btn"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@id/referral_info_text"
-                            tools:visibility="visible"/>
+                            tools:visibility="gone"/>
 
                         <com.google.android.material.card.MaterialCardView
                             android:id="@+id/sent_request_card"

@@ -8,6 +8,7 @@ import com.joshtalks.joshskills.core.EMPTY
 import java.util.Stack
 import timber.log.Timber
 
+const val AGORA_UID = "agora_uid"
 const val CHANNEL_ID = "channel_id"
 const val CONVERSATION_ID = "conversation_id"
 const val SCREEN_NAME = "screen_name"

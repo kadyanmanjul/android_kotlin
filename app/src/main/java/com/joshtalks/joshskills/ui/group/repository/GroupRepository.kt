@@ -80,9 +80,12 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
         }
     }
 
-    fun startChatEventListener() {
+    fun startChatEventListener(groupId: String? = null) {
         CoroutineScope(Dispatchers.IO).launch {
-            val groups = database.groupListDao().getGroupIds()
+            val groups = groupId?.let {
+                return@let listOf(it)
+            } ?: database.groupListDao().getGroupIds()
+
             chatService.unsubscribeToChatEvents(object : ChatEventObserver<SubscribeCallback> {
                 override fun getObserver(): SubscribeCallback {
                     return ChatSubscriber
@@ -97,6 +100,16 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
                 })
         }
     }
+
+     fun unSubscribeToChat() {
+         CoroutineScope(Dispatchers.IO).launch {
+             chatService.unsubscribeToChatEvents(object : ChatEventObserver<SubscribeCallback> {
+                 override fun getObserver(): SubscribeCallback {
+                     return ChatSubscriber
+                 }
+             })
+         }
+     }
 
     private suspend fun fetchGroupListFromNetwork(pageInfo: PageInfo? = null) {
         Log.d(TAG, "fetchGroupList: $pageInfo")
