@@ -81,6 +81,8 @@
             android:drawableStart="@drawable/ic_search"
             android:drawablePadding="@dimen/_8sdp"
             android:hint="@string/invite_friend_search_hint"
+            android:imeOptions="actionDone"
+            android:inputType="textPersonName"
             android:paddingHorizontal="@dimen/_8sdp"
             android:paddingVertical="@dimen/_6sdp"
             app:layout_constraintTop_toBottomOf="@id/invite_info" />
@@ -101,10 +103,10 @@
         <FrameLayout
             android:id="@+id/progress_container"
             android:layout_width="match_parent"
-            android:elevation="@dimen/_5sdp"
             android:layout_height="match_parent"
-            android:visibility="@{viewModel.isLoading ? View.VISIBLE : View.GONE}"
             android:background="@color/transparent_black"
+            android:elevation="@dimen/_5sdp"
+            android:visibility="@{viewModel.isLoading ? View.VISIBLE : View.GONE}"
             tools:visibility="visible">
 
             <com.pnikosis.materialishprogress.ProgressWheel
