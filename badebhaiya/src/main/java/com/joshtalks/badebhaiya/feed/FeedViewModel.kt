@@ -2,7 +2,6 @@ package com.joshtalks.badebhaiya.feed
 
 import android.os.Bundle
 import android.os.Message
-import android.util.Log
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
@@ -150,7 +149,7 @@ class FeedViewModel : ViewModel() {
                             isRoomsAvailable.set(false)
                         else {
                             isRoomsAvailable.set(true)
-                            feedAdapter.submitList(list)
+                            feedAdapter.submitList(list.toList())
                         }
                     }
                 } else {
@@ -195,17 +194,14 @@ class FeedViewModel : ViewModel() {
                         startTime = startTime
                     )
                 )
-                Log.i("ayushg", "response: $response")
                 if (response.isSuccessful) {
                     response.body()?.let {
-                        Log.i("ayushg", "response: $response")
                         showToast("Room scheduled successfully")
                         feedAdapter.addScheduleRoom(it)
                         callback.onRoomSchedule()
                     }
                 } else callback.onError("An error occurred!")
             } catch (e: Exception) {
-                Log.i("ayushg", "exception: $e")
                 callback.onError(e.localizedMessage)
                 showToast("Error while creating room")
             } finally {
@@ -215,12 +211,10 @@ class FeedViewModel : ViewModel() {
     }
 
     fun setScheduleStartDate(date: String) {
-        Log.i("ayushg", "setScheduleStartDate: $date")
         scheduleRoomStartDate.set(date)
     }
 
     fun setScheduleStartTime(time: String) {
-        Log.i("ayushg", "setScheduleStartTime: $time")
         scheduleRoomStartTime.set(time)
     }
 }

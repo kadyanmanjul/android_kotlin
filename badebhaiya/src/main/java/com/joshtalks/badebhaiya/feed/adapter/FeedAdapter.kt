@@ -40,7 +40,7 @@ class FeedAdapter :
         newScheduledRoom.conversationRoomType = ConversationRoomType.NOT_SCHEDULED
         val previousList = currentList.toMutableList()
         previousList.add(newScheduledRoom)
-        submitList(previousList)
+        submitList(previousList.toList())
     }
 
     var callback: ConversationRoomItemCallback? = null
