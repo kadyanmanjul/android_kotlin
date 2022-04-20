@@ -37,9 +37,15 @@ class FeedAdapter :
     var speaker: SpeakerData?=null
 
     fun addScheduleRoom(newScheduledRoom: RoomListResponseItem) {
-        newScheduledRoom.conversationRoomType = ConversationRoomType.NOT_SCHEDULED
+        newScheduledRoom.conversationRoomType = ConversationRoomType.SCHEDULED
         val previousList = currentList.toMutableList()
         previousList.add(newScheduledRoom)
+        submitList(previousList.toList())
+    }
+
+    fun updateScheduleRoomStatusForSpeaker(position: Int) {
+        val previousList = currentList.toMutableList()
+        previousList[position].conversationRoomType = ConversationRoomType.LIVE
         submitList(previousList.toList())
     }
 
@@ -49,6 +55,8 @@ class FeedAdapter :
         RecyclerView.ViewHolder(item.root) {
         fun onBind(room: RoomListResponseItem) {
             item.roomData = room
+            item.adapter = this@FeedAdapter
+            item.viewHolder = this
             val name = room.speakersData?.shortName
             val date = Utils.getMessageTime((room.startTime ?: 0L) * 1000L, false, DateTimeStyle.LONG)
             val time = Utils.getMessageTimeInHours(Date((room.startTime ?: 0) * 1000L))

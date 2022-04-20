@@ -1,10 +1,8 @@
 package com.joshtalks.badebhaiya.feed
 
 import android.content.res.ColorStateList
-import android.util.Log
 import android.widget.ImageView
 import androidx.databinding.BindingAdapter
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -14,8 +12,14 @@ import com.joshtalks.badebhaiya.feed.adapter.FeedAdapter
 import com.joshtalks.badebhaiya.feed.model.ConversationRoomType
 import com.joshtalks.badebhaiya.feed.model.ConversationRoomType.*
 import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
+import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.utils.DEFAULT_NAME
 import com.joshtalks.badebhaiya.utils.setUserImageOrInitials
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.Dispatchers
 
 private const val TAG = "GroupBindingAdapter"
 
@@ -42,12 +46,14 @@ fun setSwipeToRefreshAdapter(
     view.isRefreshing = isRefreshing
 }
 
-@BindingAdapter("setCardActionButton", "setCallback", "roomListItem")
+@BindingAdapter("setCardActionButton", "setCallback", "roomListItem", "adapterReference", "viewHolder")
 fun setConversationRoomCardActionButton(
     view: MaterialButton,
     type: ConversationRoomType,
     callback: FeedAdapter.ConversationRoomItemCallback?,
-    roomListResponseItem: RoomListResponseItem
+    roomListResponseItem: RoomListResponseItem,
+    adapter: RecyclerView.Adapter<FeedAdapter.FeedViewHolder>,
+    viewHolder: RecyclerView.ViewHolder
 ) {
     when (type) {
         LIVE -> {
@@ -80,19 +86,41 @@ fun setConversationRoomCardActionButton(
             view.backgroundTintList =
                 ColorStateList.valueOf(view.context.resources.getColor(R.color.base_app_color))
             //view.isEnabled = true
-            view.setOnClickListener {
-                roomListResponseItem.conversationRoomType = NOT_SCHEDULED
-                view.text = view.context.getString(R.string.set_reminder)
-                view.setTextColor(ColorStateList.valueOf(view.context.resources.getColor(R.color.white)))
-                view.backgroundTintList =
-                    ColorStateList.valueOf(view.context.resources.getColor(R.color.reminder_on_button_color))
-                callback?.deleteReminder(roomListResponseItem, view)
+            if (roomListResponseItem.speakersData != null && User.getInstance().userId == roomListResponseItem.speakersData.userId) {
+                val startTime = roomListResponseItem.startTime ?: Long.MAX_VALUE
+                if (roomListResponseItem.currentTime >= startTime) {
+                    (adapter as FeedAdapter).updateScheduleRoomStatusForSpeaker(viewHolder.adapterPosition)
+                } else {
+                    setAlarmForLiveRoom(viewHolder, roomListResponseItem, adapter)
+                }
+                view.setOnClickListener(null)
+            } else {
+                view.setOnClickListener {
+                    roomListResponseItem.conversationRoomType = NOT_SCHEDULED
+                    view.text = view.context.getString(R.string.set_reminder)
+                    view.setTextColor(ColorStateList.valueOf(view.context.resources.getColor(R.color.white)))
+                    view.backgroundTintList =
+                        ColorStateList.valueOf(view.context.resources.getColor(R.color.reminder_on_button_color))
+                    callback?.deleteReminder(roomListResponseItem, view)
+                }
             }
         }
     }
 }
+
 @BindingAdapter("isImageRequired", "imageUrl", "userName", "isRoundImage", "initialsFontSize", "imageCornerRadius", requireAll = false)
 fun ImageView.setDPUrl(isImageRequired: Boolean, url: String?, userName: String?, isRound: Boolean = false, dpToPx: Int, radius: Float) {
     if (isImageRequired)
         this.setUserImageOrInitials(url, userName ?: DEFAULT_NAME, dpToPx, isRound, radius.toInt())
+}
+
+fun setAlarmForLiveRoom(viewHolder: RecyclerView.ViewHolder, room: RoomListResponseItem, adapter: RecyclerView.Adapter<FeedAdapter.FeedViewHolder>) {
+    CoroutineScope(Dispatchers.Default).launch {
+        delay((room.startTime!! - room.currentTime) * 1000L)
+        withContext(Dispatchers.Main) {
+            if (viewHolder.absoluteAdapterPosition != -1) {
+                (adapter as FeedAdapter).updateScheduleRoomStatusForSpeaker(viewHolder.absoluteAdapterPosition)
+            }
+        }
+    }
 }

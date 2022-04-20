@@ -28,5 +28,6 @@ data class ProfileResponse(
     @SerializedName("live_room") val liveRoomList: List<RoomListResponseItem>?,
     @SerializedName("scheduled_room") val scheduledRoomList: List<RoomListResponseItem>?,
     @SerializedName("short_name") val shortName: String?,
-    @SerializedName("full_name") val fullName: String?
+    @SerializedName("full_name") val fullName: String?,
+    @SerializedName("current_time") val currentTime: Long
 )

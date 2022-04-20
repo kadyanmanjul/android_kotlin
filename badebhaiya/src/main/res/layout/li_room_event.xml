@@ -12,6 +12,12 @@
         <variable
             name="callback"
             type="com.joshtalks.badebhaiya.feed.adapter.FeedAdapter.ConversationRoomItemCallback" />
+        <variable
+            name="adapter"
+            type="com.joshtalks.badebhaiya.feed.adapter.FeedAdapter"/>
+        <variable
+            name="viewHolder"
+            type="androidx.recyclerview.widget.RecyclerView.ViewHolder" />
     </data>
 
     <com.google.android.material.card.MaterialCardView
@@ -74,6 +80,8 @@
                 roomListItem="@{roomData}"
                 setCallback="@{callback}"
                 setCardActionButton="@{roomData.conversationRoomType}"
+                adapterReference="@{adapter}"
+                viewHolder="@{viewHolder}"
                 android:layout_width="0dp"
                 android:layout_height="@dimen/_48sdp"
                 android:layout_marginStart="@dimen/_9sdp"

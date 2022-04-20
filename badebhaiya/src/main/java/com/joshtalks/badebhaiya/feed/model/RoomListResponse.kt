@@ -10,7 +10,10 @@ data class RoomListResponse(
     val liveRoomList: List<RoomListResponseItem>?,
 
     @SerializedName("schedule_room")
-    val scheduledRoomList: List<RoomListResponseItem>?
+    val scheduledRoomList: List<RoomListResponseItem>?,
+
+    @SerializedName("current_time")
+    var currentTime: Long
 )
 
 @Parcelize
@@ -39,8 +42,10 @@ data class RoomListResponseItem(
     var isScheduled: Boolean?,
     @SerializedName("speakers_data")
     val speakersData: SpeakerData?,
+    @SerializedName("current_time")
+    var currentTime: Long = 0,
     var conversationRoomQuestionId: Int? = null,
-    var conversationRoomType: ConversationRoomType? = null,
+    var conversationRoomType: ConversationRoomType? = null
 ) : Parcelable {
     val startTimeDate: Long = startTime ?: 0
         /*get() {

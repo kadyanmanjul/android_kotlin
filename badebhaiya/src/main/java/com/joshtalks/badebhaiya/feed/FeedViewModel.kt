@@ -157,6 +157,9 @@ class FeedViewModel : ViewModel() {
                             isRoomsAvailable.set(false)
                         else {
                             isRoomsAvailable.set(true)
+                            list.forEach { listItem ->
+                                listItem.currentTime = it.currentTime
+                            }
                             feedAdapter.submitList(list.toList())
                         }
                     }
@@ -226,27 +229,31 @@ class FeedViewModel : ViewModel() {
 
     fun scheduleRoom(topic: String, startTime: String, callback: CreateRoom.CreateRoomCallback) {
         viewModelScope.launch {
-            try {
-                isLoading.set(true)
-                val response = repository.scheduleRoom(
-                    ConversationRoomRequest(
-                        userId = User.getInstance().userId,
-                        topic = topic,
-                        startTime = startTime
+            if (topic.isNullOrBlank()) {
+                showToast(AppObjectController.joshApplication.getString(R.string.enter_topic_name))
+            } else {
+                try {
+                    isLoading.set(true)
+                    val response = repository.scheduleRoom(
+                        ConversationRoomRequest(
+                            userId = User.getInstance().userId,
+                            topic = topic,
+                            startTime = startTime
+                        )
                     )
-                )
-                if (response.isSuccessful) {
-                    response.body()?.let {
-                        showToast("Room scheduled successfully")
-                        feedAdapter.addScheduleRoom(it)
-                        callback.onRoomSchedule()
-                    }
-                } else callback.onError("An error occurred!")
-            } catch (e: Exception) {
-                callback.onError(e.localizedMessage)
-                showToast("Error while creating room")
-            } finally {
-                isLoading.set(false)
+                    if (response.isSuccessful) {
+                        response.body()?.let {
+                            showToast("Room scheduled successfully")
+                            feedAdapter.addScheduleRoom(it)
+                            callback.onRoomSchedule()
+                        }
+                    } else callback.onError("An error occurred!")
+                } catch (e: Exception) {
+                    callback.onError(e.localizedMessage)
+                    showToast("Error while creating room")
+                } finally {
+                    isLoading.set(false)
+                }
             }
         }
     }

@@ -111,7 +111,13 @@ class ProfileViewModel : ViewModel() {
                                 roomListResponseItem
                             })
                         if (list.isNullOrEmpty().not()) {
-                            speakerProfileRoomsAdapter.submitList(list)
+                            list.forEach { listItem ->
+                                listItem.currentTime = it.currentTime
+                            }
+                            speakerProfileRoomsAdapter.submitList(list.toList())
+                        }
+                        else {
+                            speakerProfileRoomsAdapter.submitList(null)
                         }
                     }
                 }
