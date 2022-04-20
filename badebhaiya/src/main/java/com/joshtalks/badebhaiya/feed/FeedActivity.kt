@@ -17,7 +17,6 @@ import com.joshtalks.badebhaiya.core.Notification
 import com.joshtalks.badebhaiya.core.NotificationHelper
 import com.joshtalks.badebhaiya.core.NotificationType
 import com.joshtalks.badebhaiya.core.PermissionUtils
-import com.joshtalks.badebhaiya.core.showToast
 import com.joshtalks.badebhaiya.databinding.ActivityFeedBinding
 import com.joshtalks.badebhaiya.feed.adapter.FeedAdapter
 import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
@@ -151,7 +150,6 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                 }
 
                 override fun onError(error: String) {
-                    showToast(error)
                     it.dismiss()
                 }
             })

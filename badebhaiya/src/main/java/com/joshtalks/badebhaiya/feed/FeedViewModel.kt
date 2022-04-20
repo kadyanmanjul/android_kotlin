@@ -6,10 +6,10 @@ import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.core.AppObjectController
+import com.joshtalks.badebhaiya.core.showAppropriateMsg
 import com.joshtalks.badebhaiya.core.showToast
 import com.joshtalks.badebhaiya.feed.adapter.FeedAdapter
 import com.joshtalks.badebhaiya.feed.model.ConversationRoomType
@@ -88,7 +88,7 @@ class FeedViewModel : ViewModel() {
                     } else callback.onError("An error occurred!")
                 } catch (e: Exception) {
                     callback.onError(e.localizedMessage)
-                    showToast("Error while creating room")
+                    e.showAppropriateMsg()
                 } finally {
                     isLoading.set(false)
                 }
@@ -122,7 +122,7 @@ class FeedViewModel : ViewModel() {
                     singleLiveEvent.postValue(message)
                 }
             } catch (e: Exception) {
-                showToast("Error while joining room")
+                e.showAppropriateMsg()
             } finally {
                 isLoading.set(false)
             }
@@ -173,32 +173,31 @@ class FeedViewModel : ViewModel() {
             }
         }
     }
-    fun searchRoom(query:String) {
+
+    fun searchRoom(query: String) {
         viewModelScope.launch {
-            try{
-                val parems= mutableMapOf<String,String>()
-                parems["query"]=query
-                val response=repository.searchRoom(parems)
-                if(response.isSuccessful)
-                showToast("Search API launched successfully")
-            }
-            catch (ex: Exception){
+            try {
+                val parems = mutableMapOf<String, String>()
+                parems["query"] = query
+                val response = repository.searchRoom(parems)
+                if (response.isSuccessful)
+                    showToast("Search API launched successfully")
+            } catch (ex: Exception) {
 
             }
-         }
+        }
     }
 
-    fun deleteReminder(deleteReminderRequest: DeleteReminderRequest)
-    {
+    fun deleteReminder(deleteReminderRequest: DeleteReminderRequest) {
         viewModelScope.launch {
-            try{
+            try {
                 isLoading.set(true)
-                val res=repository.deleteReminder(deleteReminderRequest)
-                if (res.isSuccessful && res.code()==200){
+                val res = repository.deleteReminder(deleteReminderRequest)
+                if (res.isSuccessful && res.code() == 200) {
                     showToast("Reminder Deleted")
                     feedAdapter.notifyDataSetChanged()
                 } else showToast("Error while Deleting Reminder")
-            } catch (ex:Exception){
+            } catch (ex: Exception) {
                 ex.printStackTrace()
                 showToast("Error while Deleting Reminder")
             } finally {

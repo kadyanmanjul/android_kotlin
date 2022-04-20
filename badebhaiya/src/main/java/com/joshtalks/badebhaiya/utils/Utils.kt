@@ -6,6 +6,7 @@ import android.accounts.AccountManager
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.ActivityManager
+import android.app.Application
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
@@ -43,7 +44,6 @@ import android.util.DisplayMetrics
 import android.util.Log
 import android.util.TypedValue
 import android.view.Display
-import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
@@ -55,7 +55,6 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -78,15 +77,16 @@ import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.github.twocoffeesoneteam.glidetovectoryou.GlideToVectorYou
 import com.google.android.material.tabs.TabLayout
+import com.google.firebase.FirebaseNetworkException
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.core.AppObjectController
 import com.joshtalks.badebhaiya.core.EMPTY
 import com.joshtalks.badebhaiya.core.PrefManager
+import com.joshtalks.badebhaiya.core.showToast
 import com.joshtalks.badebhaiya.custom_ui.TextDrawable
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.utils.datetimeutils.DateTimeStyle
 import com.joshtalks.badebhaiya.utils.datetimeutils.DateTimeUtils
-import com.muddzdev.styleabletoast.StyleableToast
 import de.hdodenhof.circleimageview.CircleImageView
 import io.michaelrocks.libphonenumber.android.NumberParseException
 import io.michaelrocks.libphonenumber.android.PhoneNumberUtil
@@ -101,7 +101,9 @@ import java.io.OutputStream
 import java.net.HttpURLConnection
 import java.net.InetSocketAddress
 import java.net.Socket
+import java.net.SocketTimeoutException
 import java.net.URL
+import java.net.UnknownHostException
 import java.nio.charset.Charset
 import java.text.DateFormat
 import java.text.DecimalFormat
@@ -116,6 +118,7 @@ import kotlin.math.ceil
 import kotlin.math.pow
 import kotlin.math.roundToInt
 import okhttp3.RequestBody.Companion.toRequestBody
+import retrofit2.HttpException
 import timber.log.Timber
 
 private val CHAT_TIME_FORMATTER = SimpleDateFormat("hh:mm aa")
@@ -1286,4 +1289,18 @@ fun getDefaultCountryIso(context: Context): String {
     val telephoneManager = context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager?
     val simState: Int? = telephoneManager?.simState
     return if (simState == 5) telephoneManager.simCountryIso.uppercase(Locale.ROOT) else Locale.getDefault().country
+}
+
+fun Exception.showAppropriateMsg(application: Application = AppObjectController.joshApplication) {
+    when (this) {
+        is HttpException -> {
+            showToast(application.getString(R.string.something_went_wrong))
+        }
+        is SocketTimeoutException, is UnknownHostException, is FirebaseNetworkException -> {
+            showToast(application.getString(R.string.internet_not_available_msz))
+        }
+        else -> {
+            showToast(application.getString(R.string.something_went_wrong))
+        }
+    }
 }
