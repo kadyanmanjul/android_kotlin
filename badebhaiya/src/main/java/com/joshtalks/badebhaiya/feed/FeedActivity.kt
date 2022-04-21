@@ -51,7 +51,6 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
     private var pendingIntent: PendingIntent? = null
 
     private lateinit var binding: ActivityFeedBinding
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_feed)
@@ -82,7 +81,6 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         User.getInstance().apply {
             binding.profileIv.setUserImageOrInitials(profilePicUrl, firstName.toString())
         }
-
         binding.recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)

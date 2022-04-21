@@ -58,6 +58,10 @@ class SearchFragment : Fragment() {
                 }
             }
         })
+        binding.searchCancel.setOnClickListener{
+            val manager = requireActivity().supportFragmentManager
+            manager.beginTransaction().remove(this).commit()
+        }
         return binding.root
         //return inflater.inflate(R.layout.fragment_search, container, false)
     }

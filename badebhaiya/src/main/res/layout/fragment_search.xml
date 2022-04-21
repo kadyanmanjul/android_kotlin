@@ -13,6 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/base_app_color"
+        android:clickable="true"
         android:id="@+id/find">
 
 
@@ -32,21 +33,33 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.036" />
+            app:layout_constraintVertical_bias="0.023" />
 
         <TextView
+            android:id="@+id/search_cancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/nunito_sans_semi_bold"
+            android:fontFamily="@font/nunito_sans_bold"
             android:text="Cancel"
-            android:id="@+id/search_cancel"
             android:textColor="#58789C"
-            android:textSize="@dimen/_15sdp"
+            android:textSize="@dimen/_12sdp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.437"
             app:layout_constraintStart_toEndOf="@+id/search_bar"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.043" />
+            app:layout_constraintVertical_bias="0.030" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:clipToPadding="false"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/search_bar"
+            tools:listitem="@layout/li_search_event" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

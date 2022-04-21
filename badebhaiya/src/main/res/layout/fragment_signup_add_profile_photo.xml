@@ -84,6 +84,7 @@
             android:textAppearance="@style/BB_Typography_Nunito_Sans_Regular"
             android:textColor="@color/white"
             android:textSize="@dimen/_17ssp"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />

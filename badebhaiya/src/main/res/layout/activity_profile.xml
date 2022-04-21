@@ -24,21 +24,20 @@
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/iv_profile_pic"
-            android:layout_width="@dimen/_68sdp"
-            android:layout_height="@dimen/_68sdp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.073"
-            app:layout_constraintStart_toStartOf="parent"
-            android:scaleType="centerCrop"
-            android:layout_marginTop="@dimen/_1sdp"
-            tools:background="@drawable/user_profile_background"
-
-            userName="@{viewModel.userFullName}"
+            imageCornerRadius="@{@dimen/_24sdp}"
             imageUrl="@{viewModel.userProfileData.profilePicUrl}"
             initialsFontSize="@{24}"
-            imageCornerRadius="@{@dimen/_24sdp}"
+            userName="@{viewModel.userFullName}"
+            android:layout_width="@dimen/_68sdp"
+            android:layout_height="@dimen/_68sdp"
+            android:layout_marginTop="@dimen/_1sdp"
+            android:scaleType="centerCrop"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.08"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/toolbar"
-            app:shapeAppearanceOverlay="@style/roundedCornersImageView_28dp" />
+            app:shapeAppearanceOverlay="@style/roundedCornersImageView_28dp"
+            tools:background="@drawable/user_profile_background" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/btnFollow"

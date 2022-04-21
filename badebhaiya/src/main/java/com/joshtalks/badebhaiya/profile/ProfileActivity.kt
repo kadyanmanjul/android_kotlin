@@ -71,19 +71,19 @@ class ProfileActivity: AppCompatActivity(), FeedAdapter.ConversationRoomItemCall
         findViewById<AppCompatImageView>(R.id.iv_back).setOnClickListener {
             super.onBackPressed()
         }
-         findViewById<ShapeableImageView>(R.id.iv_profile_pic).setOnClickListener{
-             if(Global.getInt(getContentResolver(), Global.AUTO_TIME) == 1)
-             {
-                 // Enabled
-                 showToast("Auto Time Enabled")
-             }
-             else
-             {
-                 // Disabed
-                 showToast("Auto Time Disabled")
-             }
-            //setAutoTimeEnabled(boolean enabled)
-        }
+//         findViewById<ShapeableImageView>(R.id.iv_profile_pic).setOnClickListener{
+//             if(Global.getInt(getContentResolver(), Global.AUTO_TIME) == 1)
+//             {
+//                 // Enabled
+//                 showToast("Auto Time Enabled")
+//             }
+//             else
+//             {
+//                 // Disabed
+//                 showToast("Auto Time Disabled")
+//             }
+//            //setAutoTimeEnabled(boolean enabled)
+//        }
     }
 
     private fun handleIntent() {
