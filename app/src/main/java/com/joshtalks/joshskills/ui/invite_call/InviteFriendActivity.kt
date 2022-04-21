@@ -12,18 +12,23 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.BaseActivity
-import com.joshtalks.joshskills.core.service.WorkManagerAdmin
+import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.databinding.ActivityInviteFriendBinding
 import com.joshtalks.joshskills.repository.local.entity.PhonebookContact
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.util.DeepLinkUtil
+import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.PermissionDeniedResponse
+import com.karumi.dexter.listener.PermissionGrantedResponse
+import com.karumi.dexter.listener.PermissionRequest
+import com.karumi.dexter.listener.single.PermissionListener
 
 class InviteFriendActivity : BaseActivity(), ContactsAdapter.OnContactClickListener {
-    private val viewModel: InviteFriendViewModel by lazy {
-        ViewModelProvider(this).get(InviteFriendViewModel::class.java)
-    }
     private val binding: ActivityInviteFriendBinding by lazy {
         ActivityInviteFriendBinding.inflate(layoutInflater)
+    }
+    private val viewModel: InviteFriendViewModel by lazy {
+        ViewModelProvider(this).get(InviteFriendViewModel::class.java)
     }
 
     companion object {
@@ -58,9 +63,9 @@ class InviteFriendActivity : BaseActivity(), ContactsAdapter.OnContactClickListe
                 onBackPressed()
             }
         }
-        binding.viewModel = viewModel
         binding.lifecycleOwner = this
         binding.handler = this
+        binding.viewModel = viewModel
         binding.searchView.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
             binding.inviteInfo.isVisible = hasFocus.not()
         }
@@ -77,6 +82,33 @@ class InviteFriendActivity : BaseActivity(), ContactsAdapter.OnContactClickListe
                 }
             })
             .build()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        if (PermissionUtils.isReadContactPermissionEnabled(this)) {
+            viewModel.readContacts()
+        } else {
+            PermissionUtils.requestReadContactPermission(this, object : PermissionListener {
+                override fun onPermissionGranted(p0: PermissionGrantedResponse?) {
+                    viewModel.readContacts()
+                }
+
+                override fun onPermissionDenied(p0: PermissionDeniedResponse?) {
+                    PermissionUtils.permissionPermanentlyDeniedDialog(
+                        this@InviteFriendActivity,
+                        R.string.permission_denied_contacts,
+                    )
+                }
+
+                override fun onPermissionRationaleShouldBeShown(
+                    p0: PermissionRequest?,
+                    p1: PermissionToken?
+                ) {
+                    p1?.continuePermissionRequest()
+                }
+            })
+        }
     }
 
     fun inviteFriend(contact: PhonebookContact, deepLink: String) {
