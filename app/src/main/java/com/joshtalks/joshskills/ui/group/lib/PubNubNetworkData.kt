@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.ui.group.lib
 import android.util.Log
 import com.google.gson.JsonObject
 import com.joshtalks.joshskills.core.showToast
+import com.joshtalks.joshskills.ui.group.constants.DM_CHAT
 import com.joshtalks.joshskills.ui.group.constants.OPENED_GROUP
 import com.joshtalks.joshskills.ui.group.model.GroupListResponse
 import com.joshtalks.joshskills.ui.group.model.GroupsItem
@@ -14,7 +15,7 @@ private const val TAG = "PubNub_NetworkData"
 data class PubNubNetworkData(val data: PNGetMembershipsResult) : NetworkData {
 
     val groupList = mutableListOf<GroupsItem>()
-    private val chatService : ChatService = PubNubService
+    private val chatService: ChatService = PubNubService
     val repository = GroupRepository()
 
     override fun getData(): GroupListResponse {
@@ -29,14 +30,22 @@ data class PubNubNetworkData(val data: PNGetMembershipsResult) : NetworkData {
 
                 val response = GroupsItem(
                     groupId = group.channel.id,
-                    name = group.channel.name,
+                    name = getGroupName(
+                        group.channel.name,
+                        customMap["group_type"],
+                        channelMembershipCustom["channel_name"].asString
+                    ),
                     lastMessage = lastMsg,
                     lastMsgTime = lastMessageTime,
                     unreadCount = chatService.getUnreadMessageCount(
                         group.channel.id,
                         getTimeToken(channelMembershipCustom["time_token"].asLong, group.channel.id)
                     ).toString(),
-                    groupIcon = customMap["image_url"],
+                    groupIcon = getGroupIcon(
+                        customMap["image_url"],
+                        customMap["group_type"],
+                        channelMembershipCustom["image_url"].asString
+                    ),
                     createdAt = customMap["created_at"]?.toLongOrNull(),
                     createdBy = customMap["created_by"],
                     adminId = customMap["admin_id"],
@@ -69,4 +78,12 @@ data class PubNubNetworkData(val data: PNGetMembershipsResult) : NetworkData {
     }
 
     fun getTimeToken(pubnubTime: Long, id: String) = repository.getRecentTimeToken(id) ?: pubnubTime
+
+    private fun getGroupName(name: String?, groupType: String?, dmName: String?): String? =
+        if (groupType == DM_CHAT) dmName
+        else name
+
+    private fun getGroupIcon(icon: String?, groupType: String?, dmIcon: String?): String? =
+        if (groupType == DM_CHAT) dmIcon
+        else icon
 }
