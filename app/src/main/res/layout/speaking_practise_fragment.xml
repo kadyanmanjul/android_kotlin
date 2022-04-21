@@ -357,7 +357,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:visibility="@{vm.isFreeTrail ? View.GONE : View.VISIBLE}"
+                        android:visibility="@{vm.showGroupCallButton ? View.GONE : View.VISIBLE}"
                         android:layout_marginTop="@dimen/_14sdp"
                         android:layout_marginBottom="@dimen/_14sdp"
                         android:backgroundTint="@color/colorAccent"

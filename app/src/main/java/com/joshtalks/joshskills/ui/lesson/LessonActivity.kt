@@ -197,6 +197,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
             IS_FREE_TRAIL,
             false
         ) else false
+        viewModel.isDefaultCourse = courseId == DEFAULT_COURSE_ID
         isDemo = if (intent.hasExtra(IS_DEMO)) intent.getBooleanExtra(IS_DEMO, false) else false
         isNewGrammar = if (intent.hasExtra(IS_NEW_GRAMMAR)) intent.getBooleanExtra(
             IS_NEW_GRAMMAR,
