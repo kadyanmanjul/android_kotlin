@@ -38,6 +38,11 @@ import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.ui.call.data.local.VoipPref
 import com.vanniktech.emoji.EmojiManager
 import com.vanniktech.emoji.ios.IosEmojiProvider
+import com.moengage.core.DataCenter
+import com.moengage.core.LogLevel
+import com.moengage.core.MoEngage
+import com.moengage.core.config.LogConfig
+import com.moengage.core.config.MiPushConfig
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
 import java.lang.reflect.Method
 import java.util.Calendar
@@ -45,6 +50,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import com.vanniktech.emoji.ios.IosEmojiProvider
+import com.vanniktech.emoji.EmojiManager
 
 const val TAG = "JoshSkill"
 
@@ -82,6 +89,7 @@ class JoshApplication :
                 VoipPref.initVoipPref(this)
                 PstnObserver
                 registerBroadcastReceiver()
+                initMoEngage()
                 initGroups()
             } else {
                 FirebaseApp.initializeApp(this)
@@ -97,6 +105,16 @@ class JoshApplication :
 //
 //            }
 //        }
+    }
+
+    private fun initMoEngage() {
+        val moEngage = MoEngage.Builder(this, "DU9ICNBN2A9TTT38BS59KEU6")
+            .setDataCenter(DataCenter.DATA_CENTER_3)
+            .configureMiPush(MiPushConfig("2882303761518451933", "5761845183933", true))
+            .configureLogs(LogConfig(LogLevel.VERBOSE, true))
+            .build()
+
+        MoEngage.initialiseDefaultInstance(moEngage)
     }
 
     override fun onTerminate() {

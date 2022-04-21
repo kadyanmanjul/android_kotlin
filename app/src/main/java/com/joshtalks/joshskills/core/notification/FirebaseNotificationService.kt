@@ -1,6 +1,13 @@
 package com.joshtalks.joshskills.core.notification
 
 import android.app.*
+// import com.cometchat.pro.constants.CometChatConstants
+// import com.cometchat.pro.helpers.CometChatHelper
+// import com.cometchat.pro.models.BaseMessage
+// import com.cometchat.pro.models.Group
+// import com.cometchat.pro.models.TextMessage
+// import com.joshtalks.joshskills.ui.groupchat.constant.StringContract
+// import com.joshtalks.joshskills.ui.groupchat.utils.Utils
 import android.app.ActivityManager
 import android.app.Notification
 import android.app.NotificationChannel
@@ -105,6 +112,9 @@ import com.joshtalks.joshskills.ui.voip.analytics.VoipAnalytics
 import com.joshtalks.joshskills.ui.voip.analytics.VoipAnalytics.pushIncomingCallAnalytics
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
 import com.joshtalks.joshskills.voip.constant.State
+import com.joshtalks.joshskills.util.Utils.jsonToMap
+import com.moengage.firebase.MoEFireBaseHelper
+import com.moengage.pushbase.MoEPushHelper
 import java.io.IOException
 import java.io.InputStream
 import java.lang.reflect.Type
@@ -147,6 +157,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             e.printStackTrace()
         }
         PrefManager.put(FCM_TOKEN, token)
+        MoEFireBaseHelper.getInstance().passPushToken(applicationContext, token)
         CleverTapAPI.getDefaultInstance(this)?.pushFcmRegistrationId(token, true)
         if (AppObjectController.freshChat != null) {
             AppObjectController.freshChat?.setPushRegistrationToken(token)
@@ -199,7 +210,17 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         try {
             if (Freshchat.isFreshchatNotification(remoteMessage))
                 Freshchat.handleFcmMessage(this, remoteMessage)
-            else {
+            else if (MoEPushHelper.getInstance().isFromMoEngagePlatform(remoteMessage.data)
+                && MoEPushHelper.getInstance().isSilentPush(remoteMessage.data)
+            ) {
+                MoEFireBaseHelper.getInstance().passPushPayload(applicationContext, remoteMessage.data)
+                return
+            } else if (MoEPushHelper.getInstance().isFromMoEngagePlatform(remoteMessage.data)) {
+                val map = jsonToMap(JSONObject(remoteMessage.data["gcm_alert"]))
+                processRemoteMessage(map)
+                MoEPushHelper.getInstance().logNotificationReceived(this, remoteMessage.data)
+                return
+            } else {
                 processRemoteMessage(remoteMessage)
             }
         } catch (ex: Exception) {
@@ -227,7 +248,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     }
                 }
                 sendNotification(nc)
-                pushToDatabase(nc, timeReceived)
+                //pushToDatabase(nc, timeReceived)
             }
         } else {
             val notificationTypeToken: Type = object : TypeToken<NotificationObject>() {}.type
