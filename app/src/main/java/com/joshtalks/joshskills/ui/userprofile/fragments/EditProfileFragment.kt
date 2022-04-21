@@ -99,8 +99,9 @@ class EditProfileFragment : DialogFragment(){
             container,
             false
         )
-        binding.lifecycleOwner = viewLifecycleOwner
+        binding.lifecycleOwner = this
         binding.handler = this
+        binding.vm = viewModel
 
         return binding.root
     }
@@ -264,8 +265,8 @@ class EditProfileFragment : DialogFragment(){
     }
 
     private fun saveData() {
-        val newName = binding.editTxtName.text?.trim()?.toString()
-        if (newName.isNullOrBlank() || !isFieldValid(newName)) {
+        val newName = binding.editTxtName.text?.trim()?.toString()?: EMPTY
+        if (!isFieldValid(newName)) {
             binding.seperator1.setBackgroundColor(resources.getColor(R.color.red))
             binding.editTxtName.setHintTextColor(resources.getColor(R.color.red))
             binding.basicDetailsContainer.visibility = View.VISIBLE
@@ -277,7 +278,7 @@ class EditProfileFragment : DialogFragment(){
         val educationText=binding.txtEducationName
         val collegeName=binding.editTxtCollegeName
 
-        if(educationText.text.isNullOrBlank() || !isFieldValid(educationText.text.toString())){
+        if(!isFieldValid(educationText.text.toString())){
             binding.txtEducationNameSeperator.setBackgroundColor(resources.getColor(R.color.red))
             educationText.setHintTextColor(resources.getColor(R.color.red))
             binding.educationDetailsContainer.visibility = View.VISIBLE
@@ -287,7 +288,7 @@ class EditProfileFragment : DialogFragment(){
             educationText.error = getString(R.string.degree_error_message)
             return
         }
-        if(collegeName.text.isNullOrBlank() || !isFieldValid(collegeName.text.toString())){
+        if(!isFieldValid(collegeName.text.toString())){
             binding.editTxtCollegeNameSeperator.setBackgroundColor(resources.getColor(R.color.red))
             isEducationDetailsExpanded = true
             binding.arrowDownImg.setImageDrawable(drawableUp)
@@ -298,7 +299,7 @@ class EditProfileFragment : DialogFragment(){
             return
         }
 
-        if(binding.txtOccupationName.text.isNullOrBlank() || !isFieldValid(txtOccupationName.text.toString())){
+        if(!isFieldValid(txtOccupationName.text.toString())){
             binding.txtoccupationNameSeperator.setBackgroundColor(resources.getColor(R.color.red))
             binding.txtOccupationName.setHintTextColor(resources.getColor(R.color.red))
             binding.occupationDetailsContainer.visibility = View.VISIBLE
@@ -308,7 +309,7 @@ class EditProfileFragment : DialogFragment(){
             binding.txtOccupationName.error = getString(R.string.degree_error_message)
             return
         }
-        if(binding.editTxtOccupationPlace.text.isNullOrBlank() || !isFieldValid(editTxtOccupationPlace.text.toString())){
+        if(!isFieldValid(editTxtOccupationPlace.text.toString())){
             binding.editTxtOccupationPlaceSeperator.setBackgroundColor(resources.getColor(R.color.red))
             isOccupationDetailsExpanded = true
             binding.arrowDownImg.setImageDrawable(drawableUp)
@@ -330,7 +331,7 @@ class EditProfileFragment : DialogFragment(){
         }
 
         val homeTownTxt = binding.editTxtHometown
-        if (homeTownTxt.text.isNullOrBlank() || !isFieldValid(homeTownTxt.text.toString())) {
+        if (!isFieldValid(homeTownTxt.text.toString())) {
             binding.seperator3.setBackgroundColor(resources.getColor(R.color.red))
             homeTownTxt.setHintTextColor(resources.getColor(R.color.red))
             binding.basicDetailsContainer.visibility = View.VISIBLE
@@ -351,7 +352,8 @@ class EditProfileFragment : DialogFragment(){
             }
         }
 
-        var updateProfilePayload = UpdateProfilePayload()
+
+        val updateProfilePayload = UpdateProfilePayload()
         updateProfilePayload.apply {
             basicDetails?.apply{
                 photoUrl= viewModel.getUserProfileUrl()

@@ -64,7 +64,7 @@ class RecentCallActivity : BaseFppActivity() {
     override fun initViewState() {
         event.observe(this) {
             when (it.what) {
-                FPP_RECENT_CALL_ON_BACK_PRESS -> popBackStack()
+                FPP_RECENT_CALL_ON_BACK_PRESS -> activityPopBackStack()
                 RECENT_OPEN_USER_PROFILE -> openUserProfileActivity(it.obj.toString())
                 SCROLL_TO_POSITION -> {
                     binding.recentListRv.layoutManager?.scrollToPosition(it.obj as Int)
@@ -90,7 +90,7 @@ class RecentCallActivity : BaseFppActivity() {
         }
     }
 
-    private fun popBackStack() {
+    private fun activityPopBackStack() {
         onBackPressed()
     }
 

@@ -37,7 +37,7 @@ class SeeAllRequestsActivity : BaseFppActivity() {
     override fun initViewState() {
         event.observe(this) {
             when (it.what) {
-                FPP_SEE_ALL_BACK_PRESSED -> popBackStack()
+                FPP_SEE_ALL_BACK_PRESSED -> activityPopBackStack()
                 FPP_OPEN_USER_PROFILE -> openUserProfile(it.obj.toString())
             }
         }
@@ -54,7 +54,7 @@ class SeeAllRequestsActivity : BaseFppActivity() {
         )
     }
 
-    private fun popBackStack() {
+    private fun activityPopBackStack() {
         onBackPressed()
     }
 }

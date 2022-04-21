@@ -578,6 +578,7 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
 
         viewModel.fppDialogShow.observe(this){
             fppDialog = it
+            mBoundService?.fppDialogeFlag = fppDialog
         }
         if (isCallFavoritePP() || WebRtcService.isCallOnGoing.value == true) {
             if (intent.getSerializableExtra(CALL_USER_OBJ) == null) {
@@ -1039,7 +1040,6 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
         if(((time/1000) in 121..1199 && fppDialog =="false") || !PrefManager.getBoolValue(IS_COURSE_BOUGHT)){
             this@WebRtcActivity.finish()
         }else {
-
             if (PrefManager.getBoolValue(IS_CALL_BTN_CLICKED_FROM_NEW_SCREEN)) {
                 viewModel.saveIntroVideoFlowImpression(CALL_DURATION_FROM_NEW_SCREEN, time)
                 PrefManager.put(IS_CALL_BTN_CLICKED_FROM_NEW_SCREEN, false)

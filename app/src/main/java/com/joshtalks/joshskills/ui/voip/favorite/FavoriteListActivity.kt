@@ -81,7 +81,7 @@ class FavoriteListActivity : BaseFppActivity() {
     override fun initViewState() {
         event.observe(this) {
             when (it.what) {
-                FAV_LIST_SCREEN_BACK_PRESSED -> popBackStack()
+                FAV_LIST_SCREEN_BACK_PRESSED -> activityPopBackStack()
                 FAV_CLICK_ON_PROFILE -> openProfileScreen(it.obj.toString(),it.arg1)
                 OPEN_CALL_SCREEN -> callScreenOpen(it.obj as Int)
                 OPEN_RECENT_SCREEN -> openRecentScreen()
@@ -100,7 +100,7 @@ class FavoriteListActivity : BaseFppActivity() {
         )
     }
 
-    private fun popBackStack() {
+    private fun activityPopBackStack() {
         onBackPressed()
     }
 

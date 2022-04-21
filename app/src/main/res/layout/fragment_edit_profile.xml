@@ -1,19 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:wheel="http://schemas.android.com/apk/res-auto">
 
     <data>
+
+        <import type="android.view.View" />
 
         <variable
             name="handler"
             type="com.joshtalks.joshskills.ui.userprofile.fragments.EditProfileFragment" />
 
+        <variable
+            name="vm"
+            type="com.joshtalks.joshskills.ui.userprofile.viewmodel.UserProfileViewModel" />
     </data>
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -217,25 +219,25 @@
 
                             <EditText
                                 android:id="@+id/editTxtName"
+                                style="@style/myEditText"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginHorizontal="@dimen/_12sdp"
                                 android:layout_marginTop="@dimen/_2sdp"
+                                android:background="@color/transparent"
                                 android:digits="qwertyuiopasdfghjklzxcvbnm QWERTYUIOPASDFGHJKLZXCVBNM ₹&amp;@.?!$#*:;,"
                                 android:hint="@string/your_full_name"
                                 android:inputType="textPersonName"
                                 android:lines="1"
                                 android:maxLength="20"
-                                style="@style/myEditText"
-                                android:background="@color/transparent"
-                                android:textCursorDrawable="@drawable/color_cursor"
                                 android:maxLines="1"
                                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                                 android:textColor="@color/black"
+                                android:textCursorDrawable="@drawable/color_cursor"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toBottomOf="@+id/txtLabelName"
-                                tools:ignore="RtlSymmetry"/>
+                                tools:ignore="RtlSymmetry" />
 
                             <View
                                 android:id="@+id/seperator1"
@@ -304,25 +306,25 @@
 
                             <EditText
                                 android:id="@+id/editTxtHometown"
+                                style="@style/myEditText"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginHorizontal="@dimen/_12sdp"
                                 android:layout_marginTop="@dimen/_2sdp"
-                                android:hint="Your Hometown"
+                                android:background="@color/transparent"
                                 android:digits="qwertyuiopasdfghjklzxcvbnm QWERTYUIOPASDFGHJKLZXCVBNM ₹&amp;@.?!$#*:;,"
+                                android:hint="Your Hometown"
                                 android:inputType="textPersonName"
                                 android:lines="1"
                                 android:maxLength="20"
-                                style="@style/myEditText"
-                                android:background="@color/transparent"
-                                android:textCursorDrawable="@drawable/color_cursor"
                                 android:maxLines="1"
                                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                                 android:textColor="@color/black"
+                                android:textCursorDrawable="@drawable/color_cursor"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toBottomOf="@+id/txtLabelHometown"
-                                tools:ignore="RtlSymmetry"/>
+                                tools:ignore="RtlSymmetry" />
 
                             <View
                                 android:id="@+id/seperator3"
@@ -348,21 +350,21 @@
 
                             <androidx.appcompat.widget.AppCompatEditText
                                 android:id="@+id/editTxtFutureGoals"
+                                style="@style/myEditText"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginHorizontal="@dimen/_12sdp"
                                 android:layout_marginTop="@dimen/_2sdp"
                                 android:background="@color/transparent"
-                                android:hint="@string/ex_aspiring_ias_officer"
                                 android:digits="qwertyuiopasdfghjklzxcvbnm QWERTYUIOPASDFGHJKLZXCVBNM ₹&amp;@.?!$#*:;,"
+                                android:hint="@string/ex_aspiring_ias_officer"
                                 android:inputType="textPersonName"
                                 android:lines="1"
                                 android:maxLength="100"
-                                style="@style/myEditText"
-                                android:textCursorDrawable="@drawable/color_cursor"
                                 android:maxLines="1"
                                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                                 android:textColor="@color/black"
+                                android:textCursorDrawable="@drawable/color_cursor"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toBottomOf="@+id/txtLabelFutureGoals" />
@@ -391,19 +393,19 @@
 
                             <androidx.appcompat.widget.AppCompatEditText
                                 android:id="@+id/editTxtJoshTalk"
+                                style="@style/myEditText"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginHorizontal="@dimen/_12sdp"
                                 android:layout_marginTop="@dimen/_2sdp"
+                                android:background="@color/transparent"
                                 android:hint="@string/paste_link_to_your_favourite_josh_talk_here"
                                 android:inputType="textPersonName"
                                 android:lines="1"
-                                style="@style/myEditText"
-                                android:background="@color/transparent"
-                                android:textCursorDrawable="@drawable/color_cursor"
                                 android:maxLines="1"
                                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                                 android:textColor="@color/black"
+                                android:textCursorDrawable="@drawable/color_cursor"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toBottomOf="@+id/txtLabelJoshTalk" />
@@ -491,6 +493,7 @@
 
                             <EditText
                                 android:id="@+id/txtEducationName"
+                                style="@style/myEditText"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginHorizontal="@dimen/_12sdp"
@@ -501,11 +504,10 @@
                                 android:inputType="textPersonName"
                                 android:lines="1"
                                 android:maxLength="30"
-                                style="@style/myEditText"
-                                android:textCursorDrawable="@drawable/color_cursor"
                                 android:maxLines="1"
                                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                                 android:textColor="@color/black"
+                                android:textCursorDrawable="@drawable/color_cursor"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toBottomOf="@+id/educationName" />
@@ -534,21 +536,21 @@
 
                             <androidx.appcompat.widget.AppCompatEditText
                                 android:id="@+id/editTxtCollegeName"
+                                style="@style/myEditText"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginHorizontal="@dimen/_12sdp"
                                 android:layout_marginTop="@dimen/_2sdp"
+                                android:background="@color/transparent"
                                 android:digits="qwertyuiopasdfghjklzxcvbnm QWERTYUIOPASDFGHJKLZXCVBNM ₹&amp;@.?!$#*:;,"
                                 android:hint="@string/ex_dps_vit"
                                 android:inputType="textPersonName"
                                 android:lines="1"
                                 android:maxLength="30"
-                                style="@style/myEditText"
-                                android:background="@color/transparent"
-                                android:textCursorDrawable="@drawable/color_cursor"
                                 android:maxLines="1"
                                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                                 android:textColor="@color/black"
+                                android:textCursorDrawable="@drawable/color_cursor"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toBottomOf="@+id/txtCollegeName" />
@@ -594,6 +596,7 @@
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toBottomOf="@+id/txtCompletionDate" />
+
                             <View
                                 android:id="@+id/completionDateSeperator"
                                 android:layout_width="match_parent"
@@ -679,21 +682,21 @@
 
                             <EditText
                                 android:id="@+id/txtOccupationName"
+                                style="@style/myEditText"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginHorizontal="@dimen/_12sdp"
                                 android:layout_marginTop="@dimen/_2sdp"
+                                android:background="@color/transparent"
                                 android:digits="qwertyuiopasdfghjklzxcvbnm QWERTYUIOPASDFGHJKLZXCVBNM ₹&amp;@.?!$#*:;,"
                                 android:hint="@string/ex_manager_homemaker_etc"
                                 android:inputType="textPersonName"
                                 android:lines="1"
                                 android:maxLength="30"
-                                style="@style/myEditText"
-                                android:background="@color/transparent"
-                                android:textCursorDrawable="@drawable/color_cursor"
                                 android:maxLines="1"
                                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                                 android:textColor="@color/black"
+                                android:textCursorDrawable="@drawable/color_cursor"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toBottomOf="@+id/occupationName" />
@@ -722,21 +725,21 @@
 
                             <androidx.appcompat.widget.AppCompatEditText
                                 android:id="@+id/editTxtOccupationPlace"
+                                style="@style/myEditText"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginHorizontal="@dimen/_12sdp"
                                 android:layout_marginTop="@dimen/_2sdp"
+                                android:background="@color/transparent"
                                 android:digits="qwertyuiopasdfghjklzxcvbnm QWERTYUIOPASDFGHJKLZXCVBNM ₹&amp;@.?!$#*:;,"
                                 android:hint="@string/ex_josh_talks"
                                 android:inputType="textPersonName"
                                 android:lines="1"
                                 android:maxLength="30"
-                                style="@style/myEditText"
-                                android:background="@color/transparent"
-                                android:textCursorDrawable="@drawable/color_cursor"
                                 android:maxLines="1"
                                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                                 android:textColor="@color/black"
+                                android:textCursorDrawable="@drawable/color_cursor"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toBottomOf="@+id/txtOccupationPlace" />
@@ -757,8 +760,30 @@
                     </androidx.cardview.widget.CardView>
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </ScrollView>
+
+            <FrameLayout
+                android:id="@+id/progress_container"
+                android:layout_width="match_parent"
+                android:elevation="@dimen/_5sdp"
+                android:layout_height="match_parent"
+                android:visibility="@{vm.isProfileChanging ? View.VISIBLE : View.GONE}"
+                android:background="@color/transparent_black"
+                tools:visibility="visible">
+
+                <com.pnikosis.materialishprogress.ProgressWheel
+                    android:id="@+id/progress_bar"
+                    android:layout_width="@dimen/_82sdp"
+                    android:layout_height="@dimen/_82sdp"
+                    android:layout_gravity="center"
+                    android:background="@color/transparent"
+                    wheel:matProg_barColor="@color/button_color"
+                    wheel:matProg_fillRadius="true"
+                    wheel:matProg_linearProgress="false"
+                    wheel:matProg_progressIndeterminate="true" />
+
+            </FrameLayout>
+
         </androidx.constraintlayout.widget.ConstraintLayout>
-    </FrameLayout>
 
 </layout>
 

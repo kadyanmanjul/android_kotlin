@@ -98,6 +98,7 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
     val userProfileRepo = UserProfileRepo()
     val isCourseBought = ObservableBoolean(false)
 
+    val isProfileChanging = ObservableBoolean(false)
     val isProgressBarShow = ObservableBoolean(false)
     val enrolledAdapter = EnrolledCoursesListAdapter()
     val myGroupAdapter = MyGroupsListAdapter()
@@ -164,6 +165,7 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
     fun getUserProfileUrl() = userProfileUrl.value
 
     fun uploadMedia(mediaPath: String) {
+        isProfileChanging.set(true)
         viewModelScope.launch(Dispatchers.IO) {
             apiCallStatus.postValue(ApiCallStatus.START)
             val compressImagePath = getCompressImage(mediaPath)
@@ -179,7 +181,7 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
                 val responseObj = userProfileRepo.requestMediaRequest(obj)
                 val statusCode: Int = uploadOnS3Server(responseObj, mediaPath)
                 if (statusCode in 200..210) {
-val url = responseObj.url.plus(File.separator).plus(responseObj.fields["key"])
+                    val url = responseObj.url.plus(File.separator).plus(responseObj.fields["key"])
                     var updateProfilePayload = UpdateProfilePayload()
                     var date: String? = null
                     if(userData.value!=null) {
@@ -216,6 +218,7 @@ val url = responseObj.url.plus(File.separator).plus(responseObj.fields["key"])
                     }
                     saveProfileInfo(updateProfilePayload)
                 } else {
+                    isProfileChanging.set(false)
                     apiCallStatus.postValue(ApiCallStatus.FAILED)
                 }
 
@@ -257,6 +260,8 @@ val url = responseObj.url.plus(File.separator).plus(responseObj.fields["key"])
             } catch (ex: Throwable) {
                 ex.showAppropriateMsg()
                 apiCallStatus.postValue(ApiCallStatus.FAILED)
+            }finally {
+                isProfileChanging.set(false)
             }
         }
     }
