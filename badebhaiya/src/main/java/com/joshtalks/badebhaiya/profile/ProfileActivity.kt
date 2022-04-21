@@ -4,9 +4,7 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.location.LocationManager
 import android.os.Bundle
-import android.provider.ContactsContract
 import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -21,10 +19,8 @@ import com.joshtalks.badebhaiya.core.*
 import com.joshtalks.badebhaiya.databinding.ActivityProfileBinding
 import com.joshtalks.badebhaiya.feed.FeedViewModel
 import com.joshtalks.badebhaiya.feed.ROOM_DETAILS
-import com.joshtalks.badebhaiya.feed.TOPIC
 import com.joshtalks.badebhaiya.feed.adapter.FeedAdapter
 import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
-import com.joshtalks.badebhaiya.liveroom.ConversationLiveRoomActivity
 import com.joshtalks.badebhaiya.liveroom.OPEN_PROFILE
 import com.joshtalks.badebhaiya.liveroom.OPEN_ROOM
 import com.joshtalks.badebhaiya.profile.request.ReminderRequest
@@ -32,12 +28,9 @@ import com.joshtalks.badebhaiya.profile.response.ProfileResponse
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomResponse
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.utils.Utils
-import java.util.*
 import android.provider.Settings.Global
 import com.joshtalks.badebhaiya.profile.request.DeleteReminderRequest
 import com.joshtalks.badebhaiya.utils.setUserImageOrInitials
-import kotlinx.android.synthetic.main.activity_feed.*
-import kotlinx.android.synthetic.main.activity_profile.*
 
 class ProfileActivity: AppCompatActivity(), FeedAdapter.ConversationRoomItemCallback {
 
@@ -117,7 +110,8 @@ class ProfileActivity: AppCompatActivity(), FeedAdapter.ConversationRoomItemCall
                 OPEN_ROOM ->{
                     it.data?.let {
                         it.getParcelable<ConversationRoomResponse>(ROOM_DETAILS)?.let { room->
-                            ConversationLiveRoomActivity.startRoomActivity(
+                            // TODO: Launch Live Room
+                            /*ConversationLiveRoomFragment.startRoomActivity(
                                 activity = this@ProfileActivity,
                                 channelName = room.channelName,
                                 uid = room.uid,
@@ -128,7 +122,7 @@ class ProfileActivity: AppCompatActivity(), FeedAdapter.ConversationRoomItemCall
                                 topicName = it.getString(TOPIC),
                                 flags = arrayOf()
 
-                            )
+                            )*/
                         }
                     }
                 }

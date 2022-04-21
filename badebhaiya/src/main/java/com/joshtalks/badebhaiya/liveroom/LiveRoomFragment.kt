@@ -1,26 +1,23 @@
 package com.joshtalks.badebhaiya.liveroom
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.app.NotificationManager
 import android.content.ComponentName
 import android.content.Context
+import android.content.Context.BIND_AUTO_CREATE
 import android.content.Intent
 import android.content.ServiceConnection
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.NetworkInfo
-import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
 import android.util.Log
 import android.view.View
-import android.view.Window
-import android.view.WindowManager
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.collection.ArraySet
 import androidx.collection.arraySetOf
@@ -31,12 +28,10 @@ import com.google.android.material.badge.BadgeDrawable
 import com.google.android.material.badge.BadgeUtils
 import com.google.gson.JsonObject
 import com.joshtalks.badebhaiya.R
-import com.joshtalks.badebhaiya.core.BaseActivity
-import com.joshtalks.badebhaiya.core.LogException
-import com.joshtalks.badebhaiya.core.PermissionUtils
-import com.joshtalks.badebhaiya.core.setOnSingleClickListener
-import com.joshtalks.badebhaiya.core.showToast
+import com.joshtalks.badebhaiya.core.*
+import com.joshtalks.badebhaiya.core.base.BaseFragment
 import com.joshtalks.badebhaiya.databinding.ActivityConversationLiveRoomBinding
+import com.joshtalks.badebhaiya.feed.FeedActivity
 import com.joshtalks.badebhaiya.feed.NotificationView
 import com.joshtalks.badebhaiya.feed.model.LiveRoomUser
 import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
@@ -73,7 +68,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-class ConversationLiveRoomActivity : BaseActivity(),
+class LiveRoomFragment : BaseFragment<ActivityConversationLiveRoomBinding, ConversationRoomViewModel>(
+    R.layout.activity_conversation_live_room
+),
                                      NotificationView.NotificationViewAction,
                                      RaisedHandsBottomSheet.HandRaiseSheetListener {
 
@@ -101,30 +98,34 @@ class ConversationLiveRoomActivity : BaseActivity(),
     private var isBackPressed: Boolean = false
     private var isExitApiFired: Boolean = false
     private var isPubNubUsersFetched: Boolean = false
-    private val vm by lazy { ViewModelProvider(this).get(ConversationRoomViewModel::class.java) }
+    private val vm by lazy { ViewModelProvider(requireActivity()).get(ConversationRoomViewModel::class.java) }
     val speakingListForGoldenRing: androidx.collection.ArraySet<Int?> = arraySetOf()
 
-    private val badgeDrawable: BadgeDrawable by lazy { BadgeDrawable.create(this) }
+    private val badgeDrawable: BadgeDrawable by lazy { BadgeDrawable.create(requireActivity()) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         ConvoWebRtcService.initLibrary()
-        requestWindowFeature(Window.FEATURE_NO_TITLE)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            this.window.statusBarColor =
-                this.resources.getColor(R.color.conversation_room_color, theme)
-        }
-        this.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+//        requireActivity().requestWindowFeature(Window.FEATURE_NO_TITLE)
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//            requireActivity().window.statusBarColor =
+//                this.resources.getColor(R.color.conversation_room_color, requireActivity().theme)
+//        }
+//        requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         removeIncomingNotification()
         isBackPressed = false
-        binding = ActivityConversationLiveRoomBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+
+    }
+
+    override fun onInitDataBinding(viewBinding: ActivityConversationLiveRoomBinding) {
+        // View is initialized
+        binding = viewBinding
         isActivityOpenFromNotification =
-            intent?.getBooleanExtra(OPEN_FROM_NOTIFICATION, false) == true
+            vm.liveRoomProperties?.isActivityOpenFromNotification!!
         addViewModelObserver()
         if (isActivityOpenFromNotification) {
             addJoinAPIObservers()
-            getIntentExtras(intent)
+            getIntentExtrasFromNotification()
         }
         else {
             getIntentExtras()
@@ -166,7 +167,7 @@ class ConversationLiveRoomActivity : BaseActivity(),
                     mBoundService?.leaveRoom(roomId, roomQuestionId)
                     isExitApiFired = true
                     vm.unSubscribePubNub()
-                    finish()
+                    requireActivity().supportFragmentManager.popBackStack()
                 }
                 SHOW_NOTIFICATION_FOR_INVITE_SPEAKER -> {
                     it.data?.let {
@@ -265,7 +266,7 @@ class ConversationLiveRoomActivity : BaseActivity(),
         mBoundService?.endRoom(roomId, roomQuestionId)
         isExitApiFired = true
         vm.unSubscribePubNub()
-        finish()
+        requireActivity().supportFragmentManager.popBackStack()
     }
 
 
@@ -301,26 +302,24 @@ class ConversationLiveRoomActivity : BaseActivity(),
         takePermissions()
     }
 
-    override fun onNewIntent(intent: Intent?) {
-        super.onNewIntent(intent)
+    private fun initLiveRoomProperties(){
         isActivityOpenFromNotification =
-            intent?.getBooleanExtra(OPEN_FROM_NOTIFICATION, false) == true
+            vm.liveRoomProperties!!.isActivityOpenFromNotification
         if (isActivityOpenFromNotification) {
-            getIntentExtras(intent)
+            getIntentExtrasFromNotification()
         }
-        val newChannelName = intent?.getStringExtra(CHANNEL_NAME)
+        val newChannelName = vm.liveRoomProperties?.channelName
         if (newChannelName != null && newChannelName != channelName) {
             vm.unSubscribePubNub()
-            finish()
-            startActivity(intent)
-            overridePendingTransition(0, 0)
+            requireActivity().supportFragmentManager.popBackStack()
+//            overridePendingTransition(0, 0)
             return
         }
     }
 
     private fun addJoinAPIObservers() {
         showProgressBar()
-        vm.navigation.observe(this, {
+        vm.navigation.observe(this) {
             try {
                 when (it) {
                     is ConversationRoomListingNavigation.ApiCallError -> showApiCallErrorToast(it.error)
@@ -335,11 +334,10 @@ class ConversationLiveRoomActivity : BaseActivity(),
                         hideProgressBar()
                     }
                 }
-            }
-            catch (ex: Exception) {
+            } catch (ex: Exception) {
                 LogException.catchException(ex)
             }
-        })
+        }
     }
 
     private fun setValues(
@@ -379,13 +377,13 @@ class ConversationLiveRoomActivity : BaseActivity(),
             }
         }
         else {
-            Toast.makeText(this, "Something Went Wrong !!!", Toast.LENGTH_SHORT).show()
+            showToast("Something Went Wrong !!!")
         }
     }
 
-    private fun getIntentExtras(intent: Intent?) {
-        roomId = intent?.getIntExtra(ROOM_ID, 0)?:0
-        channelTopic = intent?.getStringExtra(TOPIC_NAME)
+    private fun getIntentExtrasFromNotification() {
+        roomId = vm.liveRoomProperties!!.roomId ?:0
+        channelTopic = vm.liveRoomProperties!!.channelTopic
         if (isActivityOpenFromNotification && roomId != null) {
             vm.joinRoom(
                 RoomListResponseItem(
@@ -427,10 +425,10 @@ class ConversationLiveRoomActivity : BaseActivity(),
 
     private fun removeIncomingNotification() {
         val notificationManager =
-            applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            AppObjectController.joshApplication.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.cancel(9999)
         try {
-            stopService(Intent(this, HeadsUpNotificationService::class.java))
+            requireActivity().stopService(Intent(requireActivity(), HeadsUpNotificationService::class.java))
         }
         catch (ex: Exception) {
             ex.printStackTrace()
@@ -538,18 +536,18 @@ class ConversationLiveRoomActivity : BaseActivity(),
     }
 
     private fun getIntentExtras() {
-        channelName = intent?.getStringExtra(CHANNEL_NAME)
-        vm.setAgoraUid(intent?.getIntExtra(UID, 0))
-        vm.setModeratorId(intent?.getIntExtra(MODERATOR_UID, 0))
+        channelName = vm.liveRoomProperties!!.channelName
+        vm.setAgoraUid(vm.liveRoomProperties!!.agoraUid)
+        vm.setModeratorId(vm.liveRoomProperties!!.moderatorId)
         Log.d(
             "ABC2",
-            "getIntentExtras() MODERATOR_UID called ${intent?.getIntExtra(MODERATOR_UID, 0)} isModerator : ${intent.getBooleanExtra(IS_ROOM_CREATED_BY_USER, false)}"
+            "getIntentExtras() MODERATOR_UID called ${vm.getModeratorId()} isModerator : ${vm.liveRoomProperties!!.isRoomCreatedByUser}"
         )
-        token = intent?.getStringExtra(TOKEN)
-        roomId = intent?.getIntExtra(ROOM_ID, 0)
-        channelTopic = intent?.getStringExtra(TOPIC_NAME)
-        roomQuestionId = intent?.getIntExtra(ROOM_QUESTION_ID, 0)
-        isRoomCreatedByUser = intent.getBooleanExtra(IS_ROOM_CREATED_BY_USER, false)
+        token = vm.liveRoomProperties!!.token
+        roomId = vm.liveRoomProperties!!.roomId
+        channelTopic = vm.liveRoomProperties!!.channelTopic
+        roomQuestionId = vm.liveRoomProperties!!.roomQuestionId
+        isRoomCreatedByUser = vm.liveRoomProperties!!.isRoomCreatedByUser
     }
 
     private fun updateUI() {
@@ -872,7 +870,7 @@ class ConversationLiveRoomActivity : BaseActivity(),
             }
             Handler(Looper.getMainLooper()).postDelayed({
                 vm.unSubscribePubNub()
-                finish()
+                requireActivity().supportFragmentManager.popBackStack()
             }, 4000)
         }
     }
@@ -943,13 +941,13 @@ class ConversationLiveRoomActivity : BaseActivity(),
     }
 
     private fun takePermissions() {
-        if (PermissionUtils.isCallingPermissionWithoutLocationEnabled(this)) {
+        if (PermissionUtils.isCallingPermissionWithoutLocationEnabled(requireActivity())) {
             callWebRtcService()
             return
         }
 
         PermissionUtils.onlyCallingFeaturePermission(
-            this,
+            requireActivity(),
             object : MultiplePermissionsListener {
                 override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                     report?.areAllPermissionsGranted()?.let { flag ->
@@ -958,12 +956,8 @@ class ConversationLiveRoomActivity : BaseActivity(),
                             return
                         }
                         if (report.isAnyPermissionPermanentlyDenied) {
-                            Toast.makeText(
-                                this@ConversationLiveRoomActivity,
-                                "Permission Denied ",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                            PermissionUtils.callingPermissionPermanentlyDeniedDialog(this@ConversationLiveRoomActivity)
+                            showToast("Permission Denied ")
+                            PermissionUtils.callingPermissionPermanentlyDeniedDialog(requireActivity())
                             return
                         }
                     }
@@ -981,7 +975,7 @@ class ConversationLiveRoomActivity : BaseActivity(),
 
     private fun observeNetwork() {
         compositeDisposable.add(
-            ReactiveNetwork.observeNetworkConnectivity(applicationContext)
+            ReactiveNetwork.observeNetworkConnectivity(requireActivity().applicationContext)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { connectivity ->
@@ -1038,7 +1032,7 @@ class ConversationLiveRoomActivity : BaseActivity(),
             AudienceAdapter(isRoomCreatedByUser)
 
         binding.speakersRecyclerView.apply {
-            layoutManager = GridLayoutManager(this@ConversationLiveRoomActivity, 3)
+            layoutManager = GridLayoutManager(requireContext(), 3)
             setHasFixedSize(false)
             isNestedScrollingEnabled = false
             itemAnimator = null
@@ -1046,7 +1040,7 @@ class ConversationLiveRoomActivity : BaseActivity(),
         }
 
         binding.listenerRecyclerView.apply {
-            layoutManager = GridLayoutManager(this@ConversationLiveRoomActivity, 3)
+            layoutManager = GridLayoutManager(requireContext(), 3)
             setHasFixedSize(false)
             isNestedScrollingEnabled = false
             itemAnimator = null
@@ -1056,7 +1050,7 @@ class ConversationLiveRoomActivity : BaseActivity(),
         audienceAdapter?.setOnItemClickListener(object : AudienceAdapter.OnUserItemClickListener {
 
             override fun onItemClick(user: LiveRoomUser) {
-                if (supportFragmentManager.backStackEntryCount == 0 && isBottomSheetVisible.not()) {
+                if (requireActivity().supportFragmentManager.backStackEntryCount == 0 && isBottomSheetVisible.not()) {
                     getDataOnSpeakerAdapterItemClick(user, user.id, false)
                     isBottomSheetVisible = true
                 }
@@ -1065,7 +1059,7 @@ class ConversationLiveRoomActivity : BaseActivity(),
 
         speakerAdapter?.setOnItemClickListener(object : SpeakerAdapter.OnUserItemClickListener {
             override fun onItemClick(user: LiveRoomUser) {
-                if (supportFragmentManager.backStackEntryCount == 0 && isBottomSheetVisible.not()) {
+                if (requireActivity().supportFragmentManager.backStackEntryCount == 0 && isBottomSheetVisible.not()) {
                     getDataOnSpeakerAdapterItemClick(user, user.id, true)
                     isBottomSheetVisible = true
                 }
@@ -1146,13 +1140,13 @@ class ConversationLiveRoomActivity : BaseActivity(),
                         isBottomSheetVisible = false
                     }
                 })
-        bottomSheet.show(supportFragmentManager, "Bottom sheet")
+        bottomSheet.show(requireActivity().supportFragmentManager, "Bottom sheet")
         bottomSheet.dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
     }
 
     private fun openUserProfile(mentorId: String) {
-        ProfileActivity.openProfileActivity(this, mentorId)
+        ProfileActivity.openProfileActivity(requireActivity(), mentorId)
         /* UserProfileActivity.startUserProfileActivity(
              this@ConversationLiveRoomActivity,
              mentorId,
@@ -1169,7 +1163,7 @@ class ConversationLiveRoomActivity : BaseActivity(),
                 ArrayList(raisedHandList)
             )
         binding.notificationBar.loadAnimationSlideUp()
-        bottomSheet.show(supportFragmentManager, "Bottom sheet Hands Raised")
+        bottomSheet.show(requireActivity().supportFragmentManager, "Bottom sheet Hands Raised")
         bottomSheet.dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
     }
@@ -1189,7 +1183,7 @@ class ConversationLiveRoomActivity : BaseActivity(),
     }
 
     private fun showEndRoomPopup() {
-        val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(this)
+        val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
         val inflater = this.layoutInflater
         val dialogView: View = inflater.inflate(R.layout.alert_end_room, null)
         dialogBuilder.setView(dialogView)
@@ -1207,18 +1201,22 @@ class ConversationLiveRoomActivity : BaseActivity(),
             Log.d("ABC2", "activity showEndRoomPopup() called $mBoundService")
             if (!internetAvailableFlag) {
                 //viewModel.unSubscribePubNub()
-                finish()
+                finishFragment()
             }
             mBoundService?.endRoom(roomId, roomQuestionId)
             isExitApiFired = true
             alertDialog.dismiss()
             vm.unSubscribePubNub()
-            finish()
+            finishFragment()
         }
     }
 
+    private fun finishFragment(){
+        requireActivity().supportFragmentManager.popBackStack()
+    }
+
     private fun showLeaveRoomPopup() {
-        val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(this)
+        val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
         val inflater = this.layoutInflater
         val dialogView: View = inflater.inflate(R.layout.alert_leave_room, null)
         dialogBuilder.setView(dialogView)
@@ -1235,20 +1233,20 @@ class ConversationLiveRoomActivity : BaseActivity(),
         dialogView.findViewById<AppCompatTextView>(R.id.leave_room).setOnClickListener {
             Log.d("ABC2", "activity showLeaveRoomPopup() called $mBoundService")
             if (!internetAvailableFlag) {
-                finish()
+                finishFragment()
             }
             mBoundService?.leaveRoom(roomId, roomQuestionId)
             isExitApiFired = true
             alertDialog.dismiss()
             vm.unSubscribePubNub()
-            finish()
+            finishFragment()
         }
     }
 
     override fun onStart() {
         super.onStart()
-        bindService(
-            Intent(this, ConvoWebRtcService::class.java),
+        requireActivity().bindService(
+            Intent(requireActivity(), ConvoWebRtcService::class.java),
             myConnection,
             BIND_AUTO_CREATE
         )
@@ -1263,7 +1261,7 @@ class ConversationLiveRoomActivity : BaseActivity(),
     override fun onStop() {
         super.onStop()
         compositeDisposable.clear()
-        unbindService(myConnection)
+        requireActivity().unbindService(myConnection)
     }
 
     override fun onResume() {
@@ -1275,7 +1273,8 @@ class ConversationLiveRoomActivity : BaseActivity(),
         }
     }
 
-    override fun onBackPressed() {
+    // TODO: Rework on backpressed logic
+   /* override fun onBackPressed() {
         isBackPressed = true
         if (!internetAvailableFlag) {
             mBoundService?.endService()
@@ -1288,7 +1287,7 @@ class ConversationLiveRoomActivity : BaseActivity(),
         else {
             showLeaveRoomPopup()
         }
-    }
+    }*/
 
     override fun onDestroy() {
         if ((isBackPressed.or(isExitApiFired)).not()) {
@@ -1300,7 +1299,7 @@ class ConversationLiveRoomActivity : BaseActivity(),
             }
         }
         binding.notificationBar.destroyMediaPlayer()
-        stopService(Intent(this, ConvoWebRtcService::class.java))
+        requireActivity().stopService(Intent(requireActivity(), ConvoWebRtcService::class.java))
         super.onDestroy()
 
     }
@@ -1329,8 +1328,9 @@ class ConversationLiveRoomActivity : BaseActivity(),
         const val OPEN_FROM_NOTIFICATION = "open_from_notification"
         const val ROOM_QUESTION_ID = "room_question_id"
         const val TOPIC_NAME = "topic_name"
+        const val TAG = "live_room"
 
-        fun getIntent(
+        fun getFeedActivityIntent(
             context: Context,
             channelName: String?,
             uid: Int?,
@@ -1341,7 +1341,7 @@ class ConversationLiveRoomActivity : BaseActivity(),
             moderatorId: Int? = null,
             topicName: String? = null,
             flags: Array<Int> = arrayOf()
-        ) = Intent(context, ConversationLiveRoomActivity::class.java).apply {
+        ) = Intent(context, FeedActivity::class.java).apply {
             Log.d("ABC2", "getIntent() called")
             putExtra(CHANNEL_NAME, channelName)
             putExtra(UID, uid)
@@ -1356,33 +1356,15 @@ class ConversationLiveRoomActivity : BaseActivity(),
             }
         }
 
-        fun startRoomActivity(
-            activity: Activity,
-            channelName: String?,
-            uid: Int?,
-            token: String?,
-            isRoomCreatedByUser: Boolean,
-            roomId: Int?,
-            roomQuestionId: Int? = null,
-            moderatorId: Int? = null,
-            topicName: String? = null,
-            flags: Array<Int> = arrayOf()
+        fun launch(
+            activity: AppCompatActivity
         ) {
-            val intent = Intent(activity, ConversationLiveRoomActivity::class.java).apply {
-                Log.d("ABC2", "startRoomActivity() called isRoomCreatedByUser ${isRoomCreatedByUser}")
-                putExtra(CHANNEL_NAME, channelName)
-                putExtra(UID, uid)
-                putExtra(MODERATOR_UID, moderatorId)
-                putExtra(TOKEN, token)
-                putExtra(IS_ROOM_CREATED_BY_USER, isRoomCreatedByUser)
-                putExtra(ROOM_ID, roomId)
-                putExtra(ROOM_QUESTION_ID, roomQuestionId)
-                putExtra(TOPIC_NAME, topicName)
-                flags.forEach { flag ->
-                    this.addFlags(flag)
-                }
-            }
-            activity.startActivity(intent)
+            activity
+                .supportFragmentManager
+                .beginTransaction()
+                .replace(R.id.fragmentContainer, LiveRoomFragment())
+                .addToBackStack(TAG)
+                .commit()
         }
 
         fun getIntentForNotification(
@@ -1390,7 +1372,7 @@ class ConversationLiveRoomActivity : BaseActivity(),
             roomId: String,
             topicName: String? = null,
             flags: Array<Int> = arrayOf()
-        ) = Intent(context, ConversationLiveRoomActivity::class.java).apply {
+        ) = Intent(context, FeedActivity::class.java).apply {
 
             putExtra(OPEN_FROM_NOTIFICATION, true)
             putExtra(ROOM_ID, roomId.toInt())
@@ -1400,4 +1382,8 @@ class ConversationLiveRoomActivity : BaseActivity(),
             }
         }
     }
+
+
+
+    override fun getViewModel(): ConversationRoomViewModel = vm
 }

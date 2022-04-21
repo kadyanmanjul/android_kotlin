@@ -32,6 +32,7 @@ import com.joshtalks.badebhaiya.liveroom.adapter.PubNubEvent
 import com.joshtalks.badebhaiya.liveroom.model.ConversationRoomDetailsResponse
 import com.joshtalks.badebhaiya.liveroom.model.ConversationRoomListingNavigation
 import com.joshtalks.badebhaiya.liveroom.model.ConversationRoomPubNubEventBus
+import com.joshtalks.badebhaiya.liveroom.model.StartingLiveRoomProperties
 import com.joshtalks.badebhaiya.repository.ConversationRoomRepository
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomRequest
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomResponse
@@ -81,6 +82,7 @@ class ConversationRoomViewModel(application: Application) : AndroidViewModel(app
     private var replaySubject = ReplaySubject.create<Any>()
     private var pubnub: PubNub? = null
     private var agoraUid: Int? = null
+    var liveRoomProperties: StartingLiveRoomProperties? = null
     var isPubNubUsersFetched: MutableLiveData<Boolean> = MutableLiveData(false)
     var message = Message()
     var singleLiveEvent: MutableLiveData<Message> = MutableLiveData()

@@ -104,7 +104,7 @@ abstract class BaseFragment<T : ViewDataBinding, V : ViewModel>(
 //        getViewModel().onError(appError)
     }
 
-    fun showProgress(visible: Boolean) {
+    fun showProgressBar() {
         getBaseActivity()?.showProgressBar()
     }
 

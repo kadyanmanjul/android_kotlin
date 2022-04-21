@@ -16,7 +16,7 @@ import androidx.core.content.ContextCompat
 import com.joshtalks.badebhaiya.BuildConfig
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.core.*
-import com.joshtalks.badebhaiya.liveroom.ConversationLiveRoomActivity
+import com.joshtalks.badebhaiya.liveroom.LiveRoomFragment
 import com.joshtalks.badebhaiya.liveroom.service.NotificationId.Companion.INCOMING_CALL_NOTIFICATION_ID
 import com.joshtalks.badebhaiya.liveroom.service.NotificationId.Companion.ROOM_CALL_NOTIFICATION_ID
 import com.joshtalks.badebhaiya.liveroom.service.NotificationId.Companion.ROOM_NOTIFICATION_CHANNEL
@@ -32,7 +32,6 @@ import io.agora.rtc.RtcEngine
 import io.agora.rtc.models.ChannelMediaOptions
 import io.agora.rtc.models.ClientRoleOptions
 import java.lang.ref.WeakReference
-import java.util.*
 import java.util.concurrent.ExecutorService
 import kotlinx.coroutines.*
 
@@ -679,7 +678,8 @@ class ConvoWebRtcService : Service() {
                 .setPriority(NotificationCompat.PRIORITY_MAX)
 
         if (isHavingPendingIntent){
-            val intent = ConversationLiveRoomActivity.getIntent(
+
+            val intent = LiveRoomFragment.getFeedActivityIntent(
                 context = this,
                 channelName = conversationRoomChannelName,
                 uid = agoraUid,

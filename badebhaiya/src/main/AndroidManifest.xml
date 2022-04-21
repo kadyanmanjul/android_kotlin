@@ -88,10 +88,6 @@
         <activity
             android:name=".TemporaryFeedActivity"
             android:exported="true" />
-        <activity
-            android:name=".liveroom.ConversationLiveRoomActivity"
-            android:exported="true">
-        </activity>
         <meta-data
             android:name="io.branch.sdk.BranchKey"
             android:value="@string/branch_id" />
