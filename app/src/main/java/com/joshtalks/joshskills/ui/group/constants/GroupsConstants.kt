@@ -31,7 +31,7 @@ const val FROM_BACKEND_MSG_TIME = "from_backend_message_time"
 
 const val OPENED_GROUP = "open"
 const val CLOSED_GROUP = "closed"
-const val DM_CHAT = "dm_chat"
+const val DM_CHAT = "fpp"
 
 const val REQUESTED_GROUP = "requested"
 const val JOINED_GROUP = "joined"
