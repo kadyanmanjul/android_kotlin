@@ -5,7 +5,7 @@ import androidx.lifecycle.*
 import androidx.multidex.MultiDexApplication
 import timber.log.Timber
 
-class JoshApplication: MultiDexApplication(), LifecycleObserver {
+class JoshApplication : MultiDexApplication(), LifecycleObserver {
 
     companion object {
         @Volatile
@@ -19,11 +19,15 @@ class JoshApplication: MultiDexApplication(), LifecycleObserver {
     }
 
     private val lifecycleEventObserver = LifecycleEventObserver { source, event ->
-        if (event == Lifecycle.Event.ON_START ) {
-            isAppVisible = true
+        when (event) {
+            Lifecycle.Event.ON_START -> isAppVisible = true
+            Lifecycle.Event.ON_STOP -> isAppVisible = false
+            Lifecycle.Event.ON_DESTROY -> endTheRoom()
+            else -> {}
         }
-        else if ( event == Lifecycle.Event.ON_STOP ) {
-            isAppVisible = false
-        }
+    }
+
+    private fun endTheRoom() {
+//        TODO: End The Room if there's any room
     }
 }

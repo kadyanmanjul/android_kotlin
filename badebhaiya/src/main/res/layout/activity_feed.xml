@@ -18,17 +18,19 @@
 
     </data>
 
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/swipeRefreshLayout"
-        onRefresh="@{viewModel::getRooms}"
-        setRefreshing="@{viewModel.isLoading}"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+<!--    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout-->
+<!--        android:id="@+id/swipeRefreshLayout"-->
+<!--        onRefresh="@{viewModel::getRooms}"-->
+<!--        setRefreshing="@{viewModel.isLoading}"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent">-->
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <androidx.constraintlayout.motion.widget.MotionLayout
             android:id="@+id/root_view"
             android:layout_width="match_parent"
+            app:layoutDescription="@xml/main_scene"
             android:layout_height="match_parent"
+            app:motionDebug="SHOW_ALL"
             android:background="@color/conversation_room_color">
 
             <androidx.appcompat.widget.AppCompatImageView
@@ -77,6 +79,7 @@
                 android:layout_marginTop="@dimen/_10sdp"
                 android:clipToPadding="false"
                 android:paddingStart="@dimen/_8sdp"
+                android:onClick="@{() -> handler.openFragment()}"
                 android:paddingEnd="@dimen/_8sdp"
                 android:paddingBottom="@{viewModel.isBadeBhaiyaSpeaker ? @dimen/_80sdp : 0}"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -85,6 +88,7 @@
                 tools:listitem="@layout/li_room_event" />
 
             <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/linearLayoutCompat"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
@@ -158,6 +162,15 @@
                 android:orientation="vertical"
                 app:layout_constraintGuide_begin="20dp" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+            <FrameLayout
+                android:id="@+id/fragmentContainer"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.motion.widget.MotionLayout>
+<!--    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>-->
 </layout>

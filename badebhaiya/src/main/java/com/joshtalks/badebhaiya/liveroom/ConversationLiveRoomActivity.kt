@@ -118,6 +118,7 @@ class ConversationLiveRoomActivity : BaseActivity(),
         removeIncomingNotification()
         isBackPressed = false
         binding = ActivityConversationLiveRoomBinding.inflate(layoutInflater)
+        binding.handler = this
         setContentView(binding.root)
         isActivityOpenFromNotification =
             intent?.getBooleanExtra(OPEN_FROM_NOTIFICATION, false) == true

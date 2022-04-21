@@ -101,5 +101,7 @@
     <string name="schedule_room">Schedule Room</string>
     <string name="date_time_separator">T</string>
     <string name="enter_topic_name">Please enter topic</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

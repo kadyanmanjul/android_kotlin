@@ -299,6 +299,7 @@ class ConversationRoomViewModel(application: Application) : AndroidViewModel(app
         }
     }
 
+
     private fun getLatestUserList(channelName: String?) {
         val memberList = pubnub?.channelMembers
             ?.channel(channelName)

@@ -3,6 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+        <variable
+            name="handler"
+            type="com.joshtalks.badebhaiya.liveroom.ConversationLiveRoomActivity" />
+    </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -18,10 +24,12 @@
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/down_arrow"
-                android:layout_width="@dimen/_14sdp"
-                android:layout_height="@dimen/_8sdp"
-                android:layout_margin="@dimen/_18sdp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:tint="#000000"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:padding="@dimen/_12sdp"
+                android:onClick="@{() -> handler.finish()}"
                 android:visibility="visible"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -32,7 +40,6 @@
                 android:id="@+id/hallway"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_marginStart="@dimen/_8sdp"
                 android:text="@string/all_rooms"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7"
                 android:textColor="@color/pure_black"

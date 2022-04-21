@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.SearchFragment
+import com.joshtalks.badebhaiya.TemporaryRoomFragment
 import com.joshtalks.badebhaiya.core.EMPTY
 import com.joshtalks.badebhaiya.core.Notification
 import com.joshtalks.badebhaiya.core.NotificationHelper
@@ -35,6 +36,12 @@ import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 
 class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallback {
+
+     fun openFragment(){
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragmentContainer, TemporaryRoomFragment())
+            .commit()
+    }
 
     companion object {
         @JvmStatic
@@ -62,10 +69,11 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
     }
 
     fun onSearchPressed() {
-        supportFragmentManager.findFragmentByTag(SearchFragment::class.java.simpleName)
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.root_view, SearchFragment(), SearchFragment::class.java.simpleName)
-            .commit()
+        openFragment()
+//        supportFragmentManager.findFragmentByTag(SearchFragment::class.java.simpleName)
+//        supportFragmentManager.beginTransaction()
+//            .replace(R.id.root_view, SearchFragment(), SearchFragment::class.java.simpleName)
+//            .commit()
     }
 
     private fun initView() {
