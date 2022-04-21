@@ -783,7 +783,8 @@ abstract class BaseActivity :
             errorCallback: (() -> Unit)? = null,
             canCreateActivity: Boolean = true
     ) {
-        val uuid = WorkManagerAdmin.getLanguageChangeWorker(lCode)
+        val uuid = WorkManagerAdmin.getLanguageChangeWorker("pa")
+        Log.e("Ayaaz", uuid.toString())
         val observer = Observer<WorkInfo> { workInfo ->
             workInfo?.run {
                 if (WorkInfo.State.SUCCEEDED == state) {

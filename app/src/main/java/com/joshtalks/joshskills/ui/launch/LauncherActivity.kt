@@ -63,6 +63,7 @@ class LauncherActivity : CoreJoshActivity() {
         AppObjectController.uiHandler.postDelayed({
             analyzeAppRequirement()
         }, 700)
+        changeLanguageOfApp()
     }
 
     private fun initApp() {
@@ -458,8 +459,9 @@ class LauncherActivity : CoreJoshActivity() {
     }
 
     private fun changeLanguageOfApp() {
+        Log.e("Ayaaz","launch")
         requestWorkerForChangeLanguage(
-            "hi",
+            "pa",
             canCreateActivity = false,
             successCallback = {
                 AppObjectController.isSettingUpdate = true
