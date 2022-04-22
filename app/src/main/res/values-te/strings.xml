@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="starting_info">మీకు స్వాగతం %s</string>
+    <string name="restart_course_message">మీరు సంపాదించిన points అలాగే ఉంటాయి కానీ lesson 1 మళ్లీ ప్రారంభమవుతుంది</string>
+    <string name="groups_empty_text_1">Groups తో మీరు కొత్త స్నేహితులను కనుగొనవచ్చు, వారి భవిష్యత్ కలలు మీ కలలకు సరిపోతాయి లేదా అలాంటి ఎంపికలను కలిగి ఉంటాయి.</string>
+    <string name="share_with_friends_text">నేను English నేర్చుకుంటున్నాను, ఇక్కడ పర్యావరణం కొత్త వ్యక్తులతో మాట్లాడాలి.\nమీరు కూడా English నేర్చుకోవచ్చు.</string>
+    <string name="share_screen_tagline">నేను ప్రతిరోజు Callలో కొత్త వ్యక్తులతో Speaking Practice చేస్తున్నాను.</string>
+</resources>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="starting_info">%s பாட திட்டத்திற்கு உங்களை வரவேற்கிறோம்</string>
+    <string name="restart_course_message">உங்களுக்கு பாடத்தை தொடர வேண்டுமா? உங்கள் மதிப்பெண்களை நீங்கள் இங்கே காணலாம், அனால் Lesson- 1 (பாடம் ஒன்றில்) இருந்து ஆரமிக்க படும் .</string>
+    <string name="groups_empty_text_1">குழுக்கள் மூலம் நீங்கள் உங்கள் வகுப்பு தோழர்களுடன் பேசலாம் மற்றும் உங்கள் விருப்பங்களையும் எதிர்கால கனவுகளையும் பகிர்ந்து கொள்ளலாம்.</string>
+    <string name="share_with_friends_text">நான் English கற்றுக்கொள்கிறேன், இந்த environment மூலமாக. நீங்களும் ஆங்கிலத்தை கற்றுக்கொள்ளலாம்.</string>
+    <string name="share_screen_tagline">நான் ஒவ்வொரு நாளும் Speaking practice செய்கிறேன், புதிய நபர்களுடன் அழைப்பில்.</string>
+</resources>

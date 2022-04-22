@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="starting_info">%s നിങ്ങൾക്ക് സ്വാഗതം.</string>
+    <string name="restart_course_message">നിങ്ങൾ കോഴ്സ് പുനരാരംഭിക്കാൻ താല്പര്യപെടുന്നുണ്ടോ? നിങ്ങൾ നേടിയ പോയിന്റുകൾ നിങ്ങളുടെ പക്കൽ തന്നെ കാണും, പക്ഷേ കോഴ്‌സ് lesson 1-ൽ  നിന്നും വീണ്ടും ആരംഭിക്കുന്നതായിരിക്കും</string>
+    <string name="groups_empty_text_1">ഗ്രൂപ്സിലൂടെ താങ്കൾക് താങ്കളുടെ സഹപാഠികളുമായി സംസാരിക്കുകയും, അതിലൂടെ നിങ്ങളുടെ ഇഷ്ടങ്ങളും ഭാവി സ്വപ്നങ്ങളും പങ്കുവെക്കുകയും ചെയ്യാവുന്നതാണ്.</string>
+    <string name="share_with_friends_text">ഞാൻ <b>English</b> പഠിക്കുകയാണ്, <b>environment</b> ലഭ്യമാവുന്നിടത്ത്, പുതിയ ആളുകളുമായി സംസാരിക്കാൻ ഇനി മടിക്കേണ്ടതില്ല, നിങ്ങൾക്കും പഠിക്കാം എന്നോടൊപ്പം.</string>
+    <string name="share_screen_tagline">ഞാൻ ദിവസവും <b>speaking practice</b> ചെയ്യുന്നു <b>call</b>-ലൂടെ, പുതിയ പുതിയ ആളുകളോടൊപ്പം.</string>
+</resources>

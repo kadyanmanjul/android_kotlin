@@ -54,7 +54,7 @@
             android:gravity="center"
             android:paddingHorizontal="@dimen/_4sdp"
             android:paddingVertical="@dimen/_2sdp"
-            android:text="Groups के ज़रिये हम अपने उन सहपाठिओं को खोज सकते हैं जिनके future के सपने हमसे मिलते हैं या जो हमारे interests share करते हैं"
+            android:text="@string/groups_empty_text_1"
             android:textColor="@color/black"
             android:textSize="@dimen/_12ssp"
             app:layout_constraintEnd_toEndOf="parent"

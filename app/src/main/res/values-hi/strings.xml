@@ -147,7 +147,7 @@
     <string name="reason">कारण : %s</string>
     <string name="wohoo">वू हू!</string>
     <string name="starting_title">आपने कर दिखाया!</string>
-    <string name="starting_info">आपका स्वागत है %s कोर्स में</string>
+    <string name="starting_info">आपका स्वागत है %s में</string>
     <string name="starting_info_2">आपका %s कोर्स में सफलतापूर्वक इनरोल किया गया।</string>
     <string name="tutor_line">मैं आपको पढ़ाने के लिए उत्साहित हूं</string>
     <string name="tutor_register">कृपया शुरू करने के लिए रजिस्टर करें</string>
@@ -464,5 +464,10 @@
     <string name="mute">Mute</string>
     <string name="raised">Raised</string>
     <string name="unraised">UnRaised</string>
+
+    <string name="restart_course_message">क्या आप कोर्स फिर से शुरू करना चाहते हैं?(आपके कमाए Points आपके पास ही रहेंगे, लेकिन Course Lesson 1 से फिर से Start होगा)</string>
+    <string name="groups_empty_text_1">Groups के ज़रिये हम अपने उन सहपाठिओं को खोज सकते हैं जिनके future के सपने हमसे मिलते हैं या जो हमारे interests share करते हैं</string>
+    <string name="share_with_friends_text">मैं English सीख रहा हूँ, जहाँ environment मिलता है बेझिझक नए लोगों से बात करने का !तुम भी सीख सकते हो.</string>
+    <string name="share_screen_tagline"><b>मैं रोज़</b> speaking practice <b>कर रहा हूँ</b> call<b>\nपर</b> new new persons <b>के साथ</b></string>
 
 </resources>

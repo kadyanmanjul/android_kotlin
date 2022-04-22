@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="starting_info">ਜੀ ਆਇਆਂ ਨੂੰ\n %s ਵਿੱਚ</string>
+
     <string name="start_now">ਵਿੱਚ</string>
     <string name="privacy_label">ਵਿੱਚ</string>
+
+    <string name="starting_info">ਜੀ ਆਇਆਂ ਨੂੰ\n %s ਪੈਕ ਵਿੱਚ</string>
+    <string name="restart_course_message">ਕੀ ਤੁਸੀਂ ਕੋਰਸ ਦੁਬਾਰਾ ਸ਼ੁਰੂ ਕਰਨਾ ਚਾਹੁੰਦੇ ਹੋ? ਤੁਹਾਡੇ ਕਮਾਏ Points ਤੁਹਾਡੇ ਕੋਲ ਰਹਿਣਗੇ ਪਰ ਕੋਰਸ Lesson 1 ਤੋਂ ਦੁਬਾਰਾ ਸ਼ੁਰੂ ਹੋਵੇਗਾ</string>
+    <string name="groups_empty_text_1">Groups ਰਾਹੀਂ ਤੁਸੀਂ ਨਵੇਂ ਦੋਸਤ ਲੱਭ ਸਕਦੇ ਹੋ ਜਿਨ੍ਹਾਂ ਦੇ ਭਵਿੱਖ ਦੇ ਸੁਪਨੇ ਤੁਹਾਡੇ ਸੁਪਨਿਆਂ ਨਾਲ ਮੇਲ ਖਾਂਦੇ ਹਨ ਜਾਂ ਜਿਨ੍ਹਾਂ ਕੋਲ ਸਮਾਨ ਵਿਕਲਪ ਹਨ।</string>
+    <string name="share_with_friends_text">ਮੈਂ English ਸਿੱਖ ਰਿਹਾ ਹਾਂ, ਜਿੱਥੇ ਮੈਂ ਵਾਤਾਵਰਨ ਵਿੱਚ ਨਵੇਂ ਲੋਕਾਂ ਨਾਲ ਗੱਲ ਕਰ ਸਕਦਾ ਹਾਂ।\n ਤੁਸੀਂ ਵੀ English ਸਿੱਖ ਸਕਦੇ ਹੋ।</string>
+    <string name="share_screen_tagline">ਮੈਂ ਹਰ ਰੋਜ਼ Call \'ਤੇ ਨਵੇਂ ਲੋਕਾਂ ਨਾਲ Speaking Practice ਕਰ ਰਿਹਾ/ਰਹੀ ਹਾਂ।</string>
 </resources>

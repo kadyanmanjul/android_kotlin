@@ -424,6 +424,7 @@
         <key>SHOW_AUTOSTART_IMAGE</key>
         <value>true</value>
     </entry>
+
     <entry>
         <key>LANGUAGES_SUPPORTED</key>
         <value>[{
@@ -437,6 +438,22 @@
             ]
         </value>
     </entry>
+    <entry>
+        <key>NEW_LANGUAGES_SUPPORTED</key>
+        <value>
+            [
+            {"code": "en", "name": "Hinglish"},
+            {"code": "hi", "name": "Hindi"},
+            {"code": "bn", "name": "Bangla"},
+            {"code": "ml", "name": "Malayalam"},
+            {"code": "pa", "name": "Punjabi"},
+            {"code": "mr", "name": "Marathi"},
+            {"code": "ta", "name": "Tamil"},
+            {"code": "te", "name": "Telugu"}
+            ]
+        </value>
+    </entry>
+
     <entry>
         <key>UX_CAM_FEATURE_ENABLE</key>
         <value>false</value>
@@ -459,11 +476,6 @@
         <key>MINIMUM_TIME_TO_SHOW_REVIEW</key>
         <value>30
         </value>
-    </entry>
-
-    <entry>
-        <key>LANGUAGES_SUPPORTED</key>
-        <value>[{ "code": "en", "name": "English"},{"code": "hi","name": "Hindi"} ]</value>
     </entry>
 
     <entry>
