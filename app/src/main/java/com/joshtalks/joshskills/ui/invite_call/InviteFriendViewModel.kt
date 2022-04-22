@@ -23,7 +23,7 @@ class InviteFriendViewModel(application: Application) : AndroidViewModel(applica
     val query = MutableStateFlow("")
     val scrollToTop = ObservableBoolean(false)
     val adapter = ContactsAdapter()
-    val contacts: List<PhonebookContact> = readContacts()
+    lateinit var contacts: List<PhonebookContact>
     private var adapterList = emptyList<PhonebookContact>()
         set(value) {
             field = value
@@ -35,7 +35,7 @@ class InviteFriendViewModel(application: Application) : AndroidViewModel(applica
     }
 
     @SuppressLint("Range")
-    fun readContacts(): List<PhonebookContact> {
+    fun readContacts() {
         val cursor = context.contentResolver.query(
             ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
             null,
@@ -63,7 +63,7 @@ class InviteFriendViewModel(application: Application) : AndroidViewModel(applica
         val result = temp.distinctBy { it.phoneNumber }
         adapterList = result
         addContactsToDatabase(result)
-        return result
+        contacts = result
     }
 
     fun inviteFriend(
