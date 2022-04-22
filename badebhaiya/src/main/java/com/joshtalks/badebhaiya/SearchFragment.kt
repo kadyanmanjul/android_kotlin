@@ -37,6 +37,7 @@ import com.joshtalks.badebhaiya.profile.ProfileViewModel
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomResponse
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.utils.TAG
+import com.joshtalks.badebhaiya.utils.setTextWatcher
 import com.joshtalks.badebhaiya.utils.setUserImageOrInitials
 import kotlinx.android.synthetic.main.activity_feed.*
 import kotlinx.android.synthetic.main.li_room_event.view.*
@@ -58,10 +59,6 @@ class SearchFragment : Fragment() {
         ViewModelProvider(requireActivity()).get(FeedViewModel::class.java)
     }
 
-    private val profileViewModel by lazy {
-        //ViewModelProvider(this)[ProfileViewModel::class.java]
-        ViewModelProvider(requireActivity()).get(ProfileViewModel::class.java)
-    }
     lateinit var binding:FragmentSearchBinding
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -86,33 +83,7 @@ class SearchFragment : Fragment() {
         }
         //(activity as FeedActivity).swipeRefreshLayout.visibility=View.GONE
         return binding.root
-
-        profileViewModel.speakerFollowed.observe(viewLifecycleOwner) {
-            if (it == true) {
-                speakerFollowedUIChanges()
-            }
-            else
-                speakerUnfollowedUIChanges()
-        }
-        //return inflater.inflate(R.layout.fragment_search, container, false)
     }
-    private fun speakerFollowedUIChanges() {
-        binding.apply {
-            recyclerView.btnFollow.text = getString(R.string.following)
-            recyclerView.btnFollow.setTextColor(resources.getColor(R.color.white))
-            recyclerView.btnFollow.background = AppCompatResources.getDrawable(requireContext(),
-                R.drawable.following_button_background)
-        }
-    }
-    private fun speakerUnfollowedUIChanges() {
-        binding.apply {
-            recyclerView.btnFollow.text = getString(R.string.follow)
-            recyclerView.btnFollow.setTextColor(resources.getColor(R.color.follow_button_stroke))
-            recyclerView.btnFollow.background = AppCompatResources.getDrawable(requireContext(),
-                R.drawable.follow_button_background)
-        }
-    }
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -129,9 +100,25 @@ class SearchFragment : Fragment() {
                 }
             binding.recyclerView.adapter=SearchAdapter(users)
             binding.recyclerView.layoutManager=LinearLayoutManager(requireContext())
-
         }
 
+//        binding.searchBar.addTextChangedListener( object: TextWatcher {
+//            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+//            }
+//            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+//                job?.cancel()
+//                job = MainScope().launch {
+//                    delay(500)
+//                    if (binding.searchBar.toString().isNotEmpty())
+//                        users=viewModel.searchUser(binding.searchBar.text.toString())
+//                    //showToast("${binding.searchBar.text}")
+//                }
+//            }
+//            override fun afterTextChanged(p0: Editable?) {
+//                binding.recyclerView.adapter=SearchAdapter(users)
+//                binding.recyclerView.layoutManager=LinearLayoutManager(requireContext())
+//            }
+//        })
     }
 
     companion object {

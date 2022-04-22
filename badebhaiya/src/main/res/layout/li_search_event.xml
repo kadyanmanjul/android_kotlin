@@ -6,7 +6,7 @@
     <data>
         <import type="android.view.View"/>
 
-        <import type="com.joshtalks.badebhaiya.feed.model.ConversationRoomType"/>
+        <import type="com.joshtalks.badebhaiya.feed.model.SearchRoomsResponse"/>
         <variable
             name="roomData"
             type="com.joshtalks.badebhaiya.feed.model.Users" />
@@ -16,8 +16,8 @@
             type="com.joshtalks.badebhaiya.profile.ProfileViewModel"/>
 
         <variable
-            name="feedViewModel"
-            type="com.joshtalks.badebhaiya.feed.FeedViewModel" />
+            name="searchViewModel"
+            type="com.joshtalks.badebhaiya.feed.model.SearchRoomsResponse" />
 
         <variable
             name="handler"
@@ -31,7 +31,6 @@
         app:cardElevation="0dp"
         android:clickable="true"
         android:id="@+id/user"
-        android:onClick="onProfileClicked"
         app:cardCornerRadius="@dimen/_14sdp"
         android:layout_marginBottom="@dimen/_2sdp"
         android:backgroundTint="@color/base_app_color">
@@ -46,7 +45,6 @@
                 imageCornerRadius="@{@dimen/_16sdp}"
                 initialsFontSize="@{24}"
                 android:layout_width="@dimen/_48sdp"
-                android:onClick="@{() -> feedViewModel.onProfileClicked()}"
                 android:layout_height="@dimen/_48sdp"
                 android:layout_marginTop="@dimen/_5sdp"
                 android:layout_marginBottom="@dimen/_10sdp"

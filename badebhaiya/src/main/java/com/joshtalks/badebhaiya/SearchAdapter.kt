@@ -5,9 +5,7 @@ import android.content.Context
 import android.os.Bundle
 import android.os.Message
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.DiffUtil
@@ -23,6 +21,7 @@ import com.joshtalks.badebhaiya.profile.ProfileActivity
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.utils.setImage
 import com.joshtalks.badebhaiya.utils.setUserInitialInRect
+import java.security.AccessController.getContext
 
 
 class SearchAdapter(private val searchResult: List<Users>): ListAdapter<SearchRoomsResponse, SearchAdapter.SearchViewHolder>(SearchAdapter){
@@ -96,9 +95,10 @@ class SearchAdapter(private val searchResult: List<Users>): ListAdapter<SearchRo
             showToast("followed")
         }
         holder.item.user.setOnClickListener{
-            showToast("${searchResult[position].short_name}")
-            //ProfileActivity.openProfileActivity(getActivity(), searchResult[position].user_id)
-        }
+            ProfileActivity.openProfileActivity(holder.item.user.context,searchResult[position].user_id)
+            }
+
+
         if(searchResult[position].profilePic.isNullOrEmpty().not())
         Glide.with(holder.itemView.getContext())
             .load(searchResult[position].profilePic)

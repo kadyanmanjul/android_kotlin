@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
@@ -22,7 +21,6 @@ import com.joshtalks.badebhaiya.signup.fragments.SignUpEnterNameFragment
 import com.joshtalks.badebhaiya.signup.fragments.SignUpEnterOTPFragment
 import com.joshtalks.badebhaiya.signup.fragments.SignUpEnterPhoneFragment
 import com.joshtalks.badebhaiya.signup.viewmodel.SignUpViewModel
-import com.joshtalks.badebhaiya.utils.TAG
 import com.truecaller.android.sdk.ITrueCallback
 import com.truecaller.android.sdk.TrueError
 import com.truecaller.android.sdk.TrueProfile
