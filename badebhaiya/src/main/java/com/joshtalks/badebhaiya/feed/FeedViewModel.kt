@@ -22,6 +22,8 @@ import com.joshtalks.badebhaiya.profile.request.ReminderRequest
 import com.joshtalks.badebhaiya.repository.ConversationRoomRepository
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomRequest
 import com.joshtalks.badebhaiya.repository.model.User
+import com.joshtalks.badebhaiya.utils.Utils
+import com.joshtalks.badebhaiya.utils.ALLOWED_SCHEDULED_TIME
 import kotlinx.coroutines.launch
 
 const val ROOM_ITEM = "room_item"
@@ -165,10 +167,10 @@ class FeedViewModel : ViewModel() {
                     }
                 } else {
                     isRoomsAvailable.set(false)
-                    feedAdapter.submitList(null)
+                    feedAdapter.submitList(emptyList())
                 }
             } catch (ex: Exception) {
-                feedAdapter.submitList(null)
+                feedAdapter.submitList(emptyList())
                 isRoomsAvailable.set(false)
                 ex.printStackTrace()
             } finally {
@@ -194,7 +196,6 @@ class FeedViewModel : ViewModel() {
     fun deleteReminder(deleteReminderRequest: DeleteReminderRequest) {
         viewModelScope.launch {
             try {
-                isLoading.set(true)
                 val res = repository.deleteReminder(deleteReminderRequest)
                 if (res.isSuccessful && res.code() == 200) {
                     showToast("Reminder Deleted")
@@ -204,7 +205,7 @@ class FeedViewModel : ViewModel() {
                 ex.printStackTrace()
                 showToast("Error while Deleting Reminder")
             } finally {
-                isLoading.set(false)
+
             }
         }
     }
@@ -212,7 +213,6 @@ class FeedViewModel : ViewModel() {
     fun setReminder(reminderRequest: ReminderRequest) {
         viewModelScope.launch {
             try {
-                isLoading.set(true)
                 val res = repository.setReminder(reminderRequest)
                 if (res.isSuccessful && res.code() == 201) {
                     showToast("Reminder set successfully")
@@ -222,7 +222,7 @@ class FeedViewModel : ViewModel() {
                 ex.printStackTrace()
                 showToast("Error while setting reminder")
             } finally {
-                isLoading.set(false)
+
             }
         }
     }
@@ -233,6 +233,10 @@ class FeedViewModel : ViewModel() {
                 showToast(AppObjectController.joshApplication.getString(R.string.enter_topic_name))
             } else {
                 try {
+                    if (Utils.getEpochTimeFromFullDate(startTime) < (System.currentTimeMillis() + ALLOWED_SCHEDULED_TIME)) {
+                        showToast("Schedule a room for 30 minutes or later!")
+                        return@launch
+                    }
                     isLoading.set(true)
                     val response = repository.scheduleRoom(
                         ConversationRoomRequest(

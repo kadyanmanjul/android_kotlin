@@ -2,6 +2,7 @@ package com.joshtalks.badebhaiya.feed
 
 import android.app.AlarmManager
 import android.app.PendingIntent
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -17,6 +18,7 @@ import com.joshtalks.badebhaiya.core.Notification
 import com.joshtalks.badebhaiya.core.NotificationHelper
 import com.joshtalks.badebhaiya.core.NotificationType
 import com.joshtalks.badebhaiya.core.PermissionUtils
+import com.joshtalks.badebhaiya.core.showToast
 import com.joshtalks.badebhaiya.databinding.ActivityFeedBinding
 import com.joshtalks.badebhaiya.feed.adapter.FeedAdapter
 import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
@@ -45,12 +47,13 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         ViewModelProvider(this)[FeedViewModel::class.java]
     }
 
+    private var pendingIntent: PendingIntent? = null
+
     private lateinit var binding: ActivityFeedBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_feed)
-        viewModel.getRooms()
         viewModel.setIsBadeBhaiyaSpeaker()
         binding.lifecycleOwner = this
         binding.handler = this
@@ -59,6 +62,11 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         addObserver()
         initView()
         //setOnClickListener()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.getRooms()
     }
 
     fun onSearchPressed() {
@@ -150,6 +158,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                 }
 
                 override fun onError(error: String) {
+                    showToast(error)
                     it.dismiss()
                 }
             })
@@ -249,7 +258,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                 type = NotificationType.REMINDER
             )
         )
-        val pendingIntent =
+        pendingIntent =
             PendingIntent.getBroadcast(
                 applicationContext,
                 0,
@@ -271,12 +280,15 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
 
     override fun deleteReminder(room: RoomListResponseItem, view: View) {
         //room.isScheduled=false
-        viewModel.deleteReminder(
-            DeleteReminderRequest(
-                roomId = room.roomId.toString(),
-                userId = User.getInstance().userId
+        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        alarmManager.cancel(pendingIntent).also {
+            viewModel.deleteReminder(
+                DeleteReminderRequest(
+                    roomId = room.roomId.toString(),
+                    userId = User.getInstance().userId
+                )
             )
-        )
+        }
     }
 
     override fun viewRoom(room: RoomListResponseItem, view: View) {

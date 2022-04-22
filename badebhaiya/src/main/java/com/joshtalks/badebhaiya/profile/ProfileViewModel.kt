@@ -117,12 +117,12 @@ class ProfileViewModel : ViewModel() {
                             speakerProfileRoomsAdapter.submitList(list.toList())
                         }
                         else {
-                            speakerProfileRoomsAdapter.submitList(null)
+                            speakerProfileRoomsAdapter.submitList(emptyList())
                         }
                     }
                 }
             } catch(ex: Exception) {
-                speakerProfileRoomsAdapter.submitList(null)
+                speakerProfileRoomsAdapter.submitList(emptyList())
             }
         }
     }

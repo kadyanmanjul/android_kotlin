@@ -112,6 +112,7 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 import java.util.Random
+import java.util.TimeZone
 import java.util.concurrent.TimeUnit
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 import kotlin.math.ceil
@@ -120,6 +121,7 @@ import kotlin.math.roundToInt
 import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.HttpException
 import timber.log.Timber
+import java.time.ZonedDateTime
 
 private val CHAT_TIME_FORMATTER = SimpleDateFormat("hh:mm aa")
 private val DD_MMM = SimpleDateFormat("dd-MMM hh:mm aa")
@@ -741,6 +743,21 @@ object Utils {
         } catch (ex: Exception) {
             Timber.e(ex)
             null
+        }
+    }
+
+    fun getEpochTimeFromFullDate(dateTime: String): Long {
+        return try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                ZonedDateTime.parse(dateTime).toEpochSecond() * 1000
+            } else {
+                SimpleDateFormat("yyyy-MM-dd'T'kk:mm:ss", Locale.getDefault()).apply {
+                    timeZone = TimeZone.getTimeZone("UTC")
+                }.parse(dateTime).time
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            0
         }
     }
 }
