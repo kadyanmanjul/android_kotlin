@@ -5,6 +5,7 @@
     tools:context=".ui.assessment.AssessmentActivity">
 <data>
     <import type="android.view.View"/>
+    <import type="com.joshtalks.joshskills.base.constants.ConstantsKt"/>
     <variable
         name="vm"
         type="com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.VoiceCallViewModel" />
@@ -227,11 +228,29 @@
             tools:ignore="MissingPrefix"
             tools:visibility="visible" />
 
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/animated_video_iv"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="@{vm.source == ConstantsKt.FROM_INCOMING_CALL || vm.callStatus == 2 ? View.INVISIBLE : View.VISIBLE}"
+            app:layout_constraintBottom_toBottomOf="@+id/btn_action"
+            app:layout_constraintEnd_toStartOf="@+id/guideline5"
+            app:layout_constraintStart_toStartOf="@+id/guideline4"
+            app:layout_constraintTop_toTopOf="parent"
+            app:lottie_autoPlay="true"
+            app:lottie_fileName="lottie/connecting1.json"
+            app:lottie_imageAssetsFolder="lottie"
+            app:lottie_loop="true"
+            app:lottie_repeatMode="restart"
+            app:lottie_scale="1"
+            app:lottie_speed="1"
+            tools:visibility="visible" />
+
         <RelativeLayout
             android:id="@+id/incoming_timer_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="invisible"
+            android:visibility="@{vm.source == ConstantsKt.FROM_INCOMING_CALL ? View.VISIBLE : View.INVISIBLE }"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -264,14 +283,6 @@
                 android:textColor="#ffffff"
                 android:textSize="42dp" />
         </RelativeLayout>
-
-        <androidx.constraintlayout.widget.Group
-            android:id="@+id/group_for_incoming"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="@{vm.callStatus == 1 ? View.VISIBLE : View.INVISIBLE }"
-            app:constraint_referenced_ids="incoming_timer_container"
-            tools:visibility="invisible" />
 
         <androidx.constraintlayout.widget.Group
             android:id="@+id/group_for_outgoing"

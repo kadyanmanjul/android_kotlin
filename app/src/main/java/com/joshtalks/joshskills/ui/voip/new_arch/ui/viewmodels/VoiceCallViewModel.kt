@@ -48,6 +48,7 @@ val voipLog = JoshLog.getInstanceIfEnable(Feature.VOIP)
 
 class VoiceCallViewModel : BaseViewModel() {
     private var isConnectionRequestSent = false
+    lateinit var source: String
     private val repository = WebrtcRepository()
     private val mutex = Mutex(false)
     private val callBar = CallBar()

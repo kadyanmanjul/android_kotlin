@@ -27,7 +27,6 @@ private const val TAG = "VoiceCallActivity"
 
 class VoiceCallActivity : BaseActivity() {
     //private val ERROR_RANGE = -1 downTo Int.MIN_VALUE
-    private lateinit var source: String
 
     private val voiceCallBinding by lazy<ActivityVoiceCallBinding> {
         DataBindingUtil.setContentView(this, R.layout.activity_voice_call)
@@ -44,9 +43,9 @@ class VoiceCallActivity : BaseActivity() {
 
     // TODO: Need to refactor
     override fun getArguments() {
-        source = getSource()
-        Log.d(TAG, "getArguments: $source")
-        when (source) {
+        vm.source = getSource()
+        Log.d(TAG, "getArguments: ${vm.source}")
+        when (vm.source) {
             FROM_CALL_BAR -> {}
             FROM_INCOMING_CALL -> {
                 val incomingCallId = VoipPref.getIncomingCallId()
@@ -78,10 +77,10 @@ class VoiceCallActivity : BaseActivity() {
     }
 
     override fun onCreated() {
-        Log.d(TAG, "onCreated: $source")
-        if (source == FROM_INCOMING_CALL || source == FROM_CALL_BAR) {
+        Log.d(TAG, "onCreated: ${vm.source}")
+        if (vm.source == FROM_INCOMING_CALL || vm.source == FROM_CALL_BAR) {
             addCallUserFragment()
-        } else if(source == FROM_ACTIVITY) {
+        } else if(vm.source == FROM_ACTIVITY) {
             addSearchingUserFragment()
         }
     }

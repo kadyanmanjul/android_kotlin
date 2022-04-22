@@ -9,6 +9,7 @@ import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Bundle
 import android.os.PowerManager
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,6 +18,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
+import com.joshtalks.joshskills.base.constants.FROM_INCOMING_CALL
 import com.joshtalks.joshskills.databinding.FragmentCallBinding
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.callbar.CallBar
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.callbar.VoipPref
@@ -81,7 +83,7 @@ class CallFragment : BaseFragment() , SensorEventListener {
     override fun initViewBinding() {
         callBinding.vm = vm
         // TODO: This might fails
-        if(VoipPref.getVoipState() != CONNECTED){
+        if(vm.source == FROM_INCOMING_CALL && VoipPref.getVoipState() != CONNECTED) {
             startIncomingTimer()
         }
         callBinding.executePendingBindings()
@@ -178,9 +180,8 @@ class CallFragment : BaseFragment() , SensorEventListener {
 
     private fun setCurrentCallState() {
         if(isFragmentRestarted) {
-            if (VoipPref.getVoipState() < JOINED && VoipPref.getVoipState() > CONNECTED) {
+            if((VoipPref.getVoipState() == JOINED || VoipPref.getVoipState() == CONNECTED).not())
                 requireActivity().finish()
-            }
         } else
             isFragmentRestarted = true
     }
