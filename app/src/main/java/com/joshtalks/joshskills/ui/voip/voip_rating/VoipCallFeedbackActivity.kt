@@ -15,6 +15,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.base.EventLiveData
+import com.joshtalks.joshskills.constants.CLOSE_REPORT
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.PrefManager
@@ -103,6 +105,7 @@ class VoipCallFeedbackActivity : BaseActivity(){
 
     override fun onBackPressed() {
         submitFeedback("BACK")
+        closeActivity()
         super.onBackPressed()
     }
 
@@ -148,7 +151,6 @@ class VoipCallFeedbackActivity : BaseActivity(){
             fppDialogFlag = it.getStringExtra(SHOW_FPP_DIALOG)
             binding.txtMessage.text = msz.replaceFirst("#", callerName)
 
-            Log.e("Sagar", "initFun: $fppDialogFlag", )
             if (fppDialogFlag=="true"){
                 binding.rootView.visibility  = View.VISIBLE
             }else{
@@ -201,7 +203,7 @@ class VoipCallFeedbackActivity : BaseActivity(){
     }
 
     private fun showReportDialog(type:String,function: ()->Unit) {
-        ReportDialogFragment.newInstance(callerId,currentId, type,channelName,function = function,fppDialogFlag)
+        ReportDialogFragment.newInstance(callerId,currentId, type,channelName,mFunction = function,fppDialogFlag)
             .show(supportFragmentManager, "ReportDialogFragment")
 
     }
@@ -313,9 +315,9 @@ class VoipCallFeedbackActivity : BaseActivity(){
             dimBg: Boolean = false,
             activity: Activity,
             flags: Array<Int> = arrayOf(),
-            callerId:Int,
-            currentUserId:Int,
-            fppDialogFlag:String
+            callerId: Int,
+            currentUserId: Int,
+            fppDialogFlag: String
         ) {
             Log.e("Sagar", "callStatusNetworkApi: sagar $fppDialogFlag")
 
@@ -329,7 +331,7 @@ class VoipCallFeedbackActivity : BaseActivity(){
                 putExtra(ARG_DIM_BACKGROUND, dimBg)
                 putExtra(ARG_CALLER_ID, callerId)
                 putExtra(ARG_CURRENT_ID, currentUserId)
-                putExtra(SHOW_FPP_DIALOG,fppDialogFlag)
+                putExtra(SHOW_FPP_DIALOG, fppDialogFlag)
                 flags.forEach { flag ->
                     this.addFlags(flag)
                 }
@@ -338,4 +340,5 @@ class VoipCallFeedbackActivity : BaseActivity(){
             }
         }
     }
+
 }

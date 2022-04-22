@@ -55,6 +55,6 @@ class SeeAllRequestsActivity : BaseFppActivity() {
     }
 
     private fun popBackStack() {
-        onBackPressed()
+        this.onBackPressed()
     }
 }

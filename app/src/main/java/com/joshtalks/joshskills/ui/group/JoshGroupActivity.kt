@@ -303,7 +303,7 @@ class JoshGroupActivity : BaseGroupActivity() {
                 ex.printStackTrace()
             }
         } else
-            onBackPressed()
+            this.onBackPressed()
     }
 
     private fun openImageChooser() {

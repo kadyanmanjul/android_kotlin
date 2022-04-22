@@ -79,28 +79,30 @@ open class WebRtcMiddlewareActivity : CoreJoshActivity() {
             lifecycleScope.launchWhenResumed {
                 findViewById<View>(R.id.ongoing_call_container)?.visibility = View.GONE
                 findViewById<View>(R.id.ongoing_call_container)?.setOnClickListener(null)
-                if (time > 0 && channelName.isNullOrEmpty().not()) {
-                    try {
-                        VoipCallFeedbackActivity.startPtoPFeedbackActivity(
-                            channelName = channelName,
-                            callTime = time,
-                            callerName = mBoundService?.getOppositeCallerName(),
-                            callerImage = mBoundService?.getOppositeCallerProfilePic(),
-                            yourName = if (User.getInstance().firstName.isNullOrBlank()) "New User" else User.getInstance().firstName,
-                            yourAgoraId = mBoundService?.getUserAgoraId(),
-                            dimBg = true,
-                            activity = this@WebRtcMiddlewareActivity,
-                            flags = arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
-                            callerId = mBoundService?.getOppositeCallerId()?: -1,
-                            currentUserId=mBoundService?.getUserAgoraId()?: -1,
-                            fppDialogFlag = mBoundService?.fppDialogeFlag?: EMPTY
-                        )
-                    } catch (ex:Exception){
-                        ex.printStackTrace()
+                if(!(((time/1000) in 121..1199 && mBoundService?.fppDialogeFlag =="false") || !PrefManager.getBoolValue(IS_COURSE_BOUGHT))){
+                    if (time > 0 && channelName.isNullOrEmpty().not()) {
+                        try {
+                            VoipCallFeedbackActivity.startPtoPFeedbackActivity(
+                                channelName = channelName,
+                                callTime = time,
+                                callerName = mBoundService?.getOppositeCallerName(),
+                                callerImage = mBoundService?.getOppositeCallerProfilePic(),
+                                yourName = if (User.getInstance().firstName.isNullOrBlank()) "New User" else User.getInstance().firstName,
+                                yourAgoraId = mBoundService?.getUserAgoraId(),
+                                dimBg = true,
+                                activity = this@WebRtcMiddlewareActivity,
+                                flags = arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
+                                callerId = mBoundService?.getOppositeCallerId()?: -1,
+                                currentUserId=mBoundService?.getUserAgoraId()?: -1,
+                                fppDialogFlag = mBoundService?.fppDialogeFlag?: EMPTY
+                            )
+                        } catch (ex:Exception){
+                            ex.printStackTrace()
+                        }
+                        this@WebRtcMiddlewareActivity.finish()
                     }
-                    this@WebRtcMiddlewareActivity.finish()
+                    mBoundService?.setOppositeUserInfo(null)
                 }
-                mBoundService?.setOppositeUserInfo(null)
             }
         }
     }

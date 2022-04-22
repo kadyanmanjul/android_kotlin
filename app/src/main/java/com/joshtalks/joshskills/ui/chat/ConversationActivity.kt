@@ -660,9 +660,11 @@ class ConversationActivity :
         CoroutineScope(Dispatchers.IO).launch {
             val lastLesson= conversationViewModel.getLastLessonForCourse()
             if(lastLesson == 90 && inboxEntity.isCapsuleCourse) {
-                conversationBinding.btnRestartCourse.visibility = View.VISIBLE
-                conversationBinding.messageButton.visibility = View.GONE
-                conversationBinding.chatEdit.visibility = View.GONE
+                withContext(Dispatchers.Main) {
+                    conversationBinding.btnRestartCourse.visibility = VISIBLE
+                    conversationBinding.messageButton.visibility = GONE
+                    conversationBinding.chatEdit.visibility = GONE
+                }
             }
         }
     }

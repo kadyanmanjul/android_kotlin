@@ -23,7 +23,7 @@ class ChooseLanguageOnBoardFragment: BaseFragment() {
     private var languageAdapter = ChooseLanguageAdapter()
     private var is100PointsActive = false
     private var eftActive = false
-    lateinit var language: ChooseLanguages
+    private var language: ChooseLanguages?=null
 
     val viewModel by lazy {
         ViewModelProvider(requireActivity()).get(FreeTrialOnBoardViewModel::class.java)
@@ -83,15 +83,19 @@ class ChooseLanguageOnBoardFragment: BaseFragment() {
                 is100PointsActive =
                     (map.variantKey == VariantKeys.POINTS_HUNDRED_ENABLED.NAME) && map.variableMap?.isEnabled == true
 
-                (requireActivity() as FreeTrialOnBoardActivity).showStartTrialPopup(
-                    language,
-                    is100PointsActive
-                )
+                language?.let {
+                    (requireActivity() as FreeTrialOnBoardActivity).showStartTrialPopup(
+                        it,
+                        is100PointsActive
+                    )
+                }
             }else{
-                (requireActivity() as FreeTrialOnBoardActivity).showStartTrialPopup(
-                    language,
-                    false
-                )
+                language?.let {
+                    (requireActivity() as FreeTrialOnBoardActivity).showStartTrialPopup(
+                        it,
+                        false
+                    )
+                }
             }
         }
     }
