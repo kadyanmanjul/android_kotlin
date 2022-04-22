@@ -588,15 +588,12 @@ class ConversationRoomViewModel(application: Application) : AndroidViewModel(app
     private fun changeMicStatus(eventObject: JsonObject) {
         Log.d("ABC2", "presence() called mic_status_changes")
         val isMicOn = eventObject.get("is_mic_on").asBoolean
-
         message.what = CHANGE_MIC_STATUS
         message.data = Bundle().apply {
             putBoolean(NOTIFICATION_BOOLEAN, isMicOn)
             putInt(NOTIFICATION_ID, eventObject.get("id").asInt)
         }
         singleLiveEvent.postValue(message)
-
-
         val userId = eventObject.get("id").asInt
 
         val newList: ArraySet<LiveRoomUser> = ArraySet(speakersList.value)

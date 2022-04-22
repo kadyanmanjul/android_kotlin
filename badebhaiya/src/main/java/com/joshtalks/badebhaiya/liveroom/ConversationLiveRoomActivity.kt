@@ -200,7 +200,6 @@ class ConversationLiveRoomActivity : BaseActivity(),
                     it.data?.let {
                         val id = it.getInt(NOTIFICATION_ID)
                         val boolean = it.getBoolean(NOTIFICATION_BOOLEAN, true)
-
                         if (vm.getAgoraUid() == id) {
                             iSSoundOn = boolean
                             vm.setChannelMemberStateForUuid(
@@ -282,6 +281,7 @@ class ConversationLiveRoomActivity : BaseActivity(),
     private fun initData() {
         binding.notificationBar.setNotificationViewEnquiryAction(this)
         //TODO init data to adapters
+        Log.d("Manjul", "initData() called $isRoomCreatedByUser")
         if (isRoomCreatedByUser) {
             updateMuteButtonState()
         }
@@ -524,10 +524,11 @@ class ConversationLiveRoomActivity : BaseActivity(),
     }
 
     private fun updateMuteButtonState() {
+        Log.d("Manjul", "updateMuteButtonState() called $iSSoundOn")
         when (iSSoundOn) {
             true -> {
                 binding.unmuteBtn.visibility = View.VISIBLE
-                binding.muteBtn.visibility = View.GONE
+                binding.muteBtn.visibility = View.VISIBLE
                 mBoundService?.unMuteCall()
             }
             false -> {
@@ -574,6 +575,7 @@ class ConversationLiveRoomActivity : BaseActivity(),
         else {
             binding.handRaiseBtn.visibility = View.GONE
             binding.handUnraiseBtn.visibility = View.VISIBLE
+            binding.handUnraiseBtn.isEnabled = true
             binding.raisedHands.visibility = View.GONE
         }
     }
@@ -906,6 +908,7 @@ class ConversationLiveRoomActivity : BaseActivity(),
         isRoomUserSpeaker = false
         mBoundService?.setClientRole(IRtcEngineEventHandler.ClientRole.CLIENT_ROLE_AUDIENCE)
         //mBoundService?.muteCall()
+        Log.d("Manjul", "updateUiWhenSwitchToListener() called")
         binding.apply {
             muteBtn.visibility = View.VISIBLE
             muteBtn.isEnabled = false
@@ -921,7 +924,8 @@ class ConversationLiveRoomActivity : BaseActivity(),
         isInviteRequestComeFromModerator = true
         mBoundService?.setClientRole(IRtcEngineEventHandler.ClientRole.CLIENT_ROLE_BROADCASTER)
         binding.handRaiseBtn.visibility = View.GONE
-        binding.handUnraiseBtn.visibility = View.GONE
+        binding.handUnraiseBtn.visibility = View.VISIBLE
+        binding.handUnraiseBtn.isEnabled = false
         setHandRaiseValueToFirestore(false)
         isHandRaised = true
         iSSoundOn = isMicOn == true
