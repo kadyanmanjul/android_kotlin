@@ -1479,8 +1479,10 @@ class ReadingFragmentWithoutFeedback :
     }
 
     fun playVideo() {
-        binding.playBtn.visibility = INVISIBLE
-        binding.mergedVideo.start()
+        if (isAudioRecording.not()) {
+            binding.playBtn.visibility = INVISIBLE
+            binding.mergedVideo.start()
+        }
     }
 
     fun playPracticeAudio() {
