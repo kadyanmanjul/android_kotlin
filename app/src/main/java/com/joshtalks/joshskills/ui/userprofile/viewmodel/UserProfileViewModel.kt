@@ -56,6 +56,7 @@ import com.joshtalks.joshskills.ui.userprofile.models.CourseEnrolled
 import com.joshtalks.joshskills.ui.userprofile.models.GroupInfo
 import com.joshtalks.joshskills.ui.userprofile.repository.UserProfileRepo
 import com.joshtalks.joshskills.util.DeepLinkUtil
+import com.joshtalks.joshskills.ui.voip.favorite.FavoriteCallerRepository
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import id.zelory.compressor.Compressor
 import kotlinx.coroutines.launch
@@ -95,6 +96,9 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
 
     private val p2pNetworkService = AppObjectController.p2pNetworkService
     private var mentorId: String = EMPTY
+    private val favoriteCallerRepository = FavoriteCallerRepository()
+    private var favoriteCallerDao = AppObjectController.appDatabase.favoriteCallerDao()
+
     private var intervalType: String? = EMPTY
     private var previousPage: String? = EMPTY
     val userProfileRepo = UserProfileRepo()
@@ -699,5 +703,19 @@ val url = responseObj.url.plus(File.separator).plus(responseObj.fields["key"])
                 }
             }
         }
+    }
+
+    fun removeFpp(uId: Int){
+        try {
+            viewModelScope.launch (Dispatchers.IO){
+                val requestParams: HashMap<String, List<Int>> = HashMap()
+                requestParams["mentor_ids"] = uId.let { return@let listOf(uId) }
+                val response = favoriteCallerRepository.removeUserFormFppLit(requestParams)
+                if (response.isSuccessful) {
+                    favoriteCallerDao.removeFromFavorite(uId.let { return@let listOf(uId) })
+                    getFppStatusInProfile(mentorId)
+                }
+            }
+        }catch (ex:Exception){}
     }
 }
