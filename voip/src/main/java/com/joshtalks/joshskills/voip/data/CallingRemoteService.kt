@@ -135,11 +135,11 @@ class CallingRemoteService : Service() {
         voipLog?.log("API Header --> ${Utils.apiHeader}")
         voipLog?.log("Mentor Id --> ${Utils.uuid}")
         // TODO: Refactor Code {Maybe use Content Provider}
-        observeMediatorEvents()
+        observeNetworkEvents()
         return START_REDELIVER_INTENT
     }
 
-    private fun observeMediatorEvents() {
+    private fun observeNetworkEvents() {
         if (isMediatorInitialise.not()) {
             isMediatorInitialise = true
             ioScope.launch {
@@ -170,9 +170,9 @@ class CallingRemoteService : Service() {
                                 notification.idle()
                                 resetCallUIState()
                                 updateVoipState(LEAVING)
-                                val duration = callDuration()
+                                val duration = callDurationInMillis()
                                 if(duration > 0)
-                                    updateLastCallDetails(duration)
+                                    updateLastCallDetails(duration.inSeconds())
                             }
 
                             INCOMING_CALL -> {
@@ -210,7 +210,7 @@ class CallingRemoteService : Service() {
     override fun onBind(intent: Intent?): IBinder? {
         voipLog?.log("Binding ....")
         val messenger = Messenger(handler)
-        observeHandlerEvents(handler)
+        observeRepositoryEvents(handler)
         return messenger.binder
     }
 
@@ -297,7 +297,7 @@ class CallingRemoteService : Service() {
         }
     }
 
-    private fun observeHandlerEvents(handler: CallingRemoteServiceHandler) {
+    private fun observeRepositoryEvents(handler: CallingRemoteServiceHandler) {
         voipLog?.log("${handler}")
         ioScope.launch {
             try {
@@ -352,7 +352,7 @@ class CallingRemoteService : Service() {
 
     private fun disconnectCall() {
         Log.d(TAG, "disconnectCall: ")
-        val duration = callDuration()
+        val duration = callDurationInMillis()
         val networkAction = NetworkAction(
             channelName = CallDetails.agoraChannelName,
             uid = CallDetails.localUserAgoraId,
@@ -364,7 +364,7 @@ class CallingRemoteService : Service() {
         resetCallUIState()
         Log.d(TAG, "disconnectCall: disconnectCall")
         if(duration > 0)
-            updateLastCallDetails(duration)
+            updateLastCallDetails(duration.inSeconds())
         mediator.sendEventToServer(networkAction)
         mediator.disconnectCall()
     }
@@ -419,13 +419,17 @@ class CallingRemoteService : Service() {
         audioController.unregisterAudioControllerReceivers()
     }
 
-    fun callDuration(): Long {
+    fun callDurationInMillis(): Long {
         val startTime = getStartCallTime()
         if(startTime == 0L)
             return 0L
         val currentTime = SystemClock.elapsedRealtime()
         Log.d(TAG, "callDuration: ST -> $startTime  and CT -> $currentTime")
-        return TimeUnit.MILLISECONDS.toSeconds(currentTime - startTime)
+        return currentTime - startTime
+    }
+
+    fun Long.inSeconds() : Long {
+        return TimeUnit.MILLISECONDS.toSeconds(this)
     }
 
 }
