@@ -13,7 +13,6 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -393,7 +392,7 @@ class SpeakingPractiseFragment : ABTestFragment() {
 
             startPractise(favoriteUserCall = false, isNewUserCall = true)
         }
-        binding.btnInviteFriend.isVisible = PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID
+        binding.btnInviteFriend.isVisible = PrefManager.getStringValue(COURSE_ID) == DEFAULT_COURSE_ID
         binding.btnInviteFriend.setOnClickListener {
             viewModel.saveVoiceCallImpression(IMPRESSION_CALL_MY_FRIEND_BTN_CLICKED)
             if (PermissionUtils.isReadContactPermissionEnabled(requireActivity())) {
