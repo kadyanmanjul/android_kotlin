@@ -9,27 +9,29 @@
         <import type="com.joshtalks.badebhaiya.feed.model.ConversationRoomType"/>
         <variable
             name="roomData"
-            type="com.joshtalks.badebhaiya.feed.model.RoomListResponseItem" />
-
-        <variable
-            name="handler"
-            type="com.joshtalks.badebhaiya.profile.ProfileActivity" />
+            type="com.joshtalks.badebhaiya.feed.model.Users" />
 
         <variable
             name="viewModel"
             type="com.joshtalks.badebhaiya.profile.ProfileViewModel"/>
 
         <variable
-            name="callback"
-            type="com.joshtalks.badebhaiya.feed.adapter.FeedAdapter.ConversationRoomItemCallback" />
+            name="feedViewModel"
+            type="com.joshtalks.badebhaiya.feed.FeedViewModel" />
+
+        <variable
+            name="handler"
+            type="com.joshtalks.badebhaiya.profile.ProfileActivity" />
+
     </data>
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:cardElevation="0dp"
-        android:layout_marginLeft="@dimen/_4sdp"
-        android:layout_marginRight="@dimen/_4sdp"
+        android:clickable="true"
+        android:id="@+id/user"
+        android:onClick="onProfileClicked"
         app:cardCornerRadius="@dimen/_14sdp"
         android:layout_marginBottom="@dimen/_2sdp"
         android:backgroundTint="@color/base_app_color">
@@ -39,14 +41,12 @@
             android:layout_height="match_parent"
             android:paddingBottom="@dimen/_8sdp">
 
-
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/iv_profile_pic"
-                imageCornerRadius="@{@dimen/_24sdp}"
-                imageUrl="@{}"
+                imageCornerRadius="@{@dimen/_16sdp}"
                 initialsFontSize="@{24}"
-                userName="@{}"
                 android:layout_width="@dimen/_48sdp"
+                android:onClick="@{() -> feedViewModel.onProfileClicked()}"
                 android:layout_height="@dimen/_48sdp"
                 android:layout_marginTop="@dimen/_5sdp"
                 android:layout_marginBottom="@dimen/_10sdp"
@@ -65,7 +65,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="17dp"
                 android:layout_marginEnd="16dp"
-                android:text="@{}"
                 android:layout_marginTop="@dimen/_6sdp"
                 android:textAppearance="@style/BB_Typography_Nunito_Semi_Bold"
                 android:textColor="@color/profile_feed_item_font_color"
@@ -78,7 +77,7 @@
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/btnFollow"
-                android:layout_width="@dimen/_80sdp"
+                android:layout_width="@dimen/_70sdp"
                 android:layout_height="@dimen/_20sdp"
                 android:layout_marginBottom="16dp"
                 android:background="@drawable/follow_button_background"
@@ -88,10 +87,9 @@
                 android:textAppearance="@style/BB_Typography_Nunito_Semi_Bold"
                 android:textColor="@color/follow_button_stroke"
                 android:textSize="@dimen/_12ssp"
-                android:visibility="@{(viewModel.isBadeBhaiyaSpeaker &amp;&amp; !viewModel.isSelfProfile) ? View.VISIBLE : View.GONE}"
                 app:layout_constraintBottom_toBottomOf="@id/iv_profile_pic"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.986"
+                app:layout_constraintHorizontal_bias="0.970"
                 app:layout_constraintStart_toStartOf="@id/iv_profile_pic" />
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -99,7 +97,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_3sdp"
-                android:visibility="@{(viewModel.isBadeBhaiyaSpeaker &amp;&amp; viewModel.isBioTextAvailable)? View.VISIBLE : View.GONE}"
                 android:textColor="@color/profile_font_color"
                 android:textSize="@dimen/_10ssp"
                 app:layout_constraintStart_toStartOf="@id/userName"

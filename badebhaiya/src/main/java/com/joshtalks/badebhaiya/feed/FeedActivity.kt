@@ -27,6 +27,7 @@ import com.joshtalks.badebhaiya.liveroom.OPEN_PROFILE
 import com.joshtalks.badebhaiya.liveroom.OPEN_ROOM
 import com.joshtalks.badebhaiya.liveroom.bottomsheet.CreateRoom
 import com.joshtalks.badebhaiya.profile.ProfileActivity
+import com.joshtalks.badebhaiya.profile.ProfileViewModel
 import com.joshtalks.badebhaiya.profile.request.DeleteReminderRequest
 import com.joshtalks.badebhaiya.profile.request.ReminderRequest
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomResponse
@@ -54,6 +55,8 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_feed)
+        val feedAdapter=FeedAdapter()
+        feedAdapter.notifyDataSetChanged()
         viewModel.setIsBadeBhaiyaSpeaker()
         binding.lifecycleOwner = this
         binding.handler = this

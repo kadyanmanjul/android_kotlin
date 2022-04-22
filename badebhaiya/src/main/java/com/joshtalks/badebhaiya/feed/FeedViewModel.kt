@@ -9,12 +9,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.badebhaiya.R
+import com.joshtalks.badebhaiya.SearchAdapter
 import com.joshtalks.badebhaiya.core.AppObjectController
 import com.joshtalks.badebhaiya.core.showAppropriateMsg
 import com.joshtalks.badebhaiya.core.showToast
 import com.joshtalks.badebhaiya.feed.adapter.FeedAdapter
 import com.joshtalks.badebhaiya.feed.model.ConversationRoomType
 import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
+import com.joshtalks.badebhaiya.feed.model.SearchRoomsResponse
+import com.joshtalks.badebhaiya.feed.model.Users
 import com.joshtalks.badebhaiya.liveroom.OPEN_PROFILE
 import com.joshtalks.badebhaiya.liveroom.OPEN_ROOM
 import com.joshtalks.badebhaiya.liveroom.bottomsheet.CreateRoom
@@ -194,19 +197,48 @@ class FeedViewModel : ViewModel() {
         }
     }
 
+    fun searchUser(query: String):MutableList<Users> {
+        val listUser= mutableListOf<Users>()
+        viewModelScope.launch {
+            try {
+                val parems = mutableMapOf<String, String>()
+                parems["query"] = query
+                val response = repository.searchRoom(parems)
+                if(response.isSuccessful)
+                {
+                    response.body()?.let {
+                        if(it.users.isNullOrEmpty().not())
+                        {
+                            listUser.addAll(it.users)
+                        }
+                        if(listUser.isNullOrEmpty())
+                        //showToast("NO results Found")
+                        else
+                        {
+                            // showToast("${listUser}")
+                        }
+                    }
+                }
+                //showToast("Search API launched successfully")
+            } catch (ex: Exception) {
+
+            }
+        }
+        return listUser
+    }
+
     fun deleteReminder(deleteReminderRequest: DeleteReminderRequest) {
         viewModelScope.launch {
             try {
                 val res = repository.deleteReminder(deleteReminderRequest)
                 if (res.isSuccessful && res.code() == 200) {
-                    showToast("Reminder Deleted")
+                    //showToast("Reminder Deleted")
                     feedAdapter.notifyDataSetChanged()
                 } else showToast("Error while Deleting Reminder")
             } catch (ex: Exception) {
                 ex.printStackTrace()
                 showToast("Error while Deleting Reminder")
             } finally {
-
             }
         }
     }
@@ -216,14 +248,13 @@ class FeedViewModel : ViewModel() {
             try {
                 val res = repository.setReminder(reminderRequest)
                 if (res.isSuccessful && res.code() == 201) {
-                    showToast("Reminder set successfully")
+                    //showToast("Reminder set successfully")
                     feedAdapter.notifyDataSetChanged()
                 } else showToast("Error while setting reminder")
             } catch (ex: Exception) {
                 ex.printStackTrace()
                 showToast("Error while setting reminder")
             } finally {
-
             }
         }
     }

@@ -149,7 +149,7 @@ class ProfileActivity: AppCompatActivity(), FeedAdapter.ConversationRoomItemCall
                 else
                     speakerUnfollowedUIChanges()
             } else {
-                tvFollowers.text = HtmlCompat.fromHtml(getString(R.string.bb_following, profileResponse.followersCount.toString()),
+                tvFollowers.text = HtmlCompat.fromHtml(getString(R.string.bb_following, profileResponse.followingCount.toString()),
                     HtmlCompat.FROM_HTML_MODE_LEGACY)
             }
         }

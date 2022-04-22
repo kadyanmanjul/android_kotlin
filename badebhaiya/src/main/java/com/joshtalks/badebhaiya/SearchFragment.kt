@@ -13,10 +13,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.widget.addTextChangedListener
 import androidx.core.widget.doAfterTextChanged
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.joshtalks.badebhaiya.core.EMPTY
 import com.joshtalks.badebhaiya.core.showToast
 import com.joshtalks.badebhaiya.feed.FeedActivity
 import com.joshtalks.badebhaiya.signup.SignUpActivity
@@ -24,7 +28,20 @@ import kotlinx.android.synthetic.main.activity_sign_up.*
 import kotlinx.android.synthetic.main.fragment_search.*
 import com.joshtalks.badebhaiya.databinding.FragmentSearchBinding
 import com.joshtalks.badebhaiya.feed.FeedViewModel
+import com.joshtalks.badebhaiya.feed.model.Users
+import com.joshtalks.badebhaiya.liveroom.ConversationLiveRoomActivity
+import com.joshtalks.badebhaiya.liveroom.OPEN_PROFILE
+import com.joshtalks.badebhaiya.liveroom.OPEN_ROOM
+import com.joshtalks.badebhaiya.profile.ProfileActivity
+import com.joshtalks.badebhaiya.profile.ProfileViewModel
+import com.joshtalks.badebhaiya.repository.model.ConversationRoomResponse
+import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.utils.TAG
+import com.joshtalks.badebhaiya.utils.setUserImageOrInitials
+import kotlinx.android.synthetic.main.activity_feed.*
+import kotlinx.android.synthetic.main.li_room_event.view.*
+import kotlinx.android.synthetic.main.li_search_event.*
+import kotlinx.android.synthetic.main.li_search_event.view.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
@@ -39,6 +56,11 @@ class SearchFragment : Fragment() {
 
     val viewModel by lazy {
         ViewModelProvider(requireActivity()).get(FeedViewModel::class.java)
+    }
+
+    private val profileViewModel by lazy {
+        //ViewModelProvider(this)[ProfileViewModel::class.java]
+        ViewModelProvider(requireActivity()).get(ProfileViewModel::class.java)
     }
     lateinit var binding:FragmentSearchBinding
     override fun onCreateView(
@@ -62,24 +84,55 @@ class SearchFragment : Fragment() {
             val manager = requireActivity().supportFragmentManager
             manager.beginTransaction().remove(this).commit()
         }
+        //(activity as FeedActivity).swipeRefreshLayout.visibility=View.GONE
         return binding.root
+
+        profileViewModel.speakerFollowed.observe(viewLifecycleOwner) {
+            if (it == true) {
+                speakerFollowedUIChanges()
+            }
+            else
+                speakerUnfollowedUIChanges()
+        }
         //return inflater.inflate(R.layout.fragment_search, container, false)
     }
+    private fun speakerFollowedUIChanges() {
+        binding.apply {
+            recyclerView.btnFollow.text = getString(R.string.following)
+            recyclerView.btnFollow.setTextColor(resources.getColor(R.color.white))
+            recyclerView.btnFollow.background = AppCompatResources.getDrawable(requireContext(),
+                R.drawable.following_button_background)
+        }
+    }
+    private fun speakerUnfollowedUIChanges() {
+        binding.apply {
+            recyclerView.btnFollow.text = getString(R.string.follow)
+            recyclerView.btnFollow.setTextColor(resources.getColor(R.color.follow_button_stroke))
+            recyclerView.btnFollow.background = AppCompatResources.getDrawable(requireContext(),
+                R.drawable.follow_button_background)
+        }
+    }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         var job: Job? = null
+        var users=mutableListOf<Users>()
         binding.searchBar.addTextChangedListener{
             //var job: Job? = null
+
                 job?.cancel()
                 job = MainScope().launch {
                     delay(500)
                     if (it.toString().isNotEmpty())
-                        viewModel.searchRoom(it.toString())
+                        users=viewModel.searchUser(it.toString())
                 }
-            }
-    }
+            binding.recyclerView.adapter=SearchAdapter(users)
+            binding.recyclerView.layoutManager=LinearLayoutManager(requireContext())
 
+        }
+
+    }
 
     companion object {
         /**

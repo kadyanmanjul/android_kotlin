@@ -3,6 +3,7 @@ package com.joshtalks.badebhaiya.repository.service
 import com.joshtalks.badebhaiya.feed.model.RoomListResponse
 import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
 import com.joshtalks.badebhaiya.feed.model.SearchRoomsResponse
+import com.joshtalks.badebhaiya.feed.model.SearchRoomsResponseList
 import com.joshtalks.badebhaiya.profile.request.ReminderRequest
 import com.joshtalks.badebhaiya.profile.request.DeleteReminderRequest
 import com.joshtalks.badebhaiya.repository.model.ApiResponse
@@ -40,6 +41,6 @@ interface ConversationRoomNetworkService {
     suspend fun deleteReminder(@Body deleteReminderRequest: DeleteReminderRequest): Response<Void>
 
     @POST("$DIR/conversation_room/search/")
-    suspend fun searchRoom(@Body parems:Map<String,String>):Response<SearchRoomsResponse>
+    suspend fun searchRoom(@Body parems:Map<String,String>):Response<SearchRoomsResponseList>
 
 }
