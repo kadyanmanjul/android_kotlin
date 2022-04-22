@@ -30,6 +30,7 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.text.bold
+import androidx.core.view.get
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
@@ -510,6 +511,9 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
     private fun openPopupMenu(view: View) {
         val popupMenu = PopupMenu(this, view, R.style.setting_menu_style)
         popupMenu.inflate(R.menu.user_profile__menu)
+        if (mentorId==Mentor.getInstance().getId()){
+            popupMenu.menu[3].isVisible = false
+        }
         popupMenu.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.menu_points_history -> {
@@ -531,6 +535,9 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                             putExtra(CONVERSATION_ID, intent.getStringExtra(CONVERSATION_ID))
                         }
                     )
+                }
+                R.id.remove_from_favorite -> {
+                    viewModel.removeFpp(viewModel.fppRequest.value?.agoraUid?:0)
                 }
             }
             return@setOnMenuItemClickListener false
@@ -657,15 +664,18 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                         SENT_REQUEST -> {
                             binding.sentRequestCard.visibility = VISIBLE
                             binding.btnSentRequest.visibility = VISIBLE
+                            binding.btnSendMessage.visibility = GONE
                             binding.profileText.text = it.text
                         }
                         ALREADY_FPP -> {
-                            binding.btnSendMessage.visibility = VISIBLE
+                            if (viewModel.fppRequest.value?.groupId != null)
+                                binding.btnSendMessage.visibility = VISIBLE
                         }
                         REQUESTED -> {
                             with(binding) {
                                 sentRequestCard.visibility = VISIBLE
                                 btnSentRequest.visibility = VISIBLE
+                                btnSendMessage.visibility = GONE
                                 profileText.text = it.text
                                 btnSentRequest.backgroundTintList = ContextCompat.getColorStateList(
                                     AppObjectController.joshApplication,
@@ -681,6 +691,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                             }
                         }
                         HAS_RECIEVED_REQUEST -> {
+                            binding.btnSendMessage.visibility = GONE
                             binding.sentRequestCard.visibility = VISIBLE
                             binding.btnConfirmRequest.visibility = VISIBLE
                             binding.btnNotNowRequest.visibility = VISIBLE
