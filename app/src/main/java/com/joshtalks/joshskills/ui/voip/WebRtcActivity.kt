@@ -578,6 +578,7 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
 
         viewModel.fppDialogShow.observe(this){
             fppDialog = it
+            mBoundService?.fppDialogeFlag = fppDialog
         }
         if (isCallFavoritePP() || WebRtcService.isCallOnGoing.value == true) {
             if (intent.getSerializableExtra(CALL_USER_OBJ) == null) {

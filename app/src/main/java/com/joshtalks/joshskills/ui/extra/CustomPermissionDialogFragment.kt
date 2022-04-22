@@ -13,6 +13,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.databinding.FragmentCustomPermissionDialogBinding
+import java.lang.Exception
 
 const val NOTIFICATION_POPUP = "NOTIFICATION_POPUP"
 const val AUTO_START_POPUP = "AUTO_START_POPUP"
@@ -37,13 +38,16 @@ class CustomPermissionDialogFragment : BottomSheetDialogFragment() {
             supportFragmentManager: FragmentManager,
             popupType: String
         ) {
-            val fragmentTransaction = supportFragmentManager.beginTransaction()
-            val prev = supportFragmentManager.findFragmentByTag("custom_permission_fragment_dialog")
-            if (prev != null)
-                fragmentTransaction.remove(prev)
-            this.popupType = popupType
-            fragmentTransaction.addToBackStack(null)
-            newInstance(intent).show(supportFragmentManager, "custom_permission_fragment_dialog")
+            try {
+                val fragmentTransaction = supportFragmentManager.beginTransaction()
+                val prev = supportFragmentManager.findFragmentByTag("custom_permission_fragment_dialog")
+                if (prev != null)
+                    fragmentTransaction.remove(prev)
+                this.popupType = popupType
+                fragmentTransaction.addToBackStack(null)
+                fragmentTransaction.commitAllowingStateLoss()
+                newInstance(intent).show(supportFragmentManager, "custom_permission_fragment_dialog")
+            }catch (ex:Exception){}
         }
     }
 
@@ -128,5 +132,9 @@ class CustomPermissionDialogFragment : BottomSheetDialogFragment() {
 
     fun logImpression(actionPerformed: AnalyticsEvent) {
         (requireActivity() as BaseActivity).pushAnalyticsToServer(actionPerformed.NAME)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+
     }
 }

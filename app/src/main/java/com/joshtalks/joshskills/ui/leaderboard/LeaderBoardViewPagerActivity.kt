@@ -177,15 +177,19 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity(), ViewBitmap {
     private fun openSearchActivity() {
         val currentMentor = viewModel.leaderBoardData.value?.get("TODAY")?.current_mentor
         val isCourseBought = currentMentor?.isCourseBought ?: false
-        searchActivityResult.launch(
-            LeaderBoardSearchActivity.getSearchActivityIntent(
-                this,
-                viewModel.leaderBoardData.value,
-                intent.getStringExtra(CONVERSATION_ID),
-                isCourseBought,
-                currentMentor?.expiryDate?.time
+        try {
+            searchActivityResult.launch(
+                LeaderBoardSearchActivity.getSearchActivityIntent(
+                    this,
+                    viewModel.leaderBoardData.value,
+                    intent.getStringExtra(CONVERSATION_ID),
+                    isCourseBought,
+                    currentMentor?.expiryDate?.time
+                )
             )
-        )
+        }catch (ex:Exception){
+
+        }
     }
 
     private fun addObserver() {
