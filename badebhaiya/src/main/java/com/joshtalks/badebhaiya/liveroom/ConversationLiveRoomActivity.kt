@@ -254,6 +254,8 @@ class ConversationLiveRoomActivity : BaseActivity(),
             "setBadgeDrawable() called with: raisedHandAudienceSize = $raisedHandAudienceSize"
         )
         badgeDrawable.setNumber(raisedHandAudienceSize)
+        badgeDrawable.horizontalOffset = 20
+        badgeDrawable.verticalOffset = 20
         BadgeUtils.attachBadgeDrawable(badgeDrawable, binding.raisedHands)
         badgeDrawable.setVisible(raisedHandAudienceSize>0)
 
@@ -449,13 +451,13 @@ class ConversationLiveRoomActivity : BaseActivity(),
 
             val uids = ArrayList<Int>()
             speakers?.forEach { user ->
-                if (user.volume <= 15) {
+                if (user.volume <= 2) {
                     when (user.uid) {
                         0 -> speakingListForGoldenRing.remove(vm.getAgoraUid()!!)
                         else -> speakingListForGoldenRing.remove(user.uid)
                     }
                 }
-                else if (user.volume > 15) {
+                else if (user.volume > 2) {
                     when (user.uid) {
                         0 -> uids.add(vm.getAgoraUid()!!)
                         else -> uids.add(user.uid)
