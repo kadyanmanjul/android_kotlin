@@ -57,7 +57,6 @@ import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity
 import com.joshtalks.joshskills.voip.constant.CONNECTED
 import com.joshtalks.joshskills.voip.constant.IDLE
 import com.joshtalks.joshskills.voip.constant.LEAVING
-import com.joshtalks.joshskills.voip.voipLog
 import com.joshtalks.joshskills.ui.voip.SearchingUserActivity
 import com.joshtalks.joshskills.ui.voip.favorite.FavoriteListActivity
 import com.karumi.dexter.MultiplePermissionsReport
@@ -73,6 +72,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import com.joshtalks.joshskills.core.IS_FREE_TRIAL_CAMPAIGN_ACTIVE
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.voipLog
 
 
 class SpeakingPractiseFragment : ABTestFragment(),TimeAnimator.TimeListener {
@@ -169,7 +169,7 @@ class SpeakingPractiseFragment : ABTestFragment(),TimeAnimator.TimeListener {
         if(voipState == CONNECTED){
             binding.btnStartTrialText.isEnabled = false
             beforeAnimation?.setTint(resources.getColor(R.color.grey))
-        }else if(voipState==IDLE || voipState == LEAVING){
+        }else if(voipState==IDLE || voipState == LEAVING) {
             binding.btnStartTrialText.isEnabled = true
             beforeAnimation?.setTint(resources.getColor(R.color.colorPrimary))
         }
@@ -246,7 +246,7 @@ class SpeakingPractiseFragment : ABTestFragment(),TimeAnimator.TimeListener {
                         startPractise()
                     }
                 }
-                LEAVING ->{
+                LEAVING -> {
                     beforeAnimation?.setTint(resources.getColor(R.color.colorPrimary))
                     binding.btnStartTrialText.isEnabled = true
                 }

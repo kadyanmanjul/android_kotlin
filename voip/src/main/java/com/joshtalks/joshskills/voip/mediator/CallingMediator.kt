@@ -1,8 +1,6 @@
 package com.joshtalks.joshskills.voip.mediator
 
-import android.media.RingtoneManager
 import android.util.Log
-import com.joshtalks.joshskills.base.constants.INCOMING
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_INCOMING_CALL_ID
 import com.joshtalks.joshskills.base.constants.PEER_TO_PEER
 import com.joshtalks.joshskills.voip.FirebaseChannelService
@@ -28,33 +26,27 @@ import com.joshtalks.joshskills.voip.constant.RECONNECTING
 import com.joshtalks.joshskills.voip.constant.UNHOLD
 import com.joshtalks.joshskills.voip.constant.UNMUTE
 import com.joshtalks.joshskills.voip.data.local.PrefManager
-import com.joshtalks.joshskills.voip.mediator.CallDirection.*
 import com.joshtalks.joshskills.voip.notification.NotificationPriority
 import com.joshtalks.joshskills.voip.notification.VoipNotification
 import com.joshtalks.joshskills.voip.voipLog
-import com.joshtalks.joshskills.voip.webrtc.AgoraCallingService
+import com.joshtalks.joshskills.voip.webrtc.AgoraWebrtcService
 import com.joshtalks.joshskills.voip.webrtc.CallState
-import com.joshtalks.joshskills.voip.webrtc.CallingService
+import com.joshtalks.joshskills.voip.webrtc.WebrtcService
+import kotlinx.coroutines.*
 import kotlin.Exception
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import java.util.*
 import kotlin.collections.HashMap
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
+import kotlinx.coroutines.flow.collect
 
 const val PER_USER_TIMEOUT_IN_MILLIS = 10 * 1000L
 const val CALL_CONNECT_TIMEOUT_IN_MILLIS = 2 * 60 * 1000L
 private const val TAG = "CallingMediator"
 
 class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
-    private val callingService: CallingService by lazy { AgoraCallingService }
+    private val webrtcService: WebrtcService by lazy { AgoraWebrtcService }
     private val networkEventChannel: EventChannel by lazy { PubNubChannelService }
     private val fallbackEventChannel: EventChannel by lazy { FirebaseChannelService }
     private lateinit var callDirection: CallDirection
@@ -63,11 +55,11 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
     private val flow by lazy { MutableSharedFlow<Int>(replay = 0) }
     private val mutex = Mutex(false)
     private val incomingCallMutex = Mutex(false)
-    private val soundManager by lazy { SoundManager(SOUND_TYPE_RINGTONE,20000) }
-    private lateinit var voipNotification : VoipNotification
-    private lateinit var userNotFoundJob : Job
+    private val soundManager by lazy { SoundManager(SOUND_TYPE_RINGTONE, 20000) }
+    private lateinit var voipNotification: VoipNotification
+    private lateinit var userNotFoundJob: Job
     private var isShowingIncomingCall = false
-    private val Communication?.hasMainEventChannelFailed : Boolean
+    private val Communication?.hasMainEventChannelFailed: Boolean
         get() {
             return PrefManager.getLatestPubnubMessageTime() < (this?.getEventTime() ?: 0)
         }
@@ -75,7 +67,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
     init {
         scope.launch {
             mutex.withLock {
-                callingService.initCallingService()
+                webrtcService.initWebrtcService()
                 networkEventChannel.initChannel()
                 fallbackEventChannel.initChannel()
                 handleWebrtcEvent()
@@ -92,7 +84,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
     private fun stopAudio() {
         try {
             soundManager.stopSound()
-        } catch (e : Exception) {
+        } catch (e: Exception) {
             e.printStackTrace()
         }
     }
@@ -106,18 +98,15 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                     this@CallingMediator.callType = callType
                     // TODO: Need to Handle when Error Occurred
                     voipLog?.log("Coroutine CallData --> $callData")
-                    if(this@CallingMediator::voipNotification.isInitialized) {
+                    if (this@CallingMediator::voipNotification.isInitialized) {
                         voipNotification.removeNotification()
                         stopAudio()
                     }
 
                     // TODO: Need to Fix Checking Incoming call two time
-                    if(callData.isIncomingCall()) {
-                        stopUserNotFoundTimer()
-                    } else {
-                        stopUserNotFoundTimer()
+                    stopUserNotFoundTimer()
+                    if (callData.isIncomingCall().not())
                         startUserNotFoundTimer()
-                    }
                     calling.onPreCallConnect(callData)
                 } catch (e: Exception) {
                     flow.emit(ERROR)
@@ -128,15 +117,15 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
         }
     }
 
-    private fun HashMap<String, Any>.isIncomingCall() : Boolean {
+    private fun HashMap<String, Any>.isIncomingCall(): Boolean {
         return get(INTENT_DATA_INCOMING_CALL_ID) != null
     }
 
     private fun handleFallbackEvents() {
         Log.d(TAG, "handleFallbackEvents: Pubnub Channel Failed...")
         scope.launch {
-            fallbackEventChannel.observeChannelEvents().collectLatest { event ->
-                if(event.hasMainEventChannelFailed) {
+            fallbackEventChannel.observeChannelEvents().collect { event ->
+                if (event.hasMainEventChannelFailed) {
                     networkEventChannel.reconnect()
                     when (event) {
                         is Error -> {
@@ -145,7 +134,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                              */
                             voipLog?.log("Error --> $event")
                             // TODO: Should not handle this here
-                            callingService.disconnectCall()
+                            webrtcService.disconnectCall()
                             flow.emit(event.errorType)
                         }
                         is ChannelData -> {
@@ -160,7 +149,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                                 callToken = event.getCallingToken(),
                                 agoraUId = event.getAgoraUid()
                             )
-                            callingService.connectCall(request)
+                            webrtcService.connectCall(request)
                             CallDetails.reset()
                             CallDetails.set(event, callType)
                         }
@@ -182,15 +171,16 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                                     ServerConstants.UNMUTE -> {
                                         flow.emit(UNMUTE)
                                     }
+                                    // Remote User Disconnected
                                     ServerConstants.DISCONNECTED -> {
-                                        callingService.disconnectCall()
+                                        webrtcService.disconnectCall()
                                         flow.emit(CALL_DISCONNECT_REQUEST)
                                     }
                                 }
                             }
                         }
                         is IncomingCall -> {
-                            if(isShowingIncomingCall.not()) {
+                            if (isShowingIncomingCall.not()) {
                                 updateIncomingCallState(true)
                                 voipLog?.log("Incoming Call -> $event")
                                 IncomingCallData.set(event.getCallId(), PEER_TO_PEER)
@@ -202,60 +192,72 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
             }
         }
     }
-    
+
     private fun startUserNotFoundTimer() {
         userNotFoundJob = scope.launch {
-            if(isActive) {
-                val timeout = Timeout(ServerConstants.TIMEOUT)
-                for(i in 1..12) {
-                    Log.d(TAG, "startUserNotFoundTimer: $i")
-                    delay(PER_USER_TIMEOUT_IN_MILLIS)
-                    if(isActive)
-                        networkEventChannel.emitEvent(timeout)
-                    else
-                        break
-                }
-                val networkAction = NetworkAction(
-                    channelName = "No Channel",
-                    uid = -1,
-                    type = ServerConstants.DISCONNECTED,
-                    duration = 0,
-                    address = Utils.uuid ?: ""
-                )
-                networkEventChannel.emitEvent(networkAction)
-                disconnectCall()
+            ensureActive()
+            val timeout = Timeout(ServerConstants.TIMEOUT)
+            for (i in 1..2) {
+                delay(PER_USER_TIMEOUT_IN_MILLIS)
+                ensureActive()
+                networkEventChannel.emitEvent(timeout)
+                Log.d(TAG, "startUserNotFoundTimer: $i")
+            }
+            Log.d(TAG, "startUserNotFoundTimer: Sending Disconnect")
+            delay(PER_USER_TIMEOUT_IN_MILLIS)
+            ensureActive()
+            noUserFound()
+            Log.d(TAG, "startUserNotFoundTimer: disconnectCall()")
+            disconnectCall()
+            Log.d(TAG, "startUserNotFoundTimer: CALL_DISCONNECT_REQUEST")
+            scope.launch {
                 flow.emit(CALL_DISCONNECT_REQUEST)
             }
         }
     }
 
+    private fun noUserFound() {
+        val noUserFound = UserAction(
+            channelName = "NO_CHANNEL",
+            type = ServerConstants.NO_USER_FOUND,
+            address = Utils.uuid ?: ""
+        )
+        networkEventChannel.emitEvent(noUserFound)
+    }
+
     private fun stopUserNotFoundTimer() {
         Log.d(TAG, "stopUserNotFoundTimer: ")
-        if(::userNotFoundJob.isInitialized)
+        if (::userNotFoundJob.isInitialized) {
+            Log.d(TAG, "stopUserNotFoundTimer: Cancelling")
             userNotFoundJob.cancel()
+        }
     }
 
     override fun muteAudioStream(muteAudio: Boolean) {
-        callingService.muteAudioStream(muteAudio)
+        webrtcService.muteAudioStream(muteAudio)
     }
 
     override fun sendEventToServer(data: OutgoingData) {
         networkEventChannel.emitEvent(data)
     }
 
-    override fun showIncomingCall(incomingCall : IncomingCall) {
+    override fun showIncomingCall(incomingCall: IncomingCall) {
         showIncomingNotification(incomingCall)
     }
 
     override fun hideIncomingCall() {
         scope.launch {
-            val map = HashMap<String, Any>(1).apply {
-                put(INTENT_DATA_INCOMING_CALL_ID, IncomingCallData.callId)
+            try {
+                val map = HashMap<String, Any>(1).apply {
+                    put(INTENT_DATA_INCOMING_CALL_ID, IncomingCallData.callId)
+                }
+                calling.onCallDecline(map)
+                stopAudio()
+                voipNotification.removeNotification()
+                updateIncomingCallState(false)
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
-            calling.onCallDecline(map)
-            stopAudio()
-            voipNotification.removeNotification()
-            updateIncomingCallState(false)
         }
     }
 
@@ -264,97 +266,101 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
     override fun disconnectCall() {
         voipLog?.log("Disconnect Call")
         stopUserNotFoundTimer()
-        callingService.disconnectCall()
+        webrtcService.disconnectCall()
     }
 
     override fun observeState(): SharedFlow<Int> {
-        return callingService.observeCallingState()
+        return webrtcService.observeCallingState()
     }
 
     // Handle Events coming from Backend
     private fun handlePubnubEvent() {
         scope.launch {
-            networkEventChannel.observeChannelEvents().collectLatest {
-                val latestEventTimestamp = it.getEventTime() ?: 0L
-                PrefManager.setLatestPubnubMessageTime(latestEventTimestamp)
-                when (it) {
-                    is Error -> {
-                        /**
-                         * Reset Webrtc
-                         */
-                        voipLog?.log("Error --> $it")
-                        // TODO: Should not handle this here
-                        callingService.disconnectCall()
-                        flow.emit(it.errorType)
-                    }
-                    is ChannelData -> {
-                        /**
-                         * Join Channel
-                         */
-                        stopUserNotFoundTimer()
-                        voipLog?.log("Channel Data -> ${it}")
-                        // TODO: Use Calling Service type
-                        val request = PeerToPeerCallRequest(
-                            channelName = it.getChannel(),
-                            callToken = it.getCallingToken(),
-                            agoraUId = it.getAgoraUid()
-                        )
-                        callingService.connectCall(request)
-                        CallDetails.reset()
-                        CallDetails.set(it, callType)
-                    }
-                    is MessageData -> {
-                        voipLog?.log("Message Data -> $it")
-                        if (it.isMessageForSameChannel()) {
-                            when (it.getType()) {
-                                ServerConstants.ONHOLD -> {
-                                    // Transfer to Service
-                                    flow.emit(HOLD)
-                                }
-                                ServerConstants.RESUME -> {
-                                    flow.emit(UNHOLD)
-                                }
-                                ServerConstants.MUTE -> {
-                                    flow.emit(MUTE)
-                                }
-                                ServerConstants.UNMUTE -> {
-                                    flow.emit(UNMUTE)
-                                }
-                                ServerConstants.DISCONNECTED -> {
-                                    callingService.disconnectCall()
-                                    flow.emit(CALL_DISCONNECT_REQUEST)
+            try {
+                networkEventChannel.observeChannelEvents().collect {
+                    val latestEventTimestamp = it.getEventTime() ?: 0L
+                    PrefManager.setLatestPubnubMessageTime(latestEventTimestamp)
+                    when (it) {
+                        is Error -> {
+                            /**
+                             * Reset Webrtc
+                             */
+                            voipLog?.log("Error --> $it")
+                            // TODO: Should not handle this here
+                            webrtcService.disconnectCall()
+                            flow.emit(it.errorType)
+                        }
+                        is ChannelData -> {
+                            /**
+                             * Join Channel
+                             */
+                            stopUserNotFoundTimer()
+                            voipLog?.log("Channel Data -> ${it}")
+                            // TODO: Use Calling Service type
+                            val request = PeerToPeerCallRequest(
+                                channelName = it.getChannel(),
+                                callToken = it.getCallingToken(),
+                                agoraUId = it.getAgoraUid()
+                            )
+                            webrtcService.connectCall(request)
+                            CallDetails.reset()
+                            CallDetails.set(it, callType)
+                        }
+                        is MessageData -> {
+                            voipLog?.log("Message Data -> $it")
+                            if (it.isMessageForSameChannel()) {
+                                when (it.getType()) {
+                                    ServerConstants.ONHOLD -> {
+                                        // Transfer to Service
+                                        flow.emit(HOLD)
+                                    }
+                                    ServerConstants.RESUME -> {
+                                        flow.emit(UNHOLD)
+                                    }
+                                    ServerConstants.MUTE -> {
+                                        flow.emit(MUTE)
+                                    }
+                                    ServerConstants.UNMUTE -> {
+                                        flow.emit(UNMUTE)
+                                    }
+                                    ServerConstants.DISCONNECTED -> {
+                                        webrtcService.disconnectCall()
+                                        flow.emit(CALL_DISCONNECT_REQUEST)
+                                    }
                                 }
                             }
                         }
-                    }
-                    is IncomingCall -> {
-                        if(isShowingIncomingCall.not()) {
-                            updateIncomingCallState(true)
-                            voipLog?.log("Incoming Call -> $it")
-                            IncomingCallData.set(it.getCallId(), PEER_TO_PEER)
-                            flow.emit(INCOMING_CALL)
+                        is IncomingCall -> {
+                            if (isShowingIncomingCall.not()) {
+                                updateIncomingCallState(true)
+                                voipLog?.log("Incoming Call -> $it")
+                                IncomingCallData.set(it.getCallId(), PEER_TO_PEER)
+                                flow.emit(INCOMING_CALL)
+                            }
                         }
                     }
                 }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
     }
 
-    private fun showIncomingNotification(incomingCall : IncomingCall) {
-            val remoteView =
-                calling.notificationLayout(incomingCall) ?: return // TODO: might throw error
-            voipNotification = VoipNotification(remoteView, NotificationPriority.High)
-            voipNotification.show()
-            soundManager.playSound()
-            scope.launch {
-                delay(20000)
-                voipNotification.removeNotification()
-                updateIncomingCallState(false)
-                stopAudio()
-            }
+    private fun showIncomingNotification(incomingCall: IncomingCall) {
+        val remoteView =
+            calling.notificationLayout(incomingCall) ?: return // TODO: might throw error
+        voipNotification = VoipNotification(remoteView, NotificationPriority.High)
+        voipNotification.show()
+        soundManager.playSound()
+        scope.launch {
+            delay(20000)
+            voipNotification.removeNotification()
+            updateIncomingCallState(false)
+            stopAudio()
+        }
     }
 
-    private fun updateIncomingCallState(isShowingIncomingCall : Boolean) {
+    private fun updateIncomingCallState(isShowingIncomingCall: Boolean) {
         scope.launch {
             incomingCallMutex.withLock {
                 this@CallingMediator.isShowingIncomingCall = isShowingIncomingCall
@@ -367,46 +373,46 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
 
     private fun handleWebrtcEvent() {
         scope.launch {
-            callingService.observeCallingEvents().collectLatest {
-                when (it) {
-                    CallState.CallConnected -> {
-                        // Call Connected
-                        flow.emit(CALL_CONNECTED_EVENT)
-                        voipLog?.log("Call Connected")
-                    }
-                    CallState.CallDisconnected -> {
-                        flow.emit(CALL_DISCONNECTED)
-                        voipLog?.log("Call Disconnected")
-                    }
-                    CallState.ReconnectingFailed -> {
-                        flow.emit(CALL_DISCONNECT_REQUEST)
-                        voipLog?.log("Call Disconnect Request")
-                    }
-                    CallState.CallInitiated -> {
-                        // CallInitiated
-                        flow.emit(CALL_INITIATED_EVENT)
-                        voipLog?.log("Call CallInitiated")
-                    }
-                    CallState.OnReconnected -> {
-                        flow.emit(RECONNECTED)
-                        voipLog?.log("OnReconnected")
-                    }
+            try {
+                webrtcService.observeCallingEvents().collect {
+                    when (it) {
+                        CallState.CallConnected -> {
+                            // Call Connected
+                            flow.emit(CALL_CONNECTED_EVENT)
+                            voipLog?.log("Call Connected")
+                        }
+                        CallState.CallDisconnected -> {
+                            flow.emit(CALL_DISCONNECTED)
+                            voipLog?.log("Call Disconnected")
+                        }
+                        CallState.ReconnectingFailed -> {
+                            flow.emit(CALL_DISCONNECT_REQUEST)
+                            voipLog?.log("Call Disconnect Request")
+                        }
+                        CallState.CallInitiated -> {
+                            // CallInitiated
+                            flow.emit(CALL_INITIATED_EVENT)
+                            voipLog?.log("Call CallInitiated")
+                        }
+                        CallState.OnReconnected -> {
+                            flow.emit(RECONNECTED)
+                            voipLog?.log("OnReconnected")
+                        }
 
-                    CallState.OnReconnecting -> {
-                        flow.emit(RECONNECTING)
-                        voipLog?.log("OnReconnecting")
-                    }
-                    CallState.Error -> {
-                        flow.emit(ERROR)
-                        voipLog?.log("Error")
+                        CallState.OnReconnecting -> {
+                            flow.emit(RECONNECTING)
+                            voipLog?.log("OnReconnecting")
+                        }
+                        CallState.Error -> {
+                            flow.emit(ERROR)
+                            voipLog?.log("Error")
+                        }
                     }
                 }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
-    }
-
-    private fun updateCallDirection(direction: CallDirection) {
-        callDirection = direction
     }
 }
 

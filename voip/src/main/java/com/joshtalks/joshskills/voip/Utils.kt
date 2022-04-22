@@ -6,42 +6,16 @@ import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import com.joshtalks.joshskills.base.constants.CALL_DISCONNECTED_URI
-import com.joshtalks.joshskills.base.constants.CALL_DURATION
-import com.joshtalks.joshskills.base.constants.CALL_ID
-import com.joshtalks.joshskills.base.constants.CALL_START_TIME
-import com.joshtalks.joshskills.base.constants.CALL_TYPE
-import com.joshtalks.joshskills.base.constants.CHANNEL_NAME
-import com.joshtalks.joshskills.base.constants.CONTENT_URI
-import com.joshtalks.joshskills.base.constants.CURRENT_HOLD_STATE_URI
-import com.joshtalks.joshskills.base.constants.CURRENT_MUTE_STATE_URI
-import com.joshtalks.joshskills.base.constants.CURRENT_REMOTE_MUTE_STATE_URI
-import com.joshtalks.joshskills.base.constants.CURRENT_SPEAKER_STATE_URI
-import com.joshtalks.joshskills.base.constants.CURRENT_USER_AGORA_ID
-import com.joshtalks.joshskills.base.constants.INCOMING_CALL_URI
-import com.joshtalks.joshskills.base.constants.IS_MUTE
-import com.joshtalks.joshskills.base.constants.IS_ON_HOLD
-import com.joshtalks.joshskills.base.constants.IS_REMOTE_USER_MUTE
-import com.joshtalks.joshskills.base.constants.IS_SPEAKER_ON
-import com.joshtalks.joshskills.base.constants.REMOTE_USER_AGORA_ID
-import com.joshtalks.joshskills.base.constants.REMOTE_USER_IMAGE
-import com.joshtalks.joshskills.base.constants.REMOTE_USER_NAME
-import com.joshtalks.joshskills.base.constants.RESET_CURRENT_CALL_STATE_URI
-import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_DISCONNECT_CALL
-import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_INCOMING_CALL_DECLINE
-import com.joshtalks.joshskills.base.constants.START_CALL_TIME_COLUMN
-import com.joshtalks.joshskills.base.constants.START_CALL_TIME_URI
-import com.joshtalks.joshskills.base.constants.TOPIC_NAME
-import com.joshtalks.joshskills.base.constants.VOIP_STATE
-import com.joshtalks.joshskills.base.constants.VOIP_STATE_URI
+import com.joshtalks.joshskills.base.constants.*
+import com.joshtalks.joshskills.base.log.Feature
 import com.joshtalks.joshskills.base.model.ApiHeader
 import com.joshtalks.joshskills.voip.calldetails.IncomingCallData
 import com.joshtalks.joshskills.voip.data.CallingRemoteService
-import com.joshtalks.joshskills.voip.log.JoshLog
-import java.time.Duration
+import com.joshtalks.joshskills.base.log.JoshLog
+import com.joshtalks.joshskills.voip.constant.LEAVING
 
 // TODO: Must Refactor
-val voipLog = JoshLog.getInstanceIfEnable(com.joshtalks.joshskills.voip.log.Feature.VOIP)
+val voipLog = JoshLog.getInstanceIfEnable(Feature.VOIP)
 
 //fun Context.updateUserMuteState(state: Boolean, ) {
 //    voipLog?.log("updateUserMuteState --> $state")
@@ -180,6 +154,16 @@ fun Context.updateVoipState(state: Int) {
     }
     val data = contentResolver.insert(
         Uri.parse(CONTENT_URI + VOIP_STATE_URI),
+        values
+    )
+    voipLog?.log("Data --> $data")
+}
+
+fun Context.setVoipLeavingState() {
+    voipLog?.log("Setting Voip State --> $LEAVING")
+    val values = ContentValues(1)
+    val data = contentResolver.insert(
+        Uri.parse(CONTENT_URI + VOIP_STATE_LEAVING_URI),
         values
     )
     voipLog?.log("Data --> $data")

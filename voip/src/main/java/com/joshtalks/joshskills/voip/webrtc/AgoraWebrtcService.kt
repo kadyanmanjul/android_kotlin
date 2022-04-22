@@ -1,7 +1,6 @@
 package com.joshtalks.joshskills.voip.webrtc
 
-import android.app.Service
-import android.media.AudioManager
+import android.util.Log
 import com.joshtalks.joshskills.voip.BuildConfig
 import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.constant.CONNECTED
@@ -29,7 +28,7 @@ import timber.log.Timber
 private const val JOINING_CHANNEL_SUCCESS = 0
 private const val USER_ALREADY_IN_A_CHANNEL = -17
 
-internal object AgoraCallingService : CallingService {
+internal object AgoraWebrtcService : WebrtcService {
     // TODO: Need to change name
 
     @Volatile
@@ -41,6 +40,7 @@ internal object AgoraCallingService : CallingService {
     }
     private val ioScope = CoroutineScope(Dispatchers.IO + coroutineExceptionHandler)
     private var state = MutableSharedFlow<Int>(replay = 0)
+    private var currentState = IDLE
     private lateinit var lazyJoin : Deferred<Unit>
     private val agoraEvent by lazy {
         AgoraEventHandler.getAgoraEventObject(ioScope)
@@ -48,7 +48,7 @@ internal object AgoraCallingService : CallingService {
 
     init { observeCallbacks() }
 
-    override suspend fun initCallingService() {
+    override suspend fun initWebrtcService() {
         withContext(ioScope.coroutineContext) {
             if (agoraEngine == null)
                 synchronized(this) {
@@ -67,19 +67,22 @@ internal object AgoraCallingService : CallingService {
     override fun connectCall(request: CallRequest) {
         ioScope.launch {
             voipLog?.log("Connecting Call $agoraEngine")
-            initCallingService()
+            initWebrtcService()
             state.emit(JOINING)
+            currentState = JOINING
             val status = joinChannel(request)
             voipLog?.log("Join Channel Status ----> $status")
             when(status) {
                 JOINING_CHANNEL_SUCCESS -> {}
                 USER_ALREADY_IN_A_CHANNEL -> {
                     state.emit(LEAVING_AND_JOINING)
+                    currentState = LEAVING_AND_JOINING
                     createLazyJoinRequest(request)
                     leaveChannel()
                 }
                 else -> {
                     state.emit(IDLE)
+                    currentState = IDLE
                     eventFlow.emit(CallState.Error)
                 }
             }
@@ -98,6 +101,7 @@ internal object AgoraCallingService : CallingService {
             stopLazyJoin()
             voipLog?.log("Coroutine : About to call leaveChannel")
             state.emit(LEAVING)
+            currentState = LEAVING
             leaveChannel()
             voipLog?.log("Coroutine : Finishing call leaveChannel Coroutine")
         }
@@ -116,12 +120,12 @@ internal object AgoraCallingService : CallingService {
     }
 
     private fun stopLazyJoin() {
-        if(this@AgoraCallingService::lazyJoin.isInitialized)
+        if(this@AgoraWebrtcService::lazyJoin.isInitialized)
             lazyJoin.cancel()
     }
 
     private fun startLazyJoin() {
-        if(this@AgoraCallingService::lazyJoin.isInitialized)
+        if(this@AgoraWebrtcService::lazyJoin.isInitialized)
             lazyJoin.start()
     }
 
@@ -164,25 +168,38 @@ internal object AgoraCallingService : CallingService {
     private fun observeCallbacks() {
         ioScope.launch {
             agoraEvent.callingEvent.collect { callState ->
-                voipLog?.log("observeCallbacks : CallState = $callState")
+                voipLog?.log("observeCallbacks : CallState = $callState .... $state")
                 when(callState) {
                     CallState.CallDisconnected, CallState.Idle -> {
-                        if(state.equals(LEAVING_AND_JOINING))
+                        if(currentState == LEAVING_AND_JOINING) {
+                            voipLog?.log("LEAVING_AND_JOINING")
                             startLazyJoin()
-                        else
+                        }
+                        else {
                             state.emit(IDLE)
+                            currentState = IDLE
+                        }
                     }
-                    CallState.CallConnected -> state.emit(CONNECTED)
-                    CallState.CallInitiated -> state.emit(JOINED)
+                    CallState.CallConnected -> {
+                        state.emit(CONNECTED)
+                        currentState = CONNECTED
+                    }
+                    CallState.CallInitiated -> {
+                        state.emit(JOINED)
+                        currentState = JOINED
+                    }
                     CallState.ReconnectingFailed -> { disconnectCall() }
                     CallState.UserAlreadyDisconnectedError -> {
                         state.emit(IDLE)
+                        currentState = IDLE
                     }
                     CallState.Error -> {
-                        if(state.equals(JOINED) || state.equals(CONNECTED) || state.equals(JOINING))
+                        if(currentState == JOINED || currentState == CONNECTED || currentState == JOINING)
                             disconnectCall()
-                        else
+                        else {
                             state.emit(IDLE)
+                            currentState = IDLE
+                        }
                     }
                 }
                 voipLog?.log("observeCallbacks : CallState = $callState")

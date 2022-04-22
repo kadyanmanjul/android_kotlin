@@ -42,7 +42,7 @@ class AudioController(val coroutineScope : CoroutineScope) : AudioControllerInte
     init {
         autoRouteSwitcher()
         coroutineScope.launch {
-            headsetReceiver.observeHeadsetEvents().collectLatest {
+            headsetReceiver.observeHeadsetEvents().collect {
                 when(it) {
                     AudioRouteConstants.Default -> checkAudioRoute()
                     AudioRouteConstants.HeadsetAudio -> audioRouteFlow.emit(it)
@@ -50,7 +50,7 @@ class AudioController(val coroutineScope : CoroutineScope) : AudioControllerInte
             }
         }
         coroutineScope.launch {
-            bluetoothReceiver.observeHeadsetEvents().collectLatest {
+            bluetoothReceiver.observeHeadsetEvents().collect {
                 when(it) {
                     AudioRouteConstants.Default -> checkAudioRoute()
                     AudioRouteConstants.BluetoothAudio -> audioRouteFlow.emit(it)

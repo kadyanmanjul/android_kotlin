@@ -20,6 +20,7 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.USER_LOCALE
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.voipLog
 import com.joshtalks.joshskills.voip.constant.CALL_CONNECT_REQUEST
 import com.joshtalks.joshskills.voip.constant.CALL_DISCONNECT_REQUEST
 import com.joshtalks.joshskills.voip.constant.IPC_CONNECTION_ESTABLISHED
@@ -29,7 +30,6 @@ import com.joshtalks.joshskills.voip.constant.SPEAKER_ON_REQUEST
 import com.joshtalks.joshskills.voip.constant.SWITCHED_TO_SPEAKER
 import com.joshtalks.joshskills.voip.constant.UNMUTE
 import com.joshtalks.joshskills.voip.data.CallingRemoteService
-import com.joshtalks.joshskills.voip.voipLog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -173,7 +173,7 @@ class WebrtcRepository {
             }
         } catch (e : RemoteException) {
             e.printStackTrace()
-            voipLog?.log("Remote Closed")
+            voipLog?.log("Service Closed")
         }
     }
 }

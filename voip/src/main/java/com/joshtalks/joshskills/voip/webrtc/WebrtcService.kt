@@ -4,8 +4,8 @@ import android.telecom.Call
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
 
-internal interface CallingService {
-    suspend fun initCallingService()
+internal interface WebrtcService {
+    suspend fun initWebrtcService()
     fun connectCall(request: CallRequest) // Need Arguments
     fun disconnectCall() // Might Need Arguments
     fun muteAudioStream(muteAudio : Boolean)

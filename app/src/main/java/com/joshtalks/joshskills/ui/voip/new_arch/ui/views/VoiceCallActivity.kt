@@ -20,12 +20,8 @@ import com.joshtalks.joshskills.databinding.ActivityVoiceCallBinding
 import com.joshtalks.joshskills.ui.group.data.GroupChatPagingSource
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.callbar.VoipPref
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.VoiceCallViewModel
-import com.joshtalks.joshskills.voip.constant.CALL_CONNECTED_EVENT
-import com.joshtalks.joshskills.voip.constant.CALL_DISCONNECT_REQUEST
-import com.joshtalks.joshskills.voip.constant.CALL_INITIATED_EVENT
-import com.joshtalks.joshskills.voip.constant.CONNECTED
-import com.joshtalks.joshskills.voip.constant.IDLE
-import com.joshtalks.joshskills.voip.voipLog
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.voipLog
+import com.joshtalks.joshskills.voip.constant.*
 
 private const val TAG = "VoiceCallActivity"
 
@@ -93,7 +89,7 @@ class VoiceCallActivity : BaseActivity() {
     override fun initViewState() {
         event.observe(this) {
             when (it.what) {
-                CALL_CONNECTED_EVENT -> replaceCallUserFragment()
+                CALL_INITIATED_EVENT -> replaceCallUserFragment()
                 CALL_DISCONNECT_REQUEST -> finish()
                 else -> {
                     if (it.what < 0) {

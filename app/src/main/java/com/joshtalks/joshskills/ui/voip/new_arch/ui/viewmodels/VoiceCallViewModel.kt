@@ -12,6 +12,8 @@ import com.joshtalks.joshskills.base.BaseViewModel
 import com.joshtalks.joshskills.base.constants.FPP
 import com.joshtalks.joshskills.base.constants.GROUP
 import com.joshtalks.joshskills.base.constants.PEER_TO_PEER
+import com.joshtalks.joshskills.base.log.Feature
+import com.joshtalks.joshskills.base.log.JoshLog
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.TAG
 import com.joshtalks.joshskills.core.showToast
@@ -32,13 +34,6 @@ import com.joshtalks.joshskills.voip.constant.IPC_CONNECTION_ESTABLISHED
 import com.joshtalks.joshskills.voip.constant.MUTE
 import com.joshtalks.joshskills.voip.constant.RECONNECTED
 import com.joshtalks.joshskills.voip.constant.RECONNECTING
-import com.joshtalks.joshskills.voip.constant.SWITCHED_TO_BLUETOOTH
-import com.joshtalks.joshskills.voip.constant.SWITCHED_TO_HANDSET
-import com.joshtalks.joshskills.voip.constant.SWITCHED_TO_SPEAKER
-import com.joshtalks.joshskills.voip.constant.SWITCHED_TO_WIRED
-import com.joshtalks.joshskills.voip.constant.UNHOLD
-import com.joshtalks.joshskills.voip.constant.UNMUTE
-import com.joshtalks.joshskills.voip.voipLog
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
@@ -48,6 +43,8 @@ import kotlinx.coroutines.sync.withLock
 const val CONNECTING = 1
 const val ONGOING = 2
 
+private const val TAG = "VoiceCallViewModel"
+val voipLog = JoshLog.getInstanceIfEnable(Feature.VOIP)
 
 class VoiceCallViewModel : BaseViewModel() {
     private var isConnectionRequestSent = false
@@ -88,35 +85,41 @@ class VoiceCallViewModel : BaseViewModel() {
 
     private fun listenRepositoryEvents() {
         viewModelScope.launch(Dispatchers.IO) {
-            repository.observeRepositoryEvents().collect {
+            repository.observeRepositoryEvents().collect { it ->
                 message.copyFrom(it)
+                Log.d(TAG, "listenRepositoryEvents: ")
                 voipLog?.log("observeCallEvents =-> $it")
-                when (message.what) {
+                val data = when (message.what) {
                     CALL_INITIATED_EVENT -> {
                         voipLog?.log("CALL_INITIATED_EVENT")
+                        "Connecting"
                     }
                     CALL_CONNECTED_EVENT -> {
-                        callStatusTest.set("Timer")
                         callStatus.set(ONGOING)
                         voipLog?.log("CALL_CONNECTED_EVENT")
+                        "Timer"
                     }
                     RECONNECTING -> {
-                        callStatusTest.set("Reconnecting")
                         voipLog?.log("RECONNECTING")
+                        "Reconnecting"
                     }
                     RECONNECTED -> {
-                        callStatusTest.set("Timer")
                         voipLog?.log("RECONNECTED")
+                        "Timer"
                     }
                     CALL_DISCONNECT_REQUEST -> {
                         voipLog?.log("Call Disconnect")
                         showToast("Call Disconnect")
+                        null
                     }
                     IPC_CONNECTION_ESTABLISHED -> {
                         connectCall()
+                        null
                     }
+                    else -> null
                 }
                 withContext(Dispatchers.Main) {
+                    data?.let { callStatusTest.set(it) }
                     singleLiveEvent.value = message
                 }
             }
@@ -125,7 +128,7 @@ class VoiceCallViewModel : BaseViewModel() {
 
     private fun listenUIState() {
         viewModelScope.launch(Dispatchers.IO) {
-            callBar.observerVoipUIState().collectLatest { uiState ->
+            callBar.observerVoipUIState().collect { uiState ->
                 Log.d(TAG, "listenUIState: $uiState")
                 if(uiState.isOnHold) {
                     callStatusTest.set("Call on Hold")

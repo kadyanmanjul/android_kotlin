@@ -3,7 +3,7 @@ package com.joshtalks.joshskills.ui.call
 import android.os.Handler
 import android.os.Looper
 import android.os.Message
-import com.joshtalks.joshskills.voip.voipLog
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.voipLog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow

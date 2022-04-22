@@ -22,7 +22,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
+import kotlin.Exception
 
 /**
  * Require DataBinding in targeted xml with following instruction ->
@@ -44,6 +47,7 @@ class VoipPref {
             e.printStackTrace()
         }
         val scope = CoroutineScope(Dispatchers.IO + coroutineExceptionHandler)
+        val mutex = Mutex(false)
 
         @Synchronized
         fun initVoipPref(context: Context) {
@@ -212,11 +216,20 @@ class VoipPref {
             FeedbackDialogFragment.newInstance(function)
                 .show(fragmentActivity.supportFragmentManager, "FeedBackDialogFragment")
         }
+
         fun updateVoipState(state: Int) {
-            Log.d(TAG, "update Webrtc State : $state")
-            val editor = preferenceManager.edit()
-            editor.putInt(PREF_KEY_WEBRTC_CURRENT_STATE, state)
-            editor.apply()
+            scope.launch {
+                try {
+                    mutex.withLock {
+                        Log.d(TAG, "update Webrtc State : $state")
+                        val editor = preferenceManager.edit()
+                        editor.putInt(PREF_KEY_WEBRTC_CURRENT_STATE, state)
+                        editor.commit()
+                    }
+                } catch (e : Exception) {
+                    e.printStackTrace()
+                }
+            }
         }
 
         fun getVoipState(): Int {

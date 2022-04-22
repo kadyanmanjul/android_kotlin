@@ -36,8 +36,8 @@ import com.joshtalks.joshskills.di.DaggerApplicationComponent
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.callbar.VoipPref
 import com.joshtalks.joshskills.ui.voip.presence.UserPresence
 import com.joshtalks.joshskills.voip.Utils
-import com.joshtalks.joshskills.voip.log.Feature
-import com.joshtalks.joshskills.voip.log.JoshLog.Companion.enableLog
+import com.joshtalks.joshskills.base.log.Feature
+import com.joshtalks.joshskills.base.log.JoshLog.Companion.enableLog
 import com.vanniktech.emoji.EmojiManager
 import com.vanniktech.emoji.ios.IosEmojiProvider
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
@@ -46,8 +46,6 @@ import java.util.Calendar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import timber.log.Timber
 
 const val TAG = "JoshSkill"

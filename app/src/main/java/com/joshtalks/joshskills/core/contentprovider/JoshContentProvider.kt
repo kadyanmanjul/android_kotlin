@@ -9,10 +9,18 @@ import android.util.Log
 import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.ui.video_player.DURATION
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.callbar.VoipPref
-import com.joshtalks.joshskills.voip.voipLog
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.voipLog
+import com.joshtalks.joshskills.voip.constant.IDLE
+import com.joshtalks.joshskills.voip.constant.LEAVING
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 private const val TAG = "JoshContentProvider"
 class JoshContentProvider : ContentProvider() {
+    val mutex = Mutex(false)
 
     override fun onCreate(): Boolean {
         voipLog?.log("On Create Content Provider $context")
@@ -79,8 +87,20 @@ class JoshContentProvider : ContentProvider() {
                 VoipPref.updateCallDetails(0)
             }
             VOIP_STATE_URI -> {
-                val state = values?.getAsInteger(VOIP_STATE) ?: 0
-                VoipPref.updateVoipState(state)
+                CoroutineScope(Dispatchers.IO).launch {
+                    mutex.withLock {
+                        val state = values?.getAsInteger(VOIP_STATE) ?: 0
+                        VoipPref.updateVoipState(state)
+                    }
+                }
+            }
+            VOIP_STATE_LEAVING_URI -> {
+                CoroutineScope(Dispatchers.IO).launch {
+                    mutex.withLock {
+                        if(VoipPref.getVoipState() != LEAVING || VoipPref.getVoipState() != IDLE)
+                            VoipPref.updateVoipState(LEAVING)
+                    }
+                }
             }
             INCOMING_CALL_URI -> {
                 val callId = values?.getAsInteger(CALL_ID) ?: -1

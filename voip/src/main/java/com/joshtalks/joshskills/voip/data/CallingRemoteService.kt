@@ -32,19 +32,7 @@ import com.joshtalks.joshskills.voip.communication.constants.ServerConstants
 import com.joshtalks.joshskills.voip.communication.model.IncomingCall
 import com.joshtalks.joshskills.voip.communication.model.NetworkAction
 import com.joshtalks.joshskills.voip.communication.model.UserAction
-import com.joshtalks.joshskills.voip.constant.CALL_CONNECTED_EVENT
-import com.joshtalks.joshskills.voip.constant.CALL_CONNECT_REQUEST
-import com.joshtalks.joshskills.voip.constant.CALL_DISCONNECT_REQUEST
-import com.joshtalks.joshskills.voip.constant.HOLD
-import com.joshtalks.joshskills.voip.constant.IDLE
-import com.joshtalks.joshskills.voip.constant.INCOMING_CALL
-import com.joshtalks.joshskills.voip.constant.MUTE
-import com.joshtalks.joshskills.voip.constant.SPEAKER_OFF_REQUEST
-import com.joshtalks.joshskills.voip.constant.SPEAKER_ON_REQUEST
-import com.joshtalks.joshskills.voip.constant.SWITCHED_TO_SPEAKER
-import com.joshtalks.joshskills.voip.constant.SWITCHED_TO_WIRED
-import com.joshtalks.joshskills.voip.constant.UNHOLD
-import com.joshtalks.joshskills.voip.constant.UNMUTE
+import com.joshtalks.joshskills.voip.constant.*
 import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.getHangUpIntent
 import com.joshtalks.joshskills.voip.getStartCallTime
@@ -157,6 +145,7 @@ class CallingRemoteService : Service() {
             ioScope.launch {
                 try {
                     mediator.observeEvents().collect {
+                        Log.d(TAG, "observeMediatorEvents: $it")
                         when (it) {
                             CALL_CONNECTED_EVENT -> {
                                 updateStartCallTime(
@@ -180,6 +169,7 @@ class CallingRemoteService : Service() {
                                 Log.d(TAG, "onStartCommand: CALL_DISCONNECT_REQUEST")
                                 notification.idle()
                                 resetCallUIState()
+                                updateVoipState(LEAVING)
                                 val duration = callDuration()
                                 if(duration > 0)
                                     updateLastCallDetails(duration)
@@ -253,7 +243,7 @@ class CallingRemoteService : Service() {
     private fun observeAudioRouteEvents() {
         ioScope.launch {
             try {
-                audioController.observeAudioRoute().collectLatest {
+                audioController.observeAudioRoute().collect {
                     when (it) {
                         BluetoothAudio, EarpieceAudio, HeadsetAudio -> {
                             // TODO: Need to check

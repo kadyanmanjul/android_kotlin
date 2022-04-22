@@ -87,8 +87,8 @@ object PubNubChannelService : EventChannel {
                         config.publishKey = BuildConfig.PUBNUB_PUB_P2P_KEY
                         config.subscribeKey = BuildConfig.PUBNUB_SUB_P2P_KEY
                         config.reconnectionPolicy = PNReconnectionPolicy.LINEAR
-                        config.httpLoggingInterceptor =
-                            HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
+                        config.uuid = Utils.uuid
+                        //config.httpLoggingInterceptor = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
                         //config.uuid = "Mentor.getInstance().getId()"
                         pubnub = PubNub(config)
                         pubnub?.addListener(pubNubData.callback)
@@ -113,7 +113,7 @@ object PubNubChannelService : EventChannel {
                 Log.d(TAG, "emitEvent: Sending Message .... $message")
                 pubnub?.publish()
                     ?.channel(event.getAddress())
-                    ?.meta(message.getType())
+                    ?.meta(getMeta(event))
                     ?.message(message)
                     ?.ttl(0)
                     ?.usePOST(true)
@@ -124,6 +124,8 @@ object PubNubChannelService : EventChannel {
             }
         }
     }
+
+    private fun getMeta(event : OutgoingData) = if(Utils.uuid == event.getAddress()) null else event.getType()
 
     override fun observeChannelEvents(): SharedFlow<Communication> {
         voipLog?.log("observeChannelEvents: $pubnub")

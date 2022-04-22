@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.os.Handler
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.ui.call.WebrtcRepository
-import com.joshtalks.joshskills.voip.voipLog
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.voipLog
 import kotlinx.android.synthetic.main.activity_call.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

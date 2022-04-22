@@ -26,6 +26,7 @@ import com.joshtalks.joshskills.voip.audiocontroller.AudioRouteConstants
 import com.joshtalks.joshskills.voip.communication.constants.CLOSE_CALLING_FRAGMENT
 import com.joshtalks.joshskills.voip.constant.CALL_CONNECTED_EVENT
 import com.joshtalks.joshskills.voip.constant.CONNECTED
+import com.joshtalks.joshskills.voip.constant.JOINED
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -44,6 +45,8 @@ class CallFragment : BaseFragment() , SensorEventListener {
     private val audioController by lazy {
         AudioController(CoroutineScope((Dispatchers.IO)))
     }
+
+    private var isFragmentRestarted = false
 
     val vm by lazy {
         ViewModelProvider(requireActivity())[VoiceCallViewModel::class.java]
@@ -77,6 +80,7 @@ class CallFragment : BaseFragment() , SensorEventListener {
 
     override fun initViewBinding() {
         callBinding.vm = vm
+        // TODO: This might fails
         if(VoipPref.getVoipState() != CONNECTED){
             startIncomingTimer()
         }
@@ -156,6 +160,7 @@ class CallFragment : BaseFragment() , SensorEventListener {
     override fun setArguments() {}
 
     override fun onResume() {
+        super.onResume()
         proximity.also { proximity ->
             sensorManager.registerListener(this, proximity, SensorManager.SENSOR_DELAY_NORMAL)
         }
@@ -164,7 +169,21 @@ class CallFragment : BaseFragment() , SensorEventListener {
                 progressAnimator.resume()
             }
         }
-        super.onResume()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        setCurrentCallState()
+    }
+
+    private fun setCurrentCallState() {
+        // TODO: Might not work if its updated late
+        if(isFragmentRestarted) {
+            if (VoipPref.getVoipState() != JOINED || VoipPref.getVoipState() != CONNECTED) {
+                requireActivity().finish()
+            }
+        } else
+            isFragmentRestarted = true
     }
 
     override fun onSensorChanged(p0: SensorEvent?) {
