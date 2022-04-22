@@ -324,6 +324,34 @@
                     app:layout_constraintTop_toBottomOf="@+id/txt_label_become_senior_student">
 
                     <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_new_student"
+                        style="@style/Widget.MaterialComponents.Button"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginBottom="@dimen/_14sdp"
+                        android:layout_marginTop="@dimen/_14sdp"
+                        android:backgroundTint="@color/colorAccent"
+                        android:gravity="center"
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp"
+                        android:paddingVertical="@dimen/_14sdp"
+                        android:text="@string/call_new_student"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.ButtonSemiBold"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/_12ssp"
+                        android:visibility="gone"
+                        app:cornerRadius="@dimen/_36sdp"
+                        app:layout_constraintBottom_toTopOf="@+id/btn_favorite"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/btn_group_call"
+                        app:layout_constraintWidth_default="percent"
+                        app:layout_constraintWidth_percent="0.7"
+                        app:rippleColor="@color/white"
+                        tools:visibility="visible" />
+
+                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_group_call"
                         style="@style/Widget.MaterialComponents.Button"
                         android:layout_width="0dp"
@@ -351,34 +379,6 @@
                         tools:visibility="visible" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btn_new_student"
-                        style="@style/Widget.MaterialComponents.Button"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginTop="@dimen/_14sdp"
-                        android:layout_marginBottom="@dimen/_14sdp"
-                        android:backgroundTint="@color/colorAccent"
-                        android:gravity="center"
-                        android:insetTop="0dp"
-                        android:insetBottom="0dp"
-                        android:paddingVertical="@dimen/_14sdp"
-                        android:text="@string/call_new_student"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.ButtonSemiBold"
-                        android:textColor="@color/white"
-                        android:textSize="@dimen/_12ssp"
-                        android:visibility="gone"
-                        app:cornerRadius="@dimen/_36sdp"
-                        app:layout_constraintBottom_toTopOf="@+id/btn_favorite"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/btn_group_call"
-                        app:layout_constraintWidth_default="percent"
-                        app:layout_constraintWidth_percent="0.7"
-                        app:rippleColor="@color/white"
-                        tools:visibility="visible" />
-
-                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_favorite"
                         style="@style/Widget.MaterialComponents.Button"
                         android:layout_width="0dp"
@@ -394,7 +394,7 @@
                         android:textAppearance="@style/TextAppearance.JoshTypography.ButtonSemiBold"
                         android:textColor="@color/white"
                         android:textSize="@dimen/_12ssp"
-                        android:visibility="visible"
+                        android:visibility="gone"
                         app:cornerRadius="@dimen/_36sdp"
                         app:layout_constraintBottom_toTopOf="@+id/btn_start"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -488,7 +488,7 @@
                         android:textAppearance="@style/TextAppearance.JoshTypography.ButtonSemiBold"
                         android:textColor="@color/white"
                         android:textSize="@dimen/_12ssp"
-                        android:visibility="visible"
+                        android:visibility="gone"
                         app:cornerRadius="@dimen/_36sdp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -505,7 +505,7 @@
                         app:lottie_scale="1"
                         app:lottie_speed="1"
                         app:rippleColor="@color/white"
-                        tools:visibility="gone" />
+                        tools:visibility="visible" />
 
                     <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/btn_continue_text"
