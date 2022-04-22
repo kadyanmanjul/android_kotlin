@@ -23,6 +23,8 @@ import com.joshtalks.joshskills.ui.fpp.constants.SET_TEXT_ON_ENABLE_ACTION_MODE
 import com.joshtalks.joshskills.ui.fpp.constants.ENABLE_ACTION_MODE
 import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.joshtalks.joshskills.ui.voip.favorite.adapter.FppFavoriteAdapter
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.callbar.VoipPref
+import com.joshtalks.joshskills.voip.constant.CONNECTED
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -174,7 +176,7 @@ class FavoriteCallerViewModel : BaseViewModel() {
     }
 
     fun clickOnPhoneCall(favoriteCaller: FavoriteCaller) {
-        if (WebRtcService.isCallOnGoing.value == false) {
+        if (WebRtcService.isCallOnGoing.value == false || VoipPref.getVoipState() != CONNECTED) {
             getCallOnGoing(favoriteCaller.mentorId, favoriteCaller.id)
         } else {
             showToast(

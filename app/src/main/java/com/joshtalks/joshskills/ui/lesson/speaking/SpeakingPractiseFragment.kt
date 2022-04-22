@@ -257,7 +257,7 @@ class SpeakingPractiseFragment : ABTestFragment(),TimeAnimator.TimeListener {
         binding.btnGroupCall.setOnClickListener {
             if(PrefManager.getBoolValue(IS_LOGIN_VIA_TRUECALLER))
             viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
-            if (isCallOngoing(R.string.call_engage_initiate_call_message))
+            if (isCallOngoing(R.string.call_engage_initiate_call_message) || VoipPref.getVoipState() == CONNECTED)
                 return@setOnClickListener
             val intent = Intent(requireActivity(), JoshVoipGroupActivity::class.java).apply {
                 putExtra(CONVERSATION_ID, getConversationId())
@@ -392,7 +392,8 @@ class SpeakingPractiseFragment : ABTestFragment(),TimeAnimator.TimeListener {
 //            }
         }
         binding.btnNewStudent.setOnClickListener {
-
+            if (isCallOngoing(R.string.call_engage_initiate_call_message) || VoipPref.getVoipState() == CONNECTED)
+                return@setOnClickListener
             startPractise(favoriteUserCall = false, isNewUserCall = true)
         }
         lifecycleScope.launchWhenStarted {
