@@ -177,9 +177,8 @@ class CallFragment : BaseFragment() , SensorEventListener {
     }
 
     private fun setCurrentCallState() {
-        // TODO: Might not work if its updated late
         if(isFragmentRestarted) {
-            if (VoipPref.getVoipState() != JOINED || VoipPref.getVoipState() != CONNECTED) {
+            if (VoipPref.getVoipState() < JOINED && VoipPref.getVoipState() > CONNECTED) {
                 requireActivity().finish()
             }
         } else
