@@ -20,6 +20,7 @@ class InviteFriendViewModel(application: Application) : AndroidViewModel(applica
     private val phonebookDao = AppObjectController.appDatabase.phonebookDao()
     private val apiService by lazy { AppObjectController.commonNetworkService }
     val isLoading = ObservableBoolean(false)
+    val isContactsPermissionEnabled = ObservableBoolean(true)
     val query = MutableStateFlow("")
     val scrollToTop = ObservableBoolean(false)
     val adapter = ContactsAdapter()
@@ -137,24 +138,25 @@ class InviteFriendViewModel(application: Application) : AndroidViewModel(applica
     }
 
     private fun setQueryListener() {
-        viewModelScope.launch {
-            query.debounce(300)
-                .distinctUntilChanged()
-                .flowOn(Dispatchers.Main)
-                .collect {
-                    adapterList =
-                        if (it.isEmpty()) {
-                            contacts
-                        } else it.lowercase(Locale.getDefault()).let {
-                            contacts.filter { contact ->
-                                contact.name.lowercase()
-                                    .contains(it) || contact.phoneNumber.contains(it)
-                            }.sortedBy { contact ->
-                                contact.name
+        if (this::contacts.isInitialized)
+            viewModelScope.launch {
+                query.debounce(300)
+                    .distinctUntilChanged()
+                    .flowOn(Dispatchers.Main)
+                    .collect {
+                        adapterList =
+                            if (it.isEmpty()) {
+                                contacts
+                            } else it.lowercase(Locale.getDefault()).let {
+                                contacts.filter { contact ->
+                                    contact.name.lowercase()
+                                        .contains(it) || contact.phoneNumber.contains(it)
+                                }.sortedBy { contact ->
+                                    contact.name
+                                }
                             }
-                        }
-                    scrollToTop.set(it.isEmpty())
-                }
-        }
+                        scrollToTop.set(it.isEmpty())
+                    }
+            }
     }
 }
