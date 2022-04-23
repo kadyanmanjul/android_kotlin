@@ -1193,6 +1193,7 @@
     <string name="invite_friend_link_sent">aapke dost ko iss app ko download karne ka link bhej diya gaya hai. \naap unko ye app download karne ke liye bol sakte hai </string>
     <string name="invite_friend_search_hint">Kisko call krrna hai?</string>
     <string name="call_a_friend">Call a Friend</string>
+    <string name="allow_permission">Allow Permission</string>
 
 
 </resources>

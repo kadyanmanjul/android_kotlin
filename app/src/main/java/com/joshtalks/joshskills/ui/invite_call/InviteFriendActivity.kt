@@ -86,29 +86,39 @@ class InviteFriendActivity : BaseActivity(), ContactsAdapter.OnContactClickListe
 
     override fun onStart() {
         super.onStart()
-        if (PermissionUtils.isReadContactPermissionEnabled(this)) {
-            viewModel.readContacts()
-        } else {
-            PermissionUtils.requestReadContactPermission(this, object : PermissionListener {
-                override fun onPermissionGranted(p0: PermissionGrantedResponse?) {
-                    viewModel.readContacts()
-                }
-
-                override fun onPermissionDenied(p0: PermissionDeniedResponse?) {
-                    PermissionUtils.permissionPermanentlyDeniedDialog(
-                        this@InviteFriendActivity,
-                        R.string.permission_denied_contacts,
-                    )
-                }
-
-                override fun onPermissionRationaleShouldBeShown(
-                    p0: PermissionRequest?,
-                    p1: PermissionToken?
-                ) {
-                    p1?.continuePermissionRequest()
-                }
-            })
+        PermissionUtils.isReadContactPermissionEnabled(this).also {
+            viewModel.isContactsPermissionEnabled.set(it)
+            if (it)
+                viewModel.readContacts()
+            else
+                requestContactsPermission()
         }
+    }
+
+    fun requestContactsPermission(v: View? = null) {
+        PermissionUtils.requestReadContactPermission(this, object : PermissionListener {
+            override fun onPermissionGranted(p0: PermissionGrantedResponse?) {
+                viewModel.isContactsPermissionEnabled.set(true)
+                viewModel.readContacts()
+            }
+
+            override fun onPermissionDenied(p0: PermissionDeniedResponse?) {
+                PermissionUtils.permissionPermanentlyDeniedDialog(
+                    activity = this@InviteFriendActivity,
+                    message = R.string.permission_denied_contacts,
+                    onPermissionDenied = {
+                        viewModel.isContactsPermissionEnabled.set(false)
+                    }
+                )
+            }
+
+            override fun onPermissionRationaleShouldBeShown(
+                p0: PermissionRequest?,
+                p1: PermissionToken?
+            ) {
+                p1?.continuePermissionRequest()
+            }
+        })
     }
 
     fun inviteFriend(contact: PhonebookContact, deepLink: String) {
@@ -135,6 +145,5 @@ class InviteFriendActivity : BaseActivity(), ContactsAdapter.OnContactClickListe
                     }.show()
             }
         )
-
     }
 }

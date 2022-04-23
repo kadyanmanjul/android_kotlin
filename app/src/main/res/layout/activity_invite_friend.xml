@@ -100,6 +100,41 @@
             app:layout_constraintTop_toBottomOf="@id/search_view"
             tools:listitem="@layout/li_contact" />
 
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="@color/white_shade"
+            android:elevation="@dimen/_5sdp"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="@{viewModel.isContactsPermissionEnabled() ? View.GONE : View.VISIBLE}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/toolbar_container"
+            tools:visibility="visible">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="@dimen/_16sdp"
+                android:text="@string/permission_denied_contacts"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="@dimen/_16sdp"
+                android:paddingVertical="0dp"
+                android:text="@string/allow_permission"
+                android:onClick="@{handler::requestContactsPermission}"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+                android:textColor="@color/white"
+                app:cornerRadius="@dimen/_24sdp"/>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
         <FrameLayout
             android:id="@+id/progress_container"
             android:layout_width="match_parent"
@@ -107,7 +142,7 @@
             android:background="@color/transparent_black"
             android:elevation="@dimen/_5sdp"
             android:visibility="@{viewModel.isLoading ? View.VISIBLE : View.GONE}"
-            tools:visibility="visible">
+            tools:visibility="gone">
 
             <com.pnikosis.materialishprogress.ProgressWheel
                 android:id="@+id/progress_bar"
