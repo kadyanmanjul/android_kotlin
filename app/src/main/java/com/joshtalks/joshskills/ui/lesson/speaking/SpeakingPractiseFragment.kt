@@ -228,12 +228,7 @@ class SpeakingPractiseFragment : ABTestFragment(),TimeAnimator.TimeListener {
         }
         binding.btnStartTrialText.setOnClickListener {
             viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
-            if(VoipPref.getVoipState()==IDLE) {
                 startPractise(isNewArch = true)
-            }else if(VoipPref.getVoipState()== LEAVING){
-                beforeAnimation?.setTint(resources.getColor(R.color.grey))
-                animateButton()
-            }
         }
 
         viewModel.observerVoipState().observe(viewLifecycleOwner) {
