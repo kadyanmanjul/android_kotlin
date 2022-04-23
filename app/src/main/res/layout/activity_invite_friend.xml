@@ -142,7 +142,7 @@
             android:background="@color/transparent_black"
             android:elevation="@dimen/_5sdp"
             android:visibility="@{viewModel.isLoading ? View.VISIBLE : View.GONE}"
-            tools:visibility="visible">
+            tools:visibility="gone">
 
             <com.pnikosis.materialishprogress.ProgressWheel
                 android:id="@+id/progress_bar"
