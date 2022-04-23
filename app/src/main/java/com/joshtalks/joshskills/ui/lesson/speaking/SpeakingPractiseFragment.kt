@@ -53,6 +53,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.*
+import androidx.core.view.isVisible
 
 const val NOT_ATTEMPTED = "NA"
 const val COMPLETED = "CO"
@@ -392,7 +393,8 @@ class SpeakingPractiseFragment : ABTestFragment() {
 
             startPractise(favoriteUserCall = false, isNewUserCall = true)
         }
-        binding.btnInviteFriend.isVisible = PrefManager.getStringValue(COURSE_ID) == DEFAULT_COURSE_ID
+        binding.btnInviteFriend.isVisible =
+            PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID
         binding.btnInviteFriend.setOnClickListener {
             viewModel.saveVoiceCallImpression(IMPRESSION_CALL_MY_FRIEND_BTN_CLICKED)
             if (PermissionUtils.isReadContactPermissionEnabled(requireActivity())) {
