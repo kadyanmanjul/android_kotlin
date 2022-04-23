@@ -7,8 +7,8 @@ import android.database.MatrixCursor
 import android.net.Uri
 import android.util.Log
 import com.joshtalks.joshskills.base.constants.*
+import com.joshtalks.joshskills.ui.call.data.local.VoipPref
 import com.joshtalks.joshskills.ui.video_player.DURATION
-import com.joshtalks.joshskills.ui.voip.new_arch.ui.callbar.VoipPref
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.voipLog
 import com.joshtalks.joshskills.voip.constant.IDLE
 import com.joshtalks.joshskills.voip.constant.LEAVING
@@ -80,6 +80,27 @@ class JoshContentProvider : ContentProvider() {
                     )
                 }
 
+            }
+            VOIP_USER_DATA_URI -> {
+                    Log.d(TAG, "insert: User Details")
+                    val remoteUserName = values?.getAsString(REMOTE_USER_NAME) ?: ""
+                    val remoteUserImage = values?.getAsString(REMOTE_USER_IMAGE)
+                    val remoteAgoraId = values?.getAsInteger(REMOTE_USER_AGORA_ID) ?: -1
+                    val callId = values?.getAsInteger(CALL_ID) ?: -1
+                    val callType = values?.getAsInteger(CALL_TYPE) ?: -1
+                    val topicName = values?.getAsString(TOPIC_NAME) ?: ""
+                    val channelName = values?.getAsString(CHANNEL_NAME) ?: ""
+                    val currentUserAgoraId = values?.getAsInteger(CURRENT_USER_AGORA_ID) ?: -1
+                    VoipPref.updateUserDetails(
+                        remoteUserImage = remoteUserImage,
+                        remoteUserName = remoteUserName,
+                        remoteUserAgoraId = remoteAgoraId,
+                        callId = callId,
+                        callType = callType,
+                        currentUserAgoraId = currentUserAgoraId,
+                        channelName = channelName,
+                        topicName = topicName
+                    )
             }
             CALL_DISCONNECTED_URI -> {
                 val duration = values?.getAsLong(CALL_DURATION) ?: 0L

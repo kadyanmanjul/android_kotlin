@@ -52,8 +52,8 @@ fun ConstraintLayout.setCallBackground(callType: Int) {
 }
 
 @BindingAdapter("setSpeakerImage")
-fun AppCompatImageButton.setSpeakerImage(isSpeakerOn: ObservableBoolean) {
-    if (!isSpeakerOn.get()) {
+fun AppCompatImageButton.setSpeakerImage(isSpeakerOn: Boolean) {
+    if (!isSpeakerOn) {
         this.backgroundTintList =
             ContextCompat.getColorStateList(context, R.color.dis_color_10f)
         this.imageTintList = ContextCompat.getColorStateList(context, R.color.white)
@@ -66,8 +66,8 @@ fun AppCompatImageButton.setSpeakerImage(isSpeakerOn: ObservableBoolean) {
 }
 
 @BindingAdapter("setMicImage")
-fun AppCompatImageButton.setMicImage(isMute: ObservableBoolean) {
-    if (!isMute.get()) {
+fun AppCompatImageButton.setMicImage(isMute: Boolean) {
+    if (!isMute) {
         this.backgroundTintList =
             ContextCompat.getColorStateList(context, R.color.dis_color_10f)
         this.imageTintList = ContextCompat.getColorStateList(context, R.color.white)
@@ -80,9 +80,13 @@ fun AppCompatImageButton.setMicImage(isMute: ObservableBoolean) {
 
 @BindingAdapter("startTimer")
 fun Chronometer.startTimer(baseTime: Long) {
-    base = baseTime
-    start()
+    if(baseTime > 0) {
+        base = baseTime
+        start()
+    }
 }
+
+
 @BindingAdapter("acceptCall")
 fun AppCompatImageButton.acceptCall(isAccept: Boolean?) {
     this.setOnClickListener {

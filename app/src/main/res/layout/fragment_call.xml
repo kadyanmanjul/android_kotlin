@@ -9,15 +9,12 @@
     <variable
         name="vm"
         type="com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.VoiceCallViewModel" />
-    <variable
-        name="CallData"
-        type="com.joshtalks.joshskills.ui.voip.new_arch.ui.models.CallData"/>
 </data>
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        setCallBackground="@{CallData.callType}"
+        setCallBackground="@{vm.uiState.type}"
         android:fitsSystemWindows="true"
         tools:background="@drawable/voip_bg"
         android:orientation="vertical">
@@ -56,8 +53,8 @@
             app:layout_constraintEnd_toEndOf="@+id/call_time"
             app:layout_constraintStart_toStartOf="@+id/call_time"
             tools:ignore="MissingPrefix"
-            android:text="@{CallData.callerName}"
-            tools:text="Naman"/>
+            android:text="@{vm.uiState.name}"
+            tools:text="User Name"/>
 
         <TextView
             android:id="@+id/call_time"
@@ -65,7 +62,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/_24sdp"
             android:gravity="center"
-            android:text="@{vm.callStatusTest}"
+            android:text="@{vm.uiState.currentState}"
             tools:text=""
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
             android:textColor="@color/white"
@@ -73,7 +70,7 @@
             app:layout_constraintEnd_toEndOf="@+id/c_image"
             app:layout_constraintStart_toStartOf="@+id/c_image"
             tools:ignore="MissingPrefix"
-            android:visibility='@{!vm.callStatusTest.equals("Timer") ? View.VISIBLE : View.GONE}' />
+            android:visibility='@{!vm.uiState.currentState.equals("Timer") ? View.VISIBLE : View.GONE}' />
 
         <Chronometer
             android:id="@+id/call_time1"
@@ -83,7 +80,8 @@
             android:gravity="center"
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
             android:textColor="@color/white"
-            android:visibility='@{vm.callStatusTest.equals("Timer") ? View.VISIBLE : View.GONE}'
+            startTimer="@{vm.uiState.startTime}"
+            android:visibility='@{vm.uiState.currentState.equals("Timer") ? View.VISIBLE : View.GONE}'
             app:layout_constraintBottom_toTopOf="@+id/c_image"
             app:layout_constraintEnd_toEndOf="@+id/c_image"
             app:layout_constraintStart_toStartOf="@+id/c_image"
@@ -101,7 +99,7 @@
             android:layout_height="@dimen/_108sdp"
             android:background="@drawable/circle"
             android:backgroundTint="@color/colorPrimaryDark"
-            setProfileImage="@{CallData.profileImage}"
+            setProfileImage="@{vm.uiState.profileImage}"
             android:src="@drawable/ic_call_placeholder"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -139,7 +137,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/topic_header"
             tools:ignore="MissingPrefix"
-            android:text="@{CallData.topicName}"
+            android:text="@{vm.uiState.topic}"
             tools:text="Talk about what is Future" />
 
         <androidx.appcompat.widget.AppCompatImageButton
@@ -175,8 +173,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/btn_action"
             app:srcCompat="@drawable/ic_baseline_speaker_on"
-            setSpeakerImage="@{vm.isSpeakerOn}"
-            />
+            setSpeakerImage="@{vm.uiState.speakerOn}" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/txt_speaker"
@@ -210,7 +207,7 @@
             app:layout_constraintTop_toTopOf="@id/btn_action"
             app:layout_constraintVertical_bias="0.9"
             app:srcCompat="@drawable/ic_baseline_mic_off"
-            setMicImage="@{vm.isMute}" />
+            setMicImage="@{vm.uiState.mute}" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/txt_mute"
@@ -226,24 +223,6 @@
             app:layout_constraintStart_toStartOf="@+id/btn_mute"
             app:layout_constraintTop_toBottomOf="@+id/btn_mute"
             tools:ignore="MissingPrefix"
-            tools:visibility="visible" />
-
-        <com.airbnb.lottie.LottieAnimationView
-            android:id="@+id/animated_video_iv"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:visibility="@{vm.source == ConstantsKt.FROM_INCOMING_CALL || vm.callStatus == 2 ? View.INVISIBLE : View.VISIBLE}"
-            app:layout_constraintBottom_toBottomOf="@+id/btn_action"
-            app:layout_constraintEnd_toStartOf="@+id/guideline5"
-            app:layout_constraintStart_toStartOf="@+id/guideline4"
-            app:layout_constraintTop_toTopOf="parent"
-            app:lottie_autoPlay="true"
-            app:lottie_fileName="lottie/connecting1.json"
-            app:lottie_imageAssetsFolder="lottie"
-            app:lottie_loop="true"
-            app:lottie_repeatMode="restart"
-            app:lottie_scale="1"
-            app:lottie_speed="1"
             tools:visibility="visible" />
 
         <RelativeLayout
@@ -288,8 +267,16 @@
             android:id="@+id/group_for_outgoing"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="@{vm.callStatus == 2 ? View.VISIBLE : View.INVISIBLE }"
-            app:constraint_referenced_ids="btn_mute,btn_speaker,txt_speaker,txt_mute,topic_name,topic_header,c_image"
+            android:visibility="@{vm.uiState.startTime > 0 ? View.VISIBLE : View.INVISIBLE }"
+            app:constraint_referenced_ids="btn_mute,btn_speaker,txt_speaker,txt_mute"
+            tools:visibility="visible" />
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/group_userdata"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="@{vm.uiState.startTime &lt;= 0 &amp;&amp; vm.source == ConstantsKt.FROM_INCOMING_CALL ? View.INVISIBLE : View.VISIBLE }"
+            app:constraint_referenced_ids="topic_name,topic_header,c_image"
             tools:visibility="visible" />
 
         <androidx.constraintlayout.widget.Guideline

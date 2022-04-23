@@ -6,6 +6,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.base.log.Feature
 import com.joshtalks.joshskills.base.model.ApiHeader
@@ -16,7 +17,7 @@ import com.joshtalks.joshskills.voip.constant.LEAVING
 
 // TODO: Must Refactor
 val voipLog = JoshLog.getInstanceIfEnable(Feature.VOIP)
-
+private const val TAG = "Utils"
 //fun Context.updateUserMuteState(state: Boolean, ) {
 //    voipLog?.log("updateUserMuteState --> $state")
 //    val values = ContentValues(1).apply {
@@ -76,7 +77,7 @@ fun Context.updateStartCallTime(
     channelName: String = "",
     topicName: String = ""
 ) {
-    voipLog?.log("QUERY")
+    Log.d(TAG, "updateStartCallTime: ")
     val values = ContentValues(9).apply {
         put(CALL_START_TIME, timestamp)
         put(REMOTE_USER_NAME, remoteUserName)
@@ -90,6 +91,34 @@ fun Context.updateStartCallTime(
     }
     val data = contentResolver.insert(
         Uri.parse(CONTENT_URI + START_CALL_TIME_URI),
+        values
+    )
+    voipLog?.log("Data --> $data")
+}
+
+fun Context.updateUserDetails(
+    remoteUserName: String = "",
+    remoteUserImage: String? = null,
+    callId: Int = -1,
+    callType: Int = -1,
+    remoteUserAgoraId: Int = -1,
+    currentUserAgoraId: Int = -1,
+    channelName: String = "",
+    topicName: String = ""
+) {
+    Log.d(TAG, "updateUserDetails: ")
+    val values = ContentValues(8).apply {
+        put(REMOTE_USER_NAME, remoteUserName)
+        put(REMOTE_USER_IMAGE, remoteUserImage)
+        put(REMOTE_USER_AGORA_ID, remoteUserAgoraId)
+        put(CALL_ID, callId)
+        put(CALL_TYPE, callType)
+        put(CHANNEL_NAME, channelName)
+        put(TOPIC_NAME, topicName)
+        put(CURRENT_USER_AGORA_ID, currentUserAgoraId)
+    }
+    val data = contentResolver.insert(
+        Uri.parse(CONTENT_URI + VOIP_USER_DATA_URI),
         values
     )
     voipLog?.log("Data --> $data")

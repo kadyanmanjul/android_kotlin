@@ -25,6 +25,7 @@ const val SERVICE_ACTION_INCOMING_CALL_DECLINE = "josh_service_action_incoming_c
 // Content Provider UI
 const val CONTENT_URI = "content://com.joshtalks.joshskills.contentprovider"
 const val START_CALL_TIME_URI = "/start_call_time"
+const val VOIP_USER_DATA_URI = "/voip_user_data"
 const val INCOMING_CALL_URI = "/incoming_call"
 const val VOIP_STATE_URI = "/voip_state"
 const val VOIP_STATE_LEAVING_URI = "/voip_state_leaving"

@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.call
+package com.joshtalks.joshskills.ui.call.repository
 
 import android.content.ComponentName
 import android.content.Context
@@ -11,43 +11,42 @@ import android.os.Messenger
 import android.os.RemoteException
 import android.util.Log
 import com.joshtalks.joshskills.BuildConfig
-import com.joshtalks.joshskills.base.constants.INTENT_DATA_API_HEADER
-import com.joshtalks.joshskills.base.constants.INTENT_DATA_CONNECT_CALL
-import com.joshtalks.joshskills.base.constants.INTENT_DATA_MENTOR_ID
+import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.base.model.ApiHeader
 import com.joshtalks.joshskills.core.API_TOKEN
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.USER_LOCALE
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.ui.call.data.local.VoipPref
+import com.joshtalks.joshskills.ui.call.data.local.VoipPrefListener
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.models.CallData
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.models.CallUIState
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.voipLog
-import com.joshtalks.joshskills.voip.constant.CALL_CONNECT_REQUEST
-import com.joshtalks.joshskills.voip.constant.CALL_DISCONNECT_REQUEST
-import com.joshtalks.joshskills.voip.constant.IPC_CONNECTION_ESTABLISHED
-import com.joshtalks.joshskills.voip.constant.MUTE
-import com.joshtalks.joshskills.voip.constant.SPEAKER_OFF_REQUEST
-import com.joshtalks.joshskills.voip.constant.SPEAKER_ON_REQUEST
-import com.joshtalks.joshskills.voip.constant.SWITCHED_TO_SPEAKER
-import com.joshtalks.joshskills.voip.constant.UNMUTE
+import com.joshtalks.joshskills.voip.constant.*
 import com.joshtalks.joshskills.voip.data.CallingRemoteService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 private const val TAG = "WebrtcRepository"
 
 class WebrtcRepository {
-    private var mService : Messenger? = null
-    private var handler : Messenger? = null
+    private var mService: Messenger? = null
+    private var handler: Messenger? = null
     private val ioScope = CoroutineScope(Dispatchers.IO)
     private val repositoryHandler = RepositoryHandler(ioScope)
     private val repositoryToVMFlow = MutableSharedFlow<Message>(replay = 0)
+    val uiState by lazy { CallUIState() }
 
     init {
         voipLog?.log("INIT .... ")
+        Log.d(TAG, "INIT : ")
         observeCallEvents()
         try {
             val remoteServiceIntent =
@@ -62,9 +61,73 @@ class WebrtcRepository {
             remoteServiceIntent.putExtra(INTENT_DATA_MENTOR_ID, Mentor.getInstance().getId())
             remoteServiceIntent.putExtra(INTENT_DATA_API_HEADER, apiHeader)
             AppObjectController.joshApplication.startService(remoteServiceIntent)
-        } catch (e:Exception) {
+        } catch (e: Exception) {
             voipLog?.log("ERROR at INIT...")
             e.printStackTrace()
+        }
+
+        ioScope.launch {
+            VoipPrefListener.observerVoipUserUIState().collect {
+                setUserUIState()
+            }
+        }
+
+        VoipPrefListener.observerStartTime().observeForever(::updateCallStartTime)
+
+        ioScope.launch {
+            VoipPrefListener.observerVoipUIState().collect { state ->
+                Log.d(TAG, "listenUIState: $state")
+                if (state.isOnHold) {
+                    uiState.currentState = "Call on Hold"
+                    voipLog?.log("HOLD")
+                } else if (state.isRemoteUserMuted) {
+                    uiState.currentState = "User Muted the Call"
+                    voipLog?.log("Mute")
+                } else {
+                    if (VoipPref.getVoipState() == CONNECTED)
+                        uiState.currentState = "Timer"
+                }
+
+                if (uiState.isSpeakerOn != state.isSpeakerOn) {
+                    if (state.isSpeakerOn) {
+                        uiState.isSpeakerOn = true
+                        turnOnSpeaker()
+                    } else {
+                        uiState.isSpeakerOn = false
+                        turnOffSpeaker()
+                    }
+                }
+
+                if (uiState.isMute != state.isMute) {
+                    if (state.isMute) {
+                        uiState.isMute = true
+                        muteCall()
+                    } else {
+                        uiState.isMute = false
+                        unmuteCall()
+                    }
+                }
+            }
+        }
+    }
+
+    fun updateCallStartTime(startTime : Long) {
+        uiState.startTime = startTime
+    }
+
+    private fun setUserUIState() {
+        val name = VoipPref.getCallerName()
+        if(name.isNotEmpty()) {
+            uiState.name = name
+            uiState.profileImage = VoipPref.getProfileImage()
+            uiState.topic = VoipPref.getTopicName()
+            uiState.type = VoipPref.getCallType()
+            uiState.title = when(VoipPref.getCallType()) {
+                PEER_TO_PEER -> "Practice with Partner"
+                FPP -> "Favorite Practice Partner"
+                GROUP -> "Group Call"
+                else -> ""
+            }
         }
     }
 
@@ -86,7 +149,7 @@ class WebrtcRepository {
         }
     }
 
-    fun observeRepositoryEvents() : SharedFlow<Message> {
+    fun observeRepositoryEvents(): SharedFlow<Message> {
         return repositoryToVMFlow
     }
 
@@ -99,15 +162,20 @@ class WebrtcRepository {
     }
 
     fun startService() {
-        val remoteServiceIntent = Intent(AppObjectController.joshApplication, CallingRemoteService::class.java)
-        AppObjectController.joshApplication.bindService(remoteServiceIntent, serviceConnection, Context.BIND_AUTO_CREATE)
+        val remoteServiceIntent =
+            Intent(AppObjectController.joshApplication, CallingRemoteService::class.java)
+        AppObjectController.joshApplication.bindService(
+            remoteServiceIntent,
+            serviceConnection,
+            Context.BIND_AUTO_CREATE
+        )
     }
 
     fun stopService() {
         AppObjectController.joshApplication.unbindService(serviceConnection)
     }
 
-    fun connectCall(callData : HashMap<String, Any>) {
+    fun connectCall(callData: HashMap<String, Any>) {
         val msg = Message().apply {
             what = CALL_CONNECT_REQUEST
             obj = Bundle().apply {
@@ -157,13 +225,13 @@ class WebrtcRepository {
         sendMessageToRemoteService(msg)
     }
 
-    private fun sendMessageToRemoteService(msg : Message) {
+    private fun sendMessageToRemoteService(msg: Message) {
         try {
             val data = Message()
             data.copyFrom(msg)
             voipLog?.log("$data  $mService")
             mService?.send(data)
-            when(data.what) {
+            when (data.what) {
                 // Returning back these two event to View Model so that they can take action
                 IPC_CONNECTION_ESTABLISHED, CALL_DISCONNECT_REQUEST -> {
                     ioScope.launch {
@@ -171,9 +239,14 @@ class WebrtcRepository {
                     }
                 }
             }
-        } catch (e : RemoteException) {
+        } catch (e: RemoteException) {
             e.printStackTrace()
             voipLog?.log("Service Closed")
         }
+    }
+
+    fun clearRepository() {
+        VoipPrefListener.observerStartTime().removeObserver(::updateCallStartTime)
+        ioScope.cancel()
     }
 }

@@ -7,16 +7,12 @@ import android.util.Log
 import android.view.View
 import android.widget.Chronometer
 import android.widget.FrameLayout
-import androidx.databinding.Observable
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
-import com.google.firebase.firestore.OnProgressListener
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.constants.FROM_CALL_BAR
 import com.joshtalks.joshskills.base.constants.STARTING_POINT
+import com.joshtalks.joshskills.ui.call.data.local.VoipPref
+import com.joshtalks.joshskills.ui.call.data.local.VoipPrefListener
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.callbar.CallBar
-import com.joshtalks.joshskills.ui.voip.new_arch.ui.callbar.VoipPref
-import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.startTimer
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity
 import java.lang.Exception
 
@@ -28,7 +24,6 @@ constructor(context: Context, attributes: AttributeSet? = null) : FrameLayout(co
     }
 
     private val callTimer: Chronometer by lazy { this.findViewById(R.id.call_timer) }
-    private val callBar = CallBar()
 
     init {
         try {
@@ -75,10 +70,10 @@ constructor(context: Context, attributes: AttributeSet? = null) : FrameLayout(co
     }
 
     fun observeStartTime() {
-        callBar.getTimerLiveData().observeForever(::timerObserver)
+        VoipPrefListener.observerStartTime().observeForever(::timerObserver)
     }
 
     fun stopObservingStartTime() {
-        callBar.getTimerLiveData().removeObserver(::timerObserver)
+        VoipPrefListener.observerStartTime().removeObserver(::timerObserver)
     }
 }
