@@ -181,7 +181,8 @@ object PermissionUtils {
 
     fun permissionPermanentlyDeniedDialog(
         activity: Activity,
-        message: Int = R.string.storage_permission_message
+        message: Int = R.string.storage_permission_message,
+        onPermissionDenied: (() -> Unit)? = null
     ) {
         MaterialDialog(activity).show {
             message(message)
@@ -189,7 +190,9 @@ object PermissionUtils {
                 openSettings(activity)
 
             }
-            negativeButton(R.string.not_now)
+            negativeButton(R.string.not_now) {
+                onPermissionDenied?.invoke()
+            }
         }
     }
 
