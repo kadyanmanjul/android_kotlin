@@ -53,9 +53,15 @@ class Blur {
         if (factor.sampling == BlurFactor.DEFAULT_SAMPLING) {
             return bitmap;
         } else {
-            Bitmap scaled = Bitmap.createScaledBitmap(bitmap, factor.width, factor.height, true);
-            bitmap.recycle();
-            return scaled;
+            try {
+                if (bitmap == null)
+                    return null;
+                Bitmap scaled = Bitmap.createScaledBitmap(bitmap, factor.width, factor.height, true);
+                bitmap.recycle();
+                return scaled;
+            }catch (Exception ex){
+                return null;
+            }
         }
     }
 
