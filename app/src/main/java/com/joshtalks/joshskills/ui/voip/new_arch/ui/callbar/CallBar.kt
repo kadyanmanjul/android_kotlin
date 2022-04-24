@@ -20,17 +20,8 @@ private const val TAG = "CallBar"
 class CallBar {
     val prefListener by lazy { VoipPrefListener }
 
-    fun getTimerLiveData(): LiveData<Long> {
-        return prefListener.observerStartTime()
-    }
-
     // TODO: Can be removed
     fun observerVoipState(): LiveData<Int> {
         return prefListener.observerVoipState()
-    }
-
-    //
-    fun observerVoipUIState(): StateFlow<VoipUIState> {
-        return prefListener.observerVoipUIState()
     }
 }

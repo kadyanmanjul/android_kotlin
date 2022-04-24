@@ -95,7 +95,7 @@ internal class NotificationGenerator {
                         .setDefaults(DEFAULT_SOUND)
                         .setDefaults(DEFAULT_VIBRATE)
                         .setOngoing(true)
-                        .setAutoCancel(true)
+                        .setAutoCancel(false)
                         .setShowWhen(false)
             }
             NotificationPriority.Low-> {
