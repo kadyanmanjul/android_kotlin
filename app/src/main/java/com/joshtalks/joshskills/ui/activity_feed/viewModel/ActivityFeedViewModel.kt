@@ -201,7 +201,7 @@ class ActivityFeedViewModel : BaseViewModel(), LifecycleObserver {
 
         }
     }
-    fun onBackPress(view: View) {
+    fun onBackPress() {
         saveEngageTime()
     }
 

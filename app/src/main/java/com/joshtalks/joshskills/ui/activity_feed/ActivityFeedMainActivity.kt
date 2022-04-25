@@ -1,6 +1,8 @@
 package com.joshtalks.joshskills.ui.activity_feed
 
 import android.content.Intent
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -13,6 +15,7 @@ import com.joshtalks.joshskills.ui.activity_feed.viewModel.ActivityFeedViewModel
 import com.joshtalks.joshskills.ui.group.BaseGroupActivity
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
 import com.joshtalks.joshskills.ui.userprofile.fragments.ProfileImageShowFragment
+import kotlinx.android.synthetic.main.base_toolbar.*
 
 class ActivityFeedMainActivity : BaseGroupActivity() {
 
@@ -30,6 +33,7 @@ class ActivityFeedMainActivity : BaseGroupActivity() {
         binding.vm = viewModel
         lifecycle.addObserver(viewModel)
         binding.executePendingBindings()
+        initToolBar()
     }
 
     override fun onCreated() {
@@ -47,7 +51,20 @@ class ActivityFeedMainActivity : BaseGroupActivity() {
             }
         }
     }
-
+    private fun initToolBar(){
+        with(iv_back){
+            visibility=VISIBLE
+            setOnClickListener{
+                viewModel.onBackPress()
+            }
+        }
+        text_message_title.text = this.getString(R.string.activity_feed)
+        image_view_logo.visibility=GONE
+        iv_earn.visibility=GONE
+        iv_edit.visibility= GONE
+        iv_help.visibility= GONE
+        iv_setting.visibility=GONE
+    }
     private fun getData() {
         viewModel.getActivityFeed("")
     }
