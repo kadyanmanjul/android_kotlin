@@ -15,7 +15,7 @@ object PubNubEventsManager {
         customMessage.addProperty("is_hand_raised", isRaised)
         customMessage.addProperty("short_name", PubNubManager.currentUser?.name ?: DEFAULT_NAME)
         customMessage.addProperty("action", "IS_HAND_RAISED")
-        PubNubManager.sendCustomMessage(customMessage)
+        PubNubManager.sendCustomMessage(customMessage, PubNubManager.getLiveRoomProperties().moderatorId.toString())
     }
 
      fun sendMuteEvent(isMicOn: Boolean) {
