@@ -100,6 +100,19 @@
             app:layout_constraintTop_toBottomOf="@id/search_view"
             tools:listitem="@layout/li_contact" />
 
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="@dimen/_16sdp"
+            android:text="@string/no_contacts_found"
+            android:visibility="@{viewModel.isListEmpty ? View.VISIBLE : View.GONE}"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/search_view"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -112,7 +125,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/toolbar_container"
-            tools:visibility="visible">
+            tools:visibility="gone">
 
             <com.google.android.material.textview.MaterialTextView
                 android:layout_width="wrap_content"

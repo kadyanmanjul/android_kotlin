@@ -24,8 +24,9 @@ class InviteFriendViewModel(application: Application) : AndroidViewModel(applica
     val query = MutableStateFlow("")
     val scrollToTop = ObservableBoolean(false)
     val adapter = ContactsAdapter()
-    lateinit var contacts: List<PhonebookContact>
-    private var adapterList = emptyList<PhonebookContact>()
+    var contacts: List<PhonebookContact> = emptyList()
+    val isListEmpty = ObservableBoolean(true)
+    var adapterList = emptyList<PhonebookContact>()
         set(value) {
             field = value
             adapter.submitList(value)
@@ -51,9 +52,18 @@ class InviteFriendViewModel(application: Application) : AndroidViewModel(applica
                     cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.CONTACT_ID))
                 val name =
                     cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME))
-                val phoneNumber =
+                var phoneNumber =
                     cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER))
+                        .replace("-", "")
+                        .replace("(", "")
+                        .replace(")", "")
                         .replace(" ", "").trim()
+                if (phoneNumber.contains("+") && phoneNumber.contains("+91").not())
+                    continue
+                if (phoneNumber.first() == '0')
+                    phoneNumber = phoneNumber.substring(1)
+                if (phoneNumber.contains("+91").not())
+                    phoneNumber = "+91$phoneNumber"
                 temp.add(PhonebookContact(id, name, phoneNumber))
             }
             cursor.close()
@@ -62,9 +72,14 @@ class InviteFriendViewModel(application: Application) : AndroidViewModel(applica
             o1.name.compareTo(o2.name)
         }
         val result = temp.distinctBy { it.phoneNumber }
-        adapterList = result
-        addContactsToDatabase(result)
-        contacts = result
+        if (result.isNotEmpty()) {
+            isListEmpty.set(false)
+            contacts = result
+            adapterList = result
+            addContactsToDatabase(result)
+        } else {
+            isListEmpty.set(true)
+        }
     }
 
     fun inviteFriend(
@@ -138,25 +153,28 @@ class InviteFriendViewModel(application: Application) : AndroidViewModel(applica
     }
 
     private fun setQueryListener() {
-        if (this::contacts.isInitialized)
-            viewModelScope.launch {
-                query.debounce(300)
-                    .distinctUntilChanged()
-                    .flowOn(Dispatchers.Main)
-                    .collect {
-                        adapterList =
-                            if (it.isEmpty()) {
-                                contacts
-                            } else it.lowercase(Locale.getDefault()).let {
-                                contacts.filter { contact ->
-                                    contact.name.lowercase()
-                                        .contains(it) || contact.phoneNumber.contains(it)
-                                }.sortedBy { contact ->
-                                    contact.name
-                                }
+        viewModelScope.launch {
+            query.debounce(300)
+                .distinctUntilChanged()
+                .flowOn(Dispatchers.Main)
+                .collect {
+                    adapterList =
+                        if (it.isEmpty()) {
+                            contacts
+                        } else it.lowercase(Locale.getDefault()).let {
+                            contacts.filter { contact ->
+                                contact.name.lowercase()
+                                    .contains(it) || contact.phoneNumber.contains(it)
+                            }.sortedBy { contact ->
+                                contact.name
                             }
-                        scrollToTop.set(it.isEmpty())
-                    }
-            }
+                        }
+                    if (adapterList.isEmpty())
+                        isListEmpty.set(true)
+                    else
+                        isListEmpty.set(false)
+                    scrollToTop.set(it.isEmpty())
+                }
+        }
     }
 }
