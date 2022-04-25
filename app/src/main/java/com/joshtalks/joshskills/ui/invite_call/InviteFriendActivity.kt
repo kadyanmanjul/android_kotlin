@@ -22,6 +22,7 @@ import com.karumi.dexter.listener.PermissionDeniedResponse
 import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.single.PermissionListener
+import java.io.IOException
 
 class InviteFriendActivity : BaseActivity(), ContactsAdapter.OnContactClickListener {
     private val binding: ActivityInviteFriendBinding by lazy {
@@ -72,6 +73,7 @@ class InviteFriendActivity : BaseActivity(), ContactsAdapter.OnContactClickListe
     }
 
     override fun onContactClick(contact: PhonebookContact) {
+        if (isPhoneNumberValid(contact.phoneNumber).not()) return
         viewModel.isLoading.set(true)
         DeepLinkUtil(this)
             .setReferralCode(Mentor.getInstance().referralCode)
@@ -120,6 +122,30 @@ class InviteFriendActivity : BaseActivity(), ContactsAdapter.OnContactClickListe
             }
         })
     }
+
+    fun isPhoneNumberValid(phoneNumber: String): Boolean {
+        return try {
+            if (phoneNumber.isEmpty())
+                throw IOException("Phone number is empty")
+            val regex = Regex("^[6-9][0-9]{9}$")
+            if (!regex.matches(phoneNumber.substring(3)))
+                throw IOException("Phone number is invalid")
+            true
+        } catch (e: IOException) {
+            e.printStackTrace()
+            MaterialAlertDialogBuilder(this)
+                .setTitle("Unable to call friend!")
+                .setMessage(
+                    e.message
+                )
+                .setPositiveButton("OK") { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .show()
+            false
+        }
+    }
+
 
     fun inviteFriend(contact: PhonebookContact, deepLink: String) {
         viewModel.inviteFriend(

@@ -1197,6 +1197,7 @@
     <string name="twenty_min_call_incomplete">Aapne last practice partner se 20 minute baat nahi kari. </string>
     <string name="twenty_min_call_target">Aapka aaj ka target hai ek practice partner se 20 minute baat karein </string>
     <string name="twenty_min_call_completed">Behetereen! Aapne aaj ka speaking target pura kar lia hai</string>
+    <string name="no_contacts_found">No contacts found!</string>
 
 
 </resources>
