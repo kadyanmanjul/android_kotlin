@@ -2,6 +2,8 @@ package com.joshtalks.badebhaiya.feed
 
 import android.app.AlarmManager
 import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -25,7 +27,7 @@ import com.joshtalks.badebhaiya.liveroom.OPEN_PROFILE
 import com.joshtalks.badebhaiya.liveroom.OPEN_ROOM
 import com.joshtalks.badebhaiya.liveroom.bottomsheet.CreateRoom
 import com.joshtalks.badebhaiya.liveroom.model.StartingLiveRoomProperties
-import com.joshtalks.badebhaiya.liveroom.viewmodel.ConversationRoomViewModel
+import com.joshtalks.badebhaiya.liveroom.viewmodel.LiveRoomViewModel
 import com.joshtalks.badebhaiya.profile.ProfileActivity
 import com.joshtalks.badebhaiya.profile.request.DeleteReminderRequest
 import com.joshtalks.badebhaiya.profile.request.ReminderRequest
@@ -41,6 +43,60 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
     companion object {
         @JvmStatic
         fun getInstance() = FeedActivity()
+
+
+        const val CHANNEL_NAME = "channel_name"
+        const val UID = "uid"
+        const val MODERATOR_UID = "moderator_uid"
+        const val TOKEN = "TOKEN"
+        const val IS_ROOM_CREATED_BY_USER = "is_room_created_by_user"
+        const val ROOM_ID = "room_id"
+        const val OPEN_FROM_NOTIFICATION = "open_from_notification"
+        const val ROOM_QUESTION_ID = "room_question_id"
+        const val TOPIC_NAME = "topic_name"
+
+
+        fun getFeedActivityIntent(
+            context: Context,
+            channelName: String?,
+            uid: Int?,
+            token: String?,
+            isRoomCreatedByUser: Boolean,
+            roomId: Int?,
+            roomQuestionId: Int? = null,
+            moderatorId: Int? = null,
+            topicName: String? = null,
+            flags: Array<Int> = arrayOf()
+        ) = Intent(context, FeedActivity::class.java).apply {
+            Log.d("ABC2", "getIntent() called")
+            putExtra(CHANNEL_NAME, channelName)
+            putExtra(UID, uid)
+            putExtra(MODERATOR_UID, moderatorId)
+            putExtra(TOKEN, token)
+            putExtra(IS_ROOM_CREATED_BY_USER, isRoomCreatedByUser)
+            putExtra(ROOM_ID, roomId)
+            putExtra(ROOM_QUESTION_ID, roomQuestionId)
+            putExtra(TOPIC_NAME, topicName)
+            flags.forEach { flag ->
+                this.addFlags(flag)
+            }
+        }
+
+        fun getIntentForNotification(
+            context: Context,
+            roomId: String,
+            topicName: String? = null,
+            flags: Array<Int> = arrayOf()
+        ) = Intent(context, FeedActivity::class.java).apply {
+
+            putExtra(OPEN_FROM_NOTIFICATION, true)
+            putExtra(ROOM_ID, roomId.toInt())
+            putExtra(TOPIC_NAME, topicName)
+            flags.forEach { flag ->
+                this.addFlags(flag)
+            }
+        }
+
     }
 
     private val viewModel by lazy {
@@ -48,7 +104,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
     }
 
     private val liveRoomViewModel by lazy {
-        ViewModelProvider(this)[ConversationRoomViewModel::class.java]
+        ViewModelProvider(this)[LiveRoomViewModel::class.java]
     }
 
     private lateinit var binding: ActivityFeedBinding
@@ -70,18 +126,20 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
 
     private fun checkAndOpenLiveRoom() {
         if (intent.getBooleanExtra(LiveRoomFragment.OPEN_FROM_NOTIFICATION, false)){
-            liveRoomViewModel.liveRoomProperties = StartingLiveRoomProperties(
-                isActivityOpenFromNotification = true,
-                roomId = intent.getIntExtra(LiveRoomFragment.ROOM_ID, 0),
-                channelTopic = intent.getStringExtra(LiveRoomFragment.TOPIC_NAME)?: "",
-                channelName = intent.getStringExtra(LiveRoomFragment.CHANNEL_NAME)?: "",
-                agoraUid = intent.getIntExtra(LiveRoomFragment.UID, 0),
-                moderatorId = intent.getIntExtra(LiveRoomFragment.MODERATOR_UID, 0),
-                token = intent.getStringExtra(LiveRoomFragment.TOKEN) ?: "",
-                roomQuestionId = intent.getIntExtra(LiveRoomFragment.ROOM_QUESTION_ID, 0),
-                isRoomCreatedByUser = intent.getBooleanExtra(LiveRoomFragment.IS_ROOM_CREATED_BY_USER, false)
+            LiveRoomFragment.launch(
+                this,
+                StartingLiveRoomProperties(
+                    isActivityOpenFromNotification = true,
+                    roomId = intent.getIntExtra(LiveRoomFragment.ROOM_ID, 0),
+                    channelTopic = intent.getStringExtra(LiveRoomFragment.TOPIC_NAME)?: "",
+                    channelName = intent.getStringExtra(LiveRoomFragment.CHANNEL_NAME)?: "",
+                    agoraUid = intent.getIntExtra(LiveRoomFragment.UID, 0),
+                    moderatorId = intent.getIntExtra(LiveRoomFragment.MODERATOR_UID, 0),
+                    token = intent.getStringExtra(LiveRoomFragment.TOKEN) ?: "",
+                    roomQuestionId = intent.getIntExtra(LiveRoomFragment.ROOM_QUESTION_ID, 0),
+                    isRoomCreatedByUser = intent.getBooleanExtra(LiveRoomFragment.IS_ROOM_CREATED_BY_USER, false)
+                )
             )
-            LiveRoomFragment.launch(this)
         }
     }
 
@@ -125,8 +183,8 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                 OPEN_ROOM -> {
                     it.data?.let {
                         it.getParcelable<ConversationRoomResponse>(ROOM_DETAILS)?.let { room ->
-                            liveRoomViewModel.liveRoomProperties = StartingLiveRoomProperties.createFromRoom(room, it.getString(TOPIC)!!)
-                            LiveRoomFragment.launch(this)
+                            val liveRoomProperties = StartingLiveRoomProperties.createFromRoom(room, it.getString(TOPIC)!!)
+                            LiveRoomFragment.launch(this, liveRoomProperties)
                         }
                     }
                 }
@@ -143,8 +201,8 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                     topic: String
                 ) {
                     conversationRoomResponse.apply {
-                        liveRoomViewModel.liveRoomProperties = StartingLiveRoomProperties.createFromRoom(this, topic, createdByUser = true)
-                        LiveRoomFragment.launch(this@FeedActivity)
+                        val liveRoomProperties = StartingLiveRoomProperties.createFromRoom(this, topic, createdByUser = true)
+                        LiveRoomFragment.launch(this@FeedActivity, liveRoomProperties)
                     }
                     it.dismiss()
                 }

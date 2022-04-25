@@ -16,6 +16,7 @@ import androidx.core.content.ContextCompat
 import com.joshtalks.badebhaiya.BuildConfig
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.core.*
+import com.joshtalks.badebhaiya.feed.FeedActivity
 import com.joshtalks.badebhaiya.liveroom.LiveRoomFragment
 import com.joshtalks.badebhaiya.liveroom.service.NotificationId.Companion.INCOMING_CALL_NOTIFICATION_ID
 import com.joshtalks.badebhaiya.liveroom.service.NotificationId.Companion.ROOM_CALL_NOTIFICATION_ID
@@ -679,7 +680,7 @@ class ConvoWebRtcService : Service() {
 
         if (isHavingPendingIntent){
 
-            val intent = LiveRoomFragment.getFeedActivityIntent(
+            val intent = FeedActivity.getFeedActivityIntent(
                 context = this,
                 channelName = conversationRoomChannelName,
                 uid = agoraUid,

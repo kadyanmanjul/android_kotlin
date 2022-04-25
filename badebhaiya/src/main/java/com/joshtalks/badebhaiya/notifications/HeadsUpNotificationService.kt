@@ -26,6 +26,7 @@ import androidx.core.content.ContextCompat
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.core.AppObjectController
 import com.joshtalks.badebhaiya.core.EMPTY
+import com.joshtalks.badebhaiya.feed.FeedActivity
 import com.joshtalks.badebhaiya.liveroom.LiveRoomFragment
 import com.joshtalks.badebhaiya.liveroom.service.NotificationId
 import java.util.Objects
@@ -69,7 +70,7 @@ class HeadsUpNotificationService : Service() {
                 mNotificationManager?.cancelAll()
                 intent.getStringExtra(ConfigKey.INTENT_ROOM_ID)?.let {
                     startActivity(
-                        LiveRoomFragment.getIntentForNotification(
+                        FeedActivity.getIntentForNotification(
                             this,
                             it,
                             intent.getStringExtra(ConfigKey.INTENT_ROOM_TOPIC)?: EMPTY,
