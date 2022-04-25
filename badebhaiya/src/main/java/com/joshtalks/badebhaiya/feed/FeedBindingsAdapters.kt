@@ -1,6 +1,7 @@
 package com.joshtalks.badebhaiya.feed
 
 import android.content.res.ColorStateList
+import android.util.Log
 import android.widget.ImageView
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -89,8 +90,8 @@ fun setConversationRoomCardActionButton(
             //view.isEnabled = true
             if (roomListResponseItem.speakersData != null && User.getInstance().userId == roomListResponseItem.speakersData.userId) {
                 val startTime = roomListResponseItem.startTime ?: Long.MAX_VALUE
-                if (roomListResponseItem.currentTime >= (startTime - ALLOWED_JOIN_ROOM_TIME)) {
-                    (adapter as FeedAdapter).updateScheduleRoomStatusForSpeaker(viewHolder.adapterPosition)
+                if (roomListResponseItem.currentTime >= (startTime - ALLOWED_JOIN_ROOM_TIME / 1000L)) {
+                    (adapter as FeedAdapter).updateScheduleRoomStatusForSpeaker(viewHolder.absoluteAdapterPosition)
                 } else {
                     setAlarmForLiveRoom(viewHolder, roomListResponseItem, adapter)
                 }

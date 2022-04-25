@@ -748,13 +748,9 @@ object Utils {
 
     fun getEpochTimeFromFullDate(dateTime: String): Long {
         return try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                ZonedDateTime.parse(dateTime).toEpochSecond() * 1000
-            } else {
-                SimpleDateFormat("yyyy-MM-dd'T'kk:mm:ss", Locale.getDefault()).apply {
-                    timeZone = TimeZone.getTimeZone("UTC")
-                }.parse(dateTime).time
-            }
+            SimpleDateFormat("yyyy-MM-dd'T'kk:mm", Locale.getDefault()).apply {
+                timeZone = TimeZone.getTimeZone("UTC")
+            }.parse(dateTime).time
         } catch (e: Exception) {
             e.printStackTrace()
             0

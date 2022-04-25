@@ -2,6 +2,7 @@ package com.joshtalks.badebhaiya.feed
 
 import android.os.Bundle
 import android.os.Message
+import android.util.Log
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
@@ -28,6 +29,7 @@ import com.joshtalks.badebhaiya.repository.model.ConversationRoomRequest
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.utils.Utils
 import com.joshtalks.badebhaiya.utils.ALLOWED_SCHEDULED_TIME
+import com.joshtalks.badebhaiya.utils.IST_TIME_DIFFERENCE
 import kotlinx.coroutines.launch
 
 const val ROOM_ITEM = "room_item"
@@ -265,7 +267,8 @@ class FeedViewModel : ViewModel() {
                 showToast(AppObjectController.joshApplication.getString(R.string.enter_topic_name))
             } else {
                 try {
-                    if (Utils.getEpochTimeFromFullDate(startTime) < (System.currentTimeMillis() + ALLOWED_SCHEDULED_TIME)) {
+                    if (Utils.getEpochTimeFromFullDate(startTime) <
+                        (System.currentTimeMillis() + IST_TIME_DIFFERENCE + ALLOWED_SCHEDULED_TIME)) {
                         showToast("Schedule a room for 30 minutes or later!")
                         return@launch
                     }
