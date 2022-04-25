@@ -26,6 +26,7 @@ import com.facebook.stetho.Stetho
 import com.freshchat.consumer.sdk.Freshchat
 import com.google.firebase.FirebaseApp
 import com.joshtalks.joshskills.BuildConfig
+import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.notification.LocalNotificationAlarmReciever
 import com.joshtalks.joshskills.core.pstn_states.PstnObserver
 import com.joshtalks.joshskills.core.service.BackgroundService
@@ -43,6 +44,7 @@ import com.moengage.core.LogLevel
 import com.moengage.core.MoEngage
 import com.moengage.core.config.LogConfig
 import com.moengage.core.config.MiPushConfig
+import com.moengage.core.config.NotificationConfig
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
 import java.lang.reflect.Method
 import java.util.Calendar
@@ -112,6 +114,7 @@ class JoshApplication :
             .setDataCenter(DataCenter.DATA_CENTER_3)
             .configureMiPush(MiPushConfig("2882303761518451933", "5761845183933", true))
             .configureLogs(LogConfig(LogLevel.VERBOSE, true))
+            .configureNotificationMetaData(NotificationConfig(R.drawable.ic_status_bar_notification, R.mipmap.ic_launcher_round))
             .build()
 
         MoEngage.initialiseDefaultInstance(moEngage)

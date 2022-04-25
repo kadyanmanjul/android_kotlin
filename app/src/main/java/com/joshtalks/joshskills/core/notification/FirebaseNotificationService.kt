@@ -210,15 +210,15 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         try {
             if (Freshchat.isFreshchatNotification(remoteMessage))
                 Freshchat.handleFcmMessage(this, remoteMessage)
-            else if (MoEPushHelper.getInstance().isFromMoEngagePlatform(remoteMessage.data)
-                && MoEPushHelper.getInstance().isSilentPush(remoteMessage.data)
-            ) {
-                MoEFireBaseHelper.getInstance().passPushPayload(applicationContext, remoteMessage.data)
-                return
-            } else if (MoEPushHelper.getInstance().isFromMoEngagePlatform(remoteMessage.data)) {
-                val map = jsonToMap(JSONObject(remoteMessage.data["gcm_alert"]))
+            else if (MoEPushHelper.getInstance().isFromMoEngagePlatform(remoteMessage.data) && remoteMessage.data.containsKey("isCustom")) {
+                val map = mutableMapOf<String, String>()
+                map["nType"] = remoteMessage.data["nType"].toString()
+                map["id"] = remoteMessage.data["id"].toString()
                 processRemoteMessage(map)
                 MoEPushHelper.getInstance().logNotificationReceived(this, remoteMessage.data)
+                return
+            } else if (MoEPushHelper.getInstance().isFromMoEngagePlatform(remoteMessage.data)) {
+                MoEFireBaseHelper.getInstance().passPushPayload(applicationContext, remoteMessage.data)
                 return
             } else {
                 processRemoteMessage(remoteMessage)
