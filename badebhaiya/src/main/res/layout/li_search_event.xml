@@ -80,7 +80,6 @@
                 android:layout_marginBottom="16dp"
                 android:background="@drawable/follow_button_background"
                 android:gravity="center"
-                android:onClick="@{() -> handler.updateFollowStatus()}"
                 android:text="@string/follow"
                 android:textAppearance="@style/BB_Typography_Nunito_Semi_Bold"
                 android:textColor="@color/follow_button_stroke"

@@ -94,7 +94,7 @@ android {
             versionName "${majorVersion}.${minorVersion}.${patchVersion}.Dev"
             buildConfigField "boolean", "PLAY_STORE_DISABLED", "false"
             manifestPlaceholders = [enableCrashReporting: "true"]
-            buildConfigField "String", "BASE_URL", "\"http://bbapp-stg.joshtalks.org:9014\""
+            buildConfigField "String", "BASE_URL", "\"http://bbapp-stg.joshtalks.org\""
             applicationVariants.all { variant ->
                 variant.outputs.all {
                     outputFileName = "josh-bade-bhaiya-dev${majorVersion}.${minorVersion}.${patchVersion}.apk"
