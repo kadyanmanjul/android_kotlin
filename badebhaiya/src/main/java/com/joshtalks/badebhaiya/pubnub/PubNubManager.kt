@@ -98,7 +98,7 @@ object PubNubManager : SubscribeCallback() {
         getLatestUserList()
         getSpeakerList()
         getAudienceList()
-        collectPubNubEvents()
+//        collectPubNubEvents()
 
     }
 
@@ -109,6 +109,9 @@ object PubNubManager : SubscribeCallback() {
         jobs.forEach {
             it.cancel()
         }
+        jobs.clear()
+        speakersList.clear()
+        audienceList.clear()
     }
 
 
@@ -121,7 +124,7 @@ object PubNubManager : SubscribeCallback() {
             val tempSpeakerList = ArraySet<LiveRoomUser>()
             val tempAudienceList = ArraySet<LiveRoomUser>()
             membersList?.data?.forEach {
-                Log.d("sahilk", "getLatestUserList() called with: memberList = $it ")
+                Log.d("lvroom", "getLatestUserList() called with: memberList = $it ")
                 refreshUsersList(it.uuid.id, it.custom)?.let { user ->
                     if (user.isSpeaker == true) {
                         tempSpeakerList.add(user)
@@ -421,8 +424,10 @@ object PubNubManager : SubscribeCallback() {
             val user = audienceList.filter { it.id == agoraId }
             if (user.isNotEmpty()) {
                 val userToMove = user.get(0)
+                Log.d("lvroom", "moveToSpeaker audience list before removing => $audienceList")
                 audienceList.remove(userToMove)
                 postToAudienceList(audienceList)
+                Log.d("lvroom", "moveToSpeaker audience list => $audienceList")
                 userToMove.isSpeaker = true
                 userToMove.isMicOn = false
                 userToMove.isHandRaised = false

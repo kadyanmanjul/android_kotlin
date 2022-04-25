@@ -15,7 +15,9 @@ import com.joshtalks.badebhaiya.databinding.LiBottomSheetRaisedHandsBinding
 import com.joshtalks.badebhaiya.feed.model.LiveRoomUser
 import com.joshtalks.badebhaiya.liveroom.viewmodel.LiveRoomViewModel
 
-class RaisedHandsBottomSheet : BottomSheetDialogFragment() {
+class RaisedHandsBottomSheet(
+    private val onRaisedHand: HandRaiseSheetListener
+) : BottomSheetDialogFragment() {
     private lateinit var binding: LiBottomSheetRaisedHandsBinding
     private var roomId: Int? = null
     private var moderatorUid: Int? = null
@@ -25,7 +27,6 @@ class RaisedHandsBottomSheet : BottomSheetDialogFragment() {
     private var bottomSheetAdapter: RaisedHandsBottomSheetAdapter? = null
     private val viewModel by lazy { ViewModelProvider(requireActivity()).get(
         LiveRoomViewModel::class.java) }
-    private var listener: HandRaiseSheetListener? = null
 
     companion object {
         @JvmStatic
@@ -34,9 +35,10 @@ class RaisedHandsBottomSheet : BottomSheetDialogFragment() {
             moderatorId: Int?,
             name: String?,
             channelName: String?,
-            raisedHandList: ArrayList<LiveRoomUser>
+            raisedHandList: ArrayList<LiveRoomUser>,
+            onRaisedHand: HandRaiseSheetListener
         ) =
-            RaisedHandsBottomSheet().apply {
+            RaisedHandsBottomSheet(onRaisedHand).apply {
                 arguments = Bundle().apply {
                     putString(CHANNEL_NAME, channelName)
                     putString(MODERATOR_NAME, name)
@@ -64,7 +66,6 @@ class RaisedHandsBottomSheet : BottomSheetDialogFragment() {
             raisedHandList = it.getParcelableArrayList<LiveRoomUser>(USER_LIST)
             Log.d("RaisedHandsBottomSheet", "onCreate() called ${raisedHandList}")
         }
-        listener = requireActivity() as HandRaiseSheetListener
         setStyle(STYLE_NORMAL, R.style.BaseBottomSheetDialog)
 
     }
@@ -120,7 +121,7 @@ class RaisedHandsBottomSheet : BottomSheetDialogFragment() {
                 liveRoomUser: LiveRoomUser,
                 position: Int
             ) {
-                listener?.onUserInvitedToSpeak(liveRoomUser)
+                onRaisedHand.onUserInvitedToSpeak(liveRoomUser)
             }
 
         })

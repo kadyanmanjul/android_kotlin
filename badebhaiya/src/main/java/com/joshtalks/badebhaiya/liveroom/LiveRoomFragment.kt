@@ -120,6 +120,7 @@ class LiveRoomFragment : BaseFragment<ActivityConversationLiveRoomBinding, LiveR
 
     override fun onInitDataBinding(viewBinding: ActivityConversationLiveRoomBinding) {
         // View is initialized
+        channelName = PubNubManager.getLiveRoomProperties().channelName
         binding = viewBinding
         isActivityOpenFromNotification =
             PubNubManager.getLiveRoomProperties().isActivityOpenFromNotification!!
@@ -974,7 +975,8 @@ class LiveRoomFragment : BaseFragment<ActivityConversationLiveRoomBinding, LiveR
         val bottomSheet =
             RaisedHandsBottomSheet.newInstance(
                 roomId ?: 0, PubNubManager.getLiveRoomProperties().agoraUid, PubNubManager.moderatorName, PubNubManager.getLiveRoomProperties().channelName,
-                ArrayList(raisedHandList)
+                ArrayList(raisedHandList),
+                this
             )
         binding.notificationBar.loadAnimationSlideUp()
         bottomSheet.show(requireActivity().supportFragmentManager, "Bottom sheet Hands Raised")
