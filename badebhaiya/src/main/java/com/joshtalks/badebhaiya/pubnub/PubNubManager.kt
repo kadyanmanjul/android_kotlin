@@ -49,20 +49,20 @@ import kotlinx.coroutines.flow.single
 import java.util.*
 
 /**
- This object is responsible to handle pubnub connection and all the operations related PubNub.
-*/
+This object is responsible to handle pubnub connection and all the operations related PubNub.
+ */
 
-object PubNubManager: SubscribeCallback() {
+object PubNubManager : SubscribeCallback() {
     private lateinit var liveRoomProperties: StartingLiveRoomProperties
 
-     var moderatorName: String? = null
+    var moderatorName: String? = null
 
-     var currentUser: LiveRoomUser? = null
+    var currentUser: LiveRoomUser? = null
 
     private lateinit var pubnub: PubNub
     private val message = Message()
 
-     var moderatorUid: Int? = null
+    var moderatorUid: Int? = null
 
     @Volatile
     private var speakersList = arraySetOf<LiveRoomUser>()
@@ -74,35 +74,35 @@ object PubNubManager: SubscribeCallback() {
 
     private var pubNubEventJob: Job? = null
 
-    fun warmUp(liveRoomProperties: StartingLiveRoomProperties){
+    fun warmUp(liveRoomProperties: StartingLiveRoomProperties) {
         this.liveRoomProperties = liveRoomProperties
     }
 
     fun getLiveRoomProperties(): StartingLiveRoomProperties = liveRoomProperties
 
     fun initPubNub() {
-            val pnConf = PNConfiguration()
-            pnConf.subscribeKey = BuildConfig.PUBNUB_SUB_API_KEY
-            pnConf.publishKey = BuildConfig.PUBNUB_PUB_API_KEY
-            pnConf.uuid = User.getInstance().userId
-            pnConf.isSecure = false
-            pubnub = PubNub(pnConf)
+        val pnConf = PNConfiguration()
+        pnConf.subscribeKey = BuildConfig.PUBNUB_SUB_API_KEY
+        pnConf.publishKey = BuildConfig.PUBNUB_PUB_API_KEY
+        pnConf.uuid = User.getInstance().userId
+        pnConf.isSecure = false
+        pubnub = PubNub(pnConf)
 
-            pubnub.addListener(this)
+        pubnub.addListener(this)
 
-            pubnub.subscribe().channels(
-                listOf(liveRoomProperties.channelName, liveRoomProperties.agoraUid.toString())
-            )?.withPresence()
-                ?.execute()
+        pubnub.subscribe().channels(
+            listOf(liveRoomProperties.channelName, liveRoomProperties.agoraUid.toString())
+        )?.withPresence()
+            ?.execute()
 
-            getLatestUserList()
-            getSpeakerList()
-            getAudienceList()
-            collectPubNubEvents()
+        getLatestUserList()
+        getSpeakerList()
+        getAudienceList()
+        collectPubNubEvents()
 
     }
 
-    fun endPubNub(){
+    fun endPubNub() {
         PubNubData.pubNubEvents.resetReplayCache()
         PubNubData._liveEvent.resetReplayCache()
         pubNubEventJob?.cancel()
@@ -112,30 +112,28 @@ object PubNubManager: SubscribeCallback() {
     }
 
 
-
     private fun getLatestUserList() {
-        pubnub.channelMembers.channel(liveRoomProperties.channelName)
-            ?.includeCustom(true)
-            ?.async { result, status ->
-                val tempSpeakerList = ArraySet<LiveRoomUser>()
-                val tempAudienceList = ArraySet<LiveRoomUser>()
-                result?.data?.forEach {
-                    Log.d("ABCEvent", "getLatestUserList() called with: memberList = $it ")
-                    refreshUsersList(it.uuid.id, it.custom)?.let { user ->
-                        if (user.isSpeaker == true) {
-                            tempSpeakerList.add(user)
-                        } else {
-                            tempAudienceList.add(user)
-                        }
+        jobs += CoroutineScope(Dispatchers.IO).launch {
+            val membersList = pubnub.channelMembers.channel(liveRoomProperties.channelName)
+                ?.includeCustom(true)
+                ?.sync()
+
+            val tempSpeakerList = ArraySet<LiveRoomUser>()
+            val tempAudienceList = ArraySet<LiveRoomUser>()
+            membersList?.data?.forEach {
+                Log.d("sahilk", "getLatestUserList() called with: memberList = $it ")
+                refreshUsersList(it.uuid.id, it.custom)?.let { user ->
+                    if (user.isSpeaker == true) {
+                        tempSpeakerList.add(user)
+                    } else {
+                        tempAudienceList.add(user)
                     }
                 }
-                // post to a shared flow instead of live data
-                jobs += CoroutineScope(Dispatchers.IO).launch {
-                    _speakersList.emit(tempSpeakerList)
-                    _audienceList.emit(tempAudienceList)
-                }
-
             }
+            // post to a shared flow instead of live data
+            postToSpeakersList(tempSpeakerList)
+            postToAudienceList(tempAudienceList)
+        }
 
     }
 
@@ -168,7 +166,7 @@ object PubNubManager: SubscribeCallback() {
     }
 
     fun getSpeakerList() {
-        jobs += CoroutineScope(Dispatchers.IO).launch{
+        jobs += CoroutineScope(Dispatchers.IO).launch {
             PubNubData.speakerList.collect {
                 speakersList = it
             }
@@ -176,7 +174,7 @@ object PubNubManager: SubscribeCallback() {
     }
 
     fun getAudienceList() {
-        jobs += CoroutineScope(Dispatchers.IO).launch{
+        jobs += CoroutineScope(Dispatchers.IO).launch {
             PubNubData.audienceList.collect {
                 audienceList = it
             }
@@ -215,19 +213,19 @@ object PubNubManager: SubscribeCallback() {
         }
     }
 
-    private fun postToSpeakersList(list: ArraySet<LiveRoomUser>){
+    private fun postToSpeakersList(list: ArraySet<LiveRoomUser>) {
         jobs += CoroutineScope(Dispatchers.IO).launch {
             _speakersList.emit(list)
         }
     }
 
-    private fun postToAudienceList(list: ArraySet<LiveRoomUser>){
+    private fun postToAudienceList(list: ArraySet<LiveRoomUser>) {
         jobs += CoroutineScope(Dispatchers.IO).launch {
             _audienceList.emit(list)
         }
     }
 
-    private fun postToLiveEvent(message: Message){
+    private fun postToLiveEvent(message: Message) {
         jobs += CoroutineScope(Dispatchers.IO).launch {
             PubNubData._liveEvent.emit(message)
         }
@@ -383,16 +381,16 @@ object PubNubManager: SubscribeCallback() {
         }
     }
 
-     fun setHandRaisedForUser(userId: Int, isHandRaised: Boolean) {
+    fun setHandRaisedForUser(userId: Int, isHandRaised: Boolean) {
         updateHandRaisedToUser(userId, isHandRaised)
         val newList = arraySetOf<LiveRoomUser>()
-            newList.addAll(audienceList)
+        newList.addAll(audienceList)
         val isOldUserPresent = newList.any { it.id == userId }
         if (isOldUserPresent) {
             val oldUser = newList.filter { it.id == userId }
             newList.removeAll(oldUser)
             oldUser[0].isHandRaised = isHandRaised
-            if (isHandRaised){
+            if (isHandRaised) {
                 oldUser[0].isSpeakerAccepted = false
             }
             newList.add(oldUser[0])
@@ -400,7 +398,7 @@ object PubNubManager: SubscribeCallback() {
         postToAudienceList(newList)
     }
 
-     fun handRaisedByUser(msg: JsonObject) {
+    fun handRaisedByUser(msg: JsonObject) {
         if (msg.get("is_hand_raised").asBoolean) {
             message.what = SHOW_NOTIFICATION_FOR_INVITE_SPEAKER
             message.data = Bundle().apply {
@@ -418,7 +416,7 @@ object PubNubManager: SubscribeCallback() {
         }
     }
 
-     fun moveToSpeaker(msg: JsonObject) {
+    fun moveToSpeaker(msg: JsonObject) {
         msg.get("id").asInt?.let { agoraId ->
             val user = audienceList.filter { it.id == agoraId }
             if (user.isNotEmpty()) {
@@ -445,14 +443,14 @@ object PubNubManager: SubscribeCallback() {
         }
     }
 
-    private fun postToPubNubEvent(data: ConversationRoomPubNubEventBus){
-        jobs += CoroutineScope(Dispatchers.IO).launch{
+    private fun postToPubNubEvent(data: ConversationRoomPubNubEventBus) {
+        jobs += CoroutineScope(Dispatchers.IO).launch {
             PubNubData.pubNubEvents.emit(data)
         }
 
     }
 
-     fun moveToAudience(msg: JsonObject) {
+    fun moveToAudience(msg: JsonObject) {
         msg.get("id").asInt?.let { agoraId ->
             val user = speakersList.filter { it.id == agoraId }
             if (user.isNotEmpty()) {
@@ -474,12 +472,12 @@ object PubNubManager: SubscribeCallback() {
         }
     }
 
-    fun pauseRoomDataCollection(){
+    fun pauseRoomDataCollection() {
         PubNubData.pubNubEvents.resetReplayCache()
         pubNubEventJob?.cancel()
     }
 
-     fun changeMicStatus(eventObject: JsonObject) {
+    fun changeMicStatus(eventObject: JsonObject) {
         Log.d("ABC2", "presence() called mic_status_changes")
         val isMicOn = eventObject.get("is_mic_on").asBoolean
 
@@ -505,15 +503,18 @@ object PubNubManager: SubscribeCallback() {
 
     }
 
-    fun removeUserWhenLeft(uid: Int, speakerAdapter: SpeakerAdapter?, audienceAdapter: AudienceAdapter?) {
+    fun removeUserWhenLeft(
+        uid: Int,
+        speakerAdapter: SpeakerAdapter?,
+        audienceAdapter: AudienceAdapter?
+    ) {
         if (speakersList.any { it.id == uid }) {
             val user = speakersList.filter { it.id == uid }
             speakersList.removeAll(user)
             CoroutineScope(Dispatchers.Main).launch {
                 speakerAdapter?.updateFullList(ArrayList(speakersList))
             }
-        }
-        else if (audienceList.any { it.id == uid }) {
+        } else if (audienceList.any { it.id == uid }) {
             val user = audienceList.filter { it.id == uid }
             audienceList.removeAll(user)
             CoroutineScope(Dispatchers.Main).launch {
@@ -524,11 +525,10 @@ object PubNubManager: SubscribeCallback() {
     }
 
 
-
     fun callWebRtcService() {
         Log.d(
             "ABC2",
-            "conversationRoomJoin() called with: token = ${liveRoomProperties.token}, channelName = ${liveRoomProperties.channelName}, uid = ${liveRoomProperties.agoraUid  }, moderatorId = ${liveRoomProperties.moderatorId}, channelTopic = ${liveRoomProperties.channelTopic}, roomId = ${liveRoomProperties.roomId}, roomQuestionId = ${liveRoomProperties.roomQuestionId}"
+            "conversationRoomJoin() called with: token = ${liveRoomProperties.token}, channelName = ${liveRoomProperties.channelName}, uid = ${liveRoomProperties.agoraUid}, moderatorId = ${liveRoomProperties.moderatorId}, channelTopic = ${liveRoomProperties.channelTopic}, roomId = ${liveRoomProperties.roomId}, roomQuestionId = ${liveRoomProperties.roomQuestionId}"
         )
         ConvoWebRtcService.conversationRoomJoin(
             liveRoomProperties.token,
@@ -542,11 +542,13 @@ object PubNubManager: SubscribeCallback() {
         )
     }
 
-    fun collectPubNubEvents(){
+    fun collectPubNubEvents() {
         pubNubEventJob = CoroutineScope(Dispatchers.IO).launch {
             PubNubData.pubNubEvents.collect {
                 when (it.action) {
-                    PubNubEvent.CREATE_ROOM, PubNubEvent.JOIN_ROOM -> PubNubManager.addNewUserToAudience(it.data)
+                    PubNubEvent.CREATE_ROOM, PubNubEvent.JOIN_ROOM -> PubNubManager.addNewUserToAudience(
+                        it.data
+                    )
                     PubNubEvent.LEAVE_ROOM -> PubNubManager.removeUser(it.data)
                     PubNubEvent.END_ROOM -> PubNubManager.leaveRoom()
                     PubNubEvent.IS_HAND_RAISED -> PubNubManager.handRaisedByUser(it.data)
@@ -567,12 +569,13 @@ object PubNubManager: SubscribeCallback() {
         postToLiveEvent(message)
     }
 
-     fun inviteUserToSpeaker() {
+    fun inviteUserToSpeaker() {
         message.what = SHOW_NOTIFICATION_FOR_USER_TO_JOIN
         postToLiveEvent(message)
     }
 
-    private fun isModerator(): Boolean = liveRoomProperties.moderatorId == liveRoomProperties.agoraUid
+    private fun isModerator(): Boolean =
+        liveRoomProperties.moderatorId == liveRoomProperties.agoraUid
 
     override fun status(pubnub: PubNub, pnStatus: PNStatus) {
     }
