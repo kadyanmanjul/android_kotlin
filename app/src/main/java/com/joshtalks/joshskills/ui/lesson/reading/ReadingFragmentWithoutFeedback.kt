@@ -40,6 +40,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
+import androidx.core.view.get
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
@@ -599,19 +600,25 @@ class ReadingFragmentWithoutFeedback :
                 .subscribe(
                     {
                         AppObjectController.uiHandler.post {
-                            binding.audioListRv.removeViewAt(it.index)
-                            currentLessonQuestion?.run {
-                                if (this.practiceEngagement.isNullOrEmpty()) {
-                                    showPracticeInputLayout()
-                                    binding.feedbackLayout.visibility = GONE
-                                    //binding.yourSubAnswerTv.text = getString(R.string.your_answer)
-                                    hidePracticeSubmitLayout()
-                                    disableSubmitButton()
-                                } else {
-                                    hidePracticeInputLayout()
-                                    showImproveButton()
+                            try {
+                                if (binding.audioListRv[it.index] != null){
+                                    binding.audioListRv.removeViewAt(it.index)
+                                    currentLessonQuestion?.run {
+                                        if (this.practiceEngagement.isNullOrEmpty()) {
+                                            showPracticeInputLayout()
+                                            binding.feedbackLayout.visibility = GONE
+                                            //binding.yourSubAnswerTv.text = getString(R.string.your_answer)
+                                            hidePracticeSubmitLayout()
+                                            disableSubmitButton()
+                                        } else {
+                                            hidePracticeInputLayout()
+                                            showImproveButton()
+                                        }
+                                    }
+                                }else{
+                                    showToast("Null")
                                 }
-                            }
+                            }catch (ex:Exception){}
                         }
                     },
                     {
