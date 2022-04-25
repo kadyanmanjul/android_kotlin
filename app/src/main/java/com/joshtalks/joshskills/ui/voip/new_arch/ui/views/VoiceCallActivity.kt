@@ -2,7 +2,6 @@ package com.joshtalks.joshskills.ui.voip.new_arch.ui.views
 
 import android.content.Intent
 import android.util.Log
-import android.view.View
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
@@ -11,14 +10,11 @@ import com.joshtalks.joshskills.base.BaseActivity
 import com.joshtalks.joshskills.base.constants.FROM_ACTIVITY
 import com.joshtalks.joshskills.base.constants.FROM_CALL_BAR
 import com.joshtalks.joshskills.base.constants.FROM_INCOMING_CALL
-import com.joshtalks.joshskills.base.constants.INCOMING_CALL_ID
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_COURSE_ID
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_INCOMING_CALL_ID
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_TOPIC_ID
-import com.joshtalks.joshskills.base.constants.STARTING_POINT
 import com.joshtalks.joshskills.databinding.ActivityVoiceCallBinding
-import com.joshtalks.joshskills.ui.group.data.GroupChatPagingSource
-import com.joshtalks.joshskills.ui.voip.new_arch.ui.callbar.VoipPref
+import com.joshtalks.joshskills.ui.call.data.local.VoipPref
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.VoiceCallViewModel
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.voipLog
 import com.joshtalks.joshskills.voip.constant.*
@@ -26,8 +22,6 @@ import com.joshtalks.joshskills.voip.constant.*
 private const val TAG = "VoiceCallActivity"
 
 class VoiceCallActivity : BaseActivity() {
-    //private val ERROR_RANGE = -1 downTo Int.MIN_VALUE
-
     private val voiceCallBinding by lazy<ActivityVoiceCallBinding> {
         DataBindingUtil.setContentView(this, R.layout.activity_voice_call)
     }

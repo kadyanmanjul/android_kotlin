@@ -20,8 +20,8 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
 import com.joshtalks.joshskills.base.constants.FROM_INCOMING_CALL
 import com.joshtalks.joshskills.databinding.FragmentCallBinding
+import com.joshtalks.joshskills.ui.call.data.local.VoipPref
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.callbar.CallBar
-import com.joshtalks.joshskills.ui.voip.new_arch.ui.callbar.VoipPref
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.VoiceCallViewModel
 import com.joshtalks.joshskills.voip.audiocontroller.AudioController
 import com.joshtalks.joshskills.voip.audiocontroller.AudioRouteConstants
@@ -82,19 +82,9 @@ class CallFragment : BaseFragment() , SensorEventListener {
 
     override fun initViewBinding() {
         callBinding.vm = vm
-        // TODO: This might fails
         if(vm.source == FROM_INCOMING_CALL && VoipPref.getVoipState() != CONNECTED) {
             startIncomingTimer()
         }
-        callBinding.executePendingBindings()
-    }
-
-    private fun setCallStartedUI() {
-        val base = VoipPref.getStartTimeStamp()
-        callBinding.callData = vm.getCallData()
-        callBinding.callTime1.base = base
-        callBinding.callTime1.start()
-        isAnimationCanceled = true
         callBinding.executePendingBindings()
     }
 
@@ -103,15 +93,7 @@ class CallFragment : BaseFragment() , SensorEventListener {
         liveData.observe(viewLifecycleOwner) {
             when (it.what) {
                 CLOSE_CALLING_FRAGMENT -> requireActivity().finish()
-                CALL_CONNECTED_EVENT -> {
-                    isAnimationCanceled= true
-                }
-            }
-        }
-
-        callBar.getTimerLiveData().observe(viewLifecycleOwner) {
-            if (it > 0) {
-                setCallStartedUI()
+                CALL_CONNECTED_EVENT -> { isAnimationCanceled= true }
             }
         }
     }

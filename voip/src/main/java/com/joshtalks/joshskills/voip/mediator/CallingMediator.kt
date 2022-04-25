@@ -13,18 +13,7 @@ import com.joshtalks.joshskills.voip.communication.EventChannel
 import com.joshtalks.joshskills.voip.communication.PubNubChannelService
 import com.joshtalks.joshskills.voip.communication.constants.ServerConstants
 import com.joshtalks.joshskills.voip.communication.model.*
-import com.joshtalks.joshskills.voip.constant.CALL_CONNECTED_EVENT
-import com.joshtalks.joshskills.voip.constant.CALL_DISCONNECTED
-import com.joshtalks.joshskills.voip.constant.CALL_DISCONNECT_REQUEST
-import com.joshtalks.joshskills.voip.constant.CALL_INITIATED_EVENT
-import com.joshtalks.joshskills.voip.constant.ERROR
-import com.joshtalks.joshskills.voip.constant.HOLD
-import com.joshtalks.joshskills.voip.constant.INCOMING_CALL
-import com.joshtalks.joshskills.voip.constant.MUTE
-import com.joshtalks.joshskills.voip.constant.RECONNECTED
-import com.joshtalks.joshskills.voip.constant.RECONNECTING
-import com.joshtalks.joshskills.voip.constant.UNHOLD
-import com.joshtalks.joshskills.voip.constant.UNMUTE
+import com.joshtalks.joshskills.voip.constant.*
 import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.notification.NotificationPriority
 import com.joshtalks.joshskills.voip.notification.VoipNotification
@@ -152,6 +141,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                             webrtcService.connectCall(request)
                             CallDetails.reset()
                             CallDetails.set(event, callType)
+                            flow.emit(RECEIVED_CHANNEL_DATA)
                         }
                         is MessageData -> {
                             voipLog?.log("Message Data -> $event")
@@ -305,6 +295,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                             webrtcService.connectCall(request)
                             CallDetails.reset()
                             CallDetails.set(it, callType)
+                            flow.emit(RECEIVED_CHANNEL_DATA)
                         }
                         is MessageData -> {
                             voipLog?.log("Message Data -> $it")

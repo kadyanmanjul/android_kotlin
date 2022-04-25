@@ -19,7 +19,7 @@ import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_STOP_SERVICE
 import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_DISCONNECT_CALL
 import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_INCOMING_CALL_DECLINE
 import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_MAIN_PROCESS_IN_BACKGROUND
-import com.joshtalks.joshskills.voip.Utils
+import com.joshtalks.joshskills.voip.*
 import com.joshtalks.joshskills.voip.audiocontroller.AudioController
 import com.joshtalks.joshskills.voip.audiocontroller.AudioControllerInterface
 import com.joshtalks.joshskills.voip.audiocontroller.AudioRouteConstants.BluetoothAudio
@@ -34,24 +34,13 @@ import com.joshtalks.joshskills.voip.communication.model.NetworkAction
 import com.joshtalks.joshskills.voip.communication.model.UserAction
 import com.joshtalks.joshskills.voip.constant.*
 import com.joshtalks.joshskills.voip.data.local.PrefManager
-import com.joshtalks.joshskills.voip.getHangUpIntent
-import com.joshtalks.joshskills.voip.getStartCallTime
 import com.joshtalks.joshskills.voip.mediator.CallServiceMediator
 import com.joshtalks.joshskills.voip.mediator.CallingMediator
 import com.joshtalks.joshskills.voip.notification.NotificationData
 import com.joshtalks.joshskills.voip.notification.NotificationPriority
 import com.joshtalks.joshskills.voip.notification.VoipNotification
-import com.joshtalks.joshskills.voip.openCallScreen
 import com.joshtalks.joshskills.voip.pstn.PSTNController
 import com.joshtalks.joshskills.voip.pstn.PSTNState
-import com.joshtalks.joshskills.voip.resetCallUIState
-import com.joshtalks.joshskills.voip.updateIncomingCallDetails
-import com.joshtalks.joshskills.voip.updateLastCallDetails
-import com.joshtalks.joshskills.voip.updateRemoteUserMuteState
-import com.joshtalks.joshskills.voip.updateStartCallTime
-import com.joshtalks.joshskills.voip.updateUserHoldState
-import com.joshtalks.joshskills.voip.updateVoipState
-import com.joshtalks.joshskills.voip.voipLog
 import kotlinx.coroutines.*
 import java.time.Duration
 import java.util.concurrent.TimeUnit
@@ -163,6 +152,18 @@ class CallingRemoteService : Service() {
                                     CallDetails.remoteUserName,
                                     openCallScreen(),
                                     getHangUpIntent()
+                                )
+                            }
+                            RECEIVED_CHANNEL_DATA -> {
+                                updateUserDetails(
+                                    remoteUserName = CallDetails.remoteUserName,
+                                    remoteUserImage = CallDetails.remoteUserImageUrl,
+                                    remoteUserAgoraId = CallDetails.remoteUserAgoraId,
+                                    callId = CallDetails.callId,
+                                    callType = CallDetails.callType,
+                                    currentUserAgoraId = CallDetails.localUserAgoraId,
+                                    channelName = CallDetails.agoraChannelName,
+                                    topicName = CallDetails.topicName
                                 )
                             }
                             CALL_DISCONNECT_REQUEST -> {

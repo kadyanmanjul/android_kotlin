@@ -6,7 +6,7 @@ import com.joshtalks.joshskills.base.BaseViewModel
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.model.KFactor
-import com.joshtalks.joshskills.ui.voip.new_arch.ui.callbar.VoipPref
+import com.joshtalks.joshskills.ui.call.data.local.VoipPref
 import kotlinx.coroutines.*
 import retrofit2.Response
 import java.util.HashMap
