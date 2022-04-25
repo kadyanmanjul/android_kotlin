@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 */
 
 object PubNubData {
+
     internal val _speakersList = MutableSharedFlow<ArraySet<LiveRoomUser>>()
     val speakerList = _speakersList.asSharedFlow()
 
@@ -28,7 +29,5 @@ object PubNubData {
     val pubNubEvents = MutableSharedFlow<ConversationRoomPubNubEventBus>(
         replay = Int.MAX_VALUE
     )
-//    val pubNubEvents = _pubNubEvents.asSharedFlow()
-
 
 }

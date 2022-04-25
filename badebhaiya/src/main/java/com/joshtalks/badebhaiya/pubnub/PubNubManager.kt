@@ -49,10 +49,10 @@ import kotlinx.coroutines.flow.single
 import java.util.*
 
 /**
-This object is responsible to handle pubnub connection and all the operations related PubNub.
+    This object is responsible to handle PubNub Business Logic.
  */
 
-object PubNubManager : SubscribeCallback() {
+object PubNubManager {
     private lateinit var liveRoomProperties: StartingLiveRoomProperties
 
     var moderatorName: String? = null
@@ -88,7 +88,7 @@ object PubNubManager : SubscribeCallback() {
         pnConf.isSecure = false
         pubnub = PubNub(pnConf)
 
-        pubnub.addListener(this)
+        pubnub.addListener(PubNubCallback)
 
         pubnub.subscribe().channels(
             listOf(liveRoomProperties.channelName, liveRoomProperties.agoraUid.toString())
@@ -112,6 +112,7 @@ object PubNubManager : SubscribeCallback() {
         jobs.clear()
         speakersList.clear()
         audienceList.clear()
+        pubnub.removeListener(PubNubCallback)
     }
 
 
@@ -245,6 +246,7 @@ object PubNubManager : SubscribeCallback() {
             oldAudienceList.remove(it)
             it.isSpeakerAccepted = true
             oldAudienceList.add(it)
+
             postToAudienceList(oldAudienceList)
         }
     }
@@ -448,7 +450,7 @@ object PubNubManager : SubscribeCallback() {
         }
     }
 
-    private fun postToPubNubEvent(data: ConversationRoomPubNubEventBus) {
+     fun postToPubNubEvent(data: ConversationRoomPubNubEventBus) {
         jobs += CoroutineScope(Dispatchers.IO).launch {
             PubNubData.pubNubEvents.emit(data)
         }
@@ -582,49 +584,5 @@ object PubNubManager : SubscribeCallback() {
     private fun isModerator(): Boolean =
         liveRoomProperties.moderatorId == liveRoomProperties.agoraUid
 
-    override fun status(pubnub: PubNub, pnStatus: PNStatus) {
-    }
-
-    override fun message(pubnub: PubNub, pnMessageResult: PNMessageResult) {
-        val msg = pnMessageResult.message.asJsonObject
-        val act = msg["action"].asString
-        try {
-            if (msg != null) {
-                Log.d(
-                    "ABCEvent",
-                    "message() called with: pubnub = $pubnub, pnMessageResult = $pnMessageResult"
-                )
-                postToPubNubEvent(
-                    ConversationRoomPubNubEventBus(
-                        PubNubEvent.valueOf(act),
-                        msg
-                    )
-                )
-            }
-        } catch (ex: Exception) {
-            LogException.catchException(ex)
-        }
-    }
-
-    override fun presence(pubnub: PubNub, pnPresenceEventResult: PNPresenceEventResult) {
-    }
-
-    override fun signal(pubnub: PubNub, pnSignalResult: PNSignalResult) {
-    }
-
-    override fun uuid(pubnub: PubNub, pnUUIDMetadataResult: PNUUIDMetadataResult) {
-    }
-
-    override fun channel(pubnub: PubNub, pnChannelMetadataResult: PNChannelMetadataResult) {
-    }
-
-    override fun membership(pubnub: PubNub, pnMembershipResult: PNMembershipResult) {
-    }
-
-    override fun messageAction(pubnub: PubNub, pnMessageActionResult: PNMessageActionResult) {
-    }
-
-    override fun file(pubnub: PubNub, pnFileEventResult: PNFileEventResult) {
-    }
 
 }
