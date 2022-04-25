@@ -99,7 +99,13 @@ object PubNubManager {
         getSpeakerList()
         getAudienceList()
 //        collectPubNubEvents()
+        changePubNubState(PubNubState.STARTED)
+    }
 
+    private fun changePubNubState(state: PubNubState){
+        jobs += CoroutineScope(Dispatchers.IO).launch{
+            PubNubData._pubNubState.emit(state)
+        }
     }
 
     fun endPubNub() {
@@ -113,6 +119,7 @@ object PubNubManager {
         speakersList.clear()
         audienceList.clear()
         pubnub.removeListener(PubNubCallback)
+        changePubNubState(PubNubState.ENDED)
     }
 
 

@@ -121,6 +121,7 @@ class LiveRoomFragment : BaseFragment<ActivityConversationLiveRoomBinding, LiveR
     override fun onInitDataBinding(viewBinding: ActivityConversationLiveRoomBinding) {
         // View is initialized
         channelName = PubNubManager.getLiveRoomProperties().channelName
+        viewBinding.handler = this
         binding = viewBinding
         isActivityOpenFromNotification =
             PubNubManager.getLiveRoomProperties().isActivityOpenFromNotification!!
@@ -149,6 +150,13 @@ class LiveRoomFragment : BaseFragment<ActivityConversationLiveRoomBinding, LiveR
             val list = it.sortedBy { it.sortOrder }
             speakerAdapter?.updateFullList(list)
         })
+
+        vm.liveRoomState.observe(this){
+            when(it){
+                LiveRoomState.EXPANDED -> expandLiveRoom()
+                LiveRoomState.COLLAPSED -> {}
+            }
+        }
 
 
         vm.singleLiveEvent.observe(this, androidx.lifecycle.Observer {
@@ -242,6 +250,15 @@ class LiveRoomFragment : BaseFragment<ActivityConversationLiveRoomBinding, LiveR
                 }
             }
         })
+    }
+
+    fun collapseLiveRoom(){
+        binding.liveRoomRootView.transitionToEnd()
+        vm.liveRoomState.value = LiveRoomState.COLLAPSED
+    }
+
+    private fun expandLiveRoom() {
+        binding.liveRoomRootView.transitionToStart()
     }
 
     @SuppressLint("UnsafeOptInUsageError")

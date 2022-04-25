@@ -30,4 +30,7 @@ object PubNubData {
         replay = Int.MAX_VALUE
     )
 
+    internal val _pubNubState = MutableSharedFlow<PubNubState>()
+    val pubNubState = _pubNubState.asSharedFlow()
+
 }

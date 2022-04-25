@@ -20,14 +20,7 @@ import com.joshtalks.badebhaiya.core.showAppropriateMsg
 import com.joshtalks.badebhaiya.feed.NotificationView
 import com.joshtalks.badebhaiya.feed.model.LiveRoomUser
 import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
-import com.joshtalks.badebhaiya.liveroom.CHANGE_MIC_STATUS
-import com.joshtalks.badebhaiya.liveroom.HIDE_PROGRESSBAR
-import com.joshtalks.badebhaiya.liveroom.HIDE_SEARCHING_STATE
-import com.joshtalks.badebhaiya.liveroom.LEAVE_ROOM
-import com.joshtalks.badebhaiya.liveroom.MOVE_TO_AUDIENCE
-import com.joshtalks.badebhaiya.liveroom.MOVE_TO_SPEAKER
-import com.joshtalks.badebhaiya.liveroom.SHOW_NOTIFICATION_FOR_INVITE_SPEAKER
-import com.joshtalks.badebhaiya.liveroom.SHOW_NOTIFICATION_FOR_USER_TO_JOIN
+import com.joshtalks.badebhaiya.liveroom.*
 import com.joshtalks.badebhaiya.liveroom.adapter.PubNubEvent
 import com.joshtalks.badebhaiya.liveroom.model.ConversationRoomDetailsResponse
 import com.joshtalks.badebhaiya.liveroom.model.ConversationRoomListingNavigation
@@ -35,6 +28,7 @@ import com.joshtalks.badebhaiya.liveroom.model.ConversationRoomPubNubEventBus
 import com.joshtalks.badebhaiya.liveroom.model.StartingLiveRoomProperties
 import com.joshtalks.badebhaiya.pubnub.PubNubData
 import com.joshtalks.badebhaiya.pubnub.PubNubManager
+import com.joshtalks.badebhaiya.pubnub.PubNubState
 import com.joshtalks.badebhaiya.repository.ConversationRoomRepository
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomRequest
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomResponse
@@ -76,6 +70,8 @@ class LiveRoomViewModel(application: Application) : AndroidViewModel(application
     //val roomListLiveData = MutableLiveData<RoomListResponse>()
     var audienceList = MutableLiveData<ArraySet<LiveRoomUser>>(ArraySet())
     var speakersList = MutableLiveData<ArraySet<LiveRoomUser>>(ArraySet())
+    val pubNubState = MutableLiveData<PubNubState>()
+    val liveRoomState = MutableLiveData<LiveRoomState>()
     private val jobs = arrayListOf<Job>()
     var message = Message()
     var singleLiveEvent: MutableLiveData<Message> = MutableLiveData()
@@ -153,6 +149,12 @@ class LiveRoomViewModel(application: Application) : AndroidViewModel(application
         viewModelScope.launch {
             PubNubData.liveEvent.collect {
                 singleLiveEvent.postValue(it)
+            }
+        }
+
+        viewModelScope.launch(Dispatchers.IO) {
+            PubNubData.pubNubState.collect {
+                pubNubState.postValue(it)
             }
         }
     }

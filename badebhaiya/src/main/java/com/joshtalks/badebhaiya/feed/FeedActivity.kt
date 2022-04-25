@@ -23,6 +23,7 @@ import com.joshtalks.badebhaiya.databinding.ActivityFeedBinding
 import com.joshtalks.badebhaiya.feed.adapter.FeedAdapter
 import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
 import com.joshtalks.badebhaiya.liveroom.LiveRoomFragment
+import com.joshtalks.badebhaiya.liveroom.LiveRoomState
 import com.joshtalks.badebhaiya.liveroom.OPEN_PROFILE
 import com.joshtalks.badebhaiya.liveroom.OPEN_ROOM
 import com.joshtalks.badebhaiya.liveroom.bottomsheet.CreateRoom
@@ -31,6 +32,7 @@ import com.joshtalks.badebhaiya.liveroom.viewmodel.LiveRoomViewModel
 import com.joshtalks.badebhaiya.profile.ProfileActivity
 import com.joshtalks.badebhaiya.profile.request.DeleteReminderRequest
 import com.joshtalks.badebhaiya.profile.request.ReminderRequest
+import com.joshtalks.badebhaiya.pubnub.PubNubState
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomResponse
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.utils.setUserImageOrInitials
@@ -144,16 +146,23 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
     }
 
     fun onSearchPressed() {
-        supportFragmentManager.findFragmentByTag(SearchFragment::class.java.simpleName)
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.root_view, SearchFragment(), SearchFragment::class.java.simpleName)
-            .commit()
+        if (liveRoomViewModel.pubNubState.value != null && liveRoomViewModel.pubNubState.value == PubNubState.STARTED){
+            liveRoomViewModel.liveRoomState.value = LiveRoomState.EXPANDED
+        } else {
+            supportFragmentManager.findFragmentByTag(SearchFragment::class.java.simpleName)
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.root_view, SearchFragment(), SearchFragment::class.java.simpleName)
+                .commit()
+        }
+
     }
 
     private fun initView() {
         User.getInstance().apply {
             binding.profileIv.setUserImageOrInitials(profilePicUrl, firstName.toString())
         }
+
+        binding.feedRoot.progress
 
         binding.recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
@@ -169,6 +178,13 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
     }
 
     private fun addObserver() {
+        liveRoomViewModel.pubNubState.observe(this){
+            when(it){
+                PubNubState.STARTED -> onPubNubStart()
+                PubNubState.ENDED -> onPubNubEnd()
+            }
+        }
+
         viewModel.singleLiveEvent.observe(this, androidx.lifecycle.Observer {
             Log.d("ABC2", "Data class called with data message: ${it.what} bundle : ${it.data}")
             when (it.what) {
@@ -190,6 +206,18 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                 }
             }
         })
+    }
+
+    private fun onPubNubEnd() {
+        changeToolbarIcon(R.drawable.ic_search)
+    }
+
+    private fun onPubNubStart() {
+        changeToolbarIcon(R.drawable.ic_baseline_arrow_up)
+    }
+
+    private fun changeToolbarIcon(image: Int){
+        binding.search.setImageResource(image)
     }
 
     fun openCreateRoomDialog() {
