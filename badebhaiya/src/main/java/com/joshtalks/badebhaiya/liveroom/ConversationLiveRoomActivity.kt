@@ -913,8 +913,9 @@ class ConversationLiveRoomActivity : BaseActivity(),
             muteBtn.visibility = View.VISIBLE
             muteBtn.isEnabled = false
             unmuteBtn.visibility = View.GONE
-            handUnraiseBtn.visibility = View.VISIBLE
             handRaiseBtn.visibility = View.GONE
+            handUnraiseBtn.visibility = View.VISIBLE
+            handUnraiseBtn.isEnabled = true
         }
         isInviteRequestComeFromModerator = false
     }

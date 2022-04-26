@@ -1,12 +1,16 @@
 package com.joshtalks.badebhaiya.repository.service
 
 import android.content.Context
+import android.content.Intent
 import com.google.gson.*
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.joshtalks.badebhaiya.BuildConfig
 import com.joshtalks.badebhaiya.core.API_TOKEN
 import com.joshtalks.badebhaiya.core.AppObjectController
+import com.joshtalks.badebhaiya.core.JoshApplication
 import com.joshtalks.badebhaiya.core.PrefManager
+import com.joshtalks.badebhaiya.launcher.LauncherActivity
+import com.joshtalks.badebhaiya.utils.Utils
 import okhttp3.*
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -19,6 +23,7 @@ import java.lang.reflect.Type
 import java.text.DateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
+import timber.log.Timber
 
 const val KEY_AUTHORIZATION = "Authorization"
 private const val READ_TIMEOUT = 30L
@@ -72,6 +77,7 @@ class RetrofitInstance {
                 .followSslRedirects(true)
 //                .addInterceptor(StatusCodeInterceptor())
                 .addInterceptor(HeaderInterceptor())
+                .addInterceptor(StatusCodeInterceptor())
                 .hostnameVerifier { _, _ -> true }
                 .cache(cache())
 
@@ -126,6 +132,7 @@ class RetrofitInstance {
 
                     }
                 mediaOkhttpBuilder.addInterceptor(logging)
+                mediaOkhttpBuilder.addInterceptor(StatusCodeInterceptor())
                 mediaOkhttpBuilder.addNetworkInterceptor(getStethoInterceptor())
                 mediaOkhttpBuilder.addInterceptor(getOkhttpToolInterceptor())
             }
@@ -153,6 +160,34 @@ class HeaderInterceptor : Interceptor {
             newRequest.addHeader(KEY_AUTHORIZATION, "JWT " + PrefManager.getStringValue(API_TOKEN))
         }
         return chain.proceed(newRequest.build())
+    }
+}
+
+class StatusCodeInterceptor : Interceptor {
+    override fun intercept(chain: Interceptor.Chain): Response {
+        val response = chain.proceed(chain.request())
+        if (response.code in 401..403) {
+            if (Utils.isAppRunning(
+                    AppObjectController.joshApplication,
+                    AppObjectController.joshApplication.packageName
+                )
+            ) {
+                PrefManager.logoutUser()
+                if (JoshApplication.isAppVisible) {
+                    val intent =
+                        Intent(AppObjectController.joshApplication, LauncherActivity::class.java)
+                    intent.apply {
+                        addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        putExtra("Flow", "StatusCodeInterceptor")
+                    }
+                    AppObjectController.joshApplication.startActivity(intent)
+                }
+            }
+        }
+//        WorkManagerAdmin.userActiveStatusWorker(JoshApplication.isAppVisible)
+        Timber.i("Status code: %s", response.code)
+        return response
     }
 }
 

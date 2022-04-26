@@ -41,9 +41,9 @@ class SearchFragment : Fragment() {
     val viewModel by lazy {
         ViewModelProvider(requireActivity()).get(FeedViewModel::class.java)
     }
-    val searchViewModel by lazy{
+    /*val searchViewModel by lazy{
         ViewModelProvider(requireActivity()).get(SearchViewModel::class.java)
-    }
+    }*/
     //val myAdapter:SearchAdapter by lazy{SearchAdapter(users)}
 
     lateinit var binding:FragmentSearchBinding
