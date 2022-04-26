@@ -40,7 +40,6 @@
         android:id="@+id/score"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingHorizontal="@dimen/_2sdp"
         android:paddingVertical="@dimen/_8ssp"
         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
         android:textColor="@color/green_snackbar"
@@ -53,8 +52,8 @@
         android:id="@+id/expand_unexpand_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="@dimen/_8ssp"
-        android:layout_marginHorizontal="@dimen/_8ssp"
+        android:padding="@dimen/_2ssp"
+        android:layout_marginHorizontal="@dimen/_4ssp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />

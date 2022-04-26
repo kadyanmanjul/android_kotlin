@@ -394,7 +394,6 @@
                         android:textAppearance="@style/TextAppearance.JoshTypography.ButtonSemiBold"
                         android:textColor="@color/white"
                         android:textSize="@dimen/_12ssp"
-                        android:visibility="gone"
                         app:cornerRadius="@dimen/_36sdp"
                         app:layout_constraintBottom_toTopOf="@+id/btn_start"
                         app:layout_constraintEnd_toEndOf="parent"
