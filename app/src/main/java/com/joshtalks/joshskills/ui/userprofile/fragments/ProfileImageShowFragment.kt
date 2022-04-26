@@ -139,9 +139,9 @@ class ProfileImageShowFragment : DialogFragment(),AdapterCallback {
             dismiss()
         }
 
-        if (imageIds.isNullOrEmpty().not()) {
-            EngagementNetworkHelper.engageImageApi(ImageEngage(imageIds[position]!!))
-        }
+//        if (imageIds.isNullOrEmpty().not()) {
+//            EngagementNetworkHelper.engageImageApi(ImageEngage(imageIds[position]!!))
+//        }
 
     }
 

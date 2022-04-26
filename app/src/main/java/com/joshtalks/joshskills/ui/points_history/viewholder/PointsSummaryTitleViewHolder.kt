@@ -18,11 +18,10 @@ import com.joshtalks.joshskills.core.textColorSet
 import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
 import com.mindorks.placeholderview.annotations.View
-import com.mindorks.placeholderview.annotations.expand.Collapse
-import com.mindorks.placeholderview.annotations.expand.Expand
-import com.mindorks.placeholderview.annotations.expand.Parent
-import com.mindorks.placeholderview.annotations.expand.SingleTop
-import com.mindorks.placeholderview.annotations.expand.Toggle
+import com.mindorks.placeholderview.annotations.expand.*
+import java.math.RoundingMode
+import kotlin.math.ln
+import kotlin.math.pow
 
 @Parent
 @SingleTop
@@ -82,7 +81,7 @@ class PointsSummaryTitleViewHolder(
         name.textColorSet(R.color.black)
         rootView.background = drawable
         toggleView.setImageDrawable(drawableDown)
-        score.text = point.toString()
+        score.text =getFormattedNumber(point.toLong())
         if (isExpanded) {
             rootView.background = drawableSqaure
             toggleView.setImageDrawable(drawableUp)
@@ -102,7 +101,14 @@ class PointsSummaryTitleViewHolder(
 
         }
     }
-
+    fun getFormattedNumber(point : Long): String {
+        return when{
+            point >= 10000000 -> (point / 10000000.0).toBigDecimal().setScale(2, RoundingMode.UP).toString() + "Cr"
+            point >= 100000 ->  (point / 100000.0).toBigDecimal().setScale(2, RoundingMode.UP).toString() + "L"
+            point >= 1000 -> (point/1000.0).toBigDecimal().setScale(2, RoundingMode.UP).toString() + "K"
+            else -> point.toString()
+        }
+    }
     @SuppressLint("WrongViewCast")
     private fun addLinerLayout(iconUrl: String?): android.view.View? {
         val layoutInflater =

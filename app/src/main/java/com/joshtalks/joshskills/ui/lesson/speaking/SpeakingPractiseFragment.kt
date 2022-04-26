@@ -455,12 +455,12 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                     })
             }
         }
-        lifecycleScope.launchWhenStarted {
-            viewModel.favoriteCaller.collect {
-                haveAnyFavCaller = it
-                binding.btnFavorite.visibility = if (haveAnyFavCaller) VISIBLE else GONE
-            }
-        }
+//        lifecycleScope.launchWhenStarted {
+//            viewModel.favoriteCaller.collect {
+//                haveAnyFavCaller = it
+//                binding.btnFavorite.visibility = if (haveAnyFavCaller) VISIBLE else GONE
+//            }
+//        }
         binding.btnNextStep.setOnClickListener {
             showNextTooltip()
         }
