@@ -85,6 +85,10 @@ class SettingsFragment : Fragment() {
             override fun onSlide(bottomSheet: View, slideOffset: Float) {}
         })
 
+        if (PrefManager.getStringValue(CURRENT_COURSE_ID) != DEFAULT_COURSE_ID){
+            binding.languageRl.visibility = View.GONE
+        }
+
         if ((requireActivity() as BaseActivity).isNotificationEnabled()) {
             binding.notificationStatusTv.setText(R.string.off)
             binding.notificationDescription.text = AppObjectController.getFirebaseRemoteConfig()
