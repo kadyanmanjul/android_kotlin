@@ -377,7 +377,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                             voipLog?.log("Call Disconnected")
                         }
                         CallState.ReconnectingFailed -> {
-                            flow.emit(CALL_DISCONNECT_REQUEST)
+                            flow.emit(RECONNECTING_FAILED)
                             voipLog?.log("Call Disconnect Request")
                         }
                         CallState.CallInitiated -> {

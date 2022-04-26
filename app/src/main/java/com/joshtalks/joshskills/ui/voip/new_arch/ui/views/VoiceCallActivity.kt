@@ -83,7 +83,7 @@ class VoiceCallActivity : BaseActivity() {
         event.observe(this) {
             when (it.what) {
                 CALL_INITIATED_EVENT -> replaceCallUserFragment()
-                CALL_DISCONNECT_REQUEST -> finish()
+                CALL_DISCONNECT_REQUEST, RECONNECTING_FAILED -> finish()
                 else -> {
                     if (it.what < 0) {
                         showToast("Error Occurred")

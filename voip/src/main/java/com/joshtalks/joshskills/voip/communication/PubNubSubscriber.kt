@@ -80,33 +80,30 @@ internal class PubNubSubscriber : SubscribeCallback() {
     }
 
     override fun status(pubnub: PubNub, status: PNStatus) {
-        Log.d(TAG, "status: Category --> ${status.category}")
-        Log.d(TAG, "status: Status --> ${status}")
+        //Log.d(TAG, "status: Category --> ${status.category}")
+        //Log.d(TAG, "status: Status --> ${status}")
         when(status.category) {
             PNConnectedCategory -> {
                 scope.launch {
                     val lastMessageTime = PrefManager.getLatestPubnubMessageTime()
-                    Log.d(TAG, "status: Last Msg Time -> $lastMessageTime")
+                    //Log.d(TAG, "status: Last Msg Time -> $lastMessageTime")
                     if(lastMessageTime == 0L) {
                         PrefManager.setLatestPubnubMessageTime(pubnub.time().sync()?.timetoken ?: 0)
                         val afterUpdate = PrefManager.getLatestPubnubMessageTime()
-                        Log.d(TAG, "status: After Update --> $afterUpdate")
+                        //Log.d(TAG, "status: After Update --> $afterUpdate")
                     }
                 }
             }
             PNUnexpectedDisconnectCategory -> {
                 // internet got lost
-                Log.d(TAG, "status: PNUnexpectedDisconnectCategory")
+                //Log.d(TAG, "status: PNUnexpectedDisconnectCategory")
                 pubnub.reconnect();
             }
             PNTimeoutCategory -> {
                 //reconnect when ready
-                Log.d(TAG, "status: PNTimeoutCategory")
+                //Log.d(TAG, "status: PNTimeoutCategory")
                 pubnub.reconnect();
             }
-        }
-        when(status) {
-
         }
     }
 

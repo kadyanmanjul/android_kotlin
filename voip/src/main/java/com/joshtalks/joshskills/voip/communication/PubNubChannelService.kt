@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.voip.communication
 import android.util.Log
 import com.joshtalks.joshskills.voip.BuildConfig
 import com.joshtalks.joshskills.voip.Utils
+import com.joshtalks.joshskills.voip.communication.constants.ServerConstants
 import com.joshtalks.joshskills.voip.communication.model.*
 import com.joshtalks.joshskills.voip.voipLog
 import com.pubnub.api.PNConfiguration
@@ -51,7 +52,7 @@ object PubNubChannelService : EventChannel {
 
     private val config by lazy {
         PNConfiguration().apply {
-            logVerbosity = PNLogVerbosity.BODY
+            //logVerbosity = PNLogVerbosity.BODY
         }
     }
 
@@ -122,6 +123,12 @@ object PubNubChannelService : EventChannel {
             } catch (ex: Exception) {
                 ex.printStackTrace()
             }
+        }
+    }
+
+    private fun handleUnSentEvent(data : OutgoingData) {
+        if(data.getType() == ServerConstants.DISCONNECTED) {
+
         }
     }
 

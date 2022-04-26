@@ -233,7 +233,7 @@ class WebrtcRepository {
             mService?.send(data)
             when (data.what) {
                 // Returning back these two event to View Model so that they can take action
-                IPC_CONNECTION_ESTABLISHED, CALL_DISCONNECT_REQUEST -> {
+                IPC_CONNECTION_ESTABLISHED, CALL_DISCONNECT_REQUEST, RECONNECTING_FAILED -> {
                     ioScope.launch {
                         repositoryToVMFlow.emit(data)
                     }

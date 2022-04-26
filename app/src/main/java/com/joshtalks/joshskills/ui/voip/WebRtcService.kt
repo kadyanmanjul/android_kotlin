@@ -1090,7 +1090,6 @@ class WebRtcService : BaseWebRtcService() {
                     setParameters("{\"che.audio.enable.aec\":true}")
                 }
 
-
                 disableVideo()
                 enableAudio()
                 enableAudioVolumeIndication(500, 3, true)
@@ -1109,11 +1108,8 @@ class WebRtcService : BaseWebRtcService() {
                 enableDeepLearningDenoise(true)
                 // Configuration for the publisher. When the network condition is poor, send audio only.
                 setLocalPublishFallbackOption(Constants.STREAM_FALLBACK_OPTION_AUDIO_ONLY)
-
                 // Configuration for the subscriber. Try to receive low stream under poor network conditions. When the current network conditions are not sufficient for video streams, receive audio stream only.
                 setRemoteSubscribeFallbackOption(Constants.STREAM_FALLBACK_OPTION_AUDIO_ONLY)
-
-
             }
             if (mRtcEngine != null) {
                 isEngineInitialized = true

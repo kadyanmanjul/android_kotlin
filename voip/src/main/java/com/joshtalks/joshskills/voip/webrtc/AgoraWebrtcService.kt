@@ -11,18 +11,10 @@ import com.joshtalks.joshskills.voip.constant.LEAVING
 import com.joshtalks.joshskills.voip.constant.LEAVING_AND_JOINING
 import com.joshtalks.joshskills.voip.voipLog
 import io.agora.rtc.RtcEngine
-import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.CoroutineStart
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 private const val JOINING_CHANNEL_SUCCESS = 0
@@ -30,6 +22,7 @@ private const val USER_ALREADY_IN_A_CHANNEL = -17
 
 internal object AgoraWebrtcService : WebrtcService {
     // TODO: Need to change name
+    private var reconnectingJob : Job? = null
 
     @Volatile
     private var agoraEngine: RtcEngine? = null
@@ -54,12 +47,17 @@ internal object AgoraWebrtcService : WebrtcService {
                 synchronized(this) {
                     if (agoraEngine != null)
                         agoraEngine
-                    else
+                    else {
                         agoraEngine = RtcEngine.create(
                             Utils.context,
                             BuildConfig.AGORA_API_KEY,
                             agoraEvent.handler
-                        )
+                        ).apply {
+                            setParameters("{\"rtc.peer.offline_period\":5000}")
+                            setParameters("{\"che.audio.keep.audiosession\":true}")
+                        }
+
+                    }
                 }
         }
     }
@@ -98,6 +96,7 @@ internal object AgoraWebrtcService : WebrtcService {
         ioScope.launch {
             // 1. Send DISCONNECTING signal through Pubnub
             // 2. Leave Channel through Agora SDK
+            stopReconnectingTimeoutTimer()
             stopLazyJoin()
             voipLog?.log("Coroutine : About to call leaveChannel")
             state.emit(LEAVING)
@@ -188,7 +187,12 @@ internal object AgoraWebrtcService : WebrtcService {
                         state.emit(JOINED)
                         currentState = JOINED
                     }
-                    CallState.ReconnectingFailed -> { disconnectCall() }
+                    CallState.OnReconnecting -> {
+                        startReconnectingTimeoutTimer()
+                    }
+                    CallState.OnReconnected -> {
+                        stopReconnectingTimeoutTimer()
+                    }
                     CallState.UserAlreadyDisconnectedError -> {
                         state.emit(IDLE)
                         currentState = IDLE
@@ -206,5 +210,19 @@ internal object AgoraWebrtcService : WebrtcService {
                 eventFlow.emit(callState)
             }
         }
+    }
+
+    private fun startReconnectingTimeoutTimer() {
+        if(reconnectingJob?.isActive != true) {
+            reconnectingJob = ioScope.launch {
+                delay(RECONNECTING_TIMEOUT_IN_MILLIS)
+                eventFlow.emit(CallState.ReconnectingFailed)
+                disconnectCall()
+            }
+        }
+    }
+
+    fun stopReconnectingTimeoutTimer() {
+        reconnectingJob?.cancel()
     }
 }

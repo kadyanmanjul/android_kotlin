@@ -161,7 +161,7 @@ class SpeakingPractiseFragment : ABTestFragment(),TimeAnimator.TimeListener {
         }
         viewModel.isFavoriteCallerExist()
         subscribeRXBus()
-        checkForVoipState()
+        //checkForVoipState()
     }
 
     private fun checkForVoipState() {
@@ -228,31 +228,29 @@ class SpeakingPractiseFragment : ABTestFragment(),TimeAnimator.TimeListener {
         }
         binding.btnStartTrialText.setOnClickListener {
             viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
-            if(VoipPref.getVoipState()==IDLE) {
+            if(VoipPref.getVoipState()==IDLE || VoipPref.getVoipState()== LEAVING) {
                 startPractise(isNewArch = true)
-            }else if(VoipPref.getVoipState()== LEAVING){
-                beforeAnimation?.setTint(resources.getColor(R.color.grey))
-                animateButton()
-            }
+            } else
+                showToast("Wait for last call to get disconnected")
         }
 
-        viewModel.observerVoipState().observe(viewLifecycleOwner) {
-            when(it){
-                IDLE -> {
-                    binding.btnStartTrialText.isEnabled = true
-                    mCurrentLevel=MAX_LEVEL
-                    beforeAnimation?.setTint(resources.getColor(R.color.colorPrimary))
-                    if(mAnimator?.isRunning==true) {
-                        startPractise()
-                    }
-                }
-                LEAVING -> {
-                    beforeAnimation?.setTint(resources.getColor(R.color.colorPrimary))
-                    binding.btnStartTrialText.isEnabled = true
-                }
-            }
-            voipLog?.log("VOIP State --> $it")
-        }
+//        viewModel.observerVoipState().observe(viewLifecycleOwner) {
+//            when(it){
+//                IDLE -> {
+//                    binding.btnStartTrialText.isEnabled = true
+//                    mCurrentLevel=MAX_LEVEL
+//                    beforeAnimation?.setTint(resources.getColor(R.color.colorPrimary))
+//                    if(mAnimator?.isRunning==true) {
+//                        startPractise()
+//                    }
+//                }
+//                LEAVING -> {
+//                    beforeAnimation?.setTint(resources.getColor(R.color.colorPrimary))
+//                    binding.btnStartTrialText.isEnabled = true
+//                }
+//            }
+//            voipLog?.log("VOIP State --> $it")
+//        }
 
         binding.btnGroupCall.setOnClickListener {
             if(PrefManager.getBoolValue(IS_LOGIN_VIA_TRUECALLER))
@@ -483,7 +481,7 @@ class SpeakingPractiseFragment : ABTestFragment(),TimeAnimator.TimeListener {
 
     private fun startPractise(favoriteUserCall: Boolean = false, isNewUserCall: Boolean = false,isNewArch:Boolean = false) {
         if (PermissionUtils.isCallingPermissionEnabled(requireContext())) {
-            if (isNewArch){
+            if (isNewArch) {
                 startPracticeCall()
                 return
             }else{

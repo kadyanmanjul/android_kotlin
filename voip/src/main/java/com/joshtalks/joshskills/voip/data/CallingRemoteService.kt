@@ -167,13 +167,32 @@ class CallingRemoteService : Service() {
                                 )
                             }
                             CALL_DISCONNECT_REQUEST -> {
-                                Log.d(TAG, "onStartCommand: CALL_DISCONNECT_REQUEST")
+                                Log.d(TAG, "observeMediatorEvents: CALL_DISCONNECT_REQUEST")
                                 notification.idle()
                                 resetCallUIState()
                                 updateVoipState(LEAVING)
                                 val duration = callDurationInMillis()
                                 if(duration > 0)
                                     updateLastCallDetails(duration.inSeconds())
+                            }
+
+                            RECONNECTING_FAILED -> {
+                                Log.d(TAG, "observeMediatorEvents: RECONNECTING_FAILED")
+                                notification.idle()
+                                resetCallUIState()
+                                updateVoipState(LEAVING)
+                                val duration = callDurationInMillis()
+                                if(duration > 0)
+                                    updateLastCallDetails(duration.inSeconds())
+                                val networkAction = NetworkAction(
+                                    channelName = CallDetails.agoraChannelName,
+                                    uid = CallDetails.localUserAgoraId,
+                                    type = ServerConstants.DISCONNECTED,
+                                    duration = duration.inSeconds(),
+                                    address = CallDetails.partnerMentorId ?: (Utils.uuid ?: "")
+                                )
+                                mediator.sendEventToServer(networkAction)
+                                CallDetails.reset()
                             }
 
                             INCOMING_CALL -> {
@@ -350,7 +369,6 @@ class CallingRemoteService : Service() {
         }
     }
 
-
     private fun disconnectCall() {
         Log.d(TAG, "disconnectCall: ")
         val duration = callDurationInMillis()
@@ -358,7 +376,7 @@ class CallingRemoteService : Service() {
             channelName = CallDetails.agoraChannelName,
             uid = CallDetails.localUserAgoraId,
             type = ServerConstants.DISCONNECTED,
-            duration = duration,
+            duration = duration.inSeconds(),
             address = CallDetails.partnerMentorId ?: (Utils.uuid ?: "")
         )
         notification.idle()
@@ -372,6 +390,12 @@ class CallingRemoteService : Service() {
 
     override fun onTaskRemoved(rootIntent: Intent?) {
         //showNotification()
+        Log.d(TAG, "onTaskRemoved: $currentState")
+        if(currentState == IDLE || currentState == JOINING || currentState == JOINED) {
+            disconnectCall()
+            stopSelf()
+            return
+        }
         if (currentState == IDLE) {
             if (::serviceKillJob.isInitialized.not())
                 startAutoServiceKillingTimer()

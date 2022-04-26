@@ -12,14 +12,7 @@ import com.joshtalks.joshskills.core.TAG
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.ui.call.data.local.VoipPref
 import com.joshtalks.joshskills.ui.call.repository.WebrtcRepository
-import com.joshtalks.joshskills.voip.constant.CALL_CONNECTED_EVENT
-import com.joshtalks.joshskills.voip.constant.CALL_DISCONNECT_REQUEST
-import com.joshtalks.joshskills.voip.constant.CALL_INITIATED_EVENT
-import com.joshtalks.joshskills.voip.constant.CONNECTED
-import com.joshtalks.joshskills.voip.constant.IDLE
-import com.joshtalks.joshskills.voip.constant.IPC_CONNECTION_ESTABLISHED
-import com.joshtalks.joshskills.voip.constant.RECONNECTED
-import com.joshtalks.joshskills.voip.constant.RECONNECTING
+import com.joshtalks.joshskills.voip.constant.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.sync.Mutex
@@ -89,7 +82,7 @@ class VoiceCallViewModel : BaseViewModel() {
                         voipLog?.log("RECONNECTED")
                         "Timer"
                     }
-                    CALL_DISCONNECT_REQUEST -> {
+                    CALL_DISCONNECT_REQUEST, RECONNECTING_FAILED -> {
                         voipLog?.log("Call Disconnect")
                         showToast("Call Disconnect")
                         null

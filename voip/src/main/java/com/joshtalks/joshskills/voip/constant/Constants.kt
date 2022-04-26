@@ -9,6 +9,7 @@ const val CALL_INITIATED_EVENT = 101
 const val CALL_CONNECTED_EVENT = 102
 const val CALL_DISCONNECTING_EVENT = 103
 const val CALL_DISCONNECTED = 104
+const val RECONNECTING_FAILED = 128
 const val MUTE = 105
 const val UNMUTE = 106
 const val HOLD = 107
