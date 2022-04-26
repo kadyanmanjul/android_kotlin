@@ -449,6 +449,7 @@
                         android:textColor="@color/white"
                         android:textSize="@dimen/_12ssp"
                         app:cornerRadius="@dimen/_36sdp"
+                        android:visibility="gone"
                         app:layout_constraintBottom_toTopOf="@+id/btn_continue"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
