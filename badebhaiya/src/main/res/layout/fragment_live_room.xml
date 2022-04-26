@@ -175,12 +175,23 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>
 
+        <View
+            android:id="@+id/bottomControlBackground"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="@color/white"
+            app:layout_constraintTop_toBottomOf="@+id/scrollView" />
+
+
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/button_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/white"
             android:paddingTop="@dimen/_10sdp"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="@drawable/background_bottomsheet_24dp_corner"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
@@ -288,6 +299,7 @@
             android:id="@+id/notificationRoot"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
 
             <com.joshtalks.badebhaiya.feed.NotificationView
                 android:id="@+id/notification_bar"
