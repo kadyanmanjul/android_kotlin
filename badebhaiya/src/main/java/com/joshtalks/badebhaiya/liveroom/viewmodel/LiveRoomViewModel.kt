@@ -134,6 +134,7 @@ class LiveRoomViewModel(application: Application) : AndroidViewModel(application
     }
 
     private fun collectData(){
+        Log.d("sahil", "collectData called: ")
         viewModelScope.launch {
             PubNubData.audienceList.collect {
                 Log.d("sahil", "audience list => $it")

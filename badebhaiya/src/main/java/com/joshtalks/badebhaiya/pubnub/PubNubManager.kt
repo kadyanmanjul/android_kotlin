@@ -1,5 +1,6 @@
 package com.joshtalks.badebhaiya.pubnub
 
+import android.os.Build
 import android.os.Bundle
 import android.os.Message
 import android.util.Log
@@ -395,17 +396,20 @@ object PubNubManager {
 
     fun setHandRaisedForUser(userId: Int, isHandRaised: Boolean) {
         updateHandRaisedToUser(userId, isHandRaised)
-        val newList = arraySetOf<LiveRoomUser>()
+        var newList = arraySetOf<LiveRoomUser>()
         newList.addAll(audienceList)
         val isOldUserPresent = newList.any { it.id == userId }
         if (isOldUserPresent) {
-            val oldUser = newList.filter { it.id == userId }
-            newList.removeAll(oldUser)
-            oldUser[0].isHandRaised = isHandRaised
+            val oldUser = newList.filter { it.id == userId }[0]
+            newList.remove(oldUser)
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+//                newList.removeIf { it.id == userId }
+//            }
+            oldUser.isHandRaised = isHandRaised
             if (isHandRaised) {
-                oldUser[0].isSpeakerAccepted = false
+                oldUser.isSpeakerAccepted = false
             }
-            newList.add(oldUser[0])
+            newList.add(oldUser)
         }
         postToAudienceList(newList)
     }
