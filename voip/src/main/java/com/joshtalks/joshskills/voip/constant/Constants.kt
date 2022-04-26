@@ -35,6 +35,9 @@ const val CONNECTED = 121 // Remote User Joined the Channel and can Talk
 const val LEAVING = 122 // LeaveChannel Called but haven't left the channel
 const val LEAVING_AND_JOINING = 126 // LeaveChannel Previous Channel and Joining New Channel
 
+const val VOIP_DB_URL = "https://joshskills-p2p-online.asia-southeast1.firebasedatabase.app/"
+const val VOIP_PATH = "Presence"
+
 
 
 
