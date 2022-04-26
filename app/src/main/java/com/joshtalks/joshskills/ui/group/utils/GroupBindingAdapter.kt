@@ -45,18 +45,15 @@ fun GroupsAppBar.setFirstIcon(drawableRes: Int) {
         this.firstIcon(drawableRes)
 }
 
-@BindingAdapter("groupHeader", "groupSubHeader", "subHeaderTimer", requireAll = false)
-fun GroupsAppBar.setGroupHeaders(header: String, subHeader: String, boolean: Boolean = false) =
-    this.setGroupSubTitle(subHeader, header, boolean)
+@BindingAdapter("groupHeader", "groupSubHeader", "groupType", requireAll = false)
+fun GroupsAppBar.setGroupHeaders(header: String, subHeader: String, groupType: String) =
+    this.setGroupSubTitle(subHeader, header, groupType)
 
 @BindingAdapter("secondIcon")
 fun GroupsAppBar.setSecondIcon(drawableRes: Int) = this.secondIcon(drawableRes)
 
 @BindingAdapter("groupImage")
 fun GroupsAppBar.setGroupImage(imageUrl: String) = this.setImage(imageUrl)
-
-@BindingAdapter("groupType")
-fun GroupsAppBar.setLockVisibility(groupType: String) = this.setLockVisibility(groupType)
 
 @BindingAdapter("groupImage", "defaultImage")
 fun CircleImageView.setGroupImage(imageUrl: String, defaultImage: String) {

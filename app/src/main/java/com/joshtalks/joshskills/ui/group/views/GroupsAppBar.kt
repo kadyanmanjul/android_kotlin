@@ -15,6 +15,7 @@ import de.hdodenhof.circleimageview.CircleImageView
 
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.ui.group.constants.CLOSED_GROUP
+import com.joshtalks.joshskills.ui.group.constants.DM_CHAT
 import com.joshtalks.joshskills.ui.group.model.DefaultImage
 
 import java.lang.Exception
@@ -79,20 +80,21 @@ class GroupsAppBar @JvmOverloads constructor(
 
     }
 
-    fun setGroupSubTitle(subTitle: String, title: String, timerPresent: Boolean) {
+    fun setGroupSubTitle(subTitle: String, title: String, groupType: String) {
         if (subTitle.isNotBlank()) {
             toolBarTitleTv.visibility = View.GONE
             toolBarContainer.visibility = View.VISIBLE
             titleTv.text = title
-            if (timerPresent)
-                Handler().postDelayed({
-                    subTitleTv.text = subTitle
-                }, 3000)
-            else subTitleTv.text = subTitle
+            subTitleTv.text = subTitle
         } else {
             toolBarContainer.visibility = View.GONE
             toolBarTitleTv.visibility = View.VISIBLE
             toolBarTitleTv.text = title
+        }
+        when (groupType) {
+            CLOSED_GROUP -> closedGroupIcon.visibility = View.VISIBLE
+            DM_CHAT -> toolBarContainer.visibility = View.VISIBLE
+            else -> closedGroupIcon.visibility = View.GONE
         }
     }
 
@@ -111,13 +113,6 @@ class GroupsAppBar @JvmOverloads constructor(
 
     private fun setDrawableImage(drawableRes: Int, imageView: ImageView) {
         imageView.setImageResource(drawableRes)
-    }
-
-    fun setLockVisibility(groupType: String) {
-        if (groupType == CLOSED_GROUP)
-            closedGroupIcon.visibility = View.VISIBLE
-        else
-            closedGroupIcon.visibility = View.GONE
     }
 
     // Listeners
