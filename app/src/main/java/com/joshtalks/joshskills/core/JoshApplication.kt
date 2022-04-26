@@ -110,7 +110,7 @@ class JoshApplication :
     }
 
     private fun initMoEngage() {
-        val moEngage = MoEngage.Builder(this, "DU9ICNBN2A9TTT38BS59KEU6_DEBUG")
+        val moEngage = MoEngage.Builder(this, "DU9ICNBN2A9TTT38BS59KEU6")
             .setDataCenter(DataCenter.DATA_CENTER_3)
             .configureMiPush(MiPushConfig("2882303761518451933", "5761845183933", true))
             .configureLogs(LogConfig(LogLevel.VERBOSE, true))

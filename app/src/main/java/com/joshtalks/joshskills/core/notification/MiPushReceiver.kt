@@ -20,7 +20,6 @@ import com.joshtalks.joshskills.repository.local.model.*
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
 import com.joshtalks.joshskills.ui.voip.*
 import com.joshtalks.joshskills.ui.voip.analytics.VoipAnalytics
-import com.joshtalks.joshskills.util.Utils
 import com.moengage.core.LogLevel
 import com.moengage.core.internal.logger.Logger
 import com.moengage.mi.MoEMiPushHelper
@@ -92,6 +91,10 @@ class MiPushReceiver : PushMessageReceiver() {
                 Logger.print { "$tag onReceiveRegisterResult() : Token is null or empty." }
                 return
             }
+
+            //pass the mi push token to moengage
+            MoEMiPushHelper.getInstance().passPushToken(context, pushToken)
+
         } catch (e: Exception) {
             Logger.print(LogLevel.ERROR, e) { "$tag onReceiveRegisterResult() : " }
         }
@@ -109,7 +112,10 @@ class MiPushReceiver : PushMessageReceiver() {
         Timber.tag(tag).e("4 : $miPushMessage")
         try {
             if (context == null || miPushMessage == null) return
-            val map = Utils.jsonToMap(JSONObject(miPushMessage.content).getJSONObject("gcm_alert"))
+            val remoteData = JSONObject(miPushMessage.content)
+            val map = mutableMapOf<String, String>()
+            map["nType"] = remoteData.getString("nType")
+            map["id"] = remoteData["id"].toString()
             processRemoteMessage(context, map)
             logNotificationReceived(context, miPushMessage)
         } catch (e: Exception) {
