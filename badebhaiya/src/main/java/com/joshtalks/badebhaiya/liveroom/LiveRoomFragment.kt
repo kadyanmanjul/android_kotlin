@@ -16,22 +16,22 @@ import android.os.IBinder
 import android.os.Looper
 import android.util.Log
 import android.view.View
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.addCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatTextView
-import androidx.collection.ArraySet
 import androidx.collection.arraySetOf
+import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
 import com.google.android.material.badge.BadgeDrawable
 import com.google.android.material.badge.BadgeUtils
-import com.google.gson.JsonObject
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.core.*
 import com.joshtalks.badebhaiya.core.base.BaseFragment
-import com.joshtalks.badebhaiya.databinding.ActivityConversationLiveRoomBinding
-import com.joshtalks.badebhaiya.feed.FeedActivity
+import com.joshtalks.badebhaiya.databinding.FragmentLiveRoomBinding
 import com.joshtalks.badebhaiya.feed.NotificationView
 import com.joshtalks.badebhaiya.feed.model.LiveRoomUser
 import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
@@ -55,6 +55,7 @@ import com.joshtalks.badebhaiya.notifications.HeadsUpNotificationService
 import com.joshtalks.badebhaiya.profile.ProfileActivity
 import com.joshtalks.badebhaiya.pubnub.PubNubEventsManager
 import com.joshtalks.badebhaiya.pubnub.PubNubManager
+import com.joshtalks.badebhaiya.pubnub.PubNubState
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.utils.DEFAULT_NAME
 import com.joshtalks.badebhaiya.utils.setUserImageRectOrInitials
@@ -65,20 +66,19 @@ import io.agora.rtc.IRtcEngineEventHandler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import io.reactivex.subjects.ReplaySubject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-class LiveRoomFragment : BaseFragment<ActivityConversationLiveRoomBinding, LiveRoomViewModel>(
-    R.layout.activity_conversation_live_room
+class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel>(
+    R.layout.fragment_live_room
 ),
                                      NotificationView.NotificationViewAction,
                                      RaisedHandsBottomSheet.HandRaiseSheetListener {
 
     private var mServiceBound: Boolean = false
-    private lateinit var binding: ActivityConversationLiveRoomBinding
+    private lateinit var binding: FragmentLiveRoomBinding
     private var mBoundService: ConvoWebRtcService? = null
     private var isActivityOpenFromNotification: Boolean = false
     private var roomId: Int? = null
@@ -99,6 +99,7 @@ class LiveRoomFragment : BaseFragment<ActivityConversationLiveRoomBinding, LiveR
     private var isInviteRequestComeFromModerator: Boolean = false
     private var isBackPressed: Boolean = false
     private var isExitApiFired: Boolean = false
+    private var backPressCallback: OnBackPressedCallback? = null
     private val vm by lazy { ViewModelProvider(requireActivity()).get(LiveRoomViewModel::class.java) }
     val speakingListForGoldenRing: androidx.collection.ArraySet<Int?> = arraySetOf()
 
@@ -106,6 +107,7 @@ class LiveRoomFragment : BaseFragment<ActivityConversationLiveRoomBinding, LiveR
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        attachBackPressedDispatcher()
         ConvoWebRtcService.initLibrary()
 //        requireActivity().requestWindowFeature(Window.FEATURE_NO_TITLE)
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -118,11 +120,13 @@ class LiveRoomFragment : BaseFragment<ActivityConversationLiveRoomBinding, LiveR
 
     }
 
-    override fun onInitDataBinding(viewBinding: ActivityConversationLiveRoomBinding) {
+    override fun onInitDataBinding(viewBinding: FragmentLiveRoomBinding) {
         // View is initialized
         channelName = PubNubManager.getLiveRoomProperties().channelName
         viewBinding.handler = this
         binding = viewBinding
+        vm.lvRoomState = LiveRoomState.EXPANDED
+        trackLiveRoomState()
         isActivityOpenFromNotification =
             PubNubManager.getLiveRoomProperties().isActivityOpenFromNotification!!
         addViewModelObserver()
@@ -134,6 +138,42 @@ class LiveRoomFragment : BaseFragment<ActivityConversationLiveRoomBinding, LiveR
             initData()
             vm.startRoom()
         }
+    }
+
+    private fun trackLiveRoomState(){
+        binding.liveRoomRootView.addTransitionListener(object : MotionLayout.TransitionListener{
+            override fun onTransitionStarted(
+                motionLayout: MotionLayout?,
+                startId: Int,
+                endId: Int
+            ) {
+            }
+
+            override fun onTransitionChange(
+                motionLayout: MotionLayout?,
+                startId: Int,
+                endId: Int,
+                progress: Float
+            ) {
+            }
+
+            override fun onTransitionCompleted(motionLayout: MotionLayout?, currentId: Int) {
+                if (currentId == R.id.collapsed){
+                    vm.lvRoomState = LiveRoomState.COLLAPSED
+                } else {
+                    vm.lvRoomState = LiveRoomState.EXPANDED
+                }
+            }
+
+            override fun onTransitionTrigger(
+                motionLayout: MotionLayout?,
+                triggerId: Int,
+                positive: Boolean,
+                progress: Float
+            ) {
+            }
+
+        })
     }
 
     private fun addViewModelObserver() {
@@ -254,7 +294,7 @@ class LiveRoomFragment : BaseFragment<ActivityConversationLiveRoomBinding, LiveR
 
     fun collapseLiveRoom(){
         binding.liveRoomRootView.transitionToEnd()
-        vm.liveRoomState.value = LiveRoomState.COLLAPSED
+//        vm.lvRoomState = LiveRoomState.COLLAPSED
     }
 
     private fun expandLiveRoom() {
@@ -1093,28 +1133,42 @@ class LiveRoomFragment : BaseFragment<ActivityConversationLiveRoomBinding, LiveR
         compositeDisposable.clear()
         observeNetwork()
         PubNubManager.collectPubNubEvents()
-        /*if (vm.isPubNubUsersFetched.value == true) {
-            addPubNubEventObserver()
-        }*/
     }
 
-    // TODO: Rework on backpressed logic
-   /* override fun onBackPressed() {
+    private fun handleBackPress(onBackPressedCallback: OnBackPressedCallback) {
+        backPressCallback = onBackPressedCallback
         isBackPressed = true
-        if (!internetAvailableFlag) {
-            mBoundService?.endService()
-            super.onBackPressed()
-            return
+        if (vm.pubNubState.value != null && vm.pubNubState.value == PubNubState.STARTED){
+             /** Live Room is Going on */
+            if (vm.lvRoomState == LiveRoomState.EXPANDED){
+                // Minimise live room.
+                collapseLiveRoom()
+            } else {
+                // Live is already minimized ask if user wants to quit live room.
+                if (!internetAvailableFlag) {
+                    mBoundService?.endService()
+//                    requireActivity().onBackPressed()
+                    finishFragment()
+                    return
+                }
+                if (binding.leaveEndRoomBtn.text == getString(R.string.end_room)) {
+                    showEndRoomPopup()
+                }
+                else {
+                    showLeaveRoomPopup()
+                }
+            }
         }
-        if (binding.leaveEndRoomBtn.text == getString(R.string.end_room)) {
-            showEndRoomPopup()
+    }
+
+    private fun attachBackPressedDispatcher(){
+        requireActivity().onBackPressedDispatcher.addCallback {
+            handleBackPress(this)
         }
-        else {
-            showLeaveRoomPopup()
-        }
-    }*/
+    }
 
     override fun onDestroy() {
+        backPressCallback?.isEnabled = false
         if ((isBackPressed.or(isExitApiFired)).not()) {
             if (PubNubManager.getLiveRoomProperties().isRoomCreatedByUser) {
                 mBoundService?.endRoom(roomId, roomQuestionId)

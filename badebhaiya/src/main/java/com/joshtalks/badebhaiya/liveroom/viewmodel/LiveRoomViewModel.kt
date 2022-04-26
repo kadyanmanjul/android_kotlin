@@ -72,6 +72,7 @@ class LiveRoomViewModel(application: Application) : AndroidViewModel(application
     var speakersList = MutableLiveData<ArraySet<LiveRoomUser>>(ArraySet())
     val pubNubState = MutableLiveData<PubNubState>()
     val liveRoomState = MutableLiveData<LiveRoomState>()
+    var lvRoomState: LiveRoomState? = null
     private val jobs = arrayListOf<Job>()
     var message = Message()
     var singleLiveEvent: MutableLiveData<Message> = MutableLiveData()
