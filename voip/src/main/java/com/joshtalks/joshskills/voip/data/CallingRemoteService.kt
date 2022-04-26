@@ -34,6 +34,8 @@ import com.joshtalks.joshskills.voip.mediator.CallingMediator
 import com.joshtalks.joshskills.voip.notification.NotificationData
 import com.joshtalks.joshskills.voip.notification.NotificationPriority
 import com.joshtalks.joshskills.voip.notification.VoipNotification
+import com.joshtalks.joshskills.voip.presence.PresenceStatus
+import com.joshtalks.joshskills.voip.presence.UserPresence
 import com.joshtalks.joshskills.voip.pstn.PSTNController
 import com.joshtalks.joshskills.voip.pstn.PSTNState
 import kotlinx.coroutines.*
@@ -49,6 +51,9 @@ class CallingRemoteService : Service() {
     private val coroutineExceptionHandler = CoroutineExceptionHandler { _, e ->
         Timber.tag("Coroutine Exception").d("Handled...")
         e.printStackTrace()
+    }
+    private val userPresence by lazy {
+        UserPresence
     }
     private val ioScope by lazy { CoroutineScope(Dispatchers.IO + coroutineExceptionHandler) }
     private val mediator by lazy<CallServiceMediator> { CallingMediator(ioScope) }
@@ -124,6 +129,8 @@ class CallingRemoteService : Service() {
         voipLog?.log("API Header --> ${Utils.apiHeader}")
         voipLog?.log("Mentor Id --> ${Utils.uuid}")
         // TODO: Refactor Code {Maybe use Content Provider}
+//        setting status online on start service
+        userPresence.setUserPresence(Utils.uuid.toString(),PresenceStatus.Online)
         observeNetworkEvents()
         return START_REDELIVER_INTENT
     }
