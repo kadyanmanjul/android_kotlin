@@ -45,18 +45,18 @@
             android:layout_height="@dimen/_24sdp"
             android:background="@drawable/follow_button_background"
             android:gravity="center"
-            android:text="@string/follow"
             android:onClick="@{() -> handler.updateFollowStatus()}"
-            android:visibility="@{(viewModel.isBadeBhaiyaSpeaker &amp;&amp; !viewModel.isSelfProfile) ? View.VISIBLE : View.GONE}"
-            android:textColor="@color/follow_button_stroke"
+            android:text="@string/follow"
             android:textAppearance="@style/BB_Typography_Nunito_Semi_Bold"
+            android:textColor="@color/follow_button_stroke"
             android:textSize="@dimen/_12ssp"
+            android:visibility="@{(viewModel.isBadeBhaiyaSpeaker &amp;&amp; !viewModel.isSelfProfile) ? View.VISIBLE : View.GONE}"
             app:layout_constraintBottom_toBottomOf="@id/iv_profile_pic"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.92264416315049226441631504922644"
+            app:layout_constraintHorizontal_bias="0.933"
             app:layout_constraintStart_toStartOf="@id/iv_profile_pic"
             app:layout_constraintTop_toBottomOf="@id/toolbar"
-            app:layout_constraintVertical_bias="0.99" />
+            app:layout_constraintVertical_bias="1.0" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvUserName"

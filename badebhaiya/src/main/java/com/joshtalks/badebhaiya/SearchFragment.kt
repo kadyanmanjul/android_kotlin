@@ -3,15 +3,18 @@ package com.joshtalks.badebhaiya
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.SearchView
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.joshtalks.badebhaiya.core.showToast
 import com.joshtalks.badebhaiya.databinding.FragmentSearchBinding
 import com.joshtalks.badebhaiya.feed.FeedViewModel
 import com.joshtalks.badebhaiya.feed.model.Users
@@ -34,13 +37,14 @@ private const val ARG_PARAM2 = "param2"
 
 class SearchFragment : Fragment() {
 
+    var users=mutableListOf<Users>()
     val viewModel by lazy {
         ViewModelProvider(requireActivity()).get(FeedViewModel::class.java)
     }
-
-    private val profileViewModel by lazy {
-        ViewModelProvider(this)[ProfileViewModel::class.java]
+    val searchViewModel by lazy{
+        ViewModelProvider(requireActivity()).get(SearchViewModel::class.java)
     }
+    //val myAdapter:SearchAdapter by lazy{SearchAdapter(users)}
 
     lateinit var binding:FragmentSearchBinding
     override fun onCreateView(
@@ -50,6 +54,10 @@ class SearchFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_search, container, false)
+        //binding.recyclerView.layoutManager=LinearLayoutManager(binding.recyclerView.context)
+        //binding.recyclerView.adapter=myAdapter
+        //searchViewModel.readData.observe
+
         binding.handler = this
         activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -64,70 +72,46 @@ class SearchFragment : Fragment() {
             val manager = requireActivity().supportFragmentManager
             manager.beginTransaction().remove(this).commit()
         }
+
         //(activity as FeedActivity).swipeRefreshLayout.visibility=View.GONE
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        var job: Job? = null
-        var users=mutableListOf<Users>()
 
-        search()
+        //binding.searchBar.clearFocus()
 
-//        binding.searchBar.addTextChangedListener{
-//            //var job: Job? = null
-//
-//                job?.cancel()
-//                job = MainScope().launch {
-//                    delay(500)
-//                    if (it.toString().isNotEmpty())
-//                        users=viewModel.searchUser(it.toString())
-//                }
-//            binding.recyclerView.adapter=SearchAdapter(users)
-//            binding.recyclerView.layoutManager=LinearLayoutManager(requireContext())
-//        }
-
-//        binding.searchBar.addTextChangedListener( object: TextWatcher {
-//            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-//            }
-//            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-//                job?.cancel()
-//                job = MainScope().launch {
-//                    delay(500)
-//                    if (binding.searchBar.toString().isNotEmpty())
-//                        users=viewModel.searchUser(binding.searchBar.text.toString())
-//                    //showToast("${binding.searchBar.text}")
-//                }
-//            }
-//            override fun afterTextChanged(p0: Editable?) {
-//                binding.recyclerView.adapter=SearchAdapter(users)
-//                binding.recyclerView.layoutManager=LinearLayoutManager(requireContext())
-//            }
-//        })
-    }
-
-
-    fun search(){
-        binding.searchBar.addTextChangedListener( object: TextWatcher {
+        binding.searchBar.setOnQueryTextListener(object: androidx.appcompat.widget.SearchView.OnQueryTextListener{
             var job: Job? = null
             var users=mutableListOf<Users>()
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            override fun onQueryTextSubmit(query: String): Boolean {
+                //showToast("textSubmit")
+                return false
             }
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+            override fun onQueryTextChange(p0: String?): Boolean {
                 job?.cancel()
+                //showToast("textChange")
                 job = MainScope().launch {
                     delay(500)
-                    if (binding.searchBar.toString().isNotEmpty())
-                        users=viewModel.searchUser(binding.searchBar.text.toString())
-                    //showToast("${binding.searchBar.text}")
+                    if (p0!=null)
+                        viewModel.searchUser(p0)
                 }
-            }
-            override fun afterTextChanged(p0: Editable?) {
-                binding.recyclerView.adapter=SearchAdapter(users)
-                binding.recyclerView.layoutManager=LinearLayoutManager(requireContext())
+                return true
             }
         })
+
+//        binding.recyclerView.btnFollow.setOnClickListener{
+//            viewModel.updateFollowRequest()
+//        }
+        addObserver()
+    }
+    fun addObserver() {
+        viewModel.searchResponse.observe(viewLifecycleOwner){
+            binding.recyclerView.layoutManager=LinearLayoutManager(requireContext())
+            binding.recyclerView.adapter=SearchAdapter(it.users)
+        }
     }
     companion object {
         /**

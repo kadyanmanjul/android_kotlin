@@ -1,5 +1,6 @@
 package com.joshtalks.badebhaiya
 
+import android.annotation.SuppressLint
 import android.app.PendingIntent.getActivity
 import android.content.Context
 import android.os.Bundle
@@ -57,7 +58,7 @@ class SearchAdapter(private val searchResult: List<Users>): ListAdapter<SearchRo
 
     }
 
-    val speakerFollowed = MutableLiveData(false)
+    //var speakerFollowed = false
 
     inner class SearchViewHolder(var item: LiSearchEventBinding) :
         RecyclerView.ViewHolder(item.root) {
@@ -110,17 +111,12 @@ class SearchAdapter(private val searchResult: List<Users>): ListAdapter<SearchRo
 //
 //    }
 
+    @SuppressLint("ResourceAsColor")
     override fun onBindViewHolder(holder: SearchViewHolder, position: Int) {
-
         searchResult.let {
                 searchResult->
             holder.item.tvProfileBio.text = searchResult[position].bio
             holder.item.userName.text = searchResult[position].full_name
-            //holder.item.btnFollow.visibility=viewModel.isBadeBhaiyaSpeaker && !viewModel.isSelfProfile) ? View.VISIBLE : View.GONE
-            //holder.item.btnFollow.visibility=(searchResult[position].is_speaker_followed)
-    //            holder.item.btnFollow.setOnClickListener {
-    //                showToast("followed")
-    //            }
             holder.item.user.setOnClickListener {
                 ProfileActivity.openProfileActivity(
                     holder.item.user.context,
@@ -153,26 +149,24 @@ class SearchAdapter(private val searchResult: List<Users>): ListAdapter<SearchRo
                         R.drawable.follow_button_background
                     )
                 }
-
             holder.item.btnFollow.setOnClickListener {
-                speakerFollowed.value=searchResult[position].is_speaker_followed
-                speakerFollowed.value?.let {
+
+                //speakerFollowed=searchResult[position].is_speaker_followed
                     GlobalScope.launch {
-                        if (it.not()) {
+                        if (searchResult[position].is_speaker_followed.not()) {
                             try {
                                 val followRequest =
                                     FollowRequest(searchResult[position].user_id, User.getInstance().userId)
                                 val response =
                                     RetrofitInstance.profileNetworkService.updateFollowStatus(followRequest)
                                 if (response.isSuccessful) {
-                                    speakerFollowed.value = true
+                                    searchResult[position].is_speaker_followed=true
+                                    notifyDataSetChanged()
                                 }
                             }catch (ex:Exception){
 
                             }
-
                         } else {
-                            GlobalScope.launch {
                                 try {
                                     val followRequest =
                                         FollowRequest(
@@ -181,19 +175,37 @@ class SearchAdapter(private val searchResult: List<Users>): ListAdapter<SearchRo
                                         )
                                     val response = RetrofitInstance.profileNetworkService.updateUnfollowStatus(followRequest)
                                     if (response.isSuccessful) {
-                                        speakerFollowed.value = false
+                                        searchResult[position].is_speaker_followed=false
+                                        notifyDataSetChanged()
                                     }
                                 } catch (ex: Exception) {
 
                                 }
-
-                            }
                         }
                     }
+                if (searchResult[position].is_speaker_followed.not()==true) {
+                    holder.item.user.apply {
+                        holder.item.user.btnFollow.setText("Following")
+                        holder.item.user.btnFollow.setTextColor(resources.getColor(R.color.white))
+                        holder.item.user.btnFollow.background = AppCompatResources.getDrawable(
+                            holder.item.user.btnFollow.context,
+                            R.drawable.following_button_background
+                        )
+                    }
                 }
+                else {
+                    holder.item.user.apply {
+                        holder.item.user.btnFollow.setText("Follow")
+                        holder.item.user.btnFollow.setTextColor(resources.getColor(R.color.follow_button_stroke))
+                        //holder.item.user.btnFollow.setBackgroundDrawable(R.drawable.follow_button_background)
+                        holder.item.user.btnFollow.background = AppCompatResources.getDrawable(
+                            holder.item.user.btnFollow.context,
+                            R.drawable.follow_button_background
+                        )
+                    }
+                }
+
             }
         }
-
-
     }
 }

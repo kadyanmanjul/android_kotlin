@@ -19,7 +19,7 @@
         android:id="@+id/find">
 
 
-        <EditText
+        <androidx.appcompat.widget.SearchView
             android:id="@+id/search_bar"
             android:layout_width="@dimen/_230sdp"
             android:layout_height="@dimen/_30sdp"
@@ -27,11 +27,13 @@
             android:background="@drawable/search_bar"
             android:drawableLeft="@drawable/ic_search"
             android:drawableTint="#918F83"
+            android:textSize="@dimen/_5ssp"
+            app:queryHint="Search for people and topics"
+            app:iconifiedByDefault="false"
             android:fontFamily="@font/nunito_sans_semi_bold"
-            android:hint="Search for people and topics"
             android:imeOptions="actionDone"
-            android:paddingLeft="@dimen/_10sdp"
             android:singleLine="true"
+            android:iconifiedByDefault="false"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"

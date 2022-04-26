@@ -15,5 +15,5 @@ data class Users(
     @SerializedName("bio")
     val bio:String,
     @SerializedName("is_speaker_followed")
-    val is_speaker_followed : Boolean
+    var is_speaker_followed : Boolean
 )

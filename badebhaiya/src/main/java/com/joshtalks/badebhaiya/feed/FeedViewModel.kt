@@ -5,20 +5,14 @@ import android.os.Message
 import android.util.Log
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.SearchAdapter
 import com.joshtalks.badebhaiya.core.AppObjectController
 import com.joshtalks.badebhaiya.core.showAppropriateMsg
 import com.joshtalks.badebhaiya.core.showToast
 import com.joshtalks.badebhaiya.feed.adapter.FeedAdapter
-import com.joshtalks.badebhaiya.feed.model.ConversationRoomType
-import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
-import com.joshtalks.badebhaiya.feed.model.SearchRoomsResponse
-import com.joshtalks.badebhaiya.feed.model.Users
+import com.joshtalks.badebhaiya.feed.model.*
 import com.joshtalks.badebhaiya.liveroom.OPEN_PROFILE
 import com.joshtalks.badebhaiya.liveroom.OPEN_ROOM
 import com.joshtalks.badebhaiya.liveroom.bottomsheet.CreateRoom
@@ -43,6 +37,7 @@ class FeedViewModel : ViewModel() {
     val isLoading = ObservableBoolean(false)
     val isBadeBhaiyaSpeaker = ObservableBoolean(false)
 
+    val searchResponse=MutableLiveData<SearchRoomsResponseList>()
     val feedAdapter = FeedAdapter()
     var message = Message()
     var singleLiveEvent: MutableLiveData<Message> = MutableLiveData()
@@ -199,7 +194,7 @@ class FeedViewModel : ViewModel() {
         }
     }
 
-    fun searchUser(query: String):MutableList<Users> {
+    fun searchUser(query: String) {
         val listUser= mutableListOf<Users>()
         viewModelScope.launch {
             try {
@@ -209,25 +204,20 @@ class FeedViewModel : ViewModel() {
                 if(response.isSuccessful)
                 {
                     response.body()?.let {
-                        if(it.users.isNullOrEmpty().not())
-                        {
-                            listUser.addAll(it.users)
-                        }
-                        if(listUser.isNullOrEmpty())
-                        //showToast("NO results Found")
-                        else
-                        {
-                            // showToast("${listUser}")
-                        }
+                        searchResponse.postValue(it)
                     }
                 }
-                //showToast("Search API launched successfully")
             } catch (ex: Exception) {
 
             }
         }
-        return listUser
     }
+
+//    fun updateFollowRequest(){
+//
+//    }
+
+
 
     fun deleteReminder(deleteReminderRequest: DeleteReminderRequest) {
         viewModelScope.launch {
