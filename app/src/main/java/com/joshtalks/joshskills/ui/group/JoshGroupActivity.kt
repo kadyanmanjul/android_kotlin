@@ -17,11 +17,8 @@ import com.github.dhaval2404.imagepicker.ImagePicker
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.constants.*
 import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.MOENGAGE_USER_CREATED
 import com.joshtalks.joshskills.core.PermissionUtils
-import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.databinding.ActivityJoshGroupBinding
-import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics
 import com.joshtalks.joshskills.ui.group.constants.*
@@ -36,7 +33,6 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import com.moengage.core.analytics.MoEAnalyticsHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -62,15 +58,6 @@ class JoshGroupActivity : BaseGroupActivity() {
 
     override fun onCreated() {
         openGroupListFragment()
-        initMoEnagageForGroups()
-    }
-
-    private fun initMoEnagageForGroups() {
-        if (!PrefManager.getBoolValue(MOENGAGE_USER_CREATED)) {
-            vm.initializeMoEngageUser()
-            PrefManager.put(MOENGAGE_USER_CREATED, true)
-            MoEAnalyticsHelper.setUniqueId(this, Mentor.getInstance().getId())
-        }
     }
 
     override fun initViewState() {

@@ -18,15 +18,11 @@ import androidx.multidex.MultiDexApplication
 import com.freshchat.consumer.sdk.Freshchat
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.core.notification.LocalNotificationAlarmReciever
-import com.joshtalks.joshskills.core.service.BackgroundService
 import com.joshtalks.joshskills.core.service.NOTIFICATION_DELAY
 import com.joshtalks.joshskills.core.service.ServiceStartReceiver
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.di.ApplicationComponent
 import com.joshtalks.joshskills.di.DaggerApplicationComponent
-import com.moengage.core.DataCenter
-import com.moengage.core.MoEngage
-import com.moengage.core.config.MiPushConfig
 import com.vanniktech.emoji.EmojiManager
 import com.vanniktech.emoji.ios.IosEmojiProvider
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
@@ -62,25 +58,7 @@ class JoshApplication :
         ProcessLifecycleOwner.get().lifecycle.addObserver(this)
         AppObjectController.init(this)
         registerBroadcastReceiver()
-        initMoEngage()
         initGroups()
-    }
-
-    private fun initMoEngage() {
-        val moEngage = MoEngage.Builder(this, "DU9ICNBN2A9TTT38BS59KEU6")
-            .setDataCenter(DataCenter.DATA_CENTER_3)
-            .configureMiPush(MiPushConfig("2882303761518451933", "5761845183933", true))
-            .build()
-//            .configureLogs(LogConfig(LogLevel.VERBOSE,true))
-        MoEngage.initialiseDefaultInstance(moEngage)
-    }
-
-    private fun initServices() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            applicationContext.startForegroundService(Intent(applicationContext, BackgroundService::class.java))
-        } else {
-            applicationContext.startService(Intent(applicationContext, BackgroundService::class.java))
-        }
     }
 
     override fun onTerminate() {

@@ -1,13 +1,13 @@
 include ':app', ':joshlibrary', ':recordview', ':mediapicker', ':joshcamerax'
 
-enableFeaturePreview("VERSION_CATALOGS")
-dependencyResolutionManagement {
-    repositories {
-        mavenCentral()
-    }
-    versionCatalogs {
-        create("moengage") {
-            from("com.moengage:android-dependency-catalog:2.2.0")
-        }
-    }
-}
+//enableFeaturePreview("VERSION_CATALOGS")
+//dependencyResolutionManagement {
+//    repositories {
+//        mavenCentral()
+//    }
+//    versionCatalogs {
+//        create("moengage") {
+//            from("com.moengage:android-dependency-catalog:2.2.0")
+//        }
+//    }
+//}

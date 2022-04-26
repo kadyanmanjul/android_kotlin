@@ -85,7 +85,6 @@ import com.joshtalks.joshskills.ui.userprofile.fragments.ShowAnimatedLeaderBoard
 import com.joshtalks.joshskills.ui.userprofile.fragments.ShowAwardFragment
 import com.joshtalks.joshskills.ui.userprofile.models.Award
 import com.joshtalks.joshskills.ui.voip.WebRtcActivity
-import com.moengage.core.MoECoreHelper
 import com.patloew.colocation.CoLocation
 import io.branch.referral.Branch
 import io.branch.referral.Defines
@@ -668,7 +667,6 @@ abstract class BaseActivity :
                 putExtra(FLOW_FROM, "CourseExploreActivity")
             }
             try {
-                MoECoreHelper.logoutUser(this@BaseActivity)
                 AppObjectController.signUpNetworkService.signoutUser(Mentor.getInstance().getId())
                 PrefManager.clearUser()
                 AppObjectController.joshApplication.startActivity(intent)

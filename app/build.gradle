@@ -440,6 +440,7 @@ dependencies {
     //keyboard
     implementation "com.vanniktech:emoji-ios:0.8.0"
     implementation "com.vanniktech:emoji-material:0.8.0"
+
     //CameraX
     def camerax_version = "1.1.0-beta02"
     implementation "androidx.camera:camera-core:${camerax_version}"
@@ -451,14 +452,7 @@ dependencies {
 
     implementation 'com.github.MasayukiSuda:Mp4Composer-android:v0.4.1'
 
-/*
-    implementation 'io.sentry:sentry-android-timber:5.5.1'
-*/
-
     //mixpanel
     implementation "com.mixpanel.android:mixpanel-android:6.0.0"
 
-    //moengage
-    implementation(moengage.core)
-    implementation(moengage.pushAmpPlus)
 }
