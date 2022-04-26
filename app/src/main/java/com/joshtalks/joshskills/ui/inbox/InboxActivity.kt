@@ -96,6 +96,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         AppAnalytics.create(AnalyticsEvent.INBOX_SCREEN.NAME).push()
         super.onCreate(savedInstanceState)
         lifecycle.addObserver(this)
+        checkLanguageAndUpdate()
         setContentView(R.layout.activity_inbox)
         initView()
         addLiveDataObservable()

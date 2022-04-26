@@ -17,15 +17,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.constants.CLOSE_REPORT
-import com.joshtalks.joshskills.core.BaseActivity
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.LESSON_COMPLETE_SNACKBAR_TEXT_STRING
-import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
-import com.joshtalks.joshskills.core.setRoundImage
-import com.joshtalks.joshskills.core.IS_COURSE_BOUGHT
-import com.joshtalks.joshskills.core.textDrawableBitmap
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
@@ -181,7 +173,7 @@ class VoipCallFeedbackActivity : BaseActivity(){
             minute = (callTime / (1000 * 60) % 60).toInt()
             val totalSecond:Int=((minute*60)+second)
 
-            if(totalSecond < 120 && PrefManager.getBoolValue(IS_COURSE_BOUGHT) ){
+            if(totalSecond < 120 && PrefManager.getBoolValue(IS_COURSE_BOUGHT ) ){
                 showReportDialog("REPORT"){
                     closeActivity()
                 }
@@ -236,7 +228,7 @@ class VoipCallFeedbackActivity : BaseActivity(){
                     requestParams["response"] = response
                     val apiResponse =
                         AppObjectController.p2pNetworkService.p2pCallFeedbackV2(requestParams)
-                    if(p2pCallShareControl) startShareActivity(apiResponse)
+                    if(p2pCallShareControl && PrefManager.getStringValue(CURRENT_COURSE_ID)== DEFAULT_COURSE_ID) startShareActivity(apiResponse)
                     WorkManagerAdmin.syncFavoriteCaller()
                     delay(250)
                 } catch (ex: Throwable) {

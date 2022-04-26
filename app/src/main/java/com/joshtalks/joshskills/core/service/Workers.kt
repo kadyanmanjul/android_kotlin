@@ -115,6 +115,8 @@ val NOTIFICATION_TITLE_TEXT = arrayOf(
     "Apka aaj ka goal hai Lesson 1 complete karna"
 )
 
+private const val TAG = "Workers"
+
 class UniqueIdGenerationWorker(var context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
@@ -823,7 +825,7 @@ class LanguageChangeWorker(var context: Context, private var workerParams: Worke
             if (runAttemptCount > 2) {
                 completer.set(Result.failure())
             }
-
+        Log.d(TAG,"in language class ${PrefManager.getStringValue(USER_LOCALE)}")
             val language = workerParams.inputData.getString(LANGUAGE_CODE) ?: "en"
             val defaultLanguage = PrefManager.getStringValue(USER_LOCALE)
             Lingver.getInstance().setLocale(context, language)
@@ -831,11 +833,13 @@ class LanguageChangeWorker(var context: Context, private var workerParams: Worke
             AppObjectController.isSettingUpdate = true
             AppObjectController.getFirebaseRemoteConfig().reset()
             AppObjectController.getFirebaseRemoteConfig().fetch(0)
+            Log.d(TAG,language)
             AppObjectController.getFirebaseRemoteConfig()
                 .fetchAndActivate()
                 .addOnSuccessListener {
                     if (it) {
                         PrefManager.put(USER_LOCALE, language)
+                        Log.d(TAG, PrefManager.getStringValue(USER_LOCALE))
                         PrefManager.put(USER_LOCALE_UPDATED, true)
                         WorkManagerAdmin.startVersionAndFlowWorker()
                         completer.set(Result.success())
@@ -853,6 +857,7 @@ class LanguageChangeWorker(var context: Context, private var workerParams: Worke
     }
 
     private fun onErrorToFetch(defaultLanguage: String) {
+        Log.d(TAG, "onErrorToFetch: $defaultLanguage")
         PrefManager.put(USER_LOCALE, defaultLanguage)
         AppObjectController.isSettingUpdate = false
         Lingver.getInstance().setLocale(context, defaultLanguage)

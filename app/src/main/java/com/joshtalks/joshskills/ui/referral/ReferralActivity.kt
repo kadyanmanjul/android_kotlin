@@ -212,8 +212,7 @@ class ReferralActivity : BaseActivity() {
     }
 
     fun inviteFriends(packageString: String? = null, dynamicLink: String) {
-        var referralText = AppObjectController.getFirebaseRemoteConfig().getString(REFERRAL_SHARE_TEXT_KEY +"_"+PrefManager.getStringValue(
-                CURRENT_COURSE_ID))
+        var referralText = AppObjectController.getFirebaseRemoteConfig().getString(REFERRAL_SHARE_TEXT_KEY +"_"+PrefManager.getStringValue(CURRENT_COURSE_ID))
         val refAmount =
             AppObjectController.getFirebaseRemoteConfig().getLong(REFERRAL_EARN_AMOUNT_KEY)
                 .toString()

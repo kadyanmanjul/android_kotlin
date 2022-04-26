@@ -104,8 +104,10 @@ private const val WRITE_TIMEOUT = 30L
 private const val CONNECTION_TIMEOUT = 30L
 private const val CALL_TIMEOUT = 60L
 
-class AppObjectController {
+//private const val TAG = "AppObjectController"
 
+class AppObjectController {
+    private val TAG = "AppObjectController"
     companion object {
 
         @JvmStatic
@@ -368,6 +370,7 @@ class AppObjectController {
                 if (PrefManager.getStringValue(USER_LOCALE).isEmpty()) {
                     PrefManager.put(USER_LOCALE, "en")
                 }
+                Log.d("AppObjectController", "init: ${PrefManager.getStringValue(USER_LOCALE)}")
                 Lingver.init(context, PrefManager.getStringValue(USER_LOCALE))
             }
         }
@@ -594,7 +597,7 @@ class AppObjectController {
         }
 
         private fun initObjectInThread(context: Context) {
-            Log.i(TAG, "initObjectInThread: ")
+            Log.i("AppObjectController", "initObjectInThread: ")
             Thread {
                 val mediaOkhttpBuilder = OkHttpClient().newBuilder()
                 mediaOkhttpBuilder.connectTimeout(45, TimeUnit.SECONDS)
@@ -673,6 +676,7 @@ class HeaderInterceptor : Interceptor {
                 "APP_" + BuildConfig.VERSION_NAME + "_" + BuildConfig.VERSION_CODE.toString()
             )
             .addHeader(KEY_APP_ACCEPT_LANGUAGE, PrefManager.getStringValue(USER_LOCALE))
+        Log.d("AppObjectController", PrefManager.getStringValue(USER_LOCALE))
         if (Utils.isInternetAvailable()) {
             newRequest.cacheControl(CacheControl.FORCE_NETWORK)
         } else {

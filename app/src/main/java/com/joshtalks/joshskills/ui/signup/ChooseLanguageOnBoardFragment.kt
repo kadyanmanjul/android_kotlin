@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.ui.signup
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,6 +18,8 @@ import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.databinding.FragmentChooseLanguageOnboardBinding
 import com.joshtalks.joshskills.repository.server.ChooseLanguages
 import com.joshtalks.joshskills.ui.signup.adapters.ChooseLanguageAdapter
+
+private const val TAG = "ChooseLanguageOnBoardFr"
 
 class ChooseLanguageOnBoardFragment: BaseFragment() {
     private lateinit var binding: FragmentChooseLanguageOnboardBinding
@@ -111,6 +114,7 @@ class ChooseLanguageOnBoardFragment: BaseFragment() {
 
 
     fun initABTest(language: ChooseLanguages) {
+        Log.d(TAG, "initABTest: $language")
         this.language = language
         viewModel.get100PCampaignData(CampaignKeys.HUNDRED_POINTS.NAME, CampaignKeys.EXTEND_FREE_TRIAL.name)
     }
