@@ -1162,7 +1162,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
     }
 
     private fun attachBackPressedDispatcher(){
-        requireActivity().onBackPressedDispatcher.addCallback {
+        requireActivity().onBackPressedDispatcher.addCallback(this) {
             handleBackPress(this)
         }
     }
