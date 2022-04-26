@@ -554,10 +554,11 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
 
 
                     val data2 = it.getOrNull(1)
-                    if(data2 == null){
+                    if (data2 == null) {
                         index = 0
-                      subscriptionCard.visibility = View.GONE
-                    }else {
+                        subscriptionCard.visibility = View.GONE
+                    } else {
+                        subscriptionCard.card.performClick()
                         data2.buttonText?.let { it1 -> buttonText.add(it1) }
                         data2.heading.let { it1 -> headingText.add(it1) }
                         subscriptionCard.title.text = data2.courseHeading
