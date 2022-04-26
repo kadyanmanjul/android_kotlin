@@ -17,6 +17,7 @@ import androidx.lifecycle.lifecycleScope
 import com.afollestad.materialdialogs.MaterialDialog
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.CoreJoshFragment
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.HAS_SEEN_SPEAKING_TOOLTIP
 import com.joshtalks.joshskills.core.HOW_TO_SPEAK_TEXT_CLICKED
@@ -26,7 +27,6 @@ import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.SPEAKING_POINTS
 import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
-import com.joshtalks.joshskills.core.abTest.ABTestFragment
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.isCallOngoing
@@ -63,7 +63,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import com.joshtalks.joshskills.core.IS_FREE_TRIAL_CAMPAIGN_ACTIVE
 
-class SpeakingPractiseFragment : ABTestFragment() {
+class SpeakingPractiseFragment : CoreJoshFragment() {
 
     private lateinit var binding: SpeakingPractiseFragmentBinding
     var lessonActivityListener: LessonActivityListener? = null
@@ -96,15 +96,12 @@ class SpeakingPractiseFragment : ABTestFragment() {
         )
     }
 
-    override fun onReceiveABTestData(abTestCampaignData: ABTestCampaignData?) {
+    fun onReceiveABTestData(abTestCampaignData: ABTestCampaignData?) {
         abTestCampaignData?.let { map->
             isIntroVideoEnabled = (map.variantKey == VariantKeys.SIV_ENABLED.name )&& map.variableMap?.isEnabled == true
         }
         initDemoViews(lessonNo)
 
-    }
-
-    override fun initCampaigns() {
     }
 
     override fun onAttach(context: Context) {
@@ -125,9 +122,14 @@ class SpeakingPractiseFragment : ABTestFragment() {
         binding.handler = this
         binding.vm = viewModel
         binding.rootView.layoutTransition?.setAnimateParentHierarchy(false)
-        addObservers()
         // showTooltip()
         return binding.rootView
+    }
+
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        addObservers()
     }
 
     override fun onResume() {
@@ -347,7 +349,7 @@ class SpeakingPractiseFragment : ABTestFragment() {
 
         viewModel.lessonLiveData.observe(viewLifecycleOwner, {
             lessonNo = it.lessonNo
-            getCampaigns(CampaignKeys.SPEAKING_INTRODUCTION_VIDEO.name)
+            viewModel.getSpeakingABTestCampaign(CampaignKeys.SPEAKING_INTRODUCTION_VIDEO.name)
         })
 
         viewModel.introVideoCompleteLiveData.observe(viewLifecycleOwner, {
@@ -355,6 +357,10 @@ class SpeakingPractiseFragment : ABTestFragment() {
                 binding.btnCallDemo.visibility = View.GONE
             }
         })
+
+        viewModel.speakingABtestLiveData.observe(requireActivity()){
+            onReceiveABTestData(it)
+        }
     }
 
     private fun initDemoViews(it: Int) {
