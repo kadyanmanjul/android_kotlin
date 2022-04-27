@@ -30,6 +30,7 @@ import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import org.json.JSONArray
 import java.io.File
+import java.util.HashMap
 
 private const val TAG = "GroupRepository"
 
@@ -40,6 +41,9 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
     private val mentorId = Mentor.getInstance().getId()
     private val chatService: ChatService = PubNubService
     private val database = AppObjectController.appDatabase
+    private val p2pNetworkService by lazy { AppObjectController.p2pNetworkService }
+    private var favoriteCallerDao = AppObjectController.appDatabase.favoriteCallerDao()
+
 
     fun getGroupSearchResult(query: String) =
         Pager(PagingConfig(10, enablePlaceholders = false, maxSize = 150)) {
@@ -452,6 +456,16 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
         } catch (e: Exception) {
             e.printStackTrace()
             null
+        }
+    }
+
+    suspend fun removeUserFormFppLit(uId:Int){
+        val requestParams: HashMap<String, List<Int>> = HashMap()
+        requestParams["mentor_ids"] = uId.let { return@let listOf(uId) }
+        val response = p2pNetworkService.removeFavoriteCallerList(Mentor.getInstance().getId(), requestParams)
+        if (response.isSuccessful) {
+            favoriteCallerDao.removeFromFavorite(uId.let { return@let listOf(uId) })
+            showToast("Successfully deleted")
         }
     }
 

@@ -10,6 +10,8 @@
 
         <import type="android.view.View" />
 
+        <import type="com.joshtalks.joshskills.ui.group.constants.GroupsConstantsKt"></import>
+
         <variable
             name="vm"
             type="com.joshtalks.joshskills.ui.group.viewmodels.JoshGroupViewModel" />

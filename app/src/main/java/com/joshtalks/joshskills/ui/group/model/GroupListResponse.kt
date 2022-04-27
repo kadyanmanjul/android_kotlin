@@ -5,6 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 import com.google.gson.annotations.SerializedName
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.ui.group.constants.JOINED_GROUP
 import com.joshtalks.joshskills.ui.group.constants.NOT_JOINED_GROUP
@@ -56,7 +57,13 @@ data class GroupsItem(
     val groupStatus: String? = null,
 
     @field:SerializedName("closed_grp_text")
-    val requestGroupText: String? = null
+    val requestGroupText: String? = null,
+
+    @field:SerializedName("agora_id")
+    val agoraUid: Int? = null,
+
+    @field:SerializedName("mentor_id")
+    val dmPartnerMentorId: String? = null
 
 ) : Parcelable, GroupItemData {
 
@@ -96,4 +103,8 @@ data class GroupsItem(
     }
 
     override fun getGroupText() = requestGroupText ?: ""
+
+    override fun getAgoraId() = agoraUid ?: 0
+
+    override fun getPartnerMentorId() = dmPartnerMentorId ?: EMPTY
 }

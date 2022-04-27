@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.ui.group.views
 
 import android.os.Bundle
+import android.util.Log
 
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
@@ -159,6 +160,7 @@ class JoshVoipGroupActivity : BaseGroupActivity() {
     }
 
     private fun openGroupChat(data: GroupItemData?) {
+        Log.e("sagar", "openGroupChat: $data")
         supportFragmentManager.commit {
             setReorderingAllowed(true)
             val bundle = Bundle().apply {
