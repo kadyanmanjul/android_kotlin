@@ -278,7 +278,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         }
         binding.btnSentRequest.setOnClickListener {
             with(binding) {
-                if (btnSentRequest.text == getString(R.string.requested)) {
+                if (btnSentRequest.text.toString() == getString(R.string.requested)) {
                     btnSentRequest.setBackgroundColor(
                         ContextCompat.getColor(
                             AppObjectController.joshApplication,
@@ -300,7 +300,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                             R.color.not_now
                         )
                     )
-                    btnSentRequest.text = "Requested"
+                    btnSentRequest.text = getString(R.string.requested)
                     btnSentRequest.setTextColor(
                         ContextCompat.getColor(
                             AppObjectController.joshApplication,
