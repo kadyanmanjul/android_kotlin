@@ -61,11 +61,13 @@ class JoshGroupViewModel : BaseViewModel() {
     var shouldRefreshGroupList = false
     val isFromVoip = ObservableBoolean(false)
     val isFromGroupInfo = ObservableBoolean(false)
-    var isImageChanged = false
-    var conversationId: String = ""
-    var openedGroupId: String? = null
     val groupListCount = ObservableField(0)
+    var isImageChanged = false
+    var openedGroupId: String? = null
     var groupMemberCounts: Map<String, GroupMemberCount> = mapOf()
+    var conversationId: String = ""
+    var agoraId: Int = 0
+    var mentorId: String = EMPTY
 
     val onItemClick: (GroupItemData) -> Unit = {
         message.what = OPEN_GROUP

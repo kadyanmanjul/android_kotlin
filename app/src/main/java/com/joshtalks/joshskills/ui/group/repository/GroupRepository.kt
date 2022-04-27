@@ -147,7 +147,7 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
         database.groupMemberDao().insertMembers(memberList)
 
         val nextPage = pubNubResponse?.getPageInfo()?.pubNubNext
-        fetchGroupListFromNetwork(PageInfo(pubNubNext = nextPage))
+        fetchMembersFromNetwork(groupId, adminId, PageInfo(pubNubNext = nextPage))
     }
 
     suspend fun getGroupMemberList(groupId: String, adminId: String): List<GroupMember> {

@@ -26,7 +26,6 @@ data class PubNubNetworkData(val data: PNGetMembershipsResult) : NetworkData {
             try {
                 val channelCustom = group.channel.custom as JsonObject
                 val channelMembershipCustom = group.custom as JsonObject
-                Log.e("sagar", "getData: $channelMembershipCustom")
                 val customMap = getCustomMap(channelCustom, channelMembershipCustom)
                 val (lastMsg, lastMessageTime) = chatService.getLastMessageDetail(group.channel.id,customMap["group_type"] ?: OPENED_GROUP)
 
@@ -43,23 +42,18 @@ data class PubNubNetworkData(val data: PNGetMembershipsResult) : NetworkData {
                         group.channel.id,
                         getTimeToken(channelMembershipCustom["time_token"].asLong, group.channel.id)
                     ).toString(),
-                    groupIcon = if (channelMembershipCustom["image_url"]?.asString == "None")
-                        EMPTY
-                    else
-                        channelMembershipCustom["image_url"]?.asString ?: EMPTY
-                    ,
+                    groupIcon = customMap["image_url"],
                     createdAt = customMap["created_at"]?.toLongOrNull(),
                     createdBy = customMap["created_by"],
                     adminId = customMap["admin_id"],
                     groupType = customMap["group_type"] ?: OPENED_GROUP,
-                    agoraUid = (customMap["agora_id"]?.toInt() ?: 0),
-                    dmPartnerMentorId = customMap["mentor_id"]?: EMPTY
+                    agoraUid = (customMap["agora_id"]?.toInt() ?: 0)
                 )
                 if ((customMap["group_type"] == DM_CHAT && lastMsg == EMPTY).not())
                     groupList.add(response)
             } catch (e: Exception) {
                 e.printStackTrace()
-                Log.e("sagar", "Error in group : ${group.channel.id} : ${group.channel.name} :${e.message}")
+                Log.e(TAG, "Error in group: ${group.channel.id} :${e.message}")
                 showToast("An error has occurred")
             }
         }
@@ -76,12 +70,14 @@ data class PubNubNetworkData(val data: PNGetMembershipsResult) : NetworkData {
         json.get("")
         map["created_at"] = json["created_at"].asString
         map["created_by"] = json["created_by"].asString
-        map["image_url"] = json["image_url"]?.asString ?: EMPTY
-        map["admin_id"] = json["mentor_id"].asString
         map["group_type"] = json["group_type"]?.asString ?: OPENED_GROUP
         if (map["group_type"] == DM_CHAT) {
-            map["mentor_id"] = membership["mentor_id"].asString
+            map["image_url"] = membership["image_url"].asString
+            map["admin_id"] = membership["mentor_id"].asString
             map["agora_id"] = membership["agora_id"].asString
+        } else {
+            map["image_url"] = json["image_url"].asString
+            map["admin_id"] = json["mentor_id"].asString
         }
         return map
     }
@@ -91,8 +87,4 @@ data class PubNubNetworkData(val data: PNGetMembershipsResult) : NetworkData {
     private fun getGroupName(name: String?, groupType: String?, dmName: String?): String? =
         if (groupType == DM_CHAT) dmName
         else name
-
-    private fun getGroupIcon(icon: String?, groupType: String?, dmIcon: String?): String? =
-        if (groupType == DM_CHAT) dmIcon
-        else icon
 }

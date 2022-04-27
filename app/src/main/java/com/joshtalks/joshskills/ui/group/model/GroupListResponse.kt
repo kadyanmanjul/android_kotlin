@@ -60,10 +60,7 @@ data class GroupsItem(
     val requestGroupText: String? = null,
 
     @field:SerializedName("agora_id")
-    val agoraUid: Int? = null,
-
-    @field:SerializedName("mentor_id")
-    val dmPartnerMentorId: String? = null
+    val agoraUid: Int? = null
 
 ) : Parcelable, GroupItemData {
 
@@ -105,6 +102,4 @@ data class GroupsItem(
     override fun getGroupText() = requestGroupText ?: ""
 
     override fun getAgoraId() = agoraUid ?: 0
-
-    override fun getPartnerMentorId() = dmPartnerMentorId ?: EMPTY
 }
