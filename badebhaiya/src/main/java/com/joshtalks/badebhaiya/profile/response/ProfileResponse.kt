@@ -11,6 +11,7 @@ data class ProfileResponse(
     @SerializedName("first_name") val firstName: String,
     @SerializedName("followers_count") var followersCount: Int,
     @SerializedName("gender") val gender: String?,
+    @SerializedName("following_count") var followingCount: Int,
     @SerializedName("hometown") val hometown: String?,
     @SerializedName("id") val userId: String,
     @SerializedName("is_skills_user") val is_skills_user: Boolean,

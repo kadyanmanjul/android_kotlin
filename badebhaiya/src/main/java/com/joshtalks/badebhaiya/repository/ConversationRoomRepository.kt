@@ -33,5 +33,6 @@ class ConversationRoomRepository {
     suspend fun deleteReminder(deleteReminderRequest: DeleteReminderRequest)=
         service.deleteReminder(deleteReminderRequest)
 
-    suspend fun searchRoom(parems:Map<String,String>)=service.searchRoom(parems)
+    suspend fun searchRoom(parems:Map<String,String>)=
+        service.searchRoom(parems)
 }

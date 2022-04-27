@@ -74,8 +74,8 @@ import timber.log.Timber
 class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel>(
     R.layout.fragment_live_room
 ),
-                                     NotificationView.NotificationViewAction,
-                                     RaisedHandsBottomSheet.HandRaiseSheetListener {
+    NotificationView.NotificationViewAction,
+    RaisedHandsBottomSheet.HandRaiseSheetListener {
 
     private var mServiceBound: Boolean = false
     private lateinit var binding: FragmentLiveRoomBinding
@@ -1133,7 +1133,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
         backPressCallback = onBackPressedCallback
         isBackPressed = true
         if (vm.pubNubState.value != null && vm.pubNubState.value == PubNubState.STARTED){
-             /** Live Room is Going on */
+            /** Live Room is Going on */
             if (vm.lvRoomState == LiveRoomState.EXPANDED){
                 // Minimise live room.
                 collapseLiveRoom()

@@ -79,6 +79,7 @@ class SignUpAddProfilePhotoFragment: Fragment() {
             }
         }
     }
+
     fun submitProfilePic() {
         UserPicChooserFragment.showDialog(childFragmentManager, true)
     }

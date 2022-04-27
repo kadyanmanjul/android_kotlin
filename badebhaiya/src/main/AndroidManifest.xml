@@ -4,9 +4,12 @@
     package="com.joshtalks.badebhaiya">
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.BROADCAST_CLOSE_SYSTEM_DIALOGS"
+    <uses-permission
+        android:name="android.permission.BROADCAST_CLOSE_SYSTEM_DIALOGS"
         tools:ignore="ProtectedPermissions" />
+
     <uses-sdk tools:overrideLibrary="com.truecaller.android.sdk" />
+
     <uses-permission
         android:name="android.permission.GET_ACCOUNTS"
         android:maxSdkVersion="22" />
@@ -14,13 +17,13 @@
     <uses-permission android:name="android.permission.READ_SMS" />
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="com.google.android.gms.permission.AD_ID"/>
+    <uses-permission android:name="com.google.android.gms.permission.AD_ID" />
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
 
     <application
         android:name=".core.JoshApplication"
@@ -77,7 +80,10 @@
         </activity>
         <activity
             android:name="com.joshtalks.badebhaiya.profile.ProfileActivity"
+            android:alwaysRetainTaskState="true"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
             android:exported="true"
+            android:launchMode="singleTop"
             android:parentActivityName=".feed.FeedActivity" />
         <activity
             android:name=".signup.SignUpActivity"
@@ -88,6 +94,14 @@
         <activity
             android:name=".TemporaryFeedActivity"
             android:exported="true" />
+        <activity
+            android:name=".liveroom.ConversationLiveRoomActivity"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:showOnLockScreen="true"
+            android:showWhenLocked="true" />
+
         <meta-data
             android:name="io.branch.sdk.BranchKey"
             android:value="@string/branch_id" />
@@ -96,7 +110,9 @@
             android:name="io.branch.sdk.BranchKey.test"
             android:value="@string/branch_id" />
 
-        <meta-data android:name="io.branch.sdk.TestMode" android:value="true" />
+        <meta-data
+            android:name="io.branch.sdk.TestMode"
+            android:value="true" />
 
         <receiver
             android:name=".core.SMSReadBroadcastReceiver"
@@ -107,6 +123,7 @@
             </intent-filter>
         </receiver>
         <receiver android:name=".core.NotificationHelper" />
+
         <service
             android:name=".liveroom.service.ConvoWebRtcService"
             android:enabled="true"
@@ -131,6 +148,7 @@
             android:foregroundServiceType="phoneCall"
             android:permission="android.permission.BIND_JOB_SERVICE"
             android:stopWithTask="true" />
+
         <meta-data
             android:name="com.truecaller.android.sdk.PartnerKey"
             android:value="@string/truecaller_key" />

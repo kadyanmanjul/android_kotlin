@@ -22,6 +22,7 @@ import com.joshtalks.badebhaiya.core.Notification
 import com.joshtalks.badebhaiya.core.NotificationHelper
 import com.joshtalks.badebhaiya.core.NotificationType
 import com.joshtalks.badebhaiya.core.PermissionUtils
+import com.joshtalks.badebhaiya.core.showToast
 import com.joshtalks.badebhaiya.databinding.ActivityFeedBinding
 import com.joshtalks.badebhaiya.feed.adapter.FeedAdapter
 import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
@@ -33,11 +34,13 @@ import com.joshtalks.badebhaiya.liveroom.bottomsheet.CreateRoom
 import com.joshtalks.badebhaiya.liveroom.model.StartingLiveRoomProperties
 import com.joshtalks.badebhaiya.liveroom.viewmodel.LiveRoomViewModel
 import com.joshtalks.badebhaiya.profile.ProfileActivity
+import com.joshtalks.badebhaiya.profile.ProfileViewModel
 import com.joshtalks.badebhaiya.profile.request.DeleteReminderRequest
 import com.joshtalks.badebhaiya.profile.request.ReminderRequest
 import com.joshtalks.badebhaiya.pubnub.PubNubState
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomResponse
 import com.joshtalks.badebhaiya.repository.model.User
+import com.joshtalks.badebhaiya.signup.fragments.SignUpEnterPhoneFragment
 import com.joshtalks.badebhaiya.utils.setUserImageOrInitials
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -108,12 +111,13 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         ViewModelProvider(this)[FeedViewModel::class.java]
     }
 
+    private var pendingIntent: PendingIntent? = null
+
     private val liveRoomViewModel by lazy {
         ViewModelProvider(this)[LiveRoomViewModel::class.java]
     }
 
     private lateinit var binding: ActivityFeedBinding
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         this.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -123,6 +127,8 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         }
         this.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_feed)
+        val feedAdapter=FeedAdapter()
+        feedAdapter.notifyDataSetChanged()
         checkAndOpenLiveRoom()
         viewModel.getRooms()
         viewModel.setIsBadeBhaiyaSpeaker()
@@ -133,6 +139,11 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         addObserver()
         initView()
         //setOnClickListener()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.getRooms()
     }
 
     private fun checkAndOpenLiveRoom() {
@@ -173,7 +184,6 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         User.getInstance().apply {
             binding.profileIv.setUserImageOrInitials(profilePicUrl, firstName.toString())
         }
-
         binding.recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
@@ -257,6 +267,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                 }
 
                 override fun onError(error: String) {
+                    showToast(error)
                     it.dismiss()
                 }
             })
@@ -378,12 +389,15 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
 
     override fun deleteReminder(room: RoomListResponseItem, view: View) {
         //room.isScheduled=false
-        viewModel.deleteReminder(
-            DeleteReminderRequest(
-                roomId = room.roomId.toString(),
-                userId = User.getInstance().userId
+        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        alarmManager.cancel(pendingIntent).also {
+            viewModel.deleteReminder(
+                DeleteReminderRequest(
+                    roomId = room.roomId.toString(),
+                    userId = User.getInstance().userId
+                )
             )
-        )
+        }
     }
 
     override fun viewRoom(room: RoomListResponseItem, view: View) {

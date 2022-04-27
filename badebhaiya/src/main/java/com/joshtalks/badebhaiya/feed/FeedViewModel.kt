@@ -2,18 +2,17 @@ package com.joshtalks.badebhaiya.feed
 
 import android.os.Bundle
 import android.os.Message
+import android.util.Log
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.joshtalks.badebhaiya.R
+import com.joshtalks.badebhaiya.SearchAdapter
 import com.joshtalks.badebhaiya.core.AppObjectController
 import com.joshtalks.badebhaiya.core.showAppropriateMsg
 import com.joshtalks.badebhaiya.core.showToast
 import com.joshtalks.badebhaiya.feed.adapter.FeedAdapter
-import com.joshtalks.badebhaiya.feed.model.ConversationRoomType
-import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
+import com.joshtalks.badebhaiya.feed.model.*
 import com.joshtalks.badebhaiya.liveroom.OPEN_PROFILE
 import com.joshtalks.badebhaiya.liveroom.OPEN_ROOM
 import com.joshtalks.badebhaiya.liveroom.bottomsheet.CreateRoom
@@ -22,6 +21,9 @@ import com.joshtalks.badebhaiya.profile.request.ReminderRequest
 import com.joshtalks.badebhaiya.repository.ConversationRoomRepository
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomRequest
 import com.joshtalks.badebhaiya.repository.model.User
+import com.joshtalks.badebhaiya.utils.Utils
+import com.joshtalks.badebhaiya.utils.ALLOWED_SCHEDULED_TIME
+import com.joshtalks.badebhaiya.utils.IST_TIME_DIFFERENCE
 import kotlinx.coroutines.launch
 
 const val ROOM_ITEM = "room_item"
@@ -35,6 +37,7 @@ class FeedViewModel : ViewModel() {
     val isLoading = ObservableBoolean(false)
     val isBadeBhaiyaSpeaker = ObservableBoolean(false)
 
+    val searchResponse=MutableLiveData<SearchRoomsResponseList>()
     val feedAdapter = FeedAdapter()
     var message = Message()
     var singleLiveEvent: MutableLiveData<Message> = MutableLiveData()
@@ -165,10 +168,10 @@ class FeedViewModel : ViewModel() {
                     }
                 } else {
                     isRoomsAvailable.set(false)
-                    feedAdapter.submitList(null)
+                    feedAdapter.submitList(emptyList())
                 }
             } catch (ex: Exception) {
-                feedAdapter.submitList(null)
+                feedAdapter.submitList(emptyList())
                 isRoomsAvailable.set(false)
                 ex.printStackTrace()
             } finally {
@@ -183,28 +186,51 @@ class FeedViewModel : ViewModel() {
                 val parems = mutableMapOf<String, String>()
                 parems["query"] = query
                 val response = repository.searchRoom(parems)
-                if (response.isSuccessful)
-                    showToast("Search API launched successfully")
+                //if (response.isSuccessful)
+                    //showToast("Search API launched successfully")
             } catch (ex: Exception) {
 
             }
         }
     }
 
+    fun searchUser(query: String) {
+        val listUser= mutableListOf<Users>()
+        viewModelScope.launch {
+            try {
+                val parems = mutableMapOf<String, String>()
+                parems["query"] = query
+                val response = repository.searchRoom(parems)
+                if(response.isSuccessful)
+                {
+                    response.body()?.let {
+                        searchResponse.postValue(it)
+                    }
+                }
+            } catch (ex: Exception) {
+
+            }
+        }
+    }
+
+//    fun updateFollowRequest(){
+//
+//    }
+
+
+
     fun deleteReminder(deleteReminderRequest: DeleteReminderRequest) {
         viewModelScope.launch {
             try {
-                isLoading.set(true)
                 val res = repository.deleteReminder(deleteReminderRequest)
                 if (res.isSuccessful && res.code() == 200) {
-                    showToast("Reminder Deleted")
+                    //showToast("Reminder Deleted")
                     feedAdapter.notifyDataSetChanged()
                 } else showToast("Error while Deleting Reminder")
             } catch (ex: Exception) {
                 ex.printStackTrace()
                 showToast("Error while Deleting Reminder")
             } finally {
-                isLoading.set(false)
             }
         }
     }
@@ -212,17 +238,15 @@ class FeedViewModel : ViewModel() {
     fun setReminder(reminderRequest: ReminderRequest) {
         viewModelScope.launch {
             try {
-                isLoading.set(true)
                 val res = repository.setReminder(reminderRequest)
                 if (res.isSuccessful && res.code() == 201) {
-                    showToast("Reminder set successfully")
+                    //showToast("Reminder set successfully")
                     feedAdapter.notifyDataSetChanged()
                 } else showToast("Error while setting reminder")
             } catch (ex: Exception) {
                 ex.printStackTrace()
                 showToast("Error while setting reminder")
             } finally {
-                isLoading.set(false)
             }
         }
     }
@@ -233,6 +257,11 @@ class FeedViewModel : ViewModel() {
                 showToast(AppObjectController.joshApplication.getString(R.string.enter_topic_name))
             } else {
                 try {
+                    if (Utils.getEpochTimeFromFullDate(startTime) <
+                        (System.currentTimeMillis() + IST_TIME_DIFFERENCE + ALLOWED_SCHEDULED_TIME)) {
+                        showToast("Schedule a room for 30 minutes or later!")
+                        return@launch
+                    }
                     isLoading.set(true)
                     val response = repository.scheduleRoom(
                         ConversationRoomRequest(

@@ -77,7 +77,6 @@ class SignUpEnterOTPFragment: Fragment() {
         }
     }
 
-
     private fun processOTP() {
         binding.otpView.otpListener = object : OTPListener {
             override fun onOTPComplete(otp: String?) {

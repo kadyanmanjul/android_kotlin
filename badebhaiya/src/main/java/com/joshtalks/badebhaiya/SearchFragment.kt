@@ -1,30 +1,30 @@
 package com.joshtalks.badebhaiya
 
-import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import android.view.KeyEvent
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
+import android.widget.SearchView
 import androidx.activity.OnBackPressedCallback
-import androidx.core.widget.addTextChangedListener
-import androidx.core.widget.doAfterTextChanged
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.joshtalks.badebhaiya.core.showToast
-import com.joshtalks.badebhaiya.feed.FeedActivity
-import com.joshtalks.badebhaiya.signup.SignUpActivity
-import kotlinx.android.synthetic.main.activity_sign_up.*
-import kotlinx.android.synthetic.main.fragment_search.*
 import com.joshtalks.badebhaiya.databinding.FragmentSearchBinding
 import com.joshtalks.badebhaiya.feed.FeedViewModel
-import com.joshtalks.badebhaiya.utils.TAG
+import com.joshtalks.badebhaiya.feed.model.Users
+import com.joshtalks.badebhaiya.profile.ProfileViewModel
+import kotlinx.android.synthetic.main.activity_feed.*
+import kotlinx.android.synthetic.main.activity_sign_up.*
+import kotlinx.android.synthetic.main.fragment_search.*
+import kotlinx.android.synthetic.main.li_room_event.view.*
+import kotlinx.android.synthetic.main.li_search_event.*
+import kotlinx.android.synthetic.main.li_search_event.view.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
@@ -37,9 +37,15 @@ private const val ARG_PARAM2 = "param2"
 
 class SearchFragment : Fragment() {
 
+    var users=mutableListOf<Users>()
     val viewModel by lazy {
         ViewModelProvider(requireActivity()).get(FeedViewModel::class.java)
     }
+    /*val searchViewModel by lazy{
+        ViewModelProvider(requireActivity()).get(SearchViewModel::class.java)
+    }*/
+    //val myAdapter:SearchAdapter by lazy{SearchAdapter(users)}
+
     lateinit var binding:FragmentSearchBinding
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -48,6 +54,10 @@ class SearchFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_search, container, false)
+        //binding.recyclerView.layoutManager=LinearLayoutManager(binding.recyclerView.context)
+        //binding.recyclerView.adapter=myAdapter
+        //searchViewModel.readData.observe
+
         binding.handler = this
         activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -58,25 +68,51 @@ class SearchFragment : Fragment() {
                 }
             }
         })
+        binding.searchCancel.setOnClickListener{
+            val manager = requireActivity().supportFragmentManager
+            manager.beginTransaction().remove(this).commit()
+        }
+
+        //(activity as FeedActivity).swipeRefreshLayout.visibility=View.GONE
         return binding.root
-        //return inflater.inflate(R.layout.fragment_search, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        var job: Job? = null
-        binding.searchBar.addTextChangedListener{
-            //var job: Job? = null
+
+        //binding.searchBar.clearFocus()
+
+        binding.searchBar.setOnQueryTextListener(object: androidx.appcompat.widget.SearchView.OnQueryTextListener{
+            var job: Job? = null
+            var users=mutableListOf<Users>()
+            override fun onQueryTextSubmit(query: String): Boolean {
+                //showToast("textSubmit")
+                return false
+            }
+
+            override fun onQueryTextChange(p0: String?): Boolean {
                 job?.cancel()
+                //showToast("textChange")
                 job = MainScope().launch {
                     delay(500)
-                    if (it.toString().isNotEmpty())
-                        viewModel.searchRoom(it.toString())
+                    if (p0!=null)
+                        viewModel.searchUser(p0)
                 }
+                return true
             }
+        })
+
+//        binding.recyclerView.btnFollow.setOnClickListener{
+//            viewModel.updateFollowRequest()
+//        }
+        addObserver()
     }
-
-
+    fun addObserver() {
+        viewModel.searchResponse.observe(viewLifecycleOwner){
+            binding.recyclerView.layoutManager=LinearLayoutManager(requireContext())
+            binding.recyclerView.adapter=SearchAdapter(it.users)
+        }
+    }
     companion object {
         /**
          * Use this factory method to create a new instance of

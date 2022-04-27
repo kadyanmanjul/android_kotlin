@@ -7,16 +7,19 @@
         <variable
             name="handler"
             type="com.joshtalks.badebhaiya.SearchFragment" />
+
+
     </data>
     <!-- TODO: Update blank fragment layout -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/base_app_color"
+        android:clickable="true"
         android:id="@+id/find">
 
 
-        <EditText
+        <androidx.appcompat.widget.SearchView
             android:id="@+id/search_bar"
             android:layout_width="@dimen/_230sdp"
             android:layout_height="@dimen/_30sdp"
@@ -24,29 +27,44 @@
             android:background="@drawable/search_bar"
             android:drawableLeft="@drawable/ic_search"
             android:drawableTint="#918F83"
+            android:textSize="@dimen/_5ssp"
+            app:queryHint="Search for people and topics"
+            app:iconifiedByDefault="false"
             android:fontFamily="@font/nunito_sans_semi_bold"
-            android:hint="Search for people and topics"
             android:imeOptions="actionDone"
-            android:paddingLeft="@dimen/_10sdp"
             android:singleLine="true"
+            android:iconifiedByDefault="false"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.036" />
+            app:layout_constraintVertical_bias="0.023" />
 
         <TextView
+            android:id="@+id/search_cancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/nunito_sans_semi_bold"
+            android:fontFamily="@font/nunito_sans_bold"
             android:text="Cancel"
-            android:id="@+id/search_cancel"
             android:textColor="#58789C"
-            android:textSize="@dimen/_15sdp"
+            android:textSize="@dimen/_12sdp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.437"
             app:layout_constraintStart_toEndOf="@+id/search_bar"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.043" />
+            app:layout_constraintVertical_bias="0.030" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="@dimen/_6sdp"
+            android:clipToPadding="false"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/search_bar"
+            tools:listitem="@layout/li_search_event" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
