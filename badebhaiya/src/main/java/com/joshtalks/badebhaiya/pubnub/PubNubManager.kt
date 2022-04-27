@@ -401,10 +401,11 @@ object PubNubManager {
         val isOldUserPresent = newList.any { it.id == userId }
         if (isOldUserPresent) {
             val oldUser = newList.filter { it.id == userId }[0]
-            newList.remove(oldUser)
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-//                newList.removeIf { it.id == userId }
-//            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                newList.removeIf { it.id == userId }
+            } else {
+                newList.remove(oldUser)
+            }
             oldUser.isHandRaised = isHandRaised
             if (isHandRaised) {
                 oldUser.isSpeakerAccepted = false
