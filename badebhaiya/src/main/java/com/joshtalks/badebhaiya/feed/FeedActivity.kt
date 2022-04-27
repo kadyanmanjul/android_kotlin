@@ -9,6 +9,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.badebhaiya.R
@@ -77,7 +78,6 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         supportFragmentManager.beginTransaction()
             .replace(R.id.root_view, SearchFragment(), SearchFragment::class.java.simpleName)
             .commit()
-
     }
 
     private fun initView() {

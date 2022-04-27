@@ -18,7 +18,6 @@
         android:clickable="true"
         android:id="@+id/find">
 
-
         <androidx.appcompat.widget.SearchView
             android:id="@+id/search_bar"
             android:layout_width="@dimen/_230sdp"
@@ -26,8 +25,8 @@
             android:layout_marginStart="16dp"
             android:background="@drawable/search_bar"
             android:drawableLeft="@drawable/ic_search"
-            android:drawableTint="#918F83"
-            android:textSize="@dimen/_5ssp"
+            app:drawableTint="#918F83"
+            android:textSize="@dimen/_5sdp"
             app:queryHint="Search for people and topics"
             app:iconifiedByDefault="false"
             android:fontFamily="@font/nunito_sans_semi_bold"
