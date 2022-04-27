@@ -6,11 +6,9 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
-
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
-
 import com.afollestad.materialdialogs.MaterialDialog
 import com.github.dhaval2404.imagepicker.ImagePicker
 
@@ -31,9 +29,11 @@ import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics
 import com.joshtalks.joshskills.ui.group.constants.*
 import com.joshtalks.joshskills.ui.group.model.AddGroupRequest
 import com.joshtalks.joshskills.ui.group.model.GroupItemData
+import com.joshtalks.joshskills.ui.group.viewmodels.GroupChatViewModel
 import com.joshtalks.joshskills.ui.group.viewmodels.JoshGroupViewModel
 import com.joshtalks.joshskills.ui.userprofile.fragments.UserPicChooserFragment
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
+import com.joshtalks.joshskills.ui.userprofile.fragments.MENTOR_ID
 import com.joshtalks.joshskills.ui.voip.SearchingUserActivity
 import com.joshtalks.joshskills.ui.voip.WebRtcActivity
 
@@ -55,6 +55,10 @@ class JoshGroupActivity : BaseGroupActivity() {
         ViewModelProvider(this)[JoshGroupViewModel::class.java]
     }
 
+    val groupChatViewModel by lazy {
+        ViewModelProvider(this)[GroupChatViewModel::class.java]
+    }
+
     val binding by lazy<ActivityJoshGroupBinding> {
         DataBindingUtil.setContentView(this, R.layout.activity_josh_group)
     }
@@ -69,7 +73,8 @@ class JoshGroupActivity : BaseGroupActivity() {
         if (channelId.isEmpty())
             openGroupListFragment()
         else {
-            vm.agoraUid.set(intent.getIntExtra(AGORA_UID,0))
+            groupChatViewModel.mentorId = intent.getStringExtra(MENTOR_ID)?: EMPTY
+            groupChatViewModel.agoraId = intent.getIntExtra(AGORA_UID,0)
             val chatData = intent.getParcelableExtra(DM_CHAT_DATA) as GroupItemData?
             openGroupChat(channelId, chatData)
         }
@@ -91,7 +96,7 @@ class JoshGroupActivity : BaseGroupActivity() {
                 OPEN_CALLING_ACTIVITY -> startGroupCall(it.data)
                 SHOULD_REFRESH_GROUP_LIST -> vm.shouldRefreshGroupList = true
                 REMOVE_GROUP_AND_CLOSE -> removeGroupFromDb(it.obj as String)
-                OPEN_PROFILE_PAGE -> openProfileActivity(it.obj as String)
+                OPEN_PROFILE_DM_FPP -> openProfileActivity(mentorId = groupChatViewModel.mentorId)
                 SHOW_PROGRESS_BAR -> showProgressDialog(it.obj as String)
                 DISMISS_PROGRESS_BAR -> dismissProgressDialog()
                 REFRESH_GRP_LIST_HIDE_INFO -> {
@@ -106,7 +111,7 @@ class JoshGroupActivity : BaseGroupActivity() {
     private fun startGroupCall(data: Bundle) {
         if (PermissionUtils.isCallingPermissionEnabled(this)) {
             if (data.get(GROUP_TYPE) == DM_CHAT)
-                openFppCallScreen(vm.agoraUid.get() ?: 0)
+                openFppCallScreen(groupChatViewModel.agoraId)
             else
                 openCallingActivity(data)
             return
@@ -125,7 +130,7 @@ class JoshGroupActivity : BaseGroupActivity() {
                         }
                         if (flag) {
                             if (data.get(GROUP_TYPE) == DM_CHAT)
-                                openFppCallScreen(vm.agoraUid.get() ?: 0)
+                                openFppCallScreen(groupChatViewModel.agoraId)
                             else
                                 openCallingActivity(data)
                             return
@@ -211,9 +216,11 @@ class JoshGroupActivity : BaseGroupActivity() {
                 putString(GROUP_TYPE, data?.getGroupCategory())
                 putString(GROUP_STATUS, data?.getJoinedStatus())
                 putString(CLOSED_GROUP_TEXT, data?.getGroupText())
+                putInt(AGORA_UID, data?.getAgoraId() ?: 0)
+                putString(MENTOR_ID, data?.getPartnerMentorId())
                 data?.hasJoined()?.let {
                     if (it) {
-                        if (data.getGroupCategory() == DM_CHAT){
+                        if (data.getGroupCategory() == DM_CHAT) {
                             putString(GROUPS_CHAT_SUB_TITLE, EMPTY)
                             vm.subscribeToChat(groupId)
                         }

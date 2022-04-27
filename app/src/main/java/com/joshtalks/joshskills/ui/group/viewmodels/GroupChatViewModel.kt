@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Toast
@@ -22,6 +23,7 @@ import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.custom_ui.MiniExoPlayer
 import com.joshtalks.joshskills.core.isCallOngoing
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -74,6 +76,8 @@ class GroupChatViewModel : BaseViewModel() {
     var conversationId: String = ""
     var groupText: String = ""
     var chatSendText: String = ""
+    var agoraId: Int = 0
+    var mentorId: String = EMPTY
 
     val chatAdapter = GroupChatAdapter(GroupChatComparator).apply {
         registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
@@ -89,6 +93,10 @@ class GroupChatViewModel : BaseViewModel() {
                 singleLiveEvent.value = message
             }
         })
+    }
+
+    fun setChatAdapterType() {
+        chatAdapter.setType(groupType.get()?: OPENED_GROUP)
     }
 
     val openMemberPopup: (GroupMember, View) -> Unit = { it, view ->
@@ -286,12 +294,17 @@ class GroupChatViewModel : BaseViewModel() {
     }
 
     fun openGroupInfo() {
-        if (hasJoinedGroup.get()) {
-            message.what = OPEN_GROUP_INFO
+        if (groupType.get() == DM_CHAT) {
+            message.what = OPEN_PROFILE_DM_FPP
             singleLiveEvent.value = message
-            MixPanelTracker.publishEvent(MixPanelEvent.VIEW_GROUP_INFO)
-                .addParam(ParamKeys.GROUP_ID, groupId)
-                .push()
+        } else {
+            if (hasJoinedGroup.get()) {
+                message.what = OPEN_GROUP_INFO
+                singleLiveEvent.value = message
+                MixPanelTracker.publishEvent(MixPanelEvent.VIEW_GROUP_INFO)
+                    .addParam(ParamKeys.GROUP_ID, groupId)
+                    .push()
+            }
         }
     }
 
@@ -329,6 +342,11 @@ class GroupChatViewModel : BaseViewModel() {
             .addParam(ParamKeys.GROUP_ID, groupId)
             .addParam(ParamKeys.IS_ADMIN, adminId == Mentor.getInstance().getId())
             .push()
+    }
+
+    fun onRemoveFpp(){
+        message.what = REMOVE_DM_FPP
+        singleLiveEvent.value = message
     }
 
     fun showProgressDialog(msg: String) {
@@ -421,7 +439,7 @@ class GroupChatViewModel : BaseViewModel() {
             requestCount.set("$requestCnt")
             if (groupType.get() == DM_CHAT && onlineCount == 2)
                 groupSubHeader.set("online")
-            else if (groupType.get() == DM_CHAT && onlineCount == 1)
+            else if(groupType.get() == DM_CHAT)
                 groupSubHeader.set(" ")
             else
                 groupSubHeader.set("${memberCount.get()} members, $onlineCount online")
@@ -438,6 +456,7 @@ class GroupChatViewModel : BaseViewModel() {
     fun setRequestsTab() {
         when {
             groupType.get().equals(OPENED_GROUP) -> showRequestsTab.set(false)
+            groupType.get().equals(DM_CHAT) -> showRequestsTab.set(false)
             adminId != Mentor.getInstance().getId() -> showRequestsTab.set(false)
             else -> showRequestsTab.set(true)
         }
@@ -521,5 +540,13 @@ class GroupChatViewModel : BaseViewModel() {
             "REQUEST TO JOIN"
         else
             "JOIN GROUP"
+    }
+
+    fun removeFpp(uId: Int){
+        try {
+            viewModelScope.launch (Dispatchers.IO){
+                repository.removeUserFormFppLit(uId)
+            }
+        }catch (ex:Exception){}
     }
 }

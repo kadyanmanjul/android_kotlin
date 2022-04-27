@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.*
 import android.view.ViewGroup
+import androidx.appcompat.widget.PopupMenu
 
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
@@ -15,18 +16,17 @@ import androidx.recyclerview.widget.LinearLayoutManager
 
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
-import com.joshtalks.joshskills.constants.CLEAR_CHAT_TEXT
-import com.joshtalks.joshskills.constants.OPEN_EMOJI_KEYBOARD
-import com.joshtalks.joshskills.constants.OPEN_GROUP_INFO
-import com.joshtalks.joshskills.constants.NEW_CHAT_ADDED
-import com.joshtalks.joshskills.constants.SEND_MSG
+import com.joshtalks.joshskills.constants.*
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.HAS_SEEN_GROUP_CALL_TOOLTIP
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.hideKeyboard
 import com.joshtalks.joshskills.databinding.GroupChatFragmentBinding
+import com.joshtalks.joshskills.track.AGORA_UID
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.group.constants.*
 import com.joshtalks.joshskills.ui.group.viewmodels.GroupChatViewModel
+import com.joshtalks.joshskills.ui.userprofile.fragments.MENTOR_ID
 
 import com.vanniktech.emoji.EmojiPopup
 import kotlinx.coroutines.CoroutineScope
@@ -106,7 +106,8 @@ class GroupChatFragment : BaseFragment() {
                             it.data.getInt(GROUP_CHAT_UNREAD)
                         )
                     } else {
-                        val lastItemPosition = (binding.groupChatRv.layoutManager as? LinearLayoutManager)?.findFirstVisibleItemPosition()
+                        val lastItemPosition =
+                            (binding.groupChatRv.layoutManager as? LinearLayoutManager)?.findFirstVisibleItemPosition()
                         if (vm.scrollToEnd || lastItemPosition == 0) {
                             binding.groupChatRv.layoutManager?.scrollToPosition(0)
                             binding.scrollUnread.visibility = INVISIBLE
@@ -114,6 +115,7 @@ class GroupChatFragment : BaseFragment() {
                         vm.scrollToEnd = false
                     }
                 }
+                REMOVE_DM_FPP -> openRemoveMenu()
             }
         }
     }
@@ -128,13 +130,15 @@ class GroupChatFragment : BaseFragment() {
             vm.groupCreator.set(args.getString(GROUPS_CREATOR, ""))
             vm.conversationId = args.getString(CONVERSATION_ID, "") ?: ""
             vm.adminId = args.getString(ADMIN_ID, "")
-            if (args.getString(GROUP_TYPE) == DM_CHAT)
-                vm.groupType.set(args.getString(GROUP_TYPE, DM_CHAT))
-            else
-                vm.groupType.set(args.getString(GROUP_TYPE, OPENED_GROUP))
+            vm.groupType.set(args.getString(GROUP_TYPE, OPENED_GROUP))
             vm.groupText = args.getString(CLOSED_GROUP_TEXT, "")
             vm.groupJoinStatus.set(vm.getGroupJoinText(args.getString(GROUP_STATUS, JOINED_GROUP)))
             vm.showRequestsTab.set(false)
+            if (args.getString(MENTOR_ID) != EMPTY)
+                vm.mentorId = args.getString(MENTOR_ID) ?: EMPTY
+            if (args.getInt(AGORA_UID) != 0)
+                vm.agoraId = args.getInt(AGORA_UID)
+            vm.setChatAdapterType()
             args.getInt(GROUP_CHAT_UNREAD, 0).let {
                 vm.unreadCount = it
                 if (it != 0) {
@@ -176,6 +180,25 @@ class GroupChatFragment : BaseFragment() {
             emojiPopup.toggle()
             emojiButton.setImageResource(R.drawable.ic_keyboard)
         }
+    }
+
+    private fun openRemoveMenu() {
+        val popupMenu = PopupMenu(
+            requireContext(),
+            binding.groupAppBar.secondIconImageView,
+            R.style.setting_menu_style
+        )
+        popupMenu.inflate(R.menu.remove_menu)
+        popupMenu.setOnMenuItemClickListener {
+            popupMenu.dismiss()
+            when (it.itemId) {
+                R.id.remove_fpp -> {
+                    vm.removeFpp(vm.agoraId)
+                }
+            }
+            return@setOnMenuItemClickListener false
+        }
+        popupMenu.show()
     }
 
     override fun onResume() {

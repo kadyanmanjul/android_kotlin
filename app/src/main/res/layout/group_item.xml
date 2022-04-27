@@ -30,7 +30,8 @@
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/img_logo"
-            defaultImage="@{DefaultImage.DEFAULT_GROUP_IMAGE}"
+            defaultImage="@{itemData.groupCategory.equals(constant.DM_CHAT) ? DefaultImage.DEFAULT_DM_FPP_IMAGE :DefaultImage.DEFAULT_GROUP_IMAGE}"
+            groupName="@{itemData.title}"
             groupImage="@{itemData.imageUrl}"
             android:layout_width="@dimen/_36sdp"
             android:layout_height="@dimen/_36sdp"
@@ -71,7 +72,7 @@
                 android:layout_width="@dimen/_18sdp"
                 android:layout_height="0dp"
                 android:layout_marginStart="@dimen/_4sdp"
-                android:visibility="@{itemData.groupCategory.equals(constant.OPENED_GROUP) ? View.GONE : View.VISIBLE, default=gone}"
+                android:visibility="@{itemData.groupCategory.equals(constant.CLOSED_GROUP) ? View.VISIBLE : View.GONE, default=gone}"
                 app:layout_constraintBottom_toBottomOf="@id/title"
                 app:layout_constraintStart_toEndOf="@id/title"
                 app:layout_constraintTop_toTopOf="@+id/title"
