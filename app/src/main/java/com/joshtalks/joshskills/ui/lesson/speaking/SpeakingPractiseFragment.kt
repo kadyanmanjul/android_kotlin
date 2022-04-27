@@ -19,7 +19,21 @@ import androidx.lifecycle.lifecycleScope
 import com.afollestad.materialdialogs.MaterialDialog
 import com.airbnb.lottie.LottieCompositionFactory
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.CoreJoshFragment
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.HAS_SEEN_SPEAKING_TOOLTIP
+import com.joshtalks.joshskills.core.HOW_TO_SPEAK_TEXT_CLICKED
+import com.joshtalks.joshskills.core.IMPRESSION_TRUECALLER_P2P
+import com.joshtalks.joshskills.core.IS_LOGIN_VIA_TRUECALLER
+import com.joshtalks.joshskills.core.PermissionUtils
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.SPEAKING_POINTS
+import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
+import com.joshtalks.joshskills.core.abTest.CampaignKeys
+import com.joshtalks.joshskills.core.abTest.VariantKeys
+import com.joshtalks.joshskills.core.isCallOngoing
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.core.abTest.*
 import com.joshtalks.joshskills.databinding.SpeakingPractiseFragmentBinding
 import com.joshtalks.joshskills.messaging.RxBus2
@@ -54,12 +68,26 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.*
 import androidx.core.view.isVisible
+import com.joshtalks.joshskills.core.CALL_BTN_CLICKED
+import com.joshtalks.joshskills.core.CURRENT_COURSE_ID
+import com.joshtalks.joshskills.core.DEFAULT_COURSE_ID
+import com.joshtalks.joshskills.core.IMPRESSION_CALL_MY_FRIEND_BTN_CLICKED
+import com.joshtalks.joshskills.core.IMPRESSION_CONTACT_PERM_ACCEPTED
+import com.joshtalks.joshskills.core.IMPRESSION_CONTACT_PERM_DENIED
+import com.joshtalks.joshskills.core.IS_FREE_TRIAL_CAMPAIGN_ACTIVE
+import com.joshtalks.joshskills.core.IS_SPEAKING_SCREEN_CLICKED
+import com.joshtalks.joshskills.core.IS_TWENTY_MIN_CALL_ENABLED
+import com.joshtalks.joshskills.core.LESSON_ONE_TOPIC_ID
+import com.joshtalks.joshskills.core.REMOVE_TOOLTIP_FOR_TWENTY_MIN_CALL
+import com.joshtalks.joshskills.core.SPEAKING_SCREEN_SEEN_GOAL_POSTED
+import com.joshtalks.joshskills.core.TWENTY_MIN_CALL_ATTEMPTED_GOAL_POSTED
+import com.joshtalks.joshskills.core.TWENTY_MIN_CALL_GOAL_POSTED
 
 const val NOT_ATTEMPTED = "NA"
 const val COMPLETED = "CO"
 const val ATTEMPTED = "AT"
 const val UPGRADED_USER = "NFT"
-class SpeakingPractiseFragment : ABTestFragment() {
+class SpeakingPractiseFragment : CoreJoshFragment() {
 
     private lateinit var binding: SpeakingPractiseFragmentBinding
     var lessonActivityListener: LessonActivityListener? = null
@@ -94,16 +122,12 @@ class SpeakingPractiseFragment : ABTestFragment() {
         )
     }
 
-    override fun onReceiveABTestData(abTestCampaignData: ABTestCampaignData?) {
-        abTestCampaignData?.let { map ->
-            isIntroVideoEnabled =
-                (map.variantKey == VariantKeys.SIV_ENABLED.name) && map.variableMap?.isEnabled == true
+    fun onReceiveABTestData(abTestCampaignData: ABTestCampaignData?) {
+        abTestCampaignData?.let { map->
+            isIntroVideoEnabled = (map.variantKey == VariantKeys.SIV_ENABLED.name )&& map.variableMap?.isEnabled == true
         }
         initDemoViews(lessonNo)
 
-    }
-
-    override fun initCampaigns() {
     }
 
     override fun onAttach(context: Context) {
@@ -124,9 +148,14 @@ class SpeakingPractiseFragment : ABTestFragment() {
         binding.handler = this
         binding.vm = viewModel
         binding.rootView.layoutTransition?.setAnimateParentHierarchy(false)
-        addObservers()
         // showTooltip()
         return binding.rootView
+    }
+
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        addObservers()
     }
 
     override fun onResume() {
@@ -438,13 +467,16 @@ class SpeakingPractiseFragment : ABTestFragment() {
 
         viewModel.lessonLiveData.observe(viewLifecycleOwner) {
             lessonNo = it.lessonNo
-            getCampaigns(CampaignKeys.SPEAKING_INTRODUCTION_VIDEO.name)
+            viewModel.getSpeakingABTestCampaign(CampaignKeys.SPEAKING_INTRODUCTION_VIDEO.name)
         }
 
         viewModel.introVideoCompleteLiveData.observe(viewLifecycleOwner) {
             if (it == true) {
                 binding.btnCallDemo.visibility = View.GONE
             }
+        }
+        viewModel.speakingABtestLiveData.observe(requireActivity()){
+            onReceiveABTestData(it)
         }
     }
 
