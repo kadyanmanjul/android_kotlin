@@ -302,6 +302,8 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
             "setBadgeDrawable() called with: raisedHandAudienceSize = $raisedHandAudienceSize"
         )
         badgeDrawable.setNumber(raisedHandAudienceSize)
+        badgeDrawable.horizontalOffset = 20
+        badgeDrawable.verticalOffset = 20
         BadgeUtils.attachBadgeDrawable(badgeDrawable, binding.raisedHands)
         badgeDrawable.setVisible(raisedHandAudienceSize>0)
 
@@ -463,13 +465,13 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
 
             val uids = ArrayList<Int>()
             speakers?.forEach { user ->
-                if (user.volume <= 15) {
+                if (user.volume <= 2) {
                     when (user.uid) {
                         0 -> speakingListForGoldenRing.remove(PubNubManager.getLiveRoomProperties().agoraUid)
                         else -> speakingListForGoldenRing.remove(user.uid)
                     }
                 }
-                else if (user.volume > 15) {
+                else if (user.volume > 2) {
                     when (user.uid) {
                         0 -> uids.add(PubNubManager.getLiveRoomProperties().agoraUid)
                         else -> uids.add(user.uid)
@@ -525,7 +527,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
         when (iSSoundOn) {
             true -> {
                 binding.unmuteBtn.visibility = View.VISIBLE
-                binding.muteBtn.visibility = View.GONE
+                binding.muteBtn.visibility = View.VISIBLE
                 mBoundService?.unMuteCall()
             }
             false -> {
@@ -558,6 +560,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
         else {
             binding.handRaiseBtn.visibility = View.GONE
             binding.handUnraiseBtn.visibility = View.VISIBLE
+            binding.handUnraiseBtn.isEnabled = true
             binding.raisedHands.visibility = View.GONE
         }
     }
@@ -791,8 +794,9 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
             muteBtn.visibility = View.VISIBLE
             muteBtn.isEnabled = false
             unmuteBtn.visibility = View.GONE
-            handUnraiseBtn.visibility = View.VISIBLE
             handRaiseBtn.visibility = View.GONE
+            handUnraiseBtn.visibility = View.VISIBLE
+            handUnraiseBtn.isEnabled = true
         }
         isInviteRequestComeFromModerator = false
     }
@@ -802,7 +806,8 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
         isInviteRequestComeFromModerator = true
         mBoundService?.setClientRole(IRtcEngineEventHandler.ClientRole.CLIENT_ROLE_BROADCASTER)
         binding.handRaiseBtn.visibility = View.GONE
-        binding.handUnraiseBtn.visibility = View.GONE
+        binding.handUnraiseBtn.visibility = View.VISIBLE
+        binding.handUnraiseBtn.isEnabled = false
         isHandRaised = true
         iSSoundOn = isMicOn == true
         updateMuteButtonState()
