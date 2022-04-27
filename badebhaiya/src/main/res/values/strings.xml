@@ -101,5 +101,6 @@
     <string name="schedule_room">Schedule Room</string>
     <string name="date_time_separator">T</string>
     <string name="enter_topic_name">Please enter topic</string>
+    <string name="auto_logout_message">"You have been logged out from this device, because you have logged in from another device."</string>
 
 </resources>
