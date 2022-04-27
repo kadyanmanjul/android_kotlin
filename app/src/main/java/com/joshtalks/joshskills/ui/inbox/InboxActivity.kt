@@ -100,6 +100,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         initView()
         addLiveDataObservable()
         addAfterTime()
+        viewModel.handleGroupTimeTokens()
     }
 
     private fun initABTest() {
@@ -314,7 +315,6 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         Runtime.getRuntime().gc()
         initABTest()
         viewModel.getProfileData(Mentor.getInstance().getId())
-        viewModel.handleGroupTimeTokens()
     }
 
     override fun onPause() {

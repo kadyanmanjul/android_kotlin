@@ -400,10 +400,10 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
             try {
                 if (response.isSuccessful)
                     database.timeTokenDao().deleteTimeEntry(token.groupId, token.timeToken)
+                else if (response.code() == 501)
+                    database.timeTokenDao().deleteTimeToken(token.groupId)
             } catch (e: Exception) {
                 e.printStackTrace()
-                if (response.code() == 501)
-                    database.timeTokenDao().deleteTimeToken(token.groupId)
             }
         }
     }
