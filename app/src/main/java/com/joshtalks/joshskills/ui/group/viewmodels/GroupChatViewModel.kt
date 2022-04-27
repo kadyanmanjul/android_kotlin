@@ -77,7 +77,6 @@ class GroupChatViewModel : BaseViewModel() {
     var groupText: String = ""
     var chatSendText: String = ""
     var agoraId: Int = 0
-    var mentorId: String = EMPTY
 
     val chatAdapter = GroupChatAdapter(GroupChatComparator).apply {
         registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
