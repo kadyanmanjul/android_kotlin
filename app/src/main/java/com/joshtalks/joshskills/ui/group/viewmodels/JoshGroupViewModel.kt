@@ -17,6 +17,7 @@ import androidx.paging.cachedIn
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseViewModel
 import com.joshtalks.joshskills.constants.*
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.ui.group.constants.SHOW_NEW_INFO
 import com.joshtalks.joshskills.ui.group.adapters.GroupAdapter
@@ -59,7 +60,6 @@ class JoshGroupViewModel : BaseViewModel() {
     var openedGroupId: String? = null
     val groupListCount = ObservableField(0)
     var groupMemberCounts: Map<String, GroupMemberCount> = mapOf()
-    var agoraUid = ObservableField(0)
 
     val onItemClick: (GroupItemData) -> Unit = {
         message.what = OPEN_GROUP

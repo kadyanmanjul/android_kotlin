@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.DiffUtil
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.Utils.getMessageTime
 import com.joshtalks.joshskills.core.datetimeutils.DateTimeStyle
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.GroupChatLeftMsgBinding
 import com.joshtalks.joshskills.databinding.GroupChatMetadataBinding
 import com.joshtalks.joshskills.databinding.GroupChatRightMsgBinding
@@ -27,6 +28,7 @@ class GroupChatAdapter(diffCallback: DiffUtil.ItemCallback<ChatItem>) :
         diffCallback
     ) {
 
+    var groupType: String = OPENED_GROUP
     var itemClick: ((GroupMember, View) -> Unit)? = null
 
     override fun onCreateViewHolder(
@@ -92,6 +94,8 @@ class GroupChatAdapter(diffCallback: DiffUtil.ItemCallback<ChatItem>) :
         ChatViewHolder(item) {
         override fun bindData(groupChatData: ChatItem) {
             item.itemData = groupChatData
+            if (groupType == DM_CHAT)
+                item.textTitle.visibility = View.GONE
             item.textTitle.setOnClickListener {
                 val groupMember = GroupMember(
                     groupChatData.getMentorId() ?: Mentor.getInstance().getId(),
@@ -139,5 +143,9 @@ class GroupChatAdapter(diffCallback: DiffUtil.ItemCallback<ChatItem>) :
         override fun bindData(groupChatData: ChatItem) {
             item.itemData = groupChatData
         }
+    }
+
+    fun setType(groupType: String){
+        this.groupType = groupType
     }
 }

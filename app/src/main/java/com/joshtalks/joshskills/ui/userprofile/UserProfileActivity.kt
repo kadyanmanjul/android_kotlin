@@ -68,12 +68,7 @@ import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_PROFILE_ANIMAT
 import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
 import com.joshtalks.joshskills.ui.points_history.PointsInfoActivity
 import com.joshtalks.joshskills.ui.senior_student.SeniorStudentActivity
-import com.joshtalks.joshskills.ui.userprofile.fragments.EditProfileFragment
-import com.joshtalks.joshskills.ui.userprofile.fragments.EnrolledCoursesFragment
-import com.joshtalks.joshskills.ui.userprofile.fragments.ProfileImageShowFragment
-import com.joshtalks.joshskills.ui.userprofile.fragments.PreviousProfilePicsFragment
-import com.joshtalks.joshskills.ui.userprofile.fragments.MyGroupsFragment
-import com.joshtalks.joshskills.ui.userprofile.fragments.UserPicChooserFragment
+import com.joshtalks.joshskills.ui.userprofile.fragments.*
 import com.joshtalks.joshskills.ui.userprofile.models.*
 import com.joshtalks.joshskills.ui.userprofile.utils.MY_GROUP
 import com.joshtalks.joshskills.ui.userprofile.utils.USER_PROFILE_BACK_STACK
@@ -284,6 +279,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                 putExtra(CONVERSATION_ID, getConversationId())
                 putExtra(CHANNEL_ID, viewModel.fppRequest.value?.groupId)
                 putExtra(AGORA_UID, viewModel.fppRequest.value?.agoraUid)
+                putExtra(MENTOR_ID, mentorId)
                 putExtra(
                     DM_CHAT_DATA, GroupsItem(
                         groupIcon = viewModel.userData.value?.photoUrl,
@@ -1292,6 +1288,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                 }
             }.run {
                 activity.startActivity(this)
+                activity.finish()
             }
         }
     }

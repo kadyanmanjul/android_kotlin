@@ -12,6 +12,8 @@ interface GroupItemData {
     fun getGroupCategory() : String
     fun getJoinedStatus() : String
     fun getGroupText() : String
+    fun getAgoraId() : Int
+    fun getPartnerMentorId() : String
 
     //TODO: Need to remove
     fun hasJoined() : Boolean

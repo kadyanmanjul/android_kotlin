@@ -15,7 +15,6 @@ import de.hdodenhof.circleimageview.CircleImageView
 
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.ui.group.constants.CLOSED_GROUP
-import com.joshtalks.joshskills.ui.group.constants.DM_CHAT
 import com.joshtalks.joshskills.ui.group.model.DefaultImage
 
 import java.lang.Exception
@@ -87,27 +86,37 @@ class GroupsAppBar @JvmOverloads constructor(
             titleTv.text = title
             subTitleTv.text = subTitle
         } else {
-            toolBarContainer.visibility = View.GONE
+            toolBarContainer.visibility = View.INVISIBLE
             toolBarTitleTv.visibility = View.VISIBLE
             toolBarTitleTv.text = title
         }
         when (groupType) {
             CLOSED_GROUP -> closedGroupIcon.visibility = View.VISIBLE
-            DM_CHAT -> toolBarContainer.visibility = View.VISIBLE
             else -> closedGroupIcon.visibility = View.GONE
         }
     }
 
     fun firstIcon(drawableRes: Int) {
-        firstIconImageView.visibility = View.VISIBLE
-        setDrawableImage(drawableRes, firstIconImageView)
+        when(drawableRes){
+            0 -> firstIconImageView.visibility = View.GONE
+            else ->{
+                firstIconImageView.visibility = View.VISIBLE
+                setDrawableImage(drawableRes, firstIconImageView)
+            }
+        }
     }
 
     fun secondIcon(drawableRes: Int) {
-        if (drawableRes == 0) secondIconImageView.visibility = View.GONE
-        else {
-            secondIconImageView.visibility = View.VISIBLE
-            setDrawableImage(drawableRes, secondIconImageView)
+        when (drawableRes) {
+            0 -> secondIconImageView.visibility = View.GONE
+            1 ->{
+                secondIconImageView.visibility = View.VISIBLE
+                setDrawableImage(drawableRes, secondIconImageView)
+            }
+            else -> {
+                secondIconImageView.visibility = View.VISIBLE
+                setDrawableImage(drawableRes, secondIconImageView)
+            }
         }
     }
 
@@ -124,6 +133,12 @@ class GroupsAppBar @JvmOverloads constructor(
 
     fun onToolbarPressed(function: () -> Unit) {
         toolBarContainer.setOnClickListener {
+            function.invoke()
+        }
+    }
+
+    fun onTitlePressed(function: () -> Unit) {
+        toolBarTitleTv.setOnClickListener {
             function.invoke()
         }
     }
