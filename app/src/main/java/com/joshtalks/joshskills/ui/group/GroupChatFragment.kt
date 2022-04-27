@@ -134,11 +134,10 @@ class GroupChatFragment : BaseFragment() {
             vm.groupText = args.getString(CLOSED_GROUP_TEXT, "")
             vm.groupJoinStatus.set(vm.getGroupJoinText(args.getString(GROUP_STATUS, JOINED_GROUP)))
             vm.showRequestsTab.set(false)
-            if (args.getString(MENTOR_ID) != EMPTY)
-                vm.mentorId = args.getString(MENTOR_ID) ?: EMPTY
             if (args.getInt(AGORA_UID) != 0)
                 vm.agoraId = args.getInt(AGORA_UID)
             vm.setChatAdapterType()
+
             args.getInt(GROUP_CHAT_UNREAD, 0).let {
                 vm.unreadCount = it
                 if (it != 0) {
