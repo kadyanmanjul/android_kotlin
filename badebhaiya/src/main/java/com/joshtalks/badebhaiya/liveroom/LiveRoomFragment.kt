@@ -109,12 +109,6 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
         super.onCreate(savedInstanceState)
         attachBackPressedDispatcher()
         ConvoWebRtcService.initLibrary()
-//        requireActivity().requestWindowFeature(Window.FEATURE_NO_TITLE)
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//            requireActivity().window.statusBarColor =
-//                this.resources.getColor(R.color.conversation_room_color, requireActivity().theme)
-//        }
-//        requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         removeIncomingNotification()
         isBackPressed = false
 

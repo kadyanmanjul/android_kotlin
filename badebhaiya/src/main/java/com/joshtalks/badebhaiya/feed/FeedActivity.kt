@@ -4,9 +4,12 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.Window
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
@@ -113,6 +116,12 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        this.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            this.window.statusBarColor =
+                this.resources.getColor(R.color.conversation_room_color, this.theme)
+        }
+        this.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_feed)
         checkAndOpenLiveRoom()
         viewModel.getRooms()
@@ -127,26 +136,29 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
     }
 
     private fun checkAndOpenLiveRoom() {
-        if (intent.getBooleanExtra(LiveRoomFragment.OPEN_FROM_NOTIFICATION, false)){
+        if (intent.getBooleanExtra(LiveRoomFragment.OPEN_FROM_NOTIFICATION, false)) {
             LiveRoomFragment.launch(
                 this,
                 StartingLiveRoomProperties(
                     isActivityOpenFromNotification = true,
                     roomId = intent.getIntExtra(LiveRoomFragment.ROOM_ID, 0),
-                    channelTopic = intent.getStringExtra(LiveRoomFragment.TOPIC_NAME)?: "",
-                    channelName = intent.getStringExtra(LiveRoomFragment.CHANNEL_NAME)?: "",
+                    channelTopic = intent.getStringExtra(LiveRoomFragment.TOPIC_NAME) ?: "",
+                    channelName = intent.getStringExtra(LiveRoomFragment.CHANNEL_NAME) ?: "",
                     agoraUid = intent.getIntExtra(LiveRoomFragment.UID, 0),
                     moderatorId = intent.getIntExtra(LiveRoomFragment.MODERATOR_UID, 0),
                     token = intent.getStringExtra(LiveRoomFragment.TOKEN) ?: "",
                     roomQuestionId = intent.getIntExtra(LiveRoomFragment.ROOM_QUESTION_ID, 0),
-                    isRoomCreatedByUser = intent.getBooleanExtra(LiveRoomFragment.IS_ROOM_CREATED_BY_USER, false)
+                    isRoomCreatedByUser = intent.getBooleanExtra(
+                        LiveRoomFragment.IS_ROOM_CREATED_BY_USER,
+                        false
+                    )
                 )
             )
         }
     }
 
     fun onSearchPressed() {
-        if (liveRoomViewModel.pubNubState.value != null && liveRoomViewModel.pubNubState.value == PubNubState.STARTED){
+        if (liveRoomViewModel.pubNubState.value != null && liveRoomViewModel.pubNubState.value == PubNubState.STARTED) {
             liveRoomViewModel.liveRoomState.value = LiveRoomState.EXPANDED
         } else {
             supportFragmentManager.findFragmentByTag(SearchFragment::class.java.simpleName)
@@ -162,8 +174,6 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
             binding.profileIv.setUserImageOrInitials(profilePicUrl, firstName.toString())
         }
 
-        binding.feedRoot.progress
-
         binding.recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
@@ -178,8 +188,8 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
     }
 
     private fun addObserver() {
-        liveRoomViewModel.pubNubState.observe(this){
-            when(it){
+        liveRoomViewModel.pubNubState.observe(this) {
+            when (it) {
                 PubNubState.STARTED -> onPubNubStart()
                 PubNubState.ENDED -> onPubNubEnd()
             }
@@ -199,7 +209,10 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                 OPEN_ROOM -> {
                     it.data?.let {
                         it.getParcelable<ConversationRoomResponse>(ROOM_DETAILS)?.let { room ->
-                            val liveRoomProperties = StartingLiveRoomProperties.createFromRoom(room, it.getString(TOPIC)!!)
+                            val liveRoomProperties = StartingLiveRoomProperties.createFromRoom(
+                                room,
+                                it.getString(TOPIC)!!
+                            )
                             LiveRoomFragment.launch(this, liveRoomProperties)
                         }
                     }
@@ -216,7 +229,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         changeToolbarIcon(R.drawable.ic_baseline_arrow_up)
     }
 
-    private fun changeToolbarIcon(image: Int){
+    private fun changeToolbarIcon(image: Int) {
         binding.search.setImageResource(image)
     }
 
@@ -229,7 +242,11 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                     topic: String
                 ) {
                     conversationRoomResponse.apply {
-                        val liveRoomProperties = StartingLiveRoomProperties.createFromRoom(this, topic, createdByUser = true)
+                        val liveRoomProperties = StartingLiveRoomProperties.createFromRoom(
+                            this,
+                            topic,
+                            createdByUser = true
+                        )
                         LiveRoomFragment.launch(this@FeedActivity, liveRoomProperties)
                     }
                     it.dismiss()

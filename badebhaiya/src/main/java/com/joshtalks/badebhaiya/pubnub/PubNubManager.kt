@@ -582,12 +582,12 @@ object PubNubManager {
         }
     }
 
-    fun leaveRoom() {
+    private fun leaveRoom() {
         message.what = LEAVE_ROOM
         postToLiveEvent(message)
     }
 
-    fun inviteUserToSpeaker() {
+    private fun inviteUserToSpeaker() {
         message.what = SHOW_NOTIFICATION_FOR_USER_TO_JOIN
         postToLiveEvent(message)
     }
