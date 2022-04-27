@@ -454,7 +454,7 @@ object PubNubManager {
                     putParcelable(NOTIFICATION_USER, userToMove)
                 }
                 if (isModerator()) {
-                    bundle.putString(NOTIFICATION_NAME, msg.get("name")?.asString)
+                    bundle.putString(NOTIFICATION_NAME, msg.get("short_name")?.asString)
                 }
                 message.data = bundle
                 postToLiveEvent(message)
