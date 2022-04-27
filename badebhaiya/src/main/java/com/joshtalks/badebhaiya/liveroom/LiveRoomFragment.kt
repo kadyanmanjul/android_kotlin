@@ -550,7 +550,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
             textColor = R.color.black,
             bgColor = R.color.conversation_room_gray
         )
-        binding.topic.text = channelTopic
+        binding.topic.text = PubNubManager.getLiveRoomProperties().channelTopic
 
 
         if (PubNubManager.getLiveRoomProperties().isRoomCreatedByUser) {
