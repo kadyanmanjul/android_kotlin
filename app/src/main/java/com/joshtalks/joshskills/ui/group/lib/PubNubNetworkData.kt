@@ -72,7 +72,10 @@ data class PubNubNetworkData(val data: PNGetMembershipsResult) : NetworkData {
         map["created_by"] = json["created_by"].asString
         map["group_type"] = json["group_type"]?.asString ?: OPENED_GROUP
         if (map["group_type"] == DM_CHAT) {
-            map["image_url"] = membership["image_url"].asString
+            map["image_url"] = if (membership["image_url"]?.asString == "None")
+                EMPTY
+            else
+                membership["image_url"]?.asString ?: EMPTY
             map["admin_id"] = membership["mentor_id"].asString
             map["agora_id"] = membership["agora_id"].asString
         } else {

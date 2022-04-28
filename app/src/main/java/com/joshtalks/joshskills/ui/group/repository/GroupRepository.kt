@@ -465,7 +465,7 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
         val response = p2pNetworkService.removeFavoriteCallerList(Mentor.getInstance().getId(), requestParams)
         if (response.isSuccessful) {
             favoriteCallerDao.removeFromFavorite(uId.let { return@let listOf(uId) })
-            showToast("Successfully deleted")
+            showToast("Successfully removed")
         }
     }
 
