@@ -130,6 +130,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
     var isFirstTimeToGetProfileData = true
     var resp = StringBuilder()
     private val liveData = EventLiveData
+    var isFpp:Boolean = false
 
     private var viewerReferral: Int? = 0
     private var helpCountControl: Boolean = false
@@ -507,7 +508,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
     private fun openPopupMenu(view: View) {
         val popupMenu = PopupMenu(this, view, R.style.setting_menu_style)
         popupMenu.inflate(R.menu.user_profile__menu)
-        if (mentorId==Mentor.getInstance().getId()){
+        if (mentorId==Mentor.getInstance().getId() || isFpp.not()){
             popupMenu.menu[3].isVisible = false
         }
         popupMenu.setOnMenuItemClickListener {
@@ -664,6 +665,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                             binding.profileText.text = it.text
                         }
                         ALREADY_FPP -> {
+                            isFpp = true
                             if (viewModel.fppRequest.value?.groupId != null)
                                 binding.btnSendMessage.visibility = VISIBLE
                         }
@@ -1297,6 +1299,11 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
     override fun onResume() {
         super.onResume()
         subscribeRXBus()
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+        viewModel.getFppStatusInProfile(mentorId)
     }
 
     private fun subscribeRXBus() {

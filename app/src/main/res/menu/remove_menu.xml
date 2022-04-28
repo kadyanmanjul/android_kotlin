@@ -7,7 +7,7 @@
         android:actionLayout="@layout/base_toolbar"
         android:orderInCategory="100"
         android:visible="true"
-        android:title="Remove Fpp"
+        android:title="Remove From Favorite"
         app:showAsAction="collapseActionView" />
 
 </menu>
