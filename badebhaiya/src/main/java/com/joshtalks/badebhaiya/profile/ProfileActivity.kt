@@ -154,7 +154,7 @@ class ProfileActivity: AppCompatActivity(), FeedAdapter.ConversationRoomItemCall
     }
 
     fun updateFollowStatus() {
-        viewModel.updateFollowStatus()
+        viewModel.updateFollowStatus(userId ?: (User.getInstance().userId))
         viewModel.getProfileForUser(userId ?: (User.getInstance().userId), isFromDeeplink)
     }
 

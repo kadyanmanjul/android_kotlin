@@ -22,7 +22,6 @@ import com.joshtalks.badebhaiya.utils.setUserImageOrInitials
 import kotlinx.coroutines.launch
 
 class ProfileViewModel : ViewModel() {
-    val userIdForOpenedProfile = MutableLiveData<String>()
     private val service = RetrofitInstance.profileNetworkService
     val isBadeBhaiyaSpeaker = ObservableBoolean(false)
     var profileUrl=""
@@ -39,13 +38,13 @@ class ProfileViewModel : ViewModel() {
     var singleLiveEvent: MutableLiveData<Message> = MutableLiveData()
     val speakerFollowed = MutableLiveData(false)
     val isSelfProfile = ObservableBoolean(false)
-    fun updateFollowStatus() {
+    fun updateFollowStatus(userIdForOpenedProfile:String) {
         speakerFollowed.value?.let {
             if (it.not()) {
                 viewModelScope.launch {
                     try {
                         val followRequest =
-                            FollowRequest(userIdForOpenedProfile.value ?: "", User.getInstance().userId)
+                            FollowRequest(userIdForOpenedProfile, User.getInstance().userId)
                         val response = service.updateFollowStatus(followRequest)
                         if (response.isSuccessful) {
                             speakerFollowed.value = true
@@ -58,11 +57,10 @@ class ProfileViewModel : ViewModel() {
             }
             else
             {
-
                 viewModelScope.launch {
                     try {
                         val followRequest =
-                            FollowRequest(userIdForOpenedProfile.value ?: "", User.getInstance().userId)
+                            FollowRequest(userIdForOpenedProfile, User.getInstance().userId)
                         val response=service.updateUnfollowStatus(followRequest)
                         if(response.isSuccessful)
                         {
@@ -79,14 +77,12 @@ class ProfileViewModel : ViewModel() {
         }
     }
 
-    fun getProfileForUser(userId: String, isFromDeeplink: Boolean = false) {
+    fun getProfileForUser(userId: String, isFromDeepLink:Boolean) {
         viewModelScope.launch {
             try {
-                userIdForOpenedProfile.postValue(userId)
-                if (true){
-                    updateFollowStatus()
-                }
                 val response = repository.getProfileForUser(userId)
+                if(isFromDeepLink)
+                    updateFollowStatus(userId)
                 if (response.isSuccessful) {
                     response.body()?.let {
                         userProfileData.postValue(it)
