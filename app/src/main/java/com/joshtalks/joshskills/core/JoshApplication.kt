@@ -40,9 +40,7 @@ import com.joshtalks.joshskills.ui.call.data.local.VoipPref
 import com.vanniktech.emoji.EmojiManager
 import com.vanniktech.emoji.ios.IosEmojiProvider
 import com.moengage.core.DataCenter
-import com.moengage.core.LogLevel
 import com.moengage.core.MoEngage
-import com.moengage.core.config.LogConfig
 import com.moengage.core.config.MiPushConfig
 import com.moengage.core.config.NotificationConfig
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
@@ -113,7 +111,6 @@ class JoshApplication :
         val moEngage = MoEngage.Builder(this, "DU9ICNBN2A9TTT38BS59KEU6")
             .setDataCenter(DataCenter.DATA_CENTER_3)
             .configureMiPush(MiPushConfig("2882303761518451933", "5761845183933", true))
-            .configureLogs(LogConfig(LogLevel.VERBOSE, true))
             .configureNotificationMetaData(NotificationConfig(R.drawable.ic_status_bar_notification, R.mipmap.ic_launcher_round))
             .build()
 

@@ -1,13 +1,6 @@
 package com.joshtalks.joshskills.core.notification
 
 import android.app.*
-// import com.cometchat.pro.constants.CometChatConstants
-// import com.cometchat.pro.helpers.CometChatHelper
-// import com.cometchat.pro.models.BaseMessage
-// import com.cometchat.pro.models.Group
-// import com.cometchat.pro.models.TextMessage
-// import com.joshtalks.joshskills.ui.groupchat.constant.StringContract
-// import com.joshtalks.joshskills.ui.groupchat.utils.Utils
 import android.app.ActivityManager
 import android.app.Notification
 import android.app.NotificationChannel

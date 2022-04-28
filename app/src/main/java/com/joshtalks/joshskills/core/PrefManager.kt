@@ -148,6 +148,8 @@ const val CALL_BTN_CLICKED = "call_btn_clicked"
 const val IS_APP_OPENED_FOR_FIRST_TIME = "is_app_opened_for_first_time"
 const val IS_A2_C1_RETENTION_ENABLED = "is_a2_c1_retention_enabled"
 
+const val MOENGAGE_USER_CREATED = "MOENGAGE_USER_CREATED"
+
 object PrefManager {
 
     private const val PREF_NAME_COMMON = "JoshSkills"
