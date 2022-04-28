@@ -2,7 +2,7 @@
 <resources>
     <string name="starting_info">"Tumcha swagat aahe %s मध्ये</string>
     <string name="restart_course_message">तुम्हाला कोर्से पुन्हा सुरू करायचा आहे का? (तुमचे कमावलेले points तुमच्याकडेच राहतील पण course lesson 1 पासून परत start होईल)</string>
-    <string name="groups_empty_text_1">ഗGroups द्वारे, तुम्ही नवीन मित्र शोधू शकता ज्यांची भविष्याची स्वप्ने तुमच्या स्वप्नांशी जुळतात किंवा ज्यांना तुमच्या सारख्याच आवडी निवडी आहेत.</string>
+    <string name="groups_empty_text_1">Groups द्वारे, तुम्ही नवीन मित्र शोधू शकता ज्यांची भविष्याची स्वप्ने तुमच्या स्वप्नांशी जुळतात किंवा ज्यांना तुमच्या सारख्याच आवडी निवडी आहेत.</string>
     <string name="share_with_friends_text">मी रोज Call war speaking practice करत आहे new persons सोबत</string>
     <string name="share_screen_tagline">मी English शिकत आहे अश्या जागी जिथे Environment मोकळ्या मनाने नवीन लोकांशी बोलण्यास मदत करतेय! तुम्ही पण शिकू शकता ना घाबरता बोलायला.</string>
 </resources>

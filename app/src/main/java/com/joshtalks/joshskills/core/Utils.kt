@@ -200,6 +200,33 @@ object Utils {
         return "0"
     }
 
+    fun getLangCodeFromlangTestId(testId : String) : String {
+        return when(testId) {
+            "1880"-> "bn"
+            "1882"-> "pa"
+            "1881"-> "mr"
+            "1889"-> "ml"
+            "1891"-> "ta"
+            "1897"-> "te"
+            "784"-> "hi"
+            else -> "en"
+        }
+    }
+
+    fun getLangCodeFromCourseId(courseId : String) : String {
+        return when(courseId) {
+            "1203"-> "bn"
+            "1206"-> "pa"
+            "1207"-> "mr"
+            "1209"-> "ml"
+            "1210"-> "ta"
+            "1211"-> "te"
+            "151"-> "hi"
+            else -> "en"
+        }
+    }
+
+
     const val MEGABYTE = 1024L * 1024L
 
     fun bytesToMB(bytes: Long): Long {
