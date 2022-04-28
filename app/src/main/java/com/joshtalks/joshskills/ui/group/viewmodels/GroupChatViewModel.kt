@@ -4,7 +4,6 @@ import android.app.AlertDialog
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Toast
@@ -19,12 +18,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseViewModel
 import com.joshtalks.joshskills.constants.*
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.custom_ui.MiniExoPlayer
 import com.joshtalks.joshskills.core.isCallOngoing
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.ui.group.*
+import com.joshtalks.joshskills.track.AGORA_UID
 import com.joshtalks.joshskills.ui.group.adapters.GroupChatAdapter
 import com.joshtalks.joshskills.ui.group.adapters.GroupMemberAdapter
 import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics
@@ -146,6 +143,8 @@ class GroupChatViewModel : BaseViewModel() {
             putString(GROUPS_ID, groupId)
             putString(GROUPS_TITLE, groupHeader.get())
             putString(GROUP_TYPE,groupType.get())
+            if (groupId == DM_CHAT)
+                putInt(AGORA_UID,agoraId)
         }
         singleLiveEvent.value = message
     }
@@ -505,6 +504,12 @@ class GroupChatViewModel : BaseViewModel() {
         try {
             viewModelScope.launch (Dispatchers.IO){
                 repository.removeUserFormFppLit(uId)
+                withContext(Dispatchers.Main) {
+                    message.what = REMOVE_GROUP_AND_CLOSE
+                    message.obj = groupId
+                    singleLiveEvent.value = message
+                    repository.startChatEventListener()
+                }
             }
         }catch (ex:Exception){}
     }

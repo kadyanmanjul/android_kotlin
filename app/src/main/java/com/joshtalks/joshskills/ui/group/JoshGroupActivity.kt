@@ -24,7 +24,6 @@ import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics
 import com.joshtalks.joshskills.ui.group.constants.*
 import com.joshtalks.joshskills.ui.group.model.AddGroupRequest
 import com.joshtalks.joshskills.ui.group.model.GroupItemData
-import com.joshtalks.joshskills.ui.group.viewmodels.GroupChatViewModel
 import com.joshtalks.joshskills.ui.group.viewmodels.JoshGroupViewModel
 import com.joshtalks.joshskills.ui.userprofile.fragments.UserPicChooserFragment
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
@@ -208,11 +207,19 @@ class JoshGroupActivity : BaseGroupActivity() {
                 putString(GROUP_STATUS, data?.getJoinedStatus())
                 putString(CLOSED_GROUP_TEXT, data?.getGroupText())
                 putInt(AGORA_UID, data?.getAgoraId() ?: 0)
+                if (groupId == EMPTY){
+                    vm.agoraId = data?.getAgoraId()?:0
+                    vm.mentorId = data?.getCreatorId()?: EMPTY
+                }
                 data?.hasJoined()?.let {
                     if (it) {
                         if (data.getGroupCategory() == DM_CHAT) {
+                            vm.groupType.set(data.getGroupCategory())
                             putString(GROUPS_CHAT_SUB_TITLE, EMPTY)
-                            vm.subscribeToChat(groupId)
+                            if (groupId != EMPTY) {
+                                vm.subscribeToChat(groupId)
+                                putInt(AGORA_UID, vm.agoraId)
+                            }
                         }
                         else
                             putString(GROUPS_CHAT_SUB_TITLE, "tap here for group info")
@@ -343,8 +350,14 @@ class JoshGroupActivity : BaseGroupActivity() {
         CoroutineScope(Dispatchers.IO).launch {
             val groupName = vm.repository.getGroupName(groupId)
             vm.repository.leaveGroupFromLocal(groupId)
-            withContext(Dispatchers.Main) {
-                showRemovedAlert(groupName)
+            if(vm.groupType.get() != DM_CHAT){
+                withContext(Dispatchers.Main) {
+                    showRemovedAlert(groupName)
+                }
+            }else{
+                withContext(Dispatchers.Main) {
+                    onBackPressed()
+                }
             }
         }
     }
