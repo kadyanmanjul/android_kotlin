@@ -291,7 +291,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
 //        vm.lvRoomState = LiveRoomState.COLLAPSED
     }
 
-    private fun expandLiveRoom() {
+     fun expandLiveRoom() {
         binding.liveRoomRootView.transitionToStart()
     }
 
