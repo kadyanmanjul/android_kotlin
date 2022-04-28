@@ -8,6 +8,7 @@ import android.graphics.drawable.ClipDrawable
 import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.LayerDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -228,6 +229,7 @@ class SpeakingPractiseFragment : ABTestFragment(),TimeAnimator.TimeListener {
         }
         binding.btnStartTrialText.setOnClickListener {
             viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
+            Log.d("VOIP State", "addObservers: ${VoipPref.getVoipState()}")
             if(VoipPref.getVoipState()==IDLE || VoipPref.getVoipState()== LEAVING) {
                 startPractise(isNewArch = true)
             } else

@@ -5,8 +5,16 @@ import android.content.ContentValues
 import android.database.Cursor
 import android.database.MatrixCursor
 import android.net.Uri
+import android.os.Build
+import android.os.Bundle
 import android.util.Log
+import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.base.constants.*
+import com.joshtalks.joshskills.base.model.ApiHeader
+import com.joshtalks.joshskills.core.API_TOKEN
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.USER_LOCALE
+import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.call.data.local.VoipPref
 import com.joshtalks.joshskills.ui.video_player.DURATION
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.voipLog
@@ -42,6 +50,25 @@ class JoshContentProvider : ContentProvider() {
                 val cursor = MatrixCursor(arrayOf(START_CALL_TIME_COLUMN))
                 cursor.addRow(arrayOf(startTime))
                 Log.d(TAG, "query: Timestamp --> $startTime")
+                return cursor
+            }
+            API_HEADER -> {
+                val apiHeader = ApiHeader(
+                    token = "JWT " + PrefManager.getStringValue(API_TOKEN),
+                    versionName = BuildConfig.VERSION_NAME,
+                    versionCode = BuildConfig.VERSION_CODE.toString(),
+                    userAgent = "APP_" + BuildConfig.VERSION_NAME + "_" + BuildConfig.VERSION_CODE.toString(),
+                    acceptLanguage = PrefManager.getStringValue(USER_LOCALE)
+                )
+
+                val cursor = MatrixCursor(arrayOf(AUTHORIZATION, APP_VERSION_NAME, APP_VERSION_CODE, APP_USER_AGENT, APP_ACCEPT_LANGUAGE))
+                cursor.addRow(arrayOf(apiHeader.token, apiHeader.versionName, apiHeader.versionCode, apiHeader.userAgent, apiHeader.acceptLanguage))
+                Log.d(TAG, "query: Api Header --> $apiHeader")
+                return cursor
+            }
+            MENTOR_ID -> {
+                val cursor = MatrixCursor(arrayOf(MENTOR_ID_COLUMN))
+                cursor.addRow(arrayOf(Mentor.getInstance().getId()))
                 return cursor
             }
         }
@@ -123,12 +150,12 @@ class JoshContentProvider : ContentProvider() {
                     }
                 }
             }
-            INCOMING_CALL_URI -> {
-                val callId = values?.getAsInteger(CALL_ID) ?: -1
-                val callType = values?.getAsInteger(CALL_TYPE) ?: -1
-                Log.d(TAG, "insert: timestamp --> $callId ..... $callType")
-                VoipPref.updateIncomingCallData(callId, callType)
-            }
+//            INCOMING_CALL_URI -> {
+//                val callId = values?.getAsInteger(CALL_ID) ?: -1
+//                val callType = values?.getAsInteger(CALL_TYPE) ?: -1
+//                Log.d(TAG, "insert: timestamp --> $callId ..... $callType")
+//                VoipPref.updateIncomingCallData(callId, callType)
+//            }
             CURRENT_MUTE_STATE_URI -> {
                 val state = values?.getAsBoolean(IS_MUTE) ?: false
                 Log.d(TAG, "insert: CURRENT_MUTE_STATE_URI --> $state")

@@ -37,6 +37,7 @@ const val CURRENT_REMOTE_MUTE_STATE_URI = "/current_remote_mute_state"
 const val RESET_CURRENT_CALL_STATE_URI = "/reset_current_call_state"
 const val CURRENT_STATE_URI = "/current_call_state"
 const val API_HEADER = "/api_header"
+const val MENTOR_ID = "/mentor_id"
 
 // Content Values
 const val VOIP_STATE = "josh_voip_state"
@@ -54,6 +55,12 @@ const val IS_MUTE = "josh_is_mute"
 const val IS_REMOTE_USER_MUTE = "josh_is_remote_user_mute"
 const val IS_SPEAKER_ON = "josh_is_speaker_on"
 const val IS_ON_HOLD = "josh_is_on_hold"
+const val API_HEADER_DATA = "josh_api_header_data"
+const val AUTHORIZATION = "josh_authorization"
+const val APP_VERSION_CODE = "josh_app_version_code"
+const val APP_VERSION_NAME = "josh_app_version_name"
+const val APP_USER_AGENT = "josh_user_agent"
+const val APP_ACCEPT_LANGUAGE = "josh_accept_language"
 
 // Pref Keys
 const val PREF_KEY_WEBRTC_CURRENT_STATE = "josh_webrtc_current_state"
@@ -100,6 +107,8 @@ const val OUTGOING = 2
 
 // Cursor Column Name
 const val START_CALL_TIME_COLUMN = "START_CALL_TIME"
+const val API_HEADER_COLUMN = "API_HEADER"
+const val MENTOR_ID_COLUMN = "MENTOR_ID"
 
 // Broadcast Receiver
 const val SERVICE_BROADCAST_KEY = "service_broadcast_key"

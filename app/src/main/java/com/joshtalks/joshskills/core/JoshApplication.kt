@@ -75,21 +75,20 @@ class JoshApplication :
         super.onCreate()
         enableLog(Feature.VOIP)
         Log.d(TAG, "onCreate: STARTING MAIN PROCESS CHECK ${this.hashCode()}")
-//            if(isMainProcess()) {
+            if(isMainProcess()) {
                 Log.d(TAG, "onCreate: END ...IS MAIN PROCESS")
                 turnOnStrictMode()
                 ProcessLifecycleOwner.get().lifecycle.addObserver(this@JoshApplication)
                 AppObjectController.init(this@JoshApplication)
-                Utils.initUtils(this)
                 VoipPref.initVoipPref(this)
                 registerBroadcastReceiver()
                 initGroups()
-//            } else {
-//                FirebaseApp.initializeApp(this)
-//                Timber.plant(Timber.DebugTree())
-//                Utils.initUtils(this)
-//                Stetho.initializeWithDefaults(this);
-//            }
+            } else {
+                FirebaseApp.initializeApp(this)
+                Timber.plant(Timber.DebugTree())
+                Utils.initUtils(this)
+                Stetho.initializeWithDefaults(this);
+            }
 
             Log.d(TAG, "onCreate: STARTING MAIN PROCESS CHECK END")
 //        Log.d(TAG, "onCreate: $isMainProcess ... $packageName")

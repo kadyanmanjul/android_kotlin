@@ -5,32 +5,20 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
-import android.os.Bundle
 import android.os.IBinder
-import android.os.Message
-import android.os.Messenger
-import android.os.RemoteException
 import android.util.Log
-import androidx.lifecycle.viewModelScope
-import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.base.constants.*
-import com.joshtalks.joshskills.base.model.ApiHeader
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.ui.call.data.local.VoipPref
-import com.joshtalks.joshskills.ui.call.data.local.VoipPrefListener
 import com.joshtalks.joshskills.ui.call.repository.RepositoryConstants.*
-import com.joshtalks.joshskills.ui.voip.new_arch.ui.models.CallData
-import com.joshtalks.joshskills.ui.voip.new_arch.ui.models.CallUIState
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.voipLog
 import com.joshtalks.joshskills.voip.constant.*
 import com.joshtalks.joshskills.voip.data.CallingRemoteService
+import com.joshtalks.joshskills.voip.getApiHeader
+import com.joshtalks.joshskills.voip.getMentorId
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.sync.withLock
 
 private const val TAG = "WebrtcRepository"
 
@@ -44,14 +32,8 @@ class WebrtcRepository(scope : CoroutineScope) {
         try {
             val remoteServiceIntent =
                 Intent(com.joshtalks.joshskills.voip.Utils.context, CallingRemoteService::class.java)
-            val apiHeader = ApiHeader(
-                token = "JWT " + PrefManager.getStringValue(API_TOKEN),
-                versionName = BuildConfig.VERSION_NAME,
-                versionCode = BuildConfig.VERSION_CODE.toString(),
-                userAgent = "APP_" + BuildConfig.VERSION_NAME + "_" + BuildConfig.VERSION_CODE.toString(),
-                acceptLanguage = PrefManager.getStringValue(USER_LOCALE)
-            )
-            remoteServiceIntent.putExtra(INTENT_DATA_MENTOR_ID, Mentor.getInstance().getId())
+            val apiHeader = com.joshtalks.joshskills.voip.Utils.context?.getApiHeader()
+            remoteServiceIntent.putExtra(INTENT_DATA_MENTOR_ID, com.joshtalks.joshskills.voip.Utils.context?.getMentorId())
             remoteServiceIntent.putExtra(INTENT_DATA_API_HEADER, apiHeader)
             com.joshtalks.joshskills.voip.Utils.context?.startService(remoteServiceIntent)
         } catch (e: Exception) {

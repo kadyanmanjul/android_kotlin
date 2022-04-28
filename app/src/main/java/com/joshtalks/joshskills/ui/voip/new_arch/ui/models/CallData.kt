@@ -3,7 +3,6 @@ package com.joshtalks.joshskills.ui.voip.new_arch.ui.models
 import androidx.databinding.BaseObservable
 import androidx.databinding.Bindable
 import com.joshtalks.joshskills.BR
-import com.joshtalks.joshskills.ui.call.data.local.VoipPref
 
 interface CallData{
     fun getProfileImage(): String?
@@ -64,7 +63,7 @@ class CallUIState : BaseObservable() {
         }
 
     @get:Bindable
-    var startTime : Long = VoipPref.getStartTimeStamp()
+    var startTime : Long = 0L
         set(value) {
             field = value
             notifyPropertyChanged(BR.startTime)

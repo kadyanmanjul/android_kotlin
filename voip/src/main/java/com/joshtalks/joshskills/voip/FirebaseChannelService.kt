@@ -24,16 +24,16 @@ private const val PENDING = 0
 private const val PROCESSED = 1
 
 object FirebaseChannelService : EventChannel {
-//    private val settings = FirebaseFirestoreSettings.Builder()
-//        .setPersistenceEnabled(false)
-//        .build()
+    private val settings = FirebaseFirestoreSettings.Builder()
+        .setPersistenceEnabled(false)
+        .build()
 
     private val dataFlow by lazy {
         MutableSharedFlow<Communication>(replay = 0)
     }
 
     private val firestore by lazy {
-        Firebase.firestore/*.apply { firestoreSettings = settings }*/
+        Firebase.firestore.apply { firestoreSettings = settings }
     }
     private val coroutineExceptionHandler = CoroutineExceptionHandler{_, e ->
         Timber.tag("Coroutine Exception").d("Handled...")

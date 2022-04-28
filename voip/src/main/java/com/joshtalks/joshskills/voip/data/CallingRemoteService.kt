@@ -78,7 +78,7 @@ class CallingRemoteService : Service() {
         PrefManager.initServicePref(this)
         //stopServiceKillingTimer()
         updateStartCallTime(0)
-        //updateVoipState(IDLE)
+        updateVoipState(IDLE)
         //resetCallUIState()
         registerReceivers()
         observerPstnService()
@@ -185,6 +185,7 @@ class CallingRemoteService : Service() {
                                 notification.idle()
                                 //resetCallUIState()
                                 updateVoipState(LEAVING)
+                                PrefManager.setVoipState(LEAVING)
                                 val duration = callDurationInMillis()
                                 if(duration > 0)
                                     updateLastCallDetails(duration.inSeconds())
@@ -198,6 +199,7 @@ class CallingRemoteService : Service() {
                                 notification.idle()
                                 //resetCallUIState()
                                 updateVoipState(LEAVING)
+                                PrefManager.setVoipState(LEAVING)
                                 val duration = callDurationInMillis()
                                 if(duration > 0)
                                     updateLastCallDetails(duration.inSeconds())
@@ -215,29 +217,30 @@ class CallingRemoteService : Service() {
                             INCOMING_CALL -> {
                                 currentUiState = UIState.empty().copy(callType = IncomingCallData.callType)
                                 uiStateFlow.value = currentUiState
-                                updateIncomingCallDetails()
+                                PrefManager.setIncomingCallId(IncomingCallData.callId)
+                                //updateIncomingCallDetails()
                                 val data = IncomingCall(callId = IncomingCallData.callId)
                                 mediator.showIncomingCall(data)
                             }
                             MUTE -> {
                                 currentUiState = currentUiState.copy(isRemoteUserMuted = true)
                                 uiStateFlow.value = currentUiState
-                                updateRemoteUserMuteState(true)
+                                //updateRemoteUserMuteState(true)
                             }
                             UNMUTE -> {
                                 currentUiState = currentUiState.copy(isRemoteUserMuted = false)
                                 uiStateFlow.value = currentUiState
-                                updateRemoteUserMuteState(false)
+                                //updateRemoteUserMuteState(false)
                             }
                             HOLD -> {
                                 currentUiState = currentUiState.copy(isOnHold = true)
                                 uiStateFlow.value = currentUiState
-                                updateUserHoldState(true)
+                                //updateUserHoldState(true)
                             }
                             UNHOLD -> {
                                 currentUiState = currentUiState.copy(isOnHold = false)
                                 uiStateFlow.value = currentUiState
-                                updateUserHoldState(false)
+                                //updateUserHoldState(false)
                             }
                             CALL_INITIATED_EVENT -> {
                                 serviceEvents.emit(ServiceEvents.CALL_INITIATED_EVENT)
@@ -254,6 +257,7 @@ class CallingRemoteService : Service() {
                     mediator.observeState().collect {
                         currentState = it
                         updateVoipState(it)
+                        PrefManager.setVoipState(it)
                         Log.d(TAG, "observeNetworkEvents: ---> $it")
                         voipLog?.log("State --> $it")
                     }

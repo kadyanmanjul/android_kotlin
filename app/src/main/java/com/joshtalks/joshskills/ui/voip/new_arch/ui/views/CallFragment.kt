@@ -20,7 +20,6 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
 import com.joshtalks.joshskills.base.constants.FROM_INCOMING_CALL
 import com.joshtalks.joshskills.databinding.FragmentCallBinding
-import com.joshtalks.joshskills.ui.call.data.local.VoipPref
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.callbar.CallBar
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.VoiceCallViewModel
 import com.joshtalks.joshskills.voip.audiocontroller.AudioController
@@ -29,6 +28,7 @@ import com.joshtalks.joshskills.voip.communication.constants.CLOSE_CALLING_FRAGM
 import com.joshtalks.joshskills.voip.constant.CALL_CONNECTED_EVENT
 import com.joshtalks.joshskills.voip.constant.CONNECTED
 import com.joshtalks.joshskills.voip.constant.JOINED
+import com.joshtalks.joshskills.voip.data.local.PrefManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -82,7 +82,7 @@ class CallFragment : BaseFragment() , SensorEventListener {
 
     override fun initViewBinding() {
         callBinding.vm = vm
-        if(vm.source == FROM_INCOMING_CALL && VoipPref.getVoipState() != CONNECTED) {
+        if(vm.source == FROM_INCOMING_CALL && PrefManager.getVoipState() != CONNECTED) {
             startIncomingTimer()
         }
         callBinding.executePendingBindings()
@@ -162,7 +162,7 @@ class CallFragment : BaseFragment() , SensorEventListener {
 
     private fun setCurrentCallState() {
         if(isFragmentRestarted) {
-            if((VoipPref.getVoipState() == JOINED || VoipPref.getVoipState() == CONNECTED).not())
+            if((PrefManager.getVoipState() == JOINED || PrefManager.getVoipState() == CONNECTED).not())
                 requireActivity().finish()
         } else
             isFragmentRestarted = true

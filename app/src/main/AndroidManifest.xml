@@ -530,6 +530,7 @@
             android:theme="@style/AppNoBarTheme" />
         <activity android:name=".ui.special_practice.SpecialPracticeActivity" />
         <activity android:name=".ui.voip.new_arch.ui.views.VoiceCallActivity"
+            android:process=":joshSkillsCallingService"
             android:screenOrientation="portrait"
             android:showOnLockScreen="true"
             android:showWhenLocked="true"/>

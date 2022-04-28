@@ -5,6 +5,7 @@ import android.app.PendingIntent
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
+import android.database.Cursor
 import android.net.Uri
 import android.util.Log
 import com.joshtalks.joshskills.base.constants.*
@@ -42,29 +43,29 @@ private const val TAG = "Utils"
 //    voipLog?.log("Data --> $data")
 //}
 
-fun Context.updateUserHoldState(state: Boolean, ) {
-    voipLog?.log("updateUserMuteState --> $state")
-    val values = ContentValues(1).apply {
-        put(IS_ON_HOLD, state)
-    }
-    val data = contentResolver.insert(
-        Uri.parse(CONTENT_URI + CURRENT_HOLD_STATE_URI),
-        values
-    )
-    voipLog?.log("Data --> $data")
-}
+//fun Context.updateUserHoldState(state: Boolean, ) {
+//    voipLog?.log("updateUserMuteState --> $state")
+//    val values = ContentValues(1).apply {
+//        put(IS_ON_HOLD, state)
+//    }
+//    val data = contentResolver.insert(
+//        Uri.parse(CONTENT_URI + CURRENT_HOLD_STATE_URI),
+//        values
+//    )
+//    voipLog?.log("Data --> $data")
+//}
 
-fun Context.updateRemoteUserMuteState(state: Boolean, ) {
-    voipLog?.log("updateUserMuteState --> $state")
-    val values = ContentValues(1).apply {
-        put(IS_REMOTE_USER_MUTE, state)
-    }
-    val data = contentResolver.insert(
-        Uri.parse(CONTENT_URI + CURRENT_REMOTE_MUTE_STATE_URI),
-        values
-    )
-    voipLog?.log("Data --> $data")
-}
+//fun Context.updateRemoteUserMuteState(state: Boolean, ) {
+//    voipLog?.log("updateUserMuteState --> $state")
+//    val values = ContentValues(1).apply {
+//        put(IS_REMOTE_USER_MUTE, state)
+//    }
+//    val data = contentResolver.insert(
+//        Uri.parse(CONTENT_URI + CURRENT_REMOTE_MUTE_STATE_URI),
+//        values
+//    )
+//    voipLog?.log("Data --> $data")
+//}
 
 fun Context.updateStartCallTime(
     timestamp: Long,
@@ -142,6 +143,47 @@ fun Context.getStartCallTime(): Long {
     return startTime ?: 0L
 }
 
+fun Context.getApiHeader(): ApiHeader {
+    val apiDataCursor = contentResolver.query(
+        Uri.parse(CONTENT_URI + API_HEADER),
+        null,
+        null,
+        null,
+        null
+    )
+
+    apiDataCursor?.moveToFirst()
+    val apiHeader = ApiHeader(
+        token = apiDataCursor.getStringData(AUTHORIZATION),
+        versionCode = apiDataCursor.getStringData(APP_VERSION_CODE),
+        versionName = apiDataCursor.getStringData(APP_VERSION_NAME),
+        userAgent = apiDataCursor.getStringData(APP_USER_AGENT),
+        acceptLanguage = apiDataCursor.getStringData(APP_ACCEPT_LANGUAGE)
+    )
+
+    apiDataCursor?.close()
+    return apiHeader
+}
+
+private fun Cursor?.getStringData(columnName : String) : String {
+    return this?.getString(this.getColumnIndex(columnName)) ?: throw NoSuchElementException("$columnName is NULL from cursor")
+}
+
+fun Context.getMentorId(): String {
+    val mentorIdCursor = contentResolver.query(
+        Uri.parse(CONTENT_URI + MENTOR_ID),
+        null,
+        null,
+        null,
+        null
+    )
+
+    mentorIdCursor?.moveToFirst()
+    val mentorId = mentorIdCursor.getStringData(MENTOR_ID_COLUMN)
+    mentorIdCursor?.close()
+    return mentorId
+}
+
 fun Context.updateLastCallDetails(duration: Long) {
     voipLog?.log("QUERY")
     val values = ContentValues(1).apply {
@@ -163,18 +205,18 @@ fun Context.resetCallUIState() {
     )
 }
 
-fun Context.updateIncomingCallDetails() {
-    voipLog?.log("QUERY")
-    val values = ContentValues(2).apply {
-        put(CALL_ID, IncomingCallData.callId)
-        put(CALL_TYPE, IncomingCallData.callType)
-    }
-    val data = contentResolver.insert(
-        Uri.parse(CONTENT_URI + INCOMING_CALL_URI),
-        values
-    )
-    voipLog?.log("Data --> $data")
-}
+//fun Context.updateIncomingCallDetails() {
+//    voipLog?.log("QUERY")
+//    val values = ContentValues(2).apply {
+//        put(CALL_ID, IncomingCallData.callId)
+//        put(CALL_TYPE, IncomingCallData.callType)
+//    }
+//    val data = contentResolver.insert(
+//        Uri.parse(CONTENT_URI + INCOMING_CALL_URI),
+//        values
+//    )
+//    voipLog?.log("Data --> $data")
+//}
 
 fun Context.updateVoipState(state: Int) {
     voipLog?.log("Setting Voip State --> $state")

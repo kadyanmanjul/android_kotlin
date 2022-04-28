@@ -14,10 +14,6 @@ import com.joshtalks.joshskills.base.constants.PEER_TO_PEER
 import com.joshtalks.joshskills.base.log.Feature
 import com.joshtalks.joshskills.base.log.JoshLog
 import com.joshtalks.joshskills.core.TAG
-import com.joshtalks.joshskills.core.Utils
-import com.joshtalks.joshskills.core.showToast
-import com.joshtalks.joshskills.ui.call.data.local.VoipPref
-import com.joshtalks.joshskills.ui.call.repository.RepositoryConstants
 import com.joshtalks.joshskills.ui.call.repository.RepositoryConstants.*
 import com.joshtalks.joshskills.ui.call.repository.WebrtcRepository
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.models.CallUIState
@@ -25,7 +21,6 @@ import com.joshtalks.joshskills.voip.constant.*
 import com.joshtalks.joshskills.voip.data.ServiceEvents
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.util.*
@@ -175,7 +170,7 @@ class VoiceCallViewModel : BaseViewModel() {
     }
 
     private fun getCallStatus(): Int {
-        val status = VoipPref.getVoipState()
+        val status = repository.getVoipState()
         return if (status == CONNECTED) {
             ONGOING
         } else {
