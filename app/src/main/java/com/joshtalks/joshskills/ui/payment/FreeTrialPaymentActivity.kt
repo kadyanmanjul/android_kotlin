@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.graphics.Color
 import android.graphics.Paint
 import android.net.Uri
 import android.os.Build
@@ -155,8 +156,6 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                 PrefManager.getStringValue(PAID_COURSE_TEST_ID)
             }
         }
-
-        currentTime = System.currentTimeMillis()
         initABTest()
         setObservers()
         logNewPaymentPageOpened()
@@ -384,6 +383,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
 
     private fun downloadDigitalCopy(url: String) {
         registerDownloadReceiver()
+        currentTime = System.currentTimeMillis()
         fileName = Utils.getFileNameFromURL(url)
         fileName = fileName.split(".").get(0)
         fileName = fileName + currentTime.toString() + ".pdf"
@@ -653,6 +653,18 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                 binding.seeCourseList.visibility = View.GONE
             }
             if(!isNewFlowActive && isSyllabusActive) binding.syllabusLayout.visibility = View.VISIBLE
+        }
+        if(!isNetworkAvailable()){
+            binding.freeTrialTimer.visibility = View.INVISIBLE
+            binding.applyCoupon.visibility = View.INVISIBLE
+            binding.txtLabelHeading.visibility = View.INVISIBLE
+            binding.oldViewCourseInfo.visibility = View.INVISIBLE
+            binding.floatingContainer.visibility = View.GONE
+            binding.cardsContainer.visibility = View.INVISIBLE
+            binding.syllabusLayout.visibility = View.INVISIBLE
+            binding.toolbar.visibility = View.VISIBLE
+            binding.noInternet.visibility = View.VISIBLE
+            binding.parentContainer.setBackgroundColor(Color.WHITE)
         }
     }
 
