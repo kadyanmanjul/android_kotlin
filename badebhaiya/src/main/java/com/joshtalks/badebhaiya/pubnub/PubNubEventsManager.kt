@@ -52,7 +52,7 @@ object PubNubEventsManager {
         customMessage.addProperty("short_name", userName)
         customMessage.addProperty("is_mic_on", false)
         customMessage.addProperty("action", "MOVE_TO_AUDIENCE")
-        PubNubManager.updateInviteSentToUserForSpeaker(userUid.toInt())
+//        PubNubManager.updateInviteSentToUserForSpeaker(userUid.toInt())
         PubNubManager.sendCustomMessage(customMessage)
 
     }

@@ -250,12 +250,14 @@ object PubNubManager {
         val oldAudienceList = arraySetOf<LiveRoomUser>()
         oldAudienceList.addAll(audienceList)
         val user = oldAudienceList?.filter { it.id == userId }
-        user?.get(0)?.let { it ->
-            oldAudienceList.remove(it)
-            it.isSpeakerAccepted = true
-            oldAudienceList.add(it)
+        if (!user.isNullOrEmpty()){
+            user?.get(0)?.let { it ->
+                oldAudienceList.remove(it)
+                it.isSpeakerAccepted = true
+                oldAudienceList.add(it)
 
-            postToAudienceList(oldAudienceList)
+                postToAudienceList(oldAudienceList)
+            }
         }
     }
 
@@ -274,21 +276,22 @@ object PubNubManager {
         }
     }
 
-    fun updateInviteSentToUserForAudience(userId: Int) {
-        val audienceList = audienceList
+    private fun updateInviteSentToUserForAudience(userToMove: LiveRoomUser) {
+//        val audienceList = audienceList
         if (audienceList.isNullOrEmpty()) {
             return
         }
-        val oldAudienceList = arraySetOf<LiveRoomUser>()
-        oldAudienceList.addAll(audienceList)
-        val user = oldAudienceList?.filter { it.id == userId }
-        user?.get(0)?.let { it ->
-            oldAudienceList.remove(it)
-            it.isSpeakerAccepted = false
-            oldAudienceList.add(it)
+//        val oldAudienceList = arraySetOf<LiveRoomUser>()
+//        oldAudienceList.addAll(audienceList)
+//        val user = oldAudienceList?.filter { it.id == userId }
+//        user?.get(0)?.let { it ->
+//            oldAudienceList.remove(it)
+            userToMove.isSpeakerAccepted = false
+//            oldAudienceList.add(it)
+//
+//            postToAudienceList(oldAudienceList)
 
-            postToAudienceList(oldAudienceList)
-        }
+//        }
     }
 
     fun updateHandRaisedToUser(userId: Int, isHandRaised: Boolean) {
@@ -446,7 +449,7 @@ object PubNubManager {
                 userToMove.isMicOn = false
                 userToMove.isHandRaised = false
                 userToMove.isInviteSent = true
-                updateInviteSentToUserForAudience(userToMove.id!!)
+                updateInviteSentToUserForAudience(userToMove)
                 speakersList.add(userToMove)
                 postToSpeakersList(speakersList)
                 message.what = MOVE_TO_SPEAKER
