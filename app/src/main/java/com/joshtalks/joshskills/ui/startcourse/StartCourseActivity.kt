@@ -168,4 +168,27 @@ class StartCourseActivity : CoreJoshActivity() {
         }
     }
 
+    override fun onBackPressed() {
+        if (isUserRegistered) {
+            if(isRegProfileComplete())
+                startActivity(getInboxActivityIntent())
+            else {
+                val intent = Intent(this, SignUpActivity::class.java).apply {
+                    addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    putExtra(FLOW_FROM, "payment journey")
+                }
+                startActivity(intent)
+                this.finish()
+            }
+        } else {
+            val intent = Intent(this, SignUpActivity::class.java).apply {
+                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                putExtra(FLOW_FROM, "payment journey")
+            }
+            startActivity(intent)
+            this.finish()
+        }
+    }
 }
