@@ -69,7 +69,7 @@ class LauncherActivity : AppCompatActivity() {
                 if (viewUserId == null) {
                     Intent(this@LauncherActivity, FeedActivity::class.java)
                 } else {
-                    ProfileActivity.getIntent(this@LauncherActivity, viewUserId)
+                    ProfileActivity.getIntent(this@LauncherActivity, viewUserId, true)
                 }
             }
             else -> SignUpActivity.getIntent(

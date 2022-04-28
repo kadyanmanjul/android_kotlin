@@ -38,6 +38,8 @@ class ProfileActivity: AppCompatActivity(), FeedAdapter.ConversationRoomItemCall
         DataBindingUtil.setContentView(this, R.layout.activity_profile)
     }
 
+    private var isFromDeeplink = false
+
     private val viewModel by lazy {
         ViewModelProvider(this)[ProfileViewModel::class.java]
     }
@@ -51,7 +53,7 @@ class ProfileActivity: AppCompatActivity(), FeedAdapter.ConversationRoomItemCall
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         handleIntent()
-        viewModel.getProfileForUser(userId ?: (User.getInstance().userId))
+        viewModel.getProfileForUser(userId ?: (User.getInstance().userId), isFromDeeplink)
         feedViewModel.setIsBadeBhaiyaSpeaker()
         binding.lifecycleOwner = this
         binding.handler = this
@@ -81,7 +83,9 @@ class ProfileActivity: AppCompatActivity(), FeedAdapter.ConversationRoomItemCall
 
     private fun handleIntent() {
         userId = intent.getStringExtra(USER_ID)
+        isFromDeeplink = intent.getBooleanExtra(FROM_DEEPLINK, false)
         if (userId.isNullOrEmpty()) User.getInstance().userId
+
     }
 
     private fun addObserver() {
@@ -151,7 +155,7 @@ class ProfileActivity: AppCompatActivity(), FeedAdapter.ConversationRoomItemCall
 
     fun updateFollowStatus() {
         viewModel.updateFollowStatus()
-        viewModel.getProfileForUser(userId ?: (User.getInstance().userId))
+        viewModel.getProfileForUser(userId ?: (User.getInstance().userId), isFromDeeplink)
     }
 
     private fun speakerFollowedUIChanges() {
@@ -172,6 +176,7 @@ class ProfileActivity: AppCompatActivity(), FeedAdapter.ConversationRoomItemCall
     }
 
     companion object {
+        const val FROM_DEEPLINK = "from_deeplink"
         fun openProfileActivity(context: Context, userId: String = EMPTY) {
             Intent(context, ProfileActivity::class.java).apply {
                 putExtra(USER_ID, userId)
@@ -179,9 +184,10 @@ class ProfileActivity: AppCompatActivity(), FeedAdapter.ConversationRoomItemCall
                 context.startActivity(this)
             }
         }
-        fun getIntent(context: Context, userId: String = EMPTY): Intent {
+        fun getIntent(context: Context, userId: String = EMPTY, isFromDeeplink: Boolean = false): Intent {
             return Intent(context, ProfileActivity::class.java).apply {
                 putExtra(USER_ID, userId)
+                putExtra(FROM_DEEPLINK, isFromDeeplink)
             }
         }
     }

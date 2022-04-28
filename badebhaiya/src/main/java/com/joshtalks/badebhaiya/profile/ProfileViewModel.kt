@@ -79,10 +79,13 @@ class ProfileViewModel : ViewModel() {
         }
     }
 
-    fun getProfileForUser(userId: String) {
+    fun getProfileForUser(userId: String, isFromDeeplink: Boolean = false) {
         viewModelScope.launch {
             try {
                 userIdForOpenedProfile.postValue(userId)
+                if (true){
+                    updateFollowStatus()
+                }
                 val response = repository.getProfileForUser(userId)
                 if (response.isSuccessful) {
                     response.body()?.let {

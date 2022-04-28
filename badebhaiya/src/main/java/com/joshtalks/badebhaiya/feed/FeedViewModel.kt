@@ -124,6 +124,8 @@ class FeedViewModel : ViewModel() {
                     }
                     singleLiveEvent.postValue(message)
                 }
+                Log.d("sahil", "joinRoom:$response")
+
             } catch (e: Exception) {
                 e.showAppropriateMsg()
             } finally {
