@@ -93,9 +93,9 @@ class RaisedHandsBottomSheet(
     }
 
     private fun addObserver() {
-        viewModel.audienceList.observe(requireActivity(),{
+        viewModel.audienceList.observe(requireActivity()) {
             refreshAdapterWithNewList(it)
-        })
+        }
     }
 
     private fun refreshAdapterWithNewList(handRaisedList: ArraySet<LiveRoomUser>?) {
