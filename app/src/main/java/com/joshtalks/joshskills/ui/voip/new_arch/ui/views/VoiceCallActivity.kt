@@ -114,12 +114,12 @@ class VoiceCallActivity : BaseActivity() {
 
     override fun onStart() {
         super.onStart()
-        vm.boundService()
+        vm.boundService(this)
     }
 
     override fun onStop() {
         super.onStop()
-        vm.unboundService()
+        vm.unboundService(this)
     }
 
     override fun onBackPressed() {

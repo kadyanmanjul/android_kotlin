@@ -96,33 +96,33 @@ fun Context.updateStartCallTime(
     voipLog?.log("Data --> $data")
 }
 
-fun Context.updateUserDetails(
-    remoteUserName: String = "",
-    remoteUserImage: String? = null,
-    callId: Int = -1,
-    callType: Int = -1,
-    remoteUserAgoraId: Int = -1,
-    currentUserAgoraId: Int = -1,
-    channelName: String = "",
-    topicName: String = ""
-) {
-    Log.d(TAG, "updateUserDetails: ")
-    val values = ContentValues(8).apply {
-        put(REMOTE_USER_NAME, remoteUserName)
-        put(REMOTE_USER_IMAGE, remoteUserImage)
-        put(REMOTE_USER_AGORA_ID, remoteUserAgoraId)
-        put(CALL_ID, callId)
-        put(CALL_TYPE, callType)
-        put(CHANNEL_NAME, channelName)
-        put(TOPIC_NAME, topicName)
-        put(CURRENT_USER_AGORA_ID, currentUserAgoraId)
-    }
-    val data = contentResolver.insert(
-        Uri.parse(CONTENT_URI + VOIP_USER_DATA_URI),
-        values
-    )
-    voipLog?.log("Data --> $data")
-}
+//fun Context.updateUserDetails(
+//    remoteUserName: String = "",
+//    remoteUserImage: String? = null,
+//    callId: Int = -1,
+//    callType: Int = -1,
+//    remoteUserAgoraId: Int = -1,
+//    currentUserAgoraId: Int = -1,
+//    channelName: String = "",
+//    topicName: String = ""
+//) {
+//    Log.d(TAG, "updateUserDetails: ")
+//    val values = ContentValues(8).apply {
+//        put(REMOTE_USER_NAME, remoteUserName)
+//        put(REMOTE_USER_IMAGE, remoteUserImage)
+//        put(REMOTE_USER_AGORA_ID, remoteUserAgoraId)
+//        put(CALL_ID, callId)
+//        put(CALL_TYPE, callType)
+//        put(CHANNEL_NAME, channelName)
+//        put(TOPIC_NAME, topicName)
+//        put(CURRENT_USER_AGORA_ID, currentUserAgoraId)
+//    }
+//    val data = contentResolver.insert(
+//        Uri.parse(CONTENT_URI + VOIP_USER_DATA_URI),
+//        values
+//    )
+//    voipLog?.log("Data --> $data")
+//}
 
 fun Context.getStartCallTime(): Long {
     val startCallTimeCursor = contentResolver.query(

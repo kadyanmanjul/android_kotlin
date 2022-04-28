@@ -4,7 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.ui.call.repository.WebrtcRepository
+//import com.joshtalks.joshskills.ui.call.repository.WebrtcRepository
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.voipLog
 import kotlinx.android.synthetic.main.activity_call.*
 import kotlinx.coroutines.CoroutineScope
@@ -15,7 +15,7 @@ private const val TAG = "CallActivity"
 class CallActivity : AppCompatActivity() {
     val scope = CoroutineScope(Dispatchers.IO)
     val handler by lazy{Handler(mainLooper)}
-    val webrtc = WebrtcRepository()
+    //val webrtc = WebrtcRepository()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,6 +35,6 @@ class CallActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         voipLog?.log("onStart is called")
-        webrtc.startService()
+        //webrtc.startService()
     }
 }

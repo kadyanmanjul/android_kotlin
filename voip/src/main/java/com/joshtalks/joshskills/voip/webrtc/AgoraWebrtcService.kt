@@ -19,7 +19,7 @@ import timber.log.Timber
 
 private const val JOINING_CHANNEL_SUCCESS = 0
 private const val USER_ALREADY_IN_A_CHANNEL = -17
-
+private const val TAG = "AgoraWebrtcService"
 internal object AgoraWebrtcService : WebrtcService {
     // TODO: Need to change name
     private var reconnectingJob : Job? = null
@@ -28,7 +28,7 @@ internal object AgoraWebrtcService : WebrtcService {
     private var agoraEngine: RtcEngine? = null
     private val eventFlow : MutableSharedFlow<CallState> = MutableSharedFlow(replay = 0)
     private val coroutineExceptionHandler = CoroutineExceptionHandler{_, e ->
-        Timber.tag("Coroutine Exception").d("Handled...")
+        Timber.tag("AgoraWebrtcService").d("Handled...")
         e.printStackTrace()
     }
     private val ioScope = CoroutineScope(Dispatchers.IO + coroutineExceptionHandler)
@@ -42,23 +42,28 @@ internal object AgoraWebrtcService : WebrtcService {
     init { observeCallbacks() }
 
     override suspend fun initWebrtcService() {
+        Log.d(TAG, "initWebrtcService: ")
         withContext(ioScope.coroutineContext) {
-            if (agoraEngine == null)
-                synchronized(this) {
-                    if (agoraEngine != null)
-                        agoraEngine
-                    else {
-                        agoraEngine = RtcEngine.create(
-                            Utils.context,
-                            BuildConfig.AGORA_API_KEY,
-                            agoraEvent.handler
-                        ).apply {
-                            setParameters("{\"rtc.peer.offline_period\":5000}")
-                            setParameters("{\"che.audio.keep.audiosession\":true}")
+            try {
+                if (agoraEngine == null)
+                    synchronized(this) {
+                        if (agoraEngine != null)
+                            agoraEngine
+                        else {
+                            agoraEngine = RtcEngine.create(
+                                Utils.context,
+                                BuildConfig.AGORA_API_KEY,
+                                agoraEvent.handler
+                            ).apply {
+                                setParameters("{\"rtc.peer.offline_period\":5000}")
+                                setParameters("{\"che.audio.keep.audiosession\":true}")
+                            }
+                            Log.d(TAG, "initWebrtcService: ")
                         }
-
                     }
-                }
+            } catch (e : Exception) {
+                e.printStackTrace()
+            }
         }
     }
 
@@ -198,8 +203,10 @@ internal object AgoraWebrtcService : WebrtcService {
                         currentState = IDLE
                     }
                     CallState.Error -> {
-                        if(currentState == JOINED || currentState == CONNECTED || currentState == JOINING)
+                        if(currentState == JOINED || currentState == CONNECTED || currentState == JOINING) {
+                            Log.d("disconnectCall()", "observeCallbacks: ")
                             disconnectCall()
+                        }
                         else {
                             state.emit(IDLE)
                             currentState = IDLE
@@ -217,6 +224,7 @@ internal object AgoraWebrtcService : WebrtcService {
             reconnectingJob = ioScope.launch {
                 delay(RECONNECTING_TIMEOUT_IN_MILLIS)
                 eventFlow.emit(CallState.ReconnectingFailed)
+                Log.d("disconnectCall()", "startReconnectingTimeoutTimer: ")
                 disconnectCall()
             }
         }

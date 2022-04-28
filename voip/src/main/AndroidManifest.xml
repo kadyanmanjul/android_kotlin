@@ -9,8 +9,6 @@
     <uses-permission android:name="com.joshtalks.permission.READ_WRITE_CONTENT"/>
     <application>
         <service android:name=".data.CallingRemoteService"
-            android:process=":joshSkillsCallingService"
-            android:stopWithTask="false"
             android:foregroundServiceType="phoneCall"/>
         <!-- Audio Control Module Receivers -->
         <receiver
