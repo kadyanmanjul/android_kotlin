@@ -1192,14 +1192,13 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                 .subscribe(
                     {
                         viewModel.userData.value?.photoUrl = it.url
-                        val date = DD_MM_YYYY.parse( viewModel.userData.value?.dateOfBirth)
-                        if (it.url.isBlank()) {
+                        if (it.url.isEmpty()) {
                             var updateProfilePayload = UpdateProfilePayload()
                             updateProfilePayload.apply {
                                 basicDetails?.apply {
                                     photoUrl = ""
                                     firstName = viewModel.userData.value?.name
-                                    dateOfBirth =  DATE_FORMATTER.format(date)
+                                    dateOfBirth = if(!viewModel.userData.value?.dateOfBirth.isNullOrEmpty()) DATE_FORMATTER.format(DD_MM_YYYY.parse( viewModel.userData.value?.dateOfBirth)) else null
                                     homeTown = viewModel.userData.value?.hometown
                                     futureGoals = viewModel.userData.value?.futureGoals
                                     favouriteJoshTalk = viewModel.userData.value?.favouriteJoshTalk
