@@ -345,16 +345,18 @@ class JoshGroupActivity : BaseGroupActivity() {
 
     private fun removeGroupFromDb(groupId: String) {
         if (groupId == vm.openedGroupId)
-            while (supportFragmentManager.backStackEntryCount > 0)
-                onBackPressed()
+            if (vm.groupType.get() != DM_CHAT) {
+                while (supportFragmentManager.backStackEntryCount > 0)
+                    onBackPressed()
+            }
         CoroutineScope(Dispatchers.IO).launch {
             val groupName = vm.repository.getGroupName(groupId)
             vm.repository.leaveGroupFromLocal(groupId)
-            if(vm.groupType.get() != DM_CHAT){
+            if (vm.groupType.get() != DM_CHAT) {
                 withContext(Dispatchers.Main) {
                     showRemovedAlert(groupName)
                 }
-            }else{
+            } else {
                 withContext(Dispatchers.Main) {
                     onBackPressed()
                 }
