@@ -23,9 +23,7 @@ abstract class VoipDatabase : RoomDatabase() {
                     context.applicationContext,
                     VoipDatabase::class.java,
                     "voip_database"
-                ).fallbackToDestructiveMigration()
-                    .setJournalMode(JournalMode.WRITE_AHEAD_LOGGING)
-                    .build()
+                ).build()
                 INSTANCE = instance
                 instance
             }
