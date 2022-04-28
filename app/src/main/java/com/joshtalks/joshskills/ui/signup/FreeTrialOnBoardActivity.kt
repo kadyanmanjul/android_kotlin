@@ -159,6 +159,10 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
             MixPanelTracker.publishEvent(MixPanelEvent.JI_HAAN).push()
             if (Mentor.getInstance().getId().isNotEmpty()) {
                 viewModel.saveImpression(IMPRESSION_START_TRIAL_YES)
+                //to check
+                val langCode = Utils.getLangCodeFromlangTestId(language.testId)
+                PrefManager.put(USER_LOCALE, langCode)
+                checkLanguageAndUpdate(langCode)
                 PrefManager.put(ONBOARDING_STAGE, OnBoardingStage.JI_HAAN_CLICKED.value)
                 if (TruecallerSDK.getInstance().isUsable)
                     openTrueCallerBottomSheet()

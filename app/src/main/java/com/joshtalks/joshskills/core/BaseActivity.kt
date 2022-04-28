@@ -779,26 +779,16 @@ abstract class BaseActivity :
 
 
 
-    fun checkLanguageAndUpdate(){
-        val lCode = when(PrefManager.getStringValue(CURRENT_COURSE_ID)) {
-            "1203"-> "bn"
-            "1206"-> "pa"
-            "1207"-> "mr"
-            "1209"-> "ml"
-            "1210"-> "ta"
-            "1211"-> "te"
-            "151"-> "hi"
-            else -> "hi"
-        }
-        requestWorkerForChangeLanguage(lCode, canCreateActivity = false)
+    fun checkLanguageAndUpdate(langCode: String) {
+        requestWorkerForChangeLanguage(langCode, canCreateActivity = false)
     }
+
     fun requestWorkerForChangeLanguage(
             lCode: String,
             successCallback: (() -> Unit)? = null,
             errorCallback: (() -> Unit)? = null,
             canCreateActivity: Boolean = true
     ) {
-        Log.d("requestWorker",lCode)
         val uuid = WorkManagerAdmin.getLanguageChangeWorker(lCode)
         val observer = Observer<WorkInfo> { workInfo ->
             workInfo?.run {
