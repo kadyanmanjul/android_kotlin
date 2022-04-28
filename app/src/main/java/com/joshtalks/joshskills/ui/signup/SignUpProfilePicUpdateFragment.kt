@@ -6,10 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.CURRENT_COURSE_ID
-import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
-import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
@@ -49,9 +46,7 @@ class SignUpProfilePicUpdateFragment : BaseSignUpFragment() {
         binding.addPhotoText.text=
             AppObjectController.getFirebaseRemoteConfig()
                 .getString(FirebaseRemoteConfigKey.ADD_PROFILE_PHOTO_TEXT+"_"+ PrefManager.getStringValue(
-                    CURRENT_COURSE_ID
-                ))
-
+                    CURRENT_COURSE_ID, defaultValue = DEFAULT_COURSE_ID))
     }
 
     fun submitProfilePic() {

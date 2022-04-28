@@ -21,7 +21,7 @@ data class LanguageItem(
                 val listType: Type = object : TypeToken<List<LanguageItem>>() {}.type
                 return AppObjectController.gsonMapper.fromJson(
                     AppObjectController.getFirebaseRemoteConfig().getString(
-                        FirebaseRemoteConfigKey.NEW_LANGUAGES_SUPPORTED
+                        FirebaseRemoteConfigKey.LANGUAGES_SUPPORTED
                     ), listType
                 )
             } catch (ex: Exception) {
