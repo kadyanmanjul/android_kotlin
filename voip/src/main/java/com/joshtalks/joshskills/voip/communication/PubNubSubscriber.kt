@@ -48,7 +48,7 @@ internal class PubNubSubscriber : SubscribeCallback() {
                     return if (this::INSTANCE.isInitialized)
                         PubNubData(INSTANCE, messageFlow)
                     else {
-                        Companion.scope = scope
+                        this.scope = scope
                         PubNubData(PubNubSubscriber().also { INSTANCE = it }, messageFlow)
                     }
                 }

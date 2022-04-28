@@ -1,35 +1,52 @@
 package com.joshtalks.joshskills.voip.data.local
 
 import android.content.Context
-import androidx.room.Database
-import androidx.room.Room
-import androidx.room.RoomDatabase
+import androidx.room.*
 
 // TODO: Will be used to insert Disconnected call Data and Voip Analytics
+const val PENDING = 0
+const val SYNCED = 1
 
-// Annotates class to be a Room Database with a table (entity) of the Word class
-@Database(entities = arrayOf(), version = 1, exportSchema = false)
+@Database(entities = [DisconnectCallEntity::class], version = 1, exportSchema = true)
 abstract class VoipDatabase : RoomDatabase() {
+    abstract fun getDisconnectCallDao() : DisconnectCallDao
 
     companion object {
-        // Singleton prevents multiple instances of database opening at the
-        // same time.
+
         @Volatile
         private var INSTANCE: VoipDatabase? = null
 
         fun getDatabase(context: Context): VoipDatabase {
-            // if the INSTANCE is not null, then return it,
-            // if it is, then create the database
+
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     VoipDatabase::class.java,
                     "voip_database"
-                ).build()
+                ).fallbackToDestructiveMigration()
+                    .setJournalMode(JournalMode.WRITE_AHEAD_LOGGING)
+                    .build()
                 INSTANCE = instance
-                // return instance
                 instance
             }
         }
     }
+}
+
+@Entity(tableName = "voip_disconnect_table")
+data class DisconnectCallEntity(
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    val channelName: String,
+    val mentorId: String,
+    val duration: Long,
+    val status : Int = PENDING
+)
+
+@Dao
+interface DisconnectCallDao {
+    @Insert
+    suspend fun insertDisconnectedData(data: DisconnectCallEntity)
+
+    @Query(value = "DELETE from voip_disconnect_table WHERE status = 1")
+    suspend fun delete()
 }

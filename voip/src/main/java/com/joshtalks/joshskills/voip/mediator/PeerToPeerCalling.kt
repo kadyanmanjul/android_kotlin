@@ -1,23 +1,14 @@
 package com.joshtalks.joshskills.voip.mediator
 
-import android.app.PendingIntent
-import android.content.Context
-import android.content.Intent
-import android.os.Bundle
 import android.util.Log
 import android.widget.RemoteViews
-import com.joshtalks.joshskills.base.constants.INCOMING_CALL_ID
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_COURSE_ID
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_INCOMING_CALL_ID
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_TOPIC_ID
-import com.joshtalks.joshskills.base.constants.FROM_INCOMING_CALL
-import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_INCOMING_CALL_DECLINE
-import com.joshtalks.joshskills.base.constants.STARTING_POINT
 import com.joshtalks.joshskills.voip.R
 import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.communication.model.IncomingCall
-import com.joshtalks.joshskills.voip.data.CallingRemoteService
-import com.joshtalks.joshskills.voip.data.api.CallAcceptRequest
+import com.joshtalks.joshskills.voip.data.api.CallActionRequest
 import com.joshtalks.joshskills.voip.data.api.ConnectionRequest
 import com.joshtalks.joshskills.voip.data.api.VoipNetwork
 import com.joshtalks.joshskills.voip.getDeclineCallIntent
@@ -41,7 +32,7 @@ class PeerToPeerCalling : Calling {
         voipLog?.log("Calling API ---- $callData")
         if(callData.isIncomingCall()) {
             Log.d(TAG, "onPreCallConnect: INCOMING")
-            val request = CallAcceptRequest(
+            val request = CallActionRequest(
                 callId = callData[INTENT_DATA_INCOMING_CALL_ID] as Int,
                 mentorId = Utils.uuid,
                 response = "ACCEPT"
@@ -69,7 +60,7 @@ class PeerToPeerCalling : Calling {
     }
 
     override suspend fun onCallDecline(callData: HashMap<String, Any>) {
-        val request = CallAcceptRequest(
+        val request = CallActionRequest(
             callId = callData[INTENT_DATA_INCOMING_CALL_ID] as Int,
             mentorId = Utils.uuid,
             response = "DECLINE"

@@ -10,7 +10,10 @@ interface CallingApiService {
     suspend fun setUpConnection(@Body request : ConnectionRequest) : Response<Unit>
 
     @POST("$DIR/p2p/call_response")
-    suspend fun callAccept(@Body request : CallAcceptRequest) : Response<Unit>
+    suspend fun callAccept(@Body request : CallActionRequest) : Response<Unit>
+
+    @POST("$DIR/p2p/call_response")
+    suspend fun disconnectCall(@Body request : CallDisconnectRequest) : Response<Unit>
 }
 
 

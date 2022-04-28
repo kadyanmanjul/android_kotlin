@@ -5,17 +5,18 @@ import com.joshtalks.joshskills.voip.BuildConfig
 import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.communication.constants.ServerConstants
 import com.joshtalks.joshskills.voip.communication.model.*
+import com.joshtalks.joshskills.voip.data.api.CallDisconnectRequest
+import com.joshtalks.joshskills.voip.data.api.VoipNetwork
+import com.joshtalks.joshskills.voip.data.local.DisconnectCallEntity
+import com.joshtalks.joshskills.voip.data.local.SYNCED
+import com.joshtalks.joshskills.voip.data.local.VoipDatabase
 import com.joshtalks.joshskills.voip.voipLog
 import com.pubnub.api.PNConfiguration
 import com.pubnub.api.PubNub
-import com.pubnub.api.callbacks.SubscribeCallback
-import com.pubnub.api.enums.PNLogVerbosity
 import com.pubnub.api.enums.PNReconnectionPolicy
-import java.sql.Time
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collect
@@ -23,8 +24,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
-import okhttp3.logging.HttpLoggingInterceptor
-import org.jetbrains.annotations.NotNull
 import timber.log.Timber
 
 private const val TAG = "PubNubChannelService"
@@ -33,6 +32,12 @@ object PubNubChannelService : EventChannel {
     private val coroutineExceptionHandler = CoroutineExceptionHandler { _, e ->
         Timber.tag("Coroutine Exception").d("Handled...")
         e.printStackTrace()
+    }
+    private val database by lazy {
+        VoipDatabase.getDatabase(Utils.context!!.applicationContext)
+    }
+    private val callApiService by lazy {
+        VoipNetwork.getVoipApi()
     }
 
     var isReconnecting = false
@@ -112,6 +117,7 @@ object PubNubChannelService : EventChannel {
                     is Timeout -> event
                 }
                 Log.d(TAG, "emitEvent: Sending Message .... $message")
+                event.captureDisconnectEvent()
                 pubnub?.publish()
                     ?.channel(event.getAddress())
                     ?.meta(getMeta(event))
@@ -126,10 +132,40 @@ object PubNubChannelService : EventChannel {
         }
     }
 
-    private fun handleUnSentEvent(data : OutgoingData) {
-        if(data.getType() == ServerConstants.DISCONNECTED) {
-
+    private fun OutgoingData.captureDisconnectEvent() {
+        if(this.getType() == ServerConstants.DISCONNECTED) {
+            try {
+                val data = this as NetworkAction
+                ioScope.launch {
+                    data.insertIntoDb()
+                    callApiService.disconnectCall(data.toRequest())
+                    data.insertIntoDb(status = SYNCED)
+                    database.getDisconnectCallDao().delete()
+                }
+            } catch (e : Exception) {
+                e.printStackTrace()
+            }
         }
+    }
+
+    fun NetworkAction.toRequest() : CallDisconnectRequest {
+        return CallDisconnectRequest(
+            duration = this.getDuration(),
+            response = "DISCONNECT",
+            mentorId = this.getAddress(),
+            channelName = this.getChannelName()
+        )
+    }
+
+    private suspend fun NetworkAction.insertIntoDb(status : Int = 0) {
+        database.getDisconnectCallDao().insertDisconnectedData(
+            DisconnectCallEntity(
+                channelName = this.getChannelName(),
+                mentorId = this.getAddress(),
+                duration = this.getDuration(),
+                status = status
+            )
+        )
     }
 
     private fun getMeta(event : OutgoingData) = if(Utils.uuid == event.getAddress()) null else event.getType()

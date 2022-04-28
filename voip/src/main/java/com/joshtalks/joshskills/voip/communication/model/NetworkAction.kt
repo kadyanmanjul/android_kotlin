@@ -17,7 +17,6 @@ data class NetworkAction(
 	@field:SerializedName("channel_name")
 	private val channelName: String,
 
-
 	private val address : String
 
 ) : NetworkActionData {
