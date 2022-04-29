@@ -13,6 +13,7 @@ import com.joshtalks.joshskills.voip.data.local.VoipDatabase
 import com.joshtalks.joshskills.voip.voipLog
 import com.pubnub.api.PNConfiguration
 import com.pubnub.api.PubNub
+import com.pubnub.api.PubNubException
 import com.pubnub.api.enums.PNReconnectionPolicy
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -21,8 +22,14 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import timber.log.Timber
+import java.util.concurrent.ConcurrentHashMap
 
 private const val TAG = "PubNubChannelService"
+enum class PubnubState {
+    CONNECTED,
+    RECONNECTED,
+    DISCONNECTED
+}
 
 class PubNubChannelService(val scope: CoroutineScope) : EventChannel {
     private val database by lazy {
@@ -91,6 +98,7 @@ class PubNubChannelService(val scope: CoroutineScope) : EventChannel {
             try {
                 val message = when (event) {
                     is NetworkActionData -> event as NetworkAction
+                    is UIState -> event as UI
                     is UserActionData -> event as UserAction
                     is Timeout -> event
                 }
@@ -153,6 +161,10 @@ class PubNubChannelService(val scope: CoroutineScope) : EventChannel {
         return eventFlow
     }
 
+    override fun observeChannelState(): SharedFlow<PubnubState> {
+        return listener.observeChannelState()
+    }
+
     private fun observeIncomingMessage() {
         Log.d(TAG, "observeIncomingMessage: ${listener.hashCode()}")
         scope.launch {
@@ -163,6 +175,7 @@ class PubNubChannelService(val scope: CoroutineScope) : EventChannel {
                     is MessageData -> eventFlow.emit(it)
                     is ChannelData -> eventFlow.emit(it)
                     is IncomingCall -> eventFlow.emit(it)
+                    is UI -> eventFlow.emit(it)
                     is Error -> eventFlow.emit(it)
                 }
             }

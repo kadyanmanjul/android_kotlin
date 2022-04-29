@@ -24,6 +24,11 @@ sealed interface OutgoingData : Communication {
     fun getAddress(): String?
 }
 
+sealed interface UIState : UserActionData {
+    fun isHold() : Boolean
+    fun isMute() : Boolean
+}
+
 sealed interface IncomingCallData : Communication {
     fun getCallId() : Int
 }

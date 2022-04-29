@@ -23,11 +23,9 @@ import com.joshtalks.joshskills.voip.audiocontroller.AudioRouteConstants.Headset
 import com.joshtalks.joshskills.voip.audiocontroller.AudioRouteConstants.SpeakerAudio
 import com.joshtalks.joshskills.voip.calldetails.CallDetails
 import com.joshtalks.joshskills.voip.calldetails.IncomingCallData
+import com.joshtalks.joshskills.voip.communication.PubnubState
 import com.joshtalks.joshskills.voip.communication.constants.ServerConstants
-import com.joshtalks.joshskills.voip.communication.model.ChannelData
-import com.joshtalks.joshskills.voip.communication.model.IncomingCall
-import com.joshtalks.joshskills.voip.communication.model.NetworkAction
-import com.joshtalks.joshskills.voip.communication.model.UserAction
+import com.joshtalks.joshskills.voip.communication.model.*
 import com.joshtalks.joshskills.voip.constant.*
 import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.mediator.CallServiceMediator
@@ -177,6 +175,15 @@ class CallingRemoteService : Service() {
                             RECONNECTED -> {
                                 currentUiState = currentUiState.copy(isReconnecting = false)
                                 uiStateFlow.value = currentUiState
+                                Log.d(TAG, "-- RECONNECTED -- : $currentUiState")
+                                mediator.sendEventToServer(UI(
+                                    channelName = CallDetails.agoraChannelName,
+                                    type = ServerConstants.UI_STATE_UPDATED,
+                                    isHold = if(currentUiState.isOnHold) 1 else 0,
+                                    isMute = if(currentUiState.isOnMute) 1 else 0,
+                                    address = CallDetails.partnerMentorId ?: ""
+                                ))
+                                Log.d(TAG, "-- RECONNECTED SENT -- : $currentUiState")
                             }
                             RECEIVED_CHANNEL_DATA -> {
                                 val channelData = it.obj as? ChannelData
@@ -186,6 +193,24 @@ class CallingRemoteService : Service() {
                                     callType = channelData?.getType() ?: 0,
                                     topicName = channelData?.getCallingTopic() ?: ""
                                 )
+                                uiStateFlow.value = currentUiState
+                            }
+                            UI_STATE_UPDATED -> {
+                                val uiData = it.obj as UI
+                                if(uiData.getType() == ServerConstants.UI_STATE_UPDATED)
+                                mediator.sendEventToServer(UI(
+                                    channelName = CallDetails.agoraChannelName,
+                                    type = ServerConstants.ACK_UI_STATE_UPDATED,
+                                    isHold = if(currentUiState.isOnHold) 1 else 0,
+                                    isMute = if(currentUiState.isOnMute) 1 else 0,
+                                    address = CallDetails.partnerMentorId ?: ""
+                                ))
+                                Log.d(TAG, "-- UI_STATE -- : ${currentUiState}")
+                                currentUiState = currentUiState.copy(
+                                    isRemoteUserMuted = uiData.isMute(),
+                                    isOnHold = uiData.isHold()
+                                )
+                                Log.d(TAG, "-- UI_STATE_UPDATED -- : ${currentUiState}")
                                 uiStateFlow.value = currentUiState
                             }
 
@@ -266,6 +291,27 @@ class CallingRemoteService : Service() {
 
             ioScope.launch {
                 try {
+                    mediator.observeChannelState().collect {
+                        when(it) {
+                            PubnubState.CONNECTED -> {
+
+                            }
+                            PubnubState.RECONNECTED -> {
+                                if(currentState == CONNECTED)
+                                    sendCurrentUIState()
+                            }
+                            PubnubState.DISCONNECTED -> {
+
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+
+                }
+            }
+
+            ioScope.launch {
+                try {
                     mediator.observeState().collect {
                         currentState = it
                         updateVoipState(it)
@@ -278,6 +324,16 @@ class CallingRemoteService : Service() {
                 }
             }
         }
+    }
+
+    private fun sendCurrentUIState() {
+        mediator.sendEventToServer(UI(
+            channelName = CallDetails.agoraChannelName,
+            type = ServerConstants.UI_STATE_UPDATED,
+            isHold = if(currentUiState.isOnHold) 1 else 0,
+            isMute = if(currentUiState.isOnMute) 1 else 0,
+            address = CallDetails.partnerMentorId ?: ""
+        ))
     }
 
     override fun onBind(intent: Intent?): IBinder {
@@ -366,6 +422,8 @@ class CallingRemoteService : Service() {
     }
 
     fun changeMicState(isMicOn : Boolean) {
+        currentUiState = currentUiState.copy(isOnMute = isMicOn.not())
+        uiStateFlow.value = currentUiState
         val userAction = UserAction(
             if(isMicOn) ServerConstants.UNMUTE else ServerConstants.MUTE,
             CallDetails.agoraChannelName,
@@ -376,6 +434,8 @@ class CallingRemoteService : Service() {
     }
 
     fun changeSpeakerState(isSpeakerOn : Boolean) {
+        currentUiState = currentUiState.copy(isSpeakerOn = isSpeakerOn)
+        uiStateFlow.value = currentUiState
         if(isSpeakerOn)
             audioController.switchAudioToSpeaker()
         else

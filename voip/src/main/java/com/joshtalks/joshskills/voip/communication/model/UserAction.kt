@@ -25,3 +25,42 @@ data class UserAction(
 		return address
 	}
 }
+
+// TODO: Different Class
+data class UI(
+
+	@field:SerializedName("type")
+	private val type: Int,
+
+	@field:SerializedName("channel_name")
+	private val channelName: String,
+
+	@field:SerializedName("is_hold")
+	private val isHold: Int,
+
+	@field:SerializedName("is_mute")
+	private val isMute: Int,
+
+	private val address : String
+
+) : UIState {
+	override fun getType(): Int {
+		return type
+	}
+
+	override fun isHold(): Boolean {
+		return isHold == 1
+	}
+
+	override fun isMute(): Boolean {
+		return isMute == 1
+	}
+
+	override fun getChannelName(): String {
+		return channelName
+	}
+
+	override fun getAddress(): String {
+		return address
+	}
+}

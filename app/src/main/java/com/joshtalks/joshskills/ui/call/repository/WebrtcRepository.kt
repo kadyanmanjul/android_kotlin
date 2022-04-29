@@ -115,19 +115,6 @@ class WebrtcRepository(scope : CoroutineScope) {
 
     }
 
-    private fun checkIsValidNetworkAction() {
-        if(Utils.isInternetAvailable().not()) {
-            /**
-             * 1. Mute
-             * 2. Hold
-             * 3. Disconnect
-             *
-             * If Disconnect is fired then Others are not needed
-             * If Hold is fired then mute is not needed
-             */
-        }
-    }
-
     fun clearRepository() {
         //ioScope.cancel()
     }
