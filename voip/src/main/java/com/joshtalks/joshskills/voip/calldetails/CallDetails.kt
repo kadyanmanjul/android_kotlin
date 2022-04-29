@@ -7,6 +7,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
 private const val TAG = "CallDetails"
+
 object CallDetails {
     private val mutex = Mutex()
 
