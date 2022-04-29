@@ -102,4 +102,6 @@ data class GroupsItem(
     override fun getGroupText() = requestGroupText ?: ""
 
     override fun getAgoraId() = agoraUid ?: 0
+
+    override fun getLastMessageText() = lastMessage ?: EMPTY
 }
