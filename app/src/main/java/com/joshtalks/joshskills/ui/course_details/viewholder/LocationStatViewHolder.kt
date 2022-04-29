@@ -12,6 +12,9 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.EmptyEventBus
@@ -23,6 +26,7 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
+import com.mixpanel.android.mpmetrics.MixpanelAPI
 import com.patloew.colocation.CoGeocoder
 import java.util.*
 import java.util.regex.Pattern
@@ -34,7 +38,10 @@ open class LocationStatViewHolder(
     override val sequenceNumber: Int,
     private var locationStats: LocationStats,
     val activity: FragmentActivity,
-    private val context: Context = AppObjectController.joshApplication
+    private val context: Context = AppObjectController.joshApplication,
+    val testId: Int,
+    val coursePrice: String,
+    val courseName: String
 ) : CourseDetailsBaseCell(type, sequenceNumber) {
 
     @com.mindorks.placeholderview.annotations.View(R.id.background_image_view)
@@ -91,6 +98,12 @@ open class LocationStatViewHolder(
     }
 
     fun logAnalyticsEvent() {
+        MixPanelTracker.publishEvent(MixPanelEvent.COURSE_CHECK_LOCATION)
+            .addParam(ParamKeys.TEST_ID,testId)
+            .addParam(ParamKeys.COURSE_NAME,courseName)
+            .addParam(ParamKeys.COURSE_PRICE,coursePrice)
+            .addParam(ParamKeys.COURSE_ID,PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID))
+            .push()
         AppAnalytics.create(AnalyticsEvent.CHECK_LOCATION_CLICKED.NAME)
             .addBasicParam()
             .addUserDetails()

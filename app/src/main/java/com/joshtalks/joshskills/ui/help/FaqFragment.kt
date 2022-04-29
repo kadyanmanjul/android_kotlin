@@ -15,6 +15,8 @@ import com.google.android.material.chip.Chip
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.repository.server.FAQCategory
 import kotlinx.android.synthetic.main.fragment_faq.chipGroupCategory
 import kotlinx.android.synthetic.main.fragment_faq.faqList
@@ -121,12 +123,19 @@ class FaqFragment : Fragment() {
             }
     }
 
-    private fun logCategorySelectedEvent() =
+    private fun logCategorySelectedEvent()  {
+        when(selectedCategory?.id){
+            1-> MixPanelTracker.publishEvent(MixPanelEvent.FAQ_TECHNICAL_ISSUES).push()
+            2-> MixPanelTracker.publishEvent(MixPanelEvent.FAQ_ACC_SETUP).push()
+            3-> MixPanelTracker.publishEvent(MixPanelEvent.FAQ_PAYMENT_AND_REFUND).push()
+            4-> MixPanelTracker.publishEvent(MixPanelEvent.FAQ_COURSES).push()
+        }
         AppAnalytics.create(AnalyticsEvent.FAQ_QUESTIONS_LIST_SCREEN.NAME)
             .addBasicParam()
             .addUserDetails()
             .addParam(AnalyticsEvent.FAQ_CATEGORY_SELECTED.NAME, selectedCategory?.categoryName)
             .push()
+    }
 
     override fun onStop() {
         appAnalytics.push()

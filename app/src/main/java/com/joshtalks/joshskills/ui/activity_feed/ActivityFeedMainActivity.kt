@@ -79,7 +79,7 @@ class ActivityFeedMainActivity : BaseGroupActivity() {
             activityFeedResponse.mentorId ?: EMPTY,
             arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
             null,
-            "RECENT_CALL",
+            "ACTIVITY_FEED",
             conversationId = null
         )
     }

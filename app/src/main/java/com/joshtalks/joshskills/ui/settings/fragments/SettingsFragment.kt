@@ -19,6 +19,9 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.core.memory.MemoryManagementWorker
 import com.joshtalks.joshskills.databinding.FragmentSettingsBinding
 import com.joshtalks.joshskills.repository.local.model.User
@@ -108,6 +111,9 @@ class SettingsFragment : Fragment() {
         binding.p2pSetting.isChecked = PrefManager.getBoolValue(CALL_RINGTONE_NOT_MUTE)
         binding.p2pSetting.setOnCheckedChangeListener { buttonView, isChecked ->
             PrefManager.put(CALL_RINGTONE_NOT_MUTE, isChecked)
+            MixPanelTracker.publishEvent(MixPanelEvent.SPEAKING_PARTNER_NOTIFICATION)
+                .addParam(ParamKeys.IS_CHECKED,isChecked)
+                .push()
         }
         if (PrefManager.getBoolValue(IS_FREE_TRIAL,false,false) && User.getInstance().isVerified.not()){
             binding.personalInfoTv.isEnabled = false
@@ -122,6 +128,7 @@ class SettingsFragment : Fragment() {
     }
 
     fun clearDownloads() {
+        MixPanelTracker.publishEvent(MixPanelEvent.CLEAR_ALL_DOWNLOADS).push()
         logEvent(AnalyticsEvent.CLEAR_ALL_DOWNLOADS.name)
         val data =
             workDataOf(MemoryManagementWorker.CLEANUP_TYPE to MemoryManagementWorker.CLEANUP_TYPE_FORCE)
@@ -170,6 +177,7 @@ class SettingsFragment : Fragment() {
     }
 
     fun openSelectQualityFragment() {
+        MixPanelTracker.publishEvent(MixPanelEvent.DOWNLOAD_QUALITY).push()
         (requireActivity() as BaseActivity).replaceFragment(
             R.id.settings_container, SelectResolutionFragment(), SelectResolutionFragment.TAG,
             TAG
@@ -177,12 +185,14 @@ class SettingsFragment : Fragment() {
     }
 
     fun openSelectLanguageFragment() {
+        MixPanelTracker.publishEvent(MixPanelEvent.LANGUAGE_CHANGED).push()
         (requireActivity() as BaseActivity).replaceFragment(
             R.id.settings_container, LanguageFragment(), LanguageFragment.TAG, TAG
         )
     }
 
     fun openPersonalInfoFragment() {
+        MixPanelTracker.publishEvent(MixPanelEvent.PERSONAL_INFORMATION).push()
         logEvent(AnalyticsEvent.PERSONAL_PROFILE_CLICKED.name)
         if (User.getInstance().isVerified) {
             (requireActivity() as BaseActivity).replaceFragment(
@@ -194,11 +204,12 @@ class SettingsFragment : Fragment() {
     }
 
     private fun signout() {
-        showSignoutBottomView()
+//        showSignoutBottomView()
         (requireActivity() as BaseActivity).logout()
     }
 
     fun showSignoutBottomView() {
+        MixPanelTracker.publishEvent(MixPanelEvent.SIGN_OUT_CLICKED).push()
         binding.clearBtn.text = getString(R.string.sign_out)
         action = PopupActions.SIGNOUT
         binding.clearDownloadsBottomTv.text = AppObjectController.getFirebaseRemoteConfig()
@@ -207,6 +218,7 @@ class SettingsFragment : Fragment() {
     }
 
     fun showClearDownloadsView() {
+        MixPanelTracker.publishEvent(MixPanelEvent.CLEAR_ALL_DOWNLOADS_CLICKED).push()
         binding.clearBtn.text = getString(R.string.clear_all_downloads)
         action = PopupActions.CLEAR_DOWLOADS
         binding.clearDownloadsBottomTv.text = AppObjectController.getFirebaseRemoteConfig()
@@ -223,18 +235,22 @@ class SettingsFragment : Fragment() {
     }
 
     fun showNotificationSettingPopup() {
+        MixPanelTracker.publishEvent(MixPanelEvent.NOTIFICATIONS).push()
         (requireActivity() as SettingsActivity).openAppNotificationSettings()
     }
 
     fun showAutoStartPermissionPopup() {
+        MixPanelTracker.publishEvent(MixPanelEvent.AUTO_START).push()
         (requireActivity() as BaseActivity).checkForOemNotifications(AUTO_START_SETTINGS_POPUP)
     }
 
     fun hideBottomView() {
+        MixPanelTracker.publishEvent(MixPanelEvent.CANCEL).push()
         sheetBehaviour.state = BottomSheetBehavior.STATE_COLLAPSED
     }
 
     fun onRateUsClicked() {
+        MixPanelTracker.publishEvent(MixPanelEvent.RATE_US).push()
         val uri: Uri =
             Uri.parse("market://details?id=${AppObjectController.joshApplication.packageName}")
         val goToMarket = Intent(Intent.ACTION_VIEW, uri)
@@ -258,6 +274,7 @@ class SettingsFragment : Fragment() {
     }
 
     fun onPrivacyPolicyClicked() {
+        MixPanelTracker.publishEvent(MixPanelEvent.PRIVACY_PROFILE).push()
         val url = AppObjectController.getFirebaseRemoteConfig().getString("terms_condition_url")
         (activity as BaseActivity).showWebViewDialog(url)
 

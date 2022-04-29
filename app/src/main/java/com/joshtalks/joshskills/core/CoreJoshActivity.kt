@@ -4,6 +4,8 @@ import android.content.pm.ActivityInfo
 import android.os.Build
 import android.os.Bundle
 import androidx.lifecycle.lifecycleScope
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.repository.server.feedback.FeedbackTypes
 import com.joshtalks.joshskills.ui.feedback.FeedbackFragment
 import com.joshtalks.joshskills.ui.referral.PromotionDialogFragment
@@ -28,7 +30,10 @@ abstract class CoreJoshActivity : BaseActivity() {
     override fun onStart() {
         super.onStart()
         try {
-            iv_help.setOnClickListener { openHelpActivity() }
+            iv_help.setOnClickListener {
+                MixPanelTracker.publishEvent(MixPanelEvent.HELP).push()
+                openHelpActivity()
+            }
         } catch (ex: Throwable) {
             //LogException.catchException(ex)
         }

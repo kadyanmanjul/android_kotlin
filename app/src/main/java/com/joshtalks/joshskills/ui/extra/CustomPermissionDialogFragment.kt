@@ -12,6 +12,8 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.databinding.FragmentCustomPermissionDialogBinding
 import java.lang.Exception
 
@@ -102,12 +104,18 @@ class CustomPermissionDialogFragment : BottomSheetDialogFragment() {
     fun allow() {
         dismiss()
         when(popupType) {
-            NOTIFICATION_POPUP -> logImpression(AnalyticsEvent.NOTIFICATION_SETTINGS_YES)
+            NOTIFICATION_POPUP -> {
+                logImpression(AnalyticsEvent.NOTIFICATION_SETTINGS_YES)
+                MixPanelTracker.publishEvent(MixPanelEvent.NOTIFICATION_GO_TO_SETTINGS).push()
+            }
             AUTO_START_POPUP -> {
                 PrefManager.put(SHOULD_SHOW_AUTOSTART_POPUP, false)
                 logImpression(AnalyticsEvent.AUTOSTART_CONV_YES)
             }
-            AUTO_START_SETTINGS_POPUP -> logImpression(AnalyticsEvent.AUTOSTART_SETTINGS_YES)
+            AUTO_START_SETTINGS_POPUP -> {
+                logImpression(AnalyticsEvent.AUTOSTART_SETTINGS_YES)
+                MixPanelTracker.publishEvent(MixPanelEvent.AUTO_START_GO_TO_SETTINGS).push()
+            }
         }
         navigateToSettings()
     }
@@ -115,9 +123,15 @@ class CustomPermissionDialogFragment : BottomSheetDialogFragment() {
     fun cancel() {
         dismiss()
         when(popupType) {
-            NOTIFICATION_POPUP -> logImpression(AnalyticsEvent.NOTIFICATION_SETTINGS_NO)
+            NOTIFICATION_POPUP -> {
+                logImpression(AnalyticsEvent.NOTIFICATION_SETTINGS_NO)
+                MixPanelTracker.publishEvent(MixPanelEvent.NOTIFICATION_NOT_NOW).push()
+            }
             AUTO_START_POPUP -> logImpression(AnalyticsEvent.AUTOSTART_CONV_NO)
-            AUTO_START_SETTINGS_POPUP -> logImpression(AnalyticsEvent.AUTOSTART_SETTINGS_NO)
+            AUTO_START_SETTINGS_POPUP -> {
+                logImpression(AnalyticsEvent.AUTOSTART_SETTINGS_NO)
+                MixPanelTracker.publishEvent(MixPanelEvent.AUTO_START_NOT_NOW).push()
+            }
         }
     }
 

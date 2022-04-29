@@ -19,6 +19,9 @@ import com.airbnb.lottie.LottieAnimationView
 import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.core.extension.slideUpAnimation
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.VideoShowEvent
@@ -157,6 +160,7 @@ class GrammarButtonView : FrameLayout {
                 LessonActivity.isVideoVisible.value = false
             if (isAnswerChecked) {
                 callback?.nextQuestion()
+
             } else {
                 grammarBtn.text = AppObjectController.getFirebaseRemoteConfig().getString(
                     FirebaseRemoteConfigKey.GRAMMAR_CONTINUE_BUTTON_TEXT +
@@ -312,7 +316,6 @@ class GrammarButtonView : FrameLayout {
     }
 
     fun setCorrectView() {
-
         wrongAnswerGroup.visibility = View.GONE
         rightAnswerGroup.visibility = View.VISIBLE
         setCorrectViewVisibility()

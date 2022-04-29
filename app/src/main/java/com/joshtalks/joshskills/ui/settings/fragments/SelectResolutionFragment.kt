@@ -10,6 +10,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.SELECTED_QUALITY
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.databinding.FragmentSelectLanguageBinding
 import com.joshtalks.joshskills.ui.settings.SettingsActivity
 import com.joshtalks.joshskills.ui.settings.adapter.StringAdapter
@@ -46,6 +48,11 @@ class SelectResolutionFragment : Fragment() {
     }
 
     fun onItemClick(item: String, position: Int): Unit {
+        when(item) {
+            "High" -> MixPanelTracker.publishEvent(MixPanelEvent.HIGH).push()
+            "Medium" -> MixPanelTracker.publishEvent(MixPanelEvent.MEDIUM).push()
+            "Low" -> MixPanelTracker.publishEvent(MixPanelEvent.LOW).push()
+        }
         PrefManager.put(SELECTED_QUALITY, item)
     }
 

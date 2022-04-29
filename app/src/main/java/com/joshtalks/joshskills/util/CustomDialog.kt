@@ -8,6 +8,9 @@ import android.os.Bundle
 import android.view.Window
 import android.widget.TextView
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 
 class CustomDialog(
     context: Context,
@@ -33,7 +36,10 @@ class CustomDialog(
         titleTv.text = title
         messageTv.text = message
         buttonBt.text = buttonText
-        buttonBt.setOnClickListener { dismiss() }
+        buttonBt.setOnClickListener {
+            MixPanelTracker.publishEvent(MixPanelEvent.LESSON_CLICK_OKAY).push()
+            dismiss()
+        }
 
     }
 

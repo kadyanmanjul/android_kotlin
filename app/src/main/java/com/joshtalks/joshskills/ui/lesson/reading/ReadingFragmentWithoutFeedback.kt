@@ -70,6 +70,9 @@ import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
 import com.joshtalks.joshskills.core.extension.setImageAndFitCenter
 import com.joshtalks.joshskills.core.io.AppDirectory
@@ -118,6 +121,7 @@ import com.tonyodev.fetch2core.DownloadBlock
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.activity_comet_chat_media_view.*
 import java.io.File
 import java.io.IOException
 import java.nio.ByteBuffer
@@ -249,6 +253,8 @@ class ReadingFragmentWithoutFeedback :
             "और धीरे धीरे हम native speaker की तरह बोलना सीखेंगे"
         )
     }
+
+    private var lessonID = -1
 
     var openVideoPlayerActivity: ActivityResultLauncher<Intent> = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -601,6 +607,9 @@ class ReadingFragmentWithoutFeedback :
                     {
                         AppObjectController.uiHandler.post {
                             try {
+                                MixPanelTracker.publishEvent(MixPanelEvent.READING_RECORDING_DELETE)
+                                    .addParam(ParamKeys.LESSON_ID,lessonID)
+                                    .push()
                                 if (binding.audioListRv[it.index] != null){
                                     binding.audioListRv.removeViewAt(it.index)
                                     currentLessonQuestion?.run {
@@ -911,6 +920,12 @@ class ReadingFragmentWithoutFeedback :
         )
         binding.btnNextStep.setOnClickListener {
             showNextTooltip()
+        }
+
+        viewModel.lessonId.observe(
+            viewLifecycleOwner
+        ) {
+            lessonID = it
         }
     }
 
@@ -1351,6 +1366,10 @@ class ReadingFragmentWithoutFeedback :
                             filePath = AppDirectory.getAudioSentFile(null).absolutePath
                             AppDirectory.copy(it.absolutePath, filePath!!)
                             audioAttachmentInit()
+                            MixPanelTracker.publishEvent(MixPanelEvent.READING_RECORD)
+                                .addParam(ParamKeys.LESSON_ID,lessonID)
+                                .addParam(ParamKeys.RECORD_DURATION,timeDifference)
+                                .push()
                             AppObjectController.uiHandler.postDelayed(
                                 {
                                     binding.submitAnswerBtn.parent.requestChildFocus(
@@ -1506,7 +1525,16 @@ class ReadingFragmentWithoutFeedback :
                     .solidBackground().show()
             }
             appAnalytics?.addParam(AnalyticsEvent.PRACTICE_EXTRA.NAME, "Audio Played")
-
+            if(binding.btnPlayInfo.state == MaterialPlayPauseDrawable.State.Play) {
+                MixPanelTracker.publishEvent(MixPanelEvent.READING_PLAY)
+                    .addParam(ParamKeys.LESSON_ID, lessonID)
+                    .push()
+            }
+            else {
+                MixPanelTracker.publishEvent(MixPanelEvent.READING_PAUSE)
+                    .addParam(ParamKeys.LESSON_ID, lessonID)
+                    .push()
+            }
             if (audioManager?.currentPlayingUrl != null &&
                 audioManager?.currentPlayingUrl == currentLessonQuestion?.audioList?.getOrNull(0)?.audio_url
             ) {
@@ -1557,6 +1585,9 @@ class ReadingFragmentWithoutFeedback :
                 val holder: RecyclerView.ViewHolder =
                     binding.audioListRv.findViewHolderForAdapterPosition(i) as PracticeAudioAdapter.PracticeAudioViewHolder
                 if (holder is PracticeAudioAdapter.PracticeAudioViewHolder) {
+                    MixPanelTracker.publishEvent(MixPanelEvent.READING_RECORDING_PLAY)
+                        .addParam(ParamKeys.LESSON_ID, lessonID)
+                        .push()
                     holder.setPlayPauseBtnState(MaterialPlayPauseDrawable.State.Pause)
                     binding.btnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
                 }
@@ -1566,6 +1597,9 @@ class ReadingFragmentWithoutFeedback :
                 val holder: RecyclerView.ViewHolder =
                     binding.audioListRv.findViewHolderForAdapterPosition(i) as PracticeAudioAdapter.PracticeAudioViewHolder
                 if (holder is PracticeAudioAdapter.PracticeAudioViewHolder) {
+                    MixPanelTracker.publishEvent(MixPanelEvent.READING_RECORDING_PAUSE)
+                        .addParam(ParamKeys.LESSON_ID, lessonID)
+                        .push()
                     holder.setPlayPauseBtnState(MaterialPlayPauseDrawable.State.Play)
                 }
             }
@@ -1620,6 +1654,9 @@ class ReadingFragmentWithoutFeedback :
     }
 
     fun submitPractise() {
+        MixPanelTracker.publishEvent(MixPanelEvent.READING_SUBMIT)
+            .addParam(ParamKeys.LESSON_ID,lessonID)
+            .push()
         CoroutineScope(Dispatchers.IO).launch {
             currentLessonQuestion?.expectedEngageType?.let {
                 if (EXPECTED_ENGAGE_TYPE.AU == it && isAudioRecordDone.not()) {
@@ -1641,6 +1678,10 @@ class ReadingFragmentWithoutFeedback :
                         AnalyticsEvent.PRACTICE_SUBMITTED.NAME,
                         "Submit Practice $"
                     )
+
+                    MixPanelTracker.publishEvent(MixPanelEvent.READING_COMPLETED)
+                        .addParam(ParamKeys.LESSON_ID,lessonID)
+                        .push()
                     val requestEngage = RequestEngage()
                     if (it == EXPECTED_ENGAGE_TYPE.VI) {
                         requestEngage.localPath = outputFile
@@ -1686,6 +1727,9 @@ class ReadingFragmentWithoutFeedback :
     }
 
     fun onReadingContinueClick() {
+        MixPanelTracker.publishEvent(MixPanelEvent.READING_CONTINUE)
+            .addParam(ParamKeys.LESSON_ID,lessonID)
+            .push()
         lessonActivityListener?.onNextTabCall(READING_POSITION)
     }
 

@@ -12,6 +12,8 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.databinding.FragmentSelectInterestBinding
 import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.ui.newonboarding.viewmodel.OnBoardViewModel
@@ -54,7 +56,10 @@ class SelectInterestFragment : Fragment() {
         binding.handler = this
         binding.interestDescriptionTv.text = VersionResponse.getInstance().interestText ?: EMPTY
 
-        binding.toolbarContainer.iv_help.setOnClickListener { (requireActivity() as BaseActivity).openHelpActivity() }
+        binding.toolbarContainer.iv_help.setOnClickListener {
+            MixPanelTracker.publishEvent(MixPanelEvent.HELP).push()
+            (requireActivity() as BaseActivity).openHelpActivity()
+        }
         if (VersionResponse.getInstance().hasVersion())
             populateInterests()
         return binding.root

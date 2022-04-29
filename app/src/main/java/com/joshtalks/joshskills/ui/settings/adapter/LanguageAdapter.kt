@@ -9,6 +9,8 @@ import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.USER_LOCALE
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.databinding.StringAdapterItemBinding
 import com.joshtalks.joshskills.repository.server.LanguageItem
 
@@ -56,6 +58,10 @@ class LanguageAdapter(
             binding.root.setOnClickListener {
                 if (!inProgress) {
                     selectedItem = item.code
+                    if(item.name == "Hinglish")
+                        MixPanelTracker.publishEvent(MixPanelEvent.HINGLISH).push()
+                    else if(item.name == "Hindi")
+                        MixPanelTracker.publishEvent(MixPanelEvent.HINDI).push()
                     AppAnalytics.create(AnalyticsEvent.SELECT_LANGUAGE_CHANGED.name)
                         .addBasicParam()
                         .addUserDetails()

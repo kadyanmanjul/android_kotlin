@@ -14,6 +14,8 @@ import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.CategorySelectEventBus
@@ -49,6 +51,7 @@ class HelpActivity : CoreJoshActivity() {
         findViewById<View>(R.id.iv_help).visibility = View.GONE
         findViewById<View>(R.id.iv_back).visibility = View.VISIBLE
         findViewById<AppCompatImageView>(R.id.iv_back).setOnClickListener {
+            MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
             onBackPressed()
         }
     }
@@ -77,6 +80,7 @@ class HelpActivity : CoreJoshActivity() {
     }
 
     override fun onBackPressed() {
+        MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
         if (supportFragmentManager.backStackEntryCount == 1) {
             appAnalytics.addParam(AnalyticsEvent.HELP_BACK_CLICKED.NAME, true)
             this@HelpActivity.finish()
@@ -111,6 +115,7 @@ class HelpActivity : CoreJoshActivity() {
                     when {
                         Action.CALL == it.option.action -> {
                             it.option.actionData?.run {
+                                MixPanelTracker.publishEvent(MixPanelEvent.CALL_HELPLINE).push()
                                 appAnalytics.addParam(
                                     AnalyticsEvent.CALL_HELPLINE.NAME,
                                     it.option.actionData.toString()
@@ -127,6 +132,7 @@ class HelpActivity : CoreJoshActivity() {
                                 AnalyticsEvent.HELP_CHAT.NAME,
                                 it.option.action.toString()
                             )
+                            MixPanelTracker.publishEvent(MixPanelEvent.CHAT_WITH_AGENT).push()
                             AppAnalytics.create(AnalyticsEvent.HELP_CHAT.NAME)
                                 .addBasicParam()
                                 .addUserDetails()
@@ -139,6 +145,7 @@ class HelpActivity : CoreJoshActivity() {
                                 AnalyticsEvent.FAQ_SLECTED.NAME,
                                 it.option.action.toString()
                             )
+                            MixPanelTracker.publishEvent(MixPanelEvent.FAQ).push()
                             AppAnalytics.create(AnalyticsEvent.FAQ_SLECTED.NAME)
                                 .addBasicParam()
                                 .addUserDetails()

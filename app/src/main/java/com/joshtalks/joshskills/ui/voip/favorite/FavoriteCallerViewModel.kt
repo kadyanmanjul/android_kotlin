@@ -8,6 +8,8 @@ import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.base.BaseViewModel
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.quizgame.util.UpdateReceiver
 import com.joshtalks.joshskills.repository.local.entity.practise.FavoriteCaller
@@ -147,6 +149,7 @@ class FavoriteCallerViewModel : BaseViewModel() {
     }
 
     fun onBackPress(view: View) {
+        MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
         message.what = FAV_LIST_SCREEN_BACK_PRESSED
         singleLiveEvent.value = message
     }

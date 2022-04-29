@@ -23,7 +23,9 @@ import com.joshtalks.joshskills.core.USER_UNIQUE_ID
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.CreateOrderResponse
@@ -38,7 +40,6 @@ import java.net.UnknownHostException
 import java.util.HashMap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.json.JSONObject
 import retrofit2.HttpException
 import retrofit2.Response
 import timber.log.Timber
@@ -54,6 +55,7 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
     var responsePaymentSummary = MediatorLiveData<PaymentSummaryResponse>()
     var responseSubscriptionPaymentSummary = MediatorLiveData<PaymentSummaryResponse>()
     var mPaymentDetailsResponse = MediatorLiveData<OrderDetailResponse>()
+    var testId: MutableLiveData<String> = MutableLiveData()
     var viewState: MutableLiveData<ViewState>? = null
     val isRegisteredAlready by lazy { Mentor.getInstance().getId().isNotBlank() }
     var isFreeOrderCreated = MutableLiveData<Boolean>(false)
@@ -373,12 +375,12 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
             if (campaign != null) {
                 val data = ABTestRepository().getCampaignData(campaign)
                 data?.let {
-                    val props = JSONObject()
-                    props.put("Variant", data?.variantKey ?: EMPTY)
-                    props.put("Variable", AppObjectController.gsonMapper.toJson(data?.variableMap))
-                    props.put("Campaign", campaign)
-                    props.put("Goal", goal)
-                    MixPanelTracker().publishEvent(goal, props)
+                    MixPanelTracker.publishEvent(MixPanelEvent.GOAL)
+                        .addParam(ParamKeys.VARIANT, data?.variantKey ?: EMPTY)
+                        .addParam(ParamKeys.VARIABLE, AppObjectController.gsonMapper.toJson(data?.variableMap))
+                        .addParam(ParamKeys.CAMPAIGN, campaign)
+                        .addParam(ParamKeys.GOAL, goal)
+                        .push()
                 }
             }
         }

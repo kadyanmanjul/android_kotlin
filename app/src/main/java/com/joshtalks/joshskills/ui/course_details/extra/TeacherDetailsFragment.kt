@@ -15,6 +15,8 @@ import com.bumptech.glide.request.target.Target
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.AutoLinkMode
 import com.joshtalks.joshskills.repository.server.course_detail.TeacherDetails
 import kotlinx.android.synthetic.main.fragment_teacher_details.iv_back
@@ -72,6 +74,7 @@ class TeacherDetailsFragment : DialogFragment() {
                 HtmlCompat.FROM_HTML_MODE_LEGACY
             )
         iv_back.setOnClickListener {
+            MixPanelTracker.publishEvent(MixPanelEvent.CANCEL).push()
             dismissAllowingStateLoss()
         }
 

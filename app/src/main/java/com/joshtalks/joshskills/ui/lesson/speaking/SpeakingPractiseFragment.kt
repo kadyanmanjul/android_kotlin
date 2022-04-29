@@ -20,6 +20,15 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.airbnb.lottie.LottieCompositionFactory
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
+import com.joshtalks.joshskills.core.abTest.ABTestFragment
+import com.joshtalks.joshskills.core.abTest.CampaignKeys
+import com.joshtalks.joshskills.core.abTest.VariantKeys
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
+import com.joshtalks.joshskills.core.isCallOngoing
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.core.abTest.*
 import com.joshtalks.joshskills.databinding.SpeakingPractiseFragmentBinding
 import com.joshtalks.joshskills.messaging.RxBus2
@@ -35,6 +44,7 @@ import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
 import com.joshtalks.joshskills.ui.lesson.LessonSpotlightState
 import com.joshtalks.joshskills.ui.lesson.LessonViewModel
 import com.joshtalks.joshskills.ui.lesson.SPEAKING_POSITION
+import com.joshtalks.joshskills.ui.lesson.grammar.GrammarFragment
 import com.joshtalks.joshskills.ui.senior_student.SeniorStudentActivity
 import com.joshtalks.joshskills.ui.voip.SearchingUserActivity
 import com.joshtalks.joshskills.ui.voip.favorite.FavoriteListActivity
@@ -75,6 +85,7 @@ class SpeakingPractiseFragment : ABTestFragment() {
     private var afterTwoMinTalked = -1
     private val twoMinutes: Int = 2
     private var isTwentyMinFtuCallActive = PrefManager.getBoolValue(IS_TWENTY_MIN_CALL_ENABLED)
+    private var lessonID = -1
 
     private var openCallActivity: ActivityResultLauncher<Intent> = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -160,6 +171,12 @@ class SpeakingPractiseFragment : ABTestFragment() {
     }
 
     private fun addObservers() {
+        viewModel.lessonId.observe(
+            viewLifecycleOwner
+        ){
+            lessonID = it
+        }
+
         viewModel.lessonQuestionsLiveData.observe(
             viewLifecycleOwner
         ) {
@@ -188,6 +205,11 @@ class SpeakingPractiseFragment : ABTestFragment() {
             if (PrefManager.getBoolValue(IS_LOGIN_VIA_TRUECALLER))
                 viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
             startPractise(favoriteUserCall = false)
+            MixPanelTracker.publishEvent(MixPanelEvent.CALL_PRACTICE_PARTNER)
+                .addParam(ParamKeys.LESSON_ID,lessonID)
+                .addParam(ParamKeys.LESSON_NUMBER,lessonNo)
+                .addParam(ParamKeys.VIA,"speaking screen")
+                .push()
         }
 
         binding.btnGroupCall.setOnClickListener {
@@ -199,6 +221,10 @@ class SpeakingPractiseFragment : ABTestFragment() {
                 putExtra(CONVERSATION_ID, getConversationId())
             }
             startActivity(intent)
+            MixPanelTracker.publishEvent(MixPanelEvent.CALL_PP_FROM_GROUP_LESSON)
+                .addParam(ParamKeys.LESSON_ID, lessonID)
+                .addParam(ParamKeys.LESSON_NUMBER, lessonNo)
+                .push()
         }
 
         viewModel.speakingSpotlightClickLiveData.observe(viewLifecycleOwner) {
@@ -207,8 +233,13 @@ class SpeakingPractiseFragment : ABTestFragment() {
 
         binding.btnContinue.setOnClickListener {
             lessonActivityListener?.onNextTabCall(SPEAKING_POSITION)
+            MixPanelTracker.publishEvent(MixPanelEvent.SPEAKING_CONTINUE)
+                .addParam(ParamKeys.LESSON_ID,lessonID)
+                .addParam(ParamKeys.LESSON_NUMBER,lessonNo)
+                .push()
         }
         binding.imgRecentCallsHistory.setOnClickListener {
+            MixPanelTracker.publishEvent(MixPanelEvent.VIEW_RECENT_CALLS).push()
             RecentCallActivity.openRecentCallActivity(
                 requireActivity(),
                 CONVERSATION_ID,
@@ -388,9 +419,17 @@ class SpeakingPractiseFragment : ABTestFragment() {
 //            } else {
 //                showToast(getString(R.string.empty_favorite_list_message))
 //            }
+            MixPanelTracker.publishEvent(MixPanelEvent.CALL_FAV_PRACTICE_PARTNER)
+                .addParam(ParamKeys.LESSON_ID,lessonID)
+                .addParam(ParamKeys.LESSON_NUMBER,lessonNo)
+                .push()
         }
         binding.btnNewStudent.setOnClickListener {
 
+            MixPanelTracker.publishEvent(MixPanelEvent.CALL_NEW_STUDENT)
+                .addParam(ParamKeys.LESSON_ID,lessonID)
+                .addParam(ParamKeys.LESSON_NUMBER,lessonNo)
+                .push()
             startPractise(favoriteUserCall = false, isNewUserCall = true)
         }
         if (viewModel.isFreeTrail.not()){
@@ -463,6 +502,10 @@ class SpeakingPractiseFragment : ABTestFragment() {
     }
     private fun initDemoViews(it: Int) {
         if (it == 1 && isIntroVideoEnabled) {
+            MixPanelTracker.publishEvent(MixPanelEvent.SPEAKING_VIDEO_PLAY)
+                .addParam(ParamKeys.LESSON_ID,lessonID)
+                .addParam(ParamKeys.LESSON_NUMBER,lessonNo)
+                .push()
             lessonActivityListener?.showIntroVideo()
             lessonNo = it
             binding.btnCallDemo.visibility = View.GONE
@@ -471,6 +514,10 @@ class SpeakingPractiseFragment : ABTestFragment() {
                 viewModel.isHowToSpeakClicked(true)
                 binding.btnCallDemo.visibility = View.VISIBLE
                 viewModel.saveIntroVideoFlowImpression(HOW_TO_SPEAK_TEXT_CLICKED)
+                MixPanelTracker.publishEvent(MixPanelEvent.HOW_TO_SPEAK)
+                    .addParam(ParamKeys.LESSON_ID,lessonID)
+                    .addParam(ParamKeys.LESSON_NUMBER,lessonNo)
+                    .push()
             }
 
             viewModel.callBtnHideShowLiveData.observe(viewLifecycleOwner) {
@@ -489,6 +536,10 @@ class SpeakingPractiseFragment : ABTestFragment() {
     }
 
     private fun speakingSectionComplete(){
+        MixPanelTracker.publishEvent(MixPanelEvent.SPEAKING_COMPLETED)
+            .addParam(ParamKeys.LESSON_ID,lessonID)
+            .addParam(ParamKeys.LESSON_NUMBER,lessonNo)
+            .push()
         binding.btnContinue.visibility = VISIBLE
         binding.btnStart.pauseAnimation()
         binding.btnContinue.playAnimation()

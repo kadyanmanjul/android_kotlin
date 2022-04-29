@@ -13,6 +13,9 @@ import com.joshtalks.joshskills.constants.CLEAR_SEARCH
 import com.joshtalks.joshskills.constants.ON_BACK_PRESSED
 import com.joshtalks.joshskills.constants.OPEN_GROUP
 import com.joshtalks.joshskills.constants.OPEN_NEW_GROUP
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.ui.group.adapters.GroupAdapter
 import com.joshtalks.joshskills.ui.group.adapters.GroupStateAdapter
 import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics
@@ -59,17 +62,22 @@ class GroupSearchViewModel : BaseViewModel() {
         message.what = OPEN_GROUP
         message.obj = it
         singleLiveEvent.value = message
-        if(isSearching.get())
+        MixPanelTracker.publishEvent(MixPanelEvent.OPEN_GROUP_SEARCH)
+            .addParam(ParamKeys.GROUP_ID, it.getUniqueId())
+
+        if (isSearching.get()) {
             GroupAnalytics.push(GroupAnalytics.Event.OPEN_GROUP_FROM_SEARCH)
-        else
+            MixPanelTracker.push()
+        } else {
             GroupAnalytics.push(GroupAnalytics.Event.OPEN_GROUP_FROM_RECOMMENDATION)
+            MixPanelTracker.addParam(ParamKeys.SEARCH_KEY, queryLiveData.value).push()
+        }
     }
 
     fun createGroup(view : View) {
         message.what = OPEN_NEW_GROUP
         singleLiveEvent.value = message
     }
-
 
     private fun setQueryListener() {
         viewModelScope.launch {

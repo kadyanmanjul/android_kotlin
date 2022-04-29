@@ -18,6 +18,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseViewModel
 import com.joshtalks.joshskills.constants.*
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.core.isCallOngoing
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -140,6 +143,9 @@ class GroupChatViewModel : BaseViewModel() {
 
     fun joinGroup(view: View) {
         if (groupType.get() == CLOSED_GROUP && groupJoinStatus.get() == "REQUEST TO JOIN") {
+            MixPanelTracker.publishEvent(MixPanelEvent.REQUEST_TO_JOIN_GROUP)
+                .addParam(ParamKeys.GROUP_ID, groupId)
+                .push()
             message.what = OPEN_GROUP_REQUEST
             singleLiveEvent.value = message
         } else if (groupType.get() == OPENED_GROUP)
@@ -167,6 +173,9 @@ class GroupChatViewModel : BaseViewModel() {
                         pushMetaMessage("${Mentor.getInstance().getUser()?.firstName} has joined this group", groupId)
                         onBackPress()
                         onBackPress()
+                        MixPanelTracker.publishEvent(MixPanelEvent.JOIN_GROUP)
+                            .addParam(ParamKeys.GROUP_ID,groupId)
+                            .push()
                     }
                 } else {
                     dismissProgressDialog()
@@ -195,6 +204,10 @@ class GroupChatViewModel : BaseViewModel() {
                     showToast("Error in sending request")
                 dismissProgressDialog()
                 GroupAnalytics.push(GroupAnalytics.Event.REQUEST_TO_JOIN, groupId)
+                MixPanelTracker.publishEvent(MixPanelEvent.REQUEST_TO_JOIN_SUBMIT)
+                    .addParam(ParamKeys.GROUP_ID, groupId)
+                    .addParam(ParamKeys.ANSWER, request.answer)
+                    .push()
             } catch (e: Exception) {
                 dismissProgressDialog()
                 showToast("Error in sending request")
@@ -204,6 +217,9 @@ class GroupChatViewModel : BaseViewModel() {
     }
 
     fun showExitDialog(view: View) {
+        MixPanelTracker.publishEvent(MixPanelEvent.EXIT_GROUP_CLICKED)
+            .addParam(ParamKeys.GROUP_ID, groupId)
+            .push()
         showAlertDialog(
             view,
             "Exit \"${groupHeader.get()}\" group?",
@@ -268,6 +284,9 @@ class GroupChatViewModel : BaseViewModel() {
         if (hasJoinedGroup.get()) {
             message.what = OPEN_GROUP_INFO
             singleLiveEvent.value = message
+            MixPanelTracker.publishEvent(MixPanelEvent.VIEW_GROUP_INFO)
+                .addParam(ParamKeys.GROUP_ID, groupId)
+                .push()
         }
     }
 
@@ -276,9 +295,15 @@ class GroupChatViewModel : BaseViewModel() {
         message.obj = groupId
         singleLiveEvent.value = message
         GroupAnalytics.push(GroupAnalytics.Event.OPEN_REQUESTS_LIST, groupId)
+        MixPanelTracker.publishEvent(MixPanelEvent.OPEN_GROUP_REQUESTS)
+            .addParam(ParamKeys.GROUP_ID, groupId)
+            .push()
     }
 
     fun editGroupInfo() {
+        MixPanelTracker.publishEvent(MixPanelEvent.EDIT_GROUP_INFO_CLICKED)
+            .addParam(ParamKeys.GROUP_ID, groupId)
+            .push()
         message.what = EDIT_GROUP_INFO
         message.data = Bundle().apply {
             putBoolean(IS_FROM_GROUP_INFO, true)
@@ -295,6 +320,10 @@ class GroupChatViewModel : BaseViewModel() {
         message.obj = mentorId
         singleLiveEvent.value = message
         GroupAnalytics.push(GroupAnalytics.Event.OPENED_PROFILE)
+        MixPanelTracker.publishEvent(MixPanelEvent.VIEW_PROFILE_GROUP)
+            .addParam(ParamKeys.GROUP_ID, groupId)
+            .addParam(ParamKeys.IS_ADMIN, adminId == Mentor.getInstance().getId())
+            .push()
     }
 
     fun showProgressDialog(msg: String) {
@@ -316,6 +345,10 @@ class GroupChatViewModel : BaseViewModel() {
                     mentorId = Mentor.getInstance().getId()
                 )
                 val groupCount = repository.leaveGroupFromServer(request) ?: -1
+                MixPanelTracker.publishEvent(MixPanelEvent.EXIT_GROUP)
+                    .addParam(ParamKeys.GROUP_ID, groupId)
+                    .addParam(ParamKeys.IS_SUCCESS, groupCount != -1)
+                    .push()
                 if (groupCount == -1) {
                     showToast("An error has occurred")
                     onBackPress()
@@ -403,10 +436,17 @@ class GroupChatViewModel : BaseViewModel() {
     fun expandGroupList(view: View) {
         view.visibility = View.GONE
         memberAdapter.shouldShowAll(true)
+        MixPanelTracker.publishEvent(MixPanelEvent.VIEW_MORE_MEMBERS)
+            .addParam(ParamKeys.GROUP_ID, groupId)
+            .addParam(ParamKeys.IS_ADMIN, adminId == Mentor.getInstance().getId())
+            .push()
     }
 
     fun sendMessage(view: View) {
         GroupAnalytics.checkMsgTime(GroupAnalytics.Event.MESSAGE_SENT, groupId)
+        MixPanelTracker.publishEvent(MixPanelEvent.GROUP_MESSAGE_SENT)
+            .addParam(ParamKeys.GROUP_ID, groupId)
+            .push()
         message.what = SEND_MSG
         singleLiveEvent.value = message
     }

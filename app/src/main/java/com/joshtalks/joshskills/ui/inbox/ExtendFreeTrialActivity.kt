@@ -9,6 +9,10 @@ import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.GoalKeys
+import com.joshtalks.joshskills.core.abTest.VariantKeys
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.databinding.ActivityExtendFreeTrialBinding
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
@@ -30,6 +34,10 @@ class ExtendFreeTrialActivity : AppCompatActivity() {
         initIntentObject()
         addObserver()
         viewModel.postGoal(GoalKeys.EFT_SCREEN_SEEN.name, CampaignKeys.EXTEND_FREE_TRIAL.name)
+        MixPanelTracker.publishEvent(MixPanelEvent.EXTEND_FREE_TRIAL_OPENED)
+            .addParam(ParamKeys.VARIANT, VariantKeys.EFT_ENABLED.name)
+            .addParam(ParamKeys.CAMPAIGN, CampaignKeys.EXTEND_FREE_TRIAL.name)
+            .push()
     }
 
     private fun addObserver() {

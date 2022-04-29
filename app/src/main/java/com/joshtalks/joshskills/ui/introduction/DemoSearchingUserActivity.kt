@@ -18,6 +18,8 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.databinding.ActivityDemoSearchingUserBinding
 import com.joshtalks.joshskills.ui.voip.AUTO_PICKUP_CALL
 import com.joshtalks.joshskills.ui.voip.CALL_TYPE
@@ -299,6 +301,7 @@ class DemoSearchingUserActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
+        MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
         stopCalling(DISCONNECT.BACK_BUTTON_FAILURE)
     }
 

@@ -7,6 +7,9 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.databinding.FppRecentItemListBinding
 import com.joshtalks.joshskills.ui.fpp.constants.*
 import com.joshtalks.joshskills.ui.fpp.model.RecentCall
@@ -56,6 +59,9 @@ class RecentCallsAdapter(var items: List<RecentCall> = listOf()) :
         fun bind(recentCall: RecentCall,itemPosition: Int) {
             binding.itemData = recentCall
             binding.imgBlock.setOnClickListener {
+                MixPanelTracker.publishEvent(MixPanelEvent.BLOCK_USER_CLICKED)
+                    .addParam(ParamKeys.MENTOR_ID, recentCall.receiverMentorId)
+                    .push()
                 itemClick?.invoke(recentCall, RECENT_CALL_USER_BLOCK,itemPosition)
             }
 
@@ -90,6 +96,9 @@ class RecentCallsAdapter(var items: List<RecentCall> = listOf()) :
                             )
                         }
                         HAS_RECIEVED_REQUEST -> {
+                            MixPanelTracker.publishEvent(MixPanelEvent.FPP_REQUEST_RESPOND)
+                                .addParam(ParamKeys.MENTOR_ID, recentCall.receiverMentorId)
+                                .push()
                             setBtnVisibilityAndText(
                                 btnSentRequest,
                                 R.color.not_now,
@@ -131,6 +140,10 @@ class RecentCallsAdapter(var items: List<RecentCall> = listOf()) :
                 btnSentRequest.setOnClickListener {
                     when (recentCall.fppRequestStatus) {
                         SENT_REQUEST -> {
+                            MixPanelTracker.publishEvent(MixPanelEvent.FPP_REQUEST_SEND)
+                                .addParam(ParamKeys.MENTOR_ID, recentCall.receiverMentorId)
+                                .addParam(ParamKeys.VIA,"recent call")
+                                .push()
                             setBtnVisibilityAndText(
                                 btnSentRequest,
                                 R.color.not_now,
@@ -140,6 +153,10 @@ class RecentCallsAdapter(var items: List<RecentCall> = listOf()) :
                             itemClick?.invoke(recentCall, RECENT_CALL_SENT_REQUEST,pos)
                         }
                         REQUESTED -> {
+                            MixPanelTracker.publishEvent(MixPanelEvent.FPP_REQUEST_CANCEL)
+                                .addParam(ParamKeys.MENTOR_ID, recentCall.receiverMentorId)
+                                .addParam(ParamKeys.VIA,"recent call")
+                                .push()
                             setBtnVisibilityAndText(
                                 btnSentRequest,
                                 R.color.colorAccent,

@@ -15,6 +15,8 @@ import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.DEMO_P2P_CALLEE_NAME
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.DemoSpeakingPractiseFragmentBinding
 import com.joshtalks.joshskills.messaging.RxBus2
@@ -53,9 +55,11 @@ class DemoSpeakingPractiseActivity : BaseActivity() {
         helpIv.visibility = View.VISIBLE
         findViewById<View>(R.id.iv_back).visibility = View.GONE
         findViewById<View>(R.id.iv_back).setOnClickListener {
+            MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
             onBackPressed()
         }
         helpIv.setOnClickListener {
+            MixPanelTracker.publishEvent(MixPanelEvent.HELP).push()
             openHelpActivity()
         }
     }

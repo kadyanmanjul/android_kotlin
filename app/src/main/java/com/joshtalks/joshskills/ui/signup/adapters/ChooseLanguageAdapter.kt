@@ -1,10 +1,14 @@
 package com.joshtalks.joshskills.ui.signup.adapters
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.databinding.LiLanguageItemBinding
 import com.joshtalks.joshskills.repository.server.ChooseLanguages
 
@@ -38,9 +42,15 @@ class ChooseLanguageAdapter: RecyclerView.Adapter<ChooseLanguageAdapter.ChooseLa
             with(binding) {
                 tvLanguage.text = selectedLanguage.languageName
                 container.setOnClickListener {
+                    MixPanelTracker.publishEvent(MixPanelEvent.LANGUAGE_SELECTED)
+                        .addParam(ParamKeys.SELECTED_LANGUAGE,selectedLanguage.languageName)
+                        .push()
                     onLanguageItemClick?.invoke(selectedLanguage)
                 }
                 tvLanguage.setOnClickListener {
+                    MixPanelTracker.publishEvent(MixPanelEvent.LANGUAGE_SELECTED)
+                        .addParam(ParamKeys.SELECTED_LANGUAGE,selectedLanguage.languageName)
+                        .push()
                     onLanguageItemClick?.invoke(selectedLanguage)
                 }
             }

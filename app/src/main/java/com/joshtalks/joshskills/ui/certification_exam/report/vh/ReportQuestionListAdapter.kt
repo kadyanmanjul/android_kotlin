@@ -7,9 +7,13 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.databinding.QuestionListItemViewBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.GotoCEQuestionEventBus
+import com.joshtalks.joshskills.repository.server.certification_exam.CertificationQuestionModel
 import com.joshtalks.joshskills.repository.server.certification_exam.QuestionReportType
 import com.joshtalks.joshskills.repository.server.certification_exam.UserSelectedAnswer
 
@@ -69,11 +73,35 @@ class ReportQuestionListAdapter(
                 frameLayout.setOnClickListener {
                     val type = if (obj.isNotAttempt == null) {
                         QuestionReportType.UNANSWERED
+                        MixPanelTracker.publishEvent(MixPanelEvent.VIEW_QUESTION_RESULTS)
+                            .addParam(ParamKeys.EXAM_TYPE, CertificationQuestionModel().type)
+                            .addParam(ParamKeys.ATTEMPT_NUMBER, CertificationQuestionModel().attemptCount)
+                            .addParam(ParamKeys.QUESTION_ID, obj.question)
+                            .addParam(ParamKeys.IS_CORRECT_ANSWER,obj.isAnswerCorrect)
+                            .addParam(ParamKeys.ANSWER_ID,obj.answerId)
+                            .addParam(ParamKeys.RESULT,"unanswered")
+                            .push()
                     } else {
                         if (obj.isAnswerCorrect) {
                             QuestionReportType.RIGHT
+                            MixPanelTracker.publishEvent(MixPanelEvent.VIEW_QUESTION_RESULTS)
+                                .addParam(ParamKeys.EXAM_TYPE, CertificationQuestionModel().type)
+                                .addParam(ParamKeys.ATTEMPT_NUMBER, CertificationQuestionModel().attemptCount)
+                                .addParam(ParamKeys.QUESTION_ID, obj.question)
+                                .addParam(ParamKeys.IS_CORRECT_ANSWER,obj.isAnswerCorrect)
+                                .addParam(ParamKeys.ANSWER_ID,obj.answerId)
+                                .addParam(ParamKeys.RESULT,"right")
+                                .push()
                         } else {
                             QuestionReportType.WRONG
+                            MixPanelTracker.publishEvent(MixPanelEvent.VIEW_QUESTION_RESULTS)
+                                .addParam(ParamKeys.EXAM_TYPE, CertificationQuestionModel().type)
+                                .addParam(ParamKeys.ATTEMPT_NUMBER, CertificationQuestionModel().attemptCount)
+                                .addParam(ParamKeys.QUESTION_ID, obj.question)
+                                .addParam(ParamKeys.IS_CORRECT_ANSWER,obj.isAnswerCorrect)
+                                .addParam(ParamKeys.ANSWER_ID,obj.answerId)
+                                .addParam(ParamKeys.RESULT,"wrong")
+                                .push()
                         }
                     }
                     RxBus2.publish(GotoCEQuestionEventBus(obj.question))

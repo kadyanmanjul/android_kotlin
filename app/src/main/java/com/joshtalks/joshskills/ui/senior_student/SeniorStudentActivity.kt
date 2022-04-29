@@ -14,6 +14,8 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.databinding.ActivitySeniorStudentBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
@@ -48,12 +50,14 @@ class SeniorStudentActivity : CoreJoshActivity() {
             binding.toolbarContainer.findViewById<AppCompatTextView>(R.id.text_message_title)
         backBtnView.visibility = View.VISIBLE
         backBtnView.setOnClickListener {
+            MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
             onBackPressed()
         }
 //        settingsBtnView.setOnClickListener {
 //            openPopupMenu(it)
 //        }
         helpBtnView.setOnClickListener {
+            MixPanelTracker.publishEvent(MixPanelEvent.HELP).push()
             openHelpActivity()
         }
         toolbarTitleView.visibility = View.VISIBLE

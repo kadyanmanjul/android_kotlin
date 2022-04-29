@@ -5,6 +5,9 @@ import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.USER_UNIQUE_ID
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.entity.VideoEngage
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -16,6 +19,7 @@ import com.joshtalks.joshskills.repository.server.engage.PdfEngage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.json.JSONObject
 import timber.log.Timber
 
 const val VIDEO_TIME_LEAP = 6
@@ -92,6 +96,14 @@ object EngagementNetworkHelper {
                     .addParam("notificationType", notificationObject.type)
                     .addUserDetails()
                     .push()
+
+                MixPanelTracker.publishEvent(MixPanelEvent.NOTIFICATION_RECEIVED)
+                    .addParam(ParamKeys.TITLE, notificationObject.contentTitle)
+                    .addParam(ParamKeys.CONTENT, notificationObject.contentText)
+                    .addParam(ParamKeys.MENTOR_ID, notificationObject.mentorId)
+                    .addParam(ParamKeys.NOTIFICATION_TYPE, notificationObject.type)
+                    .push()
+
                 val data = mapOf("is_delivered" to "true")
                 notificationObject.id?.let {
                     AppObjectController.chatNetworkService.engageNotificationAsync(it, data)
@@ -115,6 +127,10 @@ object EngagementNetworkHelper {
                     .addParam("mentorId", Mentor.getInstance().getId())
                     .addUserDetails()
                     .push()
+
+                MixPanelTracker.publishEvent(MixPanelEvent.NOTIFICATION_CLICKED)
+                    .addParam(ParamKeys.ID, notificationId).push()
+
                 val data = mapOf("is_clicked" to "true")
                 AppObjectController.chatNetworkService.engageNotificationAsync(
                     notificationId,
@@ -139,6 +155,10 @@ object EngagementNetworkHelper {
                     .addParam("mentorId", Mentor.getInstance().getId())
                     .addUserDetails()
                     .push()
+
+                MixPanelTracker.publishEvent(MixPanelEvent.NOTIFICATION_SEEN)
+                    .addParam(ParamKeys.ID, notificationId).push()
+
                 val data = mapOf("is_clicked" to "false")
                 AppObjectController.chatNetworkService.engageNotificationAsync(
                     notificationId,

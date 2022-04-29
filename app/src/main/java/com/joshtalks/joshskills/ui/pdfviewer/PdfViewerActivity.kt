@@ -13,6 +13,8 @@ import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.databinding.ActivityPdfViewerBinding
 import com.joshtalks.joshskills.repository.local.DatabaseUtils
 import com.joshtalks.joshskills.repository.local.entity.PdfType
@@ -55,6 +57,11 @@ class PdfViewerActivity : BaseActivity() {
         intent.getStringExtra(COURSE_NAME)?.let {
             conversationBinding.titleTv.text = it
         }
+    }
+
+    override fun onBackPressed() {
+        MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
+        super.onBackPressed()
     }
 
     private fun showPdf() {
