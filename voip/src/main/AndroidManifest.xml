@@ -10,7 +10,6 @@
     <application>
         <service android:name=".data.CallingRemoteService"
             android:process=":joshSkillsCallingService"
-            android:stopWithTask="false"
             android:foregroundServiceType="phoneCall"/>
         <!-- Audio Control Module Receivers -->
         <receiver

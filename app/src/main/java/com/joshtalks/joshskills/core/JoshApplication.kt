@@ -73,7 +73,7 @@ class JoshApplication :
 
     override fun onCreate() {
         super.onCreate()
-        enableLog(Feature.VOIP)
+        //enableLog(Feature.VOIP)
         Log.d(TAG, "onCreate: STARTING MAIN PROCESS CHECK ${this.hashCode()}")
             if(isMainProcess()) {
                 Log.d(TAG, "onCreate: END ...IS MAIN PROCESS")

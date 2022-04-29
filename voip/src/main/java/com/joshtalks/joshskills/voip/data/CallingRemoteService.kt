@@ -5,6 +5,7 @@ import android.app.Service
 import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
+import android.os.Message
 import android.os.SystemClock
 import android.util.Log
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_API_HEADER
@@ -50,13 +51,22 @@ class CallingRemoteService : Service() {
         Timber.tag("Coroutine Exception").d("Handled...")
         e.printStackTrace()
     }
-    private val ioScope by lazy { CoroutineScope(Dispatchers.IO + coroutineExceptionHandler) }
-    private val mediator by lazy<CallServiceMediator> { CallingMediator(ioScope) }
+    private val ioScope by lazy {
+        Log.d(TAG, "Creating : Mediator")
+        CoroutineScope(Dispatchers.IO + coroutineExceptionHandler)
+    }
+    private val mediator by lazy<CallServiceMediator> {
+        Log.d(TAG, "Creating : CallServiceMediator")
+        CallingMediator(ioScope)
+    }
     //private val handler by lazy { CallingRemoteServiceHandler.getInstance(ioScope) }
     var currentState = IDLE
     private set
     private var isMediatorInitialise = false
-    private val pstnController by lazy { PSTNController(ioScope) }
+    private val pstnController by lazy {
+        Log.d(TAG, "Creating : pstnController")
+        PSTNController(ioScope)
+    }
     private val audioController: AudioControllerInterface by lazy { AudioController(ioScope) }
     private val uiStateFlow = MutableStateFlow(UIState.empty())
     private val serviceEvents = MutableSharedFlow<ServiceEvents>(replay = 0)
@@ -74,6 +84,7 @@ class CallingRemoteService : Service() {
     fun getEvents() : SharedFlow<ServiceEvents> = serviceEvents
 
     override fun onCreate() {
+        Log.d(TAG, "onCreate: ")
         super.onCreate()
         PrefManager.initServicePref(this)
         //stopServiceKillingTimer()
@@ -129,6 +140,7 @@ class CallingRemoteService : Service() {
     }
 
     private fun observeNetworkEvents() {
+        Log.d(TAG, "observeNetworkEvents: ${mediator.hashCode()}")
         if (isMediatorInitialise.not()) {
             isMediatorInitialise = true
             ioScope.launch {
@@ -269,6 +281,7 @@ class CallingRemoteService : Service() {
     }
 
     override fun onBind(intent: Intent?): IBinder {
+        Log.d(TAG, "onBind: ")
         return binder
     }
 
@@ -276,10 +289,10 @@ class CallingRemoteService : Service() {
         fun getService() = this@CallingRemoteService
     }
 
-    override fun onUnbind(intent: Intent?): Boolean {
-        voipLog?.log("Service Unbinding")
-        return true
-    }
+//    override fun onUnbind(intent: Intent?): Boolean {
+//        voipLog?.log("Service Unbinding")
+//        return true
+//    }
 
     private fun observerPstnService() {
         voipLog?.log("Listining PSTN")
@@ -373,25 +386,30 @@ class CallingRemoteService : Service() {
 
     }
 
-    /**
-     * Events which Repository can use --- End
-     */
-
     override fun onTaskRemoved(rootIntent: Intent?) {
-        //showNotification()
-        Log.d(TAG, "onTaskRemoved: $currentState")
-        if(currentState == CONNECTED) {
-            disconnectCall()
-        }
-        ioScope.cancel()
-        stopSelf()
-        voipLog?.log("onTaskRemoved --> ${rootIntent}")
         super.onTaskRemoved(rootIntent)
+        stopForeground(true)
+        stopSelf()
     }
 
+//    override fun onTaskRemoved(rootIntent: Intent?) {
+//        //showNotification()
+//        Log.d(TAG, "onTaskRemoved: $currentState")
+//        if(currentState == CONNECTED) {
+//            disconnectCall()
+//        }
+//        ioScope.cancel()
+//        stopSelf()
+//        voipLog?.log("onTaskRemoved --> ${rootIntent}")
+//        super.onTaskRemoved(rootIntent)
+//    }
+
     override fun onDestroy() {
-        super.onDestroy()
+        Log.d(TAG, "onDestroy: ")
         unregisterReceivers()
+        mediator.onDestroy()
+        ioScope.cancel()
+        super.onDestroy()
     }
 
     private fun showNotification() {

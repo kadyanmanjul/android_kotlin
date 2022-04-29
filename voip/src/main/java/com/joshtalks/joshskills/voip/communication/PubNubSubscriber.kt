@@ -27,32 +27,19 @@ import com.pubnub.api.models.consumer.pubsub.message_actions.PNMessageActionResu
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 
 private const val TAG = "PubNubSubscriber"
-internal class PubNubSubscriber : SubscribeCallback() {
+internal class PubNubSubscriber(val scope: CoroutineScope) : SubscribeCallback() {
 
-    companion object {
-        @Volatile private lateinit var INSTANCE: PubNubSubscriber
-        @Volatile private lateinit var scope : CoroutineScope
+    private val messageFlow by lazy<MutableSharedFlow<Communication>> {
+        Log.d(TAG, "Creating : messageFlow")
+        MutableSharedFlow(replay = 0)
+    }
 
-        private val messageFlow by lazy<MutableSharedFlow<Communication>> {
-            MutableSharedFlow(replay = 0)
-        }
-
-        fun getSubscribeCallback(scope: CoroutineScope) : PubNubData {
-            if (this::INSTANCE.isInitialized)
-                return PubNubData(INSTANCE, messageFlow)
-            else
-                synchronized(this) {
-                    return if (this::INSTANCE.isInitialized)
-                        PubNubData(INSTANCE, messageFlow)
-                    else {
-                        this.scope = scope
-                        PubNubData(PubNubSubscriber().also { INSTANCE = it }, messageFlow)
-                    }
-                }
-        }
+    fun observeMessages() : SharedFlow<Communication> {
+        return messageFlow
     }
 
     override fun message(pubnub: PubNub, pnMessageResult: PNMessageResult) {
@@ -121,5 +108,3 @@ internal class PubNubSubscriber : SubscribeCallback() {
 
     override fun file(pubnub: PubNub, pnFileEventResult: PNFileEventResult) {}
 }
-
-internal data class PubNubData(val callback: SubscribeCallback, val event : Flow<Communication>)

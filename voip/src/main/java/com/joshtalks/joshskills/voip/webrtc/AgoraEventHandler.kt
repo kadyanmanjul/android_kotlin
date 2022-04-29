@@ -14,35 +14,19 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 
 private const val TAG = "AgoraEventHandler"
+const val USER_QUIT_CHANNEL = 0
 const val USER_DROP_OFFLINE = 1
 private const val USER_ALREADY_LEFT_THE_CHANNEL = 18
 const val RECONNECTING_TIMEOUT_IN_MILLIS = 20 * 1000L
 
-internal class AgoraEventHandler private constructor() : IRtcEngineEventHandler() {
+internal class AgoraEventHandler(val scope: CoroutineScope) : IRtcEngineEventHandler() {
 
-    companion object {
-        @Volatile private lateinit var INSTANCE: AgoraEventHandler
-        @Volatile private lateinit var scope : CoroutineScope
-        private var reconnectingJob : Job? = null
-        private val callingEvent by lazy<MutableSharedFlow<CallState>> {
-            MutableSharedFlow(replay = 0)
-        }
+    private val callingEvent by lazy {
+        MutableSharedFlow<CallState>(replay = 0)
+    }
 
-        fun getAgoraEventObject(scope: CoroutineScope) : AgoraEvent {
-            voipLog?.log("Creating Agora Handler")
-            if (this::INSTANCE.isInitialized)
-                return AgoraEvent(INSTANCE, callingEvent)
-            else
-                synchronized(this) {
-                    return if (this::INSTANCE.isInitialized)
-                        AgoraEvent(INSTANCE, callingEvent)
-                    else {
-                        Companion.scope = scope
-                        AgoraEvent(AgoraEventHandler().also { INSTANCE = it }, callingEvent)
-                    }
-                }
-            voipLog?.log("Agora Handler Object --> $INSTANCE")
-        }
+    fun observeCallEvents() : SharedFlow<CallState> {
+        return callingEvent
     }
 
     /**
@@ -108,7 +92,10 @@ internal class AgoraEventHandler private constructor() : IRtcEngineEventHandler(
         //Log.d(TAG, "onUserOffline: $USER_DROP_OFFLINE")
         voipLog?.log("UID -> $uid and Reason -> $reason")
         scope.launch {
+
             if(reason == USER_DROP_OFFLINE && uid != CallDetails.localUserAgoraId) {
+                emitEvent(CallState.OnReconnecting)
+            } else if(reason == USER_QUIT_CHANNEL) {
                 emitEvent(CallState.OnReconnecting)
             }
         }
@@ -152,6 +139,3 @@ internal class AgoraEventHandler private constructor() : IRtcEngineEventHandler(
         }
     }
 }
-
-// TODO: Need to change Class name
-internal data class AgoraEvent(val handler : AgoraEventHandler?, val callingEvent : SharedFlow<CallState>)

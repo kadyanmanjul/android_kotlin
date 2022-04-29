@@ -4,7 +4,7 @@ import android.os.Message
 import android.util.Log
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_INCOMING_CALL_ID
 import com.joshtalks.joshskills.base.constants.PEER_TO_PEER
-import com.joshtalks.joshskills.voip.FirebaseChannelService
+import com.joshtalks.joshskills.voip.communication.fallback.FirebaseChannelService
 import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.audiomanager.SOUND_TYPE_RINGTONE
 import com.joshtalks.joshskills.voip.audiomanager.SoundManager
@@ -15,7 +15,6 @@ import com.joshtalks.joshskills.voip.communication.PubNubChannelService
 import com.joshtalks.joshskills.voip.communication.constants.ServerConstants
 import com.joshtalks.joshskills.voip.communication.model.*
 import com.joshtalks.joshskills.voip.constant.*
-import com.joshtalks.joshskills.voip.data.api.VoipNetwork
 import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.notification.NotificationPriority
 import com.joshtalks.joshskills.voip.notification.VoipNotification
@@ -30,20 +29,31 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlin.collections.HashMap
-import kotlinx.coroutines.flow.collect
 
 const val PER_USER_TIMEOUT_IN_MILLIS = 10 * 1000L
 const val CALL_CONNECT_TIMEOUT_IN_MILLIS = 2 * 60 * 1000L
 private const val TAG = "CallingMediator"
 
 class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
-    private val webrtcService: WebrtcService by lazy { AgoraWebrtcService }
-    private val networkEventChannel: EventChannel by lazy { PubNubChannelService }
-    private val fallbackEventChannel: EventChannel by lazy { FirebaseChannelService }
+    private val webrtcService: WebrtcService by lazy {
+        Log.d(TAG, "Creating : AgoraWebrtcService")
+        AgoraWebrtcService(scope)
+    }
+    private val networkEventChannel: EventChannel by lazy {
+        Log.d(TAG, "Creating : networkEventChannel")
+        PubNubChannelService(scope)
+    }
+    private val fallbackEventChannel: EventChannel by lazy {
+        Log.d(TAG, "Creating : fallbackEventChannel")
+        FirebaseChannelService(scope)
+    }
     private lateinit var callDirection: CallDirection
     private var calling = PeerToPeerCalling()
     private var callType = 0
-    private val flow by lazy { MutableSharedFlow<android.os.Message>(replay = 0) }
+    private val flow by lazy {
+        Log.d(TAG, "Creating : flow")
+        MutableSharedFlow<Message>(replay = 0)
+    }
     private val mutex = Mutex(false)
     private val incomingCallMutex = Mutex(false)
     private val soundManager by lazy { SoundManager(SOUND_TYPE_RINGTONE, 20000) }
@@ -60,13 +70,14 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
         scope.launch {
             mutex.withLock {
                 Log.d(TAG, " INIT : LOCK")
-                webrtcService.initWebrtcService()
-                networkEventChannel.initChannel()
-                fallbackEventChannel.initChannel()
                 handleWebrtcEvent()
                 handlePubnubEvent()
                 handleFallbackEvents()
                 Log.d(TAG, " INIT : UNLOCK")
+                Log.d(TAG, "Webrtc : ${webrtcService.hashCode()}")
+                Log.d(TAG, "networkEventChannel : ${networkEventChannel.hashCode()}")
+                Log.d(TAG, "fallbackEventChannel : ${fallbackEventChannel.hashCode()}")
+                Log.d(TAG, "flow : ${flow.hashCode()}")
             }
         }
     }
@@ -120,6 +131,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
     }
 
     private fun handleFallbackEvents() {
+        Log.d(TAG, "handleFallbackEvents: ${fallbackEventChannel.hashCode()}")
         Log.d(TAG, "handleFallbackEvents: Pubnub Channel Failed...")
         scope.launch {
             fallbackEventChannel.observeChannelEvents().collect { event ->
@@ -224,7 +236,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
         userNotFoundJob = scope.launch {
             ensureActive()
             val timeout = Timeout(ServerConstants.TIMEOUT)
-            for (i in 1..2) {
+            for (i in 1..12) {
                 delay(PER_USER_TIMEOUT_IN_MILLIS)
                 ensureActive()
                 networkEventChannel.emitEvent(timeout)
@@ -306,11 +318,13 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
 
     // Handle Events coming from Backend
     private fun handlePubnubEvent() {
+        Log.d(TAG, "handlePubnubEvent: ${networkEventChannel.hashCode()}")
         scope.launch {
             try {
                 networkEventChannel.observeChannelEvents().collect {
                     val latestEventTimestamp = it.getEventTime() ?: 0L
                     PrefManager.setLatestPubnubMessageTime(latestEventTimestamp)
+                    Log.d(TAG, "handlePubnubEvent: ${this.hashCode()} .... ${networkEventChannel.hashCode()}")
                     when (it) {
                         is Error -> {
                             /**
@@ -350,6 +364,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                         }
                         is MessageData -> {
                             voipLog?.log("Message Data -> $it")
+                            Log.d(TAG, "handlePubnubEvent: $it")
                             if (it.isMessageForSameChannel()) {
                                 when (it.getType()) {
                                     ServerConstants.ONHOLD -> {
@@ -433,6 +448,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
         this.getChannel() == CallDetails.agoraChannelName
 
     private fun handleWebrtcEvent() {
+        Log.d(TAG, "handleWebrtcEvent: ${webrtcService.hashCode()}")
         scope.launch {
             try {
                 webrtcService.observeCallingEvents().collect {
@@ -495,6 +511,12 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                 e.printStackTrace()
             }
         }
+    }
+
+    override fun onDestroy() {
+        networkEventChannel.onDestroy()
+        fallbackEventChannel.onDestroy()
+        webrtcService.onDestroy()
     }
 }
 

@@ -15,4 +15,5 @@ internal interface CallServiceMediator {
     fun hideIncomingCall()
     fun switchAudio()
     fun disconnectCall()
+    fun onDestroy()
 }
