@@ -73,6 +73,9 @@ class NotificationObject {
 
     @SerializedName("additional_data")
     var extraData: String? = null
+
+    @SerializedName("user_id")
+    var userId: String? = null
 }
 
 enum class NotificationAction(val type: String) {
@@ -179,8 +182,10 @@ enum class NotificationAction(val type: String) {
     ACTION_OPEN_FREE_TRIAL_SCREEN("OPEN_FREE_TRIAL_SCREEN"),
 
     @SerializedName("JOIN_CONVERSATION_ROOM")
-    JOIN_CONVERSATION_ROOM("JOIN_CONVERSATION_ROOM")
+    JOIN_CONVERSATION_ROOM("JOIN_CONVERSATION_ROOM"),
 
+    @SerializedName("ROOM_ABOUT_TO_START")
+    ROOM_IS_ABOUT_TO_START("ROOM_ABOUT_TO_START")
 }
 
 enum class NotificationChannelNames(val type: String) {

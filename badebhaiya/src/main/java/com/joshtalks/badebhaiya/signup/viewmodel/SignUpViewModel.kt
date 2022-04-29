@@ -57,7 +57,7 @@ class SignUpViewModel(application: Application): AndroidViewModel(application) {
     fun verifyOTP(otp: String, phoneNumber: String) {
         viewModelScope.launch {
             try {
-                val reqObj = VerifyOTPRequest("+91", phoneNumber, otp)
+                val reqObj = VerifyOTPRequest("+91", phoneNumber, otp, Utils.getDeviceId())
                 val response = repository.verifyOTP(reqObj)
                 Log.i(TAG, "verifyOTP: $response")
                 if (response.isSuccessful) {
@@ -225,6 +225,7 @@ class SignUpViewModel(application: Application): AndroidViewModel(application) {
                 requestTrueUser["payload"] = user.payload
                 requestTrueUser["signature"] = user.signature
                 requestTrueUser["signature_algorithm"] = user.signatureAlgorithm
+                requestTrueUser["device_id"] = Utils.getDeviceId()
                 val response = repository.trueCallerLogin(requestTrueUser)
                 if(response.isSuccessful) {
                     response.body()?.let {

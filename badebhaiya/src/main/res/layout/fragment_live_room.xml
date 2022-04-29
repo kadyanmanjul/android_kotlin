@@ -191,6 +191,7 @@
             android:paddingTop="@dimen/_10sdp"
             android:clickable="true"
             android:focusable="true"
+            android:onClick="@{() -> handler.expandLiveRoom()}"
             android:background="@drawable/background_bottomsheet_24dp_corner"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

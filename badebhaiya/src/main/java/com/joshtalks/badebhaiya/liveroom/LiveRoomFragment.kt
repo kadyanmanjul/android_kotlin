@@ -291,7 +291,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
 //        vm.lvRoomState = LiveRoomState.COLLAPSED
     }
 
-    private fun expandLiveRoom() {
+     fun expandLiveRoom() {
         binding.liveRoomRootView.transitionToStart()
     }
 
@@ -550,7 +550,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
             textColor = R.color.black,
             bgColor = R.color.conversation_room_gray
         )
-        binding.topic.text = channelTopic
+        binding.topic.text = PubNubManager.getLiveRoomProperties().channelTopic
 
 
         if (PubNubManager.getLiveRoomProperties().isRoomCreatedByUser) {
@@ -932,7 +932,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
         audienceAdapter?.setOnItemClickListener(object : AudienceAdapter.OnUserItemClickListener {
 
             override fun onItemClick(user: LiveRoomUser) {
-                if (requireActivity().supportFragmentManager.backStackEntryCount == 0 && isBottomSheetVisible.not()) {
+                if (requireActivity().supportFragmentManager.backStackEntryCount == 1 && isBottomSheetVisible.not()) {
                     getDataOnSpeakerAdapterItemClick(user, user.id, false)
                     isBottomSheetVisible = true
                 }
@@ -941,7 +941,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
 
         speakerAdapter?.setOnItemClickListener(object : SpeakerAdapter.OnUserItemClickListener {
             override fun onItemClick(user: LiveRoomUser) {
-                if (requireActivity().supportFragmentManager.backStackEntryCount == 0 && isBottomSheetVisible.not()) {
+                if (requireActivity().supportFragmentManager.backStackEntryCount == 1 && isBottomSheetVisible.not()) {
                     getDataOnSpeakerAdapterItemClick(user, user.id, true)
                     isBottomSheetVisible = true
                 }

@@ -35,13 +35,11 @@ import com.joshtalks.badebhaiya.liveroom.bottomsheet.CreateRoom
 import com.joshtalks.badebhaiya.liveroom.model.StartingLiveRoomProperties
 import com.joshtalks.badebhaiya.liveroom.viewmodel.LiveRoomViewModel
 import com.joshtalks.badebhaiya.profile.ProfileActivity
-import com.joshtalks.badebhaiya.profile.ProfileViewModel
 import com.joshtalks.badebhaiya.profile.request.DeleteReminderRequest
 import com.joshtalks.badebhaiya.profile.request.ReminderRequest
 import com.joshtalks.badebhaiya.pubnub.PubNubState
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomResponse
 import com.joshtalks.badebhaiya.repository.model.User
-import com.joshtalks.badebhaiya.signup.fragments.SignUpEnterPhoneFragment
 import com.joshtalks.badebhaiya.utils.setUserImageOrInitials
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -128,8 +126,6 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         }
         this.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_feed)
-        val feedAdapter=FeedAdapter()
-        feedAdapter.notifyDataSetChanged()
         checkAndOpenLiveRoom()
         viewModel.getRooms()
         viewModel.setIsBadeBhaiyaSpeaker()
@@ -368,7 +364,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                 type = NotificationType.REMINDER
             )
         )
-        val pendingIntent =
+        pendingIntent =
             PendingIntent.getBroadcast(
                 applicationContext,
                 0,
@@ -390,15 +386,16 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
 
     override fun deleteReminder(room: RoomListResponseItem, view: View) {
         //room.isScheduled=false
-        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        alarmManager.cancel(pendingIntent).also {
-            viewModel.deleteReminder(
-                DeleteReminderRequest(
-                    roomId = room.roomId.toString(),
-                    userId = User.getInstance().userId
-                )
-            )
+        pendingIntent?.let {
+            val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            alarmManager.cancel(pendingIntent)
         }
+        viewModel.deleteReminder(
+            DeleteReminderRequest(
+                roomId = room.roomId.toString(),
+                userId = User.getInstance().userId
+            )
+        )
     }
 
     override fun viewRoom(room: RoomListResponseItem, view: View) {

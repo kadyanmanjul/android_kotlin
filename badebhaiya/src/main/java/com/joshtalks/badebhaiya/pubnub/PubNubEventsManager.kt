@@ -49,10 +49,10 @@ object PubNubEventsManager {
         val customMessage = JsonObject()
         customMessage.addProperty("id", userUid.toString())
         customMessage.addProperty("is_speaker", false)
-        customMessage.addProperty("name", userName)
+        customMessage.addProperty("short_name", userName)
         customMessage.addProperty("is_mic_on", false)
         customMessage.addProperty("action", "MOVE_TO_AUDIENCE")
-        PubNubManager.updateInviteSentToUserForSpeaker(userUid.toInt())
+//        PubNubManager.updateInviteSentToUserForSpeaker(userUid.toInt())
         PubNubManager.sendCustomMessage(customMessage)
 
     }
