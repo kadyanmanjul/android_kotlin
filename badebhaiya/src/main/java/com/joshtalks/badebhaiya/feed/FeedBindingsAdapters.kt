@@ -1,6 +1,9 @@
 package com.joshtalks.badebhaiya.feed
 
 import android.content.res.ColorStateList
+import android.os.Handler
+import android.os.Looper
+import android.provider.Settings
 import android.util.Log
 import android.widget.ImageView
 import androidx.databinding.BindingAdapter
@@ -18,11 +21,9 @@ import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.utils.ALLOWED_JOIN_ROOM_TIME
 import com.joshtalks.badebhaiya.utils.DEFAULT_NAME
 import com.joshtalks.badebhaiya.utils.setUserImageOrInitials
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.withContext
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.*
+import java.lang.Runnable
+import java.util.*
 
 private const val TAG = "GroupBindingAdapter"
 
@@ -80,6 +81,7 @@ fun setConversationRoomCardActionButton(
                 callback?.setReminder(roomListResponseItem, view)
                 view.setOnClickListener { callback?.viewRoom(roomListResponseItem, view) }
             }
+            roomListResponseItem.startTime?.let { it1 -> setTimer(it1,view,roomListResponseItem,adapter,viewHolder,callback) }
         }
         SCHEDULED -> {
             view.text = view.context.getString(R.string.reminder_on)
@@ -104,8 +106,28 @@ fun setConversationRoomCardActionButton(
                     callback?.deleteReminder(roomListResponseItem, view)
                 }
             }
+            roomListResponseItem.startTime?.let { it1 -> setTimer(it1,view,roomListResponseItem,adapter,viewHolder,callback) }
         }
     }
+}
+
+fun setTimer(time:Long,view: MaterialButton,roomListResponseItem: RoomListResponseItem,adapter: RecyclerView.Adapter<FeedAdapter.FeedViewHolder>,
+             viewHolder: RecyclerView.ViewHolder,callback: FeedAdapter.ConversationRoomItemCallback?)
+{
+    val count= time-Date().time/1000
+    val handler5 = Handler(Looper.getMainLooper())
+    handler5.postDelayed({view.text = view.context.getString(R.string.join_now)
+        view.setTextColor(ColorStateList.valueOf(view.context.resources.getColor(R.color.white)))
+        roomListResponseItem.conversationRoomType = LIVE
+        view.backgroundTintList =
+            ColorStateList.valueOf(view.context.resources.getColor(R.color.reminder_on_button_color))
+        view.text="Join this room"
+        (adapter as FeedAdapter).updateScheduleRoomStatusForSpeaker(viewHolder.absoluteAdapterPosition)
+        //setAlarmForLiveRoom(viewHolder,roomListResponseItem,adapter)
+        view.setOnClickListener {
+            callback?.joinRoom(roomListResponseItem, view) }
+
+    }, count*1000)
 }
 
 @BindingAdapter("isImageRequired", "imageUrl", "userName", "isRoundImage", "initialsFontSize", "imageCornerRadius", requireAll = false)
