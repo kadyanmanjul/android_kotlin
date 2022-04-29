@@ -12,6 +12,8 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.databinding.FragmentSignUpProfilePicSuccessfullyUpdatedBinding
 
 class SignUpProfilePicSuccessfullyUpdatedFragment : BaseSignUpFragment() {
@@ -58,6 +60,7 @@ class SignUpProfilePicSuccessfullyUpdatedFragment : BaseSignUpFragment() {
 
     fun startCourse() {
         logStartCourseEvent()
+        MixPanelTracker.publishEvent(MixPanelEvent.REGISTRATION_START_COURSE).push()
         viewModel.changeSignupStatusToStartAfterPicUploaded()
     }
 

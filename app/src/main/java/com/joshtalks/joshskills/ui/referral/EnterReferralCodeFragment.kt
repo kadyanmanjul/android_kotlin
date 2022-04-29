@@ -20,6 +20,8 @@ import com.joshtalks.joshskills.core.REFERRED_REFERRAL_CODE
 import com.joshtalks.joshskills.core.SINGLE_SPACE
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.hideKeyboard
 import com.joshtalks.joshskills.databinding.FragmentEnterReferralCodeBinding
 import com.joshtalks.joshskills.messaging.RxBus2
@@ -104,6 +106,11 @@ class EnterReferralCodeFragment : BottomSheetDialogFragment() {
             } else {
                 validateAndMoveToNextFragment()
             }
+        }
+
+        binding.close.setOnClickListener {
+            dismiss()
+            MixPanelTracker.publishEvent(MixPanelEvent.CANCEL).push()
         }
     }
 

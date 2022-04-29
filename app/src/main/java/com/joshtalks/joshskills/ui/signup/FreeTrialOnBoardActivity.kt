@@ -32,6 +32,8 @@ import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIA
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIAL_POPUP_HUNDRED_POINTS_TEXT
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIAL_POPUP_TITLE_TEXT
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIAL_POPUP_YES_BUTTON_TEXT
+import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.analytics.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
@@ -48,18 +50,13 @@ import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityFreeTrialOnBoardBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
-import com.joshtalks.joshskills.ui.inbox.InboxActivity
-import com.truecaller.android.sdk.TruecallerSDK
-import com.truecaller.android.sdk.TruecallerSdkScope
-import com.truecaller.android.sdk.ITrueCallback
-import com.truecaller.android.sdk.TrueError
-import com.truecaller.android.sdk.TrueProfile
 import com.joshtalks.joshskills.repository.server.ChooseLanguages
 import com.joshtalks.joshskills.ui.activity_feed.utils.IS_USER_EXIST
+import com.joshtalks.joshskills.ui.inbox.InboxActivity
+import com.truecaller.android.sdk.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.CoroutineScope
-import java.util.Locale
+import java.util.*
 
 const val SHOW_SIGN_UP_FRAGMENT = "SHOW_SIGN_UP_FRAGMENT"
 const val HINDI_TO_ENGLISH_TEST_ID = "784"
@@ -130,6 +127,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
     }
 
     fun signUp() {
+        MixPanelTracker.publishEvent(MixPanelEvent.LOGIN).push()
         lifecycleScope.launch(Dispatchers.IO) {
             AppAnalytics.create(AnalyticsEvent.LOGIN_INITIATED.NAME)
                 .addBasicParam()
@@ -145,6 +143,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
     }
 
     fun showStartTrialPopup(language: ChooseLanguages, is100PointsActive : Boolean) {
+        MixPanelTracker.publishEvent(MixPanelEvent.START_NOW).push()
         viewModel.saveImpression(IMPRESSION_START_FREE_TRIAL)
         PrefManager.put(ONBOARDING_STAGE, OnBoardingStage.START_NOW_CLICKED.value)
         PrefManager.put(FREE_TRIAL_TEST_ID, language.testId)
@@ -182,6 +181,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
                 .getString(FREE_TRIAL_POPUP_YES_BUTTON_TEXT + language.testId)
 
         dialogView.findViewById<MaterialTextView>(R.id.yes).setOnClickListener {
+            MixPanelTracker.publishEvent(MixPanelEvent.JI_HAAN).push()
             if (Mentor.getInstance().getId().isNotEmpty()) {
                 viewModel.saveImpression(IMPRESSION_START_TRIAL_YES)
                 PrefManager.put(ONBOARDING_STAGE, OnBoardingStage.JI_HAAN_CLICKED.value)
@@ -226,6 +226,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
 
         override fun onFailureProfileShared(trueError: TrueError) {
             if(TrueError.ERROR_TYPE_CONTINUE_WITH_DIFFERENT_NUMBER == trueError.errorType) {
+                MixPanelTracker.publishEvent(MixPanelEvent.USE_ANOTHER_METHOD).push()
                 hideProgressBar()
                 viewModel.saveTrueCallerImpression(IMPRESSION_TC_USER_ANOTHER)
                 openProfileDetailFragment()
@@ -242,6 +243,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
 
         override fun onSuccessProfileShared(trueProfile: TrueProfile) {
                 PrefManager.put(IS_LOGIN_VIA_TRUECALLER,true)
+                MixPanelTracker.publishEvent(MixPanelEvent.CONTINUE_WITH_NUMBER).push()
                 viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_FREETRIAL_LOGIN)
                 val user = User.getInstance()
                 user.firstName = trueProfile.firstName
@@ -299,6 +301,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
     }
 
     override fun onBackPressed() {
+        MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
         if (supportFragmentManager.backStackEntryCount == 1) {
             this@FreeTrialOnBoardActivity.finish()
             return

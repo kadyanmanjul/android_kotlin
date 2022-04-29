@@ -22,7 +22,6 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/_16sdp"
             android:backgroundTint="@color/black"
-            android:onClick="@{()->fragment.dismiss()}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/freshchat_ic_calendar_close" />

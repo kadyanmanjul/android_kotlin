@@ -39,6 +39,8 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.custom_ui.AnimationView
 import com.joshtalks.joshskills.core.custom_ui.TextDrawable
 import com.joshtalks.joshskills.core.interfaces.OnDismissClaimCertificateDialog
@@ -566,6 +568,7 @@ class CourseProgressActivity :
     }
 
     override fun onBackPressed() {
+        MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
         super.onBackPressed()
         val resultIntent = Intent().apply {
             putStringArrayListExtra(PRACTISE_UPDATE_MESSAGE_KEY, updatePractiseIdList)

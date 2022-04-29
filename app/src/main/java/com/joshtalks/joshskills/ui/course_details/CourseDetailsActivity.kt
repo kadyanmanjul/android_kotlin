@@ -41,6 +41,9 @@ import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.databinding.ActivityCourseDetailsBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.*
@@ -89,8 +92,8 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
     var isPointsScoredMoreThanEqualTo100 = false
 
     private val appAnalytics by lazy { AppAnalytics.create(AnalyticsEvent.COURSE_OVERVIEW.NAME) }
-
-
+    private var loginFreeTrial = false
+    private var courseName = EMPTY
     private var onDownloadCompleteListener = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             val id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
@@ -365,13 +368,17 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
                     card.data.toString(),
                     CourseOverviewData::class.java
                 )
+                courseName = data.courseName
                 if (data.courseName.isNotBlank())
                     appAnalytics.addParam(AnalyticsEvent.COURSE_NAME.NAME, data.courseName)
                 return CourseOverviewViewHolder(
                     card.cardType,
                     card.sequenceNumber,
                     data,
-                    this
+                    this,
+                    testId,
+                    viewModel.courseDetailsLiveData.value!!.paymentData.discountedAmount,
+                    courseName
                 )
             }
             CardType.LONG_DESCRIPTION -> {
@@ -455,7 +462,10 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
                     card.sequenceNumber,
                     data,
                     this,
-                    this
+                    this,
+                    testId,
+                    viewModel.courseDetailsLiveData.value!!.paymentData.discountedAmount,
+                    courseName
                 )
             }
             CardType.STUDENT_FEEDBACK -> {
@@ -467,7 +477,10 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
                     card.cardType,
                     card.sequenceNumber,
                     data,
-                    this
+                    this,
+                    testId,
+                    viewModel.courseDetailsLiveData.value!!.paymentData.discountedAmount,
+                    courseName
                 )
             }
             CardType.FAQ -> {
@@ -478,7 +491,8 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
                 return MasterFaqViewHolder(
                     card.cardType,
                     card.sequenceNumber,
-                    data
+                    data,
+                    testId
                 )
             }
             CardType.ABOUT_JOSH -> {
@@ -621,6 +635,13 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
+                    MixPanelTracker.publishEvent(MixPanelEvent.COURSE_PLAY_DEMO)
+                        .addParam(ParamKeys.TEST_ID,testId)
+                        .addParam(ParamKeys.COURSE_NAME,courseName)
+                        .addParam(ParamKeys.COURSE_PRICE,viewModel.courseDetailsLiveData.value?.paymentData?.discountedAmount)
+                        .addParam(ParamKeys.COURSE_ID,PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID))
+                        .push()
+
                     AppAnalytics.create(AnalyticsEvent.DEMO_VIDEO_PLAYED.NAME)
                         .addBasicParam()
                         .addUserDetails()
@@ -709,6 +730,10 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
                     isFromNewFreeTrial = isFromNewFreeTrial
                 )
             } else {
+                if(isFromNewFreeTrial) {
+                    loginFreeTrial = true
+                    MixPanelTracker.publishEvent(MixPanelEvent.LOGIN_FREE_TRIAL_CLICKED).push()
+                }
                 logStartCourseAnalyticEvent(testId)
                 PaymentSummaryActivity.startPaymentSummaryActivity(this, testId.toString(),isFromNewFreeTrial = isFromNewFreeTrial, is100PointsObtained = isPointsScoredMoreThanEqualTo100 && testId == ENGLISH_COURSE_TEST_ID && is100PointsActive, isHundredPointsActive = is100PointsActive)
             }
@@ -717,6 +742,13 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
     }
 
     private fun logStartCourseAnalyticEvent(testId: Int) {
+        if(!loginFreeTrial){
+            MixPanelTracker.publishEvent(MixPanelEvent.COURSE_START_NOW)
+                .addParam(ParamKeys.TEST_ID,testId)
+                .addParam(ParamKeys.COURSE_NAME,courseName)
+                .addParam(ParamKeys.COURSE_PRICE,viewModel.courseDetailsLiveData.value?.paymentData?.discountedAmount)
+                .push()
+        }
         AppAnalytics.create(AnalyticsEvent.START_COURSE_NOW.NAME)
             .addBasicParam()
             .addUserDetails()
@@ -725,6 +757,14 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
     }
 
     private fun logMeetMeAnalyticEvent(name: String) {
+        MixPanelTracker.publishEvent(MixPanelEvent.COURSE_MEET_INSTRUCTOR)
+            .addParam(ParamKeys.TEST_ID,testId)
+            .addParam(ParamKeys.COURSE_NAME,courseName)
+            .addParam(ParamKeys.INSTRUCTOR_NAME,name)
+            .addParam(ParamKeys.COURSE_PRICE,viewModel.courseDetailsLiveData.value?.paymentData?.discountedAmount)
+            .addParam(ParamKeys.COURSE_ID,PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID))
+            .push()
+
         AppAnalytics.create(AnalyticsEvent.MEET_ME_CLICKED.NAME)
             .addBasicParam()
             .addUserDetails()
@@ -734,6 +774,13 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
     }
 
     private fun logDownloadFileAnalyticEvent() {
+        MixPanelTracker.publishEvent(MixPanelEvent.COURSE_DOWNLOAD_SYLLABUS)
+            .addParam(ParamKeys.TEST_ID,testId)
+            .addParam(ParamKeys.COURSE_NAME,courseName)
+            .addParam(ParamKeys.COURSE_PRICE,viewModel.courseDetailsLiveData.value?.paymentData?.discountedAmount)
+            .addParam(ParamKeys.COURSE_ID,PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID))
+            .push()
+
         AppAnalytics.create(AnalyticsEvent.DOWNLOAD_FILE_CLICKED.NAME)
             .addBasicParam()
             .addUserDetails()
@@ -825,6 +872,12 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
     }
 
     fun openWhatsapp() {
+        MixPanelTracker.publishEvent(MixPanelEvent.COURSE_WHATSAPP_CLICKED)
+            .addParam(ParamKeys.TEST_ID,testId)
+            .addParam(ParamKeys.COURSE_NAME,courseName)
+            .addParam(ParamKeys.COURSE_PRICE,viewModel.courseDetailsLiveData.value?.paymentData?.discountedAmount)
+            .addParam(ParamKeys.COURSE_ID,PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID))
+            .push()
         try {
             val whatsappIntent = Intent(Intent.ACTION_VIEW)
             whatsappIntent.data = Uri.parse(intent.getStringExtra(WHATSAPP_URL))
@@ -914,5 +967,9 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
 
     }
 
+    override fun onBackPressed() {
+        MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
+        super.onBackPressed()
+    }
 
 }

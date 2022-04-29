@@ -7,13 +7,23 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.CURRENT_COURSE_ID
+import com.joshtalks.joshskills.core.DEFAULT_COURSE_ID
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.HELP_ACTIVITY_REQUEST_CODE
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.databinding.FragmentPaymentFailedDialogBinding
 import com.joshtalks.joshskills.ui.help.HelpActivity
+import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryViewModel
 import com.joshtalks.joshskills.ui.payment.order_summary.TRANSACTION_ID
 
 const val WHATSAPP_URL_PAYMENT_FAILED = "http://english-new.joshtalks.org/whats_app/201"
@@ -21,7 +31,10 @@ const val WHATSAPP_URL_PAYMENT_FAILED = "http://english-new.joshtalks.org/whats_
 class PaymentFailedDialogFragment : BottomSheetDialogFragment() {
     private lateinit var binding: FragmentPaymentFailedDialogBinding
     private var transactionId: Int = 0
-
+    private var testId: String = EMPTY
+    private val viewModel: PaymentSummaryViewModel by lazy {
+        ViewModelProvider(requireActivity()).get(PaymentSummaryViewModel::class.java)
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -48,9 +61,37 @@ class PaymentFailedDialogFragment : BottomSheetDialogFragment() {
     }
 
     private fun setListeners() {
-        binding.retry.setOnClickListener { dismiss() }
-        binding.chatPay.setOnClickListener { openWhatsapp() }
-        binding.close.setOnClickListener { dismissAndCloseActivity() }
+        viewModel.testId.observe(
+            viewLifecycleOwner
+        ){
+            testId = it
+        }
+        binding.retry.setOnClickListener {
+            MixPanelTracker.publishEvent(MixPanelEvent.RETRY_PAYMENT)
+                .addParam(ParamKeys.TEST_ID,testId)
+                .addParam(ParamKeys.COURSE_NAME, viewModel.responsePaymentSummary.value?.courseName)
+                .addParam(ParamKeys.COURSE_PRICE, viewModel.responsePaymentSummary.value?.amount)
+                .addParam(ParamKeys.IS_COUPON_APPLIED, viewModel.responsePaymentSummary.value?.couponDetails?.isPromoCode)
+                .addParam(ParamKeys.AMOUNT_PAID, viewModel.responsePaymentSummary.value?.discountedAmount)
+                .addParam(ParamKeys.COURSE_ID, PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID))
+                .push()
+            dismiss()
+        }
+        binding.chatPay.setOnClickListener {
+            MixPanelTracker.publishEvent(MixPanelEvent.WHATSAPP_CLICKED_PAYMENT_FAILED)
+                .addParam(ParamKeys.TEST_ID,testId)
+                .addParam(ParamKeys.COURSE_NAME, viewModel.responsePaymentSummary.value?.courseName)
+                .addParam(ParamKeys.COURSE_PRICE, viewModel.responsePaymentSummary.value?.amount)
+                .addParam(ParamKeys.IS_COUPON_APPLIED, viewModel.responsePaymentSummary.value?.couponDetails?.isPromoCode)
+                .addParam(ParamKeys.AMOUNT_PAID, viewModel.responsePaymentSummary.value?.discountedAmount)
+                .addParam(ParamKeys.COURSE_ID,PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID))
+                .push()
+            openWhatsapp()
+        }
+        binding.close.setOnClickListener {
+            MixPanelTracker.publishEvent(MixPanelEvent.CANCEL).push()
+            dismissAndCloseActivity()
+        }
         binding.help.setOnClickListener { openHelpActivity() }
     }
 

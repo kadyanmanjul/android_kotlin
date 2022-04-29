@@ -18,6 +18,8 @@ import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.GoalKeys
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.setRoundImage
 import com.joshtalks.joshskills.databinding.ActivityShareWithFriendsBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -59,7 +61,13 @@ class ShareWithFriendsActivity : AppCompatActivity() {
         binding.handler = this
     }
 
-    fun sharePreviewToOtherApps() {
+    fun sharePreviewToOtherApps(isComingFromButton:Boolean) {
+        if(isComingFromButton) {
+            MixPanelTracker.publishEvent(MixPanelEvent.SHARE_WITH_FRIENDS_BUTTON).push()
+        }
+        else {
+            MixPanelTracker.publishEvent(MixPanelEvent.SHARE_WITH_FRIENDS_ICON).push()
+        }
         DeepLinkUtil(this)
             .setReferralCode(Mentor.getInstance().referralCode)
             .setReferralCampaign()

@@ -13,6 +13,8 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.custom_ui.tvproperty.BulletSpanWithRadius
 import com.joshtalks.joshskills.databinding.UnlockDialogLayoutBinding
 
@@ -73,6 +75,7 @@ class ExamUnlockDialogFragment(
     }
 
     fun dismissDialog() {
+        MixPanelTracker.publishEvent(MixPanelEvent.EXAM_CLICK_OKAY).push()
         dismiss()
     }
 }

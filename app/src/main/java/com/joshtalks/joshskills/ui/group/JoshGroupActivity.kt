@@ -18,7 +18,12 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.constants.*
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.PermissionUtils
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.databinding.ActivityJoshGroupBinding
+import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics
 import com.joshtalks.joshskills.ui.group.constants.*
@@ -128,9 +133,10 @@ class JoshGroupActivity : BaseGroupActivity() {
     }
 
     fun openCallingActivity(bundle: Bundle) {
-        GroupAnalytics.push(GroupAnalytics.Event.CALL_PRACTICE_PARTNER_FROM_GROUP, bundle.getString(
-            GROUPS_ID
-        ) ?: "")
+        GroupAnalytics.push(GroupAnalytics.Event.CALL_PRACTICE_PARTNER_FROM_GROUP, bundle.getString(GROUPS_ID) ?: "")
+        MixPanelTracker.publishEvent(MixPanelEvent.CALL_PP_FROM_GROUP_CHAT)
+            .addParam(ParamKeys.GROUP_ID, bundle.getString(GROUPS_ID))
+            .push()
         val intent = SearchingUserActivity.startUserForPractiseOnPhoneActivity(
             this,
             courseId = "151",
@@ -185,6 +191,10 @@ class JoshGroupActivity : BaseGroupActivity() {
                         putString(GROUPS_CHAT_SUB_TITLE, "tap here for group info")
                         putInt(GROUP_CHAT_UNREAD, Integer.valueOf(data.getUnreadMsgCount()))
                         GroupAnalytics.push(GroupAnalytics.Event.OPEN_GROUP, data.getUniqueId())
+                        MixPanelTracker.publishEvent(MixPanelEvent.OPEN_GROUP_INBOX)
+                            .addParam(ParamKeys.GROUP_ID, data.getUniqueId())
+                            .addParam(ParamKeys.IS_ADMIN, data.getCreatorId() == Mentor.getInstance().getId())
+                            .push()
                     }
                     putBoolean(HAS_JOINED_GROUP, it)
                 }
@@ -261,6 +271,7 @@ class JoshGroupActivity : BaseGroupActivity() {
             addToBackStack(GROUPS_STACK)
         }
         GroupAnalytics.push(GroupAnalytics.Event.CREATE_GROUP)
+        MixPanelTracker.publishEvent(MixPanelEvent.NEW_GROUP_CLICKED).push()
     }
 
     private fun openAdminResponseFragment(addGroupRequest: AddGroupRequest) {
@@ -283,6 +294,7 @@ class JoshGroupActivity : BaseGroupActivity() {
     }
 
     private fun popBackStack() {
+        MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
         if (supportFragmentManager.backStackEntryCount > 1) {
             try {
                 supportFragmentManager.popBackStackImmediate()
@@ -294,6 +306,14 @@ class JoshGroupActivity : BaseGroupActivity() {
     }
 
     private fun openImageChooser() {
+        if (vm.openedGroupId.isNullOrBlank())
+            MixPanelTracker.publishEvent(MixPanelEvent.ADD_GROUP_PHOTO)
+        else {
+            MixPanelTracker.publishEvent(MixPanelEvent.EDIT_GROUP_PHOTO)
+                .addParam(ParamKeys.GROUP_ID, vm.openedGroupId)
+        }
+        MixPanelTracker.push()
+
         UserPicChooserFragment.showDialog(
             supportFragmentManager,
             true,

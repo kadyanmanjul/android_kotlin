@@ -28,6 +28,9 @@ import com.joshtalks.joshskills.core.IS_COURSE_BOUGHT
 import com.joshtalks.joshskills.core.textDrawableBitmap
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.databinding.VoipCallFeedbackViewBinding
 import com.joshtalks.joshskills.repository.local.model.KFactor
@@ -104,6 +107,7 @@ class VoipCallFeedbackActivity : BaseActivity(){
     }
 
     override fun onBackPressed() {
+        MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
         submitFeedback("BACK")
         closeActivity()
         super.onBackPressed()
@@ -241,11 +245,28 @@ class VoipCallFeedbackActivity : BaseActivity(){
                 when (response) {
                     "YES" -> {
                         //showToast("$callerName is now added to your Favorite Practice Partners.")
+                        MixPanelTracker.publishEvent(MixPanelEvent.ADD_FPP)
+                            .addParam(ParamKeys.ADDED_FPP,"yes")
+                            .addParam(ParamKeys.CALLER_ID,callerId)
+                            .addParam(ParamKeys.YOUR_AGORA_ID,yourAgoraId)
+                            .push()
                         closeActivity()
 
 
                     }
                     "NO" -> {
+
+                        MixPanelTracker.publishEvent(MixPanelEvent.ADD_FPP)
+                            .addParam(ParamKeys.ADDED_FPP,"block")
+                            .addParam(ParamKeys.CALLER_ID,callerId)
+                            .addParam(ParamKeys.YOUR_AGORA_ID,yourAgoraId)
+                            .push()
+
+                        MixPanelTracker.publishEvent(MixPanelEvent.REPORT_AND_BLOCK)
+                            .addParam(ParamKeys.CALLER_ID,callerId)
+                            .addParam(ParamKeys.YOUR_AGORA_ID,yourAgoraId)
+                            .push()
+
                         showReportDialog("BLOCK"){
                             closeActivity()
                         }
@@ -254,10 +275,22 @@ class VoipCallFeedbackActivity : BaseActivity(){
                     }
                     "MAYBE" -> {
                         //showToast("Thank you for submitting the feedback.")
+                        MixPanelTracker.publishEvent(MixPanelEvent.ADD_FPP)
+                            .addParam(ParamKeys.ADDED_FPP,"no")
+                            .addParam(ParamKeys.CALLER_ID,callerId)
+                            .addParam(ParamKeys.YOUR_AGORA_ID,yourAgoraId)
+                            .push()
+
                         closeActivity()
 
                     }
                     "CLOSED"-> {
+                        MixPanelTracker.publishEvent(MixPanelEvent.ADD_FPP)
+                            .addParam(ParamKeys.ADDED_FPP,"closed")
+                            .addParam(ParamKeys.CALLER_ID,callerId)
+                            .addParam(ParamKeys.YOUR_AGORA_ID,yourAgoraId)
+                            .push()
+
                         closeActivity()
                     }
                     }

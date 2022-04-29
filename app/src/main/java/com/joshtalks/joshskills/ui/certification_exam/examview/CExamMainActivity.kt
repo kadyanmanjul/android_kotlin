@@ -14,6 +14,9 @@ import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.core.countdowntimer.CountdownTimerBack
 import com.joshtalks.joshskills.core.interfaces.CertificationExamListener
 import com.joshtalks.joshskills.core.service.CONVERSATION_ID
@@ -117,6 +120,11 @@ class CExamMainActivity : BaseActivity(), CertificationExamListener {
 
     private fun setupUI() {
         iv_bookmark.setOnClickListener {
+            MixPanelTracker.publishEvent(MixPanelEvent.BOOKMARK_QUESTION)
+                .addParam(ParamKeys.EXAM_TYPE,CertificationQuestionModel().type)
+                .addParam(ParamKeys.ATTEMPT_NUMBER,CertificationQuestionModel().attemptCount)
+                .addParam(ParamKeys.QUESTION_ID,CertificationQuestionModel().id)
+                .push()
             questionsList.let { questions ->
                 questions[question_view_pager.currentItem].let {
                     it.isBookmarked = it.isBookmarked.not()
@@ -262,6 +270,10 @@ class CExamMainActivity : BaseActivity(), CertificationExamListener {
     }
 
     private fun openQuestionListBottomSheet() {
+        MixPanelTracker.publishEvent(MixPanelEvent.EXAM_OVERVIEW)
+            .addParam(ParamKeys.EXAM_ID,CertificationQuestionModel().type)
+            .addParam(ParamKeys.ATTEMPT_NUMBER,CertificationQuestionModel().attemptCount)
+            .push()
         CoroutineScope(Dispatchers.Main).launch {
             delay(150)
             val prev =
@@ -286,6 +298,7 @@ class CExamMainActivity : BaseActivity(), CertificationExamListener {
     }
 
     override fun onBackPressed() {
+        MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
         if (CertificationExamView.EXAM_VIEW == examView) {
             openQuestionListBottomSheet()
             return

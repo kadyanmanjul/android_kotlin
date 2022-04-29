@@ -6,6 +6,9 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.server.FAQ
 
@@ -23,6 +26,10 @@ class FaqAdapter(
         val item = values[position]
         holder.question.text = item.question.trim()
         holder.itemView.setOnClickListener {
+            MixPanelTracker.publishEvent(MixPanelEvent.FAQ_QUESTION_CLICKED)
+                .addParam(ParamKeys.QUESTION,item.question)
+                .addParam(ParamKeys.CATEGORY_ID,item.categoryId)
+                .push()
             RxBus2.publish(item)
         }
     }

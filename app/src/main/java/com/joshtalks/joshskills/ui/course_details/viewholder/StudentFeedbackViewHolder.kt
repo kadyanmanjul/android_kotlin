@@ -17,7 +17,10 @@ class StudentFeedbackViewHolder(
     override val type: CardType,
     override val sequenceNumber: Int,
     private var studentFeedback: StudentFeedback,
-    private val context: Context = AppObjectController.joshApplication
+    private val context: Context = AppObjectController.joshApplication,
+    private val testId: Int,
+    private val coursePrice: String,
+    private val courseName: String
 ) : CourseDetailsBaseCell(type, sequenceNumber) {
 
     @com.mindorks.placeholderview.annotations.View(R.id.story_recycler_view)
@@ -49,7 +52,11 @@ class StudentFeedbackViewHolder(
             studentFeedback.feedbacks.forEach {
                 item.addView(
                     StudentFeedbackCard(
-                        it
+                        it,
+                        context,
+                        testId,
+                        coursePrice,
+                        courseName
                     )
                 )
             }

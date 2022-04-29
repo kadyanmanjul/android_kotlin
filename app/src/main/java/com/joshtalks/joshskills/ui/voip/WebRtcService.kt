@@ -31,6 +31,9 @@ import com.joshtalks.joshskills.conversationRoom.liveRooms.ConversationLiveRoomA
 import com.joshtalks.joshskills.conversationRoom.model.JoinConversionRoomRequest
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.core.firestore.AgoraNotificationListener
 import com.joshtalks.joshskills.core.firestore.FirestoreDB
 import com.joshtalks.joshskills.core.notification.FirebaseNotificationService
@@ -1174,6 +1177,13 @@ class WebRtcService : BaseWebRtcService() {
                                 }
                                 this == CallConnect().action -> {
                                     val state = CurrentCallDetails.state()
+
+                                    MixPanelTracker.publishEvent(MixPanelEvent.CALL_ACCEPTED)
+                                        .addParam(ParamKeys.AGORA_MENTOR_UID,state.callieUid)
+                                        .addParam(ParamKeys.AGORA_CALL_ID,state.callId)
+                                        .addParam(ParamKeys.TIMESTAMP,DateUtils.getCurrentTimeStamp())
+                                        .push()
+
                                     VoipAnalytics.push(
                                         VoipAnalytics.Event.CALL_ACCEPT,
                                         agoraMentorUid = state.callieUid,
@@ -1193,6 +1203,13 @@ class WebRtcService : BaseWebRtcService() {
                                         rejectCall()
                                     }
                                     val state = CurrentCallDetails.state()
+
+                                    MixPanelTracker.publishEvent(MixPanelEvent.CALL_DECLINED)
+                                        .addParam(ParamKeys.AGORA_MENTOR_UID,state.callieUid)
+                                        .addParam(ParamKeys.AGORA_CALL_ID,state.callId)
+                                        .addParam(ParamKeys.TIMESTAMP,DateUtils.getCurrentTimeStamp())
+                                        .push()
+
                                     VoipAnalytics.push(
                                         VoipAnalytics.Event.CALL_DECLINED,
                                         agoraMentorUid = state.callieUid,
@@ -1513,6 +1530,12 @@ class WebRtcService : BaseWebRtcService() {
                     isTimeOutToPickCall = true
                     callData?.let {
                         val state = CurrentCallDetails.state()
+
+                        MixPanelTracker.publishEvent(MixPanelEvent.CALL_IGNORED)
+                            .addParam(ParamKeys.AGORA_MENTOR_UID,state.callieUid)
+                            .addParam(ParamKeys.AGORA_CALL_ID,state.callId)
+                            .addParam(ParamKeys.TIMESTAMP,DateUtils.getCurrentTimeStamp())
+                            .push()
                         VoipAnalytics.push(
                             VoipAnalytics.Event.USER_DID_NOT_PICKUP_CALL,
                             agoraMentorUid = state.callieUid,
@@ -1787,6 +1810,21 @@ class WebRtcService : BaseWebRtcService() {
     fun switchAudioSpeaker() {
         executor.submit {
             val audioManager = getSystemService(AUDIO_SERVICE) as AudioManager
+            val state = CurrentCallDetails.state()
+            if(isSpeakerEnabled) {
+                MixPanelTracker.publishEvent(MixPanelEvent.SPEAKER_ON)
+                    .addParam(ParamKeys.CALL_ID,state.callId)
+                    .addParam(ParamKeys.CALLIE_ID,state.callieUid)
+                    .addParam(ParamKeys.CALLER_ID,state.callerUid)
+                    .push()
+            }
+            else {
+                MixPanelTracker.publishEvent(MixPanelEvent.SPEAKER_OFF)
+                    .addParam(ParamKeys.CALL_ID,state.callId)
+                    .addParam(ParamKeys.CALLIE_ID,state.callieUid)
+                    .addParam(ParamKeys.CALLER_ID,state.callerUid)
+                    .push()
+            }
             isSpeakerEnabled = !isSpeakerEnabled
             audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
             mRtcEngine?.setEnableSpeakerphone(isSpeakerEnabled)
@@ -1800,10 +1838,21 @@ class WebRtcService : BaseWebRtcService() {
             try {
                 if (holdCallByMe.not() && holdCallByAnotherUser.not()) {
                     isMicEnabled = !isMicEnabled
+                    val state = CurrentCallDetails.state()
                     if (isMicEnabled) {
                         unMuteCall()
+                        MixPanelTracker.publishEvent(MixPanelEvent.UNMUTE)
+                            .addParam(ParamKeys.CALL_ID,state.callId)
+                            .addParam(ParamKeys.CALLIE_ID,state.callieUid)
+                            .addParam(ParamKeys.CALLER_ID,state.callerUid)
+                            .push()
                     } else {
                         muteCall()
+                        MixPanelTracker.publishEvent(MixPanelEvent.MUTE)
+                            .addParam(ParamKeys.CALL_ID,state.callId)
+                            .addParam(ParamKeys.CALLIE_ID,state.callieUid)
+                            .addParam(ParamKeys.CALLER_ID,state.callerUid)
+                            .push()
                     }
                 }
             } catch (ex: Throwable) {

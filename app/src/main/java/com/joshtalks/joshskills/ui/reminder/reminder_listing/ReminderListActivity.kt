@@ -21,6 +21,8 @@ import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.databinding.ActivityReminderListLayoutBinding
 import com.joshtalks.joshskills.repository.server.reminder.ReminderResponse
 import com.joshtalks.joshskills.ui.reminder.set_reminder.ReminderActivity
@@ -51,6 +53,7 @@ class ReminderListActivity : CoreJoshActivity(),
         helpIv.visibility = GONE
         findViewById<View>(R.id.iv_back).visibility = VISIBLE
         findViewById<View>(R.id.iv_back).setOnClickListener {
+            MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
             onBackPressed()
         }
         binding.createReminderBtn.setOnClickListener {
@@ -233,6 +236,7 @@ class ReminderListActivity : CoreJoshActivity(),
     }
 
     override fun onBackPressed() {
+        MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
         if (actionMode) {
             disableActionMode()
         } else

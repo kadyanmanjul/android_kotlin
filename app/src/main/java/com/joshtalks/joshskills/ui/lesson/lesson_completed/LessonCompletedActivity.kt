@@ -14,6 +14,9 @@ import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.LESSON_COMPLETE_SNACKBAR_TEXT_STRING
 import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.core.extension.setImageAndFitCenter
 import com.joshtalks.joshskills.databinding.AcitivityUnlockNextClassLayoutBinding
 import com.joshtalks.joshskills.repository.local.entity.LessonModel
@@ -72,12 +75,18 @@ class LessonCompletedActivity : BaseActivity() {
         }
 
         findViewById<TextView>(R.id.continue_btn).setOnClickListener {
+            MixPanelTracker.publishEvent(MixPanelEvent.LESSON_CONTINUE)
+                .addParam(ParamKeys.LESSON_ID,lessonModel?.id)
+                .addParam(ParamKeys.LESSON_NUMBER,lessonModel?.lessonNo)
+                .push()
+
             setResult(RESULT_OK, Intent().apply { putExtra(IS_BATCH_CHANGED, false) })
             finish()
         }
     }
 
     override fun onBackPressed() {
+        MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
         setResult(RESULT_OK, Intent().apply { putExtra(IS_BATCH_CHANGED, false) })
         finish()
         super.onBackPressed()

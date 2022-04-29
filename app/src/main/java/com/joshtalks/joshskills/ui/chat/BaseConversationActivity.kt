@@ -13,6 +13,9 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.WebRtcMiddlewareActivity
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.core.custom_ui.JoshSnackBar
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.messaging.MessageBuilderFactory
@@ -85,8 +88,14 @@ abstract class BaseConversationActivity : WebRtcMiddlewareActivity() {
                                 }
                                 positiveButton(R.string.yes) { dialog ->
                                     mediaClearWorker(conversationId)
+                                    MixPanelTracker.publishEvent(MixPanelEvent.CLEAR_ALL_MEDIA)
+                                        .addParam(ParamKeys.IS_SUCCESS,true)
+                                        .push()
                                 }
                                 negativeButton(R.string.no) { dialog ->
+                                    MixPanelTracker.publishEvent(MixPanelEvent.CLEAR_ALL_MEDIA)
+                                        .addParam(ParamKeys.IS_SUCCESS,false)
+                                        .push()
                                 }
                             }
                             return

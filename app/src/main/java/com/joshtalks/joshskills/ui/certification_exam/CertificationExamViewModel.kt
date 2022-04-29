@@ -9,6 +9,9 @@ import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.JoshApplication
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.repository.local.DatabaseUtils
 import com.joshtalks.joshskills.repository.server.certification_exam.Answer
 import com.joshtalks.joshskills.repository.server.certification_exam.CertificateExamReportModel
@@ -40,10 +43,18 @@ class CertificationExamViewModel(application: Application) : AndroidViewModel(ap
     var isSAnswerUiShow: Boolean = false
 
     fun startExam() {
+        MixPanelTracker.publishEvent(MixPanelEvent.EXAM_STARTED)
+            .addParam(ParamKeys.EXAM_ID,CertificationQuestionModel().type)
+            .addParam(ParamKeys.ATTEMPT_NUMBER,CertificationQuestionModel().attemptCount)
+            .push()
         startExamLiveData.postValue(Unit)
     }
 
     fun showPreviousResult() {
+        MixPanelTracker.publishEvent(MixPanelEvent.PREVIOUS_RESULTS)
+            .addParam(ParamKeys.EXAM_ID,CertificationQuestionModel().type)
+            .addParam(ParamKeys.ATTEMPT_NUMBER,CertificationQuestionModel().attemptCount)
+            .push()
         previousExamsResultLiveData.postValue(Unit)
     }
 
@@ -72,6 +83,10 @@ class CertificationExamViewModel(application: Application) : AndroidViewModel(ap
         viewModelScope.launch(Dispatchers.IO) {
             if (hasResumeExam(certificateExamId)) {
                 resumeExamLiveData.postValue(true)
+                MixPanelTracker.publishEvent(MixPanelEvent.RESUME_EXAM)
+                    .addParam(ParamKeys.EXAM_ID,CertificationQuestionModel().type)
+                    .addParam(ParamKeys.ATTEMPT_NUMBER,CertificationQuestionModel().attemptCount)
+                    .push()
                 delay(200)
                 resumeExamLiveData.postValue(null)
             } else {

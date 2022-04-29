@@ -25,6 +25,9 @@ import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.core.interfaces.FileDownloadCallback
 import com.joshtalks.joshskills.core.service.CONVERSATION_ID
 import com.joshtalks.joshskills.core.showToast
@@ -218,6 +221,7 @@ class CExamReportActivity : BaseActivity(), FileDownloadCallback {
     }
 
     override fun onBackPressed() {
+        MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
         if (viewModel.isSAnswerUiShow) {
             viewModel.isSAnswerUiShow = false
             RxBus2.publish(OpenReportQTypeEventBus(QuestionReportType.UNKNOWN))

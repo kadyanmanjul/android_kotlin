@@ -15,12 +15,17 @@ import com.clevertap.android.sdk.Utils.runOnUiThread
 import com.joshtalks.joshskills.base.BaseViewModel
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.ui.activity_feed.ActivityFeedListAdapter
 import com.joshtalks.joshskills.ui.activity_feed.model.ActivityFeedResponse
 import com.joshtalks.joshskills.ui.activity_feed.repository.ActivityFeedRepository
 import com.joshtalks.joshskills.ui.activity_feed.utils.*
+import com.joshtalks.joshskills.ui.inbox.mentor_id
 import com.joshtalks.joshskills.util.ExoAudioPlayer2
 import com.joshtalks.joshskills.util.showAppropriateMsg
+import com.mixpanel.android.mpmetrics.MixpanelAPI
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -114,11 +119,18 @@ class ActivityFeedViewModel : BaseViewModel(), LifecycleObserver {
                 singleLiveEvent.value = message
             }
             OPEN_PROFILE_IMAGE_FRAGMENT -> {
+                MixPanelTracker.publishEvent(MixPanelEvent.VIEW_PROFILE_PHOTO)
+                    .addParam(ParamKeys.MENTOR_ID, mentor_id)
+                    .addParam(ParamKeys.VIA,"activity feed")
+                    .push()
                 message.what = OPEN_PROFILE_IMAGE_FRAGMENT
                 message.obj = activityFeedResponse
                 singleLiveEvent.value = message
             }
             PLAY_AUDIO->{
+                MixPanelTracker.publishEvent(MixPanelEvent.ACTIVITY_FEED_PLAY_BUTTON_CLICKED)
+                    .addParam(ParamKeys.MENTOR_ID,activityFeedResponse.mentorId)
+                    .push()
                 seekbar = seekBar!!
                 playPauseButton = playPauseBtn!!
                 seekbar.progress = 0

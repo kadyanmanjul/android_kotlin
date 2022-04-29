@@ -26,6 +26,8 @@ import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.WebRtcMiddlewareActivity
 import com.joshtalks.joshskills.core.CURRENT_COURSE_ID
 import com.joshtalks.joshskills.core.DEFAULT_COURSE_ID
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.databinding.ActivityPointsHistoryBinding
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.leaderboard.ItemOverlay
@@ -81,12 +83,14 @@ class PointsHistoryActivity : WebRtcMiddlewareActivity() {
         with(iv_back) {
             visibility = View.VISIBLE
             setOnClickListener {
+                MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
                 onBackPressed()
             }
         }
         with(iv_help) {
             visibility = View.VISIBLE
             setOnClickListener {
+                MixPanelTracker.publishEvent(MixPanelEvent.HELP).push()
                 openHelpActivity()
             }
         }
@@ -263,6 +267,7 @@ class PointsHistoryActivity : WebRtcMiddlewareActivity() {
     }
 
     fun openPointsInfoTable() {
+        MixPanelTracker.publishEvent(MixPanelEvent.HOW_TO_EARN_POINTS).push()
         startActivity(
             Intent(this, PointsInfoActivity::class.java).apply {
                 putExtra(CONVERSATION_ID, intent.getStringExtra(CONVERSATION_ID))
@@ -298,6 +303,7 @@ class PointsHistoryActivity : WebRtcMiddlewareActivity() {
     }
 
     override fun onBackPressed() {
+        MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
         if (isAnimationVisible) {
             binding.overlayView.visibility = View.INVISIBLE
             isAnimationVisible = false

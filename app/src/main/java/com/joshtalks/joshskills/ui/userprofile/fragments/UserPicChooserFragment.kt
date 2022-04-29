@@ -15,6 +15,8 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.databinding.UserPicChooserDialogBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.DeleteProfilePicEventBus
@@ -68,6 +70,10 @@ class UserPicChooserFragment : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.close.visibility = View.VISIBLE
+        binding.close.setOnClickListener{
+            MixPanelTracker.publishEvent(MixPanelEvent.CANCEL).push()
+            dismiss()
+        }
         if (isUserProfilePicEmpty.not()) {
             binding.deleteIcon.visibility = View.VISIBLE
             binding.removeText.visibility = View.VISIBLE
@@ -97,12 +103,14 @@ class UserPicChooserFragment : BottomSheetDialogFragment() {
     }
 
     fun delete() {
+        MixPanelTracker.publishEvent(MixPanelEvent.REMOVE_PROFILE_PHOTO).push()
         logChooserAnalyticsEvent(AnalyticsEvent.DELETE_PIC.NAME,isFromRegistration)
         RxBus2.publish(DeleteProfilePicEventBus(""))
         dismiss()
     }
 
     fun change() {
+        MixPanelTracker.publishEvent(MixPanelEvent.GALLERY_CLICKED).push()
         logChooserAnalyticsEvent(AnalyticsEvent.GALLERY_UPLOAD.NAME,isFromRegistration)
         ImagePicker.with(this)
             .crop()          //Crop image(Optional), Check Customization for more option
@@ -113,6 +121,7 @@ class UserPicChooserFragment : BottomSheetDialogFragment() {
     }
 
     fun captureImage() {
+        MixPanelTracker.publishEvent(MixPanelEvent.CAMERA_CLICKED).push()
         logChooserAnalyticsEvent(AnalyticsEvent.CAMERA_UPLOAD.NAME,isFromRegistration)
         ImagePicker.with(this)
             .crop()//Crop imagJoshCameraActivitye(Optional), Check Customization for more option

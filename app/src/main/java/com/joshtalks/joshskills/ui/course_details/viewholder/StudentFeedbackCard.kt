@@ -6,10 +6,15 @@ import android.widget.FrameLayout
 import android.widget.TextView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.CURRENT_COURSE_ID
+import com.joshtalks.joshskills.core.DEFAULT_COURSE_ID
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.VERSION
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.repository.server.course_detail.CardType
 import com.joshtalks.joshskills.repository.server.course_detail.Feedback
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
@@ -22,7 +27,10 @@ import de.hdodenhof.circleimageview.CircleImageView
 @Layout(R.layout.layout_listitem_story)
 class StudentFeedbackCard(
     private var feedback: Feedback,
-    private val context: Context = AppObjectController.joshApplication
+    private val context: Context = AppObjectController.joshApplication,
+    private val testId: Int,
+    private val coursePrice: String,
+    private val courseName: String
 ) : CourseDetailsBaseCell(CardType.OTHER_INFO, 0) {
 
     @com.mindorks.placeholderview.annotations.View(R.id.name)
@@ -64,6 +72,13 @@ class StudentFeedbackCard(
     }
 
     fun logAnalyticsEvent(name: String) {
+        MixPanelTracker.publishEvent(MixPanelEvent.COURSE_MEET_STUDENTS)
+            .addParam(ParamKeys.TEST_ID,testId)
+            .addParam(ParamKeys.COURSE_NAME,courseName)
+            .addParam(ParamKeys.COURSE_PRICE,coursePrice)
+            .addParam(ParamKeys.STUDENT_NAME,name)
+            .addParam(ParamKeys.COURSE_ID,PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID))
+            .push()
         AppAnalytics.create(AnalyticsEvent.MEET_STUDENT_CLICKED.NAME)
             .addBasicParam()
             .addUserDetails()

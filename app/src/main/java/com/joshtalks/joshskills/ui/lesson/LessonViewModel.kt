@@ -53,6 +53,8 @@ import org.json.JSONObject
 import timber.log.Timber
 import androidx.databinding.ObservableField
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import java.io.File
 
 
@@ -77,6 +79,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     val practiceFeedback2LiveData: MutableLiveData<PracticeFeedback2> = MutableLiveData()
     val practiceEngagementData: MutableLiveData<PracticeEngagement> = MutableLiveData()
     val courseId: MutableLiveData<String> = MutableLiveData()
+    val lessonId: MutableLiveData<Int> = MutableLiveData()
     val speakingTopicLiveData: MutableLiveData<SpeakingTopic?> = MutableLiveData()
     val updatedLessonResponseLiveData: MutableLiveData<UpdateLessonResponse> = MutableLiveData()
     val demoLessonNoLiveData: MutableLiveData<Int> = MutableLiveData()
@@ -874,12 +877,12 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
             if (campaign != null) {
                 val data = ABTestRepository().getCampaignData(campaign)
                 data?.let {
-                    val props = JSONObject()
-                    props.put("Variant", data?.variantKey ?: EMPTY)
-                    props.put("Variable", AppObjectController.gsonMapper.toJson(data?.variableMap))
-                    props.put("Campaign", campaign)
-                    props.put("Goal", goal)
-                    MixPanelTracker().publishEvent(goal, props)
+                    MixPanelTracker.publishEvent(MixPanelEvent.GOAL)
+                        .addParam(ParamKeys.VARIANT, data?.variantKey ?: EMPTY)
+                        .addParam(ParamKeys.VARIABLE, AppObjectController.gsonMapper.toJson(data?.variableMap))
+                        .addParam(ParamKeys.CAMPAIGN, campaign)
+                        .addParam(ParamKeys.GOAL, goal)
+                        .push()
                 }
             }
         }
