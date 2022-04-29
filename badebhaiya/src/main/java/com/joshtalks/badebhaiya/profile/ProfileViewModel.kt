@@ -22,6 +22,7 @@ import com.joshtalks.badebhaiya.utils.setUserImageOrInitials
 import kotlinx.coroutines.launch
 
 class ProfileViewModel : ViewModel() {
+    //val userIdForOpenedProfile = MutableLiveData<String>()
     private val service = RetrofitInstance.profileNetworkService
     val isBadeBhaiyaSpeaker = ObservableBoolean(false)
     var profileUrl=""
@@ -38,13 +39,13 @@ class ProfileViewModel : ViewModel() {
     var singleLiveEvent: MutableLiveData<Message> = MutableLiveData()
     val speakerFollowed = MutableLiveData(false)
     val isSelfProfile = ObservableBoolean(false)
-    fun updateFollowStatus(userIdForOpenedProfile:String) {
+    fun updateFollowStatus(userId:String) {
         speakerFollowed.value?.let {
             if (it.not()) {
                 viewModelScope.launch {
                     try {
                         val followRequest =
-                            FollowRequest(userIdForOpenedProfile, User.getInstance().userId)
+                            FollowRequest(userId, User.getInstance().userId)
                         val response = service.updateFollowStatus(followRequest)
                         if (response.isSuccessful) {
                             speakerFollowed.value = true
@@ -60,7 +61,7 @@ class ProfileViewModel : ViewModel() {
                 viewModelScope.launch {
                     try {
                         val followRequest =
-                            FollowRequest(userIdForOpenedProfile, User.getInstance().userId)
+                            FollowRequest(userId, User.getInstance().userId)
                         val response=service.updateUnfollowStatus(followRequest)
                         if(response.isSuccessful)
                         {
@@ -83,8 +84,6 @@ class ProfileViewModel : ViewModel() {
                 if(isFromDeepLink)
                     updateFollowStatus(userId)
                 val response = repository.getProfileForUser(userId)
-                if(isFromDeepLink)
-                    updateFollowStatus(userId)
                 if (response.isSuccessful) {
                     response.body()?.let {
                         userProfileData.postValue(it)

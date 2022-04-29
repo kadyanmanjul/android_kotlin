@@ -86,7 +86,6 @@ class ProfileActivity: AppCompatActivity(), FeedAdapter.ConversationRoomItemCall
         userId = intent.getStringExtra(USER_ID)
         isFromDeeplink = intent.getBooleanExtra(FROM_DEEPLINK, false)
         if (userId.isNullOrEmpty()) User.getInstance().userId
-
     }
 
     private fun addObserver() {
@@ -193,10 +192,11 @@ class ProfileActivity: AppCompatActivity(), FeedAdapter.ConversationRoomItemCall
     }
 
     companion object {
-        const val FROM_DEEPLINK = "from_deeplink"
-        fun openProfileActivity(context: Context, userId: String = EMPTY) {
+        const val FROM_DEEPLINK:String="from_deeplink"
+        fun openProfileActivity(context: Context, userId: String = EMPTY, isFromDeeplink:Boolean=false) {
             Intent(context, ProfileActivity::class.java).apply {
                 putExtra(USER_ID, userId)
+                putExtra(FROM_DEEPLINK,isFromDeeplink)
             }.run {
                 context.startActivity(this)
             }
