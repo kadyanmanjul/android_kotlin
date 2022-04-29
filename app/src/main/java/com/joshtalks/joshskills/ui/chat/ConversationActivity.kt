@@ -43,6 +43,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.constants.COURSE_RESTART_FAILURE
 import com.joshtalks.joshskills.constants.COURSE_RESTART_SUCCESS
+import com.joshtalks.joshskills.constants.INTERNET_FAILURE
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.Utils.getCurrentMediaVolume
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
@@ -216,7 +217,6 @@ class ConversationActivity :
     private lateinit var conversationViewModel: ConversationViewModel
     private lateinit var utilConversationViewModel: UtilConversationViewModel
     private lateinit var unlockClassViewModel: UnlockClassViewModel
-    val event = EventLiveData
     private val conversationAdapter: ConversationAdapter by lazy {
         ConversationAdapter(
             WeakReference(
@@ -2271,7 +2271,7 @@ class ConversationActivity :
     override fun onStart() {
         super.onStart()
         try {
-            event.observe(this) {
+            conversationViewModel.singleLiveEvent.observe(this) {
                 when (it.what) {
                     COURSE_RESTART_SUCCESS -> {
                         logout()
@@ -2279,6 +2279,9 @@ class ConversationActivity :
                     }
                     COURSE_RESTART_FAILURE -> {
                         showToast(getString(R.string.course_restart_fail))
+                    }
+                    INTERNET_FAILURE->{
+                        showToast(getString(R.string.internet_not_available_msz))
                     }
                 }
             }

@@ -191,30 +191,9 @@ class GrammarButtonView : FrameLayout {
 
     fun viewVideo() {
         if (reviseVideoObject?.video_url.isNullOrBlank().not()) {
-            callback?.onVideoButtonAppear(
-                isClicked = true,
-                wrongAnswerHeading = this.questionFeedback?.wrongAnswerHeading,
-                wrongAnswerSubHeading = this.questionFeedback?.wrongAnswerHeading2,
-                wrongAnswerText = this.questionFeedback?.wrongAnswerText,
-                wrongAnswerDescription = this.questionFeedback?.wrongAnswerText2,
-            )
-            openVideoObject()
+            callback?.onVideoButtonClicked()
             animatedVideoIv.visibility = GONE
             videoIv.visibility = VISIBLE
-        }
-    }
-
-    private fun openVideoObject() {
-        if (reviseVideoObject?.video_url.isNullOrBlank().not()) {
-            RxBus2.publish(
-                VideoShowEvent(
-                    videoTitle = EMPTY,
-                    videoId = reviseVideoObject?.id,
-                    videoUrl = reviseVideoObject?.video_url,
-                    videoWidth = reviseVideoObject?.video_width ?: 0,
-                    videoHeight = reviseVideoObject?.video_height ?: 0
-                )
-            )
         }
     }
 
@@ -413,7 +392,6 @@ class GrammarButtonView : FrameLayout {
                 animatedVideoIv.visibility = VISIBLE
             }
             callback?.onVideoButtonAppear(
-                isClicked = false,
                 wrongAnswerHeading = this.questionFeedback?.wrongAnswerHeading,
                 wrongAnswerSubHeading = this.questionFeedback?.wrongAnswerText,
                 wrongAnswerText = questionFeedback?.wrongAnswerText,
@@ -488,12 +466,12 @@ class GrammarButtonView : FrameLayout {
         fun checkQuestionCallBack(): Boolean?
         fun nextQuestion()
         fun onVideoButtonAppear(
-            isClicked: Boolean,
             wrongAnswerHeading: String?,
             wrongAnswerSubHeading: String?,
             wrongAnswerText: String?,
             wrongAnswerDescription: String?
         )
+        fun onVideoButtonClicked()
     }
 
     enum class GrammarButtonState(state: String) {

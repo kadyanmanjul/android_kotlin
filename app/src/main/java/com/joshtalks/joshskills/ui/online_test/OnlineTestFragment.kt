@@ -4,8 +4,8 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator
 import android.content.Context
+import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,8 +14,8 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.material.textview.MaterialTextView
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
@@ -26,9 +26,7 @@ import com.joshtalks.joshskills.core.custom_ui.JoshGrammarVideoPlayer
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.service.DownloadUtils
 import com.joshtalks.joshskills.databinding.FragmentOnlineTestBinding
-import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
-import com.joshtalks.joshskills.repository.local.eventbus.VideoShowEvent
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.local.model.assessment.Choice
 import com.joshtalks.joshskills.repository.server.assessment.ChoiceType
@@ -49,9 +47,7 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.tonyodev.fetch2.NetworkType
 import com.tonyodev.fetch2.Priority
 import com.tonyodev.fetch2.Request
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
+import com.userexperior.utilities.SecureViewBucket
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -83,7 +79,6 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
     private var testCallback: OnlineTestInterface? = null
     private var lessonActivityListener: LessonActivityListener? = null
     var reviseVideoObject: VideoModel? = null
-    private var compositeDisposable = CompositeDisposable()
     private var previousId: Int = -1
     private var completed = false
     private var questionId = -1
@@ -201,6 +196,7 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
                     binding.progressContainer.visibility = View.GONE
                 }
                 ApiCallStatus.FAILED -> {
+                    binding.progressContainer.visibility = View.GONE
                     errorView?.resolved()?.let {
                         errorView!!.get().onFailure(object : ErrorView.ErrorCallback {
                             override fun onRetryButtonClicked() {
@@ -280,6 +276,9 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
             ChoiceType.ARRANGE_THE_SENTENCE -> {
                 mcqChoiceView?.get()?.visibility = View.GONE
                 subjectiveChoiceView?.get()?.visibility = View.GONE
+                subjectiveChoiceView?.let {
+                    SecureViewBucket.removeFromSecureViewBucket(it.get())
+                }
                 atsChoiceView?.resolved().let {
                     atsChoiceView?.get()?.visibility = View.VISIBLE
                     atsChoiceView!!.get().setup(assessmentQuestions)
@@ -310,6 +309,9 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
             ChoiceType.SINGLE_SELECTION_TEXT -> {
                 atsChoiceView?.get()?.visibility = View.GONE
                 subjectiveChoiceView?.get()?.visibility = View.GONE
+                subjectiveChoiceView?.let {
+                    SecureViewBucket.removeFromSecureViewBucket(it.get())
+                }
                 mcqChoiceView?.resolved().let {
                     mcqChoiceView?.get()?.visibility = View.VISIBLE
                     mcqChoiceView!!.get().setup(assessmentQuestions)
@@ -396,17 +398,14 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
                 }
 
                 override fun onVideoButtonAppear(
-                    isClicked: Boolean,
                     wrongAnswerHeading: String?,
                     wrongAnswerSubHeading: String?,
                     wrongAnswerText: String?,
                     wrongAnswerDescription: String?
                 ) {
-                    if (isClicked)
-                        binding.progressContainer.isVisible = true
                     if (PrefManager.hasKey(
                             HAS_SEEN_QUIZ_VIDEO_TOOLTIP,
-                        ).not() && isClicked.not()
+                        ).not()
                     ) {
                         lessonActivityListener?.showVideoToolTip(
                             shouldShow = true,
@@ -418,7 +417,75 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
                         )
                     }
                 }
+
+                override fun onVideoButtonClicked() {
+                    binding.progressContainer.isVisible = true
+                    LessonActivity.isVideoVisible.value = true
+                    reviseVideoObject?.let {
+                        with(binding.videoPlayer) {
+                            setUrl(it.video_url)
+                            setVideoId(it.id)
+                            setVideoThumbnail(it.video_image_url)
+                            fitToScreen()
+                            if (it.video_height != 0 && it.video_width != 0) {
+                                (binding.videoPlayer.layoutParams as ConstraintLayout.LayoutParams).dimensionRatio =
+                                    (it.video_width / it.video_height).toString()
+                            }
+                            downloadStreamPlay()
+                            setPlayerEventCallback { event, _ ->
+                                if (event == ExoPlayer.STATE_ENDED) {
+                                    LessonActivity.isVideoVisible.value = false
+                                    PrefManager.appendToSet(
+                                        LAST_SEEN_VIDEO_ID,
+                                        it.id, false
+                                    )
+                                }
+                            }
+                            setPlayListener(object :
+                                JoshGrammarVideoPlayer.PlayerFullScreenListener {
+                                override fun onFullScreen() {
+                                    val currentVideoProgressPosition = binding.videoPlayer.progress
+                                    startActivity(
+                                        VideoPlayerActivity.getActivityIntent(
+                                            requireContext(),
+                                            "",
+                                            it.id,
+                                            it.video_url,
+                                            currentVideoProgressPosition,
+                                            conversationId = getConversationId()
+                                        )
+                                    )
+                                    LessonActivity.isVideoVisible.value = false
+                                }
+
+                                override fun onClose() {
+                                    onPause()
+                                    LessonActivity.isVideoVisible.value = false
+                                }
+                            })
+                        }
+                    } ?: showToast("Error playing video")
+                }
             })
+        }
+    }
+
+    private fun setVideoThumbnail(thumbnailUrl: String?) {
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                val thumbnailDrawable: Drawable? =
+                    Utils.getDrawableFromUrl(thumbnailUrl)
+                if (thumbnailDrawable != null) {
+                    AppObjectController.uiHandler.post {
+                        binding.videoPlayer.useArtwork = true
+                        binding.videoPlayer.defaultArtwork = thumbnailDrawable
+//                    val imgArtwork: ImageView = binding.videoPlayer.findViewById(R.id.exo_artwork) as ImageView
+//                    imgArtwork.setImageDrawable(thumbnailDrawable)
+//                    imgArtwork.visibility = View.VISIBLE
+                    }
+                }
+            } catch (e: java.lang.Exception) {
+            }
         }
     }
 
@@ -574,11 +641,8 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
     }
 
     override fun onPause() {
+        binding.videoPlayer.onPause()
         super.onPause()
-        if (binding.videoContainer.isVisible) {
-            binding.videoPlayer.onPause()
-        }
-        compositeDisposable.clear()
     }
 
     override fun onResume() {
@@ -618,71 +682,6 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
                     .start()
             }
         }
-        compositeDisposable.add(
-            RxBus2.listen(VideoShowEvent::class.java)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    LessonActivity.isVideoVisible.value = true
-                    binding.videoPlayer.apply {
-                        MixPanelTracker.publishEvent(MixPanelEvent.GRAMMAR_PLAY_VIDEO)
-                            .addParam(ParamKeys.LESSON_ID,lessonId)
-                            .addParam(ParamKeys.LESSON_NUMBER,lessonNumber)
-                            .addParam(ParamKeys.VIDEO_ID,it.videoId)
-                            .push()
-                        setUrl(it.videoUrl)
-                        setVideoId(it.videoId)
-                        fitToScreen()
-                        if (it.videoHeight != 0 && it.videoWidth != 0) {
-                            (binding.videoPlayer.layoutParams as ConstraintLayout.LayoutParams).dimensionRatio =
-                                (it.videoWidth.toDouble() / it.videoHeight).toString()
-                        }
-                        downloadStreamPlay()
-                        setPlayerEventCallback { event, _ ->
-                            if (event == ExoPlayer.STATE_ENDED) {
-                                MixPanelTracker.publishEvent(MixPanelEvent.GRAMMAR_VIDEO_COMPLETE)
-                                    .addParam(ParamKeys.LESSON_ID,lessonId)
-                                    .addParam(ParamKeys.LESSON_NUMBER,lessonNumber)
-                                    .addParam(ParamKeys.VIDEO_ID,it.videoId)
-                                    .push()
-                                LessonActivity.isVideoVisible.value = false
-//                                PrefManager.put(HAS_SEEN_QUIZ_VIDEO_BUTTON, true)
-                                it.videoId?.let { videoId ->
-                                    PrefManager.appendToSet(
-                                        LAST_SEEN_VIDEO_ID,
-                                        videoId, false
-                                    )
-                                }
-                            }
-                        }
-                        setPlayListener(object :
-                            JoshGrammarVideoPlayer.PlayerFullScreenListener {
-                            override fun onFullScreen() {
-                                val currentVideoProgressPosition = binding.videoPlayer.progress
-                                startActivity(
-                                    VideoPlayerActivity.getActivityIntent(
-                                        requireContext(),
-                                        "",
-                                        it.videoId,
-                                        it.videoUrl,
-                                        currentVideoProgressPosition,
-                                        conversationId = getConversationId()
-                                    )
-                                )
-                                LessonActivity.isVideoVisible.value = false
-                            }
-
-                            override fun onClose() {
-                                onPause()
-                                LessonActivity.isVideoVisible.value = false
-                            }
-                        })
-                    }
-
-                }, {
-                    it.printStackTrace()
-                })
-        )
     }
 
     override fun onScrollChanged() {
