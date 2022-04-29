@@ -80,6 +80,8 @@ class ProfileViewModel : ViewModel() {
     fun getProfileForUser(userId: String, isFromDeepLink:Boolean) {
         viewModelScope.launch {
             try {
+                if(isFromDeepLink)
+                    updateFollowStatus(userId)
                 val response = repository.getProfileForUser(userId)
                 if(isFromDeepLink)
                     updateFollowStatus(userId)
