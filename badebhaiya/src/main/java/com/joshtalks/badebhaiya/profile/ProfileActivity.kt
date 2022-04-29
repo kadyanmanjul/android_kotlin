@@ -192,11 +192,10 @@ class ProfileActivity: AppCompatActivity(), FeedAdapter.ConversationRoomItemCall
     }
 
     companion object {
-        const val FROM_DEEPLINK:String="from_deeplink"
-        fun openProfileActivity(context: Context, userId: String = EMPTY, isFromDeeplink:Boolean=false) {
+        const val FROM_DEEPLINK = "from_deeplink"
+        fun openProfileActivity(context: Context, userId: String = EMPTY) {
             Intent(context, ProfileActivity::class.java).apply {
                 putExtra(USER_ID, userId)
-                putExtra(FROM_DEEPLINK,isFromDeeplink)
             }.run {
                 context.startActivity(this)
             }
