@@ -67,7 +67,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.*
-
 import com.joshtalks.joshskills.core.CALL_BTN_CLICKED
 import com.joshtalks.joshskills.core.CURRENT_COURSE_ID
 import com.joshtalks.joshskills.core.DEFAULT_COURSE_ID
