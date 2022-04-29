@@ -1,24 +1,24 @@
 package com.joshtalks.badebhaiya
 
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
-import android.widget.SearchView
 import androidx.activity.OnBackPressedCallback
-import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.widget.addTextChangedListener
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.joshtalks.badebhaiya.core.showToast
+import com.joshtalks.badebhaiya.core.EMPTY
 import com.joshtalks.badebhaiya.databinding.FragmentSearchBinding
+import com.joshtalks.badebhaiya.feed.FeedActivity
 import com.joshtalks.badebhaiya.feed.FeedViewModel
+import com.joshtalks.badebhaiya.feed.model.SearchRoomsResponseList
 import com.joshtalks.badebhaiya.feed.model.Users
-import com.joshtalks.badebhaiya.profile.ProfileViewModel
 import kotlinx.android.synthetic.main.activity_feed.*
 import kotlinx.android.synthetic.main.activity_sign_up.*
 import kotlinx.android.synthetic.main.fragment_search.*
@@ -41,10 +41,7 @@ class SearchFragment : Fragment() {
     val viewModel by lazy {
         ViewModelProvider(requireActivity()).get(FeedViewModel::class.java)
     }
-    val searchViewModel by lazy{
-        ViewModelProvider(requireActivity()).get(SearchViewModel::class.java)
-    }
-    //val myAdapter:SearchAdapter by lazy{SearchAdapter(users)}
+
 
     lateinit var binding:FragmentSearchBinding
     override fun onCreateView(
@@ -52,6 +49,9 @@ class SearchFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        viewModel.searchResponse.value=null
+        Log.i("YASHENDRA", "onCreateView: (${viewModel.searchResponse.value})")
+
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_search, container, false)
         //binding.recyclerView.layoutManager=LinearLayoutManager(binding.recyclerView.context)
@@ -62,45 +62,80 @@ class SearchFragment : Fragment() {
         activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 //showToast("Back Pressed")
+                (activity as FeedActivity).swipeRefreshLayout.isEnabled=true
                 activity?.run {
                     supportFragmentManager.beginTransaction().remove(this@SearchFragment)
                         .commitAllowingStateLoss()
                 }
             }
         })
+        //binding.recyclerView.visibility=GONE
         binding.searchCancel.setOnClickListener{
-            val manager = requireActivity().supportFragmentManager
-            manager.beginTransaction().remove(this).commit()
+            (activity as FeedActivity).swipeRefreshLayout.isEnabled=true
+            activity?.run {
+                supportFragmentManager.beginTransaction().remove(this@SearchFragment)
+                    .commitAllowingStateLoss()
+            }
         }
 
-        //(activity as FeedActivity).swipeRefreshLayout.visibility=View.GONE
+        //(activity as FeedActivity?).disableSwipe()
+        (activity as FeedActivity).swipeRefreshLayout.isEnabled=false
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        var job: Job? = null
         //binding.searchBar.clearFocus()
+        binding.searchBar.addTextChangedListener{
+            //var job: Job? = null
 
-        binding.searchBar.setOnQueryTextListener(object: androidx.appcompat.widget.SearchView.OnQueryTextListener{
-            var job: Job? = null
-            var users=mutableListOf<Users>()
-            override fun onQueryTextSubmit(query: String): Boolean {
-                //showToast("textSubmit")
-                return false
+            if(it.toString()=="")
+            {
+                binding.defaultText.visibility= VISIBLE
             }
-
-            override fun onQueryTextChange(p0: String?): Boolean {
+            else {
+                binding.defaultText.visibility = GONE
+                //binding.recyclerView.visibility= VISIBLE
                 job?.cancel()
                 //showToast("textChange")
                 job = MainScope().launch {
                     delay(500)
-                    if (p0!=null)
-                        viewModel.searchUser(p0)
+                    if (it.toString() != null)
+                        viewModel.searchUser(it.toString())
                 }
-                return true
             }
-        })
+        }
+
+//        binding.searchBar.setOnQueryTextListener(object: androidx.appcompat.widget.SearchView.OnQueryTextListener{
+//
+//            var users=mutableListOf<Users>()
+//
+//            override fun onQueryTextSubmit(query: String): Boolean {
+//                //showToast("textSubmit")
+//                return false
+//            }
+//
+//            override fun onQueryTextChange(p0: String?): Boolean {
+//                if(p0=="")
+//                {
+//                    binding.defaultText.visibility= VISIBLE
+//                }
+//                else {
+//                    binding.defaultText.visibility = GONE
+//                    //binding.recyclerView.visibility= VISIBLE
+//                    job?.cancel()
+//                    //showToast("textChange")
+//                    job = MainScope().launch {
+//                        delay(500)
+//                        if (p0 != null)
+//                            viewModel.searchUser(p0)
+//                    }
+//                }
+//                return true
+//            }
+//        })
 
 //        binding.recyclerView.btnFollow.setOnClickListener{
 //            viewModel.updateFollowRequest()
@@ -110,6 +145,7 @@ class SearchFragment : Fragment() {
     fun addObserver() {
         viewModel.searchResponse.observe(viewLifecycleOwner){
             binding.recyclerView.layoutManager=LinearLayoutManager(requireContext())
+            if(it!=null)
             binding.recyclerView.adapter=SearchAdapter(it.users)
         }
     }
