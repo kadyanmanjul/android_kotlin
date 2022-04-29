@@ -30,7 +30,7 @@ interface CommonNetworkService {
     fun requestUploadMediaAsync(@FieldMap requestParams: Map<String, String>): Deferred<AmazonPolicyResponse>
 
     @POST("$DIR/user/source/")
-    suspend fun getInstallReferrerAsync(requestParams: InstallReferrerModel): Response<InstallReferrerModel>
+    suspend fun getInstallReferrerAsync(@Body requestParams: InstallReferrerModel): Response<InstallReferrerModel>
 
     @POST("$DIR/user/devices/")
     suspend fun postDeviceDetails(@Body obj: UpdateDeviceRequest): DeviceDetailsResponse
