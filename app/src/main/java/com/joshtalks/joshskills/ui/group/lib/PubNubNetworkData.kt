@@ -49,8 +49,7 @@ data class PubNubNetworkData(val data: PNGetMembershipsResult) : NetworkData {
                     groupType = customMap["group_type"] ?: OPENED_GROUP,
                     agoraUid = (customMap["agora_id"]?.toInt() ?: 0)
                 )
-                if ((customMap["group_type"] == DM_CHAT && lastMsg == EMPTY).not())
-                    groupList.add(response)
+                groupList.add(response)
             } catch (e: Exception) {
                 e.printStackTrace()
                 Log.e(TAG, "Error in group: ${group.channel.id} :${e.message}")

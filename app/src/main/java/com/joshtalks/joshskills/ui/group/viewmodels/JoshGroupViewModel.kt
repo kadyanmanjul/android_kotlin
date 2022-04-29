@@ -53,7 +53,7 @@ class JoshGroupViewModel : BaseViewModel() {
     val repository = GroupRepository(onDataLoaded)
     val groupTitle = ObservableField("Groups")
     val groupImageUrl = ObservableField("")
-    val adapter = GroupAdapter(GroupItemComparator)
+    val adapter = GroupAdapter(GroupItemComparator,"search")
     val stateAdapter = GroupStateAdapter()
     val hasGroupData = ObservableBoolean(true)
     val addingNewGroup = ObservableBoolean(false)
