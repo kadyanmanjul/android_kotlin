@@ -242,7 +242,7 @@ class ProfileActivity: AppCompatActivity(), FeedAdapter.ConversationRoomItemCall
                     )
                 )
             }
-        viewModel.getProfileForUser(userId ?: (User.getInstance().userId))
+        viewModel.getProfileForUser(userId ?: (User.getInstance().userId),false)
     }
 
     override fun deleteReminder(room: RoomListResponseItem, view: View) {

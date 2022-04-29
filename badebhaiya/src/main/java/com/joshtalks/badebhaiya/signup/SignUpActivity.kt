@@ -139,7 +139,7 @@ class SignUpActivity : AppCompatActivity() {
 
     private fun openNextActivity() {
         if (intent.extras?.getString(REDIRECT) == REDIRECT_TO_PROFILE_ACTIVITY )
-            ProfileActivity.openProfileActivity(this, intent.extras?.getString(USER_ID) ?: EMPTY, true)
+            ProfileActivity.openProfileActivity(this, intent.extras?.getString(USER_ID) ?: EMPTY)
         else
             Intent(this, FeedActivity::class.java).also {
                 this@SignUpActivity.startActivity(it)
