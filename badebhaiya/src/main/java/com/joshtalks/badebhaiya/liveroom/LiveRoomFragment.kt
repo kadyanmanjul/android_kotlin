@@ -116,13 +116,13 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
 
     override fun onInitDataBinding(viewBinding: FragmentLiveRoomBinding) {
         // View is initialized
-        channelName = PubNubManager.getLiveRoomProperties().channelName
         viewBinding.handler = this
         binding = viewBinding
         vm.lvRoomState = LiveRoomState.EXPANDED
+        channelName = PubNubManager.getLiveRoomProperties()?.channelName
         trackLiveRoomState()
         isActivityOpenFromNotification =
-            PubNubManager.getLiveRoomProperties().isActivityOpenFromNotification!!
+            PubNubManager.getLiveRoomProperties()?.isActivityOpenFromNotification!!
         addViewModelObserver()
         if (isActivityOpenFromNotification) {
             addJoinAPIObservers()
@@ -174,10 +174,13 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
         vm.audienceList.observe(this, androidx.lifecycle.Observer {
             val list = it.sortedBy { it.sortOrder }
             audienceAdapter?.updateFullList(list)
-            if (PubNubManager.getLiveRoomProperties().isModerator){
-                val int = vm.getRaisedHandAudienceSize()
-                setBadgeDrawable(int)
+            PubNubManager.getLiveRoomProperties()?.let {
+                if (it.isModerator){
+                    val int = vm.getRaisedHandAudienceSize()
+                    setBadgeDrawable(int)
+                }
             }
+
         })
 
         vm.speakersList.observe(this, androidx.lifecycle.Observer {
@@ -240,7 +243,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
                         val id = it.getInt(NOTIFICATION_ID)
                         val boolean = it.getBoolean(NOTIFICATION_BOOLEAN, true)
 
-                        if (PubNubManager.getLiveRoomProperties().agoraUid == id) {
+                        if (PubNubManager.getLiveRoomProperties()?.agoraUid == id) {
                             iSSoundOn = boolean
                             vm.setChannelMemberStateForUuid(
                                 PubNubManager.currentUser,
@@ -257,26 +260,29 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
                 MOVE_TO_SPEAKER -> {
                     it.data?.let {
                         val user = it.getParcelable<LiveRoomUser>(NOTIFICATION_USER)
-                        if (PubNubManager.getLiveRoomProperties().agoraUid == user?.id) {
+                        if (PubNubManager.getLiveRoomProperties()?.agoraUid == user?.id) {
                             updateUiWhenSwitchToSpeaker(user?.isMicOn ?: false)
                         }
-                        if (PubNubManager.getLiveRoomProperties().isModerator) {
-                            val name = it.getString(NOTIFICATION_NAME)
-                            setNotificationWithoutAction(
-                                String.format(
-                                    "%s is now a speaker!",
-                                    name
-                                ), true,
-                                NotificationView.ConversationRoomNotificationState.HAND_RAISED
-                            )
+                        PubNubManager.getLiveRoomProperties()?.isModerator?.let { isModerator ->
+                            if (isModerator) {
+                                val name = it.getString(NOTIFICATION_NAME)
+                                setNotificationWithoutAction(
+                                    String.format(
+                                        "%s is now a speaker!",
+                                        name
+                                    ), true,
+                                    NotificationView.ConversationRoomNotificationState.HAND_RAISED
+                                )
+                            }
                         }
+
                         vm.setChannelMemberStateForUuid(user, channelName = channelName)
                     }
                 }
                 MOVE_TO_AUDIENCE -> {
                     it.data?.let {
                         val user = it.getParcelable<LiveRoomUser>(NOTIFICATION_USER)
-                        if (PubNubManager.getLiveRoomProperties().agoraUid == user?.id) {
+                        if (PubNubManager.getLiveRoomProperties()?.agoraUid == user?.id) {
                             updateUiWhenSwitchToListener()
                         }
                         vm.setChannelMemberStateForUuid(user, channelName = channelName)
@@ -322,6 +328,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
     private fun initData() {
         binding.notificationBar.setNotificationViewEnquiryAction(this)
         //TODO init data to adapters
+
         if (PubNubManager.getLiveRoomProperties().isRoomCreatedByUser) {
             Log.d("lvroom", "initData: is Created by user")
             updateMuteButtonState()

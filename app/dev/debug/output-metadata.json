@@ -1,0 +1,20 @@
+{
+  "version": 3,
+  "artifactType": {
+    "type": "APK",
+    "kind": "Directory"
+  },
+  "applicationId": "com.joshtalks.joshskills",
+  "variantName": "devDebug",
+  "elements": [
+    {
+      "type": "SINGLE",
+      "filters": [],
+      "attributes": [],
+      "versionCode": 50019,
+      "versionName": "5.0.19.Dev_Debug",
+      "outputFile": "josh-skills-release5.0.19.apk"
+    }
+  ],
+  "elementType": "File"
+}

@@ -20,7 +20,7 @@ import com.pubnub.api.models.consumer.pubsub.message_actions.PNMessageActionResu
     This object handles all the callbacks from PubNub.
 */
 
-object PubNubCallback: SubscribeCallback() {
+class PubNubCallback: SubscribeCallback() {
 
     override fun status(pubnub: PubNub, pnStatus: PNStatus) {
     }

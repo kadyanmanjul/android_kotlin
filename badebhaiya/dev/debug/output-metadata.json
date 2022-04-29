@@ -1,0 +1,20 @@
+{
+  "version": 3,
+  "artifactType": {
+    "type": "APK",
+    "kind": "Directory"
+  },
+  "applicationId": "com.joshtalks.badebhaiya",
+  "variantName": "devDebug",
+  "elements": [
+    {
+      "type": "SINGLE",
+      "filters": [],
+      "attributes": [],
+      "versionCode": 5,
+      "versionName": "0.0.5.Dev_Debug",
+      "outputFile": "josh-bade-bhaiya-release0.0.5.apk"
+    }
+  ],
+  "elementType": "File"
+}

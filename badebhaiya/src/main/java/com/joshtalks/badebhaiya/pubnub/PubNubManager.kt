@@ -54,7 +54,9 @@ import java.util.*
  */
 
 object PubNubManager {
-    private lateinit var liveRoomProperties: StartingLiveRoomProperties
+
+    @Volatile
+    private var liveRoomProperties: StartingLiveRoomProperties? = null
 
     var moderatorName: String? = null
 
@@ -64,6 +66,8 @@ object PubNubManager {
     private val message = Message()
 
     var moderatorUid: Int? = null
+
+    private var pubNubCallback: SubscribeCallback? = null
 
     @Volatile
     private var speakersList = arraySetOf<LiveRoomUser>()
@@ -77,9 +81,17 @@ object PubNubManager {
 
     fun warmUp(liveRoomProperties: StartingLiveRoomProperties) {
         this.liveRoomProperties = liveRoomProperties
+        pubNubCallback = PubNubCallback()
     }
 
-    fun getLiveRoomProperties(): StartingLiveRoomProperties = liveRoomProperties
+    fun getLiveRoomProperties(): StartingLiveRoomProperties {
+        return if (liveRoomProperties != null){
+            liveRoomProperties!!
+        } else {
+            endPubNub()
+            StartingLiveRoomProperties()
+        }
+    }
 
     fun initPubNub() {
         val pnConf = PNConfiguration()
@@ -89,10 +101,12 @@ object PubNubManager {
         pnConf.isSecure = false
         pubnub = PubNub(pnConf)
 
-        pubnub.addListener(PubNubCallback)
+        pubNubCallback?.let {
+            pubnub.addListener(it)
+        }
 
         pubnub.subscribe().channels(
-            listOf(liveRoomProperties.channelName, liveRoomProperties.agoraUid.toString())
+            listOf(liveRoomProperties?.channelName, liveRoomProperties?.agoraUid.toString())
         )?.withPresence()
             ?.execute()
 
@@ -119,14 +133,16 @@ object PubNubManager {
         jobs.clear()
         speakersList.clear()
         audienceList.clear()
-        pubnub.removeListener(PubNubCallback)
+        pubNubCallback?.let {
+            pubnub.removeListener(it)
+        }
         changePubNubState(PubNubState.ENDED)
     }
 
 
     private fun getLatestUserList() {
         jobs += CoroutineScope(Dispatchers.IO).launch {
-            val membersList = pubnub.channelMembers.channel(liveRoomProperties.channelName)
+            val membersList = pubnub.channelMembers.channel(liveRoomProperties?.channelName)
                 ?.includeCustom(true)
                 ?.sync()
 
@@ -162,12 +178,12 @@ object PubNubManager {
             Log.d("ABC2", "refreshUsersList() called with: user = $user")
 
             if (user.isModerator) {
-                if (liveRoomProperties.moderatorId == null || liveRoomProperties.moderatorId == 0) {
-                    liveRoomProperties.moderatorId = user.id
+                if (liveRoomProperties?.moderatorId == null || liveRoomProperties?.moderatorId == 0) {
+                    liveRoomProperties?.moderatorId = user.id
                 }
                 moderatorName = user.name
             }
-            if (user.id == liveRoomProperties.agoraUid) {
+            if (user.id == liveRoomProperties?.agoraUid) {
                 currentUser = user
                 //hideProgressBar()
             }
@@ -204,7 +220,7 @@ object PubNubManager {
             moderatorName = user.name
             moderatorUid = user.id
         }
-        if (user.id == liveRoomProperties.agoraUid) {
+        if (user.id == liveRoomProperties?.agoraUid) {
             currentUser = user
             message.what = HIDE_PROGRESSBAR
             postToLiveEvent(message)
@@ -313,7 +329,7 @@ object PubNubManager {
         }
     }
 
-    fun sendCustomMessage(state: JsonElement, channel: String = liveRoomProperties.channelName) {
+    fun sendCustomMessage(state: JsonElement, channel: String = liveRoomProperties!!.channelName) {
         jobs += CoroutineScope(Dispatchers.IO).launch() {
             channel.let {
                 pubnub.publish()
@@ -354,7 +370,7 @@ object PubNubManager {
             state.put("is_hand_raised", user.isHandRaised)
             state.put("user_id", user.userId)
 
-            pubnub.setChannelMembers().channel(liveRoomProperties.channelName)
+            pubnub.setChannelMembers().channel(liveRoomProperties?.channelName)
                 ?.uuids(
                     Arrays.asList(
                         PNUUID.uuidWithCustom(
@@ -550,17 +566,17 @@ object PubNubManager {
     fun callWebRtcService() {
         Log.d(
             "ABC2",
-            "conversationRoomJoin() called with: token = ${liveRoomProperties.token}, channelName = ${liveRoomProperties.channelName}, uid = ${liveRoomProperties.agoraUid}, moderatorId = ${liveRoomProperties.moderatorId}, channelTopic = ${liveRoomProperties.channelTopic}, roomId = ${liveRoomProperties.roomId}, roomQuestionId = ${liveRoomProperties.roomQuestionId}"
+            "conversationRoomJoin() called with: token = ${liveRoomProperties?.token}, channelName = ${liveRoomProperties?.channelName}, uid = ${liveRoomProperties?.agoraUid}, moderatorId = ${liveRoomProperties?.moderatorId}, channelTopic = ${liveRoomProperties?.channelTopic}, roomId = ${liveRoomProperties?.roomId}, roomQuestionId = ${liveRoomProperties?.roomQuestionId}"
         )
         ConvoWebRtcService.conversationRoomJoin(
-            liveRoomProperties.token,
-            liveRoomProperties.channelName,
-            liveRoomProperties.agoraUid,
-            liveRoomProperties.moderatorId,
-            liveRoomProperties.channelTopic,
-            liveRoomProperties.roomId,
-            liveRoomProperties.roomQuestionId,
-            liveRoomProperties.isRoomCreatedByUser
+            liveRoomProperties?.token,
+            liveRoomProperties?.channelName,
+            liveRoomProperties?.agoraUid,
+            liveRoomProperties?.moderatorId,
+            liveRoomProperties?.channelTopic,
+            liveRoomProperties?.roomId,
+            liveRoomProperties?.roomQuestionId,
+            liveRoomProperties?.isRoomCreatedByUser
         )
     }
 
@@ -597,7 +613,7 @@ object PubNubManager {
     }
 
     private fun isModerator(): Boolean =
-        liveRoomProperties.moderatorId == liveRoomProperties.agoraUid
+        liveRoomProperties?.moderatorId == liveRoomProperties?.agoraUid
 
 
 }
