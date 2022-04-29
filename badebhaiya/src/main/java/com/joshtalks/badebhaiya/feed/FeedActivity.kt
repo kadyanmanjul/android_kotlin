@@ -354,7 +354,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
     }
 
     override fun setReminder(room: RoomListResponseItem, view: View) {
-        val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
+        val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager?
         val notificationIntent = NotificationHelper.getNotificationIntent(
             this, Notification(
                 title = room.topic ?: "Conversation Room Reminder",
@@ -371,7 +371,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                 notificationIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT
             )
-        alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 2000, pendingIntent)
+        alarmManager?.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 2000, pendingIntent)
             .also {
                 //room.isScheduled = true
                 viewModel.setReminder(
@@ -387,8 +387,9 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
     override fun deleteReminder(room: RoomListResponseItem, view: View) {
         //room.isScheduled=false
         pendingIntent?.let {
-            val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-            alarmManager.cancel(pendingIntent)
+            //TODO find work around or why this service is null
+            val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager?
+            alarmManager?.cancel(pendingIntent)
         }
         viewModel.deleteReminder(
             DeleteReminderRequest(
