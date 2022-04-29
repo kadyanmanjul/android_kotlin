@@ -182,6 +182,11 @@ class FeedViewModel : ViewModel() {
         }
     }
 
+
+    fun setTimer(){
+
+    }
+
     fun searchRoom(query: String) {
         viewModelScope.launch {
             try {
@@ -214,12 +219,6 @@ class FeedViewModel : ViewModel() {
             }
         }
     }
-
-//    fun updateFollowRequest(){
-//
-//    }
-
-
 
     fun deleteReminder(deleteReminderRequest: DeleteReminderRequest) {
         viewModelScope.launch {

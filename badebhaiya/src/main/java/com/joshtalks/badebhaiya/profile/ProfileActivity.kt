@@ -80,6 +80,7 @@ class ProfileActivity: AppCompatActivity(), FeedAdapter.ConversationRoomItemCall
 //             }
 //            //setAutoTimeEnabled(boolean enabled)
 //        }
+        //findViewById<ShapeableImageView>(R.id.iv_profile_pic).
     }
 
     private fun handleIntent() {

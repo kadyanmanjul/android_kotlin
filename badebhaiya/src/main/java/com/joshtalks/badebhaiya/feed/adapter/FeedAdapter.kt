@@ -25,6 +25,7 @@ import com.joshtalks.badebhaiya.utils.Utils
 import com.joshtalks.badebhaiya.utils.datetimeutils.DateTimeStyle
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.NonDisposableHandle.parent
+import java.text.SimpleDateFormat
 import java.util.*
 
 class FeedAdapter :
@@ -61,6 +62,9 @@ class FeedAdapter :
     }
 
     var callback: ConversationRoomItemCallback? = null
+
+    val sdf = SimpleDateFormat("dd/M/yyyy hh:mm:ss")
+    val currentDate = sdf.format(Date())
 
     inner class FeedViewHolder(private val item: LiRoomEventBinding) :
         RecyclerView.ViewHolder(item.root) {
