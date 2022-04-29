@@ -364,11 +364,12 @@ class JoshGroupActivity : BaseGroupActivity() {
     }
 
     private fun removeGroupFromDb(groupId: String) {
-        if (groupId == vm.openedGroupId)
+        if (groupId == vm.openedGroupId) {
             if (vm.groupType.get() != DM_CHAT) {
                 while (supportFragmentManager.backStackEntryCount > 0)
                     onBackPressed()
             }
+        }
         CoroutineScope(Dispatchers.IO).launch {
             val groupName = vm.repository.getGroupName(groupId)
             vm.repository.leaveGroupFromLocal(groupId)

@@ -34,7 +34,7 @@
             <com.joshtalks.joshskills.ui.group.views.GroupsAppBar
                 android:id="@+id/group_app_bar"
                 firstIcon="@{vm.isFromVoip() ? R.drawable.josh_skill_logo : R.drawable.ic_search}"
-                groupHeader="@{vm.isFromVoip() ? `Choose group to call` : `Groups`}"
+                groupHeader="@{vm.isFromVoip() ? `Choose group to call` : `Inbox`}"
                 groupSubHeader="@{` `}"
                 onBackPressed="@{vm::onBackPress}"
                 onFirstIconPressed="@{vm::onSearch}"
