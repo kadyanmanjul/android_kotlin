@@ -155,14 +155,14 @@ class ProfileActivity: AppCompatActivity(), FeedAdapter.ConversationRoomItemCall
             viewModel.userProfileData.value?.let {
                 //is_followed=false
                 //binding.tvFollowers.setText("${it.followersCount-1} followers")
-                tvFollowers.text =HtmlCompat.fromHtml(getString(R.string.bb_followers,
+                binding.tvFollowers.text =HtmlCompat.fromHtml(getString(R.string.bb_followers,
                     (it.followersCount.minus(1)?:0).toString()),
                     HtmlCompat.FROM_HTML_MODE_LEGACY)
             }
         else
             viewModel.userProfileData.value?.let {
                 //is_followed=true
-                tvFollowers.text =HtmlCompat.fromHtml(getString(R.string.bb_followers,
+                binding.tvFollowers.text =HtmlCompat.fromHtml(getString(R.string.bb_followers,
                     (it.followersCount.plus(1)?:0).toString()),
                     HtmlCompat.FROM_HTML_MODE_LEGACY)
                 //binding.tvFollowers.setText("${it.followersCount+1} followers")
