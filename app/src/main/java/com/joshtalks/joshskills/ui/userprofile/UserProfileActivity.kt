@@ -13,7 +13,6 @@ import android.text.SpannableStringBuilder
 import android.text.method.LinkMovementMethod
 import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -61,16 +60,8 @@ import com.joshtalks.joshskills.repository.local.eventbus.DeleteProfilePicEventB
 import com.joshtalks.joshskills.repository.local.eventbus.SaveProfileClickedEvent
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.track.AGORA_UID
-import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.track.CHANNEL_ID
 import com.joshtalks.joshskills.track.CONVERSATION_ID
-import com.joshtalks.joshskills.ui.fpp.constants.IS_ACCEPTED
-import com.joshtalks.joshskills.ui.fpp.constants.IS_REJECTED
-import com.joshtalks.joshskills.ui.fpp.constants.SENT_REQUEST
-import com.joshtalks.joshskills.ui.fpp.constants.REQUESTED
-import com.joshtalks.joshskills.ui.fpp.constants.HAS_RECIEVED_REQUEST
-import com.joshtalks.joshskills.ui.fpp.constants.IS_ALREADY_FPP
-import com.joshtalks.joshskills.ui.inbox.mentor_id
 import com.joshtalks.joshskills.ui.fpp.constants.*
 import com.joshtalks.joshskills.ui.group.JoshGroupActivity
 import com.joshtalks.joshskills.ui.group.constants.DM_CHAT
@@ -82,9 +73,9 @@ import com.joshtalks.joshskills.ui.points_history.PointsInfoActivity
 import com.joshtalks.joshskills.ui.senior_student.SeniorStudentActivity
 import com.joshtalks.joshskills.ui.userprofile.fragments.*
 import com.joshtalks.joshskills.ui.userprofile.models.*
+import com.joshtalks.joshskills.ui.userprofile.utils.COURSE
 import com.joshtalks.joshskills.ui.userprofile.utils.MY_GROUP
 import com.joshtalks.joshskills.ui.userprofile.utils.USER_PROFILE_BACK_STACK
-import com.joshtalks.joshskills.ui.userprofile.utils.COURSE
 import com.joshtalks.joshskills.ui.userprofile.viewmodel.UserProfileViewModel
 import com.joshtalks.joshskills.ui.view_holders.ROUND_CORNER
 import com.joshtalks.joshskills.ui.voip.favorite.FavoriteListActivity
@@ -94,18 +85,14 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import jp.wasabeef.glide.transformations.CropTransformation
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
-import kotlinx.android.synthetic.main.base_toolbar.iv_back
-import kotlinx.android.synthetic.main.base_toolbar.iv_help
-import kotlinx.android.synthetic.main.base_toolbar.iv_edit
-import kotlinx.android.synthetic.main.base_toolbar.iv_setting
-import kotlinx.android.synthetic.main.base_toolbar.text_message_title
+import kotlinx.android.synthetic.main.base_toolbar.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.text.DecimalFormat
-import java.util.Locale
+import java.util.*
 
 const val FOR_BASIC_DETAILS = "For_Basic_Details"
 const val FOR_REST = "For_Rest"
