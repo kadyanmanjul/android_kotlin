@@ -172,12 +172,12 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
                 ONLINE_TEST_LAST_LESSON_COMPLETED
             ) >= lessonNumber) -> {
                 binding.startTestContainer.visibility = View.GONE
-                if (PrefManager.hasKey(IS_FREE_TRIAL) && PrefManager.getBoolValue(
-                        IS_FREE_TRIAL,
-                        false,
-                        false
-                    )
-                ) {
+//                if (PrefManager.hasKey(IS_FREE_TRIAL) && PrefManager.getBoolValue(
+//                        IS_FREE_TRIAL,
+//                        false,
+//                        false
+//                    )
+//                ) {
                     binding.testScoreContainer.visibility = View.VISIBLE
                     if (scoreText != -1) {
                         binding.score.text = getString(R.string.test_score, scoreText)
@@ -193,9 +193,9 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
                         showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, pointsList)
                         playSnackbarSound(requireContext())
                     }
-                } else {
-                    binding.testCompletedContainer.visibility = View.VISIBLE
-                }
+//                } else {
+//                    binding.testCompletedContainer.visibility = View.VISIBLE
+//                }
                 completeGrammarCardLogic()
             }
             else -> {
@@ -391,12 +391,12 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
     private fun showGrammarCompleteLayout() {
         binding.parentContainer.visibility = View.GONE
         binding.startTestContainer.visibility = View.GONE
-        if (PrefManager.hasKey(IS_FREE_TRIAL) && PrefManager.getBoolValue(
-                IS_FREE_TRIAL,
-                false,
-                false
-            )
-        ) {
+//        if (PrefManager.hasKey(IS_FREE_TRIAL) && PrefManager.getBoolValue(
+//                IS_FREE_TRIAL,
+//                false,
+//                false
+//            )
+//        ) {
             binding.testScoreContainer.visibility = View.VISIBLE
             if (scoreText != -1) {
                 binding.score.text = getString(R.string.test_score, scoreText)
@@ -413,9 +413,9 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
                 showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, pointsList)
                 playSnackbarSound(requireContext())
             }
-        } else {
-            binding.testCompletedContainer.visibility = View.VISIBLE
-        }
+//        } else {
+//            binding.testCompletedContainer.visibility = View.VISIBLE
+//        }
     }
 
     fun onGrammarContinueClick() {

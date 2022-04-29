@@ -892,9 +892,11 @@ class VocabularyPracticeAdapter(
 
         // ===============================
         override fun onPlayerPause() {
+            binding.submitBtnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
         }
 
         override fun onPlayerResume() {
+            binding.submitBtnPlayInfo.state = MaterialPlayPauseDrawable.State.Pause
         }
 
         override fun onCurrentTimeUpdated(lastPosition: Long) {
@@ -1303,6 +1305,7 @@ class VocabularyPracticeAdapter(
                                     startTime
                                 )
                             Log.d(TAG, "setAudioRecordTouchListener: START")
+                            complete()
                             binding.videoPlayer.onPause()
                             binding.practiseInfoLayout.requestDisallowInterceptTouchEvent(true)
                             Log.d(TAG, "setAudioRecordTouchListener: START 2::")

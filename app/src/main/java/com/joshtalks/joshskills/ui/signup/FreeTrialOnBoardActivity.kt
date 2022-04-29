@@ -16,41 +16,12 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.CoreJoshActivity
-import com.joshtalks.joshskills.core.IMPRESSION_OPEN_FREE_TRIAL_SCREEN
-import com.joshtalks.joshskills.core.IMPRESSION_START_FREE_TRIAL
-import com.joshtalks.joshskills.core.IMPRESSION_START_TRIAL_NO
-import com.joshtalks.joshskills.core.IMPRESSION_START_TRIAL_YES
-import com.joshtalks.joshskills.core.ONBOARDING_STAGE
-import com.joshtalks.joshskills.core.IS_LOGIN_VIA_TRUECALLER
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.OnBoardingStage
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.FREE_TRIAL_TEST_ID
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIAL_POPUP_BODY_TEXT
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIAL_POPUP_HUNDRED_POINTS_TEXT
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIAL_POPUP_TITLE_TEXT
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIAL_POPUP_YES_BUTTON_TEXT
-import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.*
-import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
-import com.joshtalks.joshskills.core.analytics.AppAnalytics
-import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
-import com.joshtalks.joshskills.core.USER_LOCALE
-import com.joshtalks.joshskills.core.SignUpStepStatus
-import com.joshtalks.joshskills.core.ONLINE_TEST_LAST_LESSON_COMPLETED
-import com.joshtalks.joshskills.core.ONLINE_TEST_LAST_LESSON_ATTEMPTED
-import com.joshtalks.joshskills.core.IMPRESSION_TRUECALLER_FREETRIAL_LOGIN
-import com.joshtalks.joshskills.core.IMPRESSION_ALREADY_NEWUSER
-import com.joshtalks.joshskills.core.IMPRESSION_TC_NOT_INSTALLED_JI_HAAN
-import com.joshtalks.joshskills.core.IMPRESSION_TC_NOT_INSTALLED
-import com.joshtalks.joshskills.core.IMPRESSION_TC_USER_ANOTHER
-import com.joshtalks.joshskills.core.abTest.ABTestActivity
-import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
-import com.joshtalks.joshskills.core.abTest.CampaignKeys
-import com.joshtalks.joshskills.core.abTest.VariantKeys
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityFreeTrialOnBoardBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
@@ -125,9 +96,9 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
                 else -> return@Observer
             }
         })
-        viewModel.progressBarStatus.observe(this, androidx.lifecycle.Observer {
+        viewModel.progressBarStatus.observe(this) {
             showProgressBar()
-        })
+        }
     }
 
     fun signUp() {
