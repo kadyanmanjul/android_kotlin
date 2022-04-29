@@ -2,11 +2,13 @@ package com.joshtalks.badebhaiya.launcher
 
 import android.content.Intent
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.work.WorkManager
 import com.joshtalks.badebhaiya.R
+import com.joshtalks.badebhaiya.core.showToast
 import com.joshtalks.badebhaiya.core.workers.WorkManagerAdmin
 import com.joshtalks.badebhaiya.feed.FeedActivity
 import com.joshtalks.badebhaiya.profile.ProfileActivity
@@ -24,7 +26,20 @@ class LauncherActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_launcher)
-        initApp()
+        if(Settings.Global.getInt(getContentResolver(), Settings.Global.AUTO_TIME) == 1)
+             {
+                 // Enabled
+                 //showToast("Auto Time Enabled")
+                 initApp()
+             }
+             else
+             {
+                 // Disabed
+                 showToast("Auto Time Disabled")
+                 finish()
+             }
+            //setAutoTimeEnabled(boolean enabled)
+
     }
 
     override fun onStart() {
