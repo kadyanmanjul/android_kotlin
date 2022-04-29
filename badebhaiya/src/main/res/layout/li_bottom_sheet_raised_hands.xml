@@ -37,6 +37,7 @@
             android:textAppearance="@style/BB_Typography_Nunito_Sans_ExtraBold"
             android:textSize="@dimen/_18sdp"
             android:textColor="@color/black"
+            android:visibility="invisible"
             android:checked="true"
             app:layout_constraintTop_toBottomOf="@id/line"
             app:trackTint="@color/schedule_room_track_checked"

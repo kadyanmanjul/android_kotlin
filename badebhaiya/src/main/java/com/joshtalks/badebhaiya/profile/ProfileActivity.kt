@@ -31,6 +31,7 @@ import com.joshtalks.badebhaiya.utils.Utils
 import android.provider.Settings.Global
 import com.joshtalks.badebhaiya.profile.request.DeleteReminderRequest
 import com.joshtalks.badebhaiya.utils.setUserImageOrInitials
+import kotlinx.android.synthetic.main.activity_profile.tvFollowers
 
 class ProfileActivity: AppCompatActivity(), FeedAdapter.ConversationRoomItemCallback {
 
@@ -38,7 +39,7 @@ class ProfileActivity: AppCompatActivity(), FeedAdapter.ConversationRoomItemCall
         DataBindingUtil.setContentView(this, R.layout.activity_profile)
     }
 
-    var isFromDeeplink=false
+    private var isFromDeeplink = false
 
     private val viewModel by lazy {
         ViewModelProvider(this)[ProfileViewModel::class.java]
@@ -83,9 +84,8 @@ class ProfileActivity: AppCompatActivity(), FeedAdapter.ConversationRoomItemCall
 
     private fun handleIntent() {
         userId = intent.getStringExtra(USER_ID)
-        isFromDeeplink=intent.getBooleanExtra(IS_FROM_DEEPLINK,false)
+        isFromDeeplink = intent.getBooleanExtra(FROM_DEEPLINK, false)
         if (userId.isNullOrEmpty()) User.getInstance().userId
-
 
     }
 
@@ -155,7 +155,7 @@ class ProfileActivity: AppCompatActivity(), FeedAdapter.ConversationRoomItemCall
     }
 
     fun updateFollowStatus() {
-        userId?.let { viewModel.updateFollowStatus(it) }
+        viewModel.updateFollowStatus(userId ?: (User.getInstance().userId))
         if(viewModel.speakerFollowed.value == true)
             viewModel.userProfileData.value?.let {
                 //is_followed=false
@@ -172,7 +172,7 @@ class ProfileActivity: AppCompatActivity(), FeedAdapter.ConversationRoomItemCall
                     HtmlCompat.FROM_HTML_MODE_LEGACY)
                 //binding.tvFollowers.setText("${it.followersCount+1} followers")
             }
-        viewModel.getProfileForUser(userId ?: (User.getInstance().userId), false)
+        viewModel.getProfileForUser(userId ?: (User.getInstance().userId), isFromDeeplink)
     }
 
     private fun speakerFollowedUIChanges() {
@@ -193,18 +193,18 @@ class ProfileActivity: AppCompatActivity(), FeedAdapter.ConversationRoomItemCall
     }
 
     companion object {
-        const val IS_FROM_DEEPLINK:String="is_from_deeplink"
-        fun openProfileActivity(context: Context, userId: String = EMPTY, isFromDeeplink:Boolean=false) {
+        const val FROM_DEEPLINK = "from_deeplink"
+        fun openProfileActivity(context: Context, userId: String = EMPTY) {
             Intent(context, ProfileActivity::class.java).apply {
                 putExtra(USER_ID, userId)
-                putExtra(IS_FROM_DEEPLINK,isFromDeeplink)
             }.run {
                 context.startActivity(this)
             }
         }
-        fun getIntent(context: Context, userId: String = EMPTY): Intent {
+        fun getIntent(context: Context, userId: String = EMPTY, isFromDeeplink: Boolean = false): Intent {
             return Intent(context, ProfileActivity::class.java).apply {
                 putExtra(USER_ID, userId)
+                putExtra(FROM_DEEPLINK, isFromDeeplink)
             }
         }
     }
@@ -242,7 +242,7 @@ class ProfileActivity: AppCompatActivity(), FeedAdapter.ConversationRoomItemCall
                     )
                 )
             }
-        viewModel.getProfileForUser(userId ?: (User.getInstance().userId),false)
+        viewModel.getProfileForUser(userId ?: (User.getInstance().userId))
     }
 
     override fun deleteReminder(room: RoomListResponseItem, view: View) {
@@ -254,7 +254,6 @@ class ProfileActivity: AppCompatActivity(), FeedAdapter.ConversationRoomItemCall
                 userId=User.getInstance().userId
             )
         )
-        //viewModel.getProfileForUser(userId ?: (User.getInstance().userId))
     }
 
     override fun viewRoom(room: RoomListResponseItem, view: View) {
