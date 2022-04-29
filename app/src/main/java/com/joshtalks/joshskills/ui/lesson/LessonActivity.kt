@@ -806,6 +806,9 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
             setUpVideoProgressListener()
             viewModel.getVideoData()
     }
+    override fun introVideoCmplt(){
+        isIntroVideoCmpleted = false
+    }
 
     override fun showVideoToolTip(
         shouldShow: Boolean,
@@ -853,6 +856,10 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                     SPEAKING_POSITION -> {
                         if (lesson.speakingStatus != LESSON_STATUS.CO && status == LESSON_STATUS.CO) {
                             MarketingAnalytics.logSpeakingSectionCompleted()
+                            MixPanelTracker.publishEvent(MixPanelEvent.SPEAKING_COMPLETED)
+                                .addParam(ParamKeys.LESSON_ID, getLessonId)
+                                .addParam(ParamKeys.LESSON_NUMBER,lesson.lessonNo)
+                                .push()
                         }
                         lesson.speakingStatus = status
                     }
@@ -1366,6 +1373,10 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
 
         binding.videoView.setUrl(introVideoUrl)
         binding.videoView.onStart()
+        MixPanelTracker.publishEvent(MixPanelEvent.SPEAKING_VIDEO_PLAY)
+            .addParam(ParamKeys.LESSON_ID,getLessonId)
+            .addParam(ParamKeys.LESSON_NUMBER,lessonNumber)
+            .push()
         viewModel.saveIntroVideoFlowImpression(INTRO_VIDEO_STARTED_PLAYING)
         binding.videoView.setPlayListener {
             val currentVideoProgressPosition = binding.videoView.progress

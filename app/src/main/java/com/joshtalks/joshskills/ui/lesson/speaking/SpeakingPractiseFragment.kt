@@ -502,15 +502,12 @@ class SpeakingPractiseFragment : ABTestFragment() {
     }
     private fun initDemoViews(it: Int) {
         if (it == 1 && isIntroVideoEnabled) {
-            MixPanelTracker.publishEvent(MixPanelEvent.SPEAKING_VIDEO_PLAY)
-                .addParam(ParamKeys.LESSON_ID,lessonID)
-                .addParam(ParamKeys.LESSON_NUMBER,lessonNo)
-                .push()
             lessonActivityListener?.showIntroVideo()
             lessonNo = it
             binding.btnCallDemo.visibility = View.GONE
             binding.txtHowToSpeak.visibility = View.VISIBLE
             binding.txtHowToSpeak.setOnClickListener {
+                lessonActivityListener?.introVideoCmplt()
                 viewModel.isHowToSpeakClicked(true)
                 binding.btnCallDemo.visibility = View.VISIBLE
                 viewModel.saveIntroVideoFlowImpression(HOW_TO_SPEAK_TEXT_CLICKED)
@@ -536,10 +533,7 @@ class SpeakingPractiseFragment : ABTestFragment() {
     }
 
     private fun speakingSectionComplete(){
-        MixPanelTracker.publishEvent(MixPanelEvent.SPEAKING_COMPLETED)
-            .addParam(ParamKeys.LESSON_ID,lessonID)
-            .addParam(ParamKeys.LESSON_NUMBER,lessonNo)
-            .push()
+
         binding.btnContinue.visibility = VISIBLE
         binding.btnStart.pauseAnimation()
         binding.btnContinue.playAnimation()
