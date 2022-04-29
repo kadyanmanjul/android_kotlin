@@ -18,21 +18,19 @@
         android:clickable="true"
         android:id="@+id/find">
 
-        <androidx.appcompat.widget.SearchView
+        <EditText
             android:id="@+id/search_bar"
             android:layout_width="@dimen/_230sdp"
             android:layout_height="@dimen/_30sdp"
             android:layout_marginStart="16dp"
             android:background="@drawable/search_bar"
             android:drawableLeft="@drawable/ic_search"
-            app:drawableTint="#918F83"
-            android:textSize="@dimen/_5sdp"
-            app:queryHint="Search for people and topics"
-            app:iconifiedByDefault="false"
+            android:drawableTint="#918F83"
             android:fontFamily="@font/nunito_sans_semi_bold"
+            android:hint="Search for people and topics"
             android:imeOptions="actionDone"
+            android:paddingLeft="@dimen/_10sdp"
             android:singleLine="true"
-            android:iconifiedByDefault="false"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -52,6 +50,21 @@
             app:layout_constraintStart_toEndOf="@+id/search_bar"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.030" />
+
+        <TextView
+            android:layout_width="@dimen/_200sdp"
+            android:layout_height="@dimen/_80sdp"
+            android:id="@+id/default_text"
+            android:layout_marginTop="@dimen/_6sdp"
+            android:fontFamily="@font/nunito_sans_semi_bold"
+            android:gravity="center"
+            android:drawableTop="@drawable/ic_search"
+            android:text="Try searching for people, rooms or any topic you’d like to talk about"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:textSize="@dimen/_12sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/search_bar" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"

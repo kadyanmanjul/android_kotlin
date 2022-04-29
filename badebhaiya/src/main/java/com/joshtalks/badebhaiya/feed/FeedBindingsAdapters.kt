@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.button.MaterialButton
 import com.joshtalks.badebhaiya.R
+import com.joshtalks.badebhaiya.core.showToast
 import com.joshtalks.badebhaiya.feed.adapter.FeedAdapter
 import com.joshtalks.badebhaiya.feed.model.ConversationRoomType
 import com.joshtalks.badebhaiya.feed.model.ConversationRoomType.*
@@ -63,7 +64,6 @@ fun setConversationRoomCardActionButton(
             view.setTextColor(ColorStateList.valueOf(view.context.resources.getColor(R.color.white)))
             view.backgroundTintList =
                 ColorStateList.valueOf(view.context.resources.getColor(R.color.reminder_on_button_color))
-            //view.isEnabled = true
             view.setOnClickListener { callback?.joinRoom(roomListResponseItem, view) }
         }
         NOT_SCHEDULED -> {
@@ -71,7 +71,6 @@ fun setConversationRoomCardActionButton(
             view.setTextColor(ColorStateList.valueOf(view.context.resources.getColor(R.color.white)))
             view.backgroundTintList =
                 ColorStateList.valueOf(view.context.resources.getColor(R.color.reminder_on_button_color))
-            //view.isEnabled = true
             view.setOnClickListener {
                 roomListResponseItem.conversationRoomType = SCHEDULED
                 view.text = view.context.getString(R.string.reminder_on)
@@ -79,7 +78,7 @@ fun setConversationRoomCardActionButton(
                 view.backgroundTintList =
                     ColorStateList.valueOf(view.context.resources.getColor(R.color.base_app_color))
                 callback?.setReminder(roomListResponseItem, view)
-                //view.setOnClickListener { callback?.viewRoom(roomListResponseItem, view) }
+                view.setOnClickListener { callback?.viewRoom(roomListResponseItem, view) }
             }
         }
         SCHEDULED -> {
@@ -87,7 +86,6 @@ fun setConversationRoomCardActionButton(
             view.setTextColor(ColorStateList.valueOf(view.context.resources.getColor(R.color.reminder_on_button_color)))
             view.backgroundTintList =
                 ColorStateList.valueOf(view.context.resources.getColor(R.color.base_app_color))
-            //view.isEnabled = true
             if (roomListResponseItem.speakersData != null && User.getInstance().userId == roomListResponseItem.speakersData.userId) {
                 val startTime = roomListResponseItem.startTime ?: Long.MAX_VALUE
                 if (roomListResponseItem.currentTime >= (startTime - ALLOWED_JOIN_ROOM_TIME / 1000L)) {

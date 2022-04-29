@@ -667,7 +667,7 @@ class ConvoWebRtcService : Service() {
         val lNotificationBuilder =
             NotificationCompat.Builder(this, ROOM_NOTIFICATION_CHANNEL)
                 .setChannelId(ROOM_NOTIFICATION_CHANNEL)
-                .setContentTitle("Conversation Room")
+                .setContentTitle("${channelTopic}")
                 .setSmallIcon(R.drawable.ic_status_bar_notification)
                 .setColor(
                     ContextCompat.getColor(
