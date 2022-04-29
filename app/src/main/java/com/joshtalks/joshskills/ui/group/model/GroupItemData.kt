@@ -13,6 +13,7 @@ interface GroupItemData {
     fun getJoinedStatus() : String
     fun getGroupText() : String
     fun getAgoraId() : Int
+    fun getLastMessageText() : String
 
     //TODO: Need to remove
     fun hasJoined() : Boolean
