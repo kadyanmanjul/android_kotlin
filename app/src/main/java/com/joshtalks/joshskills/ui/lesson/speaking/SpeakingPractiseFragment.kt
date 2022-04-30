@@ -375,16 +375,24 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                 viewModel.saveIntroVideoFlowImpression(HOW_TO_SPEAK_TEXT_CLICKED)
             }
 
-            viewModel.callBtnHideShowLiveData.observe(viewLifecycleOwner, {
-                if (it == 1) {
-                    binding.nestedScrollView.visibility = View.INVISIBLE
-                    binding.btnCallDemo.visibility = View.VISIBLE
-                }
-                if (it == 2) {
-                    binding.nestedScrollView.visibility = View.VISIBLE
-                    binding.btnCallDemo.visibility = View.GONE
-                }
-            })
+            try {
+                viewModel.callBtnHideShowLiveData.observe(viewLifecycleOwner, {
+                    try {
+                        if (it == 1) {
+                            requireActivity().runOnUiThread {
+                                binding.nestedScrollView.visibility = View.INVISIBLE
+                                binding.btnCallDemo.visibility = View.VISIBLE
+                            }
+                        }
+                        if (it == 2) {
+                            requireActivity().runOnUiThread {
+                                binding.nestedScrollView.visibility = View.VISIBLE
+                                binding.btnCallDemo.visibility = View.GONE
+                            }
+                        }
+                    }catch (ex:Exception){}
+                })
+            }catch (ex:Exception){}
         } else {
             binding.btnCallDemo.visibility = View.GONE
         }
