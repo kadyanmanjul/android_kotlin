@@ -726,6 +726,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             binding.toolbar.visibility = View.VISIBLE
             binding.noInternet.visibility = View.VISIBLE
             binding.parentContainer.setBackgroundColor(Color.WHITE)
+            binding.syllabusLayout.english_syllabus_pdf.visibility = View.INVISIBLE
         }
     }
 
