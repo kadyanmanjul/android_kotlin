@@ -32,12 +32,12 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.resource.bitmap.FitCenter
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
+import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.Player
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.greentoad.turtlebody.mediapicker.MediaPicker
 import com.greentoad.turtlebody.mediapicker.core.MediaPickerConfig
-import com.joshtalks.joshcamerax.JoshCameraActivity
 import com.joshtalks.joshcamerax.utils.ImageQuality
 import com.joshtalks.joshcamerax.utils.Options
 import com.joshtalks.joshskills.R
@@ -74,6 +74,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseDrawable
+import java.io.File
 
 const val PRACTISE_OBJECT = "practise_object"
 const val IMAGE_OR_VIDEO_SELECT_REQUEST_CODE = 1081
@@ -247,25 +248,30 @@ class PractiseSubmitActivity :
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 
         try {
-            if (requestCode == IMAGE_OR_VIDEO_SELECT_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-                data?.let { intent ->
-                    when {
-                        intent.hasExtra(JoshCameraActivity.IMAGE_RESULTS) -> {
-                            val returnValue =
-                                intent.getStringArrayListExtra(JoshCameraActivity.IMAGE_RESULTS)
-                            returnValue?.get(0)?.let {
-                                filePath = it
-                            }
-                        }
-                        intent.hasExtra(JoshCameraActivity.VIDEO_RESULTS) -> {
-                            val videoPath = intent.getStringExtra(JoshCameraActivity.VIDEO_RESULTS)
-                            videoPath?.run {
-                                initVideoPractise(this)
-                            }
-                        }
-                        else -> return
-                    }
+            if (resultCode == Activity.RESULT_OK) {
+                val url = data?.data?.path ?: EMPTY
+
+                if (url.isNotBlank()) {
+                    filePath = url
                 }
+//                data?.let { intent ->
+//                    when {
+//                        intent.hasExtra(JoshCameraActivity.IMAGE_RESULTS) -> {
+//                            val returnValue =
+//                                intent.getStringArrayListExtra(JoshCameraActivity.IMAGE_RESULTS)
+//                            returnValue?.get(0)?.let {
+//                                filePath = it
+//                            }
+//                        }
+//                        intent.hasExtra(JoshCameraActivity.VIDEO_RESULTS) -> {
+//                            val videoPath = intent.getStringExtra(JoshCameraActivity.VIDEO_RESULTS)
+//                            videoPath?.run {
+                         //       initVideoPractise(this)
+//                            }
+//                        }
+//                        else -> return
+//                    }
+//                }
             } else if (requestCode == TEXT_FILE_ATTACHMENT_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
                 data?.data?.let {
                     contentResolver.query(it, null, null, null, null)?.use { cursor ->
@@ -357,6 +363,7 @@ class PractiseSubmitActivity :
                 }
 
                 BASE_MESSAGE_TYPE.IM -> {
+                    showToast("CALL")
                     binding.imageView.visibility = VISIBLE
                     this.imageList?.getOrNull(0)?.imageUrl?.let { path ->
                         setImageInImageView(path, binding.imageView)
@@ -727,18 +734,23 @@ class PractiseSubmitActivity :
                 override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                     report?.areAllPermissionsGranted()?.let { flag ->
                         if (flag) {
-                            val options = Options.init()
-                                .setRequestCode(IMAGE_OR_VIDEO_SELECT_REQUEST_CODE)
-                                .setCount(1)
-                                .setFrontfacing(false)
-                                .setPath(AppDirectory.getTempPath())
-                                .setImageQuality(ImageQuality.HIGH)
-                                .setScreenOrientation(Options.SCREEN_ORIENTATION_PORTRAIT)
+//                            val options = Options.init()
+//                                .setRequestCode(IMAGE_OR_VIDEO_SELECT_REQUEST_CODE)
+//                                .setCount(1)
+//                                .setFrontfacing(false)
+//                                .setPath(AppDirectory.getTempPath())
+//                                .setImageQuality(ImageQuality.HIGH)
+//                                .setScreenOrientation(Options.SCREEN_ORIENTATION_PORTRAIT)
 
-                            JoshCameraActivity.startJoshCameraxActivity(
-                                this@PractiseSubmitActivity,
-                                options
-                            )
+//                            JoshCameraActivity.startJoshCameraxActivity(
+//                                this@PractiseSubmitActivity,
+//                                options
+//                            )
+                            ImagePicker.with(this@PractiseSubmitActivity)
+                                .crop()
+                                .cameraOnly()
+                                .saveDir(File(getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!, "ImagePicker"))
+                                .start(ImagePicker.REQUEST_CODE)
                             return
                         }
                         if (report.isAnyPermissionPermanentlyDenied) {

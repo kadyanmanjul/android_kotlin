@@ -1269,9 +1269,11 @@ class ReadingFragmentWithoutFeedback :
             if (isCallOngoing()) {
                 return@setOnTouchListener false
             }
-            if (PermissionUtils.isAudioAndStoragePermissionEnable(requireContext()).not()) {
-                recordPermission()
-                return@setOnTouchListener true
+            if (isAdded) {
+                if (PermissionUtils.isAudioAndStoragePermissionEnable(requireContext()).not()) {
+                    recordPermission()
+                    return@setOnTouchListener true
+                }
             }
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
