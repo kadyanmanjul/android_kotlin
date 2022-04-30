@@ -169,24 +169,36 @@ internal class AgoraWebrtcService(val scope: CoroutineScope) : WebrtcService {
                             state.emit(IDLE)
                             currentState = IDLE
                         }
+                        eventFlow.emit(callState)
                     }
                     CallState.CallConnected -> {
-                        state.emit(CONNECTED)
-                        currentState = CONNECTED
+                        //TODO: Use Reconnecting
+                        if(currentState == CONNECTED) {
+                            stopReconnectingTimeoutTimer()
+                            eventFlow.emit(CallState.OnReconnected)
+                        } else {
+                            state.emit(CONNECTED)
+                            currentState = CONNECTED
+                            eventFlow.emit(callState)
+                        }
                     }
                     CallState.CallInitiated -> {
                         state.emit(JOINED)
                         currentState = JOINED
+                        eventFlow.emit(callState)
                     }
                     CallState.OnReconnecting -> {
                         startReconnectingTimeoutTimer()
+                        eventFlow.emit(callState)
                     }
                     CallState.OnReconnected -> {
                         stopReconnectingTimeoutTimer()
+                        eventFlow.emit(callState)
                     }
                     CallState.UserAlreadyDisconnectedError -> {
                         state.emit(IDLE)
                         currentState = IDLE
+                        eventFlow.emit(callState)
                     }
                     CallState.Error -> {
                         if(currentState == JOINED || currentState == CONNECTED || currentState == JOINING) {
@@ -197,10 +209,10 @@ internal class AgoraWebrtcService(val scope: CoroutineScope) : WebrtcService {
                             state.emit(IDLE)
                             currentState = IDLE
                         }
+                        eventFlow.emit(callState)
                     }
                 }
                 voipLog?.log("observeCallbacks : CallState = $callState")
-                eventFlow.emit(callState)
             }
         }
     }
@@ -210,13 +222,14 @@ internal class AgoraWebrtcService(val scope: CoroutineScope) : WebrtcService {
             reconnectingJob = scope.launch {
                 delay(RECONNECTING_TIMEOUT_IN_MILLIS)
                 eventFlow.emit(CallState.ReconnectingFailed)
-                Log.d("disconnectCall()", "startReconnectingTimeoutTimer: ")
+                Log.d("disconnectCall()", " Disconnecting due to Reconnecting")
                 disconnectCall()
             }
         }
     }
 
     fun stopReconnectingTimeoutTimer() {
+        Log.d(TAG, "Cancelling Reconnect Timer")
         reconnectingJob?.cancel()
     }
 }

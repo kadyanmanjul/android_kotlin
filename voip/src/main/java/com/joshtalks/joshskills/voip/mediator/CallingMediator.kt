@@ -12,6 +12,7 @@ import com.joshtalks.joshskills.voip.calldetails.CallDetails
 import com.joshtalks.joshskills.voip.calldetails.IncomingCallData
 import com.joshtalks.joshskills.voip.communication.EventChannel
 import com.joshtalks.joshskills.voip.communication.PubNubChannelService
+import com.joshtalks.joshskills.voip.communication.PubnubState
 import com.joshtalks.joshskills.voip.communication.constants.ServerConstants
 import com.joshtalks.joshskills.voip.communication.model.*
 import com.joshtalks.joshskills.voip.constant.*
@@ -175,7 +176,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                         is MessageData -> {
                             voipLog?.log("Message Data -> $event")
                             Log.d(TAG, "handleFallbackEvents: $event")
-                            if (event.isMessageForSameChannel()) {
+                            if (isMessageForSameChannel(event.getChannel())) {
                                 when (event.getType()) {
                                     ServerConstants.ONHOLD -> {
                                         // Transfer to Service
@@ -222,6 +223,15 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                                 val msg = Message.obtain().apply {
                                     what = INCOMING_CALL
                                     obj = event
+                                }
+                                flow.emit(msg)
+                            }
+                        }
+                        is UI -> {
+                            if (isMessageForSameChannel(event.getChannelName())) {
+                                val msg = Message.obtain().apply {
+                                    obj = event
+                                    what = UI_STATE_UPDATED
                                 }
                                 flow.emit(msg)
                             }
@@ -316,6 +326,10 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
         return webrtcService.observeCallingState()
     }
 
+    override fun observeChannelState(): SharedFlow<PubnubState> {
+        return networkEventChannel.observeChannelState()
+    }
+
     // Handle Events coming from Backend
     private fun handlePubnubEvent() {
         Log.d(TAG, "handlePubnubEvent: ${networkEventChannel.hashCode()}")
@@ -365,7 +379,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                         is MessageData -> {
                             voipLog?.log("Message Data -> $it")
                             Log.d(TAG, "handlePubnubEvent: $it")
-                            if (it.isMessageForSameChannel()) {
+                            if (isMessageForSameChannel(it.getChannel())) {
                                 when (it.getType()) {
                                     ServerConstants.ONHOLD -> {
                                         // Transfer to Service
@@ -414,6 +428,15 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                                 flow.emit(msg)
                             }
                         }
+                        is UI -> {
+                            if (isMessageForSameChannel(it.getChannelName())) {
+                                val msg = Message.obtain().apply {
+                                    obj = it
+                                    what = UI_STATE_UPDATED
+                                }
+                                flow.emit(msg)
+                            }
+                        }
                     }
                 }
             } catch (e: Exception) {
@@ -444,8 +467,8 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
         }
     }
 
-    private fun MessageData.isMessageForSameChannel() =
-        this.getChannel() == CallDetails.agoraChannelName
+    private fun isMessageForSameChannel(channel : String) =
+        channel == CallDetails.agoraChannelName
 
     private fun handleWebrtcEvent() {
         Log.d(TAG, "handleWebrtcEvent: ${webrtcService.hashCode()}")

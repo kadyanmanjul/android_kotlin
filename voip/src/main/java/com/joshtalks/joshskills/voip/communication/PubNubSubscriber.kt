@@ -4,11 +4,8 @@ import android.util.Log
 import com.google.gson.Gson
 import com.joshtalks.joshskills.voip.communication.constants.ServerConstants.Companion.CHANNEL
 import com.joshtalks.joshskills.voip.communication.constants.ServerConstants.Companion.INCOMING_CALL
-import com.joshtalks.joshskills.voip.communication.model.Channel
-import com.joshtalks.joshskills.voip.communication.model.Communication
-import com.joshtalks.joshskills.voip.communication.model.Error
-import com.joshtalks.joshskills.voip.communication.model.IncomingCall
-import com.joshtalks.joshskills.voip.communication.model.Message
+import com.joshtalks.joshskills.voip.communication.constants.ServerConstants.Companion.UI_STATE_UPDATED
+import com.joshtalks.joshskills.voip.communication.model.*
 import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.voipLog
 import com.pubnub.api.PubNub
@@ -38,8 +35,17 @@ internal class PubNubSubscriber(val scope: CoroutineScope) : SubscribeCallback()
         MutableSharedFlow(replay = 0)
     }
 
+    private val stateFlow by lazy<MutableSharedFlow<PubnubState>> {
+        Log.d(TAG, "Creating : stateFlow")
+        MutableSharedFlow(replay = 0)
+    }
+
     fun observeMessages() : SharedFlow<Communication> {
         return messageFlow
+    }
+
+    fun observeChannelState() : SharedFlow<PubnubState> {
+        return stateFlow
     }
 
     override fun message(pubnub: PubNub, pnMessageResult: PNMessageResult) {
@@ -56,6 +62,7 @@ internal class PubNubSubscriber(val scope: CoroutineScope) : SubscribeCallback()
                 val message = when(pnMessageResult.userMetadata.asInt) {
                     CHANNEL -> Gson().fromJson(messageJson, Channel::class.java)
                     INCOMING_CALL -> Gson().fromJson(messageJson, IncomingCall::class.java)
+                    UI_STATE_UPDATED -> Gson().fromJson(messageJson, UI::class.java)
                     else -> Gson().fromJson(messageJson, Message::class.java)
                 }
                 messageFlow.emit(message)
@@ -67,7 +74,7 @@ internal class PubNubSubscriber(val scope: CoroutineScope) : SubscribeCallback()
     }
 
     override fun status(pubnub: PubNub, status: PNStatus) {
-        //Log.d(TAG, "status: Category --> ${status.category}")
+        Log.d(TAG, "status: Category --> ${status.category}")
         //Log.d(TAG, "status: Status --> ${status}")
         when(status.category) {
             PNConnectedCategory -> {

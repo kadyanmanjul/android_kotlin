@@ -14,6 +14,8 @@ class ServerConstants {
         val RECONNECTING = 9
         val TIMEOUT = 10
         val NO_USER_FOUND = 11
+        val UI_STATE_UPDATED = 12
+        val ACK_UI_STATE_UPDATED = 13
     }
 }
 

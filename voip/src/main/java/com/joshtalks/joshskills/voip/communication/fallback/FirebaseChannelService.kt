@@ -6,6 +6,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.communication.EventChannel
+import com.joshtalks.joshskills.voip.communication.PubnubState
 import com.joshtalks.joshskills.voip.communication.model.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -79,6 +80,11 @@ class FirebaseChannelService(val scope: CoroutineScope) : EventChannel {
 
     override fun observeChannelEvents(): SharedFlow<Communication> {
         return dataFlow
+    }
+
+    // TODO: Ignore
+    override fun observeChannelState(): SharedFlow<PubnubState> {
+        return MutableSharedFlow()
     }
 
     override fun reconnect() {

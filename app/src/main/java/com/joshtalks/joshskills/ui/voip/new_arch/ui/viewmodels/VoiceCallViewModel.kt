@@ -157,6 +157,7 @@ class VoiceCallViewModel : BaseViewModel() {
                 }
 
                 if (uiState.isMute != state.isOnMute) {
+                    Log.d(TAG, "listenUIState: MUTE -- ${state.isOnMute}")
                     if (state.isOnMute) {
                         uiState.isMute = true
                         repository.muteCall()
