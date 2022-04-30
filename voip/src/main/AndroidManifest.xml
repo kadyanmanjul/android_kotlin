@@ -9,6 +9,8 @@
     <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS"/>
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="com.joshtalks.permission.READ_WRITE_CONTENT"/>
+    <uses-permission android:name="com.joshtalks.permission.READ_WRITE_VOIP_CONTENT"/>
+
     <application>
         <service android:name=".data.CallingRemoteService"
             android:process=":joshSkillsCallingService"
@@ -26,13 +28,6 @@
             android:exported="false">
             <intent-filter>
                 <action android:name="android.media.ACTION_CONNECTION_STATE_CHANGED" />
-            </intent-filter>
-        </receiver>
-        <!-- PSTN module -->
-        <receiver android:name=".CallingServiceReceiver"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="com.joshtalks.joshskills.CALLING_SERVICE"/>
             </intent-filter>
         </receiver>
     </application>

@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
 import androidx.fragment.app.FragmentActivity
+import com.google.gson.Gson
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.base.model.VoipUIState
@@ -180,20 +181,14 @@ object VoipPref {
 
         // TODO: These function shouldn't be here
         private fun showDialogBox(totalSecond: Long) {
-            val currentActivity = ActivityLifecycleCallback.currentActivity
-            val voiceCallClassName = "com.joshtalks.joshskills." + currentActivity.localClassName
-            val fragmentActivity = currentActivity as? FragmentActivity
-            if (currentActivity != null) {
-                if (voiceCallClassName != "com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity") {
-                    fragmentActivity?.showVoipDialog(totalSecond)
-                } else {
                     scope.launch {
-                        delay(1000)
-                        val newCurrentActivity = ActivityLifecycleCallback.currentActivity
-                        val newFragmentActivity = newCurrentActivity as? FragmentActivity
-                        withContext(Dispatchers.Main) {
+                        delay(500)
+                        val currentActivity = ActivityLifecycleCallback.currentActivity
+                        if (currentActivity != null) {
+                            val newFragmentActivity = currentActivity as? FragmentActivity
+                           withContext(Dispatchers.Main) {
                             newFragmentActivity?.showVoipDialog(totalSecond)
-                        }
+
                     }
                 }
             }
@@ -319,4 +314,33 @@ object VoipPref {
                 preferenceManager.registerOnSharedPreferenceChangeListener(VoipPrefListener)
             }
         }
+
+    fun getCurrentVoipState(): String {
+       return preferenceManager.getString(PREF_KEY_CURRENT_VOIP_STATE, IDLE_STATE)?: IDLE_STATE
+    }
+
+    fun updateCurrentVoipState(currentVoipState: String? = IDLE_STATE) {
+        Log.d(TAG, "updateCurrentVoipState: Updated")
+        val editor = preferenceManager.edit()
+        editor.putString(PREF_KEY_CURRENT_VOIP_STATE,currentVoipState)
+        editor.apply()
+    }
+
+    fun getCurrentVoipStateStack(): Array<String> {
+        val gson = Gson()
+        val jsonText: String? = preferenceManager.getString(PREF_KEY_CURRENT_VOIP_STATE_STACK, null)
+        return gson.fromJson(
+            jsonText,
+            Array<String>::class.java
+        )
+    }
+
+    fun updateCurrentVoipStateStack(currentVoipStateStack: Any? = arrayOf("")) {
+        val editor = preferenceManager.edit()
+        val gson = Gson()
+        val textList: Any? = currentVoipStateStack
+        val jsonText = gson.toJson(textList)
+        editor.putString(PREF_KEY_CURRENT_VOIP_STATE_STACK, jsonText)
+        editor.apply()
+    }
 }

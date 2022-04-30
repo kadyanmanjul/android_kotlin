@@ -62,6 +62,24 @@ const val APP_VERSION_NAME = "josh_app_version_name"
 const val APP_USER_AGENT = "josh_user_agent"
 const val APP_ACCEPT_LANGUAGE = "josh_accept_language"
 
+// Content Provider Voip State
+const val CONTENT_VOIP_STATE_AUTHORITY = "content://com.joshtalks.joshskills.voipstate"
+const val VOIP_STATE_PATH = "/current_voip_state"
+const val VOIP_STATE_STACK_PATH = "/current_voip_state_stack"
+
+//    Content values for Voip State
+const val CURRENT_VOIP_STATE = "josh_current_voip_state"
+const val CURRENT_VOIP_STATE_STACKS = "josh_current_voip_state_stack"
+
+//Voip Current States
+const val CONNECTED_STATE = "connected_state"
+const val JOINED_STATE = "joined_state"
+const val IDLE_STATE = "idle_state"
+
+const val PREF_KEY_CURRENT_VOIP_STATE = "josh_current_voip_state"
+const val PREF_KEY_CURRENT_VOIP_STATE_STACK = "josh_current_voip_stack"
+
+
 // Pref Keys
 const val PREF_KEY_WEBRTC_CURRENT_STATE = "josh_webrtc_current_state"
 const val PREF_KEY_MAIN_PROCESS_PID = "josh_main_process_pid"

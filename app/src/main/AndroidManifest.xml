@@ -829,6 +829,12 @@
                 android:resource="@xml/provider_paths" />
         </provider>
         <provider
+            android:authorities="com.joshtalks.joshskills.voipstate"
+            android:name=".core.contentprovider.VoipStateContentProvider"
+            android:permission="com.joshtalks.permission.READ_WRITE_VOIP_CONTENT"
+            android:enabled="true"
+            android:exported="true"/>
+        <provider
             android:authorities="com.joshtalks.joshskills.contentprovider"
             android:name=".core.contentprovider.JoshContentProvider"
             android:permission="com.joshtalks.permission.READ_WRITE_CONTENT"
@@ -851,5 +857,7 @@
     <queries>
         <provider
             android:authorities="com.joshtalks.joshskills.contentprovider" />
+        <provider
+            android:authorities="com.joshtalks.joshskills.voipstate"/>
     </queries>
 </manifest>
