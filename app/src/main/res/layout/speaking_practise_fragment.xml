@@ -329,8 +329,8 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:layout_marginBottom="@dimen/_14sdp"
-                        android:layout_marginTop="@dimen/_14sdp"
+                        android:layout_marginBottom="@dimen/_7sdp"
+                        android:layout_marginTop="@dimen/_7sdp"
                         android:backgroundTint="@color/colorAccent"
                         android:gravity="center"
                         android:insetTop="0dp"
@@ -359,7 +359,7 @@
                         android:layout_gravity="center"
                         android:visibility="@{vm.isFreeTrail ? View.GONE : View.VISIBLE}"
                         android:layout_marginTop="@dimen/_14sdp"
-                        android:layout_marginBottom="@dimen/_14sdp"
+                        android:layout_marginBottom="@dimen/_7sdp"
                         android:backgroundTint="@color/colorAccent"
                         android:gravity="center"
                         android:insetTop="0dp"
@@ -376,7 +376,8 @@
                         app:layout_constraintWidth_default="percent"
                         app:layout_constraintWidth_percent="0.7"
                         app:rippleColor="@color/white"
-                        tools:visibility="visible" />
+                        tools:visibility="visible"
+                        app:layout_constraintBottom_toTopOf="@id/btn_new_student"/>
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_favorite"
@@ -385,6 +386,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_marginBottom="@dimen/_7sdp"
+                        android:layout_marginTop="@dimen/_7sdp"
                         android:backgroundTint="@color/colorAccent"
                         android:gravity="center"
                         android:visibility="@{vm.isFreeTrail ? View.GONE : View.VISIBLE}"
