@@ -13,24 +13,17 @@ import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.commit
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.SearchFragment
-import com.joshtalks.badebhaiya.core.EMPTY
-import com.joshtalks.badebhaiya.core.Notification
-import com.joshtalks.badebhaiya.core.NotificationHelper
-import com.joshtalks.badebhaiya.core.NotificationType
-import com.joshtalks.badebhaiya.core.PermissionUtils
-import com.joshtalks.badebhaiya.core.showToast
+import com.joshtalks.badebhaiya.core.*
 import com.joshtalks.badebhaiya.databinding.ActivityFeedBinding
 import com.joshtalks.badebhaiya.feed.adapter.FeedAdapter
 import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
-import com.joshtalks.badebhaiya.liveroom.LiveRoomFragment
-import com.joshtalks.badebhaiya.liveroom.LiveRoomState
-import com.joshtalks.badebhaiya.liveroom.OPEN_PROFILE
-import com.joshtalks.badebhaiya.liveroom.OPEN_ROOM
+import com.joshtalks.badebhaiya.liveroom.*
 import com.joshtalks.badebhaiya.liveroom.bottomsheet.CreateRoom
 import com.joshtalks.badebhaiya.liveroom.model.StartingLiveRoomProperties
 import com.joshtalks.badebhaiya.liveroom.viewmodel.LiveRoomViewModel
@@ -137,6 +130,10 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         initView()
         //setOnClickListener()
     }
+    fun userid(): String {
+
+        return User.getInstance().userId
+    }
 
     override fun onResume() {
         super.onResume()
@@ -164,6 +161,19 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                 liveRoomViewModel
             )
         }
+    }
+    fun onProfileClicked()
+    {
+        val fragment = ProfileActivity() // replace your custom fragment class
+
+        val bundle = Bundle()
+        val fragmentTransaction: FragmentTransaction = supportFragmentManager.beginTransaction()
+        bundle.putString("user", User.getInstance().userId) // use as per your need
+
+        fragment.arguments = bundle
+        fragmentTransaction.addToBackStack(null)
+        fragmentTransaction.replace(R.id.root_view, fragment)
+        fragmentTransaction.commit()
     }
 
     fun onSearchPressed() {
@@ -207,12 +217,24 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
             Log.d("ABC2", "Data class called with data message: ${it.what} bundle : ${it.data}")
             when (it.what) {
                 OPEN_PROFILE -> {
-                    it.data?.let {
-                        val userId = it.getString(USER_ID, EMPTY)
-                        if (userId.isNullOrBlank().not()) {
-                            ProfileActivity.openProfileActivity(this, userId)
-                        }
-                    }
+//                    it.data?.let {
+//                        val userId = it.getString(USER_ID, EMPTY)
+//                        if (userId.isNullOrBlank().not()) {
+//
+//                            //ProfileActivity.openProfileActivity(this, userId)
+//                            supportFragmentManager.findFragmentByTag(ProfileActivity::class.java.simpleName)
+//                            supportFragmentManager.beginTransaction()
+//                                .replace(R.id.root_view, ProfileActivity(), ProfileActivity::class.java.simpleName)
+//                                .commit()
+//                        }
+//                    }
+
+                    var bundle=Bundle()
+                    bundle.putString("user",it.data.getString(USER_ID, EMPTY))
+                    supportFragmentManager.findFragmentByTag(ProfileActivity::class.java.simpleName)
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.root_view, ProfileActivity(), ProfileActivity::class.java.simpleName)
+                        .commit()
                 }
                 OPEN_ROOM -> {
                     it.data?.let {
@@ -224,6 +246,11 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                             LiveRoomFragment.launch(this, liveRoomProperties, liveRoomViewModel)
                         }
                     }
+                }
+
+
+                SCROLL_TO_TOP->{
+                    binding.recyclerView.layoutManager?.scrollToPosition(0)
                 }
             }
         })
@@ -400,9 +427,55 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         )
     }
 
+    fun openProfile(profile:String)
+    {
+        var bundle=Bundle()
+        bundle.putString("user",profile)
+        supportFragmentManager.findFragmentByTag(ProfileActivity::class.java.simpleName)
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.root_view, ProfileActivity(), ProfileActivity::class.java.simpleName)
+            .commit()
+    }
+
+    override fun viewProfile(profile: String?)
+    {
+        val fragment = ProfileActivity() // replace your custom fragment class
+
+        val bundle = Bundle()
+        val fragmentTransaction: FragmentTransaction = supportFragmentManager.beginTransaction()
+        bundle.putString("user",profile) // use as per your need
+
+        fragment.arguments = bundle
+        fragmentTransaction.addToBackStack(null)
+        fragmentTransaction.replace(R.id.root_view, fragment)
+        fragmentTransaction.commit()
+    }
+
     override fun viewRoom(room: RoomListResponseItem, view: View) {
-        room.speakersData?.userId?.let {
-            ProfileActivity.openProfileActivity(this, it)
-        }
+//        room.speakersData?.userId?.let {
+//            ProfileActivity.openProfileActivity(this, it)
+////        }
+//        ProfileActivity().apply{
+//            room.speakersData?.userId?.let {
+//                arguments=Bundle().apply {putString("user",it)}
+//            }
+//
+//        }
+
+        val fragment = ProfileActivity() // replace your custom fragment class
+
+        val bundle = Bundle()
+        val fragmentTransaction: FragmentTransaction = supportFragmentManager.beginTransaction()
+        bundle.putString("user", room.speakersData?.userId) // use as per your need
+
+        fragment.arguments = bundle
+        fragmentTransaction.addToBackStack(null)
+        fragmentTransaction.replace(R.id.root_view, fragment)
+        fragmentTransaction.commit()
+        showToast("${room.speakersData?.userId}")
+//        supportFragmentManager.findFragmentByTag(ProfileActivity::class.java.simpleName)
+//        supportFragmentManager.beginTransaction()
+//            .replace(R.id.root_view, ProfileActivity(), ProfileActivity::class.java.simpleName)
+//            .commit()
     }
 }

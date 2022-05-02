@@ -7,7 +7,6 @@ import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.lifecycle.*
 import com.joshtalks.badebhaiya.R
-import com.joshtalks.badebhaiya.SearchAdapter
 import com.joshtalks.badebhaiya.core.AppObjectController
 import com.joshtalks.badebhaiya.core.showAppropriateMsg
 import com.joshtalks.badebhaiya.core.showToast
@@ -15,6 +14,7 @@ import com.joshtalks.badebhaiya.feed.adapter.FeedAdapter
 import com.joshtalks.badebhaiya.feed.model.*
 import com.joshtalks.badebhaiya.liveroom.OPEN_PROFILE
 import com.joshtalks.badebhaiya.liveroom.OPEN_ROOM
+import com.joshtalks.badebhaiya.liveroom.SCROLL_TO_TOP
 import com.joshtalks.badebhaiya.liveroom.bottomsheet.CreateRoom
 import com.joshtalks.badebhaiya.profile.request.DeleteReminderRequest
 import com.joshtalks.badebhaiya.profile.request.ReminderRequest
@@ -39,7 +39,7 @@ class FeedViewModel : ViewModel() {
     val isRoomsAvailable = ObservableBoolean(true)
     val isLoading = ObservableBoolean(false)
     val isBadeBhaiyaSpeaker = ObservableBoolean(false)
-
+    var userID:String=""
     val searchResponse=MutableLiveData<SearchRoomsResponseList>()
     val feedAdapter = FeedAdapter()
     var message = Message()
@@ -192,6 +192,9 @@ class FeedViewModel : ViewModel() {
                             feedAdapter.submitList(list.toList())
                         }
                     }
+                    message.what= SCROLL_TO_TOP
+                    singleLiveEvent.postValue(message)
+
                 } else {
                     isRoomsAvailable.set(false)
                     feedAdapter.submitList(emptyList())
@@ -282,11 +285,11 @@ class FeedViewModel : ViewModel() {
                 showToast(AppObjectController.joshApplication.getString(R.string.enter_topic_name))
             } else {
                 try {
-                    if (Utils.getEpochTimeFromFullDate(startTime) <
-                        (System.currentTimeMillis() + IST_TIME_DIFFERENCE + ALLOWED_SCHEDULED_TIME)) {
-                        showToast("Schedule a room for 30 minutes or later!")
-                        return@launch
-                    }
+//                    if (Utils.getEpochTimeFromFullDate(startTime) <
+//                        (System.currentTimeMillis() + IST_TIME_DIFFERENCE + ALLOWED_SCHEDULED_TIME)) {
+//                        showToast("Schedule a room for 30 minutes or later!")
+//                        return@launch
+//                    }
                     isLoading.set(true)
                     val response = repository.scheduleRoom(
                         ConversationRoomRequest(
@@ -319,4 +322,9 @@ class FeedViewModel : ViewModel() {
     fun setScheduleStartTime(time: String) {
         scheduleRoomStartTime.set(time)
     }
+}
+
+interface Call
+{
+    fun itemClick(userId:String)
 }

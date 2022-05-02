@@ -38,7 +38,7 @@ class CreateRoom : BottomSheetDialogFragment() {
     private val dateSetListener = object: DatePickerDialog.OnDateSetListener {
         override fun onDateSet(p0: DatePicker?, p1: Int, p2: Int, p3: Int) {
             DateTimeUtils.setTimeInMillis(System.currentTimeMillis())
-            val selectedDate = Date(p1 - YEAR_DIFFERENCE, p2, p3, DateTimeUtils.getHours(), DateTimeUtils.getMinutes(), DateTimeUtils.getSeconds())
+            val selectedDate = Date(p1 - YEAR_DIFFERENCE, p2, p3, DateTimeUtils.getHours()+5, DateTimeUtils.getMinutes()+30, DateTimeUtils.getSeconds())
             viewModel.setScheduleStartDate(DATE_FORMATTER.format(selectedDate))
             binding.dateBtn.text = DateTimeUtils.formatWithStyle(selectedDate, DateTimeStyle.SEMI_MEDIUM)
         }

@@ -11,4 +11,5 @@ const val SHOW_NOTIFICATION_FOR_USER_TO_JOIN = 8
 const val MOVE_TO_SPEAKER = 9
 const val MOVE_TO_AUDIENCE = 10
 const val OPEN_ROOM = 11
+const val SCROLL_TO_TOP=14
 const val OPEN_PROFILE = 12

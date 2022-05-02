@@ -6,38 +6,40 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
-import androidx.appcompat.app.AppCompatActivity
+import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.content.res.AppCompatResources
-import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.text.HtmlCompat
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.google.android.material.imageview.ShapeableImageView
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.core.*
 import com.joshtalks.badebhaiya.databinding.ActivityProfileBinding
+import com.joshtalks.badebhaiya.feed.FeedActivity
 import com.joshtalks.badebhaiya.feed.FeedViewModel
 import com.joshtalks.badebhaiya.feed.ROOM_DETAILS
 import com.joshtalks.badebhaiya.feed.adapter.FeedAdapter
 import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
 import com.joshtalks.badebhaiya.liveroom.OPEN_PROFILE
 import com.joshtalks.badebhaiya.liveroom.OPEN_ROOM
+import com.joshtalks.badebhaiya.profile.request.DeleteReminderRequest
 import com.joshtalks.badebhaiya.profile.request.ReminderRequest
 import com.joshtalks.badebhaiya.profile.response.ProfileResponse
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomResponse
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.utils.Utils
-import android.provider.Settings.Global
-import com.joshtalks.badebhaiya.profile.request.DeleteReminderRequest
 import com.joshtalks.badebhaiya.utils.setUserImageOrInitials
-import kotlinx.android.synthetic.main.activity_profile.tvFollowers
+import kotlinx.android.synthetic.main.base_toolbar.view.*
+import java.util.*
 
-class ProfileActivity: AppCompatActivity(), FeedAdapter.ConversationRoomItemCallback {
+class ProfileActivity: Fragment(), FeedAdapter.ConversationRoomItemCallback {
 
-    private val binding by lazy<ActivityProfileBinding> {
-        DataBindingUtil.setContentView(this, R.layout.activity_profile)
-    }
+//    private val binding by lazy<ActivityProfileBinding> {
+//        DataBindingUtil.setContentView(FeedActivity(), R.layout.activity_profile)
+//    }
 
     private var isFromDeeplink = false
 
@@ -48,49 +50,81 @@ class ProfileActivity: AppCompatActivity(), FeedAdapter.ConversationRoomItemCall
     private val feedViewModel by lazy {
         ViewModelProvider(this)[FeedViewModel::class.java]
     }
+    lateinit var binding:ActivityProfileBinding
 
     private var userId: String? = EMPTY
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        binding = DataBindingUtil.inflate(inflater, R.layout.activity_profile, container, false)
+
         super.onCreate(savedInstanceState)
+
+        //userId= arguments?.getString("user")
+//        arguments?.let{
+//            it.getString("user")?.let{
+//                userId=it
+//            }
+//        }
+
+        var mBundle: Bundle? = Bundle()
+        mBundle = this.arguments
+        userId=mBundle!!.getString("user")
+        showToast("${userId}")
         handleIntent()
-        viewModel.getProfileForUser(userId ?: (User.getInstance().userId), isFromDeeplink)
+        //showToast("${userId}")
+        viewModel.getProfileForUser(userId!!, isFromDeeplink)
         feedViewModel.setIsBadeBhaiyaSpeaker()
-        binding.lifecycleOwner = this
+        //binding.lifecycleOwner = FeedActivity()
         binding.handler = this
         binding.viewModel = viewModel
+//        var activity:FeedActivity= activity as FeedActivity
+//        var userId=activity.userid()
         addObserver()
-        setOnClickListener()
+        binding.toolbar.iv_back.setOnClickListener{
+            activity?.run {
+                supportFragmentManager.beginTransaction().remove(this@ProfileActivity)
+                    .commitAllowingStateLoss()
+            }
+        }
+        activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                //showToast("Back Pressed")
+                activity?.run {
+                    supportFragmentManager.beginTransaction().remove(this@ProfileActivity)
+                        .commitAllowingStateLoss()
+                }
+            }
+        })
+        //setOnClickListener()
+        return binding.root
+
     }
 
-    private fun setOnClickListener() {
-        findViewById<AppCompatImageView>(R.id.iv_back).setOnClickListener {
-            super.onBackPressed()
-        }
-//         findViewById<ShapeableImageView>(R.id.iv_profile_pic).setOnClickListener{
-//             if(Global.getInt(getContentResolver(), Global.AUTO_TIME) == 1)
-//             {
-//                 // Enabled
-//                 showToast("Auto Time Enabled")
-//             }
-//             else
-//             {
-//                 // Disabed
-//                 showToast("Auto Time Disabled")
-//             }
-//            //setAutoTimeEnabled(boolean enabled)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+//        var user:String?
+//        if (savedInstanceState != null) {
+//            user= savedInstanceState.getString("user")
 //        }
-        //findViewById<ShapeableImageView>(R.id.iv_profile_pic).
+
+
+
     }
 
     private fun handleIntent() {
-        userId = intent.getStringExtra(USER_ID)
-        isFromDeeplink = intent.getBooleanExtra(FROM_DEEPLINK, false)
-        if (userId.isNullOrEmpty()) User.getInstance().userId
+        var activity:FeedActivity= activity as FeedActivity
+         //userId=activity.userid()
+        //userId = intent.getStringExtra(USER_ID)
+        //isFromDeeplink = intent.getBooleanExtra(FROM_DEEPLINK, false)
+        if (userId.isNullOrEmpty()) userId=User.getInstance().userId
     }
 
     private fun addObserver() {
-        viewModel.userProfileData.observe(this) {
+        viewModel.userProfileData.observe(FeedActivity()) {
             binding.apply {
                 handleSpeakerProfile(it)
                 if (it.profilePicUrl.isNullOrEmpty().not()) Utils.setImage(ivProfilePic, it.profilePicUrl.toString())
@@ -100,34 +134,34 @@ class ProfileActivity: AppCompatActivity(), FeedAdapter.ConversationRoomItemCall
                 tvUserName.text = getString(R.string.full_name_concatenated, it.firstName, it.lastName)
             }
         }
-        viewModel.speakerFollowed.observe(this) {
+        viewModel.speakerFollowed.observe(FeedActivity()) {
             if (it == true) {
                 speakerFollowedUIChanges()
             }
             else
                 speakerUnfollowedUIChanges()
         }
-        viewModel.singleLiveEvent.observe(this) {
+        viewModel.singleLiveEvent.observe(FeedActivity()) {
             Log.d("ABC2", "Data class called with data message: ${it.what} bundle : ${it.data}")
             when (it.what) {
                 OPEN_PROFILE ->{
+
                 }
                 OPEN_ROOM ->{
                     it.data?.let {
                         it.getParcelable<ConversationRoomResponse>(ROOM_DETAILS)?.let { room->
                             // TODO: Launch Live Room
-                            /*ConversationLiveRoomFragment.startRoomActivity(
-                                activity = this@ProfileActivity,
-                                channelName = room.channelName,
-                                uid = room.uid,
-                                token =room.token,
-                                isRoomCreatedByUser = room.moderatorId == room.uid,
-                                roomId = room.roomId,
-                                moderatorId = room.moderatorId,
-                                topicName = it.getString(TOPIC),
-                                flags = arrayOf()
-
-                            )*/
+//                            ConversationLiveRoomFragment.startRoomActivity(
+//                                activity = this@ProfileActivity,
+//                                channelName = room.channelName,
+//                                uid = room.uid,
+//                                token =room.token,
+//                                isRoomCreatedByUser = room.moderatorId == room.uid,
+//                                roomId = room.roomId,
+//                                moderatorId = room.moderatorId,
+//                                topicName = it.getString(TOPIC),
+//                                flags = arrayOf()
+//                            )
                         }
                     }
                 }
@@ -179,7 +213,7 @@ class ProfileActivity: AppCompatActivity(), FeedAdapter.ConversationRoomItemCall
         binding.apply {
             btnFollow.text = getString(R.string.following)
             btnFollow.setTextColor(resources.getColor(R.color.white))
-            btnFollow.background = AppCompatResources.getDrawable(this@ProfileActivity,
+            btnFollow.background = AppCompatResources.getDrawable(requireContext(),
                 R.drawable.following_button_background)
         }
     }
@@ -187,7 +221,7 @@ class ProfileActivity: AppCompatActivity(), FeedAdapter.ConversationRoomItemCall
         binding.apply {
             btnFollow.text = getString(R.string.follow)
             btnFollow.setTextColor(resources.getColor(R.color.follow_button_stroke))
-            btnFollow.background = AppCompatResources.getDrawable(this@ProfileActivity,
+            btnFollow.background = AppCompatResources.getDrawable(requireContext(),
                 R.drawable.follow_button_background)
         }
     }
@@ -214,9 +248,9 @@ class ProfileActivity: AppCompatActivity(), FeedAdapter.ConversationRoomItemCall
     }
 
     override fun setReminder(room: RoomListResponseItem, view: View) {
-        val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
+        val alarmManager = activity as AlarmManager
         val notificationIntent = NotificationHelper.getNotificationIntent(
-            this, Notification(
+            requireContext(), Notification(
                 title = room.topic ?: "Conversation Room Reminder",
                 body = room.speakersData?.name ?: "Conversation Room Reminder",
                 id = room.startedBy ?: 0,
@@ -226,7 +260,7 @@ class ProfileActivity: AppCompatActivity(), FeedAdapter.ConversationRoomItemCall
         )
         val pendingIntent =
             PendingIntent.getBroadcast(
-                applicationContext,
+                requireContext(),
                 0,
                 notificationIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT
@@ -255,6 +289,11 @@ class ProfileActivity: AppCompatActivity(), FeedAdapter.ConversationRoomItemCall
             )
         )
     }
+
+    override fun viewProfile(profile: String?) {
+
+    }
+
 
     override fun viewRoom(room: RoomListResponseItem, view: View) {
 

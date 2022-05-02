@@ -62,9 +62,9 @@
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/profile_iv"
                 initialsFontSize="@{16}"
-                android:layout_width="@dimen/_20sdp"
-                android:layout_height="@dimen/_20sdp"
-                android:onClick="@{() -> viewModel.onProfileClicked()}"
+                android:layout_width="21dp"
+                android:layout_height="21dp"
+                android:onClick="@{() -> handler.onProfileClicked()}"
                 android:scaleType="centerCrop"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

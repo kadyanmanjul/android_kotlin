@@ -11,14 +11,16 @@ import androidx.activity.OnBackPressedCallback
 import androidx.core.widget.addTextChangedListener
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.joshtalks.badebhaiya.core.EMPTY
+import com.joshtalks.badebhaiya.core.showToast
 import com.joshtalks.badebhaiya.databinding.FragmentSearchBinding
 import com.joshtalks.badebhaiya.feed.FeedActivity
 import com.joshtalks.badebhaiya.feed.FeedViewModel
-import com.joshtalks.badebhaiya.feed.model.SearchRoomsResponseList
+import com.joshtalks.badebhaiya.feed.Call
 import com.joshtalks.badebhaiya.feed.model.Users
+import com.joshtalks.badebhaiya.profile.ProfileActivity
 import kotlinx.android.synthetic.main.activity_feed.*
 import kotlinx.android.synthetic.main.activity_sign_up.*
 import kotlinx.android.synthetic.main.fragment_search.*
@@ -35,7 +37,7 @@ import kotlinx.coroutines.launch
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 
-class SearchFragment : Fragment() {
+class SearchFragment : Fragment(), Call {
 
     var users=mutableListOf<Users>()
     val viewModel by lazy {
@@ -54,9 +56,6 @@ class SearchFragment : Fragment() {
 
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_search, container, false)
-        //binding.recyclerView.layoutManager=LinearLayoutManager(binding.recyclerView.context)
-        //binding.recyclerView.adapter=myAdapter
-        //searchViewModel.readData.observe
 
         binding.handler = this
         activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
@@ -69,7 +68,6 @@ class SearchFragment : Fragment() {
                 }
             }
         })
-        //binding.recyclerView.visibility=GONE
         binding.searchCancel.setOnClickListener{
             (activity as FeedActivity).swipeRefreshLayout.isEnabled=true
             activity?.run {
@@ -77,8 +75,6 @@ class SearchFragment : Fragment() {
                     .commitAllowingStateLoss()
             }
         }
-
-        //(activity as FeedActivity?).disableSwipe()
         (activity as FeedActivity).swipeRefreshLayout.isEnabled=false
         return binding.root
     }
@@ -87,7 +83,6 @@ class SearchFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         var job: Job? = null
-        //binding.searchBar.clearFocus()
         binding.searchBar.addTextChangedListener{
             //var job: Job? = null
 
@@ -106,47 +101,27 @@ class SearchFragment : Fragment() {
                         viewModel.searchUser(it.toString())
                 }
             }
+
         }
-
-//        binding.searchBar.setOnQueryTextListener(object: androidx.appcompat.widget.SearchView.OnQueryTextListener{
-//
-//            var users=mutableListOf<Users>()
-//
-//            override fun onQueryTextSubmit(query: String): Boolean {
-//                //showToast("textSubmit")
-//                return false
-//            }
-//
-//            override fun onQueryTextChange(p0: String?): Boolean {
-//                if(p0=="")
-//                {
-//                    binding.defaultText.visibility= VISIBLE
-//                }
-//                else {
-//                    binding.defaultText.visibility = GONE
-//                    //binding.recyclerView.visibility= VISIBLE
-//                    job?.cancel()
-//                    //showToast("textChange")
-//                    job = MainScope().launch {
-//                        delay(500)
-//                        if (p0 != null)
-//                            viewModel.searchUser(p0)
-//                    }
-//                }
-//                return true
-//            }
-//        })
-
-//        binding.recyclerView.btnFollow.setOnClickListener{
-//            viewModel.updateFollowRequest()
-//        }
         addObserver()
+    }
+    fun openProfile(profile: String)
+    {
+        //FeedActivity().viewProfile(profile)
+        val bundle = Bundle()
+        bundle.putString("user", profile)
+        val profileTransaction=ProfileActivity()
+        var transaction: FragmentTransaction=requireFragmentManager().beginTransaction()
+        transaction.replace(R.id.fragmentContainer,profileTransaction)
+        profileTransaction.arguments = bundle
+        transaction.addToBackStack(null)
+        transaction.commit()
     }
     fun addObserver() {
         viewModel.searchResponse.observe(viewLifecycleOwner){
             binding.recyclerView.layoutManager=LinearLayoutManager(requireContext())
             if(it!=null)
-            binding.recyclerView.adapter=SearchAdapter(it.users)
+            binding.recyclerView.adapter=SearchAdapter(it.users,this)
         }
     }
     companion object {
@@ -169,5 +144,10 @@ class SearchFragment : Fragment() {
 //            }
         @JvmStatic
         fun newInstance()=SearchFragment()
+    }
+
+    override fun itemClick(userId:String) {
+        var c=userId
+        showToast(userId)
     }
 }
