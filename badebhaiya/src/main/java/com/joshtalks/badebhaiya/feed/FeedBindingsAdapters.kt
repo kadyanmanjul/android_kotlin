@@ -9,6 +9,7 @@ import android.widget.ImageView
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.button.MaterialButton
 import com.joshtalks.badebhaiya.R
@@ -46,6 +47,8 @@ fun setSwipeToRefreshAdapter(
 ) {
     view.setOnRefreshListener {
         function?.invoke()
+
+
     }
     view.isRefreshing = isRefreshing
 }
@@ -79,7 +82,9 @@ fun setConversationRoomCardActionButton(
                 view.backgroundTintList =
                     ColorStateList.valueOf(view.context.resources.getColor(R.color.base_app_color))
                 callback?.setReminder(roomListResponseItem, view)
-                view.setOnClickListener { callback?.viewRoom(roomListResponseItem, view) }
+                view.setOnClickListener {
+                    callback?.viewRoom(roomListResponseItem, view)
+                }
             }
             roomListResponseItem.startTime?.let { it1 -> setTimer(it1,view,roomListResponseItem,adapter,viewHolder,callback) }
         }
@@ -108,6 +113,7 @@ fun setConversationRoomCardActionButton(
             }
             roomListResponseItem.startTime?.let { it1 -> setTimer(it1,view,roomListResponseItem,adapter,viewHolder,callback) }
         }
+
     }
 }
 
@@ -122,11 +128,10 @@ fun setTimer(time:Long,view: MaterialButton,roomListResponseItem: RoomListRespon
         view.backgroundTintList =
             ColorStateList.valueOf(view.context.resources.getColor(R.color.reminder_on_button_color))
         view.text="Join this room"
-        (adapter as FeedAdapter).updateScheduleRoomStatusForSpeaker(viewHolder.absoluteAdapterPosition)
-        //setAlarmForLiveRoom(viewHolder,roomListResponseItem,adapter)
+        if (viewHolder.absoluteAdapterPosition != -1)
+            (adapter as FeedAdapter).updateScheduleRoomStatusForSpeaker(viewHolder.absoluteAdapterPosition)
         view.setOnClickListener {
             callback?.joinRoom(roomListResponseItem, view) }
-
     }, count*1000)
 }
 

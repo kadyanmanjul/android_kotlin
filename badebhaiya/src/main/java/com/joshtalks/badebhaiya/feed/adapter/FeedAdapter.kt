@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.core.showToast
 import com.joshtalks.badebhaiya.databinding.LiRoomEventBinding
+import com.joshtalks.badebhaiya.feed.FeedActivity
 import com.joshtalks.badebhaiya.feed.model.ConversationRoomType
 import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
 import com.joshtalks.badebhaiya.feed.model.SpeakerData
@@ -79,6 +80,7 @@ class FeedAdapter :
             item.tvCardHeader.text = item.root.context.getString(R.string.room_card_top_title_header, name, date, time)
             item.root.setOnClickListener {
                     callback?.viewRoom(room, it)
+
             }
 
             item.root.setOnLongClickListener{
@@ -129,6 +131,7 @@ class FeedAdapter :
         fun joinRoom(room: RoomListResponseItem, view: View)
         fun setReminder(room: RoomListResponseItem, view: View)
         fun deleteReminder(room: RoomListResponseItem,view: View)
+        fun viewProfile(profile: String?)
         fun viewRoom(room: RoomListResponseItem, view: View)
     }
 }

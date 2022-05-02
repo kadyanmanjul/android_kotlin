@@ -12,6 +12,11 @@
             type="com.joshtalks.badebhaiya.feed.model.Users" />
 
         <variable
+            name="callback"
+            type="com.joshtalks.badebhaiya.feed.adapter.FeedAdapter.ConversationRoomItemCallback" />
+
+
+        <variable
             name="viewModel"
             type="com.joshtalks.badebhaiya.profile.ProfileViewModel"/>
 

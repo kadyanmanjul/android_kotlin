@@ -86,13 +86,15 @@ class ProfileViewModel : ViewModel() {
                 val response = repository.getProfileForUser(userId)
                 if (response.isSuccessful) {
                     response.body()?.let {
-                        userProfileData.postValue(it)
+                        //showToast("${it.fullName}")
+                        userProfileData.value=it
                         userFullName.set(it.fullName)
                         profileUrl= it.profilePicUrl?: ""
                         speakerFollowed.postValue(it.isSpeakerFollowed)
                         isBadeBhaiyaSpeaker.set(it.isSpeaker)
                         isBadeBhaiyaSpeaker.notifyChange()
                         isBioTextAvailable.set(it.bioText.isNullOrEmpty().not())
+                        showToast("${userProfileData.value?.firstName}")
                         isSelfProfile.set(it.userId == User.getInstance().userId)
                         val list = mutableListOf<RoomListResponseItem>()
                         if (it.liveRoomList.isNullOrEmpty().not())

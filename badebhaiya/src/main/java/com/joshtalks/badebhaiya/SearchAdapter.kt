@@ -1,30 +1,22 @@
 package com.joshtalks.badebhaiya
 
 import android.annotation.SuppressLint
-import android.app.PendingIntent.getActivity
-import android.content.Context
 import android.os.Bundle
 import android.os.Message
-import android.provider.Settings.Global.getString
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.appcompat.content.res.AppCompatResources
-import androidx.core.os.persistableBundleOf
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.joshtalks.badebhaiya.core.showToast
-import com.joshtalks.badebhaiya.databinding.ActivityProfileBinding
 import com.joshtalks.badebhaiya.databinding.LiSearchEventBinding
+import com.joshtalks.badebhaiya.feed.Call
 import com.joshtalks.badebhaiya.feed.model.SearchRoomsResponse
 import com.joshtalks.badebhaiya.feed.model.Users
 import com.joshtalks.badebhaiya.liveroom.OPEN_PROFILE
-import com.joshtalks.badebhaiya.profile.ProfileActivity
-import com.joshtalks.badebhaiya.profile.ProfileViewModel
 import com.joshtalks.badebhaiya.profile.request.FollowRequest
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.repository.service.RetrofitInstance
@@ -36,10 +28,9 @@ import kotlinx.android.synthetic.main.li_search_event.*
 import kotlinx.android.synthetic.main.li_search_event.view.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import java.security.AccessController.getContext
 
 
-class SearchAdapter(private val searchResult: List<Users>): ListAdapter<SearchRoomsResponse, SearchAdapter.SearchViewHolder>(SearchAdapter){
+class SearchAdapter(private val searchResult: List<Users>,var call: Call): ListAdapter<SearchRoomsResponse, SearchAdapter.SearchViewHolder>(SearchAdapter){
 
     companion object DIFF_CALLBACK : DiffUtil.ItemCallback<SearchRoomsResponse>() {
         override fun areItemsTheSame(
@@ -94,6 +85,7 @@ class SearchAdapter(private val searchResult: List<Users>): ListAdapter<SearchRo
     var message = Message()
 
     var singleLiveEvent: MutableLiveData<Message> = MutableLiveData()
+
     fun onProfileClicked() {
         message.what = OPEN_PROFILE
         message.data = Bundle().apply {
@@ -118,10 +110,7 @@ class SearchAdapter(private val searchResult: List<Users>): ListAdapter<SearchRo
             holder.item.tvProfileBio.text = searchResult[position].bio
             holder.item.userName.text = searchResult[position].full_name
             holder.item.user.setOnClickListener {
-                ProfileActivity.openProfileActivity(
-                    holder.item.user.context,
-                    searchResult[position].user_id
-                )
+                call.itemClick(searchResult[position].user_id)
             }
 
             if (searchResult[position].profilePic.isNullOrEmpty().not())

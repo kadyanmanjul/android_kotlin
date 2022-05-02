@@ -26,18 +26,18 @@ class LauncherActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_launcher)
-        if(Settings.Global.getInt(getContentResolver(), Settings.Global.AUTO_TIME) == 1)
-             {
+        //if(Settings.Global.getInt(getContentResolver(), Settings.Global.AUTO_TIME) == 1)
+        //     {
                  // Enabled
                  //showToast("Auto Time Enabled")
                  initApp()
-             }
-             else
-             {
-                 // Disabed
-                 showToast("Auto Time Disabled")
-                 finish()
-             }
+//             }
+//             else
+//             {
+//                 // Disabed
+//                 showToast("Auto Time Disabled")
+//                 finish()
+//             }
             //setAutoTimeEnabled(boolean enabled)
 
     }
