@@ -177,6 +177,7 @@ class SpeakingPractiseFragment : ABTestFragment(),TimeAnimator.TimeListener {
     }
 
     private fun getVoipState():Int {
+        // TODO: Use Content Provider
         return VoipPref.getVoipState()
     }
 
@@ -229,8 +230,9 @@ class SpeakingPractiseFragment : ABTestFragment(),TimeAnimator.TimeListener {
         }
         binding.btnStartTrialText.setOnClickListener {
             viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
+            // TODO: Use Content Provider
             Log.d("VOIP State", "addObservers: ${VoipPref.getVoipState()}")
-            if(VoipPref.getVoipState()==IDLE || VoipPref.getVoipState()== LEAVING) {
+            if(VoipPref.getVoipState()==IDLE) {
                 startPractise(isNewArch = true)
             } else
                 showToast("Wait for last call to get disconnected")

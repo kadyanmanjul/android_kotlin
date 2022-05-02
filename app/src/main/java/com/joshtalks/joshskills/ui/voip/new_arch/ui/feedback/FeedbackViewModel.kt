@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.ui.voip.new_arch.ui.feedback
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.joshtalks.joshskills.base.BaseViewModel
 import com.joshtalks.joshskills.core.AppObjectController
@@ -16,10 +15,10 @@ class FeedbackViewModel : BaseViewModel() {
     var responseLiveData = MutableLiveData<Response<KFactor>?>()
 
     fun getProfileImage():String {
-       return VoipPref.getProfileImage()
+       return VoipPref.getLastProfileImage()
     }
     fun getCallerName():String {
-        return VoipPref.getLastCallerName()
+        return VoipPref.getLastRemoteUserName()
     }
     fun getCallDurationString() : String{
         val mTime = StringBuilder()
@@ -69,7 +68,7 @@ class FeedbackViewModel : BaseViewModel() {
                 try {
                     val requestParams: HashMap<String, String> = HashMap()
                     requestParams["channel_name"] = VoipPref.getLastCallChannelName()
-                    requestParams["agora_mentor_id"] = VoipPref.getCurrentUserAgoraId().toString()
+                    requestParams["agora_mentor_id"] = VoipPref.getLocalUserAgoraId().toString()
                     requestParams["response"] = response
                     val apiResponse = AppObjectController.p2pNetworkService.p2pCallFeedbackV2(requestParams)
                     responseLiveData.postValue(apiResponse)

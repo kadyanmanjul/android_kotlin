@@ -18,72 +18,30 @@ import com.joshtalks.joshskills.voip.calldetails.IncomingCallData
 import com.joshtalks.joshskills.voip.data.CallingRemoteService
 import com.joshtalks.joshskills.base.log.JoshLog
 import com.joshtalks.joshskills.voip.constant.LEAVING
+import java.util.concurrent.TimeUnit
 
 // TODO: Must Refactor
 val voipLog = JoshLog.getInstanceIfEnable(Feature.VOIP)
 private const val TAG = "Utils"
-//fun Context.updateUserMuteState(state: Boolean, ) {
-//    voipLog?.log("updateUserMuteState --> $state")
-//    val values = ContentValues(1).apply {
-//        put(IS_MUTE, state)
-//    }
-//    val data = contentResolver.insert(
-//        Uri.parse(CONTENT_URI + CURRENT_MUTE_STATE_URI),
-//        values
-//    )
-//    voipLog?.log("Data --> $data")
-//}
 
-//fun Context.updateUserSpeakerState(state: Boolean, ) {
-//    voipLog?.log("updateUserMuteState --> $state")
-//    val values = ContentValues(1).apply {
-//        put(IS_SPEAKER_ON, state)
-//    }
-//    val data = contentResolver.insert(
-//        Uri.parse(CONTENT_URI + CURRENT_SPEAKER_STATE_URI),
-//        values
-//    )
-//    voipLog?.log("Data --> $data")
-//}
+fun Long.inSeconds() : Long {
+    return TimeUnit.MILLISECONDS.toSeconds(this)
+}
 
-//fun Context.updateUserHoldState(state: Boolean, ) {
-//    voipLog?.log("updateUserMuteState --> $state")
-//    val values = ContentValues(1).apply {
-//        put(IS_ON_HOLD, state)
-//    }
-//    val data = contentResolver.insert(
-//        Uri.parse(CONTENT_URI + CURRENT_HOLD_STATE_URI),
-//        values
-//    )
-//    voipLog?.log("Data --> $data")
-//}
-
-//fun Context.updateRemoteUserMuteState(state: Boolean, ) {
-//    voipLog?.log("updateUserMuteState --> $state")
-//    val values = ContentValues(1).apply {
-//        put(IS_REMOTE_USER_MUTE, state)
-//    }
-//    val data = contentResolver.insert(
-//        Uri.parse(CONTENT_URI + CURRENT_REMOTE_MUTE_STATE_URI),
-//        values
-//    )
-//    voipLog?.log("Data --> $data")
-//}
-
-fun Context.updateStartCallTime(
-    timestamp: Long,
-    remoteUserName: String = "",
-    remoteUserImage: String? = null,
-    callId: Int = -1,
-    callType: Int = -1,
-    remoteUserAgoraId: Int = -1,
-    currentUserAgoraId: Int = -1,
-    channelName: String = "",
-    topicName: String = ""
+fun Context.updateLastCallDetails(
+    duration: Long,
+    remoteUserName: String,
+    remoteUserImage: String?,
+    callId: Int,
+    callType: Int,
+    remoteUserAgoraId: Int,
+    localUserAgoraId: Int,
+    channelName: String,
+    topicName: String
 ) {
     Log.d(TAG, "updateStartCallTime: ")
     val values = ContentValues(9).apply {
-        put(CALL_START_TIME, timestamp)
+        put(CALL_DURATION, duration)
         put(REMOTE_USER_NAME, remoteUserName)
         put(REMOTE_USER_IMAGE, remoteUserImage)
         put(REMOTE_USER_AGORA_ID, remoteUserAgoraId)
@@ -91,59 +49,19 @@ fun Context.updateStartCallTime(
         put(CALL_TYPE, callType)
         put(CHANNEL_NAME, channelName)
         put(TOPIC_NAME, topicName)
-        put(CURRENT_USER_AGORA_ID, currentUserAgoraId)
+        put(CURRENT_USER_AGORA_ID, localUserAgoraId)
     }
     val data = contentResolver.insert(
-        Uri.parse(CONTENT_URI + START_CALL_TIME_URI),
+        Uri.parse(CONTENT_URI + CALL_DISCONNECTED_URI),
         values
     )
     voipLog?.log("Data --> $data")
 }
 
-//fun Context.updateUserDetails(
-//    remoteUserName: String = "",
-//    remoteUserImage: String? = null,
-//    callId: Int = -1,
-//    callType: Int = -1,
-//    remoteUserAgoraId: Int = -1,
-//    currentUserAgoraId: Int = -1,
-//    channelName: String = "",
-//    topicName: String = ""
-//) {
-//    Log.d(TAG, "updateUserDetails: ")
-//    val values = ContentValues(8).apply {
-//        put(REMOTE_USER_NAME, remoteUserName)
-//        put(REMOTE_USER_IMAGE, remoteUserImage)
-//        put(REMOTE_USER_AGORA_ID, remoteUserAgoraId)
-//        put(CALL_ID, callId)
-//        put(CALL_TYPE, callType)
-//        put(CHANNEL_NAME, channelName)
-//        put(TOPIC_NAME, topicName)
-//        put(CURRENT_USER_AGORA_ID, currentUserAgoraId)
-//    }
-//    val data = contentResolver.insert(
-//        Uri.parse(CONTENT_URI + VOIP_USER_DATA_URI),
-//        values
-//    )
-//    voipLog?.log("Data --> $data")
-//}
-
-fun Context.getStartCallTime(): Long {
-    val startCallTimeCursor = contentResolver.query(
-        Uri.parse(CONTENT_URI + START_CALL_TIME_URI),
-        null,
-        null,
-        null,
-        null
-    )
-    startCallTimeCursor?.moveToFirst()
-    val startTime = startCallTimeCursor?.getLong(
-        startCallTimeCursor.getColumnIndex(
-            START_CALL_TIME_COLUMN
-        )
-    )
-    startCallTimeCursor?.close()
-    return startTime ?: 0L
+fun Context.updateStartTime(startTime : Long) {
+    Log.d(TAG, "updateStartCallTime: $startTime")
+    val values = ContentValues(1).apply { put(CALL_START_TIME, startTime) }
+    contentResolver.insert(Uri.parse(CONTENT_URI + START_CALL_TIME_URI), values)
 }
 
 fun Context.getApiHeader(): ApiHeader {
@@ -187,27 +105,6 @@ fun Context.getMentorId(): String {
     return mentorId
 }
 
-fun Context.updateLastCallDetails(duration: Long) {
-    voipLog?.log("QUERY")
-    val values = ContentValues(1).apply {
-        put(CALL_DURATION, duration)
-    }
-    val data = contentResolver.insert(
-        Uri.parse(CONTENT_URI + CALL_DISCONNECTED_URI),
-        values
-    )
-    voipLog?.log("Data --> $data")
-}
-
-fun Context.resetCallUIState() {
-    voipLog?.log("QUERY")
-    val values = ContentValues(1)
-    val data = contentResolver.insert(
-        Uri.parse(CONTENT_URI + RESET_CURRENT_CALL_STATE_URI),
-        values
-    )
-}
-
 //fun Context.updateIncomingCallDetails() {
 //    voipLog?.log("QUERY")
 //    val values = ContentValues(2).apply {
@@ -220,28 +117,6 @@ fun Context.resetCallUIState() {
 //    )
 //    voipLog?.log("Data --> $data")
 //}
-
-fun Context.updateVoipState(state: Int) {
-    voipLog?.log("Setting Voip State --> $state")
-    val values = ContentValues(1).apply {
-        put(VOIP_STATE, state)
-    }
-    val data = contentResolver.insert(
-        Uri.parse(CONTENT_URI + VOIP_STATE_URI),
-        values
-    )
-    voipLog?.log("Data --> $data")
-}
-
-fun Context.setVoipLeavingState() {
-    voipLog?.log("Setting Voip State --> $LEAVING")
-    val values = ContentValues(1)
-    val data = contentResolver.insert(
-        Uri.parse(CONTENT_URI + VOIP_STATE_LEAVING_URI),
-        values
-    )
-    voipLog?.log("Data --> $data")
-}
 
 fun openCallScreen(): PendingIntent {
     val destination = "com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity"
@@ -314,4 +189,6 @@ class Utils {
             }
         }
     }
+
+
 }

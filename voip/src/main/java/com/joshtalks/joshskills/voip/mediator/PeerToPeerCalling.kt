@@ -28,9 +28,9 @@ class PeerToPeerCalling : Calling {
         return remoteView
     }
 
-    override suspend fun onPreCallConnect(callData: HashMap<String, Any>) {
+    override suspend fun onPreCallConnect(callData: HashMap<String, Any>, direction: CallDirection) {
         voipLog?.log("Calling API ---- $callData")
-        if(callData.isIncomingCall()) {
+        if(direction == CallDirection.INCOMING) {
             Log.d(TAG, "onPreCallConnect: INCOMING")
             val request = CallActionRequest(
                 callId = callData[INTENT_DATA_INCOMING_CALL_ID] as Int,
@@ -53,10 +53,6 @@ class PeerToPeerCalling : Calling {
             if (response.isSuccessful)
                 voipLog?.log("Sucessfull")
         }
-    }
-
-    private fun HashMap<String, Any>.isIncomingCall() : Boolean {
-        return get(INTENT_DATA_INCOMING_CALL_ID) != null
     }
 
     override suspend fun onCallDecline(callData: HashMap<String, Any>) {

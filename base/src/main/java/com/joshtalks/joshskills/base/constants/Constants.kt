@@ -63,26 +63,14 @@ const val APP_USER_AGENT = "josh_user_agent"
 const val APP_ACCEPT_LANGUAGE = "josh_accept_language"
 
 // Pref Keys
-const val PREF_KEY_WEBRTC_CURRENT_STATE = "josh_webrtc_current_state"
 const val PREF_KEY_MAIN_PROCESS_PID = "josh_main_process_pid"
+const val PREF_KEY_LOCAL_USER_AGORA_ID= "josh_local_user_id"
 
 // Current Call Details
 const val PREF_KEY_CURRENT_CALL_START_TIME = "josh_current_call_start_time"
-const val PREF_KEY_CURRENT_REMOTE_USER_NAME = "josh_current_remote_user_name"
-const val PREF_KEY_CURRENT_REMOTE_USER_IMAGE = "josh_current_remote_user_image"
-const val PREF_KEY_CURRENT_CALL_ID = "josh_current_call_id"
-const val PREF_KEY_CURRENT_CALL_TYPE = "josh_current_call_type"
-const val PREF_KEY_CURRENT_REMOTE_USER_AGORA_ID = "josh_current_remote_user_agora_id"
-const val PREF_KEY_CURRENT_CHANNEL_NAME = "josh_current_channel_name"
-const val PREF_KEY_CURRENT_USER_AGORA_ID= "josh_current_user_id"
-const val PREF_KEY_CURRENT_TOPIC_NAME= "josh_current_topic_name"
-const val PREF_KEY_CURRENT_USER_ON_MUTE= "josh_current_user_on_mute"
-const val PREF_KEY_CURRENT_REMOTE_USER_ON_MUTE= "josh_current_remote_user_on_mute"
-const val PREF_KEY_CURRENT_USER_SPEAKER_ON= "josh_current_user_speaker_on"
-const val PREF_KEY_CURRENT_USER_ON_HOLD= "josh_current_user_on_hold"
 
 // Last Call Details
-const val PREF_KEY_LAST_CALL_START_TIME = "josh_last_call_start_time"
+//const val PREF_KEY_LAST_CALL_START_TIME = "josh_last_call_start_time"
 const val PREF_KEY_LAST_REMOTE_USER_NAME = "josh_last_remote_user_name"
 const val PREF_KEY_LAST_REMOTE_USER_IMAGE = "josh_last_remote_user_image"
 const val PREF_KEY_LAST_CALL_ID = "josh_last_call_id"

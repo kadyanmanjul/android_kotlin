@@ -18,7 +18,7 @@ internal interface NotificationInterface {
 interface NotificationData{
     fun setTitle():String
     fun setContent():String
-    fun setTapAction(): PendingIntent?{
+    fun setTapAction(): PendingIntent? {
         return null
     }
     fun setAction1():NotificationActionObj?{

@@ -10,13 +10,17 @@ import com.joshtalks.joshskills.voip.communication.model.IncomingCall
 import com.joshtalks.joshskills.voip.data.api.ConnectionRequest
 
 const val ACCEPT_REQUEST_CODE = 6943
+enum class CallDirection {
+    INCOMING,
+    OUTGOING
+}
 
 interface Calling {
     fun notificationLayout(data: IncomingCall) : RemoteViews? {
         return null
     }
 
-    suspend fun onPreCallConnect(callData: HashMap<String, Any>) {
+    suspend fun onPreCallConnect(callData: HashMap<String, Any>, direction: CallDirection) {
         // API Call
     }
 

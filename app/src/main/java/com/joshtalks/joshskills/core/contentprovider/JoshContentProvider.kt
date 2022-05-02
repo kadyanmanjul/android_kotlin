@@ -45,13 +45,6 @@ class JoshContentProvider : ContentProvider() {
         sortOrder: String?
     ): Cursor? {
         when(uri.path) {
-            START_CALL_TIME_URI -> {
-                val startTime = VoipPref.getStartTimeStamp()
-                val cursor = MatrixCursor(arrayOf(START_CALL_TIME_COLUMN))
-                cursor.addRow(arrayOf(startTime))
-                Log.d(TAG, "query: Timestamp --> $startTime")
-                return cursor
-            }
             API_HEADER -> {
                 val apiHeader = ApiHeader(
                     token = "JWT " + PrefManager.getStringValue(API_TOKEN),
@@ -82,102 +75,29 @@ class JoshContentProvider : ContentProvider() {
         when(uri.path) {
             START_CALL_TIME_URI -> {
                 val startCallTimestamp = values?.getAsLong(CALL_START_TIME) ?: 0L
-                Log.d(TAG, "insert: timestamp --> $startCallTimestamp")
-                if(startCallTimestamp == 0L)
-                    VoipPref.updateCallDetails(startCallTimestamp)
-                else {
-                    val remoteUserName = values?.getAsString(REMOTE_USER_NAME) ?: ""
-                    val remoteUserImage = values?.getAsString(REMOTE_USER_IMAGE)
-                    val remoteAgoraId = values?.getAsInteger(REMOTE_USER_AGORA_ID) ?: -1
-                    val callId = values?.getAsInteger(CALL_ID) ?: -1
-                    val callType = values?.getAsInteger(CALL_TYPE) ?: -1
-                    val topicName = values?.getAsString(TOPIC_NAME) ?: ""
-                    val channelName = values?.getAsString(CHANNEL_NAME) ?: ""
-                    val currentUserAgoraId = values?.getAsInteger(CURRENT_USER_AGORA_ID) ?: -1
-                    VoipPref.updateCallDetails(
-                        timestamp = startCallTimestamp,
-                        remoteUserImage = remoteUserImage,
-                        remoteUserName = remoteUserName,
-                        remoteUserAgoraId = remoteAgoraId,
-                        callId = callId,
-                        callType = callType,
-                        currentUserAgoraId = currentUserAgoraId,
-                        channelName = channelName,
-                        topicName = topicName
-                    )
-                }
-
-            }
-            VOIP_USER_DATA_URI -> {
-                    Log.d(TAG, "insert: User Details")
-                    val remoteUserName = values?.getAsString(REMOTE_USER_NAME) ?: ""
-                    val remoteUserImage = values?.getAsString(REMOTE_USER_IMAGE)
-                    val remoteAgoraId = values?.getAsInteger(REMOTE_USER_AGORA_ID) ?: -1
-                    val callId = values?.getAsInteger(CALL_ID) ?: -1
-                    val callType = values?.getAsInteger(CALL_TYPE) ?: -1
-                    val topicName = values?.getAsString(TOPIC_NAME) ?: ""
-                    val channelName = values?.getAsString(CHANNEL_NAME) ?: ""
-                    val currentUserAgoraId = values?.getAsInteger(CURRENT_USER_AGORA_ID) ?: -1
-                    VoipPref.updateUserDetails(
-                        remoteUserImage = remoteUserImage,
-                        remoteUserName = remoteUserName,
-                        remoteUserAgoraId = remoteAgoraId,
-                        callId = callId,
-                        callType = callType,
-                        currentUserAgoraId = currentUserAgoraId,
-                        channelName = channelName,
-                        topicName = topicName
-                    )
+                VoipPref.updateCurrentCallStartTime(startCallTimestamp)
             }
             CALL_DISCONNECTED_URI -> {
                 val duration = values?.getAsLong(CALL_DURATION) ?: 0L
-                VoipPref.updateLastCallDetails(duration)
-                VoipPref.updateCallDetails(0)
-            }
-            VOIP_STATE_URI -> {
-                CoroutineScope(Dispatchers.IO).launch {
-                    mutex.withLock {
-                        val state = values?.getAsInteger(VOIP_STATE) ?: 0
-                        VoipPref.updateVoipState(state)
-                    }
-                }
-            }
-            VOIP_STATE_LEAVING_URI -> {
-                CoroutineScope(Dispatchers.IO).launch {
-                    mutex.withLock {
-                        if(VoipPref.getVoipState() != LEAVING || VoipPref.getVoipState() != IDLE)
-                            VoipPref.updateVoipState(LEAVING)
-                    }
-                }
-            }
-//            INCOMING_CALL_URI -> {
-//                val callId = values?.getAsInteger(CALL_ID) ?: -1
-//                val callType = values?.getAsInteger(CALL_TYPE) ?: -1
-//                Log.d(TAG, "insert: timestamp --> $callId ..... $callType")
-//                VoipPref.updateIncomingCallData(callId, callType)
-//            }
-            CURRENT_MUTE_STATE_URI -> {
-                val state = values?.getAsBoolean(IS_MUTE) ?: false
-                Log.d(TAG, "insert: CURRENT_MUTE_STATE_URI --> $state")
-                VoipPref.currentUserMuteState(state)
-            }
-            CURRENT_REMOTE_MUTE_STATE_URI -> {
-                val state = values?.getAsBoolean(IS_REMOTE_USER_MUTE) ?: false
-                Log.d(TAG, "insert: CURRENT_REMOTE_MUTE_STATE_URI --> $state")
-                VoipPref.currentRemoteUserMuteState(state)
-            }
-            CURRENT_HOLD_STATE_URI -> {
-                val state = values?.getAsBoolean(IS_ON_HOLD) ?: false
-                Log.d(TAG, "insert: CURRENT_HOLD_STATE_URI --> $state")
-                VoipPref.currentUserHoldState(state)
-            }
-            CURRENT_SPEAKER_STATE_URI -> {
-                val state = values?.getAsBoolean(IS_SPEAKER_ON) ?: false
-                Log.d(TAG, "insert: CURRENT_SPEAKER_STATE_URI --> $state")
-                VoipPref.currentUserSpeakerState(state)
-            }
-            RESET_CURRENT_CALL_STATE_URI -> {
-                VoipPref.resetCurrentCallState()
+                val remoteUserName = values?.getAsString(REMOTE_USER_NAME) ?: ""
+                val remoteUserImage = values?.getAsString(REMOTE_USER_IMAGE)
+                val remoteAgoraId = values?.getAsInteger(REMOTE_USER_AGORA_ID) ?: -1
+                val callId = values?.getAsInteger(CALL_ID) ?: -1
+                val callType = values?.getAsInteger(CALL_TYPE) ?: -1
+                val topicName = values?.getAsString(TOPIC_NAME) ?: ""
+                val channelName = values?.getAsString(CHANNEL_NAME) ?: ""
+                val currentUserAgoraId = values?.getAsInteger(CURRENT_USER_AGORA_ID) ?: -1
+                VoipPref.updateLastCallDetails(
+                    duration = duration,
+                    remoteUserImage = remoteUserImage,
+                    remoteUserName = remoteUserName,
+                    remoteUserAgoraId = remoteAgoraId,
+                    callId = callId,
+                    callType = callType,
+                    localUserAgoraId = currentUserAgoraId,
+                    channelName = channelName,
+                    topicName = topicName
+                )
             }
         }
         return uri
