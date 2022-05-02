@@ -1,18 +1,19 @@
-package com.joshtalks.joshskills.core.contentprovider
+package com.joshtalks.joshskills.voip.contentprovider
 
 import android.content.ContentProvider
 import android.content.ContentValues
 import android.database.Cursor
 import android.database.MatrixCursor
 import android.net.Uri
-import android.util.Log
 import com.joshtalks.joshskills.base.constants.*
-import com.joshtalks.joshskills.ui.call.data.local.VoipPref
+import com.joshtalks.joshskills.voip.constant.CURRENT_VOIP_STATE
+import com.joshtalks.joshskills.voip.constant.CURRENT_VOIP_STATE_STACKS
+import com.joshtalks.joshskills.voip.constant.VOIP_STATE_PATH
+import com.joshtalks.joshskills.voip.constant.VOIP_STATE_STACK_PATH
 
 class VoipStateContentProvider : ContentProvider() {
 
     override fun onCreate(): Boolean {
-        context?.let { VoipPref.initVoipPref(it) }
         return true
     }
 
@@ -25,15 +26,15 @@ class VoipStateContentProvider : ContentProvider() {
     ): Cursor? {
         when(uri.path){
             VOIP_STATE_PATH ->{
-                val currentState = VoipPref.getCurrentVoipState()
+//                val currentState = VoipPref.getCurrentVoipState()
                 val cursor = MatrixCursor(arrayOf(CURRENT_VOIP_STATE))
-                cursor.addRow(arrayOf(currentState))
+//                cursor.addRow(arrayOf(currentState))
                 return cursor
             }
             VOIP_STATE_STACK_PATH -> {
-                val currentState = VoipPref.getCurrentVoipStateStack()
+//                val currentState = VoipPref.getCurrentVoipStateStack()
                 val cursor = MatrixCursor(arrayOf(CURRENT_VOIP_STATE_STACKS))
-                cursor.addRow(arrayOf(currentState))
+//                cursor.addRow(arrayOf(currentState))
                 return cursor
             }
         }
@@ -48,11 +49,11 @@ class VoipStateContentProvider : ContentProvider() {
         when(uri.path){
             VOIP_STATE_PATH ->{
                val currentVoipState = values?.getAsString(CURRENT_VOIP_STATE)
-                VoipPref.updateCurrentVoipState(currentVoipState)
+//                VoipPref.updateCurrentVoipState(currentVoipState)
             }
             VOIP_STATE_STACK_PATH -> {
                 val currentVoipStateStack = values?.get(CURRENT_VOIP_STATE_STACKS)
-                VoipPref.updateCurrentVoipStateStack(currentVoipStateStack)
+//                VoipPref.updateCurrentVoipStateStack(currentVoipStateStack)
             }
         }
         return uri

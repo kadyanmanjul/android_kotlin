@@ -40,6 +40,24 @@ const val LEAVING_AND_JOINING = 126 // LeaveChannel Previous Channel and Joining
 const val VOIP_DB_URL = "https://joshskills-p2p-online.asia-southeast1.firebasedatabase.app/"
 const val VOIP_PATH = "Presence"
 
+// Content Provider Voip State
+const val CONTENT_VOIP_STATE_AUTHORITY = "content://com.joshtalks.joshskills.voipstate"
+const val VOIP_STATE_PATH = "/current_voip_state"
+const val VOIP_STATE_STACK_PATH = "/current_voip_state_stack"
+
+//    Content values for Voip State
+const val CURRENT_VOIP_STATE = "josh_current_voip_state"
+const val CURRENT_VOIP_STATE_STACKS = "josh_current_voip_state_stack"
+
+//Voip Current States
+const val CONNECTED_STATE = "connected_state"
+const val JOINED_STATE = "joined_state"
+const val IDLE_STATE = "idle_state"
+
+const val PREF_KEY_CURRENT_VOIP_STATE = "josh_current_voip_state"
+const val PREF_KEY_CURRENT_VOIP_STATE_STACK = "josh_current_voip_stack"
+
+
 
 
 

@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.joshtalks.joshskills.voip">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
@@ -10,6 +12,7 @@
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="com.joshtalks.permission.READ_WRITE_CONTENT"/>
     <uses-permission android:name="com.joshtalks.permission.READ_WRITE_VOIP_CONTENT"/>
+
 
     <application>
         <service android:name=".data.CallingRemoteService"
@@ -30,6 +33,23 @@
                 <action android:name="android.media.ACTION_CONNECTION_STATE_CHANGED" />
             </intent-filter>
         </receiver>
+        <receiver android:name=".presence.NetworkStateReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"
+                    tools:ignore="BatteryLife" />
+                <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
+            </intent-filter>
+        </receiver>
+        <provider
+            android:authorities="com.joshtalks.joshskills.voipstate"
+            android:name=".contentprovider.VoipStateContentProvider"
+            android:permission="com.joshtalks.permission.READ_WRITE_VOIP_CONTENT"
+            android:enabled="true"
+            android:exported="true"/>
     </application>
-
+    <queries>
+        <provider
+            android:authorities="com.joshtalks.joshskills.voipstate"/>
+    </queries>
 </manifest>
