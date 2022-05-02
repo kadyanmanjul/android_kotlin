@@ -1204,15 +1204,20 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
 
         fun launch(
             activity: AppCompatActivity,
-            liveRoomProperties: StartingLiveRoomProperties
+            liveRoomProperties: StartingLiveRoomProperties,
+            liveRoomViewModel: LiveRoomViewModel
         ) {
-            PubNubManager.warmUp(liveRoomProperties)
-            activity
-                .supportFragmentManager
-                .beginTransaction()
-                .replace(R.id.fragmentContainer, LiveRoomFragment())
-                .addToBackStack(TAG)
-                .commit()
+            if (liveRoomViewModel.pubNubState.value == PubNubState.STARTED){
+                showToast("Please Leave Current Room")
+            } else {
+                PubNubManager.warmUp(liveRoomProperties)
+                activity
+                    .supportFragmentManager
+                    .beginTransaction()
+                    .replace(R.id.fragmentContainer, LiveRoomFragment())
+                    .addToBackStack(TAG)
+                    .commit()
+            }
         }
 
     }
