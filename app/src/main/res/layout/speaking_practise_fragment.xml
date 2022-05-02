@@ -387,6 +387,7 @@
                         android:layout_marginBottom="@dimen/_7sdp"
                         android:backgroundTint="@color/colorAccent"
                         android:gravity="center"
+                        android:visibility="@{vm.isFreeTrail ? View.GONE : View.VISIBLE}"
                         android:insetTop="0dp"
                         android:insetBottom="0dp"
                         android:paddingVertical="@dimen/_14sdp"
