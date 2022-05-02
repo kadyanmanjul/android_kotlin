@@ -8,7 +8,6 @@
             name="handler"
             type="com.joshtalks.badebhaiya.SearchFragment" />
 
-
     </data>
     <!-- TODO: Update blank fragment layout -->
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -78,6 +77,11 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/search_bar"
             tools:listitem="@layout/li_search_event" />
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/profile_frame"
+            />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
