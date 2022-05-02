@@ -114,6 +114,7 @@ class RecentCallViewModel : BaseViewModel() {
                 val map: HashMap<String, String> = HashMap()
                 map[TO_MENTOR_ID] = toMentorId
                 recentCallsRepository.blockUser(map)
+                getRecentCall()
             } catch (ex: Throwable) {
                 ex.printStackTrace()
             }
