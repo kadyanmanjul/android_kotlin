@@ -38,92 +38,6 @@ object VoipPref {
             startListener()
         }
 
-        fun updateCallDetails(
-            timestamp: Long,
-            remoteUserName: String = "",
-            remoteUserImage: String? = null,
-            callId: Int = -1,
-            callType: Int = -1,
-            remoteUserAgoraId: Int = -1,
-            currentUserAgoraId: Int = -1,
-            channelName: String = "",
-            topicName: String = ""
-        ) {
-            val editor = preferenceManager.edit()
-            Log.d(TAG, "updateCallDetails: timestamp --> $timestamp")
-            updateUserDetails(
-                remoteUserImage = remoteUserImage,
-                remoteUserName = remoteUserName,
-                remoteUserAgoraId = remoteUserAgoraId,
-                callId = callId,
-                callType = callType,
-                currentUserAgoraId = currentUserAgoraId,
-                channelName = channelName,
-                topicName = topicName
-            )
-            editor.putLong(PREF_KEY_CURRENT_CALL_START_TIME, timestamp)
-            editor.apply()
-        }
-
-        fun updateUserDetails(
-            remoteUserName: String = "",
-                              remoteUserImage: String? = null,
-                              callId: Int = -1,
-                              callType: Int = -1,
-                              remoteUserAgoraId: Int = -1,
-                              currentUserAgoraId: Int = -1,
-                              channelName: String = "",
-                              topicName: String = "") {
-            val editor = preferenceManager.edit()
-            editor.putString(PREF_KEY_CURRENT_REMOTE_USER_NAME, remoteUserName)
-            editor.putString(PREF_KEY_CURRENT_REMOTE_USER_IMAGE, remoteUserImage)
-            editor.putInt(PREF_KEY_CURRENT_CALL_ID, callId)
-            editor.putInt(PREF_KEY_CURRENT_CALL_TYPE, callType)
-            editor.putInt(PREF_KEY_CURRENT_REMOTE_USER_AGORA_ID, remoteUserAgoraId)
-            editor.putString(PREF_KEY_CURRENT_CHANNEL_NAME, channelName)
-            editor.putInt(PREF_KEY_CURRENT_USER_AGORA_ID, currentUserAgoraId)
-            editor.putString(PREF_KEY_CURRENT_TOPIC_NAME, topicName)
-            Log.d(TAG, "updateUserDetails: ")
-            editor.apply()
-        }
-
-        fun resetCurrentCallState() {
-            val editor = preferenceManager.edit()
-            editor.putBoolean(PREF_KEY_CURRENT_USER_ON_MUTE, false)
-            editor.putBoolean(PREF_KEY_CURRENT_USER_ON_HOLD, false)
-            editor.putBoolean(PREF_KEY_CURRENT_USER_SPEAKER_ON, false)
-            editor.putBoolean(PREF_KEY_CURRENT_REMOTE_USER_ON_MUTE, false)
-            editor.apply()
-        }
-
-        fun currentUserMuteState(userOnMute: Boolean = false) {
-            Log.d(TAG, "currentUserMuteState: $userOnMute")
-            val editor = preferenceManager.edit()
-            editor.putBoolean(PREF_KEY_CURRENT_USER_ON_MUTE, userOnMute)
-            editor.apply()
-        }
-
-        fun currentUserHoldState(userOnHold: Boolean = false) {
-            Log.d(TAG, "currentUserHoldState: $userOnHold")
-            val editor = preferenceManager.edit()
-            editor.putBoolean(PREF_KEY_CURRENT_USER_ON_HOLD, userOnHold)
-            editor.apply()
-        }
-
-        fun currentUserSpeakerState(userSpeakerOn: Boolean = false) {
-            Log.d(TAG, "currentUserSpeakerState: $userSpeakerOn")
-            val editor = preferenceManager.edit()
-            editor.putBoolean(PREF_KEY_CURRENT_USER_SPEAKER_ON, userSpeakerOn)
-            editor.apply()
-        }
-
-        fun currentRemoteUserMuteState(remoteUserOnMute: Boolean = false) {
-            Log.d(TAG, "currentRemoteUserMuteState: $remoteUserOnMute")
-            val editor = preferenceManager.edit()
-            editor.putBoolean(PREF_KEY_CURRENT_REMOTE_USER_ON_MUTE, remoteUserOnMute)
-            editor.apply()
-        }
-
         fun updateIncomingCallData(callId: Int, callType: Int) {
             val editor = preferenceManager.edit()
             editor.putInt(PREF_KEY_INCOMING_CALL_TYPE, callType)
@@ -131,47 +45,35 @@ object VoipPref {
             editor.apply()
         }
 
-        fun updateLastCallDetails(duration: Long) {
+        fun updateCurrentCallStartTime(startTime : Long) {
             val editor = preferenceManager.edit()
+            editor.putLong(PREF_KEY_CURRENT_CALL_START_TIME, startTime)
+            editor.commit()
+        }
+
+        fun updateLastCallDetails(
+            duration: Long,
+            remoteUserName: String,
+            remoteUserImage: String?,
+            callId: Int,
+            callType: Int,
+            remoteUserAgoraId: Int,
+            localUserAgoraId: Int,
+            channelName: String,
+            topicName: String
+        ) {
+            val editor = preferenceManager.edit()
+            editor.putLong(PREF_KEY_CURRENT_CALL_START_TIME, 0L)
             editor.putLong(PREF_KEY_LAST_CALL_DURATION, duration)
-
-            editor.putString(
-                PREF_KEY_LAST_REMOTE_USER_NAME, preferenceManager.getString(
-                    PREF_KEY_CURRENT_REMOTE_USER_NAME, ""
-                )
-            )
-            editor.putString(
-                PREF_KEY_LAST_REMOTE_USER_IMAGE, preferenceManager.getString(
-                    PREF_KEY_CURRENT_REMOTE_USER_IMAGE, null
-                )
-            )
-            editor.putInt(
-                PREF_KEY_LAST_CALL_ID, preferenceManager.getInt(
-                    PREF_KEY_CURRENT_CALL_ID, -1
-                )
-            )
-            editor.putInt(
-                PREF_KEY_LAST_CALL_TYPE, preferenceManager.getInt(
-                    PREF_KEY_CURRENT_CALL_TYPE, -1
-                )
-            )
-            editor.putInt(
-                PREF_KEY_LAST_REMOTE_USER_AGORA_ID, preferenceManager.getInt(
-                    PREF_KEY_CURRENT_REMOTE_USER_AGORA_ID, -1
-                )
-            )
-            editor.putLong(
-                PREF_KEY_LAST_CALL_START_TIME, preferenceManager.getLong(
-                    PREF_KEY_CURRENT_CALL_START_TIME, 0L
-                )
-            )
-            editor.putString(
-                PREF_KEY_LAST_CHANNEL_NAME, preferenceManager.getString(
-                    PREF_KEY_CURRENT_CHANNEL_NAME, ""
-                )
-            )
-
-            editor.apply()
+            editor.putString(PREF_KEY_LAST_REMOTE_USER_NAME, remoteUserName)
+            editor.putString(PREF_KEY_LAST_REMOTE_USER_IMAGE, remoteUserImage)
+            editor.putInt(PREF_KEY_LAST_CALL_ID, callId)
+            editor.putInt(PREF_KEY_LAST_CALL_TYPE, callType)
+            editor.putInt(PREF_KEY_LAST_REMOTE_USER_AGORA_ID, remoteUserAgoraId)
+            editor.putString(PREF_KEY_LAST_CHANNEL_NAME, channelName)
+            editor.putInt(PREF_KEY_LOCAL_USER_AGORA_ID, localUserAgoraId)
+            editor.putString(PREF_KEY_LAST_TOPIC_NAME, topicName)
+            editor.commit()
 
             // TODO: These logic shouldn't be here
             if (duration != 0L) {
@@ -210,7 +112,7 @@ object VoipPref {
             }
             VoipReportDialogFragment.newInstance(
                 getLastRemoteUserAgoraId(),
-                getCurrentUserAgoraId(), "REPORT", getLastCallChannelName(), function
+                getLocalUserAgoraId(), "REPORT", getLastCallChannelName(), function
             )
                 .show(fragmentActivity.supportFragmentManager, "ReportDialogFragment")
         }
@@ -221,72 +123,38 @@ object VoipPref {
                 .show(fragmentActivity.supportFragmentManager, "FeedBackDialogFragment")
         }
 
-        fun updateVoipState(state: Int) {
-            scope.launch {
-                try {
-                    mutex.withLock {
-                        Log.d(TAG, "update Webrtc State : $state")
-                        val editor = preferenceManager.edit()
-                        editor.putInt(PREF_KEY_WEBRTC_CURRENT_STATE, state)
-                        editor.commit()
-                    }
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-            }
-        }
-
-        fun getVoipState(): Int {
-            return preferenceManager.getInt(PREF_KEY_WEBRTC_CURRENT_STATE, IDLE)
-        }
-
-        fun getVoipUIState(): VoipUIState {
-            return VoipUIState(
-                isMute = preferenceManager.getBoolean(PREF_KEY_CURRENT_USER_ON_MUTE, false),
-                isSpeakerOn = preferenceManager.getBoolean(PREF_KEY_CURRENT_USER_SPEAKER_ON, false),
-                isOnHold = preferenceManager.getBoolean(PREF_KEY_CURRENT_USER_ON_HOLD, false),
-                isRemoteUserMuted = preferenceManager.getBoolean(
-                    PREF_KEY_CURRENT_REMOTE_USER_ON_MUTE, false
-                )
-            )
-        }
-
         fun getStartTimeStamp(): Long {
             val startTime = preferenceManager.getLong(PREF_KEY_CURRENT_CALL_START_TIME, 0)
             Log.d(TAG, "getStartTimeStamp: $startTime")
             return startTime
         }
 
-        fun getTopicName(): String {
-            return preferenceManager.getString(PREF_KEY_CURRENT_TOPIC_NAME, "").toString()
+        fun getLastCallTopicName(): String {
+            return preferenceManager.getString(PREF_KEY_LAST_TOPIC_NAME, "").toString()
         }
 
-        fun getCallerName(): String {
-            return preferenceManager.getString(PREF_KEY_CURRENT_REMOTE_USER_NAME, "").toString()
-        }
-
-        fun getLastCallerName(): String {
+        fun getLastRemoteUserName(): String {
             return preferenceManager.getString(PREF_KEY_LAST_REMOTE_USER_NAME, "").toString()
         }
 
-        fun getCallType(): Int {
-            return preferenceManager.getInt(PREF_KEY_CURRENT_CALL_TYPE, -1)
+        fun getLastCallType(): Int {
+            return preferenceManager.getInt(PREF_KEY_LAST_CALL_TYPE, -1)
         }
 
         fun getIncomingCallId(): Int {
             return preferenceManager.getInt(PREF_KEY_INCOMING_CALL_ID, -1)
         }
 
-        fun getProfileImage(): String {
-            return preferenceManager.getString(PREF_KEY_CURRENT_REMOTE_USER_IMAGE, "").toString()
+        fun getLastProfileImage(): String {
+            return preferenceManager.getString(PREF_KEY_LAST_REMOTE_USER_IMAGE, "").toString()
         }
 
         fun getLastRemoteUserAgoraId(): Int {
             return preferenceManager.getInt(PREF_KEY_LAST_REMOTE_USER_AGORA_ID, -1)
         }
 
-        fun getCurrentUserAgoraId(): Int {
-            return preferenceManager.getInt(PREF_KEY_CURRENT_USER_AGORA_ID, -1)
+        fun getLocalUserAgoraId(): Int {
+            return preferenceManager.getInt(PREF_KEY_LOCAL_USER_AGORA_ID, -1)
         }
 
         fun getLastCallId(): Int {
@@ -295,10 +163,6 @@ object VoipPref {
 
         fun getLastCallChannelName(): String {
             return preferenceManager.getString(PREF_KEY_LAST_CHANNEL_NAME, "").toString()
-        }
-
-        fun getLastCallStartTime(): Long {
-            return preferenceManager.getLong(PREF_KEY_LAST_CALL_START_TIME, 0L)
         }
 
         fun getLastCallDurationInSec(): Long {

@@ -23,12 +23,21 @@ const val RECONNECTED = 114
 const val INCOMING_CALL = 125
 const val RECEIVED_CHANNEL_DATA = 127
 const val UI_STATE_UPDATED = 129
+const val CLOSE_CALL_SCREEN = 130
+const val REMOTE_USER_DISCONNECTED_AGORA = 131
+const val REMOTE_USER_DISCONNECTED_USER_DROP = 132
+const val UPDATE_LAST_CALL_DETAILS = 133
+const val SYNC_UI_STATE = 138
 
 const val CALL_CONNECT_REQUEST = 115
 const val CALL_DISCONNECT_REQUEST = 116
 const val IPC_CONNECTION_ESTABLISHED = 117
 const val SPEAKER_ON_REQUEST = 123
 const val SPEAKER_OFF_REQUEST = 124
+const val HOLD_REQUEST = 134
+const val UNHOLD_REQUEST = 135
+const val MUTE_REQUEST = 136
+const val UNMUTE_REQUEST = 137
 
 const val IDLE = 118 // // Doing Nothing - Can make Call
 const val JOINING = 119 // Join Channel Called and Success Returned but haven't joined the channel

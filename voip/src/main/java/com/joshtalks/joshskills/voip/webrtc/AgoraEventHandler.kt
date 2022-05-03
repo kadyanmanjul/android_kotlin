@@ -1,16 +1,13 @@
 package com.joshtalks.joshskills.voip.webrtc
 
 import android.util.Log
-import com.joshtalks.joshskills.voip.Utils
-import com.joshtalks.joshskills.voip.calldetails.CallDetails
+import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.voipLog
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
 import io.agora.rtc.Constants
 import io.agora.rtc.IRtcEngineEventHandler
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
@@ -105,7 +102,7 @@ internal class AgoraEventHandler(val scope: CoroutineScope) : IRtcEngineEventHan
         voipLog?.log("UID -> $uid and Reason -> $reason")
         scope.launch {
 
-            if(reason == USER_DROP_OFFLINE && uid != CallDetails.localUserAgoraId) {
+            if(reason == USER_DROP_OFFLINE && uid != PrefManager.getLocalUserAgoraId()) {
                 emitEvent(CallState.OnReconnecting)
             } else if(reason == USER_QUIT_CHANNEL) {
                 emitEvent(CallState.OnReconnecting)

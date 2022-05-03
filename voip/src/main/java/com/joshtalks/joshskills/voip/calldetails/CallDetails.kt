@@ -5,66 +5,23 @@ import com.joshtalks.joshskills.voip.communication.model.ChannelData
 import com.joshtalks.joshskills.voip.mediator.CallDirection
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import java.time.Duration
 
 private const val TAG = "CallDetails"
 
-object CallDetails {
-    private val mutex = Mutex()
-
-    var remoteUserAgoraId : Int = -1
-        private set
-    var localUserAgoraId : Int = -1
-        private set
-    var callId : Int = -1
-        private set
-    var callType : Int = -1
-        private set
-    var agoraChannelName = ""
-        private set
-    var remoteUserName = ""
-        private set
-    var remoteUserImageUrl : String? = null
-        private set
-    var topicName = ""
-        private set
-    var callDirection = -1
-        private set
-    var partnerMentorId : String? = null
-        private set
-
-    suspend fun reset() {
-        mutex.withLock {
-            Log.d(TAG, "reset: $this")
-            remoteUserAgoraId = -1
-            localUserAgoraId = -1
-            callId = -1
-            callType = -1
-            agoraChannelName = ""
-            remoteUserName = ""
-            remoteUserImageUrl = null
-            topicName = ""
-            partnerMentorId = ""
-            Log.d(TAG, "reset: $this")
-        }
-    }
-
-    suspend fun set(details : ChannelData, callType : Int) {
-        mutex.withLock {
-            Log.d(TAG, "set: Previous -> $this")
-            remoteUserAgoraId = details.getPartnerUid()
-            localUserAgoraId = details.getAgoraUid()
-            callId = details.getCallingId()
-            this.callType = callType
-            agoraChannelName = details.getChannel()
-            remoteUserName = details.getCallingPartnerName()
-            remoteUserImageUrl = details.getCallingPartnerImage()
-            topicName = details.getCallingTopic()
-            partnerMentorId = details.getPartnerMentorId()
-            Log.d(TAG, "set: Setting -> $details")
-            Log.d(TAG, "set: After -> $this")
-        }
-    }
-}
+data class LastCallDetail(
+    val remoteUserAgoraId : Int,
+    val localUserAgoraId : Int,
+    val callId : Int,
+    val callType : Int,
+    val agoraChannelName : String,
+    val remoteUserName : String,
+    val remoteUserImageUrl : String?,
+    val topicName : String,
+    val callDirection : CallDirection,
+    val remoteUserMentorId : String,
+    val durationInMilli : Long
+    )
 
 object IncomingCallData {
     private val mutex = Mutex()

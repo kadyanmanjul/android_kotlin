@@ -94,9 +94,9 @@ class VoiceCallViewModel : BaseViewModel() {
                     ServiceEvents.CALL_CONNECTED_EVENT -> {
                         uiState.currentState = "Timer"
                     }
-                    ServiceEvents.CALL_DISCONNECT_REQUEST -> {
+                    ServiceEvents.CLOSE_CALL_SCREEN -> {
                         val msg = Message.obtain().apply {
-                            what = CALL_DISCONNECT_REQUEST
+                            what = CLOSE_CALL_SCREEN
                         }
                         withContext(Dispatchers.Main) {
                             singleLiveEvent.value = msg
@@ -197,10 +197,6 @@ class VoiceCallViewModel : BaseViewModel() {
     fun disconnect() {
         Log.d(TAG, "disconnect: ")
         repository.disconnectCall()
-        val msg = Message.obtain().apply {
-            what = CALL_DISCONNECT_REQUEST
-        }
-        singleLiveEvent.value = msg
     }
 
     // User Action

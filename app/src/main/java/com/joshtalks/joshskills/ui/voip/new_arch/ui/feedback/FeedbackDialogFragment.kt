@@ -2,7 +2,6 @@ package com.joshtalks.joshskills.ui.voip.new_arch.ui.feedback
 
 import android.app.Activity
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -121,7 +120,7 @@ class FeedbackDialogFragment(val function: () -> Unit) : BaseDialogFragment() {
             val rState: String?
             val rCity: String?
 
-            if (VoipPref.getCurrentUserAgoraId() == body.caller.agora_mentor_id) {
+            if (VoipPref.getLocalUserAgoraId() == body.caller.agora_mentor_id) {
                 cState = body.caller.state
                 cCity = body.caller.city
                 rState = body.receiver.state

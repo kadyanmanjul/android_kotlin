@@ -231,7 +231,7 @@ class SpeakingPractiseFragment : ABTestFragment(),TimeAnimator.TimeListener {
         }
         binding.btnStartTrialText.setOnClickListener {
             viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
-            if(getVoipState()==IDLE || getVoipState()== LEAVING) {
+            if(getVoipState()==IDLE) {
                 startPractise(isNewArch = true)
             } else
                 showToast("Wait for last call to get disconnected")
@@ -577,9 +577,6 @@ class SpeakingPractiseFragment : ABTestFragment(),TimeAnimator.TimeListener {
     }
 
     private fun startPracticeCall() {
-//        TODO: PARAMETERS CHECK
-        CallAnalytics.addAnalytics(event = EventName.CALL_INITIATED)
-
         val callIntent = Intent(requireContext(), VoiceCallActivity::class.java)
         callIntent.apply {
             putExtra(INTENT_DATA_COURSE_ID, courseId)

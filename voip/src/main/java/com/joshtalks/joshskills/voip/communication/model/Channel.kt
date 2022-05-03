@@ -57,6 +57,10 @@ data class Channel(
 		}
 	}
 
+	fun String.isMessageForSameChannel() : Boolean {
+		return this@Channel.channelName == this
+	}
+
 	override fun getCallingPartnerName(): String {
 		return partnerName ?: "Unable to fetch Name"
 	}
