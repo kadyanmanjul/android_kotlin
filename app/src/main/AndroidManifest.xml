@@ -66,7 +66,6 @@
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
-    <uses-permission android:name="com.joshtalks.permission.READ_WRITE_VOIP_CONTENT"/>
     <uses-sdk tools:overrideLibrary="com.truecaller.android.sdk"/> <!-- for API level below 22-->
     <application
         android:name=".core.JoshApplication"
@@ -853,6 +852,7 @@
         <provider
             android:authorities="com.joshtalks.joshskills.contentprovider" />
         <provider
-            android:authorities="com.joshtalks.joshskills.voipstate"/>
+            android:authorities="com.joshtalks.joshskills.voipstate"
+            android:exported="false" />
     </queries>
 </manifest>

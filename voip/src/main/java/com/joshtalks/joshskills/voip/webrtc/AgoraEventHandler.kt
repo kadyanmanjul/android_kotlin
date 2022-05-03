@@ -4,6 +4,8 @@ import android.util.Log
 import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.calldetails.CallDetails
 import com.joshtalks.joshskills.voip.voipLog
+import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
+import com.joshtalks.joshskills.voip.voipanalytics.EventName
 import io.agora.rtc.Constants
 import io.agora.rtc.IRtcEngineEventHandler
 import kotlinx.coroutines.CoroutineScope
@@ -66,6 +68,11 @@ internal class AgoraEventHandler(val scope: CoroutineScope) : IRtcEngineEventHan
     override fun onJoinChannelSuccess(channel: String, uid: Int, elapsed: Int) {
         Log.d(TAG, "onJoinChannelSuccess: ")
         voipLog?.log("Joined Channel -> $channel and UID -> $uid ")
+        CallAnalytics.addAnalytics(
+            event = EventName.CHANNEL_JOINED,
+            agoraCallId = CallDetails.callId.toString(),
+            agoraMentorId = CallDetails.localUserAgoraId.toString()
+        )
         emitEvent(CallState.CallInitiated)
     }
 
@@ -80,6 +87,11 @@ internal class AgoraEventHandler(val scope: CoroutineScope) : IRtcEngineEventHan
     override fun onLeaveChannel(stats: RtcStats) {
         Log.d(TAG, "onLeaveChannel: ")
         voipLog?.log("$stats")
+        CallAnalytics.addAnalytics(
+            event = EventName.CHANNEL_LEFT,
+            agoraCallId = CallDetails.callId.toString(),
+            agoraMentorId = CallDetails.localUserAgoraId.toString()
+        )
         emitEvent(CallState.CallDisconnected)
     }
 

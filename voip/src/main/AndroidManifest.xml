@@ -11,7 +11,6 @@
     <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS"/>
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="com.joshtalks.permission.READ_WRITE_CONTENT"/>
-    <uses-permission android:name="com.joshtalks.permission.READ_WRITE_VOIP_CONTENT"/>
 
 
     <application>
@@ -46,10 +45,6 @@
             android:name=".contentprovider.VoipStateContentProvider"
             android:permission="com.joshtalks.permission.READ_WRITE_VOIP_CONTENT"
             android:enabled="true"
-            android:exported="true"/>
+            android:exported="false"/>
     </application>
-    <queries>
-        <provider
-            android:authorities="com.joshtalks.joshskills.voipstate"/>
-    </queries>
 </manifest>

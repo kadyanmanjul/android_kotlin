@@ -5,13 +5,17 @@ import android.media.AudioManager
 import android.util.Log
 import com.joshtalks.joshskills.voip.BuildConfig
 import com.joshtalks.joshskills.voip.Utils
+import com.joshtalks.joshskills.voip.calldetails.CallDetails
 import com.joshtalks.joshskills.voip.constant.CONNECTED
 import com.joshtalks.joshskills.voip.constant.IDLE
 import com.joshtalks.joshskills.voip.constant.JOINED
 import com.joshtalks.joshskills.voip.constant.JOINING
 import com.joshtalks.joshskills.voip.constant.LEAVING
 import com.joshtalks.joshskills.voip.constant.LEAVING_AND_JOINING
+import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.voipLog
+import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
+import com.joshtalks.joshskills.voip.voipanalytics.EventName
 import io.agora.rtc.RtcEngine
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -86,6 +90,11 @@ internal class AgoraWebrtcService(val scope: CoroutineScope) : WebrtcService {
             voipLog?.log("Coroutine : About to call leaveChannel")
             state.emit(LEAVING)
             currentState = LEAVING
+            CallAnalytics.addAnalytics(
+                event = EventName.CHANNEL_LEAVING,
+                agoraMentorId = CallDetails.localUserAgoraId.toString(),
+                agoraCallId = CallDetails.callId.toString()
+            )
             leaveChannel()
             voipLog?.log("Coroutine : Finishing call leaveChannel Coroutine")
         }
@@ -115,6 +124,10 @@ internal class AgoraWebrtcService(val scope: CoroutineScope) : WebrtcService {
 
     override fun muteAudioStream(muteAudio : Boolean) {
         agoraEngine?.muteLocalAudioStream(muteAudio)
+    }
+
+    override fun enableSpeaker(speaker: Boolean) {
+        agoraEngine?.setEnableSpeakerphone(speaker)
     }
 
     override fun observeCallingEvents(): SharedFlow<CallState> {
