@@ -18,6 +18,8 @@ import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.VoiceCallViewMode
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.voipLog
 import com.joshtalks.joshskills.voip.constant.*
 import com.joshtalks.joshskills.voip.data.local.PrefManager
+import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
+import com.joshtalks.joshskills.voip.voipanalytics.EventName
 
 private const val TAG = "VoiceCallActivity"
 
@@ -43,6 +45,10 @@ class VoiceCallActivity : BaseActivity() {
             FROM_CALL_BAR -> {}
             FROM_INCOMING_CALL -> {
                 val incomingCallId = PrefManager.getIncomingCallId()
+                CallAnalytics.addAnalytics(
+                    event = EventName.INCOMING_CALL_ACCEPT,
+                    agoraCallId = incomingCallId.toString()
+                )
                 vm.callData[INTENT_DATA_INCOMING_CALL_ID] = incomingCallId
             }
             else -> {

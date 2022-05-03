@@ -207,30 +207,6 @@ fun Context.resetCallUIState() {
         values
     )
 }
-fun Context.insertCurrentVoipState(state:String) {
-    Log.d(TAG, "insertCurrentVoipState: $state")
-    val values = ContentValues(1).apply {
-        put(CURRENT_VOIP_STATE, state)
-    }
-    val data = contentResolver.insert(
-        Uri.parse(CONTENT_VOIP_STATE_AUTHORITY + VOIP_STATE_PATH),
-        values
-    )
-    voipLog?.log("Voip updated state to CP --> $data")
-}
-fun Context.getCurrentVoipState(): String {
-    val stateCursor = contentResolver.query(
-        Uri.parse(CONTENT_VOIP_STATE_AUTHORITY + VOIP_STATE_PATH),
-        null,
-        null,
-        null,
-        null
-    )
-    stateCursor?.moveToFirst()
-    val state = stateCursor.getStringData(CURRENT_VOIP_STATE)
-    stateCursor?.close()
-    return state
-}
 //fun Context.updateIncomingCallDetails() {
 //    voipLog?.log("QUERY")
 //    val values = ContentValues(2).apply {
