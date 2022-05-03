@@ -8,12 +8,7 @@ import android.os.IBinder
 import android.os.Message
 import android.os.SystemClock
 import android.util.Log
-import com.joshtalks.joshskills.base.constants.INTENT_DATA_API_HEADER
-import com.joshtalks.joshskills.base.constants.INTENT_DATA_MENTOR_ID
-import com.joshtalks.joshskills.base.constants.PEER_TO_PEER
-import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_STOP_SERVICE
-import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_DISCONNECT_CALL
-import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_INCOMING_CALL_DECLINE
+import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.voip.*
 import com.joshtalks.joshskills.voip.audiocontroller.AudioController
 import com.joshtalks.joshskills.voip.audiocontroller.AudioControllerInterface
@@ -37,6 +32,9 @@ import com.joshtalks.joshskills.voip.presence.PresenceStatus
 import com.joshtalks.joshskills.voip.presence.UserPresence
 import com.joshtalks.joshskills.voip.pstn.PSTNController
 import com.joshtalks.joshskills.voip.pstn.PSTNState
+import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
+import com.joshtalks.joshskills.voip.voipanalytics.CallEvents
+import com.joshtalks.joshskills.voip.voipanalytics.EventName
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import java.util.concurrent.TimeUnit
@@ -111,6 +109,11 @@ class CallingRemoteService : Service() {
         Log.d(TAG, "onStartCommand: SERVICE_ACTION_DISCONNECT_CALL --> $hungUpCall")
         if (hungUpCall) {
             Log.d(TAG, "onStartCommand: hungUpCall")
+                CallAnalytics.addAnalytics(
+                    event = EventName.DISCONNECTED_BY_HANG_UP,
+                    agoraCallId = CallDetails.callId.toString(),
+                    agoraMentorId = CallDetails.localUserAgoraId.toString()
+                )
             disconnectCall()
             return START_NOT_STICKY
         }
@@ -118,6 +121,9 @@ class CallingRemoteService : Service() {
         Log.d(TAG, "onStartCommand: SERVICE_ACTION_INCOMING_CALL_DECLINE --> $hungUpCall")
         if (isCallDecline) {
             mediator.hideIncomingCall()
+            CallAnalytics.addAnalytics(
+                event = EventName.INCOMING_CALL_DECLINE
+            )
             return START_NOT_STICKY
         }
         return if(isServiceInitialize)
@@ -170,6 +176,11 @@ class CallingRemoteService : Service() {
                                 uiStateFlow.value = currentUiState
                             }
                             RECONNECTING -> {
+                                CallAnalytics.addAnalytics(
+                                    event = EventName.CALL_RECONNECTING,
+                                    agoraCallId = CallDetails.callId.toString(),
+                                    agoraMentorId = CallDetails.localUserAgoraId.toString()
+                                )
                                 currentUiState = currentUiState.copy(isReconnecting = true)
                                 uiStateFlow.value = currentUiState
                             }
@@ -231,6 +242,11 @@ class CallingRemoteService : Service() {
 
                             RECONNECTING_FAILED -> {
                                 Log.d(TAG, "observeMediatorEvents: RECONNECTING_FAILED")
+                                CallAnalytics.addAnalytics(
+                                    event = EventName.DISCONNECTED_BY_RECONNECTING,
+                                    agoraCallId = CallDetails.callId.toString(),
+                                    agoraMentorId = CallDetails.localUserAgoraId.toString()
+                                )
                                 serviceEvents.emit(ServiceEvents.RECONNECTING_FAILED)
                                 currentUiState = UIState.empty()
                                 uiStateFlow.value = currentUiState
@@ -253,6 +269,10 @@ class CallingRemoteService : Service() {
                             }
 
                             INCOMING_CALL -> {
+                                CallAnalytics.addAnalytics(
+                                    event = EventName.INCOMING_CALL_RECEIVED,
+                                    agoraCallId = IncomingCallData.callId.toString()
+                                )
                                 currentUiState = UIState.empty().copy(callType = IncomingCallData.callType)
                                 uiStateFlow.value = currentUiState
                                 PrefManager.setIncomingCallId(IncomingCallData.callId)
@@ -377,6 +397,12 @@ class CallingRemoteService : Service() {
                                 channelName = CallDetails.agoraChannelName,
                                 address = CallDetails.partnerMentorId ?: (Utils.uuid ?: "")
                             )
+                            CallAnalytics.addAnalytics(
+                                event = EventName.PSTN_CALL_RECEIVED,
+                                agoraMentorId =  CallDetails.localUserAgoraId.toString(),
+                                agoraCallId = CallDetails.callId.toString()
+                            )
+
                             mediator.sendEventToServer(data)
                             currentUiState = currentUiState.copy(isOnHold = false)
                             uiStateFlow.value = currentUiState
@@ -437,15 +463,14 @@ class CallingRemoteService : Service() {
     fun changeSpeakerState(isSpeakerOn : Boolean) {
         currentUiState = currentUiState.copy(isSpeakerOn = isSpeakerOn)
         uiStateFlow.value = currentUiState
+        mediator.enableSpeaker(isSpeakerOn)
         if(isSpeakerOn)
             audioController.switchAudioToSpeaker()
         else
             audioController.switchAudioToDefault()
     }
 
-    fun backPress() {
-
-    }
+    fun backPress() {}
 
     override fun onTaskRemoved(rootIntent: Intent?) {
         super.onTaskRemoved(rootIntent)

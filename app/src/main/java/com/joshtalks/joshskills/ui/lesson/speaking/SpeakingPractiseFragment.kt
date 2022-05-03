@@ -72,8 +72,10 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import com.joshtalks.joshskills.core.IS_FREE_TRIAL_CAMPAIGN_ACTIVE
-import com.joshtalks.joshskills.ui.call.data.local.VoipPref
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.voipLog
+import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
+import com.joshtalks.joshskills.voip.voipanalytics.EventName
 
 
 class SpeakingPractiseFragment : ABTestFragment(),TimeAnimator.TimeListener {
@@ -177,7 +179,7 @@ class SpeakingPractiseFragment : ABTestFragment(),TimeAnimator.TimeListener {
     }
 
     private fun getVoipState():Int {
-        return VoipPref.getVoipState()
+        return requireActivity().getVoipState()
     }
 
     override fun onStop() {
@@ -229,8 +231,7 @@ class SpeakingPractiseFragment : ABTestFragment(),TimeAnimator.TimeListener {
         }
         binding.btnStartTrialText.setOnClickListener {
             viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
-            Log.d("VOIP State", "addObservers: ${VoipPref.getVoipState()}")
-            if(VoipPref.getVoipState()==IDLE || VoipPref.getVoipState()== LEAVING) {
+            if(getVoipState()==IDLE || getVoipState()== LEAVING) {
                 startPractise(isNewArch = true)
             } else
                 showToast("Wait for last call to get disconnected")
@@ -576,6 +577,9 @@ class SpeakingPractiseFragment : ABTestFragment(),TimeAnimator.TimeListener {
     }
 
     private fun startPracticeCall() {
+//        TODO: PARAMETERS CHECK
+        CallAnalytics.addAnalytics(event = EventName.CALL_INITIATED)
+
         val callIntent = Intent(requireContext(), VoiceCallActivity::class.java)
         callIntent.apply {
             putExtra(INTENT_DATA_COURSE_ID, courseId)

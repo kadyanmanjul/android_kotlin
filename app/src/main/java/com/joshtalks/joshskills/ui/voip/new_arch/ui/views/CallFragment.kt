@@ -80,6 +80,15 @@ class CallFragment : BaseFragment() , SensorEventListener {
         return callBinding.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+//        CallAnalytics.addAnalytics(
+//            event = EventName.CALL_SCREEN_SHOWN,
+//            agoraMentorId =  VoipPref.getCurrentUserAgoraId().toString(),
+//            agoraCallId = VoipPref.getCurrentCallId().toString()
+//        )
+    }
+
     override fun initViewBinding() {
         callBinding.vm = vm
         if(vm.source == FROM_INCOMING_CALL && PrefManager.getVoipState() != CONNECTED) {

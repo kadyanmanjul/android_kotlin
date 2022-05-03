@@ -12,6 +12,7 @@ internal interface CallServiceMediator {
     fun observeChannelState() : SharedFlow<PubnubState>
     fun connectCall(callType: Int, callData : HashMap<String, Any>)
     fun muteAudioStream(muteAudio : Boolean)
+    fun enableSpeaker(enableSpeaker : Boolean)
     fun sendEventToServer(data : OutgoingData)
     fun showIncomingCall(incomingCall : IncomingCall)
     fun hideIncomingCall()

@@ -20,6 +20,8 @@ import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.notification.NotificationPriority
 import com.joshtalks.joshskills.voip.notification.VoipNotification
 import com.joshtalks.joshskills.voip.voipLog
+import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
+import com.joshtalks.joshskills.voip.voipanalytics.EventName
 import com.joshtalks.joshskills.voip.webrtc.AgoraWebrtcService
 import com.joshtalks.joshskills.voip.webrtc.CallState
 import com.joshtalks.joshskills.voip.webrtc.WebrtcService
@@ -27,6 +29,7 @@ import kotlinx.coroutines.*
 import kotlin.Exception
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlin.collections.HashMap
@@ -206,6 +209,11 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                                     // Remote User Disconnected
                                     ServerConstants.DISCONNECTED -> {
                                         Log.d("disconnectCall()", "handleFallbackEvents: DISCO")
+                                        CallAnalytics.addAnalytics(
+                                            event = EventName.DISCONNECTED_BY_REMOTE_USER,
+                                            agoraCallId = CallDetails.callId.toString(),
+                                            agoraMentorId = CallDetails.localUserAgoraId.toString()
+                                        )
                                         webrtcService.disconnectCall()
                                         val msg = Message.obtain().apply {
                                             what = CALL_DISCONNECT_REQUEST
@@ -289,6 +297,10 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
         webrtcService.muteAudioStream(muteAudio)
     }
 
+    override fun enableSpeaker(enableSpeaker: Boolean) {
+        webrtcService.enableSpeaker(enableSpeaker)
+    }
+
     override fun sendEventToServer(data: OutgoingData) {
         networkEventChannel.emitEvent(data)
     }
@@ -364,6 +376,11 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                                 channelName = it.getChannel(),
                                 callToken = it.getCallingToken(),
                                 agoraUId = it.getAgoraUid()
+                            )
+                            CallAnalytics.addAnalytics(
+                                event = EventName.CHANNEL_RECEIVED,
+                                agoraMentorId = it.getAgoraUid().toString(),
+                                agoraCallId = it.getCallingId().toString()
                             )
                             webrtcService.connectCall(request)
                             CallDetails.reset()
@@ -449,6 +466,10 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
         val remoteView =
             calling.notificationLayout(incomingCall) ?: return // TODO: might throw error
         voipNotification = VoipNotification(remoteView, NotificationPriority.High)
+        CallAnalytics.addAnalytics(
+            event = EventName.INCOMING_CALL_SHOWN,
+            agoraCallId = incomingCall.getCallId().toString()
+        )
         voipNotification.show()
         soundManager.playSound()
         scope.launch {
@@ -456,6 +477,10 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
             voipNotification.removeNotification()
             updateIncomingCallState(false)
             stopAudio()
+            CallAnalytics.addAnalytics(
+                event = EventName.INCOMING_CALL_IGNORE,
+                agoraCallId = incomingCall.getCallId().toString()
+            )
         }
     }
 

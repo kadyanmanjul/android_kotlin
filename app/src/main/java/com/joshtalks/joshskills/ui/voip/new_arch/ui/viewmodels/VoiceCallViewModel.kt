@@ -186,6 +186,11 @@ class VoiceCallViewModel : BaseViewModel() {
     // User Action
     fun disconnectCall(v: View) {
         voipLog?.log("Disconnect Call")
+//        CallAnalytics.addAnalytics(
+//            event = EventName.DISCONNECTED_BY_RED_BUTTON,
+//            agoraMentorId =  VoipPref.getCurrentUserAgoraId().toString(),
+//            agoraCallId = VoipPref.getCurrentCallId().toString()
+//        )
         disconnect()
     }
 
@@ -204,24 +209,36 @@ class VoiceCallViewModel : BaseViewModel() {
         uiState.isSpeakerOn = isOnSpeaker.not()
         if (isOnSpeaker)
             repository.turnOffSpeaker()
-        else
+        else {
+//            CallAnalytics.addAnalytics(
+//                event = EventName.SPEAKER_ON,
+//                agoraMentorId =  VoipPref.getCurrentUserAgoraId().toString(),
+//                agoraCallId = VoipPref.getCurrentCallId().toString()
+//            )
+
             repository.turnOnSpeaker()
+        }
     }
 
     // User Action
     fun switchMic(v: View) {
         val isOnMute = uiState.isMute
         uiState.isMute = isOnMute.not()
-        if (isOnMute)
+        if (isOnMute) {
             repository.unmuteCall()
-        else
+        }
+        else {
+//            CallAnalytics.addAnalytics(
+//                event = EventName.MIC_ON,
+//                agoraMentorId =  VoipPref.getCurrentUserAgoraId().toString(),
+//                agoraCallId = VoipPref.getCurrentCallId().toString()
+//            )
             repository.muteCall()
+        }
     }
 
     // User Action
-    fun backPress() {
-
-    }
+    fun backPress() {}
 
     fun boundService(activity: Activity) {
         voipLog?.log("binding Service")

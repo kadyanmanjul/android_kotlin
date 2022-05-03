@@ -2,14 +2,17 @@ package com.joshtalks.joshskills.voip.data.local
 
 import android.content.Context
 import androidx.room.*
+import com.joshtalks.joshskills.voip.voipanalytics.data.local.VoipAnalyticsDao
+import com.joshtalks.joshskills.voip.voipanalytics.data.local.VoipAnalyticsEntity
 
 // TODO: Will be used to insert Disconnected call Data and Voip Analytics
 const val PENDING = 0
 const val SYNCED = 1
 
-@Database(entities = [DisconnectCallEntity::class], version = 1, exportSchema = true)
+@Database(entities = [DisconnectCallEntity::class,VoipAnalyticsEntity::class], version = 1, exportSchema = true)
 abstract class VoipDatabase : RoomDatabase() {
     abstract fun getDisconnectCallDao() : DisconnectCallDao
+    abstract fun voipAnalyticsDao() : VoipAnalyticsDao
 
     companion object {
 
@@ -23,7 +26,8 @@ abstract class VoipDatabase : RoomDatabase() {
                     context.applicationContext,
                     VoipDatabase::class.java,
                     "voip_database"
-                ).build()
+                ).fallbackToDestructiveMigration()
+                    .build()
                 INSTANCE = instance
                 instance
             }

@@ -33,11 +33,16 @@ import com.joshtalks.joshskills.core.service.NetworkChangeReceiver
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.di.ApplicationComponent
 import com.joshtalks.joshskills.di.DaggerApplicationComponent
-import com.joshtalks.joshskills.ui.voip.presence.UserPresence
 import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.base.log.Feature
 import com.joshtalks.joshskills.base.log.JoshLog.Companion.enableLog
 import com.joshtalks.joshskills.ui.call.data.local.VoipPref
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.VoipUtils
+import com.joshtalks.joshskills.voip.calldetails.CallDetails
+import com.joshtalks.joshskills.voip.constant.CONNECTED
+import com.joshtalks.joshskills.voip.presence.UserPresence
+import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
+import com.joshtalks.joshskills.voip.voipanalytics.EventName
 import com.vanniktech.emoji.EmojiManager
 import com.vanniktech.emoji.ios.IosEmojiProvider
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
@@ -82,6 +87,7 @@ class JoshApplication :
                 AppObjectController.init(this@JoshApplication)
                 VoipPref.initVoipPref(this)
                 registerBroadcastReceiver()
+                VoipUtils.initUtils(this)
                 initGroups()
             } else {
                 FirebaseApp.initializeApp(this)

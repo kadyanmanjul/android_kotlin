@@ -8,6 +8,7 @@ internal interface WebrtcService {
     fun connectCall(request: CallRequest) // Need Arguments
     fun disconnectCall() // Might Need Arguments
     fun muteAudioStream(muteAudio : Boolean)
+    fun enableSpeaker(speaker :Boolean)
     fun observeCallingEvents() : SharedFlow<CallState> // Will return value
     fun observeCallingState() : SharedFlow<Int> // Will Return State
     fun onDestroy()
