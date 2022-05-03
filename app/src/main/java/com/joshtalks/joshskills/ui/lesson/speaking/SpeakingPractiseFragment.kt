@@ -72,8 +72,10 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import com.joshtalks.joshskills.core.IS_FREE_TRIAL_CAMPAIGN_ACTIVE
-import com.joshtalks.joshskills.ui.call.data.local.VoipPref
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.voipLog
+import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
+import com.joshtalks.joshskills.voip.voipanalytics.EventName
 
 
 class SpeakingPractiseFragment : ABTestFragment(),TimeAnimator.TimeListener {
@@ -177,8 +179,7 @@ class SpeakingPractiseFragment : ABTestFragment(),TimeAnimator.TimeListener {
     }
 
     private fun getVoipState():Int {
-        // TODO: Use Content Provider
-        return VoipPref.getVoipState()
+        return requireActivity().getVoipState()
     }
 
     override fun onStop() {
@@ -230,31 +231,11 @@ class SpeakingPractiseFragment : ABTestFragment(),TimeAnimator.TimeListener {
         }
         binding.btnStartTrialText.setOnClickListener {
             viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
-            // TODO: Use Content Provider
-            Log.d("VOIP State", "addObservers: ${VoipPref.getVoipState()}")
-            if(VoipPref.getVoipState()==IDLE) {
+            if(getVoipState()==IDLE) {
                 startPractise(isNewArch = true)
             } else
                 showToast("Wait for last call to get disconnected")
         }
-
-//        viewModel.observerVoipState().observe(viewLifecycleOwner) {
-//            when(it){
-//                IDLE -> {
-//                    binding.btnStartTrialText.isEnabled = true
-//                    mCurrentLevel=MAX_LEVEL
-//                    beforeAnimation?.setTint(resources.getColor(R.color.colorPrimary))
-//                    if(mAnimator?.isRunning==true) {
-//                        startPractise()
-//                    }
-//                }
-//                LEAVING -> {
-//                    beforeAnimation?.setTint(resources.getColor(R.color.colorPrimary))
-//                    binding.btnStartTrialText.isEnabled = true
-//                }
-//            }
-//            voipLog?.log("VOIP State --> $it")
-//        }
 
         binding.btnGroupCall.setOnClickListener {
             if(PrefManager.getBoolValue(IS_LOGIN_VIA_TRUECALLER))
@@ -314,10 +295,6 @@ class SpeakingPractiseFragment : ABTestFragment(),TimeAnimator.TimeListener {
                     } else {
                         getString(R.string.pp_message, response.duration.toString())
                     }
-                    /*binding.progressBar.visibility = GONE
-                    binding.tvPractiseTime.visibility = GONE
-                    binding.progressBarAnim.visibility = VISIBLE
-                    binding.progressBarAnim.playAnimation()*/
                 } catch (ex: Exception) {
                     ex.printStackTrace()
                 }

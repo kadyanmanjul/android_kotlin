@@ -851,5 +851,8 @@
     <queries>
         <provider
             android:authorities="com.joshtalks.joshskills.contentprovider" />
+        <provider
+            android:authorities="com.joshtalks.joshskills.voipstate"
+            android:exported="false" />
     </queries>
 </manifest>

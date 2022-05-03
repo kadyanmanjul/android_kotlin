@@ -11,6 +11,7 @@ import com.joshtalks.joshskills.voip.constant.JOINED
 import com.joshtalks.joshskills.voip.constant.JOINING
 import com.joshtalks.joshskills.voip.constant.LEAVING
 import com.joshtalks.joshskills.voip.constant.LEAVING_AND_JOINING
+import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.voipLog
 import io.agora.rtc.RtcEngine
 import kotlinx.coroutines.*
@@ -115,6 +116,10 @@ internal class AgoraWebrtcService(val scope: CoroutineScope) : WebrtcService {
 
     override fun muteAudioStream(muteAudio : Boolean) {
         agoraEngine?.muteLocalAudioStream(muteAudio)
+    }
+
+    override fun enableSpeaker(speaker: Boolean) {
+        agoraEngine?.setEnableSpeakerphone(speaker)
     }
 
     override fun observeCallingEvents(): SharedFlow<CallState> {

@@ -7,7 +7,9 @@ import com.joshtalks.joshskills.voip.communication.model.NetworkAction
 import com.joshtalks.joshskills.voip.communication.model.UI
 import com.joshtalks.joshskills.voip.communication.model.UserAction
 import com.joshtalks.joshskills.voip.constant.*
+import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.inSeconds
+import com.joshtalks.joshskills.voip.updateLastCallDetails
 import com.joshtalks.joshskills.voip.voipLog
 import kotlinx.coroutines.*
 
@@ -71,6 +73,7 @@ class ConnectedState(val context: CallContext) : VoipState {
                             val uiState = context.currentUiState.copy(isReconnecting = true)
                             context.updateUIState(uiState = uiState)
                             context.reconnecting()
+                            PrefManager.setVoipState(RECONNECTING)
                             context.state = ReconnectingState(context)
                             break@loop
                         }
@@ -179,7 +182,19 @@ class ConnectedState(val context: CallContext) : VoipState {
         )
         context.sendMessageToServer(networkAction)
         // Show Dialog
+        Utils.context?.updateLastCallDetails(
+            duration = context.durationInMillis.inSeconds(),
+            remoteUserName = context.channelData.getCallingPartnerName(),
+            remoteUserImage = context.channelData.getCallingPartnerImage(),
+            callId = context.channelData.getCallingId(),
+            callType = context.callType,
+            remoteUserAgoraId = context.channelData.getPartnerUid(),
+            localUserAgoraId = context.channelData.getAgoraUid(),
+            channelName = context.channelData.getChannel(),
+            topicName = context.channelData.getCallingTopic()
+        )
         context.disconnectCall()
+        PrefManager.setVoipState(LEAVING)
         context.state = LeavingState(context)
         scope.cancel()
     }

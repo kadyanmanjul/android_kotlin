@@ -8,7 +8,7 @@ import com.joshtalks.joshskills.base.constants.KEY_APP_VERSION_NAME
 import com.joshtalks.joshskills.base.constants.KEY_AUTHORIZATION
 import com.joshtalks.joshskills.voip.BuildConfig
 import com.joshtalks.joshskills.voip.Utils
-import com.joshtalks.joshskills.voip.voipLog
+import com.joshtalks.joshskills.voip.voipanalytics.data.network.VoipAnalyticsService
 import java.util.concurrent.TimeUnit
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -58,6 +58,11 @@ object VoipNetwork {
     fun getVoipApi()  : CallingApiService {
         setup()
         return retrofit.create(CallingApiService::class.java)
+    }
+
+    fun getVoipAnalyticsApi() :VoipAnalyticsService{
+        setup()
+        return retrofit.create(VoipAnalyticsService::class.java)
     }
 }
 

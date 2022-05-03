@@ -33,10 +33,7 @@ import com.joshtalks.joshskills.core.service.NetworkChangeReceiver
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.di.ApplicationComponent
 import com.joshtalks.joshskills.di.DaggerApplicationComponent
-import com.joshtalks.joshskills.ui.voip.presence.UserPresence
 import com.joshtalks.joshskills.voip.Utils
-import com.joshtalks.joshskills.base.log.Feature
-import com.joshtalks.joshskills.base.log.JoshLog.Companion.enableLog
 import com.joshtalks.joshskills.ui.call.data.local.VoipPref
 import com.vanniktech.emoji.EmojiManager
 import com.vanniktech.emoji.ios.IosEmojiProvider
@@ -56,9 +53,6 @@ class JoshApplication :
     ComponentCallbacks2/*, Configuration.Provider*/ {
     val applicationGraph: ApplicationComponent by lazy {
         DaggerApplicationComponent.create()
-    }
-    val userPresenceStatus by lazy {
-        UserPresence
     }
 
     companion object {

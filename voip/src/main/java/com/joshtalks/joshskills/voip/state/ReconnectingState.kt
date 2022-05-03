@@ -1,13 +1,16 @@
 package com.joshtalks.joshskills.voip.state
 
+import android.content.Context
 import android.util.Log
+import com.joshtalks.joshskills.base.constants.IS_ON_HOLD
+import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.communication.constants.ServerConstants
 import com.joshtalks.joshskills.voip.communication.model.NetworkAction
 import com.joshtalks.joshskills.voip.communication.model.UI
-import com.joshtalks.joshskills.voip.constant.RECONNECTED
-import com.joshtalks.joshskills.voip.constant.SYNC_UI_STATE
-import com.joshtalks.joshskills.voip.constant.UI_STATE_UPDATED
+import com.joshtalks.joshskills.voip.constant.*
+import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.inSeconds
+import com.joshtalks.joshskills.voip.updateLastCallDetails
 import kotlinx.coroutines.*
 
 // Some Temp. Network Problem
@@ -39,7 +42,7 @@ class ReconnectingState(val context: CallContext) : VoipState {
         scope.cancel()
     }
 
-    // Handle Events related to Connected State
+    // Handle Events related to Reconnecting State
     private fun observe() {
         listenerJob = scope.launch {
             try {
@@ -65,6 +68,7 @@ class ReconnectingState(val context: CallContext) : VoipState {
                                     address = context.channelData.getPartnerMentorId()
                                 )
                             )
+                            PrefManager.setVoipState(CONNECTED)
                             context.state = ConnectedState(context)
                             break@loop
                         }
@@ -97,8 +101,29 @@ class ReconnectingState(val context: CallContext) : VoipState {
                                 )
                             )
                         }
+                        HOLD -> {
+                            ensureActive()
+                            val uiState = context.currentUiState.copy(isOnHold = true)
+                            context.updateUIState(uiState = uiState)
+                        }
+                        UNHOLD -> {
+                            ensureActive()
+                            val uiState = context.currentUiState.copy(isOnHold = false)
+                            context.updateUIState(uiState = uiState)
+                        }
+                        MUTE -> {
+                            ensureActive()
+                            val uiState = context.currentUiState.copy(isRemoteUserMuted = true)
+                            context.updateUIState(uiState = uiState)
+                        }
+                        UNMUTE -> {
+                            ensureActive()
+                            val uiState = context.currentUiState.copy(isRemoteUserMuted = false)
+                            context.updateUIState(uiState = uiState)
+                        }
                         else -> throw IllegalEventException("In $TAG but received ${event.what} expected $RECONNECTED")
                     }
+
                 }
                 scope.cancel()
                 } catch (e: Exception) {
@@ -120,7 +145,20 @@ class ReconnectingState(val context: CallContext) : VoipState {
         )
         context.sendMessageToServer(networkAction)
         // Show Dialog
+        Utils.context?.updateLastCallDetails(
+            duration = context.durationInMillis.inSeconds(),
+            remoteUserName = context.channelData.getCallingPartnerName(),
+            remoteUserImage = context.channelData.getCallingPartnerImage(),
+            callId = context.channelData.getCallingId(),
+            callType = context.callType,
+            remoteUserAgoraId = context.channelData.getPartnerUid(),
+            localUserAgoraId = context.channelData.getAgoraUid(),
+            channelName = context.channelData.getChannel(),
+            topicName = context.channelData.getCallingTopic()
+
+        )
         context.disconnectCall()
+        PrefManager.setVoipState(LEAVING)
         context.state = LeavingState(context)
         scope.cancel()
     }

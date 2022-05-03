@@ -1,14 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.joshtalks.joshskills.voip">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS"/>
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="com.joshtalks.permission.READ_WRITE_CONTENT"/>
+
+
     <application>
         <service android:name=".data.CallingRemoteService"
             android:process=":joshSkillsCallingService"
@@ -28,13 +32,11 @@
                 <action android:name="android.media.ACTION_CONNECTION_STATE_CHANGED" />
             </intent-filter>
         </receiver>
-        <!-- PSTN module -->
-        <receiver android:name=".CallingServiceReceiver"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="com.joshtalks.joshskills.CALLING_SERVICE"/>
-            </intent-filter>
-        </receiver>
+        <provider
+            android:authorities="com.joshtalks.joshskills.voipstate"
+            android:name=".contentprovider.VoipStateContentProvider"
+            android:permission="com.joshtalks.permission.READ_WRITE_VOIP_CONTENT"
+            android:enabled="true"
+            android:exported="false"/>
     </application>
-
 </manifest>

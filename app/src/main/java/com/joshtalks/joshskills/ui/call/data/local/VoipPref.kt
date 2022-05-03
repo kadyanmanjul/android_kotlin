@@ -82,20 +82,14 @@ object VoipPref {
 
         // TODO: These function shouldn't be here
         private fun showDialogBox(totalSecond: Long) {
-            val currentActivity = ActivityLifecycleCallback.currentActivity
-            val voiceCallClassName = "com.joshtalks.joshskills." + currentActivity.localClassName
-            val fragmentActivity = currentActivity as? FragmentActivity
-            if (currentActivity != null) {
-                if (voiceCallClassName != "com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity") {
-                    fragmentActivity?.showVoipDialog(totalSecond)
-                } else {
                     scope.launch {
-                        delay(1000)
-                        val newCurrentActivity = ActivityLifecycleCallback.currentActivity
-                        val newFragmentActivity = newCurrentActivity as? FragmentActivity
-                        withContext(Dispatchers.Main) {
+                        delay(500)
+                        val currentActivity = ActivityLifecycleCallback.currentActivity
+                        if (currentActivity != null) {
+                            val newFragmentActivity = currentActivity as? FragmentActivity
+                           withContext(Dispatchers.Main) {
                             newFragmentActivity?.showVoipDialog(totalSecond)
-                        }
+
                     }
                 }
             }
