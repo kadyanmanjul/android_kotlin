@@ -7,6 +7,9 @@ import com.joshtalks.joshskills.voip.communication.constants.ServerConstants
 import com.joshtalks.joshskills.voip.communication.model.NetworkAction
 import com.joshtalks.joshskills.voip.constant.CALL_CONNECTED_EVENT
 import com.joshtalks.joshskills.voip.constant.CALL_INITIATED_EVENT
+import com.joshtalks.joshskills.voip.constant.CONNECTED
+import com.joshtalks.joshskills.voip.constant.LEAVING
+import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.mediator.CallingMediator
 import kotlinx.coroutines.*
 
@@ -54,6 +57,7 @@ class JoinedState(val context: CallContext) : VoipState {
                     connectedEvent.copyFrom(event)
                     connectedEvent.obj = CallConnectData(startTime, context.channelData.getCallingPartnerName())
                     context.sendEventToUI(connectedEvent)
+                    PrefManager.setVoipState(CONNECTED)
                     context.state = ConnectedState(context)
                 } else
                     throw IllegalEventException("In $TAG but received ${event.what} expected $CALL_INITIATED_EVENT")
@@ -78,6 +82,7 @@ class JoinedState(val context: CallContext) : VoipState {
         )
         context.sendMessageToServer(networkAction)
         context.disconnectCall()
+        PrefManager.setVoipState(LEAVING)
         context.state = LeavingState(context)
         scope.cancel()
     }

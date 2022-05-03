@@ -26,7 +26,7 @@ object CallAnalytics : CallAnalyticsInterface{
 
     override fun addAnalytics(event: EventName, agoraMentorId: String?, agoraCallId: String?) {
         val callEvent = CallEvents(event = event, timestamp = System.currentTimeMillis().toString(), agoraCallId = agoraCallId, agoraMentorId = agoraMentorId)
-        pushAnalytics(callEvent)
+//        pushAnalytics(callEvent)
     }
 
     private fun pushAnalyticsToServer(eventHashMap: Map<String, Any>) {

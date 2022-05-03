@@ -4,6 +4,9 @@ import android.util.Log
 import com.joshtalks.joshskills.voip.communication.constants.ServerConstants
 import com.joshtalks.joshskills.voip.communication.model.NetworkAction
 import com.joshtalks.joshskills.voip.constant.CALL_INITIATED_EVENT
+import com.joshtalks.joshskills.voip.constant.JOINED
+import com.joshtalks.joshskills.voip.constant.LEAVING
+import com.joshtalks.joshskills.voip.data.local.PrefManager
 import kotlinx.coroutines.*
 
 // Got a Channel and Joining Agora State
@@ -32,6 +35,7 @@ class JoiningState(val context: CallContext) : VoipState {
                     // Emit Event to show Call Screen
                     ensureActive()
                     context.sendEventToUI(event)
+                    PrefManager.setVoipState(JOINED)
                     context.state = JoinedState(context)
                 } else
                     throw IllegalEventException("In $TAG but received ${event.what} expected $CALL_INITIATED_EVENT")
@@ -56,6 +60,7 @@ class JoiningState(val context: CallContext) : VoipState {
         )
         context.sendMessageToServer(networkAction)
         context.disconnectCall()
+        PrefManager.setVoipState(LEAVING)
         context.state = LeavingState(context)
         scope.cancel()
     }

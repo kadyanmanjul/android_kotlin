@@ -7,6 +7,7 @@ import com.joshtalks.joshskills.voip.communication.model.ChannelData
 import com.joshtalks.joshskills.voip.communication.model.NetworkAction
 import com.joshtalks.joshskills.voip.communication.model.Timeout
 import com.joshtalks.joshskills.voip.communication.model.UserAction
+import com.joshtalks.joshskills.voip.constant.JOINING
 import com.joshtalks.joshskills.voip.constant.RECEIVED_CHANNEL_DATA
 import com.joshtalks.joshskills.voip.data.UIState
 import com.joshtalks.joshskills.voip.data.local.PrefManager
@@ -110,6 +111,7 @@ class SearchingState(val context: CallContext) : VoipState {
                     if (context.direction == CallDirection.OUTGOING)
                         timeoutTimer.cancel()
                     ensureActive()
+                    PrefManager.setVoipState(JOINING)
                     context.state = JoiningState(context)
                 } else
                     throw IllegalEventException("In $TAG but received ${event.what} expected $RECEIVED_CHANNEL_DATA")
