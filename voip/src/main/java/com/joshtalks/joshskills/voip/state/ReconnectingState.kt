@@ -122,6 +122,12 @@ class ReconnectingState(val context: CallContext) : VoipState {
                             val uiState = context.currentUiState.copy(isRemoteUserMuted = false)
                             context.updateUIState(uiState = uiState)
                         }
+                        REMOTE_USER_DISCONNECTED_AGORA, REMOTE_USER_DISCONNECTED_USER_DROP, REMOTE_USER_DISCONNECTED_MESSAGE -> {
+                            Log.d(TAG, "observe: disconnect event ${event.what}")
+
+                            ensureActive()
+                            moveToLeavingState()
+                        }
                         else -> throw IllegalEventException("In $TAG but received ${event.what} expected $RECONNECTED")
                     }
 
@@ -136,31 +142,34 @@ class ReconnectingState(val context: CallContext) : VoipState {
     }
 
     private fun moveToLeavingState() {
-        listenerJob?.cancel()
-        val networkAction = NetworkAction(
-            channelName = context.channelData.getChannel(),
-            uid = context.channelData.getAgoraUid(),
-            type = ServerConstants.DISCONNECTED,
-            duration = context.durationInMillis.inSeconds(),
-            address = context.channelData.getPartnerMentorId()
-        )
-        context.sendMessageToServer(networkAction)
-        // Show Dialog
-        Utils.context?.updateLastCallDetails(
-            duration = context.durationInMillis.inSeconds(),
-            remoteUserName = context.channelData.getCallingPartnerName(),
-            remoteUserImage = context.channelData.getCallingPartnerImage(),
-            callId = context.channelData.getCallingId(),
-            callType = context.callType,
-            remoteUserAgoraId = context.channelData.getPartnerUid(),
-            localUserAgoraId = context.channelData.getAgoraUid(),
-            channelName = context.channelData.getChannel(),
-            topicName = context.channelData.getCallingTopic()
+        scope.launch {
+            listenerJob?.cancel()
+            context.closeCallScreen()
+            val networkAction = NetworkAction(
+                channelName = context.channelData.getChannel(),
+                uid = context.channelData.getAgoraUid(),
+                type = ServerConstants.DISCONNECTED,
+                duration = context.durationInMillis.inSeconds(),
+                address = context.channelData.getPartnerMentorId()
+            )
+            context.sendMessageToServer(networkAction)
+            // Show Dialog
+            Utils.context?.updateLastCallDetails(
+                duration = context.durationInMillis.inSeconds(),
+                remoteUserName = context.channelData.getCallingPartnerName(),
+                remoteUserImage = context.channelData.getCallingPartnerImage(),
+                callId = context.channelData.getCallingId(),
+                callType = context.callType,
+                remoteUserAgoraId = context.channelData.getPartnerUid(),
+                localUserAgoraId = context.channelData.getAgoraUid(),
+                channelName = context.channelData.getChannel(),
+                topicName = context.channelData.getCallingTopic()
 
-        )
-        context.disconnectCall()
-        PrefManager.setVoipState(State.LEAVING)
-        context.state = LeavingState(context)
-        scope.cancel()
+            )
+            context.disconnectCall()
+            PrefManager.setVoipState(State.LEAVING)
+            context.state = LeavingState(context)
+            scope.cancel()
+        }
     }
 }

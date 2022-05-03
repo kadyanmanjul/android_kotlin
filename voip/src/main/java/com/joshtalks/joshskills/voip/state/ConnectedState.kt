@@ -175,7 +175,10 @@ class ConnectedState(val context: CallContext) : VoipState {
                     }
                 }
                 scope.cancel()
-            } catch (e: Exception) {
+            } catch (e : CancellationException){
+                e.printStackTrace()
+            }
+            catch (e: Exception) {
                 e.printStackTrace()
                 moveToLeavingState()
             }

@@ -5,6 +5,8 @@ import android.os.SystemClock
 import android.util.Log
 import com.joshtalks.joshskills.voip.communication.constants.ServerConstants
 import com.joshtalks.joshskills.voip.communication.model.NetworkAction
+import com.joshtalks.joshskills.voip.communication.model.UI
+import com.joshtalks.joshskills.voip.communication.model.UserAction
 import com.joshtalks.joshskills.voip.constant.*
 import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.mediator.CallingMediator
@@ -44,26 +46,139 @@ class JoinedState(val context: CallContext) : VoipState {
     private fun observe() {
         listenerJob =  scope.launch {
             try {
-                ensureActive()
+                loop@ while (true) {
+                    ensureActive()
                 val event = context.getStreamPipe().receive()
                 ensureActive()
-                if (event.what == CALL_CONNECTED_EVENT) {
-                    Log.d(TAG, "observe: Joined Channel --> ${context.channelData.getChannel()}")
-                    // Emit Event to show Call Screen
-                    ensureActive()
-                    val startTime = SystemClock.elapsedRealtime()
-                    val uiState = context.currentUiState.copy(startTime = startTime)
-                    context.updateUIState(uiState = uiState)
-                    ensureActive()
-                    val connectedEvent = Message.obtain()
-                    connectedEvent.copyFrom(event)
-                    connectedEvent.obj = CallConnectData(startTime, context.channelData.getCallingPartnerName())
-                    context.sendEventToUI(connectedEvent)
-                    PrefManager.setVoipState(State.CONNECTED)
-                    context.state = ConnectedState(context)
-                } else
-                    throw IllegalEventException("In $TAG but received ${event.what} expected $CALL_INITIATED_EVENT")
-                // TODO: Handle Error Case
+                    when (event.what) {
+                        CALL_CONNECTED_EVENT -> {
+                            Log.d(TAG, "observe: Joined Channel --> ${context.channelData.getChannel()}")
+                            // Emit Event to show Call Screen
+                            ensureActive()
+                            val startTime = SystemClock.elapsedRealtime()
+                            val uiState = context.currentUiState.copy(startTime = startTime)
+                            context.updateUIState(uiState = uiState)
+                            ensureActive()
+                            val connectedEvent = Message.obtain()
+                            connectedEvent.copyFrom(event)
+                            connectedEvent.obj = CallConnectData(
+                                startTime,
+                                context.channelData.getCallingPartnerName()
+                            )
+                            context.sendEventToUI(connectedEvent)
+                            PrefManager.setVoipState(State.CONNECTED)
+                            context.state = ConnectedState(context)
+                            break@loop
+                        }
+                        MUTE -> {
+                            ensureActive()
+                            val uiState = context.currentUiState.copy(isRemoteUserMuted = true)
+                            context.updateUIState(uiState = uiState)
+                        }
+                        UNMUTE -> {
+                            ensureActive()
+                            val uiState = context.currentUiState.copy(isRemoteUserMuted = false)
+                            context.updateUIState(uiState = uiState)
+                        }
+                        HOLD -> {
+                            ensureActive()
+                            val uiState = context.currentUiState.copy(isOnHold = true)
+                            context.updateUIState(uiState = uiState)
+                        }
+                        UNHOLD -> {
+                            ensureActive()
+                            val uiState = context.currentUiState.copy(isOnHold = false)
+                            context.updateUIState(uiState = uiState)
+                        }
+                        SPEAKER_ON_REQUEST -> {
+                            ensureActive()
+                            val uiState = context.currentUiState.copy(isSpeakerOn = true)
+                            context.updateUIState(uiState = uiState)
+                        }
+                        SPEAKER_OFF_REQUEST -> {
+                            val uiState = context.currentUiState.copy(isSpeakerOn = false)
+                            context.updateUIState(uiState = uiState)
+                        }
+                        MUTE_REQUEST -> {
+                            ensureActive()
+                            val uiState = context.currentUiState.copy(isOnMute = true)
+                            context.updateUIState(uiState = uiState)
+                            val userAction = UserAction(
+                                ServerConstants.MUTE,
+                                context.channelData.getChannel(),
+                                address = context.channelData.getPartnerMentorId()
+                            )
+                            context.changeMicState(true)
+                            context.sendMessageToServer(userAction)
+                        }
+                        UNMUTE_REQUEST -> {
+                            ensureActive()
+                            val uiState = context.currentUiState.copy(isOnMute = false)
+                            context.updateUIState(uiState = uiState)
+                            val userAction = UserAction(
+                                ServerConstants.UNMUTE,
+                                context.channelData.getChannel(),
+                                address = context.channelData.getPartnerMentorId()
+                            )
+                            context.changeMicState(true)
+                            context.sendMessageToServer(userAction)
+                        }
+                        HOLD_REQUEST -> {
+                            ensureActive()
+                            val uiState = context.currentUiState.copy(isOnHold = true)
+                            context.updateUIState(uiState = uiState)
+                            val userAction = UserAction(
+                                ServerConstants.ONHOLD,
+                                context.channelData.getChannel(),
+                                address = context.channelData.getPartnerMentorId()
+                            )
+                            context.sendMessageToServer(userAction)
+                        }
+                        UNHOLD_REQUEST -> {
+                            ensureActive()
+                            val uiState = context.currentUiState.copy(isOnHold = false)
+                            context.updateUIState(uiState = uiState)
+                            val userAction = UserAction(
+                                ServerConstants.RESUME,
+                                context.channelData.getChannel(),
+                                address = context.channelData.getPartnerMentorId()
+                            )
+                            context.sendMessageToServer(userAction)
+                        }
+                        SYNC_UI_STATE -> {
+                            ensureActive()
+                            context.sendMessageToServer(
+                                UI(
+                                    channelName = context.channelData.getChannel(),
+                                    type = ServerConstants.UI_STATE_UPDATED,
+                                    isHold = if (context.currentUiState.isOnHold) 1 else 0,
+                                    isMute = if (context.currentUiState.isOnMute) 1 else 0,
+                                    address = context.channelData.getPartnerMentorId()
+                                )
+                            )
+                        }
+                        UI_STATE_UPDATED -> {
+                            ensureActive()
+                            val uiData = event.obj as UI
+                            if (uiData.getType() == ServerConstants.UI_STATE_UPDATED)
+                                context.sendMessageToServer(
+                                    UI(
+                                        channelName = context.channelData.getChannel(),
+                                        type = ServerConstants.ACK_UI_STATE_UPDATED,
+                                        isHold = if (context.currentUiState.isOnHold) 1 else 0,
+                                        isMute = if (context.currentUiState.isOnMute) 1 else 0,
+                                        address = context.channelData.getPartnerMentorId()
+                                    )
+                                )
+                            val uiState = context.currentUiState.copy(
+                                isRemoteUserMuted = uiData.isMute(),
+                                isOnHold = uiData.isHold()
+                            )
+                            context.updateUIState(uiState = uiState)
+                        }
+                        else -> throw IllegalEventException("In $TAG but received ${event.what} expected $CALL_INITIATED_EVENT")
+                    }
+                }
                 scope.cancel()
             } catch (e: Exception) {
                 e.printStackTrace()
