@@ -178,33 +178,4 @@ object VoipPref {
                 preferenceManager.registerOnSharedPreferenceChangeListener(VoipPrefListener)
             }
         }
-
-    fun getCurrentVoipState(): String {
-       return preferenceManager.getString(PREF_KEY_CURRENT_VOIP_STATE, IDLE_STATE)?: IDLE_STATE
-    }
-
-    fun updateCurrentVoipState(currentVoipState: String? = IDLE_STATE) {
-        Log.d(TAG, "updateCurrentVoipState: Updated")
-        val editor = preferenceManager.edit()
-        editor.putString(PREF_KEY_CURRENT_VOIP_STATE,currentVoipState)
-        editor.apply()
-    }
-
-    fun getCurrentVoipStateStack(): Array<String> {
-        val gson = Gson()
-        val jsonText: String? = preferenceManager.getString(PREF_KEY_CURRENT_VOIP_STATE_STACK, null)
-        return gson.fromJson(
-            jsonText,
-            Array<String>::class.java
-        )
-    }
-
-    fun updateCurrentVoipStateStack(currentVoipStateStack: Any? = arrayOf("")) {
-        val editor = preferenceManager.edit()
-        val gson = Gson()
-        val textList: Any? = currentVoipStateStack
-        val jsonText = gson.toJson(textList)
-        editor.putString(PREF_KEY_CURRENT_VOIP_STATE_STACK, jsonText)
-        editor.apply()
-    }
 }

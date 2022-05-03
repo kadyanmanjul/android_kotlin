@@ -65,11 +65,11 @@ internal class AgoraEventHandler(val scope: CoroutineScope) : IRtcEngineEventHan
     override fun onJoinChannelSuccess(channel: String, uid: Int, elapsed: Int) {
         Log.d(TAG, "onJoinChannelSuccess: ")
         voipLog?.log("Joined Channel -> $channel and UID -> $uid ")
-        CallAnalytics.addAnalytics(
-            event = EventName.CHANNEL_JOINED,
-            agoraCallId = CallDetails.callId.toString(),
-            agoraMentorId = CallDetails.localUserAgoraId.toString()
-        )
+//        CallAnalytics.addAnalytics(
+//            event = EventName.CHANNEL_JOINED,
+//            agoraCallId = CallDetails.callId.toString(),
+//            agoraMentorId = CallDetails.localUserAgoraId.toString()
+//        )
         emitEvent(CallState.CallInitiated)
     }
 
@@ -84,11 +84,11 @@ internal class AgoraEventHandler(val scope: CoroutineScope) : IRtcEngineEventHan
     override fun onLeaveChannel(stats: RtcStats) {
         Log.d(TAG, "onLeaveChannel: ")
         voipLog?.log("$stats")
-        CallAnalytics.addAnalytics(
-            event = EventName.CHANNEL_LEFT,
-            agoraCallId = CallDetails.callId.toString(),
-            agoraMentorId = CallDetails.localUserAgoraId.toString()
-        )
+//        CallAnalytics.addAnalytics(
+//            event = EventName.CHANNEL_LEFT,
+//            agoraCallId = CallDetails.callId.toString(),
+//            agoraMentorId = CallDetails.localUserAgoraId.toString()
+//        )
         emitEvent(CallState.CallDisconnected)
     }
 

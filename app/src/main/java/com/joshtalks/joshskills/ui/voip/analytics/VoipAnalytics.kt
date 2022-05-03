@@ -5,12 +5,8 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.repository.local.AppDatabase
 import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.joshtalks.joshskills.ui.voip.analytics.data.local.VoipAnalyticsEntity
-import com.joshtalks.joshskills.ui.voip.analytics.data.network.VOIP_ANALYTICS_CALL_ID_API_KEY
-import com.joshtalks.joshskills.ui.voip.analytics.data.network.VOIP_ANALYTICS_DISCONNECT_API_KEY
-import com.joshtalks.joshskills.ui.voip.analytics.data.network.VOIP_ANALYTICS_MENTOR_UID_API_KEY
-import com.joshtalks.joshskills.ui.voip.analytics.data.network.VOIP_ANALYTICS_TIMESTAMP_API_KEY
-import com.joshtalks.joshskills.ui.voip.analytics.data.network.VOIP_ANALYTICS_TYPE_API_KEY
 import com.joshtalks.joshskills.util.DateUtils
+import com.joshtalks.joshskills.voip.voipanalytics.data.network.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

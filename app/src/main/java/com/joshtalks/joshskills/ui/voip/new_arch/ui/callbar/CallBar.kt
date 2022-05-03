@@ -23,14 +23,4 @@ class CallBar {
     fun getTimerLiveData(): LiveData<Long> {
         return prefListener.observerStartTime()
     }
-
-    // TODO: Can be removed
-    fun observerVoipState(): LiveData<Int> {
-        return prefListener.observerVoipState()
-    }
-
-    //
-    fun observerVoipUIState(): StateFlow<VoipUIState> {
-        return prefListener.observerVoipUIState()
-    }
 }

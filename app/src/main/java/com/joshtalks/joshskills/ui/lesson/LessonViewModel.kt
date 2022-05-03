@@ -135,10 +135,6 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    fun observerVoipState() : LiveData<Int> {
-        return voipState.observerVoipState()
-    }
-
     fun permissionGranted() {
         message.what = PERMISSION_FROM_READING_GRANTED
         singleLiveEvent.value = message

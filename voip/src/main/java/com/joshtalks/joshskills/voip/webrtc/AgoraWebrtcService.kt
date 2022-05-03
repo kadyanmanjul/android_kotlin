@@ -5,7 +5,6 @@ import android.media.AudioManager
 import android.util.Log
 import com.joshtalks.joshskills.voip.BuildConfig
 import com.joshtalks.joshskills.voip.Utils
-import com.joshtalks.joshskills.voip.calldetails.CallDetails
 import com.joshtalks.joshskills.voip.constant.CONNECTED
 import com.joshtalks.joshskills.voip.constant.IDLE
 import com.joshtalks.joshskills.voip.constant.JOINED
@@ -90,11 +89,11 @@ internal class AgoraWebrtcService(val scope: CoroutineScope) : WebrtcService {
             voipLog?.log("Coroutine : About to call leaveChannel")
             state.emit(LEAVING)
             currentState = LEAVING
-            CallAnalytics.addAnalytics(
-                event = EventName.CHANNEL_LEAVING,
-                agoraMentorId = CallDetails.localUserAgoraId.toString(),
-                agoraCallId = CallDetails.callId.toString()
-            )
+//            CallAnalytics.addAnalytics(
+//                event = EventName.CHANNEL_LEAVING,
+//                agoraMentorId = CallDetails.localUserAgoraId.toString(),
+//                agoraCallId = CallDetails.callId.toString()
+//            )
             leaveChannel()
             voipLog?.log("Coroutine : Finishing call leaveChannel Coroutine")
         }
