@@ -74,9 +74,7 @@ class PubNubChannelService(val scope: CoroutineScope) : EventChannel {
     }
 
     override fun reconnect() {
-        Log.d(TAG, "reconnect: Pubnub")
         if (isReconnecting.not()) {
-            Log.d(TAG, "reconnect: Pubnub .....")
             scope.launch {
                 mutex.withLock {
                     isReconnecting = true
@@ -102,7 +100,6 @@ class PubNubChannelService(val scope: CoroutineScope) : EventChannel {
                     is UserActionData -> event as UserAction
                     is Timeout -> event
                 }
-                Log.d(TAG, "emitEvent: Sending Message .... $message")
                 event.captureDisconnectEvent()
                 pubnub?.publish()
                     ?.channel(event.getAddress())
@@ -111,7 +108,7 @@ class PubNubChannelService(val scope: CoroutineScope) : EventChannel {
                     ?.ttl(0)
                     ?.usePOST(true)
                     ?.sync()
-                Log.d(TAG, "emitEvent: Message Sent .... $message")
+                Log.d(TAG, "Message Sent to Server : $event")
             } catch (ex: Exception) {
                 ex.printStackTrace()
             }

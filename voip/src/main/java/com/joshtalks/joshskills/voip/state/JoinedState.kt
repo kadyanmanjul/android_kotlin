@@ -5,10 +5,7 @@ import android.os.SystemClock
 import android.util.Log
 import com.joshtalks.joshskills.voip.communication.constants.ServerConstants
 import com.joshtalks.joshskills.voip.communication.model.NetworkAction
-import com.joshtalks.joshskills.voip.constant.CALL_CONNECTED_EVENT
-import com.joshtalks.joshskills.voip.constant.CALL_INITIATED_EVENT
-import com.joshtalks.joshskills.voip.constant.CONNECTED
-import com.joshtalks.joshskills.voip.constant.LEAVING
+import com.joshtalks.joshskills.voip.constant.*
 import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.mediator.CallingMediator
 import kotlinx.coroutines.*
@@ -19,7 +16,10 @@ class JoinedState(val context: CallContext) : VoipState {
     private val scope = CoroutineScope(Dispatchers.IO)
     private var listenerJob : Job? = null
 
-    init { observe() }
+    init {
+        Log.d("Call State", TAG)
+        observe()
+    }
 
     // Red Button Pressed
     override fun disconnect() {
@@ -34,6 +34,8 @@ class JoinedState(val context: CallContext) : VoipState {
     override fun backPress() {
         Log.d(TAG, "backPress: Ignore")
     }
+
+    override fun onError() { disconnect() }
 
     override fun onDestroy() {
         scope.cancel()
@@ -57,7 +59,7 @@ class JoinedState(val context: CallContext) : VoipState {
                     connectedEvent.copyFrom(event)
                     connectedEvent.obj = CallConnectData(startTime, context.channelData.getCallingPartnerName())
                     context.sendEventToUI(connectedEvent)
-                    PrefManager.setVoipState(CONNECTED)
+                    PrefManager.setVoipState(State.CONNECTED)
                     context.state = ConnectedState(context)
                 } else
                     throw IllegalEventException("In $TAG but received ${event.what} expected $CALL_INITIATED_EVENT")
@@ -82,7 +84,7 @@ class JoinedState(val context: CallContext) : VoipState {
         )
         context.sendMessageToServer(networkAction)
         context.disconnectCall()
-        PrefManager.setVoipState(LEAVING)
+        PrefManager.setVoipState(State.LEAVING)
         context.state = LeavingState(context)
         scope.cancel()
     }

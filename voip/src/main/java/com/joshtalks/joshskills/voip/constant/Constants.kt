@@ -26,7 +26,7 @@ const val UI_STATE_UPDATED = 129
 const val CLOSE_CALL_SCREEN = 130
 const val REMOTE_USER_DISCONNECTED_AGORA = 131
 const val REMOTE_USER_DISCONNECTED_USER_DROP = 132
-const val UPDATE_LAST_CALL_DETAILS = 133
+const val REMOTE_USER_DISCONNECTED_MESSAGE = 139
 const val SYNC_UI_STATE = 138
 
 const val CALL_CONNECT_REQUEST = 115
@@ -46,25 +46,22 @@ const val CONNECTED = 121 // Remote User Joined the Channel and can Talk
 const val LEAVING = 122 // LeaveChannel Called but haven't left the channel
 const val LEAVING_AND_JOINING = 126 // LeaveChannel Previous Channel and Joining New Channel
 
-const val VOIP_DB_URL = "https://joshskills-p2p-online.asia-southeast1.firebasedatabase.app/"
-const val VOIP_PATH = "Presence"
-
 // Content Provider Voip State
 const val CONTENT_VOIP_STATE_AUTHORITY = "content://com.joshtalks.joshskills.voipstate"
 const val VOIP_STATE_PATH = "/current_voip_state"
-const val VOIP_STATE_STACK_PATH = "/current_voip_state_stack"
 
 //    Content values for Voip State
 const val CURRENT_VOIP_STATE = "josh_current_voip_state"
-const val CURRENT_VOIP_STATE_STACKS = "josh_current_voip_state_stack"
 
-//Voip Current States
-const val CONNECTED_STATE = "connected_state"
-const val JOINED_STATE = "joined_state"
-const val IDLE_STATE = "idle_state"
-
-const val PREF_KEY_CURRENT_VOIP_STATE = "josh_current_voip_state"
-const val PREF_KEY_CURRENT_VOIP_STATE_STACK = "josh_current_voip_stack"
+enum class State {
+    IDLE,
+    SEARCHING,
+    JOINING,
+    JOINED,
+    CONNECTED,
+    RECONNECTING,
+    LEAVING,
+}
 
 
 

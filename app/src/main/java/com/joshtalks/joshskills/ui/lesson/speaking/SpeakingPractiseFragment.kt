@@ -74,10 +74,11 @@ import kotlinx.coroutines.withContext
 import com.joshtalks.joshskills.core.IS_FREE_TRIAL_CAMPAIGN_ACTIVE
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.voipLog
+import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
 
-
+private const val TAG = "SpeakingPractiseFragmen"
 class SpeakingPractiseFragment : ABTestFragment(),TimeAnimator.TimeListener {
 
     private lateinit var binding: SpeakingPractiseFragmentBinding
@@ -167,18 +168,7 @@ class SpeakingPractiseFragment : ABTestFragment(),TimeAnimator.TimeListener {
         //checkForVoipState()
     }
 
-    private fun checkForVoipState() {
-        val voipState=getVoipState()
-        if(voipState == CONNECTED){
-            binding.btnStartTrialText.isEnabled = false
-            beforeAnimation?.setTint(resources.getColor(R.color.grey))
-        }else if(voipState==IDLE || voipState == LEAVING) {
-            binding.btnStartTrialText.isEnabled = true
-            beforeAnimation?.setTint(resources.getColor(R.color.colorPrimary))
-        }
-    }
-
-    private fun getVoipState():Int {
+    private fun getVoipState(): State {
         return requireActivity().getVoipState()
     }
 
@@ -231,7 +221,9 @@ class SpeakingPractiseFragment : ABTestFragment(),TimeAnimator.TimeListener {
         }
         binding.btnStartTrialText.setOnClickListener {
             viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
-            if(getVoipState()==IDLE) {
+            val state = getVoipState()
+            Log.d(TAG, " Start Call Button - Voip State $state")
+            if(state == State.IDLE) {
                 startPractise(isNewArch = true)
             } else
                 showToast("Wait for last call to get disconnected")

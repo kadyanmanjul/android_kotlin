@@ -1,22 +1,28 @@
 package com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels
 
 import android.app.Activity
+import android.app.Application
 import android.os.Message
 import android.util.Log
 import android.view.View
 import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.base.BaseViewModel
+import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.base.constants.FPP
 import com.joshtalks.joshskills.base.constants.GROUP
 import com.joshtalks.joshskills.base.constants.PEER_TO_PEER
 import com.joshtalks.joshskills.base.log.Feature
 import com.joshtalks.joshskills.base.log.JoshLog
+import com.joshtalks.joshskills.core.JoshApplication
 import com.joshtalks.joshskills.core.TAG
 import com.joshtalks.joshskills.ui.call.repository.RepositoryConstants.*
 import com.joshtalks.joshskills.ui.call.repository.WebrtcRepository
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.models.CallUIState
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.VoipUtils
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
 import com.joshtalks.joshskills.voip.constant.*
 import com.joshtalks.joshskills.voip.data.ServiceEvents
 import kotlinx.coroutines.*
@@ -32,7 +38,7 @@ const val ONGOING = 2
 private const val TAG = "VoiceCallViewModel"
 val voipLog = JoshLog.getInstanceIfEnable(Feature.VOIP)
 
-class VoiceCallViewModel : BaseViewModel() {
+class VoiceCallViewModel(application: Application) : AndroidViewModel(application) {
     private var isConnectionRequestSent = false
     lateinit var source: String
     private val repository = WebrtcRepository(viewModelScope)
@@ -42,13 +48,12 @@ class VoiceCallViewModel : BaseViewModel() {
     val callData = HashMap<String, Any>()
     val uiState by lazy { CallUIState() }
     val pendingEvents = ArrayDeque<Int>()
+    private var singleLiveEvent = EventLiveData
 
     private val connectCallJob by lazy {
         viewModelScope.launch(start = CoroutineStart.LAZY) {
             mutex.withLock {
-                Log.d(TAG, "connectCallJob : Out ${repository.getVoipState()}")
-                Log.d(TAG, "connectCallJob : Out ${isConnectionRequestSent.not()}")
-                if ((repository.getVoipState() == IDLE || repository.getVoipState() == LEAVING) && isConnectionRequestSent.not()) {
+                if (getVoipState() == State.IDLE && isConnectionRequestSent.not()) {
                     Log.d(TAG, " connectCallJob : Inside")
                     voipLog?.log("$callData")
                     repository.connectCall(callData)
@@ -116,10 +121,11 @@ class VoiceCallViewModel : BaseViewModel() {
     }
 
     private fun listenUIState() {
-        Log.d(TAG, "listenUIState: ")
         viewModelScope.launch(Dispatchers.IO) {
             repository.observeUserDetails()?.collect { state ->
                 Log.d(TAG, "listenUIState: $state")
+                val voipState = getVoipState()
+                Log.d(TAG, "listenUIState: State --> $voipState")
                 if (uiState.startTime != state.startTime)
                     uiState.startTime = state.startTime
                 uiState.name = state.remoteUserName
@@ -142,7 +148,7 @@ class VoiceCallViewModel : BaseViewModel() {
                     uiState.currentState = "User Muted the Call"
                     voipLog?.log("Mute")
                 } else {
-                    if (repository.getVoipState() == CONNECTED)
+                    if (voipState == State.CONNECTED)
                         uiState.currentState = "Timer"
                 }
 
@@ -170,9 +176,13 @@ class VoiceCallViewModel : BaseViewModel() {
         }
     }
 
+    private fun getVoipState() : State {
+        return getApplication<JoshApplication>().getVoipState()
+    }
+
     private fun getCallStatus(): Int {
-        val status = repository.getVoipState()
-        return if (status == CONNECTED) {
+        val status = getVoipState()
+        return if (status == State.CONNECTED) {
             ONGOING
         } else {
             CONNECTING
@@ -216,7 +226,7 @@ class VoiceCallViewModel : BaseViewModel() {
 
     // User Action
     fun backPress() {
-
+        repository.backPress()
     }
 
     fun boundService(activity: Activity) {

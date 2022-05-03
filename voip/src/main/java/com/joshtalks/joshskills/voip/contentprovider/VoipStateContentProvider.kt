@@ -5,10 +5,13 @@ import android.content.ContentValues
 import android.database.Cursor
 import android.database.MatrixCursor
 import android.net.Uri
+import android.util.Log
 import com.joshtalks.joshskills.voip.constant.CURRENT_VOIP_STATE
 import com.joshtalks.joshskills.voip.constant.VOIP_STATE_PATH
 import com.joshtalks.joshskills.voip.data.local.PrefManager
+import kotlin.math.log
 
+private const val TAG = "VoipStateContentProvide"
 class VoipStateContentProvider : ContentProvider() {
 
     override fun onCreate(): Boolean {
@@ -26,8 +29,9 @@ class VoipStateContentProvider : ContentProvider() {
         when(uri.path){
             VOIP_STATE_PATH ->{
                 val currentState = PrefManager.getVoipState()
+                Log.d(TAG, "query: State -> $currentState")
                 val cursor = MatrixCursor(arrayOf(CURRENT_VOIP_STATE))
-                cursor.addRow(arrayOf(currentState))
+                cursor.addRow(arrayOf(currentState.ordinal))
                 return cursor
             }
         }
@@ -38,15 +42,10 @@ class VoipStateContentProvider : ContentProvider() {
         return null
     }
 
-    override fun insert(uri: Uri, values: ContentValues?): Uri {
-        when(uri.path){
-            VOIP_STATE_PATH ->{
-               val currentVoipState = values?.getAsInteger(CURRENT_VOIP_STATE)?:-0
-                PrefManager.setVoipState(currentVoipState)
-            }
-        }
-        return uri
+    override fun insert(uri: Uri, values: ContentValues?): Uri? {
+        TODO("Not yet implemented")
     }
+
 
     override fun delete(uri: Uri, selection: String?, selectionArgs: Array<out String>?): Int {
         return 0

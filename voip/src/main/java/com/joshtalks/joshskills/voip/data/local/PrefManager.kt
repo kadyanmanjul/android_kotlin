@@ -2,15 +2,19 @@ package com.joshtalks.joshskills.voip.data.local
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.util.Log
 import com.joshtalks.joshskills.base.constants.PREF_KEY_LOCAL_USER_AGORA_ID
 import com.joshtalks.joshskills.voip.R
 import com.joshtalks.joshskills.voip.constant.IDLE
+import com.joshtalks.joshskills.voip.constant.State
 import kotlinx.coroutines.*
 
 const val LATEST_PUBNUB_MESSAGE_TIME = "josh_pref_key_latest_pubnub_message_time"
 const val VOIP_STATE = "josh_pref_key_voip_state"
 const val INCOMING_CALL = "josh_pref_key_incoming_call"
 const val LOCAL_USER_AGORA_ID = "josh_pref_key_local_user_agora_id"
+
+private const val TAG = "PrefManager"
 
 class PrefManager {
     companion object {
@@ -38,13 +42,18 @@ class PrefManager {
             editor.apply()
         }
 
-        fun getVoipState() : Int {
-            return preferenceManager.getInt(VOIP_STATE, IDLE)
+        fun getVoipState() : State {
+            val ordinal = preferenceManager.getInt(VOIP_STATE, State.IDLE.ordinal)
+            Log.d(TAG, "getVoipState: $ordinal")
+            Log.d(TAG, "getVoipState: ${State.values()}")
+            return State.values()[ordinal]
         }
 
-        fun setVoipState(state : Int) {
+        fun setVoipState(state : State) {
+            Log.d(TAG, "Setting Voip State : $state")
+            Log.d(TAG, "Setting Voip State : ${state.ordinal}")
             val editor = preferenceManager.edit()
-            editor.putInt(VOIP_STATE, state)
+            editor.putInt(VOIP_STATE, state.ordinal)
             editor.commit()
         }
 

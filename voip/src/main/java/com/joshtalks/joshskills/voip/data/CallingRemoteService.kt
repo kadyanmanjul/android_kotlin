@@ -66,7 +66,7 @@ class CallingRemoteService : Service() {
         Log.d(TAG, "onCreate: ")
         super.onCreate()
         PrefManager.initServicePref(this)
-        PrefManager.setVoipState(IDLE)
+        PrefManager.setVoipState(State.IDLE)
         updateStartTime(0)
         registerReceivers()
         observerPstnService()
@@ -79,7 +79,7 @@ class CallingRemoteService : Service() {
         when(intent?.action) {
             SERVICE_ACTION_STOP_SERVICE -> {
                 // TODO: Might Need to refactor
-                if (currentState == CONNECTED) {
+                if (PrefManager.getVoipState() == State.CONNECTED) {
                     disconnectCall()
                 }
                 ioScope.cancel()
@@ -106,6 +106,7 @@ class CallingRemoteService : Service() {
     fun getEvents(): SharedFlow<ServiceEvents> = serviceEvents
 
     private fun Intent?.initService(): Int {
+        isServiceInitialize = true
         Utils.apiHeader = this?.getParcelableExtra(INTENT_DATA_API_HEADER)
         Utils.uuid = this?.getStringExtra(INTENT_DATA_MENTOR_ID)
         voipLog?.log("API Header --> ${Utils.apiHeader}")
@@ -138,20 +139,6 @@ class CallingRemoteService : Service() {
                                 Log.d(TAG, "observeMediatorEvents: CALL_DISCONNECT_REQUEST")
                                 serviceEvents.emit(ServiceEvents.CLOSE_CALL_SCREEN)
                                 notification.idle()
-                            }
-                            UPDATE_LAST_CALL_DETAILS -> {
-                                val data = it.obj as LastCallDetail
-                                updateLastCallDetails(
-                                    duration = data.durationInMilli,
-                                    remoteUserName = data.remoteUserName,
-                                    remoteUserImage = data.remoteUserImageUrl,
-                                    remoteUserAgoraId = data.remoteUserAgoraId,
-                                    callId = data.callId,
-                                    callType = data.callType,
-                                    localUserAgoraId = data.localUserAgoraId,
-                                    topicName = data.topicName,
-                                    channelName = data.agoraChannelName
-                                )
                             }
                             RECONNECTING_FAILED -> {
                                 Log.d(TAG, "observeMediatorEvents: RECONNECTING_FAILED")

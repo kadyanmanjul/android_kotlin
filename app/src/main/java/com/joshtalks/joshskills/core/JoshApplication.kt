@@ -71,7 +71,7 @@ class JoshApplication :
         Log.d(TAG, "onCreate: STARTING MAIN PROCESS CHECK ${this.hashCode()}")
             if(isMainProcess()) {
                 Log.d(TAG, "onCreate: END ...IS MAIN PROCESS")
-                turnOnStrictMode()
+                //turnOnStrictMode()
                 ProcessLifecycleOwner.get().lifecycle.addObserver(this@JoshApplication)
                 AppObjectController.init(this@JoshApplication)
                 VoipPref.initVoipPref(this)

@@ -6,6 +6,7 @@ import com.joshtalks.joshskills.voip.communication.model.NetworkAction
 import com.joshtalks.joshskills.voip.constant.CALL_INITIATED_EVENT
 import com.joshtalks.joshskills.voip.constant.JOINED
 import com.joshtalks.joshskills.voip.constant.LEAVING
+import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.local.PrefManager
 import kotlinx.coroutines.*
 
@@ -15,10 +16,16 @@ class JoiningState(val context: CallContext) : VoipState {
     private val scope = CoroutineScope(Dispatchers.IO)
     private var listenerJob : Job? = null
 
-    init { observe() }
+    init {
+        Log.d("Call State", TAG)
+        observe()
+        context.joinChannel(context.channelData)
+    }
 
     // Join Channel Already Called
     override fun backPress() { moveToLeavingState() }
+
+    override fun onError() { backPress() }
 
     override fun onDestroy() {
         scope.cancel()
@@ -35,7 +42,7 @@ class JoiningState(val context: CallContext) : VoipState {
                     // Emit Event to show Call Screen
                     ensureActive()
                     context.sendEventToUI(event)
-                    PrefManager.setVoipState(JOINED)
+                    PrefManager.setVoipState(State.JOINED)
                     context.state = JoinedState(context)
                 } else
                     throw IllegalEventException("In $TAG but received ${event.what} expected $CALL_INITIATED_EVENT")
@@ -60,7 +67,7 @@ class JoiningState(val context: CallContext) : VoipState {
         )
         context.sendMessageToServer(networkAction)
         context.disconnectCall()
-        PrefManager.setVoipState(LEAVING)
+        PrefManager.setVoipState(State.LEAVING)
         context.state = LeavingState(context)
         scope.cancel()
     }

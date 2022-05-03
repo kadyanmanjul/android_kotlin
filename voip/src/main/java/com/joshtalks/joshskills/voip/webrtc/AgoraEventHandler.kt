@@ -119,7 +119,7 @@ internal class AgoraEventHandler(val scope: CoroutineScope) : IRtcEngineEventHan
 
     // Occurs when the network connection state changes like RECONNECTING
     override fun onConnectionStateChanged(state: Int, reason: Int) {
-        Log.d(TAG, "onConnectionStateChanged: ")
+        Log.d(TAG, "onConnectionStateChanged: State - $state and Reason - $reason")
         scope.launch {
             voipLog?.log("State -> $state and Reason -> $reason")
             if (Constants.CONNECTION_STATE_RECONNECTING == state &&

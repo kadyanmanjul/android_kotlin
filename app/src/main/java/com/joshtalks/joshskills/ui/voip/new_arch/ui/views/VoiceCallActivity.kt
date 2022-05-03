@@ -58,7 +58,7 @@ class VoiceCallActivity : BaseActivity() {
     private fun getSource(): String {
         val topicId = intent?.getStringExtra(INTENT_DATA_TOPIC_ID)
         val shouldOpenCallFragment = (topicId == null)
-        return if (shouldOpenCallFragment && PrefManager.getVoipState() == IDLE)
+        return if (shouldOpenCallFragment && PrefManager.getVoipState() == State.IDLE)
             FROM_INCOMING_CALL
         else if (shouldOpenCallFragment)
             FROM_CALL_BAR
@@ -83,7 +83,7 @@ class VoiceCallActivity : BaseActivity() {
         event.observe(this) {
             when (it.what) {
                 CALL_INITIATED_EVENT -> replaceCallUserFragment()
-                CALL_DISCONNECT_REQUEST, RECONNECTING_FAILED -> finish()
+                CLOSE_CALL_SCREEN -> finish()
                 else -> {
                     if (it.what < 0) {
                         showToast("Error Occurred")
@@ -124,7 +124,6 @@ class VoiceCallActivity : BaseActivity() {
 
     override fun onBackPressed() {
         super.onBackPressed()
-        if(PrefManager.getVoipState() != CONNECTED)
-            vm.disconnect()
+        vm.backPress()
     }
 }

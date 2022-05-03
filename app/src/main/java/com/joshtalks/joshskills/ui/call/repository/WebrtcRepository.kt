@@ -61,8 +61,6 @@ class WebrtcRepository(scope : CoroutineScope) {
         }
     }
 
-    fun getVoipState() = mService?.currentState
-
     fun observeRepositoryEvents(): SharedFlow<RepositoryConstants> {
         return repositoryToVMFlow
     }
@@ -112,7 +110,7 @@ class WebrtcRepository(scope : CoroutineScope) {
     }
 
     fun backPress() {
-
+        mService?.backPress()
     }
 
     fun clearRepository() {

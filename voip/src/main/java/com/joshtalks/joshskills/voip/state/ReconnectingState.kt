@@ -1,8 +1,6 @@
 package com.joshtalks.joshskills.voip.state
 
-import android.content.Context
 import android.util.Log
-import com.joshtalks.joshskills.base.constants.IS_ON_HOLD
 import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.communication.constants.ServerConstants
 import com.joshtalks.joshskills.voip.communication.model.NetworkAction
@@ -20,6 +18,7 @@ class ReconnectingState(val context: CallContext) : VoipState {
     private var listenerJob: Job? = null
 
     init {
+        Log.d("Call State", TAG)
         observe()
     }
 
@@ -37,6 +36,8 @@ class ReconnectingState(val context: CallContext) : VoipState {
     override fun backPress() {
         Log.d(TAG, "backPress: ")
     }
+
+    override fun onError() { disconnect() }
 
     override fun onDestroy() {
         scope.cancel()
@@ -68,7 +69,7 @@ class ReconnectingState(val context: CallContext) : VoipState {
                                     address = context.channelData.getPartnerMentorId()
                                 )
                             )
-                            PrefManager.setVoipState(CONNECTED)
+                            PrefManager.setVoipState(State.CONNECTED)
                             context.state = ConnectedState(context)
                             break@loop
                         }
@@ -158,7 +159,7 @@ class ReconnectingState(val context: CallContext) : VoipState {
 
         )
         context.disconnectCall()
-        PrefManager.setVoipState(LEAVING)
+        PrefManager.setVoipState(State.LEAVING)
         context.state = LeavingState(context)
         scope.cancel()
     }

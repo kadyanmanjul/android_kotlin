@@ -9,6 +9,7 @@ import com.joshtalks.joshskills.voip.communication.model.Timeout
 import com.joshtalks.joshskills.voip.communication.model.UserAction
 import com.joshtalks.joshskills.voip.constant.JOINING
 import com.joshtalks.joshskills.voip.constant.RECEIVED_CHANNEL_DATA
+import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.UIState
 import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.mediator.CallDirection
@@ -36,21 +37,17 @@ class SearchingState(val context: CallContext) : VoipState {
                 delay(PER_USER_TIMEOUT_IN_MILLIS)
                 ensureActive()
                 context.sendMessageToServer(timeout)
-                Log.d(TAG, "startUserNotFoundTimer: $i")
             }
-            Log.d(TAG, "startUserNotFoundTimer: Sending Disconnect")
             delay(PER_USER_TIMEOUT_IN_MILLIS)
             ensureActive()
             disconnectNoUserFound()
-            Log.d(TAG, "startUserNotFoundTimer: disconnectCall()")
-            context.disconnectCall()
-            Log.d(TAG, "startUserNotFoundTimer: CALL_DISCONNECT_REQUEST")
-            scope.launch { context.closeCallScreen() }
+            cleanUpState()
         }
     }
     private val calling by lazy<Calling> { PeerToPeerCalling() }
 
     init {
+        Log.d("Call State", TAG)
         observe()
         /* 1. Setting Call type
          -------- Applicable for Incoming Call --------
@@ -70,6 +67,7 @@ class SearchingState(val context: CallContext) : VoipState {
                 if (e is HttpException || e is SocketTimeoutException)
                     Log.d(TAG, " Exception : API failed")
                 e.printStackTrace()
+                ensureActive()
                 context.destroyContext()
                 // TODO : Emit Error - Close User Screen
             }
@@ -92,6 +90,13 @@ class SearchingState(val context: CallContext) : VoipState {
         context.destroyContext()
     }
 
+    override fun onError() {
+        scope.launch {
+            context.closeCallScreen()
+            backPress()
+        }
+    }
+
     private fun observe() {
         scope.launch {
             try {
@@ -111,7 +116,7 @@ class SearchingState(val context: CallContext) : VoipState {
                     if (context.direction == CallDirection.OUTGOING)
                         timeoutTimer.cancel()
                     ensureActive()
-                    PrefManager.setVoipState(JOINING)
+                    PrefManager.setVoipState(State.JOINING)
                     context.state = JoiningState(context)
                 } else
                     throw IllegalEventException("In $TAG but received ${event.what} expected $RECEIVED_CHANNEL_DATA")
@@ -133,6 +138,7 @@ class SearchingState(val context: CallContext) : VoipState {
     }
 
     override fun onDestroy() {
+        PrefManager.setVoipState(State.IDLE)
         scope.cancel()
     }
 

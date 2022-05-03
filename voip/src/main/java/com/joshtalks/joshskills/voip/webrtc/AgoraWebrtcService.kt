@@ -82,7 +82,6 @@ internal class AgoraWebrtcService(val scope: CoroutineScope) : WebrtcService {
         scope.launch {
             // 1. Send DISCONNECTING signal through Pubnub
             // 2. Leave Channel through Agora SDK
-            stopReconnectingTimeoutTimer()
             stopLazyJoin()
             voipLog?.log("Coroutine : About to call leaveChannel")
             state.emit(LEAVING)
@@ -179,7 +178,6 @@ internal class AgoraWebrtcService(val scope: CoroutineScope) : WebrtcService {
                     CallState.CallConnected -> {
                         //TODO: Use Reconnecting
                         if(currentState == CONNECTED) {
-                            stopReconnectingTimeoutTimer()
                             eventFlow.emit(CallState.OnReconnected)
                         } else {
                             state.emit(CONNECTED)
@@ -193,11 +191,9 @@ internal class AgoraWebrtcService(val scope: CoroutineScope) : WebrtcService {
                         eventFlow.emit(callState)
                     }
                     CallState.OnReconnecting -> {
-                        startReconnectingTimeoutTimer()
                         eventFlow.emit(callState)
                     }
                     CallState.OnReconnected -> {
-                        stopReconnectingTimeoutTimer()
                         eventFlow.emit(callState)
                     }
                     CallState.UserAlreadyDisconnectedError -> {
@@ -220,21 +216,5 @@ internal class AgoraWebrtcService(val scope: CoroutineScope) : WebrtcService {
                 voipLog?.log("observeCallbacks : CallState = $callState")
             }
         }
-    }
-
-    private fun startReconnectingTimeoutTimer() {
-        if(reconnectingJob?.isActive != true) {
-            reconnectingJob = scope.launch {
-                delay(RECONNECTING_TIMEOUT_IN_MILLIS)
-                eventFlow.emit(CallState.ReconnectingFailed)
-                Log.d("disconnectCall()", " Disconnecting due to Reconnecting")
-                disconnectCall()
-            }
-        }
-    }
-
-    fun stopReconnectingTimeoutTimer() {
-        Log.d(TAG, "Cancelling Reconnect Timer")
-        reconnectingJob?.cancel()
     }
 }

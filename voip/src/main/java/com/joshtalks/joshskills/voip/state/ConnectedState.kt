@@ -19,20 +19,24 @@ class ConnectedState(val context: CallContext) : VoipState {
     private val scope = CoroutineScope(Dispatchers.IO)
     private var listenerJob : Job? = null
 
-    init { observe() }
+    init {
+        Log.d("Call State", TAG)
+        observe()
+    }
 
     // Red Button Pressed
     override fun disconnect() {
-        scope.launch {
-            context.closeCallScreen()
-            moveToLeavingState()
-        }
+        moveToLeavingState()
     }
 
 
     override fun backPress() {
         // Do nothing because users talking
         Log.d(TAG, "backPress: ")
+    }
+
+    override fun onError() {
+        disconnect()
     }
 
     override fun onDestroy() {
@@ -73,17 +77,21 @@ class ConnectedState(val context: CallContext) : VoipState {
                             val uiState = context.currentUiState.copy(isReconnecting = true)
                             context.updateUIState(uiState = uiState)
                             context.reconnecting()
-                            PrefManager.setVoipState(RECONNECTING)
+                            PrefManager.setVoipState(State.RECONNECTING)
                             context.state = ReconnectingState(context)
                             break@loop
                         }
                         SPEAKER_ON_REQUEST -> {
-
+                            ensureActive()
+                            val uiState = context.currentUiState.copy(isSpeakerOn = true)
+                            context.updateUIState(uiState = uiState)
                         }
                         SPEAKER_OFF_REQUEST -> {
-
+                            val uiState = context.currentUiState.copy(isSpeakerOn = false)
+                            context.updateUIState(uiState = uiState)
                         }
                         MUTE_REQUEST -> {
+                            ensureActive()
                             val uiState = context.currentUiState.copy(isOnMute = true)
                             context.updateUIState(uiState = uiState)
                             val userAction = UserAction(
@@ -95,6 +103,7 @@ class ConnectedState(val context: CallContext) : VoipState {
                             context.sendMessageToServer(userAction)
                         }
                         UNMUTE_REQUEST -> {
+                            ensureActive()
                             val uiState = context.currentUiState.copy(isOnMute = false)
                             context.updateUIState(uiState = uiState)
                             val userAction = UserAction(
@@ -106,6 +115,7 @@ class ConnectedState(val context: CallContext) : VoipState {
                             context.sendMessageToServer(userAction)
                         }
                         HOLD_REQUEST -> {
+                            ensureActive()
                             val uiState = context.currentUiState.copy(isOnHold = true)
                             context.updateUIState(uiState = uiState)
                             val userAction = UserAction(
@@ -116,6 +126,7 @@ class ConnectedState(val context: CallContext) : VoipState {
                             context.sendMessageToServer(userAction)
                         }
                         UNHOLD_REQUEST -> {
+                            ensureActive()
                             val uiState = context.currentUiState.copy(isOnHold = false)
                             context.updateUIState(uiState = uiState)
                             val userAction = UserAction(
@@ -126,6 +137,7 @@ class ConnectedState(val context: CallContext) : VoipState {
                             context.sendMessageToServer(userAction)
                         }
                         SYNC_UI_STATE -> {
+                            ensureActive()
                             context.sendMessageToServer(
                                 UI(
                                     channelName = context.channelData.getChannel(),
@@ -137,25 +149,25 @@ class ConnectedState(val context: CallContext) : VoipState {
                             )
                         }
                         UI_STATE_UPDATED -> {
+                            ensureActive()
                             val uiData = event.obj as UI
-                            if(uiData.getType() == ServerConstants.UI_STATE_UPDATED)
-                            context.sendMessageToServer(
-                                UI(
-                                    channelName = context.channelData.getChannel(),
-                                    type = ServerConstants.ACK_UI_STATE_UPDATED,
-                                    isHold = if (context.currentUiState.isOnHold) 1 else 0,
-                                    isMute = if (context.currentUiState.isOnMute) 1 else 0,
-                                    address = context.channelData.getPartnerMentorId()
+                            if (uiData.getType() == ServerConstants.UI_STATE_UPDATED)
+                                context.sendMessageToServer(
+                                    UI(
+                                        channelName = context.channelData.getChannel(),
+                                        type = ServerConstants.ACK_UI_STATE_UPDATED,
+                                        isHold = if (context.currentUiState.isOnHold) 1 else 0,
+                                        isMute = if (context.currentUiState.isOnMute) 1 else 0,
+                                        address = context.channelData.getPartnerMentorId()
+                                    )
                                 )
-                            )
                             val uiState = context.currentUiState.copy(
                                 isRemoteUserMuted = uiData.isMute(),
                                 isOnHold = uiData.isHold()
                             )
                             context.updateUIState(uiState = uiState)
                         }
-                        // From Backend
-                        REMOTE_USER_DISCONNECTED_AGORA, REMOTE_USER_DISCONNECTED_USER_DROP -> {
+                        REMOTE_USER_DISCONNECTED_AGORA, REMOTE_USER_DISCONNECTED_USER_DROP, REMOTE_USER_DISCONNECTED_MESSAGE -> {
                             ensureActive()
                             moveToLeavingState()
                         }
@@ -165,37 +177,39 @@ class ConnectedState(val context: CallContext) : VoipState {
                 scope.cancel()
             } catch (e: Exception) {
                 e.printStackTrace()
-                context.closeCallScreen()
                 moveToLeavingState()
             }
         }
     }
 
     private fun moveToLeavingState() {
-        listenerJob?.cancel()
-        val networkAction = NetworkAction(
-            channelName = context.channelData.getChannel(),
-            uid = context.channelData.getAgoraUid(),
-            type = ServerConstants.DISCONNECTED,
-            duration = context.durationInMillis.inSeconds(),
-            address = context.channelData.getPartnerMentorId()
-        )
-        context.sendMessageToServer(networkAction)
-        // Show Dialog
-        Utils.context?.updateLastCallDetails(
-            duration = context.durationInMillis.inSeconds(),
-            remoteUserName = context.channelData.getCallingPartnerName(),
-            remoteUserImage = context.channelData.getCallingPartnerImage(),
-            callId = context.channelData.getCallingId(),
-            callType = context.callType,
-            remoteUserAgoraId = context.channelData.getPartnerUid(),
-            localUserAgoraId = context.channelData.getAgoraUid(),
-            channelName = context.channelData.getChannel(),
-            topicName = context.channelData.getCallingTopic()
-        )
-        context.disconnectCall()
-        PrefManager.setVoipState(LEAVING)
-        context.state = LeavingState(context)
-        scope.cancel()
+        scope.launch {
+            listenerJob?.cancel()
+            context.closeCallScreen()
+            val networkAction = NetworkAction(
+                channelName = context.channelData.getChannel(),
+                uid = context.channelData.getAgoraUid(),
+                type = ServerConstants.DISCONNECTED,
+                duration = context.durationInMillis.inSeconds(),
+                address = context.channelData.getPartnerMentorId()
+            )
+            context.sendMessageToServer(networkAction)
+            // Show Dialog
+            Utils.context?.updateLastCallDetails(
+                duration = context.durationInMillis.inSeconds(),
+                remoteUserName = context.channelData.getCallingPartnerName(),
+                remoteUserImage = context.channelData.getCallingPartnerImage(),
+                callId = context.channelData.getCallingId(),
+                callType = context.callType,
+                remoteUserAgoraId = context.channelData.getPartnerUid(),
+                localUserAgoraId = context.channelData.getAgoraUid(),
+                channelName = context.channelData.getChannel(),
+                topicName = context.channelData.getCallingTopic()
+            )
+            context.disconnectCall()
+            PrefManager.setVoipState(State.LEAVING)
+            context.state = LeavingState(context)
+            scope.cancel()
+        }
     }
 }

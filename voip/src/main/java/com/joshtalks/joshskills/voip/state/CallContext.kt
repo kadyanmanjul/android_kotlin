@@ -4,6 +4,7 @@ import android.os.Message
 import android.os.SystemClock
 import android.util.Log
 import com.joshtalks.joshskills.voip.communication.constants.ServerConstants
+import com.joshtalks.joshskills.voip.communication.model.Channel
 import com.joshtalks.joshskills.voip.communication.model.ChannelData
 import com.joshtalks.joshskills.voip.communication.model.NetworkAction
 import com.joshtalks.joshskills.voip.communication.model.OutgoingData
@@ -51,6 +52,10 @@ data class CallContext(val callType: Int, val direction : CallDirection, val req
         mediator.uiStateFlow.value = currentUiState
     }
 
+    fun joinChannel(channelData: ChannelData) {
+        mediator.joinChannel(channelData)
+    }
+
     fun destroyContext() {
         closePipe()
         destroyState()
@@ -59,6 +64,10 @@ data class CallContext(val callType: Int, val direction : CallDirection, val req
 
     fun destroyState() {
         state.onDestroy()
+    }
+
+    fun onError() {
+        state.onError()
     }
 
     fun closePipe() {
@@ -78,7 +87,6 @@ data class CallContext(val callType: Int, val direction : CallDirection, val req
 
     suspend fun closeCallScreen() {
         val msg = Message.obtain().apply {
-            // TODO: Use CLOSE_CALL_SCREEN instead
             what = CLOSE_CALL_SCREEN
         }
         sendEventToUI(msg)

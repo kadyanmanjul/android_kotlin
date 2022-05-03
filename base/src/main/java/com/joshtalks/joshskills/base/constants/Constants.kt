@@ -25,22 +25,11 @@ const val SERVICE_ACTION_INCOMING_CALL_DECLINE = "josh_service_action_incoming_c
 // Content Provider UI
 const val CONTENT_URI = "content://com.joshtalks.joshskills.contentprovider"
 const val START_CALL_TIME_URI = "/start_call_time"
-const val VOIP_USER_DATA_URI = "/voip_user_data"
-const val INCOMING_CALL_URI = "/incoming_call"
-const val VOIP_STATE_URI = "/voip_state"
-const val VOIP_STATE_LEAVING_URI = "/voip_state_leaving"
 const val CALL_DISCONNECTED_URI = "/call_disconnect"
-const val CURRENT_MUTE_STATE_URI = "/current_mute_state"
-const val CURRENT_SPEAKER_STATE_URI = "/current_speaker_state"
-const val CURRENT_HOLD_STATE_URI = "/current_hold_state"
-const val CURRENT_REMOTE_MUTE_STATE_URI = "/current_remote_mute_state"
-const val RESET_CURRENT_CALL_STATE_URI = "/reset_current_call_state"
-const val CURRENT_STATE_URI = "/current_call_state"
 const val API_HEADER = "/api_header"
 const val MENTOR_ID = "/mentor_id"
 
 // Content Values
-const val VOIP_STATE = "josh_voip_state"
 const val CALL_START_TIME = "josh_call_start_time"
 const val CALL_DURATION = "josh_call_duration"
 const val REMOTE_USER_NAME = "josh_remote_user_name"
@@ -51,11 +40,6 @@ const val CALL_TYPE = "josh_call_type"
 const val CURRENT_USER_AGORA_ID = "josh_current_user_agora_id"
 const val TOPIC_NAME = "josh_topic_name"
 const val CHANNEL_NAME = "josh_channel_name"
-const val IS_MUTE = "josh_is_mute"
-const val IS_REMOTE_USER_MUTE = "josh_is_remote_user_mute"
-const val IS_SPEAKER_ON = "josh_is_speaker_on"
-const val IS_ON_HOLD = "josh_is_on_hold"
-const val API_HEADER_DATA = "josh_api_header_data"
 const val AUTHORIZATION = "josh_authorization"
 const val APP_VERSION_CODE = "josh_app_version_code"
 const val APP_VERSION_NAME = "josh_app_version_name"
@@ -63,7 +47,6 @@ const val APP_USER_AGENT = "josh_user_agent"
 const val APP_ACCEPT_LANGUAGE = "josh_accept_language"
 
 // Pref Keys
-const val PREF_KEY_MAIN_PROCESS_PID = "josh_main_process_pid"
 const val PREF_KEY_LOCAL_USER_AGORA_ID= "josh_local_user_id"
 
 // Current Call Details
@@ -94,8 +77,6 @@ const val INCOMING = 1
 const val OUTGOING = 2
 
 // Cursor Column Name
-const val START_CALL_TIME_COLUMN = "START_CALL_TIME"
-const val API_HEADER_COLUMN = "API_HEADER"
 const val MENTOR_ID_COLUMN = "MENTOR_ID"
 
 // Broadcast Receiver

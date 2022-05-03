@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.voip.communication
 
 import android.util.Log
 import com.google.gson.Gson
+import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.communication.constants.ServerConstants.Companion.CHANNEL
 import com.joshtalks.joshskills.voip.communication.constants.ServerConstants.Companion.INCOMING_CALL
 import com.joshtalks.joshskills.voip.communication.constants.ServerConstants.Companion.UI_STATE_UPDATED
@@ -31,12 +32,10 @@ private const val TAG = "PubNubSubscriber"
 internal class PubNubSubscriber(val scope: CoroutineScope) : SubscribeCallback() {
 
     private val messageFlow by lazy<MutableSharedFlow<Communication>> {
-        Log.d(TAG, "Creating : messageFlow")
         MutableSharedFlow(replay = 0)
     }
 
     private val stateFlow by lazy<MutableSharedFlow<PubnubState>> {
-        Log.d(TAG, "Creating : stateFlow")
         MutableSharedFlow(replay = 0)
     }
 
@@ -47,17 +46,16 @@ internal class PubNubSubscriber(val scope: CoroutineScope) : SubscribeCallback()
     fun observeChannelState() : SharedFlow<PubnubState> {
         return stateFlow
     }
-
+// 19897969509
     override fun message(pubnub: PubNub, pnMessageResult: PNMessageResult) {
         scope.launch {
-            Log.d(TAG, "message: $pnMessageResult")
             val messageJson = pnMessageResult.message.asJsonObject.apply {
                 addProperty("timetoken", pnMessageResult.timetoken)
             }
-            Log.d(TAG, "message with Time : $messageJson")
             try {
                 // So that we will ignore our own message
-                if(pnMessageResult.userMetadata == null)
+
+                if(pnMessageResult.publisher == Utils.uuid)
                     return@launch
                 val message = when(pnMessageResult.userMetadata.asInt) {
                     CHANNEL -> Gson().fromJson(messageJson, Channel::class.java)
@@ -74,7 +72,6 @@ internal class PubNubSubscriber(val scope: CoroutineScope) : SubscribeCallback()
     }
 
     override fun status(pubnub: PubNub, status: PNStatus) {
-        Log.d(TAG, "status: Category --> ${status.category}")
         //Log.d(TAG, "status: Status --> ${status}")
         when(status.category) {
             PNConnectedCategory -> {
