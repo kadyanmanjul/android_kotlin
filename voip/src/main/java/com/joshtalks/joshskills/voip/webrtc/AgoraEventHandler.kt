@@ -5,6 +5,7 @@ import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.voipLog
 import io.agora.rtc.Constants
 import io.agora.rtc.IRtcEngineEventHandler
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -84,10 +85,17 @@ internal class AgoraEventHandler(val scope: CoroutineScope) : IRtcEngineEventHan
     override fun onUserOffline(uid: Int, reason: Int) {
         Log.d(TAG, "onUserOffline: $uid Reason -> $reason")
         scope.launch {
-            if(reason == USER_DROP_OFFLINE && uid != PrefManager.getLocalUserAgoraId()) {
-                emitEvent(CallState.OnReconnecting)
-            } else if(reason == USER_QUIT_CHANNEL) {
-                emitEvent(CallState.UserLeftChannel)
+            try{
+                if(reason == USER_DROP_OFFLINE && uid != PrefManager.getLocalUserAgoraId()) {
+                    emitEvent(CallState.OnReconnecting)
+                } else if(reason == USER_QUIT_CHANNEL) {
+                    emitEvent(CallState.UserLeftChannel)
+                }
+            }
+            catch (e : Exception){
+                if(e is CancellationException)
+                    throw e
+                e.printStackTrace()
             }
         }
     }
@@ -96,7 +104,14 @@ internal class AgoraEventHandler(val scope: CoroutineScope) : IRtcEngineEventHan
     override fun onRejoinChannelSuccess(channel: String?, uid: Int, elapsed: Int) {
         Log.d(TAG, "onRejoinChannelSuccess: Channel -> $channel and UID -> $uid")
         scope.launch {
-            emitEvent(CallState.OnReconnected)
+            try{
+                emitEvent(CallState.OnReconnected)
+            }
+            catch (e : Exception){
+                if(e is CancellationException)
+                    throw e
+                e.printStackTrace()
+            }
         }
     }
 
@@ -113,9 +128,16 @@ internal class AgoraEventHandler(val scope: CoroutineScope) : IRtcEngineEventHan
     override fun onConnectionStateChanged(state: Int, reason: Int) {
         Log.d(TAG, "onConnectionStateChanged: State - $state and Reason - $reason")
         scope.launch {
-            if (Constants.CONNECTION_STATE_RECONNECTING == state &&
-                reason == Constants.CONNECTION_CHANGED_INTERRUPTED) {
-                emitEvent(CallState.OnReconnecting)
+            try{
+                if (Constants.CONNECTION_STATE_RECONNECTING == state &&
+                    reason == Constants.CONNECTION_CHANGED_INTERRUPTED) {
+                    emitEvent(CallState.OnReconnecting)
+                }
+            }
+            catch (e : Exception){
+                if(e is CancellationException)
+                    throw e
+                e.printStackTrace()
             }
         }
     }
@@ -123,7 +145,14 @@ internal class AgoraEventHandler(val scope: CoroutineScope) : IRtcEngineEventHan
     private fun emitEvent(event : CallState) {
         Log.d(TAG, " Emitting Event : $event")
         scope.launch {
-            callingEvent.emit(event)
+            try{
+                callingEvent.emit(event)
+            }
+            catch (e : Exception){
+                if(e is CancellationException)
+                    throw e
+                e.printStackTrace()
+            }
         }
     }
 }

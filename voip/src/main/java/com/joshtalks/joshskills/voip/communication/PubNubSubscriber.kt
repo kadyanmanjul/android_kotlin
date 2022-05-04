@@ -22,6 +22,7 @@ import com.pubnub.api.models.consumer.pubsub.PNPresenceEventResult
 import com.pubnub.api.models.consumer.pubsub.PNSignalResult
 import com.pubnub.api.models.consumer.pubsub.files.PNFileEventResult
 import com.pubnub.api.models.consumer.pubsub.message_actions.PNMessageActionResult
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -49,10 +50,10 @@ internal class PubNubSubscriber(val scope: CoroutineScope) : SubscribeCallback()
 // 19897969509
     override fun message(pubnub: PubNub, pnMessageResult: PNMessageResult) {
         scope.launch {
-            val messageJson = pnMessageResult.message.asJsonObject.apply {
-                addProperty("timetoken", pnMessageResult.timetoken)
-            }
             try {
+                val messageJson = pnMessageResult.message.asJsonObject.apply {
+                    addProperty("timetoken", pnMessageResult.timetoken)
+                }
                 // So that we will ignore our own message
                 if(pnMessageResult.publisher == Utils.uuid)
                     return@launch
@@ -74,14 +75,21 @@ internal class PubNubSubscriber(val scope: CoroutineScope) : SubscribeCallback()
         //Log.d(TAG, "status: Status --> ${status}")
         when(status.category) {
             PNConnectedCategory -> {
-                scope.launch {
-                    val lastMessageTime = PrefManager.getLatestPubnubMessageTime()
-                    //Log.d(TAG, "status: Last Msg Time -> $lastMessageTime")
-                    if(lastMessageTime == 0L) {
-                        PrefManager.setLatestPubnubMessageTime(pubnub.time().sync()?.timetoken ?: 0)
-                        val afterUpdate = PrefManager.getLatestPubnubMessageTime()
-                        //Log.d(TAG, "status: After Update --> $afterUpdate")
+                try{
+                    scope.launch {
+                        val lastMessageTime = PrefManager.getLatestPubnubMessageTime()
+                        //Log.d(TAG, "status: Last Msg Time -> $lastMessageTime")
+                        if(lastMessageTime == 0L) {
+                            PrefManager.setLatestPubnubMessageTime(pubnub.time().sync()?.timetoken ?: 0)
+                            val afterUpdate = PrefManager.getLatestPubnubMessageTime()
+                            //Log.d(TAG, "status: After Update --> $afterUpdate")
+                        }
                     }
+                }
+                catch (e : Exception){
+                    if(e is CancellationException)
+                        throw e
+                    e.printStackTrace()
                 }
             }
             PNUnexpectedDisconnectCategory -> {

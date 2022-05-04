@@ -86,9 +86,16 @@ data class CallContext(val callType: Int, val direction : CallDirection, val req
     fun reconnecting() {
         Log.d(TAG, "reconnecting Before Delay ")
         reconnectingJob = scope.launch {
-            delay(RECONNECTING_TIMEOUT_IN_MILLIS)
-            Log.d(TAG, "reconnecting After Delay ")
-            state.disconnect()
+            try{
+                delay(RECONNECTING_TIMEOUT_IN_MILLIS)
+                Log.d(TAG, "reconnecting After Delay ")
+                state.disconnect()
+            }
+            catch (e : Exception){
+                if(e is CancellationException)
+                    throw e
+                e.printStackTrace()
+            }
         }
     }
 

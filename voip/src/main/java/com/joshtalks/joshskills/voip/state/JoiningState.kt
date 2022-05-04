@@ -32,7 +32,6 @@ class JoiningState(val context: CallContext) : VoipState {
     }
 
     private fun observe() {
-        Log.d(TAG, "Started Observing")
         listenerJob =  scope.launch {
             Log.d(TAG, "Started Observing")
             try {

@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.media.AudioManager
 import com.joshtalks.joshskills.voip.Utils
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -42,20 +43,50 @@ class AudioController(val coroutineScope : CoroutineScope) : AudioControllerInte
     init {
         autoRouteSwitcher()
         coroutineScope.launch {
-            headsetReceiver.observeHeadsetEvents().collect {
-                when(it) {
-                    AudioRouteConstants.Default -> checkAudioRoute()
-                    AudioRouteConstants.HeadsetAudio -> audioRouteFlow.emit(it)
+            try{
+                headsetReceiver.observeHeadsetEvents().collect {
+                    try{
+                        when(it) {
+                            AudioRouteConstants.Default -> checkAudioRoute()
+                            AudioRouteConstants.HeadsetAudio -> audioRouteFlow.emit(it)
+                        }
+                    }
+                    catch (e : Exception){
+                        if(e is CancellationException)
+                            throw e
+                        e.printStackTrace()
+                    }
                 }
             }
+            catch (e : Exception){
+                if(e is CancellationException)
+                    throw e
+                e.printStackTrace()
+            }
+
         }
         coroutineScope.launch {
-            bluetoothReceiver.observeHeadsetEvents().collect {
-                when(it) {
-                    AudioRouteConstants.Default -> checkAudioRoute()
-                    AudioRouteConstants.BluetoothAudio -> audioRouteFlow.emit(it)
+            try{
+                bluetoothReceiver.observeHeadsetEvents().collect {
+                    try{
+                        when(it) {
+                            AudioRouteConstants.Default -> checkAudioRoute()
+                            AudioRouteConstants.BluetoothAudio -> audioRouteFlow.emit(it)
+                        }
+                    }
+                    catch (e : Exception){
+                        if(e is CancellationException)
+                            throw e
+                        e.printStackTrace()
+                    }
                 }
             }
+            catch (e : Exception){
+                if(e is CancellationException)
+                    throw e
+                e.printStackTrace()
+            }
+
         }
     }
 
@@ -120,16 +151,36 @@ class AudioController(val coroutineScope : CoroutineScope) : AudioControllerInte
 
     private fun emitAudioRoute(audioRoute: AudioRouteConstants) {
         coroutineScope.launch {
-            audioRouteFlow.emit(audioRoute)
+            try{
+                audioRouteFlow.emit(audioRoute)
+            }
+            catch (e : Exception){
+                if(e is CancellationException)
+                    throw e
+                e.printStackTrace()
+            }
         }
     }
 
     private fun autoRouteSwitcher() {
         coroutineScope.launch {
-            audioRouteFlow.collect {
-                if (checkIfSpeakerOn()) {
-                    switchAudioToSpeaker()
+            try {
+                audioRouteFlow.collect {
+                    try{
+                        if (checkIfSpeakerOn()) {
+                            switchAudioToSpeaker()
+                        }
+                    }
+                    catch (e : Exception){
+                        if(e is CancellationException)
+                            throw e
+                        e.printStackTrace()
+                    }
                 }
+            } catch (e: Exception) {
+                if (e is CancellationException)
+                    throw e
+                e.printStackTrace()
             }
         }
     }

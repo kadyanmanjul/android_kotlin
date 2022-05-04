@@ -26,12 +26,13 @@ private const val TAG = "AgoraWebrtcService"
 
 internal class AgoraWebrtcService(val scope: CoroutineScope) : WebrtcService {
     private var agoraEngine: RtcEngine? = null
-    private val eventFlow : MutableSharedFlow<CallState> = MutableSharedFlow(replay = 0)
+    private val eventFlow: MutableSharedFlow<CallState> = MutableSharedFlow(replay = 0)
     private var state = MutableSharedFlow<Int>(replay = 0)
+
     // TODO: Make State More reliable
     private var currentState = IDLE
 
-    private lateinit var lazyJoin : Deferred<Unit>
+    private lateinit var lazyJoin: Deferred<Unit>
     private val listener by lazy { AgoraEventHandler(scope) }
 
     init {
@@ -50,67 +51,86 @@ internal class AgoraWebrtcService(val scope: CoroutineScope) : WebrtcService {
 
     override fun connectCall(request: CallRequest) {
         scope.launch {
-            voipLog?.log("Connecting Call $agoraEngine")
-            state.emit(JOINING)
-            currentState = JOINING
-            val status = joinChannel(request)
-            voipLog?.log("Join Channel Status ----> $status")
-            when(status) {
-                JOINING_CHANNEL_SUCCESS -> {}
-                USER_ALREADY_IN_A_CHANNEL -> {
-                    state.emit(LEAVING_AND_JOINING)
-                    currentState = LEAVING_AND_JOINING
-                    createLazyJoinRequest(request)
-                    leaveChannel()
+            try {
+                voipLog?.log("Connecting Call $agoraEngine")
+                state.emit(JOINING)
+                currentState = JOINING
+                val status = joinChannel(request)
+                voipLog?.log("Join Channel Status ----> $status")
+                when (status) {
+                    JOINING_CHANNEL_SUCCESS -> {}
+                    USER_ALREADY_IN_A_CHANNEL -> {
+                        state.emit(LEAVING_AND_JOINING)
+                        currentState = LEAVING_AND_JOINING
+                        createLazyJoinRequest(request)
+                        leaveChannel()
+                    }
+                    else -> {
+                        state.emit(IDLE)
+                        currentState = IDLE
+                        eventFlow.emit(CallState.Error)
+                    }
                 }
-                else -> {
-                    state.emit(IDLE)
-                    currentState = IDLE
-                    eventFlow.emit(CallState.Error)
-                }
+                // 1. API Call to notify backend Start Listening to Pubnub Channel
+                // 2. Will send timeout (Use a Timer/repeat/loop and break-out from it when receive channel through pubnub)
+                // 3. Receive Token and Channel through Pubnub [Pubnub Module]
+                // 4. Join Channel through Agora SDK
+            } catch (e: Exception) {
+                if (e is CancellationException)
+                    throw e
+                e.printStackTrace()
             }
-            // 1. API Call to notify backend Start Listening to Pubnub Channel
-            // 2. Will send timeout (Use a Timer/repeat/loop and break-out from it when receive channel through pubnub)
-            // 3. Receive Token and Channel through Pubnub [Pubnub Module]
-            // 4. Join Channel through Agora SDK
+
         }
     }
 
     override fun disconnectCall() {
         voipLog?.log("Disconnecting Call")
         scope.launch {
-            // 1. Send DISCONNECTING signal through Pubnub
-            // 2. Leave Channel through Agora SDK
-            stopLazyJoin()
-            state.emit(LEAVING)
-            currentState = LEAVING
-            leaveChannel()
+            try {
+                // 1. Send DISCONNECTING signal through Pubnub
+                // 2. Leave Channel through Agora SDK
+                stopLazyJoin()
+                state.emit(LEAVING)
+                currentState = LEAVING
+                leaveChannel()
+            } catch (e: Exception) {
+                if (e is CancellationException)
+                    throw e
+                e.printStackTrace()
+            }
         }
     }
 
     private fun createLazyJoinRequest(request: CallRequest) {
         scope.launch {
-            lazyJoin = async(start = CoroutineStart.LAZY) {
-                if(isActive) {
-                    val status = joinChannel(request)
-                    if (status != JOINING_CHANNEL_SUCCESS && isActive)
-                        eventFlow.emit(CallState.Error)
+            try {
+                lazyJoin = async(start = CoroutineStart.LAZY) {
+                    if (isActive) {
+                        val status = joinChannel(request)
+                        if (status != JOINING_CHANNEL_SUCCESS && isActive)
+                            eventFlow.emit(CallState.Error)
+                    }
                 }
+            } catch (e: Exception) {
+                if (e is CancellationException)
+                    throw e
+                e.printStackTrace()
             }
         }
     }
 
     private fun stopLazyJoin() {
-        if(this@AgoraWebrtcService::lazyJoin.isInitialized)
+        if (this@AgoraWebrtcService::lazyJoin.isInitialized)
             lazyJoin.cancel()
     }
 
     private fun startLazyJoin() {
-        if(this@AgoraWebrtcService::lazyJoin.isInitialized)
+        if (this@AgoraWebrtcService::lazyJoin.isInitialized)
             lazyJoin.start()
     }
 
-    override fun muteAudioStream(muteAudio : Boolean) {
+    override fun muteAudioStream(muteAudio: Boolean) {
         agoraEngine?.muteLocalAudioStream(muteAudio)
     }
 
@@ -129,7 +149,7 @@ internal class AgoraWebrtcService(val scope: CoroutineScope) : WebrtcService {
         agoraEngine = null
     }
 
-    private fun joinChannel(request : CallRequest) : Int? {
+    private fun joinChannel(request: CallRequest): Int? {
         voipLog?.log("Joining Channel")
         agoraEngine?.apply {
             val audio = Utils.context?.getSystemService(AUDIO_SERVICE) as AudioManager
@@ -153,66 +173,76 @@ internal class AgoraWebrtcService(val scope: CoroutineScope) : WebrtcService {
 
     private fun observeCallbacks() {
         scope.launch {
-            listener.observeCallEvents().collect { callState ->
-                voipLog?.log("observeCallbacks : CallState = $callState .... $state")
-                when(callState) {
-                    CallState.CallDisconnected, CallState.Idle -> {
-                        if(currentState == LEAVING_AND_JOINING) {
-                            voipLog?.log("LEAVING_AND_JOINING")
-                            startLazyJoin()
+            try {
+                listener.observeCallEvents().collect { callState ->
+                    try {
+                        voipLog?.log("observeCallbacks : CallState = $callState .... $state")
+                        when (callState) {
+                            CallState.CallDisconnected, CallState.Idle -> {
+                                if (currentState == LEAVING_AND_JOINING) {
+                                    voipLog?.log("LEAVING_AND_JOINING")
+                                    startLazyJoin()
+                                } else {
+                                    state.emit(IDLE)
+                                    currentState = IDLE
+                                }
+                                eventFlow.emit(callState)
+                            }
+                            CallState.CallConnected -> {
+                                //TODO: Use Reconnecting
+                                if (currentState == CONNECTED) {
+                                    eventFlow.emit(CallState.OnReconnected)
+                                } else {
+                                    state.emit(CONNECTED)
+                                    currentState = CONNECTED
+                                    eventFlow.emit(callState)
+                                }
+                            }
+                            CallState.CallInitiated -> {
+                                state.emit(JOINED)
+                                currentState = JOINED
+                                eventFlow.emit(callState)
+                            }
+                            CallState.OnReconnecting -> {
+                                eventFlow.emit(callState)
+                            }
+                            CallState.OnReconnected -> {
+                                eventFlow.emit(callState)
+                            }
+                            CallState.UserAlreadyDisconnectedError -> {
+                                state.emit(IDLE)
+                                currentState = IDLE
+                                eventFlow.emit(callState)
+                            }
+                            CallState.Error -> {
+                                if (currentState == JOINED || currentState == CONNECTED || currentState == JOINING) {
+                                    Log.d("disconnectCall()", "observeCallbacks: ")
+                                    disconnectCall()
+                                } else {
+                                    state.emit(IDLE)
+                                    currentState = IDLE
+                                }
+                                eventFlow.emit(callState)
+                            }
+                            CallState.UserLeftChannel -> {
+                                eventFlow.emit(callState)
+                            }
                         }
-                        else {
-                            state.emit(IDLE)
-                            currentState = IDLE
-                        }
-                        eventFlow.emit(callState)
-                    }
-                    CallState.CallConnected -> {
-                        //TODO: Use Reconnecting
-                        if(currentState == CONNECTED) {
-                            eventFlow.emit(CallState.OnReconnected)
-                        } else {
-                            state.emit(CONNECTED)
-                            currentState = CONNECTED
-                            eventFlow.emit(callState)
-                        }
-                    }
-                    CallState.CallInitiated -> {
-                        state.emit(JOINED)
-                        currentState = JOINED
-                        eventFlow.emit(callState)
-                    }
-                    CallState.OnReconnecting -> {
-                        eventFlow.emit(callState)
-                    }
-                    CallState.OnReconnected -> {
-                        eventFlow.emit(callState)
-                    }
-                    CallState.UserAlreadyDisconnectedError -> {
-                        state.emit(IDLE)
-                        currentState = IDLE
-                        eventFlow.emit(callState)
-                    }
-                    CallState.Error -> {
-                        if(currentState == JOINED || currentState == CONNECTED || currentState == JOINING) {
-                            Log.d("disconnectCall()", "observeCallbacks: ")
-                            disconnectCall()
-                        }
-                        else {
-                            state.emit(IDLE)
-                            currentState = IDLE
-                        }
-                        eventFlow.emit(callState)
-                    }
-                    CallState.UserLeftChannel -> {
-                        eventFlow.emit(callState)
+                        voipLog?.log("observeCallbacks : CallState = $callState")
+                    } catch (e: Exception) {
+                        if (e is CancellationException)
+                            throw e
+                        e.printStackTrace()
                     }
                 }
-                voipLog?.log("observeCallbacks : CallState = $callState")
+            } catch (e: Exception) {
+                if (e is CancellationException)
+                    throw e
+                e.printStackTrace()
             }
         }
     }
 }
 
 // TODO: Will Use this class instead of Message
-data class Envelope<T : Enum<T>>(val type : T, val data : Any? = null)
+data class Envelope<T : Enum<T>>(val type: T, val data: Any? = null)

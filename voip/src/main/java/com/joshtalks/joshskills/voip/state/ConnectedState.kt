@@ -194,34 +194,41 @@ class ConnectedState(val context: CallContext) : VoipState {
 
     private fun moveToLeavingState() {
         scope.launch {
-            listenerJob?.cancel()
-            context.closeCallScreen()
-            Log.d(TAG, "moveToLeavingState: after close screen")
-            val networkAction = NetworkAction(
-                channelName = context.channelData.getChannel(),
-                uid = context.channelData.getAgoraUid(),
-                type = ServerConstants.DISCONNECTED,
-                duration = context.durationInMillis.inSeconds(),
-                address = context.channelData.getPartnerMentorId()
-            )
-            context.sendMessageToServer(networkAction)
-            // Show Dialog
-            Utils.context?.updateLastCallDetails(
-                duration = context.durationInMillis.inSeconds(),
-                remoteUserName = context.channelData.getCallingPartnerName(),
-                remoteUserImage = context.channelData.getCallingPartnerImage(),
-                callId = context.channelData.getCallingId(),
-                callType = context.callType,
-                remoteUserAgoraId = context.channelData.getPartnerUid(),
-                localUserAgoraId = context.channelData.getAgoraUid(),
-                channelName = context.channelData.getChannel(),
-                topicName = context.channelData.getCallingTopic()
-            )
-            context.disconnectCall()
-            PrefManager.setVoipState(State.LEAVING)
-            context.state = LeavingState(context)
-            Log.d(TAG, "Received : switched to ${context.state}")
-            scope.cancel()
+            try{
+                listenerJob?.cancel()
+                context.closeCallScreen()
+                Log.d(TAG, "moveToLeavingState: after close screen")
+                val networkAction = NetworkAction(
+                    channelName = context.channelData.getChannel(),
+                    uid = context.channelData.getAgoraUid(),
+                    type = ServerConstants.DISCONNECTED,
+                    duration = context.durationInMillis.inSeconds(),
+                    address = context.channelData.getPartnerMentorId()
+                )
+                context.sendMessageToServer(networkAction)
+                // Show Dialog
+                Utils.context?.updateLastCallDetails(
+                    duration = context.durationInMillis.inSeconds(),
+                    remoteUserName = context.channelData.getCallingPartnerName(),
+                    remoteUserImage = context.channelData.getCallingPartnerImage(),
+                    callId = context.channelData.getCallingId(),
+                    callType = context.callType,
+                    remoteUserAgoraId = context.channelData.getPartnerUid(),
+                    localUserAgoraId = context.channelData.getAgoraUid(),
+                    channelName = context.channelData.getChannel(),
+                    topicName = context.channelData.getCallingTopic()
+                )
+                context.disconnectCall()
+                PrefManager.setVoipState(State.LEAVING)
+                context.state = LeavingState(context)
+                Log.d(TAG, "Received : switched to ${context.state}")
+                scope.cancel()
+            }
+            catch (e : Exception){
+                if(e is CancellationException)
+                    throw e
+                e.printStackTrace()
+            }
         }
     }
 }

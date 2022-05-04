@@ -9,6 +9,7 @@ import android.telephony.PhoneStateListener
 import android.telephony.TelephonyManager
 import android.util.Log
 import com.joshtalks.joshskills.voip.voipLog
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -45,21 +46,42 @@ class PSTNStateReceiver(val scope: CoroutineScope) : BroadcastReceiver() {
             TelephonyManager.EXTRA_STATE_IDLE -> {
                 state = TelephonyManager.CALL_STATE_IDLE
                 CoroutineScope(Dispatchers.IO).launch {
-                    pstnFlow.emit(PSTNState.Idle)
+                    try{
+                        pstnFlow.emit(PSTNState.Idle)
+                    }
+                    catch (e : Exception){
+                        if(e is CancellationException)
+                            throw e
+                        e.printStackTrace()
+                    }
                 }
                 voipLog?.log("getCallingState: Idle $state")
             }
             TelephonyManager.EXTRA_STATE_OFFHOOK -> {
                 state = TelephonyManager.CALL_STATE_OFFHOOK
                 scope.launch {
-                    pstnFlow.emit(PSTNState.OnCall)
+                    try{
+                        pstnFlow.emit(PSTNState.OnCall)
+                    }
+                    catch (e : Exception){
+                        if(e is CancellationException)
+                            throw e
+                        e.printStackTrace()
+                    }
                 }
                 Log.d(TAG, "getCallingState:OffHook  $state")
             }
             TelephonyManager.EXTRA_STATE_RINGING -> {
                 state = TelephonyManager.CALL_STATE_RINGING
                 scope.launch {
-                    pstnFlow.emit(PSTNState.Ringing)
+                    try{
+                        pstnFlow.emit(PSTNState.Ringing)
+                    }
+                    catch (e : Exception){
+                        if(e is CancellationException)
+                            throw e
+                        e.printStackTrace()
+                    }
                 }
                 Log.d(TAG, "getCallingState: Ringing $state")
             }
