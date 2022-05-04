@@ -48,6 +48,7 @@ data class GroupsItem(
     @field:SerializedName("total_calls")
     val totalCalls: String? = null,
 
+    @field:SerializedName("mentor_id")
     val adminId: String? = null,
 
     @field:SerializedName("group_type")

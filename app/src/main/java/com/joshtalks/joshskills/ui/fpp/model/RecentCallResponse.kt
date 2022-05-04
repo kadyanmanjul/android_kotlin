@@ -12,5 +12,6 @@ data class RecentCall(
     @SerializedName("fpp_request_status") var fppRequestStatus: String?,
     @SerializedName("mentor_id") var receiverMentorId: String?,
     @SerializedName("text") var textToShow: String?,
-    @SerializedName("call_type") var callType: String?
+    @SerializedName("call_type") var callType: String?,
+    @SerializedName("calls_count") var callCount: String?
 )

@@ -546,6 +546,7 @@ class GroupChatViewModel : BaseViewModel() {
         try {
             viewModelScope.launch (Dispatchers.IO){
                 repository.removeUserFormFppLit(uId)
+                pushMetaMessage("${Mentor.getInstance().getUser()?.firstName} block $groupHeader", groupId, adminId)
                 withContext(Dispatchers.Main) {
                     message.what = REMOVE_GROUP_AND_CLOSE
                     message.obj = groupId

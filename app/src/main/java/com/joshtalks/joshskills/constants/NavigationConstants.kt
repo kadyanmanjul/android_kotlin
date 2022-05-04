@@ -49,3 +49,5 @@ const val REMOVE_DM_FPP = 231
 const val CLOSE_REPORT = 2001
 
 const val INTERNET_FAILURE = 12023
+const val REMOVE_AND_BLOCK_FPP  = 300
+
