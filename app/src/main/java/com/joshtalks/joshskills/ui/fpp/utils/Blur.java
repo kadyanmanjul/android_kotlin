@@ -21,7 +21,8 @@ class Blur {
         view.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_LOW);
         Bitmap cache = view.getDrawingCache();
         Bitmap bitmap = of(view.getContext(), cache, factor);
-        cache.recycle();
+        if (cache != null && !cache.isRecycled())
+            cache.recycle();
         return bitmap;
     }
 

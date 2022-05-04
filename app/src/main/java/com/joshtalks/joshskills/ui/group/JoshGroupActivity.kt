@@ -307,10 +307,10 @@ class JoshGroupActivity : BaseGroupActivity() {
             while (supportFragmentManager.backStackEntryCount > 0)
                 onBackPressed()
         CoroutineScope(Dispatchers.IO).launch {
-            val groupName = vm.repository.getGroupName(groupId)
+            val groupName: String? = vm.repository.getGroupName(groupId)
             vm.repository.leaveGroupFromLocal(groupId)
             withContext(Dispatchers.Main) {
-                showRemovedAlert(groupName)
+                showRemovedAlert(groupName?: EMPTY)
             }
         }
     }

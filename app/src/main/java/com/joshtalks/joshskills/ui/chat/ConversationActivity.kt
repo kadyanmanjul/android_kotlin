@@ -87,6 +87,7 @@ import com.joshtalks.joshskills.ui.course_progress_new.CourseProgressActivityNew
 import com.joshtalks.joshskills.ui.courseprogress.CourseProgressActivity
 import com.joshtalks.joshskills.ui.extra.AUTO_START_POPUP
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
+import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.ui.fpp.SeeAllRequestsActivity
 import com.joshtalks.joshskills.ui.fpp.constants.IS_ACCEPTED
 import com.joshtalks.joshskills.ui.fpp.constants.IS_REJECTED
@@ -741,7 +742,7 @@ class ConversationActivity :
 //            val intent = Intent(this, JoshGroupActivity::class.java)
 //            startActivity(intent)
 //        }
-        conversationBinding.imgActivityFeed.setOnClickListener {
+        conversationBinding.imgActivityFeed.setOnSingleClickListener {
             if (inboxEntity.isCourseBought.not() &&
                 inboxEntity.expiryDate != null &&
                 inboxEntity.expiryDate!!.time < System.currentTimeMillis()
@@ -755,7 +756,7 @@ class ConversationActivity :
             }
         }
 
-        conversationBinding.imgFppRequest.setOnClickListener {
+        conversationBinding.imgFppRequest.setOnSingleClickListener {
             if (inboxEntity.isCourseBought.not() &&
                 inboxEntity.expiryDate != null &&
                 inboxEntity.expiryDate!!.time < System.currentTimeMillis()
@@ -769,7 +770,7 @@ class ConversationActivity :
             }
         }
 
-        conversationBinding.imgGroupChatBtn.setOnClickListener {
+        conversationBinding.imgGroupChatBtn.setOnSingleClickListener {
             if (inboxEntity.isCourseBought.not() &&
                 inboxEntity.expiryDate != null &&
                 inboxEntity.expiryDate!!.time < System.currentTimeMillis()
@@ -786,7 +787,7 @@ class ConversationActivity :
             }
         }
 
-        conversationBinding.imgGameBtn.setOnClickListener {
+        conversationBinding.imgGameBtn.setOnSingleClickListener {
             if (inboxEntity.isCourseBought.not() &&
                 inboxEntity.expiryDate != null &&
                 inboxEntity.expiryDate!!.time < System.currentTimeMillis()

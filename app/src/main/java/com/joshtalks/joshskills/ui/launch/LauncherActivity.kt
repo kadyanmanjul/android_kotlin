@@ -150,69 +150,71 @@ class LauncherActivity : CoreJoshActivity() {
             )
         }
         lifecycleScope.launch(Dispatchers.IO) {
-            Branch.sessionBuilder(WeakReference(this@LauncherActivity).get())
-                .withCallback { referringParams, error ->
-                    try {
-                        val jsonParams =
-                            referringParams ?: (Branch.getInstance().firstReferringParams
-                                ?: Branch.getInstance().latestReferringParams)
-                        Timber.tag("BranchDeepLinkParams : ")
-                            .d("jsonParams = $jsonParams, error = $error")
-                        var testId: String? = null
-                        var exploreType: String? = null
-                        val installReferrerModel =
-                            InstallReferrerModel.getPrefObject() ?: InstallReferrerModel()
-                        jsonParams?.let {
-                            AppObjectController.uiHandler.removeCallbacksAndMessages(null)
-                            if (it.has(Defines.Jsonkey.AndroidDeepLinkPath.key)) {
-                                testId =
-                                    it.getString(Defines.Jsonkey.AndroidDeepLinkPath.key)
-                            } else if (it.has(Defines.Jsonkey.ContentType.key)) {
-                                exploreType = if (it.has(Defines.Jsonkey.ContentType.key)) {
-                                    it.getString(Defines.Jsonkey.ContentType.key)
-                                } else null
+            try {
+                Branch.sessionBuilder(WeakReference(this@LauncherActivity).get())
+                    .withCallback { referringParams, error ->
+                        try {
+                            val jsonParams =
+                                referringParams ?: (Branch.getInstance().firstReferringParams
+                                    ?: Branch.getInstance().latestReferringParams)
+                            Timber.tag("BranchDeepLinkParams : ")
+                                .d("jsonParams = $jsonParams, error = $error")
+                            var testId: String? = null
+                            var exploreType: String? = null
+                            val installReferrerModel =
+                                InstallReferrerModel.getPrefObject() ?: InstallReferrerModel()
+                            jsonParams?.let {
+                                AppObjectController.uiHandler.removeCallbacksAndMessages(null)
+                                if (it.has(Defines.Jsonkey.AndroidDeepLinkPath.key)) {
+                                    testId =
+                                        it.getString(Defines.Jsonkey.AndroidDeepLinkPath.key)
+                                } else if (it.has(Defines.Jsonkey.ContentType.key)) {
+                                    exploreType = if (it.has(Defines.Jsonkey.ContentType.key)) {
+                                        it.getString(Defines.Jsonkey.ContentType.key)
+                                    } else null
+                                }
+                                if (it.has(Defines.Jsonkey.ReferralCode.key))
+                                    installReferrerModel.utmSource =
+                                        it.getString(Defines.Jsonkey.ReferralCode.key)
+                                if (it.has(Defines.Jsonkey.UTMMedium.key))
+                                    installReferrerModel.utmMedium =
+                                        it.getString(Defines.Jsonkey.UTMMedium.key)
+                                if (it.has(Defines.Jsonkey.UTMCampaign.key))
+                                    installReferrerModel.utmTerm =
+                                        it.getString(Defines.Jsonkey.UTMCampaign.key)
+                                InstallReferrerModel.update(installReferrerModel)
                             }
-                            if (it.has(Defines.Jsonkey.ReferralCode.key))
-                                installReferrerModel.utmSource =
-                                    it.getString(Defines.Jsonkey.ReferralCode.key)
-                            if (it.has(Defines.Jsonkey.UTMMedium.key))
-                                installReferrerModel.utmMedium =
-                                    it.getString(Defines.Jsonkey.UTMMedium.key)
-                            if (it.has(Defines.Jsonkey.UTMCampaign.key))
-                                installReferrerModel.utmTerm =
-                                    it.getString(Defines.Jsonkey.UTMCampaign.key)
-                            InstallReferrerModel.update(installReferrerModel)
+                            if (isFinishing.not()) {
+                                initReferral(testId = testId, exploreType = exploreType, jsonParams)
+                                initAfterBranch(testId = testId, exploreType = exploreType)
+                            }
+                        } catch (ex: Throwable) {
+                            ex.printStackTrace()
+                            startNextActivity()
+                            LogException.catchException(ex)
                         }
-                        if (isFinishing.not()) {
-                            initReferral(testId = testId, exploreType = exploreType, jsonParams)
-                            initAfterBranch(testId = testId, exploreType = exploreType)
+                    }.withData(this@LauncherActivity.intent.data).init()
+                /*Firebase.dynamicLinks
+                    .getDynamicLink(intent)
+                    .addOnSuccessListener { pendingDynamicLinkData ->
+                        var deepLink: Uri? = null
+                        if (pendingDynamicLinkData != null) {
+                            deepLink = pendingDynamicLinkData.link
                         }
-                    } catch (ex: Throwable) {
-                        ex.printStackTrace()
-                        startNextActivity()
-                        LogException.catchException(ex)
+                        if (deepLink != null) {
+                            Snackbar.make(findViewById(android.R.id.content),
+                                "Found deep link!$deepLink", Snackbar.LENGTH_LONG).show()
+                            Log.e(TAG, "initApp: ${pendingDynamicLinkData.toString()}")
+                            Log.e(TAG, "initApp: deepLink=> ${pendingDynamicLinkData.link}")
+                            Log.e(TAG, "initApp: utmParameters=> ${pendingDynamicLinkData.utmParameters}")
+                            Log.e(TAG, "initApp: clickTimestamp=> ${pendingDynamicLinkData.clickTimestamp}")
+                            Log.e(TAG, "initApp: extensions=> ${pendingDynamicLinkData.extensions}")
+                        } else {
+                            Log.d(TAG, "getDynamicLink: no link found")
+                        }
                     }
-                }.withData(this@LauncherActivity.intent.data).init()
-            /*Firebase.dynamicLinks
-                .getDynamicLink(intent)
-                .addOnSuccessListener { pendingDynamicLinkData ->
-                    var deepLink: Uri? = null
-                    if (pendingDynamicLinkData != null) {
-                        deepLink = pendingDynamicLinkData.link
-                    }
-                    if (deepLink != null) {
-                        Snackbar.make(findViewById(android.R.id.content),
-                            "Found deep link!$deepLink", Snackbar.LENGTH_LONG).show()
-                        Log.e(TAG, "initApp: ${pendingDynamicLinkData.toString()}")
-                        Log.e(TAG, "initApp: deepLink=> ${pendingDynamicLinkData.link}")
-                        Log.e(TAG, "initApp: utmParameters=> ${pendingDynamicLinkData.utmParameters}")
-                        Log.e(TAG, "initApp: clickTimestamp=> ${pendingDynamicLinkData.clickTimestamp}")
-                        Log.e(TAG, "initApp: extensions=> ${pendingDynamicLinkData.extensions}")
-                    } else {
-                        Log.d(TAG, "getDynamicLink: no link found")
-                    }
-                }
-                .addOnFailureListener { e -> Log.w(TAG, *//*"getDynamicLink:onFailure", e) }*/
+                    .addOnFailureListener { e -> Log.w(TAG, *//*"getDynamicLink:onFailure", e) }*/
+            }catch (ex:Exception){}
         }
     }
 
