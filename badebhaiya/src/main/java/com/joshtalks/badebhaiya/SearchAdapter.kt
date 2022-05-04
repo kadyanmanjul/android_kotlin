@@ -76,9 +76,6 @@ class SearchAdapter(private val searchResult: List<Users>,var call: Call): ListA
             parent,
             false
         )
-//        view.btnFollow.setOnClickListener{
-//            showToast("hum bhi bana lenge ")
-//        }
         return SearchViewHolder(view)
     }
 

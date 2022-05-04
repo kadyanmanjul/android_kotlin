@@ -10,8 +10,10 @@ class ReminderRequest(
     @SerializedName("user")
     val userId: String,
     @SerializedName("reminder_time")
-    val reminderTime: String
+    val reminderTime: String,
+    @SerializedName("is_from_deeplink")
+    val isFromDeeplink:Boolean
 ) {
-    constructor(roomId: String, userId: String, reminderTime: Long) :
-            this(roomId, userId, SimpleDateFormat("yyyy-MM-dd hh:mm").format(Date(reminderTime)))
+    constructor(roomId: String, userId: String, reminderTime: Long,isFromDeeplink: Boolean) :
+            this(roomId, userId, SimpleDateFormat("yyyy-MM-dd hh:mm").format(Date(reminderTime)),isFromDeeplink)
 }

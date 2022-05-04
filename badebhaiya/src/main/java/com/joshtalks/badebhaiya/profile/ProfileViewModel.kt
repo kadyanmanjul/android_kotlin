@@ -14,11 +14,13 @@ import com.joshtalks.badebhaiya.profile.request.DeleteReminderRequest
 import com.joshtalks.badebhaiya.profile.request.FollowRequest
 import com.joshtalks.badebhaiya.profile.request.ReminderRequest
 import com.joshtalks.badebhaiya.profile.response.ProfileResponse
+import com.joshtalks.badebhaiya.pubnub.PubNubData
+import com.joshtalks.badebhaiya.pubnub.PubNubState
 import com.joshtalks.badebhaiya.repository.BBRepository
 import com.joshtalks.badebhaiya.repository.ConversationRoomRepository
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.repository.service.RetrofitInstance
-import com.joshtalks.badebhaiya.utils.setUserImageOrInitials
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class ProfileViewModel : ViewModel() {
@@ -39,6 +41,19 @@ class ProfileViewModel : ViewModel() {
     var singleLiveEvent: MutableLiveData<Message> = MutableLiveData()
     val speakerFollowed = MutableLiveData(false)
     val isSelfProfile = ObservableBoolean(false)
+    var pubNubState = PubNubState.ENDED
+
+    init {
+        collectPubNubState()
+    }
+
+    private fun collectPubNubState() {
+        viewModelScope.launch {
+            PubNubData.pubNubState.collect {
+                pubNubState = it
+            }
+        }
+    }
     fun updateFollowStatus(userId:String) {
         speakerFollowed.value?.let {
             if (it.not()) {
@@ -86,15 +101,13 @@ class ProfileViewModel : ViewModel() {
                 val response = repository.getProfileForUser(userId)
                 if (response.isSuccessful) {
                     response.body()?.let {
-                        //showToast("${it.fullName}")
-                        userProfileData.value=it
+                        userProfileData.postValue(it)
                         userFullName.set(it.fullName)
                         profileUrl= it.profilePicUrl?: ""
                         speakerFollowed.postValue(it.isSpeakerFollowed)
                         isBadeBhaiyaSpeaker.set(it.isSpeaker)
                         isBadeBhaiyaSpeaker.notifyChange()
                         isBioTextAvailable.set(it.bioText.isNullOrEmpty().not())
-                        showToast("${userProfileData.value?.firstName}")
                         isSelfProfile.set(it.userId == User.getInstance().userId)
                         val list = mutableListOf<RoomListResponseItem>()
                         if (it.liveRoomList.isNullOrEmpty().not())

@@ -14,11 +14,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.joshtalks.badebhaiya.core.showToast
 import com.joshtalks.badebhaiya.databinding.FragmentSearchBinding
+import com.joshtalks.badebhaiya.feed.Call
 import com.joshtalks.badebhaiya.feed.FeedActivity
 import com.joshtalks.badebhaiya.feed.FeedViewModel
-import com.joshtalks.badebhaiya.feed.Call
 import com.joshtalks.badebhaiya.feed.model.Users
 import com.joshtalks.badebhaiya.profile.ProfileActivity
 import kotlinx.android.synthetic.main.activity_feed.*
@@ -147,7 +146,13 @@ class SearchFragment : Fragment(), Call {
     }
 
     override fun itemClick(userId:String) {
-        var c=userId
-        showToast(userId)
+        val nextFrag = ProfileActivity()
+        val bundle = Bundle()
+        bundle.putString("user", userId) // use as per your need
+        nextFrag.arguments = bundle
+        activity?.supportFragmentManager?.beginTransaction()
+            ?.replace(R.id.profile_frame, nextFrag, "findThisFragment")
+            ?.addToBackStack(null)
+            ?.commit()
     }
 }

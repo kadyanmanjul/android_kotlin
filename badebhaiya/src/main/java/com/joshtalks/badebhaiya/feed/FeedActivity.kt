@@ -217,18 +217,6 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
             Log.d("ABC2", "Data class called with data message: ${it.what} bundle : ${it.data}")
             when (it.what) {
                 OPEN_PROFILE -> {
-//                    it.data?.let {
-//                        val userId = it.getString(USER_ID, EMPTY)
-//                        if (userId.isNullOrBlank().not()) {
-//
-//                            //ProfileActivity.openProfileActivity(this, userId)
-//                            supportFragmentManager.findFragmentByTag(ProfileActivity::class.java.simpleName)
-//                            supportFragmentManager.beginTransaction()
-//                                .replace(R.id.root_view, ProfileActivity(), ProfileActivity::class.java.simpleName)
-//                                .commit()
-//                        }
-//                    }
-
                     var bundle=Bundle()
                     bundle.putString("user",it.data.getString(USER_ID, EMPTY))
                     supportFragmentManager.findFragmentByTag(ProfileActivity::class.java.simpleName)
@@ -237,6 +225,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                         .commit()
                 }
                 OPEN_ROOM -> {
+
                     it.data?.let {
                         it.getParcelable<ConversationRoomResponse>(ROOM_DETAILS)?.let { room ->
                             val liveRoomProperties = StartingLiveRoomProperties.createFromRoom(
@@ -247,8 +236,6 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                         }
                     }
                 }
-
-
                 SCROLL_TO_TOP->{
                     binding.recyclerView.layoutManager?.scrollToPosition(0)
                 }
@@ -406,7 +393,8 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                     ReminderRequest(
                         roomId = room.roomId.toString(),
                         userId = User.getInstance().userId,
-                        reminderTime = room.startTimeDate.minus(5 * 60 * 1000)
+                        reminderTime = room.startTimeDate.minus(5 * 60 * 1000),
+                        false
                     )
                 )
             }
@@ -472,7 +460,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         fragmentTransaction.addToBackStack(null)
         fragmentTransaction.replace(R.id.root_view, fragment)
         fragmentTransaction.commit()
-        showToast("${room.speakersData?.userId}")
+
 //        supportFragmentManager.findFragmentByTag(ProfileActivity::class.java.simpleName)
 //        supportFragmentManager.beginTransaction()
 //            .replace(R.id.root_view, ProfileActivity(), ProfileActivity::class.java.simpleName)

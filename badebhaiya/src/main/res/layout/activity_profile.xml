@@ -17,6 +17,7 @@
         android:layout_width="match_parent"
         android:id="@+id/profile"
         android:layout_height="match_parent"
+        android:clickable="true"
         android:background="@color/base_app_color">
 
         <include
@@ -136,6 +137,11 @@
             app:layout_constraintTop_toBottomOf="@+id/tvSpeakerRoomHeading"
             app:layout_constraintBottom_toBottomOf="parent"
             tools:listitem="@layout/li_room_event" />
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/room_frame"
+            />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
