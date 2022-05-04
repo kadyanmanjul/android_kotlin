@@ -2161,7 +2161,7 @@ class ConversationActivity :
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         try {
-            if (resultCode == RESULT_OK) {
+            if (requestCode == IMAGE_SELECT_REQUEST_CODE && resultCode == RESULT_OK) {
                 val url = data?.data?.path ?: EMPTY
 
                 if (url.isNotBlank()) {
