@@ -27,6 +27,7 @@ class ConnectedState(val context: CallContext) : VoipState {
     // Red Button Pressed
     override fun disconnect() {
         scope.launch {
+                Log.d(TAG, "disconnect : User Red Press switching to Leaving State")
             moveToLeavingState()
         }
     }
@@ -47,6 +48,7 @@ class ConnectedState(val context: CallContext) : VoipState {
 
     // Handle Events related to Connected State
     private fun observe() {
+        Log.d(TAG, "Started Observing")
         listenerJob = scope.launch {
             try {
                 loop@ while (true) {
@@ -185,6 +187,7 @@ class ConnectedState(val context: CallContext) : VoipState {
                     throw e
                 else {
                     e.printStackTrace()
+                    Log.d(TAG, "disconnect : Exception $e switching to Leaving State")
                     moveToLeavingState()
                 }
             }

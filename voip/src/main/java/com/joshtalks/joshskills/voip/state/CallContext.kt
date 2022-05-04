@@ -30,27 +30,33 @@ data class CallContext(val callType: Int, val direction : CallDirection, val req
 
 
     fun connect() {
+        Log.d(TAG, "connect")
         state.connect()
     }
 
     fun disconnect() {
+        Log.d(TAG, "disconnect")
         state.disconnect()
     }
 
     fun backPress() {
+        Log.d(TAG, "Back pressed")
         state.backPress()
     }
 
     fun disconnectCall() {
+        Log.d(TAG, "disconnect Call From Webrtc ")
         mediator.disconnectCallFromWebrtc()
     }
 
     fun updateUIState(uiState: UIState) {
+        Log.d(TAG, "Updating UI state $uiState ")
         currentUiState = uiState
         mediator.uiStateFlow.value = currentUiState
     }
 
     fun joinChannel(channelData: ChannelData) {
+        Log.d(TAG, "Join Channel with $channelData")
         mediator.joinChannel(channelData)
     }
 
@@ -62,10 +68,12 @@ data class CallContext(val callType: Int, val direction : CallDirection, val req
     }
 
     fun destroyState() {
+        Log.d(TAG, "Destroy State ")
         state.onDestroy()
     }
 
     fun onError() {
+        Log.d(TAG, "OnError ")
         state.onError()
     }
 
@@ -76,30 +84,37 @@ data class CallContext(val callType: Int, val direction : CallDirection, val req
     }
 
     fun reconnecting() {
+        Log.d(TAG, "reconnecting Before Delay ")
         reconnectingJob = scope.launch {
             delay(RECONNECTING_TIMEOUT_IN_MILLIS)
+            Log.d(TAG, "reconnecting After Delay ")
             state.disconnect()
         }
     }
 
     fun reconnected() {
+        Log.d(TAG, "Reconnected After Reconnecting")
         reconnectingJob.cancel()
     }
 
     suspend fun closeCallScreen() {
+        Log.d(TAG, "closeCallScreen} ")
         val envelope = Envelope(Event.CLOSE_CALL_SCREEN)
         sendEventToUI(envelope)
     }
 
     fun getStreamPipe()  : Channel<Envelope<Event>> {
+        Log.d(TAG, "Get Stream Pipe ${mediator.stateChannel} ")
         return mediator.stateChannel
     }
 
     fun sendMessageToServer(event : OutgoingData) {
+        Log.d(TAG, "sendMessageToServer $event} ")
         mediator.sendEventToServer(event)
     }
 
     suspend fun sendEventToUI(event : Envelope<Event>) {
+        Log.d(TAG, "sendMessageToServer $event} ")
         mediator.flow.emit(event)
     }
 
@@ -113,6 +128,7 @@ data class CallContext(val callType: Int, val direction : CallDirection, val req
     }
 
     fun changeMicState(isMuted : Boolean) {
+        Log.d(TAG, "sendMessageToServer $isMuted} ")
         mediator.muteAudio(isMuted)
     }
 }

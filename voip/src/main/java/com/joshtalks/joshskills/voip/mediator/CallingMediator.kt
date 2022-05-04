@@ -68,6 +68,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
     lateinit var stateChannel : Channel<Envelope<Event>>
 
     init {
+        Log.d(TAG, "Inside Init : ${scope.isActive}")
         scope.launch {
             mutex.withLock {
                 handleWebrtcEvent()
@@ -93,13 +94,15 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
     }
 
     override fun connectCall(callType: Int, callData: HashMap<String, Any>) {
-        Log.d(TAG, "connectCall: ")
+        Log.d(TAG, "connectCall: ${scope.isActive} ")
         // TODO: IMPORTANT- We have to make sure that in any case this should not be called twice
         scope.launch {
+            Log.d(TAG, "connectCall : Inside Scope")
             mutex.withLock {
                 /**
                  * Using State Pattern
                  */
+                Log.d(TAG, "connectCall : Inside Lock")
                 if (this@CallingMediator::voipNotification.isInitialized) {
                     voipNotification.removeNotification()
                     stopAudio()
@@ -118,6 +121,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
     }
 
     fun sendEventToServer(data: OutgoingData) {
+        Log.d(TAG, "sendEventToServer : data")
         networkEventChannel.emitEvent(data)
     }
 
@@ -142,6 +146,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
     }
 
     override fun userAction(action: UserAction) {
+        Log.d(TAG, "userAction : $action")
         scope.launch {
             try {
                 when (action) {
@@ -177,6 +182,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                     }
                 }
             } catch (e: Exception) {
+                Log.d(TAG, "userAction : $e")
                 e.printStackTrace()
             }
         }
@@ -187,12 +193,13 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
             try {
                 networkEventChannel.observeChannelState().collect {
                     when (it) {
-                        CONNECTED -> {}
+                        CONNECTED -> {  Log.d(TAG, "observeChannelState : $it") }
                         RECONNECTED -> {
+                            Log.d(TAG, "observeChannelState : $it")
                             val envelope = Envelope(Event.SYNC_UI_STATE)
                             stateChannel.send(envelope)
                         }
-                        DISCONNECTED -> {}
+                        DISCONNECTED -> { Log.d(TAG, "observeChannelState : $it") }
                     }
                 }
             } catch (e: Exception) { }
@@ -200,6 +207,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
     }
 
     override fun onDestroy() {
+        Log.d(TAG, "onDestroy : Destroying channel and services")
         networkEventChannel.onDestroy()
         fallbackEventChannel.onDestroy()
         webrtcService.onDestroy()
@@ -214,13 +222,16 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                     PrefManager.setLatestPubnubMessageTime(latestEventTimestamp)
                     when (it) {
                         is Error -> {
+                            Log.d(TAG, "handlePubnubEvent : $it")
                             callContext?.onError()
                         }
                         is ChannelData -> {
+                            Log.d(TAG, "handlePubnubEvent : $it")
                             val envelope = Envelope(Event.RECEIVED_CHANNEL_DATA,it)
                             stateChannel.send(envelope)
                         }
                         is MessageData -> {
+                            Log.d(TAG, "handlePubnubEvent : $it")
                             if (isMessageForSameChannel(it.getChannel())) {
                                 when (it.getType()) {
                                     ServerConstants.ONHOLD -> {
@@ -247,6 +258,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                             }
                         }
                         is IncomingCall -> {
+                            Log.d(TAG, "handlePubnubEvent : $it")
                             if (isShowingIncomingCall.not() && PrefManager.getVoipState() == State.IDLE) {
                                 updateIncomingCallState(true)
                                 voipLog?.log("Incoming Call -> $it")
@@ -256,6 +268,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                             }
                         }
                         is UI -> {
+                            Log.d(TAG, "handlePubnubEvent : $it")
                             if (isMessageForSameChannel(it.getChannelName())) {
                                 val envelope = Envelope(Event.UI_STATE_UPDATED,it)
                                 stateChannel.send(envelope)
@@ -264,6 +277,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                     }
                 }
             } catch (e: Exception) {
+                Log.d(TAG, "handlePubnubEvent : $e")
                 e.printStackTrace()
             }
         }
@@ -276,32 +290,39 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                     when (it) {
                         CallState.CallConnected -> {
                             // Call Connected
+                            Log.d(TAG, "handleWebrtcEvent : $it")
                             val envelope = Envelope(Event.CALL_CONNECTED_EVENT)
                             stateChannel.send(envelope)
                         }
                         CallState.CallDisconnected -> {
+                            Log.d(TAG, "handleWebrtcEvent : $it")
                             val envelope = Envelope(Event.CALL_DISCONNECTED)
                             stateChannel.send(envelope)
                         }
                         CallState.CallInitiated -> {
                             // CallInitiated
+                            Log.d(TAG, "handleWebrtcEvent : $it")
                             val envelope = Envelope(Event.CALL_INITIATED_EVENT)
                             stateChannel.send(envelope)
                         }
                         CallState.OnReconnected -> {
+                            Log.d(TAG, "handleWebrtcEvent : $it")
                             val envelope = Envelope(Event.RECONNECTED)
                             stateChannel.send(envelope)
                         }
                         CallState.OnReconnecting -> {
+                            Log.d(TAG, "handleWebrtcEvent : $it")
                             val envelope = Envelope(Event.RECONNECTING)
                             stateChannel.send(envelope)
                         }
                         CallState.Error -> {
+                            Log.d(TAG, "handleWebrtcEvent : $it")
                             callContext?.onError()
                         }
                     }
                 }
             } catch (e: Exception) {
+                Log.d(TAG, "handleWebrtcEvent : $e")
                 e.printStackTrace()
             }
         }

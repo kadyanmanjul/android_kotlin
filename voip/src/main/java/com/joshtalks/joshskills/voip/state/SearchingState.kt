@@ -98,6 +98,7 @@ class SearchingState(val context: CallContext) : VoipState {
     }
 
     private fun observe() {
+        Log.d(TAG, "Started Observing")
         scope.launch {
             try {
                 val event = context.getStreamPipe().receive()
@@ -119,6 +120,7 @@ class SearchingState(val context: CallContext) : VoipState {
                     ensureActive()
                     PrefManager.setVoipState(State.JOINING)
                     context.state = JoiningState(context)
+                    Log.d(TAG, "Received : ${event.type} switched to ${context.state}")
                 } else
                     throw IllegalEventException("In $TAG but received ${event.type} expected $RECEIVED_CHANNEL_DATA")
                 scope.cancel()

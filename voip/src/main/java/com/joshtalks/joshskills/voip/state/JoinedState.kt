@@ -28,6 +28,7 @@ class JoinedState(val context: CallContext) : VoipState {
     override fun disconnect() {
         Log.d(TAG, "disconnect: Red Button Pressed")
         scope.launch {
+            Log.d(TAG, "disconnect : User Red Press switching to Leaving State")
             context.closeCallScreen()
             moveToLeavingState()
         }
@@ -47,6 +48,7 @@ class JoinedState(val context: CallContext) : VoipState {
     }
 
     private fun observe() {
+        Log.d(TAG, "Started Observing")
         listenerJob = scope.launch {
             try {
                 loop@ while (true) {
@@ -70,7 +72,9 @@ class JoinedState(val context: CallContext) : VoipState {
                             context.sendEventToUI(connectedEvent)
                             PrefManager.setVoipState(State.CONNECTED)
                             context.state = ConnectedState(context)
-                            break@loop
+                       Log.d(TAG, "Received : ${event.type} switched to ${context.state}")
+
+                       break@loop
                         }
                         MUTE -> {
                             ensureActive()
@@ -188,6 +192,7 @@ class JoinedState(val context: CallContext) : VoipState {
                 else {
                     e.printStackTrace()
                     context.closeCallScreen()
+                    Log.d(TAG, "exception : $e switching to Leaving State")
                     moveToLeavingState()
                 }
             }

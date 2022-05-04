@@ -53,6 +53,7 @@ class ReconnectingState(val context: CallContext) : VoipState {
 
     // Handle Events related to Reconnecting State
     private fun observe() {
+        Log.d(TAG, "Started Observing")
         listenerJob = scope.launch {
             try {
                 loop@ while (true) {
@@ -80,6 +81,7 @@ class ReconnectingState(val context: CallContext) : VoipState {
                             )
                             PrefManager.setVoipState(State.CONNECTED)
                             context.state = ConnectedState(context)
+                            Log.d(TAG, "Received : ${event.type} switched to ${context.state}")
                             break@loop
                         }
                         UI_STATE_UPDATED -> {

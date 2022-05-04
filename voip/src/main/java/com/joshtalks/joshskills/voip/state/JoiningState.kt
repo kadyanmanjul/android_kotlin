@@ -32,7 +32,9 @@ class JoiningState(val context: CallContext) : VoipState {
     }
 
     private fun observe() {
+        Log.d(TAG, "Started Observing")
         listenerJob =  scope.launch {
+            Log.d(TAG, "Started Observing")
             try {
                 loop@ while (true) {
                     ensureActive()
@@ -47,6 +49,7 @@ class JoiningState(val context: CallContext) : VoipState {
                             context.sendEventToUI(event)
                             PrefManager.setVoipState(State.JOINED)
                             context.state = JoinedState(context)
+                            Log.d(TAG, "Received : ${event.type} switched to ${context.state}")
                             break@loop
                         }
                         MUTE -> {
@@ -165,6 +168,7 @@ class JoiningState(val context: CallContext) : VoipState {
                 else {
                     e.printStackTrace()
                     context.closeCallScreen()
+                    Log.d(TAG, "exception : $e switching to Leaving State")
                     moveToLeavingState()
                 }
             }

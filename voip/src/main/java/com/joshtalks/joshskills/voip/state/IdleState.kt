@@ -21,16 +21,19 @@ class IdleState(val context: CallContext) : VoipState {
         Log.d(TAG, "connect: $context")
         PrefManager.setVoipState(State.SEARCHING)
         context.state = SearchingState(context)
+        Log.d(TAG, "on Connect Call :  switched to ${context.state}")
     }
 
     override fun onError() {
         scope.launch {
+            Log.d(TAG, "onError call screen close and context destroy")
             context.closeCallScreen()
             context.destroyContext()
         }
     }
 
     override fun onDestroy() {
+        Log.d(TAG, "Voip State set onDestroy")
         PrefManager.setVoipState(State.IDLE)
     }
 }

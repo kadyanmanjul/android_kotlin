@@ -31,7 +31,7 @@ class LeavingState(val context: CallContext) : VoipState {
 
     // Handle Events related to Connected State
     private fun observe() {
-        Log.d(TAG, "observe: ")
+        Log.d(TAG, "Started Observing")
         scope.launch {
             try {
                 ensureActive()
@@ -43,6 +43,7 @@ class LeavingState(val context: CallContext) : VoipState {
                     context.updateUIState(uiState = UIState.empty())
                     ensureActive()
                     PrefManager.setVoipState(State.IDLE)
+                    Log.d(TAG, "OBSERVE : ${event.type} switched to IDLE STATE")
                     context.destroyContext()
                 } else {
                     ensureActive()
@@ -56,6 +57,7 @@ class LeavingState(val context: CallContext) : VoipState {
                     e.printStackTrace()
                 e.printStackTrace()
                 PrefManager.setVoipState(State.IDLE)
+                Log.d(TAG, "EXCEPTION : $e switched to IDLE STATE")
                 context.destroyContext()
             }
         }
