@@ -10,7 +10,10 @@ import com.joshtalks.joshskills.voip.communication.model.UserAction
 import com.joshtalks.joshskills.voip.constant.Event.*
 import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.local.PrefManager
+import com.joshtalks.joshskills.voip.webrtc.CallState
 import com.joshtalks.joshskills.voip.webrtc.Envelope
+import com.joshtalks.joshskills.voip.webrtc.USER_DROP_OFFLINE
+import com.joshtalks.joshskills.voip.webrtc.USER_QUIT_CHANNEL
 import kotlinx.coroutines.*
 
 // User Joined the Agora Channel
@@ -28,12 +31,18 @@ class JoinedState(val context: CallContext) : VoipState {
     override fun disconnect() {
         Log.d(TAG, "disconnect: Red Button Pressed")
         scope.launch {
-            Log.d(TAG, "disconnect : User Red Press switching to Leaving State")
-            context.closeCallScreen()
-            moveToLeavingState()
+            try{
+                Log.d(TAG, "disconnect : User Red Press switching to Leaving State")
+                context.closeCallScreen()
+                moveToLeavingState()
+            }
+            catch (e : Exception){
+                if(e is CancellationException)
+                    throw e
+                e.printStackTrace()
+            }
         }
     }
-
     // Showing user connecting and then user pressed back
     override fun backPress() {
         Log.d(TAG, "backPress: Ignore")

@@ -124,35 +124,42 @@ class CallingRemoteService : Service() {
             ioScope.launch {
                 try {
                     mediator.observeEvents().collect {
-                        Log.d(TAG, "observeMediatorEvents: $it")
-                        when (it.type) {
-                            CALL_CONNECTED_EVENT -> {
-                                val data = it.data as CallConnectData
-                                updateStartTime(data.startTime)
-                                notification.connected(
-                                    data.userName,
-                                    openCallScreen(),
-                                    getHangUpIntent()
-                                )
-                                serviceEvents.emit(ServiceEvents.CALL_CONNECTED_EVENT)
+                        try{
+                            Log.d(TAG, "observeMediatorEvents: $it")
+                            when (it.type) {
+                                CALL_CONNECTED_EVENT -> {
+                                    val data = it.data as CallConnectData
+                                    updateStartTime(data.startTime)
+                                    notification.connected(
+                                        data.userName,
+                                        openCallScreen(),
+                                        getHangUpIntent()
+                                    )
+                                    serviceEvents.emit(ServiceEvents.CALL_CONNECTED_EVENT)
+                                }
+                                CLOSE_CALL_SCREEN -> {
+                                    serviceEvents.emit(ServiceEvents.CLOSE_CALL_SCREEN)
+                                    notification.idle()
+                                }
+                                RECONNECTING_FAILED -> {
+                                    serviceEvents.emit(ServiceEvents.RECONNECTING_FAILED)
+                                    notification.idle()
+                                }
+                                // TODO: Might have to refactor
+                                INCOMING_CALL -> {
+                                    PrefManager.setIncomingCallId(IncomingCallData.callId)
+                                    val data = IncomingCall(callId = IncomingCallData.callId)
+                                    mediator.showIncomingCall(data)
+                                }
+                                CALL_INITIATED_EVENT -> {
+                                    serviceEvents.emit(ServiceEvents.CALL_INITIATED_EVENT)
+                                }
                             }
-                            CLOSE_CALL_SCREEN -> {
-                                serviceEvents.emit(ServiceEvents.CLOSE_CALL_SCREEN)
-                                notification.idle()
-                            }
-                            RECONNECTING_FAILED -> {
-                                serviceEvents.emit(ServiceEvents.RECONNECTING_FAILED)
-                                notification.idle()
-                            }
-                            // TODO: Might have to refactor
-                            INCOMING_CALL -> {
-                                PrefManager.setIncomingCallId(IncomingCallData.callId)
-                                val data = IncomingCall(callId = IncomingCallData.callId)
-                                mediator.showIncomingCall(data)
-                            }
-                            CALL_INITIATED_EVENT -> {
-                                serviceEvents.emit(ServiceEvents.CALL_INITIATED_EVENT)
-                            }
+                        }
+                        catch (e : Exception){
+                            if(e is CancellationException)
+                                throw e
+                            e.printStackTrace()
                         }
                     }
                 } catch (e: Exception) {
@@ -176,13 +183,20 @@ class CallingRemoteService : Service() {
         ioScope.launch {
             try {
                 pstnController.observePSTNState().collect {
-                    when (it) {
-                        PSTNState.Idle -> {
-                            mediator.userAction(Action.UNHOLD)
+                    try{
+                        when (it) {
+                            PSTNState.Idle -> {
+                                mediator.userAction(Action.UNHOLD)
+                            }
+                            PSTNState.OnCall, PSTNState.Ringing -> {
+                                mediator.userAction(Action.HOLD)
+                            }
                         }
-                        PSTNState.OnCall, PSTNState.Ringing -> {
-                            mediator.userAction(Action.HOLD)
-                        }
+                    }
+                    catch (e : Exception){
+                        if(e is CancellationException)
+                            throw e
+                        e.printStackTrace()
                     }
                 }
             } catch (e: Exception) {

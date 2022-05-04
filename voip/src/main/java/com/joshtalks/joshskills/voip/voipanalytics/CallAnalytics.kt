@@ -6,6 +6,7 @@ import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.data.api.VoipNetwork
 import com.joshtalks.joshskills.voip.data.local.VoipDatabase
 import com.joshtalks.joshskills.voip.voipanalytics.data.local.VoipAnalyticsEntity
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -55,15 +56,22 @@ object CallAnalytics : CallAnalyticsInterface{
             return
         }
         CoroutineScope(Dispatchers.IO).launch {
-            val analyticsData = VoipAnalyticsEntity(
-                event = event.event.eventName,
-                agoraCallId = event.agoraCallId?:"",
-                agoraMentorUid = event.agoraMentorId?:"",
-                timeStamp = event.timestamp.toString()
-            )
-            database?.voipAnalyticsDao()?.saveAnalytics(analyticsData)
-            val eventHashMap = event.serializeToMap()
-            pushAnalyticsToServer(eventHashMap)
+            try{
+                val analyticsData = VoipAnalyticsEntity(
+                    event = event.event.eventName,
+                    agoraCallId = event.agoraCallId?:"",
+                    agoraMentorUid = event.agoraMentorId?:"",
+                    timeStamp = event.timestamp.toString()
+                )
+                database?.voipAnalyticsDao()?.saveAnalytics(analyticsData)
+                val eventHashMap = event.serializeToMap()
+                pushAnalyticsToServer(eventHashMap)
+            }
+            catch (e : Exception){
+                if(e is CancellationException)
+                    throw e
+                e.printStackTrace()
+            }
         }
     }
 

@@ -78,16 +78,24 @@ class PubNubChannelService(val scope: CoroutineScope) : EventChannel {
         if (isReconnecting.not()) {
             Log.d(TAG, "reconnect: Pubnub Reconnecting - $isReconnecting")
             scope.launch {
-                mutex.withLock {
-                    isReconnecting = true
-                    pubnub?.removeListener(listener)
-                    pubnub?.unsubscribeAll()
-                    pubnub?.reconnect()
-                    pubnub?.addListener(listener)
-                    pubnub?.subscribe()
-                        ?.channels(listOf(Utils.uuid))
-                        ?.execute()
-                    isReconnecting = false
+                try{
+                    mutex.withLock {
+                        isReconnecting = true
+                        Log.d(TAG, "reconnect: Pubnub Reconnecting inside Lock - $pubnub || $listener")
+                        pubnub?.removeListener(listener)
+                        pubnub?.unsubscribeAll()
+                        pubnub?.reconnect()
+                        pubnub?.addListener(listener)
+                        pubnub?.subscribe()
+                            ?.channels(listOf(Utils.uuid))
+                            ?.execute()
+                        isReconnecting = false
+                    }
+                }
+                catch (e : Exception){
+                    if(e is CancellationException)
+                        throw e
+                    e.printStackTrace()
                 }
             }
         }
@@ -122,10 +130,17 @@ class PubNubChannelService(val scope: CoroutineScope) : EventChannel {
             try {
                 val data = this as NetworkAction
                 scope.launch {
-                    data.insertIntoDb()
-                    callApiService.disconnectCall(data.toRequest())
-                    data.insertIntoDb(status = SYNCED)
-                    database.getDisconnectCallDao().delete()
+                    try{
+                        data.insertIntoDb()
+                        callApiService.disconnectCall(data.toRequest())
+                        data.insertIntoDb(status = SYNCED)
+                        database.getDisconnectCallDao().delete()
+                    }
+                    catch (e : Exception){
+                        if(e is CancellationException)
+                            throw e
+                        e.printStackTrace()
+                    }
                 }
             } catch (e : Exception) {
                 e.printStackTrace()
@@ -166,16 +181,30 @@ class PubNubChannelService(val scope: CoroutineScope) : EventChannel {
 
     private fun observeIncomingMessage() {
         scope.launch {
-            listener.observeMessages().collect {
-                //if (state == State.ACTIVE)
-                Log.d(TAG, "observeIncomingMessage: $it")
-                when (it) {
-                    is MessageData -> eventFlow.emit(it)
-                    is ChannelData -> eventFlow.emit(it)
-                    is IncomingCall -> eventFlow.emit(it)
-                    is UI -> eventFlow.emit(it)
-                    is Error -> eventFlow.emit(it)
+            try{
+                listener.observeMessages().collect {
+                    try{
+                        //if (state == State.ACTIVE)
+                        Log.d(TAG, "observeIncomingMessage: $it")
+                        when (it) {
+                            is MessageData -> eventFlow.emit(it)
+                            is ChannelData -> eventFlow.emit(it)
+                            is IncomingCall -> eventFlow.emit(it)
+                            is UI -> eventFlow.emit(it)
+                            is Error -> eventFlow.emit(it)
+                        }
+                    }
+                    catch (e : Exception){
+                        if(e is CancellationException)
+                            throw e
+                        e.printStackTrace()
+                    }
                 }
+            }
+            catch (e : Exception){
+                if(e is CancellationException)
+                    throw e
+                e.printStackTrace()
             }
         }
     }

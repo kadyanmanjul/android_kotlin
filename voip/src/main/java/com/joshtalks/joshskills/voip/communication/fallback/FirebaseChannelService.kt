@@ -11,6 +11,7 @@ import com.joshtalks.joshskills.voip.communication.model.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.collect
 import kotlin.Exception
 
 private const val TAG = "FirebaseChannelService"
@@ -64,9 +65,16 @@ class FirebaseChannelService(val scope: CoroutineScope) : EventChannel {
         scope.launch {
             try{
                 listener.observerListener().collect { it ->
-                    val timestamp = it.getEventTime()
-                    dataFlow.emit(it)
-                    timestamp?.let { processEvent(it) }
+                    try{
+                        val timestamp = it.getEventTime()
+                        dataFlow.emit(it)
+                        timestamp?.let { processEvent(it) }
+                    }
+                    catch (e : Exception){
+                        if(e is CancellationException)
+                            throw e
+                        e.printStackTrace()
+                    }
                 }
             } catch (e : Exception) {
                 e.printStackTrace()

@@ -9,6 +9,7 @@ import android.content.Intent
 import android.util.Log
 import com.joshtalks.joshskills.voip.audiocontroller.AudioRouteConstants.BluetoothAudio
 import com.joshtalks.joshskills.voip.audiocontroller.AudioRouteConstants.Default
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -28,12 +29,26 @@ internal class HeadsetReceiver(val coroutineScope : CoroutineScope) : BroadcastR
         when (intent?.getIntExtra("state", 0)) {
             HEADSET_CONNECTED -> {
                 coroutineScope.launch {
-                    audioRouteFlow.emit(AudioRouteConstants.HeadsetAudio)
+                    try{
+                        audioRouteFlow.emit(AudioRouteConstants.HeadsetAudio)
+                    }
+                    catch (e : Exception){
+                        if(e is CancellationException)
+                            throw e
+                        e.printStackTrace()
+                    }
                 }
             }
             HEADSET_DISCONNECTED -> {
                 coroutineScope.launch {
-                    audioRouteFlow.emit(Default)
+                    try{
+                        audioRouteFlow.emit(Default)
+                    }
+                    catch (e : Exception){
+                        if(e is CancellationException)
+                            throw e
+                        e.printStackTrace()
+                    }
                 }
             }
         }
@@ -51,12 +66,26 @@ internal class BluetoothReceiver(val coroutineScope : CoroutineScope) : Broadcas
         when (intent?.getIntExtra(BluetoothProfile.EXTRA_STATE, -1)) {
             BluetoothProfile.STATE_CONNECTED -> {
                 coroutineScope.launch {
-                    audioRouteFlow.emit(BluetoothAudio)
+                    try{
+                        audioRouteFlow.emit(BluetoothAudio)
+                    }
+                    catch (e : Exception){
+                        if(e is CancellationException)
+                            throw e
+                        e.printStackTrace()
+                    }
                 }
             }
             BluetoothProfile.STATE_DISCONNECTED -> {
                 coroutineScope.launch {
-                    audioRouteFlow.emit(Default)
+                    try{
+                        audioRouteFlow.emit(Default)
+                    }
+                    catch (e : Exception){
+                        if(e is CancellationException)
+                            throw e
+                        e.printStackTrace()
+                    }
                 }
             }
         }

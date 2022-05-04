@@ -31,17 +31,24 @@ class SearchingState(val context: CallContext) : VoipState {
     private val scope = CoroutineScope(Dispatchers.IO)
     private val timeoutTimer by lazy {
         scope.launch(start = CoroutineStart.LAZY) {
-            ensureActive()
-            val timeout = Timeout(ServerConstants.TIMEOUT)
-            for (i in 1..12) {
+            try{
+                ensureActive()
+                val timeout = Timeout(ServerConstants.TIMEOUT)
+                for (i in 1..12) {
+                    delay(PER_USER_TIMEOUT_IN_MILLIS)
+                    ensureActive()
+                    context.sendMessageToServer(timeout)
+                }
                 delay(PER_USER_TIMEOUT_IN_MILLIS)
                 ensureActive()
-                context.sendMessageToServer(timeout)
+                disconnectNoUserFound()
+                cleanUpState()
             }
-            delay(PER_USER_TIMEOUT_IN_MILLIS)
-            ensureActive()
-            disconnectNoUserFound()
-            cleanUpState()
+            catch (e : Exception){
+                if(e is CancellationException)
+                    throw e
+                e.printStackTrace()
+            }
         }
     }
     private val calling by lazy<Calling> { PeerToPeerCalling() }
@@ -92,8 +99,16 @@ class SearchingState(val context: CallContext) : VoipState {
 
     override fun onError() {
         scope.launch {
-            context.closeCallScreen()
-            backPress()
+            try{
+                context.closeCallScreen()
+                backPress()
+            }
+            catch (e : Exception){
+                if(e is CancellationException)
+                    throw e
+                e.printStackTrace()
+            }
+
         }
     }
 
@@ -149,8 +164,16 @@ class SearchingState(val context: CallContext) : VoipState {
 
     private fun cleanUpState() {
         scope.launch {
-            context.closeCallScreen()
-            context.destroyContext()
+            try{
+                context.closeCallScreen()
+                context.destroyContext()
+            }
+            catch (e : Exception){
+                if(e is CancellationException)
+                    throw e
+                e.printStackTrace()
+            }
+
         }
     }
 }
