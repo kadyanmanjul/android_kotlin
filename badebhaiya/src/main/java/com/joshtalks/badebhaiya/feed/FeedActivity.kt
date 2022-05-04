@@ -157,7 +157,8 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                         LiveRoomFragment.IS_ROOM_CREATED_BY_USER,
                         false
                     )
-                )
+                ),
+                liveRoomViewModel
             )
         }
     }
@@ -242,7 +243,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                                 room,
                                 it.getString(TOPIC)!!
                             )
-                            LiveRoomFragment.launch(this, liveRoomProperties)
+                            LiveRoomFragment.launch(this, liveRoomProperties, liveRoomViewModel)
                         }
                     }
                 }
@@ -281,7 +282,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                             topic,
                             createdByUser = true
                         )
-                        LiveRoomFragment.launch(this@FeedActivity, liveRoomProperties)
+                        LiveRoomFragment.launch(this@FeedActivity, liveRoomProperties, liveRoomViewModel)
                     }
                     it.dismiss()
                 }

@@ -18,9 +18,15 @@ import com.joshtalks.badebhaiya.liveroom.SCROLL_TO_TOP
 import com.joshtalks.badebhaiya.liveroom.bottomsheet.CreateRoom
 import com.joshtalks.badebhaiya.profile.request.DeleteReminderRequest
 import com.joshtalks.badebhaiya.profile.request.ReminderRequest
+import com.joshtalks.badebhaiya.pubnub.PubNubData
+import com.joshtalks.badebhaiya.pubnub.PubNubState
 import com.joshtalks.badebhaiya.repository.ConversationRoomRepository
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomRequest
 import com.joshtalks.badebhaiya.repository.model.User
+import com.joshtalks.badebhaiya.utils.Utils
+import com.joshtalks.badebhaiya.utils.ALLOWED_SCHEDULED_TIME
+import com.joshtalks.badebhaiya.utils.IST_TIME_DIFFERENCE
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 const val ROOM_ITEM = "room_item"
@@ -41,6 +47,19 @@ class FeedViewModel : ViewModel() {
     val repository = ConversationRoomRepository()
     val scheduleRoomStartDate = ObservableField<String>()
     val scheduleRoomStartTime = ObservableField<String>()
+    var pubNubState = PubNubState.ENDED
+
+    init {
+        collectPubNubState()
+    }
+
+    private fun collectPubNubState() {
+        viewModelScope.launch {
+            PubNubData.pubNubState.collect {
+                pubNubState = it
+            }
+        }
+    }
 
     fun setIsBadeBhaiyaSpeaker() {
         isBadeBhaiyaSpeaker.set(User.getInstance().isSpeaker)
@@ -67,10 +86,13 @@ class FeedViewModel : ViewModel() {
             )
         }
         singleLiveEvent.postValue(message)
-
     }
 
     fun createRoom(topic: String, callback: CreateRoom.CreateRoomCallback) {
+        if (pubNubState == PubNubState.STARTED){
+            showToast("Please Leave Current Room")
+            return
+        }
         viewModelScope.launch {
             if (topic.isNullOrBlank()) {
                 showToast(AppObjectController.joshApplication.getString(R.string.enter_topic_name))
@@ -97,7 +119,11 @@ class FeedViewModel : ViewModel() {
         }
     }
 
-    fun joinRoom(item: RoomListResponseItem, ) {
+    fun joinRoom(item: RoomListResponseItem) {
+        if (pubNubState == PubNubState.STARTED){
+            showToast("Please Leave Current Room")
+            return
+        }
         viewModelScope.launch {
             try {
                 isLoading.set(true)
@@ -296,9 +322,6 @@ class FeedViewModel : ViewModel() {
     fun setScheduleStartTime(time: String) {
         scheduleRoomStartTime.set(time)
     }
-
-
-
 }
 
 interface Call
