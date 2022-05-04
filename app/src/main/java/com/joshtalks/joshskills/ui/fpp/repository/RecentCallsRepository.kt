@@ -20,10 +20,5 @@ class RecentCallsRepository {
     suspend fun confirmOrRejectFppRequest(senderMentorId: String, map: Map<String, String>) =
         p2pNetworkService.confirmOrRejectFppRequest(senderMentorId, map)
 
-    suspend fun blockUser(map: Map<String, String>) {
-        val res = p2pNetworkService.blockFppUser(map)
-        if (res.isSuccessful) {
-            fetchRecentCallsFromApi()
-        }
-    }
+    suspend fun blockUser(map: Map<String, String>) = p2pNetworkService.blockFppUser(map)
 }

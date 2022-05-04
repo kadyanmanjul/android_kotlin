@@ -148,7 +148,7 @@ class RecentCallActivity : BaseFppActivity() {
                 MixPanelTracker.publishEvent(MixPanelEvent.BLOCK_USER_YES)
                     .addParam(ParamKeys.MENTOR_ID, recentCall.receiverMentorId)
                     .push()
-                viewModel.blockUser(recentCall.receiverMentorId?: EMPTY)
+                viewModel.blockUser(recentCall.receiverMentorId?: EMPTY,recentCall.firstName?: EMPTY)
                 dialogView.dismiss()
             }
         btnNotNow.setOnClickListener {

@@ -6,6 +6,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
+import android.util.Log
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
@@ -91,6 +92,7 @@ class JoshGroupActivity : BaseGroupActivity() {
                 OPEN_CALLING_ACTIVITY -> startGroupCall(it.data)
                 SHOULD_REFRESH_GROUP_LIST -> vm.shouldRefreshGroupList = true
                 REMOVE_GROUP_AND_CLOSE -> removeGroupFromDb(it.obj as String)
+                REMOVE_AND_BLOCK_FPP -> removeDmFppDb(it.obj as String)
                 OPEN_PROFILE_PAGE -> openProfileActivity(it.obj as String)
                 OPEN_PROFILE_DM_FPP -> openProfileActivity(mentorId = vm.mentorId)
                 SHOW_PROGRESS_BAR -> showProgressDialog(it.obj as String)
@@ -210,6 +212,7 @@ class JoshGroupActivity : BaseGroupActivity() {
                 putString(CONVERSATION_ID, vm.conversationId)
                 putString(ADMIN_ID, data?.getCreatorId())
                 putString(GROUP_TYPE, data?.getGroupCategory())
+                vm.groupType.set(data?.getGroupCategory())
                 putString(GROUP_STATUS, data?.getJoinedStatus())
                 putString(CLOSED_GROUP_TEXT, data?.getGroupText())
                 putInt(AGORA_UID, data?.getAgoraId() ?: 0)
@@ -385,6 +388,18 @@ class JoshGroupActivity : BaseGroupActivity() {
         }
     }
 
+    private fun removeDmFppDb(groupId: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val groupName = vm.repository.getGroupName(groupId)
+            vm.repository.leaveGroupFromLocal(groupId)
+            withContext(Dispatchers.Main) {
+                showRemovedDmFppAlert(groupName)
+                while (supportFragmentManager.backStackEntryCount > 0)
+                    onBackPressed()
+            }
+        }
+    }
+
     override fun getConversationId(): String? {
         vm.conversationId = intent.getStringExtra(CONVERSATION_ID) ?: ""
         return vm.conversationId
@@ -405,6 +420,24 @@ class JoshGroupActivity : BaseGroupActivity() {
         val builder = AlertDialog.Builder(this)
         val dialog: AlertDialog = builder
             .setMessage("You have been removed from \"$groupName\" group")
+            .setPositiveButton("Ok") { dialog, id ->
+                dialog.cancel()
+            }
+            .create()
+
+        dialog.setCancelable(false)
+        dialog.show()
+
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).let {
+            it.setTypeface(null, Typeface.BOLD)
+            it.setTextColor(Color.parseColor("#107BE5"))
+        }
+    }
+
+    fun showRemovedDmFppAlert(groupName: String) {
+        val builder = AlertDialog.Builder(this)
+        val dialog: AlertDialog = builder
+            .setMessage("You have been blocked by \"$groupName\"")
             .setPositiveButton("Ok") { dialog, id ->
                 dialog.cancel()
             }

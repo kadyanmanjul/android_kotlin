@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.ui.group.lib
 import android.os.Message
 import com.google.gson.Gson
 import com.joshtalks.joshskills.base.EventLiveData
+import com.joshtalks.joshskills.constants.REMOVE_AND_BLOCK_FPP
 import com.joshtalks.joshskills.constants.REMOVE_GROUP_AND_CLOSE
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -75,6 +76,15 @@ object ChatSubscriber : SubscribeCallback() {
                         withContext(Dispatchers.Main) {
                             val messageObj = Message()
                             messageObj.what = REMOVE_GROUP_AND_CLOSE
+                            messageObj.obj = pnMessageResult.channel
+                            EventLiveData.value = messageObj
+                        }
+                    }
+                }else if(messageItem.getMessageType() == SENT_META_MESSAGE_LOCAL && message.contains("block")){
+                    if (messageItem.mentorId == Mentor.getInstance().getId()) {
+                        withContext(Dispatchers.Main) {
+                            val messageObj = Message()
+                            messageObj.what = REMOVE_AND_BLOCK_FPP
                             messageObj.obj = pnMessageResult.channel
                             EventLiveData.value = messageObj
                         }
