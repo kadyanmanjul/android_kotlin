@@ -118,6 +118,7 @@ class WebRtcService : BaseWebRtcService() {
     var speakingUsersOldList = arrayListOf<Int>()
     private val timber = Timber.tag(TAG)
     var fppDialogeFlag:String?=null
+    var callRatingDialogeFlag:String = EMPTY
     private val audioManager by lazy {
         getSystemService(Context.AUDIO_SERVICE) as AudioManager
     }

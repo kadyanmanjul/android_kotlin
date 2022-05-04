@@ -59,6 +59,7 @@ import com.joshtalks.joshskills.ui.voip.analytics.CurrentCallDetails
 import com.joshtalks.joshskills.ui.voip.analytics.VoipAnalytics
 import com.joshtalks.joshskills.ui.voip.analytics.VoipAnalytics.Event.DISCONNECT
 import com.joshtalks.joshskills.ui.voip.analytics.VoipEvent
+import com.joshtalks.joshskills.ui.voip.voip_rating.CallRatingDialogActivity
 import com.joshtalks.joshskills.ui.voip.voip_rating.VoipCallFeedbackActivity
 import com.joshtalks.joshskills.util.DateUtils
 import com.karumi.dexter.MultiplePermissionsReport
@@ -117,6 +118,8 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
     private var isNewCall:String = EMPTY
     private var getCallType:String = EMPTY
     private var getCallTime:Long = 1
+    private var isOnDisconnectedTriggered=false
+    private var showRatingDialog:String = EMPTY
 
     val progressAnimator by lazy<ValueAnimator> {
         ValueAnimator.ofFloat(0f, 1f).apply {
@@ -591,8 +594,11 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
         }
 
         viewModel.fppDialogShow.observe(this){
-            fppDialog = it
+            fppDialog = it[0]
             mBoundService?.fppDialogeFlag = fppDialog
+            if(it.size > 1) showRatingDialog = it[1]
+            mBoundService?.callRatingDialogeFlag = showRatingDialog
+
         }
         if (isCallFavoritePP() || WebRtcService.isCallOnGoing.value == true) {
             if (intent.getSerializableExtra(CALL_USER_OBJ) == null) {
@@ -1005,6 +1011,7 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
     }
 
     fun onDisconnectCall(reason: VoipEvent) {
+        if(reason == DISCONNECT.USER_DISCONNECTED_FAILURE) PrefManager.put(IS_CALL_DISCONNECTED_FROM_WEBRTCACTIVITY, true)
         mBoundService?.stopPlaying()
         WebRtcService.disconnectCall(reason)
         AppObjectController.uiHandler.postDelayed(
@@ -1064,7 +1071,29 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
             time = callTime
         }
         Log.d(TAG, "showCallRatingScreen: ${time/1000}")
-        if(((time/1000) in 121..1199 && fppDialog =="false") || !PrefManager.getBoolValue(IS_COURSE_BOUGHT)){
+        if(showRatingDialog == "true"){
+            if(PrefManager.getBoolValue(IS_CALL_DISCONNECTED_FROM_WEBRTCACTIVITY)) {
+                isOnDisconnectedTriggered = true
+                var agoraMentorId = mBoundService?.getUserAgoraId()
+                if (mBoundService?.getOppositeUserInfo().isNullOrEmpty().not() && agoraMentorId != null) {
+                    mBoundService?.getOppositeCallerName()?.let {
+                        mBoundService?.getOppositeUserInfo()?.get("mentor").let { it1 ->
+                                CallRatingDialogActivity.startCallRatingDialogActivity(
+                                    activity = this,
+                                    callerName = it,
+                                    callDuration = time.toInt() / 60000,
+                                    agoraCallId = CurrentCallDetails.state().callId.toInt(),
+                                    callerProfileUrl = mBoundService?.getOppositeCallerProfilePic(),
+                                    callerMentorId = it1.toString(),
+                                    agoraMentorId = agoraMentorId.toString())
+                            }
+                    }
+                }
+                mBoundService?.setOppositeUserInfo(null)
+            }
+            this@WebRtcActivity.finishAndRemoveTask()
+
+        } else if(((time/1000) in 121..1199 && fppDialog =="false") || !PrefManager.getBoolValue(IS_COURSE_BOUGHT)){
             this@WebRtcActivity.finish()
         }else {
 

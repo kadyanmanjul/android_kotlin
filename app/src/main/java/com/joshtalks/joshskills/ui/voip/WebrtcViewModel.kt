@@ -28,7 +28,7 @@ import java.net.ProtocolException
 class WebrtcViewModel(application: Application) : AndroidViewModel(application) {
     val apiCallStatusLiveData: MutableLiveData<ApiCallStatus> = MutableLiveData()
     val repository: ABTestRepository by lazy { ABTestRepository() }
-    val fppDialogShow :MutableLiveData<String> = MutableLiveData()
+    val fppDialogShow :MutableLiveData<List<String>> = MutableLiveData()
     var isApiFired = false
 
     fun initMissedCall(partnerId: String, aFunction: (String, String, Int) -> Unit) {
@@ -101,13 +101,12 @@ class WebrtcViewModel(application: Application) : AndroidViewModel(application) 
         if (isApiFired)
             return
         isApiFired = true
-        var resp = EMPTY
         try {
             viewModelScope.launch(Dispatchers.IO){
-                resp = AppObjectController.p2pNetworkService.showFppDialog(map).body()
-                    ?.get("show_fpp_dialog") ?: EMPTY
+                var resp = AppObjectController.p2pNetworkService.showFppDialog(map).body()
+                var listRes : List<String> = listOf(resp?.get("show_fpp_dialog") ?: EMPTY, resp?.get("show_rating_popup") ?: EMPTY)
                 withContext(Dispatchers.Main){
-                    fppDialogShow.value = resp
+                    fppDialogShow.value = listRes
                 }
             }
         }catch (ex:Exception){
