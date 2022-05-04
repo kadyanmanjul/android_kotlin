@@ -85,8 +85,9 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar">
 
-        <androidx.viewpager.widget.ViewPager
+        <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/viewPagerMain"
+            android:orientation = "horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </LinearLayout>
@@ -101,6 +102,7 @@
         app:layout_constraintStart_toStartOf="parent"
         android:gravity="bottom"
         android:visibility="gone"
+        tools:visibility="visible"
         android:orientation="horizontal">
 
         <LinearLayout

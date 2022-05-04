@@ -9,10 +9,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
-import androidx.appcompat.widget.AppCompatTextView
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.viewpager.widget.ViewPager
+import androidx.viewpager2.widget.ViewPager2
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
@@ -20,9 +19,7 @@ import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.engage.ImageEngage
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
-import com.joshtalks.joshskills.ui.pdfviewer.COURSE_NAME
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
-import com.joshtalks.joshskills.ui.userprofile.adapters.AdapterCallback
 import com.joshtalks.joshskills.ui.userprofile.adapters.ViewPagerAdapter
 import com.joshtalks.joshskills.ui.userprofile.viewmodel.UserProfileViewModel
 
@@ -32,13 +29,13 @@ const val List_OF_IMAGES ="list_of_images"
 const val LIST_OF_IDS="List_of_ids"
 const val POSITION ="Position"
 
-class ProfileImageShowFragment : DialogFragment(),AdapterCallback {
+class ProfileImageShowFragment : DialogFragment() {
     private var mentorId: String? = null
     private var isPreviousProfile = false
     private var position:Int=0
     var imagesUrls : Array<String> = arrayOf()
     var imageIds :  Array<String> = arrayOf()
-    lateinit var viewPager: ViewPager
+    lateinit var viewPager: ViewPager2
 
     lateinit var viewPagerAdapter: ViewPagerAdapter
     private val viewModel by lazy {
@@ -93,10 +90,17 @@ class ProfileImageShowFragment : DialogFragment(),AdapterCallback {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewPager = view.findViewById(R.id.viewPagerMain) as ViewPager
-        viewPagerAdapter =  ViewPagerAdapter(AppObjectController.joshApplication, imagesUrls,::dismissAllowingStateLoss,this)
+        viewPager = view.findViewById(R.id.viewPagerMain) as ViewPager2
+        viewPagerAdapter =  ViewPagerAdapter(AppObjectController.joshApplication, imagesUrls,::dismissAllowingStateLoss)
         viewPager.adapter = viewPagerAdapter
         viewPager.currentItem = position
+        viewPager.registerOnPageChangeCallback(object :
+            ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                onSwipeCallback(position)
+            }
+        })
 
         if (isPreviousProfile && mentorId.equals(Mentor.getInstance().getId())) {
             view.findViewById<LinearLayout>(R.id.parent_layout).visibility = View.VISIBLE
@@ -166,7 +170,7 @@ class ProfileImageShowFragment : DialogFragment(),AdapterCallback {
             }
     }
 
-    override fun onSwipeCallback(position: Int) {
+    fun onSwipeCallback(position: Int) {
         this.position=position
     }
 
