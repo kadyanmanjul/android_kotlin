@@ -3,19 +3,17 @@ package com.joshtalks.joshskills.voip.state
 import android.os.Message
 import android.os.SystemClock
 import android.util.Log
-import com.joshtalks.joshskills.voip.communication.constants.ServerConstants
-import com.joshtalks.joshskills.voip.communication.model.Channel
 import com.joshtalks.joshskills.voip.communication.model.ChannelData
-import com.joshtalks.joshskills.voip.communication.model.NetworkAction
 import com.joshtalks.joshskills.voip.communication.model.OutgoingData
 import com.joshtalks.joshskills.voip.constant.CLOSE_CALL_SCREEN
+import com.joshtalks.joshskills.voip.constant.Event
 import com.joshtalks.joshskills.voip.data.UIState
-import com.joshtalks.joshskills.voip.inSeconds
 import com.joshtalks.joshskills.voip.mediator.CallDirection
 import com.joshtalks.joshskills.voip.mediator.CallingMediator
+import com.joshtalks.joshskills.voip.webrtc.Envelope
 import com.joshtalks.joshskills.voip.webrtc.RECONNECTING_TIMEOUT_IN_MILLIS
 import kotlinx.coroutines.*
-import java.util.concurrent.TimeUnit
+import kotlinx.coroutines.channels.Channel
 
 data class CallContext(val callType: Int, val direction : CallDirection, val request: HashMap<String, Any>, private val mediator: CallingMediator)  {
     private val TAG = "CallContext"
@@ -57,6 +55,7 @@ data class CallContext(val callType: Int, val direction : CallDirection, val req
     }
 
     fun destroyContext() {
+        Log.d(TAG, "destroyContext: ")
         closePipe()
         destroyState()
         // Change Current State to Idle
@@ -71,7 +70,9 @@ data class CallContext(val callType: Int, val direction : CallDirection, val req
     }
 
     fun closePipe() {
+        Log.d(TAG, "closePipe: Closing")
         mediator.stateChannel.close()
+        Log.d(TAG, "closePipe: Closed")
     }
 
     fun reconnecting() {
@@ -92,7 +93,7 @@ data class CallContext(val callType: Int, val direction : CallDirection, val req
         sendEventToUI(msg)
     }
 
-    fun getStreamPipe()  : kotlinx.coroutines.channels.Channel<Message> {
+    fun getStreamPipe()  : Channel<Envelope<Event>> {
         return mediator.stateChannel
     }
 

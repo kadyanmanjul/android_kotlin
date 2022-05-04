@@ -22,21 +22,11 @@ import androidx.lifecycle.lifecycleScope
 import com.afollestad.materialdialogs.MaterialDialog
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.constants.*
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.HAS_SEEN_SPEAKING_TOOLTIP
-import com.joshtalks.joshskills.core.HOW_TO_SPEAK_TEXT_CLICKED
-import com.joshtalks.joshskills.core.IMPRESSION_TRUECALLER_P2P
-import com.joshtalks.joshskills.core.IS_LOGIN_VIA_TRUECALLER
-import com.joshtalks.joshskills.core.PermissionUtils
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.SPEAKING_POINTS
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
 import com.joshtalks.joshskills.core.abTest.ABTestFragment
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
-import com.joshtalks.joshskills.core.isCallOngoing
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.core.abTest.*
 import com.joshtalks.joshskills.databinding.SpeakingPractiseFragmentBinding
 import com.joshtalks.joshskills.messaging.RxBus2
@@ -49,7 +39,6 @@ import com.joshtalks.joshskills.ui.fpp.RecentCallActivity
 import com.joshtalks.joshskills.ui.group.views.JoshVoipGroupActivity
 import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
 import com.joshtalks.joshskills.ui.lesson.LessonSpotlightState
-import com.joshtalks.joshskills.core.LESSON_ONE_TOPIC_ID
 import com.joshtalks.joshskills.ui.lesson.LessonViewModel
 import com.joshtalks.joshskills.ui.lesson.SPEAKING_POSITION
 import com.joshtalks.joshskills.ui.senior_student.SeniorStudentActivity
@@ -71,7 +60,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import com.joshtalks.joshskills.core.IS_FREE_TRIAL_CAMPAIGN_ACTIVE
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.voipLog
 import com.joshtalks.joshskills.voip.constant.State
@@ -224,6 +212,10 @@ class SpeakingPractiseFragment : ABTestFragment(),TimeAnimator.TimeListener {
             val state = getVoipState()
             Log.d(TAG, " Start Call Button - Voip State $state")
             if(state == State.IDLE) {
+                if(Utils.isInternetAvailable().not()) {
+                    showToast("Seems like you have no internet")
+                    return@setOnClickListener
+                }
                 startPractise(isNewArch = true)
             } else
                 showToast("Wait for last call to get disconnected")

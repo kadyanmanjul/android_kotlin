@@ -25,7 +25,6 @@ private const val USER_ALREADY_IN_A_CHANNEL = -17
 private const val TAG = "AgoraWebrtcService"
 
 internal class AgoraWebrtcService(val scope: CoroutineScope) : WebrtcService {
-    private var reconnectingJob : Job? = null
     private var agoraEngine: RtcEngine? = null
     private val eventFlow : MutableSharedFlow<CallState> = MutableSharedFlow(replay = 0)
     private var state = MutableSharedFlow<Int>(replay = 0)
@@ -83,11 +82,9 @@ internal class AgoraWebrtcService(val scope: CoroutineScope) : WebrtcService {
             // 1. Send DISCONNECTING signal through Pubnub
             // 2. Leave Channel through Agora SDK
             stopLazyJoin()
-            voipLog?.log("Coroutine : About to call leaveChannel")
             state.emit(LEAVING)
             currentState = LEAVING
             leaveChannel()
-            voipLog?.log("Coroutine : Finishing call leaveChannel Coroutine")
         }
     }
 
@@ -124,11 +121,6 @@ internal class AgoraWebrtcService(val scope: CoroutineScope) : WebrtcService {
     override fun observeCallingEvents(): SharedFlow<CallState> {
         voipLog?.log("Setting event")
         return eventFlow
-    }
-
-    override fun observeCallingState(): SharedFlow<Int> {
-        voipLog?.log("Setting event")
-        return state
     }
 
     override fun onDestroy() {
@@ -218,3 +210,6 @@ internal class AgoraWebrtcService(val scope: CoroutineScope) : WebrtcService {
         }
     }
 }
+
+// TODO: Will Use this class instead of Message
+data class Envelope<T : Enum<T>>(val type : T, val data : Any? = null)

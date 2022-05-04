@@ -10,7 +10,6 @@ internal interface WebrtcService {
     fun muteAudioStream(muteAudio : Boolean)
     fun enableSpeaker(speaker :Boolean)
     fun observeCallingEvents() : SharedFlow<CallState> // Will return value
-    fun observeCallingState() : SharedFlow<Int> // Will Return State
     fun onDestroy()
 }
 

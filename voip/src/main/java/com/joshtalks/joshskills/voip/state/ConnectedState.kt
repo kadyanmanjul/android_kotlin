@@ -6,11 +6,11 @@ import com.joshtalks.joshskills.voip.communication.constants.ServerConstants
 import com.joshtalks.joshskills.voip.communication.model.NetworkAction
 import com.joshtalks.joshskills.voip.communication.model.UI
 import com.joshtalks.joshskills.voip.communication.model.UserAction
-import com.joshtalks.joshskills.voip.constant.*
+import com.joshtalks.joshskills.voip.constant.Event.*
+import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.inSeconds
 import com.joshtalks.joshskills.voip.updateLastCallDetails
-import com.joshtalks.joshskills.voip.voipLog
 import kotlinx.coroutines.*
 
 // Remote User Joined the Channel and can talk
@@ -26,7 +26,9 @@ class ConnectedState(val context: CallContext) : VoipState {
 
     // Red Button Pressed
     override fun disconnect() {
-        moveToLeavingState()
+        scope.launch {
+            moveToLeavingState()
+        }
     }
 
 
@@ -51,7 +53,7 @@ class ConnectedState(val context: CallContext) : VoipState {
                     ensureActive()
                     val event = context.getStreamPipe().receive()
                     ensureActive()
-                    when (event.what) {
+                    when (event.type) {
                         MUTE -> {
                             ensureActive()
                             val uiState = context.currentUiState.copy(isRemoteUserMuted = true)
@@ -79,6 +81,7 @@ class ConnectedState(val context: CallContext) : VoipState {
                             context.reconnecting()
                             PrefManager.setVoipState(State.RECONNECTING)
                             context.state = ReconnectingState(context)
+                            Log.d(TAG, "Received : ${event.type} switched to ${context.state}")
                             break@loop
                         }
                         SPEAKER_ON_REQUEST -> {
@@ -150,7 +153,7 @@ class ConnectedState(val context: CallContext) : VoipState {
                         }
                         UI_STATE_UPDATED -> {
                             ensureActive()
-                            val uiData = event.obj as UI
+                            val uiData = event.data as UI
                             if (uiData.getType() == ServerConstants.UI_STATE_UPDATED)
                                 context.sendMessageToServer(
                                     UI(
@@ -171,22 +174,22 @@ class ConnectedState(val context: CallContext) : VoipState {
                             ensureActive()
                             moveToLeavingState()
                         }
-                        else -> throw IllegalEventException("In $TAG but received ${event.what} event don't know how to process")
+                        else -> throw IllegalEventException("In $TAG but received ${event.type} event don't know how to process")
                     }
                 }
                 scope.cancel()
-            } catch (e : CancellationException){
-                e.printStackTrace()
-            }
-            catch (e: Exception) {
-                e.printStackTrace()
-                moveToLeavingState()
+            } catch (e : Throwable) {
+                if(e is CancellationException)
+                    throw e
+                else {
+                    e.printStackTrace()
+                    moveToLeavingState()
+                }
             }
         }
     }
 
-    private fun moveToLeavingState() {
-        scope.launch {
+    private suspend fun moveToLeavingState() {
             listenerJob?.cancel()
             context.closeCallScreen()
             val networkAction = NetworkAction(
@@ -213,6 +216,5 @@ class ConnectedState(val context: CallContext) : VoipState {
             PrefManager.setVoipState(State.LEAVING)
             context.state = LeavingState(context)
             scope.cancel()
-        }
     }
 }

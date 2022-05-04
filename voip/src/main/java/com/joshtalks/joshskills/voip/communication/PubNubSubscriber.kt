@@ -54,7 +54,6 @@ internal class PubNubSubscriber(val scope: CoroutineScope) : SubscribeCallback()
             }
             try {
                 // So that we will ignore our own message
-
                 if(pnMessageResult.publisher == Utils.uuid)
                     return@launch
                 val message = when(pnMessageResult.userMetadata.asInt) {

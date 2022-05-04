@@ -121,7 +121,9 @@ class SearchingState(val context: CallContext) : VoipState {
                 } else
                     throw IllegalEventException("In $TAG but received ${event.what} expected $RECEIVED_CHANNEL_DATA")
                 scope.cancel()
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
+                if(e is CancellationException)
+                    throw e
                 e.printStackTrace()
                 cleanUpState()
             }

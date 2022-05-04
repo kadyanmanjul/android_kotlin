@@ -136,12 +136,10 @@ class CallingRemoteService : Service() {
                                 serviceEvents.emit(ServiceEvents.CALL_CONNECTED_EVENT)
                             }
                             CLOSE_CALL_SCREEN -> {
-                                Log.d(TAG, "observeMediatorEvents: CALL_DISCONNECT_REQUEST")
                                 serviceEvents.emit(ServiceEvents.CLOSE_CALL_SCREEN)
                                 notification.idle()
                             }
                             RECONNECTING_FAILED -> {
-                                Log.d(TAG, "observeMediatorEvents: RECONNECTING_FAILED")
                                 serviceEvents.emit(ServiceEvents.RECONNECTING_FAILED)
                                 notification.idle()
                             }

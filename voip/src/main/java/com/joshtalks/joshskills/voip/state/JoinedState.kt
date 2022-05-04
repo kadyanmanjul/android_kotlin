@@ -16,7 +16,7 @@ import kotlinx.coroutines.*
 class JoinedState(val context: CallContext) : VoipState {
     private val TAG = "JoinedState"
     private val scope = CoroutineScope(Dispatchers.IO)
-    private var listenerJob : Job? = null
+    private var listenerJob: Job? = null
 
     init {
         Log.d("Call State", TAG)
@@ -37,22 +37,27 @@ class JoinedState(val context: CallContext) : VoipState {
         Log.d(TAG, "backPress: Ignore")
     }
 
-    override fun onError() { disconnect() }
+    override fun onError() {
+        disconnect()
+    }
 
     override fun onDestroy() {
         scope.cancel()
     }
 
     private fun observe() {
-        listenerJob =  scope.launch {
+        listenerJob = scope.launch {
             try {
                 loop@ while (true) {
                     ensureActive()
-                val event = context.getStreamPipe().receive()
-                ensureActive()
+                    val event = context.getStreamPipe().receive()
+                    ensureActive()
                     when (event.what) {
                         CALL_CONNECTED_EVENT -> {
-                            Log.d(TAG, "observe: Joined Channel --> ${context.channelData.getChannel()}")
+                            Log.d(
+                                TAG,
+                                "observe: Joined Channel --> ${context.channelData.getChannel()}"
+                            )
                             // Emit Event to show Call Screen
                             ensureActive()
                             val startTime = SystemClock.elapsedRealtime()
@@ -180,10 +185,14 @@ class JoinedState(val context: CallContext) : VoipState {
                     }
                 }
                 scope.cancel()
-            } catch (e: Exception) {
-                e.printStackTrace()
-                context.closeCallScreen()
-                moveToLeavingState()
+            } catch (e: Throwable) {
+                if(e is CancellationException)
+                    throw e
+                else {
+                    e.printStackTrace()
+                    context.closeCallScreen()
+                    moveToLeavingState()
+                }
             }
         }
     }
@@ -205,4 +214,4 @@ class JoinedState(val context: CallContext) : VoipState {
     }
 }
 
-data class CallConnectData(val startTime : Long, val userName : String)
+data class CallConnectData(val startTime: Long, val userName: String)

@@ -148,7 +148,7 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                     uiState.currentState = "User Muted the Call"
                     voipLog?.log("Mute")
                 } else {
-                    if (voipState == State.CONNECTED)
+                    if (voipState == State.CONNECTED || voipState == State.RECONNECTING)
                         uiState.currentState = "Timer"
                 }
 

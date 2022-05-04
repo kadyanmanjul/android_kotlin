@@ -157,10 +157,14 @@ class JoiningState(val context: CallContext) : VoipState {
                     }
                 }
                 scope.cancel()
-            } catch (e: Exception) {
-                e.printStackTrace()
-                context.closeCallScreen()
-                moveToLeavingState()
+            } catch (e: Throwable) {
+                if(e is CancellationException)
+                    throw e
+                else {
+                    e.printStackTrace()
+                    context.closeCallScreen()
+                    moveToLeavingState()
+                }
             }
         }
     }

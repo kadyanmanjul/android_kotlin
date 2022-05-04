@@ -5,6 +5,7 @@ import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.communication.constants.ServerConstants
 import com.joshtalks.joshskills.voip.communication.model.NetworkAction
 import com.joshtalks.joshskills.voip.communication.model.UI
+import com.joshtalks.joshskills.voip.communication.model.UserAction
 import com.joshtalks.joshskills.voip.constant.*
 import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.inSeconds
@@ -22,6 +23,10 @@ class ReconnectingState(val context: CallContext) : VoipState {
         observe()
     }
 
+    override fun toString(): String {
+        return this::class.simpleName ?: ""
+    }
+
     override fun connect() {
         Log.d(TAG, "connect: Illegal Request")
     }
@@ -37,7 +42,9 @@ class ReconnectingState(val context: CallContext) : VoipState {
         Log.d(TAG, "backPress: ")
     }
 
-    override fun onError() { disconnect() }
+    override fun onError() {
+        disconnect()
+    }
 
     override fun onDestroy() {
         scope.cancel()
@@ -122,9 +129,63 @@ class ReconnectingState(val context: CallContext) : VoipState {
                             val uiState = context.currentUiState.copy(isRemoteUserMuted = false)
                             context.updateUIState(uiState = uiState)
                         }
+                        SPEAKER_ON_REQUEST -> {
+                            ensureActive()
+                            val uiState = context.currentUiState.copy(isSpeakerOn = true)
+                            context.updateUIState(uiState = uiState)
+                        }
+                        SPEAKER_OFF_REQUEST -> {
+                            val uiState = context.currentUiState.copy(isSpeakerOn = false)
+                            context.updateUIState(uiState = uiState)
+                        }
+                        MUTE_REQUEST -> {
+                            ensureActive()
+                            val uiState = context.currentUiState.copy(isOnMute = true)
+                            context.updateUIState(uiState = uiState)
+                            val userAction = UserAction(
+                                ServerConstants.MUTE,
+                                context.channelData.getChannel(),
+                                address = context.channelData.getPartnerMentorId()
+                            )
+                            context.changeMicState(true)
+                            context.sendMessageToServer(userAction)
+                        }
+                        UNMUTE_REQUEST -> {
+                            ensureActive()
+                            val uiState = context.currentUiState.copy(isOnMute = false)
+                            context.updateUIState(uiState = uiState)
+                            val userAction = UserAction(
+                                ServerConstants.UNMUTE,
+                                context.channelData.getChannel(),
+                                address = context.channelData.getPartnerMentorId()
+                            )
+                            context.changeMicState(true)
+                            context.sendMessageToServer(userAction)
+                        }
+                        HOLD_REQUEST -> {
+                            ensureActive()
+                            val uiState = context.currentUiState.copy(isOnHold = true)
+                            context.updateUIState(uiState = uiState)
+                            val userAction = UserAction(
+                                ServerConstants.ONHOLD,
+                                context.channelData.getChannel(),
+                                address = context.channelData.getPartnerMentorId()
+                            )
+                            context.sendMessageToServer(userAction)
+                        }
+                        UNHOLD_REQUEST -> {
+                            ensureActive()
+                            val uiState = context.currentUiState.copy(isOnHold = false)
+                            context.updateUIState(uiState = uiState)
+                            val userAction = UserAction(
+                                ServerConstants.RESUME,
+                                context.channelData.getChannel(),
+                                address = context.channelData.getPartnerMentorId()
+                            )
+                            context.sendMessageToServer(userAction)
+                        }
                         REMOTE_USER_DISCONNECTED_AGORA, REMOTE_USER_DISCONNECTED_USER_DROP, REMOTE_USER_DISCONNECTED_MESSAGE -> {
                             Log.d(TAG, "observe: disconnect event ${event.what}")
-
                             ensureActive()
                             moveToLeavingState()
                         }
@@ -133,12 +194,16 @@ class ReconnectingState(val context: CallContext) : VoipState {
 
                 }
                 scope.cancel()
-                } catch (e: Exception) {
+            } catch (e: Throwable) {
+                if (e is CancellationException)
+                    throw e
+                else {
                     e.printStackTrace()
                     context.closeCallScreen()
                     moveToLeavingState()
                 }
             }
+        }
     }
 
     private fun moveToLeavingState() {

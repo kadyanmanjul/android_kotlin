@@ -26,6 +26,7 @@ import com.joshtalks.joshskills.voip.state.CallContext
 import com.joshtalks.joshskills.voip.voipLog
 import com.joshtalks.joshskills.voip.webrtc.AgoraWebrtcService
 import com.joshtalks.joshskills.voip.webrtc.CallState
+import com.joshtalks.joshskills.voip.webrtc.Envelope
 import com.joshtalks.joshskills.voip.webrtc.WebrtcService
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
@@ -68,7 +69,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
             return PrefManager.getLatestPubnubMessageTime() < (this?.getEventTime() ?: 0)
         }
     var callContext : CallContext? = null
-    lateinit var stateChannel : Channel<Message>
+    lateinit var stateChannel : Channel<Envelope<Event>>
 
     init {
         scope.launch {
@@ -155,10 +156,8 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                         callContext?.disconnect()
                     }
                     UserAction.MUTE -> {
-                        val msg = Message.obtain().apply {
-                            what = MUTE_REQUEST
-                        }
-                        stateChannel.send(msg)
+                        val envelope = Envelope(Event.MUTE_REQUEST)
+                        stateChannel.send(envelope)
                     }
                     UserAction.UNMUTE -> {
                         val msg = Message.obtain().apply {

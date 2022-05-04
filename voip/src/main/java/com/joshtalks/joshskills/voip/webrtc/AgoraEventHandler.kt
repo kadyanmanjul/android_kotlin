@@ -61,22 +61,19 @@ internal class AgoraEventHandler(val scope: CoroutineScope) : IRtcEngineEventHan
 
     // Occurs when the local user joins a specified channel (#joinChannel)
     override fun onJoinChannelSuccess(channel: String, uid: Int, elapsed: Int) {
-        Log.d(TAG, "onJoinChannelSuccess: ")
-        voipLog?.log("Joined Channel -> $channel and UID -> $uid ")
+        Log.d(TAG, "onJoinChannelSuccess: $channel and UID -> $uid")
         emitEvent(CallState.CallInitiated)
     }
 
     // Occurs when a remote user (COMMUNICATION)/host (LIVE_BROADCASTING) joins the channel.
     override fun onUserJoined(uid: Int, elapsed: Int) {
-        Log.d(TAG, "onUserJoined: ")
-        voipLog?.log("UID -> $uid")
+        Log.d(TAG, "onUserJoined: UID -> $uid")
         emitEvent(CallState.CallConnected)
     }
 
     // Occurs when a user leaves the channel(#leaveChannel)
     override fun onLeaveChannel(stats: RtcStats) {
-        Log.d(TAG, "onLeaveChannel: ")
-        voipLog?.log("$stats")
+        Log.d(TAG, "onLeaveChannel: $stats")
         emitEvent(CallState.CallDisconnected)
     }
 
@@ -86,10 +83,7 @@ internal class AgoraEventHandler(val scope: CoroutineScope) : IRtcEngineEventHan
     // 2. Drop offline
     override fun onUserOffline(uid: Int, reason: Int) {
         Log.d(TAG, "onUserOffline: $uid Reason -> $reason")
-        //Log.d(TAG, "onUserOffline: $USER_DROP_OFFLINE")
-        voipLog?.log("UID -> $uid and Reason -> $reason")
         scope.launch {
-
             if(reason == USER_DROP_OFFLINE && uid != PrefManager.getLocalUserAgoraId()) {
                 emitEvent(CallState.OnReconnecting)
             } else if(reason == USER_QUIT_CHANNEL) {
@@ -100,8 +94,7 @@ internal class AgoraEventHandler(val scope: CoroutineScope) : IRtcEngineEventHan
 
     // Occurs when a user rejoins the channel after being disconnected due to network problems
     override fun onRejoinChannelSuccess(channel: String?, uid: Int, elapsed: Int) {
-        voipLog?.log("Channel -> $channel and UID -> $uid")
-        Log.d(TAG, "onRejoinChannelSuccess: ")
+        Log.d(TAG, "onRejoinChannelSuccess: Channel -> $channel and UID -> $uid")
         scope.launch {
             emitEvent(CallState.OnReconnected)
         }
@@ -109,7 +102,6 @@ internal class AgoraEventHandler(val scope: CoroutineScope) : IRtcEngineEventHan
 
     // Occurs when the SDK cannot reconnect to Agora server after its connection to the server is interrupted.
     override fun onConnectionLost() {
-        voipLog?.log("Connection Lost")
         Log.d(TAG, "onConnectionLost: ")
         // The SDK triggers this callback when it cannot connect to the server 10 seconds after calling joinChannel(), regardless of whether it is in the channel or not.
 //        scope.launch {
@@ -121,7 +113,6 @@ internal class AgoraEventHandler(val scope: CoroutineScope) : IRtcEngineEventHan
     override fun onConnectionStateChanged(state: Int, reason: Int) {
         Log.d(TAG, "onConnectionStateChanged: State - $state and Reason - $reason")
         scope.launch {
-            voipLog?.log("State -> $state and Reason -> $reason")
             if (Constants.CONNECTION_STATE_RECONNECTING == state &&
                 reason == Constants.CONNECTION_CHANGED_INTERRUPTED) {
                 emitEvent(CallState.OnReconnecting)
@@ -130,7 +121,7 @@ internal class AgoraEventHandler(val scope: CoroutineScope) : IRtcEngineEventHan
     }
 
     private fun emitEvent(event : CallState) {
-        voipLog?.log("Event -> $event")
+        Log.d(TAG, " Emitting Event : $event")
         scope.launch {
             callingEvent.emit(event)
         }
