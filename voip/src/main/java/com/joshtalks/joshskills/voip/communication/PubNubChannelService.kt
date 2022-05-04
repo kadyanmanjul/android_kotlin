@@ -74,7 +74,9 @@ class PubNubChannelService(val scope: CoroutineScope) : EventChannel {
     }
 
     override fun reconnect() {
+        Log.d(TAG, "reconnect: Pubnub Reconnecting Request")
         if (isReconnecting.not()) {
+            Log.d(TAG, "reconnect: Pubnub Reconnecting - $isReconnecting")
             scope.launch {
                 mutex.withLock {
                     isReconnecting = true
@@ -154,7 +156,7 @@ class PubNubChannelService(val scope: CoroutineScope) : EventChannel {
     private fun getMeta(event : OutgoingData) = if(Utils.uuid == event.getAddress()) null else event.getType()
 
     override fun observeChannelEvents(): SharedFlow<Communication> {
-        voipLog?.log("observeChannelEvents: $pubnub")
+        Log.d(TAG, "observeChannelEvents: $pubnub")
         return eventFlow
     }
 
@@ -163,7 +165,6 @@ class PubNubChannelService(val scope: CoroutineScope) : EventChannel {
     }
 
     private fun observeIncomingMessage() {
-        Log.d(TAG, "observeIncomingMessage: ${listener.hashCode()}")
         scope.launch {
             listener.observeMessages().collect {
                 //if (state == State.ACTIVE)

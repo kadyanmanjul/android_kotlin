@@ -87,7 +87,7 @@ internal class AgoraEventHandler(val scope: CoroutineScope) : IRtcEngineEventHan
             if(reason == USER_DROP_OFFLINE && uid != PrefManager.getLocalUserAgoraId()) {
                 emitEvent(CallState.OnReconnecting)
             } else if(reason == USER_QUIT_CHANNEL) {
-                emitEvent(CallState.OnReconnecting)
+                emitEvent(CallState.UserLeftChannel)
             }
         }
     }

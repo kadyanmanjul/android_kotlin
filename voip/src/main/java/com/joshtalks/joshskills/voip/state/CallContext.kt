@@ -98,7 +98,7 @@ data class CallContext(val callType: Int, val direction : CallDirection, val req
     }
 
     suspend fun closeCallScreen() {
-        Log.d(TAG, "closeCallScreen} ")
+        Log.d(TAG, "closeCallScreen ")
         val envelope = Envelope(Event.CLOSE_CALL_SCREEN)
         sendEventToUI(envelope)
     }
@@ -114,7 +114,7 @@ data class CallContext(val callType: Int, val direction : CallDirection, val req
     }
 
     suspend fun sendEventToUI(event : Envelope<Event>) {
-        Log.d(TAG, "sendMessageToServer $event} ")
+        Log.d(TAG, "sendEventToUI $event} ")
         mediator.flow.emit(event)
     }
 
