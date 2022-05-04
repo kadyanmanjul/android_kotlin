@@ -106,7 +106,7 @@ class RecentCallViewModel : BaseViewModel() {
                 map[userStatus] = "true"
                 map[PAGE_TYPE] = pageType
                 recentCallsRepository.confirmOrRejectFppRequest(senderMentorId, map)
-//                getRecentCall()
+                getRecentCall()
             } catch (ex: Throwable) {
                 ex.printStackTrace()
             }
