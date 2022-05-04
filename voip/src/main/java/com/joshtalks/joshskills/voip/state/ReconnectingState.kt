@@ -188,7 +188,7 @@ class ReconnectingState(val context: CallContext) : VoipState {
                             )
                             context.sendMessageToServer(userAction)
                         }
-                        REMOTE_USER_DISCONNECTED_AGORA, REMOTE_USER_DISCONNECTED_USER_DROP, REMOTE_USER_DISCONNECTED_MESSAGE -> {
+                        REMOTE_USER_DISCONNECTED_AGORA, REMOTE_USER_DISCONNECTED_USER_LEFT, REMOTE_USER_DISCONNECTED_MESSAGE -> {
                             Log.d(TAG, "observe: disconnect event ${event.type}")
                             ensureActive()
                             moveToLeavingState()

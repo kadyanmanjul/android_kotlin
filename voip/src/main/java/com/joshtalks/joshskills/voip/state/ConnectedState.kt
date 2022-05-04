@@ -17,7 +17,7 @@ import kotlinx.coroutines.*
 class ConnectedState(val context: CallContext) : VoipState {
     private val TAG = "ConnectedState"
     private val scope = CoroutineScope(Dispatchers.IO)
-    private var listenerJob : Job? = null
+    private var listenerJob: Job? = null
 
     init {
         Log.d("Call State", TAG)
@@ -26,10 +26,8 @@ class ConnectedState(val context: CallContext) : VoipState {
 
     // Red Button Pressed
     override fun disconnect() {
-        scope.launch {
-                Log.d(TAG, "disconnect : User Red Press switching to Leaving State")
-            moveToLeavingState()
-        }
+        Log.d(TAG, "disconnect : User Red Press switching to Leaving State")
+        moveToLeavingState()
     }
 
 
@@ -173,7 +171,7 @@ class ConnectedState(val context: CallContext) : VoipState {
                             )
                             context.updateUIState(uiState = uiState)
                         }
-                        REMOTE_USER_DISCONNECTED_AGORA, REMOTE_USER_DISCONNECTED_USER_DROP, REMOTE_USER_DISCONNECTED_MESSAGE -> {
+                        REMOTE_USER_DISCONNECTED_AGORA, REMOTE_USER_DISCONNECTED_USER_LEFT, REMOTE_USER_DISCONNECTED_MESSAGE -> {
                             ensureActive()
                             Log.d(TAG, "Received : ${event.type} switched to Leaving State")
                             moveToLeavingState()
@@ -182,8 +180,8 @@ class ConnectedState(val context: CallContext) : VoipState {
                     }
                 }
                 scope.cancel()
-            } catch (e : Throwable) {
-                if(e is CancellationException)
+            } catch (e: Throwable) {
+                if (e is CancellationException)
                     throw e
                 else {
                     e.printStackTrace()
@@ -194,9 +192,11 @@ class ConnectedState(val context: CallContext) : VoipState {
         }
     }
 
-    private suspend fun moveToLeavingState() {
+    private fun moveToLeavingState() {
+        scope.launch {
             listenerJob?.cancel()
             context.closeCallScreen()
+            Log.d(TAG, "moveToLeavingState: after close screen")
             val networkAction = NetworkAction(
                 channelName = context.channelData.getChannel(),
                 uid = context.channelData.getAgoraUid(),
@@ -220,7 +220,8 @@ class ConnectedState(val context: CallContext) : VoipState {
             context.disconnectCall()
             PrefManager.setVoipState(State.LEAVING)
             context.state = LeavingState(context)
-           Log.d(TAG, "Received : switched to ${context.state}")
-           scope.cancel()
+            Log.d(TAG, "Received : switched to ${context.state}")
+            scope.cancel()
+        }
     }
 }

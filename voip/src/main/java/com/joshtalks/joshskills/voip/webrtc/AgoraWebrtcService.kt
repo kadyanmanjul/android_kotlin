@@ -204,6 +204,9 @@ internal class AgoraWebrtcService(val scope: CoroutineScope) : WebrtcService {
                         }
                         eventFlow.emit(callState)
                     }
+                    CallState.UserLeftChannel -> {
+                        eventFlow.emit(callState)
+                    }
                 }
                 voipLog?.log("observeCallbacks : CallState = $callState")
             }

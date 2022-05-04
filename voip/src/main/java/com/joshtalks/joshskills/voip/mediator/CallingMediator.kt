@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.voip.mediator
 
-import android.os.Message
 import android.util.Log
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_INCOMING_CALL_ID
 import com.joshtalks.joshskills.base.constants.PEER_TO_PEER
@@ -108,7 +107,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                     stopAudio()
                 }
                 callContext?.destroyContext()
-                stateChannel = Channel()
+                stateChannel = Channel(Channel.UNLIMITED)
                 callContext = CallContext(
                     callType = callType,
                     request = callData,
@@ -121,7 +120,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
     }
 
     fun sendEventToServer(data: OutgoingData) {
-        Log.d(TAG, "sendEventToServer : data")
+        Log.d(TAG, "sendEventToServer : $data")
         networkEventChannel.emitEvent(data)
     }
 
@@ -215,9 +214,11 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
 
     // Handle Events coming from Backend
     private fun handlePubnubEvent() {
+        Log.d(TAG, "handlePubnubEvent: Observe")
         scope.launch {
             try {
                 networkEventChannel.observeChannelEvents().collect {
+                    Log.d(TAG, "handlePubnubEvent: Collect $it")
                     val latestEventTimestamp = it.getEventTime() ?: 0L
                     PrefManager.setLatestPubnubMessageTime(latestEventTimestamp)
                     when (it) {
@@ -319,6 +320,10 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                             Log.d(TAG, "handleWebrtcEvent : $it")
                             callContext?.onError()
                         }
+                        CallState.UserLeftChannel -> {
+                            val envelope = Envelope(Event.REMOTE_USER_DISCONNECTED_USER_LEFT)
+                            stateChannel.send(envelope)
+                        }
                     }
                 }
             } catch (e: Exception) {
@@ -332,6 +337,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
         scope.launch {
             fallbackEventChannel.observeChannelEvents().collect { event ->
                 if (event.hasMainEventChannelFailed) {
+                    Log.d(TAG, "handleFallbackEvents: Pubnub Listener Failed ...")
                     networkEventChannel.reconnect()
                     when (event) {
                         is Error -> {callContext?.onError()}

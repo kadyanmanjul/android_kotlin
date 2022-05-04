@@ -119,7 +119,6 @@ class CallingRemoteService : Service() {
     }
 
     private fun observeNetworkEvents() {
-        Log.d(TAG, "observeNetworkEvents: ${mediator.hashCode()}")
         if (isMediatorInitialise.not()) {
             isMediatorInitialise = true
             ioScope.launch {
