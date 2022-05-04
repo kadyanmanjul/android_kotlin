@@ -87,10 +87,8 @@ data class CallContext(val callType: Int, val direction : CallDirection, val req
     }
 
     suspend fun closeCallScreen() {
-        val msg = Message.obtain().apply {
-            what = CLOSE_CALL_SCREEN
-        }
-        sendEventToUI(msg)
+        val envelope = Envelope(Event.CLOSE_CALL_SCREEN)
+        sendEventToUI(envelope)
     }
 
     fun getStreamPipe()  : Channel<Envelope<Event>> {
@@ -101,7 +99,7 @@ data class CallContext(val callType: Int, val direction : CallDirection, val req
         mediator.sendEventToServer(event)
     }
 
-    suspend fun sendEventToUI(event : Message) {
+    suspend fun sendEventToUI(event : Envelope<Event>) {
         mediator.flow.emit(event)
     }
 

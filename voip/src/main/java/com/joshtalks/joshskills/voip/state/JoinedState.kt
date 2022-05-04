@@ -7,9 +7,10 @@ import com.joshtalks.joshskills.voip.communication.constants.ServerConstants
 import com.joshtalks.joshskills.voip.communication.model.NetworkAction
 import com.joshtalks.joshskills.voip.communication.model.UI
 import com.joshtalks.joshskills.voip.communication.model.UserAction
-import com.joshtalks.joshskills.voip.constant.*
+import com.joshtalks.joshskills.voip.constant.Event.*
+import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.local.PrefManager
-import com.joshtalks.joshskills.voip.mediator.CallingMediator
+import com.joshtalks.joshskills.voip.webrtc.Envelope
 import kotlinx.coroutines.*
 
 // User Joined the Agora Channel
@@ -51,25 +52,21 @@ class JoinedState(val context: CallContext) : VoipState {
                 loop@ while (true) {
                     ensureActive()
                     val event = context.getStreamPipe().receive()
+                    Log.d(TAG, "Received after observing : ${event.type}")
                     ensureActive()
-                    when (event.what) {
-                        CALL_CONNECTED_EVENT -> {
-                            Log.d(
-                                TAG,
-                                "observe: Joined Channel --> ${context.channelData.getChannel()}"
-                            )
+                    when (event.type) {
+                   CALL_CONNECTED_EVENT -> {
+                            Log.d(TAG, "observe: Joined Channel --> ${context.channelData.getChannel()}")
                             // Emit Event to show Call Screen
                             ensureActive()
                             val startTime = SystemClock.elapsedRealtime()
                             val uiState = context.currentUiState.copy(startTime = startTime)
                             context.updateUIState(uiState = uiState)
                             ensureActive()
-                            val connectedEvent = Message.obtain()
-                            connectedEvent.copyFrom(event)
-                            connectedEvent.obj = CallConnectData(
+                            val connectedEvent = Envelope(event.type, CallConnectData(
                                 startTime,
                                 context.channelData.getCallingPartnerName()
-                            )
+                            ))
                             context.sendEventToUI(connectedEvent)
                             PrefManager.setVoipState(State.CONNECTED)
                             context.state = ConnectedState(context)
@@ -164,7 +161,7 @@ class JoinedState(val context: CallContext) : VoipState {
                         }
                         UI_STATE_UPDATED -> {
                             ensureActive()
-                            val uiData = event.obj as UI
+                            val uiData = event.data as UI
                             if (uiData.getType() == ServerConstants.UI_STATE_UPDATED)
                                 context.sendMessageToServer(
                                     UI(
@@ -181,7 +178,7 @@ class JoinedState(val context: CallContext) : VoipState {
                             )
                             context.updateUIState(uiState = uiState)
                         }
-                        else -> throw IllegalEventException("In $TAG but received ${event.what} expected $CALL_INITIATED_EVENT")
+                        else -> throw IllegalEventException("In $TAG but received ${event.type} expected $CALL_INITIATED_EVENT")
                     }
                 }
                 scope.cancel()
@@ -210,6 +207,7 @@ class JoinedState(val context: CallContext) : VoipState {
         context.disconnectCall()
         PrefManager.setVoipState(State.LEAVING)
         context.state = LeavingState(context)
+        Log.d(TAG, "Received : switched to ${context.state}")
         scope.cancel()
     }
 }

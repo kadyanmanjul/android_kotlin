@@ -10,7 +10,6 @@ import com.joshtalks.joshskills.voip.audiomanager.SoundManager
 import com.joshtalks.joshskills.voip.calldetails.IncomingCallData
 import com.joshtalks.joshskills.voip.communication.EventChannel
 import com.joshtalks.joshskills.voip.communication.PubNubChannelService
-import com.joshtalks.joshskills.voip.communication.PubnubState
 import com.joshtalks.joshskills.voip.communication.PubnubState.*
 import com.joshtalks.joshskills.voip.communication.PubnubState.CONNECTED
 import com.joshtalks.joshskills.voip.communication.PubnubState.RECONNECTED
@@ -30,11 +29,8 @@ import com.joshtalks.joshskills.voip.webrtc.Envelope
 import com.joshtalks.joshskills.voip.webrtc.WebrtcService
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.*
 import kotlin.Exception
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlin.collections.HashMap
@@ -55,7 +51,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
 
     private var calling = PeerToPeerCalling()
     val flow by lazy {
-        MutableSharedFlow<Message>(replay = 0)
+        MutableSharedFlow<Envelope<Event>>(replay = 0)
     }
     val uiStateFlow = MutableStateFlow(UIState.empty())
     val uiTransitionFlow = MutableSharedFlow<ServiceEvents>(replay = 0)
@@ -92,7 +88,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
         return uiTransitionFlow
     }
 
-    override fun observeEvents(): SharedFlow<Message> {
+    override fun observeEvents(): SharedFlow<Envelope<Event>> {
         return flow
     }
 
@@ -160,34 +156,24 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                         stateChannel.send(envelope)
                     }
                     UserAction.UNMUTE -> {
-                        val msg = Message.obtain().apply {
-                            what = UNMUTE_REQUEST
-                        }
-                        stateChannel.send(msg)
+                        val envelope = Envelope(Event.UNMUTE_REQUEST)
+                        stateChannel.send(envelope)
                     }
                     UserAction.HOLD -> {
-                        val msg = Message.obtain().apply {
-                            what = HOLD_REQUEST
-                        }
-                        stateChannel.send(msg)
+                        val envelope = Envelope(Event.HOLD_REQUEST)
+                        stateChannel.send(envelope)
                     }
                     UserAction.UNHOLD -> {
-                        val msg = Message.obtain().apply {
-                            what = UNHOLD_REQUEST
-                        }
-                        stateChannel.send(msg)
+                        val envelope = Envelope(Event.UNHOLD_REQUEST)
+                        stateChannel.send(envelope)
                     }
                     UserAction.SPEAKER_ON -> {
-                        val msg = Message.obtain().apply {
-                            what = SPEAKER_ON_REQUEST
-                        }
-                        stateChannel.send(msg)
+                        val envelope = Envelope(Event.SPEAKER_ON_REQUEST)
+                        stateChannel.send(envelope)
                     }
                     UserAction.SPEAKER_OFF -> {
-                        val msg = Message.obtain().apply {
-                            what = SPEAKER_OFF_REQUEST
-                        }
-                        stateChannel.send(msg)
+                        val envelope = Envelope(Event.SPEAKER_OFF_REQUEST)
+                        stateChannel.send(envelope)
                     }
                 }
             } catch (e: Exception) {
@@ -201,21 +187,15 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
             try {
                 networkEventChannel.observeChannelState().collect {
                     when (it) {
-                        CONNECTED -> {
-                        }
+                        CONNECTED -> {}
                         RECONNECTED -> {
-                            val msg = Message.obtain().apply {
-                                what = SYNC_UI_STATE
-                            }
-                            stateChannel.send(msg)
+                            val envelope = Envelope(Event.SYNC_UI_STATE)
+                            stateChannel.send(envelope)
                         }
-                        DISCONNECTED -> {
-                        }
+                        DISCONNECTED -> {}
                     }
                 }
-            } catch (e: Exception) {
-
-            }
+            } catch (e: Exception) { }
         }
     }
 
@@ -237,44 +217,31 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                             callContext?.onError()
                         }
                         is ChannelData -> {
-                            val msg = Message.obtain().apply {
-                                what = RECEIVED_CHANNEL_DATA
-                                obj = it
-                            }
-                            stateChannel.send(msg)
+                            val envelope = Envelope(Event.RECEIVED_CHANNEL_DATA,it)
+                            stateChannel.send(envelope)
                         }
                         is MessageData -> {
                             if (isMessageForSameChannel(it.getChannel())) {
                                 when (it.getType()) {
                                     ServerConstants.ONHOLD -> {
-                                        val msg = Message.obtain().apply {
-                                            what = HOLD
-                                        }
-                                        stateChannel.send(msg)
+                                        val envelope = Envelope(Event.HOLD)
+                                        stateChannel.send(envelope)
                                     }
                                     ServerConstants.RESUME -> {
-                                        val msg = Message.obtain().apply {
-                                            what = UNHOLD
-                                        }
-                                        stateChannel.send(msg)
+                                        val envelope = Envelope(Event.UNHOLD)
+                                        stateChannel.send(envelope)
                                     }
                                     ServerConstants.MUTE -> {
-                                        val msg = Message.obtain().apply {
-                                            what = MUTE
-                                        }
-                                        stateChannel.send(msg)
+                                        val envelope = Envelope(Event.MUTE)
+                                        stateChannel.send(envelope)
                                     }
                                     ServerConstants.UNMUTE -> {
-                                        val msg = Message.obtain().apply {
-                                            what = UNMUTE
-                                        }
-                                        stateChannel.send(msg)
+                                        val envelope = Envelope(Event.UNMUTE)
+                                        stateChannel.send(envelope)
                                     }
                                     ServerConstants.DISCONNECTED -> {
-                                        val msg = Message.obtain().apply {
-                                            what = REMOTE_USER_DISCONNECTED_MESSAGE
-                                        }
-                                        stateChannel.send(msg)
+                                        val envelope = Envelope(Event.REMOTE_USER_DISCONNECTED_MESSAGE)
+                                        stateChannel.send(envelope)
                                     }
                                 }
                             }
@@ -284,19 +251,14 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                                 updateIncomingCallState(true)
                                 voipLog?.log("Incoming Call -> $it")
                                 IncomingCallData.set(it.getCallId(), PEER_TO_PEER)
-                                val msg = Message.obtain().apply {
-                                    what = INCOMING_CALL
-                                }
-                                flow.emit(msg)
+                                val envelope = Envelope(Event.INCOMING_CALL)
+                                flow.emit(envelope)
                             }
                         }
                         is UI -> {
                             if (isMessageForSameChannel(it.getChannelName())) {
-                                val msg = Message.obtain().apply {
-                                    obj = it
-                                    what = UI_STATE_UPDATED
-                                }
-                                stateChannel.send(msg)
+                                val envelope = Envelope(Event.UI_STATE_UPDATED,it)
+                                stateChannel.send(envelope)
                             }
                         }
                     }
@@ -314,35 +276,25 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                     when (it) {
                         CallState.CallConnected -> {
                             // Call Connected
-                            val msg = Message.obtain().apply {
-                                what = CALL_CONNECTED_EVENT
-                            }
-                            stateChannel.send(msg)
+                            val envelope = Envelope(Event.CALL_CONNECTED_EVENT)
+                            stateChannel.send(envelope)
                         }
                         CallState.CallDisconnected -> {
-                            val msg = Message.obtain().apply {
-                                what = CALL_DISCONNECTED
-                            }
-                            stateChannel.send(msg)
+                            val envelope = Envelope(Event.CALL_DISCONNECTED)
+                            stateChannel.send(envelope)
                         }
                         CallState.CallInitiated -> {
                             // CallInitiated
-                            val msg = Message.obtain().apply {
-                                what = CALL_INITIATED_EVENT
-                            }
-                            stateChannel.send(msg)
+                            val envelope = Envelope(Event.CALL_INITIATED_EVENT)
+                            stateChannel.send(envelope)
                         }
                         CallState.OnReconnected -> {
-                            val msg = Message.obtain().apply {
-                                what = com.joshtalks.joshskills.voip.constant.RECONNECTED
-                            }
-                            stateChannel.send(msg)
+                            val envelope = Envelope(Event.RECONNECTED)
+                            stateChannel.send(envelope)
                         }
                         CallState.OnReconnecting -> {
-                            val msg = Message.obtain().apply {
-                                what = RECONNECTING
-                            }
-                            stateChannel.send(msg)
+                            val envelope = Envelope(Event.RECONNECTING)
+                            stateChannel.send(envelope)
                         }
                         CallState.Error -> {
                             callContext?.onError()
@@ -363,46 +315,33 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                     when (event) {
                         is Error -> {callContext?.onError()}
                         is ChannelData -> {
-                            val msg = Message.obtain().apply {
-                                what = RECEIVED_CHANNEL_DATA
-                                obj = event
-                            }
-                            stateChannel.send(msg)
+                            val envelope = Envelope(Event.RECEIVED_CHANNEL_DATA,event)
+                            stateChannel.send(envelope)
                         }
                         is MessageData -> {
                             if (isMessageForSameChannel(event.getChannel())) {
                                 when (event.getType()) {
                                     ServerConstants.ONHOLD -> {
                                         // Transfer to Service
-                                        val msg = Message.obtain().apply {
-                                            what = HOLD
-                                        }
-                                        stateChannel.send(msg)
+                                        val envelope = Envelope(Event.HOLD)
+                                        stateChannel.send(envelope)
                                     }
                                     ServerConstants.RESUME -> {
-                                        val msg = Message.obtain().apply {
-                                            what = UNHOLD
-                                        }
-                                        stateChannel.send(msg)
+                                        val envelope = Envelope(Event.UNHOLD)
+                                        stateChannel.send(envelope)
                                     }
                                     ServerConstants.MUTE -> {
-                                        val msg = Message.obtain().apply {
-                                            what = MUTE
-                                        }
-                                        stateChannel.send(msg)
+                                        val envelope = Envelope(Event.MUTE)
+                                        stateChannel.send(envelope)
                                     }
                                     ServerConstants.UNMUTE -> {
-                                        val msg = Message.obtain().apply {
-                                            what = UNMUTE
-                                        }
-                                        stateChannel.send(msg)
+                                        val envelope = Envelope(Event.UNMUTE)
+                                        stateChannel.send(envelope)
                                     }
                                     // Remote User Disconnected
                                     ServerConstants.DISCONNECTED -> {
-                                        val msg = Message.obtain().apply {
-                                            what = REMOTE_USER_DISCONNECTED_MESSAGE
-                                        }
-                                        stateChannel.send(msg)
+                                        val envelope = Envelope(Event.REMOTE_USER_DISCONNECTED_MESSAGE)
+                                        stateChannel.send(envelope)
                                     }
                                 }
                             }
@@ -411,20 +350,14 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                             if (isShowingIncomingCall.not() && PrefManager.getVoipState() == State.IDLE) {
                                 updateIncomingCallState(true)
                                 IncomingCallData.set(event.getCallId(), PEER_TO_PEER)
-                                val msg = Message.obtain().apply {
-                                    what = INCOMING_CALL
-                                    obj = event
-                                }
-                                flow.emit(msg)
+                                val envelope = Envelope(Event.INCOMING_CALL,event)
+                                flow.emit(envelope)
                             }
                         }
                         is UI -> {
                             if (isMessageForSameChannel(event.getChannelName())) {
-                                val msg = Message.obtain().apply {
-                                    obj = event
-                                    what = UI_STATE_UPDATED
-                                }
-                                stateChannel.send(msg)
+                                val envelope = Envelope(Event.UI_STATE_UPDATED,event)
+                                stateChannel.send(envelope)
                             }
                         }
                     }

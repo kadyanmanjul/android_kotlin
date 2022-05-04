@@ -8,7 +8,7 @@ import com.joshtalks.joshskills.voip.communication.model.NetworkAction
 import com.joshtalks.joshskills.voip.communication.model.Timeout
 import com.joshtalks.joshskills.voip.communication.model.UserAction
 import com.joshtalks.joshskills.voip.constant.JOINING
-import com.joshtalks.joshskills.voip.constant.RECEIVED_CHANNEL_DATA
+import com.joshtalks.joshskills.voip.constant.Event.*
 import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.UIState
 import com.joshtalks.joshskills.voip.data.local.PrefManager
@@ -101,9 +101,10 @@ class SearchingState(val context: CallContext) : VoipState {
         scope.launch {
             try {
                 val event = context.getStreamPipe().receive()
-                if (event.what == RECEIVED_CHANNEL_DATA) {
+                Log.d(TAG, "Received after observing : ${event.type}")
+                if (event.type == RECEIVED_CHANNEL_DATA) {
                     Log.d(TAG, "observe: Received Channel Data")
-                    context.channelData = event.obj as? ChannelData
+                    context.channelData = event.data as? ChannelData
                         ?: throw UnexpectedException("Channel data is NULL")
                     PrefManager.setLocalUserAgoraId(context.channelData.getAgoraUid())
                     val uiState = UIState(
@@ -119,7 +120,7 @@ class SearchingState(val context: CallContext) : VoipState {
                     PrefManager.setVoipState(State.JOINING)
                     context.state = JoiningState(context)
                 } else
-                    throw IllegalEventException("In $TAG but received ${event.what} expected $RECEIVED_CHANNEL_DATA")
+                    throw IllegalEventException("In $TAG but received ${event.type} expected $RECEIVED_CHANNEL_DATA")
                 scope.cancel()
             } catch (e: Throwable) {
                 if(e is CancellationException)

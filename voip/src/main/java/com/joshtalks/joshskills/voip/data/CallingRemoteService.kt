@@ -21,7 +21,9 @@ import com.joshtalks.joshskills.voip.calldetails.LastCallDetail
 import com.joshtalks.joshskills.voip.communication.PubnubState
 import com.joshtalks.joshskills.voip.communication.constants.ServerConstants
 import com.joshtalks.joshskills.voip.communication.model.*
-import com.joshtalks.joshskills.voip.constant.*
+import com.joshtalks.joshskills.voip.constant.Event.*
+import com.joshtalks.joshskills.voip.constant.IDLE
+import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.mediator.CallServiceMediator
 import com.joshtalks.joshskills.voip.mediator.CallingMediator
@@ -124,9 +126,9 @@ class CallingRemoteService : Service() {
                 try {
                     mediator.observeEvents().collect {
                         Log.d(TAG, "observeMediatorEvents: $it")
-                        when (it.what) {
+                        when (it.type) {
                             CALL_CONNECTED_EVENT -> {
-                                val data = it.obj as CallConnectData
+                                val data = it.data as CallConnectData
                                 updateStartTime(data.startTime)
                                 notification.connected(
                                     data.userName,

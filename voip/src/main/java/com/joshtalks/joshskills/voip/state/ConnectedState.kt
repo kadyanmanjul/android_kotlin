@@ -52,6 +52,7 @@ class ConnectedState(val context: CallContext) : VoipState {
                 loop@ while (true) {
                     ensureActive()
                     val event = context.getStreamPipe().receive()
+                    Log.d(TAG, "Received after observing : ${event.type}")
                     ensureActive()
                     when (event.type) {
                         MUTE -> {
@@ -172,6 +173,7 @@ class ConnectedState(val context: CallContext) : VoipState {
                         }
                         REMOTE_USER_DISCONNECTED_AGORA, REMOTE_USER_DISCONNECTED_USER_DROP, REMOTE_USER_DISCONNECTED_MESSAGE -> {
                             ensureActive()
+                            Log.d(TAG, "Received : ${event.type} switched to Leaving State")
                             moveToLeavingState()
                         }
                         else -> throw IllegalEventException("In $TAG but received ${event.type} event don't know how to process")
@@ -215,6 +217,7 @@ class ConnectedState(val context: CallContext) : VoipState {
             context.disconnectCall()
             PrefManager.setVoipState(State.LEAVING)
             context.state = LeavingState(context)
-            scope.cancel()
+           Log.d(TAG, "Received : switched to ${context.state}")
+           scope.cancel()
     }
 }

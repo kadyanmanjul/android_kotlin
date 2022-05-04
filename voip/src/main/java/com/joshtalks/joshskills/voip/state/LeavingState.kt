@@ -1,9 +1,7 @@
 package com.joshtalks.joshskills.voip.state
 
 import android.util.Log
-import com.joshtalks.joshskills.voip.constant.CALL_DISCONNECTED
-import com.joshtalks.joshskills.voip.constant.CALL_INITIATED_EVENT
-import com.joshtalks.joshskills.voip.constant.IDLE
+import com.joshtalks.joshskills.voip.constant.Event.*
 import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.UIState
 import com.joshtalks.joshskills.voip.data.local.PrefManager
@@ -38,8 +36,9 @@ class LeavingState(val context: CallContext) : VoipState {
             try {
                 ensureActive()
                 val event = context.getStreamPipe().receive()
+                Log.d(TAG, "Received after observing : ${event.type}")
                 ensureActive()
-                if (event.what == CALL_DISCONNECTED) {
+                if (event.type == CALL_DISCONNECTED) {
                     context.closePipe()
                     context.updateUIState(uiState = UIState.empty())
                     ensureActive()
@@ -47,7 +46,7 @@ class LeavingState(val context: CallContext) : VoipState {
                     context.destroyContext()
                 } else {
                     ensureActive()
-                    throw IllegalEventException("In $TAG but received ${event.what} expected $CALL_DISCONNECTED")
+                    throw IllegalEventException("In $TAG but received ${event.type} expected $CALL_DISCONNECTED")
                 }
                 scope.cancel()
             } catch (e: Throwable) {

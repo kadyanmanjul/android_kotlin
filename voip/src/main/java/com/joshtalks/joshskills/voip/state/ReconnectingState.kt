@@ -6,7 +6,8 @@ import com.joshtalks.joshskills.voip.communication.constants.ServerConstants
 import com.joshtalks.joshskills.voip.communication.model.NetworkAction
 import com.joshtalks.joshskills.voip.communication.model.UI
 import com.joshtalks.joshskills.voip.communication.model.UserAction
-import com.joshtalks.joshskills.voip.constant.*
+import com.joshtalks.joshskills.voip.constant.Event.*
+import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.inSeconds
 import com.joshtalks.joshskills.voip.updateLastCallDetails
@@ -57,8 +58,9 @@ class ReconnectingState(val context: CallContext) : VoipState {
                 loop@ while (true) {
                     ensureActive()
                     val event = context.getStreamPipe().receive()
+                    Log.d(TAG, "Received after observing : ${event.type}")
                     ensureActive()
-                    when (event.what) {
+                    when (event.type) {
                         RECONNECTED -> {
                             ensureActive()
                             context.reconnected()
@@ -81,7 +83,7 @@ class ReconnectingState(val context: CallContext) : VoipState {
                             break@loop
                         }
                         UI_STATE_UPDATED -> {
-                            val uiData = event.obj as UI
+                            val uiData = event.data as UI
                             if (uiData.getType() == ServerConstants.UI_STATE_UPDATED)
                                 context.sendMessageToServer(
                                     UI(
@@ -185,11 +187,11 @@ class ReconnectingState(val context: CallContext) : VoipState {
                             context.sendMessageToServer(userAction)
                         }
                         REMOTE_USER_DISCONNECTED_AGORA, REMOTE_USER_DISCONNECTED_USER_DROP, REMOTE_USER_DISCONNECTED_MESSAGE -> {
-                            Log.d(TAG, "observe: disconnect event ${event.what}")
+                            Log.d(TAG, "observe: disconnect event ${event.type}")
                             ensureActive()
                             moveToLeavingState()
                         }
-                        else -> throw IllegalEventException("In $TAG but received ${event.what} expected $RECONNECTED")
+                        else -> throw IllegalEventException("In $TAG but received ${event.type} expected $RECONNECTED")
                     }
 
                 }
@@ -234,6 +236,7 @@ class ReconnectingState(val context: CallContext) : VoipState {
             context.disconnectCall()
             PrefManager.setVoipState(State.LEAVING)
             context.state = LeavingState(context)
+            Log.d(TAG, "Received : switched to ${context.state}")
             scope.cancel()
         }
     }
