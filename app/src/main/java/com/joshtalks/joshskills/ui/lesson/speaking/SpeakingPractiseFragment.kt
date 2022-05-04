@@ -81,6 +81,9 @@ import com.joshtalks.joshskills.core.REMOVE_TOOLTIP_FOR_TWENTY_MIN_CALL
 import com.joshtalks.joshskills.core.SPEAKING_SCREEN_SEEN_GOAL_POSTED
 import com.joshtalks.joshskills.core.TWENTY_MIN_CALL_ATTEMPTED_GOAL_POSTED
 import com.joshtalks.joshskills.core.TWENTY_MIN_CALL_GOAL_POSTED
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 
 const val NOT_ATTEMPTED = "NA"
 const val COMPLETED = "CO"
