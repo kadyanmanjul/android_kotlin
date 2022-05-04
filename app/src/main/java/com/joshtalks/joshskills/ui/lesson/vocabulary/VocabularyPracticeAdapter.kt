@@ -649,14 +649,14 @@ class VocabularyPracticeAdapter(
 //                filePath = chatModel.downloadedLocalPath
                     val state =
                         if (it.isPlaying || isAudioPlaying()) {
-                            MixPanelTracker.publishEvent(MixPanelEvent.VOCAB_WORD_RECORDING_PAUSE)
+                            MixPanelTracker.publishEvent(MixPanelEvent.VOCAB_WORD_RECORDING_PLAY)
                                 .addParam(ParamKeys.LESSON_ID,lessonQuestion?.lessonId)
                                 .addParam(ParamKeys.QUESTION_ID,lessonQuestion?.questionId)
                                 .push()
                             currentQuestion?.isPlaying = true
                             MaterialPlayPauseDrawable.State.Pause
                         } else {
-                            MixPanelTracker.publishEvent(MixPanelEvent.VOCAB_WORD_RECORDING_PLAY)
+                            MixPanelTracker.publishEvent(MixPanelEvent.VOCAB_WORD_RECORDING_PAUSE)
                                 .addParam(ParamKeys.LESSON_ID,lessonQuestion?.lessonId)
                                 .addParam(ParamKeys.QUESTION_ID,lessonQuestion?.questionId)
                                 .push()
@@ -1330,7 +1330,6 @@ class VocabularyPracticeAdapter(
                             MixPanelTracker.publishEvent(MixPanelEvent.VOCAB_WORD_RECORD)
                                 .addParam(ParamKeys.LESSON_ID,it.lessonId)
                                 .addParam(ParamKeys.QUESTION_ID,it.questionId)
-                                .addParam(ParamKeys.RECORD_DURATION,timeDifference)
                                 .push()
                         }
                         MotionEvent.ACTION_MOVE -> {

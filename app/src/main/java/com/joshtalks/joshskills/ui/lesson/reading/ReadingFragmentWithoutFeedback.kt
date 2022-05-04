@@ -1561,9 +1561,6 @@ class ReadingFragmentWithoutFeedback :
                 val holder: RecyclerView.ViewHolder =
                     binding.audioListRv.findViewHolderForAdapterPosition(i) as PracticeAudioAdapter.PracticeAudioViewHolder
                 if (holder is PracticeAudioAdapter.PracticeAudioViewHolder) {
-                    MixPanelTracker.publishEvent(MixPanelEvent.READING_RECORDING_PLAY)
-                        .addParam(ParamKeys.LESSON_ID, lessonID)
-                        .push()
                     holder.setPlayPauseBtnState(MaterialPlayPauseDrawable.State.Pause)
                     binding.btnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
                 }
@@ -1573,9 +1570,6 @@ class ReadingFragmentWithoutFeedback :
                 val holder: RecyclerView.ViewHolder =
                     binding.audioListRv.findViewHolderForAdapterPosition(i) as PracticeAudioAdapter.PracticeAudioViewHolder
                 if (holder is PracticeAudioAdapter.PracticeAudioViewHolder) {
-                    MixPanelTracker.publishEvent(MixPanelEvent.READING_RECORDING_PAUSE)
-                        .addParam(ParamKeys.LESSON_ID, lessonID)
-                        .push()
                     holder.setPlayPauseBtnState(MaterialPlayPauseDrawable.State.Play)
                 }
             }

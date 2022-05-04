@@ -1,6 +1,8 @@
 package com.joshtalks.joshskills.ui.group.repository
 
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.USER_UNIQUE_ID
 import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -91,8 +93,8 @@ class ABTestRepository {
                 val obj = JSONObject()
                 MixPanelTracker.mixPanel.track("$$exp",obj)
                 MixPanelTracker.mixPanel.registerSuperProperties(prop)
-                MixPanelTracker.mixPanel.identify(Mentor.getInstance().getId())
-                MixPanelTracker.mixPanel.people.identify(Mentor.getInstance().getId())
+                MixPanelTracker.mixPanel.identify(PrefManager.getStringValue(USER_UNIQUE_ID))
+                MixPanelTracker.mixPanel.people.identify(PrefManager.getStringValue(USER_UNIQUE_ID))
                 MixPanelTracker.mixPanel.people.set(prop)
             }
         } catch (ex: Throwable) {

@@ -13,6 +13,7 @@ import com.joshtalks.joshskills.core.abTest.GoalKeys
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.analytics.ParamKeys
+import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.group.repository.ABTestRepository
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import kotlinx.coroutines.Dispatchers
@@ -42,19 +43,25 @@ class ExtendFreeTrialViewModel(application: Application) : AndroidViewModel(appl
                 isProgressVisible.set(true)
                 isProgressVisible.notifyChange()
                 val response = repository.extendFreeTrial()
+                val obj = JSONObject()
                 if (response.isSuccessful) {
                     MixPanelTracker.publishEvent(MixPanelEvent.FREE_TRIAL_EXTENDED)
                         .addParam(ParamKeys.IS_SUCCESS, true)
                         .push()
+                    obj.put("is free trial extended",true)
                     getCourseData()
                 } else{
                     MixPanelTracker.publishEvent(MixPanelEvent.FREE_TRIAL_EXTENDED)
                         .addParam(ParamKeys.IS_SUCCESS, false)
                         .push()
+                    obj.put("is free trial extended",false)
                     isProgressVisible.set(false)
                     isProgressVisible.notifyChange()
                     showToast(AppObjectController.joshApplication.getString(R.string.unextendable_freetrial))
                 }
+                MixPanelTracker.mixPanel.identify(PrefManager.getStringValue(USER_UNIQUE_ID))
+                MixPanelTracker.mixPanel.people.identify(PrefManager.getStringValue(USER_UNIQUE_ID))
+                MixPanelTracker.mixPanel.people.set(obj)
             }catch (ex : Exception){
                 isProgressVisible.set(false)
                 isProgressVisible.notifyChange()

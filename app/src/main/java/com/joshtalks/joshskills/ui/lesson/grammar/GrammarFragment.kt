@@ -86,7 +86,6 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
     private var correctAns = 0
     private var assessmentQuestions: ArrayList<AssessmentQuestionWithRelations> = ArrayList()
     private var lessonID = -1
-    private var isVideoWatched = false
     private var currentTooltipIndex = 0
     private val lessonTooltipList by lazy {
         listOf(
@@ -147,7 +146,6 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
         }
         subscribeRxBus()
         setObservers()
-        isVideoWatched = false
         return binding.root
     }
 
@@ -762,6 +760,7 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
                 .addParam(ParamKeys.LESSON_ID,lessonID)
                 .addParam(ParamKeys.QUESTION_ID,selectedChoice.questionId)
                 .addParam(ParamKeys.ANSWER_SELECTED,selectedChoice.text)
+                .addParam(ParamKeys.IS_CORRECT_ANSWER,question.question.status.toString())
                 .push()
         }
     }

@@ -103,13 +103,6 @@ class ReportOverviewView1(private val certificateExamReport: CertificateExamRepo
 
     @Click(R.id.check_exam_details)
     fun checkExamDetails() {
-        MixPanelTracker.publishEvent(MixPanelEvent.CHECK_EXAM_RESULTS)
-            .addParam(ParamKeys.EXAM_TYPE, CertificationQuestionModel().type)
-            .addParam(ParamKeys.ATTEMPT_NUMBER, CertificationQuestionModel().attemptCount)
-            .addParam(ParamKeys.CORRECT,certificateExamReport?.correct)
-            .addParam(ParamKeys.INCORRECT,certificateExamReport?.wrong)
-            .addParam(ParamKeys.UNANSWERED,certificateExamReport?.unanswered)
-            .push()
         RxBus2.publish(EmptyEventBus())
     }
 }

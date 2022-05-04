@@ -37,7 +37,6 @@ class CustomDialog(
         messageTv.text = message
         buttonBt.text = buttonText
         buttonBt.setOnClickListener {
-            MixPanelTracker.publishEvent(MixPanelEvent.LESSON_CLICK_OKAY).push()
             dismiss()
         }
 

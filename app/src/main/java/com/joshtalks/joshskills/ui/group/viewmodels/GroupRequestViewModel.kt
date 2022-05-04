@@ -31,6 +31,9 @@ class GroupRequestViewModel : BaseViewModel() {
     var groupId: String = ""
 
     fun onBackPress() {
+        MixPanelTracker.publishEvent(MixPanelEvent.BACK)
+            .addParam(ParamKeys.SCREEN_NAME,"groups request to join screen")
+            .push()
         message.what = ON_BACK_PRESSED
         singleLiveEvent.value = message
     }

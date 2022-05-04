@@ -324,7 +324,6 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity(), ViewBitmap {
     private fun setTabText(map: HashMap<String, LeaderboardResponse>) {
         var list = EMPTY
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
-            Log.e("Ayaaz","$position")
             when (position) {
                 0 -> {
                     list = "TODAY"
@@ -452,13 +451,6 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity(), ViewBitmap {
 
     fun setTabOverlay(position: Int) {
         Log.d(TAG, "setTabOverlay: $position")
-        when(position) {
-            0 ->  MixPanelTracker.publishEvent(MixPanelEvent.LEADERBOARD_TODAY).push()
-            1 ->  MixPanelTracker.publishEvent(MixPanelEvent.LEADERBOARD_WEEK).push()
-            2 ->  MixPanelTracker.publishEvent(MixPanelEvent.LEADERBOARD_MONTH).push()
-            3 ->  MixPanelTracker.publishEvent(MixPanelEvent.LEADERBOARD_LIFETIME).push()
-            4 ->  MixPanelTracker.publishEvent(MixPanelEvent.LEADERBOARD_MY_BATCH).push()
-        }
         toolTipJob = CoroutineScope(Dispatchers.IO).launch {
             delay(1000)
             withContext(Dispatchers.Main) {

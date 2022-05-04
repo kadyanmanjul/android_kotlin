@@ -214,6 +214,9 @@ class ActivityFeedViewModel : BaseViewModel(), LifecycleObserver {
         }
     }
     fun onBackPress() {
+        MixPanelTracker.publishEvent(MixPanelEvent.BACK)
+            .addParam(ParamKeys.SCREEN_NAME,"activity feed")
+            .push()
         saveEngageTime()
     }
 

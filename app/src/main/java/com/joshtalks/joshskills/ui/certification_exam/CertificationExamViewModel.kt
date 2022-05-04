@@ -43,18 +43,10 @@ class CertificationExamViewModel(application: Application) : AndroidViewModel(ap
     var isSAnswerUiShow: Boolean = false
 
     fun startExam() {
-        MixPanelTracker.publishEvent(MixPanelEvent.EXAM_STARTED)
-            .addParam(ParamKeys.EXAM_ID,CertificationQuestionModel().type)
-            .addParam(ParamKeys.ATTEMPT_NUMBER,CertificationQuestionModel().attemptCount)
-            .push()
         startExamLiveData.postValue(Unit)
     }
 
     fun showPreviousResult() {
-        MixPanelTracker.publishEvent(MixPanelEvent.PREVIOUS_RESULTS)
-            .addParam(ParamKeys.EXAM_ID,CertificationQuestionModel().type)
-            .addParam(ParamKeys.ATTEMPT_NUMBER,CertificationQuestionModel().attemptCount)
-            .push()
         previousExamsResultLiveData.postValue(Unit)
     }
 
@@ -83,10 +75,6 @@ class CertificationExamViewModel(application: Application) : AndroidViewModel(ap
         viewModelScope.launch(Dispatchers.IO) {
             if (hasResumeExam(certificateExamId)) {
                 resumeExamLiveData.postValue(true)
-                MixPanelTracker.publishEvent(MixPanelEvent.RESUME_EXAM)
-                    .addParam(ParamKeys.EXAM_ID,CertificationQuestionModel().type)
-                    .addParam(ParamKeys.ATTEMPT_NUMBER,CertificationQuestionModel().attemptCount)
-                    .push()
                 delay(200)
                 resumeExamLiveData.postValue(null)
             } else {

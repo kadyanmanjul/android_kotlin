@@ -151,9 +151,6 @@ class JoshGroupActivity : BaseGroupActivity() {
 
     fun openCallingActivity(bundle: Bundle) {
         GroupAnalytics.push(GroupAnalytics.Event.CALL_PRACTICE_PARTNER_FROM_GROUP, bundle.getString(GROUPS_ID) ?: "")
-        MixPanelTracker.publishEvent(MixPanelEvent.CALL_PP_FROM_GROUP_CHAT)
-            .addParam(ParamKeys.GROUP_ID, bundle.getString(GROUPS_ID))
-            .push()
         val intent = SearchingUserActivity.startUserForPractiseOnPhoneActivity(
             this,
             courseId = "151",

@@ -5,6 +5,7 @@ import android.graphics.Paint
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.text.Html
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -285,6 +286,7 @@ class EditProfileFragment : DialogFragment(){
 
         binding.ivSave.setOnClickListener {
             saveData()
+            MixPanelTracker.publishEvent(MixPanelEvent.PROFILE_EDITED).push()
         }
     }
 
@@ -363,33 +365,6 @@ class EditProfileFragment : DialogFragment(){
             binding.arrowDownImg.setImageDrawable(drawableUp)
             homeTownTxt.error = getString(R.string.hometown_error_message)
             return
-        }
-        if(homeTownTxt.text.isNullOrEmpty()){
-            MixPanelTracker.publishEvent(MixPanelEvent.PROFILE_EDITED)
-                .addParam(ParamKeys.HOMETOWN,"empty")
-                .push()
-        }else{
-            MixPanelTracker.publishEvent(MixPanelEvent.PROFILE_EDITED)
-                .addParam(ParamKeys.HOMETOWN,"not empty")
-                .push()
-        }
-        if(binding.editTxtFutureGoals.text.isNullOrEmpty()){
-            MixPanelTracker.publishEvent(MixPanelEvent.PROFILE_EDITED)
-                .addParam(ParamKeys.HOMETOWN,"empty")
-                .push()
-        }else{
-            MixPanelTracker.publishEvent(MixPanelEvent.PROFILE_EDITED)
-                .addParam(ParamKeys.HOMETOWN,"not empty")
-                .push()
-        }
-        if(editTxtJoshTalk.text.isNullOrEmpty()){
-            MixPanelTracker.publishEvent(MixPanelEvent.PROFILE_EDITED)
-                .addParam(ParamKeys.HOMETOWN,"empty")
-                .push()
-        }else{
-            MixPanelTracker.publishEvent(MixPanelEvent.PROFILE_EDITED)
-                .addParam(ParamKeys.HOMETOWN,"not empty")
-                .push()
         }
         if (editTxtJoshTalk.text.toString() != EMPTY){
             if(!isYoutubeUrl(editTxtJoshTalk.text.toString()) || !(editTxtJoshTalk.text.toString()).startsWith("https") || !(editTxtJoshTalk.text.toString()).startsWith("https")){

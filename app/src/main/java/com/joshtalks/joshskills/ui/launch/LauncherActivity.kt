@@ -84,6 +84,13 @@ class LauncherActivity : CoreJoshActivity() {
                 PrefManager.put(IS_FREE_TRIAL, true, false)
             }
         }
+
+        var isAppOpenedForFirstTime = PrefManager.getBoolValue(IS_APP_OPENED_FOR_FIRST_TIME,true)
+        MixPanelTracker.mixPanel.track("app session")
+        if(isAppOpenedForFirstTime) {
+            PrefManager.put(IS_APP_OPENED_FOR_FIRST_TIME,false,true)
+            MixPanelTracker.publishEvent(MixPanelEvent.APP_OPENED_FOR_FIRST_TIME).push()
+        }
     }
 
     fun isUserOnline(context: Context): Boolean {

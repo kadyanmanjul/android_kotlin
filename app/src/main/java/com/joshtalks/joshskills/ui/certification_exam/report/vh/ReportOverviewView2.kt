@@ -176,28 +176,16 @@ class ReportOverviewView2(
 
     @Click(R.id.ll_correct)
     fun onClickCorrectView() {
-        MixPanelTracker.publishEvent(MixPanelEvent.CHECK_EXAM_RESULTS_CORRECT)
-            .addParam(ParamKeys.EXAM_TYPE, CertificationQuestionModel().type)
-            .addParam(ParamKeys.ATTEMPT_NUMBER, CertificationQuestionModel().attemptCount)
-            .push()
         RxBus2.publish(OpenReportQTypeEventBus(QuestionReportType.RIGHT))
     }
 
     @Click(R.id.ll_unanswerd)
     fun onClickUnAnsweredView() {
-        MixPanelTracker.publishEvent(MixPanelEvent.CHECK_EXAM_RESULTS_INCORRECT)
-            .addParam(ParamKeys.EXAM_TYPE, CertificationQuestionModel().type)
-            .addParam(ParamKeys.ATTEMPT_NUMBER, CertificationQuestionModel().attemptCount)
-            .push()
         RxBus2.publish(OpenReportQTypeEventBus(QuestionReportType.UNANSWERED))
     }
 
     @Click(R.id.ll_incorrect)
     fun onClickInCorrectView() {
-        MixPanelTracker.publishEvent(MixPanelEvent.CHECK_EXAM_RESULTS_UNANSWERED)
-            .addParam(ParamKeys.EXAM_TYPE, CertificationQuestionModel().type)
-            .addParam(ParamKeys.ATTEMPT_NUMBER, CertificationQuestionModel().attemptCount)
-            .push()
         RxBus2.publish(OpenReportQTypeEventBus(QuestionReportType.WRONG))
     }
 }

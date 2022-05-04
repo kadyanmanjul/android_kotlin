@@ -142,9 +142,9 @@ public class AppAnalytics {
         profileUpdate.put("Gender", user.getGender());
         cleverTapAnalytics.pushProfile(profileUpdate);
 
-        MixPanelTracker.INSTANCE.getMixPanel().alias(Mentor.getInstance().getId(),Mentor.getInstance().getId());
-        MixPanelTracker.INSTANCE.getMixPanel().identify(Mentor.getInstance().getId());
-        MixPanelTracker.INSTANCE.getMixPanel().getPeople().identify(Mentor.getInstance().getId());
+        MixPanelTracker.INSTANCE.getMixPanel().alias(PrefManager.INSTANCE.getStringValue(USER_UNIQUE_ID, false, EMPTY), PrefManager.INSTANCE.getStringValue(USER_UNIQUE_ID, false, EMPTY));
+        MixPanelTracker.INSTANCE.getMixPanel().identify(PrefManager.INSTANCE.getStringValue(USER_UNIQUE_ID, false, EMPTY));
+        MixPanelTracker.INSTANCE.getMixPanel().getPeople().identify(PrefManager.INSTANCE.getStringValue(USER_UNIQUE_ID, false, EMPTY));
 
         JSONObject obj = new JSONObject();
         try {

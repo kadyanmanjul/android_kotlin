@@ -120,11 +120,6 @@ class CExamMainActivity : BaseActivity(), CertificationExamListener {
 
     private fun setupUI() {
         iv_bookmark.setOnClickListener {
-            MixPanelTracker.publishEvent(MixPanelEvent.BOOKMARK_QUESTION)
-                .addParam(ParamKeys.EXAM_TYPE,CertificationQuestionModel().type)
-                .addParam(ParamKeys.ATTEMPT_NUMBER,CertificationQuestionModel().attemptCount)
-                .addParam(ParamKeys.QUESTION_ID,CertificationQuestionModel().id)
-                .push()
             questionsList.let { questions ->
                 questions[question_view_pager.currentItem].let {
                     it.isBookmarked = it.isBookmarked.not()
@@ -270,10 +265,6 @@ class CExamMainActivity : BaseActivity(), CertificationExamListener {
     }
 
     private fun openQuestionListBottomSheet() {
-        MixPanelTracker.publishEvent(MixPanelEvent.EXAM_OVERVIEW)
-            .addParam(ParamKeys.EXAM_ID,CertificationQuestionModel().type)
-            .addParam(ParamKeys.ATTEMPT_NUMBER,CertificationQuestionModel().attemptCount)
-            .push()
         CoroutineScope(Dispatchers.Main).launch {
             delay(150)
             val prev =

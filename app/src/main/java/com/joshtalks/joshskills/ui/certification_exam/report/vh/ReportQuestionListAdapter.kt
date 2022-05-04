@@ -73,35 +73,11 @@ class ReportQuestionListAdapter(
                 frameLayout.setOnClickListener {
                     val type = if (obj.isNotAttempt == null) {
                         QuestionReportType.UNANSWERED
-                        MixPanelTracker.publishEvent(MixPanelEvent.VIEW_QUESTION_RESULTS)
-                            .addParam(ParamKeys.EXAM_TYPE, CertificationQuestionModel().type)
-                            .addParam(ParamKeys.ATTEMPT_NUMBER, CertificationQuestionModel().attemptCount)
-                            .addParam(ParamKeys.QUESTION_ID, obj.question)
-                            .addParam(ParamKeys.IS_CORRECT_ANSWER,obj.isAnswerCorrect)
-                            .addParam(ParamKeys.ANSWER_ID,obj.answerId)
-                            .addParam(ParamKeys.RESULT,"unanswered")
-                            .push()
                     } else {
                         if (obj.isAnswerCorrect) {
                             QuestionReportType.RIGHT
-                            MixPanelTracker.publishEvent(MixPanelEvent.VIEW_QUESTION_RESULTS)
-                                .addParam(ParamKeys.EXAM_TYPE, CertificationQuestionModel().type)
-                                .addParam(ParamKeys.ATTEMPT_NUMBER, CertificationQuestionModel().attemptCount)
-                                .addParam(ParamKeys.QUESTION_ID, obj.question)
-                                .addParam(ParamKeys.IS_CORRECT_ANSWER,obj.isAnswerCorrect)
-                                .addParam(ParamKeys.ANSWER_ID,obj.answerId)
-                                .addParam(ParamKeys.RESULT,"right")
-                                .push()
                         } else {
                             QuestionReportType.WRONG
-                            MixPanelTracker.publishEvent(MixPanelEvent.VIEW_QUESTION_RESULTS)
-                                .addParam(ParamKeys.EXAM_TYPE, CertificationQuestionModel().type)
-                                .addParam(ParamKeys.ATTEMPT_NUMBER, CertificationQuestionModel().attemptCount)
-                                .addParam(ParamKeys.QUESTION_ID, obj.question)
-                                .addParam(ParamKeys.IS_CORRECT_ANSWER,obj.isAnswerCorrect)
-                                .addParam(ParamKeys.ANSWER_ID,obj.answerId)
-                                .addParam(ParamKeys.RESULT,"wrong")
-                                .push()
                         }
                     }
                     RxBus2.publish(GotoCEQuestionEventBus(obj.question))

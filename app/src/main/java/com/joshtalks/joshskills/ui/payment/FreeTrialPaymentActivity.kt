@@ -12,6 +12,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -208,21 +209,11 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         }
 
         englishCard.iv_expand.setOnClickListener {
-            MixPanelTracker.publishEvent(MixPanelEvent.BUY_PAGE_COURSE_INFO_EXPAND)
-                .addParam(ParamKeys.TEST_ID,viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.testId)
-                .addParam(ParamKeys.COURSE_PRICE,viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.discount)
-                .addParam(ParamKeys.COURSE_NAME,viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.courseName)
-                .push()
             isEnglishCardTapped = true
             performActionOnEnglishTapped()
         }
 
         englishCard.iv_minimise.setOnClickListener {
-            MixPanelTracker.publishEvent(MixPanelEvent.BUY_PAGE_COURSE_INFO_COLLAPSE)
-                .addParam(ParamKeys.TEST_ID,viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.testId)
-                .addParam(ParamKeys.COURSE_PRICE,viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.discount)
-                .addParam(ParamKeys.COURSE_NAME,viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.courseName)
-                .push()
             performActionOntapped(englishCard)
         }
 
@@ -233,11 +224,6 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         }
 
         subscriptionCard.iv_expand.setOnClickListener {
-            MixPanelTracker.publishEvent(MixPanelEvent.BUY_PAGE_COURSE_INFO_EXPAND)
-                .addParam(ParamKeys.TEST_ID,viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.testId)
-                .addParam(ParamKeys.COURSE_PRICE,viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.discount)
-                .addParam(ParamKeys.COURSE_NAME,viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.courseName)
-                .push()
             isEnglishCardTapped = false
             performActionOnSubscriptionTapped()
             enableBuyCourseButton()
@@ -254,11 +240,6 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         }
 
         subscriptionCard.iv_minimise.setOnClickListener {
-            MixPanelTracker.publishEvent(MixPanelEvent.BUY_PAGE_COURSE_INFO_COLLAPSE)
-                .addParam(ParamKeys.TEST_ID,viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.testId)
-                .addParam(ParamKeys.COURSE_PRICE,viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.discount)
-                .addParam(ParamKeys.COURSE_NAME,viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.courseName)
-                .push()
             performActionOntapped(subscriptionCard)
             subscriptionCard.see_course_list_new.visibility = View.GONE
             enableBuyCourseButton()
@@ -323,6 +304,12 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         card.see_course_list_new.visibility = View.GONE
         binding.seeCourseList.visibility = View.GONE
         englishCard.syllabus_layout_new.visibility = View.GONE
+
+        MixPanelTracker.publishEvent(MixPanelEvent.BUY_PAGE_COURSE_INFO_COLLAPSE)
+            .addParam(ParamKeys.TEST_ID,viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.testId)
+            .addParam(ParamKeys.COURSE_PRICE,viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.discount)
+            .addParam(ParamKeys.COURSE_NAME,viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.courseName)
+            .push()
     }
 
     private fun performActionOnEnglishTapped(){
@@ -360,6 +347,12 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             englishCard.course_info.visibility = View.VISIBLE
             englishCard.iv_minimise.visibility = View.VISIBLE
             englishCard.iv_expand.visibility = View.GONE
+
+            MixPanelTracker.publishEvent(MixPanelEvent.BUY_PAGE_COURSE_INFO_EXPAND)
+                .addParam(ParamKeys.TEST_ID,viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.testId)
+                .addParam(ParamKeys.COURSE_PRICE,viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.discount)
+                .addParam(ParamKeys.COURSE_NAME,viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.courseName)
+                .push()
         }else if(englishCard.iv_minimise.visibility == View.VISIBLE) performActionOntapped(englishCard)
 
         binding.seeCourseList.visibility = View.GONE
@@ -393,6 +386,12 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             subscriptionCard.iv_minimise.visibility = View.VISIBLE
             subscriptionCard.course_info.visibility = View.VISIBLE
             subscriptionCard.see_course_list_new.visibility = View.VISIBLE
+
+            MixPanelTracker.publishEvent(MixPanelEvent.BUY_PAGE_COURSE_INFO_EXPAND)
+                .addParam(ParamKeys.TEST_ID,viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.testId)
+                .addParam(ParamKeys.COURSE_PRICE,viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.discount)
+                .addParam(ParamKeys.COURSE_NAME,viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.courseName)
+                .push()
         }else if(subscriptionCard.iv_minimise.visibility == View.VISIBLE) performActionOntapped(subscriptionCard)
     }
 
@@ -875,15 +874,14 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             .addParam(ParamKeys.COURSE_NAME,viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.courseName)
             .addParam(ParamKeys.COURSE_ID,PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID))
             .addParam(ParamKeys.IS_COUPON_APPLIED,viewModel.paymentDetailsLiveData.value?.couponDetails?.isPromoCode)
+            .addParam(ParamKeys.IS_100_POINTS_OBTAINED_IN_FREE_TRIAL,isPointsScoredMoreThanEqualTo100)
             .push()
 
-        val obj = JSONObject()
+        var obj = JSONObject()
         obj.put("is paid",true)
-        if(totalPointsScored!=null) {
-            obj.put("points scored at payment success ",totalPointsScored)
-        }
-        MixPanelTracker.mixPanel.identify(Mentor.getInstance().getId())
-        MixPanelTracker.mixPanel.people.identify(Mentor.getInstance().getId())
+        obj.put("is 100 points obtained in free trial",isPointsScoredMoreThanEqualTo100)
+        MixPanelTracker.mixPanel.identify(PrefManager.getStringValue(USER_UNIQUE_ID))
+        MixPanelTracker.mixPanel.people.identify(PrefManager.getStringValue(USER_UNIQUE_ID))
         MixPanelTracker.mixPanel.people.set(obj)
         MixPanelTracker.mixPanel.registerSuperProperties(obj)
 

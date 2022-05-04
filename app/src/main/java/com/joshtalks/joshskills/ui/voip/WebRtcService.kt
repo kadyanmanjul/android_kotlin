@@ -1178,12 +1178,6 @@ class WebRtcService : BaseWebRtcService() {
                                 this == CallConnect().action -> {
                                     val state = CurrentCallDetails.state()
 
-                                    MixPanelTracker.publishEvent(MixPanelEvent.CALL_ACCEPTED)
-                                        .addParam(ParamKeys.AGORA_MENTOR_UID,state.callieUid)
-                                        .addParam(ParamKeys.AGORA_CALL_ID,state.callId)
-                                        .addParam(ParamKeys.TIMESTAMP,DateUtils.getCurrentTimeStamp())
-                                        .push()
-
                                     VoipAnalytics.push(
                                         VoipAnalytics.Event.CALL_ACCEPT,
                                         agoraMentorUid = state.callieUid,
@@ -1203,12 +1197,6 @@ class WebRtcService : BaseWebRtcService() {
                                         rejectCall()
                                     }
                                     val state = CurrentCallDetails.state()
-
-                                    MixPanelTracker.publishEvent(MixPanelEvent.CALL_DECLINED)
-                                        .addParam(ParamKeys.AGORA_MENTOR_UID,state.callieUid)
-                                        .addParam(ParamKeys.AGORA_CALL_ID,state.callId)
-                                        .addParam(ParamKeys.TIMESTAMP,DateUtils.getCurrentTimeStamp())
-                                        .push()
 
                                     VoipAnalytics.push(
                                         VoipAnalytics.Event.CALL_DECLINED,
@@ -1531,11 +1519,6 @@ class WebRtcService : BaseWebRtcService() {
                     callData?.let {
                         val state = CurrentCallDetails.state()
 
-                        MixPanelTracker.publishEvent(MixPanelEvent.CALL_IGNORED)
-                            .addParam(ParamKeys.AGORA_MENTOR_UID,state.callieUid)
-                            .addParam(ParamKeys.AGORA_CALL_ID,state.callId)
-                            .addParam(ParamKeys.TIMESTAMP,DateUtils.getCurrentTimeStamp())
-                            .push()
                         VoipAnalytics.push(
                             VoipAnalytics.Event.USER_DID_NOT_PICKUP_CALL,
                             agoraMentorUid = state.callieUid,
@@ -1810,21 +1793,6 @@ class WebRtcService : BaseWebRtcService() {
     fun switchAudioSpeaker() {
         executor.submit {
             val audioManager = getSystemService(AUDIO_SERVICE) as AudioManager
-            val state = CurrentCallDetails.state()
-            if(isSpeakerEnabled) {
-                MixPanelTracker.publishEvent(MixPanelEvent.SPEAKER_ON)
-                    .addParam(ParamKeys.CALL_ID,state.callId)
-                    .addParam(ParamKeys.CALLIE_ID,state.callieUid)
-                    .addParam(ParamKeys.CALLER_ID,state.callerUid)
-                    .push()
-            }
-            else {
-                MixPanelTracker.publishEvent(MixPanelEvent.SPEAKER_OFF)
-                    .addParam(ParamKeys.CALL_ID,state.callId)
-                    .addParam(ParamKeys.CALLIE_ID,state.callieUid)
-                    .addParam(ParamKeys.CALLER_ID,state.callerUid)
-                    .push()
-            }
             isSpeakerEnabled = !isSpeakerEnabled
             audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
             mRtcEngine?.setEnableSpeakerphone(isSpeakerEnabled)
@@ -1841,18 +1809,8 @@ class WebRtcService : BaseWebRtcService() {
                     val state = CurrentCallDetails.state()
                     if (isMicEnabled) {
                         unMuteCall()
-                        MixPanelTracker.publishEvent(MixPanelEvent.UNMUTE)
-                            .addParam(ParamKeys.CALL_ID,state.callId)
-                            .addParam(ParamKeys.CALLIE_ID,state.callieUid)
-                            .addParam(ParamKeys.CALLER_ID,state.callerUid)
-                            .push()
                     } else {
                         muteCall()
-                        MixPanelTracker.publishEvent(MixPanelEvent.MUTE)
-                            .addParam(ParamKeys.CALL_ID,state.callId)
-                            .addParam(ParamKeys.CALLIE_ID,state.callieUid)
-                            .addParam(ParamKeys.CALLER_ID,state.callerUid)
-                            .push()
                     }
                 }
             } catch (ex: Throwable) {

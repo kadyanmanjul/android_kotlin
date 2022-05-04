@@ -103,8 +103,8 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
                             PrefManager.put(MY_COLOR_CODE, it, false)
                         }
                     }
-                    MixPanelTracker.mixPanel.identify(Mentor.getInstance().getId())
-                    MixPanelTracker.mixPanel.people.identify(Mentor.getInstance().getId())
+                    MixPanelTracker.mixPanel.identify(PrefManager.getStringValue(USER_UNIQUE_ID))
+                    MixPanelTracker.mixPanel.people.identify(PrefManager.getStringValue(USER_UNIQUE_ID))
                     val prop = JSONObject()
                     prop.put("total points",response.body()?.points)
                     prop.put("total min spoken",response.body()?.minutesSpoken)

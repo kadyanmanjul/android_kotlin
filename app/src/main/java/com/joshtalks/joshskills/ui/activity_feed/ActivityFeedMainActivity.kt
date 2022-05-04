@@ -8,6 +8,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.databinding.ActivityFeedMainBinding
 import com.joshtalks.joshskills.ui.activity_feed.model.ActivityFeedResponse
 import com.joshtalks.joshskills.ui.activity_feed.utils.*
@@ -111,5 +114,12 @@ class ActivityFeedMainActivity : BaseGroupActivity() {
     fun scrollToEnd() {
         binding.rvFeeds.layoutManager?.scrollToPosition(0)
         viewModel.isScrollToEndButtonVisible.set(false)
+    }
+
+    override fun onBackPressed() {
+        MixPanelTracker.publishEvent(MixPanelEvent.BACK)
+            .addParam(ParamKeys.SCREEN_NAME,"activity feed")
+            .push()
+        super.onBackPressed()
     }
 }

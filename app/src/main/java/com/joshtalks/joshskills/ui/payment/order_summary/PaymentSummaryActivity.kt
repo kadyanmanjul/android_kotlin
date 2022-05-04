@@ -305,10 +305,10 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                 when (paymentSummaryResponse.couponDetails.isPromoCode) {
                     true -> {
                         MixPanelTracker.publishEvent(MixPanelEvent.COUPON_APPLIED)
-                            .addParam(ParamKeys.TEST_ID,testId)
-                            .addParam(ParamKeys.COURSE_NAME,viewModel.responsePaymentSummary.value?.courseName)
-                            .addParam(ParamKeys.COURSE_PRICE,viewModel.responsePaymentSummary.value?.amount)
-                            .addParam(ParamKeys.DISCOUNTED_AMOUNT,viewModel.responsePaymentSummary.value?.discountedAmount)
+                            .addParam(ParamKeys.TEST_ID,viewModel.getPaymentTestId())
+                            .addParam(ParamKeys.COURSE_NAME,viewModel.getCourseName())
+                            .addParam(ParamKeys.COURSE_PRICE,viewModel.getCourseActualAmount())
+                            .addParam(ParamKeys.DISCOUNTED_AMOUNT,viewModel.getCourseDiscountedAmount())
                             .addParam(ParamKeys.COURSE_ID,PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID))
                             .push()
 
@@ -334,7 +334,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                     }
                     false -> {
                         MixPanelTracker.publishEvent(MixPanelEvent.APPLY_COUPON_FAILED)
-                            .addParam(ParamKeys.TEST_ID,testId)
+                            .addParam(ParamKeys.TEST_ID,viewModel.getPaymentTestId())
                             .push()
                         showToast(getString(R.string.invalid_coupon_code))
                     }
@@ -425,9 +425,9 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                     .getString(FirebaseRemoteConfigKey.APPLY_COUPON_TEXT)
                 applyCouponText.setOnClickListener {
                     MixPanelTracker.publishEvent(MixPanelEvent.APPLY_COUPON_CLICKED)
-                        .addParam(ParamKeys.TEST_ID,testId)
-                        .addParam(ParamKeys.COURSE_NAME,viewModel.responsePaymentSummary.value?.courseName)
-                        .addParam(ParamKeys.COURSE_PRICE,viewModel.responsePaymentSummary.value?.discountedAmount)
+                        .addParam(ParamKeys.TEST_ID,viewModel.getPaymentTestId())
+                        .addParam(ParamKeys.COURSE_NAME,viewModel.getCourseName())
+                        .addParam(ParamKeys.COURSE_PRICE,viewModel.getCourseDiscountedAmount())
                         .addParam(ParamKeys.COURSE_ID,PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID))
                         .push()
 
@@ -821,12 +821,11 @@ class PaymentSummaryActivity : CoreJoshActivity(),
 
         if(!loginStartFreeTrial) {
             MixPanelTracker.publishEvent(MixPanelEvent.PAYMENT_STARTED)
-                .addParam(ParamKeys.TEST_ID, testId)
-                .addParam(ParamKeys.COURSE_NAME, viewModel.responsePaymentSummary.value?.courseName)
-                .addParam(ParamKeys.COURSE_PRICE, viewModel.responsePaymentSummary.value?.amount)
+                .addParam(ParamKeys.TEST_ID, viewModel.getPaymentTestId())
+                .addParam(ParamKeys.COURSE_NAME, viewModel.getCourseName())
+                .addParam(ParamKeys.COURSE_PRICE, viewModel.getCourseActualAmount())
                 .addParam(ParamKeys.IS_COUPON_APPLIED, viewModel.responsePaymentSummary.value?.couponDetails?.isPromoCode)
-                .addParam(ParamKeys.COURSE_ID,PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID))
-                .addParam(ParamKeys.AMOUNT_PAID, viewModel.responsePaymentSummary.value?.discountedAmount)
+                .addParam(ParamKeys.AMOUNT_PAID, viewModel.getCourseDiscountedAmount())
                 .push()
         }
     }
@@ -890,12 +889,11 @@ class PaymentSummaryActivity : CoreJoshActivity(),
 
     override fun onPaymentError(p0: Int, p1: String?) {
         MixPanelTracker.publishEvent(MixPanelEvent.PAYMENT_FAILED)
-            .addParam(ParamKeys.TEST_ID, testId)
-            .addParam(ParamKeys.COURSE_NAME, viewModel.responsePaymentSummary.value?.courseName)
-            .addParam(ParamKeys.COURSE_PRICE, viewModel.responsePaymentSummary.value?.amount)
+            .addParam(ParamKeys.TEST_ID, viewModel.getPaymentTestId())
+            .addParam(ParamKeys.COURSE_NAME, viewModel.getCourseName())
+            .addParam(ParamKeys.COURSE_PRICE, viewModel.getCourseActualAmount())
             .addParam(ParamKeys.IS_COUPON_APPLIED, viewModel.responsePaymentSummary.value?.couponDetails?.isPromoCode)
-            .addParam(ParamKeys.AMOUNT_PAID, viewModel.responsePaymentSummary.value?.discountedAmount)
-            .addParam(ParamKeys.COURSE_ID,PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID))
+            .addParam(ParamKeys.AMOUNT_PAID, viewModel.getCourseDiscountedAmount())
             .push()
 
         appAnalytics.addParam(AnalyticsEvent.PAYMENT_FAILED.NAME, p1)
@@ -910,18 +908,19 @@ class PaymentSummaryActivity : CoreJoshActivity(),
     @Synchronized
     override fun onPaymentSuccess(razorpayPaymentId: String) {
         MixPanelTracker.publishEvent(MixPanelEvent.PAYMENT_SUCCESS)
-            .addParam(ParamKeys.TEST_ID, testId)
-            .addParam(ParamKeys.COURSE_NAME, viewModel.responsePaymentSummary.value?.courseName)
-            .addParam(ParamKeys.COURSE_PRICE, viewModel.responsePaymentSummary.value?.amount)
+            .addParam(ParamKeys.TEST_ID, viewModel.getPaymentTestId())
+            .addParam(ParamKeys.COURSE_NAME, viewModel.getCourseName())
+            .addParam(ParamKeys.COURSE_PRICE, viewModel.getCourseActualAmount())
             .addParam(ParamKeys.IS_COUPON_APPLIED, viewModel.responsePaymentSummary.value?.couponDetails?.isPromoCode)
-            .addParam(ParamKeys.AMOUNT_PAID, viewModel.responsePaymentSummary.value?.discountedAmount)
-            .addParam(ParamKeys.COURSE_ID,PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID))
+            .addParam(ParamKeys.AMOUNT_PAID, viewModel.getCourseDiscountedAmount())
+            .addParam(ParamKeys.IS_100_POINTS_OBTAINED_IN_FREE_TRIAL,is100PointsObtained)
             .push()
 
         val obj = JSONObject()
         obj.put("is paid",true)
-        MixPanelTracker.mixPanel.identify(Mentor.getInstance().getId())
-        MixPanelTracker.mixPanel.people.identify(Mentor.getInstance().getId())
+        obj.put("is 100 points obtained in free trial",is100PointsObtained)
+        MixPanelTracker.mixPanel.identify(PrefManager.getStringValue(USER_UNIQUE_ID))
+        MixPanelTracker.mixPanel.people.identify(PrefManager.getStringValue(USER_UNIQUE_ID))
         MixPanelTracker.mixPanel.people.set(obj)
         MixPanelTracker.mixPanel.registerSuperProperties(obj)
 

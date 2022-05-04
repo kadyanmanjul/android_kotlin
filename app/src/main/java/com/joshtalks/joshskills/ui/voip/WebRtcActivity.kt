@@ -101,21 +101,11 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
     private val viewModel: WebrtcViewModel by lazy {
         ViewModelProvider(this).get(WebrtcViewModel::class.java)
     }
-    private val executeMixPanelCallEvent by lazy {
-        executeMixPanelEvent()
-    }
-    private val executeMixPanelCallEndEvent by lazy {
-        executeMixPanelCallEnd()
-    }
     private var isAnimationCancled = false
     private var callType: CallType? = null
     private var callieId: String = ""
     private var callerId: String = ""
     private var fppDialog:String = EMPTY
-    private var isFavCall: String = EMPTY
-    private var isGroupCall: String = EMPTY
-    private var isNewCall:String = EMPTY
-    private var getCallType:String = EMPTY
     private var getCallTime:Long = 1
 
     val progressAnimator by lazy<ValueAnimator> {
@@ -686,9 +676,6 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
         if (intent.hasExtra(IS_CALL_CONNECTED)) {
             startCallTimer()
         }
-        isFavCall = mBoundService?.isFavorite().toString()
-        isGroupCall = mBoundService?.isGroupCall().toString()
-        getCallType = mBoundService?.getCallType().toString()
     }
 
     private fun updateCallInfo() {
@@ -771,7 +758,6 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
                         "from group \"${WebRtcService.currentCallingGroupName}\""
                 }
             }
-            executeMixPanelCallEvent
         }
     }
 
@@ -904,12 +890,6 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
         } else if (!isTimerCanceled) {
             if (isUserPickUp) {
                 val state = CurrentCallDetails.state()
-
-                MixPanelTracker.publishEvent(MixPanelEvent.CALL_ACCEPTED)
-                    .addParam(ParamKeys.AGORA_MENTOR_UID,state.callieUid)
-                    .addParam(ParamKeys.AGORA_CALL_ID,state.callId)
-                    .addParam(ParamKeys.TIMESTAMP,DateUtils.getCurrentTimeStamp())
-                    .push()
 
                 VoipAnalytics.push(
                     VoipAnalytics.Event.CALL_ACCEPT,
@@ -1057,7 +1037,6 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
     }
 
     private fun showCallRatingScreen(callTime: Long, channelName: String?) {
-        executeMixPanelCallEndEvent
         getCallTime = callTime
         var time = mBoundService?.getTimeOfTalk() ?: 0
         if (time <= 0) {
@@ -1264,23 +1243,4 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
     override fun onAccuracyChanged(p0: Sensor?, p1: Int) {
     }
 
-    private fun executeMixPanelEvent() {
-        MixPanelTracker.publishEvent(MixPanelEvent.CALL_CONNECTED)
-            .addParam(ParamKeys.CALL_TYPE,getCallType)
-            .addParam(ParamKeys.CALLIE_ID,callieId)
-            .addParam(ParamKeys.CALLER_ID,callerId)
-            .push()
-    }
-    private fun executeMixPanelCallEnd() {
-        MixPanelTracker.publishEvent(MixPanelEvent.CALL_END)
-            .addParam(ParamKeys.CALL_ID,mBoundService?.getCallId())
-            .addParam(ParamKeys.CALLIE_ID,callieId)
-            .addParam(ParamKeys.CALLER_ID,callerId)
-            .addParam(ParamKeys.DURATION,getCallTime)
-            .addParam(ParamKeys.CALL_TYPE,getCallType)
-            .addParam(ParamKeys.IS_FAV_CALL,isFavCall)
-            .addParam(ParamKeys.IS_GROUP_CALL,isGroupCall)
-            .addParam(ParamKeys.IS_NEW_CALL,isNewUserCall())
-            .push()
-    }
 }

@@ -96,14 +96,6 @@ object EngagementNetworkHelper {
                     .addParam("notificationType", notificationObject.type)
                     .addUserDetails()
                     .push()
-
-                MixPanelTracker.publishEvent(MixPanelEvent.NOTIFICATION_RECEIVED)
-                    .addParam(ParamKeys.TITLE, notificationObject.contentTitle)
-                    .addParam(ParamKeys.CONTENT, notificationObject.contentText)
-                    .addParam(ParamKeys.MENTOR_ID, notificationObject.mentorId)
-                    .addParam(ParamKeys.NOTIFICATION_TYPE, notificationObject.type)
-                    .push()
-
                 val data = mapOf("is_delivered" to "true")
                 notificationObject.id?.let {
                     AppObjectController.chatNetworkService.engageNotificationAsync(it, data)
@@ -127,10 +119,6 @@ object EngagementNetworkHelper {
                     .addParam("mentorId", Mentor.getInstance().getId())
                     .addUserDetails()
                     .push()
-
-                MixPanelTracker.publishEvent(MixPanelEvent.NOTIFICATION_CLICKED)
-                    .addParam(ParamKeys.ID, notificationId).push()
-
                 val data = mapOf("is_clicked" to "true")
                 AppObjectController.chatNetworkService.engageNotificationAsync(
                     notificationId,
@@ -155,10 +143,6 @@ object EngagementNetworkHelper {
                     .addParam("mentorId", Mentor.getInstance().getId())
                     .addUserDetails()
                     .push()
-
-                MixPanelTracker.publishEvent(MixPanelEvent.NOTIFICATION_SEEN)
-                    .addParam(ParamKeys.ID, notificationId).push()
-
                 val data = mapOf("is_clicked" to "false")
                 AppObjectController.chatNetworkService.engageNotificationAsync(
                     notificationId,

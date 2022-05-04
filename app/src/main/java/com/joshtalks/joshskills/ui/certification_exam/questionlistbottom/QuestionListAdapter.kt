@@ -39,9 +39,6 @@ class QuestionListAdapter(
             with(binding) {
                 textView.text = (position + 1).toString()
                 frameLayout.setOnClickListener {
-                    MixPanelTracker.publishEvent(MixPanelEvent.VIEW_QUESTION)
-                        .addParam(ParamKeys.QUESTION_ID,obj.questionId)
-                        .push()
                     listener?.onGoToQuestion(position)
                 }
                 when {

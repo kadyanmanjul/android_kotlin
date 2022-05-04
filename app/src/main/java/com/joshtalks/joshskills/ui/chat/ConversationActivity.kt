@@ -531,18 +531,16 @@ class ConversationActivity :
     }
 
     private fun initToolbar() {
-        MixPanelTracker.mixPanel.identify(Mentor.getInstance().getId())
-        MixPanelTracker.mixPanel.people.identify(Mentor.getInstance().getId())
+        MixPanelTracker.mixPanel.identify(PrefManager.getStringValue(USER_UNIQUE_ID))
+        MixPanelTracker.mixPanel.people.identify(PrefManager.getStringValue(USER_UNIQUE_ID))
         var obj = JSONObject()
         if(inboxEntity.isCourseBought) {
             obj.put("is paid",true)
-            MixPanelTracker.mixPanel.people.set(obj)
-            MixPanelTracker.mixPanel.registerSuperProperties(obj)
         } else {
             obj.put("is paid",false)
-            MixPanelTracker.mixPanel.people.set(obj)
-            MixPanelTracker.mixPanel.registerSuperProperties(obj)
         }
+        MixPanelTracker.mixPanel.people.set(obj)
+        MixPanelTracker.mixPanel.registerSuperProperties(obj)
         try {
             if (inboxEntity.isCapsuleCourse) {
                 PrefManager.put(IS_DEMO_P2P, false)
@@ -598,10 +596,6 @@ class ConversationActivity :
                         openHelpActivity()
                     }
                     R.id.profile_setting -> {
-                        MixPanelTracker.publishEvent(MixPanelEvent.VIEW_PROFILE)
-                            .addParam(ParamKeys.MENTOR_ID, Mentor.getInstance().getId())
-                            .addParam(ParamKeys.VIA,"settings")
-                            .push()
                         openUserProfileActivity(
                             Mentor.getInstance().getId(),
                             USER_PROFILE_FLOW_FROM.MENU.value
@@ -1349,7 +1343,6 @@ class ConversationActivity :
 
     private fun blurViewOnClickListeners(userProfileData: UserProfileResponse) {
         conversationBinding.floatingActionButtonAdd.setOnClickListener {
-            MixPanelTracker.publishEvent(MixPanelEvent.MORE_BUTTON_CLICKED).push()
             setExpandableButtons(userProfileData)
             setButtonsAnimation()
         }
@@ -1364,6 +1357,7 @@ class ConversationActivity :
     private fun setExpandableButtons(userProfileData: UserProfileResponse) {
         with(conversationBinding) {
             if (buttonClicked) {
+                MixPanelTracker.publishEvent(MixPanelEvent.MORE_BUTTON_CLICKED).push()
                 getAllPendingRequest()
                 conversationBinding.root.setOnClickListener {}
                 showBlurOrQuickView()
@@ -1377,6 +1371,7 @@ class ConversationActivity :
                 if (userProfileData.hasGroupAccess)
                     imgGroupChatBtn.visibility = VISIBLE
             } else {
+                MixPanelTracker.publishEvent(MixPanelEvent.CANCEL).push()
                 conversationBinding.root.onFocusChangeListener = null
                 hideBlurOrQuickView()
                 imgActivityFeed.visibility = GONE

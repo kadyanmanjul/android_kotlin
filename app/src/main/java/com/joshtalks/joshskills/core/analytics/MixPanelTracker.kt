@@ -196,6 +196,7 @@ enum class MixPanelEvent(override val value: String) : Event {
     EDIT_PROFILE_CLICKED("edit profile clicked"),
     PROFILE_EDITED("profile edited"),
     EDIT_PROFILE_PHOTO_CLICKED("edit profile photo clicked"),
+    ADD_PROFILE_PHOTO_CLICKED("add profile photo clicked"),
     REMOVE_PROFILE_PHOTO("remove profile photo"),
     VIEW_PHOTO("view photo"),
 
@@ -304,9 +305,9 @@ enum class MixPanelEvent(override val value: String) : Event {
     //GROUPS
     GROUP_ICON_CLICKED("groups icon clicked"),
     FIND_GROUPS_TO_JOIN("find groups to join"),
-    SEARCH_GROUPS("search"),
-    OPEN_GROUP_INBOX("open group from search"),
-    OPEN_GROUP_SEARCH("open group from inbox"),
+    SEARCH_GROUPS("search groups"),
+    OPEN_GROUP_SEARCH("open group from search"),
+    OPEN_GROUP_INBOX("open group from inbox"),
     JOIN_GROUP("join group"),
     GROUP_MESSAGE_SENT("group message sent"),
     CALL_PP_FROM_GROUP_LESSON("call pp from group clicked"),
@@ -399,7 +400,8 @@ enum class MixPanelEvent(override val value: String) : Event {
 
     LANGUAGE_SELECTED("language selected"),
 
-    EXPERIMENT_STARTED("experiment started")
+    EXPERIMENT_STARTED("experiment started"),
+    APP_OPENED_FOR_FIRST_TIME("app opened for first time")
 }
 
 enum class ParamKeys(val value: String) {
@@ -495,6 +497,7 @@ enum class ParamKeys(val value: String) {
     VIDEO_ID("video id"),
     SELECTED_LANGUAGE("selected language"),
     SCREEN_NAME("screen name"),
+    IS_100_POINTS_OBTAINED_IN_FREE_TRIAL("is 100 points obtained in free trial")
 }
 
 interface Event {

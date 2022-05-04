@@ -97,19 +97,11 @@ class QuestionListBottomSheet : BottomSheetDialogFragment(), Callback {
     }
 
     fun pauseAndExit() {
-        MixPanelTracker.publishEvent(MixPanelEvent.EXAM_PAUSED)
-            .addParam(ParamKeys.EXAM_ID,CertificationQuestionModel().type)
-            .addParam(ParamKeys.ATTEMPT_NUMBER,CertificationQuestionModel().attemptCount)
-            .push()
         dismissAllowingStateLoss()
         listener?.onPauseExit()
     }
 
     fun finishExam() {
-        MixPanelTracker.publishEvent(MixPanelEvent.EXAM_FINISHED)
-            .addParam(ParamKeys.EXAM_ID,CertificationQuestionModel().type)
-            .addParam(ParamKeys.ATTEMPT_NUMBER,CertificationQuestionModel().attemptCount)
-            .push()
         dismissAllowingStateLoss()
         listener?.onFinishExam()
     }

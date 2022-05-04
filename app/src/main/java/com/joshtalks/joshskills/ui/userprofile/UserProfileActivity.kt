@@ -147,13 +147,6 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         getProfileData(intervalType, previousPage)
         initABTest(mentorId, intervalType, previousPage)
         setOnClickListeners()
-        if(mentorId != Mentor.getInstance().getId())
-        {
-            MixPanelTracker.publishEvent(MixPanelEvent.VIEW_PROFILE)
-                .addParam(ParamKeys.MENTOR_ID,mentorId)
-                .addParam(ParamKeys.VIA,previousPage)
-                .push()
-        }
     }
 
     private fun initABTest(mentorId: String, intervalType: String?, previousPage: String?) {
@@ -219,15 +212,13 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             if (mentorId == Mentor.getInstance().getId()) {
                 if(binding.editPic.text.equals("Add"))
                 {
-                    MixPanelTracker.publishEvent(MixPanelEvent.EDIT_PROFILE_PHOTO_CLICKED)
-                        .addParam(ParamKeys.IS_FIRST_TIME,"true")
+                    MixPanelTracker.publishEvent(MixPanelEvent.ADD_PROFILE_PHOTO_CLICKED)
                         .addParam(ParamKeys.VIA,"profile")
                         .push()
                 }
                 else
                 {
                     MixPanelTracker.publishEvent(MixPanelEvent.EDIT_PROFILE_PHOTO_CLICKED)
-                        .addParam(ParamKeys.IS_FIRST_TIME,"false")
                         .addParam(ParamKeys.VIA,"profile")
                         .push()
                 }
@@ -1616,6 +1607,9 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             .getString(TOOLTIP_USER_PROFILE_SCREEN + courseId)
     }
     override fun onBackPressed() {
+        MixPanelTracker.publishEvent(MixPanelEvent.BACK)
+            .addParam(ParamKeys.SCREEN_NAME,"user profile")
+            .push()
         super.onBackPressed()
     }
 

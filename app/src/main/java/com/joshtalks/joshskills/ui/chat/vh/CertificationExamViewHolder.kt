@@ -46,25 +46,11 @@ class CertificationExamViewHolder(view: View, userId: String) :
     init {
         messageView.also {
             it.setOnClickListener {
-                MixPanelTracker.publishEvent(MixPanelEvent.CERTIFICATION_EXAM_OPENED)
-                    .addParam(ParamKeys.EXAM_ID,message?.question?.certificateExamId)
-                    .addParam(ParamKeys.ATTEMPT_LEFT,attemptsLeft)
-                    .addParam(ParamKeys.ATTEMPT_NUMBER,attemptNo)
-                    .addParam(ParamKeys.LAST_ATTEMPT_DATE,attemptedOn)
-                    .addParam(ParamKeys.MARKS,getmarks)
-                    .push()
                 analyzeAction(cardClick = true)
             }
         }
         btnStartExam.also {
             it.setOnClickListener {
-                MixPanelTracker.publishEvent(MixPanelEvent.CERTIFICATION_EXAM_OPENED)
-                    .addParam(ParamKeys.EXAM_ID,message?.question?.certificateExamId)
-                    .addParam(ParamKeys.ATTEMPT_LEFT,attemptsLeft)
-                    .addParam(ParamKeys.ATTEMPT_NUMBER,attemptNo)
-                    .addParam(ParamKeys.LAST_ATTEMPT_DATE,attemptedOn)
-                    .addParam(ParamKeys.MARKS,getmarks)
-                    .push()
                 analyzeAction()
             }
         }

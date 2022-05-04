@@ -75,7 +75,6 @@ class ExamUnlockDialogFragment(
     }
 
     fun dismissDialog() {
-        MixPanelTracker.publishEvent(MixPanelEvent.EXAM_CLICK_OKAY).push()
         dismiss()
     }
 }
