@@ -7,10 +7,7 @@ import android.content.Context
 import android.database.Cursor
 import android.net.Uri
 import android.util.Log
-import com.joshtalks.joshskills.voip.constant.CONTENT_VOIP_STATE_AUTHORITY
-import com.joshtalks.joshskills.voip.constant.CURRENT_VOIP_STATE
-import com.joshtalks.joshskills.voip.constant.State
-import com.joshtalks.joshskills.voip.constant.VOIP_STATE_PATH
+import com.joshtalks.joshskills.voip.constant.*
 
 private const val TAG = "Utils"
 
@@ -41,6 +38,20 @@ fun Context.getVoipState(): State {
     val state = stateCursor.getStringData(CURRENT_VOIP_STATE)
     stateCursor?.close()
     return State.values()[state.toInt()]
+}
+
+fun Context.getPstnState(): String {
+    val stateCursor = contentResolver.query(
+        Uri.parse(CONTENT_VOIP_STATE_AUTHORITY + PSTN_STATE_PATH),
+        null,
+        null,
+        null,
+        null
+    )
+    stateCursor?.moveToFirst()
+    val state = stateCursor.getStringData(CURRENT_PSTN_STATE)
+    stateCursor?.close()
+    return state
 }
 
 

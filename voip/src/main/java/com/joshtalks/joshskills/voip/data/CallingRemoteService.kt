@@ -1,11 +1,9 @@
 package com.joshtalks.joshskills.voip.data
 
-import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
-import android.os.SystemClock
 import android.util.Log
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_API_HEADER
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_MENTOR_ID
@@ -17,12 +15,11 @@ import com.joshtalks.joshskills.voip.*
 import com.joshtalks.joshskills.voip.audiocontroller.AudioController
 import com.joshtalks.joshskills.voip.audiocontroller.AudioControllerInterface
 import com.joshtalks.joshskills.voip.calldetails.IncomingCallData
-import com.joshtalks.joshskills.voip.calldetails.LastCallDetail
-import com.joshtalks.joshskills.voip.communication.PubnubState
-import com.joshtalks.joshskills.voip.communication.constants.ServerConstants
 import com.joshtalks.joshskills.voip.communication.model.*
 import com.joshtalks.joshskills.voip.constant.Event.*
 import com.joshtalks.joshskills.voip.constant.IDLE
+import com.joshtalks.joshskills.voip.constant.PSTN_STATE_IDLE
+import com.joshtalks.joshskills.voip.constant.PSTN_STATE_ONCALL
 import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.mediator.CallServiceMediator
@@ -36,7 +33,6 @@ import com.joshtalks.joshskills.voip.state.CallConnectData
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import com.joshtalks.joshskills.voip.mediator.UserAction as Action
-import java.util.concurrent.TimeUnit
 import timber.log.Timber
 
 private const val TAG = "CallingRemoteService"
@@ -188,9 +184,11 @@ class CallingRemoteService : Service() {
                     try{
                         when (it) {
                             PSTNState.Idle -> {
+                                PrefManager.savePstnState(PSTN_STATE_IDLE)
                                 mediator.userAction(Action.UNHOLD)
                             }
                             PSTNState.OnCall, PSTNState.Ringing -> {
+                                PrefManager.savePstnState(PSTN_STATE_ONCALL)
                                 mediator.userAction(Action.HOLD)
                             }
                         }

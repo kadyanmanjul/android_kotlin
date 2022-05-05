@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 
-class PSTNStateReceiver(val scope: CoroutineScope) : BroadcastReceiver() {
+internal class PSTNStateReceiver(val scope: CoroutineScope) : BroadcastReceiver() {
     private val pstnFlow = MutableSharedFlow<PSTNState>()
 
     fun observePstnReceiver() : SharedFlow<PSTNState> {
@@ -55,7 +55,7 @@ class PSTNStateReceiver(val scope: CoroutineScope) : BroadcastReceiver() {
                         e.printStackTrace()
                     }
                 }
-                voipLog?.log("getCallingState: Idle $state")
+                Log.d(TAG, "getCallingState:Idle  $state")
             }
             TelephonyManager.EXTRA_STATE_OFFHOOK -> {
                 state = TelephonyManager.CALL_STATE_OFFHOOK

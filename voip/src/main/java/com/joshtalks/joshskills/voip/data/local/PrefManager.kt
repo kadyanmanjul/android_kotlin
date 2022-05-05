@@ -6,6 +6,8 @@ import android.util.Log
 import com.joshtalks.joshskills.base.constants.PREF_KEY_LOCAL_USER_AGORA_ID
 import com.joshtalks.joshskills.voip.R
 import com.joshtalks.joshskills.voip.constant.IDLE
+import com.joshtalks.joshskills.voip.constant.PREF_KEY_PSTN_STATE
+import com.joshtalks.joshskills.voip.constant.PSTN_STATE_IDLE
 import com.joshtalks.joshskills.voip.constant.State
 import kotlinx.coroutines.*
 
@@ -75,6 +77,17 @@ class PrefManager {
             val editor = preferenceManager.edit()
             editor.putInt(LOCAL_USER_AGORA_ID, localUserAgoraId)
             editor.commit()
+        }
+
+        fun savePstnState(state: String) {
+            Log.d(TAG, "Setting pstn State : $state")
+            val editor = preferenceManager.edit()
+                editor.putString(PREF_KEY_PSTN_STATE, state)
+               editor.commit()
+        }
+        fun getPstnState() : String {
+            Log.d(TAG, "Getting pstn State")
+            return preferenceManager.getString(PREF_KEY_PSTN_STATE, PSTN_STATE_IDLE).toString()
         }
     }
 }
