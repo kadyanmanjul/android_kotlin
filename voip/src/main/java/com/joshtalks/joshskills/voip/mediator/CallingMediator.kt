@@ -90,7 +90,6 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
         return uiStateFlow
     }
 
-    // TODO: Can be removed
     override fun observerUITransition(): SharedFlow<ServiceEvents> {
         return uiTransitionFlow
     }

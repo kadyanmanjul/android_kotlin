@@ -44,7 +44,6 @@ class SearchingState(val context: CallContext) : VoipState {
                     context.sendMessageToServer(timeout)
                 }
                 delay(PER_USER_TIMEOUT_IN_MILLIS)
-                ensureActive()
                 disconnectNoUserFound()
                 cleanUpState()
             }
@@ -56,6 +55,32 @@ class SearchingState(val context: CallContext) : VoipState {
         }
     }
     private val calling by lazy<Calling> { PeerToPeerCalling() }
+    private val apiCallJob by lazy {
+        scope.launch(start = CoroutineStart.LAZY) {
+            try {
+                ensureActive()
+                calling.onPreCallConnect(context.request, context.direction)
+                ensureActive()
+            } catch (e: Exception) {
+                e.printStackTrace()
+                when(e) {
+                    is HttpException, is SocketTimeoutException -> {
+                        Log.d(TAG, " Exception : API failed")
+                        e.printStackTrace()
+                        ensureActive()
+                        disconnectNoUserFound()
+                        cleanUpState()
+                    }
+                    is CancellationException -> { throw e }
+                    else -> {
+                        ensureActive()
+                        disconnectNoUserFound()
+                        cleanUpState()
+                    }
+                }
+            }
+        }
+    }
 
     init {
         Log.d("Call State", TAG)
@@ -71,20 +96,7 @@ class SearchingState(val context: CallContext) : VoipState {
          7. If its outgoing Call then start timeout timer*/
         if (context.direction == CallDirection.OUTGOING)
             timeoutTimer.start()
-        scope.launch {
-            try {
-                calling.onPreCallConnect(context.request, context.direction)
-            } catch (e: Exception) {
-                if (e is HttpException || e is SocketTimeoutException || e is IOException) {
-                    Log.d(TAG, " Exception : API failed - $e")
-                    e.printStackTrace()
-                } else {
-                    e.printStackTrace()
-                    ensureActive()
-                    context.destroyContext()
-                }
-            }
-        }
+        apiCallJob.start()
     }
 
     // TODO: What will happen if user pickup the call and press back button
@@ -126,6 +138,7 @@ class SearchingState(val context: CallContext) : VoipState {
                 Log.d(TAG, "Received after observing : ${event.type}")
                 if (event.type == RECEIVED_CHANNEL_DATA) {
                     Log.d(TAG, "observe: Received Channel Data")
+                    apiCallJob.cancel()
                     context.channelData = event.data as? ChannelData
                         ?: throw UnexpectedException("Channel data is NULL")
                     PrefManager.setLocalUserAgoraId(context.channelData.getAgoraUid())

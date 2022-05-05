@@ -50,8 +50,9 @@ class PeerToPeerCalling : Calling {
             )
             voipLog?.log("Calling API ---- $request")
             val response = voipNetwork.setUpConnection(request)
-            if (response.isSuccessful)
-                voipLog?.log("Sucessfull")
+            Log.d(TAG, "onPreCallConnect: $response")
+//            if (response.isSuccessful)
+//                voipLog?.log("Sucessfull")
         }
     }
 
