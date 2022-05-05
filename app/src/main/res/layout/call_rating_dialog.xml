@@ -25,6 +25,18 @@
                 app:layout_constraintTop_toBottomOf="@+id/call_duration_text">
 
                 <androidx.appcompat.widget.AppCompatRadioButton
+                    android:id="@+id/zero"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@drawable/radio_background"
+                    android:button="@drawable/transparent"
+                    android:checked="false"
+                    android:gravity="center"
+                    android:text="0"
+                    android:textColor="@color/black" />
+
+                <androidx.appcompat.widget.AppCompatRadioButton
                     android:id="@+id/one"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"

@@ -8,6 +8,7 @@ import android.view.View
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import androidx.lifecycle.ViewModelProvider
@@ -15,6 +16,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.databinding.CallRatingDialogBinding
+import com.joshtalks.joshskills.quizgame.util.MyBounceInterpolator
 
 class CallRatingsFragment :BottomSheetDialogFragment() {
 
@@ -34,6 +36,7 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
     var callerProfileUrl : String? = null
     var callerMentorId = EMPTY
     var agoraMentorId = EMPTY
+    private var checked=0
 
     val vm :CallRatingsViewModel by lazy {
         ViewModelProvider(requireActivity())[CallRatingsViewModel::class.java]
@@ -70,8 +73,8 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
         binding.howCallTxt.text=getString(R.string.how_was_your_call_name,callerName)
         binding.callDurationText.text=getString(R.string.you_spoke_for_minutes,callDuration.toString())
         binding.block.text=getString(R.string.block_caller,callerName)
-        if(PrefManager.getBoolValue(IS_FREE_TRIAL)) binding.cross.visibility = View.VISIBLE
-        else binding.cross.visibility = View.GONE
+        if(PrefManager.getBoolValue(IS_FREE_TRIAL)) binding.cross.visibility = View.GONE
+        else binding.cross.visibility = View.VISIBLE
 
         callerProfileUrl?.let {
             binding.cImage.setImage(callerProfileUrl!!)
@@ -81,7 +84,7 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
        with(binding) {
            block.setOnClickListener {
                if (!isBlockSelected) {
-                   block.setBackgroundColor(Color.BLACK)
+                   block.setBackground(context?.getDrawable(R.drawable.block_button_round_stroke))
                    block.setTextColor(Color.WHITE)
                } else {
                    block.setBackground(context?.getDrawable(R.drawable.rectangle_with_grey_round_stroke))
@@ -90,8 +93,20 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
                isBlockSelected = !isBlockSelected
            }
            ratingList.setOnCheckedChangeListener(RadioGroup.OnCheckedChangeListener { group, checkedId ->
-                selectedRating=group.findViewById<RadioButton>(checkedId).text.toString().toInt()
-               showToast("Thanks for rating  $selectedRating")
+//               AnimationUtils.loadAnimation(activity.get()!!, R.anim.blink)
+//               UtilsQuiz.dipDown(group.findViewById<RadioButton>(checkedId), requireActivity())
+//               AnimationUtils.loadAnimation(AppObjectController.joshApplication, R.anim.blink)
+               val myAnim = AnimationUtils.loadAnimation(activity, R.anim.bounce_anim)
+               val interpolator = MyBounceInterpolator(0.8, 20.0)
+               myAnim.interpolator = interpolator
+               myAnim.duration = 80
+               myAnim.repeatCount = 1
+               group.findViewById<RadioButton>(checkedId).startAnimation(myAnim)
+               if(checked>0){
+                   group.findViewById<RadioButton>(checked).setTextColor(resources.getColor(R.color.black))
+               }
+               selectedRating=group.findViewById<RadioButton>(checkedId).text.toString().toInt()
+               group.findViewById<RadioButton>(checkedId).setTextColor(resources.getColor(R.color.white))
                if(selectedRating<=6){
                    block.visibility=VISIBLE
                    submit.visibility= VISIBLE
@@ -102,6 +117,7 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
                    dismiss()
                    activity?.finish()
                }
+               checked =checkedId
 
            })
 
