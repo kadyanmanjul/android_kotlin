@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
+import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.userprofile.models.UserProfileResponse
@@ -149,7 +150,11 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
 
     fun handleGroupTimeTokens() {
         CoroutineScope(Dispatchers.IO).launch {
-            GroupRepository().fireTimeTokenAPI()
+            try {
+                GroupRepository().fireTimeTokenAPI()
+            } catch (ex:Exception){
+                LogException.catchException(ex)
+            }
         }
     }
 

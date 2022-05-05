@@ -21,6 +21,7 @@ import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.DismissNotifEventReceiver
+import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.io.LastSyncPrefManager
 import com.joshtalks.joshskills.core.notification.HAS_NOTIFICATION
 import com.joshtalks.joshskills.core.notification.NOTIFICATION_ID
@@ -110,7 +111,11 @@ class Mentor {
                 AppAnalytics.create(AnalyticsEvent.LOGOUT_CLICKED.NAME)
                     .addUserDetails()
                     .addParam(AnalyticsEvent.USER_LOGGED_OUT.NAME, true).push()
-                AppObjectController.signUpNetworkService.signoutUser(getInstance().getId())
+                try {
+                    AppObjectController.signUpNetworkService.signoutUser(getInstance().getId())
+                } catch (ex:Exception){
+                    LogException.catchException(ex)
+                }
 
                 val intent = Intent(joshApplication, SignUpActivity::class.java)
                 intent.apply {

@@ -434,13 +434,17 @@ class LauncherActivity : CoreJoshActivity() {
 
     private fun getMentorForUser(instanceId: String, testId: String?) {
         lifecycleScope.launch(Dispatchers.IO) {
-            val response =
-                AppObjectController.signUpNetworkService.createGuestUser(mapOf("instance_id" to instanceId))
-            Mentor.updateFromLoginResponse(response)
-            if (testId.isNullOrEmpty()) {
-                navigateToNextScreen()
-            } else {
-                navigateToCourseDetailsScreen(testId)
+            try {
+                val response =
+                    AppObjectController.signUpNetworkService.createGuestUser(mapOf("instance_id" to instanceId))
+                Mentor.updateFromLoginResponse(response)
+                if (testId.isNullOrEmpty()) {
+                    navigateToNextScreen()
+                } else {
+                    navigateToCourseDetailsScreen(testId)
+                }
+            } catch (ex:Exception){
+                LogException.catchException(ex)
             }
         }
     }
