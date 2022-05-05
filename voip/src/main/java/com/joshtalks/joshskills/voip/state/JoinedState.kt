@@ -17,17 +17,37 @@ import com.joshtalks.joshskills.voip.webrtc.USER_QUIT_CHANNEL
 import kotlinx.coroutines.*
 
 // User Joined the Agora Channel
+const val CONNECTING_TIMER = 10 * 1000L
+
 class JoinedState(val context: CallContext) : VoipState {
     private val TAG = "JoinedState"
     private val scope = CoroutineScope(Dispatchers.IO + CoroutineExceptionHandler { coroutineContext, throwable ->
         Log.d(TAG, "CoroutineExceptionHandler : $throwable")
         throwable.printStackTrace()
     })
+
     private var listenerJob: Job? = null
+    private val connectingTimer by lazy {
+        scope.launch(start = CoroutineStart.LAZY) {
+            try{
+                Log.d(TAG, "Connecting Timer Started")
+                delay(CONNECTING_TIMER)
+                ensureActive()
+                context.closeCallScreen()
+                moveToLeavingState()
+            }
+            catch (e : Exception){
+                if(e is CancellationException)
+                    throw e
+                e.printStackTrace()
+            }
+        }
+    }
 
     init {
         Log.d("Call State", TAG)
         observe()
+        connectingTimer.start()
     }
 
     // Red Button Pressed
@@ -36,6 +56,7 @@ class JoinedState(val context: CallContext) : VoipState {
         scope.launch {
             try{
                 Log.d(TAG, "disconnect : User Red Press switching to Leaving State")
+                connectingTimer.cancel()
                 context.closeCallScreen()
                 moveToLeavingState()
             }
@@ -52,10 +73,12 @@ class JoinedState(val context: CallContext) : VoipState {
     }
 
     override fun onError() {
+        connectingTimer.cancel()
         disconnect()
     }
 
     override fun onDestroy() {
+        connectingTimer.cancel()
         scope.cancel()
     }
 
@@ -76,6 +99,7 @@ class JoinedState(val context: CallContext) : VoipState {
                             val startTime = SystemClock.elapsedRealtime()
                             val uiState = context.currentUiState.copy(startTime = startTime)
                             context.updateUIState(uiState = uiState)
+                            connectingTimer.cancel()
                             ensureActive()
                             val connectedEvent = Envelope(event.type, CallConnectData(
                                 startTime,
@@ -193,6 +217,10 @@ class JoinedState(val context: CallContext) : VoipState {
                                 isOnHold = uiData.isHold()
                             )
                             context.updateUIState(uiState = uiState)
+                        }
+                        RECONNECTED -> {
+                            // Ignore Error Event from Agora
+                            Log.d(TAG, "Ignoring : In $TAG but received ${event.type} expected $CALL_INITIATED_EVENT")
                         }
                         else -> throw IllegalEventException("In $TAG but received ${event.type} expected $CALL_INITIATED_EVENT")
                     }

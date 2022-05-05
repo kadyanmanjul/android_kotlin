@@ -54,6 +54,11 @@ class JoiningState(val context: CallContext) : VoipState {
                             Log.d(TAG, "Received : ${event.type} switched to ${context.state}")
                             break@loop
                         }
+                        // TODO: Not a fix
+                        RECEIVED_CHANNEL_DATA -> {
+                            // Ignore
+                            Log.d(TAG, "In $TAG but received ${event.type} expected $CALL_INITIATED_EVENT")
+                        }
                         MUTE -> {
                             ensureActive()
                             val uiState = context.currentUiState.copy(isRemoteUserMuted = true)
