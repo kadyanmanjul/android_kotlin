@@ -28,6 +28,7 @@ class WebrtcViewModel(application: Application) : AndroidViewModel(application) 
     val repository: ABTestRepository by lazy { ABTestRepository() }
     val fppDialogShow :MutableLiveData<String> = MutableLiveData()
     var isApiFired = false
+    val topicUrlLiveData: MutableLiveData<String> = MutableLiveData()
 
     fun initMissedCall(partnerId: String, aFunction: (String, String, Int) -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -110,6 +111,29 @@ class WebrtcViewModel(application: Application) : AndroidViewModel(application) 
             }
         }catch (ex:Exception){
             ex.printStackTrace()
+        }
+    }
+
+    fun saveTopicImpression(map: HashMap<String, Any?>) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                AppObjectController.p2pNetworkService.saveTopicUrlImpression(map)
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
+        }
+    }
+
+    fun showTopicUrl(partnerMentorId:String){
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val topicUrl = AppObjectController.p2pNetworkService.getTopicImage(partnerMentorId)
+                withContext(Dispatchers.Main) {
+                    topicUrlLiveData.value = topicUrl["topic_url"]
+                }
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
         }
     }
 }

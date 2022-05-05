@@ -31,6 +31,9 @@ interface P2PNetworkService {
     @GET("$DIR/voicecall/agora_user_profile/{id}/")
     suspend fun getUserDetailOnCall(@Path("id") id: String): HashMap<String, String>
 
+    @GET("$DIR/voicecall/agora_user_profile_v2/{id}/")
+    suspend fun getTopicImage(@Path("id") id: String): HashMap<String, String>
+
     @POST("$DIR/voicecall/agora_call_location/")
     suspend fun uploadUserLocationAgora(@Body params: RequestUserLocation): Response<Void>
 
@@ -87,4 +90,7 @@ interface P2PNetworkService {
 
     @POST("$DIR/fpp/fpp_dialog/")
     suspend fun showFppDialog(@Body params: HashMap<String, String?>) : Response<HashMap<String,String>>
+
+    @POST("$DIR/voicecall/agora_new_topic/")
+    suspend fun saveTopicUrlImpression(@Body params : HashMap<String,Any?>) :Response<Any>
 }
