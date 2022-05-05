@@ -7,7 +7,7 @@ import retrofit2.http.POST
 
 interface CallingApiService {
     @POST("$DIR/p2p/call")
-    suspend fun setUpConnection(@Body request : ConnectionRequest) : Response<Unit>
+    suspend fun setUpConnection(@Body request : ConnectionRequest) : HashMap<String, Any?>
 
     @POST("$DIR/p2p/call_response")
     suspend fun callAccept(@Body request : CallActionRequest) : Response<Unit>

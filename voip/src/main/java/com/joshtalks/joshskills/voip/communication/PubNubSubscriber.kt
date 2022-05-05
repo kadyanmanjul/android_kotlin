@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.voip.communication
 import android.util.Log
 import com.google.gson.Gson
 import com.joshtalks.joshskills.voip.Utils
+import com.joshtalks.joshskills.voip.communication.constants.ServerConstants.Companion.ACK_UI_STATE_UPDATED
 import com.joshtalks.joshskills.voip.communication.constants.ServerConstants.Companion.CHANNEL
 import com.joshtalks.joshskills.voip.communication.constants.ServerConstants.Companion.INCOMING_CALL
 import com.joshtalks.joshskills.voip.communication.constants.ServerConstants.Companion.UI_STATE_UPDATED
@@ -57,10 +58,11 @@ internal class PubNubSubscriber(val scope: CoroutineScope) : SubscribeCallback()
                 // So that we will ignore our own message
                 if(pnMessageResult.publisher == Utils.uuid)
                     return@launch
+                Log.d(TAG, "Raw message : $pnMessageResult")
                 val message = when(pnMessageResult.userMetadata.asInt) {
                     CHANNEL -> Gson().fromJson(messageJson, Channel::class.java)
                     INCOMING_CALL -> Gson().fromJson(messageJson, IncomingCall::class.java)
-                    UI_STATE_UPDATED -> Gson().fromJson(messageJson, UI::class.java)
+                    UI_STATE_UPDATED, ACK_UI_STATE_UPDATED -> Gson().fromJson(messageJson, UI::class.java)
                     else -> Gson().fromJson(messageJson, Message::class.java)
                 }
                 messageFlow.emit(message)
@@ -94,6 +96,9 @@ internal class PubNubSubscriber(val scope: CoroutineScope) : SubscribeCallback()
                     e.printStackTrace()
                 }
             }
+            PNReconnectedCategory -> {
+                sendEvent(PubnubState.RECONNECTED)
+            }
             PNUnexpectedDisconnectCategory -> {
                 // internet got lost
                 //Log.d(TAG, "status: PNUnexpectedDisconnectCategory")
@@ -103,6 +108,19 @@ internal class PubNubSubscriber(val scope: CoroutineScope) : SubscribeCallback()
                 //reconnect when ready
                 //Log.d(TAG, "status: PNTimeoutCategory")
                 pubnub.reconnect();
+            }
+        }
+    }
+
+    private fun sendEvent(event : PubnubState) {
+        scope.launch {
+            try {
+                stateFlow.emit(event)
+            } catch (e : Exception) {
+                if(e is CancellationException)
+                    throw e
+                else
+                    e.printStackTrace()
             }
         }
     }
