@@ -43,11 +43,9 @@ import com.joshtalks.joshskills.ui.lesson.LessonViewModel
 import com.joshtalks.joshskills.ui.lesson.SPEAKING_POSITION
 import com.joshtalks.joshskills.ui.senior_student.SeniorStudentActivity
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity
-import com.joshtalks.joshskills.voip.constant.CONNECTED
-import com.joshtalks.joshskills.voip.constant.IDLE
-import com.joshtalks.joshskills.voip.constant.LEAVING
 import com.joshtalks.joshskills.ui.voip.SearchingUserActivity
 import com.joshtalks.joshskills.ui.voip.favorite.FavoriteListActivity
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getPstnState
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -55,16 +53,14 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import java.util.Calendar
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.voipLog
+import com.joshtalks.joshskills.voip.constant.PSTN_STATE_ONCALL
 import com.joshtalks.joshskills.voip.constant.State
-import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
-import com.joshtalks.joshskills.voip.voipanalytics.EventName
+import com.joshtalks.joshskills.voip.pstn.PSTNController
+import com.joshtalks.joshskills.voip.pstn.PSTNState
+import kotlinx.coroutines.*
 
 private const val TAG = "SpeakingPractiseFragmen"
 class SpeakingPractiseFragment : ABTestFragment(),TimeAnimator.TimeListener {
@@ -114,8 +110,7 @@ class SpeakingPractiseFragment : ABTestFragment(),TimeAnimator.TimeListener {
 
     }
 
-    override fun initCampaigns() {
-    }
+    override fun initCampaigns() {}
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -212,11 +207,15 @@ class SpeakingPractiseFragment : ABTestFragment(),TimeAnimator.TimeListener {
             val state = getVoipState()
             Log.d(TAG, " Start Call Button - Voip State $state")
             if(state == State.IDLE) {
-                if(Utils.isInternetAvailable().not()) {
-                    showToast("Seems like you have no internet")
-                    return@setOnClickListener
+                if(requireActivity().getPstnState() != PSTN_STATE_ONCALL ) {
+                    if (Utils.isInternetAvailable().not()) {
+                        showToast("Seems like you have no internet")
+                        return@setOnClickListener
+                    }
+                    startPractise(isNewArch = true)
+                }else{
+                    showToast("Cannot make this call while on another call")
                 }
-                startPractise(isNewArch = true)
             } else
                 showToast("Wait for last call to get disconnected")
         }

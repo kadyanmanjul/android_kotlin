@@ -6,10 +6,11 @@ import android.database.Cursor
 import android.database.MatrixCursor
 import android.net.Uri
 import android.util.Log
+import com.joshtalks.joshskills.voip.constant.CURRENT_PSTN_STATE
 import com.joshtalks.joshskills.voip.constant.CURRENT_VOIP_STATE
+import com.joshtalks.joshskills.voip.constant.PSTN_STATE_PATH
 import com.joshtalks.joshskills.voip.constant.VOIP_STATE_PATH
 import com.joshtalks.joshskills.voip.data.local.PrefManager
-import kotlin.math.log
 
 private const val TAG = "VoipStateContentProvide"
 class VoipStateContentProvider : ContentProvider() {
@@ -32,6 +33,13 @@ class VoipStateContentProvider : ContentProvider() {
                 Log.d(TAG, "query: State -> $currentState")
                 val cursor = MatrixCursor(arrayOf(CURRENT_VOIP_STATE))
                 cursor.addRow(arrayOf(currentState.ordinal))
+                return cursor
+            }
+            PSTN_STATE_PATH->{
+                val currentState = PrefManager.getPstnState()
+                Log.d(TAG, "query: PSTN State -> $currentState")
+                val cursor = MatrixCursor(arrayOf(CURRENT_PSTN_STATE))
+                cursor.addRow(arrayOf(currentState))
                 return cursor
             }
         }

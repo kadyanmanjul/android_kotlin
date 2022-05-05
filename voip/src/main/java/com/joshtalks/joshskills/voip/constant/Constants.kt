@@ -49,9 +49,19 @@ const val LEAVING_AND_JOINING = 126 // LeaveChannel Previous Channel and Joining
 // Content Provider Voip State
 const val CONTENT_VOIP_STATE_AUTHORITY = "content://com.joshtalks.joshskills.voipstate"
 const val VOIP_STATE_PATH = "/current_voip_state"
+const val PSTN_STATE_PATH = "/current_pstn_state"
+
 
 //    Content values for Voip State
 const val CURRENT_VOIP_STATE = "josh_current_voip_state"
+const val CURRENT_PSTN_STATE = "josh_current_pstn_state"
+
+
+//PSTN states
+const val PSTN_STATE_IDLE = "pstn_state_Idle"
+const val PSTN_STATE_ONCALL = "pstn_state_oncall"
+const val PREF_KEY_PSTN_STATE = "pstn_state_pstn_state"
+
 
 enum class Event {
     ERROR,
@@ -91,8 +101,3 @@ enum class State {
     RECONNECTING,
     LEAVING,
 }
-
-
-
-
-
