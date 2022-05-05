@@ -7,6 +7,7 @@ import com.google.firebase.firestore.FirebaseFirestoreException
 import com.joshtalks.joshskills.voip.communication.constants.ServerConstants
 import com.joshtalks.joshskills.voip.communication.model.*
 import com.joshtalks.joshskills.voip.data.local.PrefManager
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -39,6 +40,8 @@ class FirebaseEventListener(val scope : CoroutineScope) : EventListener<Document
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
+                if(e is CancellationException)
+                    throw e
                 dataFlow.emit(Error())
             }
         }

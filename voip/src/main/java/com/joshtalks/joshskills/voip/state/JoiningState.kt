@@ -13,7 +13,10 @@ import kotlinx.coroutines.*
 // Got a Channel and Joining Agora State
 class JoiningState(val context: CallContext) : VoipState {
     private val TAG = "JoiningState"
-    private val scope = CoroutineScope(Dispatchers.IO)
+    private val scope = CoroutineScope(Dispatchers.IO + CoroutineExceptionHandler { coroutineContext, throwable ->
+        Log.d(TAG, "CoroutineExceptionHandler : $throwable")
+        throwable.printStackTrace()
+    })
     private var listenerJob : Job? = null
 
     init {

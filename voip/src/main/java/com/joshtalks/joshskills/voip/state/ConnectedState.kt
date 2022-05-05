@@ -176,6 +176,9 @@ class ConnectedState(val context: CallContext) : VoipState {
                             Log.d(TAG, "Received : ${event.type} switched to Leaving State")
                             moveToLeavingState()
                         }
+                        RECONNECTED -> {
+                            // Ignore this event as we are already in Connected State
+                        }
                         else -> throw IllegalEventException("In $TAG but received ${event.type} event don't know how to process")
                     }
                 }
