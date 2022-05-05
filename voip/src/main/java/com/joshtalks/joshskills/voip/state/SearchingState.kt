@@ -18,6 +18,7 @@ import com.joshtalks.joshskills.voip.mediator.PER_USER_TIMEOUT_IN_MILLIS
 import com.joshtalks.joshskills.voip.mediator.PeerToPeerCalling
 import kotlinx.coroutines.*
 import retrofit2.HttpException
+import java.io.IOException
 import java.net.SocketTimeoutException
 
 // Fired an API So We have to make sure how to cancel
@@ -28,7 +29,10 @@ import java.net.SocketTimeoutException
  */
 class SearchingState(val context: CallContext) : VoipState {
     private val TAG = "SearchingState"
-    private val scope = CoroutineScope(Dispatchers.IO)
+    private val scope = CoroutineScope(Dispatchers.IO + CoroutineExceptionHandler { coroutineContext, throwable ->
+        Log.d(TAG, "CoroutineExceptionHandler : $throwable")
+        throwable.printStackTrace()
+    })
     private val timeoutTimer by lazy {
         scope.launch(start = CoroutineStart.LAZY) {
             try{
@@ -71,12 +75,14 @@ class SearchingState(val context: CallContext) : VoipState {
             try {
                 calling.onPreCallConnect(context.request, context.direction)
             } catch (e: Exception) {
-                if (e is HttpException || e is SocketTimeoutException)
-                    Log.d(TAG, " Exception : API failed")
-                e.printStackTrace()
-                ensureActive()
-                context.destroyContext()
-                // TODO : Emit Error - Close User Screen
+                if (e is HttpException || e is SocketTimeoutException || e is IOException) {
+                    Log.d(TAG, " Exception : API failed - $e")
+                    e.printStackTrace()
+                } else {
+                    e.printStackTrace()
+                    ensureActive()
+                    context.destroyContext()
+                }
             }
         }
     }

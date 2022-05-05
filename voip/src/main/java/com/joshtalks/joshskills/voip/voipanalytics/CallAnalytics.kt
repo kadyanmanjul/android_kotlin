@@ -44,6 +44,8 @@ object CallAnalytics : CallAnalyticsInterface{
                         } catch (e: Exception) {
                             Timber.tag("VOIP_ANALYTICS").e("Error Occurred")
                             e.printStackTrace()
+                            if(e is CancellationException)
+                                throw e
                         }
                     }
                 }

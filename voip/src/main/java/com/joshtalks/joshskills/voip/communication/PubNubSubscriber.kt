@@ -67,6 +67,8 @@ internal class PubNubSubscriber(val scope: CoroutineScope) : SubscribeCallback()
             } catch (e : Exception) {
                 e.printStackTrace()
                 messageFlow.emit(Error())
+                if(e is CancellationException)
+                    throw e
             }
         }
     }

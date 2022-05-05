@@ -154,6 +154,8 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                 updateIncomingCallState(false)
             } catch (e: Exception) {
                 e.printStackTrace()
+                if(e is CancellationException)
+                    throw e
             }
         }
     }
@@ -197,6 +199,8 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
             } catch (e: Exception) {
                 Log.d(TAG, "userAction : $e")
                 e.printStackTrace()
+                if(e is CancellationException)
+                    throw e
             }
         }
     }
@@ -222,7 +226,12 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                         e.printStackTrace()
                     }
                 }
-            } catch (e: Exception) { }
+            } catch (e: Exception) {
+                Log.d(TAG, "observeChannelState: $e")
+                e.printStackTrace()
+                if(e is CancellationException)
+                    throw e
+            }
         }
     }
 
@@ -308,6 +317,8 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
             } catch (e: Exception) {
                 Log.d(TAG, "handlePubnubEvent : $e")
                 e.printStackTrace()
+                if(e is CancellationException)
+                    throw e
             }
         }
     }
@@ -363,6 +374,8 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
             } catch (e: Exception) {
                 Log.d(TAG, "handleWebrtcEvent : $e")
                 e.printStackTrace()
+                if(e is CancellationException)
+                    throw e
             }
         }
     }
@@ -480,14 +493,16 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
         }
     }
 
-    private fun isMessageForSameChannel(channel: String) =
-        channel == callContext?.channelData?.getChannel()
+    private fun isMessageForSameChannel(channel: String) = callContext?.hasChannelData() == true && channel == callContext?.channelData?.getChannel()
+
 
     private fun stopAudio() {
         try {
             soundManager.stopSound()
         } catch (e: Exception) {
             e.printStackTrace()
+            if(e is CancellationException)
+                throw e
         }
     }
 

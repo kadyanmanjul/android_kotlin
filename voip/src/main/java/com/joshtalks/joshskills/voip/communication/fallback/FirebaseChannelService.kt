@@ -78,6 +78,8 @@ class FirebaseChannelService(val scope: CoroutineScope) : EventChannel {
                 }
             } catch (e : Exception) {
                 e.printStackTrace()
+                if(e is CancellationException)
+                    throw e
             }
         }
     }

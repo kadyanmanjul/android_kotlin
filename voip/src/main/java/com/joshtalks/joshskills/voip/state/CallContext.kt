@@ -28,6 +28,8 @@ data class CallContext(val callType: Int, val direction : CallDirection, val req
         callDurationInMillis()
     }
 
+    fun hasChannelData() = this::channelData.isInitialized
+
 
     fun connect() {
         Log.d(TAG, "connect")
