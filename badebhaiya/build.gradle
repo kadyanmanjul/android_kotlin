@@ -153,6 +153,8 @@ dependencies {
     //Branch for deeplink
     implementation 'io.branch.sdk.android:library:5.1.2'
     implementation 'com.google.android.gms:play-services-ads-identifier:18.0.1'
+    implementation 'com.userexperior:userexperior-android:7.0.5'
+
 
 
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'

@@ -237,7 +237,8 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                     }
                 }
                 SCROLL_TO_TOP->{
-                    binding.recyclerView.layoutManager?.scrollToPosition(0)
+                   //binding.recyclerView.layoutManager?.scrollToPosition(0)
+                    binding.recyclerView.layoutManager?.smoothScrollToPosition(binding.recyclerView, null, 0)
                 }
             }
         })

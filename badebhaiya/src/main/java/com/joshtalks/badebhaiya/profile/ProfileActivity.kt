@@ -81,7 +81,7 @@ class ProfileActivity: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         feedViewModel.setIsBadeBhaiyaSpeaker()
         binding.handler = this
         binding.viewModel = viewModel
-        addObserver()
+        //addObserver()
         binding.toolbar.iv_back.setOnClickListener{
             activity?.run {
                 (activity as FeedActivity).swipeRefreshLayout.isEnabled=true
@@ -240,7 +240,7 @@ class ProfileActivity: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         }
 
         PermissionUtils.onlyCallingFeaturePermission(
-            FeedActivity(),
+            (activity as AppCompatActivity),
             object : MultiplePermissionsListener {
                 override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                     report?.areAllPermissionsGranted()?.let { flag ->
@@ -272,6 +272,34 @@ class ProfileActivity: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         )
     }
 
+    fun takePermissionsXml() {
+        PermissionUtils.onlyCallingFeaturePermission(
+            (requireActivity() as AppCompatActivity),
+            object : MultiplePermissionsListener {
+                override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                    report?.areAllPermissionsGranted()?.let { flag ->
+                        if (report.isAnyPermissionPermanentlyDenied) {
+                            Toast.makeText(
+                                requireContext(),
+                                "Permission Denied ",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            PermissionUtils.callingPermissionPermanentlyDeniedDialog((activity as AppCompatActivity))
+                            return
+                        }
+                    }
+                }
+
+                override fun onPermissionRationaleShouldBeShown(
+                    p0: MutableList<com.karumi.dexter.listener.PermissionRequest>?,
+                    token: PermissionToken?
+                ) {
+                    token?.continuePermissionRequest()
+                }
+            }
+        )
+    }
+
     override fun setReminder(room: RoomListResponseItem, view: View) {
         val alarmManager = activity?.applicationContext?.getSystemService(ALARM_SERVICE) as AlarmManager
         val notificationIntent = context?.let {
@@ -288,7 +316,7 @@ class ProfileActivity: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         val pendingIntent =
             notificationIntent?.let {
                 PendingIntent.getBroadcast(
-                    getActivity()?.getApplicationContext(),
+                    FeedActivity(),
                     0,
                     it,
                     PendingIntent.FLAG_UPDATE_CURRENT

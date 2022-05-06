@@ -584,7 +584,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
         }
 
         binding.userPhoto.setOnClickListener {
-            openUserProfile(User.getInstance().userId)
+            itemClick(User.getInstance().userId)
         }
         binding.muteBtn.setOnClickListener {
             if (internetAvailableFlag) {
@@ -939,7 +939,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
         audienceAdapter?.setOnItemClickListener(object : AudienceAdapter.OnUserItemClickListener {
 
             override fun onItemClick(user: LiveRoomUser) {
-                if (requireActivity().supportFragmentManager.backStackEntryCount == 1 && isBottomSheetVisible.not()) {
+                if (activity?.supportFragmentManager?.backStackEntryCount!! > 0 && isBottomSheetVisible.not()) {
                     getDataOnSpeakerAdapterItemClick(user, user.id, false)
                     isBottomSheetVisible = true
                 }
@@ -948,7 +948,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
 
         speakerAdapter?.setOnItemClickListener(object : SpeakerAdapter.OnUserItemClickListener {
             override fun onItemClick(user: LiveRoomUser) {
-                if (requireActivity().supportFragmentManager.backStackEntryCount == 1 && isBottomSheetVisible.not()) {
+                if (activity?.supportFragmentManager?.backStackEntryCount!! > 0 && isBottomSheetVisible.not()) {
                     getDataOnSpeakerAdapterItemClick(user, user.id, true)
                     isBottomSheetVisible = true
                 }
@@ -988,7 +988,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
                 object : ConversationRoomBottomSheetAction {
                     override fun openUserProfile() {
                         if (mentorId.isBlank().not()) {
-                            openUserProfile(mentorId)
+                            itemClick(mentorId)
                         }
                         else {
                             showToast(getString(R.string.generic_message_for_error))
@@ -1210,13 +1210,17 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
             if (liveRoomViewModel.pubNubState.value == PubNubState.STARTED){
                 showToast("Please Leave Current Room")
             } else {
-                PubNubManager.warmUp(liveRoomProperties)
-                activity
-                    .supportFragmentManager
-                    .beginTransaction()
-                    .replace(R.id.fragmentContainer, LiveRoomFragment())
-                    .addToBackStack(TAG)
-                    .commit()
+
+                var frag=activity.supportFragmentManager.findFragmentById(R.id.liveRoomRootView)
+                if(frag==null) {
+                    PubNubManager.warmUp(liveRoomProperties)
+                    activity
+                        .supportFragmentManager
+                        .beginTransaction()
+                        .replace(R.id.fragmentContainer, LiveRoomFragment())
+                        .addToBackStack(null)
+                        .commit()
+                }
             }
         }
 
@@ -1225,4 +1229,14 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
 
 
     override fun getViewModel(): LiveRoomViewModel = vm
+     fun itemClick(userId: String) {
+        val nextFrag = ProfileActivity()
+        val bundle = Bundle()
+        bundle.putString("user", userId) // use as per your need
+        nextFrag.arguments = bundle
+        activity?.supportFragmentManager?.beginTransaction()
+            ?.replace(R.id.live_frame, nextFrag, "findThisFragment")
+            //?.addToBackStack(null)
+            ?.commit()
+    }
 }

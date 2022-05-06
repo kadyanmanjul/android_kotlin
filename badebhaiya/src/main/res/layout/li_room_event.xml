@@ -18,6 +18,9 @@
         <variable
             name="viewHolder"
             type="androidx.recyclerview.widget.RecyclerView.ViewHolder" />
+        <variable
+            name="handler"
+            type="com.joshtalks.badebhaiya.profile.ProfileActivity" />
     </data>
 
     <com.google.android.material.card.MaterialCardView
@@ -87,6 +90,7 @@
                 android:layout_marginTop="@dimen/_25sdp"
                 android:layout_marginEnd="@dimen/_9sdp"
                 android:layout_marginBottom="@dimen/_9sdp"
+                android:onClick="@{()->handler.takePermissionsXml()}"
                 android:backgroundTint="@color/reminder_button_color"
                 android:textAllCaps="false"
                 android:textAppearance="@style/BB_Typography_Nunito_Sans_Bold"

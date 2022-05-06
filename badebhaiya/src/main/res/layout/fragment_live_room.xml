@@ -135,14 +135,14 @@
                     android:layout_marginEnd="@dimen/_5sdp"
                     android:isScrollContainer="false"
                     android:nestedScrollingEnabled="false"
-                    tools:itemCount="2"
-                    tools:listitem="@layout/li_speakers_item"
                     app:layout_constraintBottom_toTopOf="@id/audienceTextView"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/speakerTextView"
-                    app:layout_constraintVertical_chainStyle="packed" />
+                    app:layout_constraintVertical_chainStyle="packed"
+                    tools:itemCount="2"
+                    tools:listitem="@layout/li_speakers_item" />
 
                 <TextView
                     android:id="@+id/audienceTextView"
@@ -165,13 +165,14 @@
                     android:id="@+id/listener__recycler_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    tools:itemCount="2"
-                    tools:listitem="@layout/li_audience_item"
                     android:layout_marginStart="@dimen/_12sdp"
                     android:layout_marginEnd="@dimen/_38sdp"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="1.0"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/audienceTextView" />
+                    app:layout_constraintTop_toBottomOf="@id/audienceTextView"
+                    tools:itemCount="2"
+                    tools:listitem="@layout/li_audience_item" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>
 
@@ -308,6 +309,11 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:visibility="visible" />
+
+            <FrameLayout
+                android:id="@+id/live_frame"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

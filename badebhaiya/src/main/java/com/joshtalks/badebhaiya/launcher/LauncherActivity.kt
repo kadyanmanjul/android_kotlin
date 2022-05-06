@@ -20,12 +20,16 @@ import io.branch.referral.Branch
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import com.userexperior.UserExperior
 
 class LauncherActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_launcher)
+
+        UserExperior.startRecording(getApplicationContext(), "ad556094-72d3-4a13-973d-1a759a00329a")
+
         //if(Settings.Global.getInt(getContentResolver(), Settings.Global.AUTO_TIME) == 1)
         //     {
                  // Enabled

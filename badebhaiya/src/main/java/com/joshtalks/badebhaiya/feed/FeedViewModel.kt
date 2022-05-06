@@ -26,6 +26,7 @@ import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.utils.Utils
 import com.joshtalks.badebhaiya.utils.ALLOWED_SCHEDULED_TIME
 import com.joshtalks.badebhaiya.utils.IST_TIME_DIFFERENCE
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
@@ -124,7 +125,7 @@ class FeedViewModel : ViewModel() {
             showToast("Please Leave Current Room")
             return
         }
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.Main) {
             try {
                 isLoading.set(true)
                 val response = repository.joinRoom(
@@ -146,7 +147,8 @@ class FeedViewModel : ViewModel() {
                             item.topic
                         )
                     }
-                    singleLiveEvent.postValue(message)
+                    Log.i("YASHEN", "postvalue: ")
+                    singleLiveEvent.value=message
                 }
                 Log.d("sahil", "joinRoom:$response")
 
