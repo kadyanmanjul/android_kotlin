@@ -2,12 +2,19 @@ package com.joshtalks.joshskills.ui.voip.voip_rating
 
 import android.app.Activity
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.databinding.ActivityCallRatingDialogBinding
+import com.joshtalks.joshskills.ui.voip.SearchingUserActivity
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 class CallRatingDialogActivity : AppCompatActivity() {
     private var callerName = EMPTY
@@ -37,9 +44,18 @@ class CallRatingDialogActivity : AppCompatActivity() {
         ).show(supportFragmentManager, "CallRatingsFragment")
     }
 
+
     override fun onBackPressed() {
-        closeActivity()
-        super.onBackPressed()
+        if(!SearchingUserActivity.backPressMutex.isLocked) {
+            CoroutineScope(Dispatchers.Main).launch {
+                backPressMutex.withLock {
+                    delay(1000)
+                }
+            }
+        } else{
+            closeActivity()
+            super.onBackPressed()
+        }
     }
 
     fun closeActivity(){
@@ -62,6 +78,7 @@ class CallRatingDialogActivity : AppCompatActivity() {
         const val PROFILE_URL = "profile_url"
         const val CALLER_MENTOR_ID = "caller_mentor_id"
         const val AGORA_MENTOR_ID = "agora_mentor_id"
+        var backPressMutex = Mutex()
 
         fun startCallRatingDialogActivity(activity: Activity,
                                           callerName: String,

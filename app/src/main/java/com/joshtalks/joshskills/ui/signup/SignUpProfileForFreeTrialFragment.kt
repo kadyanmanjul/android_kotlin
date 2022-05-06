@@ -1,11 +1,13 @@
 package com.joshtalks.joshskills.ui.signup
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
@@ -65,6 +67,10 @@ class SignUpProfileForFreeTrialFragment(name: String,isVerified:Boolean) : BaseS
         addObservers()
         binding.nameEditText.requestFocus()
         initUI()
+
+        val imm: InputMethodManager? =
+            activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
+        imm?.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY)
     }
 
     private fun initUI() {

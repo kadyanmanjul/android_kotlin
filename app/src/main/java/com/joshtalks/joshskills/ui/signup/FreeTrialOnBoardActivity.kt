@@ -221,7 +221,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
                 MixPanelTracker.publishEvent(MixPanelEvent.CONTINUE_WITH_NUMBER).push()
                 viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_FREETRIAL_LOGIN)
                 val user = User.getInstance()
-                user.firstName = trueProfile.firstName
+                user.firstName = trueProfile.firstName + trueProfile.lastName
                 user.phoneNumber = trueProfile.phoneNumber
                 user.email = trueProfile.email
                 user.gender = trueProfile.gender
@@ -229,7 +229,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
                 viewModel.userName = trueProfile.firstName
                 viewModel.verifyUserViaTrueCaller(trueProfile)
                 viewModel.isVerified = true
-                openProfileDetailFragment()
+                moveToInboxScreen()
         }
     }
 

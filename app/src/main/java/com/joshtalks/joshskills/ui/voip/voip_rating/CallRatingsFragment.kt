@@ -43,6 +43,7 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
     var agoraMentorId = EMPTY
     private var checked=0
 
+
     val vm :CallRatingsViewModel by lazy {
         ViewModelProvider(requireActivity())[CallRatingsViewModel::class.java]
     }
@@ -119,7 +120,7 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
                }else{
                    block.visibility=INVISIBLE
                    submit.visibility= INVISIBLE
-                   vm.submitCallRatings(agoraCallId, selectedRating, agoraMentorId)
+                   vm.submitCallRatings(agoraCallId, selectedRating, callerMentorId)
                    dismiss()
                    activity?.finish()
                }
@@ -132,7 +133,7 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
                    vm.blockUser(callerMentorId)
                }
                if(selectedRating>0){
-                   vm.submitCallRatings(agoraCallId, selectedRating, agoraMentorId)
+                   vm.submitCallRatings(agoraCallId, selectedRating, callerMentorId)
                }
 
                dismiss()

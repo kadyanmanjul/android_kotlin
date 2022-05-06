@@ -20,11 +20,11 @@ class CallRatingsViewModel: BaseViewModel() {
         }
     }
 
-    fun submitCallRatings(agoraCallId : Int, rating : Int, agoraMentorId : String) {
+    fun submitCallRatings(agoraCallId : Int, rating : Int, callerMentorId : String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val map: HashMap<String, String> = HashMap()
-                map["agora_mentor"] = agoraMentorId
+                map["agora_mentor"] = callerMentorId
                 map["agora_call"] = agoraCallId.toString()
                 map["rating"] = rating.toString()
                 callRatingsRepository.submitCallRating(map)
