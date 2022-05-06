@@ -60,6 +60,7 @@ import com.joshtalks.joshskills.ui.payment.PaymentFailedDialogFragment
 import com.joshtalks.joshskills.ui.payment.PaymentProcessingFragment
 import com.joshtalks.joshskills.ui.referral.EnterReferralCodeFragment
 import com.joshtalks.joshskills.ui.signup.FLOW_FROM
+import com.joshtalks.joshskills.ui.signup.HINDI_TO_ENGLISH_TEST_ID
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.ui.startcourse.StartCourseActivity
 import com.joshtalks.joshskills.ui.voip.IS_DEMO_P2P
@@ -842,16 +843,23 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         alertDialog.show()
         alertDialog.window?.setLayout(width.toInt(), height)
         alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-
+        var isIncreasePriceActive=PrefManager.getBoolValue(IS_ICP_ENABLED)
         var popUpText = " "
         if(isHundredPointsActive && testId == ENGLISH_FREE_TRIAL_1D_TEST_ID || testId == ENGLISH_COURSE_TEST_ID) {
             popUpText = AppObjectController.getFirebaseRemoteConfig()
                 .getString(FirebaseRemoteConfigKey.FREE_TRIAL_POPUP_HUNDRED_POINTS_TEXT + testId)
                 .replace("\\n", "\n")
         }else{
-            popUpText =   AppObjectController.getFirebaseRemoteConfig()
-                .getString(FirebaseRemoteConfigKey.FREE_TRIAL_POPUP_BODY_TEXT + testId)
-                .replace("\\n", "\n")
+            popUpText =
+                if(isIncreasePriceActive && testId == ENGLISH_FREE_TRIAL_1D_TEST_ID || testId == ENGLISH_COURSE_TEST_ID) {
+                    AppObjectController.getFirebaseRemoteConfig()
+                        .getString(FirebaseRemoteConfigKey.FREE_TRIAL_POPUP_BODY_TEXT_ICP_ENABLED + testId)
+                        .replace("\\n", "\n")
+                }else{
+                    AppObjectController.getFirebaseRemoteConfig()
+                        .getString(FirebaseRemoteConfigKey.FREE_TRIAL_POPUP_BODY_TEXT + testId)
+                        .replace("\\n", "\n")
+                }
         }
         dialogView.findViewById<TextView>(R.id.e_g_motivat).text = popUpText
 

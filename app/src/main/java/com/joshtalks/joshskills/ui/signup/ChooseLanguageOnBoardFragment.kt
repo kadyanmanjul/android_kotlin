@@ -9,10 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
-import com.joshtalks.joshskills.core.IS_EFT_VARIENT_ENABLED
-import com.joshtalks.joshskills.core.LANGUAGE_SELECTION_SCREEN_OPENED
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.databinding.FragmentChooseLanguageOnboardBinding
@@ -24,6 +21,7 @@ class ChooseLanguageOnBoardFragment: BaseFragment() {
     private var languageAdapter = ChooseLanguageAdapter()
     private var is100PointsActive = false
     private var eftActive = false
+    private var isIncreasePriceActive=false
     private var language: ChooseLanguages?=null
 
     val viewModel by lazy {
@@ -80,6 +78,12 @@ class ChooseLanguageOnBoardFragment: BaseFragment() {
                 PrefManager.put(IS_EFT_VARIENT_ENABLED, eftActive)
             }
         }
+        viewModel.increasePriceABtestLiveData.observe(viewLifecycleOwner){ abTestCampaignData ->
+            abTestCampaignData?.let { map ->
+                isIncreasePriceActive =(map.variantKey == VariantKeys.ICP_ENABLED.NAME) && map.variableMap?.isEnabled == true
+                PrefManager.put(IS_ICP_ENABLED, isIncreasePriceActive)
+            }
+        }
         viewModel.points100ABtestLiveData.observe(viewLifecycleOwner) { map ->
             if (map != null) {
                 is100PointsActive =
@@ -88,14 +92,16 @@ class ChooseLanguageOnBoardFragment: BaseFragment() {
                 language?.let {
                     (requireActivity() as FreeTrialOnBoardActivity).showStartTrialPopup(
                         it,
-                        is100PointsActive
+                        is100PointsActive,
+                        isIncreasePriceActive
                     )
                 }
             }else{
                 language?.let {
                     (requireActivity() as FreeTrialOnBoardActivity).showStartTrialPopup(
                         it,
-                        false
+                        false,
+                        isIncreasePriceActive
                     )
                 }
             }
@@ -114,7 +120,7 @@ class ChooseLanguageOnBoardFragment: BaseFragment() {
 
     fun initABTest(language: ChooseLanguages) {
         this.language = language
-        viewModel.get100PCampaignData(CampaignKeys.HUNDRED_POINTS.NAME, CampaignKeys.EXTEND_FREE_TRIAL.name)
+        viewModel.get100PCampaignData(CampaignKeys.HUNDRED_POINTS.NAME, CampaignKeys.EXTEND_FREE_TRIAL.name,CampaignKeys.INCREASE_COURSE_PRICE.name)
     }
 
     fun onBackPressed() {

@@ -29,6 +29,7 @@ import com.joshtalks.joshskills.core.OnBoardingStage
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.FREE_TRIAL_TEST_ID
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIAL_POPUP_BODY_TEXT
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIAL_POPUP_BODY_TEXT_ICP_ENABLED
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIAL_POPUP_HUNDRED_POINTS_TEXT
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIAL_POPUP_TITLE_TEXT
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIAL_POPUP_YES_BUTTON_TEXT
@@ -142,7 +143,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         }
     }
 
-    fun showStartTrialPopup(language: ChooseLanguages, is100PointsActive : Boolean) {
+    fun showStartTrialPopup(language: ChooseLanguages, is100PointsActive : Boolean,isIncreasePriceActive:Boolean) {
         MixPanelTracker.publishEvent(MixPanelEvent.START_NOW).push()
         viewModel.saveImpression(IMPRESSION_START_FREE_TRIAL)
         PrefManager.put(ONBOARDING_STAGE, OnBoardingStage.START_NOW_CLICKED.value)
@@ -167,10 +168,17 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
                     .replace("\\n", "\n")
         }
         else {
-            dialogView.findViewById<TextView>(R.id.e_g_motivat).text =
-                AppObjectController.getFirebaseRemoteConfig()
-                    .getString(FREE_TRIAL_POPUP_BODY_TEXT + language.testId)
-                    .replace("\\n", "\n")
+            if(isIncreasePriceActive && language.testId == HINDI_TO_ENGLISH_TEST_ID) {
+                dialogView.findViewById<TextView>(R.id.e_g_motivat).text =
+                    AppObjectController.getFirebaseRemoteConfig()
+                        .getString(FREE_TRIAL_POPUP_BODY_TEXT_ICP_ENABLED + language.testId)
+                        .replace("\\n", "\n")
+            }else{
+                dialogView.findViewById<TextView>(R.id.e_g_motivat).text =
+                    AppObjectController.getFirebaseRemoteConfig()
+                        .getString(FREE_TRIAL_POPUP_BODY_TEXT + language.testId)
+                        .replace("\\n", "\n")
+            }
         }
         dialogView.findViewById<TextView>(R.id.add_a_topic).text =
             AppObjectController.getFirebaseRemoteConfig()
