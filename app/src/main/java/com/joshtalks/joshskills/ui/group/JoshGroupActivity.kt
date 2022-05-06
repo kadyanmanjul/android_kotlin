@@ -375,7 +375,7 @@ class JoshGroupActivity : BaseGroupActivity() {
             vm.repository.leaveGroupFromLocal(groupId)
             if (vm.groupType.get() != DM_CHAT) {
                 withContext(Dispatchers.Main) {
-                    showRemovedAlert(groupName)
+                    showRemovedAlert(groupName?: EMPTY)
                 }
             } else {
                 withContext(Dispatchers.Main) {
@@ -390,7 +390,7 @@ class JoshGroupActivity : BaseGroupActivity() {
             val groupName = vm.repository.getGroupName(groupId)
             vm.repository.leaveGroupFromLocal(groupId)
             withContext(Dispatchers.Main) {
-                showRemovedDmFppAlert(groupName)
+                showRemovedDmFppAlert(groupName?: EMPTY)
                 while (supportFragmentManager.backStackEntryCount > 0)
                     onBackPressed()
             }
@@ -434,7 +434,7 @@ class JoshGroupActivity : BaseGroupActivity() {
     fun showRemovedDmFppAlert(groupName: String) {
         val builder = AlertDialog.Builder(this)
         val dialog: AlertDialog = builder
-            .setMessage("You have been blocked by \"$groupName\"")
+            .setMessage("You have been removed from fpp by \"$groupName\"")
             .setPositiveButton("Ok") { dialog, id ->
                 dialog.cancel()
             }

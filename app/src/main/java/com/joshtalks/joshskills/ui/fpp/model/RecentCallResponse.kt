@@ -13,5 +13,6 @@ data class RecentCall(
     @SerializedName("mentor_id") var receiverMentorId: String?,
     @SerializedName("text") var textToShow: String?,
     @SerializedName("call_type") var callType: String?,
-    @SerializedName("calls_count") var callCount: String?
+    @SerializedName("calls_count") var callCount: String?,
+    @SerializedName("uid") var partnerUid: Int?
 )

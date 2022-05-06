@@ -30,7 +30,6 @@ import com.joshtalks.joshskills.ui.fpp.constants.IS_REJECTED
 import com.joshtalks.joshskills.ui.fpp.constants.IS_ACCEPTED
 import com.joshtalks.joshskills.ui.fpp.model.RecentCall
 import com.joshtalks.joshskills.ui.fpp.viewmodels.RecentCallViewModel
-import com.joshtalks.joshskills.ui.inbox.mentor_id
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
 
 class RecentCallActivity : BaseFppActivity() {
@@ -148,7 +147,7 @@ class RecentCallActivity : BaseFppActivity() {
                 MixPanelTracker.publishEvent(MixPanelEvent.BLOCK_USER_YES)
                     .addParam(ParamKeys.MENTOR_ID, recentCall.receiverMentorId)
                     .push()
-                viewModel.blockUser(recentCall.receiverMentorId?: EMPTY,recentCall.firstName?: EMPTY)
+                viewModel.blockUser(recentCall.receiverMentorId?: EMPTY,recentCall.firstName?: EMPTY,recentCall.partnerUid?:0)
                 dialogView.dismiss()
             }
         btnNotNow.setOnClickListener {

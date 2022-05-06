@@ -14,7 +14,9 @@ import com.bumptech.glide.Glide
 import de.hdodenhof.circleimageview.CircleImageView
 
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.setUserImageOrInitialsWithWhiteBackground
 import com.joshtalks.joshskills.ui.group.constants.CLOSED_GROUP
+import com.joshtalks.joshskills.ui.group.constants.DM_CHAT
 import com.joshtalks.joshskills.ui.group.model.DefaultImage
 
 import java.lang.Exception
@@ -68,9 +70,11 @@ class GroupsAppBar @JvmOverloads constructor(
     }
 
     //TODO: Explicitly Handle low end device issue
-    fun setImage(url: String) {
+    fun setImage(url: String,groupHeader:String,groupType: String) {
         toolbarImageView.visibility = View.VISIBLE
-        if (url.isEmpty())
+        if (groupType == DM_CHAT && url.isEmpty())
+            toolbarImageView.setUserImageOrInitialsWithWhiteBackground(url, groupHeader, isRound = true,bgColor = R.color.white,txtColor = R.color.colorAccent)
+        else if (url.isEmpty())
             toolbarImageView.setImageResource(DefaultImage.DEFAULT_GROUP_IMAGE.drwRes)
         else
             Glide.with(toolbarImageView)

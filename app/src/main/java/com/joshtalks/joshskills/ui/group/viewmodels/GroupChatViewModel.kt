@@ -21,8 +21,6 @@ import com.joshtalks.joshskills.constants.*
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.analytics.ParamKeys
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.custom_ui.MiniExoPlayer
 import com.joshtalks.joshskills.core.isCallOngoing
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -546,7 +544,6 @@ class GroupChatViewModel : BaseViewModel() {
         try {
             viewModelScope.launch (Dispatchers.IO){
                 repository.removeUserFormFppLit(uId)
-                pushMetaMessage("${Mentor.getInstance().getUser()?.firstName} block $groupHeader", groupId, adminId)
                 withContext(Dispatchers.Main) {
                     message.what = REMOVE_GROUP_AND_CLOSE
                     message.obj = groupId

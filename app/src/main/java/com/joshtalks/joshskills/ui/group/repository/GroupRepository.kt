@@ -298,7 +298,7 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
         return null
     }
 
-    suspend fun getGroupName(groupId: String) = database.groupListDao().getGroupName(groupId)
+    suspend fun getGroupName(groupId: String?) = database.groupListDao().getGroupName(groupId)
 
     fun leaveGroupFromLocal(groupId: String) {
         CoroutineScope(Dispatchers.IO).launch {

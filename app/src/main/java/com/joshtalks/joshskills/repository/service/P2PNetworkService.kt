@@ -6,7 +6,6 @@ import com.joshtalks.joshskills.repository.local.model.KFactor
 import com.joshtalks.joshskills.repository.server.voip.AgoraTokenRequest
 import com.joshtalks.joshskills.repository.server.voip.RequestUserLocation
 import com.joshtalks.joshskills.ui.fpp.model.PendingRequestResponse
-import com.joshtalks.joshskills.ui.fpp.model.RecentBlockResponse
 import com.joshtalks.joshskills.ui.fpp.model.RecentCallResponse
 import com.joshtalks.joshskills.ui.voip.voip_rating.model.ReportModel
 import retrofit2.Response
@@ -84,7 +83,7 @@ interface P2PNetworkService {
     suspend fun checkUserInCallOrNot(@Body params : Map<String,String>) : Response<HashMap<String,String>>
 
     @POST("$DIR/fpp/block/")
-    suspend fun blockFppUser(@Body params : Map<String,String>) : Response<RecentBlockResponse>
+    suspend fun blockFppUser(@Body params : Map<String,String>) : Response<Any>
 
     @POST("$DIR/fpp/fpp_dialog/")
     suspend fun showFppDialog(@Body params: HashMap<String, String?>) : Response<HashMap<String,String>>

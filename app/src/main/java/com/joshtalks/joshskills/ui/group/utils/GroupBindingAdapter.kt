@@ -57,8 +57,8 @@ fun GroupsAppBar.setGroupHeaders(header: String, subHeader: String, groupType: S
 @BindingAdapter("secondIcon")
 fun GroupsAppBar.setSecondIcon(drawableRes: Int) = this.secondIcon(drawableRes)
 
-@BindingAdapter("groupImage")
-fun GroupsAppBar.setGroupImage(imageUrl: String) = this.setImage(imageUrl)
+@BindingAdapter("groupImage", "groupName", "groupTypeDm",requireAll = false)
+fun GroupsAppBar.setGroupImage(imageUrl: String, groupName: String, groupType: String) = this.setImage(imageUrl,groupName,groupType)
 
 @BindingAdapter("groupImage", "defaultImage")
 fun CircleImageView.setGroupImage(imageUrl: String, defaultImage: String) {

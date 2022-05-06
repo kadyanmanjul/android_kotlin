@@ -1123,6 +1123,31 @@ fun ImageView.setUserInitial(
     this.setImageDrawable(drawable)
 }
 
+fun ImageView.setUserInitial(
+    userName: String,
+    dpToPx: Int = 16,
+    background: Int = R.color.white,
+    txtColor: Int = R.color.button_color
+) {
+    val font = Typeface.createFromAsset(
+        AppObjectController.joshApplication.assets,
+        "fonts/OpenSans-SemiBold.ttf"
+    )
+    val drawable: TextDrawable = TextDrawable.builder()
+        .beginConfig()
+        .textColor(txtColor)
+        .useFont(font)
+        .fontSize(Utils.dpToPx(dpToPx))
+        .toUpperCase()
+        .endConfig()
+        .buildRound(
+            getUserNameInShort(userName),
+            ContextCompat.getColor(AppObjectController.joshApplication, background)
+        )
+    this.background = drawable
+    this.setImageDrawable(drawable)
+}
+
 fun ImageView.setUserInitialInRect(
     userName: String,
     dpToPx: Int = 16,
@@ -1158,6 +1183,38 @@ fun ImageView.setUserImageOrInitials(
 ) {
     if (url.isNullOrEmpty()) {
         setUserInitial(userName, dpToPx)
+    } else {
+        if (isRound) {
+            val requestOptions = RequestOptions().placeholder(R.drawable.ic_call_placeholder)
+                .error(R.drawable.ic_call_placeholder)
+                .format(DecodeFormat.PREFER_RGB_565)
+                .disallowHardwareConfig().dontAnimate().encodeQuality(75)
+            Glide.with(context)
+                .load(url)
+                .optionalTransform(
+                    WebpDrawable::class.java,
+                    WebpDrawableTransformation(CircleCrop())
+                )
+                .circleCrop()
+                .apply(requestOptions)
+                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                .into(this)
+        } else {
+            this.setImage(url)
+        }
+    }
+}
+
+fun ImageView.setUserImageOrInitialsWithWhiteBackground(
+    url: String?,
+    userName: String,
+    dpToPx: Int = 16,
+    isRound: Boolean = false,
+    bgColor: Int = R.color.white,
+    txtColor: Int = R.color.button_color
+) {
+    if (url.isNullOrEmpty()) {
+        setUserInitial(userName, dpToPx,background = bgColor, txtColor = txtColor)
     } else {
         if (isRound) {
             val requestOptions = RequestOptions().placeholder(R.drawable.ic_call_placeholder)
