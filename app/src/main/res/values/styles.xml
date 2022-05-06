@@ -858,4 +858,15 @@
         <item name="android:textCursorDrawable">@android:drawable/editbox_background_normal</item>
         <item name="android:height">20dp</item>
     </style>
+
+    <style name="BlockButtonChipStyle" parent="Widget.MaterialComponents.Chip.Choice">
+        <item name="chipBackgroundColor">@color/chip_bg_color_black</item>
+        <item name="android:textColor">@color/chip_text_color_black</item>
+        <item name="rippleColor">@color/white</item>
+    </style>
+
+    <style name="RatingRadioButtonStyle" parent="@style/Widget.MaterialComponents.Chip.Choice">
+        <item name="chipBackgroundColor">@color/language_chip_bg_color_selector</item>
+        <item name="android:textColor">@color/chip_text_color_black</item>
+    </style>
 </resources>

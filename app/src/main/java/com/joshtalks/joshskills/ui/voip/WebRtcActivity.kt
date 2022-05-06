@@ -1084,8 +1084,9 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
                                     callDuration = time.toInt() / 60000,
                                     agoraCallId = CurrentCallDetails.state().callId.toInt(),
                                     callerProfileUrl = mBoundService?.getOppositeCallerProfilePic(),
-                                    callerMentorId = it1.toString(),
-                                    agoraMentorId = agoraMentorId.toString())
+                                    callerMentorId = callerId,
+                                    agoraMentorId = callieId
+                                )
                             }
                     }
                 }

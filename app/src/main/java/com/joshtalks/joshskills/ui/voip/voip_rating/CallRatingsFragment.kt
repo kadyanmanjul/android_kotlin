@@ -1,5 +1,9 @@
 package com.joshtalks.joshskills.ui.voip.voip_rating
 
+import android.animation.AnimatorSet
+import android.animation.ArgbEvaluator
+import android.animation.ObjectAnimator
+import android.animation.ValueAnimator
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
@@ -9,8 +13,10 @@ import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
+import android.view.animation.LinearInterpolator
 import android.widget.RadioButton
 import android.widget.RadioGroup
+import android.widget.TextView
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.joshtalks.joshskills.R
@@ -19,7 +25,6 @@ import com.joshtalks.joshskills.databinding.CallRatingDialogBinding
 import com.joshtalks.joshskills.quizgame.util.MyBounceInterpolator
 
 class CallRatingsFragment :BottomSheetDialogFragment() {
-
 
     val CALLER_NAME = "caller_name"
     val CALL_DURATION = "call_duration"
@@ -73,8 +78,8 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
         binding.howCallTxt.text=getString(R.string.how_was_your_call_name,callerName)
         binding.callDurationText.text=getString(R.string.you_spoke_for_minutes,callDuration.toString())
         binding.block.text=getString(R.string.block_caller,callerName)
-        if(PrefManager.getBoolValue(IS_FREE_TRIAL)) binding.cross.visibility = View.GONE
-        else binding.cross.visibility = View.VISIBLE
+        if(PrefManager.getBoolValue(IS_FREE_TRIAL)) binding.cross.visibility = View.VISIBLE
+        else binding.cross.visibility = View.GONE
 
         callerProfileUrl?.let {
             binding.cImage.setImage(callerProfileUrl!!)
@@ -96,12 +101,13 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
 //               AnimationUtils.loadAnimation(activity.get()!!, R.anim.blink)
 //               UtilsQuiz.dipDown(group.findViewById<RadioButton>(checkedId), requireActivity())
 //               AnimationUtils.loadAnimation(AppObjectController.joshApplication, R.anim.blink)
-               val myAnim = AnimationUtils.loadAnimation(activity, R.anim.bounce_anim)
-               val interpolator = MyBounceInterpolator(0.8, 20.0)
+               val myAnim = AnimationUtils.loadAnimation(activity, R.anim.zoom_in)
+               val interpolator = MyBounceInterpolator(0.8, 10.0)
                myAnim.interpolator = interpolator
-               myAnim.duration = 80
-               myAnim.repeatCount = 1
+//               myAnim.duration = 3000
+//               myAnim.repeatCount = 1
                group.findViewById<RadioButton>(checkedId).startAnimation(myAnim)
+//               animateIt(group.findViewById<RadioButton>(checkedId))
                if(checked>0){
                    group.findViewById<RadioButton>(checked).setTextColor(resources.getColor(R.color.black))
                }
@@ -167,5 +173,15 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
                     putString(AGORA_MENTOR_ID, agoraMentorId)
                 }
             }
+    }
+
+    fun animateIt(tv: TextView) {
+        val a: ObjectAnimator = ObjectAnimator.ofInt(tv, "textColor", Color.WHITE, Color.WHITE)
+        a.setInterpolator(LinearInterpolator())
+        a.setDuration(500)
+        a.setEvaluator(ArgbEvaluator())
+        val t = AnimatorSet()
+        t.play(a)
+        t.start()
     }
 }
