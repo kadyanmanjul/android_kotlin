@@ -4,6 +4,8 @@ import android.animation.AnimatorSet
 import android.animation.ArgbEvaluator
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
+import android.app.Dialog
+import android.content.DialogInterface
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
@@ -23,6 +25,11 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.databinding.CallRatingDialogBinding
 import com.joshtalks.joshskills.quizgame.util.MyBounceInterpolator
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.withLock
 
 class CallRatingsFragment :BottomSheetDialogFragment() {
 
@@ -118,6 +125,7 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
                    block.visibility=VISIBLE
                    submit.visibility= VISIBLE
                }else{
+                   group.findViewById<RadioButton>(checkedId).startAnimation(myAnim)
                    block.visibility=INVISIBLE
                    submit.visibility= INVISIBLE
                    vm.submitCallRatings(agoraCallId, selectedRating, callerMentorId)
@@ -149,10 +157,16 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
 
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        activity?.finish()
+//    override fun onDestroy() {
+//        super.onDestroy()
+//        activity?.finish()
+//    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
     }
+
+
 
     companion object {
         @JvmStatic
@@ -163,18 +177,31 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
             callerProfileUrl: String?,
             callerMentorId : String,
             agoraMentorId : String
-        ) =
-            CallRatingsFragment().apply {
+        ): CallRatingsFragment {
+            val fragment = CallRatingsFragment().apply {
                 arguments = Bundle().apply {
                     putString(CALLER_NAME, callerName)
-                    putInt(CALL_DURATION,callDuration)
-                    putInt(AGORA_ID,agoraCallId)
-                    putString(PROFILE_URL,callerProfileUrl)
+                    putInt(CALL_DURATION, callDuration)
+                    putInt(AGORA_ID, agoraCallId)
+                    putString(PROFILE_URL, callerProfileUrl)
                     putString(CALLER_MENTOR_ID, callerMentorId)
                     putString(AGORA_MENTOR_ID, agoraMentorId)
                 }
             }
+            //fragment.isCancelable = false
+            return fragment
+        }
     }
+
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        return super.onCreateDialog(savedInstanceState)
+    }
+
+//    override fun onCancel(dialog: DialogInterface) {
+//        super.onCancel(dialog)
+//        Log.e("Ayaaz","fdsfdsf")
+//        requireActivity().onBackPressedDispatcher
+//    }
 
     fun animateIt(tv: TextView) {
         val a: ObjectAnimator = ObjectAnimator.ofInt(tv, "textColor", Color.WHITE, Color.WHITE)
@@ -185,4 +212,5 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
         t.play(a)
         t.start()
     }
+
 }

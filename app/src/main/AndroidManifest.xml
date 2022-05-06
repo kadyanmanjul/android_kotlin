@@ -86,6 +86,7 @@
         tools:replace="android:allowBackup,android:supportsRtl,android:hardwareAccelerated">
         <activity
             android:name=".ui.voip.voip_rating.CallRatingDialogActivity"
+            android:screenOrientation="portrait"
             android:exported="true" />
         <activity
             android:name=".ui.fpp.SeeAllRequestsActivity"
