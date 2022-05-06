@@ -32,7 +32,10 @@ import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.core.*
 import com.joshtalks.badebhaiya.core.base.BaseFragment
 import com.joshtalks.badebhaiya.databinding.FragmentLiveRoomBinding
+import com.joshtalks.badebhaiya.feed.FeedActivity
 import com.joshtalks.badebhaiya.feed.NotificationView
+import com.joshtalks.badebhaiya.feed.ROOM_DETAILS
+import com.joshtalks.badebhaiya.feed.TOPIC
 import com.joshtalks.badebhaiya.feed.model.LiveRoomUser
 import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
 import com.joshtalks.badebhaiya.liveroom.adapter.AudienceAdapter
@@ -53,9 +56,11 @@ import com.joshtalks.badebhaiya.liveroom.viewmodel.NOTIFICATION_TYPE
 import com.joshtalks.badebhaiya.liveroom.viewmodel.NOTIFICATION_USER
 import com.joshtalks.badebhaiya.notifications.HeadsUpNotificationService
 import com.joshtalks.badebhaiya.profile.ProfileActivity
+import com.joshtalks.badebhaiya.profile.ProfileViewModel
 import com.joshtalks.badebhaiya.pubnub.PubNubEventsManager
 import com.joshtalks.badebhaiya.pubnub.PubNubManager
 import com.joshtalks.badebhaiya.pubnub.PubNubState
+import com.joshtalks.badebhaiya.repository.model.ConversationRoomResponse
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.utils.DEFAULT_NAME
 import com.joshtalks.badebhaiya.utils.setUserImageRectOrInitials
@@ -76,6 +81,14 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
 ),
     NotificationView.NotificationViewAction,
     RaisedHandsBottomSheet.HandRaiseSheetListener {
+
+    private val FeedViewModel by lazy {
+        ViewModelProvider(this)[ProfileViewModel::class.java]
+    }
+
+    private val liveRoomViewModel by lazy {
+        ViewModelProvider(this)[LiveRoomViewModel::class.java]
+    }
 
     private var mServiceBound: Boolean = false
     private lateinit var binding: FragmentLiveRoomBinding
@@ -124,6 +137,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
         isActivityOpenFromNotification =
             PubNubManager.getLiveRoomProperties()?.isActivityOpenFromNotification!!
         addViewModelObserver()
+        addObserver()
         if (isActivityOpenFromNotification) {
             addJoinAPIObservers()
             getIntentExtrasFromNotification()
@@ -298,6 +312,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
     }
 
      fun expandLiveRoom() {
+         Log.i("YASHEN", "expandLiveRoom: ")
         binding.liveRoomRootView.transitionToStart()
     }
 
@@ -497,6 +512,27 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
         }
 
     }
+    fun addObserver(){
+        FeedViewModel.singleLiveEvent.observe(viewLifecycleOwner) {
+            Log.d("ABC2", "Data class called with data message: ${it.what} bundle : ${it.data}")
+            when (it.what) {
+                OPEN_ROOM ->{
+                    Log.i("YASHENDRA", "addObserver: ")
+                    it.data?.let {
+                        it.getParcelable<ConversationRoomResponse>(ROOM_DETAILS)?.let { room ->
+                            val liveRoomProperties = StartingLiveRoomProperties.createFromRoom(
+                                room,
+                                it.getString(TOPIC)!!
+                            )
+                            launch((requireActivity() as AppCompatActivity), liveRoomProperties, liveRoomViewModel)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
 
     private fun removeUserWhenLeft(uid: Int) {
         PubNubManager.removeUserWhenLeft(uid, speakerAdapter, audienceAdapter)
@@ -584,6 +620,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
         }
 
         binding.userPhoto.setOnClickListener {
+            collapseLiveRoom()
             itemClick(User.getInstance().userId)
         }
         binding.muteBtn.setOnClickListener {
@@ -886,6 +923,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
         binding.notificationBar.apply {
             visibility = View.VISIBLE
             setHeading("The Internet connection appears to be offline")
+            Intent(requireContext(), FeedActivity::class.java)
             setNotificationState(NotificationView.ConversationRoomNotificationState.NO_INTERNET_AVAILABLE)
             loadAnimationSlideDown()
             startSound()
@@ -988,6 +1026,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
                 object : ConversationRoomBottomSheetAction {
                     override fun openUserProfile() {
                         if (mentorId.isBlank().not()) {
+                            collapseLiveRoom()
                             itemClick(mentorId)
                         }
                         else {
@@ -1235,7 +1274,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
         bundle.putString("user", userId) // use as per your need
         nextFrag.arguments = bundle
         activity?.supportFragmentManager?.beginTransaction()
-            ?.replace(R.id.live_frame, nextFrag, "findThisFragment")
+            ?.replace(R.id.root_view, nextFrag, "findThisFragment")
             //?.addToBackStack(null)
             ?.commit()
     }

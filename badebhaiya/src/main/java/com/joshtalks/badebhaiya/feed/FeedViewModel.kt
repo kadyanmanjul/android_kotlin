@@ -14,6 +14,7 @@ import com.joshtalks.badebhaiya.feed.adapter.FeedAdapter
 import com.joshtalks.badebhaiya.feed.model.*
 import com.joshtalks.badebhaiya.liveroom.OPEN_PROFILE
 import com.joshtalks.badebhaiya.liveroom.OPEN_ROOM
+import com.joshtalks.badebhaiya.liveroom.ROOM_EXPAND
 import com.joshtalks.badebhaiya.liveroom.SCROLL_TO_TOP
 import com.joshtalks.badebhaiya.liveroom.bottomsheet.CreateRoom
 import com.joshtalks.badebhaiya.profile.request.DeleteReminderRequest
@@ -128,6 +129,7 @@ class FeedViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.Main) {
             try {
                 isLoading.set(true)
+                Log.d("YASH", "joinRoom:")
                 val response = repository.joinRoom(
                     ConversationRoomRequest(
                         userId = User.getInstance().userId,
@@ -149,6 +151,14 @@ class FeedViewModel : ViewModel() {
                     }
                     Log.i("YASHEN", "postvalue: ")
                     singleLiveEvent.value=message
+                }
+                else
+                {
+
+                    message.what = ROOM_EXPAND
+                    singleLiveEvent.value=message
+
+                    Log.i("YASHEN", "joinRoom: failed")
                 }
                 Log.d("sahil", "joinRoom:$response")
 

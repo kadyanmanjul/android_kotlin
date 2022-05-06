@@ -560,6 +560,8 @@ object PubNubManager {
             }
             postToAudienceList(audienceList)
         }
+        message.what = LIST_UPDATE
+        postToLiveEvent(message)
     }
 
 

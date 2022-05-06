@@ -243,6 +243,9 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                         }
                     }
                 }
+                ROOM_EXPAND->{
+                    LiveRoomFragment().expandLiveRoom()
+                }
                 SCROLL_TO_TOP->{
                    //binding.recyclerView.layoutManager?.scrollToPosition(0)
                     binding.recyclerView.layoutManager?.smoothScrollToPosition(binding.recyclerView, null, 0)
@@ -394,7 +397,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                 notificationIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT
             )
-        alarmManager?.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 2000, pendingIntent)
+        alarmManager?.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + room.startTimeDate.minus(5 * 60 * 1000), pendingIntent)
             .also {
                 //room.isScheduled = true
                 viewModel.setReminder(

@@ -68,6 +68,7 @@ fun setConversationRoomCardActionButton(
             view.setTextColor(ColorStateList.valueOf(view.context.resources.getColor(R.color.white)))
             view.backgroundTintList =
                 ColorStateList.valueOf(view.context.resources.getColor(R.color.reminder_on_button_color))
+            Log.i("YASHENDRA", "setConversationRoomCardActionButton: ")
             view.setOnClickListener { callback?.joinRoom(roomListResponseItem, view) }
         }
         NOT_SCHEDULED -> {
