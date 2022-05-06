@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.lifecycleScope
 import androidx.work.WorkManager
 import com.joshtalks.badebhaiya.R
@@ -59,6 +60,7 @@ class LauncherActivity : AppCompatActivity() {
 
     private fun initBranch() {
         Branch.sessionBuilder(this@LauncherActivity).withCallback { referringParams, error ->
+            Log.d("YASHENDRA", "initBranch: $referringParams")
             if (error == null) {
                 Log.d(
                     "LauncherActivity.kt",
@@ -85,11 +87,17 @@ class LauncherActivity : AppCompatActivity() {
                     SignUpActivity.start(this, REDIRECT_TO_ENTER_NAME)
                     return
                 }
-                if (viewUserId == null) {
-                    Intent(this@LauncherActivity, FeedActivity::class.java)
-                } else {
-                    ProfileActivity.getIntent(this@LauncherActivity, viewUserId, true)
-                }
+//                if (viewUserId == null) {
+//                    Log.i("YASHENDRA", "startActivityForState:  Feed")
+//                    Intent(this@LauncherActivity, FeedActivity::class.java)
+//                } else {
+//                    openProfile(viewUserId)
+//                    Log.i("YASHENDRA", "startActivityForState:  profile")
+//                    ProfileActivity.getIntent(this@LauncherActivity, viewUserId, true)
+//                }
+                val intent = Intent(this@LauncherActivity, FeedActivity::class.java)
+                intent.putExtra("userId",viewUserId)
+                intent
             }
             else -> SignUpActivity.getIntent(
                 this@LauncherActivity,

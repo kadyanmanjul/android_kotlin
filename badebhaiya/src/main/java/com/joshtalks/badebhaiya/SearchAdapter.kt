@@ -53,16 +53,6 @@ class SearchAdapter(private val searchResult: List<Users>,var call: Call): ListA
 
     inner class SearchViewHolder(var item: LiSearchEventBinding) :
         RecyclerView.ViewHolder(item.root) {
-        fun onBind(user: SearchRoomsResponse) {
-            item.roomData = user.users
-            val name = user.users.full_name
-            val bio = user.users.bio
-            var profilePic = user.users.profilePic
-            item.ivProfilePic.setImage(profilePic)
-            item.userName.setText(name)
-            item.tvProfileBio.setText(bio)
-
-        }
 
     }
 
@@ -136,8 +126,6 @@ class SearchAdapter(private val searchResult: List<Users>,var call: Call): ListA
                     )
                 }
             holder.item.btnFollow.setOnClickListener {
-
-                //speakerFollowed=searchResult[position].is_speaker_followed
                     GlobalScope.launch {
                         if (searchResult[position].is_speaker_followed.not()) {
                             try {
@@ -147,7 +135,7 @@ class SearchAdapter(private val searchResult: List<Users>,var call: Call): ListA
                                     RetrofitInstance.profileNetworkService.updateFollowStatus(followRequest)
                                 if (response.isSuccessful) {
                                     searchResult[position].is_speaker_followed=true
-                                    notifyDataSetChanged()
+                                    //notifyDataSetChanged()
                                 }
                             }catch (ex:Exception){
 
@@ -162,7 +150,7 @@ class SearchAdapter(private val searchResult: List<Users>,var call: Call): ListA
                                     val response = RetrofitInstance.profileNetworkService.updateUnfollowStatus(followRequest)
                                     if (response.isSuccessful) {
                                         searchResult[position].is_speaker_followed=false
-                                        notifyDataSetChanged()
+                                        //notifyDataSetChanged()
                                     }
                                 } catch (ex: Exception) {
 

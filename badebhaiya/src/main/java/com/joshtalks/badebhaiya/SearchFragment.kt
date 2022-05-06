@@ -1,5 +1,6 @@
 package com.joshtalks.badebhaiya
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -7,7 +8,9 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -123,6 +126,11 @@ class SearchFragment : Fragment(), Call {
             binding.recyclerView.adapter=SearchAdapter(it.users,this)
         }
     }
+    fun keyboard()
+    {
+        val `in` = (requireActivity() as AppCompatActivity).getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        `in`.hideSoftInputFromWindow(find.getWindowToken(), 0)
+    }
     companion object {
         /**
          * Use this factory method to create a new instance of
@@ -151,8 +159,8 @@ class SearchFragment : Fragment(), Call {
         bundle.putString("user", userId) // use as per your need
         nextFrag.arguments = bundle
         activity?.supportFragmentManager?.beginTransaction()
-            ?.replace(R.id.profile_frame, nextFrag, "findThisFragment")
-            ?.addToBackStack(null)
+            ?.replace(R.id.find, nextFrag, "findThisFragment")
+            //?.addToBackStack(null)
             ?.commit()
     }
 }

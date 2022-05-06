@@ -76,6 +76,7 @@ class ProfileActivity: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         var mBundle: Bundle? = Bundle()
         mBundle = this.arguments
         userId=mBundle!!.getString("user")
+        isFromDeeplink=mBundle!!.getBoolean("isFromdeeplink")
         handleIntent()
         viewModel.getProfileForUser(userId!!, isFromDeeplink)
         feedViewModel.setIsBadeBhaiyaSpeaker()
@@ -174,6 +175,7 @@ class ProfileActivity: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
             viewModel.userProfileData.value?.let {
                 //is_followed=false
                 //binding.tvFollowers.setText("${it.followersCount-1} followers")
+                speakerUnfollowedUIChanges()
                 binding.tvFollowers.text =HtmlCompat.fromHtml(getString(R.string.bb_followers,
                     (it.followersCount.minus(1)?:0).toString()),
                     HtmlCompat.FROM_HTML_MODE_LEGACY)
@@ -181,6 +183,7 @@ class ProfileActivity: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         else
             viewModel.userProfileData.value?.let {
                 //is_followed=true
+                speakerFollowedUIChanges()
                 binding.tvFollowers.text =HtmlCompat.fromHtml(getString(R.string.bb_followers,
                     (it.followersCount.plus(1)?:0).toString()),
                     HtmlCompat.FROM_HTML_MODE_LEGACY)
@@ -316,7 +319,7 @@ class ProfileActivity: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         val pendingIntent =
             notificationIntent?.let {
                 PendingIntent.getBroadcast(
-                    FeedActivity(),
+                    FeedActivity().applicationContext,
                     0,
                     it,
                     PendingIntent.FLAG_UPDATE_CURRENT
@@ -347,8 +350,9 @@ class ProfileActivity: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         viewModel.getProfileForUser(userId ?: (User.getInstance().userId),isFromDeeplink)
     }
 
-    override fun viewProfile(profile: String?) {
+    override fun viewProfile(profile: String?, deeplink: Boolean) {
     }
+
 
 
     override fun viewRoom(room: RoomListResponseItem, view: View) {
