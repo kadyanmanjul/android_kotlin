@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_settings">एप्लिकेशन सेटिंग</string>
+    <string name="clear_all_downloads">सभी डाउनलोड साफ़ करें</string>
+    <string name="sign_out">"लॉग आउट "</string>
+    <string name="notifications">"नोटिफिकेशन्स "</string>
+    <string name="autostart">"ऑटो स्टार्ट की अनुमति"</string>
+    <string name="language">भाषा</string>
+    <string name="english">अंग्रेज़ी</string>
+    <string name="low">कम</string>
+    <string name="login_type">लॉगिन प्रकार</string>
+    <string name="on">ऑन</string>
+    <string name="off">ऑफ</string>
+</resources>
