@@ -13,3 +13,5 @@ const val MOVE_TO_AUDIENCE = 10
 const val OPEN_ROOM = 11
 const val SCROLL_TO_TOP=14
 const val OPEN_PROFILE = 12
+const val LIST_UPDATE=15
+const val ROOM_EXPAND=16

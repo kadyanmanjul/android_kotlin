@@ -26,7 +26,9 @@ import com.joshtalks.badebhaiya.feed.*
 import com.joshtalks.badebhaiya.feed.adapter.FeedAdapter
 import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
 import com.joshtalks.badebhaiya.liveroom.LiveRoomFragment
+import com.joshtalks.badebhaiya.liveroom.LiveRoomState
 import com.joshtalks.badebhaiya.liveroom.OPEN_ROOM
+import com.joshtalks.badebhaiya.liveroom.ROOM_EXPAND
 import com.joshtalks.badebhaiya.liveroom.model.StartingLiveRoomProperties
 import com.joshtalks.badebhaiya.liveroom.viewmodel.LiveRoomViewModel
 import com.joshtalks.badebhaiya.profile.request.DeleteReminderRequest
@@ -125,7 +127,7 @@ class ProfileActivity: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
                 tvUserName.text = getString(R.string.full_name_concatenated, it.firstName, it.lastName)
             }
         }
-        viewModel.speakerFollowed.observe(FeedActivity()) {
+        viewModel.speakerFollowed.observe(requireActivity()) {
             if (it == true) {
                 speakerFollowedUIChanges()
             }
@@ -137,6 +139,7 @@ class ProfileActivity: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
             when (it.what) {
                 OPEN_ROOM ->{
                     it.data?.let {
+                        Log.i("YASHENDRA", "addObserver: ")
                         it.getParcelable<ConversationRoomResponse>(ROOM_DETAILS)?.let { room ->
                             val liveRoomProperties = StartingLiveRoomProperties.createFromRoom(
                                 room,
@@ -145,6 +148,18 @@ class ProfileActivity: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
                             LiveRoomFragment.launch((requireActivity() as AppCompatActivity), liveRoomProperties, liveRoomViewModel)
                         }
                     }
+                }
+
+                ROOM_EXPAND->{
+                    Log.i("YASHENDRA", "addObserver: Expand")
+//                    activity?.run {
+//                        (activity as FeedActivity).swipeRefreshLayout.isEnabled=true
+//                        supportFragmentManager.beginTransaction().remove(this@ProfileActivity)
+//                            .commitAllowingStateLoss()
+//                    }
+                    liveRoomViewModel.liveRoomState.value=LiveRoomState.EXPANDED
+//                    var live=LiveRoomFragment()
+//                    live.expandLiveRoom()
                 }
             }
         }
@@ -259,7 +274,7 @@ class ProfileActivity: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
                                 "Permission Denied ",
                                 Toast.LENGTH_SHORT
                             ).show()
-                            PermissionUtils.callingPermissionPermanentlyDeniedDialog(FeedActivity())
+                            PermissionUtils.callingPermissionPermanentlyDeniedDialog(requireActivity())
                             return
                         }
                     }
@@ -319,13 +334,13 @@ class ProfileActivity: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         val pendingIntent =
             notificationIntent?.let {
                 PendingIntent.getBroadcast(
-                    FeedActivity().applicationContext,
+                    requireActivity().applicationContext,
                     0,
                     it,
                     PendingIntent.FLAG_UPDATE_CURRENT
                 )
             }
-        alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 2000, pendingIntent)
+        alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + room.startTimeDate.minus(5 * 60 * 1000), pendingIntent)
             .also {
                 //room.isScheduled = true
                 viewModel.setReminder(
