@@ -57,11 +57,11 @@ internal class AgoraWebrtcService(val scope: CoroutineScope) : WebrtcService {
     override fun connectCall(request: CallRequest) {
         scope.launch {
             try {
-                voipLog?.log("Connecting Call $agoraEngine")
+                Log.d(TAG, "Connect Call Request : $request")
                 state.emit(JOINING)
                 currentState = JOINING
                 val status = joinChannel(request)
-                voipLog?.log("Join Channel Status ----> $status")
+                Log.d(TAG, "Join Channel Status ----> $status")
                 when (status) {
                     JOINING_CHANNEL_SUCCESS -> {}
                     USER_ALREADY_IN_A_CHANNEL -> {

@@ -115,7 +115,7 @@ class ConnectedState(val context: CallContext) : VoipState {
                                 context.channelData.getChannel(),
                                 address = context.channelData.getPartnerMentorId()
                             )
-                            context.changeMicState(true)
+                            context.changeMicState(false)
                             context.sendMessageToServer(userAction)
                         }
                         HOLD_REQUEST -> {
