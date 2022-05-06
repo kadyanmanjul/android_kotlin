@@ -15,20 +15,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.COURSE_EXPLORER_NEW
-import com.joshtalks.joshskills.core.CURRENT_COURSE_ID
-import com.joshtalks.joshskills.core.PAID_COURSE_TEST_ID
-import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
-import com.joshtalks.joshskills.core.IMPRESSION_REFER_VIA_INBOX_ICON
-import com.joshtalks.joshskills.core.IMPRESSION_REFER_VIA_INBOX_MENU
-import com.joshtalks.joshskills.core.INBOX_SCREEN_VISIT_COUNT
-import com.joshtalks.joshskills.core.ONBOARDING_STAGE
-import com.joshtalks.joshskills.core.OnBoardingStage
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
@@ -62,8 +51,6 @@ import kotlinx.android.synthetic.main.inbox_toolbar.text_message_title
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import com.joshtalks.joshskills.core.IS_FREE_TRIAL_CAMPAIGN_ACTIVE
-import com.joshtalks.joshskills.core.IS_EFT_VARIENT_ENABLED
 
 
 const val REGISTER_INFO_CODE = 2001
@@ -246,6 +233,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                     courseList.forEach { inboxEntity ->
                         if (inboxEntity.isCourseBought.not()) {
                             haveFreeTrialCourse = true
+                            PrefManager.put(IS_FREE_TRIAL,true)
                         }
                     }
                     temp.addAll(courseList)

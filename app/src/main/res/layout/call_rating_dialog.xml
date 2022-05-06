@@ -5,10 +5,9 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
+        android:layout_height="wrap_content"
         android:background="@drawable/dialog_bg"
+        android:paddingBottom="@dimen/_24sdp"
         android:orientation="vertical">
 
         <RadioGroup
@@ -209,17 +208,15 @@
             style="@style/BlockButtonChipStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_10sdp"
             android:text="@string/block_caller"
             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H11_Semi_Bold"
             android:textColor="@color/black"
-            android:visibility="invisible"
+            android:visibility="gone"
             app:chipStrokeColor="@color/pitch_black"
             app:chipStrokeWidth="1dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/very_bad_text"
-            tools:visibility="visible" />
+            app:layout_constraintTop_toBottomOf="@+id/very_bad_text" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/submit"
@@ -236,12 +233,11 @@
             android:text="@string/submit_call_rating"
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
             android:textColor="@color/white"
-            android:visibility="invisible"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/block"
-            app:rippleColor="@color/white"
-            tools:visibility="visible" />
+            app:rippleColor="@color/white" />
 
         <ImageView
             android:id="@+id/cross"

@@ -15,12 +15,8 @@ import com.joshtalks.joshskills.ui.voip.WebRtcCallback
 import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.joshtalks.joshskills.ui.voip.voip_rating.CallRatingDialogActivity
 import com.joshtalks.joshskills.ui.voip.voip_rating.VoipCallFeedbackActivity
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import timber.log.Timber
 
 
@@ -29,7 +25,6 @@ open class WebRtcMiddlewareActivity : CoreJoshActivity() {
     private var mServiceBound = false
     private var isOnDisconnectedTriggered=false
     private val TAG = "WebRtcMiddlewareActivit"
-    var backPressMutex = Mutex()
     private var myConnection: ServiceConnection = object : ServiceConnection {
 
         override fun onServiceConnected(name: ComponentName, service: IBinder) {
@@ -176,20 +171,5 @@ open class WebRtcMiddlewareActivity : CoreJoshActivity() {
 
     override fun getConversationId(): String? {
         return super.getConversationId()
-    }
-
-    override fun onBackPressed() {
-        showToast("${CallRatingDialogActivity.backPressMutex.isLocked}:fasdfasdfasdfasdfa")
-        if(backPressMutex.isLocked) {
-            finishAndRemoveTask()
-            super.onBackPressed()
-        } else {
-            showToast("Please press back again")
-            CoroutineScope(Dispatchers.Main).launch {
-                backPressMutex.withLock {
-                    delay(1000)
-                }
-            }
-        }
     }
 }

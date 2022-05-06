@@ -3,22 +3,11 @@ package com.joshtalks.joshskills.ui.voip.voip_rating
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
-import android.view.KeyEvent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityCallRatingDialogBinding
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
-
-private const val TAG = "CallRatingDialogActivit"
 
 class CallRatingDialogActivity : AppCompatActivity() {
     private var callerName = EMPTY
@@ -47,22 +36,11 @@ class CallRatingDialogActivity : AppCompatActivity() {
             agoraMentorId
         ).show(supportFragmentManager, "CallRatingsFragment")
     }
-    override fun onBackPressed() {
-        Log.d(TAG, "onBackPressed: ")
-        Log.e("Ayaaz","fasdfadsfadsfasdfadsfasdfadsfadsf")
-        if(CallRatingDialogActivity.backPressMutex.isLocked) {
-            closeActivity()
-            super.onBackPressed()
-        } else {
-            showToast("Please press back again")
-            CoroutineScope(Dispatchers.Main).launch {
-                CallRatingDialogActivity.backPressMutex.withLock {
-                    delay(1000)
-                }
-            }
-        }
-    }
 
+    override fun onBackPressed() {
+        closeActivity()
+        super.onBackPressed()
+    }
 
     fun closeActivity(){
         finishAndRemoveTask()
@@ -84,7 +62,6 @@ class CallRatingDialogActivity : AppCompatActivity() {
         const val PROFILE_URL = "profile_url"
         const val CALLER_MENTOR_ID = "caller_mentor_id"
         const val AGORA_MENTOR_ID = "agora_mentor_id"
-        var backPressMutex = Mutex()
 
         fun startCallRatingDialogActivity(activity: Activity,
                                           callerName: String,
@@ -105,17 +82,5 @@ class CallRatingDialogActivity : AppCompatActivity() {
             activity.startActivity(intent)
             activity.overridePendingTransition(R.anim.slide_up_dialog, R.anim.slide_out_top)
         }
-    }
-
-    override fun onDestroy() {
-        showToast("destroyingggg...")
-        super.onDestroy()
-    }
-
-    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        Log.d(TAG, "onKeyDown: ")
-        if(keyCode == KeyEvent.KEYCODE_BACK)
-            Log.d(TAG, "onKeyDown: ")
-        return true
     }
 }

@@ -3,15 +3,14 @@ package com.joshtalks.joshskills.ui.voip.voip_rating
 import android.animation.AnimatorSet
 import android.animation.ArgbEvaluator
 import android.animation.ObjectAnimator
-import android.animation.ValueAnimator
 import android.app.Dialog
-import android.content.DialogInterface
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.INVISIBLE
+import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
@@ -22,14 +21,14 @@ import android.widget.TextView
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.IS_FREE_TRIAL
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.setImage
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.CallRatingDialogBinding
 import com.joshtalks.joshskills.quizgame.util.MyBounceInterpolator
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.sync.withLock
+import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 
 class CallRatingsFragment :BottomSheetDialogFragment() {
 
@@ -49,7 +48,7 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
     var callerMentorId = EMPTY
     var agoraMentorId = EMPTY
     private var checked=0
-
+    private var count = 0
 
     val vm :CallRatingsViewModel by lazy {
         ViewModelProvider(requireActivity())[CallRatingsViewModel::class.java]
@@ -86,8 +85,14 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
         binding.howCallTxt.text=getString(R.string.how_was_your_call_name,callerName)
         binding.callDurationText.text=getString(R.string.you_spoke_for_minutes,callDuration.toString())
         binding.block.text=getString(R.string.block_caller,callerName)
-        if(PrefManager.getBoolValue(IS_FREE_TRIAL)) binding.cross.visibility = View.VISIBLE
-        else binding.cross.visibility = View.GONE
+        if(PrefManager.getBoolValue(IS_FREE_TRIAL)) {
+            Log.e("Ayaaz","is free trial")
+            binding.cross.visibility = VISIBLE
+        }
+        else {
+            Log.e("Ayaaz","is not in free trial")
+            binding.cross.visibility = GONE
+        }
 
         callerProfileUrl?.let {
             binding.cImage.setImage(callerProfileUrl!!)
@@ -125,9 +130,10 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
                    block.visibility=VISIBLE
                    submit.visibility= VISIBLE
                }else{
+                   showToast("Your feedback has been successfully submitted")
                    group.findViewById<RadioButton>(checkedId).startAnimation(myAnim)
-                   block.visibility=INVISIBLE
-                   submit.visibility= INVISIBLE
+                   block.visibility= GONE
+                   submit.visibility= GONE
                    vm.submitCallRatings(agoraCallId, selectedRating, callerMentorId)
                    dismiss()
                    activity?.finish()
@@ -141,6 +147,7 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
                    vm.blockUser(callerMentorId)
                }
                if(selectedRating>0){
+                   showToast("Your feedback has been successfully submitted")
                    vm.submitCallRatings(agoraCallId, selectedRating, callerMentorId)
                }
 
@@ -157,16 +164,10 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
 
     }
 
-//    override fun onDestroy() {
-//        super.onDestroy()
-//        activity?.finish()
-//    }
-
-    override fun onDismiss(dialog: DialogInterface) {
-        super.onDismiss(dialog)
+    override fun onDestroy() {
+        super.onDestroy()
+        activity?.finish()
     }
-
-
 
     companion object {
         @JvmStatic
@@ -188,20 +189,25 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
                     putString(AGORA_MENTOR_ID, agoraMentorId)
                 }
             }
-            //fragment.isCancelable = false
+            fragment.isCancelable = false
             return fragment
         }
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return super.onCreateDialog(savedInstanceState)
+        return super.onCreateDialog(savedInstanceState).apply {
+            setOnKeyListener { dialogInterface, keyCode, keyEvent ->
+                if(keyCode == KeyEvent.KEYCODE_BACK) {
+                    if(count>=3) {
+                        this@CallRatingsFragment.dismiss()
+                        activity?.finish()
+                    }
+                    count+=1
+                }
+                true
+            }
+        }
     }
-
-//    override fun onCancel(dialog: DialogInterface) {
-//        super.onCancel(dialog)
-//        Log.e("Ayaaz","fdsfdsf")
-//        requireActivity().onBackPressedDispatcher
-//    }
 
     fun animateIt(tv: TextView) {
         val a: ObjectAnimator = ObjectAnimator.ofInt(tv, "textColor", Color.WHITE, Color.WHITE)
@@ -212,5 +218,4 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
         t.play(a)
         t.start()
     }
-
 }
