@@ -44,6 +44,11 @@ internal class AgoraWebrtcService(val scope: CoroutineScope) : WebrtcService {
         ).apply {
             setParameters("{\"rtc.peer.offline_period\":5000}")
             setParameters("{\"che.audio.keep.audiosession\":true}")
+
+            //            TODO:SOUND PROBLEM
+            setParameters("{\"che.audio.enable.aec\":false}")  //for automatic echo cancelling
+            setParameters("{\"che.audio.enable.agc\":true}")  //automatic gain control
+            setParameters("{\"che.audio.enable.ns\":false}")   //noise suppression
         }
         Log.d(TAG, "initWebrtcService: ${agoraEngine}")
         observeCallbacks()
@@ -156,7 +161,9 @@ internal class AgoraWebrtcService(val scope: CoroutineScope) : WebrtcService {
             val maxVolume = audio.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL)
             val currentVolume = audio.getStreamVolume(AudioManager.STREAM_VOICE_CALL)
             adjustPlaybackSignalVolume((95 / maxVolume) * currentVolume)
-            enableDeepLearningDenoise(true)
+            adjustRecordingSignalVolume(400)
+//            TODO:SOUND PROBLEM
+            enableDeepLearningDenoise(false)
         }
         return agoraEngine?.joinChannel(
             request.getToken(),
