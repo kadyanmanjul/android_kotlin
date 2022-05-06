@@ -117,6 +117,13 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
             this.window.statusBarColor =
                 this.resources.getColor(R.color.conversation_room_color, this.theme)
         }
+//        var intent=Intent()
+//        var bundle=intent.extras
+        var user=intent.getStringExtra("userId")
+        if(user!=null)
+        {
+            viewProfile(user, true)
+        }
         this.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_feed)
         checkAndOpenLiveRoom()
@@ -426,13 +433,14 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
             .commit()
     }
 
-    override fun viewProfile(profile: String?)
+    override fun viewProfile(profile: String?, deeplink:Boolean)
     {
         val fragment = ProfileActivity() // replace your custom fragment class
 
         val bundle = Bundle()
         val fragmentTransaction: FragmentTransaction = supportFragmentManager.beginTransaction()
         bundle.putString("user",profile) // use as per your need
+        bundle.putBoolean("deeplink", deeplink)
 
         fragment.arguments = bundle
         fragmentTransaction.addToBackStack(null)
