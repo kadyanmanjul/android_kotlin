@@ -1011,7 +1011,6 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
     }
 
     fun onDisconnectCall(reason: VoipEvent) {
-        if(reason == DISCONNECT.USER_DISCONNECTED_FAILURE) PrefManager.put(IS_CALL_DISCONNECTED_FROM_WEBRTCACTIVITY, true)
         mBoundService?.stopPlaying()
         WebRtcService.disconnectCall(reason)
         AppObjectController.uiHandler.postDelayed(
@@ -1072,26 +1071,26 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
         }
         Log.d(TAG, "showCallRatingScreen: ${time/1000}")
         if(showRatingDialog == "true"){
-            if(PrefManager.getBoolValue(IS_CALL_DISCONNECTED_FROM_WEBRTCACTIVITY)) {
-                isOnDisconnectedTriggered = true
-                var agoraMentorId = mBoundService?.getUserAgoraId()
-                if (mBoundService?.getOppositeUserInfo().isNullOrEmpty().not() && agoraMentorId != null) {
-                    mBoundService?.getOppositeCallerName()?.let {
-                        mBoundService?.getOppositeUserInfo()?.get("mentor").let { it1 ->
-                                CallRatingDialogActivity.startCallRatingDialogActivity(
-                                    activity = this,
-                                    callerName = it,
-                                    callDuration = time.toInt() / 60000,
-                                    agoraCallId = CurrentCallDetails.state().callId.toInt(),
-                                    callerProfileUrl = mBoundService?.getOppositeCallerProfilePic(),
-                                    callerMentorId = callerId,
-                                    agoraMentorId = callieId
-                                )
-                            }
+            isOnDisconnectedTriggered = true
+            var agoraMentorId = mBoundService?.getUserAgoraId()
+            if (mBoundService?.getOppositeUserInfo().isNullOrEmpty()
+                    .not() && agoraMentorId != null
+            ) {
+                mBoundService?.getOppositeCallerName()?.let {
+                    mBoundService?.getOppositeUserInfo()?.get("mentor").let { it1 ->
+                        CallRatingDialogActivity.startCallRatingDialogActivity(
+                            activity = this,
+                            callerName = it,
+                            callDuration = time.toInt() / 60000,
+                            agoraCallId = CurrentCallDetails.state().callId.toInt(),
+                            callerProfileUrl = mBoundService?.getOppositeCallerProfilePic(),
+                            callerMentorId = callerId,
+                            agoraMentorId = callieId
+                        )
                     }
                 }
-                mBoundService?.setOppositeUserInfo(null)
             }
+            mBoundService?.setOppositeUserInfo(null)
             this@WebRtcActivity.finishAndRemoveTask()
 
         } else if(((time/1000) in 121..1199 && fppDialog =="false") || !PrefManager.getBoolValue(IS_COURSE_BOUGHT)){

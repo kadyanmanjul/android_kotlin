@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="visible"
-        android:background="@drawable/speaking_ss"
+        android:background="@drawable/show_call_rating"
         tools:context=".ui.voip.voip_rating.CallRatingDialogActivity">
 
     </androidx.constraintlayout.widget.ConstraintLayout>

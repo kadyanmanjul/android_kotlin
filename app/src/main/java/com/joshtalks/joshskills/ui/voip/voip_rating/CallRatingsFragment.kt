@@ -6,7 +6,6 @@ import android.animation.ObjectAnimator
 import android.app.Dialog
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
@@ -29,6 +28,9 @@ import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.CallRatingDialogBinding
 import com.joshtalks.joshskills.quizgame.util.MyBounceInterpolator
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class CallRatingsFragment :BottomSheetDialogFragment() {
 
@@ -79,18 +81,13 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
         callerMentorId = mArgs.getString(CALLER_MENTOR_ID).toString()
         agoraMentorId = mArgs.getString(AGORA_MENTOR_ID).toString()
 
-        Log.d("abcd", "callerMentorId " + callerMentorId )
-        Log.d("abcd", "agoraMentorId " + agoraMentorId )
-
         binding.howCallTxt.text=getString(R.string.how_was_your_call_name,callerName)
         binding.callDurationText.text=getString(R.string.you_spoke_for_minutes,callDuration.toString())
         binding.block.text=getString(R.string.block_caller,callerName)
         if(PrefManager.getBoolValue(IS_FREE_TRIAL)) {
-            Log.e("Ayaaz","is free trial")
             binding.cross.visibility = VISIBLE
         }
         else {
-            Log.e("Ayaaz","is not in free trial")
             binding.cross.visibility = GONE
         }
 
@@ -130,7 +127,9 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
                    block.visibility=VISIBLE
                    submit.visibility= VISIBLE
                }else{
-                   showToast("Your feedback has been successfully submitted")
+                   CoroutineScope(Dispatchers.Main).launch{
+                       showToast("Your feedback has been successfully submitted")
+                   }
                    group.findViewById<RadioButton>(checkedId).startAnimation(myAnim)
                    block.visibility= GONE
                    submit.visibility= GONE
@@ -146,8 +145,10 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
                if(isBlockSelected){
                    vm.blockUser(callerMentorId)
                }
-               if(selectedRating>0){
-                   showToast("Your feedback has been successfully submitted")
+               if (selectedRating >= 0){
+                   CoroutineScope(Dispatchers.Main).launch{
+                       showToast("Your feedback has been successfully submitted")
+                   }
                    vm.submitCallRatings(agoraCallId, selectedRating, callerMentorId)
                }
 

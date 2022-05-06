@@ -81,16 +81,10 @@ open class WebRtcMiddlewareActivity : CoreJoshActivity() {
                 findViewById<View>(R.id.ongoing_call_container)?.visibility = View.GONE
                 findViewById<View>(R.id.ongoing_call_container)?.setOnClickListener(null)
                 if(mBoundService?.callRatingDialogeFlag == "true"){
-                    if(!isOnDisconnectedTriggered && !PrefManager.getBoolValue(IS_CALL_DISCONNECTED_FROM_WEBRTCACTIVITY)) {
-                        PrefManager.put(IS_CALL_DISCONNECTED_FROM_WEBRTCACTIVITY, false)
+                    if(!isOnDisconnectedTriggered) {
                         isOnDisconnectedTriggered=true
-                        var agoraMentorId = mBoundService?.getUserAgoraId()
+                        val agoraMentorId = mBoundService?.getUserAgoraId()
                         if (mBoundService?.getOppositeUserInfo().isNullOrEmpty().not() && agoraMentorId != null && callId != null) {
-                            Log.d("ghh", "webmiddlertc_callername " + mBoundService?.getOppositeCallerName().toString() )
-                            Log.d("ghh", "webmiddlertc_agoraCallId " + mBoundService?.getOppositeCallerId() )
-                            Log.d("ghh", "webmiddlertc_callerProfileUrl " + mBoundService?.getOppositeCallerProfilePic() )
-                            Log.d("ghh", "webmiddlertc_callerMentorId " + mBoundService?.getOppositeUserInfo()?.get("mentor") )
-                            Log.d("ghh", "webmiddlertc_agoraMentorId " + agoraMentorId )
                             mBoundService?.getOppositeCallerName()?.let {
                                 mBoundService?.getOppositeUserInfo()?.get("mentor").let { it1 ->
                                     CallRatingDialogActivity.startCallRatingDialogActivity(
