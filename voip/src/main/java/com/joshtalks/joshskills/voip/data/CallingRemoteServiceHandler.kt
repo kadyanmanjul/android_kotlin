@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
+private const val TAG = "CallingRemoteServiceHan"
 internal class CallingRemoteServiceHandler private constructor(val scope : CoroutineScope) : Handler(
     Looper.getMainLooper()) {
     private var clientMessageChannel: Messenger? = null
@@ -24,6 +25,7 @@ internal class CallingRemoteServiceHandler private constructor(val scope : Corou
     fun sendMessageToRepository(message: Int) {
         try {
             voipLog?.log("Events form Service to Handler : $message")
+            Log.d(TAG, "sendMessageToRepository: ")
             val msg = Message()
             msg.what = message
             clientMessageChannel?.send(msg)

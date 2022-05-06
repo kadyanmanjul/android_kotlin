@@ -90,7 +90,7 @@ internal class AgoraWebrtcService(val scope: CoroutineScope) : WebrtcService {
     }
 
     override fun disconnectCall() {
-        voipLog?.log("Disconnecting Call")
+        Log.d(TAG, "Disconnecting Call")
         scope.launch {
             try {
                 // 1. Send DISCONNECTING signal through Pubnub
@@ -144,7 +144,6 @@ internal class AgoraWebrtcService(val scope: CoroutineScope) : WebrtcService {
     }
 
     override fun observeCallingEvents(): SharedFlow<CallState> {
-        voipLog?.log("Setting event")
         return eventFlow
     }
 
@@ -155,7 +154,7 @@ internal class AgoraWebrtcService(val scope: CoroutineScope) : WebrtcService {
     }
 
     private fun joinChannel(request: CallRequest): Int? {
-        voipLog?.log("Joining Channel")
+        Log.d(TAG, "joinChannel: $request")
         agoraEngine?.apply {
             val audio = Utils.context?.getSystemService(AUDIO_SERVICE) as AudioManager
             val maxVolume = audio.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL)
@@ -183,11 +182,11 @@ internal class AgoraWebrtcService(val scope: CoroutineScope) : WebrtcService {
             try {
                 listener.observeCallEvents().collect { callState ->
                     try {
-                        voipLog?.log("observeCallbacks : CallState = $callState .... $state")
+                        Log.d(TAG, "observeCallbacks : CallState = $callState .... $state")
                         when (callState) {
                             CallState.CallDisconnected, CallState.Idle -> {
                                 if (currentState == LEAVING_AND_JOINING) {
-                                    voipLog?.log("LEAVING_AND_JOINING")
+                                    Log.d(TAG, "observeCallbacks: LEAVING_AND_JOINING")
                                     startLazyJoin()
                                 } else {
                                     state.emit(IDLE)
@@ -235,7 +234,6 @@ internal class AgoraWebrtcService(val scope: CoroutineScope) : WebrtcService {
                                 eventFlow.emit(callState)
                             }
                         }
-                        voipLog?.log("observeCallbacks : CallState = $callState")
                     } catch (e: Exception) {
                         if (e is CancellationException)
                             throw e

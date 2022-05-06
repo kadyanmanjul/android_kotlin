@@ -134,29 +134,37 @@ class SearchingState(val context: CallContext) : VoipState {
         Log.d(TAG, "Started Observing")
         scope.launch {
             try {
-                val event = context.getStreamPipe().receive()
-                Log.d(TAG, "Received after observing : ${event.type}")
-                if (event.type == RECEIVED_CHANNEL_DATA) {
-                    Log.d(TAG, "observe: Received Channel Data")
-                    apiCallJob.cancel()
-                    context.channelData = event.data as? ChannelData
-                        ?: throw UnexpectedException("Channel data is NULL")
-                    PrefManager.setLocalUserAgoraId(context.channelData.getAgoraUid())
-                    val uiState = UIState(
-                        remoteUserImage = context.channelData.getCallingPartnerImage(),
-                        remoteUserName = context.channelData.getCallingPartnerName(),
-                        callType = context.channelData.getType(),
-                        topicName = context.channelData.getCallingTopic()
-                    )
-                    context.updateUIState(uiState)
-                    if (context.direction == CallDirection.OUTGOING)
-                        timeoutTimer.cancel()
-                    ensureActive()
-                    PrefManager.setVoipState(State.JOINING)
-                    context.state = JoiningState(context)
-                    Log.d(TAG, "Received : ${event.type} switched to ${context.state}")
-                } else
-                    throw IllegalEventException("In $TAG but received ${event.type} expected $RECEIVED_CHANNEL_DATA")
+                loop@ while (true) {
+                    val event = context.getStreamPipe().receive()
+                    Log.d(TAG, "Received after observing : ${event.type}")
+                    when(event.type) {
+                        RECEIVED_CHANNEL_DATA -> {
+                            Log.d(TAG, "observe: Received Channel Data")
+                            apiCallJob.cancel()
+                            context.channelData = event.data as? ChannelData
+                                ?: throw UnexpectedException("Channel data is NULL")
+                            PrefManager.setLocalUserAgoraId(context.channelData.getAgoraUid())
+                            val uiState = UIState(
+                                remoteUserImage = context.channelData.getCallingPartnerImage(),
+                                remoteUserName = context.channelData.getCallingPartnerName(),
+                                callType = context.channelData.getType(),
+                                topicName = context.channelData.getCallingTopic()
+                            )
+                            context.updateUIState(uiState)
+                            if (context.direction == CallDirection.OUTGOING)
+                                timeoutTimer.cancel()
+                            ensureActive()
+                            PrefManager.setVoipState(State.JOINING)
+                            context.state = JoiningState(context)
+                            Log.d(TAG, "Received : ${event.type} switched to ${context.state}")
+                            break@loop
+                        }
+                        SYNC_UI_STATE -> {
+
+                        }
+                        else -> throw IllegalEventException("In $TAG but received ${event.type} expected $RECEIVED_CHANNEL_DATA")
+                    }
+                }
                 scope.cancel()
             } catch (e: Throwable) {
                 if(e is CancellationException)

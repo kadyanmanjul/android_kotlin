@@ -26,7 +26,6 @@ internal class PSTNStateReceiver(val scope: CoroutineScope) : BroadcastReceiver(
     @SuppressLint("UnsafeProtectedBroadcastReceiver")
     override fun onReceive(applicationContext: Context, intent: Intent) {
         try {
-            voipLog?.log("On Receive")
             getCallingState(applicationContext, intent)
         } catch (ex: Exception) {
             print(ex)

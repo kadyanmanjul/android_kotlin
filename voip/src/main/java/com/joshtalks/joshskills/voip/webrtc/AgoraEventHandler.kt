@@ -38,25 +38,22 @@ internal class AgoraEventHandler(val scope: CoroutineScope) : IRtcEngineEventHan
         speakers: Array<out IRtcEngineEventHandler.AudioVolumeInfo>?,
         totalVolume: Int
     ) {
-        Log.d(TAG, "onAudioVolumeIndication: ")
-        voipLog?.log("$totalVolume")
+        Log.d(TAG, "onAudioVolumeIndication: $totalVolume  $speakers")
     }
 
     // Occurs when the local audio playback route changes
     override fun onAudioRouteChanged(routing: Int) {
-        Log.d(TAG, "onAudioRouteChanged: ")
-        voipLog?.log("$routing")
+        Log.d(TAG, "onAudioRouteChanged: $routing")
     }
 
     // Reports an error during SDK runtime
     override fun onError(errorCode: Int) {
-        Log.d(TAG, "onError: ")
+        Log.d(TAG, "onError: $errorCode")
         if(errorCode == USER_ALREADY_LEFT_THE_CHANNEL) {
             Log.d(TAG, "onError: USER ALREADY LEFT THE CHANNEL")
             emitEvent(CallState.UserAlreadyDisconnectedError)
             return
         }
-        voipLog?.log("$errorCode")
         emitEvent(CallState.Error)
     }
 

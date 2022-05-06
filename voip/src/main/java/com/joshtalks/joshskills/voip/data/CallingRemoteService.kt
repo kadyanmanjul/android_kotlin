@@ -68,12 +68,12 @@ class CallingRemoteService : Service() {
         updateStartTime(0)
         registerReceivers()
         observerPstnService()
-        voipLog?.log("Creating Service")
         showNotification()
+        Log.d(TAG, "onCreate: Creating Service")
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        voipLog?.log("StartService --- OnStartCommand")
+        Log.d(TAG, "StartService --- OnStartCommand")
         when(intent?.action) {
             SERVICE_ACTION_STOP_SERVICE -> {
                 // TODO: Might Need to refactor
@@ -107,9 +107,6 @@ class CallingRemoteService : Service() {
         isServiceInitialize = true
         Utils.apiHeader = this?.getParcelableExtra(INTENT_DATA_API_HEADER)
         Utils.uuid = this?.getStringExtra(INTENT_DATA_MENTOR_ID)
-        voipLog?.log("API Header --> ${Utils.apiHeader}")
-        voipLog?.log("Mentor Id --> ${Utils.uuid}")
-        // TODO: Refactor Code {Maybe use Content Provider}
         observeNetworkEvents()
         return START_REDELIVER_INTENT
     }
@@ -177,7 +174,6 @@ class CallingRemoteService : Service() {
     }
 
     private fun observerPstnService() {
-        voipLog?.log("Listining PSTN")
         ioScope.launch {
             try {
                 pstnController.observePSTNState().collect {
@@ -213,9 +209,9 @@ class CallingRemoteService : Service() {
     fun connectCall(callData: HashMap<String, Any>) {
         if (callData != null) {
             mediator.connectCall(PEER_TO_PEER, callData)
-            voipLog?.log("Connecting Call Data --> $callData")
+            Log.d(TAG, "Connecting Call Data --> $callData")
         } else
-            voipLog?.log("Mediator is NULL")
+            Log.d(TAG, "connectCall: Call Data is Null")
     }
 
     fun disconnectCall() {

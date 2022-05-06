@@ -25,6 +25,7 @@ import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.VoipUtils
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
 import com.joshtalks.joshskills.voip.constant.*
 import com.joshtalks.joshskills.voip.data.ServiceEvents
+import com.joshtalks.joshskills.voip.data.local.PrefManager
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.sync.Mutex
@@ -53,7 +54,7 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
     private val connectCallJob by lazy {
         viewModelScope.launch(start = CoroutineStart.LAZY) {
             mutex.withLock {
-                if (getVoipState() == State.IDLE && isConnectionRequestSent.not()) {
+                if (PrefManager.getVoipState() == State.IDLE && isConnectionRequestSent.not()) {
                     Log.d(TAG, " connectCallJob : Inside")
                     voipLog?.log("$callData")
                     repository.connectCall(callData)
@@ -124,7 +125,7 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
         viewModelScope.launch(Dispatchers.IO) {
             repository.observeUserDetails()?.collect { state ->
                 Log.d(TAG, "listenUIState: $state")
-                val voipState = getVoipState()
+                val voipState = PrefManager.getVoipState()
                 Log.d(TAG, "listenUIState: State --> $voipState")
                 if (uiState.startTime != state.startTime)
                     uiState.startTime = state.startTime
@@ -176,12 +177,8 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
-    private fun getVoipState() : State {
-        return getApplication<JoshApplication>().getVoipState()
-    }
-
     private fun getCallStatus(): Int {
-        val status = getVoipState()
+        val status = PrefManager.getVoipState()
         return if (status == State.CONNECTED) {
             ONGOING
         } else {
@@ -190,12 +187,13 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     private fun connectCall() {
+        Log.d(TAG, "connectCall: ")
         connectCallJob.start()
     }
 
     // User Action
     fun disconnectCall(v: View) {
-        voipLog?.log("Disconnect Call")
+        Log.d(TAG, "disconnectCall: ")
         disconnect()
     }
 
@@ -206,6 +204,7 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
 
     // User Action
     fun switchSpeaker(v: View) {
+        Log.d(TAG, "switchSpeaker")
         val isOnSpeaker = uiState.isSpeakerOn
         uiState.isSpeakerOn = isOnSpeaker.not()
         if (isOnSpeaker)
@@ -216,6 +215,7 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
 
     // User Action
     fun switchMic(v: View) {
+        Log.d(TAG, "switchMic")
         val isOnMute = uiState.isMute
         uiState.isMute = isOnMute.not()
         if (isOnMute)
@@ -226,6 +226,7 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
 
     // User Action
     fun backPress() {
+        Log.d(TAG, "backPress ")
         repository.backPress()
     }
 

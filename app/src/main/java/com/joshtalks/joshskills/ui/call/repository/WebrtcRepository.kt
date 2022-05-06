@@ -14,6 +14,7 @@ import com.joshtalks.joshskills.ui.call.repository.RepositoryConstants.*
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.voipLog
 import com.joshtalks.joshskills.voip.constant.*
 import com.joshtalks.joshskills.voip.data.CallingRemoteService
+import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.getApiHeader
 import com.joshtalks.joshskills.voip.getMentorId
 import kotlinx.coroutines.*
@@ -27,7 +28,6 @@ class WebrtcRepository(scope : CoroutineScope) {
     private val repositoryToVMFlow = MutableSharedFlow<RepositoryConstants>(replay = 0)
 
     init {
-        voipLog?.log("INIT .... ")
         Log.d(TAG, "INIT : ")
         try {
             val remoteServiceIntent =
@@ -66,6 +66,7 @@ class WebrtcRepository(scope : CoroutineScope) {
     }
 
     fun startService(activity : Activity) {
+        Log.d(TAG, "startService: ")
         with(activity) {
             val remoteServiceIntent =
                 Intent(this, CallingRemoteService::class.java)
@@ -78,6 +79,7 @@ class WebrtcRepository(scope : CoroutineScope) {
     }
 
     fun stopService(activity: Activity) {
+        Log.d(TAG, "stopService: ")
         with(activity) {
             unbindService(serviceConnection)
         }
@@ -85,31 +87,37 @@ class WebrtcRepository(scope : CoroutineScope) {
 
     fun connectCall(callData: HashMap<String, Any>) {
         Log.d(TAG, "connectCall: ")
-        if(mService != null && (mService?.currentState == IDLE || mService?.currentState == LEAVING))
+        if(mService != null && PrefManager.getVoipState() == State.IDLE)
             mService?.connectCall(callData)
     }
 
     fun disconnectCall() {
+        Log.d(TAG, "disconnectCall: ")
         mService?.disconnectCall()
     }
 
     fun muteCall() {
+        Log.d(TAG, "muteCall: ")
         mService?.changeMicState(false)
     }
 
     fun turnOnSpeaker() {
+        Log.d(TAG, "turnOnSpeaker: ")
         mService?.changeSpeakerState(true)
     }
 
     fun turnOffSpeaker() {
+        Log.d(TAG, "turnOffSpeaker: ")
         mService?.changeSpeakerState(false)
     }
 
     fun unmuteCall() {
+        Log.d(TAG, "unmuteCall: ")
         mService?.changeMicState(true)
     }
 
     fun backPress() {
+        Log.d(TAG, "backPress: ")
         mService?.backPress()
     }
 

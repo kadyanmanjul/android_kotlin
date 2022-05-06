@@ -29,15 +29,15 @@ class PeerToPeerCalling : Calling {
     }
 
     override suspend fun onPreCallConnect(callData: HashMap<String, Any>, direction: CallDirection) {
-        voipLog?.log("Calling API ---- $callData")
+        Log.d(TAG, "Calling API ---- $callData")
         if(direction == CallDirection.INCOMING) {
+
             Log.d(TAG, "onPreCallConnect: INCOMING")
             val request = CallActionRequest(
                 callId = callData[INTENT_DATA_INCOMING_CALL_ID] as Int,
                 mentorId = Utils.uuid,
                 response = "ACCEPT"
             )
-            voipLog?.log("Calling API ---- $request")
             val response = voipNetwork.callAccept(request)
             if (response.isSuccessful)
                 voipLog?.log("Sucessfull")
@@ -48,7 +48,6 @@ class PeerToPeerCalling : Calling {
                 mentorId = Utils.uuid,
                 courseId = (callData[INTENT_DATA_COURSE_ID] as String).toInt()
             )
-            voipLog?.log("Calling API ---- $request")
             val response = voipNetwork.setUpConnection(request)
             Log.d(TAG, "onPreCallConnect: $response")
 //            if (response.isSuccessful)
@@ -62,9 +61,9 @@ class PeerToPeerCalling : Calling {
             mentorId = Utils.uuid,
             response = "DECLINE"
         )
-        voipLog?.log("Calling API ---- $request")
+        Log.d(TAG, "onCallDecline: $request")
         val response = voipNetwork.callAccept(request)
         if (response.isSuccessful)
-            voipLog?.log("Sucessfull")
+            Log.d(TAG, "onCallDecline: Sucessfull")
     }
 }

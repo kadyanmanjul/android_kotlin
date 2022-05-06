@@ -292,7 +292,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                                 Log.d(TAG, "handlePubnubEvent : $it")
                                 if (isShowingIncomingCall.not() && PrefManager.getVoipState() == State.IDLE) {
                                     updateIncomingCallState(true)
-                                    voipLog?.log("Incoming Call -> $it")
+                                    Log.d(TAG, "handlePubnubEvent: Incoming Call -> $it")
                                     IncomingCallData.set(it.getCallId(), PEER_TO_PEER)
                                     val envelope = Envelope(Event.INCOMING_CALL)
                                     flow.emit(envelope)
