@@ -72,6 +72,8 @@ import com.joshtalks.joshskills.core.custom_ui.TextDrawable
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.TouchableSpan
 import com.joshtalks.joshskills.core.datetimeutils.DateTimeStyle
 import com.joshtalks.joshskills.core.datetimeutils.DateTimeUtils
+import com.joshtalks.joshskills.core.pstn_states.PSTNState
+import com.joshtalks.joshskills.core.pstn_states.PstnObserver
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.muddzdev.styleabletoast.StyleableToast
@@ -1538,5 +1540,10 @@ fun getDefaultCountryIso(context: Context): String {
     val simState: Int? = telephoneManager?.simState
     return if (simState == 5) telephoneManager.simCountryIso.uppercase(Locale.ROOT) else Locale.getDefault().country
 }
+
+ fun checkPstnState(): PSTNState {
+     Log.d(TAG, "checkPstnState: ${PstnObserver.getCurrentPstnState()}")
+   return PstnObserver.getCurrentPstnState()
+  }
 
 fun getFeatureLockedText(courseId: String, name: String = EMPTY) = "$name ${AppObjectController.getFirebaseRemoteConfig().getString(FREE_TRIAL_ENDED_FEATURE_LOCKED.plus(courseId))}"

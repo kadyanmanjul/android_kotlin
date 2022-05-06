@@ -8,6 +8,8 @@ import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.base.BaseViewModel
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.checkPstnState
+import com.joshtalks.joshskills.core.pstn_states.PSTNState
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.quizgame.util.UpdateReceiver
 import com.joshtalks.joshskills.repository.local.entity.practise.FavoriteCaller
@@ -23,6 +25,8 @@ import com.joshtalks.joshskills.ui.fpp.constants.SET_TEXT_ON_ENABLE_ACTION_MODE
 import com.joshtalks.joshskills.ui.fpp.constants.ENABLE_ACTION_MODE
 import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.joshtalks.joshskills.ui.voip.favorite.adapter.FppFavoriteAdapter
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
+import com.joshtalks.joshskills.voip.constant.State
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -174,7 +178,14 @@ class FavoriteCallerViewModel : BaseViewModel() {
     }
 
     fun clickOnPhoneCall(favoriteCaller: FavoriteCaller) {
-        if (WebRtcService.isCallOnGoing.value == false) {
+        if(checkPstnState() != PSTNState.Idle){
+            showToast(
+                "You can't place a new call while you're already in a call.",
+                Toast.LENGTH_LONG
+            )
+            return
+        }
+        if (WebRtcService.isCallOnGoing.value == false && AppObjectController.joshApplication.getVoipState() == State.IDLE) {
             getCallOnGoing(favoriteCaller.mentorId, favoriteCaller.id)
         } else {
             showToast(

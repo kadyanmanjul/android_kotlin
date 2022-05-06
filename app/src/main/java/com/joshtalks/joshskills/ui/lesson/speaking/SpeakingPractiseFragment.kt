@@ -23,11 +23,8 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.core.*
-import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
-import com.joshtalks.joshskills.core.abTest.ABTestFragment
-import com.joshtalks.joshskills.core.abTest.CampaignKeys
-import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.abTest.*
+import com.joshtalks.joshskills.core.pstn_states.PSTNState
 import com.joshtalks.joshskills.databinding.SpeakingPractiseFragmentBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
@@ -35,6 +32,7 @@ import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.repository.local.eventbus.DBInsertion
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
+import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.ui.fpp.RecentCallActivity
 import com.joshtalks.joshskills.ui.group.views.JoshVoipGroupActivity
 import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
@@ -42,25 +40,21 @@ import com.joshtalks.joshskills.ui.lesson.LessonSpotlightState
 import com.joshtalks.joshskills.ui.lesson.LessonViewModel
 import com.joshtalks.joshskills.ui.lesson.SPEAKING_POSITION
 import com.joshtalks.joshskills.ui.senior_student.SeniorStudentActivity
-import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity
 import com.joshtalks.joshskills.ui.voip.SearchingUserActivity
 import com.joshtalks.joshskills.ui.voip.favorite.FavoriteListActivity
-import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getPstnState
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.voipLog
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity
+import com.joshtalks.joshskills.voip.constant.State
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import java.util.Calendar
-import kotlinx.coroutines.flow.collect
-import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
-import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.voipLog
-import com.joshtalks.joshskills.voip.constant.PSTN_STATE_ONCALL
-import com.joshtalks.joshskills.voip.constant.State
-import com.joshtalks.joshskills.voip.pstn.PSTNController
-import com.joshtalks.joshskills.voip.pstn.PSTNState
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collect
+import java.util.*
 
 private const val TAG = "SpeakingPractiseFragmen"
 class SpeakingPractiseFragment : ABTestFragment(),TimeAnimator.TimeListener {
@@ -202,15 +196,15 @@ class SpeakingPractiseFragment : ABTestFragment(),TimeAnimator.TimeListener {
         ) {
             courseId = it
         }
-        binding.btnStartTrialText.setOnClickListener {
+        binding.btnStartTrialText.setOnSingleClickListener {
             viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
             val state = getVoipState()
             Log.d(TAG, " Start Call Button - Voip State $state")
             if(state == State.IDLE) {
-                if(requireActivity().getPstnState() != PSTN_STATE_ONCALL ) {
+                if(checkPstnState()== PSTNState.Idle) {
                     if (Utils.isInternetAvailable().not()) {
                         showToast("Seems like you have no internet")
-                        return@setOnClickListener
+                        return@setOnSingleClickListener
                     }
                     startPractise(isNewArch = true)
                 }else{

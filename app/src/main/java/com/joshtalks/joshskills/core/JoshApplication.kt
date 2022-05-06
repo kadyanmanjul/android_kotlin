@@ -27,6 +27,7 @@ import com.freshchat.consumer.sdk.Freshchat
 import com.google.firebase.FirebaseApp
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.core.notification.LocalNotificationAlarmReciever
+import com.joshtalks.joshskills.core.pstn_states.PstnObserver
 import com.joshtalks.joshskills.core.service.BackgroundService
 import com.joshtalks.joshskills.core.service.NOTIFICATION_DELAY
 import com.joshtalks.joshskills.core.service.NetworkChangeReceiver
@@ -75,6 +76,7 @@ class JoshApplication :
                 ProcessLifecycleOwner.get().lifecycle.addObserver(this@JoshApplication)
                 AppObjectController.init(this@JoshApplication)
                 VoipPref.initVoipPref(this)
+                PstnObserver
                 registerBroadcastReceiver()
                 initGroups()
             } else {
