@@ -17,11 +17,11 @@ import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.signup.SignUpActivity
 import com.joshtalks.badebhaiya.signup.SignUpActivity.Companion.REDIRECT_TO_ENTER_NAME
 import com.joshtalks.badebhaiya.signup.SignUpActivity.Companion.REDIRECT_TO_PROFILE_ACTIVITY
+import com.userexperior.UserExperior
 import io.branch.referral.Branch
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import com.userexperior.UserExperior
 
 class LauncherActivity : AppCompatActivity() {
 
@@ -67,6 +67,7 @@ class LauncherActivity : AppCompatActivity() {
                     "YASH => onInitFinished: $referringParams"
                 )
                 referringParams?.let {
+                    Log.d("YASHENDRA", "branch json data => ${it.has("user_id")}")
                     startActivityForState(
                         if (it.has("user_id"))
                             it.getString("user_id")

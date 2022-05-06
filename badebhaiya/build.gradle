@@ -72,7 +72,8 @@ android {
             debuggable true
             signingConfig signingConfigs.debug
             minifyEnabled false
-            resValue("string", "branch_id", "key_test_anIJDPvxqLaamLdPJyO6AhpmuvgaD8Un")
+//            resValue("string", "branch_id", "key_test_anIJDPvxqLaamLdPJyO6AhpmuvgaD8Un")
+            resValue("string", "branch_id", "key_test_fh6HFiV5gd4B874LteXabhjaqqnts1yv")
             resValue("string", "truecaller_key", "kVht21c4b4c0aa0f04e55aa76bac5b056ddd7")
             crunchPngs false
             ext.enableCrashlytics = true

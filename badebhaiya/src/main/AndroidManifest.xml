@@ -80,13 +80,13 @@
                     android:scheme="https" />
             </intent-filter>
         </activity>
-        <activity
-            android:name="com.joshtalks.badebhaiya.profile.ProfileActivity"
-            android:alwaysRetainTaskState="true"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
-            android:exported="true"
-            android:launchMode="singleTop"
-            android:parentActivityName=".feed.FeedActivity" />
+<!--        <activity-->
+<!--            android:name="com.joshtalks.badebhaiya.profile.ProfileActivity"-->
+<!--            android:alwaysRetainTaskState="true"-->
+<!--            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"-->
+<!--            android:exported="true"-->
+<!--            android:launchMode="singleTop"-->
+<!--            android:parentActivityName=".feed.FeedActivity" />-->
         <activity
             android:name=".signup.SignUpActivity"
             android:exported="true" />
