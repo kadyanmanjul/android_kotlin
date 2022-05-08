@@ -16,6 +16,8 @@ import com.joshtalks.joshskills.voip.mediator.CallDirection
 import com.joshtalks.joshskills.voip.mediator.Calling
 import com.joshtalks.joshskills.voip.mediator.PER_USER_TIMEOUT_IN_MILLIS
 import com.joshtalks.joshskills.voip.mediator.PeerToPeerCalling
+import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
+import com.joshtalks.joshskills.voip.voipanalytics.EventName
 import kotlinx.coroutines.*
 import retrofit2.HttpException
 import java.io.IOException
@@ -29,13 +31,14 @@ import java.net.SocketTimeoutException
  */
 class SearchingState(val context: CallContext) : VoipState {
     private val TAG = "SearchingState"
-    private val scope = CoroutineScope(Dispatchers.IO + CoroutineExceptionHandler { coroutineContext, throwable ->
-        Log.d(TAG, "CoroutineExceptionHandler : $throwable")
-        throwable.printStackTrace()
-    })
+    private val scope =
+        CoroutineScope(Dispatchers.IO + CoroutineExceptionHandler { coroutineContext, throwable ->
+            Log.d(TAG, "CoroutineExceptionHandler : $throwable")
+            throwable.printStackTrace()
+        })
     private val timeoutTimer by lazy {
         scope.launch(start = CoroutineStart.LAZY) {
-            try{
+            try {
                 ensureActive()
                 val timeout = Timeout(ServerConstants.TIMEOUT)
                 for (i in 1..12) {
@@ -46,9 +49,8 @@ class SearchingState(val context: CallContext) : VoipState {
                 delay(PER_USER_TIMEOUT_IN_MILLIS)
                 disconnectNoUserFound()
                 cleanUpState()
-            }
-            catch (e : Exception){
-                if(e is CancellationException)
+            } catch (e: Exception) {
+                if (e is CancellationException)
                     throw e
                 e.printStackTrace()
             }
@@ -59,11 +61,16 @@ class SearchingState(val context: CallContext) : VoipState {
         scope.launch(start = CoroutineStart.LAZY) {
             try {
                 ensureActive()
+                CallAnalytics.addAnalytics(
+                    event = EventName.CALL_INITIATED,
+                    agoraCallId = "",
+                    agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
+                )
                 calling.onPreCallConnect(context.request, context.direction)
                 ensureActive()
             } catch (e: Exception) {
                 e.printStackTrace()
-                when(e) {
+                when (e) {
                     is HttpException, is SocketTimeoutException -> {
                         Log.d(TAG, " Exception : API failed")
                         e.printStackTrace()
@@ -71,7 +78,9 @@ class SearchingState(val context: CallContext) : VoipState {
                         disconnectNoUserFound()
                         cleanUpState()
                     }
-                    is CancellationException -> { throw e }
+                    is CancellationException -> {
+                        throw e
+                    }
                     else -> {
                         ensureActive()
                         disconnectNoUserFound()
@@ -111,18 +120,22 @@ class SearchingState(val context: CallContext) : VoipState {
             duration = 0,
             address = Utils.uuid ?: ""
         )
+        CallAnalytics.addAnalytics(
+            event = EventName.DISCONNECTED_BY_BACKPRESS,
+            agoraCallId = context.channelData.getCallingId().toString(),
+            agoraMentorId = context.channelData.getAgoraUid().toString()
+        )
         context.sendMessageToServer(networkAction)
         context.destroyContext()
     }
 
     override fun onError() {
         scope.launch {
-            try{
+            try {
                 context.closeCallScreen()
                 backPress()
-            }
-            catch (e : Exception){
-                if(e is CancellationException)
+            } catch (e: Exception) {
+                if (e is CancellationException)
                     throw e
                 e.printStackTrace()
             }
@@ -141,7 +154,12 @@ class SearchingState(val context: CallContext) : VoipState {
                     apiCallJob.cancel()
                     context.channelData = event.data as? ChannelData
                         ?: throw UnexpectedException("Channel data is NULL")
-                    PrefManager.setLocalUserAgoraId(context.channelData.getAgoraUid())
+                    CallAnalytics.addAnalytics(
+                        event = EventName.CHANNEL_RECEIVED,
+                        agoraCallId = context.channelData.getCallingId().toString(),
+                        agoraMentorId = context.channelData.getAgoraUid().toString()
+                    )
+                    PrefManager.setLocalUserAgoraIdAndCallId(context.channelData.getAgoraUid(),context.channelData.getCallingId())
                     val uiState = UIState(
                         remoteUserImage = context.channelData.getCallingPartnerImage(),
                         remoteUserName = context.channelData.getCallingPartnerName(),
@@ -159,7 +177,7 @@ class SearchingState(val context: CallContext) : VoipState {
                     throw IllegalEventException("In $TAG but received ${event.type} expected $RECEIVED_CHANNEL_DATA")
                 scope.cancel()
             } catch (e: Throwable) {
-                if(e is CancellationException)
+                if (e is CancellationException)
                     throw e
                 e.printStackTrace()
                 cleanUpState()
@@ -183,12 +201,11 @@ class SearchingState(val context: CallContext) : VoipState {
 
     private fun cleanUpState() {
         scope.launch {
-            try{
+            try {
                 context.closeCallScreen()
                 context.destroyContext()
-            }
-            catch (e : Exception){
-                if(e is CancellationException)
+            } catch (e: Exception) {
+                if (e is CancellationException)
                     throw e
                 e.printStackTrace()
             }

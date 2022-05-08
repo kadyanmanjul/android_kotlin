@@ -10,6 +10,8 @@ import com.joshtalks.joshskills.voip.communication.model.UserAction
 import com.joshtalks.joshskills.voip.constant.Event.*
 import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.local.PrefManager
+import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
+import com.joshtalks.joshskills.voip.voipanalytics.EventName
 import com.joshtalks.joshskills.voip.webrtc.CallState
 import com.joshtalks.joshskills.voip.webrtc.Envelope
 import com.joshtalks.joshskills.voip.webrtc.USER_DROP_OFFLINE
@@ -27,6 +29,11 @@ class JoinedState(val context: CallContext) : VoipState {
 
     init {
         Log.d("Call State", TAG)
+        CallAnalytics.addAnalytics(
+            event = EventName.CHANNEL_JOINED,
+            agoraCallId = context.channelData.getCallingId().toString(),
+            agoraMentorId = context.channelData.getAgoraUid().toString()
+        )
         observe()
     }
 
