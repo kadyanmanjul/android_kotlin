@@ -819,6 +819,7 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
                 ex.printStackTrace()
             }
         }
+        PrefManager.put(GET_OPP_USER_CALL_ID,uuid)
     }
 
     private fun setImageInIV(imageUrl: String?) {

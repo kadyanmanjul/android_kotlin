@@ -13,6 +13,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.voip.WebRtcCallback
 import com.joshtalks.joshskills.ui.voip.WebRtcService
+import com.joshtalks.joshskills.ui.voip.analytics.CurrentCallDetails
 import com.joshtalks.joshskills.ui.voip.voip_rating.CallRatingDialogActivity
 import com.joshtalks.joshskills.ui.voip.voip_rating.VoipCallFeedbackActivity
 import kotlinx.coroutines.Dispatchers
@@ -91,10 +92,11 @@ open class WebRtcMiddlewareActivity : CoreJoshActivity() {
                                         activity = this@WebRtcMiddlewareActivity,
                                         callerName = it,
                                         callDuration = (time / 60000).toInt(),
-                                        agoraCallId = 1234576,
+                                        agoraCallId = PrefManager.getStringValue(GET_CALL_ID).toInt(),
                                         callerProfileUrl = mBoundService?.getOppositeCallerProfilePic(),
-                                        callerMentorId = it1.toString(),
-                                        agoraMentorId = agoraMentorId.toString())
+                                        callerMentorId = PrefManager.getStringValue(GET_OPP_USER_CALL_ID),
+                                        agoraMentorId = agoraMentorId.toString()
+                                    )
                                 }
                             }
                         }
