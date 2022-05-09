@@ -14,6 +14,7 @@ import com.joshtalks.badebhaiya.core.*
 import com.joshtalks.badebhaiya.core.io.AppDirectory
 import com.joshtalks.badebhaiya.databinding.ActivitySignUpBinding
 import com.joshtalks.badebhaiya.feed.FeedActivity
+import com.joshtalks.badebhaiya.privacyPolicy.WebViewFragment
 import com.joshtalks.badebhaiya.profile.ProfileActivity
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.signup.fragments.SignUpAddProfilePhotoFragment
@@ -21,6 +22,8 @@ import com.joshtalks.badebhaiya.signup.fragments.SignUpEnterNameFragment
 import com.joshtalks.badebhaiya.signup.fragments.SignUpEnterOTPFragment
 import com.joshtalks.badebhaiya.signup.fragments.SignUpEnterPhoneFragment
 import com.joshtalks.badebhaiya.signup.viewmodel.SignUpViewModel
+import com.joshtalks.badebhaiya.utils.PRIVACY_POLICY_URL
+import com.joshtalks.badebhaiya.utils.events.makeLinks
 import com.truecaller.android.sdk.ITrueCallback
 import com.truecaller.android.sdk.TrueError
 import com.truecaller.android.sdk.TrueProfile
@@ -59,14 +62,29 @@ class SignUpActivity : AppCompatActivity() {
     }
 
     private fun setOnClickListeners() {
+        setSpanText()
         binding.btnWelcome.setOnClickListener {
             binding.btnWelcome.visibility = View.GONE
-            if(User.getInstance().userId.isNullOrEmpty().not() && User.getInstance().firstName.isNullOrEmpty())
+            if (User.getInstance().userId.isNullOrEmpty()
+                    .not() && User.getInstance().firstName.isNullOrEmpty()
+            )
                 openEnterNameFragment()
             else
-            openTrueCallerBottomSheet()
+                openTrueCallerBottomSheet()
 
         }
+
+    }
+
+    private fun setSpanText() {
+        binding.termsOfServiceText.makeLinks(
+            Pair(
+                getString(R.string.privacy_policy),
+                View.OnClickListener {
+                    WebViewFragment.showDialog(supportFragmentManager, PRIVACY_POLICY_URL)
+                }
+            )
+        )
     }
 
     override fun onStart() {
@@ -76,7 +94,7 @@ class SignUpActivity : AppCompatActivity() {
 
     private fun addObservers() {
         viewModel.signUpStatus.observe(this) {
-            btnWelcome.visibility=View.GONE
+            btnWelcome.visibility = View.GONE
             when (it) {
                 SignUpStepStatus.RequestForOTP -> {
                     openOTPVerificationFragment()
@@ -138,16 +156,15 @@ class SignUpActivity : AppCompatActivity() {
     }
 
     private fun openNextActivity() {
-        if (intent.extras?.getString(REDIRECT) == REDIRECT_TO_PROFILE_ACTIVITY ) {
+        if (intent.extras?.getString(REDIRECT) == REDIRECT_TO_PROFILE_ACTIVITY) {
             //ProfileActivity.openProfileActivity(this, intent.extras?.getString(USER_ID) ?: EMPTY)
-            var bundle=Bundle()
-            bundle.putString("user",intent.extras?.getString(USER_ID))
+            var bundle = Bundle()
+            bundle.putString("user", intent.extras?.getString(USER_ID))
             supportFragmentManager.findFragmentByTag(ProfileActivity::class.java.simpleName)
             supportFragmentManager.beginTransaction()
                 .replace(R.id.root_view, ProfileActivity(), ProfileActivity::class.java.simpleName)
                 .commit()
-        }
-        else
+        } else
             Intent(this, FeedActivity::class.java).also {
                 this@SignUpActivity.startActivity(it)
             }
@@ -188,7 +205,7 @@ class SignUpActivity : AppCompatActivity() {
         if (TruecallerSDK.getInstance().isUsable) {
             TruecallerSDK.getInstance().getUserProfile(this)
         } else
-        openEnterPhoneNumberFragment()
+            openEnterPhoneNumberFragment()
     }
 
     private val sdkCallback: ITrueCallback = object : ITrueCallback {
@@ -211,7 +228,7 @@ class SignUpActivity : AppCompatActivity() {
         const val REDIRECT_TO_PROFILE_ACTIVITY = "redirect_to_profile_activity"
         const val REDIRECT_TO_ENTER_NAME = "REDIRECT_TO_ENTER_NAME"
         const val REDIRECT_TO_ENTER_PROFILE_PIC = "REDIRECT_TO_ENTER_PROFILE_PIC"
-        const val REDIRECT_PROFILE_SKIPPED="REDIRECT_WHEN_PROFILE_SKIPPED"
+        const val REDIRECT_PROFILE_SKIPPED = "REDIRECT_WHEN_PROFILE_SKIPPED"
 
         @JvmStatic
         fun start(context: Context, redirect: String? = null, userId: String? = null) {
