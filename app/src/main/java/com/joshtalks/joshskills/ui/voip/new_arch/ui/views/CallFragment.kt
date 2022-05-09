@@ -24,10 +24,7 @@ import com.joshtalks.joshskills.ui.voip.new_arch.ui.callbar.CallBar
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.VoiceCallViewModel
 import com.joshtalks.joshskills.voip.audiocontroller.AudioController
 import com.joshtalks.joshskills.voip.audiocontroller.AudioRouteConstants
-import com.joshtalks.joshskills.voip.communication.constants.CLOSE_CALLING_FRAGMENT
 import com.joshtalks.joshskills.voip.constant.CALL_CONNECTED_EVENT
-import com.joshtalks.joshskills.voip.constant.CONNECTED
-import com.joshtalks.joshskills.voip.constant.JOINED
 import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
@@ -36,12 +33,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-private const val TAG = "CallFragment"
-
 class CallFragment : BaseFragment() , SensorEventListener {
+    private val TAG = "CallFragment"
 
     lateinit var callBinding: FragmentCallBinding
-    private val callBar = CallBar()
     private var isAnimationCanceled = false
     private lateinit var sensorManager: SensorManager
     private lateinit var proximity: Sensor
@@ -103,8 +98,9 @@ class CallFragment : BaseFragment() , SensorEventListener {
         setUpProximitySensor()
         liveData.observe(viewLifecycleOwner) {
             when (it.what) {
-                CLOSE_CALLING_FRAGMENT -> requireActivity().finish()
-                CALL_CONNECTED_EVENT -> { isAnimationCanceled= true }
+                CALL_CONNECTED_EVENT -> {
+                    isAnimationCanceled= true
+                }
             }
         }
     }
@@ -132,6 +128,7 @@ class CallFragment : BaseFragment() , SensorEventListener {
                 }
 
                 if (counter <= 0) {
+                    Log.d(TAG, "onAnimationEnd: Disconnecting")
                     vm.disconnect()
                 }
             }

@@ -106,6 +106,13 @@ class SearchingState(val context: CallContext) : VoipState {
         apiCallJob.start()
     }
 
+    override fun disconnect() {
+        scope.launch {
+            context.closeCallScreen()
+            backPress()
+        }
+    }
+
     // TODO: What will happen if user pickup the call and press back button
     override fun backPress() {
         Log.d(TAG, "backPress: ")
@@ -120,8 +127,8 @@ class SearchingState(val context: CallContext) : VoipState {
         )
         CallAnalytics.addAnalytics(
             event = EventName.DISCONNECTED_BY_BACKPRESS,
-            agoraCallId = context.channelData.getCallingId().toString(),
-            agoraMentorId = context.channelData.getAgoraUid().toString()
+            agoraCallId = "-1",
+            agoraMentorId = "-1"
         )
         context.sendMessageToServer(networkAction)
         context.destroyContext()

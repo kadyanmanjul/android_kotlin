@@ -32,6 +32,13 @@ class JoiningState(val context: CallContext) : VoipState {
         )
     }
 
+    override fun disconnect() {
+        scope.launch {
+            context.closeCallScreen()
+            moveToLeavingState()
+        }
+    }
+
     // Join Channel Already Called
     override fun backPress() { moveToLeavingState() }
 

@@ -48,8 +48,6 @@ class CallingRemoteService : Service() {
     }
     private val ioScope by lazy { CoroutineScope(Dispatchers.IO + coroutineExceptionHandler) }
     private val mediator by lazy<CallServiceMediator> { CallingMediator(ioScope) }
-    var currentState = IDLE
-        private set
     private var isMediatorInitialise = false
     private val pstnController by lazy { PSTNController(ioScope) }
     private val audioController: AudioControllerInterface by lazy { AudioController(ioScope) }
@@ -277,6 +275,7 @@ class CallingRemoteService : Service() {
     }
 }
 
+// TODO: Need to Change
 class TestNotification : NotificationData {
     override fun setTitle(): String {
         return "Josh Skills"
@@ -287,6 +286,7 @@ class TestNotification : NotificationData {
     }
 }
 
+// TODO: Should be in a new Class
 data class UIState(
     val remoteUserName: String,
     val remoteUserImage: String?,

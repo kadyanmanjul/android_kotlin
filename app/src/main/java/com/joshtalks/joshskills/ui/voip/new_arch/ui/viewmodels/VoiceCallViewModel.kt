@@ -16,7 +16,6 @@ import com.joshtalks.joshskills.base.constants.GROUP
 import com.joshtalks.joshskills.base.constants.PEER_TO_PEER
 import com.joshtalks.joshskills.base.log.Feature
 import com.joshtalks.joshskills.base.log.JoshLog
-import com.joshtalks.joshskills.core.TAG
 import com.joshtalks.joshskills.ui.call.repository.RepositoryConstants.*
 import com.joshtalks.joshskills.ui.call.repository.WebrtcRepository
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.models.CallUIState
@@ -35,10 +34,11 @@ import kotlin.collections.HashMap
 const val CONNECTING = 1
 const val ONGOING = 2
 
-private const val TAG = "VoiceCallViewModel"
 val voipLog = JoshLog.getInstanceIfEnable(Feature.VOIP)
 
 class VoiceCallViewModel(application: Application) : AndroidViewModel(application) {
+    private val TAG = "VoiceCallViewModel"
+
     private var isConnectionRequestSent = false
     lateinit var source: String
     private val repository = WebrtcRepository(viewModelScope)
@@ -54,8 +54,7 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
         viewModelScope.launch(start = CoroutineStart.LAZY) {
             mutex.withLock {
                 if (PrefManager.getVoipState() == State.IDLE && isConnectionRequestSent.not()) {
-                    Log.d(TAG, " connectCallJob : Inside")
-                    voipLog?.log("$callData")
+                    Log.d(TAG, " connectCallJob : Inside - $callData")
                     repository.connectCall(callData)
                     isConnectionRequestSent = true
                 }

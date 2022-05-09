@@ -305,8 +305,8 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                                 if (isShowingIncomingCall.not() && PrefManager.getVoipState() == State.IDLE) {
                                     CallAnalytics.addAnalytics(
                                         event = EventName.INCOMING_CALL_RECEIVED,
-                                        agoraCallId = callContext?.channelData?.getCallingId().toString(),
-                                        agoraMentorId = callContext?.channelData?.getAgoraUid().toString()
+                                        agoraCallId = IncomingCallData.callId.toString(),
+                                        agoraMentorId = "-1"
                                     )
                                     updateIncomingCallState(true)
                                     Log.d(TAG, "handlePubnubEvent: Incoming Call -> $it")
@@ -450,6 +450,11 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                                 }
                                 is IncomingCall -> {
                                     if (isShowingIncomingCall.not() && PrefManager.getVoipState() == State.IDLE) {
+                                        CallAnalytics.addAnalytics(
+                                            event = EventName.INCOMING_CALL_RECEIVED,
+                                            agoraCallId = IncomingCallData.callId.toString(),
+                                            agoraMentorId = "-1"
+                                        )
                                         updateIncomingCallState(true)
                                         IncomingCallData.set(event.getCallId(), PEER_TO_PEER)
                                         val envelope = Envelope(Event.INCOMING_CALL,event)
@@ -489,8 +494,8 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
         voipNotification.show()
         CallAnalytics.addAnalytics(
             event = EventName.INCOMING_CALL_SHOWN,
-            agoraCallId = callContext?.channelData?.getCallingId().toString(),
-            agoraMentorId = callContext?.channelData?.getAgoraUid().toString()
+            agoraCallId = IncomingCallData.callId.toString(),
+            agoraMentorId = "-1"
         )
         soundManager.playSound()
         scope.launch {
@@ -501,8 +506,8 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                 stopAudio()
                 CallAnalytics.addAnalytics(
                     event = EventName.INCOMING_CALL_IGNORE,
-                    agoraCallId = callContext?.channelData?.getCallingId().toString(),
-                    agoraMentorId = callContext?.channelData?.getAgoraUid().toString()
+                    agoraCallId = IncomingCallData.callId.toString(),
+                    agoraMentorId = "-1"
                 )
             }
             catch (e : Exception){

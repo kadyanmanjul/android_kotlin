@@ -5,7 +5,7 @@ buildscript {
         dev_base_url = "\"http://staging.joshtalks.org\""
         skills_base_url = "\"https://skills.joshtalks.org\""
         prod_base_url = "\"https://app.joshtalks.org\""
-        voip_debug_base_url = "\"http://staging.joshtalks.org:9002/\""
+        voip_debug_base_url = "\"http://781f-116-72-150-157.ngrok.io/\""
     }
 
     repositories {
