@@ -357,7 +357,6 @@ object PermissionUtils {
                 Manifest.permission.RECORD_AUDIO,
                 Manifest.permission.ACCESS_NETWORK_STATE,
                 Manifest.permission.MODIFY_AUDIO_SETTINGS,
-                Manifest.permission.READ_PHONE_STATE
             )
             .withListener(multiplePermissionsListener).check()
     }

@@ -188,7 +188,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
         vm.audienceList.observe(this, androidx.lifecycle.Observer {
             val list = it.sortedBy { it.sortOrder }
             audienceAdapter?.updateFullList(list)
-            PubNubManager.getLiveRoomProperties()?.let {
+            PubNubManager.getLiveRoomProperties().let {
                 if (it.isModerator){
                     val int = vm.getRaisedHandAudienceSize()
                     setBadgeDrawable(int)
