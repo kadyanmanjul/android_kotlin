@@ -111,12 +111,21 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     fun isHowToSpeakClicked(event: Boolean) = howToSpeakLiveData.postValue(event)
     fun showHideSpeakingFragmentCallButtons(event: Int) = callBtnHideShowLiveData.postValue(event)
     val whatsappRemarketingLiveData = MutableLiveData<ABTestCampaignData?>()
+    val speakingABtestLiveData = MutableLiveData<ABTestCampaignData?>()
 
     val repository: ABTestRepository by lazy { ABTestRepository() }
     fun getWhatsappRemarketingCampaign(campaign: String) {
         viewModelScope.launch(Dispatchers.IO) {
             repository.getCampaignData(campaign)?.let { campaign ->
                 whatsappRemarketingLiveData.postValue(campaign)
+            }
+        }
+    }
+
+    fun getSpeakingABTestCampaign(campaign: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.getCampaignData(campaign)?.let { campaign ->
+                speakingABtestLiveData.postValue(campaign)
             }
         }
     }

@@ -13,6 +13,7 @@ import android.graphics.Color
 import android.graphics.Rect
 import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
@@ -37,15 +38,13 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
+import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.offline.Download
 import com.google.android.material.button.MaterialButton
 import com.greentoad.turtlebody.mediapicker.MediaPicker
 import com.greentoad.turtlebody.mediapicker.core.MediaPickerConfig
 import com.greentoad.turtlebody.mediapicker.util.UtilTime
-import com.joshtalks.joshcamerax.JoshCameraActivity
-import com.joshtalks.joshcamerax.utils.ImageQuality
-import com.joshtalks.joshcamerax.utils.Options
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.constants.COURSE_RESTART_FAILURE
@@ -95,6 +94,7 @@ import com.joshtalks.joshskills.ui.course_progress_new.CourseProgressActivityNew
 import com.joshtalks.joshskills.ui.courseprogress.CourseProgressActivity
 import com.joshtalks.joshskills.ui.extra.AUTO_START_POPUP
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
+import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.ui.fpp.SeeAllRequestsActivity
 import com.joshtalks.joshskills.ui.fpp.constants.IS_ACCEPTED
 import com.joshtalks.joshskills.ui.fpp.constants.IS_REJECTED
@@ -145,6 +145,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
+import java.io.File
 import java.lang.ref.WeakReference
 import java.util.*
 import kotlin.concurrent.scheduleAtFixedRate
@@ -700,9 +701,11 @@ class ConversationActivity :
         CoroutineScope(Dispatchers.IO).launch {
             val lastLesson= conversationViewModel.getLastLessonForCourse()
             if(lastLesson == 90 && inboxEntity.isCapsuleCourse) {
-                conversationBinding.btnRestartCourse.visibility = View.VISIBLE
-                conversationBinding.messageButton.visibility = View.GONE
-                conversationBinding.chatEdit.visibility = View.GONE
+                withContext(Dispatchers.Main) {
+                    conversationBinding.btnRestartCourse.visibility = VISIBLE
+                    conversationBinding.messageButton.visibility = GONE
+                    conversationBinding.chatEdit.visibility = GONE
+                }
             }
         }
     }
@@ -779,7 +782,7 @@ class ConversationActivity :
 //            val intent = Intent(this, JoshGroupActivity::class.java)
 //            startActivity(intent)
 //        }
-        conversationBinding.imgActivityFeed.setOnClickListener {
+        conversationBinding.imgActivityFeed.setOnSingleClickListener {
             if (inboxEntity.isCourseBought.not() &&
                 inboxEntity.expiryDate != null &&
                 inboxEntity.expiryDate!!.time < System.currentTimeMillis()
@@ -793,7 +796,7 @@ class ConversationActivity :
             }
         }
 
-        conversationBinding.imgFppRequest.setOnClickListener {
+        conversationBinding.imgFppRequest.setOnSingleClickListener {
             if (inboxEntity.isCourseBought.not() &&
                 inboxEntity.expiryDate != null &&
                 inboxEntity.expiryDate!!.time < System.currentTimeMillis()
@@ -807,7 +810,7 @@ class ConversationActivity :
             }
         }
 
-        conversationBinding.imgGroupChatBtn.setOnClickListener {
+        conversationBinding.imgGroupChatBtn.setOnSingleClickListener {
             if (inboxEntity.isCourseBought.not() &&
                 inboxEntity.expiryDate != null &&
                 inboxEntity.expiryDate!!.time < System.currentTimeMillis()
@@ -824,7 +827,7 @@ class ConversationActivity :
             }
         }
 
-        conversationBinding.imgGameBtn.setOnClickListener {
+        conversationBinding.imgGameBtn.setOnSingleClickListener {
             if (inboxEntity.isCourseBought.not() &&
                 inboxEntity.expiryDate != null &&
                 inboxEntity.expiryDate!!.time < System.currentTimeMillis()
@@ -2143,25 +2146,30 @@ class ConversationActivity :
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         try {
             if (requestCode == IMAGE_SELECT_REQUEST_CODE && resultCode == RESULT_OK) {
-                data?.let { intent ->
-                    when {
-                        intent.hasExtra(JoshCameraActivity.IMAGE_RESULTS) -> {
-                            intent.getStringArrayListExtra(JoshCameraActivity.IMAGE_RESULTS)
-                                ?.getOrNull(0)?.let {
-                                    if (it.isNotBlank()) {
-                                        addImageMessage(it)
-                                    }
-                                }
-                        }
-                        intent.hasExtra(JoshCameraActivity.VIDEO_RESULTS) -> {
-                            val videoPath = intent.getStringExtra(JoshCameraActivity.VIDEO_RESULTS)
-                            videoPath?.let {
-                                addVideoMessage(it)
-                            }
-                        }
-                        else -> return
-                    }
+                val url = data?.data?.path ?: EMPTY
+
+                if (url.isNotBlank()) {
+                    addImageMessage(url)
                 }
+//                data?.let { intent ->
+//                    when {
+//                        intent.hasExtra(JoshCameraActivity.IMAGE_RESULTS) -> {
+//                            intent.getStringArrayListExtra(JoshCameraActivity.IMAGE_RESULTS)
+//                                ?.getOrNull(0)?.let {
+//                                    if (it.isNotBlank()) {
+//                                        addImageMessage(it)
+//                                    }
+//                                }
+//                        }
+//                        intent.hasExtra(JoshCameraActivity.VIDEO_RESULTS) -> {
+//                            val videoPath = intent.getStringExtra(JoshCameraActivity.VIDEO_RESULTS)
+//                            videoPath?.let {
+//                                addVideoMessage(it)
+//                            }
+//                        }
+//                        else -> return
+//                    }
+//                }
             } else if (requestCode == PRACTISE_SUBMIT_REQUEST_CODE && resultCode == RESULT_OK) {
                 showToast(getString(R.string.answer_submitted))
                 (data?.getParcelableExtra(PRACTISE_OBJECT) as ChatModel?)?.let {
@@ -2209,18 +2217,23 @@ class ConversationActivity :
                 override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                     report?.areAllPermissionsGranted()?.let { flag ->
                         if (flag) {
-                            val options = Options.init()
-                                .setRequestCode(IMAGE_SELECT_REQUEST_CODE)
-                                .setCount(1)
-                                .setFrontfacing(false)
-                                .setPath(AppDirectory.getTempPath())
-                                .setImageQuality(ImageQuality.HIGH)
-                                .setScreenOrientation(Options.SCREEN_ORIENTATION_PORTRAIT)
-
-                            JoshCameraActivity.startJoshCameraxActivity(
-                                this@ConversationActivity,
-                                options
-                            )
+//                            val options = Options.init()
+//                                .setRequestCode(IMAGE_SELECT_REQUEST_CODE)
+//                                .setCount(1)
+//                                .setFrontfacing(false)
+//                                .setPath(AppDirectory.getTempPath())
+//                                .setImageQuality(ImageQuality.HIGH)
+//                                .setScreenOrientation(Options.SCREEN_ORIENTATION_PORTRAIT)
+//
+//                            JoshCameraActivity.startJoshCameraxActivity(
+//                                this@ConversationActivity,
+//                                options
+//                            )
+                            ImagePicker.with(this@ConversationActivity)
+                                .crop()
+                                .cameraOnly()
+                                .saveDir(File(getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!, "ImagePicker"))
+                                .start(ImagePicker.REQUEST_CODE)
                             return
                         }
                         if (report.isAnyPermissionPermanentlyDenied) {

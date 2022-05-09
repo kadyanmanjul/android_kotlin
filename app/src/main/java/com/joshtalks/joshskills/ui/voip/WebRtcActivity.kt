@@ -34,6 +34,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import com.bumptech.glide.Glide
 import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
@@ -362,6 +363,19 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
         if (isCallOnGoing.value == false) {
             callMissedCallUser()
         }
+
+        binding.btnMoveForwardArrow.setOnClickListener {
+            if (Utils.isInternetAvailable()) {
+                showToast("No New Image")
+                val map: HashMap<String, Any?> = HashMap()
+                map["channel_name"] = mBoundService?.channelName
+                map["agora_mentor_id"] = mBoundService?.getUserAgoraId()
+                map["event"] = "BUTTON_PRESSED"
+                viewModel.saveTopicImpression(map)
+            } else {
+                showToast("No Internet Connection")
+            }
+        }
     }
 
     private fun setCallerInfoOnAppCreate() {
@@ -535,14 +549,14 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
             {
                 val map = intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>?
                 val isCallFromGroup = map != null && map.get(RTC_IS_GROUP_CALL) == "true"
-                binding.topicHeader.visibility = View.VISIBLE
+                /*binding.topicHeader.visibility = View.VISIBLE
                 binding.topicName.text = it["topic_name"]
                 Log.d(TAG, "updateStatusLabel: addObserver -#@- ${map?.get(RTC_WEB_GROUP_CALL_GROUP_NAME)}")
                 if (isCallFromGroup || map?.get(RTC_WEB_GROUP_CALL_GROUP_NAME).isNullOrBlank().not()) {
                     binding.tvGroupName.visibility = View.VISIBLE
                     binding.tvGroupName.text =
                         "from group \"${WebRtcService.currentCallingGroupName}\""
-                }
+                }*/
                 binding.callerName.text = it["name"]
                 setImageInIV(it["profile_pic"])
                 mBoundService?.setOppositeUserInfo(it)
@@ -572,12 +586,24 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
             val map: HashMap<String, String?> = HashMap()
             map["agora_channel_name"] = mBoundService?.channelName
             viewModel.checkShowFppDialog(map)
+
         }catch (ex:Exception){
 
         }
 
+        viewModel.topicUrlLiveData.observe(this) {
+            if (it != null) {
+                binding.discussionTopic.visibility = View.VISIBLE
+                binding.imageLayout.visibility = View.VISIBLE
+                Glide.with(this)
+                    .load(it)
+                    .into(binding.articleImage)
+            }
+        }
+
         viewModel.fppDialogShow.observe(this){
             fppDialog = it
+            mBoundService?.fppDialogeFlag = fppDialog
         }
         if (isCallFavoritePP() || WebRtcService.isCallOnGoing.value == true) {
             if (intent.getSerializableExtra(CALL_USER_OBJ) == null) {
@@ -698,7 +724,7 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
 
     private fun updateStatusLabel() {
         lifecycleScope.launchWhenCreated {
-            binding.tvGroupName.visibility = View.GONE
+           // binding.tvGroupName.visibility = View.GONE
             val map = intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>?
             val isCallFromGroup = map != null && map.get(RTC_IS_GROUP_CALL) == "true"
             Log.d(TAG, "updateStatusLabel: ${map} : $isCallFromGroup")
@@ -712,15 +738,15 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
             callieId = map?.get("uid") ?: mBoundService?.getUserAgoraId().toString()
             callType?.run {
                 if (CallType.FAVORITE_MISSED_CALL == this || CallType.OUTGOING == this) {
-                    if (callConnected && isCallFavoritePP()) {
+                    /*if (callConnected && isCallFavoritePP()) {
                         binding.callStatus.text = getText(R.string.pp_connected)
                         return@run
                     } else if (callConnected.not() && isCallFavoritePP()) {
                         binding.callStatus.text = getText(R.string.pp_calling)
                         return@run
-                    }
+                    }*/
                 } else {
-                    if (callConnected && isCallFavoritePP()) {
+                   /* if (callConnected && isCallFavoritePP()) {
                         binding.callStatus.text = getText(R.string.pp_connected)
                         return@run
                     } else if (callConnected.not() && isCallFavoritePP()) {
@@ -744,14 +770,14 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
                                 "from group \"${WebRtcService.currentCallingGroupName}\""
                         }
                         return@run
-                    }
+                    }*/
                 }
-                binding.callStatus.text = "Practice with Partner"
+               /* binding.callStatus.text = "Practice with Partner"
                 if (isCallFromGroup || map?.get(RTC_WEB_GROUP_CALL_GROUP_NAME).isNullOrBlank().not()) {
                     binding.tvGroupName.visibility = View.VISIBLE
                     binding.tvGroupName.text =
                         "from group \"${WebRtcService.currentCallingGroupName}\""
-                }
+                }*/
             }
         }
     }
@@ -776,6 +802,12 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
     private fun setUserInfo(uuid: String?, isFromApi: Boolean = false) {
         if (uuid.isNullOrEmpty())
             return
+
+        try {
+            viewModel.showTopicUrl(uuid)
+        } catch (ex: Exception) {
+        }
+
         if (!isFromApi && userDetailLiveData.value != null) {
             return
         }
@@ -1036,7 +1068,7 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
             time = callTime
         }
         Log.d(TAG, "showCallRatingScreen: ${time/1000}")
-        if((time/1000) in 121..1199 && mBoundService?.fppDialogeFlag ?: EMPTY=="false"){
+        if(((time/1000) in 121..1199 && fppDialog =="false") || !PrefManager.getBoolValue(IS_COURSE_BOUGHT)){
             this@WebRtcActivity.finish()
         }else {
 
@@ -1126,11 +1158,11 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
         isAnimationCancled = false
         binding.incomingTimerContainer.visibility = View.VISIBLE
         binding.cImage.visibility = View.INVISIBLE
-        binding.topicName.visibility = View.INVISIBLE
-        binding.topicHeader.visibility = View.INVISIBLE
+       /* binding.topicName.visibility = View.INVISIBLE
+        binding.topicHeader.visibility = View.INVISIBLE*/
         binding.callerName.visibility = View.INVISIBLE
-        binding.callStatus.visibility = View.INVISIBLE
-        setIncomingText()
+       /* binding.callStatus.visibility = View.INVISIBLE
+        setIncomingText()*/
         var counter = 35
         progressAnimator.addListener(object : Animator.AnimatorListener {
             override fun onAnimationStart(animation: Animator?) {}
@@ -1177,14 +1209,14 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
         progressAnimator.start()
     }
 
-    private fun setIncomingText() {
+    /*private fun setIncomingText() {
         binding.tvIncomingCallHeading.visibility = View.VISIBLE
         binding.tvIncomingCallSubHeading.visibility = View.VISIBLE
         binding.tvIncomingCallHeading.text = "Practice with Partner"
         binding.tvIncomingCallSubHeading.text = "Call is being connected..."
         binding.tvIncomingCallSubHeading.textSize = 15f
         binding.tvIncomingCallSubHeading.setTypeface(binding.callStatus.typeface, Typeface.NORMAL)
-    }
+    }*/
 
     @Synchronized
     private fun stopAnimation(isCallConnected: Boolean = false) {
@@ -1193,14 +1225,14 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
         runOnUiThread {
             progressAnimator.cancel()
             binding.incomingTimerContainer.visibility = View.INVISIBLE
-            binding.tvIncomingCallHeading.visibility = View.INVISIBLE
-            binding.tvIncomingCallSubHeading.visibility = View.INVISIBLE
+            /*binding.tvIncomingCallHeading.visibility = View.INVISIBLE
+            binding.tvIncomingCallSubHeading.visibility = View.INVISIBLE*/
             binding.groupForOutgoing.visibility = View.VISIBLE
             binding.cImage.visibility = View.VISIBLE
-            binding.topicName.visibility = View.VISIBLE
-            binding.topicHeader.visibility = View.VISIBLE
+           /* binding.topicName.visibility = View.VISIBLE
+            binding.topicHeader.visibility = View.VISIBLE*/
             binding.callerName.visibility = View.VISIBLE
-            binding.callStatus.visibility = View.VISIBLE
+            //binding.callStatus.visibility = View.VISIBLE
             if (isCallConnected) {
                 Log.d(TAG, "stopAnimation: ---> CALL_CONNECT_SCREEN_VISUAL")
                 VoipAnalytics.push(

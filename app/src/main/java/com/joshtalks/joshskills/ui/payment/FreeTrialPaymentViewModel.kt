@@ -53,8 +53,12 @@ class FreeTrialPaymentViewModel(application: Application) : AndroidViewModel(app
                     }
                 }
             }
-
-            getPaymentDetails(testId.toInt())
+            try {
+                getPaymentDetails(Integer.parseInt(testId))
+            }
+            catch (ex:Exception){
+                ex.printStackTrace()
+            }
 
         }
     }

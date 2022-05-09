@@ -1,7 +1,7 @@
 package com.joshtalks.joshskills.ui.voip.voip_rating
 
+import android.content.DialogInterface
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,7 +18,7 @@ import com.joshtalks.joshskills.ui.voip.SHOW_FPP_DIALOG
 import com.joshtalks.joshskills.ui.voip.voip_rating.adapter.ReportAdapter
 
 
-class ReportDialogFragment(val function: () -> Unit) : BaseDialogFragment() {
+class ReportDialogFragment : BaseDialogFragment() {
 
     lateinit var binding: LayoutReportDialogFragmentBinding
     private lateinit var manager: FlexboxLayoutManager
@@ -26,6 +26,7 @@ class ReportDialogFragment(val function: () -> Unit) : BaseDialogFragment() {
     var channelName = EMPTY
     var fppDialogFlag:String?=null
     var optionId = 0
+    lateinit var function: () -> Unit
     val CHANNEL_NAME="channel_name"
     val FEEDBACK_OPTIONS="feedback_option"
     val REPORTED_BY_ID="reported_by_id"
@@ -52,7 +53,6 @@ class ReportDialogFragment(val function: () -> Unit) : BaseDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
 
         initView()
         addObserver()
@@ -112,7 +112,6 @@ class ReportDialogFragment(val function: () -> Unit) : BaseDialogFragment() {
     }
 
     private fun closeDialog() {
-        Log.e("Sagar", "closeDialog: $fppDialogFlag")
         if(fppDialogFlag=="false"){
             function.invoke()
         }else{
@@ -127,11 +126,12 @@ class ReportDialogFragment(val function: () -> Unit) : BaseDialogFragment() {
             currentID: Int,
             typ: String,
             channelName: String,
-            function: () -> Unit,
+            mFunction: () -> Unit,
             fppDialogFlag: String?,
         ) =
-            ReportDialogFragment(function).apply {
+            ReportDialogFragment().apply {
                 arguments = Bundle().apply {
+                    function = mFunction
                     putString(ARG_TYPE, typ)
                     putInt(ARG_CALLER_ID,callerID)
                     putInt(ARG_CURRENT_ID,currentID)
@@ -145,5 +145,10 @@ class ReportDialogFragment(val function: () -> Unit) : BaseDialogFragment() {
         if (!manager?.isDestroyed && !manager.isStateSaved) {
             super.show(manager, tag)
         }
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        activity?.finish()
     }
 }

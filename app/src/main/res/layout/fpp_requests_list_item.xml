@@ -98,7 +98,7 @@
                 android:stateListAnimator="@null"
                 android:text="@string/confirm"
                 android:textAllCaps="false"
-                android:textAppearance="@style/TextAppearance.JoshTypography.8_Caption_Semi_bold"
+                android:textAppearance="@style/TextAppearance.JoshTypography.8_Caption_Normal"
                 android:textColor="@color/white"
                 android:textStyle="bold"
                 app:cornerRadius="@dimen/_2sdp"

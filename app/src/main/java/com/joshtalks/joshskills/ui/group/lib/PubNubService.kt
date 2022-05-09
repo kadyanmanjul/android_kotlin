@@ -269,10 +269,13 @@ object PubNubService : ChatService {
         null
     }
 
-    override fun getUserMetadata(mentorId: String): PNGetUUIDMetadataResult? =
+    override fun getUserMetadata(mentorId: String): PNGetUUIDMetadataResult? = try {
         pubnub.uuidMetadata
             .uuid(mentorId)
             .includeCustom(true)
             .sync()
+    } catch (e: Exception) {
+        null
+    }
 }
 

@@ -21,6 +21,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.afollestad.materialdialogs.MaterialDialog
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.CoreJoshFragment
 import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.abTest.*
@@ -56,8 +57,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
 import java.util.*
 
-private const val TAG = "SpeakingPractiseFragmen"
-class SpeakingPractiseFragment : ABTestFragment(),TimeAnimator.TimeListener {
+class SpeakingPractiseFragment : CoreJoshFragment() {
 
     private lateinit var binding: SpeakingPractiseFragmentBinding
     var lessonActivityListener: LessonActivityListener? = null
@@ -96,15 +96,13 @@ class SpeakingPractiseFragment : ABTestFragment(),TimeAnimator.TimeListener {
         )
     }
 
-    override fun onReceiveABTestData(abTestCampaignData: ABTestCampaignData?) {
+    fun onReceiveABTestData(abTestCampaignData: ABTestCampaignData?) {
         abTestCampaignData?.let { map->
             isIntroVideoEnabled = (map.variantKey == VariantKeys.SIV_ENABLED.name )&& map.variableMap?.isEnabled == true
         }
         initDemoViews(lessonNo)
 
     }
-
-    override fun initCampaigns() {}
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -124,15 +122,15 @@ class SpeakingPractiseFragment : ABTestFragment(),TimeAnimator.TimeListener {
         binding.handler = this
         binding.vm = viewModel
         binding.rootView.layoutTransition?.setAnimateParentHierarchy(false)
-        val layerDrawable = binding.btnStartTrialText.getBackground() as LayerDrawable
-        mClipDrawable = layerDrawable.findDrawableByLayerId(R.id.clip_drawable) as ClipDrawable
-        beforeAnimation = layerDrawable.findDrawableByLayerId(R.id.before_animation) as GradientDrawable
-
-        mAnimator = TimeAnimator()
-        mAnimator!!.setTimeListener(this)
         addObservers()
         // showTooltip()
         return binding.rootView
+    }
+
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        addObservers()
     }
 
     override fun onResume() {
@@ -363,7 +361,7 @@ class SpeakingPractiseFragment : ABTestFragment(),TimeAnimator.TimeListener {
 
         viewModel.lessonLiveData.observe(viewLifecycleOwner, {
             lessonNo = it.lessonNo
-            getCampaigns(CampaignKeys.SPEAKING_INTRODUCTION_VIDEO.name)
+            viewModel.getSpeakingABTestCampaign(CampaignKeys.SPEAKING_INTRODUCTION_VIDEO.name)
         })
 
         viewModel.introVideoCompleteLiveData.observe(viewLifecycleOwner, {
@@ -371,6 +369,10 @@ class SpeakingPractiseFragment : ABTestFragment(),TimeAnimator.TimeListener {
                 binding.btnCallDemo.visibility = View.GONE
             }
         })
+
+        viewModel.speakingABtestLiveData.observe(requireActivity()){
+            onReceiveABTestData(it)
+        }
     }
 
     private fun initDemoViews(it: Int) {
@@ -385,16 +387,24 @@ class SpeakingPractiseFragment : ABTestFragment(),TimeAnimator.TimeListener {
                 viewModel.saveIntroVideoFlowImpression(HOW_TO_SPEAK_TEXT_CLICKED)
             }
 
-            viewModel.callBtnHideShowLiveData.observe(viewLifecycleOwner, {
-                if (it == 1) {
-                    binding.nestedScrollView.visibility = View.INVISIBLE
-                    binding.btnCallDemo.visibility = View.VISIBLE
-                }
-                if (it == 2) {
-                    binding.nestedScrollView.visibility = View.VISIBLE
-                    binding.btnCallDemo.visibility = View.GONE
-                }
-            })
+            try {
+                viewModel.callBtnHideShowLiveData.observe(viewLifecycleOwner, {
+                    try {
+                        if (it == 1) {
+                            requireActivity().runOnUiThread {
+                                binding.nestedScrollView.visibility = View.INVISIBLE
+                                binding.btnCallDemo.visibility = View.VISIBLE
+                            }
+                        }
+                        if (it == 2) {
+                            requireActivity().runOnUiThread {
+                                binding.nestedScrollView.visibility = View.VISIBLE
+                                binding.btnCallDemo.visibility = View.GONE
+                            }
+                        }
+                    }catch (ex:Exception){}
+                })
+            }catch (ex:Exception){}
         } else {
             binding.btnCallDemo.visibility = View.GONE
         }
