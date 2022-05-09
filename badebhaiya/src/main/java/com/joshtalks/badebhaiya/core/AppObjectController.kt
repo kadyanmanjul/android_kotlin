@@ -71,10 +71,10 @@ class AppObjectController {
 
         private fun initBranch(context: Context){
             Branch.getAutoInstance(context)
-//            if (BuildConfig.DEBUG) {
+            if (BuildConfig.DEBUG) {
                 Branch.enableLogging()
                 Branch.enableTestMode()
-//            }
+            }
         }
 
         private fun initGsonMapper() {
