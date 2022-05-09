@@ -1299,7 +1299,8 @@ class ReadingFragmentWithoutFeedback :
                     binding.counterTv.visibility = GONE
                     //}
                     binding.audioPractiseHint.visibility = VISIBLE
-                    requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                    if (isAdded && activity != null)
+                        requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                     val timeDifference =
                         TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()) - TimeUnit.MILLISECONDS.toSeconds(
                             startTime
