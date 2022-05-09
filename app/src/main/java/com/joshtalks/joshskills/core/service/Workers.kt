@@ -987,9 +987,11 @@ class FakeCallNotificationWorker(
                 AppObjectController.currentActivityClass != PaymentSummaryActivity::class.java.simpleName &&
                 AppObjectController.currentActivityClass != FreeTrialPaymentActivity::class.java.simpleName
             ) {
-                val resp = AppObjectController.p2pNetworkService.getFakeCall()
-                val nc = resp.toNotificationObject(null)
-                FirebaseNotificationService.sendFirestoreNotification(nc, context)
+                try {
+                    val resp = AppObjectController.p2pNetworkService.getFakeCall()
+                    val nc = resp.toNotificationObject(null)
+                    FirebaseNotificationService.sendFirestoreNotification(nc, context)
+                }catch (ex:Exception){}
             }
         } catch (ex: Throwable) {
             ex.printStackTrace()

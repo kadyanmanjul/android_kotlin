@@ -4,12 +4,9 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.joshtalks.joshskills.core.ApiCallStatus
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.CURRENT_COURSE_ID
-import com.joshtalks.joshskills.core.DEFAULT_COURSE_ID
+import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.group.repository.ABTestRepository
@@ -21,6 +18,8 @@ import org.json.JSONObject
 import retrofit2.HttpException
 import timber.log.Timber
 import java.net.ProtocolException
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 
 
 class WebrtcViewModel(application: Application) : AndroidViewModel(application) {
@@ -101,14 +100,28 @@ class WebrtcViewModel(application: Application) : AndroidViewModel(application) 
         isApiFired = true
         var resp = EMPTY
         try {
-            viewModelScope.launch(Dispatchers.IO){
-                resp = AppObjectController.p2pNetworkService.showFppDialog(map).body()
-                    ?.get("show_fpp_dialog") ?: EMPTY
-                withContext(Dispatchers.Main){
-                    fppDialogShow.value = resp
+            viewModelScope.launch(Dispatchers.IO) {
+                try {
+                    resp = AppObjectController.p2pNetworkService.showFppDialog(map).body()
+                        ?.get("show_fpp_dialog") ?: EMPTY
+                    withContext(Dispatchers.Main) {
+                        fppDialogShow.value = resp
+                    }
+                } catch (ex: Exception) {
+                    when (ex) {
+                        is HttpException -> {
+                            showToast(AppObjectController.joshApplication.getString(R.string.something_went_wrong))
+                        }
+                        is SocketTimeoutException, is UnknownHostException -> {
+                            showToast(AppObjectController.joshApplication.getString(R.string.internet_not_available_msz))
+                        }
+                        else -> {
+                            FirebaseCrashlytics.getInstance().recordException(ex)
+                        }
+                    }
                 }
             }
-        }catch (ex:Exception){
+        }catch (ex:Exception) {
             ex.printStackTrace()
         }
     }
