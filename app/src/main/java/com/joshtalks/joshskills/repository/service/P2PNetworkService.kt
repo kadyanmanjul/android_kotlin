@@ -93,4 +93,7 @@ interface P2PNetworkService {
 
     @POST("$DIR/voicecall/agora_new_topic/")
     suspend fun saveTopicUrlImpression(@Body params : HashMap<String,Any?>) :Response<Any>
+
+    @POST("$DIR/voicecall/call_rating/")
+    suspend fun submitCallRatings(@Body params: HashMap<String, String>) : Response<Any>
 }

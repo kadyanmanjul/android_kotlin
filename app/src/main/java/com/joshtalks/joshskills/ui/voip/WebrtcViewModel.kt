@@ -18,14 +18,12 @@ import org.json.JSONObject
 import retrofit2.HttpException
 import timber.log.Timber
 import java.net.ProtocolException
-import java.net.SocketTimeoutException
-import java.net.UnknownHostException
 
 
 class WebrtcViewModel(application: Application) : AndroidViewModel(application) {
     val apiCallStatusLiveData: MutableLiveData<ApiCallStatus> = MutableLiveData()
     val repository: ABTestRepository by lazy { ABTestRepository() }
-    val fppDialogShow :MutableLiveData<String> = MutableLiveData()
+    val fppDialogShow :MutableLiveData<List<String>> = MutableLiveData()
     var isApiFired = false
     val topicUrlLiveData: MutableLiveData<String> = MutableLiveData()
 
@@ -99,30 +97,15 @@ class WebrtcViewModel(application: Application) : AndroidViewModel(application) 
         if (isApiFired)
             return
         isApiFired = true
-        var resp = EMPTY
         try {
-            viewModelScope.launch(Dispatchers.IO) {
-                try {
-                    resp = AppObjectController.p2pNetworkService.showFppDialog(map).body()
-                        ?.get("show_fpp_dialog") ?: EMPTY
-                    withContext(Dispatchers.Main) {
-                        fppDialogShow.value = resp
-                    }
-                } catch (ex: Exception) {
-                    when (ex) {
-                        is HttpException -> {
-                            showToast(AppObjectController.joshApplication.getString(R.string.something_went_wrong))
-                        }
-                        is SocketTimeoutException, is UnknownHostException -> {
-                            showToast(AppObjectController.joshApplication.getString(R.string.internet_not_available_msz))
-                        }
-                        else -> {
-                            FirebaseCrashlytics.getInstance().recordException(ex)
-                        }
-                    }
+            viewModelScope.launch(Dispatchers.IO){
+                var resp = AppObjectController.p2pNetworkService.showFppDialog(map).body()
+                var listRes : List<String> = listOf(resp?.get("show_fpp_dialog") ?: EMPTY, resp?.get("show_rating_popup") ?: EMPTY)
+                withContext(Dispatchers.Main){
+                    fppDialogShow.value = listRes
                 }
             }
-        }catch (ex:Exception) {
+        }catch (ex:Exception){
             ex.printStackTrace()
         }
     }

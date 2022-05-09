@@ -244,7 +244,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
                 PrefManager.put(IS_LOGIN_VIA_TRUECALLER,true)
                 viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_FREETRIAL_LOGIN)
                 val user = User.getInstance()
-                user.firstName = trueProfile.firstName
+                user.firstName = trueProfile.firstName + trueProfile.lastName
                 user.phoneNumber = trueProfile.phoneNumber
                 user.email = trueProfile.email
                 user.gender = trueProfile.gender
@@ -252,7 +252,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
                 viewModel.userName = trueProfile.firstName
                 viewModel.verifyUserViaTrueCaller(trueProfile)
                 viewModel.isVerified = true
-                openProfileDetailFragment()
+                moveToInboxScreen()
         }
     }
 

@@ -384,6 +384,7 @@ class ConversationActivity :
     }
 
     private fun initFreeTrialTimer() {
+        PrefManager.put(IS_FREE_TRIAL,inboxEntity.isCourseBought.not())
         if (inboxEntity.isCourseBought.not() &&
             inboxEntity.expiryDate != null &&
             inboxEntity.expiryDate!!.time >= System.currentTimeMillis()

@@ -13,6 +13,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.voip.WebRtcCallback
 import com.joshtalks.joshskills.ui.voip.WebRtcService
+import com.joshtalks.joshskills.ui.voip.voip_rating.CallRatingDialogActivity
 import com.joshtalks.joshskills.ui.voip.voip_rating.VoipCallFeedbackActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -22,6 +23,7 @@ import timber.log.Timber
 open class WebRtcMiddlewareActivity : CoreJoshActivity() {
     private var mBoundService: WebRtcService? = null
     private var mServiceBound = false
+    private var isOnDisconnectedTriggered=false
     private val TAG = "WebRtcMiddlewareActivit"
 
     private var myConnection: ServiceConnection = object : ServiceConnection {
@@ -79,7 +81,26 @@ open class WebRtcMiddlewareActivity : CoreJoshActivity() {
             lifecycleScope.launchWhenResumed {
                 findViewById<View>(R.id.ongoing_call_container)?.visibility = View.GONE
                 findViewById<View>(R.id.ongoing_call_container)?.setOnClickListener(null)
-                if(!(((time/1000) in 121..1199 && mBoundService?.fppDialogeFlag =="false") || !PrefManager.getBoolValue(IS_COURSE_BOUGHT))){
+                if(mBoundService?.callRatingDialogeFlag == "true"){
+                    if(!isOnDisconnectedTriggered) {
+                        isOnDisconnectedTriggered=true
+                        val agoraMentorId = mBoundService?.getUserAgoraId()
+                        if (mBoundService?.getOppositeUserInfo().isNullOrEmpty().not() && agoraMentorId != null && callId != null) {
+                            mBoundService?.getOppositeCallerName()?.let {
+                                mBoundService?.getOppositeUserInfo()?.get("mentor").let { it1 ->
+                                    CallRatingDialogActivity.startCallRatingDialogActivity(
+                                        activity = this@WebRtcMiddlewareActivity,
+                                        callerName = it,
+                                        callDuration = (time / 60000).toInt(),
+                                        agoraCallId = 1234576,
+                                        callerProfileUrl = mBoundService?.getOppositeCallerProfilePic(),
+                                        callerMentorId = it1.toString(),
+                                        agoraMentorId = agoraMentorId.toString())
+                                }
+                            }
+                        }
+                    }
+                }else if(!(((time/1000) in 121..1199 && mBoundService?.fppDialogeFlag =="false") || !PrefManager.getBoolValue(IS_COURSE_BOUGHT))){
                     if (time > 0 && channelName.isNullOrEmpty().not()) {
                         try {
                             VoipCallFeedbackActivity.startPtoPFeedbackActivity(
