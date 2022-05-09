@@ -173,6 +173,16 @@ class SignUpProfileFragment : BaseSignUpFragment() {
             binding.emailEditText.visibility = View.VISIBLE
         }
 
+        if (user.occupation.isNullOrEmpty().not()) {
+            binding.occupationEditText.setText(user.occupation)
+            binding.occupationEditText.isEnabled = false
+        }
+
+        if (user.aspiration.isNullOrEmpty().not()) {
+            binding.aspirationEditText.setText(user.aspiration)
+            binding.aspirationEditText.isEnabled = false
+        }
+
     }
 
     private fun initCountryCodePicker() {
@@ -250,6 +260,16 @@ class SignUpProfileFragment : BaseSignUpFragment() {
             return
         }
 
+        if (binding.occupationEditText.text.isNullOrEmpty()) {
+            showToast(getString(R.string.occupation_error_toast))
+            return
+        }
+
+        if (binding.aspirationEditText.text.isNullOrEmpty()) {
+            showToast(getString(R.string.aspiration_error_toast))
+            return
+        }
+
         if (binding.phoneNumberEt.text.isNullOrEmpty() && binding.emailEditText.text.isNullOrEmpty()) {
             showToast(getString(R.string.enter_valid_email_toast))
         }
@@ -271,7 +291,11 @@ class SignUpProfileFragment : BaseSignUpFragment() {
         }
         requestMap["date_of_birth"] = userDateOfBirth ?: EMPTY
         requestMap["gender"] = gender?.gValue ?: EMPTY
+        requestMap["gender"] = gender?.gValue ?: EMPTY
         requestMap["is_free_trial"] = "N"
+        requestMap["occupation"] = binding.occupationEditText.text?.toString() ?: EMPTY
+        requestMap["future_goals"] = binding.aspirationEditText.text?.toString() ?: EMPTY
+
         viewModel.completingProfile(requestMap)
     }
 

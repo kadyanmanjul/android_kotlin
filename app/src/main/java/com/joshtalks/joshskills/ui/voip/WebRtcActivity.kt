@@ -561,6 +561,15 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
                         "from group \"${WebRtcService.currentCallingGroupName}\""
                 }*/
                 binding.callerName.text = it["name"]
+                if (it["occupation"] != null && it["future_goals"] != null) {
+                    binding.occupationFutureGoals.text = it["occupation"] ?: EMPTY + ", Dream - " + it["future_goals"]
+                } else if (it["occupation"] == null && it["future_goals"] != null) {
+                    binding.occupationFutureGoals.text = "Dream - " + it["future_goals"]
+                } else if (it["future_goals"] != null && it["future_goals"] == null) {
+                    binding.occupationFutureGoals.text = it["occupation"]
+                }else{
+                    binding.occupationFutureGoals.visibility = View.GONE
+                }
                 setImageInIV(it["profile_pic"])
                 mBoundService?.setOppositeUserInfo(it)
             }
@@ -1261,6 +1270,8 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
            /* binding.topicName.visibility = View.VISIBLE
             binding.topicHeader.visibility = View.VISIBLE*/
             binding.callerName.visibility = View.VISIBLE
+            binding.occupationFutureGoals.visibility = View.VISIBLE
+
             //binding.callStatus.visibility = View.VISIBLE
             if (isCallConnected) {
                 Log.d(TAG, "stopAnimation: ---> CALL_CONNECT_SCREEN_VISUAL")

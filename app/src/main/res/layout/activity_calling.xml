@@ -97,6 +97,23 @@
             tools:ignore="MissingPrefix"
             tools:text="Mohit " />
 
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/occupation_future_goals"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginTop="@dimen/_3sdp"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_14ssp"
+            android:textAlignment="center"
+            android:lines="2"
+            app:layout_constraintTop_toBottomOf="@+id/caller_name"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:ignore="MissingPrefix"
+            tools:text="Engineer, Dream - IAS Officer " />
+
         <Chronometer
             android:id="@+id/call_time"
             android:layout_width="wrap_content"
@@ -107,7 +124,7 @@
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
             android:textColor="@color/white"
             android:visibility="invisible"
-            app:layout_constraintTop_toBottomOf="@+id/caller_name"
+            app:layout_constraintTop_toBottomOf="@+id/occupation_future_goals"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             tools:ignore="MissingPrefix"
@@ -122,7 +139,7 @@
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
             android:textColor="@color/white"
             android:visibility="invisible"
-            app:layout_constraintTop_toBottomOf="@+id/caller_name"
+            app:layout_constraintTop_toBottomOf="@+id/occupation_future_goals"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             tools:ignore="MissingPrefix"

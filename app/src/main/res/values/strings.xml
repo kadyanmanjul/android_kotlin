@@ -257,6 +257,8 @@
     <string name="select_gender">Please choose gender</string>
     <string name="dob_error_toast">Please enter Date of birth</string>
     <string name="name_error_toast">Name cannot be empty!</string>
+    <string name="occupation_error_toast">Occupation cannot be empty!</string>
+    <string name="aspiration_error_toast">Aspiration cannot be empty!</string>
     <string name="please_enter_valid_number">Please enter valid mobile number </string>
     <string name="enter_valid_email_toast">Please enter valid Email Id</string>
 
@@ -1189,18 +1191,6 @@
     <string name="year_format">YYYY</string>
     <string name="allowed_name_characters">qwertyuiopasdfghjklzxcvbnm QWERTYUIOPASDFGHJKLZXCVBNM</string>
     <string name="discussion_topic">Discussion Topic</string>
-    <string name="permission_denied_contacts">Permission to access contacts is required to invite friends.</string>
-    <string name="invite_friend_call_info">Aap apne dost ko unki pehli call kara sakte hai aur unke english bolne ke darr khatam karne me madad kar sakte hai</string>
-    <string name="invite_friend_link_sent">aapke dost ko iss app ko download karne ka link bhej diya gaya hai. \naap unko ye app download karne ke liye bol sakte hai </string>
-    <string name="invite_friend_search_hint">Kisko call krrna hai?</string>
-    <string name="call_a_friend">Call a Friend</string>
-    <string name="allow_permission">Allow Permission</string>
-    <string name="twenty_min_call_incomplete">Aapne last practice partner se 20 minute baat nahi kari. </string>
-    <string name="twenty_min_call_target">Aapka aaj ka target hai ek practice partner se 20 minute baat karein </string>
-    <string name="twenty_min_call_completed">Behetereen! Aapne aaj ka speaking target pura kar lia hai</string>
-    <string name="activity_feed">Activity Feed</string>
-    <string name="no_contacts_found">No contacts found!</string>
-    <string name="remove_from_favorite">Remove from favorite</string>
 
     //call ratings strings
     <string name="how_was_your_call_name">How was your call with %s ?</string>
@@ -1209,5 +1199,10 @@
     <string name="block_caller">Block %s</string>
     <string name="excellent">Excellent</string>
     <string name="submit_call_rating">Submit</string>
+
+    <string name="occupation_field">आप क्या काम करते हैं? (Occupation)</string>
+    <string name="occupation_filed_hint_text">e.g. Manager at Flipkart</string>
+    <string name="aspiration_filed">आपका सपना क्या है? (Aspiration)</string>
+    <string name="aspiration_filed_hint_text">e.g. IAS Officer </string>
 
 </resources>
