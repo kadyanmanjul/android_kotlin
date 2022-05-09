@@ -70,10 +70,10 @@ class GroupsAppBar @JvmOverloads constructor(
     }
 
     //TODO: Explicitly Handle low end device issue
-    fun setImage(url: String,groupHeader:String,groupType: String) {
+    fun setImage(url: String, groupHeader: String?, groupType: String?) {
         toolbarImageView.visibility = View.VISIBLE
         if (groupType == DM_CHAT && url.isEmpty())
-            toolbarImageView.setUserImageOrInitialsWithWhiteBackground(url, groupHeader, isRound = true,bgColor = R.color.white,txtColor = R.color.colorAccent)
+            toolbarImageView.setUserImageOrInitialsWithWhiteBackground(url, groupHeader!!, isRound = true,bgColor = R.color.white,txtColor = R.color.colorAccent)
         else if (url.isEmpty())
             toolbarImageView.setImageResource(DefaultImage.DEFAULT_GROUP_IMAGE.drwRes)
         else

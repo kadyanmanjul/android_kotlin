@@ -31,8 +31,8 @@
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/img_logo"
             defaultImage="@{itemData.groupCategory.equals(constant.DM_CHAT) ? DefaultImage.DEFAULT_DM_FPP_IMAGE :DefaultImage.DEFAULT_GROUP_IMAGE}"
-            groupName="@{itemData.title}"
             groupImage="@{itemData.imageUrl}"
+            groupName="@{itemData.title}"
             android:layout_width="@dimen/_36sdp"
             android:layout_height="@dimen/_36sdp"
             android:layout_centerVertical="true"

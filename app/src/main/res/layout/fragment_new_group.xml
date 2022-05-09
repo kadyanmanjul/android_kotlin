@@ -134,7 +134,6 @@
             android:id="@+id/img_group"
             defaultImage="@{DefaultImage.NO_IMAGE}"
             groupImage="@{vm.isFromGroupInfo ? vm.groupImageUrl : ` `}"
-            groupName="@{`Sagar`}"
             android:layout_width="@dimen/_42sdp"
             android:layout_height="@dimen/_42sdp"
             android:layout_centerVertical="true"

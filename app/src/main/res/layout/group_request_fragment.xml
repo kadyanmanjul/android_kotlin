@@ -43,7 +43,6 @@
             android:id="@+id/img_logo"
             defaultImage="@{DefaultImage.DEFAULT_GROUP_IMAGE}"
             groupImage="@{vm.imageUrl}"
-            groupName="@{`Sagar`}"
             android:layout_width="@dimen/_36sdp"
             android:layout_height="@dimen/_36sdp"
             android:layout_centerVertical="true"

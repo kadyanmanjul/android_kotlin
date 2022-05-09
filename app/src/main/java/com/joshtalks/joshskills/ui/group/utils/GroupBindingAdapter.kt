@@ -57,8 +57,9 @@ fun GroupsAppBar.setGroupHeaders(header: String, subHeader: String, groupType: S
 @BindingAdapter("secondIcon")
 fun GroupsAppBar.setSecondIcon(drawableRes: Int) = this.secondIcon(drawableRes)
 
-@BindingAdapter("groupImage", "groupName", "groupTypeDm",requireAll = false)
-fun GroupsAppBar.setGroupImage(imageUrl: String, groupName: String, groupType: String) = this.setImage(imageUrl,groupName,groupType)
+@BindingAdapter("groupImage", "groupName", "groupTypeDm", requireAll = false)
+fun GroupsAppBar.setGroupImage(imageUrl: String, groupName: String?, groupType: String?) =
+    this.setImage(imageUrl, groupName, groupType)
 
 @BindingAdapter("groupImage", "defaultImage")
 fun CircleImageView.setGroupImage(imageUrl: String, defaultImage: String) {
@@ -66,15 +67,15 @@ fun CircleImageView.setGroupImage(imageUrl: String, defaultImage: String) {
         this.setUserImageOrInitials(imageUrl, defaultImage, isRound = true)
 }
 
-@BindingAdapter("groupImage", "defaultImage","groupName")
-fun CircleImageView.setGroupImage(imageUrl: String, defaultImage: DefaultImage,groupName:String) {
+@BindingAdapter("groupImage", "defaultImage", "groupName", requireAll = false)
+fun CircleImageView.setGroupImage(imageUrl: String, defaultImage: DefaultImage, groupName: String?) {
     when {
         imageUrl.isNotBlank() -> Glide.with(this)
             .load(imageUrl)
             .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
             .into(this)
         defaultImage == DefaultImage.DEFAULT_DM_FPP_IMAGE -> {
-            this.setUserImageOrInitials(imageUrl, groupName, isRound = true)
+            this.setUserImageOrInitials(imageUrl, groupName!!, isRound = true)
         }
         else -> Glide.with(this)
             .load(defaultImage.drwRes)
