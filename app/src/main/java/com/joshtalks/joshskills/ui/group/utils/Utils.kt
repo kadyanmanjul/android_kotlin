@@ -1,10 +1,12 @@
 package com.joshtalks.joshskills.ui.group.utils
 
+import com.joshtalks.joshskills.core.dateStartOfDay
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.group.constants.*
 import com.joshtalks.joshskills.ui.group.lib.ChatService
 import com.joshtalks.joshskills.ui.group.lib.PubNubService
 import com.joshtalks.joshskills.ui.group.model.MessageItem
+import com.joshtalks.joshskills.ui.group.repository.GroupRepository
 import java.lang.Math.abs
 
 fun getMemberCount(memberText: String): Int {
@@ -40,14 +42,26 @@ fun MessageItem.getLastMessage(sender: String, msgType: Int) =
         else -> "$sender: $msg"
     }
 
-fun pushMetaMessage(msg: String, groupId: String, mentorId: String = Mentor.getInstance().getId()) {
+suspend fun pushMetaMessage(msg: String, groupId: String, mentorId: String = Mentor.getInstance().getId()) {
     val chatService: ChatService = PubNubService
     val message = MessageItem(
         msg = msg,
         msgType = META_MESSAGE,
         mentorId = mentorId
     )
+    if (GroupRepository().checkIfFirstMsg(groupId))
+        pushTimeMetaMessage(groupId)
     chatService.sendMessage(groupId, message)
+}
+
+fun pushTimeMetaMessage(groupId: String) {
+    val chatService: ChatService = PubNubService
+    val message = MessageItem(
+        msg = dateStartOfDay().time.div(1000).toString(),
+        msgType = META_MESSAGE,
+        mentorId = ""
+    )
+    chatService.sendMessage(groupId, message, true)
 }
 
 fun getColorHexCode(str: String): String {

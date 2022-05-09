@@ -43,21 +43,23 @@ object ChatSubscriber : SubscribeCallback() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val messageItem = Gson().fromJson(pnMessageResult.message, MessageItem::class.java)
-                if (pnMessageResult.userMetadata.asString != FROM_BACKEND_MSG_TIME)
-                    database.groupListDao().updateGroupItem(
-                        lastMessage = messageItem.getLastMessage(pnMessageResult.userMetadata.asString, messageItem.msgType),
-                        lastMsgTime = pnMessageResult.timetoken,
-                        id = pnMessageResult.channel
-                    )
+                database.groupListDao().updateGroupItem(
+                    lastMessage = messageItem.getLastMessage(pnMessageResult.userMetadata.asString, messageItem.msgType),
+                    lastMsgTime = pnMessageResult.timetoken,
+                    id = pnMessageResult.channel
+                )
+                var messageTime = pnMessageResult.timetoken
+                if (pnMessageResult.userMetadata.asString == FROM_BACKEND_MSG_TIME)
+                    messageTime = messageItem.msg.toLong().times(10000000)
                 // Meta + Sender
                 database.groupChatDao().insertMessage(
                     ChatItem(
                         sender = pnMessageResult.userMetadata.asString,
                         message = messageItem.msg,
-                        msgTime = pnMessageResult.timetoken,
+                        msgTime = messageTime,
                         groupId = pnMessageResult.channel,
                         msgType = messageItem.getMessageType(),
-                        messageId = "${pnMessageResult.timetoken}_${pnMessageResult.channel}_${messageItem.mentorId}"
+                        messageId = "${messageTime}_${pnMessageResult.channel}_${messageItem.mentorId}"
                     )
                 )
                 val message = messageItem.msg
@@ -80,7 +82,7 @@ object ChatSubscriber : SubscribeCallback() {
                             EventLiveData.value = messageObj
                         }
                     }
-                }else if(messageItem.getMessageType() == SENT_META_MESSAGE_LOCAL && message.contains("block")){
+                } else if (messageItem.getMessageType() == SENT_META_MESSAGE_LOCAL && message.contains("block")) {
                     if (messageItem.mentorId == Mentor.getInstance().getId()) {
                         withContext(Dispatchers.Main) {
                             val messageObj = Message()

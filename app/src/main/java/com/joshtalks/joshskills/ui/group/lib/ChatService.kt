@@ -7,7 +7,7 @@ interface ChatService {
     fun initializeChatService()
     fun <T> subscribeToChatEvents(groups : List<String>, observer: ChatEventObserver<T>)
     fun <T> unsubscribeToChatEvents(observer: ChatEventObserver<T>)
-    fun sendMessage(groupName: String, messageItem: MessageItem)
+    fun sendMessage(groupName: String, messageItem: MessageItem, isBackend: Boolean = false)
     fun sendGroupNotification(groupId: String, messageItem: Map<String, Any?>)
     fun dispatchNotifications(groups : List<String>)
     fun fetchGroupList(pageInfo: PageInfo? = null) : NetworkData?

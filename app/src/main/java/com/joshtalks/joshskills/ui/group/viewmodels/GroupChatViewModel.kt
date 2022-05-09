@@ -39,6 +39,7 @@ import com.joshtalks.joshskills.ui.group.repository.GroupRepository
 import com.joshtalks.joshskills.ui.group.utils.GroupChatComparator
 import com.joshtalks.joshskills.ui.group.utils.getMemberCount
 import com.joshtalks.joshskills.ui.group.utils.pushMetaMessage
+import com.joshtalks.joshskills.ui.group.utils.pushTimeMetaMessage
 import com.pubnub.api.models.consumer.push.payload.PushPayloadHelper
 import de.hdodenhof.circleimageview.CircleImageView
 
@@ -486,8 +487,12 @@ class GroupChatViewModel : BaseViewModel() {
                 mentorId = Mentor.getInstance().getId()
             )
             scrollToEnd = true
-            chatService.sendGroupNotification(groupId, getNotification(msg))
-            chatService.sendMessage(groupId, message)
+            viewModelScope.launch(Dispatchers.IO) {
+                chatService.sendGroupNotification(groupId, getNotification(msg))
+                if (repository.checkIfFirstMsg(groupId))
+                    pushTimeMetaMessage(groupId)
+                chatService.sendMessage(groupId, message)
+            }
             clearText()
             resetUnreadLabel()
         }

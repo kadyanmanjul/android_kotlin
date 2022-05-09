@@ -7,6 +7,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.dateStartOfDay
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -43,7 +44,6 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
     private val database = AppObjectController.appDatabase
     private val p2pNetworkService by lazy { AppObjectController.p2pNetworkService }
     private var favoriteCallerDao = AppObjectController.appDatabase.favoriteCallerDao()
-
 
     fun getGroupSearchResult(query: String) =
         Pager(PagingConfig(10, enablePlaceholders = false, maxSize = 150)) {
@@ -459,7 +459,7 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
         }
     }
 
-    suspend fun removeUserFormFppLit(uId:Int){
+    suspend fun removeUserFormFppLit(uId: Int) {
         val requestParams: HashMap<String, List<Int>> = HashMap()
         requestParams["mentor_ids"] = uId.let { return@let listOf(uId) }
         val response = p2pNetworkService.removeFavoriteCallerList(Mentor.getInstance().getId(), requestParams)
@@ -469,4 +469,7 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
         }
     }
 
+    suspend fun checkIfFirstMsg(groupId: String): Boolean {
+        return dateStartOfDay().time.times(10000) > (database.groupChatDao().getRecentMessageTime(groupId) ?: 0)
+    }
 }

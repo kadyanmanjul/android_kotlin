@@ -7,6 +7,7 @@ import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.notification.FCM_TOKEN
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.group.constants.DM_CHAT
+import com.joshtalks.joshskills.ui.group.constants.FROM_BACKEND_MSG_TIME
 import com.joshtalks.joshskills.ui.group.model.ChatItem
 import com.joshtalks.joshskills.ui.group.model.MessageItem
 import com.joshtalks.joshskills.ui.group.utils.getMessageType
@@ -229,13 +230,16 @@ object PubNubService : ChatService {
         return messages
     }
 
-    override fun sendMessage(groupName: String, messageItem: MessageItem) {
+    override fun sendMessage(groupName: String, messageItem: MessageItem, isBackend: Boolean) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 pubnub.publish()
                     .channel(groupName)
                     .message(messageItem)
-                    .meta("${Mentor.getInstance().getUser()?.firstName}")
+                    .meta(
+                        if (isBackend) FROM_BACKEND_MSG_TIME
+                        else "${Mentor.getInstance().getUser()?.firstName}"
+                    )
                     .shouldStore(true)
                     .ttl(0)
                     .usePOST(true)
