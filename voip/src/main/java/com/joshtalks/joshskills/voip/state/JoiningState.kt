@@ -8,6 +8,8 @@ import com.joshtalks.joshskills.voip.communication.model.UserAction
 import com.joshtalks.joshskills.voip.constant.Event.*
 import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.local.PrefManager
+import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
+import com.joshtalks.joshskills.voip.voipanalytics.EventName
 import kotlinx.coroutines.*
 
 // Got a Channel and Joining Agora State
@@ -23,6 +25,11 @@ class JoiningState(val context: CallContext) : VoipState {
         Log.d("Call State", TAG)
         observe()
         context.joinChannel(context.channelData)
+        CallAnalytics.addAnalytics(
+            event = EventName.CHANNEL_JOINING,
+            agoraCallId = context.channelData.getCallingId().toString(),
+            agoraMentorId = context.channelData.getAgoraUid().toString()
+        )
     }
 
     // Join Channel Already Called

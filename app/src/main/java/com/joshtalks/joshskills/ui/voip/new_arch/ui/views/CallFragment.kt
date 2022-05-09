@@ -30,6 +30,8 @@ import com.joshtalks.joshskills.voip.constant.CONNECTED
 import com.joshtalks.joshskills.voip.constant.JOINED
 import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.local.PrefManager
+import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
+import com.joshtalks.joshskills.voip.voipanalytics.EventName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -81,6 +83,14 @@ class CallFragment : BaseFragment() , SensorEventListener {
         return callBinding.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        CallAnalytics.addAnalytics(
+            event = EventName.CALL_SCREEN_SHOWN,
+            agoraCallId = PrefManager.getAgraCallId().toString(),
+            agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
+        )
+    }
     override fun initViewBinding() {
         callBinding.vm = vm
         if(vm.source == FROM_INCOMING_CALL && PrefManager.getVoipState() != State.CONNECTED) {

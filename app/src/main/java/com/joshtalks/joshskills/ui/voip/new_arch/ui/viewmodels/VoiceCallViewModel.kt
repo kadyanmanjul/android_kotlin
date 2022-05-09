@@ -16,16 +16,15 @@ import com.joshtalks.joshskills.base.constants.GROUP
 import com.joshtalks.joshskills.base.constants.PEER_TO_PEER
 import com.joshtalks.joshskills.base.log.Feature
 import com.joshtalks.joshskills.base.log.JoshLog
-import com.joshtalks.joshskills.core.JoshApplication
 import com.joshtalks.joshskills.core.TAG
 import com.joshtalks.joshskills.ui.call.repository.RepositoryConstants.*
 import com.joshtalks.joshskills.ui.call.repository.WebrtcRepository
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.models.CallUIState
-import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.VoipUtils
-import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
 import com.joshtalks.joshskills.voip.constant.*
 import com.joshtalks.joshskills.voip.data.ServiceEvents
 import com.joshtalks.joshskills.voip.data.local.PrefManager
+import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
+import com.joshtalks.joshskills.voip.voipanalytics.EventName
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.sync.Mutex
@@ -193,7 +192,12 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
 
     // User Action
     fun disconnectCall(v: View) {
-        Log.d(TAG, "disconnectCall: ")
+        Log.d(TAG, "Disconnect Call :Red Button Press")
+        CallAnalytics.addAnalytics(
+            event = EventName.DISCONNECTED_BY_RED_BUTTON,
+            agoraCallId = PrefManager.getAgraCallId().toString(),
+            agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
+        )
         disconnect()
     }
 
@@ -207,10 +211,22 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
         Log.d(TAG, "switchSpeaker")
         val isOnSpeaker = uiState.isSpeakerOn
         uiState.isSpeakerOn = isOnSpeaker.not()
-        if (isOnSpeaker)
+        if (isOnSpeaker) {
+            CallAnalytics.addAnalytics(
+                event = EventName.SPEAKER_OFF,
+                agoraCallId = PrefManager.getAgraCallId().toString(),
+                agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
+            )
             repository.turnOffSpeaker()
-        else
+        }
+        else {
+            CallAnalytics.addAnalytics(
+                event = EventName.SPEAKER_ON,
+                agoraCallId = PrefManager.getAgraCallId().toString(),
+                agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
+            )
             repository.turnOnSpeaker()
+        }
     }
 
     // User Action
@@ -218,10 +234,22 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
         Log.d(TAG, "switchMic")
         val isOnMute = uiState.isMute
         uiState.isMute = isOnMute.not()
-        if (isOnMute)
+        if (isOnMute) {
+            CallAnalytics.addAnalytics(
+                event = EventName.MIC_ON,
+                agoraCallId = PrefManager.getAgraCallId().toString(),
+                agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
+            )
             repository.unmuteCall()
-        else
+        }
+        else {
+            CallAnalytics.addAnalytics(
+                event = EventName.MIC_OFF,
+                agoraCallId = PrefManager.getAgraCallId().toString(),
+                agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
+            )
             repository.muteCall()
+        }
     }
 
     // User Action
