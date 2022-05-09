@@ -4,6 +4,7 @@ import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.repository.server.AmazonPolicyResponse
 import com.joshtalks.badebhaiya.signup.request.VerifyOTPRequest
 import com.joshtalks.badebhaiya.signup.response.LoginResponse
+import com.joshtalks.badebhaiya.signup.response.OTPResponse
 import kotlinx.coroutines.Deferred
 import retrofit2.Response
 import retrofit2.http.Body
@@ -17,7 +18,7 @@ const val DIR = "api/bbapp/v1"
 interface SignUpNetworkService {
 
     @GET("$DIR/user/login/")
-    suspend fun sendNumberForOTP(@QueryMap params: Map<String, String>)
+    suspend fun sendNumberForOTP(@QueryMap params: Map<String, String>):Response<OTPResponse>
 
     @POST("$DIR/user/verify_otp/")
     suspend fun verityOTP(@Body verifyOTPRequest: VerifyOTPRequest): Response<LoginResponse>

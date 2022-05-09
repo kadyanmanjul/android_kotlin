@@ -15,7 +15,7 @@ enum class AnalyticsEvent(val NAME: String) {
     DEVICE_MANUFACTURER("Device Manufacturer V3"),
     DEVICE_MODEL("Device Model V3"),
     ANDROID_OR_IOS("Android/IOS Version V3"),
-    USER_GAID("Gaid V3"),
+//    USER_GAID("Gaid V3"),
     USER_MENTOR_ID("Mentor id V3"),
     USER_NAME("User name V3"),
     USER_EMAIL("User email id V3"),
