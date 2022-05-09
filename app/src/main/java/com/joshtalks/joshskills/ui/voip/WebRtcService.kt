@@ -33,6 +33,7 @@ import com.joshtalks.joshskills.conversationRoom.liveRooms.ConversationLiveRoomA
 import com.joshtalks.joshskills.conversationRoom.model.JoinConversionRoomRequest
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.firestore.AgoraNotificationListener
 import com.joshtalks.joshskills.core.firestore.FirestoreDB
 import com.joshtalks.joshskills.core.notification.FirebaseNotificationService
@@ -194,7 +195,11 @@ class WebRtcService : BaseWebRtcService() {
             data["duration"] = "0"
             data["has_disconnected"] = "false"
             CoroutineScope(Dispatchers.IO).launch {
-                AppObjectController.p2pNetworkService.getAgoraCallResponse(data)
+                try {
+                    AppObjectController.p2pNetworkService.getAgoraCallResponse(data)
+                } catch (ex:Exception){
+                    LogException.catchException(ex)
+                }
             }
         }
 

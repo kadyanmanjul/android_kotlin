@@ -13,11 +13,13 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.ApiCallStatus
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.databinding.FragmentPreviousProfilePicsBinding
 import com.joshtalks.joshskills.ui.userprofile.models.ProfilePicture
 import com.joshtalks.joshskills.ui.userprofile.models.PreviousProfilePictures
 import com.joshtalks.joshskills.ui.userprofile.adapters.PreviousPicsAdapter
 import com.joshtalks.joshskills.ui.userprofile.viewmodel.UserProfileViewModel
+import java.lang.Exception
 
 class PreviousProfilePicsFragment : DialogFragment() {
     lateinit var binding: FragmentPreviousProfilePicsBinding
@@ -106,11 +108,13 @@ class PreviousProfilePicsFragment : DialogFragment() {
     }
 
     override fun onPause() {
-        startTime = System.currentTimeMillis().minus(startTime).div(1000)
-        if (startTime > 0 && impressionId!!.isBlank().not()) {
-            viewModel.engageUserProfileSectionTime(impressionId!!, startTime.toString())
-        }
-        super.onPause()
+        try {
+            startTime = System.currentTimeMillis().minus(startTime).div(1000)
+            if (startTime > 0 && impressionId?.isBlank()?.not() == true) {
+                viewModel.engageUserProfileSectionTime(impressionId?: EMPTY, startTime.toString())
+            }
+            super.onPause()
+        }catch (ex:Exception){}
     }
 
     private fun initView(previousProfilePics: PreviousProfilePictures) {

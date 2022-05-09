@@ -112,11 +112,17 @@ class SearchingUserActivity : BaseActivity(), ServiceConnection {
 
     private var myConnection: ServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName, service: IBinder) {
-            val myBinder = service as WebRtcService.MyBinder
-            mBoundService = myBinder.getService()
-            mServiceBound = true
-            mBoundService?.addListener(callback)
-            addRequesting()
+            try {
+                val myBinder = service as WebRtcService.MyBinder
+                mBoundService = myBinder.getService()
+                mServiceBound = true
+                mBoundService?.addListener(callback)
+                addRequesting()
+            }catch (ex:Exception){
+                try {
+                    this@SearchingUserActivity.finish()
+                }catch (ex:Exception){}
+            }
         }
 
         override fun onServiceDisconnected(name: ComponentName) {

@@ -886,7 +886,7 @@
                     android:layout_marginEnd="@dimen/_8sdp"
                     android:layout_toStartOf="@+id/img_game_btn"
                     android:focusable="true"
-                    android:src="@drawable/ic_activity_feed"
+                    android:src="@drawable/ic_groups_new"
                     android:visibility="gone"
                     app:layout_constraintEnd_toStartOf="@id/img_game_btn"
                     app:layout_constraintTop_toTopOf="parent"

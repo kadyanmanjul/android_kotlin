@@ -375,20 +375,22 @@ class GroupChatViewModel : BaseViewModel() {
     fun getGroupInfo(showLoading: Boolean = true) {
         if (showLoading) fetchingGrpInfo.set(true)
         viewModelScope.launch(Dispatchers.IO) {
-            val memberResult = repository.getGroupMemberList(groupId, adminId)
-            val onlineAndRequestCount = repository.getOnlineAndRequestCount(groupId)
-            val onlineCount = (onlineAndRequestCount["online_count"] as? Double)?.toInt()
-            val requestCnt = (onlineAndRequestCount["request_count"] as? Double)?.toInt()
-            memberCount.set(memberResult.size)
-            requestCount.set("$requestCnt")
-            groupSubHeader.set("${memberCount.get()} members, $onlineCount online")
-            setRequestsTab()
-            withContext(Dispatchers.Main) {
-                memberAdapter.addMembersToList(memberResult)
-                if (showLoading) fetchingGrpInfo.set(false)
-                else showToast("Removed member from the group", Toast.LENGTH_LONG)
-                dismissProgressDialog()
-            }
+            try {
+                val memberResult = repository.getGroupMemberList(groupId, adminId)
+                val onlineAndRequestCount = repository.getOnlineAndRequestCount(groupId)
+                val onlineCount = (onlineAndRequestCount["online_count"] as? Double)?.toInt()
+                val requestCnt = (onlineAndRequestCount["request_count"] as? Double)?.toInt()
+                memberCount.set(memberResult.size)
+                requestCount.set("$requestCnt")
+                groupSubHeader.set("${memberCount.get()} members, $onlineCount online")
+                setRequestsTab()
+                withContext(Dispatchers.Main) {
+                    memberAdapter.addMembersToList(memberResult)
+                    if (showLoading) fetchingGrpInfo.set(false)
+                    else showToast("Removed member from the group", Toast.LENGTH_LONG)
+                    dismissProgressDialog()
+                }
+            }catch (ex:Exception){}
         }
     }
 

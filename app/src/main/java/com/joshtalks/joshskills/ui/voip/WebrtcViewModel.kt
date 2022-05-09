@@ -4,12 +4,9 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.joshtalks.joshskills.core.ApiCallStatus
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.CURRENT_COURSE_ID
-import com.joshtalks.joshskills.core.DEFAULT_COURSE_ID
+import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.group.repository.ABTestRepository
@@ -21,12 +18,16 @@ import org.json.JSONObject
 import retrofit2.HttpException
 import timber.log.Timber
 import java.net.ProtocolException
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 
 
 class WebrtcViewModel(application: Application) : AndroidViewModel(application) {
     val apiCallStatusLiveData: MutableLiveData<ApiCallStatus> = MutableLiveData()
     val repository: ABTestRepository by lazy { ABTestRepository() }
     val fppDialogShow :MutableLiveData<String> = MutableLiveData()
+    var isApiFired = false
+    val topicUrlLiveData: MutableLiveData<String> = MutableLiveData()
 
     fun initMissedCall(partnerId: String, aFunction: (String, String, Int) -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -95,17 +96,57 @@ class WebrtcViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     fun checkShowFppDialog(map: HashMap<String, String?>){
+        if (isApiFired)
+            return
+        isApiFired = true
         var resp = EMPTY
         try {
-            viewModelScope.launch(Dispatchers.IO){
-                withContext(Dispatchers.Default) {
+            viewModelScope.launch(Dispatchers.IO) {
+                try {
                     resp = AppObjectController.p2pNetworkService.showFppDialog(map).body()
                         ?.get("show_fpp_dialog") ?: EMPTY
-                    fppDialogShow.postValue(resp)
+                    withContext(Dispatchers.Main) {
+                        fppDialogShow.value = resp
+                    }
+                } catch (ex: Exception) {
+                    when (ex) {
+                        is HttpException -> {
+                            showToast(AppObjectController.joshApplication.getString(R.string.something_went_wrong))
+                        }
+                        is SocketTimeoutException, is UnknownHostException -> {
+                            showToast(AppObjectController.joshApplication.getString(R.string.internet_not_available_msz))
+                        }
+                        else -> {
+                            FirebaseCrashlytics.getInstance().recordException(ex)
+                        }
+                    }
                 }
             }
-        }catch (ex:Exception){
+        }catch (ex:Exception) {
             ex.printStackTrace()
+        }
+    }
+
+    fun saveTopicImpression(map: HashMap<String, Any?>) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                AppObjectController.p2pNetworkService.saveTopicUrlImpression(map)
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
+        }
+    }
+
+    fun showTopicUrl(partnerMentorId:String){
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val topicUrl = AppObjectController.p2pNetworkService.getTopicImage(partnerMentorId)
+                withContext(Dispatchers.Main) {
+                    topicUrlLiveData.value = topicUrl["topic_url"]
+                }
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
         }
     }
 }

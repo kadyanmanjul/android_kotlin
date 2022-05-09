@@ -34,129 +34,12 @@
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_arrow_back_2" />
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/call_status"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/_4sdp"
-            android:gravity="center"
-            android:text="@string/pp_calling"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Semi_Bold"
-            android:textColor="@color/white"
-            android:visibility="visible"
-            app:layout_constraintBottom_toTopOf="@+id/tv_group_name"
-            app:layout_constraintEnd_toEndOf="@+id/tv_group_name"
-            app:layout_constraintStart_toStartOf="@+id/tv_group_name"
-            tools:ignore="MissingPrefix"
-            tools:visibility="visible" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tv_group_name"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/_8sdp"
-            android:ellipsize="end"
-            android:gravity="center"
-            android:lineSpacingMultiplier="1.5"
-            android:maxLines="1"
-            android:text="from group Home hfajgjfag jhfgahjgaf  fjaggafjhgfghag jjafg "
-            android:textColor="@color/white"
-            android:textSize="@dimen/_14sdp"
-            android:textStyle="bold"
-            android:visibility="gone"
-            app:layout_constraintBottom_toTopOf="@+id/caller_name"
-            app:layout_constraintEnd_toStartOf="@+id/guideline5"
-            app:layout_constraintStart_toStartOf="@+id/guideline4"
-            tools:ignore="MissingPrefix"
-            tools:visibility="visible" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/caller_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/_8sdp"
-            android:gravity="center"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Normal"
-            android:textColor="@color/white"
-            android:textSize="@dimen/_20ssp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@+id/call_time"
-            app:layout_constraintEnd_toEndOf="@+id/call_time"
-            app:layout_constraintStart_toStartOf="@+id/call_time"
-            tools:ignore="MissingPrefix"
-            tools:text="Mohit " />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tv_incoming_call_heading"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/_8sdp"
-            android:gravity="center"
-            android:text="@string/pp_calling"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Semi_Bold"
-            android:textColor="@color/white"
-            android:visibility="invisible"
-            app:layout_constraintBottom_toTopOf="@+id/caller_name"
-            app:layout_constraintEnd_toEndOf="@+id/caller_name"
-            app:layout_constraintStart_toStartOf="@+id/caller_name"
-            tools:ignore="MissingPrefix"
-            tools:visibility="gone" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tv_incoming_call_sub_heading"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/_8sdp"
-            android:gravity="center"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Normal"
-            android:textColor="@color/white"
-            android:textSize="@dimen/_20ssp"
-            android:textStyle="bold"
-            android:visibility="invisible"
-            app:layout_constraintBottom_toTopOf="@+id/call_time"
-            app:layout_constraintEnd_toEndOf="@+id/call_time"
-            app:layout_constraintStart_toStartOf="@+id/call_time"
-            tools:ignore="MissingPrefix"
-            tools:text="Mohit " />
-
-        <Chronometer
-            android:id="@+id/call_time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/_24sdp"
-            android:gravity="center"
-            android:text=""
-            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
-            android:textColor="@color/white"
-            android:visibility="invisible"
-            app:layout_constraintBottom_toTopOf="@+id/c_image"
-            app:layout_constraintEnd_toEndOf="@+id/c_image"
-            app:layout_constraintStart_toStartOf="@+id/c_image"
-            tools:ignore="MissingPrefix"
-            tools:visibility="invisible" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/connection_lost"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/_24sdp"
-            android:gravity="center"
-            android:text=""
-            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
-            android:textColor="@color/white"
-            android:visibility="invisible"
-            app:layout_constraintBottom_toTopOf="@+id/c_image"
-            app:layout_constraintEnd_toEndOf="@+id/c_image"
-            app:layout_constraintStart_toStartOf="@+id/c_image"
-            tools:ignore="MissingPrefix"
-            tools:visibility="visible" />
-
         <RelativeLayout
             android:id="@+id/incoming_timer_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_25sdp"
             android:visibility="invisible"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -168,7 +51,7 @@
                 android:layout_height="wrap_content"
                 android:progress="75"
                 app:indicatorColor="#0D5CB8"
-                app:indicatorSize="@dimen/_108sdp"
+                app:indicatorSize="@dimen/_90sdp"
                 app:trackColor="#ffffff"
                 app:trackThickness="10dp" />
 
@@ -184,51 +67,136 @@
                 android:textSize="42dp" />
         </RelativeLayout>
 
-
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/c_image"
-            android:layout_width="@dimen/_108sdp"
-            android:layout_height="@dimen/_108sdp"
+            android:layout_width="@dimen/_90sdp"
+            android:layout_height="@dimen/_90sdp"
+            android:layout_marginTop="@dimen/_25sdp"
             android:background="@drawable/circle"
             android:backgroundTint="@color/colorPrimaryDark"
             android:src="@drawable/ic_call_placeholder"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.43" />
+            app:layout_constraintVertical_bias="0.43"
+            />
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/topic_header"
-            android:layout_width="0dp"
+            android:id="@+id/caller_name"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/_16sdp"
-            android:layout_marginTop="@dimen/_28sdp"
             android:gravity="center"
-            android:text="@string/topic"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Bold"
+            android:layout_marginTop="@dimen/_6sdp"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Normal"
             android:textColor="@color/white"
+            android:textSize="@dimen/_20ssp"
             android:textStyle="bold"
-            android:visibility="invisible"
+            app:layout_constraintTop_toBottomOf="@+id/c_image"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/c_image" />
+            tools:ignore="MissingPrefix"
+            tools:text="Mohit " />
 
+        <Chronometer
+            android:id="@+id/call_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginTop="@dimen/_4sdp"
+            android:text=""
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+            android:textColor="@color/white"
+            android:visibility="invisible"
+            app:layout_constraintTop_toBottomOf="@+id/caller_name"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:ignore="MissingPrefix"
+            tools:visibility="invisible" />
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/topic_name"
-            android:layout_width="0dp"
+            android:id="@+id/connection_lost"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/_16sdp"
-            android:layout_marginTop="@dimen/_2sdp"
             android:gravity="center"
+            android:text=""
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
             android:textColor="@color/white"
+            android:visibility="invisible"
+            app:layout_constraintTop_toBottomOf="@+id/caller_name"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/topic_header"
             tools:ignore="MissingPrefix"
-            tools:text="Talk about what is Futur" />
+            tools:visibility="invisible" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/discussion_topic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginVertical="@dimen/_6sdp"
+            android:text="@string/discussion_topic"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
+            android:textColor="@color/white"
+            android:visibility="invisible"
+            app:layout_constraintTop_toBottomOf="@+id/connection_lost"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:ignore="MissingPrefix"
+            tools:visibility="invisible" />
+
+        <RelativeLayout
+            android:id="@+id/image_layout"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="invisible"
+            android:layout_marginHorizontal="@dimen/_25sdp"
+            android:layout_marginVertical="@dimen/_8sdp"
+            app:layout_constraintBottom_toTopOf="@+id/btn_action"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/discussion_topic">
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:cardCornerRadius="@dimen/_4sdp">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:id="@+id/article_image"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="fitXY"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/discussion_topic" />
+
+
+                    <androidx.appcompat.widget.AppCompatImageButton
+                        android:id="@+id/btn_move_forward_arrow"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/_5sdp"
+                        android:layout_marginBottom="@dimen/_5sdp"
+                        android:background="@drawable/circle2"
+                        android:backgroundTint="@color/blue33"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:padding="@dimen/_8sdp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:srcCompat="@drawable/ic_move_forward_arrow" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+        </RelativeLayout>
 
         <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/btn_action"

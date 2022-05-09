@@ -44,10 +44,6 @@ import com.joshtalks.joshskills.core.IMPRESSION_ALREADY_NEWUSER
 import com.joshtalks.joshskills.core.IMPRESSION_TC_NOT_INSTALLED_JI_HAAN
 import com.joshtalks.joshskills.core.IMPRESSION_TC_NOT_INSTALLED
 import com.joshtalks.joshskills.core.IMPRESSION_TC_USER_ANOTHER
-import com.joshtalks.joshskills.core.abTest.ABTestActivity
-import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
-import com.joshtalks.joshskills.core.abTest.CampaignKeys
-import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityFreeTrialOnBoardBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor

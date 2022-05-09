@@ -2,7 +2,6 @@ package com.joshtalks.joshskills.core.custom_ui;
 
 import android.animation.Animator;
 import android.animation.ValueAnimator;
-import android.animation.ValueAnimator.AnimatorUpdateListener;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
@@ -15,7 +14,6 @@ import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
-import android.view.ScaleGestureDetector.OnScaleGestureListener;
 import android.widget.ImageView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageView;
@@ -28,12 +26,11 @@ import com.joshtalks.joshskills.R;
  * automatic resetting, and allows for exterior bounds restriction to keep the image within
  * visible window.
  */
-public class ZoomageView extends AppCompatImageView implements OnScaleGestureListener {
+public class ZoomageView extends AppCompatImageView implements ScaleGestureDetector.OnScaleGestureListener {
 
     private static final float MIN_SCALE = 0.6f;
     private static final float MAX_SCALE = 8f;
     private final int RESET_DURATION = 200;
-    private final RectF bounds = new RectF();
     private ScaleType startScaleType;
     // These matrices will be used to move and zoom image
     private Matrix matrix = new Matrix();
@@ -45,6 +42,7 @@ public class ZoomageView extends AppCompatImageView implements OnScaleGestureLis
     //the adjusted scale bounds that account for an image's starting scale values
     private float calculatedMinScale = MIN_SCALE;
     private float calculatedMaxScale = MAX_SCALE;
+    private final RectF bounds = new RectF();
     private boolean translatable;
     private boolean zoomable;
     private boolean doubleTapToZoom;
@@ -65,9 +63,11 @@ public class ZoomageView extends AppCompatImageView implements OnScaleGestureLis
     private ScaleGestureDetector scaleDetector;
     private GestureDetectorInterface gestureDetectorInterface;
 
+    private ValueAnimator resetAnimator;
     private GestureDetector gestureDetector;
     private boolean doubleTapDetected = false;
     private boolean singleTapDetected = false;
+
     private final GestureDetector.OnGestureListener gestureListener = new GestureDetector.SimpleOnGestureListener() {
         @Override
         public boolean onSingleTapUp(MotionEvent e) {
@@ -116,9 +116,21 @@ public class ZoomageView extends AppCompatImageView implements OnScaleGestureLis
 
     };
 
+
+
     public ZoomageView(Context context) {
         super(context);
         init(context, null);
+    }
+
+    public ZoomageView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        init(context, attrs);
+    }
+
+    public ZoomageView(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+        init(context, attrs);
     }
 
     private void init(Context context, AttributeSet attrs) {
@@ -165,16 +177,6 @@ public class ZoomageView extends AppCompatImageView implements OnScaleGestureLis
         if (doubleTapToZoomScaleFactor < minScale) {
             doubleTapToZoomScaleFactor = minScale;
         }
-    }
-
-    public ZoomageView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init(context, attrs);
-    }
-
-    public ZoomageView(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-        init(context, attrs);
     }
 
     /**
@@ -360,6 +362,18 @@ public class ZoomageView extends AppCompatImageView implements OnScaleGestureLis
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setScaleType(@Nullable ScaleType scaleType) {
+        if (scaleType != null) {
+            super.setScaleType(scaleType);
+            startScaleType = scaleType;
+            startValues = null;
+        }
+    }
+
+    /**
      * Set enabled state of the view. Note that this will reset the image's
      * {@link android.widget.ImageView.ScaleType} to its pre-zoom state.
      *
@@ -381,99 +395,6 @@ public class ZoomageView extends AppCompatImageView implements OnScaleGestureLis
     public void setImageResource(int resId) {
         super.setImageResource(resId);
         setScaleType(startScaleType);
-    }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-
-        if (!isClickable() && isEnabled() && (zoomable || translatable)) {
-            if (getScaleType() != ScaleType.MATRIX) {
-                super.setScaleType(ScaleType.MATRIX);
-            }
-
-            if (startValues == null) {
-                setStartValues();
-            }
-
-            currentPointerCount = event.getPointerCount();
-
-            //get the current state of the image matrix, its values, and the bounds of the drawn bitmap
-            matrix.set(getImageMatrix());
-            matrix.getValues(matrixValues);
-            updateBounds(matrixValues);
-
-            scaleDetector.onTouchEvent(event);
-            gestureDetector.onTouchEvent(event);
-
-            if (doubleTapToZoom && doubleTapDetected) {
-                doubleTapDetected = false;
-                singleTapDetected = false;
-                if (matrixValues[Matrix.MSCALE_X] != startValues[Matrix.MSCALE_X]) {
-                    reset();
-                } else {
-                    Matrix zoomMatrix = new Matrix(matrix);
-                    zoomMatrix.postScale(doubleTapToZoomScaleFactor, doubleTapToZoomScaleFactor, scaleDetector.getFocusX(), scaleDetector.getFocusY());
-                    animateScaleAndTranslationToMatrix(zoomMatrix, RESET_DURATION);
-                }
-                return true;
-            } else if (!singleTapDetected) {
-                /* if the event is a down touch, or if the number of touch points changed,
-                 * we should reset our start point, as event origins have likely shifted to a
-                 * different part of the screen*/
-                if (event.getActionMasked() == MotionEvent.ACTION_DOWN ||
-                        currentPointerCount != previousPointerCount) {
-                    last.set(scaleDetector.getFocusX(), scaleDetector.getFocusY());
-                } else if (event.getActionMasked() == MotionEvent.ACTION_MOVE) {
-
-                    final float focusx = scaleDetector.getFocusX();
-                    final float focusy = scaleDetector.getFocusY();
-
-                    if (translatable) {
-                        //calculate the distance for translation
-                        float xdistance = getXDistance(focusx, last.x);
-                        float ydistance = getYDistance(focusy, last.y);
-                        matrix.postTranslate(xdistance, ydistance);
-                    }
-
-                    if (zoomable) {
-                        matrix.postScale(scaleBy, scaleBy, focusx, focusy);
-                        currentScaleFactor = matrixValues[Matrix.MSCALE_X] / startValues[Matrix.MSCALE_X];
-                    }
-
-                    setImageMatrix(matrix);
-
-                    last.set(focusx, focusy);
-                }
-
-                if (event.getActionMasked() == MotionEvent.ACTION_UP) {
-                    scaleBy = 1f;
-                    resetImage();
-                }
-            }
-
-            getParent().requestDisallowInterceptTouchEvent((translatable && currentPointerCount > 0)
-                    || (zoomable && currentPointerCount > 1));
-
-            //this tracks whether they have changed the number of fingers down
-            previousPointerCount = currentPointerCount;
-
-
-            return true;
-        }
-
-        return super.onTouchEvent(event);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setScaleType(@Nullable ScaleType scaleType) {
-        if (scaleType != null) {
-            super.setScaleType(scaleType);
-            startScaleType = scaleType;
-            startValues = null;
-        }
     }
 
     /**
@@ -550,6 +471,107 @@ public class ZoomageView extends AppCompatImageView implements OnScaleGestureLis
         startMatrix.getValues(startValues);
         calculatedMinScale = minScale * startValues[Matrix.MSCALE_X];
         calculatedMaxScale = maxScale * startValues[Matrix.MSCALE_X];
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+
+        if (!isClickable() && isEnabled() && (zoomable || translatable)) {
+            if (getScaleType() != ScaleType.MATRIX) {
+                super.setScaleType(ScaleType.MATRIX);
+            }
+
+            if (startValues == null) {
+                setStartValues();
+            }
+
+            currentPointerCount = event.getPointerCount();
+
+            //get the current state of the image matrix, its values, and the bounds of the drawn bitmap
+            matrix.set(getImageMatrix());
+            matrix.getValues(matrixValues);
+            updateBounds(matrixValues);
+
+            scaleDetector.onTouchEvent(event);
+            gestureDetector.onTouchEvent(event);
+
+            if (doubleTapToZoom && doubleTapDetected) {
+                doubleTapDetected = false;
+                singleTapDetected = false;
+                if (matrixValues[Matrix.MSCALE_X] != startValues[Matrix.MSCALE_X]) {
+                    reset();
+                } else {
+                    Matrix zoomMatrix = new Matrix(matrix);
+                    zoomMatrix.postScale(doubleTapToZoomScaleFactor, doubleTapToZoomScaleFactor, scaleDetector.getFocusX(), scaleDetector.getFocusY());
+                    animateScaleAndTranslationToMatrix(zoomMatrix, RESET_DURATION);
+                }
+                return true;
+            } else if (!singleTapDetected) {
+                /* if the event is a down touch, or if the number of touch points changed,
+                 * we should reset our start point, as event origins have likely shifted to a
+                 * different part of the screen*/
+                if (event.getActionMasked() == MotionEvent.ACTION_DOWN ||
+                        currentPointerCount != previousPointerCount) {
+                    last.set(scaleDetector.getFocusX(), scaleDetector.getFocusY());
+                } else if (event.getActionMasked() == MotionEvent.ACTION_MOVE) {
+
+                    final float focusx = scaleDetector.getFocusX();
+                    final float focusy = scaleDetector.getFocusY();
+
+                    if (allowTranslate(event)) {
+                        //calculate the distance for translation
+                        float xdistance = getXDistance(focusx, last.x);
+                        float ydistance = getYDistance(focusy, last.y);
+                        matrix.postTranslate(xdistance, ydistance);
+                    }
+
+                    if (allowZoom(event)) {
+                        matrix.postScale(scaleBy, scaleBy, focusx, focusy);
+                        currentScaleFactor = matrixValues[Matrix.MSCALE_X] / startValues[Matrix.MSCALE_X];
+                    }
+
+                    setImageMatrix(matrix);
+
+                    last.set(focusx, focusy);
+                }
+
+                if (event.getActionMasked() == MotionEvent.ACTION_UP ||
+                        event.getActionMasked() == MotionEvent.ACTION_CANCEL) {
+                    scaleBy = 1f;
+                    resetImage();
+                }
+            }
+
+            getParent().requestDisallowInterceptTouchEvent(disallowParentTouch(event));
+
+            //this tracks whether they have changed the number of fingers down
+            previousPointerCount = currentPointerCount;
+
+
+            return true;
+        }
+
+        return super.onTouchEvent(event);
+    }
+
+    protected boolean disallowParentTouch(MotionEvent event) {
+        if ((currentPointerCount > 1 || currentScaleFactor > 1.0f || isAnimating())) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    protected boolean allowTranslate(MotionEvent event) {
+        return translatable && currentScaleFactor > 1.0f;
+    }
+
+    protected boolean allowZoom(MotionEvent event) {
+        return zoomable;
+    }
+
+    private boolean isAnimating() {
+        return resetAnimator != null && resetAnimator.isRunning();
     }
 
     /**
@@ -639,8 +661,8 @@ public class ZoomageView extends AppCompatImageView implements OnScaleGestureLis
         final float xtdiff = targetValues[Matrix.MTRANS_X] - matrixValues[Matrix.MTRANS_X];
         final float ytdiff = targetValues[Matrix.MTRANS_Y] - matrixValues[Matrix.MTRANS_Y];
 
-        ValueAnimator anim = ValueAnimator.ofFloat(0, 1f);
-        anim.addUpdateListener(new AnimatorUpdateListener() {
+        resetAnimator = ValueAnimator.ofFloat(0, 1f);
+        resetAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
 
             final Matrix activeMatrix = new Matrix(getImageMatrix());
             final float[] values = new float[9];
@@ -659,15 +681,15 @@ public class ZoomageView extends AppCompatImageView implements OnScaleGestureLis
             }
         });
 
-        anim.addListener(new SimpleAnimatorListener() {
+        resetAnimator.addListener(new SimpleAnimatorListener() {
             @Override
             public void onAnimationEnd(Animator animation) {
                 setImageMatrix(targetMatrix);
             }
         });
 
-        anim.setDuration(duration);
-        anim.start();
+        resetAnimator.setDuration(duration);
+        resetAnimator.start();
     }
 
     private void animateTranslationX() {
@@ -716,7 +738,7 @@ public class ZoomageView extends AppCompatImageView implements OnScaleGestureLis
 
     private void animateMatrixIndex(final int index, final float to) {
         ValueAnimator animator = ValueAnimator.ofFloat(matrixValues[index], to);
-        animator.addUpdateListener(new AnimatorUpdateListener() {
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
 
             final float[] values = new float[9];
             Matrix current = new Matrix();
