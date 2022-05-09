@@ -48,6 +48,10 @@ class JoshApplication :
         public var isAppVisible = false
     }
 
+    fun isAppVisible(): Boolean {
+        return isAppVisible
+    }
+
     override fun attachBaseContext(base: Context) {
         super.attachBaseContext(base)
         base.let { ViewPumpContextWrapper.wrap(it) }
