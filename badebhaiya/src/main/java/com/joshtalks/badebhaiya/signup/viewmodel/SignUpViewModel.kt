@@ -2,6 +2,7 @@ package com.joshtalks.badebhaiya.signup.viewmodel
 
 import android.app.Application
 import android.util.Log
+import androidx.databinding.ObservableBoolean
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -40,14 +41,18 @@ class SignUpViewModel(application: Application): AndroidViewModel(application) {
     val profilePicUploadApiCallStatus = MutableLiveData<ApiCallStatus>()
     var firstName = EMPTY
     var lastName = EMPTY
+    var valid: ObservableBoolean = ObservableBoolean()
 
     fun sendPhoneNumberForOTP(phoneNumber: String, countryCode: String) {
         viewModelScope.launch {
             try {
                 mobileNumber = phoneNumber
                 val reqObj = mapOf("country_code" to countryCode, "mobile" to phoneNumber)
-                repository.sendPhoneNumberForOTP(reqObj)
-                signUpStatus.value = SignUpStepStatus.RequestForOTP
+                 var resp=repository.sendPhoneNumberForOTP(reqObj)
+               valid.set(resp.code()==500)
+                //showToast(resp.toString())
+
+
             } catch (ex: Exception) {
 
             }

@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintSet.INVISIBLE
 import androidx.core.widget.addTextChangedListener
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -59,6 +60,7 @@ class SearchFragment : Fragment(), Call {
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_search, container, false)
 
+        binding.noresult.visibility= View.INVISIBLE
         binding.handler = this
         activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -88,12 +90,14 @@ class SearchFragment : Fragment(), Call {
         binding.searchBar.addTextChangedListener{
             //var job: Job? = null
 
+            binding.noresult.visibility= View.INVISIBLE
             if(it.toString()=="")
             {
                 binding.defaultText.visibility= VISIBLE
             }
             else {
                 binding.defaultText.visibility = GONE
+                binding.noresult.visibility= VISIBLE
                 //binding.recyclerView.visibility= VISIBLE
                 job?.cancel()
                 //showToast("textChange")
@@ -102,35 +106,48 @@ class SearchFragment : Fragment(), Call {
                     if (it.toString() != null)
                         viewModel.searchUser(it.toString())
                 }
+                addObserver()
             }
 
         }
-        addObserver()
+        //addObserver()
     }
-    fun openProfile(profile: String)
+
+    fun displayNull()
     {
-        //FeedActivity().viewProfile(profile)
-        val bundle = Bundle()
-        bundle.putString("user", profile)
-        val profileTransaction=ProfileActivity()
-        var transaction: FragmentTransaction=requireFragmentManager().beginTransaction()
-        transaction.replace(R.id.fragmentContainer,profileTransaction)
-        profileTransaction.arguments = bundle
-        transaction.addToBackStack(null)
-        transaction.commit()
+        //if(binding.noresult.visibility== INVISIBLE)
+        binding.defaultText.visibility= View.INVISIBLE
+        binding.noresult.visibility= VISIBLE
     }
+//    fun openProfile(profile: String)
+//    {
+//        //FeedActivity().viewProfile(profile)
+//        val bundle = Bundle()
+//        bundle.putString("user", profile)
+//        val profileTransaction=ProfileActivity()
+//        var transaction: FragmentTransaction=requireFragmentManager().beginTransaction()
+//        transaction.replace(R.id.fragmentContainer,profileTransaction)
+//        profileTransaction.arguments = bundle
+//        transaction.addToBackStack(null)
+//        transaction.commit()
+//    }
     fun addObserver() {
         viewModel.searchResponse.observe(viewLifecycleOwner){
+            //display()
             binding.recyclerView.layoutManager=LinearLayoutManager(requireContext())
             if(it!=null)
             binding.recyclerView.adapter=SearchAdapter(it.users,this)
+            else
+             displayNull()
+
+
         }
     }
-    fun keyboard()
-    {
-        val `in` = (requireActivity() as AppCompatActivity).getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        `in`.hideSoftInputFromWindow(find.getWindowToken(), 0)
-    }
+//    fun keyboard()
+//    {
+//        val `in` = (requireActivity() as AppCompatActivity).getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+//        `in`.hideSoftInputFromWindow(find.getWindowToken(), 0)
+//    }
     companion object {
         /**
          * Use this factory method to create a new instance of

@@ -21,8 +21,8 @@ data class DeviceDetailsResponse(
     val device: String,
     @SerializedName("device_id")
     val deviceId: String,
-    @SerializedName("gaid_id")
-    val gaidId: String,
+//    @SerializedName("gaid_id")
+//    val gaidId: String,
     @SerializedName("id")
     val id: Int,
     @SerializedName("manufacture")

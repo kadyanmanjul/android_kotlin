@@ -14,6 +14,7 @@ import com.github.razir.progressbutton.DrawableButton
 import com.github.razir.progressbutton.showProgress
 import com.google.android.gms.auth.api.phone.SmsRetriever
 import com.joshtalks.badebhaiya.R
+import com.joshtalks.badebhaiya.core.SignUpStepStatus
 import com.joshtalks.badebhaiya.core.hideKeyboard
 import com.joshtalks.badebhaiya.core.isValidFullNumber
 import com.joshtalks.badebhaiya.core.showToast
@@ -32,6 +33,7 @@ class SignUpEnterPhoneFragment: Fragment() {
     companion object {
         fun newInstance() = SignUpEnterPhoneFragment()
     }
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -71,10 +73,20 @@ class SignUpEnterPhoneFragment: Fragment() {
             showToast(getString(R.string.please_enter_valid_number))
             return
         }
-        startProgress()
+
         hideKeyboard(requireActivity(), binding.etPhone)
         viewModel.sendPhoneNumberForOTP(binding.etPhone.text.toString(), "+91")
-        startSmsListener()
+        var check=viewModel.valid.get()
+
+        if(check) {
+            startProgress()
+            viewModel.signUpStatus.value = SignUpStepStatus.RequestForOTP
+            startSmsListener()
+        }
+        else
+        {
+            showToast("Invalid Number")
+        }
     }
 
         private fun startSmsListener(){

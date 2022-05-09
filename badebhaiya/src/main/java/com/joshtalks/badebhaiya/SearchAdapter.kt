@@ -3,6 +3,8 @@ package com.joshtalks.badebhaiya
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.Message
+import android.util.Log
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.appcompat.content.res.AppCompatResources
@@ -92,6 +94,12 @@ class SearchAdapter(private val searchResult: List<Users>,var call: Call): ListA
 
     @SuppressLint("ResourceAsColor")
     override fun onBindViewHolder(holder: SearchViewHolder, position: Int) {
+//        if(searchResult.isNullOrEmpty())
+//        {
+//            SearchFragment().displayNull()
+//            //holder.noresult.visibility= View.VISIBLE
+//        }
+        Log.i("YASHENDRA", "onBindViewHolder: ${searchResult}")
         searchResult.let {
                 searchResult->
             holder.item.tvProfileBio.text = searchResult[position].bio
@@ -110,6 +118,8 @@ class SearchAdapter(private val searchResult: List<Users>,var call: Call): ListA
             if (searchResult[position].is_speaker_followed) {
                 holder.item.user.apply {
                     holder.item.user.btnFollow.text = "Following"
+                    holder.item.user.btnFollow.textSize=12F
+                    //holder.item.user.btnFollow.setTextAppearance(R.style.BB_Typography_Nunito_Semi_Bold)
                     btnFollow.setTextColor(resources.getColor(R.color.white))
                     btnFollow.background = AppCompatResources.getDrawable(
                         holder.item.user.btnFollow.context,
@@ -119,6 +129,9 @@ class SearchAdapter(private val searchResult: List<Users>,var call: Call): ListA
             } else
                 holder.item.user.apply {
                     holder.item.user.btnFollow.text = "Follow"
+                    holder.item.user.btnFollow.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14F)
+                    //holder.item.user.btnFollow.setTextAppearance(R.style.BB_Typography_Nunito_Bold)
+                    //holder.item.user.btnFollow.setTextAppearance(R.style.BB_Typography_Nunito_Sans_Bold)
                     btnFollow.setTextColor(resources.getColor(R.color.follow_button_stroke))
                     btnFollow.background = AppCompatResources.getDrawable(
                         holder.item.user.btnFollow.context,
@@ -160,7 +173,9 @@ class SearchAdapter(private val searchResult: List<Users>,var call: Call): ListA
                 if (searchResult[position].is_speaker_followed.not()==true) {
                     holder.item.user.apply {
                         holder.item.user.btnFollow.setText("Following")
+                        holder.item.user.btnFollow.textSize=12F
                         holder.item.user.btnFollow.setTextColor(resources.getColor(R.color.white))
+                        //holder.item.user.btnFollow.setTextAppearance(R.style.BB_Typography_Nunito_Semi_Bold)
                         holder.item.user.btnFollow.background = AppCompatResources.getDrawable(
                             holder.item.user.btnFollow.context,
                             R.drawable.following_button_background
@@ -170,6 +185,9 @@ class SearchAdapter(private val searchResult: List<Users>,var call: Call): ListA
                 else {
                     holder.item.user.apply {
                         holder.item.user.btnFollow.setText("Follow")
+                        //holder.item.user.btnFollow.textSize=11F
+                        holder.item.user.btnFollow.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14F)
+                        //holder.item.user.btnFollow.setTextAppearance(R.style.BB_Typography_Nunito_Bold)
                         holder.item.user.btnFollow.setTextColor(resources.getColor(R.color.follow_button_stroke))
                         //holder.item.user.btnFollow.setBackgroundDrawable(R.drawable.follow_button_background)
                         holder.item.user.btnFollow.background = AppCompatResources.getDrawable(
