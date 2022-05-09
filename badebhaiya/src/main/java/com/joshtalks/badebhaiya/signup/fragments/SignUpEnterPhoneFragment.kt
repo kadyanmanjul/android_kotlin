@@ -79,13 +79,14 @@ class SignUpEnterPhoneFragment: Fragment() {
         var check=viewModel.valid.get()
 
         if(check) {
-            startProgress()
-            viewModel.signUpStatus.value = SignUpStepStatus.RequestForOTP
-            startSmsListener()
+            showToast("Invalid Number")
         }
         else
         {
-            showToast("Invalid Number")
+
+            startProgress()
+            viewModel.signUpStatus.value = SignUpStepStatus.RequestForOTP
+            startSmsListener()
         }
     }
 

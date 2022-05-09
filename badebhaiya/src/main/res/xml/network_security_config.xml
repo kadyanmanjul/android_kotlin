@@ -4,5 +4,6 @@
     <domain-config cleartextTrafficPermitted="true">
         <domain includeSubdomains="true">bbapp-prod.joshtalks.org</domain>
         <domain includeSubdomains="true">bbapp-stg.joshtalks.org</domain>
+        <domain includeSubdomains="true">ps.pndsn.com</domain>
     </domain-config>
 </network-security-config>
