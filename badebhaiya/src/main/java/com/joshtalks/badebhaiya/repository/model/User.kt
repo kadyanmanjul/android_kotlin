@@ -168,6 +168,8 @@ data class User(
         return AppObjectController.gsonMapper.toJson(this)
     }
 
+    fun isLoggedIn(): Boolean = userId.isNotBlank()
+
     fun updateFromResponse(user: User) {
         this.firstName = user.firstName
         this.lastName = user.lastName

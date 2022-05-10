@@ -120,21 +120,23 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
 //        var intent=Intent()
 //        var bundle=intent.extras
         var user=intent.getStringExtra("userId")
+
+        this.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_feed)
+        binding.lifecycleOwner = this
+        binding.handler = this
+        binding.viewModel = viewModel
         if(user!=null)
         {
             viewProfile(user, true)
         }
-        this.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_feed)
-        checkAndOpenLiveRoom()
-        viewModel.getRooms()
-        viewModel.setIsBadeBhaiyaSpeaker()
-        binding.lifecycleOwner = this
-        binding.handler = this
-        binding.viewModel = viewModel
-
-        addObserver()
-        initView()
+        if (User.getInstance().isLoggedIn()) {
+            checkAndOpenLiveRoom()
+            viewModel.getRooms()
+            viewModel.setIsBadeBhaiyaSpeaker()
+            addObserver()
+            initView()
+        }
         //setOnClickListener()
     }
     fun userid(): String {

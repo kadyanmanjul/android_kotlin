@@ -185,6 +185,8 @@ class ProfileActivity: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
     }
 
     fun updateFollowStatus() {
+        checkAndRedirectToSignUp()
+
         viewModel.updateFollowStatus(userId ?: (User.getInstance().userId))
         if(viewModel.speakerFollowed.value == true)
             viewModel.userProfileData.value?.let {
@@ -205,6 +207,14 @@ class ProfileActivity: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
                 //binding.tvFollowers.setText("${it.followersCount+1} followers")
             }
         viewModel.getProfileForUser(userId ?: (User.getInstance().userId), isFromDeeplink)
+    }
+
+    private fun checkAndRedirectToSignUp() {
+        if (!User.getInstance().isLoggedIn()){
+            showToast("LogIn karo")
+
+            // TODO: Start on boarding flow.
+        }
     }
 
     private fun speakerFollowedUIChanges() {

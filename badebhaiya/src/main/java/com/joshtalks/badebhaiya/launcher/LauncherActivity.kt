@@ -68,20 +68,26 @@ class LauncherActivity : AppCompatActivity() {
                 )
                 referringParams?.let {
                     Log.d("YASHENDRA", "branch json data => ${it.has("user_id")}")
+
+                    // TODO: Uncomment it.
+//                    startActivityForState(
+//                        if (it.has("user_id"))
+//                            it.getString("user_id")
+//                        else null
+//                    )
+
                     startActivityForState(
-                        if (it.has("user_id"))
-                            it.getString("user_id")
-                        else null
+                        "cb91868f-2e8c-4c09-8003-2bd480534d7e"
                     )
                 }
             } else {
                 Log.e("BRANCH SDK", error.message)
-                startActivityForState()
+                startActivityForState("cb91868f-2e8c-4c09-8003-2bd480534d7e")
             }
         }.withData(this.intent.data).init()
     }
 
-    private fun startActivityForState(viewUserId: String? = null) {
+    private fun startActivityForState(viewUserId: String? = "cb91868f-2e8c-4c09-8003-2bd480534d7e") {
         val intent: Intent = when {
             User.getInstance().userId.isNotBlank() -> {
                 if (User.getInstance().firstName.isNullOrEmpty()) {
@@ -100,11 +106,23 @@ class LauncherActivity : AppCompatActivity() {
                 intent.putExtra("userId",viewUserId)
                 intent
             }
-            else -> SignUpActivity.getIntent(
-                this@LauncherActivity,
+            else -> {
+                // User is not logged in.
+
+                if (viewUserId != null){
+                    // came by deeplink.. redirect to profile
+                    val intent = Intent(this@LauncherActivity, FeedActivity::class.java)
+                    intent.putExtra("userId",viewUserId)
+                    intent
+
+                } else {
+                    SignUpActivity.getIntent(
+                        this@LauncherActivity,
 //                REDIRECT_TO_PROFILE_ACTIVITY,
-                viewUserId
-            )
+                        viewUserId
+                    )
+                }
+            }
         }
         lifecycleScope.launch(Dispatchers.IO) {
             delay(1000)
