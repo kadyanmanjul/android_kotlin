@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.joshtalks.badebhaiya.core.hideKeyboard
 import com.joshtalks.badebhaiya.databinding.LiSearchEventBinding
 import com.joshtalks.badebhaiya.feed.Call
 import com.joshtalks.badebhaiya.feed.model.SearchRoomsResponse
@@ -105,6 +106,7 @@ class SearchAdapter(private val searchResult: List<Users>,var call: Call): ListA
             holder.item.tvProfileBio.text = searchResult[position].bio
             holder.item.userName.text = searchResult[position].full_name
             holder.item.user.setOnClickListener {
+                com.joshtalks.badebhaiya.utils.hideKeyboard(holder.item.user.context)
                 call.itemClick(searchResult[position].user_id)
             }
 

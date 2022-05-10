@@ -71,6 +71,8 @@ import io.agora.rtc.IRtcEngineEventHandler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.fragment_live_room.*
+import kotlinx.android.synthetic.main.li_audience_item.view.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -681,12 +683,13 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
 
     private fun clickHandRaisedButton(isRaised: Boolean, type: String) {
         try {
-            isHandRaised = !isHandRaised
+            isHandRaised = !isRaised
             when (isRaised) {
                 true -> {
                     binding.apply {
                         handRaiseBtn.visibility = View.VISIBLE
                         handUnraiseBtn.visibility = View.GONE
+                        listener__recycler_view.raised_hands.visibility=View.VISIBLE
                     }
                     setNotificationWithoutAction(
                         String.format(
@@ -700,6 +703,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
                     binding.apply {
                         handRaiseBtn.visibility = View.GONE
                         handUnraiseBtn.visibility = View.VISIBLE
+                        listener__recycler_view.raised_hands.visibility=View.GONE
                     }
                 }
             }

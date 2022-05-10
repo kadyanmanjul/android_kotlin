@@ -18,6 +18,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.joshtalks.badebhaiya.core.hideKeyboard
+import com.joshtalks.badebhaiya.core.showToast
 import com.joshtalks.badebhaiya.databinding.FragmentSearchBinding
 import com.joshtalks.badebhaiya.feed.Call
 import com.joshtalks.badebhaiya.feed.FeedActivity
@@ -47,7 +49,6 @@ class SearchFragment : Fragment(), Call {
         ViewModelProvider(requireActivity()).get(FeedViewModel::class.java)
     }
 
-
     lateinit var binding:FragmentSearchBinding
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -60,12 +61,12 @@ class SearchFragment : Fragment(), Call {
         // Inflate the layout for this fragment
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_search, container, false)
 
-        binding.noresult.visibility= View.INVISIBLE
+        binding.noresult.visibility= GONE
         binding.handler = this
         activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                //showToast("Back Pressed")
                 (activity as FeedActivity).swipeRefreshLayout.isEnabled=true
+                hide()
                 activity?.run {
                     supportFragmentManager.beginTransaction().remove(this@SearchFragment)
                         .commitAllowingStateLoss()
@@ -74,6 +75,7 @@ class SearchFragment : Fragment(), Call {
         })
         binding.searchCancel.setOnClickListener{
             (activity as FeedActivity).swipeRefreshLayout.isEnabled=true
+            hide()
             activity?.run {
                 supportFragmentManager.beginTransaction().remove(this@SearchFragment)
                     .commitAllowingStateLoss()
@@ -83,6 +85,11 @@ class SearchFragment : Fragment(), Call {
         return binding.root
     }
 
+    fun hide()
+    {
+        hideKeyboard(requireActivity(), binding.searchBar)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -90,17 +97,16 @@ class SearchFragment : Fragment(), Call {
         binding.searchBar.addTextChangedListener{
             //var job: Job? = null
 
-            binding.noresult.visibility= View.INVISIBLE
+            binding.noresult.visibility= GONE
             if(it.toString()=="")
             {
                 binding.defaultText.visibility= VISIBLE
+                binding.noresult.visibility= GONE
             }
             else {
                 binding.defaultText.visibility = GONE
-                binding.noresult.visibility= VISIBLE
-                //binding.recyclerView.visibility= VISIBLE
+//                binding.noresult.visibility= GONE
                 job?.cancel()
-                //showToast("textChange")
                 job = MainScope().launch {
                     delay(500)
                     if (it.toString() != null)
@@ -112,42 +118,33 @@ class SearchFragment : Fragment(), Call {
         }
         //addObserver()
     }
-
-    fun displayNull()
-    {
-        //if(binding.noresult.visibility== INVISIBLE)
-        binding.defaultText.visibility= View.INVISIBLE
-        binding.noresult.visibility= VISIBLE
-    }
-//    fun openProfile(profile: String)
-//    {
-//        //FeedActivity().viewProfile(profile)
-//        val bundle = Bundle()
-//        bundle.putString("user", profile)
-//        val profileTransaction=ProfileActivity()
-//        var transaction: FragmentTransaction=requireFragmentManager().beginTransaction()
-//        transaction.replace(R.id.fragmentContainer,profileTransaction)
-//        profileTransaction.arguments = bundle
-//        transaction.addToBackStack(null)
-//        transaction.commit()
-//    }
     fun addObserver() {
         viewModel.searchResponse.observe(viewLifecycleOwner){
             //display()
             binding.recyclerView.layoutManager=LinearLayoutManager(requireContext())
-            if(it!=null)
-            binding.recyclerView.adapter=SearchAdapter(it.users,this)
-            else
-             displayNull()
+            if(it?.users!=null ) {
+                binding.recyclerView.adapter = SearchAdapter(it.users, this)
+                if(it?.users.size>0) {
+                    binding.noresult.visibility = GONE
+                    //binding.noresult.visibility== View.INVISIBLE
+
+                }
+                else {
+                    if(binding.searchBar.toString()=="") {
+                        binding.noresult.visibility = GONE
+                        binding.defaultText.visibility= VISIBLE
+                    }
+                    else {
+                        binding.noresult.visibility = VISIBLE
+                    }
+                }
+            }
+
+            //showToast(it.)
 
 
         }
     }
-//    fun keyboard()
-//    {
-//        val `in` = (requireActivity() as AppCompatActivity).getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-//        `in`.hideSoftInputFromWindow(find.getWindowToken(), 0)
-//    }
     companion object {
         /**
          * Use this factory method to create a new instance of
