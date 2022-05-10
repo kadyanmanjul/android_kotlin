@@ -594,9 +594,15 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
     }
 
     private fun initCall() {
+        val getChannelName = mBoundService?.channelName
         try {
             val map: HashMap<String, String?> = HashMap()
-            map["agora_channel_name"] = mBoundService?.channelName
+            if(getChannelName!=null) {
+                map["agora_channel_name"] = getChannelName
+            }
+            else {
+                map["agora_channel_name"] = EMPTY
+            }
             viewModel.checkShowFppDialog(map)
 
         }catch (ex:Exception){

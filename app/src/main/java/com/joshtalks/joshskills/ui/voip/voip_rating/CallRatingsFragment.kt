@@ -20,11 +20,7 @@ import android.widget.TextView
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.IS_FREE_TRIAL
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.setImage
-import com.joshtalks.joshskills.core.showToast
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.databinding.CallRatingDialogBinding
 import com.joshtalks.joshskills.quizgame.util.MyBounceInterpolator
 import kotlinx.coroutines.CoroutineScope
@@ -126,7 +122,9 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
                    group.findViewById<RadioButton>(checkedId).startAnimation(myAnim)
                    block.visibility= GONE
                    submit.visibility= GONE
-                   vm.submitCallRatings(agoraCallId, selectedRating, callerMentorId)
+                   vm.submitCallRatings(agoraCallId, selectedRating, PrefManager.getStringValue(
+                       GET_OPP_USER_CALL_ID
+                   ))
                    dismiss()
                    activity?.finish()
                }
@@ -136,13 +134,13 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
 
            submit.setOnClickListener {
                if(isBlockSelected){
-                   vm.blockUser(callerMentorId)
+                   vm.blockUser(PrefManager.getStringValue(GET_OPP_USER_CALL_ID))
                }
                if (selectedRating >= 0){
                    CoroutineScope(Dispatchers.Main).launch{
                        showToast("Your feedback has been successfully submitted")
                    }
-                   vm.submitCallRatings(agoraCallId, selectedRating, callerMentorId)
+                   vm.submitCallRatings(agoraCallId, selectedRating, PrefManager.getStringValue(GET_OPP_USER_CALL_ID))
                }
 
                dismiss()
