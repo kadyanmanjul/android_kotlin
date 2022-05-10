@@ -13,6 +13,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.voip.WebRtcCallback
 import com.joshtalks.joshskills.ui.voip.WebRtcService
+import com.joshtalks.joshskills.ui.voip.analytics.CurrentCallDetails
 import com.joshtalks.joshskills.ui.voip.voip_rating.CallRatingDialogActivity
 import com.joshtalks.joshskills.ui.voip.voip_rating.VoipCallFeedbackActivity
 import kotlinx.coroutines.Dispatchers
@@ -25,7 +26,6 @@ open class WebRtcMiddlewareActivity : CoreJoshActivity() {
     private var mServiceBound = false
     private var isOnDisconnectedTriggered=false
     private val TAG = "WebRtcMiddlewareActivit"
-
     private var myConnection: ServiceConnection = object : ServiceConnection {
 
         override fun onServiceConnected(name: ComponentName, service: IBinder) {
@@ -81,7 +81,7 @@ open class WebRtcMiddlewareActivity : CoreJoshActivity() {
             lifecycleScope.launchWhenResumed {
                 findViewById<View>(R.id.ongoing_call_container)?.visibility = View.GONE
                 findViewById<View>(R.id.ongoing_call_container)?.setOnClickListener(null)
-                if(mBoundService?.callRatingDialogeFlag == "true"){
+                if(mBoundService?.callRatingDialogeFlag == "true" &&  time>0){
                     if(!isOnDisconnectedTriggered) {
                         isOnDisconnectedTriggered=true
                         val agoraMentorId = mBoundService?.getUserAgoraId()
@@ -92,37 +92,40 @@ open class WebRtcMiddlewareActivity : CoreJoshActivity() {
                                         activity = this@WebRtcMiddlewareActivity,
                                         callerName = it,
                                         callDuration = (time / 60000).toInt(),
-                                        agoraCallId = 1234576,
+                                        agoraCallId = PrefManager.getStringValue(GET_CALL_ID).toInt(),
                                         callerProfileUrl = mBoundService?.getOppositeCallerProfilePic(),
-                                        callerMentorId = it1.toString(),
-                                        agoraMentorId = agoraMentorId.toString())
+                                        callerMentorId = PrefManager.getStringValue(GET_OPP_USER_CALL_ID),
+                                        agoraMentorId = agoraMentorId.toString()
+                                    )
                                 }
                             }
                         }
                     }
-                }else if(!(((time/1000) in 121..1199 && mBoundService?.fppDialogeFlag =="false") || !PrefManager.getBoolValue(IS_COURSE_BOUGHT))){
-                    if (time > 0 && channelName.isNullOrEmpty().not()) {
-                        try {
-                            VoipCallFeedbackActivity.startPtoPFeedbackActivity(
-                                channelName = channelName,
-                                callTime = time,
-                                callerName = mBoundService?.getOppositeCallerName(),
-                                callerImage = mBoundService?.getOppositeCallerProfilePic(),
-                                yourName = if (User.getInstance().firstName.isNullOrBlank()) "New User" else User.getInstance().firstName,
-                                yourAgoraId = mBoundService?.getUserAgoraId(),
-                                dimBg = true,
-                                activity = this@WebRtcMiddlewareActivity,
-                                flags = arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
-                                callerId = mBoundService?.getOppositeCallerId()?: -1,
-                                currentUserId=mBoundService?.getUserAgoraId()?: -1,
-                                fppDialogFlag = mBoundService?.fppDialogeFlag?: EMPTY
-                            )
-                        } catch (ex:Exception){
-                            ex.printStackTrace()
+                }else{
+                     if(!(((time/1000) in 121..1199 && mBoundService?.fppDialogeFlag =="false") || !PrefManager.getBoolValue(IS_COURSE_BOUGHT))){
+                        if (time > 0 && channelName.isNullOrEmpty().not()) {
+                            try {
+                                VoipCallFeedbackActivity.startPtoPFeedbackActivity(
+                                    channelName = channelName,
+                                    callTime = time,
+                                    callerName = mBoundService?.getOppositeCallerName(),
+                                    callerImage = mBoundService?.getOppositeCallerProfilePic(),
+                                    yourName = if (User.getInstance().firstName.isNullOrBlank()) "New User" else User.getInstance().firstName,
+                                    yourAgoraId = mBoundService?.getUserAgoraId(),
+                                    dimBg = true,
+                                    activity = this@WebRtcMiddlewareActivity,
+                                    flags = arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
+                                    callerId = mBoundService?.getOppositeCallerId()?: -1,
+                                    currentUserId=mBoundService?.getUserAgoraId()?: -1,
+                                    fppDialogFlag = mBoundService?.fppDialogeFlag?: EMPTY
+                                )
+                            } catch (ex:Exception){
+                                ex.printStackTrace()
+                            }
+                            this@WebRtcMiddlewareActivity.finish()
                         }
-                        this@WebRtcMiddlewareActivity.finish()
+                        mBoundService?.setOppositeUserInfo(null)
                     }
-                    mBoundService?.setOppositeUserInfo(null)
                 }
             }
         }

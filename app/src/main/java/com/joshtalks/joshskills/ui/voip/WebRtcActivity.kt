@@ -841,6 +841,7 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
                 ex.printStackTrace()
             }
         }
+        PrefManager.put(GET_OPP_USER_CALL_ID,uuid)
     }
 
     private fun setImageInIV(imageUrl: String?) {
@@ -1082,66 +1083,70 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
         if (time <= 0) {
             time = callTime
         }
-        Log.d(TAG, "showCallRatingScreen: ${time/1000}")
-        if(showRatingDialog == "true"){
+
+        if(showRatingDialog == "true" && time>0){
             isOnDisconnectedTriggered = true
             var agoraMentorId = mBoundService?.getUserAgoraId()
-            if (mBoundService?.getOppositeUserInfo().isNullOrEmpty()
-                    .not() && agoraMentorId != null
-            ) {
+            if (mBoundService?.getOppositeUserInfo().isNullOrEmpty().not() && agoraMentorId != null) {
                 mBoundService?.getOppositeCallerName()?.let {
                     mBoundService?.getOppositeUserInfo()?.get("mentor").let { it1 ->
-                        CallRatingDialogActivity.startCallRatingDialogActivity(
-                            activity = this,
-                            callerName = it,
-                            callDuration = time.toInt() / 60000,
-                            agoraCallId = CurrentCallDetails.state().callId.toInt(),
-                            callerProfileUrl = mBoundService?.getOppositeCallerProfilePic(),
-                            callerMentorId = callerId,
-                            agoraMentorId = callieId
-                        )
+                        runOnUiThread{
+                            try{
+                                CallRatingDialogActivity.startCallRatingDialogActivity(
+                                    activity = this,
+                                    callerName = it,
+                                    callDuration = time.toInt() / 60000,
+                                    agoraCallId = PrefManager.getStringValue(GET_CALL_ID).toInt(),
+                                    callerProfileUrl = mBoundService?.getOppositeCallerProfilePic(),
+                                    callerMentorId = callerId,
+                                    agoraMentorId = callieId
+                                )
+                            }catch (ex:Exception){}
+                        }
                     }
                 }
             }
             mBoundService?.setOppositeUserInfo(null)
             this@WebRtcActivity.finishAndRemoveTask()
 
-        } else if(((time/1000) in 121..1199 && fppDialog =="false") || !PrefManager.getBoolValue(IS_COURSE_BOUGHT)){
-            this@WebRtcActivity.finish()
-        }else {
+        }else{
+            if(((time/1000) in 121..1199 && fppDialog =="false") || !PrefManager.getBoolValue(IS_COURSE_BOUGHT)){
+                this@WebRtcActivity.finish()
+            }else {
 
-            if (PrefManager.getBoolValue(IS_CALL_BTN_CLICKED_FROM_NEW_SCREEN)) {
-                viewModel.saveIntroVideoFlowImpression(CALL_DURATION_FROM_NEW_SCREEN, time)
-                PrefManager.put(IS_CALL_BTN_CLICKED_FROM_NEW_SCREEN, false)
-            }
-            val channelName2 =
-                if (channelName.isNullOrBlank().not()) channelName else mBoundService?.channelName
-            if (time > 0 && channelName2.isNullOrEmpty().not()) {
-                runOnUiThread {
-                    try {
-                        binding.placeholderBg.visibility = View.VISIBLE
-                        VoipCallFeedbackActivity.startPtoPFeedbackActivity(
-                            channelName = channelName2,
-                            callTime = time,
-                            callerName = userDetailLiveData.value?.get("name"),
-                            callerImage = userDetailLiveData.value?.get("profile_pic"),
-                            yourName = if (User.getInstance().firstName.isNullOrBlank()) "New User" else User.getInstance().firstName,
-                            yourAgoraId = mBoundService?.getUserAgoraId(),
-                            activity = this,
-                            flags = arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
-                            callerId = callerId.toInt(),
-                            currentUserId = callieId.toInt(),
-                            fppDialogFlag = fppDialog
-                        )
-                    } catch (ex: Exception) {
-                        ex.printStackTrace()
-                    }
-                    this.finish()
+                if (PrefManager.getBoolValue(IS_CALL_BTN_CLICKED_FROM_NEW_SCREEN)) {
+                    viewModel.saveIntroVideoFlowImpression(CALL_DURATION_FROM_NEW_SCREEN, time)
+                    PrefManager.put(IS_CALL_BTN_CLICKED_FROM_NEW_SCREEN, false)
                 }
-                mBoundService?.setOppositeUserInfo(null)
-                return
+                val channelName2 =
+                    if (channelName.isNullOrBlank().not()) channelName else mBoundService?.channelName
+                if (time > 0 && channelName2.isNullOrEmpty().not()) {
+                    runOnUiThread {
+                        try {
+                            binding.placeholderBg.visibility = View.VISIBLE
+                            VoipCallFeedbackActivity.startPtoPFeedbackActivity(
+                                channelName = channelName2,
+                                callTime = time,
+                                callerName = userDetailLiveData.value?.get("name"),
+                                callerImage = userDetailLiveData.value?.get("profile_pic"),
+                                yourName = if (User.getInstance().firstName.isNullOrBlank()) "New User" else User.getInstance().firstName,
+                                yourAgoraId = mBoundService?.getUserAgoraId(),
+                                activity = this,
+                                flags = arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
+                                callerId = callerId.toInt(),
+                                currentUserId = callieId.toInt(),
+                                fppDialogFlag = fppDialog
+                            )
+                        } catch (ex: Exception) {
+                            ex.printStackTrace()
+                        }
+                        this.finish()
+                    }
+                    mBoundService?.setOppositeUserInfo(null)
+                    return
+                }
+                this@WebRtcActivity.finishAndRemoveTask()
             }
-            this@WebRtcActivity.finishAndRemoveTask()
         }
     }
 
@@ -1162,7 +1167,10 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
                 .subscribe(
                     {
                         onStopCall()
-                        checkAndShowRating(mBoundService?.getCallId(), mBoundService?.channelName)
+                            checkAndShowRating(
+                                mBoundService?.getCallId(),
+                                mBoundService?.channelName
+                            )
                     },
                     {
                         it.printStackTrace()

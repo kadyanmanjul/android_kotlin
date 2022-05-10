@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.GET_CALL_ID
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.voip.AgoraTokenRequest
@@ -53,6 +54,8 @@ class VoipCallingViewModel(application: Application) : AndroidViewModel(applicat
                                 callieUid = it["uid"] ?: "",
                                 callerUid = ""
                         )
+
+                        PrefManager.put(GET_CALL_ID,it["agora_call_id"] ?: "")
 
                         try {
                             AppObjectController.p2pNetworkService.sendAgoraTokenConformation(mapOf("agora_call_id" to it["agora_call_id"]))

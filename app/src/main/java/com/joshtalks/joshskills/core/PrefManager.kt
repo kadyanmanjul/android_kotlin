@@ -138,7 +138,8 @@ const val SPEAKING_SCREEN_SEEN_GOAL_POSTED = "speaking_screen_seen_goal_posted"
 const val TWENTY_MIN_CALL_ATTEMPTED_GOAL_POSTED = "twenty_min_call_attempted_goal_posted"
 const val IS_SPEAKING_SCREEN_CLICKED = "is_speaking_screen_clicked"
 const val CALL_BTN_CLICKED = "call_btn_clicked"
-
+const val GET_CALL_ID = "get_call_id"
+const val GET_OPP_USER_CALL_ID = "get_opp_user_call_id"
 
 object PrefManager {
 
