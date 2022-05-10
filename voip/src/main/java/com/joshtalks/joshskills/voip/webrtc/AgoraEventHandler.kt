@@ -1,8 +1,11 @@
 package com.joshtalks.joshskills.voip.webrtc
 
 import android.util.Log
+import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.voipLog
+import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
+import com.joshtalks.joshskills.voip.voipanalytics.EventName
 import io.agora.rtc.Constants
 import io.agora.rtc.IRtcEngineEventHandler
 import kotlinx.coroutines.CancellationException
@@ -51,6 +54,11 @@ internal class AgoraEventHandler(val scope: CoroutineScope) : IRtcEngineEventHan
     override fun onRemoteAudioStateChanged(uid: Int, state: Int, reason: Int, elapsed: Int) {
         if(state == REMOTE_AUDIO_STATE_STARTING) {
             // LISTENING Event
+                CallAnalytics.addAnalytics(
+                    EventName.SPEAKING,
+                    agoraMentorId = PrefManager.getLocalUserAgoraId().toString(),
+                    agoraCallId = PrefManager.getAgraCallId().toString()
+                )
             Log.d(TAG, "SPEAKER STARTED")
         }
     }
