@@ -179,6 +179,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
     }
 
     private fun initABTest() {
+        if(PrefManager.getBoolValue(IS_ICP_ENABLED)) viewModel.postGoal(GoalKeys.ICP_BUY_PAGE_SEEN.name, CampaignKeys.INCREASE_COURSE_PRICE.name)
         viewModel.getAllCampaigns(testId)
     }
 
@@ -915,6 +916,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                 viewModel.postGoal(GoalKeys.HUNDRED_POINTS_COURSE_BOUGHT.NAME, CampaignKeys.HUNDRED_POINTS.NAME)
             }
         }
+        if(PrefManager.getBoolValue(IS_ICP_ENABLED)) viewModel.postGoal(GoalKeys.ICP_COURSE_BOUGHT.name, CampaignKeys.INCREASE_COURSE_PRICE.name)
         // isBackPressDisabled = true
         razorpayOrderId.verifyPayment()
         MarketingAnalytics.coursePurchased(

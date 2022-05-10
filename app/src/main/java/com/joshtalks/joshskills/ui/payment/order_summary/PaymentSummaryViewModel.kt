@@ -20,6 +20,7 @@ import com.joshtalks.joshskills.core.REMAINING_TRIAL_DAYS
 import com.joshtalks.joshskills.core.SHOW_COURSE_DETAIL_TOOLTIP
 import com.joshtalks.joshskills.core.SUBSCRIPTION_TEST_ID
 import com.joshtalks.joshskills.core.USER_UNIQUE_ID
+import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
@@ -61,6 +62,7 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
     var isFreeOrderCreated = MutableLiveData<Boolean>(false)
     var isSubscriptionTipUsed = false
     var mTestId = EMPTY
+    val increasePriceABtestLiveData = MutableLiveData<ABTestCampaignData?>()
 
     val repository: ABTestRepository by lazy { ABTestRepository() }
 
@@ -396,6 +398,17 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
                 AppObjectController.commonNetworkService.saveTrueCallerImpression(requestData)
             } catch (ex: Exception) {
                 Timber.e(ex)
+            }
+        }
+    }
+    fun getICPCampaignData(campaignIncreasePrice:String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try{
+                repository.getCampaignData(campaignIncreasePrice).let { campaign ->
+                    increasePriceABtestLiveData.postValue(campaign)
+                }
+            }catch (ex : Exception){
+                ex.printStackTrace()
             }
         }
     }

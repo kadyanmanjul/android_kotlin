@@ -44,6 +44,7 @@ import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIA
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.PAYMENT_SUMMARY_CTA_LABEL_FREE
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.GoalKeys
+import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.analytics.*
 import com.joshtalks.joshskills.databinding.ActivityPaymentSummaryBinding
 import com.joshtalks.joshskills.messaging.RxBus2
@@ -60,7 +61,6 @@ import com.joshtalks.joshskills.ui.payment.PaymentFailedDialogFragment
 import com.joshtalks.joshskills.ui.payment.PaymentProcessingFragment
 import com.joshtalks.joshskills.ui.referral.EnterReferralCodeFragment
 import com.joshtalks.joshskills.ui.signup.FLOW_FROM
-import com.joshtalks.joshskills.ui.signup.HINDI_TO_ENGLISH_TEST_ID
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.ui.startcourse.StartCourseActivity
 import com.joshtalks.joshskills.ui.voip.IS_DEMO_P2P
@@ -71,16 +71,16 @@ import io.branch.referral.util.CurrencyType
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import java.math.BigDecimal
-import java.text.DecimalFormat
-import java.text.DecimalFormatSymbols
-import java.util.*
-import kotlin.math.roundToInt
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import retrofit2.HttpException
+import java.math.BigDecimal
+import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
+import java.util.*
+import kotlin.math.roundToInt
 
 const val TRANSACTION_ID = "TRANSACTION_ID"
 const val ENGLISH_COURSE_TEST_ID = "102"
@@ -106,6 +106,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
     private var loginStartFreeTrial = false
     private var is100PointsObtained = false
     private var isHundredPointsActive = false
+    private var isIncreasePriceActive=false
 
     companion object {
         fun startPaymentSummaryActivity(
@@ -170,9 +171,13 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         binding.handler = this
         initToolbarView()
         initViewModel()
+        initAbTest()
         subscribeObservers()
         initCountryCode()
         logPaymentAnalyticsEvents()
+    }
+    fun initAbTest(){
+        viewModel.getICPCampaignData(CampaignKeys.INCREASE_COURSE_PRICE.name)
     }
 
     private fun initViewModel() {
@@ -223,6 +228,12 @@ class PaymentSummaryActivity : CoreJoshActivity(),
 
     @SuppressLint("SetTextI18n")
     private fun subscribeObservers() {
+        viewModel.increasePriceABtestLiveData.observe(this){ abTestCampaignData ->
+            abTestCampaignData?.let { map ->
+                isIncreasePriceActive =(map.variantKey == VariantKeys.ICP_ENABLED.NAME) && map.variableMap?.isEnabled == true
+                PrefManager.put(IS_ICP_ENABLED, isIncreasePriceActive)
+            }
+        }
         viewModel.viewState?.observe(this, androidx.lifecycle.Observer {
             when (it) {
                 PaymentSummaryViewModel.ViewState.INTERNET_NOT_AVAILABLE -> {
@@ -843,7 +854,6 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         alertDialog.show()
         alertDialog.window?.setLayout(width.toInt(), height)
         alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        var isIncreasePriceActive=PrefManager.getBoolValue(IS_ICP_ENABLED)
         var popUpText = " "
         if(isHundredPointsActive && testId == ENGLISH_FREE_TRIAL_1D_TEST_ID || testId == ENGLISH_COURSE_TEST_ID) {
             popUpText = AppObjectController.getFirebaseRemoteConfig()
@@ -964,7 +974,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             isEcommereceEventFire = false
             addECommerceEvent(razorpayPaymentId)
         }
-
+        if(PrefManager.getBoolValue(IS_ICP_ENABLED)) viewModel.postGoal(GoalKeys.ICP_COURSE_BOUGHT.name, CampaignKeys.INCREASE_COURSE_PRICE.name)
         uiHandler.post {
             PrefManager.put(IS_PAYMENT_DONE, true)
             showPaymentProcessingFragment()
