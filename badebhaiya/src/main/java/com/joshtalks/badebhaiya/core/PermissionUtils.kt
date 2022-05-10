@@ -330,10 +330,6 @@ object PermissionUtils {
 
     fun isCallingPermissionWithoutLocationEnabled(context: Context): Boolean {
         return ContextCompat.checkSelfPermission(
-            context,
-            Manifest.permission.READ_PHONE_STATE
-        ) +
-                ContextCompat.checkSelfPermission(
                     context,
                     Manifest.permission.MODIFY_AUDIO_SETTINGS
                 ) +

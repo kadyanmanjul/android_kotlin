@@ -211,7 +211,6 @@ class SignUpActivity : AppCompatActivity() {
     private val sdkCallback: ITrueCallback = object : ITrueCallback {
 
         override fun onFailureProfileShared(trueError: TrueError) {
-            showToast(trueError.errorType.toString())
             openEnterPhoneNumberFragment()
         }
 
