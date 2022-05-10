@@ -562,12 +562,12 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
                 }*/
                 binding.callerName.text = it["name"]
                 if (it["occupation"] != null && it["future_goals"] != null) {
-                    binding.occupationFutureGoals.text = it["occupation"] ?: EMPTY + ", Dream - " + it["future_goals"]
+                    binding.occupationFutureGoals.text = it["occupation"] + ", Dream - " + it["future_goals"]
                 } else if (it["occupation"] == null && it["future_goals"] != null) {
                     binding.occupationFutureGoals.text = "Dream - " + it["future_goals"]
-                } else if (it["future_goals"] != null && it["future_goals"] == null) {
+                } else if (it["future_goals"] == null && it["occupation"] != null) {
                     binding.occupationFutureGoals.text = it["occupation"]
-                }else{
+                } else {
                     binding.occupationFutureGoals.visibility = View.GONE
                 }
                 setImageInIV(it["profile_pic"])
