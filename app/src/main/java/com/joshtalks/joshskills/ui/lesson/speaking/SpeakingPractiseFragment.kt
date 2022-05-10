@@ -199,7 +199,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             val state = getVoipState()
             Log.d(TAG, " Start Call Button - Voip State $state")
             if(state == State.IDLE) {
-                if(checkPstnState()== PSTNState.Idle) {
+                if(checkPstnState()) {
                     if (Utils.isInternetAvailable().not()) {
                         showToast("Seems like you have no internet")
                         return@setOnSingleClickListener
