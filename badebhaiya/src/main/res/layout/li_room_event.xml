@@ -36,7 +36,7 @@
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvCardHeader"
                 android:layout_width="0dp"
-                android:textSize="@dimen/_12ssp"
+                android:textSize="@dimen/_10ssp"
                 android:textAppearance="@style/BB_Typography_Nunito_Sans_Semi_Bold"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_16sdp"

@@ -21,6 +21,8 @@ import com.joshtalks.badebhaiya.feed.FeedActivity
 import com.joshtalks.badebhaiya.feed.model.ConversationRoomType
 import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
 import com.joshtalks.badebhaiya.feed.model.SpeakerData
+import com.joshtalks.badebhaiya.liveroom.service.ConvoWebRtcService
+import com.joshtalks.badebhaiya.liveroom.service.ConvoWebRtcService.Companion.roomQuestionId
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.utils.Utils
 import com.joshtalks.badebhaiya.utils.datetimeutils.DateTimeStyle
@@ -84,14 +86,39 @@ class FeedAdapter :
             }
 
             item.root.setOnLongClickListener{
-                if(room.speakersData?.userId == User.getInstance().userId)
-                showPopup()
+                if(room.speakersData?.userId == User.getInstance().userId) {
+                    //showPopup()
+                        showToast("Ended the Room")
+                    ConvoWebRtcService().endRoom(room.roomId)
+                }
+                else {
+                    showToast("Left the Room")
+                    ConvoWebRtcService().leaveRoom(room.roomId,roomQuestionId)
+                    //showLeavePopup()
+                }
                 return@setOnLongClickListener true
             }
 
             item.callback = callback
         }
         fun showPopup(){
+            val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(item.tvCardTopic.context)
+            val inflater = LayoutInflater.from(item.tvCardTopic.context)
+            val dialogView = inflater.inflate(R.layout.popup_room, null)
+            dialogBuilder.setView(dialogView)
+            val alertDialog: AlertDialog = dialogBuilder.create()
+            alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            alertDialog.show()
+            dialogView.findViewById<AppCompatTextView>(R.id.cancel_room).setOnClickListener {
+                alertDialog.dismiss()
+            }
+            dialogView.findViewById<AppCompatTextView>(R.id.delete_room).setOnClickListener{
+                //showToast("Kuch nhi hoga")
+                alertDialog.dismiss()
+            }
+        }
+
+        fun showLeavePopup(){
             val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(item.tvCardTopic.context)
             val inflater = LayoutInflater.from(item.tvCardTopic.context)
             val dialogView = inflater.inflate(R.layout.popup_room, null)

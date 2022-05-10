@@ -927,7 +927,9 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
         binding.notificationBar.apply {
             visibility = View.VISIBLE
             setHeading("The Internet connection appears to be offline")
-            Intent(requireContext(), FeedActivity::class.java)
+           var int= Intent(requireContext(), FeedActivity::class.java)
+            startActivity(int)
+            finishFragment()
             setNotificationState(NotificationView.ConversationRoomNotificationState.NO_INTERNET_AVAILABLE)
             loadAnimationSlideDown()
             startSound()
@@ -1250,9 +1252,9 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
             liveRoomProperties: StartingLiveRoomProperties,
             liveRoomViewModel: LiveRoomViewModel
         ) {
-            if (liveRoomViewModel.pubNubState.value == PubNubState.STARTED){
-                showToast("Please Leave Current Room")
-            } else {
+//            if (liveRoomViewModel.pubNubState.value == PubNubState.STARTED){
+//                showToast("Please Leave Current Room")
+//            } else {
 
                 var frag=activity.supportFragmentManager.findFragmentById(R.id.liveRoomRootView)
                 if(frag==null) {
@@ -1264,7 +1266,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
                         .addToBackStack(null)
                         .commit()
                 }
-            }
+//            }
         }
 
     }
