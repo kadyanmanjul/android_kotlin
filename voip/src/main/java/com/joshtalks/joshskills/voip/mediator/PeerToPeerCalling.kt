@@ -9,15 +9,13 @@ import android.widget.RemoteViews
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_COURSE_ID
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_INCOMING_CALL_ID
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_TOPIC_ID
-import com.joshtalks.joshskills.voip.R
-import com.joshtalks.joshskills.voip.Utils
+import com.joshtalks.joshskills.voip.*
 import com.joshtalks.joshskills.voip.communication.model.IncomingCall
 import com.joshtalks.joshskills.voip.data.api.CallActionRequest
 import com.joshtalks.joshskills.voip.data.api.ConnectionRequest
 import com.joshtalks.joshskills.voip.data.api.VoipNetwork
-import com.joshtalks.joshskills.voip.getDeclineCallIntent
-import com.joshtalks.joshskills.voip.openCallScreen
-import com.joshtalks.joshskills.voip.voipLog
+import java.util.*
+import kotlin.collections.HashMap
 
 private const val TAG = "PeerToPeerCalling"
 class PeerToPeerCalling : Calling {

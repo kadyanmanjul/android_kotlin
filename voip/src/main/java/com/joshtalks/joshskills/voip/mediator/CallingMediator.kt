@@ -497,7 +497,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
             agoraCallId = IncomingCallData.callId.toString(),
             agoraMentorId = "-1"
         )
-        soundManager.playSound()
+        soundManager.startRingtoneAndVibration()
         scope.launch {
             try{
                 delay(20000)
@@ -539,7 +539,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
 
     private fun stopAudio() {
         try {
-            soundManager.stopSound()
+            soundManager.stopPlaying()
         } catch (e: Exception) {
             e.printStackTrace()
             if(e is CancellationException)

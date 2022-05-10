@@ -27,16 +27,21 @@ object CallAnalytics : CallAnalyticsInterface{
 
     override fun addAnalytics(event: EventName, agoraMentorId: String?, agoraCallId: String?) {
         val callEvent = CallEvents(event = event, timestamp = System.currentTimeMillis().toString(), agoraCallId = agoraCallId, agoraMentorId = agoraMentorId)
-//        pushAnalytics(callEvent)
+        pushAnalytics(callEvent)
     }
 
-    private fun pushAnalyticsToServer(eventHashMap: Map<String, Any>) {
+    override fun uploadAnalyticsToServer() {
+        pushAnalyticsToServer()
+    }
+
+    private fun pushAnalyticsToServer() {
         CoroutineScope(Dispatchers.IO).launch {
             mutex.withLock {
                 val analyticsList = database?.voipAnalyticsDao()?.getAnalytics()
                 if (analyticsList != null) {
                     for (analytics in analyticsList) {
                         try {
+                            val eventHashMap = analytics.serializeToMap()
                             val response = callAnalyticsApi(eventHashMap)
                             if (response.isSuccessful) {
                                 database?.voipAnalyticsDao()?.deleteAnalytics(analytics.id)
@@ -66,8 +71,7 @@ object CallAnalytics : CallAnalyticsInterface{
                     timeStamp = event.timestamp.toString()
                 )
                 database?.voipAnalyticsDao()?.saveAnalytics(analyticsData)
-                val eventHashMap = event.serializeToMap()
-                pushAnalyticsToServer(eventHashMap)
+                pushAnalyticsToServer()
             }
             catch (e : Exception){
                 if(e is CancellationException)
