@@ -18,6 +18,8 @@ import org.json.JSONObject
 import retrofit2.HttpException
 import timber.log.Timber
 import java.net.ProtocolException
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 
 
 class WebrtcViewModel(application: Application) : AndroidViewModel(application) {
@@ -99,10 +101,24 @@ class WebrtcViewModel(application: Application) : AndroidViewModel(application) 
         isApiFired = true
         try {
             viewModelScope.launch(Dispatchers.IO){
-                var resp = AppObjectController.p2pNetworkService.showFppDialog(map).body()
-                var listRes : List<String> = listOf(resp?.get("show_fpp_dialog") ?: EMPTY, resp?.get("show_rating_popup") ?: EMPTY)
-                withContext(Dispatchers.Main){
-                    fppDialogShow.value = listRes
+                try {
+                    var resp = AppObjectController.p2pNetworkService.showFppDialog(map).body()
+                    var listRes : List<String> = listOf(resp?.get("show_fpp_dialog") ?: EMPTY, resp?.get("show_rating_popup") ?: EMPTY)
+                    withContext(Dispatchers.Main){
+                        fppDialogShow.value = listRes
+                    }
+                }catch (ex: Exception) {
+                    when (ex) {
+                        is HttpException -> {
+                            showToast(AppObjectController.joshApplication.getString(R.string.something_went_wrong))
+                        }
+                        is SocketTimeoutException, is UnknownHostException -> {
+                            showToast(AppObjectController.joshApplication.getString(R.string.internet_not_available_msz))
+                        }
+                        else -> {
+                            FirebaseCrashlytics.getInstance().recordException(ex)
+                        }
+                    }
                 }
             }
         }catch (ex:Exception){
