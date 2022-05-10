@@ -501,14 +501,6 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             }
         )
     }
-    override fun onTimeUpdate(animation: TimeAnimator?, totalTime: Long, deltaTime: Long) {
-        mClipDrawable?.level = mCurrentLevel
-        if (mCurrentLevel >= MAX_LEVEL) {
-            mAnimator?.cancel()
-        } else {
-            mCurrentLevel = Math.min(MAX_LEVEL, mCurrentLevel + LEVEL_INCREMENT)
-        }
-    }
 
     private fun startPractiseSearchScreen(
         favoriteUserCall: Boolean = false,

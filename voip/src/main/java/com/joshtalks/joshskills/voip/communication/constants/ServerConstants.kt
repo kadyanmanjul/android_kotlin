@@ -18,5 +18,3 @@ class ServerConstants {
         val ACK_UI_STATE_UPDATED = 13
     }
 }
-
-const val CLOSE_CALLING_FRAGMENT = 100

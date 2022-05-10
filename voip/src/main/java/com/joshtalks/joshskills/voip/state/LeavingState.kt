@@ -5,6 +5,8 @@ import com.joshtalks.joshskills.voip.constant.Event.*
 import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.UIState
 import com.joshtalks.joshskills.voip.data.local.PrefManager
+import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
+import com.joshtalks.joshskills.voip.voipanalytics.EventName
 import kotlinx.coroutines.*
 
 // Fired Leave Channel and waiting for Leave Channel Callback
@@ -18,6 +20,11 @@ class LeavingState(val context: CallContext) : VoipState {
 
     init {
         Log.d("Call State", TAG)
+        CallAnalytics.addAnalytics(
+            event = EventName.CHANNEL_LEAVING,
+            agoraCallId = context.channelData.getCallingId().toString(),
+            agoraMentorId = context.channelData.getAgoraUid().toString()
+        )
         observe()
     }
 
@@ -40,6 +47,11 @@ class LeavingState(val context: CallContext) : VoipState {
                     Log.d(TAG, "Received after observing : ${event.type}")
                     ensureActive()
                     if (event.type == CALL_DISCONNECTED) {
+                        CallAnalytics.addAnalytics(
+                            event = EventName.CHANNEL_LEFT,
+                            agoraCallId = context.channelData.getCallingId().toString(),
+                            agoraMentorId = context.channelData.getAgoraUid().toString()
+                        )
                         context.closePipe()
                         context.updateUIState(uiState = UIState.empty())
                         ensureActive()

@@ -86,7 +86,7 @@ class WebrtcRepository(scope : CoroutineScope) {
     }
 
     fun connectCall(callData: HashMap<String, Any>) {
-        Log.d(TAG, "connectCall: ")
+        Log.d(TAG, "connectCall: - $callData")
         if(mService != null && PrefManager.getVoipState() == State.IDLE)
             mService?.connectCall(callData)
     }

@@ -15,6 +15,8 @@ private const val TAG = "AgoraEventHandler"
 const val USER_QUIT_CHANNEL = 0
 const val USER_DROP_OFFLINE = 1
 private const val USER_ALREADY_LEFT_THE_CHANNEL = 18
+private const val REMOTE_AUDIO_STATE_STARTING = 1
+private const val AUDIO_PUBLISHED = 3
 const val RECONNECTING_TIMEOUT_IN_MILLIS = 20 * 1000L
 
 internal class AgoraEventHandler(val scope: CoroutineScope) : IRtcEngineEventHandler() {
@@ -45,6 +47,27 @@ internal class AgoraEventHandler(val scope: CoroutineScope) : IRtcEngineEventHan
     override fun onAudioRouteChanged(routing: Int) {
         Log.d(TAG, "onAudioRouteChanged: $routing")
     }
+
+    override fun onRemoteAudioStateChanged(uid: Int, state: Int, reason: Int, elapsed: Int) {
+        if(state == REMOTE_AUDIO_STATE_STARTING) {
+            // LISTENING Event
+            Log.d(TAG, "SPEAKER STARTED")
+        }
+    }
+
+
+    override fun onAudioPublishStateChanged(
+        channel: String?,
+        oldState: Int,
+        newState: Int,
+        elapseSinceLastState: Int
+    ) {
+       if(newState == AUDIO_PUBLISHED) {
+           // Mic Started
+           Log.d(TAG, "MIC STARTED")
+       }
+    }
+
 
     // Reports an error during SDK runtime
     override fun onError(errorCode: Int) {

@@ -22,6 +22,8 @@ import com.joshtalks.joshskills.voip.notification.NotificationPriority
 import com.joshtalks.joshskills.voip.notification.VoipNotification
 import com.joshtalks.joshskills.voip.state.CallContext
 import com.joshtalks.joshskills.voip.voipLog
+import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
+import com.joshtalks.joshskills.voip.voipanalytics.EventName
 import com.joshtalks.joshskills.voip.webrtc.*
 import com.joshtalks.joshskills.voip.webrtc.AgoraWebrtcService
 import com.joshtalks.joshskills.voip.webrtc.CallState
@@ -179,6 +181,11 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                         stateChannel.send(envelope)
                     }
                     UserAction.HOLD -> {
+                        CallAnalytics.addAnalytics(
+                            event = EventName.PSTN_CALL_RECEIVED,
+                            agoraCallId = callContext?.channelData?.getCallingId().toString(),
+                            agoraMentorId = callContext?.channelData?.getAgoraUid().toString()
+                        )
                         val envelope = Envelope(Event.HOLD_REQUEST)
                         stateChannel.send(envelope)
                     }
@@ -282,6 +289,11 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                                             stateChannel.send(envelope)
                                         }
                                         ServerConstants.DISCONNECTED -> {
+                                            CallAnalytics.addAnalytics(
+                                                event = EventName.DISCONNECTED_BY_REMOTE_USER,
+                                                agoraCallId = callContext?.channelData?.getCallingId().toString(),
+                                                agoraMentorId = callContext?.channelData?.getAgoraUid().toString()
+                                            )
                                             val envelope = Envelope(Event.REMOTE_USER_DISCONNECTED_MESSAGE)
                                             stateChannel.send(envelope)
                                         }
@@ -291,6 +303,11 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                             is IncomingCall -> {
                                 Log.d(TAG, "handlePubnubEvent : $it")
                                 if (isShowingIncomingCall.not() && PrefManager.getVoipState() == State.IDLE) {
+                                    CallAnalytics.addAnalytics(
+                                        event = EventName.INCOMING_CALL_RECEIVED,
+                                        agoraCallId = IncomingCallData.callId.toString(),
+                                        agoraMentorId = "-1"
+                                    )
                                     updateIncomingCallState(true)
                                     Log.d(TAG, "handlePubnubEvent: Incoming Call -> $it")
                                     IncomingCallData.set(it.getCallId(), PEER_TO_PEER)
@@ -352,6 +369,11 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                             }
                             CallState.OnReconnecting -> {
                                 Log.d(TAG, "handleWebrtcEvent : $it")
+                                CallAnalytics.addAnalytics(
+                                    event = EventName.CALL_RECONNECTING,
+                                    agoraCallId = PrefManager.getAgraCallId().toString(),
+                                    agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
+                                )
                                 val envelope = Envelope(Event.RECONNECTING)
                                 stateChannel.send(envelope)
                             }
@@ -415,6 +437,11 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                                             }
                                             // Remote User Disconnected
                                             ServerConstants.DISCONNECTED -> {
+                                                CallAnalytics.addAnalytics(
+                                                    event = EventName.DISCONNECTED_BY_REMOTE_USER,
+                                                    agoraCallId = callContext?.channelData?.getCallingId().toString(),
+                                                    agoraMentorId = callContext?.channelData?.getAgoraUid().toString()
+                                                )
                                                 val envelope = Envelope(Event.REMOTE_USER_DISCONNECTED_MESSAGE)
                                                 stateChannel.send(envelope)
                                             }
@@ -423,6 +450,11 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                                 }
                                 is IncomingCall -> {
                                     if (isShowingIncomingCall.not() && PrefManager.getVoipState() == State.IDLE) {
+                                        CallAnalytics.addAnalytics(
+                                            event = EventName.INCOMING_CALL_RECEIVED,
+                                            agoraCallId = IncomingCallData.callId.toString(),
+                                            agoraMentorId = "-1"
+                                        )
                                         updateIncomingCallState(true)
                                         IncomingCallData.set(event.getCallId(), PEER_TO_PEER)
                                         val envelope = Envelope(Event.INCOMING_CALL,event)
@@ -460,13 +492,23 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
             calling.notificationLayout(incomingCall) ?: return // TODO: might throw error
         voipNotification = VoipNotification(remoteView, NotificationPriority.High)
         voipNotification.show()
-        soundManager.playSound()
+        CallAnalytics.addAnalytics(
+            event = EventName.INCOMING_CALL_SHOWN,
+            agoraCallId = IncomingCallData.callId.toString(),
+            agoraMentorId = "-1"
+        )
+        soundManager.startRingtoneAndVibration()
         scope.launch {
             try{
                 delay(20000)
                 voipNotification.removeNotification()
                 updateIncomingCallState(false)
                 stopAudio()
+                CallAnalytics.addAnalytics(
+                    event = EventName.INCOMING_CALL_IGNORE,
+                    agoraCallId = IncomingCallData.callId.toString(),
+                    agoraMentorId = "-1"
+                )
             }
             catch (e : Exception){
                 if(e is CancellationException)
@@ -497,7 +539,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
 
     private fun stopAudio() {
         try {
-            soundManager.stopSound()
+            soundManager.stopPlaying()
         } catch (e: Exception) {
             e.printStackTrace()
             if(e is CancellationException)

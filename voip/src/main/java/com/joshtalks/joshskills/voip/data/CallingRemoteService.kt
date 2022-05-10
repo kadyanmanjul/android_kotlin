@@ -30,6 +30,8 @@ import com.joshtalks.joshskills.voip.notification.VoipNotification
 import com.joshtalks.joshskills.voip.pstn.PSTNController
 import com.joshtalks.joshskills.voip.pstn.PSTNState
 import com.joshtalks.joshskills.voip.state.CallConnectData
+import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
+import com.joshtalks.joshskills.voip.voipanalytics.EventName
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import com.joshtalks.joshskills.voip.mediator.UserAction as Action
@@ -46,8 +48,6 @@ class CallingRemoteService : Service() {
     }
     private val ioScope by lazy { CoroutineScope(Dispatchers.IO + coroutineExceptionHandler) }
     private val mediator by lazy<CallServiceMediator> { CallingMediator(ioScope) }
-    var currentState = IDLE
-        private set
     private var isMediatorInitialise = false
     private val pstnController by lazy { PSTNController(ioScope) }
     private val audioController: AudioControllerInterface by lazy { AudioController(ioScope) }
@@ -85,10 +85,20 @@ class CallingRemoteService : Service() {
                 return START_NOT_STICKY
             }
             SERVICE_ACTION_DISCONNECT_CALL -> {
+                CallAnalytics.addAnalytics(
+                    event = EventName.DISCONNECTED_BY_HANG_UP,
+                    agoraCallId = PrefManager.getAgraCallId().toString(),
+                    agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
+                )
                 disconnectCall()
                 return START_NOT_STICKY
             }
             SERVICE_ACTION_INCOMING_CALL_DECLINE -> {
+                CallAnalytics.addAnalytics(
+                    event = EventName.INCOMING_CALL_DECLINE,
+                    agoraCallId ="-1",
+                    agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
+                )
                 mediator.hideIncomingCall()
                 return START_NOT_STICKY
             }
@@ -265,6 +275,7 @@ class CallingRemoteService : Service() {
     }
 }
 
+// TODO: Need to Change
 class TestNotification : NotificationData {
     override fun setTitle(): String {
         return "Josh Skills"
@@ -275,6 +286,7 @@ class TestNotification : NotificationData {
     }
 }
 
+// TODO: Should be in a new Class
 data class UIState(
     val remoteUserName: String,
     val remoteUserImage: String?,

@@ -9,7 +9,7 @@ import com.joshtalks.joshskills.voip.voipanalytics.data.local.VoipAnalyticsEntit
 const val PENDING = 0
 const val SYNCED = 1
 
-@Database(entities = [DisconnectCallEntity::class,VoipAnalyticsEntity::class], version = 2, exportSchema = true)
+@Database(entities = [DisconnectCallEntity::class,VoipAnalyticsEntity::class], version = 3, exportSchema = true)
 abstract class VoipDatabase : RoomDatabase() {
     abstract fun getDisconnectCallDao() : DisconnectCallDao
     abstract fun voipAnalyticsDao() : VoipAnalyticsDao

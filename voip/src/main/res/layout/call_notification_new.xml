@@ -61,7 +61,7 @@
             android:ellipsize="end"
             android:gravity="left"
             android:singleLine="true"
-            android:text="JoshSkills Call"
+            android:text="Speaking Practice"
             android:textColor="#FFF"
             android:textSize="14dip" />
 
@@ -109,7 +109,7 @@
                 android:textSize="14dip"
                 app:drawableStartCompat="@drawable/ic_call_end"
                 app:drawableTint="@color/call_decline_color"
-                tools:text="@string/decline" />
+                android:text="@string/hang_up" />
 
         </FrameLayout>
 
@@ -136,7 +136,7 @@
                 app:drawableLeftCompat="@drawable/ic_pick_call"
                 app:drawableStartCompat="@drawable/ic_pick_call"
                 app:drawableTint="@color/call_action_color"
-                tools:text="@string/answer" />
+                android:text="@string/answer" />
 
         </FrameLayout>
     </LinearLayout>

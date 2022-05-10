@@ -18,7 +18,10 @@ import com.joshtalks.joshskills.voip.calldetails.IncomingCallData
 import com.joshtalks.joshskills.voip.data.CallingRemoteService
 import com.joshtalks.joshskills.base.log.JoshLog
 import com.joshtalks.joshskills.voip.constant.LEAVING
+import java.text.SimpleDateFormat
+import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlin.NoSuchElementException
 
 // TODO: Must Refactor
 val voipLog = JoshLog.getInstanceIfEnable(Feature.VOIP)
@@ -188,7 +191,11 @@ class Utils {
                 return nwInfo.isConnected
             }
         }
+
+        fun getCurrentTimeStamp(pattern: String = "yyyy-MM-dd HH:mm:ss.SSS"): String {
+            val dateFormat = SimpleDateFormat(pattern, Locale.getDefault())
+            System.currentTimeMillis()
+            return dateFormat.format(Date())
+        }
     }
-
-
 }

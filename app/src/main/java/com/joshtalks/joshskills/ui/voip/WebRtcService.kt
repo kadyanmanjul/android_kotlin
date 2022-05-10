@@ -6,13 +6,11 @@ import android.app.NotificationManager.IMPORTANCE_HIGH
 import android.app.NotificationManager.IMPORTANCE_LOW
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.content.pm.ServiceInfo
 import android.graphics.Bitmap
 import android.media.AudioAttributes
 import android.media.AudioFocusRequest
 import android.media.AudioManager
-import android.net.ConnectivityManager
 import android.os.*
 import android.telephony.PhoneStateListener
 import android.telephony.TelephonyManager
@@ -2153,7 +2151,7 @@ class WebRtcService : BaseWebRtcService() {
                 R.layout.favorite_call_notification
             }
             isFromGroup -> R.layout.group_call_notification
-            else -> R.layout.call_notification
+            else -> R.layout.call_notification_new
         }
 
         val customView = RemoteViews(packageName, layout)

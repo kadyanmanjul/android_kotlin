@@ -29,16 +29,9 @@ enum class EventName(val eventName : String){
     DISCONNECTED_BY_RECONNECTING("DISCONNECTED_BY_RECONNECTING"),
     DISCONNECTED_BY_BACKPRESS("DISCONNECTED_BY_BACKPRESS"),
     DISCONNECTED_BY_HANG_UP("DISCONNECTED_BY_HANG_UP"),
-    PUBNUB_LISTENER_RESTART("PUBNUB_LISTENER_RESTART")
+    PUBNUB_LISTENER_RESTART("PUBNUB_LISTENER_RESTART"),
+    MIC_OFF("MIC_OFF"),
+    SPEAKER_OFF("SPEAKER_OFF"),
+    SPEAKING("MIC_STARTED"),
+    LISTENING("SPEAKER_STARTED"),
 }
-//CallAnalytics.addAnalytics(
-//event = EventName.CALL_RECONNECTING,
-//agoraCallId = CallDetails.callId.toString(),
-//agoraMentorId = CallDetails.localUserAgoraId.toString()
-//)
-//
-//CallAnalytics.addAnalytics(
-//event = EventName.DISCONNECTED_BY_RED_BUTTON,
-//agoraMentorId =  VoipPref.getCurrentUserAgoraId().toString(),
-//agoraCallId = VoipPref.getCurrentCallId().toString()
-//)

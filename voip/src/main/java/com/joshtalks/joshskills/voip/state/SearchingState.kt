@@ -16,6 +16,8 @@ import com.joshtalks.joshskills.voip.mediator.CallDirection
 import com.joshtalks.joshskills.voip.mediator.Calling
 import com.joshtalks.joshskills.voip.mediator.PER_USER_TIMEOUT_IN_MILLIS
 import com.joshtalks.joshskills.voip.mediator.PeerToPeerCalling
+import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
+import com.joshtalks.joshskills.voip.voipanalytics.EventName
 import kotlinx.coroutines.*
 import retrofit2.HttpException
 import java.io.IOException
@@ -59,6 +61,11 @@ class SearchingState(val context: CallContext) : VoipState {
         scope.launch(start = CoroutineStart.LAZY) {
             try {
                 ensureActive()
+                CallAnalytics.addAnalytics(
+                    event = EventName.CALL_INITIATED,
+                    agoraCallId = "",
+                    agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
+                )
                 calling.onPreCallConnect(context.request, context.direction)
                 ensureActive()
             } catch (e: Exception) {
@@ -99,6 +106,13 @@ class SearchingState(val context: CallContext) : VoipState {
         apiCallJob.start()
     }
 
+    override fun disconnect() {
+        scope.launch {
+            context.closeCallScreen()
+            backPress()
+        }
+    }
+
     // TODO: What will happen if user pickup the call and press back button
     override fun backPress() {
         Log.d(TAG, "backPress: ")
@@ -110,6 +124,11 @@ class SearchingState(val context: CallContext) : VoipState {
             type = ServerConstants.DISCONNECTED,
             duration = 0,
             address = Utils.uuid ?: ""
+        )
+        CallAnalytics.addAnalytics(
+            event = EventName.DISCONNECTED_BY_BACKPRESS,
+            agoraCallId = "-1",
+            agoraMentorId = "-1"
         )
         context.sendMessageToServer(networkAction)
         context.destroyContext()
@@ -143,7 +162,12 @@ class SearchingState(val context: CallContext) : VoipState {
                             apiCallJob.cancel()
                             context.channelData = event.data as? ChannelData
                                 ?: throw UnexpectedException("Channel data is NULL")
-                            PrefManager.setLocalUserAgoraId(context.channelData.getAgoraUid())
+                            CallAnalytics.addAnalytics(
+                                event = EventName.CHANNEL_RECEIVED,
+                                agoraCallId = context.channelData.getCallingId().toString(),
+                                agoraMentorId = context.channelData.getAgoraUid().toString()
+                            )
+                            PrefManager.setLocalUserAgoraIdAndCallId(context.channelData.getAgoraUid(),context.channelData.getCallingId())
                             val uiState = UIState(
                                 remoteUserImage = context.channelData.getCallingPartnerImage(),
                                 remoteUserName = context.channelData.getCallingPartnerName(),

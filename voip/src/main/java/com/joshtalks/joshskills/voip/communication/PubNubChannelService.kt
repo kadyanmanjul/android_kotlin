@@ -8,9 +8,12 @@ import com.joshtalks.joshskills.voip.communication.model.*
 import com.joshtalks.joshskills.voip.data.api.CallDisconnectRequest
 import com.joshtalks.joshskills.voip.data.api.VoipNetwork
 import com.joshtalks.joshskills.voip.data.local.DisconnectCallEntity
+import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.data.local.SYNCED
 import com.joshtalks.joshskills.voip.data.local.VoipDatabase
 import com.joshtalks.joshskills.voip.voipLog
+import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
+import com.joshtalks.joshskills.voip.voipanalytics.EventName
 import com.pubnub.api.PNConfiguration
 import com.pubnub.api.PubNub
 import com.pubnub.api.PubNubException
@@ -89,6 +92,11 @@ class PubNubChannelService(val scope: CoroutineScope) : EventChannel {
                         pubnub?.subscribe()
                             ?.channels(listOf(Utils.uuid))
                             ?.execute()
+                        CallAnalytics.addAnalytics(
+                            event = EventName.PUBNUB_LISTENER_RESTART,
+                            agoraCallId = PrefManager.getAgraCallId().toString(),
+                            agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
+                        )
                         isReconnecting = false
                     }
                 }

@@ -17,7 +17,7 @@ import timber.log.Timber
 
 
 private const val TAG = "CallAnalytics"
-object CallAnalytics : CallAnalyticsInterface{
+object CallAnalytics : CallAnalyticsInterface {
 
     private val database by lazy {
         Utils.context?.let { VoipDatabase.getDatabase(it.applicationContext) }
@@ -26,17 +26,22 @@ object CallAnalytics : CallAnalyticsInterface{
     private val mutex = Mutex()
 
     override fun addAnalytics(event: EventName, agoraMentorId: String?, agoraCallId: String?) {
-        val callEvent = CallEvents(event = event, timestamp = System.currentTimeMillis().toString(), agoraCallId = agoraCallId, agoraMentorId = agoraMentorId)
-//        pushAnalytics(callEvent)
+        val callEvent = CallEvents(event = event, timestamp = Utils.getCurrentTimeStamp(), agoraCallId = agoraCallId, agoraMentorId = agoraMentorId)
+        pushAnalytics(callEvent)
     }
 
-    private fun pushAnalyticsToServer(eventHashMap: Map<String, Any>) {
+    override fun uploadAnalyticsToServer() {
+        pushAnalyticsToServer()
+    }
+
+    private fun pushAnalyticsToServer() {
         CoroutineScope(Dispatchers.IO).launch {
             mutex.withLock {
                 val analyticsList = database?.voipAnalyticsDao()?.getAnalytics()
                 if (analyticsList != null) {
                     for (analytics in analyticsList) {
                         try {
+                            val eventHashMap = analytics.serializeToMap()
                             val response = callAnalyticsApi(eventHashMap)
                             if (response.isSuccessful) {
                                 database?.voipAnalyticsDao()?.deleteAnalytics(analytics.id)
@@ -60,14 +65,13 @@ object CallAnalytics : CallAnalyticsInterface{
         CoroutineScope(Dispatchers.IO).launch {
             try{
                 val analyticsData = VoipAnalyticsEntity(
-                    event = event.event.eventName,
-                    agoraCallId = event.agoraCallId?:"",
-                    agoraMentorUid = event.agoraMentorId?:"",
-                    timeStamp = event.timestamp.toString()
+                    type = event.event.eventName,
+                    agora_call = event.agoraCallId?:"",
+                    agora_mentor = event.agoraMentorId?:"",
+                    timestamp = event.timestamp.toString()
                 )
                 database?.voipAnalyticsDao()?.saveAnalytics(analyticsData)
-                val eventHashMap = event.serializeToMap()
-                pushAnalyticsToServer(eventHashMap)
+                pushAnalyticsToServer()
             }
             catch (e : Exception){
                 if(e is CancellationException)
@@ -91,6 +95,5 @@ object CallAnalytics : CallAnalyticsInterface{
     private suspend fun callAnalyticsApi(request: Map<String, Any?>): Response<Unit> {
            return VoipNetwork.getVoipAnalyticsApi().agoraMidCallDetails(request)
     }
-
 
 }

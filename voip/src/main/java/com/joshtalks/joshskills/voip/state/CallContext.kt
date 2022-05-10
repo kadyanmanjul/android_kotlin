@@ -1,15 +1,16 @@
 package com.joshtalks.joshskills.voip.state
 
-import android.os.Message
 import android.os.SystemClock
 import android.util.Log
 import com.joshtalks.joshskills.voip.communication.model.ChannelData
 import com.joshtalks.joshskills.voip.communication.model.OutgoingData
-import com.joshtalks.joshskills.voip.constant.CLOSE_CALL_SCREEN
 import com.joshtalks.joshskills.voip.constant.Event
 import com.joshtalks.joshskills.voip.data.UIState
+import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.mediator.CallDirection
 import com.joshtalks.joshskills.voip.mediator.CallingMediator
+import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
+import com.joshtalks.joshskills.voip.voipanalytics.EventName
 import com.joshtalks.joshskills.voip.webrtc.Envelope
 import com.joshtalks.joshskills.voip.webrtc.RECONNECTING_TIMEOUT_IN_MILLIS
 import kotlinx.coroutines.*
@@ -33,6 +34,7 @@ data class CallContext(val callType: Int, val direction : CallDirection, val req
 
     fun connect() {
         Log.d(TAG, "connect")
+
         state.connect()
     }
 
@@ -91,6 +93,11 @@ data class CallContext(val callType: Int, val direction : CallDirection, val req
             try{
                 delay(RECONNECTING_TIMEOUT_IN_MILLIS)
                 Log.d(TAG, "reconnecting After Delay ")
+                CallAnalytics.addAnalytics(
+                    event = EventName.DISCONNECTED_BY_RECONNECTING,
+                    agoraCallId =channelData.getCallingId().toString(),
+                    agoraMentorId = channelData.getAgoraUid().toString()
+                )
                 state.disconnect()
             }
             catch (e : Exception){

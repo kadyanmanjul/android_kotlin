@@ -1,8 +1,11 @@
 package com.joshtalks.joshskills.voip.audiomanager
 
+import android.app.Service
 import android.content.Context
 import android.media.*
+import android.net.Uri
 import android.os.Build
+import android.os.VibrationEffect
 import android.os.Vibrator
 import androidx.core.content.ContextCompat
 import com.joshtalks.joshskills.voip.Utils
@@ -15,6 +18,10 @@ class SoundManager(
     private val applicationContext=Utils.context
     private var pattern = longArrayOf(0, 1500, 1000)
     private var defaultRingtoneUri = RingtoneManager.getActualDefaultRingtoneUri(applicationContext, soundType)
+    private var ringtonePlayer: MediaPlayer? = null
+    private var mPlayer: MediaPlayer? = null
+    private var ringingPlay = false
+    private var vibrator: Vibrator? = null
 
     companion object {
         private var vibrator: Vibrator? = null
@@ -104,6 +111,79 @@ class SoundManager(
                 AudioManager.STREAM_MUSIC,
                 AudioManager.AUDIOFOCUS_GAIN
             )
+        }
+    }
+
+     fun startRingtoneAndVibration() {
+        stopPlaying()
+        if (ringingPlay) {
+            return
+        }
+        val am = applicationContext?.getSystemService(Service.AUDIO_SERVICE) as AudioManager
+        val needRing = am.ringerMode != AudioManager.RINGER_MODE_SILENT
+        if (needRing) {
+            val att: AudioAttributes = AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_NOTIFICATION_RINGTONE)
+                .build()
+            ringtonePlayer = MediaPlayer()
+            ringtonePlayer?.setOnPreparedListener { mediaPlayer ->
+                try {
+                    ringtonePlayer?.start()
+                    ringingPlay = true
+                } catch (ex: IllegalStateException) {}
+            }
+            ringtonePlayer?.isLooping = true
+            ringtonePlayer?.setAudioAttributes(att)
+            ringtonePlayer?.setAudioStreamType(AudioManager.STREAM_RING)
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                am.requestAudioFocus(
+                    AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN).build()
+                )
+            } else {
+                am.requestAudioFocus({ }, AudioManager.STREAM_RING, AudioManager.AUDIOFOCUS_GAIN)
+            }
+
+            try {
+                val notificationUri: String =
+                    RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE).toString()
+                ringtonePlayer?.setDataSource(applicationContext, Uri.parse(notificationUri))
+                ringtonePlayer?.prepareAsync()
+                ringingPlay = true
+            } catch (e: java.lang.Exception) {
+                if (ringtonePlayer != null) {
+                    ringtonePlayer?.release()
+                    ringtonePlayer = null
+                    ringingPlay = false
+                }
+            }
+
+            if ((am.ringerMode == AudioManager.RINGER_MODE_VIBRATE || am.ringerMode == AudioManager.RINGER_MODE_NORMAL) || am.ringerMode == AudioManager.RINGER_MODE_VIBRATE) {
+                vibrator = applicationContext?.getSystemService(Service.VIBRATOR_SERVICE) as Vibrator
+                val pattern = longArrayOf(100, 250, 500, 750, 1000)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    vibrator?.vibrate(VibrationEffect.createWaveform(pattern, 0))
+                } else {
+                    vibrator?.vibrate(pattern, 0)
+                }
+            }
+        }
+    }
+
+    fun stopPlaying() {
+        try {
+            ringtonePlayer?.run {
+                stop()
+                release()
+                ringtonePlayer = null
+                ringingPlay = false
+            }
+            vibrator?.run {
+                cancel()
+                vibrator = null
+            }
+        } catch (ex: Exception) {
+            ex.printStackTrace()
         }
     }
 }
