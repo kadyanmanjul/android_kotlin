@@ -13,12 +13,11 @@ import kotlinx.coroutines.flow.SharedFlow
 
 class PSTNController(val scope: CoroutineScope) : PSTNInterface {
     private val applicationContext= Utils.context
-    private val pstnReceiver = PSTNStateReceiver(scope)
+    private val pstnReceiver = PSTNServiceReceiver(scope)
 
     override fun registerPstnReceiver() {
         val filter = IntentFilter().apply {
             addAction("android.intent.action.PHONE_STATE")
-            addAction("android.intent.action.NEW_OUTGOING_CALL")
         }
         applicationContext?.registerReceiver(pstnReceiver, filter)
     }
@@ -28,6 +27,6 @@ class PSTNController(val scope: CoroutineScope) : PSTNInterface {
     }
 
     override fun observePSTNState(): SharedFlow<PSTNState> {
-        return pstnReceiver.observePstnReceiver()
+        return pstnReceiver.phoneListener.observePstnReceiver()
     }
 }

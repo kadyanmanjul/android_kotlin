@@ -8,7 +8,6 @@ import android.content.Intent
 import android.telephony.PhoneStateListener
 import android.telephony.TelephonyManager
 import android.util.Log
-import com.joshtalks.joshskills.voip.voipLog
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -16,33 +15,19 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 
-internal class PSTNStateReceiver(val scope: CoroutineScope) : BroadcastReceiver() {
+class PSTNStateReceiver(val scope: CoroutineScope) : PhoneStateListener() {
     private val pstnFlow = MutableSharedFlow<PSTNState>()
 
     fun observePstnReceiver() : SharedFlow<PSTNState> {
         return pstnFlow
     }
 
-    @SuppressLint("UnsafeProtectedBroadcastReceiver")
-    override fun onReceive(applicationContext: Context, intent: Intent) {
-        try {
-            getCallingState(applicationContext, intent)
-        } catch (ex: Exception) {
-            print(ex)
-        }
-    }
+    var state = 0
 
-    private fun getCallingState(applicationContext: Context, intent: Intent) {
-
-        val telephony =
-            applicationContext.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
-        val customPhoneListener = PhoneStateListener()
-        telephony.listen(customPhoneListener, PhoneStateListener.LISTEN_CALL_STATE)
-        val stateStr = intent.extras?.getString(TelephonyManager.EXTRA_STATE)
-        var state = 0
-
-        when (stateStr) {
-            TelephonyManager.EXTRA_STATE_IDLE -> {
+    override fun onCallStateChanged(newstate: Int, incomingNumber: String) {
+        when (newstate) {
+            TelephonyManager.CALL_STATE_IDLE -> {
+                Log.d("DEBUG", "IDLE")
                 state = TelephonyManager.CALL_STATE_IDLE
                 CoroutineScope(Dispatchers.IO).launch {
                     try{
@@ -56,7 +41,8 @@ internal class PSTNStateReceiver(val scope: CoroutineScope) : BroadcastReceiver(
                 }
                 Log.d(TAG, "getCallingState:Idle  $state")
             }
-            TelephonyManager.EXTRA_STATE_OFFHOOK -> {
+            TelephonyManager.CALL_STATE_OFFHOOK -> {
+                Log.d("DEBUG", "OFFHOOK")
                 state = TelephonyManager.CALL_STATE_OFFHOOK
                 scope.launch {
                     try{
@@ -70,7 +56,8 @@ internal class PSTNStateReceiver(val scope: CoroutineScope) : BroadcastReceiver(
                 }
                 Log.d(TAG, "getCallingState:OffHook  $state")
             }
-            TelephonyManager.EXTRA_STATE_RINGING -> {
+            TelephonyManager.CALL_STATE_RINGING -> {
+                Log.d("DEBUG", "RINGING")
                 state = TelephonyManager.CALL_STATE_RINGING
                 scope.launch {
                     try{
@@ -85,5 +72,20 @@ internal class PSTNStateReceiver(val scope: CoroutineScope) : BroadcastReceiver(
                 Log.d(TAG, "getCallingState: Ringing $state")
             }
         }
+    }
+}
+
+class PSTNServiceReceiver(val scope: CoroutineScope) : BroadcastReceiver() {
+    var telephony: TelephonyManager? = null
+    val phoneListener = PSTNStateReceiver(scope)
+
+    @SuppressLint("UnsafeProtectedBroadcastReceiver")
+    override fun onReceive(context: Context, intent: Intent) {
+        telephony = context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
+        telephony?.listen(phoneListener, PhoneStateListener.LISTEN_CALL_STATE)
+    }
+
+    fun onDestroy() {
+        telephony?.listen(null, PhoneStateListener.LISTEN_NONE)
     }
 }

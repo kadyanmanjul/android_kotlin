@@ -71,7 +71,6 @@ object CallAnalytics : CallAnalyticsInterface {
                     timestamp = event.timestamp.toString()
                 )
                 database?.voipAnalyticsDao()?.saveAnalytics(analyticsData)
-                pushAnalyticsToServer()
             }
             catch (e : Exception){
                 if(e is CancellationException)

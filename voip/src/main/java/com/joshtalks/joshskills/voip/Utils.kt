@@ -18,6 +18,8 @@ import com.joshtalks.joshskills.voip.calldetails.IncomingCallData
 import com.joshtalks.joshskills.voip.data.CallingRemoteService
 import com.joshtalks.joshskills.base.log.JoshLog
 import com.joshtalks.joshskills.voip.constant.LEAVING
+import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
+import kotlinx.coroutines.delay
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -26,6 +28,7 @@ import kotlin.NoSuchElementException
 // TODO: Must Refactor
 val voipLog = JoshLog.getInstanceIfEnable(Feature.VOIP)
 private const val TAG = "Utils"
+private const val UPLOAD_ANALYTICS_WORKER_NAME="Upload_Analytics_Api"
 
 fun Long.inSeconds() : Long {
     return TimeUnit.MILLISECONDS.toSeconds(this)
@@ -196,6 +199,26 @@ class Utils {
             val dateFormat = SimpleDateFormat(pattern, Locale.getDefault())
             System.currentTimeMillis()
             return dateFormat.format(Date())
+        }
+
+//        fun uploadVoipAnalyticsWorker() {
+//            val uploadDataConstraints = Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
+//            val workRequest = PeriodicWorkRequestBuilder<UploadAnalyticsWorker>(10, TimeUnit.MINUTES).setConstraints(uploadDataConstraints).build()
+//            WorkManager.getInstance(context!!.applicationContext).enqueueUniquePeriodicWork(
+//                UPLOAD_ANALYTICS_WORKER_NAME,
+//                ExistingPeriodicWorkPolicy.REPLACE,
+//                workRequest
+//            )
+//        }
+
+        suspend fun syncAnalytics() {
+            if(isInternetAvailable()) {
+                CallAnalytics.uploadAnalyticsToServer()
+                delay(10 * 60 * 1000L)
+            } else {
+                delay(1 * 60 * 1000L)
+            }
+            syncAnalytics()
         }
     }
 }
