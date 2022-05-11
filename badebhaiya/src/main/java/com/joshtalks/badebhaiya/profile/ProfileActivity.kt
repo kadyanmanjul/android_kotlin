@@ -21,6 +21,9 @@ import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.core.*
 import com.joshtalks.badebhaiya.core.USER_ID
+import com.joshtalks.badebhaiya.core.models.PendingPilotEvent
+import com.joshtalks.badebhaiya.core.models.PendingPilotEvent.*
+import com.joshtalks.badebhaiya.core.models.PendingPilotEventData
 import com.joshtalks.badebhaiya.databinding.ActivityProfileBinding
 import com.joshtalks.badebhaiya.feed.*
 import com.joshtalks.badebhaiya.feed.adapter.FeedAdapter
@@ -36,6 +39,8 @@ import com.joshtalks.badebhaiya.profile.request.ReminderRequest
 import com.joshtalks.badebhaiya.profile.response.ProfileResponse
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomResponse
 import com.joshtalks.badebhaiya.repository.model.User
+import com.joshtalks.badebhaiya.signup.SignUpActivity
+import com.joshtalks.badebhaiya.utils.SingleDataManager
 import com.joshtalks.badebhaiya.utils.Utils
 import com.joshtalks.badebhaiya.utils.setUserImageOrInitials
 import com.karumi.dexter.MultiplePermissionsReport
@@ -53,7 +58,7 @@ class ProfileActivity: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
     private var isFromDeeplink = false
 
     private val liveRoomViewModel by lazy {
-        ViewModelProvider(this)[LiveRoomViewModel::class.java]
+        ViewModelProvider(requireActivity())[LiveRoomViewModel::class.java]
     }
 
     private val viewModel by lazy {
@@ -61,7 +66,7 @@ class ProfileActivity: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
     }
 
     private val feedViewModel by lazy {
-        ViewModelProvider(this)[FeedViewModel::class.java]
+        ViewModelProvider(requireActivity())[FeedViewModel::class.java]
     }
     lateinit var binding:ActivityProfileBinding
 
@@ -110,6 +115,20 @@ class ProfileActivity: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         super.onViewCreated(view, savedInstanceState)
         addObserver()
         viewModel.getProfileForUser(userId!!, isFromDeeplink)
+        executePendingActions()
+    }
+
+    private fun executePendingActions() {
+        SingleDataManager.pendingPilotAction?.let {
+            when(it){
+                FOLLOW -> followPilot()
+            }
+        }
+    }
+
+    private fun followPilot(){
+        SingleDataManager.pendingPilotAction = null
+        updateFollowStatus()
     }
 
     private fun handleIntent() {
@@ -185,7 +204,13 @@ class ProfileActivity: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
     }
 
     fun updateFollowStatus() {
-        checkAndRedirectToSignUp()
+        if (!User.getInstance().isLoggedIn() ){
+            userId?.let {
+                redirectToSignUp(FOLLOW, PendingPilotEventData(pilotUserId = it))
+            }
+            return
+        }
+
 
         viewModel.updateFollowStatus(userId ?: (User.getInstance().userId))
         if(viewModel.speakerFollowed.value == true)
@@ -209,12 +234,10 @@ class ProfileActivity: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         viewModel.getProfileForUser(userId ?: (User.getInstance().userId), isFromDeeplink)
     }
 
-    private fun checkAndRedirectToSignUp() {
-        if (!User.getInstance().isLoggedIn()){
-            showToast("LogIn karo")
-
-            // TODO: Start on boarding flow.
-        }
+    private fun redirectToSignUp(pendingPilotAction: PendingPilotEvent, pendingPilotEventData: PendingPilotEventData) {
+        SingleDataManager.pendingPilotAction = pendingPilotAction
+        SingleDataManager.pendingPilotEventData = pendingPilotEventData
+        SignUpActivity.start(requireActivity(), isRedirected = true)
     }
 
     private fun speakerFollowedUIChanges() {
@@ -329,6 +352,14 @@ class ProfileActivity: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
     }
 
     override fun setReminder(room: RoomListResponseItem, view: View) {
+        if (!User.getInstance().isLoggedIn()){
+
+            userId?.let {
+                redirectToSignUp(SET_REMINDER, PendingPilotEventData(roomId = room.roomId, pilotUserId = it))
+            }
+            return
+        }
+
         val alarmManager = activity?.applicationContext?.getSystemService(ALARM_SERVICE) as AlarmManager
         val notificationIntent = context?.let {
             NotificationHelper.getNotificationIntent(

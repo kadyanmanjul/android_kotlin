@@ -85,12 +85,9 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
     RaisedHandsBottomSheet.HandRaiseSheetListener {
 
     private val FeedViewModel by lazy {
-        ViewModelProvider(this)[ProfileViewModel::class.java]
+        ViewModelProvider(requireActivity())[ProfileViewModel::class.java]
     }
 
-    private val liveRoomViewModel by lazy {
-        ViewModelProvider(this)[LiveRoomViewModel::class.java]
-    }
 
     private var mServiceBound: Boolean = false
     private lateinit var binding: FragmentLiveRoomBinding
@@ -526,7 +523,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
                                 room,
                                 it.getString(TOPIC)!!
                             )
-                            launch((requireActivity() as AppCompatActivity), liveRoomProperties, liveRoomViewModel)
+                            launch((requireActivity() as AppCompatActivity), liveRoomProperties, vm)
                         }
                     }
                 }

@@ -33,6 +33,7 @@ import com.joshtalks.badebhaiya.profile.request.ReminderRequest
 import com.joshtalks.badebhaiya.pubnub.PubNubState
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomResponse
 import com.joshtalks.badebhaiya.repository.model.User
+import com.joshtalks.badebhaiya.utils.SingleDataManager
 import com.joshtalks.badebhaiya.utils.setUserImageOrInitials
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -129,10 +130,11 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         if(user!=null)
         {
             viewProfile(user, true)
+        } else if (SingleDataManager.pendingPilotAction != null){
+            viewProfile(SingleDataManager.pendingPilotEventData!!.pilotUserId, true)
         }
         if (User.getInstance().isLoggedIn()) {
             checkAndOpenLiveRoom()
-            viewModel.getRooms()
             viewModel.setIsBadeBhaiyaSpeaker()
             addObserver()
             initView()
@@ -146,7 +148,9 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
 
     override fun onResume() {
         super.onResume()
-        viewModel.getRooms()
+        if (User.getInstance().isLoggedIn()){
+            viewModel.getRooms()
+        }
     }
 
     private fun checkAndOpenLiveRoom() {

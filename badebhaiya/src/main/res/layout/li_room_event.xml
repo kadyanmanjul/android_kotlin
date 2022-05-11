@@ -79,6 +79,7 @@
                 tools:text="Guide To Crack UPSC 2023 \nIn One Attempt?" />
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/actionButton"
                 roomListItem="@{roomData}"
                 setCallback="@{callback}"
                 setCardActionButton="@{roomData.conversationRoomType}"

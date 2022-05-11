@@ -23,6 +23,7 @@ import com.joshtalks.badebhaiya.signup.fragments.SignUpEnterOTPFragment
 import com.joshtalks.badebhaiya.signup.fragments.SignUpEnterPhoneFragment
 import com.joshtalks.badebhaiya.signup.viewmodel.SignUpViewModel
 import com.joshtalks.badebhaiya.utils.PRIVACY_POLICY_URL
+import com.joshtalks.badebhaiya.utils.SingleDataManager
 import com.joshtalks.badebhaiya.utils.events.makeLinks
 import com.truecaller.android.sdk.ITrueCallback
 import com.truecaller.android.sdk.TrueError
@@ -48,6 +49,7 @@ class SignUpActivity : AppCompatActivity() {
         handleIntent()
         addObservers()
         setOnClickListeners()
+
     }
 
     private fun handleIntent() {
@@ -59,6 +61,7 @@ class SignUpActivity : AppCompatActivity() {
             binding.btnWelcome.visibility = View.GONE
             openUploadProfilePicFragment()
         }
+
     }
 
     private fun setOnClickListeners() {
@@ -90,6 +93,9 @@ class SignUpActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         initTrueCallerUI()
+        if (intent.getBooleanExtra(IS_REDIRECTED, false)){
+            openTrueCallerBottomSheet()
+        }
     }
 
     private fun addObservers() {
@@ -165,8 +171,14 @@ class SignUpActivity : AppCompatActivity() {
                 .replace(R.id.root_view, ProfileActivity(), ProfileActivity::class.java.simpleName)
                 .commit()
         } else
-            Intent(this, FeedActivity::class.java).also {
+            Intent(this, FeedActivity::class.java).also { it ->
+
+                SingleDataManager.pendingPilotAction?.let { event ->
+                    val userId = SingleDataManager.pendingPilotEventData?.pilotUserId
+                    it.putExtra("user", userId)
+                }
                 this@SignUpActivity.startActivity(it)
+
             }
     }
 
@@ -228,10 +240,13 @@ class SignUpActivity : AppCompatActivity() {
         const val REDIRECT_TO_ENTER_NAME = "REDIRECT_TO_ENTER_NAME"
         const val REDIRECT_TO_ENTER_PROFILE_PIC = "REDIRECT_TO_ENTER_PROFILE_PIC"
         const val REDIRECT_PROFILE_SKIPPED = "REDIRECT_WHEN_PROFILE_SKIPPED"
+        const val IS_REDIRECTED = "is_redirected"
+
 
         @JvmStatic
-        fun start(context: Context, redirect: String? = null, userId: String? = null) {
+        fun start(context: Context, redirect: String? = null, userId: String? = null, isRedirected: Boolean = false) {
             val starter = Intent(context, SignUpActivity::class.java)
+                .putExtra(IS_REDIRECTED, isRedirected)
                 .putExtra(REDIRECT, redirect)
                 .putExtra(USER_ID, userId)
             context.startActivity(starter)
