@@ -24,11 +24,11 @@ import com.joshtalks.badebhaiya.signup.fragments.SignUpEnterPhoneFragment
 import com.joshtalks.badebhaiya.signup.viewmodel.SignUpViewModel
 import com.joshtalks.badebhaiya.utils.PRIVACY_POLICY_URL
 import com.joshtalks.badebhaiya.utils.events.makeLinks
-import com.truecaller.android.sdk.ITrueCallback
-import com.truecaller.android.sdk.TrueError
-import com.truecaller.android.sdk.TrueProfile
-import com.truecaller.android.sdk.TruecallerSDK
-import com.truecaller.android.sdk.TruecallerSdkScope
+//import com.truecaller.android.sdk.ITrueCallback
+//import com.truecaller.android.sdk.TrueError
+//import com.truecaller.android.sdk.TrueProfile
+//import com.truecaller.android.sdk.TruecallerSDK
+//import com.truecaller.android.sdk.TruecallerSdkScope
 import java.util.Locale
 import kotlinx.android.synthetic.main.activity_sign_up.btnWelcome
 
@@ -180,47 +180,49 @@ class SignUpActivity : AppCompatActivity() {
             return
         }
 
-        if (TruecallerSDK.getInstance().isUsable) {
-            TruecallerSDK.getInstance()
-                .onActivityResultObtained(this, requestCode, resultCode, data)
-            return
-        }
+//        if (TruecallerSDK.getInstance().isUsable) {
+//            TruecallerSDK.getInstance()
+//                .onActivityResultObtained(this, requestCode, resultCode, data)
+//            return
+//        }
     }
 
     private fun initTrueCallerUI() {
-        val trueScope = TruecallerSdkScope.Builder(this, sdkCallback)
-            .consentMode(TruecallerSdkScope.CONSENT_MODE_BOTTOMSHEET)
-            .ctaTextPrefix(TruecallerSdkScope.CTA_TEXT_PREFIX_CONTINUE_WITH)
-            .consentTitleOption(TruecallerSdkScope.SDK_CONSENT_TITLE_VERIFY)
-            .footerType(TruecallerSdkScope.FOOTER_TYPE_ANOTHER_METHOD)
-            .sdkOptions(TruecallerSdkScope.SDK_OPTION_WITHOUT_OTP)
-            .build()
-        TruecallerSDK.init(trueScope)
-        if (TruecallerSDK.getInstance().isUsable) {
-            TruecallerSDK.getInstance().setLocale(Locale("en"))
-        }
+//        val trueScope = TruecallerSdkScope.Builder(this, sdkCallback)
+//            .consentMode(TruecallerSdkScope.CONSENT_MODE_BOTTOMSHEET)
+//            .ctaTextPrefix(TruecallerSdkScope.CTA_TEXT_PREFIX_CONTINUE_WITH)
+//            .consentTitleOption(TruecallerSdkScope.SDK_CONSENT_TITLE_VERIFY)
+//            .footerType(TruecallerSdkScope.FOOTER_TYPE_ANOTHER_METHOD)
+//            .sdkOptions(TruecallerSdkScope.SDK_OPTION_WITHOUT_OTP)
+//            .build()
+//        TruecallerSDK.init(trueScope)
+//        if (TruecallerSDK.getInstance().isUsable) {
+//            TruecallerSDK.getInstance().setLocale(Locale("en"))
+//        }
     }
 
     fun openTrueCallerBottomSheet() {
-        if (TruecallerSDK.getInstance().isUsable) {
-            TruecallerSDK.getInstance().getUserProfile(this)
-        } else
-            openEnterPhoneNumberFragment()
+                    openEnterPhoneNumberFragment()
+
+//        if (TruecallerSDK.getInstance().isUsable) {
+//            TruecallerSDK.getInstance().getUserProfile(this)
+//        } else
+//            openEnterPhoneNumberFragment()
     }
 
-    private val sdkCallback: ITrueCallback = object : ITrueCallback {
-
-        override fun onFailureProfileShared(trueError: TrueError) {
-            openEnterPhoneNumberFragment()
-        }
-
-        override fun onVerificationRequired(p0: TrueError?) {
-        }
-
-        override fun onSuccessProfileShared(trueProfile: TrueProfile) {
-            viewModel.trueCallerLogin(trueProfile)
-        }
-    }
+//    private val sdkCallback: ITrueCallback = object : ITrueCallback {
+//
+//        override fun onFailureProfileShared(trueError: TrueError) {
+//            openEnterPhoneNumberFragment()
+//        }
+//
+//        override fun onVerificationRequired(p0: TrueError?) {
+//        }
+//
+//        override fun onSuccessProfileShared(trueProfile: TrueProfile) {
+//            viewModel.trueCallerLogin(trueProfile)
+//        }
+//    }
 
     companion object {
         private const val REDIRECT = ""

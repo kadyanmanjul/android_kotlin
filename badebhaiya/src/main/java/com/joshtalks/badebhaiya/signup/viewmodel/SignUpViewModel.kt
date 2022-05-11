@@ -23,7 +23,7 @@ import com.joshtalks.badebhaiya.signup.request.VerifyOTPRequest
 import com.joshtalks.badebhaiya.signup.response.LoginResponse
 import com.joshtalks.badebhaiya.utils.TAG
 import com.joshtalks.badebhaiya.utils.Utils
-import com.truecaller.android.sdk.TrueProfile
+//import com.truecaller.android.sdk.TrueProfile
 import id.zelory.compressor.Compressor
 import java.io.File
 import kotlinx.coroutines.Dispatchers
@@ -223,29 +223,29 @@ class SignUpViewModel(application: Application): AndroidViewModel(application) {
         }
     }
 
-    fun trueCallerLogin(user: TrueProfile) {
-        viewModelScope.launch {
-            try {
-                val requestTrueUser = mutableMapOf<String, String>()
-                requestTrueUser["payload"] = user.payload
-                requestTrueUser["signature"] = user.signature
-                requestTrueUser["signature_algorithm"] = user.signatureAlgorithm
-                requestTrueUser["device_id"] = Utils.getDeviceId()
-                val response = repository.trueCallerLogin(requestTrueUser)
-                if(response.isSuccessful) {
-                    response.body()?.let {
-                        firstName = user.firstName
-                        lastName = user.lastName
-                        updateUserFromLoginResponse(it)
-                    }
-                }
-                else
-                    showToast("API Failed")
-
-            }
-            catch (ex: Exception) {
-
-            }
-        }
-    }
+//    fun trueCallerLogin(user: TrueProfile) {
+//        viewModelScope.launch {
+//            try {
+//                val requestTrueUser = mutableMapOf<String, String>()
+//                requestTrueUser["payload"] = user.payload
+//                requestTrueUser["signature"] = user.signature
+//                requestTrueUser["signature_algorithm"] = user.signatureAlgorithm
+//                requestTrueUser["device_id"] = Utils.getDeviceId()
+//                val response = repository.trueCallerLogin(requestTrueUser)
+//                if(response.isSuccessful) {
+//                    response.body()?.let {
+//                        firstName = user.firstName
+//                        lastName = user.lastName
+//                        updateUserFromLoginResponse(it)
+//                    }
+//                }
+//                else
+//                    showToast("API Failed")
+//
+//            }
+//            catch (ex: Exception) {
+//
+//            }
+//        }
+//    }
 }

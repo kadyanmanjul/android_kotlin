@@ -7,7 +7,7 @@ apply plugin: 'com.google.gms.google-services'
 
 def majorVersion = 0
 def minorVersion = 0
-def patchVersion = 7
+def patchVersion = 9
 
 android {
     compileSdk 32
@@ -73,13 +73,13 @@ android {
             signingConfig signingConfigs.debug
             minifyEnabled false
             resValue("string", "branch_id", "key_test_fh6HFiV5gd4B874LteXabhjaqqnts1yv")
-            resValue("string", "truecaller_key", "kVht21c4b4c0aa0f04e55aa76bac5b056ddd7")
+//            resValue("string", "truecaller_key", "kVht21c4b4c0aa0f04e55aa76bac5b056ddd7")
             crunchPngs false
             ext.enableCrashlytics = true
         }
         release {
             resValue("string", "branch_id", "key_live_hk0NAoI7iiZt62YMAeLuZnakuuexFWqk")
-            resValue("string", "truecaller_key", "Uwwcd95a74fb4cdf8449b9d30c12c9cc43347")
+//            resValue("string", "truecaller_key", "Uwwcd95a74fb4cdf8449b9d30c12c9cc43347")
             debuggable false
             minifyEnabled false
             shrinkResources false
@@ -193,7 +193,7 @@ dependencies {
     implementation 'id.zelory:compressor:2.1.0'
 
     //treucaller
-    implementation "com.truecaller.android.sdk:truecaller-sdk:2.6.0"
+//    implementation "com.truecaller.android.sdk:truecaller-sdk:2.6.0"
     // crashlytics
     implementation 'com.google.firebase:firebase-crashlytics-ktx:18.2.4'
     //agora
