@@ -188,7 +188,7 @@
     <string name="wait_for_second">"%s ਸਕਿੰਟਾਂ ਲਈ ਉਡੀਕ ਕਰੋ"</string>
     <string name="retry_miss_call_verify">ਮਿਸਡ ਕਾਲ ਵੈਰੀਫਿਕੇਸ਼ਨ ਦੁਬਾਰਾ ਕਰੋ</string>
     <string name="flash_call_verify_permission_message">ਤੁਹਾਡੇ ਨੰਬਰ ਦੀ ਪੁਸ਼ਟੀ ਕਰਨ ਲਈ, Josh Skills ਨੂੰ ਕਾਲ ਕਰਨ ਅਤੇ ਫ਼ੋਨ ਕਰਨ ਦੀ ਇਜਾਜ਼ਤ ਦੀ ਲੋੜ ਹੋਵੇਗੀ।
-ਸੈਟਿੰਗਾਂ&gt; ਅਨੁਮਤੀ, ਕਾਲ 'ਤੇ ਟੈਪ ਕਰੋ।</string>
+ਸੈਟਿੰਗਾਂ&gt; ਅਨੁਮਤੀ, ਕਾਲ \'ਤੇ ਟੈਪ ਕਰੋ।</string>
     <string name="registration">"ਰਜਿਸਟ੍ਰੇਸ਼ਨ"</string>
     <string name="verification_failed">"ਪੁਸ਼ਟੀਕਰਨ ਅਸਫਲ"</string>
     <string name="gender">ਲਿੰਗ</string>
