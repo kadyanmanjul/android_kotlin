@@ -298,6 +298,7 @@ class JoshApplication :
     fun onAppDestroy() {
         Timber.tag(TAG).e("************* onAppDestroy")
         AppObjectController.releaseInstance()
+        PstnObserver.unregisterPstnReceiver()
     }
 
     private fun isActivityVisible(): String {

@@ -37,12 +37,5 @@
             android:process=":joshSkillsCallingService"
             android:enabled="true"
             android:exported="true"/>
-
-        <receiver android:name=".pstn.PSTNServiceReceiver"
-            tools:ignore="Instantiatable">
-            <intent-filter>
-                <action android:name="android.intent.action.PHONE_STATE" />
-            </intent-filter>
-        </receiver>
     </application>
 </manifest>
