@@ -181,11 +181,13 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                         stateChannel.send(envelope)
                     }
                     UserAction.HOLD -> {
-                        CallAnalytics.addAnalytics(
-                            event = EventName.PSTN_CALL_RECEIVED,
-                            agoraCallId = callContext?.channelData?.getCallingId().toString(),
-                            agoraMentorId = callContext?.channelData?.getAgoraUid().toString()
-                        )
+                        if(callContext?.hasChannelData() == true) {
+                            CallAnalytics.addAnalytics(
+                                event = EventName.PSTN_CALL_RECEIVED,
+                                agoraCallId = callContext?.channelData?.getCallingId().toString(),
+                                agoraMentorId = callContext?.channelData?.getAgoraUid().toString()
+                            )
+                        }
                         val envelope = Envelope(Event.HOLD_REQUEST)
                         stateChannel.send(envelope)
                     }
@@ -548,7 +550,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
     }
 
     // TODO: Change Name
-    fun disconnectCallFromWebrtc() {
+    suspend fun disconnectCallFromWebrtc() {
         webrtcService.disconnectCall()
     }
 
@@ -565,7 +567,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
         webrtcService.muteAudioStream(muteAudio)
     }
 
-    fun joinChannel(channel: ChannelData) {
+    suspend fun joinChannel(channel: ChannelData) {
         val request = PeerToPeerCallRequest(
             channelName = channel.getChannel(),
             callToken = channel.getCallingToken(),

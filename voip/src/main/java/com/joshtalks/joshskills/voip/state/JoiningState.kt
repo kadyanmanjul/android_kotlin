@@ -11,6 +11,8 @@ import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
 import kotlinx.coroutines.*
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 // Got a Channel and Joining Agora State
 class JoiningState(val context: CallContext) : VoipState {
@@ -19,12 +21,22 @@ class JoiningState(val context: CallContext) : VoipState {
         Log.d(TAG, "CoroutineExceptionHandler : $throwable")
         throwable.printStackTrace()
     })
-    private var listenerJob : Job? = null
+    @OptIn(DelicateCoroutinesApi::class)
+    private val webrtcScope = CoroutineScope(newSingleThreadContext("Webrtc Context") + CoroutineExceptionHandler { coroutineContext, throwable ->
+        Log.d(TAG, "CoroutineExceptionHandler : $throwable")
+        throwable.printStackTrace()
+    })
+    val mutex = Mutex(false)
 
     init {
         Log.d("Call State", TAG)
-        observe()
-        context.joinChannel(context.channelData)
+        webrtcScope.launch {
+            mutex.withLock {
+                observe()
+                context.joinChannel(context.channelData)
+            }
+        }
+
         CallAnalytics.addAnalytics(
             event = EventName.CHANNEL_JOINING,
             agoraCallId = context.channelData.getCallingId().toString(),
@@ -49,7 +61,7 @@ class JoiningState(val context: CallContext) : VoipState {
     }
 
     private fun observe() {
-        listenerJob =  scope.launch {
+        scope.launch {
             Log.d(TAG, "Started Observing")
             try {
                 loop@ while (true) {
@@ -183,6 +195,7 @@ class JoiningState(val context: CallContext) : VoipState {
                     }
                 }
                 scope.cancel()
+                webrtcScope.cancel()
             } catch (e: Throwable) {
                 if(e is CancellationException)
                     throw e
@@ -197,7 +210,7 @@ class JoiningState(val context: CallContext) : VoipState {
     }
 
     private fun moveToLeavingState() {
-        listenerJob?.cancel()
+        scope.cancel()
         val networkAction = NetworkAction(
             channelName = context.channelData.getChannel(),
             uid = context.channelData.getAgoraUid(),
@@ -206,10 +219,20 @@ class JoiningState(val context: CallContext) : VoipState {
             address = context.channelData.getPartnerMentorId()
         )
         context.sendMessageToServer(networkAction)
-        context.disconnectCall()
-        PrefManager.setVoipState(State.LEAVING)
-        context.state = LeavingState(context)
-        Log.d(TAG, "Received : switched to ${context.state}")
-        scope.cancel()
+        webrtcScope.launch {
+            try {
+                mutex.withLock {
+                    context.disconnectCall()
+                    PrefManager.setVoipState(State.LEAVING)
+                    context.state = LeavingState(context)
+                    Log.d(TAG, "Received : switched to ${context.state}")
+                    webrtcScope.cancel()
+                }
+            } catch (e : Exception){
+                if(e is CancellationException)
+                    throw e
+                e.printStackTrace()
+            }
+        }
     }
 }

@@ -256,11 +256,19 @@ class JoinedState(val context: CallContext) : VoipState {
             address = context.channelData.getPartnerMentorId()
         )
         context.sendMessageToServer(networkAction)
-        context.disconnectCall()
-        PrefManager.setVoipState(State.LEAVING)
-        context.state = LeavingState(context)
-        Log.d(TAG, "Received : switched to ${context.state}")
-        scope.cancel()
+        scope.launch {
+            try {
+                context.disconnectCall()
+                PrefManager.setVoipState(State.LEAVING)
+                context.state = LeavingState(context)
+                Log.d(TAG, "Received : switched to ${context.state}")
+                scope.cancel()
+            } catch (e : Exception){
+                if(e is CancellationException)
+                    throw e
+                e.printStackTrace()
+            }
+        }
     }
 }
 
