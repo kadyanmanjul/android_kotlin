@@ -11,6 +11,8 @@ import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
 import com.joshtalks.joshskills.core.abTest.VariableMap
 import com.joshtalks.joshskills.core.abTest.repository.ABTestCampaignDao
+import com.joshtalks.joshskills.core.notification.database.NotificationDao
+import com.joshtalks.joshskills.core.notification.model.NotificationModel
 import com.joshtalks.joshskills.engage_notification.AppActivityDao
 import com.joshtalks.joshskills.engage_notification.AppActivityModel
 import com.joshtalks.joshskills.engage_notification.AppUsageDao
@@ -69,7 +71,8 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
         RecentSearch::class, FavoriteCaller::class, CourseUsageModel::class, AssessmentQuestionFeedback::class,
         VoipAnalyticsEntity::class, GroupsAnalyticsEntity::class, GroupChatAnalyticsEntity::class,
         GroupsItem::class, TimeTokenRequest::class, ChatItem::class, GameAnalyticsEntity::class,
-        ABTestCampaignData::class, GroupMember::class, SpecialPractice::class, ReadingVideo::class, CompressedVideo::class, PhonebookContact::class, OnlineTestRequest::class,  BroadCastEvent::class
+        ABTestCampaignData::class, GroupMember::class, SpecialPractice::class, ReadingVideo::class, CompressedVideo::class,
+        PhonebookContact::class, BroadCastEvent::class, NotificationModel::class, OnlineTestRequest::class
     ],
     version = 50,
     exportSchema = true
@@ -168,7 +171,7 @@ abstract class AppDatabase : RoomDatabase() {
                                 MIGRATION_46_47,
                                 MIGRATION_47_48,
                                 MIGRATION_48_49,
-                                MIGRATION_49_50,
+                                MIGRATION_49_50
                             )
                             .fallbackToDestructiveMigration()
                             .addCallback(sRoomDatabaseCallback)
@@ -592,6 +595,7 @@ abstract class AppDatabase : RoomDatabase() {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("CREATE TABLE IF NOT EXISTS `online_test_request` (`question_id` INTEGER NOT NULL, `lesson_id` INTEGER NOT NULL, `status` TEXT NOT NULL, `answer` TEXT NOT NULL, `rule_assessment_question_id` TEXT, `answer_order` TEXT NOT NULL, `time_taken` INTEGER, PRIMARY KEY (`lesson_id`))")
                 database.execSQL("ALTER TABLE `lessonmodel` ADD COLUMN `translationStatus` TEXT")
+                database.execSQL("CREATE TABLE IF NOT EXISTS `notification_table` (`id` TEXT PRIMARY KEY NOT NULL, `platform` TEXT NOT NULL, `time_received` INTEGER NOT NULL, `time_shown` INTEGER NOT NULL, `action` TEXT NOT NULL, `analytics_sent` INTEGER NOT NULL DEFAULT 0)")
             }
         }
 
@@ -642,6 +646,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun abCampaignDao(): ABTestCampaignDao
     abstract fun groupMemberDao(): GroupMemberDao
     abstract fun phonebookDao(): PhonebookDao
+    abstract fun notificationDao(): NotificationDao
     abstract fun broadcastDao(): BroadCastDao
 }
 
