@@ -113,6 +113,7 @@ class SignUpActivity : AppCompatActivity() {
                 }
                 SignUpStepStatus.ProfilePicSkipped, SignUpStepStatus.ProfileCompleted, SignUpStepStatus.ProfilePicUploaded -> {
                     openNextActivity()
+//                    finish()
                     this@SignUpActivity.finishAffinity()
                 }
             }
@@ -173,11 +174,11 @@ class SignUpActivity : AppCompatActivity() {
         } else
             Intent(this, FeedActivity::class.java).also { it ->
 
-                SingleDataManager.pendingPilotAction?.let { event ->
-                    val userId = SingleDataManager.pendingPilotEventData?.pilotUserId
-                    it.putExtra("user", userId)
-                }
-                this@SignUpActivity.startActivity(it)
+//                SingleDataManager.pendingPilotAction?.let { event ->
+//                    val userId = SingleDataManager.pendingPilotEventData?.pilotUserId
+//                    it.putExtra("user", userId)
+//                }
+                startActivity(it)
 
             }
     }

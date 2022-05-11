@@ -238,6 +238,7 @@ class ProfileActivity: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         SingleDataManager.pendingPilotAction = pendingPilotAction
         SingleDataManager.pendingPilotEventData = pendingPilotEventData
         SignUpActivity.start(requireActivity(), isRedirected = true)
+        requireActivity().finish()
     }
 
     private fun speakerFollowedUIChanges() {

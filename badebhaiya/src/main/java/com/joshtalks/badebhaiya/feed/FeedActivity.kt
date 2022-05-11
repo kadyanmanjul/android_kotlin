@@ -112,6 +112,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
 
     private lateinit var binding: ActivityFeedBinding
     override fun onCreate(savedInstanceState: Bundle?) {
+        Log.d("sahil", "onCreate of feed activity ")
         super.onCreate(savedInstanceState)
         this.requestWindowFeature(Window.FEATURE_NO_TITLE)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
