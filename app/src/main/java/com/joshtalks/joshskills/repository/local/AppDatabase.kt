@@ -11,6 +11,8 @@ import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
 import com.joshtalks.joshskills.core.abTest.VariableMap
 import com.joshtalks.joshskills.core.abTest.repository.ABTestCampaignDao
+import com.joshtalks.joshskills.core.notification.database.NotificationDao
+import com.joshtalks.joshskills.core.notification.model.NotificationModel
 import com.joshtalks.joshskills.engage_notification.AppActivityDao
 import com.joshtalks.joshskills.engage_notification.AppActivityModel
 import com.joshtalks.joshskills.engage_notification.AppUsageDao
@@ -69,9 +71,9 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
         VoipAnalyticsEntity::class, GroupsAnalyticsEntity::class, GroupChatAnalyticsEntity::class,
         GroupsItem::class, TimeTokenRequest::class, ChatItem::class, GameAnalyticsEntity::class,
         ABTestCampaignData::class, GroupMember::class, SpecialPractice::class, ReadingVideo::class, CompressedVideo::class,
-        PhonebookContact::class,
+        PhonebookContact::class, NotificationModel::class
     ],
-    version = 48,
+    version = 49,
     exportSchema = true
 )
 @TypeConverters(
@@ -166,7 +168,8 @@ abstract class AppDatabase : RoomDatabase() {
                                 MIGRATION_44_45,
                                 MIGRATION_45_46,
                                 MIGRATION_46_47,
-                                MIGRATION_47_48
+                                MIGRATION_47_48,
+                                MIGRATION_48_49
                             )
                             .fallbackToDestructiveMigration()
                             .addCallback(sRoomDatabaseCallback)
@@ -574,9 +577,15 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
-        private val MIGRATION_47_48: Migration = object :Migration(47, 48){
+        private val MIGRATION_47_48: Migration = object : Migration(47, 48) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE `group_list_table` ADD COLUMN `agoraUid` INTEGER")
+            }
+        }
+
+        private val MIGRATION_48_49: Migration = object : Migration(48, 49) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("CREATE TABLE IF NOT EXISTS `notification_table` (`id` TEXT PRIMARY KEY NOT NULL, `platform` TEXT NOT NULL, `time_received` INTEGER NOT NULL, `time_shown` INTEGER NOT NULL, `action` TEXT NOT NULL, `analytics_sent` INTEGER NOT NULL DEFAULT 0)")
             }
         }
 
@@ -627,6 +636,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun abCampaignDao(): ABTestCampaignDao
     abstract fun groupMemberDao(): GroupMemberDao
     abstract fun phonebookDao(): PhonebookDao
+    abstract fun notificationDao(): NotificationDao
 }
 
 class MessageTypeConverters {
