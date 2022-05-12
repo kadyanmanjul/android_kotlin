@@ -378,8 +378,8 @@ class AppObjectController {
             try {
                 CoroutineScope(Dispatchers.IO).launch {
                     try {
-                        val resp = p2pNetworkService.getVoipNewArchFlag()["status"]?:0
-                        PrefManager.put(IS_VOIP_NEW_ARCH_ENABLED,resp)
+                        val resp = p2pNetworkService.getVoipNewArchFlag()["status"] ?: 1
+                        PrefManager.put(IS_VOIP_NEW_ARCH_ENABLED, resp)
                     } catch (ex: Exception) {
                         when (ex) {
                             is HttpException -> {

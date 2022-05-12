@@ -28,6 +28,9 @@ import com.joshtalks.joshskills.core.CoreJoshFragment
 import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.abTest.*
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.core.pstn_states.PSTNState
 import com.joshtalks.joshskills.databinding.SpeakingPractiseFragmentBinding
 import com.joshtalks.joshskills.messaging.RxBus2
@@ -207,7 +210,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                     binding.nestedScrollView.scrollTo(0, binding.nestedScrollView.bottom)
                 }
             }
-        })
+        }
         viewModel.courseId.observe(
             viewLifecycleOwner
         ) {
@@ -221,7 +224,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                 .addParam(ParamKeys.LESSON_NUMBER, lessonNo)
                 .addParam(ParamKeys.VIA, "speaking screen")
                 .push()
-            if(PrefManager.getIntValue(IS_VOIP_NEW_ARCH_ENABLED)==1) {
+            if(PrefManager.getIntValue(IS_VOIP_NEW_ARCH_ENABLED, defValue = 1) == 1) {
                 val state = getVoipState()
                 Log.d(TAG, " Start Call Button - Voip State $state")
                 if (state == State.IDLE) {
@@ -452,7 +455,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                     binding.infoContainer.visibility = VISIBLE
                 }
             }
-        }
+        })
         binding.btnFavorite.setOnClickListener {
             FavoriteListActivity.openFavoriteCallerActivity(
                 requireActivity(),
@@ -524,7 +527,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             if (it == true) {
                 binding.btnCallDemo.visibility = View.GONE
             }
-        }
+        })
         viewModel.speakingABtestLiveData.observe(requireActivity()) {
             onReceiveABTestData(it)
         }
