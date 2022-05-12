@@ -36,6 +36,8 @@ import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
 import com.joshtalks.joshskills.ui.userprofile.fragments.MENTOR_ID
 import com.joshtalks.joshskills.ui.voip.SearchingUserActivity
 import com.joshtalks.joshskills.ui.voip.WebRtcActivity
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
+import com.joshtalks.joshskills.voip.constant.State
 
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -167,12 +169,16 @@ class JoshGroupActivity : BaseGroupActivity() {
     }
 
     private fun openFppCallScreen(uid: Int) {
-        val intent =
-            WebRtcActivity.getFavMissedCallbackIntent(uid, this).apply {
-                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            }
-        startActivity(intent)
+        if (getVoipState() != State.IDLE){
+            val intent =
+                WebRtcActivity.getFavMissedCallbackIntent(uid, this).apply {
+                    addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                }
+            startActivity(intent)
+        }else{
+            showToast("You are already on a call")
+        }
     }
 
     private fun openGroupListFragment() {

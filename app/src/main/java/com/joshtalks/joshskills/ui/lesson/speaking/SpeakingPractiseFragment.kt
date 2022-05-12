@@ -481,10 +481,10 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                 .push()
             startPractise(favoriteUserCall = false, isNewUserCall = true)
         }
-        if (viewModel.isFreeTrail.not()) {
-            binding.btnInviteFriend.isVisible =
-                PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID
-        }
+//        if (viewModel.isFreeTrail.not()) {
+//            binding.btnInviteFriend.isVisible =
+//                PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID
+//        }
         binding.btnInviteFriend.setOnClickListener {
             viewModel.saveVoiceCallImpression(IMPRESSION_CALL_MY_FRIEND_BTN_CLICKED)
             if (PermissionUtils.isReadContactPermissionEnabled(requireActivity())) {
