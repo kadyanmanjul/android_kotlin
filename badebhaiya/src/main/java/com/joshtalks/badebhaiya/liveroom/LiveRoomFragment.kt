@@ -55,7 +55,7 @@ import com.joshtalks.badebhaiya.liveroom.viewmodel.NOTIFICATION_NAME
 import com.joshtalks.badebhaiya.liveroom.viewmodel.NOTIFICATION_TYPE
 import com.joshtalks.badebhaiya.liveroom.viewmodel.NOTIFICATION_USER
 import com.joshtalks.badebhaiya.notifications.HeadsUpNotificationService
-import com.joshtalks.badebhaiya.profile.ProfileActivity
+import com.joshtalks.badebhaiya.profile.ProfileFragment
 import com.joshtalks.badebhaiya.profile.ProfileViewModel
 import com.joshtalks.badebhaiya.pubnub.PubNubEventsManager
 import com.joshtalks.badebhaiya.pubnub.PubNubManager
@@ -63,7 +63,6 @@ import com.joshtalks.badebhaiya.pubnub.PubNubState
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomResponse
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.utils.DEFAULT_NAME
-import com.joshtalks.badebhaiya.utils.setUserImageRectOrInitials
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
@@ -1064,7 +1063,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
     }
 
     private fun openUserProfile(mentorId: String) {
-        ProfileActivity.openProfileActivity(requireActivity(), mentorId)
+        ProfileFragment.openProfileActivity(requireActivity(), mentorId)
         /* UserProfileActivity.startUserProfileActivity(
              this@ConversationLiveRoomActivity,
              mentorId,
@@ -1270,7 +1269,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
 
     override fun getViewModel(): LiveRoomViewModel = vm
      fun itemClick(userId: String) {
-        val nextFrag = ProfileActivity()
+        val nextFrag = ProfileFragment()
         val bundle = Bundle()
         bundle.putString("user", userId) // use as per your need
         nextFrag.arguments = bundle

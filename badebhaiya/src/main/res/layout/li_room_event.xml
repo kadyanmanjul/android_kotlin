@@ -20,7 +20,7 @@
             type="androidx.recyclerview.widget.RecyclerView.ViewHolder" />
         <variable
             name="handler"
-            type="com.joshtalks.badebhaiya.profile.ProfileActivity" />
+            type="com.joshtalks.badebhaiya.profile.ProfileFragment" />
     </data>
 
     <com.google.android.material.card.MaterialCardView

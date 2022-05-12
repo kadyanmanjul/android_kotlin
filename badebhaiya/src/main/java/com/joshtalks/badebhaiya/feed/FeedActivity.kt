@@ -13,7 +13,6 @@ import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
@@ -27,14 +26,13 @@ import com.joshtalks.badebhaiya.liveroom.*
 import com.joshtalks.badebhaiya.liveroom.bottomsheet.CreateRoom
 import com.joshtalks.badebhaiya.liveroom.model.StartingLiveRoomProperties
 import com.joshtalks.badebhaiya.liveroom.viewmodel.LiveRoomViewModel
-import com.joshtalks.badebhaiya.profile.ProfileActivity
+import com.joshtalks.badebhaiya.profile.ProfileFragment
 import com.joshtalks.badebhaiya.profile.request.DeleteReminderRequest
 import com.joshtalks.badebhaiya.profile.request.ReminderRequest
 import com.joshtalks.badebhaiya.pubnub.PubNubState
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomResponse
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.utils.SingleDataManager
-import com.joshtalks.badebhaiya.utils.setUserImageOrInitials
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
@@ -178,7 +176,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
     }
     fun onProfileClicked()
     {
-        val fragment = ProfileActivity() // replace your custom fragment class
+        val fragment = ProfileFragment() // replace your custom fragment class
 
         val bundle = Bundle()
         val fragmentTransaction: FragmentTransaction = supportFragmentManager.beginTransaction()
@@ -233,9 +231,9 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                 OPEN_PROFILE -> {
                     var bundle=Bundle()
                     bundle.putString("user",it.data.getString(USER_ID, EMPTY))
-                    supportFragmentManager.findFragmentByTag(ProfileActivity::class.java.simpleName)
+                    supportFragmentManager.findFragmentByTag(ProfileFragment::class.java.simpleName)
                     supportFragmentManager.beginTransaction()
-                        .replace(R.id.root_view, ProfileActivity(), ProfileActivity::class.java.simpleName)
+                        .replace(R.id.root_view, ProfileFragment(), ProfileFragment::class.java.simpleName)
                         .commit()
                 }
                 OPEN_ROOM -> {
@@ -437,15 +435,15 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
     {
         var bundle=Bundle()
         bundle.putString("user",profile)
-        supportFragmentManager.findFragmentByTag(ProfileActivity::class.java.simpleName)
+        supportFragmentManager.findFragmentByTag(ProfileFragment::class.java.simpleName)
         supportFragmentManager.beginTransaction()
-            .replace(R.id.root_view, ProfileActivity(), ProfileActivity::class.java.simpleName)
+            .replace(R.id.root_view, ProfileFragment(), ProfileFragment::class.java.simpleName)
             .commit()
     }
 
     override fun viewProfile(profile: String?, deeplink:Boolean)
     {
-        val fragment = ProfileActivity() // replace your custom fragment class
+        val fragment = ProfileFragment() // replace your custom fragment class
 
         val bundle = Bundle()
         val fragmentTransaction: FragmentTransaction = supportFragmentManager.beginTransaction()
@@ -469,7 +467,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
 //
 //        }
 
-        val fragment = ProfileActivity() // replace your custom fragment class
+        val fragment = ProfileFragment() // replace your custom fragment class
 
         val bundle = Bundle()
         val fragmentTransaction: FragmentTransaction = supportFragmentManager.beginTransaction()

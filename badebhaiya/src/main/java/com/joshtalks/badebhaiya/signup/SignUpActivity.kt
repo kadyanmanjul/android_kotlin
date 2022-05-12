@@ -15,7 +15,7 @@ import com.joshtalks.badebhaiya.core.io.AppDirectory
 import com.joshtalks.badebhaiya.databinding.ActivitySignUpBinding
 import com.joshtalks.badebhaiya.feed.FeedActivity
 import com.joshtalks.badebhaiya.privacyPolicy.WebViewFragment
-import com.joshtalks.badebhaiya.profile.ProfileActivity
+import com.joshtalks.badebhaiya.profile.ProfileFragment
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.signup.fragments.SignUpAddProfilePhotoFragment
 import com.joshtalks.badebhaiya.signup.fragments.SignUpEnterNameFragment
@@ -23,8 +23,6 @@ import com.joshtalks.badebhaiya.signup.fragments.SignUpEnterOTPFragment
 import com.joshtalks.badebhaiya.signup.fragments.SignUpEnterPhoneFragment
 import com.joshtalks.badebhaiya.signup.viewmodel.SignUpViewModel
 import com.joshtalks.badebhaiya.utils.PRIVACY_POLICY_URL
-import com.joshtalks.badebhaiya.utils.SingleDataManager
-import com.joshtalks.badebhaiya.utils.events.makeLinks
 import com.truecaller.android.sdk.ITrueCallback
 import com.truecaller.android.sdk.TrueError
 import com.truecaller.android.sdk.TrueProfile
@@ -167,9 +165,9 @@ class SignUpActivity : AppCompatActivity() {
             //ProfileActivity.openProfileActivity(this, intent.extras?.getString(USER_ID) ?: EMPTY)
             var bundle = Bundle()
             bundle.putString("user", intent.extras?.getString(USER_ID))
-            supportFragmentManager.findFragmentByTag(ProfileActivity::class.java.simpleName)
+            supportFragmentManager.findFragmentByTag(ProfileFragment::class.java.simpleName)
             supportFragmentManager.beginTransaction()
-                .replace(R.id.root_view, ProfileActivity(), ProfileActivity::class.java.simpleName)
+                .replace(R.id.root_view, ProfileFragment(), ProfileFragment::class.java.simpleName)
                 .commit()
         } else
             Intent(this, FeedActivity::class.java).also { it ->

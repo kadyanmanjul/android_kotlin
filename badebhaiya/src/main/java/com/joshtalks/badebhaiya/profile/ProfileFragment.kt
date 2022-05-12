@@ -24,7 +24,7 @@ import com.joshtalks.badebhaiya.core.USER_ID
 import com.joshtalks.badebhaiya.core.models.PendingPilotEvent
 import com.joshtalks.badebhaiya.core.models.PendingPilotEvent.*
 import com.joshtalks.badebhaiya.core.models.PendingPilotEventData
-import com.joshtalks.badebhaiya.databinding.ActivityProfileBinding
+import com.joshtalks.badebhaiya.databinding.FragmentProfileBinding
 import com.joshtalks.badebhaiya.feed.*
 import com.joshtalks.badebhaiya.feed.adapter.FeedAdapter
 import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
@@ -49,11 +49,7 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import kotlinx.android.synthetic.main.activity_feed.*
 import kotlinx.android.synthetic.main.base_toolbar.view.*
 
-class ProfileActivity: Fragment(), Call, FeedAdapter.ConversationRoomItemCallback {
-
-//    private val binding by lazy<ActivityProfileBinding> {
-//        DataBindingUtil.setContentView(FeedActivity(), R.layout.activity_profile)
-//    }
+class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallback {
 
     private var isFromDeeplink = false
 
@@ -68,7 +64,7 @@ class ProfileActivity: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
     private val feedViewModel by lazy {
         ViewModelProvider(requireActivity())[FeedViewModel::class.java]
     }
-    lateinit var binding:ActivityProfileBinding
+    lateinit var binding: FragmentProfileBinding
 
     private var userId: String? = EMPTY
 
@@ -78,7 +74,7 @@ class ProfileActivity: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         savedInstanceState: Bundle?
     ): View? {
         (activity as FeedActivity).swipeRefreshLayout.isEnabled=false
-        binding = DataBindingUtil.inflate(inflater, R.layout.activity_profile, container, false)
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_profile, container, false)
         super.onCreate(savedInstanceState)
         var mBundle: Bundle? = Bundle()
         mBundle = this.arguments
@@ -93,7 +89,7 @@ class ProfileActivity: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         binding.toolbar.iv_back.setOnClickListener{
             activity?.run {
                 (activity as FeedActivity).swipeRefreshLayout.isEnabled=true
-                supportFragmentManager.beginTransaction().remove(this@ProfileActivity)
+                supportFragmentManager.beginTransaction().remove(this@ProfileFragment)
                     .commitAllowingStateLoss()
             }
         }
@@ -101,7 +97,7 @@ class ProfileActivity: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
             override fun handleOnBackPressed() {
                 activity?.run {
                     (activity as FeedActivity).swipeRefreshLayout.isEnabled=true
-                    supportFragmentManager.beginTransaction().remove(this@ProfileActivity)
+                    supportFragmentManager.beginTransaction().remove(this@ProfileFragment)
                         .commitAllowingStateLoss()
                 }
             }
@@ -261,14 +257,14 @@ class ProfileActivity: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
     companion object {
         const val FROM_DEEPLINK = "from_deeplink"
         fun openProfileActivity(context: Context, userId: String = EMPTY) {
-            Intent(context, ProfileActivity::class.java).apply {
+            Intent(context, ProfileFragment::class.java).apply {
                 putExtra(USER_ID, userId)
             }.run {
                 context.startActivity(this)
             }
         }
         fun getIntent(context: Context, userId: String = EMPTY, isFromDeeplink: Boolean = false): Intent {
-            return Intent(context, ProfileActivity::class.java).apply {
+            return Intent(context, ProfileFragment::class.java).apply {
                 putExtra(USER_ID, userId)
                 putExtra(FROM_DEEPLINK, isFromDeeplink)
             }

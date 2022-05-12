@@ -12,7 +12,7 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.os.bundleOf
 import com.joshtalks.badebhaiya.R
-import com.joshtalks.badebhaiya.profile.ProfileActivity
+import com.joshtalks.badebhaiya.profile.ProfileFragment
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
@@ -101,7 +101,7 @@ class NotificationHelper : BroadcastReceiver() {
                         contentIntent = PendingIntent.getActivity(
                             context,
                             notification.id,
-                            Intent(context, ProfileActivity::class.java).apply {
+                            Intent(context, ProfileFragment::class.java).apply {
                                 putExtra(USER_ID, notification.userId)
                             },
                             PendingIntent.FLAG_UPDATE_CURRENT
