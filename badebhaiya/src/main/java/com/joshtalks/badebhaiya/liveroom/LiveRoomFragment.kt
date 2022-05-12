@@ -63,6 +63,7 @@ import com.joshtalks.badebhaiya.pubnub.PubNubState
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomResponse
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.utils.DEFAULT_NAME
+import com.joshtalks.badebhaiya.utils.setImage
 import com.joshtalks.badebhaiya.utils.setUserImageRectOrInitials
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -85,11 +86,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
     RaisedHandsBottomSheet.HandRaiseSheetListener {
 
     private val FeedViewModel by lazy {
-        ViewModelProvider(this)[ProfileViewModel::class.java]
-    }
-
-    private val liveRoomViewModel by lazy {
-        ViewModelProvider(this)[LiveRoomViewModel::class.java]
+        ViewModelProvider(requireActivity())[ProfileViewModel::class.java]
     }
 
     private var mServiceBound: Boolean = false
@@ -516,6 +513,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
     }
     fun addObserver(){
         FeedViewModel.singleLiveEvent.observe(viewLifecycleOwner) {
+            Log.i("ABC2", "addObserver: ${it.what}")
             Log.d("ABC2", "Data class called with data message: ${it.what} bundle : ${it.data}")
             when (it.what) {
                 OPEN_ROOM ->{
@@ -526,7 +524,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
                                 room,
                                 it.getString(TOPIC)!!
                             )
-                            launch((requireActivity() as AppCompatActivity), liveRoomProperties, liveRoomViewModel)
+                            launch((requireActivity() as AppCompatActivity), liveRoomProperties, vm)
                         }
                     }
                 }
@@ -588,13 +586,21 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
     private fun updateUI() {
         setUpRecyclerView()
         setLeaveEndButton(PubNubManager.getLiveRoomProperties().isRoomCreatedByUser)
+        if(User.getInstance().profilePicUrl!=null) {
+            User.getInstance().apply {
+                profilePicUrl?.let { binding.userPhoto.setImage(it, radius = 16) }
+                //binding.profileIv.setUserImageOrInitials(profilePicUrl, firstName.toString())
+            }
+        }
         binding.userPhoto.clipToOutline = true
-        binding.userPhoto.setUserImageRectOrInitials(
-            User.getInstance().profilePicUrl,
-            User.getInstance().firstName ?: DEFAULT_NAME,
-            textColor = R.color.black,
-            bgColor = R.color.conversation_room_gray
-        )
+//        binding.userPhoto.setUserImageRectOrInitials(
+//            User.getInstance().profilePicUrl,
+//            User.getInstance().firstName ?: DEFAULT_NAME,
+//            textColor = R.color.black,
+//            bgColor = R.color.conversation_room_gray
+//        )
+
+
         binding.topic.text = PubNubManager.getLiveRoomProperties().channelTopic
 
 
@@ -1252,9 +1258,11 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
             liveRoomProperties: StartingLiveRoomProperties,
             liveRoomViewModel: LiveRoomViewModel
         ) {
-//            if (liveRoomViewModel.pubNubState.value == PubNubState.STARTED){
-//                showToast("Please Leave Current Room")
-//            } else {
+            if (liveRoomViewModel.pubNubState.value == PubNubState.STARTED){
+                showToast("Please Leave Current Room")
+                //LiveRoomFragment().expandLiveRoom()
+                //LiveRoomFragment().expandLiveRoom()
+            } else {
 
                 var frag=activity.supportFragmentManager.findFragmentById(R.id.liveRoomRootView)
                 if(frag==null) {
@@ -1266,7 +1274,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
                         .addToBackStack(null)
                         .commit()
                 }
-//            }
+            }
         }
 
     }

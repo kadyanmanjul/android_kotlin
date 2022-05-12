@@ -100,33 +100,33 @@ class SearchFragment : Fragment(), Call {
             binding.noresult.visibility= GONE
             if(it.toString()=="")
             {
+                viewModel.searchResponse.value= null
                 binding.defaultText.visibility= VISIBLE
                 binding.noresult.visibility= GONE
+                binding.recyclerView.visibility=GONE
             }
             else {
                 binding.defaultText.visibility = GONE
-//                binding.noresult.visibility= GONE
                 job?.cancel()
                 job = MainScope().launch {
                     delay(500)
-                    if (it.toString() != null)
+                    if (it.toString() != "" )
                         viewModel.searchUser(it.toString())
                 }
-                addObserver()
+//                addObserver()
             }
 
         }
-        //addObserver()
+        addObserver()
     }
     fun addObserver() {
         viewModel.searchResponse.observe(viewLifecycleOwner){
-            //display()
             binding.recyclerView.layoutManager=LinearLayoutManager(requireContext())
             if(it?.users!=null ) {
+                binding.recyclerView.visibility= VISIBLE
                 binding.recyclerView.adapter = SearchAdapter(it.users, this)
                 if(it?.users.size>0) {
                     binding.noresult.visibility = GONE
-                    //binding.noresult.visibility== View.INVISIBLE
 
                 }
                 else {
@@ -139,10 +139,6 @@ class SearchFragment : Fragment(), Call {
                     }
                 }
             }
-
-            //showToast(it.)
-
-
         }
     }
     companion object {

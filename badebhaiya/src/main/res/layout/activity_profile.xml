@@ -43,8 +43,8 @@
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/btnFollow"
-            android:layout_width="@dimen/_90sdp"
-            android:layout_height="@dimen/_20sdp"
+            android:layout_width="@dimen/_100sdp"
+            android:layout_height="@dimen/_24sdp"
             android:background="@drawable/follow_button_background"
             android:gravity="center"
             android:onClick="@{() -> handler.updateFollowStatus()}"
@@ -80,6 +80,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_11sdp"
             android:textSize="@dimen/_12ssp"
+            app:flow_verticalAlign="top"
             android:textColor="@color/profile_font_color"
             app:layout_constraintStart_toStartOf="@id/tvUserName"
             app:layout_constraintTop_toBottomOf="@id/tvUserName"

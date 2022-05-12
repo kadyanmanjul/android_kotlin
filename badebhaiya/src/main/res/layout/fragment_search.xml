@@ -17,11 +17,12 @@
         android:clickable="true"
         android:id="@+id/find">
 
-        <EditText
+        <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/search_bar"
             android:layout_width="@dimen/_230sdp"
             android:layout_height="@dimen/_30sdp"
             android:layout_marginStart="16dp"
+            android:inputType="textNoSuggestions"
             android:background="@drawable/search_bar"
             android:drawableLeft="@drawable/ic_search"
             android:drawableTint="#918F83"

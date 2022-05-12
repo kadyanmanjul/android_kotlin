@@ -33,6 +33,7 @@ import com.joshtalks.badebhaiya.profile.request.ReminderRequest
 import com.joshtalks.badebhaiya.pubnub.PubNubState
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomResponse
 import com.joshtalks.badebhaiya.repository.model.User
+import com.joshtalks.badebhaiya.utils.setImage
 import com.joshtalks.badebhaiya.utils.setUserImageOrInitials
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -196,8 +197,11 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
     }
 
     private fun initView() {
-        User.getInstance().apply {
-            binding.profileIv.setUserImageOrInitials(profilePicUrl, firstName.toString())
+        if(User.getInstance().profilePicUrl!=null) {
+            User.getInstance().apply {
+                profilePicUrl?.let { binding.profileIv.setImage(it, radius = 16) }
+                //binding.profileIv.setUserImageOrInitials(profilePicUrl, firstName.toString())
+            }
         }
         binding.recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
@@ -221,7 +225,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         }
 
         viewModel.singleLiveEvent.observe(this, androidx.lifecycle.Observer {
-            Log.d("ABC2", "Data class called with data message: ${it.what} bundle : ${it.data}")
+            Log.d("ABC2", "Data class called with feed data message: ${it.what} bundle : ${it.data}")
             when (it.what) {
                 OPEN_PROFILE -> {
                     var bundle=Bundle()

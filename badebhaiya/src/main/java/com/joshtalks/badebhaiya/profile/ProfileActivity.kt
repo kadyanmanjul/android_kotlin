@@ -109,7 +109,7 @@ class ProfileActivity: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         addObserver()
-        viewModel.getProfileForUser(userId!!, isFromDeeplink)
+        //viewModel.getProfileForUser(userId!!, isFromDeeplink)
     }
 
     private fun handleIntent() {
@@ -135,7 +135,7 @@ class ProfileActivity: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
                 speakerUnfollowedUIChanges()
         }
         feedViewModel.singleLiveEvent.observe(viewLifecycleOwner) {
-            Log.d("ABC2", "Data class called with data message: ${it.what} bundle : ${it.data}")
+            Log.d("ABC2", "Data class called with profile data message: ${it.what} bundle : ${it.data}")
             when (it.what) {
                 OPEN_ROOM ->{
                     it.data?.let {
@@ -151,13 +151,19 @@ class ProfileActivity: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
                 }
 
                 ROOM_EXPAND->{
-                    Log.i("YASHENDRA", "addObserver: Expand")
-//                    activity?.run {
-//                        (activity as FeedActivity).swipeRefreshLayout.isEnabled=true
-//                        supportFragmentManager.beginTransaction().remove(this@ProfileActivity)
-//                            .commitAllowingStateLoss()
-//                    }
-                    liveRoomViewModel.liveRoomState.value=LiveRoomState.EXPANDED
+                    it.data?.let {
+                        Log.i("YASHENDRA", "addObserver: Expand")
+                        it.getParcelable<ConversationRoomResponse>(ROOM_DETAILS)?.let{ room->
+                            val liveRoomProperties = StartingLiveRoomProperties.createFromRoom(
+                                room,
+                                it.getString(TOPIC)!!
+                            )
+                            LiveRoomFragment.launch((requireActivity() as AppCompatActivity), liveRoomProperties, liveRoomViewModel)
+                        }
+
+                    }
+
+                 //liveRoomViewModel.liveRoomState.value=LiveRoomState.EXPANDED
 //                    var live=LiveRoomFragment()
 //                    live.expandLiveRoom()
                 }
@@ -170,7 +176,7 @@ class ProfileActivity: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         binding.apply {
             if (profileResponse.isSpeaker) {
                 tvProfileBio.text = profileResponse.bioText
-                tvFollowers.text = HtmlCompat.fromHtml(getString(R.string.bb_followers, profileResponse.followersCount.toString()),
+                tvFollowers.text = HtmlCompat.fromHtml(getString(R.string.bb_followers, "<big>"+profileResponse.followersCount.toString()+"</big>"),
                     HtmlCompat.FROM_HTML_MODE_LEGACY)
                 if (profileResponse.isSpeakerFollowed) {
                     speakerFollowedUIChanges()
@@ -178,7 +184,7 @@ class ProfileActivity: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
                 else
                     speakerUnfollowedUIChanges()
             } else {
-                tvFollowers.text = HtmlCompat.fromHtml(getString(R.string.bb_following, profileResponse.followingCount.toString()),
+                tvFollowers.text = HtmlCompat.fromHtml(getString(R.string.bb_following, "<big>"+profileResponse.followingCount.toString()+"</big>"),
                     HtmlCompat.FROM_HTML_MODE_LEGACY)
             }
         }
@@ -192,7 +198,7 @@ class ProfileActivity: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
                 //binding.tvFollowers.setText("${it.followersCount-1} followers")
                 speakerUnfollowedUIChanges()
                 binding.tvFollowers.text =HtmlCompat.fromHtml(getString(R.string.bb_followers,
-                    (it.followersCount.minus(1)?:0).toString()),
+                    ("<big>"+it.followersCount.minus(1)?:0).toString()+"</big>"),
                     HtmlCompat.FROM_HTML_MODE_LEGACY)
             }
         else
@@ -200,7 +206,7 @@ class ProfileActivity: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
                 //is_followed=true
                 speakerFollowedUIChanges()
                 binding.tvFollowers.text =HtmlCompat.fromHtml(getString(R.string.bb_followers,
-                    (it.followersCount.plus(1)?:0).toString()),
+                    ("<big>"+it.followersCount.plus(1)?:0).toString()+"</big>"),
                     HtmlCompat.FROM_HTML_MODE_LEGACY)
                 //binding.tvFollowers.setText("${it.followersCount+1} followers")
             }

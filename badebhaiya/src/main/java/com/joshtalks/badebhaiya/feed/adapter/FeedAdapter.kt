@@ -79,7 +79,7 @@ class FeedAdapter :
             val name = room.speakersData?.shortName
             val date = Utils.getMessageTime((room.startTime ?: 0L) * 1000L, false, DateTimeStyle.LONG)
             val time = Utils.getMessageTimeInHours(Date((room.startTime ?: 0) * 1000L))
-            item.tvCardHeader.text = item.root.context.getString(R.string.room_card_top_title_header, name, date, time)
+             item.tvCardHeader.text = item.root.context.getString(R.string.room_card_top_title_header, name, date, time)
             item.root.setOnClickListener {
                     callback?.viewRoom(room, it)
 
@@ -87,21 +87,18 @@ class FeedAdapter :
 
             item.root.setOnLongClickListener{
                 if(room.speakersData?.userId == User.getInstance().userId) {
-                    //showPopup()
-                        showToast("Ended the Room")
-                    ConvoWebRtcService().endRoom(room.roomId)
+                    showPopup(room.roomId)
                 }
                 else {
-                    showToast("Left the Room")
-                    ConvoWebRtcService().leaveRoom(room.roomId,roomQuestionId)
-                    //showLeavePopup()
+                    if (room.conversationRoomType==ConversationRoomType.LIVE)
+                    showLeavePopup(room.roomId,roomQuestionId)
                 }
                 return@setOnLongClickListener true
             }
 
             item.callback = callback
         }
-        fun showPopup(){
+        fun showPopup(roomId: Int) {
             val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(item.tvCardTopic.context)
             val inflater = LayoutInflater.from(item.tvCardTopic.context)
             val dialogView = inflater.inflate(R.layout.popup_room, null)
@@ -113,15 +110,16 @@ class FeedAdapter :
                 alertDialog.dismiss()
             }
             dialogView.findViewById<AppCompatTextView>(R.id.delete_room).setOnClickListener{
-                //showToast("Kuch nhi hoga")
+                showToast("Ended the Room")
+                ConvoWebRtcService().endRoom(roomId)
                 alertDialog.dismiss()
             }
         }
 
-        fun showLeavePopup(){
+        fun showLeavePopup(roomId: Int, roomQuestionId: Int?) {
             val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(item.tvCardTopic.context)
             val inflater = LayoutInflater.from(item.tvCardTopic.context)
-            val dialogView = inflater.inflate(R.layout.popup_room, null)
+            val dialogView = inflater.inflate(R.layout.leave_popup_room, null)
             dialogBuilder.setView(dialogView)
             val alertDialog: AlertDialog = dialogBuilder.create()
             alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
@@ -130,7 +128,8 @@ class FeedAdapter :
                 alertDialog.dismiss()
             }
             dialogView.findViewById<AppCompatTextView>(R.id.delete_room).setOnClickListener{
-                //showToast("Kuch nhi hoga")
+                showToast("Left the Room")
+                ConvoWebRtcService().leaveRoom(roomId,roomQuestionId)
                 alertDialog.dismiss()
             }
         }
