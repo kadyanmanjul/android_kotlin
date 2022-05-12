@@ -7,7 +7,7 @@ apply plugin: 'com.google.gms.google-services'
 
 def majorVersion = 0
 def minorVersion = 0
-def patchVersion = 10
+def patchVersion = 11
 
 android {
     compileSdk 32
