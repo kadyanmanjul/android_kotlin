@@ -12,8 +12,10 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.os.bundleOf
 import com.joshtalks.badebhaiya.R
+import com.joshtalks.badebhaiya.feed.FeedActivity
 import com.joshtalks.badebhaiya.profile.ProfileFragment
 import kotlinx.android.parcel.Parcelize
+import timber.log.Timber
 
 @Parcelize
 data class Notification(
@@ -86,6 +88,8 @@ class NotificationHelper : BroadcastReceiver() {
     }
 
     override fun onReceive(context: Context, intent: Intent) {
+        Timber.d("Notification agaya => $intent")
+
         val notificationManager: NotificationManager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         intent.getBundleExtra(NOTIFICATION_BUNDLE)?.getParcelable<Notification>(NOTIFICATION)
@@ -101,7 +105,7 @@ class NotificationHelper : BroadcastReceiver() {
                         contentIntent = PendingIntent.getActivity(
                             context,
                             notification.id,
-                            Intent(context, ProfileFragment::class.java).apply {
+                            Intent(context, FeedActivity::class.java).apply {
                                 putExtra(USER_ID, notification.userId)
                             },
                             PendingIntent.FLAG_UPDATE_CURRENT

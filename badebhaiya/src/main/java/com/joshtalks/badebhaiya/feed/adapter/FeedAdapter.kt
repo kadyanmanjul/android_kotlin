@@ -79,8 +79,8 @@ class FeedAdapter(private val fromProfile: Boolean = false, private val coroutin
             item.adapter = this@FeedAdapter
             item.viewHolder = this
             val name = room.speakersData?.shortName
-            val date = Utils.getMessageTime((room.startTime ?: 0L) * 1000L, false, DateTimeStyle.LONG)
-            val time = Utils.getMessageTimeInHours(Date((room.startTime ?: 0) * 1000L))
+            val date = Utils.getMessageTime((room.startTime ?: 0L), false, DateTimeStyle.LONG)
+            val time = Utils.getMessageTimeInHours(Date(room.startTime ?: 0))
             item.tvCardHeader.text = item.root.context.getString(R.string.room_card_top_title_header, name, date, time)
             item.root.setOnClickListener {
                     callback?.viewRoom(room, it)

@@ -36,7 +36,12 @@ import com.joshtalks.badebhaiya.utils.SingleDataManager
 import com.joshtalks.badebhaiya.utils.setUserImageOrInitials
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.PermissionDeniedResponse
+import com.karumi.dexter.listener.PermissionGrantedResponse
+import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import com.karumi.dexter.listener.single.PermissionListener
+import timber.log.Timber
 
 class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallback {
 
@@ -138,6 +143,21 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
             viewModel.setIsBadeBhaiyaSpeaker()
             addObserver()
             initView()
+            PermissionUtils.demandAlarmPermission(this, object : PermissionListener {
+                override fun onPermissionGranted(p0: PermissionGrantedResponse?) {
+                    Timber.d("ALARM PERMISSION ACCEPTED")
+                }
+
+                override fun onPermissionDenied(p0: PermissionDeniedResponse?) {
+                }
+
+                override fun onPermissionRationaleShouldBeShown(
+                    p0: PermissionRequest?,
+                    p1: PermissionToken?
+                ) {
+                }
+
+            })
         }
         //setOnClickListener()
     }
@@ -412,7 +432,11 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                 PendingIntent.FLAG_UPDATE_CURRENT
             )
         val startingTime = System.currentTimeMillis() + room.startTimeDate.minus(5 * 60 * 1000)
-        alarmManager?.set(AlarmManager.RTC_WAKEUP, startingTime, pendingIntent)
+        val mStart = System.currentTimeMillis() + 20000
+        Timber.d("Static start time => $mStart")
+        Timber.d("Timer by network => ${room.startTime}")
+
+        alarmManager?.setExact(AlarmManager.RTC_WAKEUP, room.startTime!!, pendingIntent)
             .also {
                 //room.isScheduled = true
                 viewModel.setReminder(

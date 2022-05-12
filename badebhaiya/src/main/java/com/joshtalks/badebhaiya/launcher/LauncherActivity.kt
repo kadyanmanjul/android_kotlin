@@ -64,7 +64,6 @@ class LauncherActivity : AppCompatActivity() {
                 referringParams?.let {
                     Log.d("YASHENDRA", "branch json data => ${it.has("user_id")}")
 
-                    // TODO: Uncomment it.
                     startActivityForState(
                         if (it.has("user_id"))
                             it.getString("user_id")
