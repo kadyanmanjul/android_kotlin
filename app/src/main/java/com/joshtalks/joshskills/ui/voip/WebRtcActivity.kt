@@ -195,6 +195,7 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
                 500
             )
             PrefManager.put(P2P_LAST_CALL, true)
+            PrefManager.put(GET_CHANNEL_NAME,CurrentCallDetails.channelName)
         }
 
         override fun onNewIncomingCallChannel() {
@@ -594,19 +595,17 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
     }
 
     private fun initCall() {
-        val getChannelName = mBoundService?.channelName
+        var getChannelName = PrefManager.getStringValue(GET_CHANNEL_NAME)
+        if(getChannelName.isNullOrEmpty()) {
+            getChannelName = mBoundService?.channelName.toString()
+        }
         try {
             val map: HashMap<String, String?> = HashMap()
-            if(getChannelName!=null) {
                 map["agora_channel_name"] = getChannelName
-            }
-            else {
-                map["agora_channel_name"] = EMPTY
-            }
             viewModel.checkShowFppDialog(map)
 
         }catch (ex:Exception){
-
+            ex.printStackTrace()
         }
 
         viewModel.topicUrlLiveData.observe(this) {
@@ -945,6 +944,7 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
                     agoraCallId = state.callId,
                     timeStamp = DateUtils.getCurrentTimeStamp()
                 )
+                CallRatingDialogActivity.callRatingActivity?.finish()
             } /*else {
                 Log.d(TAG, "acceptCall: ---> CALL_CONNECT_SCREEN_VISUAL")
                 val state = CurrentCallDetails.state()
@@ -1085,6 +1085,7 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
     }
 
     private fun showCallRatingScreen(callTime: Long, channelName: String?) {
+        PrefManager.put(GET_OPP_USER_PROFILE_PIC,mBoundService?.getOppositeCallerProfilePic()?: EMPTY)
         var time = mBoundService?.getTimeOfTalk() ?: 0
         if (time <= 0) {
             time = callTime

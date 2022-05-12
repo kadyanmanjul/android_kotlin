@@ -27,6 +27,7 @@ class CallRatingDialogActivity : AppCompatActivity() {
         )
         binding.lifecycleOwner = this
         initIntentObject()
+        callRatingActivity = this
         CallRatingsFragment.newInstance(
             callerName,
             callDuration,
@@ -63,6 +64,7 @@ class CallRatingDialogActivity : AppCompatActivity() {
         const val CALLER_MENTOR_ID = "caller_mentor_id"
         const val AGORA_MENTOR_ID = "agora_mentor_id"
 
+        var callRatingActivity: Activity? =null
         fun startCallRatingDialogActivity(activity: Activity,
                                           callerName: String,
                                           callDuration: Int,

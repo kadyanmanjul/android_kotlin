@@ -140,6 +140,8 @@ const val IS_SPEAKING_SCREEN_CLICKED = "is_speaking_screen_clicked"
 const val CALL_BTN_CLICKED = "call_btn_clicked"
 const val GET_CALL_ID = "get_call_id"
 const val GET_OPP_USER_CALL_ID = "get_opp_user_call_id"
+const val GET_CHANNEL_NAME = "get_channel_name"
+const val GET_OPP_USER_PROFILE_PIC = "get_opposite_user_profile_pic"
 
 object PrefManager {
 

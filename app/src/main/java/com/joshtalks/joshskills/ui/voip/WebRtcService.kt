@@ -54,6 +54,7 @@ import com.joshtalks.joshskills.ui.voip.analytics.VoipAnalytics.Event.DISCONNECT
 import com.joshtalks.joshskills.ui.voip.analytics.VoipEvent
 import com.joshtalks.joshskills.ui.voip.util.NotificationUtil
 import com.joshtalks.joshskills.ui.voip.util.TelephonyUtil
+import com.joshtalks.joshskills.ui.voip.voip_rating.CallRatingDialogActivity
 import com.joshtalks.joshskills.util.DateUtils
 import io.agora.rtc.Constants
 import io.agora.rtc.Constants.*
@@ -1191,6 +1192,7 @@ class WebRtcService : BaseWebRtcService() {
                                         intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>?
                                     addNotification(CallForceConnect().action,null)
                                     callConnectService(callData)
+                                    CallRatingDialogActivity.callRatingActivity?.finish()
                                 }
                                 this == CallReject().action -> {
                                     addNotification(CallDisconnect().action, null)

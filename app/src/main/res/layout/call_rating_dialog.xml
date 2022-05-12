@@ -257,7 +257,6 @@
             android:layout_height="@dimen/_49sdp"
             android:layout_marginTop="@dimen/_23sdp"
             android:background="@drawable/circle"
-            android:backgroundTint="@color/colorPrimaryDark"
             android:src="@drawable/ic_call_placeholder"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

@@ -45,6 +45,7 @@ class WebrtcViewModel(application: Application) : AndroidViewModel(application) 
                             it["channel_name"]!!,
                             it["uid"]!!.toInt()
                         )
+                        PrefManager.put(GET_CALL_ID,it["agora_call_id"]!!)
                     }
                 } else if (response.code() == 204) {
                     apiCallStatusLiveData.postValue(ApiCallStatus.INVALIDED)

@@ -2,6 +2,8 @@ package com.joshtalks.joshskills.ui.voip.analytics
 
 import android.util.Log
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.GET_CALL_ID
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.repository.local.AppDatabase
 import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.joshtalks.joshskills.ui.voip.analytics.data.local.VoipAnalyticsEntity
@@ -131,6 +133,7 @@ object VoipAnalytics {
                 for (analytics in analyticsList) {
                     try {
                         val request = getApiRequest(analytics)
+                        PrefManager.put(GET_CALL_ID,analytics.agoraCallId)
                         val response = callAnalyticsApi(request, analytics.event)
                         if (response.isSuccessful)
                             database?.voipAnalyticsDao()?.deleteAnalytics(analytics.id)

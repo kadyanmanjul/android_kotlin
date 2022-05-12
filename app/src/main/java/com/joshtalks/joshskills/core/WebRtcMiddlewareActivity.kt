@@ -76,6 +76,7 @@ open class WebRtcMiddlewareActivity : CoreJoshActivity() {
         }
 
         override fun onDisconnect(callId: String?, channelName: String?, time: Long) {
+            PrefManager.put(GET_OPP_USER_PROFILE_PIC,mBoundService?.getOppositeCallerProfilePic()?: EMPTY)
             super.onDisconnect(callId, channelName, time)
             Log.d(TAG, "${this.javaClass.simpleName} onDisconnect: ")
             lifecycleScope.launchWhenResumed {

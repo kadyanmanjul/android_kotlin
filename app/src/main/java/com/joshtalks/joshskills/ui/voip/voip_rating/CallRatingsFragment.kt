@@ -6,6 +6,7 @@ import android.animation.ObjectAnimator
 import android.app.Dialog
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
@@ -86,8 +87,8 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
             binding.cross.visibility = GONE
         }
 
-        callerProfileUrl?.let {
-            binding.cImage.setImage(callerProfileUrl!!)
+        if(PrefManager.getStringValue(GET_OPP_USER_PROFILE_PIC).isNotEmpty()){
+            binding.cImage.setImage(PrefManager.getStringValue(GET_OPP_USER_PROFILE_PIC))
         }
     }
     private fun addListner() {
@@ -122,9 +123,7 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
                    group.findViewById<RadioButton>(checkedId).startAnimation(myAnim)
                    block.visibility= GONE
                    submit.visibility= GONE
-                   vm.submitCallRatings(agoraCallId, selectedRating, PrefManager.getStringValue(
-                       GET_OPP_USER_CALL_ID
-                   ))
+                   vm.submitCallRatings(PrefManager.getStringValue(GET_CALL_ID), selectedRating, PrefManager.getStringValue(GET_OPP_USER_CALL_ID))
                    dismiss()
                    activity?.finish()
                }
@@ -140,7 +139,7 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
                    CoroutineScope(Dispatchers.Main).launch{
                        showToast("Your feedback has been successfully submitted")
                    }
-                   vm.submitCallRatings(agoraCallId, selectedRating, PrefManager.getStringValue(GET_OPP_USER_CALL_ID))
+                   vm.submitCallRatings(PrefManager.getStringValue(GET_CALL_ID), selectedRating, PrefManager.getStringValue(GET_OPP_USER_CALL_ID))
                }
 
                dismiss()
