@@ -100,4 +100,7 @@ interface P2PNetworkService {
 
     @POST("$DIR/voicecall/agora_new_topic/")
     suspend fun saveTopicUrlImpression(@Body params : HashMap<String,Any?>) :Response<Any>
+
+    @GET("$DIR/p2p/status/")
+    suspend fun getVoipNewArchFlag(): HashMap<String,Int>
 }

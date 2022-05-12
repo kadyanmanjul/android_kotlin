@@ -194,21 +194,26 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             courseId = it
         }
         binding.btnStartTrialText.setOnSingleClickListener {
-            viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
-            val state = getVoipState()
-            Log.d(TAG, " Start Call Button - Voip State $state")
-            if(state == State.IDLE) {
-                if(checkPstnState()== PSTNState.Idle) {
-                    if (Utils.isInternetAvailable().not()) {
-                        showToast("Seems like you have no internet")
-                        return@setOnSingleClickListener
+            if(PrefManager.getIntValue(IS_VOIP_NEW_ARCH_ENABLED)==1) {
+                viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
+                val state = getVoipState()
+                Log.d(TAG, " Start Call Button - Voip State $state")
+                if (state == State.IDLE) {
+                    if (checkPstnState() == PSTNState.Idle) {
+                        if (Utils.isInternetAvailable().not()) {
+                            showToast("Seems like you have no internet")
+                            return@setOnSingleClickListener
+                        }
+                        startPractise(isNewArch = true)
+                    } else {
+                        showToast("Cannot make this call while on another call")
                     }
-                    startPractise(isNewArch = true)
-                }else{
-                    showToast("Cannot make this call while on another call")
-                }
-            } else
-                showToast("Wait for last call to get disconnected")
+                } else
+                    showToast("Wait for last call to get disconnected")
+            }else{
+                viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
+                startPractise()
+            }
         }
 
         binding.btnGroupCall.setOnClickListener {

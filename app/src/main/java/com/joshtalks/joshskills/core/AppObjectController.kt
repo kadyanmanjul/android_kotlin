@@ -94,9 +94,12 @@ import okhttp3.Request
 import okhttp3.Response
 import okhttp3.TlsVersion
 import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.HttpException
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import timber.log.Timber
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 
 private const val JOSH_SKILLS_CACHE = "joshskills-cache"
 private const val READ_TIMEOUT = 30L
@@ -350,7 +353,7 @@ class AppObjectController {
                     .addConverterFactory(GsonConverterFactory.create(gsonMapper))
                     .build()
                 p2pNetworkService = p2pRetrofitBuilder.create(P2PNetworkService::class.java)
-
+                getNewArchVoipFlag()
                 initObjectInThread(context)
             }
             return INSTANCE
@@ -369,6 +372,30 @@ class AppObjectController {
                     PrefManager.put(USER_LOCALE, "en")
                 }
                 Lingver.init(context, PrefManager.getStringValue(USER_LOCALE))
+            }
+        }
+        private fun getNewArchVoipFlag(){
+            try {
+                CoroutineScope(Dispatchers.IO).launch {
+                    try {
+                        val resp = p2pNetworkService.getVoipNewArchFlag()["status"]?:0
+                        PrefManager.put(IS_VOIP_NEW_ARCH_ENABLED,resp)
+                    } catch (ex: Exception) {
+                        when (ex) {
+                            is HttpException -> {
+                                showToast(joshApplication.getString(R.string.something_went_wrong))
+                            }
+                            is SocketTimeoutException, is UnknownHostException -> {
+                                showToast(joshApplication.getString(R.string.internet_not_available_msz))
+                            }
+                            else -> {
+                                FirebaseCrashlytics.getInstance().recordException(ex)
+                            }
+                        }
+                    }
+                }
+            }catch (ex:Exception) {
+                ex.printStackTrace()
             }
         }
 
