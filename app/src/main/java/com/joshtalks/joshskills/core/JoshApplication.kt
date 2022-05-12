@@ -30,7 +30,7 @@ import com.joshtalks.joshskills.core.notification.LocalNotificationAlarmReciever
 import com.joshtalks.joshskills.core.pstn_states.PstnObserver
 import com.joshtalks.joshskills.core.service.BackgroundService
 import com.joshtalks.joshskills.core.service.NOTIFICATION_DELAY
-import com.joshtalks.joshskills.core.service.NetworkChangeReceiver
+import com.joshtalks.joshskills.core.service.ServiceStartReceiver
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.di.ApplicationComponent
 import com.joshtalks.joshskills.di.DaggerApplicationComponent
@@ -76,7 +76,7 @@ class JoshApplication :
         Log.d(TAG, "onCreate: STARTING MAIN PROCESS CHECK ${this.hashCode()}")
             if(isMainProcess()) {
                 Log.d(TAG, "onCreate: END ...IS MAIN PROCESS")
-                //turnOnStrictMode()
+                turnOnStrictMode()
                 ProcessLifecycleOwner.get().lifecycle.addObserver(this@JoshApplication)
                 AppObjectController.init(this@JoshApplication)
                 VoipPref.initVoipPref(this)
@@ -97,14 +97,6 @@ class JoshApplication :
 //
 //            }
 //        }
-    }
-
-    private fun initServices() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            applicationContext.startForegroundService(Intent(applicationContext, BackgroundService::class.java))
-        } else {
-            applicationContext.startService(Intent(applicationContext, BackgroundService::class.java))
-        }
     }
 
     override fun onTerminate() {
@@ -135,10 +127,16 @@ class JoshApplication :
     }
 
     private fun registerBroadcastReceiver() {
-        registerReceiver(
-            NetworkChangeReceiver(),
-            IntentFilter("android.net.conn.CONNECTIVITY_CHANGE")
-        )
+        val intentFilter = IntentFilter()
+//        intentFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE")
+        intentFilter.addAction(Intent.ACTION_USER_PRESENT)
+        intentFilter.addAction(Intent.ACTION_SCREEN_ON)
+        intentFilter.addAction(Intent.ACTION_SCREEN_OFF)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            intentFilter.addAction(Intent.ACTION_USER_UNLOCKED)
+        }
+        registerReceiver(ServiceStartReceiver(), intentFilter)
+
         JoshSkillExecutors.BOUNDED.submit {
             if (PrefManager.getStringValue(RESTORE_ID).isBlank()) {
                 val intentFilterRestoreID =

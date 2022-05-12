@@ -7,6 +7,9 @@ import com.joshtalks.joshskills.constants.DISMISS_PROGRESS_BAR
 import com.joshtalks.joshskills.constants.ON_BACK_PRESSED
 import com.joshtalks.joshskills.constants.OPEN_PROFILE_PAGE
 import com.joshtalks.joshskills.constants.SHOW_PROGRESS_BAR
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.ui.group.adapters.GroupRequestAdapter
 import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics
@@ -28,6 +31,9 @@ class GroupRequestViewModel : BaseViewModel() {
     var groupId: String = ""
 
     fun onBackPress() {
+        MixPanelTracker.publishEvent(MixPanelEvent.BACK)
+            .addParam(ParamKeys.SCREEN_NAME,"groups request to join screen")
+            .push()
         message.what = ON_BACK_PRESSED
         singleLiveEvent.value = message
     }
@@ -66,9 +72,17 @@ class GroupRequestViewModel : BaseViewModel() {
                 if (response && allow) {
                     pushMetaMessage("${name.substringBefore(" ")} has joined the group", groupId, mentorId)
                     GroupAnalytics.push(GroupAnalytics.Event.REQUEST_ACCEPTED, groupId, mentorId)
-                } else if (response && !allow)
+                    MixPanelTracker.publishEvent(MixPanelEvent.GROUP_REQUEST_ALLOW)
+                        .addParam(ParamKeys.GROUP_ID, request.groupId)
+                        .addParam(ParamKeys.MENTOR_ID, request.mentorId)
+                        .push()
+                } else if (response && !allow) {
                     GroupAnalytics.push(GroupAnalytics.Event.REQUEST_DECLINED, groupId, mentorId)
-                else
+                    MixPanelTracker.publishEvent(MixPanelEvent.GROUP_REQUEST_DECLINE)
+                        .addParam(ParamKeys.GROUP_ID, request.groupId)
+                        .addParam(ParamKeys.MENTOR_ID, request.mentorId)
+                        .push()
+                } else
                     showToast("Error responding to the request")
                 dismissProgressDialog()
             } catch (e: Exception) {

@@ -19,6 +19,9 @@ import com.airbnb.lottie.LottieAnimationView
 import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.core.extension.slideUpAnimation
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.VideoShowEvent
@@ -157,6 +160,7 @@ class GrammarButtonView : FrameLayout {
                 LessonActivity.isVideoVisible.value = false
             if (isAnswerChecked) {
                 callback?.nextQuestion()
+
             } else {
                 grammarBtn.text = AppObjectController.getFirebaseRemoteConfig().getString(
                     FirebaseRemoteConfigKey.GRAMMAR_CONTINUE_BUTTON_TEXT +
@@ -187,30 +191,9 @@ class GrammarButtonView : FrameLayout {
 
     fun viewVideo() {
         if (reviseVideoObject?.video_url.isNullOrBlank().not()) {
-            callback?.onVideoButtonAppear(
-                isClicked = true,
-                wrongAnswerHeading = this.questionFeedback?.wrongAnswerHeading,
-                wrongAnswerSubHeading = this.questionFeedback?.wrongAnswerHeading2,
-                wrongAnswerText = this.questionFeedback?.wrongAnswerText,
-                wrongAnswerDescription = this.questionFeedback?.wrongAnswerText2,
-            )
-            openVideoObject()
+            callback?.onVideoButtonClicked()
             animatedVideoIv.visibility = GONE
             videoIv.visibility = VISIBLE
-        }
-    }
-
-    private fun openVideoObject() {
-        if (reviseVideoObject?.video_url.isNullOrBlank().not()) {
-            RxBus2.publish(
-                VideoShowEvent(
-                    videoTitle = EMPTY,
-                    videoId = reviseVideoObject?.id,
-                    videoUrl = reviseVideoObject?.video_url,
-                    videoWidth = reviseVideoObject?.video_width ?: 0,
-                    videoHeight = reviseVideoObject?.video_height ?: 0
-                )
-            )
         }
     }
 
@@ -312,7 +295,6 @@ class GrammarButtonView : FrameLayout {
     }
 
     fun setCorrectView() {
-
         wrongAnswerGroup.visibility = View.GONE
         rightAnswerGroup.visibility = View.VISIBLE
         setCorrectViewVisibility()
@@ -410,7 +392,6 @@ class GrammarButtonView : FrameLayout {
                 animatedVideoIv.visibility = VISIBLE
             }
             callback?.onVideoButtonAppear(
-                isClicked = false,
                 wrongAnswerHeading = this.questionFeedback?.wrongAnswerHeading,
                 wrongAnswerSubHeading = this.questionFeedback?.wrongAnswerText,
                 wrongAnswerText = questionFeedback?.wrongAnswerText,
@@ -485,12 +466,12 @@ class GrammarButtonView : FrameLayout {
         fun checkQuestionCallBack(): Boolean?
         fun nextQuestion()
         fun onVideoButtonAppear(
-            isClicked: Boolean,
             wrongAnswerHeading: String?,
             wrongAnswerSubHeading: String?,
             wrongAnswerText: String?,
             wrongAnswerDescription: String?
         )
+        fun onVideoButtonClicked()
     }
 
     enum class GrammarButtonState(state: String) {

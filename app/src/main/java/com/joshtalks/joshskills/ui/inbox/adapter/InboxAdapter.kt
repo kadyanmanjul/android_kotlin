@@ -30,6 +30,9 @@ import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.YYYY_MM_DD
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.core.countdowntimer.CountdownTimerBack
 import com.joshtalks.joshskills.core.interfaces.OnOpenCourseListener
 import com.joshtalks.joshskills.databinding.InboxItemLayoutBinding
@@ -352,6 +355,10 @@ class InboxAdapter(
                 .push()
             openCourseListener.onClick(inboxEntity)
             //   RxBus2.publish(OpenCourseEventBus(inboxEntity))
+            MixPanelTracker.publishEvent(MixPanelEvent.OPEN_COURSE_CHAT)
+                .addParam(ParamKeys.COURSE_NAME,inboxEntity.course_name)
+                .addParam(ParamKeys.COURSE_ID,inboxEntity.courseId)
+                .push()
         }
     }
 }

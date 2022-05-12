@@ -6,7 +6,6 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Outline
 import android.net.Uri
-import android.util.Log
 import android.view.View
 import android.view.ViewOutlineProvider
 import androidx.databinding.ObservableBoolean
@@ -17,24 +16,19 @@ import com.daasuu.mp4compose.FillMode
 import com.daasuu.mp4compose.composer.Mp4Composer
 import com.daasuu.mp4compose.filter.GlWatermarkFilter
 import com.joshtalks.joshskills.base.BaseViewModel
-import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.showToast
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.Utils
-import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.custom_ui.JoshVideoPlayer
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
-import com.joshtalks.joshskills.repository.server.LinkAttribution
 import com.joshtalks.joshskills.ui.referral.REFERRAL_SHARE_TEXT_SHARABLE_VIDEO
-import com.joshtalks.joshskills.ui.referral.USER_SHARE_SHORT_URL
 import com.joshtalks.joshskills.ui.special_practice.model.SaveVideoModel
 import com.joshtalks.joshskills.ui.special_practice.model.SpecialPractice
 import com.joshtalks.joshskills.ui.special_practice.repo.SpecialPracticeRepo
 import com.joshtalks.joshskills.ui.special_practice.utils.*
-import io.branch.indexing.BranchUniversalObject
-import io.branch.referral.Defines
-import io.branch.referral.util.LinkProperties
+import com.joshtalks.joshskills.util.DeepLinkUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -42,7 +36,6 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
-import timber.log.Timber
 import java.io.File
 
 class ViewAndShareViewModel : BaseViewModel() {
@@ -116,67 +109,26 @@ class ViewAndShareViewModel : BaseViewModel() {
     }
 
     fun getDeepLinkAndInviteFriends(view: View) {
-        val referralTimestamp = System.currentTimeMillis()
-        val branchUniversalObject = BranchUniversalObject()
-            .setCanonicalIdentifier(userReferralCode.plus(referralTimestamp))
-            .setTitle("Invite Friend")
-            .setContentIndexingMode(BranchUniversalObject.CONTENT_INDEX_MODE.PUBLIC)
-            .setLocalIndexMode(BranchUniversalObject.CONTENT_INDEX_MODE.PUBLIC)
-        val lp = LinkProperties()
-            .setChannel(userReferralCode)
-            .setFeature("sharing")
-            .setCampaign(userReferralCode.plus(referralTimestamp))
-            .addControlParameter(Defines.Jsonkey.ReferralCode.key, userReferralCode)
-            .addControlParameter(
-                Defines.Jsonkey.UTMCampaign.key,
-                userReferralCode.plus(referralTimestamp)
-            )
-            .addControlParameter(Defines.Jsonkey.UTMMedium.key, "referral")
-
-        branchUniversalObject
-            .generateShortUrl(AppObjectController.joshApplication, lp) { url, error ->
-                if (error == null)
+        DeepLinkUtil(AppObjectController.joshApplication)
+            .setReferralCode(Mentor.getInstance().referralCode)
+            .setReferralCampaign()
+            .setListener(object : DeepLinkUtil.OnDeepLinkListener {
+                override fun onDeepLinkCreated(deepLink: String) {
                     inviteFriends(
-                        WHATSAPP_PACKAGE_STRING,
-                        dynamicLink = url,
-                        referralTimestamp = referralTimestamp
+                        packageString = WHATSAPP_PACKAGE_STRING,
+                        dynamicLink = deepLink
                     )
-                else
-                    inviteFriends(
-                        WHATSAPP_PACKAGE_STRING,
-                        dynamicLink = if (PrefManager.hasKey(USER_SHARE_SHORT_URL))
-                            PrefManager.getStringValue(USER_SHARE_SHORT_URL)
-                        else
-                            getAppShareUrl(userReferralCode),
-                        referralTimestamp = referralTimestamp
-                    )
-            }
+                }
+            })
+            .build()
     }
 
-    fun inviteFriends(packageString: String? = null, dynamicLink: String, referralTimestamp: Long) {
+    fun inviteFriends(packageString: String? = null, dynamicLink: String) {
         var referralText =
             AppObjectController.getFirebaseRemoteConfig()
                 .getString(REFERRAL_SHARE_TEXT_SHARABLE_VIDEO)
         referralText = referralText.plus("\n").plus(dynamicLink)
         try {
-            viewModelScope.launch {
-                try {
-                    val requestData = LinkAttribution(
-                        mentorId = Mentor.getInstance().getId(),
-                        contentId = userReferralCode.plus(
-                            referralTimestamp
-                        ),
-                        sharedItem = "User Video",
-                        sharedItemType = "VI",
-                        deepLink = dynamicLink
-                    )
-                    val res = AppObjectController.commonNetworkService.getDeepLink(requestData)
-                    Timber.i(res.body().toString())
-                } catch (ex: Exception) {
-                    Timber.e(ex)
-                }
-            }
-
             val waIntent = Intent(Intent.ACTION_SEND)
             waIntent.type = "*/*"
             if (packageString.isNullOrEmpty().not()) {
@@ -228,13 +180,13 @@ class ViewAndShareViewModel : BaseViewModel() {
         videoView: JoshVideoPlayer
     ) {
         try {
-            var filePath :String? = null
-            filePath = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q){
-                saveVideoQ(context,spViewModel)
-            }else{
+            var filePath: String? = null
+            filePath = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+                saveVideoQ(context, spViewModel)
+            } else {
                 getVideoFilePath()
             }
-            Mp4Composer(spViewModel.cameraVideoPath.get() ?: EMPTY, filePath?: EMPTY)
+            Mp4Composer(spViewModel.cameraVideoPath.get() ?: EMPTY, filePath ?: EMPTY)
                 .size(getWindowWidth(), getHeightByPixel())
                 .fillMode(FillMode.PRESERVE_ASPECT_CROP)
                 .filter(GlWatermarkFilter(bitmap, GlWatermarkFilter.Position.RIGHT_BOTTOM))
@@ -248,12 +200,12 @@ class ViewAndShareViewModel : BaseViewModel() {
                     override fun onCompleted() {
                         try {
 
-                            submitPractice(filePath?: EMPTY, spViewModel.specialId.get() ?: EMPTY)
+                            submitPractice(filePath ?: EMPTY, spViewModel.specialId.get() ?: EMPTY)
                             viewModelScope.launch(Dispatchers.Main) {
                                 isShareCardClickable.set(true)
                                 isProgressbarShow.set(false)
                                 sharableVideoUrl.set(filePath)
-                                showVideoUi(filePath?: EMPTY, videoView)
+                                showVideoUi(filePath ?: EMPTY, videoView)
                             }
                             updateUserRecordVideo(spViewModel.specialId.get() ?: EMPTY, EMPTY)
                             deleteFile(spViewModel.imageNameForDelete.get() ?: EMPTY)
@@ -268,7 +220,8 @@ class ViewAndShareViewModel : BaseViewModel() {
                     }
                 })
                 .start()
-        } catch (ex: Exception) {}
+        } catch (ex: Exception) {
+        }
     }
 
 }

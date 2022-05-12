@@ -14,6 +14,9 @@ import com.google.android.material.button.MaterialButton
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.IS_FREE_TRIAL
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.databinding.ActivityRecentCallBinding
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.fpp.adapters.RecentCallsAdapter
@@ -113,6 +116,10 @@ class RecentCallActivity : BaseFppActivity() {
             "${recentCall.firstName} has requested to be your favorite practice partner"
         btnConfirm
             .setOnClickListener {
+                MixPanelTracker.publishEvent(MixPanelEvent.FPP_REQUEST_CONFIRM)
+                    .addParam(ParamKeys.MENTOR_ID, recentCall.receiverMentorId)
+                    .addParam(ParamKeys.VIA,"recent call")
+                    .push()
                 viewModel.confirmOrRejectFppRequest(
                     recentCall.receiverMentorId?: EMPTY,
                     IS_ACCEPTED,
@@ -121,6 +128,10 @@ class RecentCallActivity : BaseFppActivity() {
                 dialogView.dismiss()
             }
         btnNotNow.setOnClickListener {
+            MixPanelTracker.publishEvent(MixPanelEvent.FPP_REQUEST_NOT_NOW)
+                .addParam(ParamKeys.MENTOR_ID, recentCall.receiverMentorId)
+                .addParam(ParamKeys.VIA,"recent call")
+                .push()
             viewModel.confirmOrRejectFppRequest(recentCall.receiverMentorId?: EMPTY, IS_REJECTED, RECENT_CALL)
             dialogView.dismiss()
         }
@@ -133,10 +144,16 @@ class RecentCallActivity : BaseFppActivity() {
         dialogView.findViewById<TextView>(R.id.text).text = "Block ${recentCall.firstName}"
         btnConfirm
             .setOnClickListener {
-                viewModel.blockUser(recentCall.receiverMentorId?: EMPTY)
+                MixPanelTracker.publishEvent(MixPanelEvent.BLOCK_USER_YES)
+                    .addParam(ParamKeys.MENTOR_ID, recentCall.receiverMentorId)
+                    .push()
+                viewModel.blockUser(recentCall.receiverMentorId?: EMPTY,recentCall.firstName?: EMPTY,recentCall.partnerUid?:0)
                 dialogView.dismiss()
             }
         btnNotNow.setOnClickListener {
+            MixPanelTracker.publishEvent(MixPanelEvent.BLOCK_USER_NO)
+                .addParam(ParamKeys.MENTOR_ID, recentCall.receiverMentorId)
+                .push()
             dialogView.dismiss()
         }
     }

@@ -11,6 +11,9 @@ import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.databinding.FragmentFaqDetailBinding
 import com.joshtalks.joshskills.repository.server.FAQ
 import kotlinx.android.synthetic.main.fragment_faq_detail.no_btn
@@ -58,10 +61,16 @@ class FaqDetailsFragment : Fragment() {
             yes_btn.backgroundTintList =
                 ContextCompat.getColorStateList(requireActivity(), R.color.button_color)
             yes_btn.setTextColor(ContextCompat.getColor(requireActivity(), R.color.white))
+            MixPanelTracker.publishEvent(MixPanelEvent.FAQ_ANSWER_HELPFUL_YES)
+                .addParam(ParamKeys.QUESTION,faq.question)
+                .push()
         } else {
             no_btn.backgroundTintList =
                 ContextCompat.getColorStateList(requireActivity(), R.color.button_color)
             no_btn.setTextColor(ContextCompat.getColor(requireActivity(), R.color.white))
+            MixPanelTracker.publishEvent(MixPanelEvent.FAQ_ANSWER_HELPFUL_NO)
+                .addParam(ParamKeys.QUESTION,faq.question)
+                .push()
         }
         yes_btn.isEnabled = false
         no_btn.isEnabled = false
@@ -74,6 +83,7 @@ class FaqDetailsFragment : Fragment() {
     }
 
     fun dismiss() {
+        MixPanelTracker.publishEvent(MixPanelEvent.FAQ_GO_HOME).push()
         requireActivity().finish()
     }
 

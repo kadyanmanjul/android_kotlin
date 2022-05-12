@@ -43,4 +43,11 @@ const val SHARE_VIDEO = 105
 const val ON_BACK_PRESS_PROFILE = 200
 const val COURSE_LIST_DATA = 201
 const val MY_GROUP_LIST_DATA = 202
+const val OPEN_PROFILE_DM_FPP = 230
+const val REMOVE_DM_FPP = 231
+
 const val CLOSE_REPORT = 2001
+
+const val INTERNET_FAILURE = 12023
+const val REMOVE_AND_BLOCK_FPP  = 300
+

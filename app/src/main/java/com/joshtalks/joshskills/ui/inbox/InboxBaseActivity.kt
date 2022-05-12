@@ -13,6 +13,8 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.inapp_update.Constants
 import com.joshtalks.joshskills.core.inapp_update.InAppUpdateManager
 import com.joshtalks.joshskills.core.inapp_update.InAppUpdateStatus
@@ -204,6 +206,7 @@ abstract class InboxBaseActivity :
         lifecycleScope.launch(Dispatchers.IO) {
             if (isGuestUser().not()) {
                 openCourseExplorer()
+                MixPanelTracker.publishEvent(MixPanelEvent.FIND_MORE_COURSES).push()
                 logEvent(AnalyticsEvent.FIND_MORE_COURSE_CLICKED.NAME)
                 return@launch
             }
@@ -212,6 +215,7 @@ abstract class InboxBaseActivity :
                 when (it) {
                     ONBOARD_VERSIONS.ONBOARDING_V1, ONBOARD_VERSIONS.ONBOARDING_V7, ONBOARD_VERSIONS.ONBOARDING_V8 -> {
                         openCourseExplorer()
+                        MixPanelTracker.publishEvent(MixPanelEvent.FIND_MORE_COURSES).push()
                         logEvent(AnalyticsEvent.FIND_MORE_COURSE_CLICKED.NAME)
                     }
                     ONBOARD_VERSIONS.ONBOARDING_V2, ONBOARD_VERSIONS.ONBOARDING_V4, ONBOARD_VERSIONS.ONBOARDING_V3, ONBOARD_VERSIONS.ONBOARDING_V5, ONBOARD_VERSIONS.ONBOARDING_V6 -> {

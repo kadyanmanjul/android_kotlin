@@ -8,6 +8,9 @@ import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.SINGLE_SPACE
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.repository.local.entity.LessonQuestion
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.assessment.Assessment
@@ -80,6 +83,12 @@ class OnlineTestViewModel(application: Application) : AndroidViewModel(applicati
                     AppObjectController.chatNetworkService.postAndGetNextOnlineTestQuestion(
                         assessmentRequest
                     )
+                MixPanelTracker.publishEvent(MixPanelEvent.GRAMMAR_QUIZ_SUBMIT)
+                    .addParam(ParamKeys.LESSON_ID,lessonId)
+                    .addParam(ParamKeys.QUESTION_ID,assessmentQuestion.question.remoteId)
+                    .addParam(ParamKeys.IS_CORRECT_ANSWER,assessmentQuestion.question.isCorrect)
+                    .addParam(ParamKeys.ANSWER,answerText.toString())
+                    .push()
                 if (response.isSuccessful) {
                     apiStatus.postValue(ApiCallStatus.SUCCESS)
                     response.body()?.let {

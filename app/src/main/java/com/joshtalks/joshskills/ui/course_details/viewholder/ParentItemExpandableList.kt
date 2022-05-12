@@ -13,6 +13,9 @@ import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.VERSION
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
 import com.mindorks.placeholderview.annotations.View
@@ -25,7 +28,7 @@ import com.mindorks.placeholderview.annotations.expand.Toggle
 @Parent
 @SingleTop
 @Layout(R.layout.faq_item)
-class ParentItemExpandableList(val question: String) {
+class ParentItemExpandableList(val question: String, val testId: Int ,val categoryId: Int) {
 
     @View(R.id.question)
     lateinit var itemNameTxt: TextView
@@ -78,6 +81,12 @@ class ParentItemExpandableList(val question: String) {
     }
 
     fun logAnalyticsEvent(selectedCategory: String) {
+        MixPanelTracker.publishEvent(MixPanelEvent.COURSE_QNA_QUESTION_CLICKED)
+            .addParam(ParamKeys.TEST_ID,testId)
+            .addParam(ParamKeys.QUESTION_NAME,selectedCategory)
+            .addParam(ParamKeys.CATEGORY_ID,categoryId)
+            .push()
+
         AppAnalytics.create(AnalyticsEvent.QNA_QUESTION_CLICKED.NAME)
             .addBasicParam()
             .addUserDetails()

@@ -6,11 +6,10 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
-
+import android.util.Log
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
-
 import com.afollestad.materialdialogs.MaterialDialog
 import com.github.dhaval2404.imagepicker.ImagePicker
 
@@ -18,7 +17,14 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.constants.*
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.PermissionUtils
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.databinding.ActivityJoshGroupBinding
+import com.joshtalks.joshskills.track.AGORA_UID
+import com.joshtalks.joshskills.track.CHANNEL_ID
+import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics
 import com.joshtalks.joshskills.ui.group.constants.*
@@ -27,7 +33,9 @@ import com.joshtalks.joshskills.ui.group.model.GroupItemData
 import com.joshtalks.joshskills.ui.group.viewmodels.JoshGroupViewModel
 import com.joshtalks.joshskills.ui.userprofile.fragments.UserPicChooserFragment
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
+import com.joshtalks.joshskills.ui.userprofile.fragments.MENTOR_ID
 import com.joshtalks.joshskills.ui.voip.SearchingUserActivity
+import com.joshtalks.joshskills.ui.voip.WebRtcActivity
 
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -57,14 +65,22 @@ class JoshGroupActivity : BaseGroupActivity() {
     }
 
     override fun onCreated() {
-        openGroupListFragment()
+        val channelId = intent.getStringExtra(CHANNEL_ID) ?: EMPTY
+        if (channelId.isEmpty())
+            openGroupListFragment()
+        else {
+            vm.mentorId = intent.getStringExtra(MENTOR_ID)?: EMPTY
+            vm.agoraId = intent.getIntExtra(AGORA_UID,0)
+            val chatData = intent.getParcelableExtra(DM_CHAT_DATA) as GroupItemData?
+            openGroupChat(channelId, chatData)
+        }
     }
 
     override fun initViewState() {
         event.observe(this) {
             when (it.what) {
                 ON_BACK_PRESSED -> popBackStack()
-                OPEN_GROUP -> openGroupChat(it.obj as? GroupItemData)
+                OPEN_GROUP -> openGroupChat(data = it.obj as? GroupItemData)
                 OPEN_NEW_GROUP -> openNewGroupFragment()
                 OPEN_GROUP_INFO -> openGroupInfoFragment()
                 EDIT_GROUP_INFO -> openEditGroupInfo(it.data)
@@ -76,7 +92,9 @@ class JoshGroupActivity : BaseGroupActivity() {
                 OPEN_CALLING_ACTIVITY -> startGroupCall(it.data)
                 SHOULD_REFRESH_GROUP_LIST -> vm.shouldRefreshGroupList = true
                 REMOVE_GROUP_AND_CLOSE -> removeGroupFromDb(it.obj as String)
+                REMOVE_AND_BLOCK_FPP -> removeDmFppDb(it.obj as String)
                 OPEN_PROFILE_PAGE -> openProfileActivity(it.obj as String)
+                OPEN_PROFILE_DM_FPP -> openProfileActivity(mentorId = vm.mentorId)
                 SHOW_PROGRESS_BAR -> showProgressDialog(it.obj as String)
                 DISMISS_PROGRESS_BAR -> dismissProgressDialog()
                 REFRESH_GRP_LIST_HIDE_INFO -> {
@@ -90,7 +108,10 @@ class JoshGroupActivity : BaseGroupActivity() {
     // TODO: Need to refactor
     private fun startGroupCall(data: Bundle) {
         if (PermissionUtils.isCallingPermissionEnabled(this)) {
-            openCallingActivity(data)
+            if (data.get(GROUP_TYPE) == DM_CHAT)
+                openFppCallScreen(vm.agoraId)
+            else
+                openCallingActivity(data)
             return
         }
         PermissionUtils.callingFeaturePermission(
@@ -106,7 +127,10 @@ class JoshGroupActivity : BaseGroupActivity() {
                             return
                         }
                         if (flag) {
-                            openCallingActivity(data)
+                            if (data.get(GROUP_TYPE) == DM_CHAT)
+                                openFppCallScreen(vm.agoraId)
+                            else
+                                openCallingActivity(data)
                             return
                         } else {
                             MaterialDialog(this@JoshGroupActivity).show {
@@ -128,9 +152,7 @@ class JoshGroupActivity : BaseGroupActivity() {
     }
 
     fun openCallingActivity(bundle: Bundle) {
-        GroupAnalytics.push(GroupAnalytics.Event.CALL_PRACTICE_PARTNER_FROM_GROUP, bundle.getString(
-            GROUPS_ID
-        ) ?: "")
+        GroupAnalytics.push(GroupAnalytics.Event.CALL_PRACTICE_PARTNER_FROM_GROUP, bundle.getString(GROUPS_ID) ?: "")
         val intent = SearchingUserActivity.startUserForPractiseOnPhoneActivity(
             this,
             courseId = "151",
@@ -141,6 +163,15 @@ class JoshGroupActivity : BaseGroupActivity() {
             groupName = bundle.getString(GROUPS_TITLE),
             favoriteUserCall = false
         )
+        startActivity(intent)
+    }
+
+    private fun openFppCallScreen(uid: Int) {
+        val intent =
+            WebRtcActivity.getFavMissedCallbackIntent(uid, this).apply {
+                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
         startActivity(intent)
     }
 
@@ -166,7 +197,7 @@ class JoshGroupActivity : BaseGroupActivity() {
         }
     }
 
-    private fun openGroupChat(data: GroupItemData?) {
+    private fun openGroupChat(groupId: String = EMPTY, data: GroupItemData?) {
         supportFragmentManager.commit {
             setReorderingAllowed(true)
             val bundle = Bundle().apply {
@@ -178,13 +209,32 @@ class JoshGroupActivity : BaseGroupActivity() {
                 putString(CONVERSATION_ID, vm.conversationId)
                 putString(ADMIN_ID, data?.getCreatorId())
                 putString(GROUP_TYPE, data?.getGroupCategory())
+                vm.groupType.set(data?.getGroupCategory())
                 putString(GROUP_STATUS, data?.getJoinedStatus())
                 putString(CLOSED_GROUP_TEXT, data?.getGroupText())
+                putInt(AGORA_UID, data?.getAgoraId() ?: 0)
+                if (groupId == EMPTY){
+                    vm.agoraId = data?.getAgoraId()?:0
+                    vm.mentorId = data?.getCreatorId()?: EMPTY
+                }
                 data?.hasJoined()?.let {
                     if (it) {
-                        putString(GROUPS_CHAT_SUB_TITLE, "tap here for group info")
+                        if (data.getGroupCategory() == DM_CHAT) {
+                            vm.groupType.set(data.getGroupCategory())
+                            putString(GROUPS_CHAT_SUB_TITLE, EMPTY)
+                            if (groupId != EMPTY) {
+                                vm.subscribeToChat(groupId)
+                                putInt(AGORA_UID, vm.agoraId)
+                            }
+                        }
+                        else
+                            putString(GROUPS_CHAT_SUB_TITLE, "tap here for group info")
                         putInt(GROUP_CHAT_UNREAD, Integer.valueOf(data.getUnreadMsgCount()))
                         GroupAnalytics.push(GroupAnalytics.Event.OPEN_GROUP, data.getUniqueId())
+                        MixPanelTracker.publishEvent(MixPanelEvent.OPEN_GROUP_INBOX)
+                            .addParam(ParamKeys.GROUP_ID, data.getUniqueId())
+                            .addParam(ParamKeys.IS_ADMIN, data.getCreatorId() == Mentor.getInstance().getId())
+                            .push()
                     }
                     putBoolean(HAS_JOINED_GROUP, it)
                 }
@@ -193,7 +243,8 @@ class JoshGroupActivity : BaseGroupActivity() {
             val fragment = GroupChatFragment()
             fragment.arguments = bundle
             replace(R.id.group_fragment_container, fragment, CHAT_FRAGMENT)
-            addToBackStack(GROUPS_STACK)
+            if (groupId == EMPTY)
+                addToBackStack(GROUPS_STACK)
         }
     }
 
@@ -261,6 +312,7 @@ class JoshGroupActivity : BaseGroupActivity() {
             addToBackStack(GROUPS_STACK)
         }
         GroupAnalytics.push(GroupAnalytics.Event.CREATE_GROUP)
+        MixPanelTracker.publishEvent(MixPanelEvent.NEW_GROUP_CLICKED).push()
     }
 
     private fun openAdminResponseFragment(addGroupRequest: AddGroupRequest) {
@@ -283,6 +335,7 @@ class JoshGroupActivity : BaseGroupActivity() {
     }
 
     private fun popBackStack() {
+        MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
         if (supportFragmentManager.backStackEntryCount > 1) {
             try {
                 supportFragmentManager.popBackStackImmediate()
@@ -294,6 +347,14 @@ class JoshGroupActivity : BaseGroupActivity() {
     }
 
     private fun openImageChooser() {
+        if (vm.openedGroupId.isNullOrBlank())
+            MixPanelTracker.publishEvent(MixPanelEvent.ADD_GROUP_PHOTO)
+        else {
+            MixPanelTracker.publishEvent(MixPanelEvent.EDIT_GROUP_PHOTO)
+                .addParam(ParamKeys.GROUP_ID, vm.openedGroupId)
+        }
+        MixPanelTracker.push()
+
         UserPicChooserFragment.showDialog(
             supportFragmentManager,
             true,
@@ -303,14 +364,35 @@ class JoshGroupActivity : BaseGroupActivity() {
     }
 
     private fun removeGroupFromDb(groupId: String) {
-        if (groupId == vm.openedGroupId)
-            while (supportFragmentManager.backStackEntryCount > 0)
-                onBackPressed()
+        if (groupId == vm.openedGroupId) {
+            if (vm.groupType.get() != DM_CHAT) {
+                while (supportFragmentManager.backStackEntryCount > 0)
+                    onBackPressed()
+            }
+        }
         CoroutineScope(Dispatchers.IO).launch {
             val groupName: String? = vm.repository.getGroupName(groupId)
             vm.repository.leaveGroupFromLocal(groupId)
+            if (vm.groupType.get() != DM_CHAT) {
+                withContext(Dispatchers.Main) {
+                    showRemovedAlert(groupName?: EMPTY)
+                }
+            } else {
+                withContext(Dispatchers.Main) {
+                    onBackPressed()
+                }
+            }
+        }
+    }
+
+    private fun removeDmFppDb(groupId: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val groupName = vm.repository.getGroupName(groupId)
+            vm.repository.leaveGroupFromLocal(groupId)
             withContext(Dispatchers.Main) {
-                showRemovedAlert(groupName?: EMPTY)
+                showRemovedDmFppAlert(groupName?: EMPTY)
+                while (supportFragmentManager.backStackEntryCount > 0)
+                    onBackPressed()
             }
         }
     }
@@ -349,6 +431,24 @@ class JoshGroupActivity : BaseGroupActivity() {
         }
     }
 
+    fun showRemovedDmFppAlert(groupName: String) {
+        val builder = AlertDialog.Builder(this)
+        val dialog: AlertDialog = builder
+            .setMessage("You have been removed from fpp by \"$groupName\"")
+            .setPositiveButton("Ok") { dialog, id ->
+                dialog.cancel()
+            }
+            .create()
+
+        dialog.setCancelable(false)
+        dialog.show()
+
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).let {
+            it.setTypeface(null, Typeface.BOLD)
+            it.setTextColor(Color.parseColor("#107BE5"))
+        }
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK) {
@@ -365,9 +465,10 @@ class JoshGroupActivity : BaseGroupActivity() {
     override fun setIntentExtras() {}
 
     override fun onDestroy() {
-        super.onDestroy()
         CoroutineScope(Dispatchers.IO).launch {
             vm.deleteExtraMessages()
+            vm.unSubscribeToChat()
         }
+        super.onDestroy()
     }
 }

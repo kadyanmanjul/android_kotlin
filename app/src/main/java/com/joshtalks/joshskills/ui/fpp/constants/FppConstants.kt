@@ -1,7 +1,6 @@
 package com.joshtalks.joshskills.ui.fpp.constants
 
 const val SENT_REQUEST = "send_request"
-const val IS_ALREADY_FPP = "is_already_fpp"
 const val ALREADY_FPP = "already_fpp"
 const val REQUESTED = "requested"
 const val HAS_RECIEVED_REQUEST = "recieved_request"

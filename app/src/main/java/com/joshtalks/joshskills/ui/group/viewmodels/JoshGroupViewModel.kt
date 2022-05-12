@@ -17,11 +17,17 @@ import androidx.paging.cachedIn
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseViewModel
 import com.joshtalks.joshskills.constants.*
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.ui.group.constants.SHOW_NEW_INFO
 import com.joshtalks.joshskills.ui.group.adapters.GroupAdapter
 import com.joshtalks.joshskills.ui.group.adapters.GroupStateAdapter
 import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics
+import com.joshtalks.joshskills.ui.group.constants.CLOSED_GROUP
+import com.joshtalks.joshskills.ui.group.constants.OPENED_GROUP
 import com.joshtalks.joshskills.ui.group.model.*
 import com.joshtalks.joshskills.ui.group.utils.GroupItemComparator
 import com.joshtalks.joshskills.ui.group.repository.GroupRepository
@@ -46,7 +52,7 @@ class JoshGroupViewModel : BaseViewModel() {
     val repository = GroupRepository(onDataLoaded)
     val groupTitle = ObservableField("Groups")
     val groupImageUrl = ObservableField("")
-    val adapter = GroupAdapter(GroupItemComparator)
+    val adapter = GroupAdapter(GroupItemComparator,"search")
     val stateAdapter = GroupStateAdapter()
     val hasGroupData = ObservableBoolean(true)
     val addingNewGroup = ObservableBoolean(false)
@@ -54,11 +60,13 @@ class JoshGroupViewModel : BaseViewModel() {
     var shouldRefreshGroupList = false
     val isFromVoip = ObservableBoolean(false)
     val isFromGroupInfo = ObservableBoolean(false)
-    var isImageChanged = false
-    var conversationId: String = ""
-    var openedGroupId: String? = null
     val groupListCount = ObservableField(0)
+    var isImageChanged = false
+    var openedGroupId: String? = null
     var groupMemberCounts: Map<String, GroupMemberCount> = mapOf()
+    var conversationId: String = ""
+    var agoraId: Int = 0
+    var mentorId: String = EMPTY
 
     val onItemClick: (GroupItemData) -> Unit = {
         message.what = OPEN_GROUP
@@ -94,11 +102,13 @@ class JoshGroupViewModel : BaseViewModel() {
     }
 
     fun onSearch() {
+        MixPanelTracker.publishEvent(MixPanelEvent.SEARCH_GROUPS).push()
         message.what = SEARCH_GROUP
         singleLiveEvent.value = message
     }
 
     fun onSearch(view: View) {
+        MixPanelTracker.publishEvent(MixPanelEvent.FIND_GROUPS_TO_JOIN).push()
         GroupAnalytics.push(GroupAnalytics.Event.FIND_GROUPS_TO_JOIN)
         message.what = SEARCH_GROUP
         singleLiveEvent.value = message
@@ -135,6 +145,7 @@ class JoshGroupViewModel : BaseViewModel() {
         message.obj = request
         singleLiveEvent.value = message
         GroupAnalytics.push(GroupAnalytics.Event.OPEN_ADMIN_RESPONSIBILITY)
+        MixPanelTracker.publishEvent(MixPanelEvent.OPEN_ADMIN_RESPONSIBILITY).push()
     }
 
     fun createGroup(view: View) {
@@ -163,10 +174,16 @@ class JoshGroupViewModel : BaseViewModel() {
         groupTypeDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
         groupTypeDialog.select_group_type.setOnClickListener {
-            if (groupTypeDialog.open_group_radio.isChecked)
+            MixPanelTracker.publishEvent(MixPanelEvent.CHOOSE_GROUP_TYPE)
+            if (groupTypeDialog.open_group_radio.isChecked) {
                 (view as TextView).text = "Open Group"
-            else
+                MixPanelTracker.addParam(ParamKeys.GROUP_TYPE, OPENED_GROUP)
+                    .push()
+            } else {
                 (view as TextView).text = "Closed Group"
+                MixPanelTracker.addParam(ParamKeys.GROUP_TYPE, CLOSED_GROUP)
+                    .push()
+            }
             groupTypeDialog.dismiss()
         }
     }
@@ -176,6 +193,10 @@ class JoshGroupViewModel : BaseViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 repository.addGroupToServer(request)
+                MixPanelTracker.publishEvent(MixPanelEvent.NEW_GROUP_CREATED)
+                    .addParam(ParamKeys.GROUP_TYPE, request.groupType)
+                    .addParam(ParamKeys.ICON_ADDED, request.groupIcon != EMPTY)
+                    .push()
                 withContext(Dispatchers.Main) {
                     message.what = REFRESH_GRP_LIST_HIDE_INFO
                     message.data = Bundle().apply {
@@ -207,6 +228,10 @@ class JoshGroupViewModel : BaseViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val isSuccess = repository.editGroupInServer(request, isNameChanged)
+                MixPanelTracker.publishEvent(MixPanelEvent.GROUP_INFO_EDITED)
+                    .addParam(ParamKeys.GROUP_ID, request.groupId)
+                    .addParam(ParamKeys.IS_SUCCESS, isSuccess)
+                    .push()
                 withContext(Dispatchers.Main) {
                     if (isSuccess) {
                         message.what = SHOULD_REFRESH_GROUP_LIST
@@ -251,5 +276,10 @@ class JoshGroupViewModel : BaseViewModel() {
         }
     }
 
+    fun subscribeToChat(groupId: String) = repository.startChatEventListener(groupId)
+
+    fun unSubscribeToChat()  = repository.unSubscribeToChat()
+
     suspend fun deleteExtraMessages() = repository.removeExtraMessages()
+
 }

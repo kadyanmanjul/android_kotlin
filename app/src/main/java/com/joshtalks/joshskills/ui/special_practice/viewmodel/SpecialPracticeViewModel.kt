@@ -21,43 +21,20 @@ import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.custom_ui.JoshVideoPlayer
 import com.joshtalks.joshskills.quizgame.util.UpdateReceiver
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.repository.server.LinkAttribution
 import com.joshtalks.joshskills.ui.referral.REFERRAL_SHARE_TEXT_SHARABLE_VIDEO
-import com.joshtalks.joshskills.ui.referral.USER_SHARE_SHORT_URL
 import com.joshtalks.joshskills.ui.special_practice.model.SpecialPractice
 import com.joshtalks.joshskills.ui.special_practice.model.SpecialPracticeModel
 import com.joshtalks.joshskills.ui.special_practice.repo.SpecialPracticeRepo
-import com.joshtalks.joshskills.ui.special_practice.utils.K_FACTOR_ON_BACK_PRESSED
-import com.joshtalks.joshskills.ui.special_practice.utils.SHOW_RECORDED_SPECIAL_VIDEO
-import com.joshtalks.joshskills.ui.special_practice.utils.SHOW_RECORD_VIDEO
-import com.joshtalks.joshskills.ui.special_practice.utils.getAndroidDownloadFolder
-import com.joshtalks.joshskills.ui.special_practice.utils.getAppShareUrl
-import com.joshtalks.joshskills.ui.special_practice.utils.WHATSAPP_PACKAGE_STRING
-import com.joshtalks.joshskills.ui.special_practice.utils.START_VIDEO_RECORDING
-import com.joshtalks.joshskills.ui.special_practice.utils.CALL_INVITE_FRIENDS_METHOD
-import com.joshtalks.joshskills.ui.special_practice.utils.START_VIEW_AND_SHARE
-import com.joshtalks.joshskills.ui.special_practice.utils.SHOW_SAMPLE_VIDEO
-import com.joshtalks.joshskills.ui.special_practice.utils.CLOSE_SAMPLE_VIDEO
-import com.joshtalks.joshskills.ui.special_practice.utils.DOWNLOAD_ID_DATA
-import com.joshtalks.joshskills.ui.special_practice.utils.OPEN_VIEW_AND_SHARE
-import com.joshtalks.joshskills.ui.special_practice.utils.SHOW_SAMPLE_SPECIAL_VIDEO
-import com.joshtalks.joshskills.ui.special_practice.utils.MOVE_TO_ACTIVITY
-import io.branch.indexing.BranchUniversalObject
-import io.branch.referral.Defines
-import io.branch.referral.util.LinkProperties
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
+import com.joshtalks.joshskills.ui.special_practice.utils.*
+import com.joshtalks.joshskills.util.DeepLinkUtil
+import kotlinx.coroutines.*
 import timber.log.Timber
-import java.util.Random
+import java.util.*
 
 class SpecialPracticeViewModel : BaseViewModel() {
     val specialPracticeRepo = SpecialPracticeRepo()
     val specialPracticeData = MutableLiveData<SpecialPracticeModel>()
     val specialIdData = MutableLiveData<SpecialPractice>()
-    private var userReferralCode = Mentor.getInstance().referralCode
     val recordedPathLocal = ObservableField(EMPTY)
     var wordText = ObservableField(EMPTY)
     var instructionText = ObservableField(EMPTY)
@@ -126,8 +103,10 @@ class SpecialPracticeViewModel : BaseViewModel() {
 
     fun getSpecialIdData(specialId: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            recordedPathLocal.set(AppObjectController.appDatabase.specialDao()
-                .getSpecialPracticeFromId(specialId)?.recordedVideo)
+            recordedPathLocal.set(
+                AppObjectController.appDatabase.specialDao()
+                    .getSpecialPracticeFromId(specialId)?.recordedVideo
+            )
         }
     }
 
@@ -137,72 +116,30 @@ class SpecialPracticeViewModel : BaseViewModel() {
     }
 
     fun getDeepLinkAndInviteFriends(view: View) {
-        val referralTimestamp = System.currentTimeMillis()
-        val branchUniversalObject = BranchUniversalObject()
-            .setCanonicalIdentifier(userReferralCode.plus(referralTimestamp))
-            .setTitle("Invite Friend")
-            .setContentIndexingMode(BranchUniversalObject.CONTENT_INDEX_MODE.PUBLIC)
-            .setLocalIndexMode(BranchUniversalObject.CONTENT_INDEX_MODE.PUBLIC)
-        val lp = LinkProperties()
-            .setChannel(userReferralCode)
-            .setFeature("sharing")
-            .setCampaign(userReferralCode.plus(referralTimestamp))
-            .addControlParameter(Defines.Jsonkey.ReferralCode.key, userReferralCode)
-            .addControlParameter(
-                Defines.Jsonkey.UTMCampaign.key,
-                userReferralCode.plus(referralTimestamp)
-            )
-            .addControlParameter(Defines.Jsonkey.UTMMedium.key, "referral")
-
-        branchUniversalObject
-            .generateShortUrl(AppObjectController.joshApplication, lp) { url, error ->
-                if (error == null)
-                    inviteFriends(
-                        dynamicLink = url,
-                        referralTimestamp = referralTimestamp
-                    )
-                else
-                    inviteFriends(
-                        dynamicLink = if (PrefManager.hasKey(USER_SHARE_SHORT_URL))
-                            PrefManager.getStringValue(USER_SHARE_SHORT_URL)
-                        else
-                            getAppShareUrl(userReferralCode),
-                        referralTimestamp = referralTimestamp
-                    )
-            }
+        DeepLinkUtil(AppObjectController.joshApplication)
+            .setReferralCode(Mentor.getInstance().referralCode)
+            .setReferralCampaign()
+            .setListener(object : DeepLinkUtil.OnDeepLinkListener {
+                override fun onDeepLinkCreated(deepLink: String) {
+                    inviteFriends(deepLink)
+                }
+            })
+            .build()
     }
 
-    fun inviteFriends(dynamicLink: String, referralTimestamp: Long) {
+    fun inviteFriends(dynamicLink: String) {
         var referralText =
             AppObjectController.getFirebaseRemoteConfig()
                 .getString(REFERRAL_SHARE_TEXT_SHARABLE_VIDEO)
         referralText = referralText.plus("\n").plus(dynamicLink)
         try {
-            viewModelScope.launch {
-                try {
-                    val requestData = LinkAttribution(
-                        mentorId = Mentor.getInstance().getId(),
-                        contentId = userReferralCode.plus(
-                            referralTimestamp
-                        ),
-                        sharedItem = "User Video",
-                        sharedItemType = "VI",
-                        deepLink = dynamicLink
-                    )
-                    val res = AppObjectController.commonNetworkService.getDeepLink(requestData)
-                    Timber.i(res.body().toString())
-                } catch (ex: Exception) {
-                    Timber.e(ex)
-                }
-            }
-
             val waIntent = Intent(Intent.ACTION_SEND)
             waIntent.type = "*/*"
             if (WHATSAPP_PACKAGE_STRING.isEmpty().not()) {
                 waIntent.setPackage(WHATSAPP_PACKAGE_STRING)
             }
             waIntent.putExtra(Intent.EXTRA_TEXT, referralText)
-            if (recordedPathLocal.get() == EMPTY){
+            if (recordedPathLocal.get() == EMPTY) {
                 recordedPathLocal.set(videoDownloadPath.get())
             }
             waIntent.putExtra(
@@ -226,7 +163,7 @@ class SpecialPracticeViewModel : BaseViewModel() {
             message.what = SHOW_SAMPLE_VIDEO
             message.obj = false
             singleLiveEvent.value = message
-        }else{
+        } else {
             showToast("Seems like your Internet is too slow or not available.")
         }
     }
@@ -237,10 +174,10 @@ class SpecialPracticeViewModel : BaseViewModel() {
     }
 
     fun startRecording(view: View) {
-        if (UpdateReceiver.isNetworkAvailable()){
+        if (UpdateReceiver.isNetworkAvailable()) {
             message.what = START_VIDEO_RECORDING
             singleLiveEvent.value = message
-        }else{
+        } else {
             showToast("Seems like your Internet is too slow or not available.")
         }
     }
@@ -307,7 +244,7 @@ class SpecialPracticeViewModel : BaseViewModel() {
                         // showToast(getString(R.string.downloading_complete))
                     } else {
                         getSpecialIdData(specialId.get() ?: EMPTY)
-                      //  downloadComplete.set(true)
+                        //  downloadComplete.set(true)
                     }
                     isVideoDownloadingStarted.set(false)
                 } catch (Ex: Exception) {

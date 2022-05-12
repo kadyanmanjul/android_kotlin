@@ -29,6 +29,7 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.text.bold
+import androidx.core.view.get
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
@@ -48,6 +49,9 @@ import com.joshtalks.joshskills.constants.ON_BACK_PRESS_PROFILE
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.databinding.ActivityUserProfileBinding
 import com.joshtalks.joshskills.messaging.RxBus2
@@ -55,27 +59,23 @@ import com.joshtalks.joshskills.repository.local.eventbus.AwardItemClickedEventB
 import com.joshtalks.joshskills.repository.local.eventbus.DeleteProfilePicEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.SaveProfileClickedEvent
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.track.AGORA_UID
+import com.joshtalks.joshskills.track.CHANNEL_ID
 import com.joshtalks.joshskills.track.CONVERSATION_ID
-import com.joshtalks.joshskills.ui.fpp.constants.IS_ACCEPTED
-import com.joshtalks.joshskills.ui.fpp.constants.IS_REJECTED
-import com.joshtalks.joshskills.ui.fpp.constants.SENT_REQUEST
-import com.joshtalks.joshskills.ui.fpp.constants.REQUESTED
-import com.joshtalks.joshskills.ui.fpp.constants.HAS_RECIEVED_REQUEST
-import com.joshtalks.joshskills.ui.fpp.constants.IS_ALREADY_FPP
+import com.joshtalks.joshskills.ui.fpp.constants.*
+import com.joshtalks.joshskills.ui.group.JoshGroupActivity
+import com.joshtalks.joshskills.ui.group.constants.DM_CHAT
+import com.joshtalks.joshskills.ui.group.constants.DM_CHAT_DATA
+import com.joshtalks.joshskills.ui.group.model.GroupsItem
 import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_PROFILE_ANIMATION
 import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
 import com.joshtalks.joshskills.ui.points_history.PointsInfoActivity
 import com.joshtalks.joshskills.ui.senior_student.SeniorStudentActivity
-import com.joshtalks.joshskills.ui.userprofile.fragments.EditProfileFragment
-import com.joshtalks.joshskills.ui.userprofile.fragments.EnrolledCoursesFragment
-import com.joshtalks.joshskills.ui.userprofile.fragments.ProfileImageShowFragment
-import com.joshtalks.joshskills.ui.userprofile.fragments.PreviousProfilePicsFragment
-import com.joshtalks.joshskills.ui.userprofile.fragments.MyGroupsFragment
-import com.joshtalks.joshskills.ui.userprofile.fragments.UserPicChooserFragment
+import com.joshtalks.joshskills.ui.userprofile.fragments.*
 import com.joshtalks.joshskills.ui.userprofile.models.*
+import com.joshtalks.joshskills.ui.userprofile.utils.COURSE
 import com.joshtalks.joshskills.ui.userprofile.utils.MY_GROUP
 import com.joshtalks.joshskills.ui.userprofile.utils.USER_PROFILE_BACK_STACK
-import com.joshtalks.joshskills.ui.userprofile.utils.COURSE
 import com.joshtalks.joshskills.ui.userprofile.viewmodel.UserProfileViewModel
 import com.joshtalks.joshskills.ui.view_holders.ROUND_CORNER
 import com.joshtalks.joshskills.ui.voip.favorite.FavoriteListActivity
@@ -85,18 +85,14 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import jp.wasabeef.glide.transformations.CropTransformation
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
-import kotlinx.android.synthetic.main.base_toolbar.iv_back
-import kotlinx.android.synthetic.main.base_toolbar.iv_help
-import kotlinx.android.synthetic.main.base_toolbar.iv_edit
-import kotlinx.android.synthetic.main.base_toolbar.iv_setting
-import kotlinx.android.synthetic.main.base_toolbar.text_message_title
+import kotlinx.android.synthetic.main.base_toolbar.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.text.DecimalFormat
-import java.util.Locale
+import java.util.*
 
 const val FOR_BASIC_DETAILS = "For_Basic_Details"
 const val FOR_REST = "For_Rest"
@@ -121,6 +117,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
     var isFirstTimeToGetProfileData = true
     var resp = StringBuilder()
     private val liveData = EventLiveData
+    var isFpp:Boolean = false
 
     private var viewerReferral: Int? = 0
     private var helpCountControl: Boolean = false
@@ -163,10 +160,16 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
     private fun setOnClickListeners() {
         binding.pointLayout.setOnClickListener {
             hideOverlayAnimation()
+            MixPanelTracker.publishEvent(MixPanelEvent.VIEW_POINTS_HISTORY)
+                .addParam(ParamKeys.MENTOR_ID,mentorId)
+                .push()
             openPointHistory(mentorId, intent.getStringExtra(CONVERSATION_ID))
         }
 
         binding.minutesLayout.setOnClickListener {
+            MixPanelTracker.publishEvent(MixPanelEvent.VIEW_MINUTES_SPOKEN)
+                .addParam(ParamKeys.MENTOR_ID,mentorId)
+                .push()
             openSpokenMinutesHistory(mentorId, intent.getStringExtra(CONVERSATION_ID))
         }
 
@@ -181,6 +184,10 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                         null
                     )
                         .show(supportFragmentManager, "ImageShow")
+                    MixPanelTracker.publishEvent(MixPanelEvent.VIEW_PROFILE_PHOTO)
+                        .addParam(ParamKeys.MENTOR_ID,mentorId)
+                        .addParam(ParamKeys.VIA,"profile")
+                        .push()
                 } else {
                     openChooser()
                 }
@@ -194,22 +201,48 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                         null
                     )
                         .show(supportFragmentManager, "ImageShow")
+                    MixPanelTracker.publishEvent(MixPanelEvent.VIEW_PROFILE_PHOTO)
+                        .addParam(ParamKeys.MENTOR_ID,mentorId)
+                        .addParam(ParamKeys.VIA,"profile")
+                        .push()
                 }
             }
         }
         binding.editPic.setOnClickListener {
             if (mentorId == Mentor.getInstance().getId()) {
+                if(binding.editPic.text.equals("Add"))
+                {
+                    MixPanelTracker.publishEvent(MixPanelEvent.ADD_PROFILE_PHOTO_CLICKED)
+                        .addParam(ParamKeys.VIA,"profile")
+                        .push()
+                }
+                else
+                {
+                    MixPanelTracker.publishEvent(MixPanelEvent.EDIT_PROFILE_PHOTO_CLICKED)
+                        .addParam(ParamKeys.VIA,"profile")
+                        .push()
+                }
                 openChooser()
             }
         }
         binding.labelViewMoreAwards.setOnClickListener {
+            MixPanelTracker.publishEvent(MixPanelEvent.VIEW_AWARDS)
+                .addParam(ParamKeys.MENTOR_ID,mentorId)
+                .push()
             showAllAwards()
         }
         binding.awardsLayout.setOnClickListener {
+            MixPanelTracker.publishEvent(MixPanelEvent.VIEW_AWARDS)
+                .addParam(ParamKeys.MENTOR_ID,mentorId)
+                .push()
             showAllAwards()
         }
 
         binding.labelViewMoreDp.setOnClickListener {
+            MixPanelTracker.publishEvent(MixPanelEvent.VIEW_PREVIOUS_PROFILE_PHOTO)
+                .addParam(ParamKeys.MENTOR_ID,mentorId)
+                .addParam(ParamKeys.VIA,"profile")
+                .push()
             openPreviousProfilePicsScreen()
         }
         binding.enrolledCoursesLayout.setOnClickListener {
@@ -221,14 +254,24 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             openEnrolledCoursesScreen()
         }
         binding.previousProfilePicLayout.setOnClickListener {
+            MixPanelTracker.publishEvent(MixPanelEvent.VIEW_PREVIOUS_PROFILE_PHOTO)
+                .addParam(ParamKeys.MENTOR_ID,mentorId)
+                .addParam(ParamKeys.VIA,"profile")
+                .push()
             openPreviousProfilePicsScreen()
         }
         binding.labelViewMoreGroups.setOnClickListener {
             viewModel.userProfileSectionImpression(mentorId, "GROUP")
+            MixPanelTracker.publishEvent(MixPanelEvent.VIEW_GROUPS)
+                .addParam(ParamKeys.MENTOR_ID,mentorId)
+                .push()
             openMyGroupsScreen()
         }
         binding.myGroupsLayout.setOnClickListener {
             viewModel.userProfileSectionImpression(mentorId, "GROUP")
+            MixPanelTracker.publishEvent(MixPanelEvent.VIEW_GROUPS)
+                .addParam(ParamKeys.MENTOR_ID,mentorId)
+                .push()
             openMyGroupsScreen()
         }
         binding.fppListLayout.setOnClickListener {
@@ -255,6 +298,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             }
         }
         binding.withoutEducation.setOnClickListener {
+            MixPanelTracker.publishEvent(MixPanelEvent.ADD_EDUCATION_CLICKED).push()
             if (mentorId == Mentor.getInstance().getId()) {
                 binding.txtUserHometown.isClickable = true
                 EditProfileFragment.newInstance(FOR_REST)
@@ -262,6 +306,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             }
         }
         binding.withoutFutureGoals.setOnClickListener {
+            MixPanelTracker.publishEvent(MixPanelEvent.ADD_FUTURE_GOALS_CLICKED).push()
             if (mentorId == Mentor.getInstance().getId()) {
                 binding.txtUserHometown.isClickable = true
                 EditProfileFragment.newInstance(FOR_BASIC_DETAILS)
@@ -276,9 +321,34 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                     .show(supportFragmentManager, "EditProfile")
             }
         }
+
+        binding.btnSendMessage.setOnClickListener {
+            val intent = Intent(this, JoshGroupActivity::class.java).apply {
+                putExtra(CONVERSATION_ID, getConversationId())
+                putExtra(CHANNEL_ID, viewModel.fppRequest.value?.groupId)
+                putExtra(AGORA_UID, viewModel.fppRequest.value?.agoraUid)
+                putExtra(MENTOR_ID, mentorId)
+                putExtra(
+                    DM_CHAT_DATA, GroupsItem(
+                        groupIcon = viewModel.userData.value?.photoUrl,
+                        groupId = viewModel.fppRequest.value?.groupId?: EMPTY,
+                        unreadCount = "0",
+                        name = viewModel.userData.value?.name,
+                        groupType = DM_CHAT,
+                        lastMessage = DM_CHAT
+                    )
+                )
+            }
+            startActivity(intent)
+        }
+
         binding.btnSentRequest.setOnClickListener {
             with(binding) {
-                if (btnSentRequest.text == getString(R.string.requested)) {
+                if (btnSentRequest.text.toString() == getString(R.string.requested)) {
+                    MixPanelTracker.publishEvent(MixPanelEvent.FPP_REQUEST_CANCEL)
+                        .addParam(ParamKeys.MENTOR_ID, mentorId)
+                        .addParam(ParamKeys.VIA,"profile")
+                        .push()
                     btnSentRequest.setBackgroundColor(
                         ContextCompat.getColor(
                             AppObjectController.joshApplication,
@@ -294,13 +364,17 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                     )
                     viewModel.deleteFppRequest(mentorId)
                 } else {
+                    MixPanelTracker.publishEvent(MixPanelEvent.FPP_REQUEST_SEND)
+                        .addParam(ParamKeys.MENTOR_ID, mentorId)
+                        .addParam(ParamKeys.VIA,"profile")
+                        .push()
                     btnSentRequest.setBackgroundColor(
                         ContextCompat.getColor(
                             AppObjectController.joshApplication,
                             R.color.not_now
                         )
                     )
-                    btnSentRequest.text = "Requested"
+                    btnSentRequest.text = getString(R.string.requested)
                     btnSentRequest.setTextColor(
                         ContextCompat.getColor(
                             AppObjectController.joshApplication,
@@ -313,6 +387,10 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             }
         }
         binding.btnConfirmRequest.setOnClickListener {
+            MixPanelTracker.publishEvent(MixPanelEvent.FPP_REQUEST_CONFIRM)
+                .addParam(ParamKeys.MENTOR_ID, mentorId)
+                .addParam(ParamKeys.VIA,"profile")
+                .push()
             viewModel.confirmOrRejectFppRequest(mentorId, IS_ACCEPTED, "USER_PROFILE")
             binding.btnConfirmRequest.visibility = GONE
             binding.btnNotNowRequest.visibility = GONE
@@ -334,6 +412,10 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         }
 
         binding.btnNotNowRequest.setOnClickListener {
+            MixPanelTracker.publishEvent(MixPanelEvent.FPP_REQUEST_NOT_NOW)
+                .addParam(ParamKeys.MENTOR_ID, mentorId)
+                .addParam(ParamKeys.VIA,"profile")
+                .push()
             viewModel.confirmOrRejectFppRequest(mentorId, IS_REJECTED, "USER_PROFILE")
             binding.btnConfirmRequest.visibility = GONE
             binding.btnNotNowRequest.visibility = GONE
@@ -354,6 +436,9 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         with(iv_back) {
             visibility = View.VISIBLE
             setOnClickListener {
+                MixPanelTracker.publishEvent(MixPanelEvent.BACK)
+                    .addParam(ParamKeys.SCREEN_NAME,"profile")
+                    .push()
                 onBackPressed()
             }
         }
@@ -363,6 +448,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             } else {
                 visibility = View.VISIBLE
                 setOnClickListener {
+                    MixPanelTracker.publishEvent(MixPanelEvent.HELP).push()
                     openHelpActivity()
                 }
             }
@@ -373,6 +459,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                 setOnClickListener {
                     EditProfileFragment.newInstance(FOR_EDIT_SCREEN)
                         .show(supportFragmentManager, "EditProfile")
+                    MixPanelTracker.publishEvent(MixPanelEvent.EDIT_PROFILE_CLICKED).push()
                 }
             } else {
                 visibility = View.GONE
@@ -399,20 +486,33 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
     private fun openPopupMenu(view: View) {
         val popupMenu = PopupMenu(this, view, R.style.setting_menu_style)
         popupMenu.inflate(R.menu.user_profile__menu)
+        if (mentorId==Mentor.getInstance().getId() || isFpp.not()){
+            popupMenu.menu[3].isVisible = false
+        }
         popupMenu.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.menu_points_history -> {
+                    MixPanelTracker.publishEvent(MixPanelEvent.VIEW_POINTS_HISTORY)
+                        .addParam(ParamKeys.MENTOR_ID,mentorId)
+                        .push()
                     openPointHistory(mentorId, intent.getStringExtra(CONVERSATION_ID))
                 }
                 R.id.minutes_points_history -> {
+                    MixPanelTracker.publishEvent(MixPanelEvent.VIEW_MINUTES_SPOKEN)
+                        .addParam(ParamKeys.MENTOR_ID,mentorId)
+                        .push()
                     openSpokenMinutesHistory(mentorId, intent.getStringExtra(CONVERSATION_ID))
                 }
                 R.id.how_to_get_points -> {
+                    MixPanelTracker.publishEvent(MixPanelEvent.HOW_TO_EARN_POINTS).push()
                     startActivity(
                         Intent(this, PointsInfoActivity::class.java).apply {
                             putExtra(CONVERSATION_ID, intent.getStringExtra(CONVERSATION_ID))
                         }
                     )
+                }
+                R.id.remove_from_favorite -> {
+                    viewModel.removeFpp(viewModel.fppRequest.value?.agoraUid?:0)
                 }
             }
             return@setOnMenuItemClickListener false
@@ -435,6 +535,9 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
     }
 
     fun openEnrolledCoursesScreen() {
+        MixPanelTracker.publishEvent(MixPanelEvent.VIEW_ENROLLED_COURSES)
+            .addParam(ParamKeys.MENTOR_ID,mentorId)
+            .push()
         supportFragmentManager.commit {
             setReorderingAllowed(true)
             val fragment = EnrolledCoursesFragment()
@@ -536,14 +639,19 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                         SENT_REQUEST -> {
                             binding.sentRequestCard.visibility = VISIBLE
                             binding.btnSentRequest.visibility = VISIBLE
+                            binding.btnSendMessage.visibility = GONE
                             binding.profileText.text = it.text
                         }
-                        IS_ALREADY_FPP -> {
+                        ALREADY_FPP -> {
+                            isFpp = true
+                            if (viewModel.fppRequest.value?.groupId != null)
+                                binding.btnSendMessage.visibility = VISIBLE
                         }
                         REQUESTED -> {
                             with(binding) {
                                 sentRequestCard.visibility = VISIBLE
                                 btnSentRequest.visibility = VISIBLE
+                                btnSendMessage.visibility = GONE
                                 profileText.text = it.text
                                 btnSentRequest.backgroundTintList = ContextCompat.getColorStateList(
                                     AppObjectController.joshApplication,
@@ -559,6 +667,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                             }
                         }
                         HAS_RECIEVED_REQUEST -> {
+                            binding.btnSendMessage.visibility = GONE
                             binding.sentRequestCard.visibility = VISIBLE
                             binding.btnConfirmRequest.visibility = VISIBLE
                             binding.btnNotNowRequest.visibility = VISIBLE
@@ -1170,6 +1279,11 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         subscribeRXBus()
     }
 
+    override fun onRestart() {
+        super.onRestart()
+        viewModel.getFppStatusInProfile(mentorId)
+    }
+
     private fun subscribeRXBus() {
         compositeDisposable.add(
             RxBus2.listen(AwardItemClickedEventBus::class.java)
@@ -1192,14 +1306,13 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                 .subscribe(
                     {
                         viewModel.userData.value?.photoUrl = it.url
-                        val date = DD_MM_YYYY.parse( viewModel.userData.value?.dateOfBirth)
-                        if (it.url.isBlank()) {
+                        if (it.url.isEmpty()) {
                             var updateProfilePayload = UpdateProfilePayload()
                             updateProfilePayload.apply {
                                 basicDetails?.apply {
                                     photoUrl = ""
                                     firstName = viewModel.userData.value?.name
-                                    dateOfBirth =  DATE_FORMATTER.format(date)
+                                    dateOfBirth = if(!viewModel.userData.value?.dateOfBirth.isNullOrEmpty()) DATE_FORMATTER.format(DD_MM_YYYY.parse( viewModel.userData.value?.dateOfBirth)) else null
                                     homeTown = viewModel.userData.value?.hometown
                                     futureGoals = viewModel.userData.value?.futureGoals
                                     favouriteJoshTalk = viewModel.userData.value?.favouriteJoshTalk
@@ -1259,6 +1372,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                 }
             }.run {
                 activity.startActivity(this)
+                activity.finish()
             }
         }
     }
@@ -1485,6 +1599,18 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             replace(R.id.user_root_container, fragment, "OPEN_FRAGMENT")
             addToBackStack("PROFILE_STACKS")
         }
+    }
+
+    fun getUserProfileTooltip() :String {
+        val courseId = PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID)
+        return AppObjectController.getFirebaseRemoteConfig()
+            .getString(TOOLTIP_USER_PROFILE_SCREEN + courseId)
+    }
+    override fun onBackPressed() {
+        MixPanelTracker.publishEvent(MixPanelEvent.BACK)
+            .addParam(ParamKeys.SCREEN_NAME,"user profile")
+            .push()
+        super.onBackPressed()
     }
 
 }

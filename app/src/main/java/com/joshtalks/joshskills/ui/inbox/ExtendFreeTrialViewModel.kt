@@ -10,7 +10,10 @@ import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.GoalKeys
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
+import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.group.repository.ABTestRepository
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import kotlinx.coroutines.Dispatchers
@@ -40,13 +43,25 @@ class ExtendFreeTrialViewModel(application: Application) : AndroidViewModel(appl
                 isProgressVisible.set(true)
                 isProgressVisible.notifyChange()
                 val response = repository.extendFreeTrial()
+                val obj = JSONObject()
                 if (response.isSuccessful) {
+                    MixPanelTracker.publishEvent(MixPanelEvent.FREE_TRIAL_EXTENDED)
+                        .addParam(ParamKeys.IS_SUCCESS, true)
+                        .push()
+                    obj.put("is free trial extended",true)
                     getCourseData()
                 } else{
+                    MixPanelTracker.publishEvent(MixPanelEvent.FREE_TRIAL_EXTENDED)
+                        .addParam(ParamKeys.IS_SUCCESS, false)
+                        .push()
+                    obj.put("is free trial extended",false)
                     isProgressVisible.set(false)
                     isProgressVisible.notifyChange()
                     showToast(AppObjectController.joshApplication.getString(R.string.unextendable_freetrial))
                 }
+                MixPanelTracker.mixPanel.identify(PrefManager.getStringValue(USER_UNIQUE_ID))
+                MixPanelTracker.mixPanel.people.identify(PrefManager.getStringValue(USER_UNIQUE_ID))
+                MixPanelTracker.mixPanel.people.set(obj)
             }catch (ex : Exception){
                 isProgressVisible.set(false)
                 isProgressVisible.notifyChange()
@@ -89,17 +104,18 @@ class ExtendFreeTrialViewModel(application: Application) : AndroidViewModel(appl
             if (campaign != null) {
                 val data = ABTestRepository().getCampaignData(campaign)
                 data?.let {
-                    val props = JSONObject()
-                    props.put(variant, data?.variantKey ?: EMPTY)
-                    props.put(variable, AppObjectController.gsonMapper.toJson(data?.variableMap))
-                    props.put(campaign_v, campaign)
-                    props.put(goal_v, goal)
-                    MixPanelTracker().publishEvent(goal, props)
+                    MixPanelTracker.publishEvent(MixPanelEvent.GOAL)
+                        .addParam(ParamKeys.VARIANT, data?.variantKey ?: EMPTY)
+                        .addParam(ParamKeys.VARIABLE, AppObjectController.gsonMapper.toJson(data?.variableMap))
+                        .addParam(ParamKeys.CAMPAIGN, campaign)
+                        .addParam(ParamKeys.GOAL, goal)
+                        .push()
                 }
             }
         }
     }
     fun openConversationActivity(){
+        MixPanelTracker.publishEvent(MixPanelEvent.CANCEL).push()
         message.what= OPEN_CONVERSATION_ACTIVITY
         singleLiveEvent.value=message
     }

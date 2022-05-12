@@ -42,6 +42,9 @@ import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.GoalKeys
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.core.custom_ui.PointSnackbar
 import com.joshtalks.joshskills.core.custom_ui.TextDrawable
 import com.joshtalks.joshskills.databinding.ActivityCallingBinding
@@ -104,6 +107,7 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
     private var callieId: String = ""
     private var callerId: String = ""
     private var fppDialog:String = EMPTY
+    private var getCallTime:Long = 1
 
     val progressAnimator by lazy<ValueAnimator> {
         ValueAnimator.ofFloat(0f, 1f).apply {
@@ -917,6 +921,7 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
         } else if (!isTimerCanceled) {
             if (isUserPickUp) {
                 val state = CurrentCallDetails.state()
+
                 VoipAnalytics.push(
                     VoipAnalytics.Event.CALL_ACCEPT,
                     agoraMentorUid = state.callieUid,
@@ -1063,6 +1068,7 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
     }
 
     private fun showCallRatingScreen(callTime: Long, channelName: String?) {
+        getCallTime = callTime
         var time = mBoundService?.getTimeOfTalk() ?: 0
         if (time <= 0) {
             time = callTime
@@ -1267,4 +1273,5 @@ class WebRtcActivity : AppCompatActivity(), SensorEventListener {
 
     override fun onAccuracyChanged(p0: Sensor?, p1: Int) {
     }
+
 }

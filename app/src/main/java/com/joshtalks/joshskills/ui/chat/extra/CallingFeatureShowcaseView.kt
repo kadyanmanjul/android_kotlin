@@ -8,6 +8,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.skydoves.balloon.ArrowOrientation
 import com.joshtalks.skydoves.balloon.Balloon
 import com.joshtalks.skydoves.balloon.BalloonAnimation
@@ -28,6 +30,7 @@ class CallingFeatureShowcaseView : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return object : Dialog(requireActivity(), R.style.full_dialog) {
             override fun onBackPressed() {
+                MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
                 dismissAllowingStateLoss()
             }
         }

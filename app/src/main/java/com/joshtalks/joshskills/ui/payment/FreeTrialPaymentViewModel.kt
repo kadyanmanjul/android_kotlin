@@ -12,7 +12,9 @@ import com.joshtalks.joshskills.core.INSTANCE_ID
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.FreeTrialPaymentResponse
@@ -69,12 +71,12 @@ class FreeTrialPaymentViewModel(application: Application) : AndroidViewModel(app
             if (campaign != null) {
                 val data = ABTestRepository().getCampaignData(campaign)
                 data?.let {
-                    val props = JSONObject()
-                    props.put("Variant", data?.variantKey ?: EMPTY)
-                    props.put("Variable", AppObjectController.gsonMapper.toJson(data?.variableMap))
-                    props.put("Campaign", campaign)
-                    props.put("Goal", goal)
-                    MixPanelTracker().publishEvent(goal, props)
+                    MixPanelTracker.publishEvent(MixPanelEvent.GOAL)
+                        .addParam(ParamKeys.VARIANT, data?.variantKey ?: EMPTY)
+                        .addParam(ParamKeys.VARIABLE, AppObjectController.gsonMapper.toJson(data?.variableMap))
+                        .addParam(ParamKeys.CAMPAIGN, campaign)
+                        .addParam(ParamKeys.GOAL, goal)
+                        .push()
                 }
             }
         }

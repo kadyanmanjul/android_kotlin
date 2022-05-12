@@ -9,6 +9,8 @@
 
         <import type="com.joshtalks.joshskills.R" />
 
+        <import type="com.joshtalks.joshskills.ui.group.constants.GroupsConstantsKt"></import>
+
         <variable
             name="vm"
             type="com.joshtalks.joshskills.ui.group.viewmodels.GroupChatViewModel" />
@@ -37,10 +39,15 @@
                 groupImage="@{vm.imageUrl}"
                 groupSubHeader="@{vm.groupSubHeader}"
                 groupType="@{vm.groupType}"
+                groupTypeDm="@{vm.groupType}"
                 onBackPressed="@{vm::onBackPress}"
-                onSecondIconPressed="@{vm::callGroup}"
+                onSecondIconPressed="@{vm.groupType.equals(`fpp`) ? vm.onRemoveFpp : vm::callGroup}"
                 onToolbarPressed="@{vm::openGroupInfo}"
-                secondIcon="@{vm.hasJoinedGroup ? R.drawable.group_call : 0, default=0}"
+                onFirstIconPressed="@{vm::callGroup}"
+                onTitlePressed="@{vm::openGroupInfo}"
+                firstIcon="@{vm.groupType.equals(`fpp`)? R.drawable.ic_dm_call: 0}"
+                secondIcon="@{vm.groupType.equals(`fpp`)? R.drawable.ic_more_option : vm.hasJoinedGroup ? R.drawable.group_call : 0, default=0}"
+                groupName="@{vm.groupHeader}"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
         </com.google.android.material.appbar.AppBarLayout>
@@ -198,7 +205,7 @@
             android:text="@{vm.groupJoinStatus}"
             android:textColor="@color/join_group"
             android:textSize="@dimen/_14ssp"
-            android:visibility="@{vm.hasJoinedGroup ? View.GONE : View.VISIBLE}"
+            android:visibility="@{vm.groupType.equals(`fpp`) || vm.hasJoinedGroup ? View.GONE : View.VISIBLE}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -298,7 +305,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/appBarLayout"
-            app:tooltipText="You can call members of this group from here" />
+            app:tooltipText="@{vm.groupType.equals(`fpp`) ? `You can call your partner from here` : `You can call members of this group from here`}" />
 
         <FrameLayout
             android:id="@+id/overlay_layout"

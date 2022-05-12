@@ -214,7 +214,7 @@
     <string name="try_again">Try again</string>
     <string name="chat_option">Chat &amp; Pay</string>
     <string name="title">Oops! Payment failed.</string>
-    <string name="trx_id">Transation ID : %s</string>
+    <string name="trx_id">Transaction ID : %s</string>
     <string name="reason">Reason : %s</string>
     <string name="wohoo">Woohoo!</string>
     <string name="starting_title">You Made it!</string>
@@ -1125,6 +1125,11 @@
     <string name="start_learning_english">start learning English</string>
     <string name="course_restart_success">Course Restarted Successfully</string>
     <string name="course_restart_fail">Course Can Not Restart</string>
+    <string name="my_formatted_text">
+        <font color="@android:color/black">I want to</font>
+        <font color="#107BE5">speak english confidently</font>
+        <font color ="@android:color/black">from ...</font>
+    </string>
     <string name="buy_now">Buy now</string>
     <string name="your_free_trial_has_ended">Your Free Trial has ended</string>
     <string name="tap_anywhere_to_continue">Tap anywhere to continue</string>
@@ -1207,8 +1212,23 @@
     <string name="accept_call">Accept</string>
     <string name="reject_call">Reject</string>
     <string name="submit_report_btn">Submit</string>
-    
+
    <!-- Voip Preference-->
-    
+
     <string name="voip_shared_pref_file_name">com.joshtalks.joshskills.new_arch_voip_shared_pref_file</string>
+    <string name="permission_denied_contacts">Permission to access contacts is required to invite friends.</string>
+    <string name="invite_friend_call_info">Aap apne dost ko unki pehli call kara sakte hai aur unke english bolne ke darr khatam karne me madad kar sakte hai</string>
+    <string name="invite_friend_link_sent">aapke dost ko iss app ko download karne ka link bhej diya gaya hai. \naap unko ye app download karne ke liye bol sakte hai </string>
+    <string name="invite_friend_search_hint">Kisko call krrna hai?</string>
+    <string name="call_a_friend">Call a Friend</string>
+    <string name="allow_permission">Allow Permission</string>
+    <string name="twenty_min_call_incomplete">Aapne last practice partner se 20 minute baat nahi kari. </string>
+    <string name="twenty_min_call_target">Aapka aaj ka target hai ek practice partner se 20 minute baat karein </string>
+    <string name="twenty_min_call_completed">Behetereen! Aapne aaj ka speaking target pura kar lia hai</string>
+    <string name="activity_feed">Activity Feed</string>
+    <string name="no_contacts_found">No contacts found!</string>
+    <string name="remove_from_favorite">Remove from favorite</string>
+    <string name="space">\u0020</string>
+
+
 </resources>

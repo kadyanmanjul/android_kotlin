@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
 import com.joshtalks.joshskills.core.IS_EFT_VARIENT_ENABLED
+import com.joshtalks.joshskills.core.LANGUAGE_SELECTION_SCREEN_OPENED
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
@@ -58,6 +59,7 @@ class ChooseLanguageOnBoardFragment: BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         addObservers()
+        viewModel.saveImpression(LANGUAGE_SELECTION_SCREEN_OPENED)
         if (Utils.isInternetAvailable().not()) {
             binding.noInternetContainer.visibility = View.VISIBLE
         } else {

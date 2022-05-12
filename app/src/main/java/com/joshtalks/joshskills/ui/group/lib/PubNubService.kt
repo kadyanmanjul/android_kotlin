@@ -6,6 +6,8 @@ import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.notification.FCM_TOKEN
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.ui.group.constants.DM_CHAT
+import com.joshtalks.joshskills.ui.group.constants.FROM_BACKEND_MSG_TIME
 import com.joshtalks.joshskills.ui.group.model.ChatItem
 import com.joshtalks.joshskills.ui.group.model.MessageItem
 import com.joshtalks.joshskills.ui.group.utils.getMessageType
@@ -127,7 +129,7 @@ object PubNubService : ChatService {
         }
     }
 
-    override fun getLastMessageDetail(groupId: String): Pair<String, Long> {
+    override fun getLastMessageDetail(groupId: String,groupType:String): Pair<String, Long> {
         val msg = pubnub.fetchMessages()
             .channels(listOf(groupId))
             .includeMeta(true)
@@ -150,10 +152,11 @@ object PubNubService : ChatService {
             else
                 message to (msgObj.timetoken ?: 0L)
         } else {
-            if (msgObj?.uuid == Mentor.getInstance().getId())
-                "You: $message" to (msgObj.timetoken ?: 0L)
-            else
-                "${msgObj?.meta?.asString}: $message" to (msgObj?.timetoken ?: 0L)
+            when {
+                msgObj?.uuid == Mentor.getInstance().getId() -> "You: $message" to (msgObj.timetoken ?: 0L)
+                groupType == DM_CHAT -> message to (msgObj?.timetoken ?: 0L)
+                else -> "${msgObj?.meta?.asString}: $message" to (msgObj?.timetoken ?: 0L)
+            }
         }
     }
 
@@ -227,13 +230,16 @@ object PubNubService : ChatService {
         return messages
     }
 
-    override fun sendMessage(groupName: String, messageItem: MessageItem) {
+    override fun sendMessage(groupName: String, messageItem: MessageItem, isBackend: Boolean) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 pubnub.publish()
                     .channel(groupName)
                     .message(messageItem)
-                    .meta("${Mentor.getInstance().getUser()?.firstName}")
+                    .meta(
+                        if (isBackend) FROM_BACKEND_MSG_TIME
+                        else "${Mentor.getInstance().getUser()?.firstName}"
+                    )
                     .shouldStore(true)
                     .ttl(0)
                     .usePOST(true)

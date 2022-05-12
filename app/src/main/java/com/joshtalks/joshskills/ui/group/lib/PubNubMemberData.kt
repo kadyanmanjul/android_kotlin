@@ -10,16 +10,20 @@ data class PubNubMemberData(val data: PNGetChannelMembersResult) : MemberNetwork
     override fun getMemberData(groupId: String, adminId: String): List<GroupMember> {
         memberList.clear()
         data.data.map {
-            memberList.add(
-                GroupMember(
-                    mentorID = it.uuid.id,
-                    memberName = it.uuid.name,
-                    memberIcon = it.uuid.profileUrl,
-                    isAdmin = adminId == it.uuid.id,
-                    isOnline = false,
-                    groupId = groupId
+            try {
+                memberList.add(
+                    GroupMember(
+                        mentorID = it.uuid.id,
+                        memberName = it.uuid.name,
+                        memberIcon = it.uuid.profileUrl,
+                        isAdmin = adminId == it.uuid.id,
+                        isOnline = false,
+                        groupId = groupId
+                    )
                 )
-            )
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
         return memberList
     }

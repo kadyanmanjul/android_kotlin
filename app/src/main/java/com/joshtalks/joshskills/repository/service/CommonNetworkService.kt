@@ -28,21 +28,15 @@ import com.joshtalks.joshskills.repository.server.points.SpokenMinutesHistoryRes
 import com.joshtalks.joshskills.repository.server.reminder.DeleteReminderRequest
 import com.joshtalks.joshskills.repository.server.reminder.ReminderRequest
 import com.joshtalks.joshskills.repository.server.reminder.ReminderResponse
-import com.joshtalks.joshskills.ui.userprofile.models.UserProfileSectionResponse
-import com.joshtalks.joshskills.ui.userprofile.models.FppStatusInProfileResponse
-import com.joshtalks.joshskills.ui.userprofile.models.UserProfileResponse
-import com.joshtalks.joshskills.ui.userprofile.models.AwardHeader
-import com.joshtalks.joshskills.ui.userprofile.models.GroupsHeader
-import com.joshtalks.joshskills.ui.userprofile.models.CourseHeader
-import com.joshtalks.joshskills.ui.userprofile.models.PictureHeader
 import com.joshtalks.joshskills.repository.server.translation.WordDetailsResponse
 import com.joshtalks.joshskills.repository.server.voip.RequestVoipRating
 import com.joshtalks.joshskills.repository.server.voip.SpeakingTopic
 import com.joshtalks.joshskills.repository.server.voip.VoipCallDetailModel
 import com.joshtalks.joshskills.track.CourseUsageSync
+import com.joshtalks.joshskills.ui.activity_feed.model.ActivityFeedList
 import com.joshtalks.joshskills.ui.special_practice.model.SaveVideoModel
 import com.joshtalks.joshskills.ui.special_practice.model.SpecialPracticeModel
-import com.joshtalks.joshskills.ui.activity_feed.model.ActivityFeedList
+import com.joshtalks.joshskills.ui.userprofile.models.*
 import kotlinx.coroutines.Deferred
 import retrofit2.Response
 import retrofit2.http.*
@@ -86,7 +80,7 @@ interface CommonNetworkService {
     suspend fun verifyPayment(@Body params: Map<String, String>): Any
 
     @GET("$DIR/payment/verify_razorpay_order/")
-    suspend fun verifyErrorPayment(@Body params:Map<String,String>): Any
+    suspend fun verifyErrorPayment(@Body params: Map<String, String>): Any
 
     @POST("$DIR/course/certificate/generate/")
     suspend fun certificateGenerate(@Body requestCertificateGenerate: RequestCertificateGenerate): Response<CertificateDetail>
@@ -177,6 +171,7 @@ interface CommonNetworkService {
     suspend fun getFppStatusInProfile(
         @Path("user_profile_mentor_id") mentorId: String
     ): Response<FppStatusInProfileResponse>
+
     @POST("$DIR/version/onboarding/")
     suspend fun getOnBoardingVersionDetails(@Body params: Map<String, String>): VersionResponse
 
@@ -219,7 +214,7 @@ interface CommonNetworkService {
         @Path("mentor_id") id: String,
         @Query("interval_type") intervalType: String? = null,
         @Query("previous_page") previousPage: String? = null,
-        @Query("?api_version=") apiVersion:Int = 2
+        @Query("?api_version=") apiVersion: Int = 2
     ): Response<UserProfileResponse>
 
     @GET("$DIR/user/profile_awards/{mentor_id}/")
@@ -232,7 +227,7 @@ interface CommonNetworkService {
     suspend fun getProfileCourses(@Path("mentor_id") id: String): Response<CourseHeader>
 
     @GET("$DIR/user/profile_pictures/{mentor_id}/")
-    suspend fun getPreviousProfilePics(@Path("mentor_id")id: String): Response<PictureHeader>
+    suspend fun getPreviousProfilePics(@Path("mentor_id") id: String): Response<PictureHeader>
 
     @GET("$DIR/activity_feed/fetch_all/")
     suspend fun getActivityFeedData(): Response<ActivityFeedList>
@@ -365,6 +360,9 @@ interface CommonNetworkService {
     @POST("$DIR/impression/tcflow_track_impressions/")
     suspend fun saveTrueCallerImpression(@Body params: Map<String, String>): Response<Void>
 
+    @POST("$DIR/impression/track_voicecall_impression/")
+    suspend fun saveVoiceCallImpression(@Body params: Map<String, String>): Response<Void>
+
     @POST("$DIR/payment/verify_payment/")
     suspend fun checkMentorPayStatus(@Body params: Map<String, String>): Map<String, Any>
 
@@ -375,7 +373,7 @@ interface CommonNetworkService {
     suspend fun saveIntroVideoFlowImpression(@Body params: Map<String, Any?>): Response<Any>
 
     @POST("$DIR/mentor/restart_course/")
-    suspend fun restartCourse(@Body params: Map<String, String>) : Response<RestartCourseResponse>
+    suspend fun restartCourse(@Body params: Map<String, String>): Response<RestartCourseResponse>
 
     @POST("$DIR/impression/restart_course_track_impressions/")
     suspend fun restartCourseImpression(@Body params: Map<String, String>): Response<Void>
@@ -385,4 +383,13 @@ interface CommonNetworkService {
 
     @POST("$DIR/question/special_practice_submit/")
     suspend fun saveVideoOnServer(@Body params: SaveVideoModel): Response<SuccessResponse>
+
+    @POST("$DIR/voicecall/invite/call_invite/")
+    suspend fun inviteFriend(@Body params: HashMap<String, String>): Response<Any>
+
+    @POST("$DIR/voicecall/invite/contacts/")
+    suspend fun uploadContacts(@Body params: HashMap<String, Any>): Response<Any>
+
+    @POST("$DIR/impression/track_broadcast_event/")
+    suspend fun saveBroadcastEvent(@Body params: Map<String, String?>): Response<Unit>
 }

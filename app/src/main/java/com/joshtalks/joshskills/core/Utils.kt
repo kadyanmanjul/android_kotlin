@@ -42,6 +42,7 @@ import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
+import androidx.annotation.ColorRes
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -139,8 +140,8 @@ const val IMPRESSION_ALREADY_NEWUSER = "ALREADY_NEWUSER_LOGIN"
 const val IMPRESSION_ALREADY_NEWUSER_ENROLL = "ALREADY_NEWUSER_ENROLL"
 const val IMPRESSION_ALREADY_NEWUSER_STARTED = "ALREADY_NEWUSER_STARTEDFT"
 const val IMPRESSION_ALREADY_ALREADYUSER = "ALREADY_ALREADYUSER"
-const val IMPRESSION_TC_NOT_INSTALLED_JI_HAAN= "TC_NOT_INSTALLED_JI_HAAN"
-const val IMPRESSION_TC_NOT_INSTALLED= "TC_NOT_INSTALLED"
+const val IMPRESSION_TC_NOT_INSTALLED_JI_HAAN = "TC_NOT_INSTALLED_JI_HAAN"
+const val IMPRESSION_TC_NOT_INSTALLED = "TC_NOT_INSTALLED"
 const val IMPRESSION_TC_USER_ANOTHER = "TC_USEANOTHER"
 
 const val SPEAKING_TAB_CLICKED_FOR_FIRST_TIME = "SPEAKING_TAB_CLICKED_FOR_FIRST_TIME"
@@ -166,8 +167,13 @@ const val IMPRESSION_SUCCESS_RESTART_COURSE_DOT = "SUCCESS_RESTART_COURSE_DOT"
 const val IMPRESSION_CLICK_RESTART_90LESSONS = "CLICK_RESTART_90LESSONS"
 const val IMPRESSION_SUCCESS_RESTART_90LESSONS = "SUCCESS_RESTART_90LESSONS"
 
+const val IMPRESSION_CALL_MY_FRIEND_BTN_CLICKED = "CALL_MY_FRIEND_BTN_CLICKED"
+const val IMPRESSION_CONTACT_PERM_DENIED = "CONTACT_PERM_DENIED"
+const val IMPRESSION_CONTACT_PERM_ACCEPTED = "CONTACT_PERM_ACCEPTED"
+
 const val FREE_TRIAL_TEST_ID = "FREE_TRIAL_TEST_ID"
 const val FREE_TRIAL_DEFAULT_TEST_ID = "784"
+const val LANGUAGE_SELECTION_SCREEN_OPENED = "LANGUAGE_SELECTION_SCREEN_OPENED"
 
 object Utils {
 
@@ -232,7 +238,7 @@ object Utils {
         val date = Date(epoch)
         return when {
             DateUtils.isToday(epoch) -> {
-                if(timeNeeded)
+                if (timeNeeded)
                     CHAT_TIME_FORMATTER.format(date.time).lowercase(Locale.getDefault())
                 else
                     "Today"
@@ -1061,11 +1067,13 @@ fun ImageView.setPreviousProfileImage(url: String, context: Context = AppObjectC
         .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
         .into(this)
 }
+
 fun imageLoadingListener(pendingImage: LottieAnimationView): RequestListener<Drawable?>? {
     return object : RequestListener<Drawable?> {
         override fun onLoadFailed(e: GlideException?, model: Any?, target: com.bumptech.glide.request.target.Target<Drawable?>?, isFirstResource: Boolean): Boolean {
             return false
         }
+
         override fun onResourceReady(
             resource: Drawable?,
             model: Any?,
@@ -1080,7 +1088,11 @@ fun imageLoadingListener(pendingImage: LottieAnimationView): RequestListener<Dra
     }
 }
 
-fun ImageView.setUserInitial(userName: String, dpToPx: Int = 16) {
+fun ImageView.setUserInitial(
+    userName: String,
+    dpToPx: Int = 16,
+    @ColorRes background: Int = R.color.button_color,
+) {
     val font = Typeface.createFromAsset(
         AppObjectController.joshApplication.assets,
         "fonts/OpenSans-SemiBold.ttf"
@@ -1094,7 +1106,32 @@ fun ImageView.setUserInitial(userName: String, dpToPx: Int = 16) {
         .endConfig()
         .buildRound(
             getUserNameInShort(userName),
-            ContextCompat.getColor(AppObjectController.joshApplication, R.color.button_color)
+            ContextCompat.getColor(AppObjectController.joshApplication, background)
+        )
+    this.background = drawable
+    this.setImageDrawable(drawable)
+}
+
+fun ImageView.setUserInitial(
+    userName: String,
+    dpToPx: Int = 16,
+    background: Int = R.color.white,
+    txtColor: Int = R.color.button_color
+) {
+    val font = Typeface.createFromAsset(
+        AppObjectController.joshApplication.assets,
+        "fonts/OpenSans-SemiBold.ttf"
+    )
+    val drawable: TextDrawable = TextDrawable.builder()
+        .beginConfig()
+        .textColor(txtColor)
+        .useFont(font)
+        .fontSize(Utils.dpToPx(dpToPx))
+        .toUpperCase()
+        .endConfig()
+        .buildRound(
+            getUserNameInShort(userName),
+            ContextCompat.getColor(AppObjectController.joshApplication, background)
         )
     this.background = drawable
     this.setImageDrawable(drawable)
@@ -1135,6 +1172,38 @@ fun ImageView.setUserImageOrInitials(
 ) {
     if (url.isNullOrEmpty()) {
         setUserInitial(userName, dpToPx)
+    } else {
+        if (isRound) {
+            val requestOptions = RequestOptions().placeholder(R.drawable.ic_call_placeholder)
+                .error(R.drawable.ic_call_placeholder)
+                .format(DecodeFormat.PREFER_RGB_565)
+                .disallowHardwareConfig().dontAnimate().encodeQuality(75)
+            Glide.with(context)
+                .load(url)
+                .optionalTransform(
+                    WebpDrawable::class.java,
+                    WebpDrawableTransformation(CircleCrop())
+                )
+                .circleCrop()
+                .apply(requestOptions)
+                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                .into(this)
+        } else {
+            this.setImage(url)
+        }
+    }
+}
+
+fun ImageView.setUserImageOrInitialsWithWhiteBackground(
+    url: String?,
+    userName: String,
+    dpToPx: Int = 16,
+    isRound: Boolean = false,
+    bgColor: Int = R.color.white,
+    txtColor: Int = R.color.button_color
+) {
+    if (url.isNullOrEmpty()) {
+        setUserInitial(userName, dpToPx,background = bgColor, txtColor = txtColor)
     } else {
         if (isRound) {
             val requestOptions = RequestOptions().placeholder(R.drawable.ic_call_placeholder)

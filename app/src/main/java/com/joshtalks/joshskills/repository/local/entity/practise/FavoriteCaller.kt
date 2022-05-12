@@ -67,6 +67,9 @@ interface FavoriteCallerDao {
     @Query("DELETE FROM  favorite_caller WHERE id IN (:ids)")
     suspend fun removeFromFavorite(ids: List<Int>)
 
+    @Query("DELETE FROM  favorite_caller WHERE id=:id")
+    suspend fun removeFppUser(id: String)
+
     @Query(value = "SELECT * from favorite_caller WHERE is_deleted=0 ")
     fun getFavoriteCallers(): List<FavoriteCaller>
 

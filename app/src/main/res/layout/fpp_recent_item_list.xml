@@ -70,7 +70,7 @@
                     android:layout_height="wrap_content"
                     android:singleLine="true"
                     android:ellipsize="end"
-                    android:text="@{itemData.firstName}"
+                    android:text="@{itemData.firstName.concat(@string/space).concat(`(`).concat(itemData.callCount).concat(`)`)}"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7_Semi_Bold"
                     android:textColor="@color/pure_black"
                     tools:text="Harsh Gupta" />

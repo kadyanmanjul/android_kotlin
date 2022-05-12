@@ -12,6 +12,7 @@ import com.joshtalks.joshskills.core.AppObjectController;
 import com.joshtalks.joshskills.core.JoshSkillExecutors;
 import com.joshtalks.joshskills.core.PrefManager;
 import static com.joshtalks.joshskills.core.PrefManagerKt.INSTANCE_ID;
+import static com.joshtalks.joshskills.core.PrefManagerKt.IS_FREE_TRIAL;
 import static com.joshtalks.joshskills.core.PrefManagerKt.USER_UNIQUE_ID;
 import static com.joshtalks.joshskills.core.StaticConstantKt.EMPTY;
 import static com.joshtalks.joshskills.core.UtilsKt.getPhoneNumber;
@@ -28,6 +29,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import timber.log.Timber;
 
 public class AppAnalytics {
@@ -137,6 +141,35 @@ public class AppAnalytics {
         profileUpdate.put("User Type", user.getUserType());
         profileUpdate.put("Gender", user.getGender());
         cleverTapAnalytics.pushProfile(profileUpdate);
+
+        MixPanelTracker.INSTANCE.getMixPanel().alias(PrefManager.INSTANCE.getStringValue(USER_UNIQUE_ID, false, EMPTY), PrefManager.INSTANCE.getStringValue(USER_UNIQUE_ID, false, EMPTY));
+        MixPanelTracker.INSTANCE.getMixPanel().identify(PrefManager.INSTANCE.getStringValue(USER_UNIQUE_ID, false, EMPTY));
+        MixPanelTracker.INSTANCE.getMixPanel().getPeople().identify(PrefManager.INSTANCE.getStringValue(USER_UNIQUE_ID, false, EMPTY));
+
+        JSONObject obj = new JSONObject();
+        try {
+            obj.put("gaid", PrefManager.INSTANCE.getStringValue(USER_UNIQUE_ID, false, EMPTY));
+            obj.put("mentor id",Mentor.getInstance().getId());
+            obj.put("gender",User.getInstance().getGender());
+            obj.put("date of birth",User.getInstance().getDateOfBirth());
+            obj.put("created source",User.getInstance().getSource());
+            obj.put("is verified",User.getInstance().isVerified());
+            obj.put("email",User.getInstance().getEmail());
+            obj.put("phone number",User.getInstance().getPhoneNumber());
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        MixPanelTracker.INSTANCE.getMixPanel().getPeople().set(obj);
+
+        JSONObject props = new JSONObject();
+        try {
+            props.put("is paid",!PrefManager.INSTANCE.getBoolValue(IS_FREE_TRIAL,false,true));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        MixPanelTracker.INSTANCE.getMixPanel().registerSuperProperties(props);
     }
 
     private static void updateFirebaseSdkUser() {

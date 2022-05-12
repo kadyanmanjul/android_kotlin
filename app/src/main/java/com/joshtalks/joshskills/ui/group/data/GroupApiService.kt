@@ -44,4 +44,5 @@ interface GroupApiService {
 
     @GET("$DIR/group/list_group_requests/")
     suspend fun getRequestsList(@Query("group_id") groupId: String): GroupRequestList
+
 }

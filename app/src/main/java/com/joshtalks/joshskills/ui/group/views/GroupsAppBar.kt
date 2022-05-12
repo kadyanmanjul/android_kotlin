@@ -14,7 +14,9 @@ import com.bumptech.glide.Glide
 import de.hdodenhof.circleimageview.CircleImageView
 
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.setUserImageOrInitialsWithWhiteBackground
 import com.joshtalks.joshskills.ui.group.constants.CLOSED_GROUP
+import com.joshtalks.joshskills.ui.group.constants.DM_CHAT
 import com.joshtalks.joshskills.ui.group.model.DefaultImage
 
 import java.lang.Exception
@@ -68,9 +70,11 @@ class GroupsAppBar @JvmOverloads constructor(
     }
 
     //TODO: Explicitly Handle low end device issue
-    fun setImage(url: String) {
+    fun setImage(url: String, groupHeader: String?, groupType: String?) {
         toolbarImageView.visibility = View.VISIBLE
-        if (url.isEmpty())
+        if (groupType == DM_CHAT && url.isEmpty())
+            toolbarImageView.setUserImageOrInitialsWithWhiteBackground(url, groupHeader!!, isRound = true,bgColor = R.color.white,txtColor = R.color.colorAccent)
+        else if (url.isEmpty())
             toolbarImageView.setImageResource(DefaultImage.DEFAULT_GROUP_IMAGE.drwRes)
         else
             Glide.with(toolbarImageView)
@@ -79,45 +83,49 @@ class GroupsAppBar @JvmOverloads constructor(
 
     }
 
-    fun setGroupSubTitle(subTitle: String, title: String, timerPresent: Boolean) {
+    fun setGroupSubTitle(subTitle: String, title: String, groupType: String) {
         if (subTitle.isNotBlank()) {
             toolBarTitleTv.visibility = View.GONE
             toolBarContainer.visibility = View.VISIBLE
             titleTv.text = title
-            if (timerPresent)
-                Handler().postDelayed({
-                    subTitleTv.text = subTitle
-                }, 3000)
-            else subTitleTv.text = subTitle
+            subTitleTv.text = subTitle
         } else {
-            toolBarContainer.visibility = View.GONE
+            toolBarContainer.visibility = View.INVISIBLE
             toolBarTitleTv.visibility = View.VISIBLE
             toolBarTitleTv.text = title
+        }
+        when (groupType) {
+            CLOSED_GROUP -> closedGroupIcon.visibility = View.VISIBLE
+            else -> closedGroupIcon.visibility = View.GONE
         }
     }
 
     fun firstIcon(drawableRes: Int) {
-        firstIconImageView.visibility = View.VISIBLE
-        setDrawableImage(drawableRes, firstIconImageView)
+        when(drawableRes){
+            0 -> firstIconImageView.visibility = View.GONE
+            else ->{
+                firstIconImageView.visibility = View.VISIBLE
+                setDrawableImage(drawableRes, firstIconImageView)
+            }
+        }
     }
 
     fun secondIcon(drawableRes: Int) {
-        if (drawableRes == 0) secondIconImageView.visibility = View.GONE
-        else {
-            secondIconImageView.visibility = View.VISIBLE
-            setDrawableImage(drawableRes, secondIconImageView)
+        when (drawableRes) {
+            0 -> secondIconImageView.visibility = View.GONE
+            1 ->{
+                secondIconImageView.visibility = View.VISIBLE
+                setDrawableImage(drawableRes, secondIconImageView)
+            }
+            else -> {
+                secondIconImageView.visibility = View.VISIBLE
+                setDrawableImage(drawableRes, secondIconImageView)
+            }
         }
     }
 
     private fun setDrawableImage(drawableRes: Int, imageView: ImageView) {
         imageView.setImageResource(drawableRes)
-    }
-
-    fun setLockVisibility(groupType: String) {
-        if (groupType == CLOSED_GROUP)
-            closedGroupIcon.visibility = View.VISIBLE
-        else
-            closedGroupIcon.visibility = View.GONE
     }
 
     // Listeners
@@ -129,6 +137,12 @@ class GroupsAppBar @JvmOverloads constructor(
 
     fun onToolbarPressed(function: () -> Unit) {
         toolBarContainer.setOnClickListener {
+            function.invoke()
+        }
+    }
+
+    fun onTitlePressed(function: () -> Unit) {
+        toolBarTitleTv.setOnClickListener {
             function.invoke()
         }
     }

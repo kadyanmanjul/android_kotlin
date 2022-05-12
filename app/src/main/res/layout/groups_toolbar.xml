@@ -149,6 +149,7 @@
                 android:padding="@dimen/_4sdp"
                 android:tint="@color/white"
                 android:transitionName="group_list_appbar"
+                android:foreground="?attr/actionBarItemBackground"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/second_right_icon"

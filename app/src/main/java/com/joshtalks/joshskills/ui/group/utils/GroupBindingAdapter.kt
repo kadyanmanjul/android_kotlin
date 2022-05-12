@@ -18,6 +18,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
 import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.ui.group.adapters.*
+import com.joshtalks.joshskills.ui.group.constants.OPENED_GROUP
 import com.joshtalks.joshskills.ui.group.model.DefaultImage
 import com.joshtalks.joshskills.ui.group.model.GroupItemData
 import com.joshtalks.joshskills.ui.group.model.GroupMember
@@ -39,24 +40,26 @@ fun GroupsAppBar.onSecondIconPress(function: () -> Unit) = this.onSecondIconPres
 @BindingAdapter("onToolbarPressed")
 fun GroupsAppBar.onToolbarPressed(function: () -> Unit) = this.onToolbarPressed(function)
 
+@BindingAdapter("onTitlePressed")
+fun GroupsAppBar.onTitlePressed(function: () -> Unit) = this.onTitlePressed(function)
+
 @BindingAdapter("firstIcon")
 fun GroupsAppBar.setFirstIcon(drawableRes: Int) {
     if (drawableRes != R.drawable.josh_skill_logo)
         this.firstIcon(drawableRes)
 }
 
-@BindingAdapter("groupHeader", "groupSubHeader", "subHeaderTimer", requireAll = false)
-fun GroupsAppBar.setGroupHeaders(header: String, subHeader: String, boolean: Boolean = false) =
-    this.setGroupSubTitle(subHeader, header, boolean)
+@BindingAdapter("groupHeader", "groupSubHeader", "groupType", requireAll = false)
+fun GroupsAppBar.setGroupHeaders(header: String, subHeader: String, groupType: String?) {
+    this.setGroupSubTitle(subHeader, header, groupType?: OPENED_GROUP)
+}
 
 @BindingAdapter("secondIcon")
 fun GroupsAppBar.setSecondIcon(drawableRes: Int) = this.secondIcon(drawableRes)
 
-@BindingAdapter("groupImage")
-fun GroupsAppBar.setGroupImage(imageUrl: String) = this.setImage(imageUrl)
-
-@BindingAdapter("groupType")
-fun GroupsAppBar.setLockVisibility(groupType: String) = this.setLockVisibility(groupType)
+@BindingAdapter("groupImage", "groupName", "groupTypeDm", requireAll = false)
+fun GroupsAppBar.setGroupImage(imageUrl: String, groupName: String?, groupType: String?) =
+    this.setImage(imageUrl, groupName, groupType)
 
 @BindingAdapter("groupImage", "defaultImage")
 fun CircleImageView.setGroupImage(imageUrl: String, defaultImage: String) {
@@ -64,18 +67,21 @@ fun CircleImageView.setGroupImage(imageUrl: String, defaultImage: String) {
         this.setUserImageOrInitials(imageUrl, defaultImage, isRound = true)
 }
 
-@BindingAdapter("groupImage", "defaultImage")
-fun CircleImageView.setGroupImage(imageUrl: String, defaultImage: DefaultImage) {
-    if (imageUrl.isNotBlank())
-        Glide.with(this)
+@BindingAdapter("groupImage", "defaultImage", "groupName", requireAll = false)
+fun CircleImageView.setGroupImage(imageUrl: String, defaultImage: DefaultImage, groupName: String?) {
+    when {
+        imageUrl.isNotBlank() -> Glide.with(this)
             .load(imageUrl)
             .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
             .into(this)
-    else
-        Glide.with(this)
+        defaultImage == DefaultImage.DEFAULT_DM_FPP_IMAGE -> {
+            this.setUserImageOrInitials(imageUrl, groupName!!, isRound = true)
+        }
+        else -> Glide.with(this)
             .load(defaultImage.drwRes)
             .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
             .into(this)
+    }
 }
 
 @BindingAdapter("groupAdapter", "stateAdapter", "onGroupItemClick")

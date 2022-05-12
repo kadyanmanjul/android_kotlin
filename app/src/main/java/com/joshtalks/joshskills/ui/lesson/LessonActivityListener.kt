@@ -6,6 +6,7 @@ interface LessonActivityListener {
 
     fun onNextTabCall(currentTabNumber: Int)
     fun showIntroVideo()
+    fun introVideoCmplt()
 
     fun onQuestionStatusUpdate(
         status: QUESTION_STATUS,

@@ -1,11 +1,16 @@
 package com.joshtalks.joshskills.ui.activity_feed
 
 import android.content.Intent
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.databinding.ActivityFeedMainBinding
 import com.joshtalks.joshskills.ui.activity_feed.model.ActivityFeedResponse
 import com.joshtalks.joshskills.ui.activity_feed.utils.*
@@ -13,6 +18,7 @@ import com.joshtalks.joshskills.ui.activity_feed.viewModel.ActivityFeedViewModel
 import com.joshtalks.joshskills.ui.group.BaseGroupActivity
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
 import com.joshtalks.joshskills.ui.userprofile.fragments.ProfileImageShowFragment
+import kotlinx.android.synthetic.main.base_toolbar.*
 
 class ActivityFeedMainActivity : BaseGroupActivity() {
 
@@ -30,6 +36,7 @@ class ActivityFeedMainActivity : BaseGroupActivity() {
         binding.vm = viewModel
         lifecycle.addObserver(viewModel)
         binding.executePendingBindings()
+        initToolBar()
     }
 
     override fun onCreated() {
@@ -47,7 +54,20 @@ class ActivityFeedMainActivity : BaseGroupActivity() {
             }
         }
     }
-
+    private fun initToolBar(){
+        with(iv_back){
+            visibility=VISIBLE
+            setOnClickListener{
+                viewModel.onBackPress()
+            }
+        }
+        text_message_title.text = this.getString(R.string.activity_feed)
+        image_view_logo.visibility=GONE
+        iv_earn.visibility=GONE
+        iv_edit.visibility= GONE
+        iv_help.visibility= GONE
+        iv_setting.visibility=GONE
+    }
     private fun getData() {
         viewModel.getActivityFeed("")
     }
@@ -62,7 +82,7 @@ class ActivityFeedMainActivity : BaseGroupActivity() {
             activityFeedResponse.mentorId ?: EMPTY,
             arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
             null,
-            "RECENT_CALL",
+            "ACTIVITY_FEED",
             conversationId = null
         )
     }
@@ -94,5 +114,12 @@ class ActivityFeedMainActivity : BaseGroupActivity() {
     fun scrollToEnd() {
         binding.rvFeeds.layoutManager?.scrollToPosition(0)
         viewModel.isScrollToEndButtonVisible.set(false)
+    }
+
+    override fun onBackPressed() {
+        MixPanelTracker.publishEvent(MixPanelEvent.BACK)
+            .addParam(ParamKeys.SCREEN_NAME,"activity feed")
+            .push()
+        super.onBackPressed()
     }
 }

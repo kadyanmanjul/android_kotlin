@@ -119,6 +119,23 @@
                     app:lottie_imageAssetsFolder="lottie"
                     app:lottie_loop="false" />
 
+                <com.airbnb.lottie.LottieAnimationView
+                    android:id="@+id/ftu_twenty_min_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/_175sdp"
+                    android:layout_marginVertical="@dimen/_26sdp"
+                    android:visibility="gone"
+                    android:scaleX="1.5"
+                    android:scaleY="1.5"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_today_topic"
+                    app:lottie_autoPlay="false"
+                    app:lottie_fileName="lottie/not_attempted.json"
+                    app:lottie_imageAssetsFolder="lottie"
+                    app:lottie_loop="true"
+                    tools:visibility="visible"/>
+
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tv_practise_time"
                     android:layout_width="wrap_content"
@@ -195,6 +212,24 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/image_view"
                         app:layout_constraintTop_toTopOf="@+id/image_view" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/twenty_min_ftu_text"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start|center"
+                        android:layout_marginHorizontal="@dimen/_3sdp"
+                        android:text="@string/twenty_min_call_incomplete"
+                        android:textAllCaps="false"
+                        android:gravity="center"
+                        android:visibility="gone"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
+                        android:textColor="@color/black"
+                        app:layout_constraintBottom_toBottomOf="@+id/image_view"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/image_view"
+                        app:layout_constraintTop_toTopOf="@+id/image_view" />
+
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <androidx.appcompat.widget.AppCompatTextView
@@ -294,8 +329,8 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:layout_marginBottom="@dimen/_13sdp"
-                        android:layout_marginTop="@dimen/_14sdp"
+                        android:layout_marginBottom="@dimen/_7sdp"
+                        android:layout_marginTop="@dimen/_7sdp"
                         android:backgroundTint="@color/colorAccent"
                         android:gravity="center"
                         android:insetTop="0dp"
@@ -324,7 +359,7 @@
                         android:layout_gravity="center"
                         android:visibility="@{vm.isFreeTrail ? View.GONE : View.VISIBLE}"
                         android:layout_marginTop="@dimen/_14sdp"
-                        android:layout_marginBottom="@dimen/_13sdp"
+                        android:layout_marginBottom="@dimen/_7sdp"
                         android:backgroundTint="@color/colorAccent"
                         android:gravity="center"
                         android:insetTop="0dp"
@@ -341,7 +376,8 @@
                         app:layout_constraintWidth_default="percent"
                         app:layout_constraintWidth_percent="0.7"
                         app:rippleColor="@color/white"
-                        tools:visibility="invisible" />
+                        tools:visibility="visible"
+                        app:layout_constraintBottom_toTopOf="@id/btn_new_student"/>
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_favorite"
@@ -350,8 +386,10 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_marginBottom="@dimen/_7sdp"
+                        android:layout_marginTop="@dimen/_7sdp"
                         android:backgroundTint="@color/colorAccent"
                         android:gravity="center"
+                        android:visibility="@{vm.isFreeTrail ? View.GONE : View.VISIBLE}"
                         android:insetTop="0dp"
                         android:insetBottom="0dp"
                         android:paddingVertical="@dimen/_14sdp"
@@ -359,7 +397,6 @@
                         android:textAppearance="@style/TextAppearance.JoshTypography.ButtonSemiBold"
                         android:textColor="@color/white"
                         android:textSize="@dimen/_12ssp"
-                        android:visibility="gone"
                         app:cornerRadius="@dimen/_36sdp"
                         app:layout_constraintBottom_toTopOf="@+id/btn_start"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -380,7 +417,7 @@
                         android:gravity="center"
                         android:insetTop="0dp"
                         android:insetBottom="0dp"
-                        app:layout_constraintBottom_toTopOf="@+id/btn_continue"
+                        app:layout_constraintBottom_toTopOf="@+id/btn_invite_friend"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/btn_favorite"
@@ -395,6 +432,34 @@
                         app:lottie_speed="1"
                         app:rippleColor="@color/white"
                         android:visibility="invisible" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_invite_friend"
+                        style="@style/Widget.MaterialComponents.Button"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="@dimen/_7sdp"
+                        android:layout_marginBottom="@dimen/_7sdp"
+                        android:backgroundTint="@color/colorAccent"
+                        android:gravity="center"
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp"
+                        android:paddingVertical="@dimen/_14sdp"
+                        android:text="Call your friend"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.ButtonSemiBold"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/_12ssp"
+                        app:cornerRadius="@dimen/_36sdp"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toTopOf="@+id/btn_continue"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/btn_start"
+                        app:layout_constraintWidth_default="percent"
+                        app:layout_constraintWidth_percent="0.7"
+                        app:rippleColor="@color/white"
+                        tools:visibility="visible" />
 
                     <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/btnStartTrialText"
@@ -434,7 +499,7 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintHorizontal_bias="0.5"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/btn_start"
+                        app:layout_constraintTop_toBottomOf="@+id/btn_invite_friend"
                         app:layout_constraintWidth_default="percent"
                         app:layout_constraintWidth_percent="0.8"
                         app:lottie_autoPlay="true"

@@ -14,6 +14,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.databinding.FragmentPreviousProfilePicsBinding
 import com.joshtalks.joshskills.ui.userprofile.models.ProfilePicture
 import com.joshtalks.joshskills.ui.userprofile.models.PreviousProfilePictures
@@ -103,6 +106,9 @@ class PreviousProfilePicsFragment : DialogFragment() {
 
     private fun addListeners() {
         binding.ivBack.setOnClickListener {
+            MixPanelTracker.publishEvent(MixPanelEvent.BACK)
+                .addParam(ParamKeys.SCREEN_NAME,"previous profile photo")
+                .push()
             dismiss()
         }
     }
@@ -149,7 +155,8 @@ class PreviousProfilePicsFragment : DialogFragment() {
                             )
                                 .show(activity!!.supportFragmentManager, "ImageShow")
                         }
-                    })
+                    },
+                    mentorId)
             }
     }
 

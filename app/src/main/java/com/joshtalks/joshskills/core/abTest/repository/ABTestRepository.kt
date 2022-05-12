@@ -1,8 +1,13 @@
 package com.joshtalks.joshskills.ui.group.repository
 
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.USER_UNIQUE_ID
 import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.util.showAppropriateMsg
+import org.json.JSONObject
 
 private const val TAG = "ABTestRepository"
 
@@ -19,9 +24,78 @@ class ABTestRepository {
     suspend fun updateAllCampaigns(list: List<String>) {
         try {
             database.deleteAllCampaigns()
+            val prop = JSONObject()
             val apiResponse = apiService.getAllCampaigns(list.joinToString(","))
             if (apiResponse.isSuccessful && apiResponse.body() != null) {
                 database.insertCampaigns(apiResponse.body()!!)
+
+                for(i in apiResponse.body()!!) {
+                    when(i.campaignKey) {
+                        "SPEAKING_INTRODUCTION_VIDEO" -> {
+                            if (i.isCampaignActive) {
+                                prop.put("SPEAKING_INTRODUCTION_VIDEO",i.variantKey)
+                            }
+                        }
+                        "ENGLISH_SYLLABUS_DOWNLOAD" -> {
+                            if(i.isCampaignActive){
+                                prop.put("ENGLISH_SYLLABUS_DOWNLOAD",i.variantKey)
+                            }
+                        }
+                        "ACTIVITY_FEED" -> {
+                            if(i.isCampaignActive){
+                                prop.put("ACTIVITY_FEED",i.variantKey)
+                            }
+                        }
+                        "P2P_IMAGE_SHARING" -> {
+                            if(i.isCampaignActive){
+                                prop.put("P2P_IMAGE_SHARING",i.variantKey)
+                            }
+                        }
+                        "100_POINTS" -> {
+                            if(i.isCampaignActive){
+                                prop.put("100_POINTS",i.variantKey)
+                            }
+                        }
+                        "BUY_LAYOUT_CHANGED" -> {
+                            if(i.isCampaignActive){
+                                prop.put("BUY_LAYOUT_CHANGED",i.variantKey)
+                            }
+                        }
+                        "WHATSAPP_REMARKETING" -> {
+                            if(i.isCampaignActive){
+                                prop.put("WHATSAPP_REMARKETING",i.variantKey)
+                            }
+                        }
+                        "PEOPLE_HELP_COUNT" -> {
+                            if(i.isCampaignActive){
+                                prop.put("PEOPLE_HELP_COUNT",i.variantKey)
+                            }
+                        }
+                        "EXTEND_FREE_TRIAL" -> {
+                            if(i.isCampaignActive){
+                                prop.put("EXTEND_FREE_TRIAL",i.variantKey)
+                            }
+                        }
+                        "ACTIVITY_FEED_V2" -> {
+                            if(i.isCampaignActive){
+                                prop.put("ACTIVITY_FEED_V2",i.variantKey)
+                            }
+                        }
+                        "20_MIN_TARGET" -> {
+                            if(i.isCampaignActive){
+                                prop.put("20_MIN_TARGET",i.variantKey)
+                            }
+                        }
+                    }
+                }
+
+                val exp = "experiment_started"
+                val obj = JSONObject()
+                MixPanelTracker.mixPanel.track("$$exp",obj)
+                MixPanelTracker.mixPanel.registerSuperProperties(prop)
+                MixPanelTracker.mixPanel.identify(PrefManager.getStringValue(USER_UNIQUE_ID))
+                MixPanelTracker.mixPanel.people.identify(PrefManager.getStringValue(USER_UNIQUE_ID))
+                MixPanelTracker.mixPanel.people.set(prop)
             }
         } catch (ex: Throwable) {
             ex.showAppropriateMsg()

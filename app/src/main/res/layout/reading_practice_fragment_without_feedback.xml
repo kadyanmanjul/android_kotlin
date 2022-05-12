@@ -590,10 +590,11 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/_16sdp"
                         android:visibility="gone"
+                        tools:visibility="visible"
                         android:orientation="vertical">
 
-                        <com.mindorks.placeholderview.PlaceHolderView
-                            android:id="@+id/audio_list"
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/audio_list_rv"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:visibility="gone"

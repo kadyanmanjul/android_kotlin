@@ -15,19 +15,15 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
-import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.GoalKeys
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.setRoundImage
 import com.joshtalks.joshskills.databinding.ActivityShareWithFriendsBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.ui.referral.USER_SHARE_SHORT_URL
-import io.branch.indexing.BranchUniversalObject
-import io.branch.referral.Defines
-import io.branch.referral.util.LinkProperties
+import com.joshtalks.joshskills.util.DeepLinkUtil
 import java.io.File
 import java.io.FileOutputStream
 
@@ -50,8 +46,6 @@ class ShareWithFriendsActivity : AppCompatActivity() {
 
     val fragment = ShareScreenFragment()
 
-    private var userReferralCode: String = EMPTY
-
     override fun onCreate(savedInstanceState: Bundle?) {
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
@@ -67,44 +61,25 @@ class ShareWithFriendsActivity : AppCompatActivity() {
         binding.handler = this
     }
 
-    fun sharePreviewToOtherApps() {
-        userReferralCode = Mentor.getInstance().referralCode
-        val branchUniversalObject = BranchUniversalObject()
-            .setCanonicalIdentifier(userReferralCode.plus(System.currentTimeMillis()))
-            .setTitle("Invite Friend")
-            .setContentIndexingMode(BranchUniversalObject.CONTENT_INDEX_MODE.PUBLIC)
-            .setLocalIndexMode(BranchUniversalObject.CONTENT_INDEX_MODE.PUBLIC)
-        val lp = LinkProperties()
-            .setChannel(userReferralCode)
-            .setFeature("sharing")
-            .setCampaign("referral")
-            .addControlParameter(Defines.Jsonkey.ReferralCode.key, userReferralCode)
-            .addControlParameter(Defines.Jsonkey.UTMCampaign.key, "referral")
-            .addControlParameter(
-                Defines.Jsonkey.UTMMedium.key,
-                userReferralCode.plus(System.currentTimeMillis())
-            )
-        branchUniversalObject
-            .generateShortUrl(this, lp) { url, error ->
-                if (error == null)
-                    inviteFriends(
-                        dynamicLink = url
-                    )
-                else
-                    inviteFriends(
-                        dynamicLink = if (PrefManager.hasKey(USER_SHARE_SHORT_URL))
-                            PrefManager.getStringValue(USER_SHARE_SHORT_URL)
-                        else
-                            getAppShareUrl()
-                    )
-            }
+    fun sharePreviewToOtherApps(isComingFromButton:Boolean) {
+        if(isComingFromButton) {
+            MixPanelTracker.publishEvent(MixPanelEvent.SHARE_WITH_FRIENDS_BUTTON).push()
+        }
+        else {
+            MixPanelTracker.publishEvent(MixPanelEvent.SHARE_WITH_FRIENDS_ICON).push()
+        }
+        DeepLinkUtil(this)
+            .setReferralCode(Mentor.getInstance().referralCode)
+            .setReferralCampaign()
+            .setListener(object : DeepLinkUtil.OnDeepLinkListener {
+                override fun onDeepLinkCreated(deepLink: String) {
+                    inviteFriends(deepLink)
+                }
+            })
+            .build()
     }
 
     fun inviteFriends(dynamicLink: String) {
-        viewModel.getDeepLink(
-            dynamicLink,
-            userReferralCode.plus(System.currentTimeMillis())
-        )
         val view = fragment.getShareScreen()
         val bitmapCreated = getBitMapFromView(view)
         try {
@@ -114,10 +89,6 @@ class ShareWithFriendsActivity : AppCompatActivity() {
         } catch (e: Exception) {
             e.printStackTrace()
         }
-    }
-
-    private fun getAppShareUrl(): String {
-        return "https://play.google.com/store/apps/details?id=" + BuildConfig.APPLICATION_ID + "&referrer=utm_source%3D$userReferralCode"
     }
 
     private fun populateViewsAndFragment() {

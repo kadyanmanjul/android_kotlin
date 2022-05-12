@@ -21,13 +21,13 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.databinding.ActivityReferralBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
+import com.joshtalks.joshskills.util.DeepLinkUtil
 import com.muddzdev.styleabletoast.StyleableToast
-import io.branch.indexing.BranchUniversalObject
-import io.branch.referral.Defines
-import io.branch.referral.util.LinkProperties
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -197,103 +197,21 @@ class ReferralActivity : BaseActivity() {
     }
 
     fun getDeepLinkAndInviteFriends(packageString: String? = null) {
-        val referralTimestamp = System.currentTimeMillis()
-        val branchUniversalObject = BranchUniversalObject()
-            .setCanonicalIdentifier(userReferralCode.plus(referralTimestamp))
-            .setTitle("Invite Friend")
-            .setContentIndexingMode(BranchUniversalObject.CONTENT_INDEX_MODE.PUBLIC)
-            .setLocalIndexMode(BranchUniversalObject.CONTENT_INDEX_MODE.PUBLIC)
-        val lp = LinkProperties()
-            .setChannel(userReferralCode)
-            .setFeature("sharing")
-            .setCampaign(userReferralCode.plus(referralTimestamp))
-            .addControlParameter(Defines.Jsonkey.ReferralCode.key, userReferralCode)
-            .addControlParameter(
-                Defines.Jsonkey.UTMCampaign.key,
-                userReferralCode.plus(referralTimestamp)
-            )
-            .addControlParameter(Defines.Jsonkey.UTMMedium.key, "referral")
-
-        branchUniversalObject
-            .generateShortUrl(this, lp) { url, error ->
-                if (error == null)
+        DeepLinkUtil(this)
+            .setReferralCode(Mentor.getInstance().referralCode)
+            .setReferralCampaign()
+            .setListener(object : DeepLinkUtil.OnDeepLinkListener {
+                override fun onDeepLinkCreated(deepLink: String) {
                     inviteFriends(
                         packageString = packageString,
-                        dynamicLink = url,
-                        referralTimestamp = referralTimestamp
+                        dynamicLink = deepLink
                     )
-                else
-                    inviteFriends(
-                        packageString = packageString,
-                        referralTimestamp = referralTimestamp,
-                        dynamicLink = if (PrefManager.hasKey(USER_SHARE_SHORT_URL))
-                            PrefManager.getStringValue(USER_SHARE_SHORT_URL)
-                        else
-                            getAppShareUrl()
-                    )
-            }
-        /* val domain = AppObjectController.getFirebaseRemoteConfig().getString(SHARE_DOMAIN)
-         Firebase.dynamicLinks.shortLinkAsync(ShortDynamicLink.Suffix.SHORT) {
-             domainUriPrefix = domain
-             link = Uri.parse("https://joshskill.app.link")
- //            link =
- //                Uri.parse(
- //                    "https://joshskill.app.link/" +
- //                            "?apn=${application.packageName}" +
- //                            "&link=https://joshskill.app.link/" +
- //                            "&source=$userReferralCode" +
- //                            "&medium=${
- //                                userReferralCode.plus(
- //                                    System.currentTimeMillis()
- //                                )
- //                            }&campaign=referral"
- //                )
-             androidParameters(BuildConfig.APPLICATION_ID) {
-                 minimumVersion = 69
-             }
-             googleAnalyticsParameters {
-                 source = userReferralCode.plus(System.currentTimeMillis())
-                 medium = "Mobile"
-                 campaign = "user_referer"
-             }
-
-         }.addOnSuccessListener { result ->
-             Log.e(TAG, "getDeepLinkAndInviteFriends: ${result.shortLink}")
-             Log.e(TAG, "getDeepLinkAndInviteFriends: ${result.previewLink}")
-             result.warnings.forEach {
-                 Log.w(TAG, "getDeepLinkAndInviteFriends: Warning${it.message}")
-             }
-             result.shortLink?.let {
-                 try {
-                     if (it.toString().isNotEmpty()) {
-                         if (PrefManager.hasKey(USER_SHARE_SHORT_URL).not())
-                             PrefManager.put(USER_SHARE_SHORT_URL, it.toString())
-                         inviteFriends(packageString = packageString, dynamicLink = it.toString())
-                     } else
-                         inviteFriends(
-                             packageString = packageString,
-                             dynamicLink = if (PrefManager.hasKey(USER_SHARE_SHORT_URL))
-                                 PrefManager.getStringValue(USER_SHARE_SHORT_URL)
-                             else
-                                 getAppShareUrl()
-                         )
-                 } catch (ex: Exception) {
-                     ex.printStackTrace()
-                 }
-             }
-         }.addOnFailureListener {
-             it.printStackTrace()
-             inviteFriends(
-                 packageString = packageString,
-                 dynamicLink = if (PrefManager.hasKey(USER_SHARE_SHORT_URL))
-                     PrefManager.getStringValue(USER_SHARE_SHORT_URL)
-                 else
-                     getAppShareUrl()
-             )
-         }*/
+                }
+            })
+            .build()
     }
 
-    fun inviteFriends(packageString: String? = null, dynamicLink: String, referralTimestamp: Long) {
+    fun inviteFriends(packageString: String? = null, dynamicLink: String) {
         var referralText = VIDEO_URL.plus("\n").plus(
             AppObjectController.getFirebaseRemoteConfig().getString(REFERRAL_SHARE_TEXT_KEY)
         )
@@ -305,10 +223,6 @@ class ReferralActivity : BaseActivity() {
 
         referralText = referralText.plus("\n").plus(dynamicLink)
         try {
-            viewModel.getDeepLink(
-                dynamicLink,
-                userReferralCode.plus(referralTimestamp)
-            )
             val waIntent = Intent(Intent.ACTION_SEND)
             waIntent.type = "text/plain"
             if (packageString.isNullOrEmpty().not()) {
@@ -323,13 +237,14 @@ class ReferralActivity : BaseActivity() {
                 .addUserDetails()
                 .addParam(AnalyticsEvent.REFERRAL_CODE.NAME, userReferralCode)
                 .push()
-
         } catch (e: PackageManager.NameNotFoundException) {
             showToast(getString(R.string.whatsApp_not_installed))
         }
         if (packageString == WHATSAPP_PACKAGE_STRING) {
+            MixPanelTracker.publishEvent(MixPanelEvent.SHARE_REFERRAL_WHATSAPP).push()
             viewModel.saveImpression(IMPRESSION_REFER_VIA_WHATSAPP_CLICKED)
         } else {
+            MixPanelTracker.publishEvent(MixPanelEvent.SHARE_REFERRAL_OTHERS).push()
             viewModel.saveImpression(IMPRESSION_REFER_VIA_OTHER_CLICKED)
         }
     }
@@ -355,6 +270,7 @@ class ReferralActivity : BaseActivity() {
 
     @Synchronized
     private fun copyCodeIntoClipBoard() {
+        MixPanelTracker.publishEvent(MixPanelEvent.COPY_REFERRAL).push()
         AppObjectController.uiHandler.removeCallbacksAndMessages(null)
         val cManager =
             application.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
@@ -374,6 +290,7 @@ class ReferralActivity : BaseActivity() {
     }
 
     override fun onBackPressed() {
+        MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
         if (intent.hasExtra(FROM_CLASS)) {
             intent.getStringExtra(FROM_CLASS)?.run {
                 if (this.equals(InboxActivity::class.java.name, ignoreCase = true)) {

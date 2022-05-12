@@ -5,7 +5,10 @@ import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.DownloadManager
-import android.content.*
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -16,14 +19,12 @@ import android.media.MediaFormat
 import android.media.MediaMuxer
 import android.net.NetworkInfo
 import android.net.Uri
-import android.os.*
-import android.view.Gravity
-import android.view.LayoutInflater
-import android.view.MotionEvent
-import android.view.View
+import android.os.Build
+import android.os.Bundle
+import android.os.Environment
+import android.os.SystemClock
+import android.view.*
 import android.view.View.*
-import android.view.ViewGroup
-import android.view.WindowManager
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.SeekBar
@@ -32,19 +33,29 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
+import androidx.core.view.get
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
 import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.Player
 import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
+import com.joshtalks.joshskills.constants.PERMISSION_FROM_READING_GRANTED
+import com.joshtalks.joshskills.constants.SHARE_VIDEO
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
 import com.joshtalks.joshskills.core.extension.setImageAndFitCenter
 import com.joshtalks.joshskills.core.io.AppDirectory
@@ -76,30 +87,26 @@ import com.tonyodev.fetch2.Download
 import com.tonyodev.fetch2.Error
 import com.tonyodev.fetch2.FetchListener
 import com.tonyodev.fetch2core.DownloadBlock
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.reading_practice_fragment_without_feedback.*
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import java.util.concurrent.TimeUnit
+import kotlinx.coroutines.withContext
 import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseDrawable
 import timber.log.Timber
 import java.io.File
-import java.lang.IllegalStateException
-import java.lang.Runnable
-import java.util.*
-import kotlin.collections.ArrayList
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
-import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
-import com.joshtalks.joshskills.constants.PERMISSION_FROM_READING_GRANTED
-import com.joshtalks.joshskills.constants.SHARE_VIDEO
-import io.reactivex.android.schedulers.AndroidSchedulers
-import kotlinx.android.synthetic.main.fragment_record_practise.view.*
 import java.io.IOException
+import java.lang.Runnable
+import java.lang.System
 import java.nio.ByteBuffer
-
+import java.util.concurrent.TimeUnit
 
 private const val TAG = "ReadingFragmentWithoutFeedback"
 
@@ -134,7 +141,12 @@ class ReadingFragmentWithoutFeedback :
     private val mutex = Mutex(false)
     private var muxerJob: Job? = null
     private var internetAvailableFlag: Boolean = true
-
+    private val praticAudioAdapter: PracticeAudioAdapter by lazy { PracticeAudioAdapter(context) }
+    private val layoutManager: LinearLayoutManager by lazy {
+        LinearLayoutManager(activity).apply {
+            isSmoothScrollbarEnabled = true
+        }
+    }
     private var onDownloadCompleteListener = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             val id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
@@ -211,6 +223,8 @@ class ReadingFragmentWithoutFeedback :
             "और धीरे धीरे हम native speaker की तरह बोलना सीखेंगे"
         )
     }
+
+    private var lessonID = -1
 
     var openVideoPlayerActivity: ActivityResultLauncher<Intent> = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -440,8 +454,11 @@ class ReadingFragmentWithoutFeedback :
         try {
             if (audioManager != null) {
                 audioManager?.onPause()
-                binding.btnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
+                onPlayerPause()
+//                binding.btnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
             }
+            binding.videoPlayer.onPause()
+            binding.mergedVideo.pause()
             pauseAllViewHolderAudio()
         } catch (ex: Exception) {
             Timber.d(ex)
@@ -548,9 +565,10 @@ class ReadingFragmentWithoutFeedback :
     }
 
     private fun pauseAllViewHolderAudio() {
-        val viewHolders = binding.audioList.allViewResolvers as List<PracticeAudioViewHolder>
-        viewHolders.forEach {
-            it.pauseAudio()
+        for (i in 0 until binding.audioListRv.getChildCount()) {
+            val holder: PracticeAudioAdapter.PracticeAudioViewHolder =
+                binding.audioListRv.findViewHolderForAdapterPosition(i) as PracticeAudioAdapter.PracticeAudioViewHolder
+            holder.pauseAudio()
         }
     }
 
@@ -561,18 +579,28 @@ class ReadingFragmentWithoutFeedback :
                 .subscribe(
                     {
                         AppObjectController.uiHandler.post {
-                            binding.audioList.removeView(it.practiceAudioViewHolder)
-                            currentLessonQuestion?.run {
-                                if (this.practiceEngagement.isNullOrEmpty()) {
-                                    showPracticeInputLayout()
-                                    binding.feedbackLayout.visibility = GONE
-                                    //binding.yourSubAnswerTv.text = getString(R.string.your_answer)
-                                    hidePracticeSubmitLayout()
-                                    disableSubmitButton()
+                            try {
+                                MixPanelTracker.publishEvent(MixPanelEvent.READING_RECORDING_DELETE)
+                                    .addParam(ParamKeys.LESSON_ID,lessonID)
+                                    .push()
+                                if (binding.audioListRv[it.index] != null){
+                                    binding.audioListRv.removeViewAt(it.index)
+                                    currentLessonQuestion?.run {
+                                        if (this.practiceEngagement.isNullOrEmpty()) {
+                                            showPracticeInputLayout()
+                                            binding.feedbackLayout.visibility = GONE
+                                            //binding.yourSubAnswerTv.text = getString(R.string.your_answer)
+                                            hidePracticeSubmitLayout()
+                                            disableSubmitButton()
+                                        } else {
+                                            hidePracticeInputLayout()
+                                            showImproveButton()
+                                        }
+                                    }
                                 } else {
-                                    hidePracticeInputLayout()
-                                    showImproveButton()
+                                    showToast("Null")
                                 }
+                            } catch (ex: Exception) {
                             }
                         }
                     },
@@ -732,158 +760,161 @@ class ReadingFragmentWithoutFeedback :
 
     private fun addObserver() {
         viewModel.lessonQuestionsLiveData.observe(
-            viewLifecycleOwner,
-            {
-                currentLessonQuestion = it.filter { it.chatType == CHAT_TYPE.RP }.getOrNull(0)
-                video = currentLessonQuestion?.videoList?.getOrNull(0)?.video_url
-                lifecycleScope.launch {
-                    lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                        fetchVideo()
-                    }
+            viewLifecycleOwner
+        ) {
+            currentLessonQuestion = it.filter { it.chatType == CHAT_TYPE.RP }.getOrNull(0)
+            video = currentLessonQuestion?.videoList?.getOrNull(0)?.video_url
+            lifecycleScope.launch {
+                lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                    fetchVideo()
                 }
-                currentLessonQuestion?.run {
+            }
+            currentLessonQuestion?.run {
 
-                    appAnalytics = AppAnalytics.create(AnalyticsEvent.PRACTICE_SCREEN.NAME)
-                        .addBasicParam()
-                        .addUserDetails()
-                        .addParam("lesson_id", this.lessonId)
-                        .addParam("question_id", this.id)
+                appAnalytics = AppAnalytics.create(AnalyticsEvent.PRACTICE_SCREEN.NAME)
+                    .addBasicParam()
+                    .addUserDetails()
+                    .addParam("lesson_id", this.lessonId)
+                    .addParam("question_id", this.id)
 
-                    if (this.practiceEngagement.isNullOrEmpty()) {
-                        binding.submitAnswerBtn.visibility = VISIBLE
-                        appAnalytics?.addParam(AnalyticsEvent.PRACTICE_SOLVED.NAME, false)
-                        appAnalytics?.addParam(AnalyticsEvent.PRACTICE_STATUS.NAME, "Not Submitted")
-                        setViewAccordingExpectedAnswer()
-                    } else {
-                        if (video.isNullOrBlank().not()) {
-                            binding.videoLayout.visibility = VISIBLE
-                            binding.mergedVideo.visibility = VISIBLE
-                            binding.ivClose.visibility = GONE
-                            binding.ivShare.visibility = VISIBLE
-                            if (this.practiceEngagement?.get(0)?.localPath.isNullOrEmpty()) {
-                                scope.launch {
-                                    if (AppObjectController.appDatabase.chatDao()
-                                            .getDownloadedVideoStatus(currentLessonQuestion!!.questionId) != null && AppObjectController.appDatabase.chatDao()
-                                            .getDownloadedVideoStatus(currentLessonQuestion!!.questionId)
-                                    ) {
-                                        val submittedVideoPath = AppObjectController.appDatabase.chatDao()
+                if (this.practiceEngagement.isNullOrEmpty()) {
+                    binding.submitAnswerBtn.visibility = VISIBLE
+                    appAnalytics?.addParam(AnalyticsEvent.PRACTICE_SOLVED.NAME, false)
+                    appAnalytics?.addParam(AnalyticsEvent.PRACTICE_STATUS.NAME, "Not Submitted")
+                    setViewAccordingExpectedAnswer()
+                } else {
+                    if (video.isNullOrBlank().not()) {
+                        binding.videoLayout.visibility = VISIBLE
+                        binding.mergedVideo.visibility = VISIBLE
+                        binding.ivClose.visibility = GONE
+                        binding.ivShare.visibility = VISIBLE
+                        if (this.practiceEngagement?.get(0)?.localPath.isNullOrEmpty()) {
+                            scope.launch {
+                                if (AppObjectController.appDatabase.chatDao()
+                                        .getDownloadedVideoStatus(currentLessonQuestion!!.questionId) != null && AppObjectController.appDatabase.chatDao()
+                                        .getDownloadedVideoStatus(currentLessonQuestion!!.questionId)
+                                ) {
+                                    val submittedVideoPath =
+                                        AppObjectController.appDatabase.chatDao()
                                             .getDownloadedVideoPath(currentLessonQuestion!!.questionId)
-                                        binding.mergedVideo.setVideoPath(submittedVideoPath)
-                                    } else {
-                                        getPermissionAndDownloadVideo(
-                                            currentLessonQuestion!!.practiceEngagement?.get(
-                                                0
-                                            )?.answerUrl.toString()
-                                        )
-                                    }
+                                    binding.mergedVideo.setVideoPath(submittedVideoPath)
+                                } else {
+                                    getPermissionAndDownloadVideo(
+                                        currentLessonQuestion!!.practiceEngagement?.get(
+                                            0
+                                        )?.answerUrl.toString()
+                                    )
                                 }
-                            } else {
-                                binding.mergedVideo.setVideoPath(this.practiceEngagement?.get(0)?.localPath)
                             }
-                            binding.ivShare.setOnClickListener {
-                                scope.launch {
-                                    if (currentLessonQuestion?.practiceEngagement?.get(0)?.localPath.isNullOrEmpty()
-                                            .not()
-                                    ) {
-                                        viewModel.shareVideoForAudio(
-                                            currentLessonQuestion?.practiceEngagement?.get(
-                                                0
-                                            )?.localPath.toString()
-                                        )
-                                    } else if (AppObjectController.appDatabase.chatDao()
-                                            .getDownloadedVideoStatus(currentLessonQuestion!!.questionId)
-                                    ) {
-                                        viewModel.shareVideoForAudio(
-                                            AppObjectController.appDatabase.chatDao()
-                                                .getDownloadedVideoPath(currentLessonQuestion!!.questionId)
-                                        )
-                                    }
+                        } else {
+                            binding.mergedVideo.setVideoPath(this.practiceEngagement?.get(0)?.localPath)
+                        }
+                        binding.ivShare.setOnClickListener {
+                            scope.launch {
+                                if (currentLessonQuestion?.practiceEngagement?.get(0)?.localPath.isNullOrEmpty()
+                                        .not()
+                                ) {
+                                    viewModel.shareVideoForAudio(
+                                        currentLessonQuestion?.practiceEngagement?.get(
+                                            0
+                                        )?.localPath.toString()
+                                    )
+                                } else if (AppObjectController.appDatabase.chatDao()
+                                        .getDownloadedVideoStatus(currentLessonQuestion!!.questionId)
+                                ) {
+                                    viewModel.shareVideoForAudio(
+                                        AppObjectController.appDatabase.chatDao()
+                                            .getDownloadedVideoPath(currentLessonQuestion!!.questionId)
+                                    )
                                 }
                             }
                         }
-                        binding.submitAnswerBtn.visibility = GONE
-                        // binding.improveAnswerBtn.visibility = VISIBLE
-                        binding.continueBtn.visibility = VISIBLE
-                        appAnalytics?.addParam(AnalyticsEvent.PRACTICE_SOLVED.NAME, true)
-                        appAnalytics?.addParam(
-                            AnalyticsEvent.PRACTICE_STATUS.NAME,
-                            "Already Submitted"
-                        )
-                        setViewUserSubmitAnswer()
                     }
+                    binding.submitAnswerBtn.visibility = GONE
+                    // binding.improveAnswerBtn.visibility = VISIBLE
+                    binding.continueBtn.visibility = VISIBLE
+                    appAnalytics?.addParam(AnalyticsEvent.PRACTICE_SOLVED.NAME, true)
+                    appAnalytics?.addParam(
+                        AnalyticsEvent.PRACTICE_STATUS.NAME,
+                        "Already Submitted"
+                    )
+                    setViewUserSubmitAnswer()
                 }
-
-                setPracticeInfoView()
             }
-        )
+
+            setPracticeInfoView()
+        }
 
         viewModel.requestStatusLiveData.observe(
-            viewLifecycleOwner,
-            {
-                if (it) {
-                    showCompletedPractise()
-                } else {
-                    enableSubmitButton()
-                    binding.progressLayout.visibility = GONE
-                }
+            viewLifecycleOwner
+        ) {
+            if (it) {
+                showCompletedPractise()
+            } else {
+                enableSubmitButton()
+                binding.progressLayout.visibility = GONE
             }
-        )
+        }
 
         viewModel.practiceFeedback2LiveData.observe(
-            viewLifecycleOwner,
-            {
-                setFeedBackLayout(it)
-                hideCancelButtonInRV()
-                binding.feedbackLayout.setCardBackgroundColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        R.color.white
-                    )
+            viewLifecycleOwner
+        ) {
+            setFeedBackLayout(it)
+            hideCancelButtonInRV()
+            binding.feedbackLayout.setCardBackgroundColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    R.color.white
                 )
-                binding.feedbackResultProgressLl.visibility = GONE
-                binding.feedbackResultLinearLl.visibility = VISIBLE
-                binding.progressLayout.visibility = GONE
-                binding.submitAnswerBtn.visibility = GONE
-                // binding.improveAnswerBtn.visibility = VISIBLE
-                binding.continueBtn.visibility = VISIBLE
-            }
-        )
+            )
+            binding.feedbackResultProgressLl.visibility = GONE
+            binding.feedbackResultLinearLl.visibility = VISIBLE
+            binding.progressLayout.visibility = GONE
+            binding.submitAnswerBtn.visibility = GONE
+            // binding.improveAnswerBtn.visibility = VISIBLE
+            binding.continueBtn.visibility = VISIBLE
+        }
 
         viewModel.practiceEngagementData.observe(
-            viewLifecycleOwner,
-            {
-                updatePracticeFeedback(it)
-                if (it.pointsList.isNullOrEmpty().not()) {
-                    showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, it.pointsList?.get(0))
-                    PrefManager.put(
-                        LESSON_COMPLETE_SNACKBAR_TEXT_STRING,
-                        it.pointsList!!.last(),
-                        false
-                    )
-                }
+            viewLifecycleOwner
+        ) {
+            updatePracticeFeedback(it)
+            if (it.pointsList.isNullOrEmpty().not()) {
+                showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, it.pointsList?.get(0))
+                PrefManager.put(
+                    LESSON_COMPLETE_SNACKBAR_TEXT_STRING,
+                    it.pointsList!!.last(),
+                    false
+                )
             }
-        )
+        }
         binding.btnNextStep.setOnClickListener {
             showNextTooltip()
+        }
+
+        viewModel.lessonId.observe(
+            viewLifecycleOwner
+        ) {
+            lessonID = it
         }
     }
 
     private fun fetchVideo() {
-            if (video.isNullOrEmpty().not()) {
-                scope.launch {
-                    AppObjectController.appDatabase.chatDao().insertReadingVideoDownloadedPath(
-                        ReadingVideo(currentLessonQuestion!!.questionId, " ", false)
-                    )
-                }
-                if (currentLessonQuestion?.videoList?.getOrNull(0)?.downloadStatus == DOWNLOAD_STATUS.DOWNLOADED) {
-                    scope.launch {
-                        videoDownPath = AppObjectController.appDatabase.chatDao()
-                            .getCompressedVideo(currentLessonQuestion!!.questionId)
-                    }
-                } else {
-                    download()
-                }
+        if (video.isNullOrEmpty().not()) {
+            scope.launch {
+                AppObjectController.appDatabase.chatDao().insertReadingVideoDownloadedPath(
+                    ReadingVideo(currentLessonQuestion!!.questionId, " ", false)
+                )
             }
+            if (currentLessonQuestion?.videoList?.getOrNull(0)?.downloadStatus == DOWNLOAD_STATUS.DOWNLOADED) {
+                scope.launch {
+                    videoDownPath = AppObjectController.appDatabase.chatDao()
+                        .getCompressedVideo(currentLessonQuestion!!.questionId)
+                }
+            } else {
+                download()
+            }
+        }
     }
 
     private fun download() {
@@ -1039,30 +1070,29 @@ class ReadingFragmentWithoutFeedback :
     }
 
     private fun updatePracticeFeedback(practiceEngagement: PracticeEngagement) {
-        val viewHolders = binding.audioList.allViewResolvers as List<PracticeAudioViewHolder>
-        viewHolders.forEach { it ->
-            it.let {
-                if (it.isEmpty()) {
-                    it.updatePracticeEngagement(practiceEngagement)
-                }
+        for (i in 0 until binding.audioListRv.getChildCount()) {
+            val holder: RecyclerView.ViewHolder =
+                binding.audioListRv.findViewHolderForAdapterPosition(i) as PracticeAudioAdapter.PracticeAudioViewHolder
+            if (holder is PracticeAudioAdapter.PracticeAudioViewHolder && holder.isEmpty()) {
+                holder.updatePracticeEngagement(practiceEngagement)
             }
         }
     }
 
     private fun hideCancelButtonInRV() {
-        val viewHolders = binding.audioList.allViewResolvers as List<PracticeAudioViewHolder>
-        viewHolders.forEach {
-            it.hideCancelButtons()
+        for (i in 0 until binding.audioListRv.getChildCount()) {
+            val holder: PracticeAudioAdapter.PracticeAudioViewHolder =
+                binding.audioListRv.findViewHolderForAdapterPosition(i) as PracticeAudioAdapter.PracticeAudioViewHolder
+            holder.hideCancelButtons()
         }
     }
 
     private fun removePreviousAddedViewHolder() {
-        val viewHolders = binding.audioList.allViewResolvers as List<PracticeAudioViewHolder>
-        viewHolders.forEach { it ->
-            it.let {
-                if (it.isEmpty()) {
-                    binding.audioList.removeView(it)
-                }
+        for (i in 0 until binding.audioListRv.getChildCount()) {
+            val holder: PracticeAudioAdapter.PracticeAudioViewHolder =
+                binding.audioListRv.findViewHolderForAdapterPosition(i) as PracticeAudioAdapter.PracticeAudioViewHolder
+            if (holder.isEmpty()) {
+                binding.audioListRv.removeViewAt(i)
             }
         }
     }
@@ -1107,10 +1137,6 @@ class ReadingFragmentWithoutFeedback :
     }
 
     private fun initRV() {
-        val linearLayoutManager = LinearLayoutManager(activity)
-        linearLayoutManager.isSmoothScrollbarEnabled = true
-        binding.audioList.builder.setHasFixedSize(true)
-            .setLayoutManager(linearLayoutManager)
         val divider = DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL)
         divider.setDrawable(
             ColorDrawable(
@@ -1120,8 +1146,11 @@ class ReadingFragmentWithoutFeedback :
                 )
             )
         )
-        binding.audioList.addItemDecoration(divider)
-        binding.audioList.enforceSingleScrollDirection()
+        binding.audioListRv.setHasFixedSize(false)
+        binding.audioListRv.layoutManager = layoutManager
+        binding.audioListRv.addItemDecoration(divider)
+        binding.audioListRv.enforceSingleScrollDirection()
+        binding.audioListRv.adapter = praticAudioAdapter
     }
 
     private fun addAudioListRV(practiceEngagement: List<PracticeEngagement>?) {
@@ -1134,26 +1163,15 @@ class ReadingFragmentWithoutFeedback :
             binding.mergedVideo.visibility = VISIBLE
             binding.ivShare.visibility = VISIBLE
         } else {
-            binding.audioList.visibility = VISIBLE
+            binding.audioListRv.visibility = VISIBLE
         }
         practiceEngagement?.let { practiceList ->
+            val list = arrayListOf<PracticeEngagementWrapper>()
             if (practiceList.isNullOrEmpty().not()) {
                 practiceList.forEach { practice ->
-                    binding.audioList.addView(
-                        PracticeAudioViewHolder(
-                            practice,
-                            context,
-                            practice.answerUrl
-                        ) {
-                            binding.btnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
-                        }
-                    )
-                    if (practice.practiceFeedback != null) {
-                        // binding.feedbackLayout.visibility = VISIBLE
-                        // binding.feedbackGrade.text = practice.practiceFeedback!!.grade
-                        // binding.feedbackDescription.text = practice.practiceFeedback!!.text
-                    }
+                    list.add(PracticeEngagementWrapper(practice, practice.answerUrl))
                 }
+                praticAudioAdapter?.updateList(list)
             }
         }
     }
@@ -1177,13 +1195,11 @@ class ReadingFragmentWithoutFeedback :
                     audioManager?.seekTo(userSelectedPosition.toLong())
                 }
             })
-        val viewHolders = binding.audioList.allViewResolvers as List<*>
-        viewHolders.forEach {
-            it?.let {
-                if (it is PracticeAudioViewHolder && it.isSeekBaarInitialized()) {
-                    it.initializePractiseSeekBar()
-                    // it.setSeekToZero()
-                }
+        for (i in 0 until binding.audioListRv.getChildCount()) {
+            val holder: RecyclerView.ViewHolder =
+                binding.audioListRv.findViewHolderForAdapterPosition(i) as PracticeAudioAdapter.PracticeAudioViewHolder
+            if (holder is PracticeAudioAdapter.PracticeAudioViewHolder) {
+                holder.initializePractiseSeekBar()
             }
         }
     }
@@ -1196,18 +1212,16 @@ class ReadingFragmentWithoutFeedback :
             addVideoView()
         } else {
             binding.subPractiseSubmitLayout.visibility = VISIBLE
-            binding.audioList.visibility = VISIBLE
+            binding.audioListRv.visibility = VISIBLE
+            initRV()
             removePreviousAddedViewHolder()
-            binding.audioList.addView(
-                PracticeAudioViewHolder(null, context, filePath) {
-                    binding.btnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
-                }
-            )
+            praticAudioAdapter?.addNewItem(PracticeEngagementWrapper(null, filePath))
             initializePractiseSeekBar()
         }
         enableSubmitButton()
     }
-    private fun addVideoView(){
+
+    private fun addVideoView() {
         binding.practiseSubmitLayout.visibility = VISIBLE
         binding.videoLayout.visibility = VISIBLE
         binding.mergedVideo.visibility = VISIBLE
@@ -1271,8 +1285,12 @@ class ReadingFragmentWithoutFeedback :
                     //binding.recordingViewFrame.layoutTransition?.setAnimateParentHierarchy(false)
                     binding.recordingView.startAnimation(scaleAnimation)
                     //binding.recordingViewFrame.layoutTransition?.setAnimateParentHierarchy(false)
-                    binding.videoPlayer.onPause()
                     pauseAllAudioAndUpdateViews()
+                    binding.progressBarImageView.progress = 0
+                    binding.practiseSeekbar.progress = 0
+                    audioManager?.seekTo(0)
+                    binding.mergedVideo.seekTo(0)
+                    binding.videoPlayer.seekToStart()
                     //PrefManager.put(HAS_SEEN_VOCAB_HAND_TOOLTIP,true)
                     requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                     appAnalytics?.addParam(AnalyticsEvent.AUDIO_RECORD.NAME, "Audio Recording")
@@ -1312,18 +1330,23 @@ class ReadingFragmentWithoutFeedback :
                             if (File(outputFile).exists()) {
                                 File(outputFile).delete()
                             }
-                             if(android.os.Build.VERSION.SDK_INT >= 29){
-                                if(isAdded){
-                                    outputFile = saveVideoQ(requireContext(), videoDownPath?: EMPTY)?: EMPTY
+                            if (android.os.Build.VERSION.SDK_INT >= 29) {
+                                if (isAdded) {
+                                    outputFile =
+                                        saveVideoQ(requireContext(), videoDownPath ?: EMPTY)
+                                            ?: EMPTY
                                 }
-                            }
-                            else{
-                                 outputFile = getVideoFilePath()
+                            } else {
+                                outputFile = getVideoFilePath()
                             }
 
                             filePath = AppDirectory.getAudioSentFile(null).absolutePath
                             AppDirectory.copy(it.absolutePath, filePath!!)
                             audioAttachmentInit()
+                            MixPanelTracker.publishEvent(MixPanelEvent.READING_RECORD)
+                                .addParam(ParamKeys.LESSON_ID,lessonID)
+                                .addParam(ParamKeys.RECORD_DURATION,timeDifference)
+                                .push()
                             AppObjectController.uiHandler.postDelayed(
                                 {
                                     binding.submitAnswerBtn.parent.requestChildFocus(
@@ -1441,7 +1464,8 @@ class ReadingFragmentWithoutFeedback :
             Timber.e(e)
         }
     }
-    fun inviteFriends(waIntent: Intent){
+
+    fun inviteFriends(waIntent: Intent) {
         try {
             startActivity(Intent.createChooser(waIntent, "Share with"))
         } catch (e: Exception) {
@@ -1450,11 +1474,11 @@ class ReadingFragmentWithoutFeedback :
     }
 
     fun closeRecordedView() {
-            if (binding.mergedVideo.isPlaying) {
-                binding.mergedVideo.stopPlayback()
-            }
-            binding.practiseSubmitLayout.visibility = GONE
-            disableSubmitButton()
+        if (binding.mergedVideo.isPlaying) {
+            binding.mergedVideo.stopPlayback()
+        }
+        binding.practiseSubmitLayout.visibility = GONE
+        disableSubmitButton()
     }
 
     fun playVideo() {
@@ -1478,7 +1502,16 @@ class ReadingFragmentWithoutFeedback :
                     .solidBackground().show()
             }
             appAnalytics?.addParam(AnalyticsEvent.PRACTICE_EXTRA.NAME, "Audio Played")
-
+            if(binding.btnPlayInfo.state == MaterialPlayPauseDrawable.State.Play) {
+                MixPanelTracker.publishEvent(MixPanelEvent.READING_PLAY)
+                    .addParam(ParamKeys.LESSON_ID, lessonID)
+                    .push()
+            }
+            else {
+                MixPanelTracker.publishEvent(MixPanelEvent.READING_PAUSE)
+                    .addParam(ParamKeys.LESSON_ID, lessonID)
+                    .push()
+            }
             if (audioManager?.currentPlayingUrl != null &&
                 audioManager?.currentPlayingUrl == currentLessonQuestion?.audioList?.getOrNull(0)?.audio_url
             ) {
@@ -1525,19 +1558,20 @@ class ReadingFragmentWithoutFeedback :
         audioManager?.play(coreJoshActivity?.currentAudio!!)
         audioManager?.setProgressUpdateListener(this)
         if (filePath.isNullOrEmpty().not() && coreJoshActivity?.currentAudio == filePath) {
-
-            val viewHolders = binding.audioList.allViewResolvers as List<*>
-            viewHolders.forEach {
-                if (it is PracticeAudioViewHolder) {
-                    it.playPauseBtn.state = MaterialPlayPauseDrawable.State.Pause
+            for (i in 0 until binding.audioListRv.getChildCount()) {
+                val holder: RecyclerView.ViewHolder =
+                    binding.audioListRv.findViewHolderForAdapterPosition(i) as PracticeAudioAdapter.PracticeAudioViewHolder
+                if (holder is PracticeAudioAdapter.PracticeAudioViewHolder) {
+                    holder.setPlayPauseBtnState(MaterialPlayPauseDrawable.State.Pause)
                     binding.btnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
                 }
             }
         } else {
-            val viewHolders = binding.audioList.allViewResolvers as List<*>
-            viewHolders.forEach {
-                if (it is PracticeAudioViewHolder) {
-                    it.playPauseBtn.state = MaterialPlayPauseDrawable.State.Play
+            for (i in 0 until binding.audioListRv.getChildCount()) {
+                val holder: RecyclerView.ViewHolder =
+                    binding.audioListRv.findViewHolderForAdapterPosition(i) as PracticeAudioAdapter.PracticeAudioViewHolder
+                if (holder is PracticeAudioAdapter.PracticeAudioViewHolder) {
+                    holder.setPlayPauseBtnState(MaterialPlayPauseDrawable.State.Play)
                 }
             }
             binding.btnPlayInfo.state = MaterialPlayPauseDrawable.State.Pause
@@ -1591,6 +1625,9 @@ class ReadingFragmentWithoutFeedback :
     }
 
     fun submitPractise() {
+        MixPanelTracker.publishEvent(MixPanelEvent.READING_SUBMIT)
+            .addParam(ParamKeys.LESSON_ID,lessonID)
+            .push()
         CoroutineScope(Dispatchers.IO).launch {
             currentLessonQuestion?.expectedEngageType?.let {
                 if (EXPECTED_ENGAGE_TYPE.AU == it && isAudioRecordDone.not()) {
@@ -1612,6 +1649,10 @@ class ReadingFragmentWithoutFeedback :
                         AnalyticsEvent.PRACTICE_SUBMITTED.NAME,
                         "Submit Practice $"
                     )
+
+                    MixPanelTracker.publishEvent(MixPanelEvent.READING_COMPLETED)
+                        .addParam(ParamKeys.LESSON_ID,lessonID)
+                        .push()
                     val requestEngage = RequestEngage()
                     if (it == EXPECTED_ENGAGE_TYPE.VI) {
                         requestEngage.localPath = outputFile
@@ -1657,6 +1698,9 @@ class ReadingFragmentWithoutFeedback :
     }
 
     fun onReadingContinueClick() {
+        MixPanelTracker.publishEvent(MixPanelEvent.READING_CONTINUE)
+            .addParam(ParamKeys.LESSON_ID,lessonID)
+            .push()
         lessonActivityListener?.onNextTabCall(READING_POSITION)
     }
 
@@ -1733,6 +1777,7 @@ class ReadingFragmentWithoutFeedback :
         @JvmStatic
         fun getInstance() = ReadingFragmentWithoutFeedback()
     }
+
     private fun observeNetwork() {
         compositeDisposable.add(
             ReactiveNetwork.observeNetworkConnectivity(requireContext())
@@ -1744,8 +1789,7 @@ class ReadingFragmentWithoutFeedback :
                     if (!internetAvailableFlag && videoDownPath == null) {
                         disableSubmitButton()
                         showToast("Internet not available")
-                    }
-                    else {
+                    } else {
                         enableSubmitButton()
                     }
                 }

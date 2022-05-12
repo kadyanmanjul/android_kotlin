@@ -2,7 +2,9 @@ package com.joshtalks.joshskills.ui.group.lib
 
 import android.util.Log
 import com.google.gson.JsonObject
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.showToast
+import com.joshtalks.joshskills.ui.group.constants.DM_CHAT
 import com.joshtalks.joshskills.ui.group.constants.OPENED_GROUP
 import com.joshtalks.joshskills.ui.group.model.GroupListResponse
 import com.joshtalks.joshskills.ui.group.model.GroupsItem
@@ -14,7 +16,7 @@ private const val TAG = "PubNub_NetworkData"
 data class PubNubNetworkData(val data: PNGetMembershipsResult) : NetworkData {
 
     val groupList = mutableListOf<GroupsItem>()
-    private val chatService : ChatService = PubNubService
+    private val chatService: ChatService = PubNubService
     val repository = GroupRepository()
 
     override fun getData(): GroupListResponse {
@@ -24,12 +26,16 @@ data class PubNubNetworkData(val data: PNGetMembershipsResult) : NetworkData {
             try {
                 val channelCustom = group.channel.custom as JsonObject
                 val channelMembershipCustom = group.custom as JsonObject
-                val customMap = getCustomMap(channelCustom)
-                val (lastMsg, lastMessageTime) = chatService.getLastMessageDetail(group.channel.id)
+                val customMap = getCustomMap(channelCustom, channelMembershipCustom)
+                val (lastMsg, lastMessageTime) = chatService.getLastMessageDetail(group.channel.id,customMap["group_type"] ?: OPENED_GROUP)
 
                 val response = GroupsItem(
                     groupId = group.channel.id,
-                    name = group.channel.name,
+                    name = getGroupName(
+                        group.channel.name?: EMPTY,
+                        customMap["group_type"],
+                        channelMembershipCustom["channel_name"]?.asString ?: EMPTY
+                    ),
                     lastMessage = lastMsg,
                     lastMsgTime = lastMessageTime,
                     unreadCount = chatService.getUnreadMessageCount(
@@ -40,12 +46,13 @@ data class PubNubNetworkData(val data: PNGetMembershipsResult) : NetworkData {
                     createdAt = customMap["created_at"]?.toLongOrNull(),
                     createdBy = customMap["created_by"],
                     adminId = customMap["admin_id"],
-                    groupType = customMap["group_type"] ?: OPENED_GROUP
+                    groupType = customMap["group_type"] ?: OPENED_GROUP,
+                    agoraUid = (customMap["agora_id"]?.toInt() ?: 0)
                 )
                 groupList.add(response)
             } catch (e: Exception) {
                 e.printStackTrace()
-                Log.e(TAG, "Error in group : ${group.channel.id} : ${group.channel.name}")
+                Log.e(TAG, "Error in group: ${group.channel.id} :${e.message}")
                 showToast("An error has occurred")
             }
         }
@@ -57,16 +64,29 @@ data class PubNubNetworkData(val data: PNGetMembershipsResult) : NetworkData {
         pubNubNext = data.nextPage(),
     )
 
-    private fun getCustomMap(json: JsonObject): Map<String, String> {
+    private fun getCustomMap(json: JsonObject, membership: JsonObject): Map<String, String> {
         val map = mutableMapOf<String, String>()
         json.get("")
         map["created_at"] = json["created_at"].asString
         map["created_by"] = json["created_by"].asString
-        map["image_url"] = json["image_url"].asString
-        map["admin_id"] = json["mentor_id"].asString
         map["group_type"] = json["group_type"]?.asString ?: OPENED_GROUP
+        if (map["group_type"] == DM_CHAT) {
+            map["image_url"] = if (membership["image_url"]?.asString == "None")
+                EMPTY
+            else
+                membership["image_url"]?.asString ?: EMPTY
+            map["admin_id"] = membership["mentor_id"].asString
+            map["agora_id"] = membership["agora_id"].asString
+        } else {
+            map["image_url"] = json["image_url"].asString
+            map["admin_id"] = json["mentor_id"].asString
+        }
         return map
     }
 
     fun getTimeToken(pubnubTime: Long, id: String) = repository.getRecentTimeToken(id) ?: pubnubTime
+
+    private fun getGroupName(name: String?, groupType: String?, dmName: String?): String? =
+        if (groupType == DM_CHAT) dmName
+        else name
 }

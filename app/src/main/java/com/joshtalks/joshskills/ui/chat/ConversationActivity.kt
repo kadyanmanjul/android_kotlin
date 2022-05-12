@@ -49,12 +49,16 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.constants.COURSE_RESTART_FAILURE
 import com.joshtalks.joshskills.constants.COURSE_RESTART_SUCCESS
+import com.joshtalks.joshskills.constants.INTERNET_FAILURE
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.Utils.getCurrentMediaVolume
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.core.countdowntimer.CountdownTimerBack
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.core.custom_ui.decorator.SmoothScrollingLinearLayoutManager
@@ -145,6 +149,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
+import org.json.JSONObject
 import java.io.File
 import java.lang.ref.WeakReference
 import java.util.*
@@ -559,6 +564,7 @@ class ConversationActivity :
     }
 
     fun showFreeTrialPaymentScreen() {
+        MixPanelTracker.publishEvent(MixPanelEvent.FREE_TRIAL_ENDED_BUY_NOW).push()
         FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
             this,
             AppObjectController.getFirebaseRemoteConfig().getString(
@@ -570,6 +576,16 @@ class ConversationActivity :
     }
 
     private fun initToolbar() {
+        MixPanelTracker.mixPanel.identify(PrefManager.getStringValue(USER_UNIQUE_ID))
+        MixPanelTracker.mixPanel.people.identify(PrefManager.getStringValue(USER_UNIQUE_ID))
+        var obj = JSONObject()
+        if(inboxEntity.isCourseBought) {
+            obj.put("is paid",true)
+        } else {
+            obj.put("is paid",false)
+        }
+        MixPanelTracker.mixPanel.people.set(obj)
+        MixPanelTracker.mixPanel.registerSuperProperties(obj)
         try {
             if (inboxEntity.isCapsuleCourse) {
                 PrefManager.put(IS_DEMO_P2P, false)
@@ -581,6 +597,7 @@ class ConversationActivity :
                 openCourseProgressListingScreen()
             }
             conversationBinding.textMessageTitle.setOnClickListener {
+                MixPanelTracker.publishEvent(MixPanelEvent.COURSE_OVERVIEW).push()
                 openCourseProgressListingScreen()
             }
 
@@ -588,6 +605,7 @@ class ConversationActivity :
                 val resultIntent = Intent()
                 setResult(RESULT_OK, resultIntent)
                 finish()
+                MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
             }
             conversationBinding.ivIconReferral.setOnClickListener {
                 refViewModel.saveImpression(IMPRESSION_REFER_VIA_CONVERSATION_ICON)
@@ -596,6 +614,7 @@ class ConversationActivity :
                     this@ConversationActivity,
                     ConversationActivity::class.java.name
                 )
+                MixPanelTracker.publishEvent(MixPanelEvent.REFERRAL_OPENED).push()
             }
 
             conversationBinding.toolbar.inflateMenu(R.menu.conversation_menu)
@@ -607,16 +626,18 @@ class ConversationActivity :
                     R.id.menu_referral -> {
 
                         refViewModel.saveImpression(IMPRESSION_REFER_VIA_CONVERSATION_MENU)
-
+                        MixPanelTracker.publishEvent(MixPanelEvent.REFERRAL_OPENED).push()
                         ReferralActivity.startReferralActivity(
                             this@ConversationActivity,
                             ConversationActivity::class.java.name
                         )
                     }
                     R.id.menu_clear_media -> {
+                        MixPanelTracker.publishEvent(MixPanelEvent.CLEAR_ALL_MEDIA_CLICKED).push()
                         clearMediaFromInternal(inboxEntity.conversation_id)
                     }
                     R.id.menu_help -> {
+                        MixPanelTracker.publishEvent(MixPanelEvent.HELP).push()
                         openHelpActivity()
                     }
                     R.id.profile_setting -> {
@@ -626,9 +647,11 @@ class ConversationActivity :
                         )
                     }
                     R.id.leaderboard_setting -> {
+                        MixPanelTracker.publishEvent(MixPanelEvent.LEADERBOARD_OPENED).push()
                         openLeaderBoard(inboxEntity.conversation_id, inboxEntity.courseId)
                     }
                     R.id.menu_favorite_list -> {
+                        MixPanelTracker.publishEvent(MixPanelEvent.FAVORITE_LIST).push()
                         FavoriteListActivity.openFavoriteCallerActivity(
                             this,
                             inboxEntity.conversation_id,
@@ -636,6 +659,9 @@ class ConversationActivity :
                         )
                     }
                     R.id.menu_restart_course -> {
+                        MixPanelTracker.publishEvent(MixPanelEvent.RESTART_COURSE_CLICKED)
+                            .addParam(ParamKeys.CLICKED_FROM,"3 dot")
+                            .push()
                         conversationViewModel.saveRestartCourseImpression(IMPRESSION_CLICK_RESTART_COURSE_DOT)
                         restartCourse(false)
                     }
@@ -660,8 +686,12 @@ class ConversationActivity :
     }
 
     fun restartCourse(isFromRestartButton: Boolean) {
-        if(isFromRestartButton)
+        if(isFromRestartButton) {
             conversationViewModel.saveRestartCourseImpression(IMPRESSION_CLICK_RESTART_90LESSONS)
+            MixPanelTracker.publishEvent(MixPanelEvent.RESTART_COURSE_CLICKED)
+                .addParam(ParamKeys.CLICKED_FROM,"button")
+                .push()
+        }
 
         var phoneNumber = User.getInstance().phoneNumber
         phoneNumber = phoneNumber?.substring(3)
@@ -690,8 +720,10 @@ class ConversationActivity :
                             IMPRESSION_SUCCESS_RESTART_COURSE_DOT
                         )
                     }
+                    MixPanelTracker.publishEvent(MixPanelEvent.RESTART_COURSE_NOW).push()
                 }
                 negativeButton(R.string.cancel) {
+                    MixPanelTracker.publishEvent(MixPanelEvent.RESTART_COURSE_CANCEL).push()
                 }
             }
         }
@@ -791,6 +823,7 @@ class ConversationActivity :
                 val firstName = if (nameArr != null) nameArr[0] else EMPTY
                 showToast(getString(R.string.feature_locked, firstName))
             } else {
+                MixPanelTracker.publishEvent(MixPanelEvent.ACTIVITY_FEED).push()
                 val intent = Intent(this, ActivityFeedMainActivity::class.java)
                 startActivity(intent)
             }
@@ -805,6 +838,7 @@ class ConversationActivity :
                 val firstName = if (nameArr != null) nameArr[0] else EMPTY
                 showToast(getString(R.string.feature_locked, firstName))
             } else {
+                MixPanelTracker.publishEvent(MixPanelEvent.FPP_REQUESTS_ICON_CLICKED).push()
                 val intent = Intent(this, SeeAllRequestsActivity::class.java)
                 startActivity(intent)
             }
@@ -819,6 +853,7 @@ class ConversationActivity :
                 val firstName = if (nameArr != null) nameArr[0] else EMPTY
                 showToast(getString(R.string.feature_locked, firstName))
             } else {
+                MixPanelTracker.publishEvent(MixPanelEvent.GROUP_ICON_CLICKED).push()
                 val intent = Intent(this, JoshGroupActivity::class.java).apply {
                     putExtra(CONVERSATION_ID, getConversationId())
                 }
@@ -836,6 +871,7 @@ class ConversationActivity :
                 val firstName = if (nameArr != null) nameArr[0] else EMPTY
                 showToast(getString(R.string.feature_locked, firstName))
             } else {
+                MixPanelTracker.publishEvent(MixPanelEvent.GAME_BUTTON_CLICKED).push()
                 val intent = Intent(this, StartActivity::class.java)
                 GameAnalytics.push(GameAnalytics.Event.CLICK_ON_MAIN_GAME_ICON)
                 startActivity(intent)
@@ -843,6 +879,7 @@ class ConversationActivity :
         }
 
         conversationBinding.leaderboardBtnClose.setOnClickListener {
+            MixPanelTracker.publishEvent(MixPanelEvent.LEADERBOARD_CANCEL).push()
             conversationBinding.userPointContainer.slideOutAnimation(
                 conversationBinding.imgGroupChat,
                 conversationBinding.txtUnreadCount
@@ -851,14 +888,17 @@ class ConversationActivity :
         }
 
         conversationBinding.leaderboardTxt.setOnClickListener {
+            MixPanelTracker.publishEvent(MixPanelEvent.LEADERBOARD_OPENED).push()
             openLeaderBoard(inboxEntity.conversation_id, inboxEntity.courseId)
         }
         conversationBinding.overlayLeaderboardContainer.setOnClickListener {
+            MixPanelTracker.publishEvent(MixPanelEvent.LEADERBOARD_OPENED).push()
             PrefManager.put(HAS_SEEN_LEADERBOARD_ANIMATION, true)
             openLeaderBoard(inboxEntity.conversation_id, inboxEntity.courseId)
             hideLeaderBoardSpotlight()
         }
         conversationBinding.points.setOnClickListener {
+            MixPanelTracker.publishEvent(MixPanelEvent.CONVERSATION_POINTS_CLICKED).push()
             openUserProfileActivity(
                 Mentor.getInstance().getId(),
                 USER_PROFILE_FLOW_FROM.FLOATING_BAR.value
@@ -928,6 +968,7 @@ class ConversationActivity :
         }
 
         conversationBinding.buyBtn.setOnClickListener {
+            MixPanelTracker.publishEvent(MixPanelEvent.FREE_TRIAL_ENDED_BUY_NOW).push()
             FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
                 this,
                 AppObjectController.getFirebaseRemoteConfig().getString(
@@ -1233,6 +1274,7 @@ class ConversationActivity :
                         it.pendingRequestsList.size.toString()
                 }
                 viewAllRequests.setOnClickListener {
+                    MixPanelTracker.publishEvent(MixPanelEvent.SEE_ALL_REQUESTS).push()
                     val intent =
                         Intent(conversationBinding.root.context, SeeAllRequestsActivity::class.java)
                     startActivity(intent)
@@ -1360,6 +1402,7 @@ class ConversationActivity :
     private fun setExpandableButtons(userProfileData: UserProfileResponse) {
         with(conversationBinding) {
             if (buttonClicked) {
+                MixPanelTracker.publishEvent(MixPanelEvent.MORE_BUTTON_CLICKED).push()
                 getAllPendingRequest()
                 conversationBinding.root.setOnClickListener {}
                 showBlurOrQuickView()
@@ -1373,6 +1416,7 @@ class ConversationActivity :
                 if (userProfileData.hasGroupAccess)
                     imgGroupChatBtn.visibility = VISIBLE
             } else {
+                MixPanelTracker.publishEvent(MixPanelEvent.CANCEL).push()
                 conversationBinding.root.onFocusChangeListener = null
                 hideBlurOrQuickView()
                 imgActivityFeed.visibility = GONE
@@ -1444,7 +1488,7 @@ class ConversationActivity :
             fppRequestContainer.setOnClickListener {
                 openUserProfileActivity(
                     pendingRequestDetail.senderMentorId ?: "",
-                    RECENT_CALL
+                    QUICK_VIEW
                 )
             }
             profileImage.setUserImageOrInitials(
@@ -1452,6 +1496,10 @@ class ConversationActivity :
                 pendingRequestDetail.fullName ?: ""
             )
             btnConfirmRequest.setOnClickListener {
+                MixPanelTracker.publishEvent(MixPanelEvent.FPP_REQUEST_CONFIRM)
+                    .addParam(ParamKeys.MENTOR_ID, pendingRequestDetail.senderMentorId)
+                    .addParam(ParamKeys.VIA,"quick view")
+                    .push()
                 btnConfirmRequest.visibility = GONE
                 btnNotNow.visibility = GONE
                 tvSpokenTime.text = getString(R.string.now_fpp)
@@ -1462,6 +1510,10 @@ class ConversationActivity :
                 )
             }
             btnNotNow.setOnClickListener {
+                MixPanelTracker.publishEvent(MixPanelEvent.FPP_REQUEST_NOT_NOW)
+                    .addParam(ParamKeys.MENTOR_ID, pendingRequestDetail.senderMentorId)
+                    .addParam(ParamKeys.VIA,"quick view")
+                    .push()
                 btnConfirmRequest.visibility = GONE
                 btnNotNow.visibility = GONE
                 tvSpokenTime.text = getString(R.string.request_removed)
@@ -2045,6 +2097,9 @@ class ConversationActivity :
                             val firstName = if (nameArr != null) nameArr[0] else EMPTY
                             showToast(getFeatureLockedText(inboxEntity.courseId, firstName))
                         } else {
+                            MixPanelTracker.publishEvent(MixPanelEvent.LESSON_OPENED)
+                                .addParam(ParamKeys.LESSON_ID,it.lessonId)
+                                .push()
                             startActivityForResult(
                                 LessonActivity.getActivityIntent(
                                     this,
@@ -2119,6 +2174,11 @@ class ConversationActivity :
     }
 
     private fun logUnlockCardEvent() {
+        MixPanelTracker.publishEvent(MixPanelEvent.UNLOCK_NEXT_LESSON)
+            .addParam(ParamKeys.LESSON_NUMBER,conversationAdapter.getLastLesson()?.lessonNo?.plus(1))
+            .addParam(ParamKeys.COURSE_NAME,inboxEntity.course_name)
+            .push()
+
         AppAnalytics.create(AnalyticsEvent.UNLOCK_CARD_CLICKED.NAME)
             .addBasicParam()
             .addUserDetails()
@@ -2152,23 +2212,24 @@ class ConversationActivity :
                     addImageMessage(url)
                 }
 //                data?.let { intent ->
-//                    when {
-//                        intent.hasExtra(JoshCameraActivity.IMAGE_RESULTS) -> {
-//                            intent.getStringArrayListExtra(JoshCameraActivity.IMAGE_RESULTS)
-//                                ?.getOrNull(0)?.let {
-//                                    if (it.isNotBlank()) {
-//                                        addImageMessage(it)
-//                                    }
-//                                }
-//                        }
-//                        intent.hasExtra(JoshCameraActivity.VIDEO_RESULTS) -> {
-//                            val videoPath = intent.getStringExtra(JoshCameraActivity.VIDEO_RESULTS)
-//                            videoPath?.let {
-//                                addVideoMessage(it)
-//                            }
-//                        }
-//                        else -> return
-//                    }
+//
+////                    when {
+////                        intent.hasExtra(JoshCameraActivity.IMAGE_RESULTS) -> {
+////                            intent.getStringArrayListExtra(JoshCameraActivity.IMAGE_RESULTS)
+////                                ?.getOrNull(0)?.let {
+////                                    if (it.isNotBlank()) {
+////                                        addImageMessage(it)
+////                                    }
+////                                }
+////                        }
+////                        intent.hasExtra(JoshCameraActivity.VIDEO_RESULTS) -> {
+////                            val videoPath = intent.getStringExtra(JoshCameraActivity.VIDEO_RESULTS)
+////                            videoPath?.let {
+////                                addVideoMessage(it)
+////                            }
+////                        }
+////                        else -> return
+////                    }
 //                }
             } else if (requestCode == PRACTISE_SUBMIT_REQUEST_CODE && resultCode == RESULT_OK) {
                 showToast(getString(R.string.answer_submitted))
@@ -2259,7 +2320,7 @@ class ConversationActivity :
         super.onStart()
         checkAndRequestPermissions()
         try {
-            event.observe(this) {
+            conversationViewModel.singleLiveEvent.observe(this) {
                 when (it.what) {
                     COURSE_RESTART_SUCCESS -> {
                         logout()
@@ -2267,6 +2328,9 @@ class ConversationActivity :
                     }
                     COURSE_RESTART_FAILURE -> {
                         showToast(getString(R.string.course_restart_fail))
+                    }
+                    INTERNET_FAILURE->{
+                        showToast(getString(R.string.internet_not_available_msz))
                     }
                 }
             }
@@ -2311,6 +2375,7 @@ class ConversationActivity :
     }
 
     override fun onBackPressed() {
+        MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
         audioPlayerManager?.onPause()
         if (conversationBinding.overlayLayout.visibility == VISIBLE) {
             hideLeaderBoardSpotlight()
@@ -2500,6 +2565,9 @@ class ConversationActivity :
             TChatMessage(conversationBinding.chatEdit.text.toString()),
             chatModel = message
         )
+        MixPanelTracker.publishEvent(MixPanelEvent.CHAT_ENTERED)
+            .addParam(ParamKeys.CHAT_TEXT,conversationBinding.chatEdit.text.toString())
+            .push()
         conversationBinding.chatEdit.setText(EMPTY)
         scrollToEnd()
         AppAnalytics.create(AnalyticsEvent.CHAT_ENTERED.NAME)

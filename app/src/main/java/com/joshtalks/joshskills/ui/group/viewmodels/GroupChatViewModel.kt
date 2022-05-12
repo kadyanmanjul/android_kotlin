@@ -18,10 +18,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseViewModel
 import com.joshtalks.joshskills.constants.*
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.core.isCallOngoing
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.ui.group.*
+import com.joshtalks.joshskills.track.AGORA_UID
 import com.joshtalks.joshskills.ui.group.adapters.GroupChatAdapter
 import com.joshtalks.joshskills.ui.group.adapters.GroupMemberAdapter
 import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics
@@ -36,6 +39,7 @@ import com.joshtalks.joshskills.ui.group.repository.GroupRepository
 import com.joshtalks.joshskills.ui.group.utils.GroupChatComparator
 import com.joshtalks.joshskills.ui.group.utils.getMemberCount
 import com.joshtalks.joshskills.ui.group.utils.pushMetaMessage
+import com.joshtalks.joshskills.ui.group.utils.pushTimeMetaMessage
 import com.pubnub.api.models.consumer.push.payload.PushPayloadHelper
 import de.hdodenhof.circleimageview.CircleImageView
 
@@ -70,6 +74,7 @@ class GroupChatViewModel : BaseViewModel() {
     var conversationId: String = ""
     var groupText: String = ""
     var chatSendText: String = ""
+    var agoraId: Int = 0
 
     val chatAdapter = GroupChatAdapter(GroupChatComparator).apply {
         registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
@@ -85,6 +90,10 @@ class GroupChatViewModel : BaseViewModel() {
                 singleLiveEvent.value = message
             }
         })
+    }
+
+    fun setChatAdapterType() {
+        chatAdapter.setType(groupType.get()?: OPENED_GROUP)
     }
 
     val openMemberPopup: (GroupMember, View) -> Unit = { it, view ->
@@ -120,26 +129,35 @@ class GroupChatViewModel : BaseViewModel() {
     fun callGroup() {
         if (isCallOngoing(R.string.call_engage_initiate_call_message))
             return
-        val memberText = groupSubHeader.get() ?: "0"
-        val memberCount = getMemberCount(memberText)
-        if (memberCount == 0) {
-            showToast("Unknown Error Occurred")
-            return
-        } else if (memberCount == 1) {
-            showToast("You are the only member, Can't Initiate a Call")
-            return
+
+        if (groupType.get() != DM_CHAT){
+            val memberText = groupSubHeader.get() ?: "0"
+            val memberCount = getMemberCount(memberText)
+            if (memberCount == 0) {
+                showToast("Unknown Error Occurred")
+                return
+            } else if (memberCount == 1) {
+                showToast("You are the only member, Can't Initiate a Call")
+                return
+            }
         }
 
         message.what = OPEN_CALLING_ACTIVITY
         message.data = Bundle().apply {
             putString(GROUPS_ID, groupId)
             putString(GROUPS_TITLE, groupHeader.get())
+            putString(GROUP_TYPE,groupType.get())
+            if (groupId == DM_CHAT)
+                putInt(AGORA_UID,agoraId)
         }
         singleLiveEvent.value = message
     }
 
     fun joinGroup(view: View) {
         if (groupType.get() == CLOSED_GROUP && groupJoinStatus.get() == "REQUEST TO JOIN") {
+            MixPanelTracker.publishEvent(MixPanelEvent.REQUEST_TO_JOIN_GROUP)
+                .addParam(ParamKeys.GROUP_ID, groupId)
+                .push()
             message.what = OPEN_GROUP_REQUEST
             singleLiveEvent.value = message
         } else if (groupType.get() == OPENED_GROUP)
@@ -167,6 +185,9 @@ class GroupChatViewModel : BaseViewModel() {
                         pushMetaMessage("${Mentor.getInstance().getUser()?.firstName} has joined this group", groupId)
                         onBackPress()
                         onBackPress()
+                        MixPanelTracker.publishEvent(MixPanelEvent.JOIN_GROUP)
+                            .addParam(ParamKeys.GROUP_ID,groupId)
+                            .push()
                     }
                 } else {
                     dismissProgressDialog()
@@ -195,6 +216,10 @@ class GroupChatViewModel : BaseViewModel() {
                     showToast("Error in sending request")
                 dismissProgressDialog()
                 GroupAnalytics.push(GroupAnalytics.Event.REQUEST_TO_JOIN, groupId)
+                MixPanelTracker.publishEvent(MixPanelEvent.REQUEST_TO_JOIN_SUBMIT)
+                    .addParam(ParamKeys.GROUP_ID, groupId)
+                    .addParam(ParamKeys.ANSWER, request.answer)
+                    .push()
             } catch (e: Exception) {
                 dismissProgressDialog()
                 showToast("Error in sending request")
@@ -204,6 +229,9 @@ class GroupChatViewModel : BaseViewModel() {
     }
 
     fun showExitDialog(view: View) {
+        MixPanelTracker.publishEvent(MixPanelEvent.EXIT_GROUP_CLICKED)
+            .addParam(ParamKeys.GROUP_ID, groupId)
+            .push()
         showAlertDialog(
             view,
             "Exit \"${groupHeader.get()}\" group?",
@@ -265,9 +293,17 @@ class GroupChatViewModel : BaseViewModel() {
     }
 
     fun openGroupInfo() {
-        if (hasJoinedGroup.get()) {
-            message.what = OPEN_GROUP_INFO
+        if (groupType.get() == DM_CHAT) {
+            message.what = OPEN_PROFILE_DM_FPP
             singleLiveEvent.value = message
+        } else {
+            if (hasJoinedGroup.get()) {
+                message.what = OPEN_GROUP_INFO
+                singleLiveEvent.value = message
+                MixPanelTracker.publishEvent(MixPanelEvent.VIEW_GROUP_INFO)
+                    .addParam(ParamKeys.GROUP_ID, groupId)
+                    .push()
+            }
         }
     }
 
@@ -276,9 +312,15 @@ class GroupChatViewModel : BaseViewModel() {
         message.obj = groupId
         singleLiveEvent.value = message
         GroupAnalytics.push(GroupAnalytics.Event.OPEN_REQUESTS_LIST, groupId)
+        MixPanelTracker.publishEvent(MixPanelEvent.OPEN_GROUP_REQUESTS)
+            .addParam(ParamKeys.GROUP_ID, groupId)
+            .push()
     }
 
     fun editGroupInfo() {
+        MixPanelTracker.publishEvent(MixPanelEvent.EDIT_GROUP_INFO_CLICKED)
+            .addParam(ParamKeys.GROUP_ID, groupId)
+            .push()
         message.what = EDIT_GROUP_INFO
         message.data = Bundle().apply {
             putBoolean(IS_FROM_GROUP_INFO, true)
@@ -295,6 +337,15 @@ class GroupChatViewModel : BaseViewModel() {
         message.obj = mentorId
         singleLiveEvent.value = message
         GroupAnalytics.push(GroupAnalytics.Event.OPENED_PROFILE)
+        MixPanelTracker.publishEvent(MixPanelEvent.VIEW_PROFILE_GROUP)
+            .addParam(ParamKeys.GROUP_ID, groupId)
+            .addParam(ParamKeys.IS_ADMIN, adminId == Mentor.getInstance().getId())
+            .push()
+    }
+
+    fun onRemoveFpp(){
+        message.what = REMOVE_DM_FPP
+        singleLiveEvent.value = message
     }
 
     fun showProgressDialog(msg: String) {
@@ -316,6 +367,10 @@ class GroupChatViewModel : BaseViewModel() {
                     mentorId = Mentor.getInstance().getId()
                 )
                 val groupCount = repository.leaveGroupFromServer(request) ?: -1
+                MixPanelTracker.publishEvent(MixPanelEvent.EXIT_GROUP)
+                    .addParam(ParamKeys.GROUP_ID, groupId)
+                    .addParam(ParamKeys.IS_SUCCESS, groupCount != -1)
+                    .push()
                 if (groupCount == -1) {
                     showToast("An error has occurred")
                     onBackPress()
@@ -375,28 +430,32 @@ class GroupChatViewModel : BaseViewModel() {
     fun getGroupInfo(showLoading: Boolean = true) {
         if (showLoading) fetchingGrpInfo.set(true)
         viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val memberResult = repository.getGroupMemberList(groupId, adminId)
-                val onlineAndRequestCount = repository.getOnlineAndRequestCount(groupId)
-                val onlineCount = (onlineAndRequestCount["online_count"] as? Double)?.toInt()
-                val requestCnt = (onlineAndRequestCount["request_count"] as? Double)?.toInt()
-                memberCount.set(memberResult.size)
-                requestCount.set("$requestCnt")
+            val memberResult = repository.getGroupMemberList(groupId, adminId)
+            val onlineAndRequestCount = repository.getOnlineAndRequestCount(groupId)
+            val onlineCount = (onlineAndRequestCount["online_count"] as? Double)?.toInt()
+            val requestCnt = (onlineAndRequestCount["request_count"] as? Double)?.toInt()
+            memberCount.set(memberResult.size)
+            requestCount.set("$requestCnt")
+            if (groupType.get() == DM_CHAT && onlineCount == 2)
+                groupSubHeader.set("online")
+            else if(groupType.get() == DM_CHAT)
+                groupSubHeader.set(" ")
+            else
                 groupSubHeader.set("${memberCount.get()} members, $onlineCount online")
-                setRequestsTab()
-                withContext(Dispatchers.Main) {
-                    memberAdapter.addMembersToList(memberResult)
-                    if (showLoading) fetchingGrpInfo.set(false)
-                    else showToast("Removed member from the group", Toast.LENGTH_LONG)
-                    dismissProgressDialog()
-                }
-            }catch (ex:Exception){}
+            setRequestsTab()
+            withContext(Dispatchers.Main) {
+                memberAdapter.addMembersToList(memberResult)
+                if (showLoading) fetchingGrpInfo.set(false)
+                else showToast("Removed member from the group", Toast.LENGTH_LONG)
+                dismissProgressDialog()
+            }
         }
     }
 
     fun setRequestsTab() {
         when {
             groupType.get().equals(OPENED_GROUP) -> showRequestsTab.set(false)
+            groupType.get().equals(DM_CHAT) -> showRequestsTab.set(false)
             adminId != Mentor.getInstance().getId() -> showRequestsTab.set(false)
             else -> showRequestsTab.set(true)
         }
@@ -405,10 +464,17 @@ class GroupChatViewModel : BaseViewModel() {
     fun expandGroupList(view: View) {
         view.visibility = View.GONE
         memberAdapter.shouldShowAll(true)
+        MixPanelTracker.publishEvent(MixPanelEvent.VIEW_MORE_MEMBERS)
+            .addParam(ParamKeys.GROUP_ID, groupId)
+            .addParam(ParamKeys.IS_ADMIN, adminId == Mentor.getInstance().getId())
+            .push()
     }
 
     fun sendMessage(view: View) {
         GroupAnalytics.checkMsgTime(GroupAnalytics.Event.MESSAGE_SENT, groupId)
+        MixPanelTracker.publishEvent(MixPanelEvent.GROUP_MESSAGE_SENT)
+            .addParam(ParamKeys.GROUP_ID, groupId)
+            .push()
         message.what = SEND_MSG
         singleLiveEvent.value = message
     }
@@ -421,8 +487,12 @@ class GroupChatViewModel : BaseViewModel() {
                 mentorId = Mentor.getInstance().getId()
             )
             scrollToEnd = true
-            chatService.sendGroupNotification(groupId, getNotification(msg))
-            chatService.sendMessage(groupId, message)
+            viewModelScope.launch(Dispatchers.IO) {
+                chatService.sendGroupNotification(groupId, getNotification(msg))
+                if (repository.checkIfFirstMsg(groupId))
+                    pushTimeMetaMessage(groupId)
+                chatService.sendMessage(groupId, message)
+            }
             clearText()
             resetUnreadLabel()
         }
@@ -473,5 +543,19 @@ class GroupChatViewModel : BaseViewModel() {
             "REQUEST TO JOIN"
         else
             "JOIN GROUP"
+    }
+
+    fun removeFpp(uId: Int){
+        try {
+            viewModelScope.launch (Dispatchers.IO){
+                repository.removeUserFormFppLit(uId)
+                withContext(Dispatchers.Main) {
+                    message.what = REMOVE_GROUP_AND_CLOSE
+                    message.obj = groupId
+                    singleLiveEvent.value = message
+                    repository.startChatEventListener()
+                }
+            }
+        }catch (ex:Exception){}
     }
 }

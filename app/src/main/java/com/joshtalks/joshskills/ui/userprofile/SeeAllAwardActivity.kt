@@ -16,6 +16,9 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.databinding.FragmentSeeAllAwardBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.AwardItemClickedEventBus
@@ -82,6 +85,7 @@ class SeeAllAwardActivity : BaseActivity() {
         with(iv_help) {
             visibility = View.VISIBLE
             setOnClickListener {
+                MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
                 openHelpActivity()
             }
         }
@@ -136,6 +140,9 @@ class SeeAllAwardActivity : BaseActivity() {
     }
 
     override fun onBackPressed() {
+        MixPanelTracker.publishEvent(MixPanelEvent.BACK)
+            .addParam(ParamKeys.SCREEN_NAME,"awards screen")
+            .push()
         startTime = System.currentTimeMillis().minus(startTime).div(1000)
         impressionId?.let {
             if (startTime > 0 && impressionId!!.isBlank().not()) {

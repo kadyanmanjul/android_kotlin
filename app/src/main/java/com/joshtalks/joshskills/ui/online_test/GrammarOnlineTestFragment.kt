@@ -30,6 +30,9 @@ import com.joshtalks.joshskills.core.playSnackbarSound
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.GRAMMAR_CONTINUE_BUTTON_TEXT
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.GRAMMAR_START_BUTTON_TEXT
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.GRAMMAR_TEST_COMPLETE_DESCRIPTION
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.databinding.FragmentGrammarOnlineTestBinding
 import com.joshtalks.joshskills.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
 import com.joshtalks.joshskills.ui.leaderboard.ItemOverlay
@@ -60,6 +63,7 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
         ViewModelProvider(requireActivity()).get(LessonViewModel::class.java)
     }
     private var lessonNumber: Int = -1
+    private var lessonId : Int = -1
     private var scoreText: Int = -1
     private var pointsList: String? = null
 
@@ -168,12 +172,12 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
                 ONLINE_TEST_LAST_LESSON_COMPLETED
             ) >= lessonNumber) -> {
                 binding.startTestContainer.visibility = View.GONE
-                if (PrefManager.hasKey(IS_FREE_TRIAL) && PrefManager.getBoolValue(
-                        IS_FREE_TRIAL,
-                        false,
-                        false
-                    )
-                ) {
+//                if (PrefManager.hasKey(IS_FREE_TRIAL) && PrefManager.getBoolValue(
+//                        IS_FREE_TRIAL,
+//                        false,
+//                        false
+//                    )
+//                ) {
                     binding.testScoreContainer.visibility = View.VISIBLE
                     if (scoreText != -1) {
                         binding.score.text = getString(R.string.test_score, scoreText)
@@ -189,9 +193,9 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
                         showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, pointsList)
                         playSnackbarSound(requireContext())
                     }
-                } else {
-                    binding.testCompletedContainer.visibility = View.VISIBLE
-                }
+//                } else {
+//                    binding.testCompletedContainer.visibility = View.VISIBLE
+//                }
                 completeGrammarCardLogic()
             }
             else -> {
@@ -238,6 +242,12 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
                 binding.startBtn.performClick()
             }
         })
+
+        viewModel.lessonId.observe(
+            viewLifecycleOwner
+        ) {
+            lessonId = it
+        }
     }
 
     override fun onResume() {
@@ -313,6 +323,10 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
     }
 
     fun startOnlineExamTest() {
+        MixPanelTracker.publishEvent(MixPanelEvent.GRAMMAR_QUIZ_START)
+            .addParam(ParamKeys.LESSON_ID,lessonId)
+            .addParam(ParamKeys.LESSON_NUMBER,lessonNumber)
+            .push()
 
         if (PermissionUtils.isStoragePermissionEnabled(AppObjectController.joshApplication).not()) {
             askStoragePermission()
@@ -377,12 +391,12 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
     private fun showGrammarCompleteLayout() {
         binding.parentContainer.visibility = View.GONE
         binding.startTestContainer.visibility = View.GONE
-        if (PrefManager.hasKey(IS_FREE_TRIAL) && PrefManager.getBoolValue(
-                IS_FREE_TRIAL,
-                false,
-                false
-            )
-        ) {
+//        if (PrefManager.hasKey(IS_FREE_TRIAL) && PrefManager.getBoolValue(
+//                IS_FREE_TRIAL,
+//                false,
+//                false
+//            )
+//        ) {
             binding.testScoreContainer.visibility = View.VISIBLE
             if (scoreText != -1) {
                 binding.score.text = getString(R.string.test_score, scoreText)
@@ -399,12 +413,15 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
                 showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, pointsList)
                 playSnackbarSound(requireContext())
             }
-        } else {
-            binding.testCompletedContainer.visibility = View.VISIBLE
-        }
+//        } else {
+//            binding.testCompletedContainer.visibility = View.VISIBLE
+//        }
     }
 
     fun onGrammarContinueClick() {
+        MixPanelTracker.publishEvent(MixPanelEvent.GRAMMAR_CONTINUE)
+            .addParam(ParamKeys.LESSON_ID,lessonId)
+            .push()
         lessonActivityListener?.onNextTabCall(GRAMMAR_POSITION)
     }
 

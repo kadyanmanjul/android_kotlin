@@ -12,6 +12,9 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.core.custom_ui.decorator.SmoothScrollingLinearLayoutManager
 import com.joshtalks.joshskills.core.custom_ui.decorator.StickHeaderItemDecoration
 import com.joshtalks.joshskills.core.extension.deepEquals
@@ -228,6 +231,7 @@ class CourseProgressActivityNew :
 
     private fun setupToolbar() {
         findViewById<ImageView>(R.id.back_iv).setOnClickListener {
+            MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
             onBackPressed()
         }
     }
@@ -328,6 +332,7 @@ class CourseProgressActivityNew :
     }
 
     override fun onBackPressed() {
+        MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
         val resultIntent = Intent()
         resultIntent.putExtra(COURSE_ID, courseId)
         setResult(RESULT_OK, resultIntent)

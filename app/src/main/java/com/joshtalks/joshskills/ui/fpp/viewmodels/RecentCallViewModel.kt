@@ -2,22 +2,15 @@ package com.joshtalks.joshskills.ui.fpp.viewmodels
 
 import android.view.View
 import androidx.databinding.ObservableBoolean
+import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.base.BaseViewModel
 import com.joshtalks.joshskills.core.ApiCallStatus
+import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.ui.fpp.adapters.RecentCallsAdapter
-import com.joshtalks.joshskills.ui.fpp.constants.FPP_RECENT_CALL_ON_BACK_PRESS
-import com.joshtalks.joshskills.ui.fpp.constants.RECENT_OPEN_USER_PROFILE
-import com.joshtalks.joshskills.ui.fpp.constants.SCROLL_TO_POSITION
-import com.joshtalks.joshskills.ui.fpp.constants.RECENT_CALL_USER_BLOCK
-import com.joshtalks.joshskills.ui.fpp.constants.RECENT_CALL_HAS_RECIEVED_REQUESTED
-import com.joshtalks.joshskills.ui.fpp.constants.TO_MENTOR_ID
-import com.joshtalks.joshskills.ui.fpp.constants.PAGE_TYPE
-import com.joshtalks.joshskills.ui.fpp.constants.RECENT_CALL_REQUESTED
-import com.joshtalks.joshskills.ui.fpp.constants.RECENT_CALL_SENT_REQUEST
+import com.joshtalks.joshskills.ui.fpp.constants.*
 import com.joshtalks.joshskills.ui.fpp.model.RecentCall
 import com.joshtalks.joshskills.ui.fpp.model.RecentCallResponse
 import com.joshtalks.joshskills.ui.fpp.repository.RecentCallsRepository
@@ -37,6 +30,8 @@ class RecentCallViewModel : BaseViewModel() {
     var itemPosition = 0
     var isFirstTime = true
     val isFreeTrial = ObservableBoolean(false)
+    var partnerUid = ObservableField(0)
+    private var favoriteCallerDao = AppObjectController.appDatabase.favoriteCallerDao()
 
     fun getRecentCall() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -72,11 +67,12 @@ class RecentCallViewModel : BaseViewModel() {
         }
     }
 
-    fun sendFppRequest(receiverMentorId: String) {
+    fun sendFppRequest(receiverMentorId: String,position:Int) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 recentCallsRepository.sendFppRequest(receiverMentorId)
-                getRecentCall()
+                //getRecentCall()
+                adapter.notifyItemChanged(position)
             } catch (ex: Throwable) {
                 ex.printStackTrace()
             }
@@ -87,7 +83,7 @@ class RecentCallViewModel : BaseViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 recentCallsRepository.deleteFppRequest(receiverMentorId)
-                getRecentCall()
+//                getRecentCall()
             } catch (ex: Throwable) {
                 ex.printStackTrace()
             }
@@ -108,12 +104,16 @@ class RecentCallViewModel : BaseViewModel() {
         }
     }
 
-    fun blockUser(toMentorId: String) {
+    fun blockUser(toMentorId: String,partnerUserName:String,partnerUid:Int) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val map: HashMap<String, String> = HashMap()
                 map[TO_MENTOR_ID] = toMentorId
-                recentCallsRepository.blockUser(map)
+                val response = recentCallsRepository.blockUser(map)
+                if (response.isSuccessful && response.body() != null) {
+                    favoriteCallerDao.removeFromFavorite(listOf(partnerUid))
+                    recentCallsRepository.fetchRecentCallsFromApi()
+                }
             } catch (ex: Throwable) {
                 ex.printStackTrace()
             }
@@ -134,7 +134,7 @@ class RecentCallViewModel : BaseViewModel() {
                 singleLiveEvent.value = message
             }
             RECENT_CALL_SENT_REQUEST -> {
-                sendFppRequest(it.receiverMentorId ?: EMPTY)
+                sendFppRequest(it.receiverMentorId ?: EMPTY,position)
             }
             RECENT_CALL_REQUESTED -> {
                 deleteFppRequest(it.receiverMentorId ?: EMPTY)

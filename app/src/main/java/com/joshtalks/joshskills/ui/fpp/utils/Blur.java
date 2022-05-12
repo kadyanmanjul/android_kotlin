@@ -43,7 +43,7 @@ class Blur {
         PorterDuffColorFilter filter =
                 new PorterDuffColorFilter(factor.color, PorterDuff.Mode.SRC_ATOP);
         paint.setColorFilter(filter);
-        if (source!=null && !source.isRecycled())
+        if (source != null && !source.isRecycled())
             canvas.drawBitmap(source, 0, 0, paint);
 
         try {

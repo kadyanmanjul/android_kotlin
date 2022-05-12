@@ -9,7 +9,6 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.constants.PERMISSION_FROM_READING
@@ -30,7 +29,6 @@ import com.joshtalks.joshskills.repository.local.entity.practise.PointsListRespo
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentWithRelations
-import com.joshtalks.joshskills.repository.server.LinkAttribution
 import com.joshtalks.joshskills.repository.server.RequestEngage
 import com.joshtalks.joshskills.repository.server.UpdateLessonResponse
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentRequest
@@ -46,12 +44,9 @@ import com.joshtalks.joshskills.ui.lesson.speaking.VideoPopupItem
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.callbar.CallBar
 import com.joshtalks.joshskills.ui.referral.USER_SHARE_SHORT_URL
 import com.joshtalks.joshskills.util.AudioRecording
+import com.joshtalks.joshskills.util.DeepLinkUtil
 import com.joshtalks.joshskills.util.FileUploadService
 import com.joshtalks.joshskills.util.showAppropriateMsg
-import io.branch.indexing.BranchUniversalObject
-import io.branch.referral.Defines
-import io.branch.referral.util.LinkProperties
-import java.io.File
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -60,6 +55,10 @@ import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import timber.log.Timber
 import androidx.databinding.ObservableField
+import com.joshtalks.joshskills.core.abTest.CampaignKeys
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.ParamKeys
+import java.io.File
 
 
 class LessonViewModel(application: Application) : AndroidViewModel(application) {
@@ -83,6 +82,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     val practiceFeedback2LiveData: MutableLiveData<PracticeFeedback2> = MutableLiveData()
     val practiceEngagementData: MutableLiveData<PracticeEngagement> = MutableLiveData()
     val courseId: MutableLiveData<String> = MutableLiveData()
+    val lessonId: MutableLiveData<Int> = MutableLiveData()
     val speakingTopicLiveData: MutableLiveData<SpeakingTopic?> = MutableLiveData()
     val updatedLessonResponseLiveData: MutableLiveData<UpdateLessonResponse> = MutableLiveData()
     val demoLessonNoLiveData: MutableLiveData<Int> = MutableLiveData()
@@ -111,6 +111,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     fun isHowToSpeakClicked(event: Boolean) = howToSpeakLiveData.postValue(event)
     fun showHideSpeakingFragmentCallButtons(event: Int) = callBtnHideShowLiveData.postValue(event)
     val whatsappRemarketingLiveData = MutableLiveData<ABTestCampaignData?>()
+    val twentyMinCallFtuAbTestLiveData = MutableLiveData<ABTestCampaignData?>()
     val speakingABtestLiveData = MutableLiveData<ABTestCampaignData?>()
 
     val repository: ABTestRepository by lazy { ABTestRepository() }
@@ -127,6 +128,15 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
             repository.getCampaignData(campaign)?.let { campaign ->
                 speakingABtestLiveData.postValue(campaign)
             }
+        }
+    }
+
+    fun getTwentyMinFtuCallCampaignData(campaign: String, lessonId: Int, isDemo: Boolean = false) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.getCampaignData(campaign)?.let { campaign ->
+                twentyMinCallFtuAbTestLiveData.postValue(campaign)
+            }
+            getQuestions(lessonId, isDemo)
         }
     }
 
@@ -824,7 +834,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    fun saveIntroVideoFlowImpression(eventName : String, eventDuration : Long = 0L) {
+    fun saveIntroVideoFlowImpression(eventName: String, eventDuration: Long = 0L) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val requestData = hashMapOf(
@@ -838,6 +848,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
             }
         }
     }
+
     fun saveTrueCallerImpression(eventName: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -851,80 +862,54 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
             }
         }
     }
-    fun postGoal(goal: String, campaign: String?) {
-        viewModelScope.launch(Dispatchers.IO) {
-            repository.postGoal(goal)
-            if (campaign != null) {
-                val data = ABTestRepository().getCampaignData(campaign)
-                data?.let {
-                    val props = JSONObject()
-                    props.put("Variant", data?.variantKey ?: EMPTY)
-                    props.put("Variable", AppObjectController.gsonMapper.toJson(data?.variableMap))
-                    props.put("Campaign", campaign)
-                    props.put("Goal", goal)
-                    MixPanelTracker().publishEvent(goal, props)
-                }
-            }
-        }
-    }
 
-    fun getDeepLink(deepLink: String, contentId: String) {
-        viewModelScope.launch {
+    fun saveVoiceCallImpression(eventName: String) {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
-                val requestData = LinkAttribution(
-                    mentorId = Mentor.getInstance().getId(),
-                    contentId = contentId,
-                    sharedItem = "READING_SECTION_VIDEO",
-                    sharedItemType = "VI",
-                    deepLink = deepLink
+                val requestData = hashMapOf(
+                    Pair("mentor_id", Mentor.getInstance().getId()),
+                    Pair("event_name", eventName)
                 )
-                AppObjectController.commonNetworkService.getDeepLink(requestData)
+                AppObjectController.commonNetworkService.saveVoiceCallImpression(requestData)
             } catch (ex: Exception) {
                 Timber.e(ex)
             }
         }
     }
 
-    fun shareVideoForAudio(path: String) {
-        userReferralCode = Mentor.getInstance().referralCode
-        val branchUniversalObject = BranchUniversalObject()
-            .setCanonicalIdentifier(userReferralCode.plus(System.currentTimeMillis()))
-            .setTitle("Invite Friend")
-            .setContentIndexingMode(BranchUniversalObject.CONTENT_INDEX_MODE.PUBLIC)
-            .setLocalIndexMode(BranchUniversalObject.CONTENT_INDEX_MODE.PUBLIC)
-        val lp = LinkProperties()
-            .setChannel(userReferralCode)
-            .setFeature("sharing")
-            .setCampaign("referral")
-            .addControlParameter(Defines.Jsonkey.ReferralCode.key, userReferralCode)
-            .addControlParameter(Defines.Jsonkey.UTMCampaign.key, "referral")
-            .addControlParameter(
-                Defines.Jsonkey.UTMMedium.key,
-                userReferralCode.plus(System.currentTimeMillis())
-            )
-        branchUniversalObject
-            .generateShortUrl(AppObjectController.joshApplication, lp) { url, error ->
-                if (error == null)
-                    inviteFriends(
-                        dynamicLink = url,
-                        path = path
-                    )
-                else
-                    inviteFriends(
-                        dynamicLink = (if (PrefManager.hasKey(USER_SHARE_SHORT_URL))
-                            PrefManager.getStringValue(USER_SHARE_SHORT_URL)
-                        else
-                            getAppShareUrl()),
-                        path = path
-                    )
+    fun postGoal(goal: String, campaign: String?) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.postGoal(goal)
+            if (campaign != null) {
+                val data = ABTestRepository().getCampaignData(campaign)
+                data?.let {
+                    MixPanelTracker.publishEvent(MixPanelEvent.GOAL)
+                        .addParam(ParamKeys.VARIANT, data?.variantKey ?: EMPTY)
+                        .addParam(ParamKeys.VARIABLE, AppObjectController.gsonMapper.toJson(data?.variableMap))
+                        .addParam(ParamKeys.CAMPAIGN, campaign)
+                        .addParam(ParamKeys.GOAL, goal)
+                        .push()
+                }
             }
+        }
+    }
+
+    fun shareVideoForAudio(path: String) {
+        DeepLinkUtil(context = AppObjectController.joshApplication)
+            .setReferralCode(Mentor.getInstance().referralCode)
+            .setReferralCampaign()
+            .setListener(object : DeepLinkUtil.OnDeepLinkListener {
+                override fun onDeepLinkCreated(deepLink: String) {
+                    inviteFriends(
+                        dynamicLink = deepLink,
+                        path = path
+                    )
+                }
+            })
+            .build()
     }
 
     fun inviteFriends(dynamicLink: String, path: String) {
-        getDeepLink(
-            dynamicLink,
-            userReferralCode.plus(System.currentTimeMillis())
-        )
         try {
             val destination = path
             val waIntent = Intent(Intent.ACTION_SEND)
@@ -942,9 +927,4 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
             e.printStackTrace()
         }
     }
-
-    private fun getAppShareUrl(): String {
-        return "https://play.google.com/store/apps/details?id=" + BuildConfig.APPLICATION_ID + "&referrer=utm_source%3D$userReferralCode"
-    }
-
 }

@@ -120,6 +120,7 @@ const val BLOCK_ISSUE = "BLOCK_ISSUE"
 const val REPORT_ISSUE = "REPORT_ISSUE"
 const val LAST_TIME_AUTOSTART_SHOWN = "LAST_TIME_AUTOSTART_SHOWN"
 const val SHOULD_SHOW_AUTOSTART_POPUP = "SHOULD_SHOW_AUTOSTART_POPUP"
+const val LAST_TIME_WORK_MANAGER_START = "LAST_TIME_WORK_MANAGER_START"
 
 const val USER_ACTIVE_IN_GAME = "game_active"
 const val USER_LEAVE_THE_GAME = "game_left"
@@ -137,6 +138,14 @@ const val PAID_COURSE_TEST_ID = "PAID_COURSE_TEST_ID"
 const val IS_FREE_TRIAL_CAMPAIGN_ACTIVE = "is_free_trial_campaign_active"
 const val IS_EFT_VARIENT_ENABLED = "is_eft_varient_enabled"
 const val IS_VOIP_NEW_ARCH_ENABLED = "is_voip_new_arch_enabled"
+const val IS_TWENTY_MIN_CALL_ENABLED = "is_twenty_min_call_enabled"
+const val REMOVE_TOOLTIP_FOR_TWENTY_MIN_CALL = "remove_toolpit_for_twenty_min_call"
+const val TWENTY_MIN_CALL_GOAL_POSTED = "twenty_min_call_goal_posted"
+const val SPEAKING_SCREEN_SEEN_GOAL_POSTED = "speaking_screen_seen_goal_posted"
+const val TWENTY_MIN_CALL_ATTEMPTED_GOAL_POSTED = "twenty_min_call_attempted_goal_posted"
+const val IS_SPEAKING_SCREEN_CLICKED = "is_speaking_screen_clicked"
+const val CALL_BTN_CLICKED = "call_btn_clicked"
+const val IS_APP_OPENED_FOR_FIRST_TIME = "is_app_opened_for_first_time"
 
 object PrefManager {
 

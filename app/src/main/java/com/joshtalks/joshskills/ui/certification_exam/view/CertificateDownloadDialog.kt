@@ -19,6 +19,8 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.interfaces.FileDownloadCallback
 import com.joshtalks.joshskills.databinding.CertificateDownloadFragmentBinding
 import com.joshtalks.joshskills.ui.certification_exam.report.udetail.CERTIFICATE_URL
@@ -81,6 +83,7 @@ class CertificateDownloadDialog : DialogFragment(), FetchListener {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return object : Dialog(requireActivity(), R.style.full_dialog) {
             override fun onBackPressed() {
+                MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
             }
         }
     }

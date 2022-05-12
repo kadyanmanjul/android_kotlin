@@ -13,6 +13,9 @@ import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.DD_MM_YYYY
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.DatabaseUtils
 import com.joshtalks.joshskills.repository.local.entity.CExamStatus
@@ -35,6 +38,10 @@ class CertificationExamViewHolder(view: View, userId: String) :
     private val tvAttemptedDate: AppCompatTextView = view.findViewById(R.id.tv_attempted_date)
     private val btnStartExam: MaterialTextView = view.findViewById(R.id.btn_start_exam)
     private var message: ChatModel? = null
+    private lateinit var attemptsLeft: String
+    private lateinit var attemptNo: String
+    private lateinit var attemptedOn: String
+    private lateinit var getmarks: String
 
     init {
         messageView.also {
@@ -93,6 +100,10 @@ class CertificationExamViewHolder(view: View, userId: String) :
 
     private fun updateView(cexamDetail: CertificationExamDetailModel?) {
         cexamDetail?.run {
+            attemptsLeft = attemptLeft.toString()
+            attemptNo = attempted.toString()
+            attemptedOn = attemptOn
+            getmarks = marks.toString()
             tvTitle.text = HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_LEGACY)
             when (examStatus) {
                 CExamStatus.PASSED -> {

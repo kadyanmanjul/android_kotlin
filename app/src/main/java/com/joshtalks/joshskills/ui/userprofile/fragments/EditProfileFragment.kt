@@ -5,6 +5,7 @@ import android.graphics.Paint
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.text.Html
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -21,6 +22,9 @@ import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.MAX_YEAR
 import com.joshtalks.joshskills.core.DD_MM_YYYY
 import com.joshtalks.joshskills.core.DATE_FORMATTER
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.core.getRandomName
 import com.joshtalks.joshskills.core.hideKeyboard
@@ -217,19 +221,29 @@ class EditProfileFragment : DialogFragment(){
 
     private fun addListeners() {
         binding.ivBack.setOnClickListener {
+            MixPanelTracker.publishEvent(MixPanelEvent.CANCEL).push()
             hideKeyboard(requireActivity(),binding.editTxtHometown)
             dismiss()
         }
 
         binding.txtChangePicture.setOnClickListener {
+            MixPanelTracker.publishEvent(MixPanelEvent.EDIT_PROFILE_PHOTO_CLICKED)
+                .addParam(ParamKeys.VIA,"edit profile")
+                .push()
             openChooser()
         }
         binding.basicDetailsLayout.setOnClickListener {view->
             if (isBasicDetailsExpanded) {
+                MixPanelTracker.publishEvent(MixPanelEvent.ADD_PROFILE_INFO_COLLAPSE)
+                    .addParam(ParamKeys.CARD_NAME,"Basic Details")
+                    .push()
                 isBasicDetailsExpanded = false
                 binding.arrowDownImg.setImageDrawable(drawableDown)
                 binding.basicDetailsContainer.visibility = View.GONE
             }else{
+                MixPanelTracker.publishEvent(MixPanelEvent.ADD_PROFILE_INFO_EXPAND)
+                    .addParam(ParamKeys.CARD_NAME,"Basic Details")
+                    .push()
                 isBasicDetailsExpanded = true
                 binding.arrowDownImg.setImageDrawable(drawableUp)
                 binding.basicDetailsContainer.visibility = View.VISIBLE
@@ -237,10 +251,16 @@ class EditProfileFragment : DialogFragment(){
         }
         binding.educationDetailsLayout.setOnClickListener {view->
             if (isEducationDetailsExpanded) {
+                MixPanelTracker.publishEvent(MixPanelEvent.ADD_PROFILE_INFO_COLLAPSE)
+                    .addParam(ParamKeys.CARD_NAME,"Education Details")
+                    .push()
                 isEducationDetailsExpanded = false
                 binding.educationDownImg.setImageDrawable(drawableDown)
                 binding.educationDetailsContainer.visibility = View.GONE
             }else{
+                MixPanelTracker.publishEvent(MixPanelEvent.ADD_PROFILE_INFO_EXPAND)
+                    .addParam(ParamKeys.CARD_NAME,"Education Details")
+                    .push()
                 isEducationDetailsExpanded = true
                 binding.educationDownImg.setImageDrawable(drawableUp)
                 binding.educationDetailsContainer.visibility = View.VISIBLE
@@ -248,10 +268,16 @@ class EditProfileFragment : DialogFragment(){
         }
         binding.occupationDetailsLayout.setOnClickListener {view->
             if (isOccupationDetailsExpanded) {
+                MixPanelTracker.publishEvent(MixPanelEvent.ADD_PROFILE_INFO_COLLAPSE)
+                    .addParam(ParamKeys.CARD_NAME,"Occupation Details")
+                    .push()
                 isOccupationDetailsExpanded = false
                 binding.occupationDownImg.setImageDrawable(drawableDown)
                 binding.occupationDetailsContainer.visibility = View.GONE
             }else{
+                MixPanelTracker.publishEvent(MixPanelEvent.ADD_PROFILE_INFO_EXPAND)
+                    .addParam(ParamKeys.CARD_NAME,"Occupation Details")
+                    .push()
                 isOccupationDetailsExpanded = true
                 binding.occupationDownImg.setImageDrawable(drawableUp)
                 binding.occupationDetailsContainer.visibility = View.VISIBLE
@@ -260,6 +286,7 @@ class EditProfileFragment : DialogFragment(){
 
         binding.ivSave.setOnClickListener {
             saveData()
+            MixPanelTracker.publishEvent(MixPanelEvent.PROFILE_EDITED).push()
         }
     }
 

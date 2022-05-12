@@ -62,6 +62,7 @@
     <uses-permission
         android:name="android.permission.READ_PRIVILEGED_PHONE_STATE"
         tools:ignore="ProtectedPermissions" /> <!-- for API level below 22 -->
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
     <!-- For Audio Control Module -->
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
@@ -529,6 +530,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppNoBarTheme" />
         <activity android:name=".ui.special_practice.SpecialPracticeActivity" />
+        <activity android:name=".ui.invite_call.InviteFriendActivity" />
         <activity android:name=".ui.voip.new_arch.ui.views.VoiceCallActivity"
             android:process=":joshSkillsCallingService"
             android:screenOrientation="portrait"
@@ -668,11 +670,10 @@
             </intent-filter>
         </receiver>
         <receiver
-            android:name=".core.service.NetworkChangeReceiver"
+            android:name=".core.service.ServiceStartReceiver"
             android:exported="true">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.intent.action. ACTION_LOCKED_BOOT_COMPLETED" />
+                <action android:name="android.intent.action.ACTION_LOCKED_BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
         <!-- Audio Control Module Receivers -->
@@ -725,11 +726,11 @@
             android:exported="true"
             android:permission="android.permission.BIND_JOB_SERVICE"
             tools:ignore="ExportedService" />
-        <service android:name="com.clevertap.android.sdk.pushnotification.fcm.FcmMessageListenerService">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-            </intent-filter>
-        </service>
+<!--        <service android:name="com.clevertap.android.sdk.pushnotification.fcm.FcmMessageListenerService">-->
+<!--            <intent-filter>-->
+<!--                <action android:name="com.google.firebase.MESSAGING_EVENT" />-->
+<!--            </intent-filter>-->
+<!--        </service>-->
         <service
             android:name=".core.service.video_download.VideoDownloadService"
             android:enabled="true"
@@ -778,6 +779,7 @@
             android:name=".ui.groupchat.messagelist.CometChatMessageListActivity"
             android:screenOrientation="portrait" />
         -->
+
         <provider
             android:name=".repository.service.GenericFileProvider"
             android:authorities="com.joshtalks.joshskills.provider"

@@ -7,6 +7,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.dateStartOfDay
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -30,6 +31,7 @@ import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import org.json.JSONArray
 import java.io.File
+import java.util.HashMap
 
 private const val TAG = "GroupRepository"
 
@@ -40,6 +42,8 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
     private val mentorId = Mentor.getInstance().getId()
     private val chatService: ChatService = PubNubService
     private val database = AppObjectController.appDatabase
+    private val p2pNetworkService by lazy { AppObjectController.p2pNetworkService }
+    private var favoriteCallerDao = AppObjectController.appDatabase.favoriteCallerDao()
 
     fun getGroupSearchResult(query: String) =
         Pager(PagingConfig(10, enablePlaceholders = false, maxSize = 150)) {
@@ -80,9 +84,12 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
         }
     }
 
-    fun startChatEventListener() {
+    fun startChatEventListener(groupId: String? = null) {
         CoroutineScope(Dispatchers.IO).launch {
-            val groups = database.groupListDao().getGroupIds()
+            val groups = groupId?.let {
+                return@let listOf(it)
+            } ?: database.groupListDao().getGroupIds()
+
             chatService.unsubscribeToChatEvents(object : ChatEventObserver<SubscribeCallback> {
                 override fun getObserver(): SubscribeCallback {
                     return ChatSubscriber
@@ -97,6 +104,16 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
                 })
         }
     }
+
+     fun unSubscribeToChat() {
+         CoroutineScope(Dispatchers.IO).launch {
+             chatService.unsubscribeToChatEvents(object : ChatEventObserver<SubscribeCallback> {
+                 override fun getObserver(): SubscribeCallback {
+                     return ChatSubscriber
+                 }
+             })
+         }
+     }
 
     private suspend fun fetchGroupListFromNetwork(pageInfo: PageInfo? = null) {
         Log.d(TAG, "fetchGroupList: $pageInfo")
@@ -130,7 +147,7 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
         database.groupMemberDao().insertMembers(memberList)
 
         val nextPage = pubNubResponse?.getPageInfo()?.pubNubNext
-        fetchGroupListFromNetwork(PageInfo(pubNubNext = nextPage))
+        fetchMembersFromNetwork(groupId, adminId, PageInfo(pubNubNext = nextPage))
     }
 
     suspend fun getGroupMemberList(groupId: String, adminId: String): List<GroupMember> {
@@ -280,7 +297,7 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
         return null
     }
 
-    suspend fun getGroupName(groupId: String) = database.groupListDao().getGroupName(groupId)
+    suspend fun getGroupName(groupId: String?) = database.groupListDao().getGroupName(groupId)
 
     fun leaveGroupFromLocal(groupId: String) {
         CoroutineScope(Dispatchers.IO).launch {
@@ -382,10 +399,10 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
             try {
                 if (response.isSuccessful)
                     database.timeTokenDao().deleteTimeEntry(token.groupId, token.timeToken)
+                else if (response.code() == 501)
+                    database.timeTokenDao().deleteTimeToken(token.groupId)
             } catch (e: Exception) {
                 e.printStackTrace()
-                if (response.code() == 501)
-                    database.timeTokenDao().deleteTimeToken(token.groupId)
             }
         }
     }
@@ -439,5 +456,19 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
             e.printStackTrace()
             null
         }
+    }
+
+    suspend fun removeUserFormFppLit(uId: Int) {
+        val requestParams: HashMap<String, List<Int>> = HashMap()
+        requestParams["mentor_ids"] = uId.let { return@let listOf(uId) }
+        val response = p2pNetworkService.removeFavoriteCallerList(Mentor.getInstance().getId(), requestParams)
+        if (response.isSuccessful) {
+            favoriteCallerDao.removeFromFavorite(uId.let { return@let listOf(uId) })
+            showToast("Successfully removed")
+        }
+    }
+
+    suspend fun checkIfFirstMsg(groupId: String): Boolean {
+        return dateStartOfDay().time.times(10000) > (database.groupChatDao().getRecentMessageTime(groupId) ?: 0)
     }
 }

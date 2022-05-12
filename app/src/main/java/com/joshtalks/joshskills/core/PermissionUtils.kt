@@ -13,6 +13,7 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.joshtalks.joshskills.R
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import com.karumi.dexter.listener.single.PermissionListener
 
 enum class PermissionAction(val action: String) {
     ALLOW("ALLOW"),
@@ -79,6 +80,16 @@ object PermissionUtils {
             .withListener(multiplePermissionsListener).check()
     }
 
+    fun requestReadContactPermission(
+        activity: Activity?,
+        permissionListener: PermissionListener
+    ) {
+        Dexter.withContext(activity)
+            .withPermission(Manifest.permission.READ_CONTACTS)
+            .withListener(permissionListener)
+            .check()
+    }
+
 
     fun audioRecordStorageReadAndWritePermission(
         activity: Activity?,
@@ -133,6 +144,16 @@ object PermissionUtils {
         ) == PackageManager.PERMISSION_GRANTED
     }
 
+    fun isReadContactPermissionEnabled(context: Context): Boolean {
+        return ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.READ_CONTACTS
+        ) + ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.READ_CONTACTS
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+
     fun isAudioAndStoragePermissionEnable(context: Context): Boolean {
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
             return ContextCompat.checkSelfPermission(
@@ -160,7 +181,8 @@ object PermissionUtils {
 
     fun permissionPermanentlyDeniedDialog(
         activity: Activity,
-        message: Int = R.string.storage_permission_message
+        message: Int = R.string.storage_permission_message,
+        onPermissionDenied: (() -> Unit)? = null
     ) {
         MaterialDialog(activity).show {
             message(message)
@@ -168,7 +190,9 @@ object PermissionUtils {
                 openSettings(activity)
 
             }
-            negativeButton(R.string.not_now)
+            negativeButton(R.string.not_now) {
+                onPermissionDenied?.invoke()
+            }
         }
     }
 

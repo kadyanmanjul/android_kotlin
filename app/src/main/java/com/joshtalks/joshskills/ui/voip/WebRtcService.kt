@@ -32,6 +32,9 @@ import com.joshtalks.joshskills.conversationRoom.model.JoinConversionRoomRequest
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.LogException
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.core.firestore.AgoraNotificationListener
 import com.joshtalks.joshskills.core.firestore.FirestoreDB
 import com.joshtalks.joshskills.core.notification.FirebaseNotificationService
@@ -1175,6 +1178,7 @@ class WebRtcService : BaseWebRtcService() {
                                 }
                                 this == CallConnect().action -> {
                                     val state = CurrentCallDetails.state()
+
                                     VoipAnalytics.push(
                                         VoipAnalytics.Event.CALL_ACCEPT,
                                         agoraMentorUid = state.callieUid,
@@ -1194,6 +1198,7 @@ class WebRtcService : BaseWebRtcService() {
                                         rejectCall()
                                     }
                                     val state = CurrentCallDetails.state()
+
                                     VoipAnalytics.push(
                                         VoipAnalytics.Event.CALL_DECLINED,
                                         agoraMentorUid = state.callieUid,
@@ -1514,6 +1519,7 @@ class WebRtcService : BaseWebRtcService() {
                     isTimeOutToPickCall = true
                     callData?.let {
                         val state = CurrentCallDetails.state()
+
                         VoipAnalytics.push(
                             VoipAnalytics.Event.USER_DID_NOT_PICKUP_CALL,
                             agoraMentorUid = state.callieUid,
@@ -1801,6 +1807,7 @@ class WebRtcService : BaseWebRtcService() {
             try {
                 if (holdCallByMe.not() && holdCallByAnotherUser.not()) {
                     isMicEnabled = !isMicEnabled
+                    val state = CurrentCallDetails.state()
                     if (isMicEnabled) {
                         unMuteCall()
                     } else {

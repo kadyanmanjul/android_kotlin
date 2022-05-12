@@ -9,6 +9,8 @@ import android.view.View
 import android.widget.TextView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.WebRtcMiddlewareActivity
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.ui.extra.CustomPermissionDialogFragment
 import com.joshtalks.joshskills.ui.extra.NOTIFICATION_POPUP
 import com.joshtalks.joshskills.ui.settings.fragments.SettingsFragment
@@ -24,6 +26,7 @@ class SettingsActivity : WebRtcMiddlewareActivity() {
         iv_help.visibility = View.GONE
         iv_back.visibility = View.VISIBLE
         iv_back.setOnClickListener {
+            MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
             onBackPressed()
         }
 
