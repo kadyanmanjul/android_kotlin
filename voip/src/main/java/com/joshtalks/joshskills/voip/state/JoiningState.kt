@@ -58,6 +58,7 @@ class JoiningState(val context: CallContext) : VoipState {
 
     override fun onDestroy() {
         scope.cancel()
+        webrtcScope.cancel()
     }
 
     private fun observe() {
