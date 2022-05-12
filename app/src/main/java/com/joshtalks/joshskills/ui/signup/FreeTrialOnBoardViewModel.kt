@@ -41,6 +41,7 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
     var isUserExist: Boolean = false
     val points100ABtestLiveData = MutableLiveData<ABTestCampaignData?>()
     val eftABtestLiveData = MutableLiveData<ABTestCampaignData?>()
+    var newLanguageABtestLiveData = MutableLiveData<ABTestCampaignData?>()
 
     val repository: ABTestRepository by lazy { ABTestRepository() }
     fun get100PCampaignData(campaign: String, campaignEft: String) {
@@ -61,6 +62,20 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
             }
         }
     }
+
+    fun getNewLanguageABTest(campaign: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                repository.getCampaignData(campaign)?.let { campaign ->
+                    newLanguageABtestLiveData.postValue(campaign)
+                }
+            }catch (ex: Exception){
+                ex.printStackTrace()
+                newLanguageABtestLiveData.postValue(null)
+            }
+        }
+    }
+
     fun saveImpression(eventName: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {

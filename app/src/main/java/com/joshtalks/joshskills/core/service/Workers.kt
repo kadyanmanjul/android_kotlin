@@ -1053,7 +1053,8 @@ class UpdateABTestCampaignsWorker(context: Context, workerParams: WorkerParamete
                     CampaignKeys.PEOPLE_HELP_COUNT.name,
                     CampaignKeys.EXTEND_FREE_TRIAL.name,
                     CampaignKeys.ACTIVITY_FEED_V2.name,
-                    CampaignKeys.TWENTY_MIN_TARGET.NAME
+                    CampaignKeys.TWENTY_MIN_TARGET.NAME,
+                    CampaignKeys.NEW_LANGUAGE.name
 
                 )
             )
