@@ -6,22 +6,19 @@ import android.os.Looper
 import android.util.Log
 import androidx.core.app.NotificationManagerCompat
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
-import com.google.gson.JsonDeserializationContext
-import com.google.gson.JsonDeserializer
-import com.google.gson.JsonElement
-import com.google.gson.JsonParseException
+import com.google.gson.*
 import com.joshtalks.badebhaiya.BuildConfig
 import com.joshtalks.badebhaiya.repository.service.initStethoLibrary
 import com.joshtalks.badebhaiya.utils.datetimeutils.DateTimeUtils
 import io.agora.rtc.IRtcEngineEventHandler
 import io.agora.rtc.RtcEngine
 import io.branch.referral.Branch
+import timber.log.Timber
+import timber.log.Timber.DebugTree
 import java.lang.reflect.Modifier
 import java.lang.reflect.Type
 import java.text.DateFormat
-import java.util.Date
+import java.util.*
 
 class AppObjectController {
     companion object {
@@ -55,6 +52,13 @@ class AppObjectController {
             initBranch(context)
             initRtcEngine(joshApplication)
             initUtils()
+            initTimber()
+        }
+
+        private fun initTimber(){
+            if (BuildConfig.DEBUG) {
+                Timber.plant(DebugTree())
+            }
         }
 
         private fun initNotificationChannels(context: Context) {

@@ -305,7 +305,6 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
 
     override fun onBackPressed() {
         if (intent.getBooleanExtra("profile_deeplink", false)){
-            // TODO: Finish App
             finish()
             return
         }
@@ -412,7 +411,8 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                 notificationIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT
             )
-        alarmManager?.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + room.startTimeDate.minus(5 * 60 * 1000), pendingIntent)
+        val startingTime = System.currentTimeMillis() + room.startTimeDate.minus(5 * 60 * 1000)
+        alarmManager?.set(AlarmManager.RTC_WAKEUP, startingTime, pendingIntent)
             .also {
                 //room.isScheduled = true
                 viewModel.setReminder(

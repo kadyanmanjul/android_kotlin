@@ -2,6 +2,7 @@ package com.joshtalks.badebhaiya.feed.adapter
 
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuInflater
 import android.view.View
@@ -26,12 +27,13 @@ import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.utils.SingleDataManager
 import com.joshtalks.badebhaiya.utils.Utils
 import com.joshtalks.badebhaiya.utils.datetimeutils.DateTimeStyle
-import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.*
 import kotlinx.coroutines.NonDisposableHandle.parent
+import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*
 
-class FeedAdapter(private val fromProfile: Boolean = false) :
+class FeedAdapter(private val fromProfile: Boolean = false, private val coroutineScope: CoroutineScope? = null) :
     ListAdapter<RoomListResponseItem, FeedAdapter.FeedViewHolder>(DIFF_CALLBACK) {
 
     companion object DIFF_CALLBACK : DiffUtil.ItemCallback<RoomListResponseItem>() {
@@ -94,7 +96,11 @@ class FeedAdapter(private val fromProfile: Boolean = false) :
             item.callback = callback
 
             if (fromProfile && SingleDataManager.pendingPilotAction != null && SingleDataManager.pendingPilotAction == PendingPilotEvent.SET_REMINDER && SingleDataManager.pendingPilotEventData!!.roomId == room.roomId){
-                item.actionButton.performClick()
+                Timber.d("found the room")
+                coroutineScope?.launch {
+                    delay(1000)
+                    item.actionButton.performClick()
+                }
                 SingleDataManager.pendingPilotAction = null
                 SingleDataManager.pendingPilotEventData = null
             }

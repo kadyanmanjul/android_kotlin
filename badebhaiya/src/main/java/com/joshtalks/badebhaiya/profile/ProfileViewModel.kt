@@ -36,7 +36,7 @@ class ProfileViewModel : ViewModel() {
 
     val userFullName = ObservableField<String>()
     val isBioTextAvailable = ObservableBoolean(false)
-    val speakerProfileRoomsAdapter = FeedAdapter()
+    val speakerProfileRoomsAdapter = FeedAdapter(fromProfile = true, coroutineScope = viewModelScope)
     var message = Message()
     var singleLiveEvent: MutableLiveData<Message> = MutableLiveData()
     val speakerFollowed = MutableLiveData(false)
