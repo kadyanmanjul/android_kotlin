@@ -173,11 +173,11 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                         callContext?.disconnect()
                     }
                     UserAction.MUTE -> {
-                        val envelope = Envelope(Event.HOLD_REQUEST)
+                        val envelope = Envelope(Event.MUTE_REQUEST)
                         stateChannel.send(envelope)
                     }
                     UserAction.UNMUTE -> {
-                        val envelope = Envelope(Event.UNHOLD_REQUEST)
+                        val envelope = Envelope(Event.UNMUTE_REQUEST)
                         stateChannel.send(envelope)
                     }
                     UserAction.HOLD -> {
