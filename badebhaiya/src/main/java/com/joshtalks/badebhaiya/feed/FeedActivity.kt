@@ -33,6 +33,7 @@ import com.joshtalks.badebhaiya.pubnub.PubNubState
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomResponse
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.utils.SingleDataManager
+import com.joshtalks.badebhaiya.utils.setUserImageOrInitials
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
@@ -300,6 +301,15 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                 }
             })
         }
+    }
+
+    override fun onBackPressed() {
+        if (intent.getBooleanExtra("profile_deeplink", false)){
+            // TODO: Finish App
+            finish()
+            return
+        }
+        super.onBackPressed()
     }
 
     override fun joinRoom(room: RoomListResponseItem, view: View) {

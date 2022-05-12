@@ -108,6 +108,7 @@ class LauncherActivity : AppCompatActivity() {
                     // came by deeplink.. redirect to profile
                     val intent = Intent(this@LauncherActivity, FeedActivity::class.java)
                     intent.putExtra("userId",viewUserId)
+                    intent.putExtra("profile_deeplink", true)
                     intent
 
                 } else {

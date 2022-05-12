@@ -23,6 +23,7 @@ import com.joshtalks.badebhaiya.signup.fragments.SignUpEnterOTPFragment
 import com.joshtalks.badebhaiya.signup.fragments.SignUpEnterPhoneFragment
 import com.joshtalks.badebhaiya.signup.viewmodel.SignUpViewModel
 import com.joshtalks.badebhaiya.utils.PRIVACY_POLICY_URL
+import com.joshtalks.badebhaiya.utils.events.makeLinks
 import com.truecaller.android.sdk.ITrueCallback
 import com.truecaller.android.sdk.TrueError
 import com.truecaller.android.sdk.TrueProfile

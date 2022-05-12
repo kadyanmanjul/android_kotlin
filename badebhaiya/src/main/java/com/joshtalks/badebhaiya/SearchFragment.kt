@@ -8,6 +8,7 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
+import androidx.core.widget.addTextChangedListener
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -87,26 +88,27 @@ class SearchFragment : Fragment(), Call {
         super.onViewCreated(view, savedInstanceState)
 
         var job: Job? = null
-        binding.searchBar.addTextChangedListener{
-            //var job: Job? = null
+        binding.searchBar.addTextChangedListener {
+                //var job: Job? = null
 
-            binding.noresult.visibility= GONE
-            if(it.toString()=="")
-            {
-                binding.defaultText.visibility= VISIBLE
                 binding.noresult.visibility= GONE
-            }
-            else {
-                binding.defaultText.visibility = GONE
-//                binding.noresult.visibility= GONE
-                job?.cancel()
-                job = MainScope().launch {
-                    delay(500)
-                    if (it.toString() != null)
-                        viewModel.searchUser(it.toString())
+                if(it.toString()=="")
+                {
+                    binding.defaultText.visibility= VISIBLE
+                    binding.noresult.visibility= GONE
                 }
-                addObserver()
-            }
+                else {
+                    binding.defaultText.visibility = GONE
+//                binding.noresult.visibility= GONE
+                    job?.cancel()
+                    job = MainScope().launch {
+                        delay(500)
+                        if (it.toString() != null)
+                            viewModel.searchUser(it.toString())
+                    }
+                    addObserver()
+                }
+
 
         }
         //addObserver()

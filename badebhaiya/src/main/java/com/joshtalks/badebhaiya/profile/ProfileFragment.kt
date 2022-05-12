@@ -89,8 +89,9 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         binding.toolbar.iv_back.setOnClickListener{
             activity?.run {
                 (activity as FeedActivity).swipeRefreshLayout.isEnabled=true
-                supportFragmentManager.beginTransaction().remove(this@ProfileFragment)
-                    .commitAllowingStateLoss()
+//                supportFragmentManager.beginTransaction().remove(this@ProfileFragment)
+//                    .commitAllowingStateLoss()
+                onBackPressed()
             }
         }
         activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
