@@ -100,6 +100,8 @@ import com.joshtalks.joshskills.ui.voip.RTC_WEB_GROUP_CALL_GROUP_NAME
 import com.joshtalks.joshskills.ui.voip.RTC_WEB_GROUP_PHOTO
 import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.joshtalks.joshskills.ui.voip.analytics.VoipAnalytics.pushIncomingCallAnalytics
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
+import com.joshtalks.joshskills.voip.constant.State
 import java.io.IOException
 import java.io.InputStream
 import java.lang.reflect.Type
@@ -203,6 +205,8 @@ class FirebaseNotificationService : FirebaseMessagingService() {
 
     private fun processRemoteMessage(remoteData: MutableMap<String, String>) {
         if (remoteData.containsKey("nType")) {
+            if(remoteData["nType"] == "CR" && application.getVoipState() != State.IDLE)
+                return
             val notificationTypeToken: Type = object : TypeToken<ShortNotificationObject>() {}.type
             val shortNc: ShortNotificationObject = AppObjectController.gsonMapper.fromJson(
                 AppObjectController.gsonMapper.toJson(remoteData),
