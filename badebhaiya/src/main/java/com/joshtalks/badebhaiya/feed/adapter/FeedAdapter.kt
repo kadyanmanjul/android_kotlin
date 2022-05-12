@@ -96,7 +96,6 @@ class FeedAdapter(private val fromProfile: Boolean = false, private val coroutin
             item.callback = callback
 
             if (fromProfile && SingleDataManager.pendingPilotAction != null && SingleDataManager.pendingPilotAction == PendingPilotEvent.SET_REMINDER && SingleDataManager.pendingPilotEventData!!.roomId == room.roomId){
-                Timber.d("found the room")
                 coroutineScope?.launch {
                     delay(1000)
                     item.actionButton.performClick()

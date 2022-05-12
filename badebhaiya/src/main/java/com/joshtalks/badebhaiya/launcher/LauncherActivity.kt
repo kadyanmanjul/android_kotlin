@@ -65,24 +65,24 @@ class LauncherActivity : AppCompatActivity() {
                     Log.d("YASHENDRA", "branch json data => ${it.has("user_id")}")
 
                     // TODO: Uncomment it.
-//                    startActivityForState(
-//                        if (it.has("user_id"))
-//                            it.getString("user_id")
-//                        else null
-//                    )
-
                     startActivityForState(
-                        "cb91868f-2e8c-4c09-8003-2bd480534d7e"
+                        if (it.has("user_id"))
+                            it.getString("user_id")
+                        else null
                     )
+
+//                    startActivityForState(
+//                        "cb91868f-2e8c-4c09-8003-2bd480534d7e"
+//                    )
                 }
             } else {
                 Log.e("BRANCH SDK", error.message)
-                startActivityForState("cb91868f-2e8c-4c09-8003-2bd480534d7e")
+                startActivityForState()
             }
         }.withData(this.intent.data).init()
     }
 
-    private fun startActivityForState(viewUserId: String? = "cb91868f-2e8c-4c09-8003-2bd480534d7e") {
+    private fun startActivityForState(viewUserId: String? = null) {
         val intent: Intent = when {
             User.getInstance().userId.isNotBlank() -> {
                 if (User.getInstance().firstName.isNullOrEmpty()) {
