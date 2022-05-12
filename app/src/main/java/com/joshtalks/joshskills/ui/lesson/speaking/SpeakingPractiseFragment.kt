@@ -122,7 +122,6 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         binding.handler = this
         binding.vm = viewModel
         binding.rootView.layoutTransition?.setAnimateParentHierarchy(false)
-        addObservers()
         // showTooltip()
         return binding.rootView
     }

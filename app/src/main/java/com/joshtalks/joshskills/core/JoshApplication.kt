@@ -61,6 +61,10 @@ class JoshApplication :
         public var isAppVisible = false
     }
 
+    fun isAppVisible(): Boolean {
+        return isAppVisible
+    }
+
     override fun attachBaseContext(base: Context) {
         super.attachBaseContext(base)
         base.let { ViewPumpContextWrapper.wrap(it) }
@@ -294,6 +298,7 @@ class JoshApplication :
     fun onAppDestroy() {
         Timber.tag(TAG).e("************* onAppDestroy")
         AppObjectController.releaseInstance()
+        PstnObserver.unregisterPstnReceiver()
     }
 
     private fun isActivityVisible(): String {

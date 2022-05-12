@@ -35,6 +35,7 @@ object VoipNetwork {
                 .readTimeout(READ_TIMEOUT, TimeUnit.SECONDS)
                 .callTimeout(CALL_TIMEOUT, TimeUnit.SECONDS)
                 .followSslRedirects(true)
+                .retryOnConnectionFailure(false)
 
             if (BuildConfig.DEBUG) {
                 val logging =

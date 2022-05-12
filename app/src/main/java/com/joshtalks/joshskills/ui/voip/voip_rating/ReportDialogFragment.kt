@@ -26,7 +26,7 @@ class ReportDialogFragment : BaseDialogFragment() {
     var channelName = EMPTY
     var fppDialogFlag:String?=null
     var optionId = 0
-    lateinit var function: () -> Unit
+    private var function: (() -> Unit)? = null
     val CHANNEL_NAME="channel_name"
     val FEEDBACK_OPTIONS="feedback_option"
     val REPORTED_BY_ID="reported_by_id"
@@ -53,7 +53,6 @@ class ReportDialogFragment : BaseDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         initView()
         addObserver()
     }
@@ -81,7 +80,6 @@ class ReportDialogFragment : BaseDialogFragment() {
     }
 
     private fun initView() {
-
 
         val mArgs = arguments
         type1 = mArgs?.getString(ARG_TYPE).toString()
@@ -113,7 +111,7 @@ class ReportDialogFragment : BaseDialogFragment() {
 
     private fun closeDialog() {
         if(fppDialogFlag=="false"){
-            function.invoke()
+            function?.invoke()
         }else{
             super.dismiss()
         }

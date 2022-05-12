@@ -229,7 +229,7 @@
             android:id="@+id/incoming_timer_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="@{vm.source == ConstantsKt.FROM_INCOMING_CALL ? View.VISIBLE : View.INVISIBLE }"
+            android:visibility="@{vm.source == ConstantsKt.FROM_INCOMING_CALL  ? View.VISIBLE : View.INVISIBLE }"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

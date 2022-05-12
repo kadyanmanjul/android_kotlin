@@ -47,6 +47,7 @@ class CallingRemoteService : Service() {
         e.printStackTrace()
     }
     private val ioScope by lazy { CoroutineScope(Dispatchers.IO + coroutineExceptionHandler) }
+    private val syncScope by lazy { CoroutineScope(Dispatchers.IO + coroutineExceptionHandler) }
     private val mediator by lazy<CallServiceMediator> { CallingMediator(ioScope) }
     private var isMediatorInitialise = false
     private val pstnController by lazy { PSTNController(ioScope) }
@@ -66,6 +67,9 @@ class CallingRemoteService : Service() {
         PrefManager.initServicePref(this)
         PrefManager.setVoipState(State.IDLE)
         updateStartTime(0)
+        syncScope.launch {
+            Utils.syncAnalytics()
+        }
         registerReceivers()
         observerPstnService()
         showNotification()
@@ -81,6 +85,7 @@ class CallingRemoteService : Service() {
                     disconnectCall()
                 }
                 ioScope.cancel()
+                syncScope.cancel()
                 stopSelf()
                 return START_NOT_STICKY
             }
@@ -254,6 +259,7 @@ class CallingRemoteService : Service() {
         unregisterReceivers()
         mediator.onDestroy()
         ioScope.cancel()
+        syncScope.cancel()
         super.onDestroy()
     }
 

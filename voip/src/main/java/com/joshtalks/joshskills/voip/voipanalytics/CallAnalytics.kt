@@ -17,7 +17,7 @@ import timber.log.Timber
 
 
 private const val TAG = "CallAnalytics"
-object CallAnalytics : CallAnalyticsInterface{
+object CallAnalytics : CallAnalyticsInterface {
 
     private val database by lazy {
         Utils.context?.let { VoipDatabase.getDatabase(it.applicationContext) }
@@ -26,7 +26,7 @@ object CallAnalytics : CallAnalyticsInterface{
     private val mutex = Mutex()
 
     override fun addAnalytics(event: EventName, agoraMentorId: String?, agoraCallId: String?) {
-        val callEvent = CallEvents(event = event, timestamp = System.currentTimeMillis().toString(), agoraCallId = agoraCallId, agoraMentorId = agoraMentorId)
+        val callEvent = CallEvents(event = event, timestamp = Utils.getCurrentTimeStamp(), agoraCallId = agoraCallId, agoraMentorId = agoraMentorId)
         pushAnalytics(callEvent)
     }
 
@@ -65,13 +65,12 @@ object CallAnalytics : CallAnalyticsInterface{
         CoroutineScope(Dispatchers.IO).launch {
             try{
                 val analyticsData = VoipAnalyticsEntity(
-                    event = event.event.eventName,
-                    agoraCallId = event.agoraCallId?:"",
-                    agoraMentorUid = event.agoraMentorId?:"",
-                    timeStamp = event.timestamp.toString()
+                    type = event.event.eventName,
+                    agora_call = event.agoraCallId?:"",
+                    agora_mentor = event.agoraMentorId?:"",
+                    timestamp = event.timestamp.toString()
                 )
                 database?.voipAnalyticsDao()?.saveAnalytics(analyticsData)
-                pushAnalyticsToServer()
             }
             catch (e : Exception){
                 if(e is CancellationException)
@@ -95,6 +94,5 @@ object CallAnalytics : CallAnalyticsInterface{
     private suspend fun callAnalyticsApi(request: Map<String, Any?>): Response<Unit> {
            return VoipNetwork.getVoipAnalyticsApi().agoraMidCallDetails(request)
     }
-
 
 }

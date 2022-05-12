@@ -5,8 +5,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
 
 internal interface WebrtcService {
-    fun connectCall(request: CallRequest) // Need Arguments
-    fun disconnectCall() // Might Need Arguments
+    suspend fun connectCall(request: CallRequest) // Need Arguments
+    suspend fun disconnectCall() // Might Need Arguments
     fun muteAudioStream(muteAudio : Boolean)
     fun enableSpeaker(speaker :Boolean)
     fun observeCallingEvents() : SharedFlow<CallState> // Will return value

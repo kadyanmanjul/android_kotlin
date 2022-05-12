@@ -48,7 +48,7 @@ data class CallContext(val callType: Int, val direction : CallDirection, val req
         state.backPress()
     }
 
-    fun disconnectCall() {
+    suspend fun disconnectCall() {
         Log.d(TAG, "disconnect Call From Webrtc ")
         mediator.disconnectCallFromWebrtc()
     }
@@ -59,7 +59,7 @@ data class CallContext(val callType: Int, val direction : CallDirection, val req
         mediator.uiStateFlow.value = currentUiState
     }
 
-    fun joinChannel(channelData: ChannelData) {
+    suspend fun joinChannel(channelData: ChannelData) {
         Log.d(TAG, "Join Channel with $channelData")
         mediator.joinChannel(channelData)
     }

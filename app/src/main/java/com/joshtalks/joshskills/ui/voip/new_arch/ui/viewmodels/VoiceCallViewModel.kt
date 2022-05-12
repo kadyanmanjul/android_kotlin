@@ -12,6 +12,7 @@ import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.base.BaseViewModel
 import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.base.constants.FPP
+import com.joshtalks.joshskills.base.constants.FROM_INCOMING_CALL
 import com.joshtalks.joshskills.base.constants.GROUP
 import com.joshtalks.joshskills.base.constants.PEER_TO_PEER
 import com.joshtalks.joshskills.base.log.Feature
@@ -89,7 +90,10 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                     ServiceEvents.CALL_INITIATED_EVENT -> {
                         uiState.currentState = "Connecting..."
                         val msg = Message.obtain().apply {
-                            what = CALL_INITIATED_EVENT
+                            what = if(source == FROM_INCOMING_CALL)
+                                        CANCEL_INCOMING_TIMER
+                                    else
+                                        CALL_INITIATED_EVENT
                         }
                         withContext(Dispatchers.Main) {
                             singleLiveEvent.value = msg

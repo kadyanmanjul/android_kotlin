@@ -22,6 +22,7 @@ class SoundManager(
     private var mPlayer: MediaPlayer? = null
     private var ringingPlay = false
     private var vibrator: Vibrator? = null
+
     companion object {
         private var vibrator: Vibrator? = null
        private var medialPlayer: MediaPlayer? = null
@@ -112,6 +113,7 @@ class SoundManager(
             )
         }
     }
+
      fun startRingtoneAndVibration() {
         stopPlaying()
         if (ringingPlay) {
@@ -170,13 +172,18 @@ class SoundManager(
 
     fun stopPlaying() {
         try {
-            mPlayer?.run {
+            ringtonePlayer?.run {
                 stop()
                 release()
-                mPlayer = null
+                ringtonePlayer = null
+                ringingPlay = false
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
+            vibrator?.run {
+                cancel()
+                vibrator = null
+            }
+        } catch (ex: Exception) {
+            ex.printStackTrace()
         }
     }
 }

@@ -54,8 +54,7 @@ internal class AgoraWebrtcService(val scope: CoroutineScope) : WebrtcService {
         observeCallbacks()
     }
 
-    override fun connectCall(request: CallRequest) {
-        scope.launch {
+    override suspend fun connectCall(request: CallRequest) {
             try {
                 Log.d(TAG, "Connect Call Request : $request")
                 state.emit(JOINING)
@@ -85,13 +84,10 @@ internal class AgoraWebrtcService(val scope: CoroutineScope) : WebrtcService {
                     throw e
                 e.printStackTrace()
             }
-
-        }
     }
 
-    override fun disconnectCall() {
+    override suspend fun disconnectCall() {
         Log.d(TAG, "Disconnecting Call")
-        scope.launch {
             try {
                 // 1. Send DISCONNECTING signal through Pubnub
                 // 2. Leave Channel through Agora SDK
@@ -104,7 +100,6 @@ internal class AgoraWebrtcService(val scope: CoroutineScope) : WebrtcService {
                     throw e
                 e.printStackTrace()
             }
-        }
     }
 
     private fun createLazyJoinRequest(request: CallRequest) {

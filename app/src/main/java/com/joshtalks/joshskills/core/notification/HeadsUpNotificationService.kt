@@ -282,7 +282,7 @@ class HeadsUpNotificationService : Service() {
                 R.layout.conversion_rooms_custom_notification
             }
         } else {
-            R.layout.call_notification
+            R.layout.call_notification_new
         }
         val customView = RemoteViews(packageName, layout)
         customView.setTextViewText(

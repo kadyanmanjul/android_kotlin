@@ -25,6 +25,7 @@ import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.VoiceCallViewMode
 import com.joshtalks.joshskills.voip.audiocontroller.AudioController
 import com.joshtalks.joshskills.voip.audiocontroller.AudioRouteConstants
 import com.joshtalks.joshskills.voip.constant.CALL_CONNECTED_EVENT
+import com.joshtalks.joshskills.voip.constant.CANCEL_INCOMING_TIMER
 import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
@@ -98,8 +99,9 @@ class CallFragment : BaseFragment() , SensorEventListener {
         setUpProximitySensor()
         liveData.observe(viewLifecycleOwner) {
             when (it.what) {
-                CALL_CONNECTED_EVENT -> {
-                    isAnimationCanceled= true
+                CANCEL_INCOMING_TIMER -> {
+                    stopAnimation()
+                    callBinding.incomingTimerContainer.visibility = View.INVISIBLE
                 }
             }
         }
@@ -120,8 +122,10 @@ class CallFragment : BaseFragment() , SensorEventListener {
             override fun onAnimationStart(animation: Animator?) {}
 
             override fun onAnimationEnd(animation: Animator?) {
+                Log.d(TAG, "onAnimationEnd: $counter $isAnimationCanceled")
                 if (counter != 0 && !isAnimationCanceled) {
                     counter -= 1
+                    Log.d(TAG, "onAnimationEnd Inside: $counter $isAnimationCanceled")
                     callBinding.incomingTimerTv.text = "$counter"
                     textAnimator.start()
                     progressAnimator.start()
@@ -132,6 +136,7 @@ class CallFragment : BaseFragment() , SensorEventListener {
                     vm.disconnect()
                 }
             }
+
             override fun onAnimationCancel(animation: Animator?) {
                 if (textAnimator.isStarted && textAnimator.isRunning)
                     textAnimator.cancel()
@@ -144,9 +149,7 @@ class CallFragment : BaseFragment() , SensorEventListener {
     @Synchronized
     private fun stopAnimation() {
         isAnimationCanceled = true
-        run{
-            progressAnimator.cancel()
-        }
+        progressAnimator.cancel()
     }
 
     override fun setArguments() {}

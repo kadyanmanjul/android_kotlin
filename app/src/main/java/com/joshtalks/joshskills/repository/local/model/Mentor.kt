@@ -116,13 +116,14 @@ class Mentor {
                 } catch (ex:Exception){
                     LogException.catchException(ex)
                 }
-
-                val intent = Intent(joshApplication, SignUpActivity::class.java)
-                intent.apply {
-                    addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                if (AppObjectController.joshApplication.isAppVisible()) {
+                    val intent = Intent(joshApplication, SignUpActivity::class.java)
+                    intent.apply {
+                        addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    }
+                    joshApplication.startActivity(intent)
                 }
-                joshApplication.startActivity(intent)
                 if (showNotification) {
                     showLogoutNotification()
                 }
