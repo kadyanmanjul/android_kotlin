@@ -17,6 +17,7 @@ import timber.log.Timber
 
 
 private const val TAG = "CallAnalytics"
+
 object CallAnalytics : CallAnalyticsInterface {
 
     private val database by lazy {
@@ -26,54 +27,54 @@ object CallAnalytics : CallAnalyticsInterface {
     private val mutex = Mutex()
 
     override fun addAnalytics(event: EventName, agoraMentorId: String?, agoraCallId: String?) {
-        val callEvent = CallEvents(event = event, timestamp = Utils.getCurrentTimeStamp(), agoraCallId = agoraCallId, agoraMentorId = agoraMentorId)
+        val callEvent = CallEvents(
+            event = event,
+            timestamp = Utils.getCurrentTimeStamp(),
+            agoraCallId = agoraCallId,
+            agoraMentorId = agoraMentorId
+        )
         pushAnalytics(callEvent)
     }
 
-    override fun uploadAnalyticsToServer() {
+    override suspend fun uploadAnalyticsToServer() {
         pushAnalyticsToServer()
     }
 
-    private fun pushAnalyticsToServer() {
-        CoroutineScope(Dispatchers.IO).launch {
-            mutex.withLock {
-                val analyticsList = database?.voipAnalyticsDao()?.getAnalytics()
-                if (analyticsList != null) {
-                    for (analytics in analyticsList) {
-                        try {
-                            val eventHashMap = analytics.serializeToMap()
-                            val response = callAnalyticsApi(eventHashMap)
-                            if (response.isSuccessful) {
-                                database?.voipAnalyticsDao()?.deleteAnalytics(analytics.id)
-                            }
-                        } catch (e: Exception) {
-                            Timber.tag("VOIP_ANALYTICS").e("Error Occurred")
-                            e.printStackTrace()
-                            if(e is CancellationException)
-                                throw e
-                        }
+    private suspend fun pushAnalyticsToServer() {
+        val analyticsList = database?.voipAnalyticsDao()?.getAnalytics()
+        if (analyticsList != null) {
+            for (analytics in analyticsList) {
+                try {
+                    val eventHashMap = analytics.serializeToMap()
+                    val response = callAnalyticsApi(eventHashMap)
+                    if (response.isSuccessful) {
+                        database?.voipAnalyticsDao()?.deleteAnalytics(analytics.id)
                     }
+                } catch (e: Exception) {
+                    Timber.tag("VOIP_ANALYTICS").e("Error Occurred")
+                    e.printStackTrace()
+                    if (e is CancellationException)
+                        throw e
                 }
             }
         }
     }
 
     private fun pushAnalytics(event: CallEvents) {
-        if(event.agoraCallId?.isEmpty() == true || event.agoraMentorId?.isEmpty() == true) {
+        if (event.agoraCallId?.isEmpty() == true || event.agoraMentorId?.isEmpty() == true) {
             return
         }
         CoroutineScope(Dispatchers.IO).launch {
-            try{
+            try {
                 val analyticsData = VoipAnalyticsEntity(
                     type = event.event.eventName,
-                    agora_call = event.agoraCallId?:"",
-                    agora_mentor = event.agoraMentorId?:"",
+                    agora_call = event.agoraCallId ?: "",
+                    agora_mentor = event.agoraMentorId ?: "",
                     timestamp = event.timestamp.toString()
                 )
                 database?.voipAnalyticsDao()?.saveAnalytics(analyticsData)
-            }
-            catch (e : Exception){
-                if(e is CancellationException)
+            } catch (e: Exception) {
+                if (e is CancellationException)
                     throw e
                 e.printStackTrace()
             }
@@ -92,7 +93,7 @@ object CallAnalytics : CallAnalyticsInterface {
 
     @JvmSuppressWildcards
     private suspend fun callAnalyticsApi(request: Map<String, Any?>): Response<Unit> {
-           return VoipNetwork.getVoipAnalyticsApi().agoraMidCallDetails(request)
+        return VoipNetwork.getVoipAnalyticsApi().agoraMidCallDetails(request)
     }
 
 }
