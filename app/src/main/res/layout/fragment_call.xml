@@ -36,10 +36,10 @@
             app:layout_constraintTop_toBottomOf="@+id/topic_header" />
 
         <androidx.appcompat.widget.AppCompatImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/_30sdp"
+            android:layout_height="@dimen/_30sdp"
             android:id="@+id/next_topic_btn"
-            android:padding="@dimen/_5sdp"
+            android:layout_margin="@dimen/_10sdp"
             android:onClick="@{callFragment::changeTopicImage}"
             app:layout_constraintBottom_toBottomOf="@+id/topic_viewpager"
             app:layout_constraintEnd_toEndOf="@+id/topic_viewpager"
@@ -89,7 +89,6 @@
             android:id="@+id/call_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/_24sdp"
             android:gravity="center"
             android:text="@{vm.uiState.currentState}"
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
@@ -99,6 +98,7 @@
             app:layout_constraintEnd_toStartOf="@+id/guideline5"
             app:layout_constraintStart_toStartOf="@+id/guideline4"
             app:layout_constraintTop_toBottomOf="@id/caller_name"
+            app:layout_constraintVertical_bias="0.317"
             tools:ignore="MissingPrefix"
             tools:text="" />
 
@@ -107,7 +107,6 @@
             startTimer="@{vm.uiState.startTime}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/_24sdp"
             android:gravity="center"
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
             android:textColor="@color/white"
@@ -116,6 +115,7 @@
             app:layout_constraintEnd_toStartOf="@+id/guideline5"
             app:layout_constraintStart_toStartOf="@+id/guideline4"
             app:layout_constraintTop_toBottomOf="@id/caller_name"
+            app:layout_constraintVertical_bias="0.317"
             tools:ignore="MissingPrefix" />
 
         <androidx.constraintlayout.widget.Barrier
@@ -136,10 +136,10 @@
             android:src="@drawable/ic_call_placeholder"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.514"
+            app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.027" />
+            app:layout_constraintVertical_bias="0.026" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/topic_header"
