@@ -138,8 +138,8 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
         addViewModelObserver()
         addObserver()
         if (isActivityOpenFromNotification) {
-            addJoinAPIObservers()
-            getIntentExtrasFromNotification()
+//            addJoinAPIObservers()
+//            getIntentExtrasFromNotification()
         }
         else {
             initData()

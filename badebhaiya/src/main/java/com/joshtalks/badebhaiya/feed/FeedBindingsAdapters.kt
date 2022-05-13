@@ -125,7 +125,7 @@ fun setConversationRoomCardActionButton(
 fun setTimer(time:Long,view: MaterialButton,roomListResponseItem: RoomListResponseItem,adapter: RecyclerView.Adapter<FeedAdapter.FeedViewHolder>,
              viewHolder: RecyclerView.ViewHolder,callback: FeedAdapter.ConversationRoomItemCallback?)
 {
-    val count= time-Date().time/1000
+    val count= time-Date().time
     val handler5 = Handler(Looper.getMainLooper())
     handler5.postDelayed({view.text = view.context.getString(R.string.join_now)
         view.setTextColor(ColorStateList.valueOf(view.context.resources.getColor(R.color.white)))
@@ -137,7 +137,7 @@ fun setTimer(time:Long,view: MaterialButton,roomListResponseItem: RoomListRespon
             (adapter as FeedAdapter).updateScheduleRoomStatusForSpeaker(viewHolder.absoluteAdapterPosition)
         view.setOnClickListener {
             callback?.joinRoom(roomListResponseItem, view) }
-    }, count*1000)
+    }, count)
 }
 
 @BindingAdapter("isImageRequired", "imageUrl", "userName", "isRoundImage", "initialsFontSize", "imageCornerRadius", requireAll = false)

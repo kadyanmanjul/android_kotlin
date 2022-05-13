@@ -95,6 +95,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
             flags: Array<Int> = arrayOf()
         ) = Intent(context, FeedActivity::class.java).apply {
 
+            Timber.d("INTENT FOR NOTIFICATION DATA => $roomId $topicName")
             putExtra(OPEN_FROM_NOTIFICATION, true)
             putExtra(ROOM_ID, roomId.toInt())
             putExtra(TOPIC_NAME, topicName)
@@ -139,6 +140,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         binding.lifecycleOwner = this
         binding.handler = this
         binding.viewModel = viewModel
+        Timber.d("FEED INTENT ${intent.extras}")
         if(user!=null)
         {
             viewProfile(user, true)
@@ -146,7 +148,6 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
             viewProfile(SingleDataManager.pendingPilotEventData!!.pilotUserId, true)
         }
         if (User.getInstance().isLoggedIn()) {
-            checkAndOpenLiveRoom()
             viewModel.setIsBadeBhaiyaSpeaker()
             addObserver()
             initView()
@@ -165,8 +166,15 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                 }
 
             })
+            checkAndOpenLiveRoom()
         }
         //setOnClickListener()
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+        checkAndOpenLiveRoom()
+
     }
     fun userid(): String {
 
@@ -181,11 +189,14 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
     }
 
     private fun checkAndOpenLiveRoom() {
+        Timber.d("FEED ACIVITY ON RESTART  => ${intent.extras}")
         if (intent.getBooleanExtra(OPEN_FROM_NOTIFICATION, false)) {
 
             // TODO: Open Live Room.
 
-            takePermissions(intent.getStringExtra(ROOM_ID) ?: "", intent.getStringExtra(TOPIC_NAME) ?: "")
+                Timber.d("CHECK AND OPEN LIVE ROOM ID => ${intent.getIntExtra(ROOM_ID, 0)} and topic name => ${intent.getStringExtra(TOPIC_NAME)}")
+
+            takePermissions(intent.getIntExtra(ROOM_ID, 0).toString(), intent.getStringExtra(TOPIC_NAME) ?: "")
 
 
 //            LiveRoomFragment.launch(
@@ -283,7 +294,6 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                     }
                 }
                 ROOM_EXPAND->{
-                    LiveRoomFragment().expandLiveRoom()
                 }
                 SCROLL_TO_TOP->{
                    //binding.recyclerView.layoutManager?.scrollToPosition(0)
@@ -438,6 +448,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                 roomId = room.roomId.toString()
             )
         )
+        Timber.d("NOTIFICATION INTENT => ${notificationIntent.extras}")
         pendingIntent =
             PendingIntent.getBroadcast(
                 applicationContext,
@@ -467,6 +478,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
             //TODO find work around or why this service is null
             val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager?
             alarmManager?.cancel(pendingIntent)
+//            alarmManager?.cance
         }
         viewModel.deleteReminder(
             DeleteReminderRequest(

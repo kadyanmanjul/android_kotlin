@@ -6,16 +6,19 @@ import com.joshtalks.badebhaiya.R
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import retrofit2.HttpException
+import timber.log.Timber
 
 fun Exception.showAppropriateMsg(application: Application = AppObjectController.joshApplication) {
     when (this) {
         is HttpException -> {
+            Timber.d("HTTP EXCEPTION AGYA => ${this.message()}")
             showToast(application.getString(R.string.something_went_wrong))
         }
         is SocketTimeoutException, is UnknownHostException, is FirebaseNetworkException -> {
             showToast(application.getString(R.string.internet_not_available_msz))
         }
         else -> {
+            Timber.d("else EXCEPTION AGYA => ${this.message}")
             showToast(application.getString(R.string.something_went_wrong))
         }
     }

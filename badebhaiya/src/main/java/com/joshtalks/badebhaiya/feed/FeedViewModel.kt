@@ -6,8 +6,11 @@ import android.util.Log
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.lifecycle.*
+import com.google.gson.Gson
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.core.AppObjectController
+import com.joshtalks.badebhaiya.core.errorMessage
+import com.joshtalks.badebhaiya.core.models.ErrorBody
 import com.joshtalks.badebhaiya.core.showAppropriateMsg
 import com.joshtalks.badebhaiya.core.showToast
 import com.joshtalks.badebhaiya.feed.adapter.FeedAdapter
@@ -30,6 +33,7 @@ import com.joshtalks.badebhaiya.utils.IST_TIME_DIFFERENCE
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 const val ROOM_ITEM = "room_item"
 const val USER_ID = "user_id"
@@ -121,7 +125,8 @@ class FeedViewModel : ViewModel() {
         }
     }
 
-    fun joinRoom(roomId: String, topic: String) {
+    fun joinRoom(roomId: String, topic: String = "sahil") {
+        Timber.d("JOIN ROOM PARAMS => room: $roomId and Topic => $topic")
         if (pubNubState == PubNubState.STARTED){
             showToast("Please Leave Current Room")
             return
@@ -154,15 +159,13 @@ class FeedViewModel : ViewModel() {
                 }
                 else
                 {
-
-                    message.what = ROOM_EXPAND
-                    singleLiveEvent.value=message
-
-                    Log.i("YASHEN", "joinRoom: failed")
+                    showToast(response.errorMessage())
                 }
                 Log.d("sahil", "joinRoom:$response")
 
             } catch (e: Exception) {
+                Timber.d("JOIN ROOM ERROR => ${e.stackTrace}")
+                e.printStackTrace()
                 e.showAppropriateMsg()
             } finally {
                 isLoading.set(false)

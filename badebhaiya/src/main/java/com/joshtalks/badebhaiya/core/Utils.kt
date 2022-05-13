@@ -11,8 +11,11 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import com.google.gson.Gson
+import com.joshtalks.badebhaiya.core.models.ErrorBody
 import com.muddzdev.styleabletoast.StyleableToast
 import io.michaelrocks.libphonenumber.android.PhoneNumberUtil
+import retrofit2.Response
 
 fun hideKeyboard(activity: Activity, view: View) {
     val inputManager: InputMethodManager =
@@ -53,4 +56,8 @@ fun Intent.startServiceForWebrtc() {
             this
         )
     }
+}
+
+fun <T> Response<T>.errorMessage(): String{
+    return Gson().fromJson(this.errorBody()?.string(), ErrorBody::class.java).message
 }

@@ -11,16 +11,17 @@ object ReminderNotificationManager {
 
     fun getRedirectingIntent(context: Context, notification: Notification): Intent{
         return when(notification.type) {
-            REMINDER -> getLiveRoomIntent(context, notification.roomId)
-            LIVE -> getReminderIntent(context, notification.userId)
+            LIVE -> getLiveRoomIntent(context, notification.roomId, notification.title)
+            REMINDER -> getReminderIntent(context, notification.userId)
         }
     }
 
-    private fun getLiveRoomIntent(context: Context, roomId: String): Intent {
-        return FeedActivity.getIntentForNotification(context, roomId = roomId)
+    private fun getLiveRoomIntent(context: Context, roomId: String, topic: String): Intent {
+        return FeedActivity.getIntentForNotification(context, roomId = roomId, topic)
     }
 
     private fun getReminderIntent(context: Context, speakerUserId: String): Intent{
         return FeedActivity.getIntentForProfile(context, speakerUserId)
     }
+
 }

@@ -91,12 +91,13 @@ class NotificationHelper : BroadcastReceiver() {
     }
 
     override fun onReceive(context: Context, intent: Intent) {
-        Timber.d("Notification agaya => $intent")
+        Timber.d("Notification agaya => ${intent.extras}")
 
         val notificationManager: NotificationManager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         intent.getBundleExtra(NOTIFICATION_BUNDLE)?.getParcelable<Notification>(NOTIFICATION)
             ?.let { notification ->
+                Timber.d("Notification aur data hai => $notification")
                 notificationManager.notify(
                     notification.id,
                     getNotification(
