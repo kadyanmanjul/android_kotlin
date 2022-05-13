@@ -141,7 +141,7 @@
     <string name="feedback_sub_video">இந்த வீடியோவை மதிப்பிடவும்</string>
     <string name="feedback_hint">தயவுசெய்து உங்கள் கருத்தைப் பகிரவும்</string>
     <string name="cancel_button">ரத்துசெய் </string>
-    <string name="permission_dialog_description">&lt;![CDATA[अगर आप कोर्स को लेके serious हो और &lt;b&gt;பாடம் நினைவூட்டல் மற்றும் &lt;b&gt;பயிற்சி கூட்டாளியின்&lt;/b&gt; அழைப்பைத் தவறவிட வேண்டாம்,&lt;br&gt;&lt;br&gt; &lt;b&gt;அமைப்புகளில்&lt;/b&gt; &lt;b&gt;ஜேக்&lt;/b&gt; &lt;b&gt;ஆட்டோ ஸ்டார்ட்டை&lt;/b&gt; இயக்கவும் ]]&amp;gt;</string>
+    <string name="permission_dialog_description"><![CDATA[If you\'re serious about the course and don\'t want to miss out on practicing <b>Lessons</b> reminder and <b>Practice partner</b> calls:<br><br>தீவிரமான மாணவர் என்றால்: Go to <b>settings</b> and <b>Auto Start ON</b>]]></string>
     <string name="serious_student_ho">நீங்கள் தீவிர மாணவரா?</string>
     <string name="allow">அனுமதி</string>
     <string name="do_not_ask_again">மீண்டும் கேட்காதே</string>
@@ -468,5 +468,11 @@
     <string name="mute">Mute</string>
     <string name="raised">Raised</string>
     <string name="unraised">UnRaised</string>
+    <string name="restart_course_message">கோர்ஸை முதலில் இருந்து மறுபடியும் தொடங்க வேண்டுமா ? இதுவரை நீங்கள் செய்தது அழிந்து விடும். சேகரிக்கப்பட்ட புள்ளிகள் மாறாது.</string>
+    <string name="mehnat_prompt">அதே வழியில் முயற்சி செய்யுங்கள்.</string>
+    <string name="extend_free_trial_subheading">நீங்கள் பாடம் 1 ஐ முடிக்கவில்லை என்பதை நாங்கள் காண்கிறோம்!இந்த பயன்பாடு தீவிரமாக ஆங்கிலம் படிக்க விரும்பும் மாணவர்களுக்கு மட்டுமே </string>
+    <string name="extend_free_trial1">நாங்கள் உங்களுக்கு மேலும் ஒரு நாள் இலவச சோதனையை வழங்க விரும்புகிறோம்.</string>
+    <string name="extend_free_trial2">நீங்கள் இலவச சோதனையை ஒரு முறை மட்டுமே நீட்டிக்க முடியும்.</string>
+    <string name="extend_free_trial3">உங்கள் ஆங்கிலத்தை மேம்படுத்துவதில் நீங்கள் தீவிரமாக இருக்கிறீர்களா?</string>
 
 </resources>

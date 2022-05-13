@@ -141,7 +141,7 @@
     <string name="feedback_sub_video">"ദയവായി ഈ വീഡിയോ റേറ്റ്  ചെയ്യുക"</string>
     <string name="feedback_hint">ദയവായി നിങ്ങളുടെ ഫീഡ്ബാക്ക് പങ്കിടുക</string>
     <string name="cancel_button">"cancel button"</string>
-    <string name="permission_dialog_description">&lt;![CDATA[अगर आप कोर्स को लेके serious हो और &lt;b&gt;പാഠം ഓർമ്മപ്പെടുത്തലിന്റെയും &lt;b&gt;പരിശീലന പങ്കാളിയുടെയും&lt;/b&gt; കോൾ നഷ്‌ടപ്പെടുത്താൻ ആഗ്രഹിക്കരുത്,&lt;br&gt;&lt;br&gt; &lt;b&gt;ക്രമീകരണങ്ങളിൽ&lt;/b&gt; &lt;b&gt;Jake&lt;/b&gt; &lt;b&gt;Auto Start&lt;/b&gt; ഓണാക്കുക ]]&amp;gt;</string>
+    <string name="permission_dialog_description"><![CDATA[നിങ്ങൾ കോഴ്‌സിനെക്കുറിച്ച് serious ആയ വ്യക്തിയാണെങ്കിൽ, <b>Lessons</b> reminder & <b>Practice partner</b> call -സും  പരിശീലിക്കുന്നത് നഷ്‌ടപ്പെടുത്താൻ ആഗ്രഹിക്കുന്നില്ലെങ്കിൽ:<br><br>സെറ്റിങ്‌സിലേക്കു പോയി <b>Auto Start ON</b> ചെയ്യൂ.]]></string>
     <string name="serious_student_ho">നിങ്ങൾ ഒരു serious വിദ്യാർത്ഥിയാണോ?</string>
     <string name="allow">"അനുവദിക്കുക"</string>
     <string name="do_not_ask_again">"വീണ്ടും ചോദിക്കരുത്"</string>
@@ -471,5 +471,11 @@
     <string name="mute">Mute</string>
     <string name="raised">Raised</string>
     <string name="unraised">UnRaised</string>
+    <string name="restart_course_message">നിങ്ങൾ കോഴ്സ് പുനരാരംഭിക്കാൻ താല്പര്യപെടുന്നുണ്ടോ? നിങ്ങൾ നേടിയ പോയിന്റുകൾ നിങ്ങളുടെ പക്കൽ തന്നെ കാണും, പക്ഷേ കോഴ്‌സ് lesson 1-ൽ  നിന്നും വീണ്ടും ആരംഭിക്കുന്നതായിരിക്കും </string>
+    <string name="mehnat_prompt">ഇതുപോലെ തന്നെ പരിശ്രമം തുടരുക. </string>
+    <string name="extend_free_trial_subheading">നിങ്ങൾ Lesson 1 പൂർത്തിയാക്കിയിട്ടില്ലെന്ന് ഞങ്ങൾ കാണുന്നു!English പഠിക്കാൻ serious ആയി ആഗ്രഹിക്കുന്ന വിദ്യാർത്ഥികൾക്ക് മാത്രമാണ് ഈ App</string>
+    <string name="extend_free_trial1">നിങ്ങൾക്ക് ഒരു ദിവസത്തെ free trial കൂടി നൽകാൻ ഞങ്ങൾ ആഗ്രഹിക്കുന്നു.</string>
+    <string name="extend_free_trial2">നിങ്ങൾക്ക് ഒരു തവണ മാത്രമേ free trial നീട്ടാൻ സാധിക്കുകയുള്ളു.</string>
+    <string name="extend_free_trial3">നിങ്ങളുടെ English മെച്ചപ്പെടുത്തുന്നതിൽ നിങ്ങൾ serious ആണോ ?</string>
 
 </resources>

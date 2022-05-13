@@ -144,7 +144,7 @@
     <string name="feedback_sub_video">"ਕਿਰਪਾ ਕਰਕੇ ਇਸ ਵੀਡੀਓ ਨੂੰ ਦਰਜਾ ਦਿਓ"</string>
     <string name="feedback_hint">ਕਿਰਪਾ ਕਰਕੇ ਆਪਣਾ ਫੀਡਬੈਕ ਸਾਂਝਾ ਕਰੋ</string>
     <string name="cancel_button">"ਰੱਦ ਕਰੋ ਬਟਨ"</string>
-    <string name="permission_dialog_description">&lt;![CDATA[अगर आप कोर्स को लेके serious हो और &lt;b&gt;ਸਬਕ ਰੀਮਾਈਂਡਰ ਅਤੇ &lt;b&gt;ਪ੍ਰੈਕਟਿਸ ਪਾਰਟਨਰ&lt;/b&gt; ਦੀ ਕਾਲ ਨੂੰ ਮਿਸ ਨਹੀਂ ਕਰਨਾ ਚਾਹੁੰਦੇ,&lt;br&gt;&lt;br&gt; &lt;b&gt;ਸੈਟਿੰਗਾਂ&lt;/b&gt; ]]&amp;gt; ਵਿੱਚ &lt;b&gt;ਜੈਕ&lt;/b&gt; &lt;b&gt;ਆਟੋ ਸਟਾਰਟ&lt;/b&gt; ਨੂੰ ਚਾਲੂ ਕਰੋ</string>
+    <string name="permission_dialog_description"><![CDATA[Agar aap course ko leke serious ho aur <b>Lessons</b> reminder and <b>Practice partner</b> calls miss nahi karna chahate ho to:<br><br><b>Settings</b> me jake <b>Auto Start</b> ko <b>ON</b> kare]]></string>
     <string name="serious_student_ho">ਕੀ ਤੁਸੀਂ ਇੱਕ ਗੰਭੀਰ ਵਿਦਿਆਰਥੀ ਹੋ?</string>
     <string name="allow">"ਦੀ ਇਜਾਜ਼ਤ"</string>
     <string name="do_not_ask_again">"ਦੁਬਾਰਾ ਨਾ ਪੁੱਛੋ"</string>
@@ -473,5 +473,11 @@
     <string name="mute">Mute</string>
     <string name="raised">Raised</string>
     <string name="unraised">UnRaised</string>
+    <string name="restart_course_message">ਕੀ ਤੁਸੀਂ ਕੋਰਸ ਦੁਬਾਰਾ ਸ਼ੁਰੂ ਕਰਨਾ ਚਾਹੁੰਦੇ ਹੋ? ਤੁਹਾਡੇ ਕਮਾਏ Points ਤੁਹਾਡੇ ਕੋਲ ਰਹਿਣਗੇ ਪਰ ਕੋਰਸ Lesson 1 ਤੋਂ ਦੁਬਾਰਾ ਸ਼ੁਰੂ ਹੋਵੇਗਾ</string>
+    <string name="mehnat_prompt">ਇਸ ਤਰ੍ਹਾਂ ਕੋਸ਼ਿਸ਼ ਕਰਦੇ ਰਹੋ</string>
+    <string name="extend_free_trial_subheading">ਅਸੀਂ ਦੇਖਦੇ ਹਾਂ ਕਿ ਤੁਸੀਂ Lesson 1 ਪੂਰਾ ਨਹੀਂ ਕੀਤਾ ਹੈ!ਇਹ ਐਪ ਸਿਰਫ਼ serious students ਲਈ ਹੈ ਜੋ ਅੰਗਰੇਜ਼ੀ ਸਿੱਖਣਾ ਚਾਹੁੰਦੇ ਹਨ।</string>
+    <string name="extend_free_trial1">ਅਸੀਂ ਤੁਹਾਨੂੰ ਇੱਕ ਦਿਨ ਦਾ Free Trial ਦੇਣਾ ਚਾਹੁੰਦੇ ਹਾਂ।</string>
+    <string name="extend_free_trial2">ਤੁਸੀਂ Free Trial ਸਿਰਫ਼ ਇੱਕ ਵਾਰ ਵਧਾ ਸਕਦੇ ਹੋ।</string>
+    <string name="extend_free_trial3">ਕੀ ਤੁਸੀਂ ਆਪਣੀ English ਨੂੰ ਸੁਧਾਰਨ ਲਈ serious ਹੋ?</string>
 
 </resources>

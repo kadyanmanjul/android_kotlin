@@ -141,7 +141,7 @@
     <string name="feedback_sub_video">దయచేసి ఈ వీడియోను రేట్ చేయండి</string>
     <string name="feedback_hint">దయచేసి మీ అభిప్రాయాన్ని పంచుకోండి</string>
     <string name="cancel_button">రద్దు చేయి బటన్</string>
-    <string name="permission_dialog_description">&lt;![CDATA[अगर आप कोर्स को लेके serious हो और &lt;b&gt;లెసన్ రిమైండర్ మరియు &lt;b&gt;ప్రాక్టీస్ పార్టనర్&lt;/b&gt; కాల్‌ని మిస్ చేయకూడదనుకోండి,&lt;br&gt;&lt;br&gt; &lt;b&gt;సెట్టింగ్‌లు&lt;/b&gt; ]]&amp;gt;లో &lt;b&gt;జేక్&lt;/b&gt; &lt;b&gt;ఆటో స్టార్ట్‌ని&lt;/b&gt; ఆన్ చేయండి</string>
+    <string name="permission_dialog_description"><![CDATA[Miru course gurinci tivraṅga uṇṭe mariyu <b>lessons </b>remindernu kōlpōkūḍadanukuṇṭē mariyu bhāgasvāmi kāl‌lanu <b>practice</b> ceyandi:<br><br><b>Settinglaku</b> velli <b>Auto Startni ON</b> ceyandi]]></string>
     <string name="serious_student_ho">నీవు పట్టుదల ఉన్న విద్యార్థివా?</string>
     <string name="allow">అనుమతించు</string>
     <string name="do_not_ask_again">మళ్ళీ అడగకు</string>
@@ -470,5 +470,11 @@
     <string name="mute">Mute</string>
     <string name="raised">Raised</string>
     <string name="unraised">UnRaised</string>
+    <string name="restart_course_message">మీరు సంపాదించిన points అలాగే ఉంటాయి కానీ lesson 1 మళ్లీ ప్రారంభమవుతుంది</string>
+    <string name="mehnat_prompt">ఇలాగే ప్రయత్నిస్తూ ఉండండి</string>
+    <string name="extend_free_trial_subheading">మీరు Lesson 1 పూర్తి చేయలేదని మేము గమనించాము!ఈ యాప్ ఇంగ్లీషు నేర్చుకోవాలనుకునే serious students మాత్రమే.</string>
+    <string name="extend_free_trial1">మేము మీకు మరో రోజు Free Trial అందించాలనుకుంటున్నాము.</string>
+    <string name="extend_free_trial2">మీరు Free Trial ఒక్కసారి మాత్రమే పెంచగలరు.</string>
+    <string name="extend_free_trial3">మీరు మీ Englishని మెరుగుపరచడానికి తీవ్రంగా ఉన్నారా?</string>
 
 </resources>

@@ -141,7 +141,7 @@
     <string name="feedback_sub_video">"कृपया या व्हिडिओला रेट करा"</string>
     <string name="feedback_hint">कृपया तुमचा अभिप्राय शेअर करा</string>
     <string name="cancel_button">"रद्द करा बटण"</string>
-    <string name="permission_dialog_description">&lt;![CDATA[आपण कोर्सबद्दल serious असल्यास आणि &lt;b&gt;धडा रिमाइंडर आणि &lt;b&gt;सराव भागीदाराचा&lt;/b&gt; कॉल चुकवायचा चुकवायचा नसेल तर &lt;br&gt;&lt;br&gt; &lt;b&gt;सेटिंग्जमध्ये&lt;/b&gt; &lt;b&gt;जाऊन &lt;/b&gt; &lt;b&gt;ऑटो स्टार्ट&lt;/b&gt; चालू करा]]&amp;gt;</string>
+    <string name="permission_dialog_description"><![CDATA[Je tusim korasa bare serious ho ate <b>lessons</b> reminder ate <b>Practice partner</b> calls nu miss nahim karana cahude ho tam:<br><br><b>Settings</b>\'te jao ate <b>Auto Start</b> nū <b>ON</b> karo]]></string>
     <string name="serious_student_ho">तुम्ही गंभीर विद्यार्थी आहात का?</string>
     <string name="allow">"परवानगी द्या"</string>
     <string name="do_not_ask_again">"पुन्हा विचारू नका"</string>
@@ -467,5 +467,11 @@
     <string name="mute">Mute</string>
     <string name="raised">Raised</string>
     <string name="unraised">UnRaised</string>
+    <string name="restart_course_message">तुम्हाला कोर्से पुन्हा सुरू करायचा आहे का? (तुमचे कमावलेले points तुमच्याकडेच राहतील पण course lesson 1 पासून परत start होईल) </string>
+    <string name="mehnat_prompt">Ashich mehnat karat raha.</string>
+    <string name="extend_free_trial_subheading">आमच्या लक्षात आले की तुम्ही lesson 1 पूर्ण केलेला नाही!हे ऐप फक्त serious students साठी आहे ज्यांना English शिकायचे आहे.</string>
+    <string name="extend_free_trial1">आम्ही तुम्हाला आणखी एक दिवसाचा Free Trial देऊ इच्छितो.</string>
+    <string name="extend_free_trial2">तुम्ही Free Trial फक्त एकदाच वाढवू शकता.</string>
+    <string name="extend_free_trial3">तुम्ही तुमचे English सुधारण्यासाठी serious आहात का?</string>
 
 </resources>

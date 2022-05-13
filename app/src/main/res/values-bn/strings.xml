@@ -143,7 +143,7 @@
     <string name="feedback_sub_video">"দয়া করে এই ভিডিওটিকে রেট দিন"</string>
     <string name="feedback_hint">আপনার মতামত শেয়ার করুন</string>
     <string name="cancel_button">"বাতিল বোতাম"</string>
-    <string name="permission_dialog_description">&lt;![CDATA[যদি আপনি এই কোর্স টি কে নিয়ে serious হন আর &lt;b&gt;Lesson Reminder &lt;/b&gt; আর &lt;b&gt;Practice Partner&lt;/b&gt; এর কল মিস করতে না চান তাহলে,&lt;br&gt;&lt;br&gt; &lt;b&gt;সেটিংসে&lt;/b&gt; এ গিয়ে  &lt;b&gt;অটো স্টার্ট&lt;/b&gt;টি কে &lt;b&gt;ON&lt;/b&gt; করুন]]&amp;gt;</string>
+    <string name="permission_dialog_description"><![CDATA[Jodi apni course tike niye serious thaken, ar <b>Lesson</b> er reminder ar <b>Practice partner</b> er calls miss korte chan na, tahole <br><br> <b>Settings</b> e giye <b>Auto Start ON</b> Korun]]></string>
     <string name="serious_student_ho">আপনি কি একজন Serious Student?</string>
     <string name="allow">"অনুমতি দিন"</string>
     <string name="do_not_ask_again">"আর জিজ্ঞাসা করবেন না"</string>
@@ -471,5 +471,13 @@
     <string name="mute">Mute</string>
     <string name="raised">Raised</string>
     <string name="unraised">UnRaised</string>
+    <string name="restart_course_message">আপনি কি কোর্স টি আবার শুরু করতে চান?(আপনার Earn করা Points আপনার কাছেই থাকবে।কিন্তু কোর্স Lesson 1 থেকে আবার start হবে)</string>
+    <string name="mehnat_prompt">এরকম ভাবেই পরিশ্রম করতে থাকুন </string>
+    <string name="extend_free_trial_subheading">আমরা দেখলাম যে আপনি Lesson 1 পুরো করেন নি।এই App টি শুধু Serious  Students দের জন্য যারা ইংলিশ শিখতে চায়।</string>
+    <string name="extend_free_trial1">আমি আপনাকে আরেক দিন এর জন্য Free Trial দিতে চাই ।</string>
+    <string name="extend_free_trial2">আপনি Free Trial কে মাত্র একবার বাড়াতে পারবেন।</string>
+    <string name="extend_free_trial3">আপনি কি Serious? যে আপনি English Improve করতে চান?</string>
+
+
 
 </resources>
