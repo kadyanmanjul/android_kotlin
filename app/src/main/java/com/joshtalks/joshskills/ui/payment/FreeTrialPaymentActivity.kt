@@ -552,32 +552,39 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                         "(" + String.format("%,d", data1.ratingsCount) + ")"
 
 
-                    val data2 = it[1]
-                    data2.buttonText?.let { it1 -> buttonText.add(it1) }
-                    data2.heading.let { it1 -> headingText.add(it1) }
-                    subscriptionCard.title.text = data2.courseHeading
-                    TextViewCompat.setTextAppearance(
-                        subscriptionCard.title,
-                        R.style.TextAppearance_JoshTypography_Body_Text_Small_Semi_Bold
-                    )
-                    subscriptionCard.title.setTextColor(resources.getColor(R.color.colorPrimary))
-                    subscriptionCard.txt_currency.text = data2.discount?.get(0).toString()
-                    if (data2.perCoursePrice.isNullOrBlank()) {
-                        subscriptionCard.per_course_text.visibility = View.GONE
+                    val data2 = it.getOrNull(1)
+                    if (data2 == null||PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID)!=DEFAULT_COURSE_ID) {
+                        index = 0
+                        subscriptionCard.visibility = View.GONE
                     } else {
-                        subscriptionCard.per_course_text.visibility = View.VISIBLE
-                        subscriptionCard.per_course_text.text = data2.perCoursePrice
+                        subscriptionCard.card.performClick()
+                        data2.buttonText?.let { it1 -> buttonText.add(it1) }
+                        data2.heading.let { it1 -> headingText.add(it1) }
+                        subscriptionCard.title.text = data2.courseHeading
+                        TextViewCompat.setTextAppearance(
+                            subscriptionCard.title,
+                            R.style.TextAppearance_JoshTypography_Body_Text_Small_Semi_Bold
+                        )
+                        subscriptionCard.title.setTextColor(resources.getColor(R.color.colorPrimary))
+                        subscriptionCard.txt_currency.text = data2.discount?.get(0).toString()
+                        if (data2.perCoursePrice.isNullOrBlank()) {
+                            subscriptionCard.per_course_text.visibility = View.GONE
+                        } else {
+                            subscriptionCard.per_course_text.visibility = View.VISIBLE
+                            subscriptionCard.per_course_text.text = data2.perCoursePrice
+                        }
+                        subscriptionCard.txt_currency.text = data2.discount?.get(0).toString()
+                        subscriptionCard.txt_final_price.text = data2.discount?.substring(1)
+                        subscriptionCard.txt_og_price.text =
+                            getString(R.string.price, data2.actualAmount)
+                        subscriptionCard.txt_og_price.paintFlags =
+                            subscriptionCard.txt_og_price.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+                        subscriptionCard.txt_saving.text =
+                            getString(R.string.savings, data2.savings)
+                        subscriptionCard.course_rating.rating = data2.rating?.toFloat() ?: 4f
+                        subscriptionCard.txt_total_reviews.text =
+                            "(" + String.format("%,d", data2.ratingsCount) + ")"
                     }
-                    subscriptionCard.txt_currency.text = data2.discount?.get(0).toString()
-                    subscriptionCard.txt_final_price.text = data2.discount?.substring(1)
-                    subscriptionCard.txt_og_price.text = getString(R.string.price, data2.actualAmount)
-                    subscriptionCard.txt_og_price.paintFlags =
-                        subscriptionCard.txt_og_price.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
-                    subscriptionCard.txt_saving.text = getString(R.string.savings, data2.savings)
-                    subscriptionCard.course_rating.rating = data2.rating?.toFloat() ?: 4f
-                    subscriptionCard.txt_total_reviews.text =
-                        "(" + String.format("%,d", data2.ratingsCount) + ")"
-
                     try {
                         binding.materialTextView.text = buttonText.get(index)
                         binding.txtLabelHeading.text = headingText.get(index)

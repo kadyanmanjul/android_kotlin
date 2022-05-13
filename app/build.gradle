@@ -50,7 +50,7 @@ android {
                         "room.expandProjection": "true"]
             }
         }
-        resConfigs "en,hi"
+        resConfigs "en,hi,pa,bn,mr,ta,te,ml"
         multiDexEnabled true
         if (project.hasProperty("devBuild")) {
             splits.abi.enable = false

@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.BaseActivity
+import com.joshtalks.joshskills.core.IS_LOCALE_UPDATED_IN_SETTINGS
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.USER_LOCALE
 import com.joshtalks.joshskills.databinding.FragmentSelectLanguageBinding
@@ -53,6 +54,7 @@ class LanguageFragment : Fragment() {
         if (locale == item.code) {
             return
         }
+        PrefManager.put(IS_LOCALE_UPDATED_IN_SETTINGS,true)
         (requireActivity() as BaseActivity).requestWorkerForChangeLanguage(item.code)
     }
 

@@ -205,8 +205,8 @@ class ShareWithFriendsActivity : AppCompatActivity() {
             type = "text/plain"
             putExtra(
                 Intent.EXTRA_TEXT,
-                "मैं English सीख रहा हूँ ,जहाँ enviroment मिलता है बेझिझक नए लोगों से बात करने का !तुम भी सीख सकते हो.\n" +
-                        "Link :\n" + dynamicLink
+                getString(R.string.share_with_friends_text) + "\nLink :\n" + dynamicLink
+
             )
         }.run {
             startActivity(Intent.createChooser(this, "Share image via"))

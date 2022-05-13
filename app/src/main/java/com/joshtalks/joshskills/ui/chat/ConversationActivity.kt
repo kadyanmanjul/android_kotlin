@@ -1192,7 +1192,7 @@ class ConversationActivity :
         lifecycleScope.launchWhenResumed {
             utilConversationViewModel.userData.collectLatest { userProfileData ->
                 this@ConversationActivity.userProfileData = userProfileData
-                if (userProfileData.hasGroupAccess) {
+                if (userProfileData.hasGroupAccess && PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID) {
                     conversationBinding.imgGroupChatBtn.visibility = VISIBLE
                     if (PrefManager.getBoolValue(SHOULD_SHOW_AUTOSTART_POPUP, defValue = true)
                         && System.currentTimeMillis()
@@ -1393,7 +1393,7 @@ class ConversationActivity :
                 getAllPendingRequest()
                 conversationBinding.root.setOnClickListener {}
                 showBlurOrQuickView()
-                if (activityFeedControl) imgActivityFeed.visibility =
+                if (activityFeedControl && PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID) imgActivityFeed.visibility =
                     VISIBLE else conversationBinding.imgActivityFeed.visibility = GONE
                 imgFppRequest.visibility = VISIBLE
 
