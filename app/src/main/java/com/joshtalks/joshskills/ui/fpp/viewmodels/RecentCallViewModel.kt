@@ -112,7 +112,7 @@ class RecentCallViewModel : BaseViewModel() {
                 val response = recentCallsRepository.blockUser(map)
                 if (response.isSuccessful && response.body() != null) {
                     favoriteCallerDao.removeFromFavorite(listOf(partnerUid))
-                    recentCallsRepository.fetchRecentCallsFromApi()
+                    getRecentCall()
                 }
             } catch (ex: Throwable) {
                 ex.printStackTrace()

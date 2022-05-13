@@ -38,22 +38,26 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_9sdp"
-            android:gravity="center_vertical"
             android:layout_marginTop="@dimen/_3sdp"
+            android:gravity="center_vertical"
             android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/group_icon"
             app:layout_constraintTop_toTopOf="parent">
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tv_group_name"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:ellipsize="end"
                 android:singleLine="true"
+                android:maxLength="90"
+                android:layout_marginEnd="@dimen/_5sdp"
                 android:text="@{itemData.groupName}"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7_Semi_Bold"
                 android:textColor="@color/black_quiz"
-                tools:text="Group Name" />
+                tools:text="Group Namedjcbniefdrjebcijbreeicjtgnb crib" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tv_minutes_spoken"

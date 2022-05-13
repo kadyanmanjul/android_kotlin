@@ -169,7 +169,7 @@ class JoshGroupActivity : BaseGroupActivity() {
     }
 
     private fun openFppCallScreen(uid: Int) {
-        if (getVoipState() != State.IDLE){
+        if (getVoipState() == State.IDLE){
             val intent =
                 WebRtcActivity.getFavMissedCallbackIntent(uid, this).apply {
                     addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)

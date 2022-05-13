@@ -42,15 +42,19 @@
             android:layout_marginTop="@dimen/_3sdp"
             android:gravity="center_vertical"
             android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/profile_image"
             app:layout_constraintTop_toTopOf="parent">
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tv_course_name"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:ellipsize="end"
                 android:singleLine="true"
+                android:maxLength="90"
+                android:layout_marginEnd="@dimen/_5sdp"
                 android:text="@{itemData.courseName}"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7_Semi_Bold"
                 android:textColor="@color/black_quiz"

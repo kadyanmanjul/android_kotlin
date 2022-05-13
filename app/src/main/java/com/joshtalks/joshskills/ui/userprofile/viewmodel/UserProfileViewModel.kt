@@ -478,12 +478,12 @@ val url = responseObj.url.plus(File.separator).plus(responseObj.fields["key"])
                 val response =
                     AppObjectController.commonNetworkService.getFppStatusInProfile(mentorId)
                 if (response.isSuccessful && response.body() != null) {
-                    if (response.body()!!.fppList.isNullOrEmpty()) {
-                        response.body()!!.fppRequest?.let {
+                    if (response.body()?.fppList.isNullOrEmpty()) {
+                        response.body()?.fppRequest?.let {
                             fppRequest.postValue(it)
                         }
-                    } else if (response.body()!!.fppRequest == null) {
-                        response.body()!!.fppList?.let {
+                    } else if (response.body()?.fppRequest == null) {
+                        response.body()?.fppList?.let {
                             fppList.postValue(it)
                         }
                     }
@@ -714,6 +714,7 @@ val url = responseObj.url.plus(File.separator).plus(responseObj.fields["key"])
                 if (response.isSuccessful) {
                     favoriteCallerDao.removeFromFavorite(uId.let { return@let listOf(uId) })
                     getFppStatusInProfile(mentorId)
+                    getProfileData(mentorId,null,null)
                 }
             }
         }catch (ex:Exception){}

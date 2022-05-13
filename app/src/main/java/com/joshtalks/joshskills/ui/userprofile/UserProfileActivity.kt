@@ -681,8 +681,8 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
 
         viewModel.fppList.observe(this) {
             if (it.isNullOrEmpty()) {
-                binding.fppListLayout.visibility = View.GONE
-                binding.myFppLl.visibility = View.GONE
+                binding.fppListLayout.visibility = GONE
+                binding.myFppLl.visibility = GONE
             } else {
                 binding.fppListLayout.visibility = VISIBLE
                 binding.myFppLl.visibility = VISIBLE
@@ -848,18 +848,18 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             binding.withoutEducation.visibility = GONE
             binding.educationOccupationLayout.visibility = VISIBLE
             var occupationDetailsFlag: Boolean
-            if (userData.occupationDetails!!.designation != null || userData.occupationDetails!!.company != null) {
+            if (userData.occupationDetails?.designation != null || userData.occupationDetails?.company != null) {
                 binding.txtLabelOccupation.visibility = VISIBLE
                 occupationDetailsFlag = true
-                if (userData.occupationDetails!!.designation != null) {
+                if (userData.occupationDetails?.designation != null) {
                     binding.txtOccupation.visibility = VISIBLE
-                    binding.txtOccupation.text = userData.occupationDetails!!.designation
+                    binding.txtOccupation.text = userData.occupationDetails?.designation
                 } else {
                     binding.txtOccupation.visibility = GONE
                 }
-                if (userData.occupationDetails!!.company != null) {
+                if (userData.occupationDetails?.company != null) {
                     binding.txtPlace.visibility = VISIBLE
-                    binding.txtPlace.text = "at " + userData.occupationDetails!!.company
+                    binding.txtPlace.text = "at " + userData.occupationDetails?.company
                     binding.txtPlace.setColorize("at")
                 } else {
                     binding.txtPlace.visibility = GONE
@@ -873,29 +873,29 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
             }
             var educationDetailsFlag: Boolean
 
-            if (userData.educationDetails!!.year != null || userData.educationDetails!!.degree != null || userData.educationDetails!!.college != null) {
+            if (userData.educationDetails?.year != null || userData.educationDetails?.degree != null || userData.educationDetails?.college != null) {
                 binding.labelEducation.visibility = VISIBLE
                 educationDetailsFlag = true
-                if (userData.educationDetails!!.degree != null) {
+                if (userData.educationDetails?.degree != null) {
                     binding.txtDegree.visibility = VISIBLE
-                    binding.txtDegree.text = userData.educationDetails!!.degree
+                    binding.txtDegree.text = userData.educationDetails?.degree
                 } else {
                     binding.txtDegree.visibility = GONE
                 }
-                if (userData.educationDetails!!.year != null) {
+                if (userData.educationDetails?.year != null) {
                     binding.txtDate.visibility = VISIBLE
-                    if (userData.educationDetails!!.college != null) {
+                    if (userData.educationDetails?.college != null) {
                         binding.txtDate.text =
-                            "from " + userData.educationDetails!!.college + SINGLE_SPACE + "  • " + userData.educationDetails!!.year
+                            "from " + userData.educationDetails?.college + SINGLE_SPACE + "  • " + userData.educationDetails?.year
                         binding.txtDate.setColorize("from")
                     } else {
-                        binding.txtDate.text = SINGLE_SPACE + "•" + userData.educationDetails!!.year
+                        binding.txtDate.text = SINGLE_SPACE + "•" + userData.educationDetails?.year
                     }
                 } else {
                     binding.txtDate.visibility = GONE
-                    if (userData.educationDetails!!.college != null) {
+                    if (userData.educationDetails?.college != null) {
                         binding.txtDate.visibility = VISIBLE
-                        binding.txtDate.text = "from " + userData.educationDetails!!.college
+                        binding.txtDate.text = "from " + userData.educationDetails?.college
                         binding.txtDate.setColorize("from")
                     } else {
                         binding.txtDate.visibility = GONE
