@@ -189,24 +189,24 @@ class FirebaseNotificationService : FirebaseMessagingService() {
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
-        Timber.tag(FirebaseNotificationService::class.java.name).e("fcm : ${remoteMessage.data}")
+        Timber.tag(FirebaseNotificationService::class.java.name).e("fcm onMessageReceived data: ${remoteMessage.data}  remote body: ${remoteMessage.notification?.body }  title : ${ remoteMessage.notification?.title}")
 
         try {
             if (Freshchat.isFreshchatNotification(remoteMessage))
                 Freshchat.handleFcmMessage(this, remoteMessage)
             else {
-                processRemoteMessage(remoteMessage.data)
+                processRemoteMessage(remoteMessage)
             }
         } catch (ex: Exception) {
             ex.printStackTrace()
         }
     }
 
-    private fun processRemoteMessage(remoteData: MutableMap<String, String>) {
-        if (remoteData.containsKey("nType")) {
+    private fun processRemoteMessage(remoteData: RemoteMessage) {
+        if (remoteData.data.containsKey("nType")) {
             val notificationTypeToken: Type = object : TypeToken<ShortNotificationObject>() {}.type
             val shortNc: ShortNotificationObject = AppObjectController.gsonMapper.fromJson(
-                AppObjectController.gsonMapper.toJson(remoteData),
+                AppObjectController.gsonMapper.toJson(remoteData.data),
                 notificationTypeToken
             )
 
@@ -214,7 +214,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
 
             FirestoreDB.getNotification {
                 val nc = it.toNotificationObject(shortNc.id)
-                if (remoteData["nType"] == "CR") {
+                if (remoteData.data["nType"] == "CR") {
                     nc.actionData?.let {
                         pushIncomingCallAnalytics(it)
                     }
@@ -225,9 +225,11 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         } else {
             val notificationTypeToken: Type = object : TypeToken<NotificationObject>() {}.type
             val nc: NotificationObject = AppObjectController.gsonMapper.fromJson(
-                AppObjectController.gsonMapper.toJson(remoteData),
+                AppObjectController.gsonMapper.toJson(remoteData.data),
                 notificationTypeToken
             )
+            nc.contentTitle = remoteData.notification?.title
+            nc.contentText = remoteData.notification?.body
             sendNotification(nc)
             pushToDatabase(nc)
         }
