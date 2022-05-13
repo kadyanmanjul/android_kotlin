@@ -71,6 +71,15 @@ class AppObjectController {
                 enableLights = true,
                 enableVibration = true,
             )
+            NotificationHelper.createNotificationChannel(
+                context = context,
+                importance = NotificationManagerCompat.IMPORTANCE_MAX,
+                showBadge = false,
+                name = NotificationType.LIVE.value,
+                description = "App notification channel.",
+                enableLights = true,
+                enableVibration = true,
+            )
         }
 
         private fun initBranch(context: Context){

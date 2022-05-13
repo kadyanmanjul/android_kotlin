@@ -277,13 +277,13 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
 //    }
 
     override fun joinRoom(room: RoomListResponseItem, view: View) {
-        takePermissions(room)
+        takePermissions(room.roomId.toString(), room.topic.toString())
     }
 
-    private fun takePermissions(room: RoomListResponseItem? = null) {
+    private fun takePermissions(room: String? = null, roomTopic: String) {
         if (PermissionUtils.isCallingPermissionWithoutLocationEnabled(requireContext())) {
             if (room != null) {
-                feedViewModel.joinRoom(room)
+                feedViewModel.joinRoom(room, roomTopic)
             }
             return
         }
@@ -295,7 +295,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
                     report?.areAllPermissionsGranted()?.let { flag ->
                         if (flag) {
                             if (room != null) {
-                                feedViewModel.joinRoom(room)
+                                feedViewModel.joinRoom(room, roomTopic)
                             }
                             return
                         }
@@ -366,7 +366,8 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
                     body = room.speakersData?.name ?: "Conversation Room Reminder",
                     id = room.startedBy ?: 0,
                     userId = room.speakersData?.userId ?: "",
-                    type = NotificationType.REMINDER
+                    type = NotificationType.LIVE,
+                    roomId = room.roomId.toString()
                 )
             )
         }

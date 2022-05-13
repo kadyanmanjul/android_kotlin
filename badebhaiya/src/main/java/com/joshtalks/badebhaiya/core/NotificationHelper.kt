@@ -13,6 +13,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.os.bundleOf
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.feed.FeedActivity
+import com.joshtalks.badebhaiya.notifications.reminderNotification.ReminderNotificationManager
 import com.joshtalks.badebhaiya.profile.ProfileFragment
 import kotlinx.android.parcel.Parcelize
 import timber.log.Timber
@@ -23,11 +24,13 @@ data class Notification(
     val body: String,
     val id: Int,
     val userId: String,
-    val type: NotificationType
+    val type: NotificationType,
+    val roomId: String
 ) : Parcelable
 
 enum class NotificationType(val value: String) {
-    REMINDER("Reminders")
+    REMINDER("Reminders"),
+    LIVE("Live")
 }
 
 class NotificationHelper : BroadcastReceiver() {
@@ -105,9 +108,7 @@ class NotificationHelper : BroadcastReceiver() {
                         contentIntent = PendingIntent.getActivity(
                             context,
                             notification.id,
-                            Intent(context, FeedActivity::class.java).apply {
-                                putExtra(USER_ID, notification.userId)
-                            },
+                            ReminderNotificationManager.getRedirectingIntent(context, notification),
                             PendingIntent.FLAG_UPDATE_CURRENT
                         )
                     ).build()

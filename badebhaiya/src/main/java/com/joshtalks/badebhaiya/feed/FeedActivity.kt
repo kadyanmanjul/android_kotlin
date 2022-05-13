@@ -59,6 +59,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         const val OPEN_FROM_NOTIFICATION = "open_from_notification"
         const val ROOM_QUESTION_ID = "room_question_id"
         const val TOPIC_NAME = "topic_name"
+        const val USER_ID = "user_id"
 
 
         fun getFeedActivityIntent(
@@ -99,6 +100,12 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
             putExtra(TOPIC_NAME, topicName)
             flags.forEach { flag ->
                 this.addFlags(flag)
+            }
+        }
+
+        fun getIntentForProfile(context: Context, userId: String): Intent{
+            return Intent(context, FeedActivity::class.java).also {
+                it.putExtra(USER_ID, userId)
             }
         }
 
@@ -174,25 +181,31 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
     }
 
     private fun checkAndOpenLiveRoom() {
-        if (intent.getBooleanExtra(LiveRoomFragment.OPEN_FROM_NOTIFICATION, false)) {
-            LiveRoomFragment.launch(
-                this,
-                StartingLiveRoomProperties(
-                    isActivityOpenFromNotification = true,
-                    roomId = intent.getIntExtra(LiveRoomFragment.ROOM_ID, 0),
-                    channelTopic = intent.getStringExtra(LiveRoomFragment.TOPIC_NAME) ?: "",
-                    channelName = intent.getStringExtra(LiveRoomFragment.CHANNEL_NAME) ?: "",
-                    agoraUid = intent.getIntExtra(LiveRoomFragment.UID, 0),
-                    moderatorId = intent.getIntExtra(LiveRoomFragment.MODERATOR_UID, 0),
-                    token = intent.getStringExtra(LiveRoomFragment.TOKEN) ?: "",
-                    roomQuestionId = intent.getIntExtra(LiveRoomFragment.ROOM_QUESTION_ID, 0),
-                    isRoomCreatedByUser = intent.getBooleanExtra(
-                        LiveRoomFragment.IS_ROOM_CREATED_BY_USER,
-                        false
-                    )
-                ),
-                liveRoomViewModel
-            )
+        if (intent.getBooleanExtra(OPEN_FROM_NOTIFICATION, false)) {
+
+            // TODO: Open Live Room.
+
+            takePermissions(intent.getStringExtra(ROOM_ID) ?: "", intent.getStringExtra(TOPIC_NAME) ?: "")
+
+
+//            LiveRoomFragment.launch(
+//                this,
+//                StartingLiveRoomProperties(
+//                    isActivityOpenFromNotification = true,
+//                    roomId = intent.getIntExtra(LiveRoomFragment.ROOM_ID, 0),
+//                    channelTopic = intent.getStringExtra(LiveRoomFragment.TOPIC_NAME) ?: "",
+//                    channelName = intent.getStringExtra(LiveRoomFragment.CHANNEL_NAME) ?: "",
+//                    agoraUid = intent.getIntExtra(LiveRoomFragment.UID, 0),
+//                    moderatorId = intent.getIntExtra(LiveRoomFragment.MODERATOR_UID, 0),
+//                    token = intent.getStringExtra(LiveRoomFragment.TOKEN) ?: "",
+//                    roomQuestionId = intent.getIntExtra(LiveRoomFragment.ROOM_QUESTION_ID, 0),
+//                    isRoomCreatedByUser = intent.getBooleanExtra(
+//                        LiveRoomFragment.IS_ROOM_CREATED_BY_USER,
+//                        false
+//                    )
+//                ),
+//                liveRoomViewModel
+//            )
         }
     }
     fun onProfileClicked()
@@ -332,14 +345,14 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
     }
 
     override fun joinRoom(room: RoomListResponseItem, view: View) {
-        takePermissions(room)
+        takePermissions(room.roomId.toString(), room.topic)
     }
 
-    private fun takePermissions(room: RoomListResponseItem? = null) {
+    private fun takePermissions(roomId: String? = null, roomTopic: String? = null) {
         if (PermissionUtils.isCallingPermissionWithoutLocationEnabled(this)) {
-            if (room == null) {
+            if (roomId == null) {
                 openCreateRoomDialog()
-            } else viewModel.joinRoom(room)
+            } else viewModel.joinRoom(roomId, roomTopic!!)
             return
         }
 
@@ -349,9 +362,9 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                 override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                     report?.areAllPermissionsGranted()?.let { flag ->
                         if (flag) {
-                            if (room == null) {
+                            if (roomId == null) {
                                 openCreateRoomDialog()
-                            } else viewModel.joinRoom(room)
+                            } else viewModel.joinRoom(roomId, roomTopic!!)
                             return
                         }
                         if (report.isAnyPermissionPermanentlyDenied) {
@@ -421,7 +434,8 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                 body = room.speakersData?.name ?: "Conversation Room Reminder",
                 id = room.startedBy ?: 0,
                 userId = room.speakersData?.userId ?: "",
-                type = NotificationType.REMINDER
+                type = NotificationType.LIVE,
+                roomId = room.roomId.toString()
             )
         )
         pendingIntent =
@@ -431,9 +445,6 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                 notificationIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT
             )
-        val startingTime = System.currentTimeMillis() + room.startTimeDate.minus(5 * 60 * 1000)
-        val mStart = System.currentTimeMillis() + 20000
-        Timber.d("Static start time => $mStart")
         Timber.d("Timer by network => ${room.startTime}")
 
         alarmManager?.setExact(AlarmManager.RTC_WAKEUP, room.startTime!!, pendingIntent)
@@ -443,7 +454,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                     ReminderRequest(
                         roomId = room.roomId.toString(),
                         userId = User.getInstance().userId,
-                        reminderTime = room.startTimeDate.minus(5 * 60 * 1000),
+                        reminderTime = room.startTimeDate,
                         false
                     )
                 )

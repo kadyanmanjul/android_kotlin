@@ -121,7 +121,7 @@ class FeedViewModel : ViewModel() {
         }
     }
 
-    fun joinRoom(item: RoomListResponseItem) {
+    fun joinRoom(roomId: String, topic: String) {
         if (pubNubState == PubNubState.STARTED){
             showToast("Please Leave Current Room")
             return
@@ -133,7 +133,7 @@ class FeedViewModel : ViewModel() {
                 val response = repository.joinRoom(
                     ConversationRoomRequest(
                         userId = User.getInstance().userId,
-                        roomId = item.roomId
+                        roomId = roomId.toInt()
                     )
                 )
                 if (response.isSuccessful) {
@@ -146,7 +146,7 @@ class FeedViewModel : ViewModel() {
                         )
                         putString(
                             TOPIC,
-                            item.topic
+                            topic
                         )
                     }
                     Log.i("YASHEN", "postvalue: ")
