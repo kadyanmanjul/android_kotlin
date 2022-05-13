@@ -27,6 +27,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:cardElevation="2dp"
+        android:clipToPadding="false"
         android:layout_margin="@dimen/_8sdp"
         app:cardCornerRadius="@dimen/_14sdp">
 
@@ -92,10 +93,12 @@
                 android:layout_marginBottom="@dimen/_9sdp"
                 android:onClick="@{()->handler.takePermissionsXml()}"
                 android:backgroundTint="@color/reminder_button_color"
+                android:shadowColor="@color/black"
+                android:elevation="9dp"
                 android:textAllCaps="false"
                 android:textAppearance="@style/BB_Typography_Nunito_Sans_Bold"
                 android:textColor="@color/white"
-                android:textSize="@dimen/_16ssp"
+                android:textSize="@dimen/_15ssp"
                 app:cornerRadius="@dimen/_15sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

@@ -19,6 +19,9 @@ interface CommonNetworkService {
     @POST("$DIR/user/fcm/")
     suspend fun postFCMToken(@Body params: Map<String, String>): Response<FCMData>
 
+    @POST("$DIR/user/fcm_verify")
+    suspend fun checkFCMInServer(@Body params:Map<String,String>):Map<String,String>
+
     @PATCH("$DIR/user/fcm/{id}/")
     suspend fun patchFCMToken(
         @Path("id") id: Int,

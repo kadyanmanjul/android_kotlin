@@ -47,6 +47,7 @@ import java.util.concurrent.ExecutorService
 const val FCM_TOKEN = "fcmToken"
 const val HAS_NOTIFICATION = "has_notification"
 const val NOTIFICATION_ID = "notification_id"
+const val FCM_ACTIVE="FCM_ACTIVE"
 
 class FirebaseNotificationService : FirebaseMessagingService() {
 

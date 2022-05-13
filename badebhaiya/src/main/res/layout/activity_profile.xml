@@ -116,14 +116,15 @@
             android:id="@+id/tvSpeakerRoomHeading"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/nunito_regular"
             android:layout_marginTop="@dimen/_12sdp"
-            android:visibility="@{viewModel.isBadeBhaiyaSpeaker ? View.VISIBLE : View.GONE}"
-            android:textSize="@dimen/_12ssp"
+            android:fontFamily="@font/nunito_regular"
+            android:text="@string/upcoming_rooms"
             android:textColor="@color/profile_font_color"
-            app:layout_constraintStart_toStartOf="@id/tvFollowers"
+            android:textSize="@dimen/_12ssp"
+            android:visibility="@{viewModel.isBadeBhaiyaSpeaker ? View.VISIBLE : View.GONE}"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/divider"
-            android:text="@string/upcoming_rooms" />
+            android:layout_margin="@dimen/_10sdp" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvSpeakerRoomList"
@@ -139,11 +140,13 @@
             app:layout_constraintTop_toBottomOf="@+id/tvSpeakerRoomHeading"
             app:layout_constraintBottom_toBottomOf="parent"
             tools:listitem="@layout/li_room_event" />
+
         <FrameLayout
+            android:id="@+id/room_frame"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/room_frame"
-            />
+            tools:layout_editor_absoluteX="0dp"
+            tools:layout_editor_absoluteY="-3dp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

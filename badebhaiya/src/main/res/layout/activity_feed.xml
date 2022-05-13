@@ -39,8 +39,8 @@
             android:background="@color/conversation_room_color">
 
             <androidx.appcompat.widget.AppCompatImageView
-                android:layout_width="37dp"
-                android:layout_height="33dp"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
                 android:layout_marginStart="@dimen/_10sdp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
@@ -48,15 +48,13 @@
                 android:focusable="true"
                 android:gravity="center_vertical|start"
                 android:onClick="@{() -> handler.onSearchPressed()}"
-                android:paddingTop="@dimen/_4sdp"
-                android:paddingBottom="@dimen/_3sdp"
                 android:visibility="visible"
                 app:layout_constraintBottom_toBottomOf="@+id/profile_iv"
                 app:layout_constraintEnd_toStartOf="@+id/profile_iv"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/profile_iv"
-                app:srcCompat="@drawable/ic_search"
+                app:srcCompat="@drawable/ic_vector_search"
                 app:tint="@color/black" />
 
             <com.google.android.material.imageview.ShapeableImageView
