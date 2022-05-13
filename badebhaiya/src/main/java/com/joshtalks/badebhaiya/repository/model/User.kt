@@ -23,10 +23,7 @@ import com.joshtalks.badebhaiya.notifications.HAS_NOTIFICATION
 import com.joshtalks.badebhaiya.notifications.NOTIFICATION_ID
 import com.joshtalks.badebhaiya.signup.SignUpActivity
 import com.joshtalks.badebhaiya.utils.TAG
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 const val USER_PERSISTENT_KEY = "USER_PERSISTENT_KEY"
 

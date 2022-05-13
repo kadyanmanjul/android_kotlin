@@ -15,6 +15,8 @@ class CommonRepository {
     suspend fun checkFCMInServer(requestParams: Map<String, String>) =
         service.checkFCMInServer(requestParams)
 
+    suspend fun signOutUser() =service.signOutUser()
+
     suspend fun patchFCMToken(id: Int, requestParams: Map<String, String>) =
         service.patchFCMToken(id, requestParams)
     fun requestUploadMediaAsync(requestParams: Map<String, String>) = service.requestUploadMediaAsync(requestParams)

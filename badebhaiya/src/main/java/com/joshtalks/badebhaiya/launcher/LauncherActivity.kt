@@ -50,6 +50,7 @@ class LauncherActivity : AppCompatActivity() {
 
     private fun initApp() {
         WorkManager.getInstance(applicationContext).cancelAllWork()
+        if(User.getInstance().isLoggedIn())
         WorkManagerAdmin.appStartWorker()
     }
 

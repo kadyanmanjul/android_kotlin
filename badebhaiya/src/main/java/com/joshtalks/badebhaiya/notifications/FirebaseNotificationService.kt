@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.Intent
 import android.media.RingtoneManager
 import android.os.Build
+import android.os.Message
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
@@ -34,11 +35,7 @@ import com.joshtalks.badebhaiya.repository.model.FCMData
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.utils.ApiRespStatus
 import com.joshtalks.badebhaiya.utils.Utils
-import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import org.json.JSONObject
 import timber.log.Timber
 import java.lang.reflect.Type
@@ -230,7 +227,12 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         return when(action) {
             NotificationAction.ACTION_LOGOUT_USER -> {
                 if (User.getInstance().userId.isNotEmpty()) {
-                    User.deleteUserCredentials(true)
+                    CoroutineScope(Dispatchers.IO).launch {
+                        val resp=CommonRepository().signOutUser()
+                        if(resp.isSuccessful) {
+                            User.deleteUserCredentials(true)
+                        }
+                    }
                 }
                 return null
             }

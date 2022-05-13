@@ -4,7 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
-
+import com.joshtalks.badebhaiya.core.workers.WorkManagerAdmin
 const val API_TOKEN = "api_token"
 const val FCM_TOKEN = "fcmToken"
 const val INSTALL_REFERRER_SYNC = "install_referrer_sync"
@@ -123,11 +123,9 @@ object PrefManager {
     }
 
     fun logoutUser() {
-
-    }
-
-    fun clearUser() {
-
+        prefManagerCommon.edit().clear().apply()
+         WorkManagerAdmin.appInitWorker()
+        WorkManagerAdmin.appStartWorker()
     }
 
     fun removeKey(key: String, isConsistent: Boolean = false) {

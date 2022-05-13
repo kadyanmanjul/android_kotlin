@@ -167,19 +167,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
                 }
 
                 ROOM_EXPAND->{
-                    it.data?.let {
-                        Log.i("YASHENDRA", "addObserver: Expand")
-                        it.getParcelable<ConversationRoomResponse>(ROOM_DETAILS)?.let{ room->
-                            val liveRoomProperties = StartingLiveRoomProperties.createFromRoom(
-                                room,
-                                it.getString(TOPIC)!!
-                            )
-                            LiveRoomFragment.launch((requireActivity() as AppCompatActivity), liveRoomProperties, liveRoomViewModel)
-                        }
-
-                    }
-
-                 //liveRoomViewModel.liveRoomState.value=LiveRoomState.EXPANDED
+                 liveRoomViewModel.liveRoomState.value=LiveRoomState.EXPANDED
 //                    var live=LiveRoomFragment()
 //                    live.expandLiveRoom()
                 }

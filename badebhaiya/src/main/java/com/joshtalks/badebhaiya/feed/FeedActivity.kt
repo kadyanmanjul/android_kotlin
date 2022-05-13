@@ -287,7 +287,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                     }
                 }
                 ROOM_EXPAND->{
-                    LiveRoomFragment().expandLiveRoom()
+                    liveRoomViewModel.liveRoomState.value=LiveRoomState.EXPANDED
                 }
                 SCROLL_TO_TOP->{
                    //binding.recyclerView.layoutManager?.scrollToPosition(0)

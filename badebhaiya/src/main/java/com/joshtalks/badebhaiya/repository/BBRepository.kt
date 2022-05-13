@@ -20,5 +20,6 @@ class BBRepository {
             RetrofitInstance.profileNetworkService.getProfileWithoutToken(userId)
         }
     }
+    suspend fun signOut()=service.signOutUser()
     suspend fun trueCallerLogin(params: Map<String, String>) = service.trueCallerLogin(params)
 }
