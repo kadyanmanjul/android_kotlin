@@ -55,7 +55,7 @@ import com.joshtalks.badebhaiya.liveroom.viewmodel.NOTIFICATION_NAME
 import com.joshtalks.badebhaiya.liveroom.viewmodel.NOTIFICATION_TYPE
 import com.joshtalks.badebhaiya.liveroom.viewmodel.NOTIFICATION_USER
 import com.joshtalks.badebhaiya.notifications.HeadsUpNotificationService
-import com.joshtalks.badebhaiya.profile.ProfileActivity
+import com.joshtalks.badebhaiya.profile.ProfileFragment
 import com.joshtalks.badebhaiya.profile.ProfileViewModel
 import com.joshtalks.badebhaiya.pubnub.PubNubEventsManager
 import com.joshtalks.badebhaiya.pubnub.PubNubManager
@@ -88,6 +88,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
     private val FeedViewModel by lazy {
         ViewModelProvider(requireActivity())[ProfileViewModel::class.java]
     }
+
 
     private var mServiceBound: Boolean = false
     private lateinit var binding: FragmentLiveRoomBinding
@@ -513,7 +514,6 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
     }
     fun addObserver(){
         FeedViewModel.singleLiveEvent.observe(viewLifecycleOwner) {
-            Log.i("ABC2", "addObserver: ${it.what}")
             Log.d("ABC2", "Data class called with data message: ${it.what} bundle : ${it.data}")
             when (it.what) {
                 OPEN_ROOM ->{
@@ -1075,7 +1075,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
     }
 
     private fun openUserProfile(mentorId: String) {
-        ProfileActivity.openProfileActivity(requireActivity(), mentorId)
+        ProfileFragment.openProfileActivity(requireActivity(), mentorId)
         /* UserProfileActivity.startUserProfileActivity(
              this@ConversationLiveRoomActivity,
              mentorId,
@@ -1260,8 +1260,6 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
         ) {
             if (liveRoomViewModel.pubNubState.value == PubNubState.STARTED){
                 showToast("Please Leave Current Room")
-                //LiveRoomFragment().expandLiveRoom()
-                //LiveRoomFragment().expandLiveRoom()
             } else {
 
                 var frag=activity.supportFragmentManager.findFragmentById(R.id.liveRoomRootView)
@@ -1283,7 +1281,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
 
     override fun getViewModel(): LiveRoomViewModel = vm
      fun itemClick(userId: String) {
-        val nextFrag = ProfileActivity()
+        val nextFrag = ProfileFragment()
         val bundle = Bundle()
         bundle.putString("user", userId) // use as per your need
         nextFrag.arguments = bundle

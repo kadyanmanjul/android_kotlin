@@ -20,7 +20,7 @@
             type="androidx.recyclerview.widget.RecyclerView.ViewHolder" />
         <variable
             name="handler"
-            type="com.joshtalks.badebhaiya.profile.ProfileActivity" />
+            type="com.joshtalks.badebhaiya.profile.ProfileFragment" />
     </data>
 
     <com.google.android.material.card.MaterialCardView
@@ -80,6 +80,7 @@
                 tools:text="Guide To Crack UPSC 2023 \nIn One Attempt?" />
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/actionButton"
                 roomListItem="@{roomData}"
                 setCallback="@{callback}"
                 setCardActionButton="@{roomData.conversationRoomType}"

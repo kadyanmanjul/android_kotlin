@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.ui.signup
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -55,6 +56,7 @@ import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivitySignUpV2Binding
 import com.joshtalks.joshskills.messaging.RxBus2
+import com.joshtalks.joshskills.quizgame.StartActivity
 import com.joshtalks.joshskills.repository.local.eventbus.LoginViaEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.LoginViaStatus
 import com.joshtalks.joshskills.repository.local.model.User
@@ -785,5 +787,7 @@ class SignUpActivity : BaseActivity() {
         window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         super.onDestroy()
     }
+
+
 }
 

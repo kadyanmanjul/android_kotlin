@@ -13,7 +13,6 @@ import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
@@ -27,17 +26,23 @@ import com.joshtalks.badebhaiya.liveroom.*
 import com.joshtalks.badebhaiya.liveroom.bottomsheet.CreateRoom
 import com.joshtalks.badebhaiya.liveroom.model.StartingLiveRoomProperties
 import com.joshtalks.badebhaiya.liveroom.viewmodel.LiveRoomViewModel
-import com.joshtalks.badebhaiya.profile.ProfileActivity
+import com.joshtalks.badebhaiya.profile.ProfileFragment
 import com.joshtalks.badebhaiya.profile.request.DeleteReminderRequest
 import com.joshtalks.badebhaiya.profile.request.ReminderRequest
 import com.joshtalks.badebhaiya.pubnub.PubNubState
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomResponse
 import com.joshtalks.badebhaiya.repository.model.User
+import com.joshtalks.badebhaiya.utils.SingleDataManager
 import com.joshtalks.badebhaiya.utils.setImage
 import com.joshtalks.badebhaiya.utils.setUserImageOrInitials
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.PermissionDeniedResponse
+import com.karumi.dexter.listener.PermissionGrantedResponse
+import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import com.karumi.dexter.listener.single.PermissionListener
+import timber.log.Timber
 
 class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallback {
 
@@ -55,6 +60,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         const val OPEN_FROM_NOTIFICATION = "open_from_notification"
         const val ROOM_QUESTION_ID = "room_question_id"
         const val TOPIC_NAME = "topic_name"
+        const val USER_ID = "user_id"
 
 
         fun getFeedActivityIntent(
@@ -98,6 +104,12 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
             }
         }
 
+        fun getIntentForProfile(context: Context, userId: String): Intent{
+            return Intent(context, FeedActivity::class.java).also {
+                it.putExtra(USER_ID, userId)
+            }
+        }
+
     }
 
     private val viewModel by lazy {
@@ -112,6 +124,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
 
     private lateinit var binding: ActivityFeedBinding
     override fun onCreate(savedInstanceState: Bundle?) {
+        Log.d("sahil", "onCreate of feed activity ")
         super.onCreate(savedInstanceState)
         this.requestWindowFeature(Window.FEATURE_NO_TITLE)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -121,21 +134,39 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
 //        var intent=Intent()
 //        var bundle=intent.extras
         var user=intent.getStringExtra("userId")
-        if(user!=null)
-        {
-            viewProfile(user, true)
-        }
+
         this.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_feed)
-        checkAndOpenLiveRoom()
-        viewModel.getRooms()
-        viewModel.setIsBadeBhaiyaSpeaker()
         binding.lifecycleOwner = this
         binding.handler = this
         binding.viewModel = viewModel
+        if(user!=null)
+        {
+            viewProfile(user, true)
+        } else if (SingleDataManager.pendingPilotAction != null){
+            viewProfile(SingleDataManager.pendingPilotEventData!!.pilotUserId, true)
+        }
+        if (User.getInstance().isLoggedIn()) {
+            checkAndOpenLiveRoom()
+            viewModel.setIsBadeBhaiyaSpeaker()
+            addObserver()
+            initView()
+            PermissionUtils.demandAlarmPermission(this, object : PermissionListener {
+                override fun onPermissionGranted(p0: PermissionGrantedResponse?) {
+                    Timber.d("ALARM PERMISSION ACCEPTED")
+                }
 
-        addObserver()
-        initView()
+                override fun onPermissionDenied(p0: PermissionDeniedResponse?) {
+                }
+
+                override fun onPermissionRationaleShouldBeShown(
+                    p0: PermissionRequest?,
+                    p1: PermissionToken?
+                ) {
+                }
+
+            })
+        }
         //setOnClickListener()
     }
     fun userid(): String {
@@ -145,34 +176,42 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
 
     override fun onResume() {
         super.onResume()
-        viewModel.getRooms()
+        if (User.getInstance().isLoggedIn()){
+            viewModel.getRooms()
+        }
     }
 
     private fun checkAndOpenLiveRoom() {
-        if (intent.getBooleanExtra(LiveRoomFragment.OPEN_FROM_NOTIFICATION, false)) {
-            LiveRoomFragment.launch(
-                this,
-                StartingLiveRoomProperties(
-                    isActivityOpenFromNotification = true,
-                    roomId = intent.getIntExtra(LiveRoomFragment.ROOM_ID, 0),
-                    channelTopic = intent.getStringExtra(LiveRoomFragment.TOPIC_NAME) ?: "",
-                    channelName = intent.getStringExtra(LiveRoomFragment.CHANNEL_NAME) ?: "",
-                    agoraUid = intent.getIntExtra(LiveRoomFragment.UID, 0),
-                    moderatorId = intent.getIntExtra(LiveRoomFragment.MODERATOR_UID, 0),
-                    token = intent.getStringExtra(LiveRoomFragment.TOKEN) ?: "",
-                    roomQuestionId = intent.getIntExtra(LiveRoomFragment.ROOM_QUESTION_ID, 0),
-                    isRoomCreatedByUser = intent.getBooleanExtra(
-                        LiveRoomFragment.IS_ROOM_CREATED_BY_USER,
-                        false
-                    )
-                ),
-                liveRoomViewModel
-            )
+        if (intent.getBooleanExtra(OPEN_FROM_NOTIFICATION, false)) {
+
+            // TODO: Open Live Room.
+
+            takePermissions(intent.getStringExtra(ROOM_ID) ?: "", intent.getStringExtra(TOPIC_NAME) ?: "")
+
+
+//            LiveRoomFragment.launch(
+//                this,
+//                StartingLiveRoomProperties(
+//                    isActivityOpenFromNotification = true,
+//                    roomId = intent.getIntExtra(LiveRoomFragment.ROOM_ID, 0),
+//                    channelTopic = intent.getStringExtra(LiveRoomFragment.TOPIC_NAME) ?: "",
+//                    channelName = intent.getStringExtra(LiveRoomFragment.CHANNEL_NAME) ?: "",
+//                    agoraUid = intent.getIntExtra(LiveRoomFragment.UID, 0),
+//                    moderatorId = intent.getIntExtra(LiveRoomFragment.MODERATOR_UID, 0),
+//                    token = intent.getStringExtra(LiveRoomFragment.TOKEN) ?: "",
+//                    roomQuestionId = intent.getIntExtra(LiveRoomFragment.ROOM_QUESTION_ID, 0),
+//                    isRoomCreatedByUser = intent.getBooleanExtra(
+//                        LiveRoomFragment.IS_ROOM_CREATED_BY_USER,
+//                        false
+//                    )
+//                ),
+//                liveRoomViewModel
+//            )
         }
     }
     fun onProfileClicked()
     {
-        val fragment = ProfileActivity() // replace your custom fragment class
+        val fragment = ProfileFragment() // replace your custom fragment class
 
         val bundle = Bundle()
         val fragmentTransaction: FragmentTransaction = supportFragmentManager.beginTransaction()
@@ -230,9 +269,9 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                 OPEN_PROFILE -> {
                     var bundle=Bundle()
                     bundle.putString("user",it.data.getString(USER_ID, EMPTY))
-                    supportFragmentManager.findFragmentByTag(ProfileActivity::class.java.simpleName)
+                    supportFragmentManager.findFragmentByTag(ProfileFragment::class.java.simpleName)
                     supportFragmentManager.beginTransaction()
-                        .replace(R.id.root_view, ProfileActivity(), ProfileActivity::class.java.simpleName)
+                        .replace(R.id.root_view, ProfileFragment(), ProfileFragment::class.java.simpleName)
                         .commit()
                 }
                 OPEN_ROOM -> {
@@ -301,15 +340,23 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         }
     }
 
-    override fun joinRoom(room: RoomListResponseItem, view: View) {
-        takePermissions(room)
+    override fun onBackPressed() {
+        if (intent.getBooleanExtra("profile_deeplink", false)){
+            finish()
+            return
+        }
+        super.onBackPressed()
     }
 
-    private fun takePermissions(room: RoomListResponseItem? = null) {
+    override fun joinRoom(room: RoomListResponseItem, view: View) {
+        takePermissions(room.roomId.toString(), room.topic)
+    }
+
+    private fun takePermissions(roomId: String? = null, roomTopic: String? = null) {
         if (PermissionUtils.isCallingPermissionWithoutLocationEnabled(this)) {
-            if (room == null) {
+            if (roomId == null) {
                 openCreateRoomDialog()
-            } else viewModel.joinRoom(room)
+            } else viewModel.joinRoom(roomId, roomTopic!!)
             return
         }
 
@@ -319,9 +366,9 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                 override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                     report?.areAllPermissionsGranted()?.let { flag ->
                         if (flag) {
-                            if (room == null) {
+                            if (roomId == null) {
                                 openCreateRoomDialog()
-                            } else viewModel.joinRoom(room)
+                            } else viewModel.joinRoom(roomId, roomTopic!!)
                             return
                         }
                         if (report.isAnyPermissionPermanentlyDenied) {
@@ -391,7 +438,8 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                 body = room.speakersData?.name ?: "Conversation Room Reminder",
                 id = room.startedBy ?: 0,
                 userId = room.speakersData?.userId ?: "",
-                type = NotificationType.REMINDER
+                type = NotificationType.LIVE,
+                roomId = room.roomId.toString()
             )
         )
         pendingIntent =
@@ -401,14 +449,16 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                 notificationIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT
             )
-        alarmManager?.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + room.startTimeDate.minus(5 * 60 * 1000), pendingIntent)
+        Timber.d("Timer by network => ${room.startTime}")
+
+        alarmManager?.setExact(AlarmManager.RTC_WAKEUP, room.startTime!!, pendingIntent)
             .also {
                 //room.isScheduled = true
                 viewModel.setReminder(
                     ReminderRequest(
                         roomId = room.roomId.toString(),
                         userId = User.getInstance().userId,
-                        reminderTime = room.startTimeDate.minus(5 * 60 * 1000),
+                        reminderTime = room.startTimeDate,
                         false
                     )
                 )
@@ -434,15 +484,15 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
     {
         var bundle=Bundle()
         bundle.putString("user",profile)
-        supportFragmentManager.findFragmentByTag(ProfileActivity::class.java.simpleName)
+        supportFragmentManager.findFragmentByTag(ProfileFragment::class.java.simpleName)
         supportFragmentManager.beginTransaction()
-            .replace(R.id.root_view, ProfileActivity(), ProfileActivity::class.java.simpleName)
+            .replace(R.id.root_view, ProfileFragment(), ProfileFragment::class.java.simpleName)
             .commit()
     }
 
     override fun viewProfile(profile: String?, deeplink:Boolean)
     {
-        val fragment = ProfileActivity() // replace your custom fragment class
+        val fragment = ProfileFragment() // replace your custom fragment class
 
         val bundle = Bundle()
         val fragmentTransaction: FragmentTransaction = supportFragmentManager.beginTransaction()
@@ -466,7 +516,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
 //
 //        }
 
-        val fragment = ProfileActivity() // replace your custom fragment class
+        val fragment = ProfileFragment() // replace your custom fragment class
 
         val bundle = Bundle()
         val fragmentTransaction: FragmentTransaction = supportFragmentManager.beginTransaction()

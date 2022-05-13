@@ -1,6 +1,5 @@
 package com.joshtalks.badebhaiya
 
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -8,24 +7,19 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import androidx.activity.OnBackPressedCallback
-import androidx.appcompat.app.AppCompatActivity
-import androidx.constraintlayout.widget.ConstraintSet.INVISIBLE
 import androidx.core.widget.addTextChangedListener
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.joshtalks.badebhaiya.core.hideKeyboard
-import com.joshtalks.badebhaiya.core.showToast
 import com.joshtalks.badebhaiya.databinding.FragmentSearchBinding
 import com.joshtalks.badebhaiya.feed.Call
 import com.joshtalks.badebhaiya.feed.FeedActivity
 import com.joshtalks.badebhaiya.feed.FeedViewModel
 import com.joshtalks.badebhaiya.feed.model.Users
-import com.joshtalks.badebhaiya.profile.ProfileActivity
+import com.joshtalks.badebhaiya.profile.ProfileFragment
 import kotlinx.android.synthetic.main.activity_feed.*
 import kotlinx.android.synthetic.main.activity_sign_up.*
 import kotlinx.android.synthetic.main.fragment_search.*
@@ -94,8 +88,8 @@ class SearchFragment : Fragment(), Call {
         super.onViewCreated(view, savedInstanceState)
 
         var job: Job? = null
-        binding.searchBar.addTextChangedListener{
-            //var job: Job? = null
+        binding.searchBar.addTextChangedListener {
+                //var job: Job? = null
 
             binding.noresult.visibility= GONE
             if(it.toString()=="")
@@ -164,7 +158,7 @@ class SearchFragment : Fragment(), Call {
     }
 
     override fun itemClick(userId:String) {
-        val nextFrag = ProfileActivity()
+        val nextFrag = ProfileFragment()
         val bundle = Bundle()
         bundle.putString("user", userId) // use as per your need
         nextFrag.arguments = bundle

@@ -28,7 +28,7 @@ import com.joshtalks.badebhaiya.core.startServiceForWebrtc
 import com.joshtalks.badebhaiya.core.NotificationChannelNames
 import com.joshtalks.badebhaiya.core.JoshSkillExecutors
 import com.joshtalks.badebhaiya.core.analytics.DismissNotifEventReceiver
-import com.joshtalks.badebhaiya.profile.ProfileActivity
+import com.joshtalks.badebhaiya.profile.ProfileFragment
 import com.joshtalks.badebhaiya.repository.CommonRepository
 import com.joshtalks.badebhaiya.repository.model.FCMData
 import com.joshtalks.badebhaiya.repository.model.User
@@ -260,7 +260,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             NotificationAction.ROOM_IS_ABOUT_TO_START -> {
                 Intent(
                     AppObjectController.joshApplication,
-                    ProfileActivity::class.java
+                    ProfileFragment::class.java
                 ).apply {
                     addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                     putExtra(HAS_NOTIFICATION, true)

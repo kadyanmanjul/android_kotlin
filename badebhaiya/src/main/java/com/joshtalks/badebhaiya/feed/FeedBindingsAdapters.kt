@@ -23,6 +23,7 @@ import com.joshtalks.badebhaiya.utils.ALLOWED_JOIN_ROOM_TIME
 import com.joshtalks.badebhaiya.utils.DEFAULT_NAME
 import com.joshtalks.badebhaiya.utils.setUserImageOrInitials
 import kotlinx.coroutines.*
+import timber.log.Timber
 import java.lang.Runnable
 import java.util.*
 
@@ -95,10 +96,13 @@ fun setConversationRoomCardActionButton(
             view.backgroundTintList =
                 ColorStateList.valueOf(view.context.resources.getColor(R.color.base_app_color))
             if (roomListResponseItem.speakersData != null && User.getInstance().userId == roomListResponseItem.speakersData.userId) {
-                val startTime = roomListResponseItem.startTime ?: Long.MAX_VALUE
-                if (roomListResponseItem.currentTime >= (startTime - ALLOWED_JOIN_ROOM_TIME / 1000L)) {
+//                val startTime = roomListResponseItem.startTime ?: Long.MAX_VALUE
+                if (roomListResponseItem.startTime!! <= System.currentTimeMillis()) {
+                        Timber.d("JOIN ROOM BUTTOn")
                     (adapter as FeedAdapter).updateScheduleRoomStatusForSpeaker(viewHolder.absoluteAdapterPosition)
                 } else {
+                    Timber.d("JOIN ROOM TIMING GALAT")
+
                     setAlarmForLiveRoom(viewHolder, roomListResponseItem, adapter)
                 }
                 view.setOnClickListener(null)
@@ -144,7 +148,7 @@ fun ImageView.setDPUrl(isImageRequired: Boolean, url: String?, userName: String?
 
 fun setAlarmForLiveRoom(viewHolder: RecyclerView.ViewHolder, room: RoomListResponseItem, adapter: RecyclerView.Adapter<FeedAdapter.FeedViewHolder>) {
     CoroutineScope(Dispatchers.Default).launch {
-        delay((room.startTime!! - room.currentTime) * 1000L)
+        delay((room.startTime!! - room.currentTime))
         withContext(Dispatchers.Main) {
             if (viewHolder.absoluteAdapterPosition != -1) {
                 (adapter as FeedAdapter).updateScheduleRoomStatusForSpeaker(viewHolder.absoluteAdapterPosition)

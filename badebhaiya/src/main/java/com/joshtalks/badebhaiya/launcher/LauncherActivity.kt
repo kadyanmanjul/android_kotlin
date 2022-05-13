@@ -2,21 +2,16 @@ package com.joshtalks.badebhaiya.launcher
 
 import android.content.Intent
 import android.os.Bundle
-import android.provider.Settings
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.lifecycleScope
 import androidx.work.WorkManager
 import com.joshtalks.badebhaiya.R
-import com.joshtalks.badebhaiya.core.showToast
 import com.joshtalks.badebhaiya.core.workers.WorkManagerAdmin
 import com.joshtalks.badebhaiya.feed.FeedActivity
-import com.joshtalks.badebhaiya.profile.ProfileActivity
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.signup.SignUpActivity
 import com.joshtalks.badebhaiya.signup.SignUpActivity.Companion.REDIRECT_TO_ENTER_NAME
-import com.joshtalks.badebhaiya.signup.SignUpActivity.Companion.REDIRECT_TO_PROFILE_ACTIVITY
 import com.userexperior.UserExperior
 import io.branch.referral.Branch
 import kotlinx.coroutines.Dispatchers
@@ -68,11 +63,16 @@ class LauncherActivity : AppCompatActivity() {
                 )
                 referringParams?.let {
                     Log.d("YASHENDRA", "branch json data => ${it.has("user_id")}")
+
                     startActivityForState(
                         if (it.has("user_id"))
                             it.getString("user_id")
                         else null
                     )
+
+//                    startActivityForState(
+//                        "cb91868f-2e8c-4c09-8003-2bd480534d7e"
+//                    )
                 }
             } else {
                 Log.e("BRANCH SDK", error.message)
@@ -100,11 +100,24 @@ class LauncherActivity : AppCompatActivity() {
                 intent.putExtra("userId",viewUserId)
                 intent
             }
-            else -> SignUpActivity.getIntent(
-                this@LauncherActivity,
+            else -> {
+                // User is not logged in.
+
+                if (viewUserId != null){
+                    // came by deeplink.. redirect to profile
+                    val intent = Intent(this@LauncherActivity, FeedActivity::class.java)
+                    intent.putExtra("userId",viewUserId)
+                    intent.putExtra("profile_deeplink", true)
+                    intent
+
+                } else {
+                    SignUpActivity.getIntent(
+                        this@LauncherActivity,
 //                REDIRECT_TO_PROFILE_ACTIVITY,
-                viewUserId
-            )
+                        viewUserId
+                    )
+                }
+            }
         }
         lifecycleScope.launch(Dispatchers.IO) {
             delay(1000)

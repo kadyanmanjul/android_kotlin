@@ -21,7 +21,10 @@ import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.core.*
 import com.joshtalks.badebhaiya.core.USER_ID
-import com.joshtalks.badebhaiya.databinding.ActivityProfileBinding
+import com.joshtalks.badebhaiya.core.models.PendingPilotEvent
+import com.joshtalks.badebhaiya.core.models.PendingPilotEvent.*
+import com.joshtalks.badebhaiya.core.models.PendingPilotEventData
+import com.joshtalks.badebhaiya.databinding.FragmentProfileBinding
 import com.joshtalks.badebhaiya.feed.*
 import com.joshtalks.badebhaiya.feed.adapter.FeedAdapter
 import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
@@ -36,6 +39,8 @@ import com.joshtalks.badebhaiya.profile.request.ReminderRequest
 import com.joshtalks.badebhaiya.profile.response.ProfileResponse
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomResponse
 import com.joshtalks.badebhaiya.repository.model.User
+import com.joshtalks.badebhaiya.signup.SignUpActivity
+import com.joshtalks.badebhaiya.utils.SingleDataManager
 import com.joshtalks.badebhaiya.utils.Utils
 import com.joshtalks.badebhaiya.utils.setUserImageOrInitials
 import com.karumi.dexter.MultiplePermissionsReport
@@ -44,16 +49,12 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import kotlinx.android.synthetic.main.activity_feed.*
 import kotlinx.android.synthetic.main.base_toolbar.view.*
 
-class ProfileActivity: Fragment(), Call, FeedAdapter.ConversationRoomItemCallback {
-
-//    private val binding by lazy<ActivityProfileBinding> {
-//        DataBindingUtil.setContentView(FeedActivity(), R.layout.activity_profile)
-//    }
+class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallback {
 
     private var isFromDeeplink = false
 
     private val liveRoomViewModel by lazy {
-        ViewModelProvider(this)[LiveRoomViewModel::class.java]
+        ViewModelProvider(requireActivity())[LiveRoomViewModel::class.java]
     }
 
     private val viewModel by lazy {
@@ -61,9 +62,9 @@ class ProfileActivity: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
     }
 
     private val feedViewModel by lazy {
-        ViewModelProvider(this)[FeedViewModel::class.java]
+        ViewModelProvider(requireActivity())[FeedViewModel::class.java]
     }
-    lateinit var binding:ActivityProfileBinding
+    lateinit var binding: FragmentProfileBinding
 
     private var userId: String? = EMPTY
 
@@ -73,7 +74,7 @@ class ProfileActivity: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         savedInstanceState: Bundle?
     ): View? {
         (activity as FeedActivity).swipeRefreshLayout.isEnabled=false
-        binding = DataBindingUtil.inflate(inflater, R.layout.activity_profile, container, false)
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_profile, container, false)
         super.onCreate(savedInstanceState)
         var mBundle: Bundle? = Bundle()
         mBundle = this.arguments
@@ -88,15 +89,16 @@ class ProfileActivity: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         binding.toolbar.iv_back.setOnClickListener{
             activity?.run {
                 (activity as FeedActivity).swipeRefreshLayout.isEnabled=true
-                supportFragmentManager.beginTransaction().remove(this@ProfileActivity)
-                    .commitAllowingStateLoss()
+//                supportFragmentManager.beginTransaction().remove(this@ProfileFragment)
+//                    .commitAllowingStateLoss()
+                onBackPressed()
             }
         }
         activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 activity?.run {
                     (activity as FeedActivity).swipeRefreshLayout.isEnabled=true
-                    supportFragmentManager.beginTransaction().remove(this@ProfileActivity)
+                    supportFragmentManager.beginTransaction().remove(this@ProfileFragment)
                         .commitAllowingStateLoss()
                 }
             }
@@ -109,7 +111,21 @@ class ProfileActivity: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         addObserver()
-        //viewModel.getProfileForUser(userId!!, isFromDeeplink)
+        viewModel.getProfileForUser(userId!!, isFromDeeplink)
+        executePendingActions()
+    }
+
+    private fun executePendingActions() {
+        SingleDataManager.pendingPilotAction?.let {
+            when(it){
+                FOLLOW -> followPilot()
+            }
+        }
+    }
+
+    private fun followPilot(){
+        SingleDataManager.pendingPilotAction = null
+        updateFollowStatus()
     }
 
     private fun handleIntent() {
@@ -191,6 +207,14 @@ class ProfileActivity: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
     }
 
     fun updateFollowStatus() {
+        if (!User.getInstance().isLoggedIn() ){
+            userId?.let {
+                redirectToSignUp(FOLLOW, PendingPilotEventData(pilotUserId = it))
+            }
+            return
+        }
+
+
         viewModel.updateFollowStatus(userId ?: (User.getInstance().userId))
         if(viewModel.speakerFollowed.value == true)
             viewModel.userProfileData.value?.let {
@@ -213,6 +237,13 @@ class ProfileActivity: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         viewModel.getProfileForUser(userId ?: (User.getInstance().userId), isFromDeeplink)
     }
 
+    private fun redirectToSignUp(pendingPilotAction: PendingPilotEvent, pendingPilotEventData: PendingPilotEventData) {
+        SingleDataManager.pendingPilotAction = pendingPilotAction
+        SingleDataManager.pendingPilotEventData = pendingPilotEventData
+        SignUpActivity.start(requireActivity(), isRedirected = true)
+        requireActivity().finish()
+    }
+
     private fun speakerFollowedUIChanges() {
         binding.apply {
             btnFollow.text = getString(R.string.following)
@@ -233,14 +264,14 @@ class ProfileActivity: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
     companion object {
         const val FROM_DEEPLINK = "from_deeplink"
         fun openProfileActivity(context: Context, userId: String = EMPTY) {
-            Intent(context, ProfileActivity::class.java).apply {
+            Intent(context, ProfileFragment::class.java).apply {
                 putExtra(USER_ID, userId)
             }.run {
                 context.startActivity(this)
             }
         }
         fun getIntent(context: Context, userId: String = EMPTY, isFromDeeplink: Boolean = false): Intent {
-            return Intent(context, ProfileActivity::class.java).apply {
+            return Intent(context, ProfileFragment::class.java).apply {
                 putExtra(USER_ID, userId)
                 putExtra(FROM_DEEPLINK, isFromDeeplink)
             }
@@ -252,13 +283,13 @@ class ProfileActivity: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
 //    }
 
     override fun joinRoom(room: RoomListResponseItem, view: View) {
-        takePermissions(room)
+        takePermissions(room.roomId.toString(), room.topic.toString())
     }
 
-    private fun takePermissions(room: RoomListResponseItem? = null) {
+    private fun takePermissions(room: String? = null, roomTopic: String) {
         if (PermissionUtils.isCallingPermissionWithoutLocationEnabled(requireContext())) {
             if (room != null) {
-                feedViewModel.joinRoom(room)
+                feedViewModel.joinRoom(room, roomTopic)
             }
             return
         }
@@ -270,7 +301,7 @@ class ProfileActivity: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
                     report?.areAllPermissionsGranted()?.let { flag ->
                         if (flag) {
                             if (room != null) {
-                                feedViewModel.joinRoom(room)
+                                feedViewModel.joinRoom(room, roomTopic)
                             }
                             return
                         }
@@ -325,6 +356,14 @@ class ProfileActivity: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
     }
 
     override fun setReminder(room: RoomListResponseItem, view: View) {
+        if (!User.getInstance().isLoggedIn()){
+
+            userId?.let {
+                redirectToSignUp(SET_REMINDER, PendingPilotEventData(roomId = room.roomId, pilotUserId = it))
+            }
+            return
+        }
+
         val alarmManager = activity?.applicationContext?.getSystemService(ALARM_SERVICE) as AlarmManager
         val notificationIntent = context?.let {
             NotificationHelper.getNotificationIntent(
@@ -333,7 +372,8 @@ class ProfileActivity: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
                     body = room.speakersData?.name ?: "Conversation Room Reminder",
                     id = room.startedBy ?: 0,
                     userId = room.speakersData?.userId ?: "",
-                    type = NotificationType.REMINDER
+                    type = NotificationType.LIVE,
+                    roomId = room.roomId.toString()
                 )
             )
         }

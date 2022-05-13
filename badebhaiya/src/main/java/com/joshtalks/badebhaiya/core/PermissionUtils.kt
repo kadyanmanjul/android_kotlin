@@ -13,6 +13,8 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.joshtalks.badebhaiya.R
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import com.karumi.dexter.listener.single.PermissionListener
+import timber.log.Timber
 
 enum class PermissionAction(val action: String) {
     ALLOW("ALLOW"),
@@ -355,6 +357,20 @@ object PermissionUtils {
                 Manifest.permission.MODIFY_AUDIO_SETTINGS,
             )
             .withListener(multiplePermissionsListener).check()
+    }
+
+    fun demandAlarmPermission(
+        activity: Activity,
+        permissionListener: PermissionListener
+    ){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            Dexter.withContext(activity)
+                .withPermission(
+                    Manifest.permission.SCHEDULE_EXACT_ALARM
+                )
+                .withListener(permissionListener).check()
+            Timber.d("AlarM PERMISSION ASKED")
+        }
     }
 
     fun callingPermissionPermanentlyDeniedDialog(

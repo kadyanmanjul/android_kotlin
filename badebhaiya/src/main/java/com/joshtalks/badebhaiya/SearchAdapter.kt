@@ -25,8 +25,6 @@ import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.repository.service.RetrofitInstance
 import com.joshtalks.badebhaiya.utils.setImage
 import com.joshtalks.badebhaiya.utils.setUserInitialInRect
-import kotlinx.android.synthetic.main.activity_profile.view.*
-import kotlinx.android.synthetic.main.activity_profile.view.btnFollow
 import kotlinx.android.synthetic.main.li_search_event.*
 import kotlinx.android.synthetic.main.li_search_event.view.*
 import kotlinx.coroutines.GlobalScope

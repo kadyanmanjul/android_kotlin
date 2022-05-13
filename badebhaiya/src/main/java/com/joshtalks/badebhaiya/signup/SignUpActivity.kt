@@ -15,7 +15,7 @@ import com.joshtalks.badebhaiya.core.io.AppDirectory
 import com.joshtalks.badebhaiya.databinding.ActivitySignUpBinding
 import com.joshtalks.badebhaiya.feed.FeedActivity
 import com.joshtalks.badebhaiya.privacyPolicy.WebViewFragment
-import com.joshtalks.badebhaiya.profile.ProfileActivity
+import com.joshtalks.badebhaiya.profile.ProfileFragment
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.signup.fragments.SignUpAddProfilePhotoFragment
 import com.joshtalks.badebhaiya.signup.fragments.SignUpEnterNameFragment
@@ -48,6 +48,7 @@ class SignUpActivity : AppCompatActivity() {
         handleIntent()
         addObservers()
         setOnClickListeners()
+
     }
 
     private fun handleIntent() {
@@ -59,6 +60,7 @@ class SignUpActivity : AppCompatActivity() {
             binding.btnWelcome.visibility = View.GONE
             openUploadProfilePicFragment()
         }
+
     }
 
     private fun setOnClickListeners() {
@@ -90,6 +92,9 @@ class SignUpActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         initTrueCallerUI()
+        if (intent.getBooleanExtra(IS_REDIRECTED, false)){
+            openTrueCallerBottomSheet()
+        }
     }
 
     private fun addObservers() {
@@ -107,6 +112,7 @@ class SignUpActivity : AppCompatActivity() {
                 }
                 SignUpStepStatus.ProfilePicSkipped, SignUpStepStatus.ProfileCompleted, SignUpStepStatus.ProfilePicUploaded -> {
                     openNextActivity()
+//                    finish()
                     this@SignUpActivity.finishAffinity()
                 }
             }
@@ -160,13 +166,19 @@ class SignUpActivity : AppCompatActivity() {
             //ProfileActivity.openProfileActivity(this, intent.extras?.getString(USER_ID) ?: EMPTY)
             var bundle = Bundle()
             bundle.putString("user", intent.extras?.getString(USER_ID))
-            supportFragmentManager.findFragmentByTag(ProfileActivity::class.java.simpleName)
+            supportFragmentManager.findFragmentByTag(ProfileFragment::class.java.simpleName)
             supportFragmentManager.beginTransaction()
-                .replace(R.id.root_view, ProfileActivity(), ProfileActivity::class.java.simpleName)
+                .replace(R.id.root_view, ProfileFragment(), ProfileFragment::class.java.simpleName)
                 .commit()
         } else
-            Intent(this, FeedActivity::class.java).also {
-                this@SignUpActivity.startActivity(it)
+            Intent(this, FeedActivity::class.java).also { it ->
+
+//                SingleDataManager.pendingPilotAction?.let { event ->
+//                    val userId = SingleDataManager.pendingPilotEventData?.pilotUserId
+//                    it.putExtra("user", userId)
+//                }
+                startActivity(it)
+
             }
     }
 
@@ -228,10 +240,13 @@ class SignUpActivity : AppCompatActivity() {
         const val REDIRECT_TO_ENTER_NAME = "REDIRECT_TO_ENTER_NAME"
         const val REDIRECT_TO_ENTER_PROFILE_PIC = "REDIRECT_TO_ENTER_PROFILE_PIC"
         const val REDIRECT_PROFILE_SKIPPED = "REDIRECT_WHEN_PROFILE_SKIPPED"
+        const val IS_REDIRECTED = "is_redirected"
+
 
         @JvmStatic
-        fun start(context: Context, redirect: String? = null, userId: String? = null) {
+        fun start(context: Context, redirect: String? = null, userId: String? = null, isRedirected: Boolean = false) {
             val starter = Intent(context, SignUpActivity::class.java)
+                .putExtra(IS_REDIRECTED, isRedirected)
                 .putExtra(REDIRECT, redirect)
                 .putExtra(USER_ID, userId)
             context.startActivity(starter)

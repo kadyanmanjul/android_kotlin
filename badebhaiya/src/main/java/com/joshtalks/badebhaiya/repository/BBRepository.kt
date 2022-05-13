@@ -1,7 +1,10 @@
 package com.joshtalks.badebhaiya.repository
 
+import com.joshtalks.badebhaiya.profile.response.ProfileResponse
+import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.repository.service.RetrofitInstance
 import com.joshtalks.badebhaiya.signup.request.VerifyOTPRequest
+import retrofit2.Response
 
 class BBRepository {
 
@@ -10,6 +13,12 @@ class BBRepository {
     suspend fun verifyOTP(verifyOTPRequest: VerifyOTPRequest) = service.verityOTP(verifyOTPRequest)
     suspend fun getUserDetailsForSignUp(userId: String) = service.getUserProfile(userId)
     suspend fun updateUserProfile(userId: String, requestMap: MutableMap<String, String?>) = service.updateUserProfile(userId, requestMap)
-    suspend fun getProfileForUser(userId: String) = RetrofitInstance.profileNetworkService.getProfileForUser(userId)
+    suspend fun getProfileForUser(userId: String): Response<ProfileResponse> {
+        return if (User.getInstance().isLoggedIn()){
+            RetrofitInstance.profileNetworkService.getProfileForUser(userId)
+        } else {
+            RetrofitInstance.profileNetworkService.getProfileWithoutToken(userId)
+        }
+    }
     suspend fun trueCallerLogin(params: Map<String, String>) = service.trueCallerLogin(params)
 }

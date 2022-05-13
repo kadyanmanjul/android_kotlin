@@ -2,6 +2,7 @@ package com.joshtalks.badebhaiya.feed.adapter
 
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuInflater
 import android.view.View
@@ -15,6 +16,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.badebhaiya.R
+import com.joshtalks.badebhaiya.core.models.PendingPilotEvent
 import com.joshtalks.badebhaiya.core.showToast
 import com.joshtalks.badebhaiya.databinding.LiRoomEventBinding
 import com.joshtalks.badebhaiya.feed.FeedActivity
@@ -24,14 +26,16 @@ import com.joshtalks.badebhaiya.feed.model.SpeakerData
 import com.joshtalks.badebhaiya.liveroom.service.ConvoWebRtcService
 import com.joshtalks.badebhaiya.liveroom.service.ConvoWebRtcService.Companion.roomQuestionId
 import com.joshtalks.badebhaiya.repository.model.User
+import com.joshtalks.badebhaiya.utils.SingleDataManager
 import com.joshtalks.badebhaiya.utils.Utils
 import com.joshtalks.badebhaiya.utils.datetimeutils.DateTimeStyle
-import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.*
 import kotlinx.coroutines.NonDisposableHandle.parent
+import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*
 
-class FeedAdapter :
+class FeedAdapter(private val fromProfile: Boolean = false, private val coroutineScope: CoroutineScope? = null) :
     ListAdapter<RoomListResponseItem, FeedAdapter.FeedViewHolder>(DIFF_CALLBACK) {
 
     companion object DIFF_CALLBACK : DiffUtil.ItemCallback<RoomListResponseItem>() {
@@ -77,26 +81,35 @@ class FeedAdapter :
             item.adapter = this@FeedAdapter
             item.viewHolder = this
             val name = room.speakersData?.shortName
-            val date = Utils.getMessageTime((room.startTime ?: 0L) * 1000L, false, DateTimeStyle.LONG)
-            val time = Utils.getMessageTimeInHours(Date((room.startTime ?: 0) * 1000L))
-             item.tvCardHeader.text = item.root.context.getString(R.string.room_card_top_title_header, name, date, time)
+            val date = Utils.getMessageTime((room.startTime ?: 0L), false, DateTimeStyle.LONG)
+            val time = Utils.getMessageTimeInHours(Date(room.startTime ?: 0))
+            item.tvCardHeader.text = item.root.context.getString(R.string.room_card_top_title_header, name, date, time)
             item.root.setOnClickListener {
                     callback?.viewRoom(room, it)
 
             }
 
             item.root.setOnLongClickListener{
-                if(room.speakersData?.userId == User.getInstance().userId) {
-                    showPopup(room.roomId)
-                }
-                else {
-                    if (room.conversationRoomType==ConversationRoomType.LIVE)
-                    showLeavePopup(room.roomId,roomQuestionId)
-                }
+//                if(room.speakersData?.userId == User.getInstance().userId) {
+//                    showPopup(room.roomId)
+//                }
+//                else {
+//                    if (room.conversationRoomType==ConversationRoomType.LIVE)
+//                    showLeavePopup(room.roomId,roomQuestionId)
+//                }
                 return@setOnLongClickListener true
             }
 
             item.callback = callback
+
+            if (fromProfile && SingleDataManager.pendingPilotAction != null && SingleDataManager.pendingPilotAction == PendingPilotEvent.SET_REMINDER && SingleDataManager.pendingPilotEventData!!.roomId == room.roomId){
+                coroutineScope?.launch {
+                    delay(1000)
+                    item.actionButton.performClick()
+                }
+                SingleDataManager.pendingPilotAction = null
+                SingleDataManager.pendingPilotEventData = null
+            }
         }
         fun showPopup(roomId: Int) {
             val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(item.tvCardTopic.context)
