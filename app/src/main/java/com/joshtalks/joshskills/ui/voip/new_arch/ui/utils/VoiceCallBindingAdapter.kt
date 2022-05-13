@@ -1,19 +1,18 @@
 package com.joshtalks.joshskills.ui.voip.new_arch.ui.utils
 
 import android.content.Intent
-import android.os.SystemClock
 import android.widget.Chronometer
 import androidx.appcompat.widget.AppCompatImageButton
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
-import androidx.databinding.ObservableBoolean
+import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.constants.*
-import com.joshtalks.joshskills.ui.voip.new_arch.ui.models.CallType
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.adapter.TopicImageAdapter
 import de.hdodenhof.circleimageview.CircleImageView
 
 @BindingAdapter("setProfileImage")
@@ -96,5 +95,12 @@ fun AppCompatImageButton.acceptCall(isAccept: Boolean?) {
             }
             context.startActivity(intent)
         }
+    }
+}
+@BindingAdapter("setViewPagerAdapter")
+fun ViewPager2.setViewPagerAdapter(imageList: ArrayList<String>?) {
+    if(!imageList.isNullOrEmpty()) {
+        val adapter = TopicImageAdapter(imageList, context)
+        this.adapter=adapter
     }
 }

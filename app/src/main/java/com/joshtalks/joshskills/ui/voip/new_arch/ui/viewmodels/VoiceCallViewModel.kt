@@ -5,11 +5,11 @@ import android.app.Application
 import android.os.Message
 import android.util.Log
 import android.view.View
+import androidx.databinding.ObservableArrayList
 import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.joshtalks.joshskills.base.BaseViewModel
 import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.base.constants.FPP
 import com.joshtalks.joshskills.base.constants.FROM_INCOMING_CALL
@@ -25,12 +25,12 @@ import com.joshtalks.joshskills.voip.data.ServiceEvents
 import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
+import com.mindorks.placeholderview.`$`.R.id.viewPager
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.util.*
-import kotlin.collections.HashMap
+
 
 const val CONNECTING = 1
 const val ONGOING = 2
@@ -46,6 +46,7 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
     private val mutex = Mutex(false)
     val callType = ObservableField("")
     val callStatus = ObservableInt(getCallStatus())
+    var imageList = ObservableArrayList<String>()
     val callData = HashMap<String, Any>()
     val uiState by lazy { CallUIState() }
     val pendingEvents = ArrayDeque<Int>()
@@ -65,6 +66,7 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
 
     init {
         listenRepositoryEvents()
+        getTopicImageList()
     }
 
     fun listenRepositoryEvents() {
@@ -193,6 +195,10 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
         connectCallJob.start()
     }
 
+    fun getTopicImageList() {
+        imageList.add("https://img.thedailybeast.com/image/upload/c_crop,d_placeholder_euli9k,h_1688,w_3000,x_0,y_0/dpr_2.0/c_limit,w_740/fl_lossy,q_auto/v1652421540/220512-tna-twitter-musk-tease-02_djauok")
+        imageList.add("https://static.independent.co.uk/2022/05/11/22/newFile-1.jpg?quality=75&width=1200&auto=webp")
+    }
     // User Action
     fun disconnectCall(v: View) {
         Log.d(TAG, "Disconnect Call :Red Button Press")
@@ -270,7 +276,6 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
         voipLog?.log("unbound Service")
         repository.stopService(activity)
     }
-
     override fun onCleared() {
         Log.d(TAG, "onCleared: ")
         super.onCleared()
