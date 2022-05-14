@@ -26,6 +26,7 @@ import com.joshtalks.joshskills.track.AGORA_UID
 import com.joshtalks.joshskills.track.CHANNEL_ID
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.track.CONVERSATION_ID
+import com.joshtalks.joshskills.ui.fpp.constants.GROUP
 import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics
 import com.joshtalks.joshskills.ui.group.constants.*
 import com.joshtalks.joshskills.ui.group.model.AddGroupRequest
@@ -418,7 +419,7 @@ class JoshGroupActivity : BaseGroupActivity() {
             mentorId = mentorId,
             flags = arrayOf(),
             intervalType =  null,
-            previousPage = this.javaClass.name,
+            previousPage = GROUP,
             conversationId = null
         )
     }

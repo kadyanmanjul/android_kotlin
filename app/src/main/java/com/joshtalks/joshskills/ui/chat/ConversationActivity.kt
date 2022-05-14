@@ -100,10 +100,7 @@ import com.joshtalks.joshskills.ui.extra.AUTO_START_POPUP
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
 import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.ui.fpp.SeeAllRequestsActivity
-import com.joshtalks.joshskills.ui.fpp.constants.IS_ACCEPTED
-import com.joshtalks.joshskills.ui.fpp.constants.IS_REJECTED
-import com.joshtalks.joshskills.ui.fpp.constants.QUICK_VIEW
-import com.joshtalks.joshskills.ui.fpp.constants.RECENT_CALL
+import com.joshtalks.joshskills.ui.fpp.constants.*
 import com.joshtalks.joshskills.ui.fpp.model.PendingRequestDetail
 import com.joshtalks.joshskills.ui.fpp.utils.Blurry
 import com.joshtalks.joshskills.ui.group.JoshGroupActivity
@@ -1488,7 +1485,7 @@ class ConversationActivity :
             fppRequestContainer.setOnClickListener {
                 openUserProfileActivity(
                     pendingRequestDetail.senderMentorId ?: "",
-                    QUICK_VIEW
+                    REQUESTS_SCREEN
                 )
             }
             profileImage.setUserImageOrInitials(
@@ -1506,7 +1503,7 @@ class ConversationActivity :
                 fppRequestContainer.setBackgroundColor(resources.getColor(R.color.request_respond))
                 conversationViewModel.confirmOrRejectFppRequest(
                     pendingRequestDetail.senderMentorId!!,
-                    IS_ACCEPTED, QUICK_VIEW
+                    IS_ACCEPTED, REQUESTS_SCREEN
                 )
             }
             btnNotNow.setOnClickListener {
@@ -1520,7 +1517,7 @@ class ConversationActivity :
                 fppRequestContainer.setBackgroundColor(resources.getColor(R.color.request_respond))
                 conversationViewModel.confirmOrRejectFppRequest(
                     pendingRequestDetail.senderMentorId!!,
-                    IS_REJECTED, QUICK_VIEW
+                    IS_REJECTED, REQUESTS_SCREEN
                 )
 
             }

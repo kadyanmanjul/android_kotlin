@@ -1372,7 +1372,6 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
                 }
             }.run {
                 activity.startActivity(this)
-                activity.finish()
             }
         }
     }

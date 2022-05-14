@@ -14,13 +14,7 @@ import com.joshtalks.joshskills.databinding.FavoriteListActivityBinding
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.fpp.BaseFppActivity
 import com.joshtalks.joshskills.ui.fpp.RecentCallActivity
-import com.joshtalks.joshskills.ui.fpp.constants.FAV_CLICK_ON_PROFILE
-import com.joshtalks.joshskills.ui.fpp.constants.FAV_LIST_SCREEN_BACK_PRESSED
-import com.joshtalks.joshskills.ui.fpp.constants.OPEN_CALL_SCREEN
-import com.joshtalks.joshskills.ui.fpp.constants.OPEN_RECENT_SCREEN
-import com.joshtalks.joshskills.ui.fpp.constants.FINISH_ACTION_MODE
-import com.joshtalks.joshskills.ui.fpp.constants.SET_TEXT_ON_ENABLE_ACTION_MODE
-import com.joshtalks.joshskills.ui.fpp.constants.ENABLE_ACTION_MODE
+import com.joshtalks.joshskills.ui.fpp.constants.*
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
 import com.joshtalks.joshskills.ui.voip.WebRtcActivity
 
@@ -129,7 +123,8 @@ class FavoriteListActivity : BaseFppActivity() {
             UserProfileActivity.startUserProfileActivity(
                 this,
                 mentorId = mId,
-                conversationId = conversationId1
+                conversationId = conversationId1,
+                previousPage = FAVOURITE_LIST
             )
             return
         }

@@ -49,7 +49,7 @@ class SeeAllRequestsActivity : BaseFppActivity() {
             senderMentorId,
             arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
             null,
-            REQUESTS_SCREEN,
+            previousPage = REQUESTS_SCREEN,
             conversationId = null
         )
     }
