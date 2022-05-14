@@ -30,11 +30,7 @@ import com.google.gson.JsonParseException
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.base.constants.KEY_APP_ACCEPT_LANGUAGE
-import com.joshtalks.joshskills.base.constants.KEY_APP_USER_AGENT
-import com.joshtalks.joshskills.base.constants.KEY_APP_VERSION_CODE
-import com.joshtalks.joshskills.base.constants.KEY_APP_VERSION_NAME
-import com.joshtalks.joshskills.base.constants.KEY_AUTHORIZATION
+import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.conversationRoom.network.ConversationRoomsNetworkService
 import com.joshtalks.joshskills.core.abTest.ABTestNetworkService
 import com.joshtalks.joshskills.core.datetimeutils.DateTimeUtils
@@ -106,6 +102,11 @@ private const val READ_TIMEOUT = 30L
 private const val WRITE_TIMEOUT = 30L
 private const val CONNECTION_TIMEOUT = 30L
 private const val CALL_TIMEOUT = 60L
+private val IGNORE_UNAUTHORISED = setOf(
+    "$DIR/reputation/vp_rp_snackbar",
+    "$DIR/voicecall/agora_call_feedback/",
+    "$DIR/voicecall/agora_call_feedback_submit/"
+)
 
 class AppObjectController {
 
@@ -721,20 +722,22 @@ class StatusCodeInterceptor : Interceptor {
                     AppObjectController.joshApplication.packageName
                 )
             ) {
-                PrefManager.logoutUser()
-                LastSyncPrefManager.clear()
-                WorkManagerAdmin.instanceIdGenerateWorker()
-                WorkManagerAdmin.appInitWorker()
-                WorkManagerAdmin.appStartWorker()
-                if (JoshApplication.isAppVisible) {
-                    val intent =
-                        Intent(AppObjectController.joshApplication, SignUpActivity::class.java)
-                    intent.apply {
-                        addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                        putExtra("Flow", "StatusCodeInterceptor")
+                if (IGNORE_UNAUTHORISED.none { !chain.request().url.toString().contains(it) }) {
+                    PrefManager.logoutUser()
+                    LastSyncPrefManager.clear()
+                    WorkManagerAdmin.instanceIdGenerateWorker()
+                    WorkManagerAdmin.appInitWorker()
+                    WorkManagerAdmin.appStartWorker()
+                    if (JoshApplication.isAppVisible) {
+                        val intent =
+                            Intent(AppObjectController.joshApplication, SignUpActivity::class.java)
+                        intent.apply {
+                            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            putExtra("Flow", "StatusCodeInterceptor")
+                        }
+                        AppObjectController.joshApplication.startActivity(intent)
                     }
-                    AppObjectController.joshApplication.startActivity(intent)
                 }
             }
         }
