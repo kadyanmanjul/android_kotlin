@@ -397,8 +397,12 @@ class JoshGroupActivity : BaseGroupActivity() {
             vm.repository.leaveGroupFromLocal(groupId)
             withContext(Dispatchers.Main) {
                 showRemovedDmFppAlert(groupName?: EMPTY)
-                while (supportFragmentManager.backStackEntryCount > 0)
+                if (supportFragmentManager.backStackEntryCount > 0){
+                    while (supportFragmentManager.backStackEntryCount > 0)
+                        onBackPressed()
+                }else{
                     onBackPressed()
+                }
             }
         }
     }
