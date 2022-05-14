@@ -553,9 +553,10 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
 
 
                     val data2 = it.getOrNull(1)
-                    if (data2 == null||PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID)!=DEFAULT_COURSE_ID) {
+                    if (data2 == null) {
                         index = 0
-                        subscriptionCard.visibility = View.GONE
+                        if(PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID)!=DEFAULT_COURSE_ID)
+                           subscriptionCard.visibility = View.GONE
                     } else {
                         subscriptionCard.card.performClick()
                         data2.buttonText?.let { it1 -> buttonText.add(it1) }

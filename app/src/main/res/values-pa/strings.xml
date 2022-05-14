@@ -104,7 +104,7 @@
     <string name="wrong_otp">ਦਾਖਲ ਕੀਤਾ OTP ਅਵੈਧ ਹੈ। ਕਿਰਪਾ ਕਰਕੇ ਸਹੀ OTP ਦਾਖਲ ਕਰੋ ਜਾਂ OTP ਨੂੰ ਦੁਬਾਰਾ ਬਣਾਓ</string>
     <string name="refer_and_earn">Refer &amp; Earn</string>
     <string name="paise_kamao">Paise Kamao</string>
-    <string name="copy_code">ਰੈਫਰਲ ਕੋਡ ਕਲਿੱਪਬੋਰਡ &#39;ਤੇ ਕਾਪੀ ਕੀਤਾ ਗਿਆ</string>
+    <string name="copy_code">ਰੈਫਰਲ ਕੋਡ ਕਲਿੱਪਬੋਰਡ ਤੇ ਕਾਪੀ ਕੀਤਾ ਗਿਆ </string>
     <string name="complete_payment">ਭੁਗਤਾਨ ਨੂੰ ਪੂਰਾ ਕਰੋ</string>
     <string name="bill_detail_header">Bill Details</string>
     <string name="total_amount">Total Amount</string>
@@ -311,7 +311,7 @@
     <string name="call_permission_permanent_message">%s ਨਾਲ ਇਸ ਕਾਲ ਦਾ ਜਵਾਬ ਦੇਣ ਲਈ, ਜੋਸ਼ ਸਕਿੱਲਸ ਨੂੰ ਆਪਣੇ ਮਾਈਕ੍ਰੋਫ਼ੋਨ ਤੱਕ ਪਹੁੰਚ ਦਿਓ। ਸੈਟਿੰਗਾਂ &amp;gt; ਅਨੁਮਤੀਆਂ &amp;#39;ਤੇ ਟੈਪ ਕਰੋ, ਅਤੇ ਮਾਈਕ੍ਰੋਫ਼ੋਨ ਚਾਲੂ ਕਰੋ।</string>
     <string name="clear_all_media">"ਸਾਰਾ ਮੀਡੀਆ ਸਾਫ਼ ਕਰੋ"</string>
     <string name="time_ago_full_seconds">"%1$d ਸਕਿੰਟ ਪਹਿਲਾਂ"</string>
-    <string name="inbox_header">ਜੋਸ਼ ਹੁਨਰ</string>
+    <string name="inbox_header">Josh Skills</string>
     <string name="time_ago_seconds">"%1$d ਸਕਿੰਟ ਪਹਿਲਾਂ"</string>
     <string name="time_ago_minute">%1$d ਮਿੰਟ ਪਹਿਲਾਂ</string>
     <string name="time_ago_minutes">%1$d ਮਿੰਟ ਪਹਿਲਾਂ</string>

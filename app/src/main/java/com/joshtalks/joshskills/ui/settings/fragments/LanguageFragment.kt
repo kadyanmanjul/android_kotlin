@@ -55,7 +55,7 @@ class LanguageFragment : Fragment() {
             return
         }
         PrefManager.put(IS_LOCALE_UPDATED_IN_SETTINGS,true)
-        (requireActivity() as BaseActivity).requestWorkerForChangeLanguage(item.code)
+        (requireActivity() as BaseActivity).requestWorkerForChangeLanguage(item.code,canCreateActivity=false)
     }
 
 }

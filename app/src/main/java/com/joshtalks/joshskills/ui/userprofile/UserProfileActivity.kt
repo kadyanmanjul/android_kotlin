@@ -99,7 +99,8 @@ const val FOR_REST = "For_Rest"
 const val FOR_EDIT_SCREEN = "For_Edit_Screen"
 const val TOOLTIP_USER_PROFILE_SCREEN = "TOOLTIP_USER_PROFILE_SCREEN_"
 const val REFERRAL_COUNT = "REFERRAL_COUNT"
-class UserProfileActivity : WebRtcMiddlewareActivity() {
+class
+UserProfileActivity : WebRtcMiddlewareActivity() {
 
     lateinit var binding: ActivityUserProfileBinding
     private var mentorId: String = EMPTY
@@ -978,7 +979,7 @@ class UserProfileActivity : WebRtcMiddlewareActivity() {
         // binding.points.text = DecimalFormat("#,##,##,###").format(userData.points)
         binding.streaksText.text = getString(R.string.user_streak_text, userData.streak)
         binding.streaksText.visibility = GONE
-        if(helpCountControl) {
+        if(helpCountControl && PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID) {
             if (mentorId == Mentor.getInstance().getId()) {
                 binding.referralInfoText.visibility = VISIBLE
                 if (userData.numberOfReferral != 0 && userData.numberOfReferral != null) {

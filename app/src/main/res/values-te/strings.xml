@@ -308,7 +308,7 @@
     <string name="call_permission_permanent_message">%sతో ఈ కాల్‌కి సమాధానం ఇవ్వడానికి, మీ మైక్రోఫోన్‌కు Josh Skills యాక్సెస్ ఇవ్వండి. సెట్టింగ్‌లు &gt; అనుమతులు నొక్కండి మరియు మైక్రోఫోన్‌ను ఆన్ చేయండి.</string>
     <string name="clear_all_media">అన్ని మీడియాను క్లియర్ చేయండి</string>
     <string name="time_ago_full_seconds">%1$d సెకన్ల క్రితం</string>
-    <string name="inbox_header">జోష్ స్కిల్స్</string>
+    <string name="inbox_header">Josh Skills</string>
     <string name="time_ago_seconds">%1$d సెకన్ల క్రితం</string>
     <string name="time_ago_minute">%1$d నిమిషాల క్రితం</string>
     <string name="time_ago_minutes">%1$d నిమిషాల క్రితం</string>

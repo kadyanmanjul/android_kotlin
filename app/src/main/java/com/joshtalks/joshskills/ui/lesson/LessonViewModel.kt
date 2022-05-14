@@ -91,7 +91,6 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     val eventLiveData: MutableLiveData<Event<Boolean>> = MutableLiveData()
     var lessonIsConvoRoomActive: Boolean = false
     var isFreeTrail = false
-
     val introVideoLiveDataForSpeakingSection: MutableLiveData<VideoPopupItem> = MutableLiveData()
     val callBtnHideShowLiveData: MutableLiveData<Int> = MutableLiveData()
     val howToSpeakLiveData: MutableLiveData<Boolean> = MutableLiveData()

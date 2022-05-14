@@ -307,7 +307,7 @@
     <string name="call_permission_permanent_message">இந்த அழைப்பிற்கு %s மூலம் பதிலளிக்க, உங்கள் மைக்ரோஃபோனுக்கான அணுகலை Josh Skills வழங்கவும். அமைப்புகள் &amp;gt; அனுமதிகள் என்பதைத் தட்டி, மைக்ரோஃபோனை இயக்கவும்.</string>
     <string name="clear_all_media">அனைத்து மீடியாவையும் அழி</string>
     <string name="time_ago_full_seconds">%1$d வினாடிகளுக்கு முன்பு</string>
-    <string name="inbox_header">ஜோஷ் திறன்கள்</string>
+    <string name="inbox_header">Josh Skills</string>
     <string name="time_ago_seconds">%1$d வினாடிகளுக்கு முன்பு</string>
     <string name="time_ago_minute">%1$d நிமிடங்களுக்கு முன்பு</string>
     <string name="time_ago_minutes">%1$d நிமிடங்களுக்கு முன்பு</string>

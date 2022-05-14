@@ -307,7 +307,7 @@
     <string name="call_permission_permanent_message">या कॉलला %s उत्तर देण्यासाठी, Josh Skills ला तुमच्या मायक्रोफोनमध्ये प्रवेश द्या. सेटिंग्ज मध्ये &amp;gt; परवानगी वर टॅप करा आणि मायक्रोफोन चालू करा.</string>
     <string name="clear_all_media">"सर्व मीडिया साफ करा"</string>
     <string name="time_ago_full_seconds">"%1$d सेकंदांपूर्वी"</string>
-    <string name="inbox_header">जोश कौशल्ये</string>
+    <string name="inbox_header">Josh Skills</string>
     <string name="time_ago_seconds">"%1$d सेकंदांपूर्वी"</string>
     <string name="time_ago_minute">%1$d मिनिटांपूर्वी</string>
     <string name="time_ago_minutes">%1$d मिनिटांपूर्वी</string>
