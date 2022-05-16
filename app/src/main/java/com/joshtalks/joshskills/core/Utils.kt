@@ -1536,26 +1536,31 @@ fun String.urlToBitmap(
     height: Int = 80,
     context: Context = AppObjectController.joshApplication
 ): Bitmap? {
+    var bitmap : Bitmap? = null
+    try {
+        val requestOptions =
+            RequestOptions()
+                .circleCrop()
+                .format(DecodeFormat.PREFER_RGB_565)
+                .disallowHardwareConfig().dontAnimate().encodeQuality(75)
 
-    val requestOptions =
-        RequestOptions()
-            .circleCrop()
-            .format(DecodeFormat.PREFER_RGB_565)
-            .disallowHardwareConfig().dontAnimate().encodeQuality(75)
-
-    return Glide.with(context)
-        .asBitmap()
-        .load(this)
-        .override(Utils.dpToPx(width), Utils.dpToPx(height))
-        .apply(
-            requestOptions
-        )
-        // .override(Target.SIZE_ORIGINAL)
-        .diskCacheStrategy(DiskCacheStrategy.ALL)
-        .optionalTransform(
-            WebpDrawable::class.java,
-            WebpDrawableTransformation(CircleCrop())
-        ).submit().get(1500, TimeUnit.MILLISECONDS)
+        bitmap = Glide.with(context)
+            .asBitmap()
+            .load(this)
+            .override(Utils.dpToPx(width), Utils.dpToPx(height))
+            .apply(
+                requestOptions
+            )
+            // .override(Target.SIZE_ORIGINAL)
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
+            .optionalTransform(
+                WebpDrawable::class.java,
+                WebpDrawableTransformation(CircleCrop())
+            ).submit().get(1500, TimeUnit.MILLISECONDS)
+        return bitmap
+    } catch (e : Exception) {
+        return bitmap
+    }
 }
 
 fun Int.toBoolean() = this == 1
