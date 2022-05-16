@@ -971,6 +971,12 @@ class NotificationEngagementSyncWorker(context: Context, workerParams: WorkerPar
     CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
         try {
+
+           /* user_action: "received" (when received)
+            user_action: "displayed" (when displayed)
+            user_action: "clicked" (when user clicked)
+            user_action: "discarded" (when user discarded)
+            user_action: "app_discarded" (when app discards it for being duplicate)*/
             val db = AppObjectController.appDatabase
             val listOfReceived = db.notificationDao().getUnsentAnalytics()?: emptyList()
             val listOfClicked = db.notificationDao().getUnsyncedNotifications("Clicked%")?: emptyList()
@@ -984,7 +990,7 @@ class NotificationEngagementSyncWorker(context: Context, workerParams: WorkerPar
                 request.add(NotificationAnalyticsRequest(it.id,it.time_received,"received",it.platform))
             }
             listOfClicked.forEach {
-                request.add(NotificationAnalyticsRequest(it.id,it.actionTime,"opened",it.platform))
+                request.add(NotificationAnalyticsRequest(it.id,it.actionTime,"clicked",it.platform))
             }
             listDismissed.forEach {
                 request.add(NotificationAnalyticsRequest(it.id,it.actionTime,"discarded",it.platform))

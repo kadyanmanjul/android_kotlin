@@ -101,6 +101,7 @@ import com.joshtalks.joshskills.ui.voip.RTC_UID_KEY
 import com.joshtalks.joshskills.ui.voip.RTC_WEB_GROUP_CALL_GROUP_NAME
 import com.joshtalks.joshskills.ui.voip.RTC_WEB_GROUP_PHOTO
 import com.joshtalks.joshskills.ui.voip.WebRtcService
+import com.joshtalks.joshskills.ui.voip.analytics.VoipAnalytics
 import com.joshtalks.joshskills.ui.voip.analytics.VoipAnalytics.pushIncomingCallAnalytics
 import java.io.IOException
 import java.io.InputStream
@@ -233,9 +234,17 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             nc.contentTitle = remoteData.notification?.title
             nc.contentText = remoteData.notification?.body
             nc.id = nc.notificationId.toString()
-            sendNotification(nc)
-            Log.d(FirebaseNotificationService::class.java.simpleName, "onMessageReceived nc() nc = ${nc.toString()}")
-            pushToDatabase(nc)
+            CoroutineScope(Dispatchers.IO).launch {
+                val notification = AppObjectController.appDatabase.notificationDao()
+                    .getNotification(nc.notificationId.toString())
+                if (notification!=null){
+
+                } else {
+                    sendNotification(nc)
+                    Log.d(FirebaseNotificationService::class.java.simpleName, "onMessageReceived nc() nc = ${nc.toString()}")
+                    pushToDatabase(nc)
+                }
+            }
         }
     }
 

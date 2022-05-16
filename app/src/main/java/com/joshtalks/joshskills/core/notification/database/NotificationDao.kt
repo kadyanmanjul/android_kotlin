@@ -14,6 +14,9 @@ interface NotificationDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertNotification(notification: NotificationModel)
 
+    @Query("SELECT * FROM notification_table WHERE id = :id")
+    suspend fun getNotification(id:String): NotificationModel?
+
     @Query("SELECT * FROM notification_table WHERE analytics_sent = 0")
     suspend fun getUnsentAnalytics(): List<NotificationModel>?
 
