@@ -34,6 +34,8 @@ import com.joshtalks.badebhaiya.repository.model.ConversationRoomResponse
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.utils.SingleDataManager
 import com.joshtalks.badebhaiya.utils.setUserImageOrInitials
+import com.joshtalks.badebhaiya.utils.toBitmap
+import com.joshtalks.badebhaiya.utils.urlToBitmap
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionDeniedResponse
@@ -438,14 +440,17 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
 
     override fun setReminder(room: RoomListResponseItem, view: View) {
         val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager?
+        val speakerDpInBitmap = room.speakersData?.photoUrl?.toBitmap(this)
+//        val speakerBitmap = room.speakersData?.photoUrl?.urlToBitmap(context = this)
         val notificationIntent = NotificationHelper.getNotificationIntent(
             this, Notification(
-                title = room.topic ?: "Conversation Room Reminder",
-                body = room.speakersData?.name ?: "Conversation Room Reminder",
+                title = room.speakersData?.fullName ?: "Conversation Room Reminder",
+                body = room.topic ?: "Conversation Room Reminder",
                 id = room.startedBy ?: 0,
                 userId = room.speakersData?.userId ?: "",
                 type = NotificationType.LIVE,
-                roomId = room.roomId.toString()
+                roomId = room.roomId.toString(),
+                speakerDpInBitmap
             )
         )
         Timber.d("NOTIFICATION INTENT => ${notificationIntent.extras}")

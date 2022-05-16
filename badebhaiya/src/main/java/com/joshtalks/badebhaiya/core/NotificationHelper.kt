@@ -6,6 +6,7 @@ import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.os.Build
 import android.os.Parcelable
 import android.util.Log
@@ -13,10 +14,13 @@ import androidx.core.app.NotificationCompat
 import androidx.core.os.bundleOf
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.feed.FeedActivity
+import com.joshtalks.badebhaiya.notifications.NotificationLauncher
 import com.joshtalks.badebhaiya.notifications.reminderNotification.ReminderNotificationManager
 import com.joshtalks.badebhaiya.profile.ProfileFragment
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.parcel.Parcelize
 import timber.log.Timber
+import javax.inject.Inject
 
 @Parcelize
 data class Notification(
@@ -25,7 +29,8 @@ data class Notification(
     val id: Int,
     val userId: String,
     val type: NotificationType,
-    val roomId: String
+    val roomId: String,
+    val speakerPicture: Bitmap?
 ) : Parcelable
 
 enum class NotificationType(val value: String) {
@@ -33,7 +38,11 @@ enum class NotificationType(val value: String) {
     LIVE("Live")
 }
 
+@AndroidEntryPoint
 class NotificationHelper : BroadcastReceiver() {
+
+    @Inject
+    lateinit var notificationLauncher: NotificationLauncher
 
     companion object {
         const val NOTIFICATION_ID = "notification-id"
@@ -48,25 +57,6 @@ class NotificationHelper : BroadcastReceiver() {
                 )
             }.also {
                 Log.d("NotificationHelper.kt", "YASH => getNotificationIntent: ${it.extras}")
-            }
-
-        fun getNotification(
-            context: Context,
-            channelId: String,
-            title: String,
-            message: String,
-            bigText: String = message,
-            autoCancel: Boolean = false,
-            contentIntent: PendingIntent? = null
-        ): NotificationCompat.Builder =
-            NotificationCompat.Builder(context, channelId).apply {
-                setSmallIcon(R.drawable.adaptive_icon_foreground)
-                setContentTitle(title)
-                setContentText(message)
-                setStyle(NotificationCompat.BigTextStyle().bigText(bigText))
-                priority = NotificationCompat.PRIORITY_MAX
-                setContentIntent(contentIntent)
-                setAutoCancel(autoCancel)
             }
 
         fun createNotificationChannel(
@@ -93,28 +83,8 @@ class NotificationHelper : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         Timber.d("Notification agaya => ${intent.extras}")
 
-        val notificationManager: NotificationManager =
-            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        intent.getBundleExtra(NOTIFICATION_BUNDLE)?.getParcelable<Notification>(NOTIFICATION)
-            ?.let { notification ->
-                Timber.d("Notification aur data hai => $notification")
-                notificationManager.notify(
-                    notification.id,
-                    getNotification(
-                        context = context,
-                        channelId = notification.type.value,
-                        title = notification.title,
-                        message = notification.body,
-                        autoCancel = false,
-                        contentIntent = PendingIntent.getActivity(
-                            context,
-                            notification.id,
-                            ReminderNotificationManager.getRedirectingIntent(context, notification),
-                            PendingIntent.FLAG_UPDATE_CURRENT
-                        )
-                    ).build()
-                )
-            }
+        notificationLauncher.launchNotification(context, intent)
+
 //        val id: Int = intent.getIntExtra(NOTIFICATION_ID, 0)
 //        notificationManager.notify(id, notification)
     }

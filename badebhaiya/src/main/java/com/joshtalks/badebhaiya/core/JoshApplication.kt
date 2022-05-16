@@ -3,8 +3,10 @@ package com.joshtalks.badebhaiya.core
 import android.app.Application
 import androidx.lifecycle.*
 import androidx.multidex.MultiDexApplication
+import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
 
+@HiltAndroidApp
 class JoshApplication: MultiDexApplication(), LifecycleObserver {
 
     companion object {

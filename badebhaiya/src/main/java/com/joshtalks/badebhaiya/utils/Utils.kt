@@ -14,16 +14,7 @@ import android.content.Intent.ACTION_VIEW
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.content.res.Resources
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.Point
-import android.graphics.PorterDuff
-import android.graphics.PorterDuffXfermode
-import android.graphics.Rect
-import android.graphics.Typeface
+import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.PictureDrawable
@@ -74,7 +65,9 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.target.Target
+import com.bumptech.glide.request.transition.Transition
 import com.github.twocoffeesoneteam.glidetovectoryou.GlideToVectorYou
 import com.google.android.material.tabs.TabLayout
 import com.google.firebase.FirebaseNetworkException
@@ -93,35 +86,22 @@ import io.michaelrocks.libphonenumber.android.PhoneNumberUtil
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
-import java.io.InputStream
-import java.io.OutputStream
-import java.net.HttpURLConnection
-import java.net.InetSocketAddress
-import java.net.Socket
-import java.net.SocketTimeoutException
-import java.net.URL
-import java.net.UnknownHostException
+import jp.wasabeef.glide.transformations.RoundedCornersTransformation
+import okhttp3.RequestBody.Companion.toRequestBody
+import retrofit2.HttpException
+import timber.log.Timber
+import java.io.*
+import java.net.*
 import java.nio.charset.Charset
 import java.text.DateFormat
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Date
-import java.util.Locale
-import java.util.Random
-import java.util.TimeZone
+import java.util.*
 import java.util.concurrent.TimeUnit
-import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 import kotlin.math.ceil
 import kotlin.math.pow
 import kotlin.math.roundToInt
-import okhttp3.RequestBody.Companion.toRequestBody
-import retrofit2.HttpException
-import timber.log.Timber
-import java.time.ZonedDateTime
+
 
 private val CHAT_TIME_FORMATTER = SimpleDateFormat("hh:mm aa")
 private val DD_MMM = SimpleDateFormat("dd-MMM hh:mm aa")
@@ -954,6 +934,22 @@ fun ImageView.setUserInitialInRect(
         )
     this.background = drawable
     this.setImageDrawable(drawable)
+}
+
+fun String.toBitmap(context: Context): Bitmap? {
+    var bitmap: Bitmap? = null
+     Glide.with(context).asBitmap().load(this)
+        .into(object : CustomTarget<Bitmap?>() {
+            override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap?>?) {
+                bitmap = resource
+            }
+
+            override fun onLoadCleared(placeholder: Drawable?) {
+
+            }
+        })
+
+    return bitmap
 }
 
 fun ImageView.setUserImageOrInitials(

@@ -4,6 +4,7 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.google.firebase.crashlytics'
 apply plugin: 'com.google.gms.google-services'
+apply plugin: 'dagger.hilt.android.plugin'
 
 def majorVersion = 0
 def minorVersion = 0
@@ -27,7 +28,7 @@ android {
         manifestPlaceholders = [file_provider: "com.joshtalks.badebhaiya"]
         javaCompileOptions {
             annotationProcessorOptions {
-                arguments = [
+                arguments += [
                         "room.schemaLocation"  : "$projectDir/schemas".toString(),
                         "room.incremental"     : "true",
                         "room.expandProjection": "true"]
@@ -209,5 +210,9 @@ dependencies {
     // reactive network
     implementation 'com.github.pwittchen:reactivenetwork-rx2:3.0.8'
     implementation 'com.pnikosis:materialish-progress:1.7'
+
+    // dagger hilt
+    implementation "com.google.dagger:hilt-android:$hilt_version"
+    kapt "com.google.dagger:hilt-compiler:$hilt_version"
 
 }

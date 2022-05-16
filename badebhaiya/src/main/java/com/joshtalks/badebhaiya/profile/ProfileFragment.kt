@@ -43,6 +43,7 @@ import com.joshtalks.badebhaiya.signup.SignUpActivity
 import com.joshtalks.badebhaiya.utils.SingleDataManager
 import com.joshtalks.badebhaiya.utils.Utils
 import com.joshtalks.badebhaiya.utils.setUserImageOrInitials
+import com.joshtalks.badebhaiya.utils.toBitmap
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
@@ -367,7 +368,8 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
                     id = room.startedBy ?: 0,
                     userId = room.speakersData?.userId ?: "",
                     type = NotificationType.LIVE,
-                    roomId = room.roomId.toString()
+                    roomId = room.roomId.toString(),
+                    speakerPicture = room.speakersData?.photoUrl?.toBitmap(requireContext())
                 )
             )
         }
