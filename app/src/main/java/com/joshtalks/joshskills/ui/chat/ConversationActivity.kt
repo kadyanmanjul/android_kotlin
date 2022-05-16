@@ -1485,7 +1485,7 @@ class ConversationActivity :
             fppRequestContainer.setOnClickListener {
                 openUserProfileActivity(
                     pendingRequestDetail.senderMentorId ?: "",
-                    REQUESTS_SCREEN
+                    FAVOURITE_REQUEST
                 )
             }
             profileImage.setUserImageOrInitials(
@@ -1503,7 +1503,7 @@ class ConversationActivity :
                 fppRequestContainer.setBackgroundColor(resources.getColor(R.color.request_respond))
                 conversationViewModel.confirmOrRejectFppRequest(
                     pendingRequestDetail.senderMentorId!!,
-                    IS_ACCEPTED, REQUESTS_SCREEN
+                    IS_ACCEPTED, QUICK_VIEW
                 )
             }
             btnNotNow.setOnClickListener {
@@ -1517,7 +1517,7 @@ class ConversationActivity :
                 fppRequestContainer.setBackgroundColor(resources.getColor(R.color.request_respond))
                 conversationViewModel.confirmOrRejectFppRequest(
                     pendingRequestDetail.senderMentorId!!,
-                    IS_REJECTED, REQUESTS_SCREEN
+                    IS_REJECTED, QUICK_VIEW
                 )
 
             }

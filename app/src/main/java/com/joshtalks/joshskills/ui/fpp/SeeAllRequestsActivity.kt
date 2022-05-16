@@ -6,9 +6,9 @@ import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.databinding.ActivitySeeAllRequestsBinding
 import com.joshtalks.joshskills.ui.fpp.adapters.SeeAllRequestsAdapter
+import com.joshtalks.joshskills.ui.fpp.constants.FAVOURITE_REQUEST
 import com.joshtalks.joshskills.ui.fpp.constants.FPP_SEE_ALL_BACK_PRESSED
 import com.joshtalks.joshskills.ui.fpp.constants.FPP_OPEN_USER_PROFILE
-import com.joshtalks.joshskills.ui.fpp.constants.REQUESTS_SCREEN
 import com.joshtalks.joshskills.ui.fpp.viewmodels.SeeAllRequestsViewModel
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
 
@@ -49,7 +49,7 @@ class SeeAllRequestsActivity : BaseFppActivity() {
             senderMentorId,
             arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
             null,
-            previousPage = REQUESTS_SCREEN,
+            previousPage = FAVOURITE_REQUEST,
             conversationId = null
         )
     }
