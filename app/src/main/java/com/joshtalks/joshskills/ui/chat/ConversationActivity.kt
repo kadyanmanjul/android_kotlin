@@ -729,7 +729,7 @@ class ConversationActivity :
     fun showRestartButton() {
         CoroutineScope(Dispatchers.IO).launch {
             val lastLesson= conversationViewModel.getLastLessonForCourse()
-            if(lastLesson == 90 && inboxEntity.isCapsuleCourse) {
+            if(lastLesson == 90 && inboxEntity.isCapsuleCourse && inboxEntity.isCourseBought ) {
                 withContext(Dispatchers.Main) {
                     conversationBinding.btnRestartCourse.visibility = VISIBLE
                     conversationBinding.messageButton.visibility = GONE
