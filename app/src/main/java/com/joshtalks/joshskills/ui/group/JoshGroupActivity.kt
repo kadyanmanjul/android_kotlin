@@ -37,6 +37,7 @@ import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
 import com.joshtalks.joshskills.ui.userprofile.fragments.MENTOR_ID
 import com.joshtalks.joshskills.ui.voip.SearchingUserActivity
 import com.joshtalks.joshskills.ui.voip.WebRtcActivity
+import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
 import com.joshtalks.joshskills.voip.constant.State
 
@@ -155,22 +156,29 @@ class JoshGroupActivity : BaseGroupActivity() {
     }
 
     fun openCallingActivity(bundle: Bundle) {
-        GroupAnalytics.push(GroupAnalytics.Event.CALL_PRACTICE_PARTNER_FROM_GROUP, bundle.getString(GROUPS_ID) ?: "")
-        val intent = SearchingUserActivity.startUserForPractiseOnPhoneActivity(
-            this,
-            courseId = "151",
-            topicId = 5,
-            groupId = bundle.getString(GROUPS_ID),
-            isGroupCallCall = true,
-            topicName = "Group Call",
-            groupName = bundle.getString(GROUPS_TITLE),
-            favoriteUserCall = false
-        )
-        startActivity(intent)
+        if (WebRtcService.isCallOnGoing.value == false && getVoipState() == State.IDLE) {
+            GroupAnalytics.push(
+                GroupAnalytics.Event.CALL_PRACTICE_PARTNER_FROM_GROUP,
+                bundle.getString(GROUPS_ID) ?: ""
+            )
+            val intent = SearchingUserActivity.startUserForPractiseOnPhoneActivity(
+                this,
+                courseId = "151",
+                topicId = 5,
+                groupId = bundle.getString(GROUPS_ID),
+                isGroupCallCall = true,
+                topicName = "Group Call",
+                groupName = bundle.getString(GROUPS_TITLE),
+                favoriteUserCall = false
+            )
+            startActivity(intent)
+        }else{
+            showToast("Wait for last call to get disconnected")
+        }
     }
 
     private fun openFppCallScreen(uid: Int) {
-        if (getVoipState() == State.IDLE){
+        if (WebRtcService.isCallOnGoing.value == false && getVoipState() == State.IDLE){
             val intent =
                 WebRtcActivity.getFavMissedCallbackIntent(uid, this).apply {
                     addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)

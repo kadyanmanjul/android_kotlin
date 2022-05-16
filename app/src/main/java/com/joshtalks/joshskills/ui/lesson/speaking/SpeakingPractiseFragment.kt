@@ -49,6 +49,7 @@ import com.joshtalks.joshskills.ui.lesson.LessonViewModel
 import com.joshtalks.joshskills.ui.lesson.SPEAKING_POSITION
 import com.joshtalks.joshskills.ui.senior_student.SeniorStudentActivity
 import com.joshtalks.joshskills.ui.voip.SearchingUserActivity
+import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.joshtalks.joshskills.ui.voip.favorite.FavoriteListActivity
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.voipLog
@@ -227,7 +228,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             if(PrefManager.getIntValue(IS_VOIP_NEW_ARCH_ENABLED, defValue = 1) == 1) {
                 val state = getVoipState()
                 Log.d(TAG, " Start Call Button - Voip State $state")
-                if (state == State.IDLE) {
+                if (state == State.IDLE && WebRtcService.isCallOnGoing.value == false) {
                     if (checkPstnState() == PSTNState.Idle) {
                         if (Utils.isInternetAvailable().not()) {
                             showToast("Seems like you have no internet")
@@ -241,27 +242,35 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                     showToast("Wait for last call to get disconnected")
             }else{
                 viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
-                startPractise()
+                if (getVoipState() == State.IDLE && WebRtcService.isCallOnGoing.value == false)
+                    startPractise()
+                else
+                    showToast("Wait for last call to get disconnected")
             }
         }
 
         binding.btnGroupCall.setOnClickListener {
             if (PrefManager.getBoolValue(IS_LOGIN_VIA_TRUECALLER))
                 viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
-            if (isCallOngoing(R.string.call_engage_initiate_call_message))
-                return@setOnClickListener
-            val intent = Intent(requireActivity(), JoshVoipGroupActivity::class.java).apply {
-                putExtra(CONVERSATION_ID, getConversationId())
+            if (getVoipState() == State.IDLE && WebRtcService.isCallOnGoing.value == false) {
+                val intent = Intent(requireActivity(), JoshVoipGroupActivity::class.java).apply {
+                    putExtra(CONVERSATION_ID, getConversationId())
+                }
+                startActivity(intent)
+                MixPanelTracker.publishEvent(MixPanelEvent.CALL_PP_FROM_GROUP_LESSON)
+                    .addParam(ParamKeys.LESSON_ID, lessonID)
+                    .addParam(ParamKeys.LESSON_NUMBER, lessonNo)
+                    .push()
+            } else {
+                showToast("Wait for last call to get disconnected")
             }
-            startActivity(intent)
-            MixPanelTracker.publishEvent(MixPanelEvent.CALL_PP_FROM_GROUP_LESSON)
-                .addParam(ParamKeys.LESSON_ID, lessonID)
-                .addParam(ParamKeys.LESSON_NUMBER, lessonNo)
-                .push()
         }
 
         viewModel.speakingSpotlightClickLiveData.observe(viewLifecycleOwner) {
-            startPractise(favoriteUserCall = false)
+            if (getVoipState() == State.IDLE && WebRtcService.isCallOnGoing.value == false)
+                startPractise(favoriteUserCall = false)
+            else
+                showToast("Wait for last call to get disconnected")
         }
 
         binding.btnContinue.setOnClickListener {
@@ -479,7 +488,10 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                 .addParam(ParamKeys.LESSON_ID, lessonID)
                 .addParam(ParamKeys.LESSON_NUMBER, lessonNo)
                 .push()
-            startPractise(favoriteUserCall = false, isNewUserCall = true)
+            if (getVoipState() == State.IDLE && WebRtcService.isCallOnGoing.value == false)
+                startPractise(favoriteUserCall = false, isNewUserCall = true)
+            else
+                showToast("Wait for last call to get disconnected")
         }
 //        if (viewModel.isFreeTrail.not()) {
 //            binding.btnInviteFriend.isVisible =

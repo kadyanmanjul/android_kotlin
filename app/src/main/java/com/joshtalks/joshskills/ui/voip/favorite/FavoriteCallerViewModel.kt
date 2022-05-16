@@ -188,7 +188,7 @@ class FavoriteCallerViewModel : BaseViewModel() {
             )
             return
         }
-        if (WebRtcService.isCallOnGoing.value == false) {
+        if (WebRtcService.isCallOnGoing.value == false && AppObjectController.joshApplication.getVoipState() == State.IDLE) {
             getCallOnGoing(favoriteCaller.mentorId, favoriteCaller.id)
         } else {
             showToast(
