@@ -154,7 +154,9 @@ class FeedViewModel : ViewModel() {
                 }
                 else
                 {
-
+                   // showToast(response.body().toString())
+                    if(response.code()==500)
+                        showToast("Room is not started yet")
                     message.what = ROOM_EXPAND
                     singleLiveEvent.value=message
 

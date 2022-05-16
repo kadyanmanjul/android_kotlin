@@ -37,6 +37,7 @@ import com.joshtalks.badebhaiya.liveroom.viewmodel.LiveRoomViewModel
 import com.joshtalks.badebhaiya.profile.request.DeleteReminderRequest
 import com.joshtalks.badebhaiya.profile.request.ReminderRequest
 import com.joshtalks.badebhaiya.profile.response.ProfileResponse
+import com.joshtalks.badebhaiya.repository.CommonRepository
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomResponse
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.signup.SignUpActivity
@@ -48,6 +49,9 @@ import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import kotlinx.android.synthetic.main.activity_feed.*
 import kotlinx.android.synthetic.main.base_toolbar.view.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallback {
 
@@ -103,6 +107,16 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
                 }
             }
         })
+
+//        binding.ivProfilePic.setOnLongClickListener{
+//            CoroutineScope(Dispatchers.IO).launch {
+//                val resp= CommonRepository().signOutUser()
+//                if(resp.isSuccessful) {
+//                    User.deleteUserCredentials(true)
+//                }
+//            }
+//            return@setOnLongClickListener true
+//        }
         //setOnClickListener()
         return binding.root
 

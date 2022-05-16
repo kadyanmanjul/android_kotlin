@@ -23,6 +23,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.collection.arraySetOf
 import androidx.constraintlayout.motion.widget.MotionLayout
+import androidx.core.view.get
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
@@ -695,7 +696,13 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
                     binding.apply {
                         handRaiseBtn.visibility = View.VISIBLE
                         handUnraiseBtn.visibility = View.GONE
-                        listener__recycler_view.raised_hands.visibility=View.VISIBLE
+
+                        for(i in audienceAdapter!!.audienceList)
+                            if(i.userId==User.getInstance().userId) {
+                                val pos=audienceAdapter!!.audienceList.indexOf(i)
+                                listener__recycler_view[pos].raised_hands.visibility= View.VISIBLE
+                            }
+
                     }
                     setNotificationWithoutAction(
                         String.format(
@@ -709,7 +716,11 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
                     binding.apply {
                         handRaiseBtn.visibility = View.GONE
                         handUnraiseBtn.visibility = View.VISIBLE
-                        listener__recycler_view.raised_hands.visibility=View.GONE
+                        for(i in audienceAdapter!!.audienceList)
+                            if(i.userId==User.getInstance().userId) {
+                                 val pos=audienceAdapter!!.audienceList.indexOf(i)
+                                listener__recycler_view[pos].raised_hands.visibility=View.GONE
+                            }
                     }
                 }
             }
