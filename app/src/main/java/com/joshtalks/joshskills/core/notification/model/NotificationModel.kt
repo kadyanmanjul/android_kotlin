@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.core.notification.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.joshtalks.joshskills.core.AppObjectController
 
 @Entity(tableName = "notification_table")
 data class NotificationModel(
@@ -12,5 +13,7 @@ data class NotificationModel(
     val time_received: Long,
     val time_shown: Long,
     val action: String,
-    val analytics_sent: Boolean = false
+    val actionTime: Long,
+    val analytics_sent: Boolean = false,
+    val isSynced: Boolean = false
 )

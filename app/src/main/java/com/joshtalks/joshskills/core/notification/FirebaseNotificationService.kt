@@ -19,6 +19,7 @@ import android.graphics.Rect
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
@@ -189,7 +190,8 @@ class FirebaseNotificationService : FirebaseMessagingService() {
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
-        Timber.tag(FirebaseNotificationService::class.java.name).e("fcm onMessageReceived data: ${remoteMessage.data}  remote body: ${remoteMessage.notification?.body }  title : ${ remoteMessage.notification?.title}")
+        Timber.tag(FirebaseNotificationService::class.java.name)
+            .e("fcm onMessageReceived data: ${remoteMessage.data}  remote body: ${remoteMessage.notification?.body}  title : ${remoteMessage.notification?.title}")
 
         try {
             if (Freshchat.isFreshchatNotification(remoteMessage))
@@ -230,7 +232,9 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             )
             nc.contentTitle = remoteData.notification?.title
             nc.contentText = remoteData.notification?.body
+            nc.id = nc.notificationId.toString()
             sendNotification(nc)
+            Log.d(FirebaseNotificationService::class.java.simpleName, "onMessageReceived nc() nc = ${nc.toString()}")
             pushToDatabase(nc)
         }
     }
@@ -511,7 +515,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
 
              }*/
             NotificationAction.ACTION_DELETE_DATA -> {
-                if (User.getInstance().isVerified ) {
+                if (User.getInstance().isVerified) {
                     Mentor.deleteUserData()
                 }
                 return null
@@ -525,13 +529,13 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 return null
             }
             NotificationAction.ACTION_DELETE_USER -> {
-                if (User.getInstance().isVerified ) {
+                if (User.getInstance().isVerified) {
                     Mentor.deleteUserCredentials()
                 }
                 return null
             }
             NotificationAction.ACTION_DELETE_USER_AND_DATA -> {
-                if (Mentor.getInstance().hasId() && User.getInstance().isVerified ) {
+                if (Mentor.getInstance().hasId() && User.getInstance().isVerified) {
                     Mentor.deleteUserCredentials()
                     Mentor.deleteUserData()
                 }
@@ -1084,11 +1088,12 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         CoroutineScope(Dispatchers.IO).launch {
             AppObjectController.appDatabase.notificationDao().insertNotification(
                 NotificationModel(
-                    nc.id ?: EMPTY ,
-                    "",
+                    nc.notificationId.toString(),
+                    "FCM",
                     timeReceived,
                     System.currentTimeMillis(),
-                    nc.action?.type ?: EMPTY,
+                    "recieved",
+                    0L
                 )
             )
         }

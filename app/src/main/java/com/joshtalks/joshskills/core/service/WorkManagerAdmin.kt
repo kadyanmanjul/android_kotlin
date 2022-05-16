@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.core.service
 
+import android.util.Log
 import androidx.work.BackoffPolicy
 import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
@@ -158,6 +159,35 @@ object WorkManagerAdmin {
                 CourseUsageSyncWorker::class.java.simpleName,
                 ExistingPeriodicWorkPolicy.KEEP,
                 workRequest
+            )
+    }
+
+    fun syncNotifiationEngagement() {
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .build()
+        val workRequest = PeriodicWorkRequest.Builder(
+            NotificationEngagementSyncWorker::class.java,
+            3,
+            TimeUnit.HOURS,
+            PeriodicWorkRequest.MIN_PERIODIC_FLEX_MILLIS,
+            TimeUnit.MILLISECONDS
+        )
+            .setConstraints(constraints)
+            .setInitialDelay(10, TimeUnit.MINUTES)
+            .addTag(NotificationEngagementSyncWorker::class.java.simpleName)
+            .build()
+
+        /*WorkManager.getInstance(AppObjectController.joshApplication)
+            .enqueueUniquePeriodicWork(
+                NotificationEngagementSyncWorker::class.java.simpleName,
+                ExistingPeriodicWorkPolicy.KEEP,
+                workRequest
+            )*/
+
+        WorkManager.getInstance(AppObjectController.joshApplication)
+            .enqueue(
+                OneTimeWorkRequestBuilder<NotificationEngagementSyncWorker>().build()
             )
     }
 

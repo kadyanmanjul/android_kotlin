@@ -31,6 +31,7 @@ import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.LocalNotificationDismissEventReceiver
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
+import com.joshtalks.joshskills.core.firestore.NotificationAnalyticsRequest
 import com.joshtalks.joshskills.core.notification.FCM_ACTIVE
 import com.joshtalks.joshskills.core.notification.FCM_TOKEN
 import com.joshtalks.joshskills.core.notification.FirebaseNotificationService
@@ -354,6 +355,7 @@ class WorkerInLandingScreen(context: Context, workerParams: WorkerParameters) :
         // SyncChatService.syncChatWithServer()
         WorkManagerAdmin.readMessageUpdating()
         WorkManagerAdmin.syncAppCourseUsage()
+        WorkManagerAdmin.syncNotifiationEngagement()
         AppAnalytics.updateUser()
         return Result.success()
     }
@@ -957,6 +959,51 @@ class CourseUsageSyncWorker(context: Context, workerParams: WorkerParameters) :
             val resp = AppObjectController.commonNetworkService.engageCourseUsageSession(body)
             if (resp.isSuccessful) {
                 AppObjectController.appDatabase.courseUsageDao().deleteAllSyncSession()
+            }
+        } catch (ex: Throwable) {
+            ex.printStackTrace()
+        }
+        return Result.success()
+    }
+}
+
+class NotificationEngagementSyncWorker(context: Context, workerParams: WorkerParameters) :
+    CoroutineWorker(context, workerParams) {
+    override suspend fun doWork(): Result {
+        try {
+            val db = AppObjectController.appDatabase
+            val listOfReceived = db.notificationDao().getUnsentAnalytics()?: emptyList()
+            val listOfClicked = db.notificationDao().getUnsyncedNotifications("Clicked%")?: emptyList()
+            val listDismissed = db.notificationDao().getUnsyncedNotifications("Dismissed%")?: emptyList()
+            if (listOfReceived.isEmpty() && listOfClicked.isEmpty() && listDismissed.isEmpty()) {
+                return Result.success()
+            }
+
+            val request = ArrayList<NotificationAnalyticsRequest>()
+            listOfReceived.forEach {
+                request.add(NotificationAnalyticsRequest(it.id,it.time_received,"received",it.platform))
+            }
+            listOfClicked.forEach {
+                request.add(NotificationAnalyticsRequest(it.id,it.actionTime,"opened",it.platform))
+            }
+            listDismissed.forEach {
+                request.add(NotificationAnalyticsRequest(it.id,it.actionTime,"discarded",it.platform))
+            }
+            if (request.isEmpty()) {
+                return Result.success()
+            }
+
+            val resp = AppObjectController.commonNetworkService.engageNewNotificationAsync(request)
+            if (resp.isSuccessful) {
+                listOfReceived.forEach {
+                    db.notificationDao().updateEngagementStatus(it.id)
+                }
+                listOfClicked.forEach {
+                    db.notificationDao().updateSyncStatus(it.id)
+                }
+                listDismissed.forEach {
+                    db.notificationDao().updateSyncStatus(it.id)
+                }
             }
         } catch (ex: Throwable) {
             ex.printStackTrace()

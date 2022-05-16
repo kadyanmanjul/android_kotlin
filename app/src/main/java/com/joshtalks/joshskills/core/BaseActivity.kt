@@ -411,6 +411,9 @@ abstract class BaseActivity :
                                     NOTIFICATION_ID
                             )
                     )
+                        AppObjectController.appDatabase.notificationDao().updateAction(
+                            mIntent.getStringExtra(NOTIFICATION_ID)!!,"Clicked"
+                        )
                 }
             }
         } catch (ex: Throwable) {
