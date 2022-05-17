@@ -98,6 +98,9 @@ interface P2PNetworkService {
     @POST("$DIR/fpp/fpp_dialog/")
     suspend fun showFppDialog(@Body params: HashMap<String, String?>) : Response<HashMap<String,String>>
 
+    @POST("$DIR/voicecall/call_rating/")
+    suspend fun submitCallRatings(@Body params: HashMap<String, String>) : Response<Any>
+
     @POST("$DIR/voicecall/agora_new_topic/")
     suspend fun saveTopicUrlImpression(@Body params : HashMap<String,Any?>) :Response<Any>
 
