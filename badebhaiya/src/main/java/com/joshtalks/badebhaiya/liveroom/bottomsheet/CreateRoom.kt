@@ -15,6 +15,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.databinding.BottomSheetCreateRoomBinding
 import com.joshtalks.badebhaiya.feed.FeedViewModel
+import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomResponse
 import com.joshtalks.badebhaiya.utils.DATE_FORMATTER
 import com.joshtalks.badebhaiya.utils.TWENTY_FOUR_HOUR_CLOCK_TIME
@@ -27,7 +28,7 @@ import java.util.Date
 class CreateRoom : BottomSheetDialogFragment() {
     interface CreateRoomCallback {
         fun onRoomCreated(conversationRoomResponse: ConversationRoomResponse, topic: String)
-        fun onRoomSchedule()
+        fun onRoomSchedule(room: RoomListResponseItem)
         fun onError(error: String)
     }
 

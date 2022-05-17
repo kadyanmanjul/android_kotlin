@@ -17,6 +17,7 @@ import com.joshtalks.badebhaiya.feed.FeedActivity
 import com.joshtalks.badebhaiya.notifications.NotificationLauncher
 import com.joshtalks.badebhaiya.notifications.reminderNotification.ReminderNotificationManager
 import com.joshtalks.badebhaiya.profile.ProfileFragment
+import com.joshtalks.badebhaiya.repository.model.User
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.parcel.Parcelize
 import timber.log.Timber
@@ -30,8 +31,11 @@ data class Notification(
     val userId: String,
     val type: NotificationType,
     val roomId: String,
-    val speakerPicture: Bitmap?
-) : Parcelable
+    val speakerPicture: Bitmap?,
+    val remainingTime: String? = null
+) : Parcelable {
+    fun isSpeaker(): Boolean = userId == User.getInstance().userId
+}
 
 enum class NotificationType(val value: String) {
     REMINDER("Reminders"),

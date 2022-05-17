@@ -317,7 +317,7 @@ class FeedViewModel : ViewModel() {
                         response.body()?.let {
                             showToast("Room scheduled successfully")
                             feedAdapter.addScheduleRoom(it)
-                            callback.onRoomSchedule()
+                            callback.onRoomSchedule(it)
                         }
                     } else callback.onError("An error occurred!")
                 } catch (e: Exception) {

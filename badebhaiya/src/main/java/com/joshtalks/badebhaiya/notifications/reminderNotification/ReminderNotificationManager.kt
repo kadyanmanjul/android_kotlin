@@ -12,7 +12,13 @@ object ReminderNotificationManager {
     fun getRedirectingIntent(context: Context, notification: Notification): Intent{
         return when(notification.type) {
             LIVE -> getLiveRoomIntent(context, notification.roomId, notification.title)
-            REMINDER -> getReminderIntent(context, notification.userId)
+            REMINDER -> {
+                if (notification.isSpeaker()){
+                    getLiveRoomIntent(context, notification.roomId, notification.title)
+                } else {
+                    getReminderIntent(context, notification.userId)
+                }
+            }
         }
     }
 

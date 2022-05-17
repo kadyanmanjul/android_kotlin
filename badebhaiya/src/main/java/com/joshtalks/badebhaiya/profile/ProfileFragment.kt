@@ -18,6 +18,7 @@ import androidx.core.text.HtmlCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.core.*
 import com.joshtalks.badebhaiya.core.USER_ID
@@ -40,15 +41,14 @@ import com.joshtalks.badebhaiya.profile.response.ProfileResponse
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomResponse
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.signup.SignUpActivity
-import com.joshtalks.badebhaiya.utils.SingleDataManager
-import com.joshtalks.badebhaiya.utils.Utils
-import com.joshtalks.badebhaiya.utils.setUserImageOrInitials
-import com.joshtalks.badebhaiya.utils.toBitmap
+import com.joshtalks.badebhaiya.utils.*
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import kotlinx.android.synthetic.main.activity_feed.*
 import kotlinx.android.synthetic.main.base_toolbar.view.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallback {
 
@@ -359,6 +359,11 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
             return
         }
 
+        lifecycleScope.launch(Dispatchers.IO) {
+
+
+        val speakerBitmap = room.speakersData?.photoUrl?.urlToBitmap()
+
         val alarmManager = activity?.applicationContext?.getSystemService(ALARM_SERVICE) as AlarmManager
         val notificationIntent = context?.let {
             NotificationHelper.getNotificationIntent(
@@ -369,9 +374,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
                     userId = room.speakersData?.userId ?: "",
                     type = NotificationType.LIVE,
                     roomId = room.roomId.toString(),
-                    speakerPicture = room.speakersData?.photoUrl?.toBitmap(requireContext()){
-
-                    }
+                    speakerPicture = speakerBitmap
                 )
             )
         }
@@ -397,6 +400,8 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
                 )
             }
         viewModel.getProfileForUser(userId ?: (User.getInstance().userId),isFromDeeplink)
+        }
+
     }
 
     override fun deleteReminder(room: RoomListResponseItem, view: View) {

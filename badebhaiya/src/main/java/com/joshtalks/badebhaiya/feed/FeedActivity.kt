@@ -27,6 +27,7 @@ import com.joshtalks.badebhaiya.liveroom.*
 import com.joshtalks.badebhaiya.liveroom.bottomsheet.CreateRoom
 import com.joshtalks.badebhaiya.liveroom.model.StartingLiveRoomProperties
 import com.joshtalks.badebhaiya.liveroom.viewmodel.LiveRoomViewModel
+import com.joshtalks.badebhaiya.notifications.NotificationScheduler
 import com.joshtalks.badebhaiya.profile.ProfileFragment
 import com.joshtalks.badebhaiya.profile.request.DeleteReminderRequest
 import com.joshtalks.badebhaiya.profile.request.ReminderRequest
@@ -44,10 +45,13 @@ import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.karumi.dexter.listener.single.PermissionListener
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallback {
 
     companion object {
@@ -116,6 +120,9 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         }
 
     }
+
+    @Inject
+    lateinit var notificationScheduler: NotificationScheduler
 
     private val viewModel by lazy {
         ViewModelProvider(this)[FeedViewModel::class.java]
@@ -361,7 +368,8 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                     it.dismiss()
                 }
 
-                override fun onRoomSchedule() {
+                override fun onRoomSchedule(room: RoomListResponseItem) {
+                    notificationScheduler.scheduleNotificationsForSpeaker(this@FeedActivity, room)
                     it.dismiss()
                 }
 

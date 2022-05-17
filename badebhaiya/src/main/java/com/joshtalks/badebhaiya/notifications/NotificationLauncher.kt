@@ -31,18 +31,8 @@ class NotificationLauncher @Inject constructor(
         return context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     }
 
-    private fun launchLiveRoomNotification(context: Context, notificationData: Notification) {
-
-        createNotification(context, notificationData)
-    }
-
     fun launchNotification(context: Context, intent: Intent) {
         val notificationData = getNotificationData(intent)
-//        when (notificationData?.type) {
-//            REMINDER -> {}
-//            LIVE -> launchLiveRoomNotification(context, notificationData)
-//            null -> {}
-//        }
         createNotification(context, notificationData)
     }
 
@@ -52,13 +42,14 @@ class NotificationLauncher @Inject constructor(
         )
 
     private fun getTitle(notificationData: Notification): String =
-        String.format(getCorrespondingTitle(notificationData), notificationData.title)
-
-    private fun getCorrespondingTitle(notificationData: Notification): String =
         when(notificationData.type){
-            REMINDER -> ""
-            LIVE -> applicationContext.getString(R.string.live_room_notification_title)
+            REMINDER -> applicationContext.getString(R.string.reminder_for_your_call)
+            LIVE -> String.format(getTitleForLive(), notificationData.title)
         }
+
+    private fun getTitleForLive(): String =
+       applicationContext.getString(R.string.live_room_notification_title)
+
 
     private fun getNotification(
         context: Context,
@@ -95,7 +86,7 @@ class NotificationLauncher @Inject constructor(
                     context = context,
                     channelId = notification.type.value,
                     title = getTitle(notification),
-                    message = getBody(notification.body),
+                    message = getBody(notification),
                     autoCancel = false,
                     profilePicture = notification.speakerPicture,
                     contentIntent = PendingIntent.getActivity(
@@ -109,7 +100,12 @@ class NotificationLauncher @Inject constructor(
         }
     }
 
-    private fun getBody(body: String): String {
-        return String.format(applicationContext.getString(R.string.speak_with_them), body)
+    private fun getBody(notificationData: Notification): String {
+        return when(notificationData.type){
+            REMINDER -> notificationData.remainingTime?.let { remaining ->
+                String.format(applicationContext.getString(R.string.your_call_will_start_in, remaining))
+            } ?: String.format(applicationContext.getString(R.string.your_call_will_start_in, "Soon"))
+            LIVE -> String.format(applicationContext.getString(R.string.speak_with_them), notificationData.body)
+        }
     }
 }

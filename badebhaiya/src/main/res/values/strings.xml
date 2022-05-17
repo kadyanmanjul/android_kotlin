@@ -107,5 +107,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="live_room_notification_title">%1$s started a call</string>
     <string name="speak_with_them">%1$s. Speak with them?</string>
+    <string name="reminder_for_your_call">Reminder for your scheduled call</string>
+    <string name="your_call_will_start_in">Your call will start in %1$s</string>
 
 </resources>
