@@ -1,11 +1,16 @@
 package com.joshtalks.joshskills.ui.voip.new_arch.ui.views.adapter
 
 import android.content.Context
+import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
 import com.joshtalks.joshskills.databinding.TopicImageViewpagerItemBinding
 
 class TopicImageAdapter(val imageList:ArrayList<String> ,val context:Context):RecyclerView.Adapter<TopicImageAdapter.TopicImageViewHolder>() {
@@ -28,6 +33,23 @@ class TopicImageAdapter(val imageList:ArrayList<String> ,val context:Context):Re
         fun bind(imageUrl: String) {
             Glide.with(context)
                 .load(imageUrl)
+                .listener(object : RequestListener<Drawable> {
+                    override fun onLoadFailed(p0: GlideException?, p1: Any?, p2: Target<Drawable>?, p3: Boolean): Boolean {
+                        //do something if error loading
+                        binding.progress.visibility = View.GONE
+                        return false
+                    }
+                    override fun onResourceReady(
+                        resource: Drawable?,
+                        model: Any?,
+                        target: Target<Drawable>?,
+                        dataSource: com.bumptech.glide.load.DataSource?,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        binding.progress.visibility = View.GONE
+                        return false
+                    }
+                })
                 .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                 .into(binding.topicImage)
         }

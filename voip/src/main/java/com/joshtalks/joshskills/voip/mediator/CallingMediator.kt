@@ -21,7 +21,6 @@ import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.notification.NotificationPriority
 import com.joshtalks.joshskills.voip.notification.VoipNotification
 import com.joshtalks.joshskills.voip.state.CallContext
-import com.joshtalks.joshskills.voip.voipLog
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
 import com.joshtalks.joshskills.voip.webrtc.*
@@ -203,6 +202,10 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                         val envelope = Envelope(Event.SPEAKER_OFF_REQUEST)
                         stateChannel.send(envelope)
                     }
+                    UserAction.TOPIC_IMAGE_CHANGE -> {
+                        val envelope = Envelope(Event.TOPIC_IMAGE_CHANGE_REQUEST)
+                        stateChannel.send(envelope)
+                    }
                 }
             } catch (e: Exception) {
                 Log.d(TAG, "userAction : $e")
@@ -297,6 +300,11 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                                         ServerConstants.UNMUTE -> {
                                             val envelope = Envelope(Event.UNMUTE)
                                             stateChannel.send(envelope)
+                                        }
+                                        ServerConstants.TOPIC_IMAGE_RECEIVED ->{
+                                               val envelope= Envelope(Event.TOPIC_IMAGE_RECEIVED, it.getMsgData())
+                                                stateChannel.send(envelope)
+
                                         }
                                         ServerConstants.DISCONNECTED -> {
                                             CallAnalytics.addAnalytics(
@@ -443,6 +451,10 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                                             }
                                             ServerConstants.UNMUTE -> {
                                                 val envelope = Envelope(Event.UNMUTE)
+                                                stateChannel.send(envelope)
+                                            }
+                                            ServerConstants.TOPIC_IMAGE_RECEIVED ->{
+                                                val envelope = Envelope(Event.TOPIC_IMAGE_RECEIVED,event.getMsgData())
                                                 stateChannel.send(envelope)
                                             }
                                             // Remote User Disconnected

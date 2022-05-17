@@ -13,7 +13,10 @@ data class Message(
 	private val type: Int? = null,
 
 	@field:SerializedName("timetoken")
-	private val timeToken: Long? = null
+	private val timeToken: Long? = null,
+
+	@field:SerializedName("topic_image")
+     private val msgData: String? = null
 
 ) : MessageData {
 
@@ -23,7 +26,8 @@ data class Message(
 				channelName = map?.get("channel_name")?.toString(),
 				type = map?.get("type")?.toString()?.toInt(),
 				timeToken = map?.get("timetoken")?.toString()?.toLong(),
-			)
+				msgData = map?.get("topic_image")?.toString(),
+				)
 		}
 	}
 
@@ -37,5 +41,9 @@ data class Message(
 
 	override fun getChannel(): String {
 		return channelName ?: throw IncorrectCommunicationDataException("Channel is NULL")
+	}
+
+	override fun getMsgData(): String {
+		return msgData ?: ""
 	}
 }

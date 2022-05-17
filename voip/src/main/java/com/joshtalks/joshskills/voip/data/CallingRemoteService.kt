@@ -248,6 +248,8 @@ class CallingRemoteService : Service() {
 
     fun backPress() { mediator.userAction(Action.BACK_PRESS) }
 
+    fun changeTopicImage() { mediator.userAction(Action.TOPIC_IMAGE_CHANGE) }
+
     override fun onTaskRemoved(rootIntent: Intent?) {
         super.onTaskRemoved(rootIntent)
         stopForeground(true)
@@ -298,6 +300,7 @@ data class UIState(
     val remoteUserImage: String?,
     val topicName: String,
     val callType: Int,
+    val currentTopicImage: String,
     val isOnHold: Boolean = false,
     val isSpeakerOn: Boolean = false,
     val isRemoteUserMuted: Boolean = false,
@@ -306,7 +309,7 @@ data class UIState(
     val startTime: Long = 0L
 ) {
     companion object {
-        fun empty() = UIState("", null, "", 0)
+        fun empty() = UIState("", null, "", 0,"")
     }
 }
 

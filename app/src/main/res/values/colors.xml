@@ -231,5 +231,6 @@
     <color name="grey_button">#E4E4E4</color>
     <color name="black_0.7_alpha">#4C4C4C</color>
     <color name="topic_btn_blue">#107BE5</color>
+    <color name="bottom_sheet_color">#003A7D</color>
 
 </resources>
