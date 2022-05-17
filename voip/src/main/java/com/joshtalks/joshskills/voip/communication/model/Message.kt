@@ -15,7 +15,7 @@ data class Message(
 	@field:SerializedName("timetoken")
 	private val timeToken: Long? = null,
 
-	@field:SerializedName("topic_image")
+	@field:SerializedName("msg_data")
      private val msgData: String? = null
 
 ) : MessageData {
@@ -26,7 +26,7 @@ data class Message(
 				channelName = map?.get("channel_name")?.toString(),
 				type = map?.get("type")?.toString()?.toInt(),
 				timeToken = map?.get("timetoken")?.toString()?.toLong(),
-				msgData = map?.get("topic_image")?.toString(),
+				msgData = map?.get("msg_data")?.toString(),
 				)
 		}
 	}
