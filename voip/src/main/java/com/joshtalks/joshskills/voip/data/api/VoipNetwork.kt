@@ -36,6 +36,7 @@ object VoipNetwork {
                 .callTimeout(CALL_TIMEOUT, TimeUnit.SECONDS)
                 .followSslRedirects(true)
                 .retryOnConnectionFailure(false)
+                .addInterceptor(HeaderInterceptor)
 
             if (BuildConfig.DEBUG) {
                 val logging =
@@ -44,7 +45,6 @@ object VoipNetwork {
                     }.apply {
                         level = HttpLoggingInterceptor.Level.BODY
                     }
-                okHttpBuilder.addInterceptor(HeaderInterceptor)
                 okHttpBuilder.addInterceptor(logging)
                 okHttpBuilder.addNetworkInterceptor(StethoInterceptor())
             }
