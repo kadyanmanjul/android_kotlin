@@ -45,5 +45,6 @@
     <color name="check_thumb_color">#FDF7F7</color>
     <color name="enter_room_hint_color">#BCCDD4</color>
     <color name="da_grey">#F2F2F2</color>
+<color name="notification_icon">#665BEB</color>
 
 </resources>

@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.SearchFragment
@@ -43,6 +44,8 @@ import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.karumi.dexter.listener.single.PermissionListener
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallback {
@@ -106,7 +109,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
             }
         }
 
-        fun getIntentForProfile(context: Context, userId: String): Intent{
+        fun getIntentForProfile(context: Context, userId: String): Intent {
             return Intent(context, FeedActivity::class.java).also {
                 it.putExtra(USER_ID, userId)
             }
@@ -135,7 +138,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         }
 //        var intent=Intent()
 //        var bundle=intent.extras
-        var user=intent.getStringExtra("userId")
+        var user = intent.getStringExtra("userId")
 
         this.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_feed)
@@ -143,10 +146,9 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         binding.handler = this
         binding.viewModel = viewModel
         Timber.d("FEED INTENT ${intent.extras}")
-        if(user!=null)
-        {
+        if (user != null) {
             viewProfile(user, true)
-        } else if (SingleDataManager.pendingPilotAction != null){
+        } else if (SingleDataManager.pendingPilotAction != null) {
             viewProfile(SingleDataManager.pendingPilotEventData!!.pilotUserId, true)
         }
         if (User.getInstance().isLoggedIn()) {
@@ -178,6 +180,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         checkAndOpenLiveRoom()
 
     }
+
     fun userid(): String {
 
         return User.getInstance().userId
@@ -185,7 +188,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
 
     override fun onResume() {
         super.onResume()
-        if (User.getInstance().isLoggedIn()){
+        if (User.getInstance().isLoggedIn()) {
             viewModel.getRooms()
         }
     }
@@ -196,9 +199,19 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
 
             // TODO: Open Live Room.
 
-                Timber.d("CHECK AND OPEN LIVE ROOM ID => ${intent.getIntExtra(ROOM_ID, 0)} and topic name => ${intent.getStringExtra(TOPIC_NAME)}")
+            Timber.d(
+                "CHECK AND OPEN LIVE ROOM ID => ${
+                    intent.getIntExtra(
+                        ROOM_ID,
+                        0
+                    )
+                } and topic name => ${intent.getStringExtra(TOPIC_NAME)}"
+            )
 
-            takePermissions(intent.getIntExtra(ROOM_ID, 0).toString(), intent.getStringExtra(TOPIC_NAME) ?: "")
+            takePermissions(
+                intent.getIntExtra(ROOM_ID, 0).toString(),
+                intent.getStringExtra(TOPIC_NAME) ?: ""
+            )
 
 
 //            LiveRoomFragment.launch(
@@ -221,8 +234,8 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
 //            )
         }
     }
-    fun onProfileClicked()
-    {
+
+    fun onProfileClicked() {
         val fragment = ProfileFragment() // replace your custom fragment class
 
         val bundle = Bundle()
@@ -276,11 +289,15 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
             Log.d("ABC2", "Data class called with data message: ${it.what} bundle : ${it.data}")
             when (it.what) {
                 OPEN_PROFILE -> {
-                    var bundle=Bundle()
-                    bundle.putString("user",it.data.getString(USER_ID, EMPTY))
+                    var bundle = Bundle()
+                    bundle.putString("user", it.data.getString(USER_ID, EMPTY))
                     supportFragmentManager.findFragmentByTag(ProfileFragment::class.java.simpleName)
                     supportFragmentManager.beginTransaction()
-                        .replace(R.id.root_view, ProfileFragment(), ProfileFragment::class.java.simpleName)
+                        .replace(
+                            R.id.root_view,
+                            ProfileFragment(),
+                            ProfileFragment::class.java.simpleName
+                        )
                         .commit()
                 }
                 OPEN_ROOM -> {
@@ -295,11 +312,15 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                         }
                     }
                 }
-                ROOM_EXPAND->{
+                ROOM_EXPAND -> {
                 }
-                SCROLL_TO_TOP->{
-                   //binding.recyclerView.layoutManager?.scrollToPosition(0)
-                    binding.recyclerView.layoutManager?.smoothScrollToPosition(binding.recyclerView, null, 0)
+                SCROLL_TO_TOP -> {
+                    //binding.recyclerView.layoutManager?.scrollToPosition(0)
+                    binding.recyclerView.layoutManager?.smoothScrollToPosition(
+                        binding.recyclerView,
+                        null,
+                        0
+                    )
                 }
             }
         })
@@ -331,7 +352,11 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                             topic,
                             createdByUser = true
                         )
-                        LiveRoomFragment.launch(this@FeedActivity, liveRoomProperties, liveRoomViewModel)
+                        LiveRoomFragment.launch(
+                            this@FeedActivity,
+                            liveRoomProperties,
+                            liveRoomViewModel
+                        )
                     }
                     it.dismiss()
                 }
@@ -349,7 +374,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
     }
 
     override fun onBackPressed() {
-        if (intent.getBooleanExtra("profile_deeplink", false)){
+        if (intent.getBooleanExtra("profile_deeplink", false)) {
             finish()
             return
         }
@@ -440,41 +465,45 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
 
     override fun setReminder(room: RoomListResponseItem, view: View) {
         val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager?
-        val speakerDpInBitmap = room.speakersData?.photoUrl?.toBitmap(this)
-//        val speakerBitmap = room.speakersData?.photoUrl?.urlToBitmap(context = this)
-        val notificationIntent = NotificationHelper.getNotificationIntent(
-            this, Notification(
-                title = room.speakersData?.fullName ?: "Conversation Room Reminder",
-                body = room.topic ?: "Conversation Room Reminder",
-                id = room.startedBy ?: 0,
-                userId = room.speakersData?.userId ?: "",
-                type = NotificationType.LIVE,
-                roomId = room.roomId.toString(),
-                speakerDpInBitmap
-            )
-        )
-        Timber.d("NOTIFICATION INTENT => ${notificationIntent.extras}")
-        pendingIntent =
-            PendingIntent.getBroadcast(
-                applicationContext,
-                0,
-                notificationIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT
-            )
-        Timber.d("Timer by network => ${room.startTime}")
+        lifecycleScope.launch(Dispatchers.IO) {
 
-        alarmManager?.setExact(AlarmManager.RTC_WAKEUP, room.startTime!!, pendingIntent)
-            .also {
-                //room.isScheduled = true
-                viewModel.setReminder(
-                    ReminderRequest(
+            val speakerBitmap = room.speakersData?.photoUrl?.urlToBitmap()
+
+                val notificationIntent = NotificationHelper.getNotificationIntent(
+                    this@FeedActivity, Notification(
+                        title = room.speakersData?.fullName ?: "Conversation Room Reminder",
+                        body = room.topic ?: "Conversation Room Reminder",
+                        id = room.startedBy ?: 0,
+                        userId = room.speakersData?.userId ?: "",
+                        type = NotificationType.LIVE,
                         roomId = room.roomId.toString(),
-                        userId = User.getInstance().userId,
-                        reminderTime = room.startTimeDate,
-                        false
+                        speakerBitmap
                     )
                 )
-            }
+                Timber.d("NOTIFICATION INTENT => ${notificationIntent.extras}")
+                pendingIntent =
+                    PendingIntent.getBroadcast(
+                        applicationContext,
+                        0,
+                        notificationIntent,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                    )
+                Timber.d("Timer by network => ${room.startTime}")
+
+                alarmManager?.setExact(AlarmManager.RTC_WAKEUP, room.startTime!!, pendingIntent)
+                    .also {
+                        //room.isScheduled = true
+                        viewModel.setReminder(
+                            ReminderRequest(
+                                roomId = room.roomId.toString(),
+                                userId = User.getInstance().userId,
+                                reminderTime = room.startTimeDate,
+                                false
+                            )
+                        )
+                    }
+        }
+
     }
 
     override fun deleteReminder(room: RoomListResponseItem, view: View) {
@@ -493,23 +522,21 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         )
     }
 
-    fun openProfile(profile:String)
-    {
-        var bundle=Bundle()
-        bundle.putString("user",profile)
+    fun openProfile(profile: String) {
+        var bundle = Bundle()
+        bundle.putString("user", profile)
         supportFragmentManager.findFragmentByTag(ProfileFragment::class.java.simpleName)
         supportFragmentManager.beginTransaction()
             .replace(R.id.root_view, ProfileFragment(), ProfileFragment::class.java.simpleName)
             .commit()
     }
 
-    override fun viewProfile(profile: String?, deeplink:Boolean)
-    {
+    override fun viewProfile(profile: String?, deeplink: Boolean) {
         val fragment = ProfileFragment() // replace your custom fragment class
 
         val bundle = Bundle()
         val fragmentTransaction: FragmentTransaction = supportFragmentManager.beginTransaction()
-        bundle.putString("user",profile) // use as per your need
+        bundle.putString("user", profile) // use as per your need
         bundle.putBoolean("deeplink", deeplink)
 
         fragment.arguments = bundle

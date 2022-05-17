@@ -104,9 +104,8 @@
     <string name="date_time_separator">T</string>
     <string name="enter_topic_name">Please enter topic</string>
     <string name="auto_logout_message">"You have been logged out from this device, because you have logged in from another device."</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-
     <string name="live_room_notification_title">%1$s started a call</string>
+    <string name="speak_with_them">%1$s. Speak with them?</string>
 
 </resources>

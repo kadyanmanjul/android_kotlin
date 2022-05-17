@@ -5,6 +5,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.core.Notification
@@ -71,6 +72,9 @@ class NotificationLauncher @Inject constructor(
     ): NotificationCompat.Builder =
         NotificationCompat.Builder(context, channelId).apply {
             setSmallIcon(R.drawable.ic_notification_icon)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                color = applicationContext.getColor(R.color.notification_icon)
+            }
             setContentTitle(title)
             setContentText(message)
             setStyle(NotificationCompat.BigTextStyle().bigText(bigText))
@@ -91,7 +95,7 @@ class NotificationLauncher @Inject constructor(
                     context = context,
                     channelId = notification.type.value,
                     title = getTitle(notification),
-                    message = notification.body,
+                    message = getBody(notification.body),
                     autoCancel = false,
                     profilePicture = notification.speakerPicture,
                     contentIntent = PendingIntent.getActivity(
@@ -103,5 +107,9 @@ class NotificationLauncher @Inject constructor(
                 ).build()
             )
         }
+    }
+
+    private fun getBody(body: String): String {
+        return String.format(applicationContext.getString(R.string.speak_with_them), body)
     }
 }

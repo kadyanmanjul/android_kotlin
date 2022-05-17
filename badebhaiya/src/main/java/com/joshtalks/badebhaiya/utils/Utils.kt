@@ -936,16 +936,19 @@ fun ImageView.setUserInitialInRect(
     this.setImageDrawable(drawable)
 }
 
-fun String.toBitmap(context: Context): Bitmap? {
+fun String.toBitmap(context: Context, onResourceReady: (bitmap: Bitmap) -> Unit): Bitmap? {
     var bitmap: Bitmap? = null
      Glide.with(context).asBitmap().load(this)
         .into(object : CustomTarget<Bitmap?>() {
             override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap?>?) {
                 bitmap = resource
+                Timber.d(resource.toString())
+                onResourceReady.invoke(resource)
+
             }
 
             override fun onLoadCleared(placeholder: Drawable?) {
-
+                Timber.d("failed")
             }
         })
 
@@ -1221,17 +1224,24 @@ fun playWrongAnswerSound(context: Context) {
     }
 }
 
-fun String.urlToBitmap(
+suspend fun String.urlToBitmap(
     width: Int = 80,
     height: Int = 80,
-    context: Context = AppObjectController.joshApplication
+    context: Context = AppObjectController.joshApplication,
+    makeItCircular: Boolean = false
 ): Bitmap? {
 
-    val requestOptions =
-        RequestOptions()
-            .circleCrop()
-            .format(DecodeFormat.PREFER_RGB_565)
-            .disallowHardwareConfig().dontAnimate().encodeQuality(75)
+    val requestOptions = when(makeItCircular) {
+        true ->
+            RequestOptions()
+                .circleCrop()
+                .format(DecodeFormat.PREFER_RGB_565)
+                .disallowHardwareConfig().dontAnimate().encodeQuality(75)
+        false ->
+            RequestOptions()
+                .format(DecodeFormat.PREFER_RGB_565)
+                .disallowHardwareConfig().dontAnimate().encodeQuality(75)
+    }
 
     return Glide.with(context)
         .asBitmap()
@@ -1242,10 +1252,11 @@ fun String.urlToBitmap(
         )
         // .override(Target.SIZE_ORIGINAL)
         .diskCacheStrategy(DiskCacheStrategy.ALL)
-        .optionalTransform(
-            WebpDrawable::class.java,
-            WebpDrawableTransformation(CircleCrop())
-        ).submit().get(1500, TimeUnit.MILLISECONDS)
+//        .optionalTransform(
+//            WebpDrawable::class.java,
+////            WebpDrawableTransformation()
+//        )
+        .submit().get(1500, TimeUnit.MILLISECONDS)
 }
 
 fun Int.toBoolean() = this == 1

@@ -369,7 +369,9 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
                     userId = room.speakersData?.userId ?: "",
                     type = NotificationType.LIVE,
                     roomId = room.roomId.toString(),
-                    speakerPicture = room.speakersData?.photoUrl?.toBitmap(requireContext())
+                    speakerPicture = room.speakersData?.photoUrl?.toBitmap(requireContext()){
+
+                    }
                 )
             )
         }
