@@ -38,4 +38,5 @@ enum class UserAction {
     UNHOLD,
     SPEAKER_ON,
     SPEAKER_OFF,
+    TOPIC_IMAGE_CHANGE,
 }

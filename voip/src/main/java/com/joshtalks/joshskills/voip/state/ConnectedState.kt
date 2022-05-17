@@ -75,6 +75,11 @@ class ConnectedState(val context: CallContext) : VoipState {
                             val uiState = context.currentUiState.copy(isOnHold = false)
                             context.updateUIState(uiState = uiState)
                         }
+                        TOPIC_IMAGE_RECEIVED -> {
+                            ensureActive()
+                            val uiState = context.currentUiState.copy(currentTopicImage = event.data.toString())
+                            context.updateUIState(uiState = uiState)
+                        }
                         RECONNECTING -> {
                             ensureActive()
                             val uiState = context.currentUiState.copy(isReconnecting = true)
@@ -135,6 +140,15 @@ class ConnectedState(val context: CallContext) : VoipState {
                             context.updateUIState(uiState = uiState)
                             val userAction = UserAction(
                                 ServerConstants.RESUME,
+                                context.channelData.getChannel(),
+                                address = context.channelData.getPartnerMentorId()
+                            )
+                            context.sendMessageToServer(userAction)
+                        }
+                        TOPIC_IMAGE_CHANGE_REQUEST ->{
+                            ensureActive()
+                            val userAction = UserAction(
+                                ServerConstants.TOPIC_IMAGE_REQUEST,
                                 context.channelData.getChannel(),
                                 address = context.channelData.getPartnerMentorId()
                             )

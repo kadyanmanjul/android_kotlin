@@ -195,6 +195,20 @@ class ReconnectingState(val context: CallContext) : VoipState {
                             )
                             context.sendMessageToServer(userAction)
                         }
+                        TOPIC_IMAGE_RECEIVED -> {
+                            ensureActive()
+                            val uiState = context.currentUiState.copy(currentTopicImage = event.data.toString())
+                            context.updateUIState(uiState = uiState)
+                        }
+                        TOPIC_IMAGE_CHANGE_REQUEST ->{
+                            ensureActive()
+                            val userAction = UserAction(
+                                ServerConstants.TOPIC_IMAGE_REQUEST,
+                                context.channelData.getChannel(),
+                                address = context.channelData.getPartnerMentorId()
+                            )
+                            context.sendMessageToServer(userAction)
+                        }
                         REMOTE_USER_DISCONNECTED_AGORA, REMOTE_USER_DISCONNECTED_USER_LEFT, REMOTE_USER_DISCONNECTED_MESSAGE -> {
                             Log.d(TAG, "observe: disconnect event ${event.type}")
                             ensureActive()

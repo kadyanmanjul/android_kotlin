@@ -16,5 +16,7 @@ class ServerConstants {
         val NO_USER_FOUND = 11
         val UI_STATE_UPDATED = 12
         val ACK_UI_STATE_UPDATED = 13
+        val TOPIC_IMAGE_REQUEST = 14
+        val TOPIC_IMAGE_RECEIVED = 15
     }
 }

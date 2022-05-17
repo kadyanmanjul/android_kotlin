@@ -66,7 +66,6 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
 
     init {
         listenRepositoryEvents()
-        getTopicImageList()
     }
 
     fun listenRepositoryEvents() {
@@ -136,6 +135,7 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                 uiState.name = state.remoteUserName
                 uiState.profileImage = state.remoteUserImage ?: ""
                 uiState.topic = state.topicName
+                uiState.topicImage = state.currentTopicImage
                 uiState.type = state.callType
                 uiState.title = when (state.callType) {
                     PEER_TO_PEER -> "Practice with Partner"
@@ -195,10 +195,6 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
         connectCallJob.start()
     }
 
-    fun getTopicImageList() {
-        imageList.add("https://img.thedailybeast.com/image/upload/c_crop,d_placeholder_euli9k,h_1688,w_3000,x_0,y_0/dpr_2.0/c_limit,w_740/fl_lossy,q_auto/v1652421540/220512-tna-twitter-musk-tease-02_djauok")
-        imageList.add("https://static.independent.co.uk/2022/05/11/22/newFile-1.jpg?quality=75&width=1200&auto=webp")
-    }
     // User Action
     fun disconnectCall(v: View) {
         Log.d(TAG, "Disconnect Call :Red Button Press")
@@ -265,6 +261,10 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
     fun backPress() {
         Log.d(TAG, "backPress ")
         repository.backPress()
+    }
+
+    fun getNewTopicImage(v:View){
+        repository.getNewTopicImage()
     }
 
     fun boundService(activity: Activity) {

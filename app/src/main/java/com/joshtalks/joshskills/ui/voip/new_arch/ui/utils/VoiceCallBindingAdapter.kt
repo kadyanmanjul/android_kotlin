@@ -14,6 +14,7 @@ import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.adapter.TopicImageAdapter
 import de.hdodenhof.circleimageview.CircleImageView
+import java.util.ArrayList
 
 @BindingAdapter("setProfileImage")
 fun CircleImageView.setProfileImage(imageUrl: String?) {
@@ -98,7 +99,11 @@ fun AppCompatImageButton.acceptCall(isAccept: Boolean?) {
     }
 }
 @BindingAdapter("setViewPagerAdapter")
-fun ViewPager2.setViewPagerAdapter(imageList: ArrayList<String>?) {
+fun ViewPager2.setViewPagerAdapter(image: String?) {
+    val imageList = ArrayList<String>()
+    if (image != null) {
+        imageList.add(image)
+    }
     if(!imageList.isNullOrEmpty()) {
         val adapter = TopicImageAdapter(imageList, context)
         this.adapter=adapter
