@@ -288,7 +288,7 @@ class TestNotification : NotificationData {
     }
 
     override fun setContent(): String {
-        return "Quickly Learn English"
+        return "Learn Spoken English"
     }
 }
 

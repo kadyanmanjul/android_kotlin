@@ -184,7 +184,7 @@ internal class NotificationGenerator {
     @SuppressLint("RestrictedApi")
     fun idle(notificationBuiltObj: NotificationBuiltObj) {
         notificationBuiltObj.notificationBuilder.setContentTitle("Josh Skills")
-        notificationBuiltObj.notificationBuilder.setContentText("Quickly Learn English")
+        notificationBuiltObj.notificationBuilder.setContentText("Learn Spoken English")
         notificationBuiltObj.notificationBuilder.setContentIntent(null)
         notificationBuiltObj.notificationBuilder.setUsesChronometer(false)
         notificationBuiltObj.notificationBuilder.setShowWhen(false)

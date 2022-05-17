@@ -414,11 +414,6 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                             }
                         }
                     }
-
-                    /*binding.progressBar.visibility = GONE
-                    binding.tvPractiseTime.visibility = GONE
-                    binding.progressBarAnim.visibility = VISIBLE
-                    binding.progressBarAnim.playAnimation()*/
                 } catch (ex: Exception) {
                     ex.printStackTrace()
                 }
