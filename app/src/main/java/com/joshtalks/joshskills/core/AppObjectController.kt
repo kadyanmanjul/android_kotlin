@@ -99,7 +99,9 @@ private const val CALL_TIMEOUT = 60L
 private val IGNORE_UNAUTHORISED = setOf(
     "$DIR/reputation/vp_rp_snackbar",
     "$DIR/voicecall/agora_call_feedback/",
-    "$DIR/voicecall/agora_call_feedback_submit/"
+    "$DIR/voicecall/agora_call_feedback_submit/",
+    "$DIR/voicecall/call_rating/",
+    "$DIR/fpp/block/"
 )
 
 class AppObjectController {

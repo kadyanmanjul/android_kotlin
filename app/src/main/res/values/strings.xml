@@ -1205,7 +1205,13 @@
     <string name="reject_call">Reject</string>
     <string name="submit_report_btn">Submit</string>
 
-   <!-- Voip Preference-->
+    //call ratings strings
+    <string name="how_was_your_call_name">How was your call with %s ?</string>
+    <string name="you_spoke_for_minutes">You spoke for %s minutes</string>
+    <string name="very_bad">Very bad</string>
+    <string name="block_caller">Block %s</string>
+    <string name="excellent">Excellent</string>
+    <string name="submit_call_rating">Submit</string>
 
     <string name="voip_shared_pref_file_name">com.joshtalks.joshskills.new_arch_voip_shared_pref_file</string>
     <string name="permission_denied_contacts">Permission to access contacts is required to invite friends.</string>
