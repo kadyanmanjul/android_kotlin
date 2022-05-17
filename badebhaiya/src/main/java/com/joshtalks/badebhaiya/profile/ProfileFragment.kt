@@ -41,6 +41,7 @@ import com.joshtalks.badebhaiya.repository.CommonRepository
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomResponse
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.signup.SignUpActivity
+import com.joshtalks.badebhaiya.signup.UserPicChooserFragment
 import com.joshtalks.badebhaiya.utils.SingleDataManager
 import com.joshtalks.badebhaiya.utils.Utils
 import com.joshtalks.badebhaiya.utils.setUserImageOrInitials
@@ -117,6 +118,10 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
 //            }
 //            return@setOnLongClickListener true
 //        }
+        binding.ivProfilePic.setOnClickListener{
+            UserPicChooserFragment.showDialog(childFragmentManager, true)
+
+        }
         //setOnClickListener()
         return binding.root
 
