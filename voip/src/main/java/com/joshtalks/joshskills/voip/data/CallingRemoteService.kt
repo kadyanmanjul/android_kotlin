@@ -120,8 +120,8 @@ class CallingRemoteService : Service() {
 
     private fun Intent?.initService(): Int {
         isServiceInitialize = true
-        Utils.apiHeader = this?.getParcelableExtra(INTENT_DATA_API_HEADER)
-        Utils.uuid = this?.getStringExtra(INTENT_DATA_MENTOR_ID)
+        //Utils.apiHeader = this?.getParcelableExtra(INTENT_DATA_API_HEADER)
+        //Utils.uuid = this?.getStringExtra(INTENT_DATA_MENTOR_ID)
         observeNetworkEvents()
         return START_REDELIVER_INTENT
     }

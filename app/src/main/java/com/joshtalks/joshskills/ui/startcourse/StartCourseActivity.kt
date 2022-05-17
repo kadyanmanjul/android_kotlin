@@ -6,11 +6,15 @@ import android.os.Bundle
 import android.text.SpannableStringBuilder
 import android.view.View
 import androidx.databinding.DataBindingUtil
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.MultiTransformation
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.base.constants.CALLING_SERVICE_ACTION
+import com.joshtalks.joshskills.base.constants.SERVICE_BROADCAST_KEY
+import com.joshtalks.joshskills.base.constants.STOP_SERVICE
 import com.joshtalks.joshskills.core.CURRENT_COURSE_ID
 import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.DEFAULT_COURSE_ID
@@ -171,6 +175,11 @@ class StartCourseActivity : CoreJoshActivity() {
                         putExtra(FLOW_FROM, "payment journey")
                     }
                     startActivity(intent)
+                    val broadcastIntent=Intent().apply {
+                        action = CALLING_SERVICE_ACTION
+                        putExtra(SERVICE_BROADCAST_KEY, STOP_SERVICE)
+                    }
+                    LocalBroadcastManager.getInstance(this@StartCourseActivity).sendBroadcast(broadcastIntent)
                     this.finish()
                 }
             } else {
@@ -192,6 +201,11 @@ class StartCourseActivity : CoreJoshActivity() {
                     putExtra(FLOW_FROM, "payment journey")
                 }
                 startActivity(intent)
+                val broadcastIntent=Intent().apply {
+                    action = CALLING_SERVICE_ACTION
+                    putExtra(SERVICE_BROADCAST_KEY, STOP_SERVICE)
+                }
+                LocalBroadcastManager.getInstance(this@StartCourseActivity).sendBroadcast(broadcastIntent)
                 this.finish()
             }
         }

@@ -18,10 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.base.constants.CALLING_SERVICE_ACTION
-import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_MAIN_PROCESS_IN_BACKGROUND
-import com.joshtalks.joshskills.base.constants.SERVICE_BROADCAST_KEY
-import com.joshtalks.joshskills.base.constants.START_SERVICE
+import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
@@ -438,13 +435,10 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
     }
 
     private fun applicationClosed() {
-        val remoteServiceIntent =
-            Intent(
-                AppObjectController.joshApplication,
-                CallingRemoteService::class.java
-            )
-        remoteServiceIntent.action = SERVICE_ACTION_MAIN_PROCESS_IN_BACKGROUND
-        AppObjectController.joshApplication.startService(remoteServiceIntent)
+        val broadcastIntent=Intent().apply {
+            action = CALLING_SERVICE_ACTION
+            putExtra(SERVICE_BROADCAST_KEY, STOP_SERVICE)
+        }
+        LocalBroadcastManager.getInstance(this@InboxActivity).sendBroadcast(broadcastIntent)
     }
-
 }

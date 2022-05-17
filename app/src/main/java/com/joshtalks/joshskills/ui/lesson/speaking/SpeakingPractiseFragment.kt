@@ -267,10 +267,28 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         }
 
         viewModel.speakingSpotlightClickLiveData.observe(viewLifecycleOwner) {
-            if (getVoipState() == State.IDLE && WebRtcService.isCallOnGoing.value == false)
-                startPractise(favoriteUserCall = false)
-            else
-                showToast("Wait for last call to get disconnected")
+            if(PrefManager.getIntValue(IS_VOIP_NEW_ARCH_ENABLED, defValue = 1) == 1) {
+                val state = getVoipState()
+                Log.d(TAG, " Start Call Button - Voip State $state")
+                if (state == State.IDLE && WebRtcService.isCallOnGoing.value == false) {
+                    if (checkPstnState() == PSTNState.Idle) {
+                        if (Utils.isInternetAvailable().not()) {
+                            showToast("Seems like you have no internet")
+                            return@observe
+                        }
+                        startPractise(isNewArch = true)
+                    } else {
+                        showToast("Cannot make this call while on another call")
+                    }
+                } else
+                    showToast("Wait for last call to get disconnected")
+            }else{
+                viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
+                if (getVoipState() == State.IDLE && WebRtcService.isCallOnGoing.value == false)
+                    startPractise()
+                else
+                    showToast("Wait for last call to get disconnected")
+            }
         }
 
         binding.btnContinue.setOnClickListener {

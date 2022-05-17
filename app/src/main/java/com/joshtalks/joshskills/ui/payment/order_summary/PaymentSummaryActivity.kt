@@ -30,6 +30,7 @@ import androidx.core.text.color
 import androidx.core.widget.TextViewCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.bumptech.glide.Glide
 import com.google.android.gms.auth.api.credentials.Credential
 import com.google.android.gms.auth.api.credentials.Credentials
@@ -38,6 +39,10 @@ import com.google.android.gms.auth.api.credentials.HintRequest
 import com.google.android.material.textview.MaterialTextView
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.base.constants.CALLING_SERVICE_ACTION
+import com.joshtalks.joshskills.base.constants.SERVICE_BROADCAST_KEY
+import com.joshtalks.joshskills.base.constants.START_SERVICE
+import com.joshtalks.joshskills.base.constants.STOP_SERVICE
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.CTA_PAYMENT_SUMMARY
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIAL_PAYMENT_BTN_TXT
@@ -1119,6 +1124,11 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             putExtra(FLOW_FROM, "payment journey")
         }
         startActivity(intent)
+        val broadcastIntent=Intent().apply {
+            action = CALLING_SERVICE_ACTION
+            putExtra(SERVICE_BROADCAST_KEY, STOP_SERVICE)
+        }
+        LocalBroadcastManager.getInstance(this@PaymentSummaryActivity).sendBroadcast(broadcastIntent)
         this.finish()
     }
 }

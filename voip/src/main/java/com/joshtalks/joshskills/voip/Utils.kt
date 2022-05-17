@@ -168,8 +168,10 @@ fun getDeclineCallIntent(): PendingIntent {
 class Utils {
     companion object {
         var context : Application? = null
-        var apiHeader : ApiHeader? = null
-        var uuid : String? = null
+        val apiHeader : ApiHeader?
+            get() = context?.getApiHeader()
+        val uuid : String?
+            get() = context?.getMentorId()
 
         fun initUtils(application: Application ) {
             this.context = application
