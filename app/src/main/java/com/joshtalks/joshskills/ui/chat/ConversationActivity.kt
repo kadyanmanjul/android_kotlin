@@ -396,35 +396,6 @@ class ConversationActivity :
         }
     }
 
-    private fun checkAndRequestPermissions(): Boolean {
-        val readPhoneState =
-            ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE)
-        val read_call_log =
-            ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CALL_LOG)
-        val listPermissionsNeeded: MutableList<String> = ArrayList()
-        if (readPhoneState != PackageManager.PERMISSION_GRANTED) {
-            listPermissionsNeeded.add(Manifest.permission.READ_PHONE_STATE)
-        }
-        if (read_call_log != PackageManager.PERMISSION_GRANTED) {
-            listPermissionsNeeded.add(Manifest.permission.READ_CALL_LOG)
-        }
-        if (read_call_log != PackageManager.PERMISSION_GRANTED) {
-            listPermissionsNeeded.add(Manifest.permission.PROCESS_OUTGOING_CALLS)
-        }
-        if (read_call_log != PackageManager.PERMISSION_GRANTED) {
-            listPermissionsNeeded.add(Manifest.permission.INTERNET)
-        }
-        if (listPermissionsNeeded.isNotEmpty()) {
-            ActivityCompat.requestPermissions(
-                this,
-                (listPermissionsNeeded.toTypedArray() as Array<String?>),
-                1
-            )
-            return false
-        }
-        return true
-    }
-
     private fun initFreeTrialTimer() {
         if (inboxEntity.isCourseBought.not() &&
             inboxEntity.expiryDate != null &&
@@ -2315,7 +2286,6 @@ class ConversationActivity :
 
     override fun onStart() {
         super.onStart()
-        checkAndRequestPermissions()
         try {
             conversationViewModel.singleLiveEvent.observe(this) {
                 when (it.what) {
