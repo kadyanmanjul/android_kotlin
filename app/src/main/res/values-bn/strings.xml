@@ -477,7 +477,7 @@
     <string name="extend_free_trial1">আমি আপনাকে আরেক দিন এর জন্য Free Trial দিতে চাই ।</string>
     <string name="extend_free_trial2">আপনি Free Trial কে মাত্র একবার বাড়াতে পারবেন।</string>
     <string name="extend_free_trial3">আপনি কি Serious? যে আপনি English Improve করতে চান?</string>
-
-
+    <string name="share_screen_tagline"><b>আমি রোজ</b> speaking practice <b>করছি</b> call<b>\nএ</b> নতুন নতুন মানুষের <b>সাথে।</b></string>
+    <string name="share_with_friends_text">আমি English শিখছি, যেখানে Environment পাওয়া নতুন লোকের সাথে কথা বলার। তুমিও ইংলিশ শিখতে পার।</string>
 
 </resources>

@@ -474,5 +474,7 @@
     <string name="extend_free_trial1">நாங்கள் உங்களுக்கு மேலும் ஒரு நாள் இலவச சோதனையை வழங்க விரும்புகிறோம்.</string>
     <string name="extend_free_trial2">நீங்கள் இலவச சோதனையை ஒரு முறை மட்டுமே நீட்டிக்க முடியும்.</string>
     <string name="extend_free_trial3">உங்கள் ஆங்கிலத்தை மேம்படுத்துவதில் நீங்கள் தீவிரமாக இருக்கிறீர்களா?</string>
+    <string name="share_screen_tagline"><b>நான் ஒவ்வொரு நாளும்</b> speaking practice <b>செய்கிறேன் </b> <b>\nபுதிய </b> நபர்களுடன் <b>அழைப்பில்.</b></string>
+    <string name="share_with_friends_text">நான் English கற்றுக்கொள்கிறேன்,  இந்த  environment மூலமாக. நீங்களும் ஆங்கிலத்தை கற்றுக்கொள்ளலாம்.</string>
 
 </resources>
