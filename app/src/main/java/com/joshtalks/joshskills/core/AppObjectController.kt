@@ -79,21 +79,15 @@ import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import okhttp3.Cache
-import okhttp3.CacheControl
-import okhttp3.CertificatePinner
-import okhttp3.CipherSuite
-import okhttp3.ConnectionSpec
-import okhttp3.Interceptor
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.Response
-import okhttp3.TlsVersion
+import okhttp3.*
+import okhttp3.ResponseBody.Companion.toResponseBody
+import okhttp3.internal.http2.ConnectionShutdownException
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.HttpException
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import timber.log.Timber
+import java.io.IOException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 
@@ -646,10 +640,11 @@ class AppObjectController {
 
                 mediaOkhttpBuilder.addInterceptor(object : Interceptor {
                     override fun intercept(chain: Interceptor.Chain): Response {
-                        val original = chain.request()
-                        val newRequest: Request.Builder = original.newBuilder()
-                        newRequest.addHeader("Connection", "close")
-                        return chain.proceed(newRequest.build())
+                        return chain.request().safeCall {
+                            val newRequest: Request.Builder = it.newBuilder()
+                            newRequest.addHeader("Connection", "close")
+                            chain.proceed(newRequest.build())
+                        }
                     }
                 })
 
@@ -687,63 +682,101 @@ class AppObjectController {
 
 class HeaderInterceptor : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
-        val original = chain.request()
-        val newRequest: Request.Builder = original.newBuilder()
-        if (PrefManager.getStringValue(API_TOKEN).isNotEmpty()) {
-            newRequest.addHeader(
-                KEY_AUTHORIZATION, "JWT " + PrefManager.getStringValue(API_TOKEN)
-            )
+        return chain.request().safeCall {
+            val newRequest: Request.Builder = it.newBuilder()
+            if (PrefManager.getStringValue(API_TOKEN).isNotEmpty()) {
+                newRequest.addHeader(
+                    KEY_AUTHORIZATION, "JWT " + PrefManager.getStringValue(API_TOKEN)
+                )
+            }
+            newRequest.addHeader(KEY_APP_VERSION_NAME, BuildConfig.VERSION_NAME)
+                .addHeader(KEY_APP_VERSION_CODE, BuildConfig.VERSION_CODE.toString())
+                .addHeader(
+                    KEY_APP_USER_AGENT,
+                    "APP_" + BuildConfig.VERSION_NAME + "_" + BuildConfig.VERSION_CODE.toString()
+                )
+                .addHeader(KEY_APP_ACCEPT_LANGUAGE, PrefManager.getStringValue(USER_LOCALE))
+            if (Utils.isInternetAvailable()) {
+                newRequest.cacheControl(CacheControl.FORCE_NETWORK)
+            } else {
+                if (it.headers.none().not()) {
+                    newRequest.cacheControl(CacheControl.FORCE_CACHE)
+                }
+            }
+            chain.proceed(newRequest.build())
         }
-        newRequest.addHeader(KEY_APP_VERSION_NAME, BuildConfig.VERSION_NAME)
-            .addHeader(KEY_APP_VERSION_CODE, BuildConfig.VERSION_CODE.toString())
-            .addHeader(
-                KEY_APP_USER_AGENT,
-                "APP_" + BuildConfig.VERSION_NAME + "_" + BuildConfig.VERSION_CODE.toString()
-            )
-            .addHeader(KEY_APP_ACCEPT_LANGUAGE, PrefManager.getStringValue(USER_LOCALE))
-        if (Utils.isInternetAvailable()) {
-            newRequest.cacheControl(CacheControl.FORCE_NETWORK)
-        } else {
-            if (original.headers.none().not()) {
-                newRequest.cacheControl(CacheControl.FORCE_CACHE)
+    }
+}
+
+inline fun Request.safeCall(block : (Request)->Response) : Response {
+    try {
+        return block(this)
+    } catch (e : Exception) {
+        e.printStackTrace()
+        var msg = ""
+        when (e) {
+            is SocketTimeoutException -> {
+                msg = "Timeout - Please check your internet connection"
+            }
+            is UnknownHostException -> {
+                msg = "Unable to make a connection. Please check your internet"
+            }
+            is ConnectionShutdownException -> {
+                msg = "Connection shutdown. Please check your internet"
+            }
+            is IOException -> {
+                msg = "Server is unreachable, please try again later."
+            }
+            is IllegalStateException -> {
+                msg = "${e.message}"
+            }
+            else -> {
+                msg = "${e.message}"
             }
         }
-        return chain.proceed(newRequest.build())
+        return Response.Builder()
+            .request(this)
+            .protocol(Protocol.HTTP_1_1)
+            .code(999)
+            .message(msg)
+            .body("{${e}}".toResponseBody(null)).build()
     }
 }
 
 
 class StatusCodeInterceptor : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
-        val response = chain.proceed(chain.request())
-        if (response.code in 401..403) {
-            if (Utils.isAppRunning(
-                    AppObjectController.joshApplication,
-                    AppObjectController.joshApplication.packageName
-                )
-            ) {
-                if (IGNORE_UNAUTHORISED.none { !chain.request().url.toString().contains(it) }) {
-                    PrefManager.logoutUser()
-                    LastSyncPrefManager.clear()
-                    WorkManagerAdmin.instanceIdGenerateWorker()
-                    WorkManagerAdmin.appInitWorker()
-                    WorkManagerAdmin.appStartWorker()
-                    if (JoshApplication.isAppVisible) {
-                        val intent =
-                            Intent(AppObjectController.joshApplication, SignUpActivity::class.java)
-                        intent.apply {
-                            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                            putExtra("Flow", "StatusCodeInterceptor")
+        return chain.request().safeCall {
+            val response = chain.proceed(it)
+            if (response.code in 401..403) {
+                if (Utils.isAppRunning(
+                        AppObjectController.joshApplication,
+                        AppObjectController.joshApplication.packageName
+                    )
+                ) {
+                    if (IGNORE_UNAUTHORISED.none { !chain.request().url.toString().contains(it) }) {
+                        PrefManager.logoutUser()
+                        LastSyncPrefManager.clear()
+                        WorkManagerAdmin.instanceIdGenerateWorker()
+                        WorkManagerAdmin.appInitWorker()
+                        WorkManagerAdmin.appStartWorker()
+                        if (JoshApplication.isAppVisible) {
+                            val intent =
+                                Intent(AppObjectController.joshApplication, SignUpActivity::class.java)
+                            intent.apply {
+                                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                putExtra("Flow", "StatusCodeInterceptor")
+                            }
+                            AppObjectController.joshApplication.startActivity(intent)
                         }
-                        AppObjectController.joshApplication.startActivity(intent)
                     }
                 }
             }
-        }
 //        WorkManagerAdmin.userActiveStatusWorker(JoshApplication.isAppVisible)
-        Timber.i("Status code: %s", response.code)
-        return response
+            Timber.i("Status code: %s", response.code)
+            response
+        }
     }
 }
 
