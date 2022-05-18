@@ -102,7 +102,11 @@ class FirebaseChannelService(val scope: CoroutineScope) : EventChannel {
     }
 
     override fun onDestroy() {
-        dbListenerRef.remove()
+        try {
+            dbListenerRef.remove()
+        } catch (e : Exception) {
+            e.printStackTrace()
+        }
     }
 }
 
