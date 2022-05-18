@@ -1,12 +1,13 @@
 package com.joshtalks.joshskills.repository.local.model
 
+import android.util.Log
 import com.google.firebase.Timestamp
 import com.google.gson.annotations.SerializedName
+import com.joshtalks.joshskills.core.EMPTY
 
 data class FirestoreNotificationObjectV2(
 
-    @SerializedName("id")
-    var id: String? = null,
+    var id: Int? = null,
 
     @SerializedName("name")
     var name: String? = null,
@@ -18,10 +19,10 @@ data class FirestoreNotificationObjectV2(
     var type: String? = null,
 
     @SerializedName("title")
-    var contentTitle: String? = "",
+    var title: String? = "",
 
     @SerializedName("body")
-    var contentText: String? = "",
+    var body: String? = "",
 
     @SerializedName("isDelivered")
     var isDelivered: Boolean = false,
@@ -29,16 +30,16 @@ data class FirestoreNotificationObjectV2(
     @SerializedName("isClicked")
     var isClicked: Boolean = false,
 
-    @SerializedName("client_action")
-    var action: FirestoreNotificationAction? = null,
+    @SerializedName("action")
+    var action: String? = null,
 
-    @SerializedName("actionData")
-    var actionData: String? = null,
+    @SerializedName("action_data")
+    var action_data: String? = null,
 
     @SerializedName("largeIcon")
     var largeIcon: String? = null,
 
-    @SerializedName("notificationId")
+    @SerializedName("id")
     var notificationId: Int = -1,
 
     @SerializedName("isStrict")
@@ -84,18 +85,18 @@ data class FirestoreNotificationObjectV2(
     var created: Timestamp? = null,
 
     @SerializedName("modified")
-    var modified: Timestamp? = null,
+    var modified: Timestamp? = Timestamp.now(),
 ) {
     fun toNotificationObject(id: String?) = NotificationObject().also {
-        it.id = id
+        it.id = id.toString()
         it.name = name
         it.mentorId = mentorId
         it.type = type
-        it.contentTitle = contentTitle
-        it.contentText = contentText
+        it.contentTitle = title
+        it.contentText = body
         it.isDelivered = isDelivered
         it.isClicked = isClicked
-        it.actionData = actionData
+        it.actionData = action_data
         it.largeIcon = largeIcon
         it.notificationId = notificationId
         it.isOngoing = isOngoing
@@ -106,17 +107,44 @@ data class FirestoreNotificationObjectV2(
         it.deeplink = deeplink
         it.extraData = extraData
         it.action = when (action) {
-            FirestoreNotificationAction.CALL_RECEIVE_NOTIFICATION -> NotificationAction.INCOMING_CALL_NOTIFICATION
-            FirestoreNotificationAction.CALL_DISCONNECT_NOTIFICATION -> NotificationAction.CALL_DISCONNECT_NOTIFICATION
-            FirestoreNotificationAction.CALL_FORCE_RECEIVE_NOTIFICATION -> NotificationAction.CALL_FORCE_CONNECT_NOTIFICATION
-            FirestoreNotificationAction.CALL_FORCE_DISCONNECT_NOTIFICATION -> NotificationAction.CALL_FORCE_DISCONNECT_NOTIFICATION
-            FirestoreNotificationAction.CALL_DECLINE_NOTIFICATION -> NotificationAction.CALL_DECLINE_NOTIFICATION
-            FirestoreNotificationAction.NO_USER_FOUND_NOTIFICATION -> NotificationAction.CALL_NO_USER_FOUND_NOTIFICATION
-            FirestoreNotificationAction.CALL_ONHOLD_NOTIFICATION -> NotificationAction.CALL_ON_HOLD_NOTIFICATION
-            FirestoreNotificationAction.CALL_RESUME_NOTIFICATION -> NotificationAction.CALL_RESUME_NOTIFICATION
-            FirestoreNotificationAction.CALL_CONNECTED_NOTIFICATION -> NotificationAction.CALL_CONNECTED_NOTIFICATION
-            FirestoreNotificationAction.JOIN_CONVERSATION_ROOM -> NotificationAction.JOIN_CONVERSATION_ROOM
+            NotificationAction.INCOMING_CALL_NOTIFICATION.type -> NotificationAction.INCOMING_CALL_NOTIFICATION
+            NotificationAction.CALL_DISCONNECT_NOTIFICATION.type -> NotificationAction.CALL_DISCONNECT_NOTIFICATION
+            NotificationAction.CALL_FORCE_CONNECT_NOTIFICATION.type -> NotificationAction.CALL_FORCE_CONNECT_NOTIFICATION
+            NotificationAction.CALL_FORCE_DISCONNECT_NOTIFICATION.type -> NotificationAction.CALL_FORCE_DISCONNECT_NOTIFICATION
+            NotificationAction.CALL_DECLINE_NOTIFICATION.type -> NotificationAction.CALL_DECLINE_NOTIFICATION
+            NotificationAction.CALL_NO_USER_FOUND_NOTIFICATION.type -> NotificationAction.CALL_NO_USER_FOUND_NOTIFICATION
+            NotificationAction.CALL_ON_HOLD_NOTIFICATION.type -> NotificationAction.CALL_ON_HOLD_NOTIFICATION
+            NotificationAction.CALL_RESUME_NOTIFICATION.type -> NotificationAction.CALL_RESUME_NOTIFICATION
+            NotificationAction.CALL_CONNECTED_NOTIFICATION.type -> NotificationAction.CALL_CONNECTED_NOTIFICATION
+            NotificationAction.JOIN_CONVERSATION_ROOM.type -> NotificationAction.JOIN_CONVERSATION_ROOM
+            NotificationAction.ACTION_OPEN_FREE_TRIAL_SCREEN.type -> NotificationAction.ACTION_OPEN_FREE_TRIAL_SCREEN
+            NotificationAction.ACTION_COMPLETE_ONBOARDING.type -> NotificationAction.ACTION_COMPLETE_ONBOARDING
+            NotificationAction.GROUP_CHAT_PIN_MESSAGE.type -> NotificationAction.GROUP_CHAT_PIN_MESSAGE
+            NotificationAction.GROUP_CHAT_VOICE_NOTE_HEARD.type -> NotificationAction.GROUP_CHAT_VOICE_NOTE_HEARD
+            NotificationAction.GROUP_CHAT_REPLY.type -> NotificationAction.GROUP_CHAT_REPLY
+            NotificationAction.GROUP_CHAT_MESSAGE_NOTIFICATION.type -> NotificationAction.GROUP_CHAT_MESSAGE_NOTIFICATION
+            NotificationAction.AWARD_DECLARE.type -> NotificationAction.AWARD_DECLARE
+            NotificationAction.AUDIO_FEEDBACK_REPORT.type -> NotificationAction.AUDIO_FEEDBACK_REPORT
+            NotificationAction.ACTION_OPEN_REMINDER.type -> NotificationAction.ACTION_OPEN_REMINDER
+            NotificationAction.ACTION_LOGOUT_USER.type -> NotificationAction.ACTION_LOGOUT_USER
+            NotificationAction.ACTION_DELETE_USER_AND_DATA.type -> NotificationAction.ACTION_DELETE_USER_AND_DATA
+            NotificationAction.ACTION_DELETE_USER.type -> NotificationAction.ACTION_DELETE_USER
+            NotificationAction.ACTION_DELETE_CONVERSATION_DATA.type -> NotificationAction.ACTION_DELETE_CONVERSATION_DATA
+            NotificationAction.ACTION_DELETE_DATA.type -> NotificationAction.ACTION_DELETE_DATA
+            NotificationAction.ACTION_OPEN_QUESTION.type -> NotificationAction.ACTION_OPEN_QUESTION
+            NotificationAction.ACTION_OPEN_COURSE_REPORT.type -> NotificationAction.ACTION_OPEN_COURSE_REPORT
+            NotificationAction.ACTION_OPEN_REFERRAL.type -> NotificationAction.ACTION_OPEN_REFERRAL
+            NotificationAction.ACTION_UP_SELLING_POPUP.type -> NotificationAction.ACTION_UP_SELLING_POPUP
+            NotificationAction.ACTION_OPEN_CONVERSATION_LIST.type -> NotificationAction.ACTION_OPEN_CONVERSATION_LIST
+            NotificationAction.ACTION_OPEN_URL.type -> NotificationAction.ACTION_OPEN_URL
+            NotificationAction.ACTION_OPEN_COURSE_EXPLORER.type -> NotificationAction.ACTION_OPEN_COURSE_EXPLORER
+            NotificationAction.ACTION_OPEN_PAYMENT_PAGE.type -> NotificationAction.ACTION_OPEN_PAYMENT_PAGE
+            NotificationAction.ACTION_OPEN_SPEAKING_SECTION.type -> NotificationAction.ACTION_OPEN_SPEAKING_SECTION
+            NotificationAction.ACTION_OPEN_LESSON.type -> NotificationAction.ACTION_OPEN_LESSON
+            NotificationAction.ACTION_OPEN_CONVERSATION.type -> NotificationAction.ACTION_OPEN_CONVERSATION
+            NotificationAction.ACTION_OPEN_TEST.type -> NotificationAction.ACTION_OPEN_TEST
             else -> null
         }
+        Log.d("Manjul", "toNotificationObject() called ${it.toString()}")
     }
 }

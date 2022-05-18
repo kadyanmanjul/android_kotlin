@@ -250,13 +250,13 @@ class FirebaseNotificationService : FirebaseMessagingService() {
 
     private fun sendNotification(notificationObject: NotificationObject) {
         executor.execute {
-
+            Log.d("Manjul", "sendNotification() called ${notificationObject.toString()}")
             val intent = getIntentAccordingAction(
                 notificationObject,
                 notificationObject.action,
                 notificationObject.actionData
             )
-
+            Log.d("Manjul", "sendNotification() intent : ${intent}")
             intent?.run {
                 putExtra(HAS_NOTIFICATION, true)
                 putExtra(NOTIFICATION_ID, notificationObject.id)
@@ -367,6 +367,8 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     notificationBuilder.setChannelId(notificationChannelId)
                     notificationManager.createNotificationChannel(notificationChannel)
                 }
+                Log.d("Manjul", "sendNotification() notificationManager ${notificationObject.action}")
+
                 when (notificationObject.action) {
                     NotificationAction.GROUP_CHAT_REPLY -> {
                         notificationManager.notify(10112, notificationBuilder.build())
@@ -1098,7 +1100,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             AppObjectController.appDatabase.notificationDao().insertNotification(
                 NotificationModel(
                     nc.notificationId.toString(),
-                    "FCM",
+                    "fcm",
                     timeReceived,
                     System.currentTimeMillis(),
                     "recieved",
@@ -1106,6 +1108,10 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 )
             )
         }
+    }
+
+    public fun sendFirestoreNotificationNew(nc: NotificationObject) {
+        sendNotification(nc)
     }
 
     companion object {
@@ -1125,10 +1131,15 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         ) {
             executor.execute {
 
-                val intent = getIntentForNotificationAction(
+                val intent = getIntentAccordingAction(
                     notificationObject,
                     notificationObject.action,
                     notificationObject.actionData
+                )
+
+                Log.d(
+                    "Manjul",
+                    "sendFirestoreNotification() called ${notificationObject.toString()} intent  :${intent}"
                 )
 
                 intent?.run {
@@ -1322,6 +1333,282 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 }
                 else -> {
                     null
+                }
+            }
+        }
+
+        private fun getIntentAccordingAction(
+            notificationObject: NotificationObject,
+            action: NotificationAction?,
+            actionData: String?
+        ): Intent? {
+
+            return when (action) {
+                NotificationAction.ACTION_OPEN_TEST -> {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        importance = NotificationManager.IMPORTANCE_HIGH
+                    }
+                    notificationChannelId = NotificationAction.ACTION_OPEN_TEST.type
+                    CourseDetailsActivity.getIntent(
+                        AppObjectController.joshApplication,
+                        actionData!!.toInt(),
+                        "Notification",
+                        arrayOf(Intent.FLAG_ACTIVITY_CLEAR_TOP, Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                    )
+                }
+                NotificationAction.ACTION_OPEN_CONVERSATION,
+                NotificationAction.ACTION_OPEN_COURSE_REPORT,
+                NotificationAction.ACTION_OPEN_QUESTION -> {
+                    if (PrefManager.getStringValue(API_TOKEN).isEmpty()) {
+                        return null
+                    }
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        importance = NotificationManager.IMPORTANCE_HIGH
+                    }
+                    notificationChannelId = action.name
+                    return null
+                }
+                NotificationAction.ACTION_OPEN_LESSON -> {
+                    if (PrefManager.getStringValue(API_TOKEN).isEmpty()) {
+                        return null
+                    }
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        importance = NotificationManager.IMPORTANCE_HIGH
+                    }
+                    notificationChannelId = action.name
+                    return null
+                }
+                NotificationAction.ACTION_OPEN_SPEAKING_SECTION -> {
+                    if (PrefManager.getStringValue(API_TOKEN).isEmpty()) {
+                        return null
+                    }
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        importance = NotificationManager.IMPORTANCE_HIGH
+                    }
+                    notificationChannelId = action.name
+                    return null
+                }
+                NotificationAction.ACTION_OPEN_PAYMENT_PAGE -> {
+                    if (PrefManager.getStringValue(API_TOKEN).isEmpty()) {
+                        return null
+                    }
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        importance = NotificationManager.IMPORTANCE_HIGH
+                    }
+                    notificationChannelId = action.name
+                    return null
+                }
+                NotificationAction.ACTION_OPEN_COURSE_EXPLORER -> {
+                    notificationChannelId = NotificationAction.ACTION_OPEN_COURSE_EXPLORER.name
+                    return Intent(AppObjectController.joshApplication, CourseExploreActivity::class.java).apply {
+                        flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+                    }
+                }
+                NotificationAction.ACTION_OPEN_URL -> {
+                    notificationChannelId = NotificationAction.ACTION_OPEN_URL.name
+                    val intent = Intent(Intent.ACTION_VIEW).apply {
+                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    }
+                    if (actionData!!.trim().startsWith("http://").not()) {
+                        intent.data = Uri.parse("http://" + actionData.replace("https://", "").trim())
+                    } else {
+                        intent.data = Uri.parse(actionData.trim())
+                    }
+                    return intent
+                }
+                NotificationAction.ACTION_OPEN_CONVERSATION_LIST -> {
+                    if (PrefManager.getStringValue(API_TOKEN).isEmpty()) {
+                        return null
+                    }
+                    notificationChannelId = NotificationAction.ACTION_OPEN_CONVERSATION_LIST.name
+                    Intent(AppObjectController.joshApplication, InboxActivity::class.java).apply {
+                        addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                        putExtra(HAS_NOTIFICATION, true)
+                        putExtra(NOTIFICATION_ID, notificationObject.id)
+                    }
+                }
+                NotificationAction.ACTION_UP_SELLING_POPUP -> {
+                    if (PrefManager.getStringValue(API_TOKEN).isEmpty()) {
+                        return null
+                    }
+                    notificationChannelId = NotificationAction.ACTION_UP_SELLING_POPUP.name
+                    Intent(AppObjectController.joshApplication, InboxActivity::class.java).apply {
+                        addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                        putExtra(HAS_NOTIFICATION, true)
+                        putExtra(NOTIFICATION_ID, notificationObject.id)
+                        putExtra(COURSE_ID, actionData)
+                        putExtra(ACTION_TYPE, action)
+                        putExtra(ARG_PLACEHOLDER_URL, notificationObject.bigPicture)
+                        notificationObject.bigPicture?.run {
+                            Glide.with(AppObjectController.joshApplication).load(this)
+                                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                .submit()
+                        }
+                    }
+                }
+                NotificationAction.ACTION_OPEN_REFERRAL -> {
+                    notificationChannelId = NotificationAction.ACTION_OPEN_REFERRAL.name
+                    return Intent(AppObjectController.joshApplication, ReferralActivity::class.java).apply {
+                        flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+                    }
+                }
+                /* NotificationAction.ACTION_OPEN_QUESTION -> {
+
+                     if (PrefManager.getStringValue(API_TOKEN).isEmpty()) {
+                         return null
+                     }
+                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                         importance = NotificationManager.IMPORTANCE_HIGH
+                     }
+                     notificationChannelId = action.name
+                     return processQuestionTypeNotification(notificationObject, action, actionData)
+
+                 }*/
+                NotificationAction.ACTION_DELETE_DATA -> {
+                    if (User.getInstance().isVerified) {
+                        Mentor.deleteUserData()
+                    }
+                    return null
+                }
+                NotificationAction.ACTION_DELETE_CONVERSATION_DATA -> {
+                    actionData?.let {
+                        println("action = ${action}")
+                        println("actionData = ${actionData}")
+                        //deleteConversationData(it)
+                    }
+                    return null
+                }
+                NotificationAction.ACTION_DELETE_USER -> {
+                    if (User.getInstance().isVerified) {
+                        Mentor.deleteUserCredentials()
+                    }
+                    return null
+                }
+                NotificationAction.ACTION_DELETE_USER_AND_DATA -> {
+                    if (Mentor.getInstance().hasId() && User.getInstance().isVerified) {
+                        Mentor.deleteUserCredentials()
+                        Mentor.deleteUserData()
+                    }
+                    return null
+                }
+                NotificationAction.ACTION_LOGOUT_USER -> {
+                    if (Mentor.getInstance().hasId() && User.getInstance().isVerified) {
+                        Mentor.deleteUserCredentials(true)
+                        Mentor.deleteUserData()
+                    }
+                    return null
+                }
+                NotificationAction.ACTION_OPEN_REMINDER -> {
+                    if (PrefManager.getStringValue(API_TOKEN).isEmpty()) {
+                        return null
+                    }
+                    notificationChannelId = NotificationAction.ACTION_OPEN_REFERRAL.name
+                    return Intent(AppObjectController.joshApplication, ReminderListActivity::class.java).apply {
+                        flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+                    }
+                }
+                NotificationAction.INCOMING_CALL_NOTIFICATION -> {
+                    if (!PrefManager.getBoolValue(
+                            PREF_IS_CONVERSATION_ROOM_ACTIVE
+                        ) && !PrefManager.getBoolValue(USER_ACTIVE_IN_GAME)
+                    ) {
+                        incomingCallNotificationAction(notificationObject.actionData)
+                    }
+                    return null
+                }
+                NotificationAction.JOIN_CONVERSATION_ROOM -> {
+                    if (!PrefManager.getBoolValue(PREF_IS_CONVERSATION_ROOM_ACTIVE) && User.getInstance().isVerified
+                        && PrefManager.getBoolValue(IS_CONVERSATION_ROOM_ACTIVE_FOR_USER)
+                    ) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            val intent = Intent(AppObjectController.joshApplication, HeadsUpNotificationService::class.java).apply {
+                                putExtra(ConfigKey.ROOM_DATA, actionData)
+                            }
+                            intent.startServiceForWebrtc()
+                        } else {
+                            val roomId = JSONObject(actionData).getString("room_id")
+                            val topic = JSONObject(actionData).getString("topic") ?: EMPTY
+
+                            if (roomId.isNotBlank()) {
+                                return ConversationLiveRoomActivity.getIntentForNotification(
+                                    AppObjectController.joshApplication,
+                                    roomId, topicName = topic
+                                )
+                            } else return null
+                        }
+                    }
+                    return null
+                }
+                NotificationAction.CALL_DISCONNECT_NOTIFICATION -> {
+                    callDisconnectNotificationAction()
+                    return null
+                }
+                NotificationAction.CALL_FORCE_CONNECT_NOTIFICATION -> {
+                    //if (User.getInstance().isVerified) {
+                    callForceConnect(notificationObject.actionData)
+                    //}
+                    return null
+                }
+                NotificationAction.CALL_FORCE_DISCONNECT_NOTIFICATION -> {
+                    callForceDisconnect()
+                    return null
+                }
+                NotificationAction.CALL_DECLINE_NOTIFICATION -> {
+                    callDeclineDisconnect()
+                    return null
+                }
+                NotificationAction.CALL_NO_USER_FOUND_NOTIFICATION -> {
+                    WebRtcService.noUserFoundCallDisconnect()
+                    return null
+                }
+                NotificationAction.CALL_ON_HOLD_NOTIFICATION -> {
+                    WebRtcService.holdCall()
+                    return null
+                }
+                NotificationAction.CALL_RESUME_NOTIFICATION -> {
+                    WebRtcService.resumeCall()
+                    return null
+                }
+                NotificationAction.CALL_CONNECTED_NOTIFICATION -> {
+                    if (notificationObject.actionData != null) {
+                        try {
+                            val obj = JSONObject(notificationObject.actionData!!)
+                            WebRtcService.userJoined(obj.getInt(OPPOSITE_USER_UID))
+                        } catch (ex: Exception) {
+                            ex.printStackTrace()
+                        }
+                    }
+                    return null
+                }
+                NotificationAction.AUDIO_FEEDBACK_REPORT -> {
+                    // deleteUserCredentials()
+                    // deleteUserData()
+                    return null
+                }
+                NotificationAction.AWARD_DECLARE -> {
+                    Intent(AppObjectController.joshApplication, LeaderBoardViewPagerActivity::class.java).apply {
+                        addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                        putExtra(HAS_NOTIFICATION, true)
+                        putExtra(NOTIFICATION_ID, notificationObject.id)
+                    }
+                    return null
+                }
+                NotificationAction.ACTION_OPEN_FREE_TRIAL_SCREEN -> {
+                    Intent(
+                        AppObjectController.joshApplication,
+                        FreeTrialOnBoardActivity::class.java
+                    ).apply {
+                        addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                        putExtra(HAS_NOTIFICATION, true)
+                        putExtra(NOTIFICATION_ID, notificationObject.id)
+                    }
+                }
+                else -> {
+                    return null
                 }
             }
         }

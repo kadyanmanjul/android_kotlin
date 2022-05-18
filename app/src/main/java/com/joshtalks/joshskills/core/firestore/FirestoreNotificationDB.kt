@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.core.firestore
 
+import android.util.Log
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.ktx.firestore
@@ -29,8 +30,7 @@ object FirestoreNotificationDB {
     private var notificationListener: ListenerRegistration? = null
 
     fun getNotification(
-        mentorId: String = Mentor.getInstance().getId(),
-        onSuccess: (FirestoreNotificationObjectV2) -> Unit
+        mentorId: String = Mentor.getInstance().getId()
     ) {
         notificationsCollection
             .document(mentorId)
@@ -39,22 +39,22 @@ object FirestoreNotificationDB {
                 try {
                     querySnapshot.toObject(FirestoreNotificationObjectV2::class.java)?.let {
                         Timber.d("FirestoreNotificationDB : Notification : $it")
+                        Log.d("Manjul", "getNotification() FirestoreNotificationDB : Notification : $it")
                         saveCurrentNotificationTime(it.modified!!.seconds)
-                        onSuccess(it)
                         removeNotificationAfterRead(mentorId)
                         CoroutineScope(Dispatchers.IO).launch {
                             val notification = AppObjectController.appDatabase.notificationDao()
-                                .getNotification(it.notificationId.toString())
+                                .getNotification(it.id.toString())
                             if (notification!=null){
 
                             } else {
-                                val nc = it.toNotificationObject(it.notificationId.toString())
+                                val nc = it.toNotificationObject(it.id.toString())
                                 /*if (nc.action == NotificationAction.INCOMING_CALL_NOTIFICATION)
                                     nc.actionData?.let { VoipAnalytics.pushIncomingCallAnalytics(it) }*/
                                     AppObjectController.appDatabase.notificationDao().insertNotification(
                                         NotificationModel(
-                                            nc.notificationId.toString(),
-                                            "Firestore",
+                                            nc.id.toString(),
+                                            "firestore",
                                             System.currentTimeMillis(),
                                             System.currentTimeMillis(),
                                             "recieved",
@@ -91,13 +91,10 @@ object FirestoreNotificationDB {
                                 return@addSnapshotListener
                             }
                             querySnapshot.toObject(FirestoreNotificationObjectV2::class.java)?.let {
-                                if (it.action != FirestoreNotificationAction.CALL_RECEIVE_NOTIFICATION
-                                ) {
                                     Timber.d("FirestoreNotificationDB : NotificationListener : $it")
                                     saveCurrentNotificationTime(it.modified!!.seconds)
                                     listener.onReceived(it)
                                     removeNotificationAfterRead(mentorId)
-                                }
                             }
                         } catch (ex: Exception) {
                             Timber.w(ex)
@@ -123,6 +120,10 @@ object FirestoreNotificationDB {
         } catch (ex: Exception) {
             Timber.e(ex)
         }
+    }
+
+    fun unsubscribe() {
+        notificationListener?.remove()
     }
 }
 

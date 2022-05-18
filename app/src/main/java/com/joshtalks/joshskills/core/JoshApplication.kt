@@ -9,6 +9,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Build
 import android.os.StrictMode
+import android.util.Log
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
@@ -17,12 +18,17 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.multidex.MultiDexApplication
 import com.freshchat.consumer.sdk.Freshchat
 import com.joshtalks.joshskills.BuildConfig
+import com.joshtalks.joshskills.core.firestore.FirestoreNotificationDB
+import com.joshtalks.joshskills.core.firestore.NotificationListener
+import com.joshtalks.joshskills.core.notification.FirebaseNotificationService
 import com.joshtalks.joshskills.core.notification.LocalNotificationAlarmReciever
+import com.joshtalks.joshskills.core.notification.model.NotificationModel
 import com.joshtalks.joshskills.core.service.NOTIFICATION_DELAY
 import com.joshtalks.joshskills.core.service.ServiceStartReceiver
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.di.ApplicationComponent
 import com.joshtalks.joshskills.di.DaggerApplicationComponent
+import com.joshtalks.joshskills.repository.local.model.FirestoreNotificationObjectV2
 import com.vanniktech.emoji.EmojiManager
 import com.vanniktech.emoji.ios.IosEmojiProvider
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
@@ -59,12 +65,52 @@ class JoshApplication :
         AppObjectController.init(this)
         registerBroadcastReceiver()
         initGroups()
+        addFirestoreObserver()
+    }
+
+
+    private fun addFirestoreObserver() {
+        FirestoreNotificationDB.getNotification ()
+        FirestoreNotificationDB.setNotificationListener(listener = object : NotificationListener {
+            override fun onReceived(firestoreNotification: FirestoreNotificationObjectV2) {
+                CoroutineScope(Dispatchers.IO).launch {
+                    val notification = AppObjectController.appDatabase.notificationDao()
+                        .getNotification(firestoreNotification.id.toString())
+                    if (notification!=null){
+
+                    } else {
+                        try {
+                            val nc = firestoreNotification.toNotificationObject(firestoreNotification.id.toString())
+                            /*if (nc.action == NotificationAction.INCOMING_CALL_NOTIFICATION)
+                                nc.actionData?.let { VoipAnalytics.pushIncomingCallAnalytics(it) }*/
+
+                            AppObjectController.appDatabase.notificationDao().insertNotification(
+                                NotificationModel(
+                                    nc.notificationId.toString(),
+                                    "firestore",
+                                    System.currentTimeMillis(),
+                                    System.currentTimeMillis(),
+                                    "recieved",
+                                    0L
+                                )
+                            )
+                            FirebaseNotificationService.sendFirestoreNotification(nc,this@JoshApplication)
+                        } catch (ex:java.lang.Exception){
+                            ex.printStackTrace()
+                        }
+
+                    }
+                }
+
+            }
+        })
     }
 
     override fun onTerminate() {
         super.onTerminate()
         getLocalBroadcastManager().unregisterReceiver(restoreIdReceiver)
         getLocalBroadcastManager().unregisterReceiver(unreadCountChangeReceiver)
+        FirestoreNotificationDB.unsubscribe()
     }
 
     private fun turnOnStrictMode() {
