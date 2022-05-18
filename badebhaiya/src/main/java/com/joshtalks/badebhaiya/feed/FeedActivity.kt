@@ -472,45 +472,48 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
     }
 
     override fun setReminder(room: RoomListResponseItem, view: View) {
-        val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager?
-        lifecycleScope.launch(Dispatchers.IO) {
 
-            val speakerBitmap = room.speakersData?.photoUrl?.urlToBitmap()
+        notificationScheduler.scheduleNotificationAsListener(this, room)
 
-                val notificationIntent = NotificationHelper.getNotificationIntent(
-                    this@FeedActivity, Notification(
-                        title = room.speakersData?.fullName ?: "Conversation Room Reminder",
-                        body = room.topic ?: "Conversation Room Reminder",
-                        id = room.startedBy ?: 0,
-                        userId = room.speakersData?.userId ?: "",
-                        type = NotificationType.LIVE,
-                        roomId = room.roomId.toString(),
-                        speakerBitmap
-                    )
-                )
-                Timber.d("NOTIFICATION INTENT => ${notificationIntent.extras}")
-                pendingIntent =
-                    PendingIntent.getBroadcast(
-                        applicationContext,
-                        0,
-                        notificationIntent,
-                        PendingIntent.FLAG_UPDATE_CURRENT
-                    )
-                Timber.d("Timer by network => ${room.startTime}")
-
-                alarmManager?.setExact(AlarmManager.RTC_WAKEUP, room.startTime!!, pendingIntent)
-                    .also {
-                        //room.isScheduled = true
-                        viewModel.setReminder(
-                            ReminderRequest(
-                                roomId = room.roomId.toString(),
-                                userId = User.getInstance().userId,
-                                reminderTime = room.startTimeDate,
-                                false
-                            )
-                        )
-                    }
-        }
+//        val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager?
+//        lifecycleScope.launch(Dispatchers.IO) {
+//
+//            val speakerBitmap = room.speakersData?.photoUrl?.urlToBitmap()
+//
+//                val notificationIntent = NotificationHelper.getNotificationIntent(
+//                    this@FeedActivity, Notification(
+//                        title = room.speakersData?.fullName ?: "Conversation Room Reminder",
+//                        body = room.topic ?: "Conversation Room Reminder",
+//                        id = room.startedBy ?: 0,
+//                        userId = room.speakersData?.userId ?: "",
+//                        type = NotificationType.LIVE,
+//                        roomId = room.roomId.toString(),
+//                        speakerBitmap
+//                    )
+//                )
+//                Timber.d("NOTIFICATION INTENT => ${notificationIntent.extras}")
+//                pendingIntent =
+//                    PendingIntent.getBroadcast(
+//                        applicationContext,
+//                        0,
+//                        notificationIntent,
+//                        PendingIntent.FLAG_UPDATE_CURRENT
+//                    )
+//                Timber.d("Timer by network => ${room.startTime}")
+//
+//                alarmManager?.setExact(AlarmManager.RTC_WAKEUP, room.startTime!!, pendingIntent)
+//                    .also {
+//                        //room.isScheduled = true
+//                        viewModel.setReminder(
+//                            ReminderRequest(
+//                                roomId = room.roomId.toString(),
+//                                userId = User.getInstance().userId,
+//                                reminderTime = room.startTimeDate,
+//                                false
+//                            )
+//                        )
+//                    }
+//        }
 
     }
 

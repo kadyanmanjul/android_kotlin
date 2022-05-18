@@ -12,6 +12,7 @@ import com.joshtalks.badebhaiya.core.Notification
 import com.joshtalks.badebhaiya.core.NotificationHelper
 import com.joshtalks.badebhaiya.core.NotificationType.*
 import com.joshtalks.badebhaiya.notifications.reminderNotification.ReminderNotificationManager
+import com.joshtalks.badebhaiya.pubnub.PubNubManager
 import dagger.hilt.android.qualifiers.ApplicationContext
 import timber.log.Timber
 import javax.inject.Inject
@@ -79,24 +80,26 @@ class NotificationLauncher @Inject constructor(
 
     private fun createNotification(context: Context, notificationData: Notification?) {
         notificationData?.let { notification ->
-            Timber.d("Notification aur data hai => $notification")
-            notificationManager(context).notify(
-                notification.id,
-                getNotification(
-                    context = context,
-                    channelId = notification.type.value,
-                    title = getTitle(notification),
-                    message = getBody(notification),
-                    autoCancel = false,
-                    profilePicture = notification.speakerPicture,
-                    contentIntent = PendingIntent.getActivity(
-                        context,
-                        notification.id,
-                        ReminderNotificationManager.getRedirectingIntent(context, notification),
-                        PendingIntent.FLAG_UPDATE_CURRENT
-                    )
-                ).build()
-            )
+            if (!PubNubManager.isRoomActive || PubNubManager.getLiveRoomProperties().roomId.toString() != notification.roomId) {
+                Timber.d("Notification aur data hai => $notification")
+                notificationManager(context).notify(
+                    notification.id,
+                    getNotification(
+                        context = context,
+                        channelId = notification.type.value,
+                        title = getTitle(notification),
+                        message = getBody(notification),
+                        autoCancel = false,
+                        profilePicture = notification.speakerPicture,
+                        contentIntent = PendingIntent.getActivity(
+                            context,
+                            notification.id,
+                            ReminderNotificationManager.getRedirectingIntent(context, notification),
+                            PendingIntent.FLAG_UPDATE_CURRENT
+                        )
+                    ).build()
+                )
+            }
         }
     }
 

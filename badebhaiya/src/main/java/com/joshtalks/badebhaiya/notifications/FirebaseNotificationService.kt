@@ -107,6 +107,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
     }
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
+        Timber.d("PUSH NOTIFICATION AGAYI AUR DATA HAI => ${remoteMessage.data}")
         super.onMessageReceived(remoteMessage)
         Timber.tag(FirebaseNotificationService::class.java.name).e("fcm")
         try {

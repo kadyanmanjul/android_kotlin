@@ -79,6 +79,9 @@ object PubNubManager {
 
     private var pubNubEventJob: Job? = null
 
+    @Volatile
+    var isRoomActive = false
+
     fun warmUp(liveRoomProperties: StartingLiveRoomProperties) {
         this.liveRoomProperties = liveRoomProperties
         pubNubCallback = PubNubCallback()
@@ -118,6 +121,7 @@ object PubNubManager {
     }
 
     private fun changePubNubState(state: PubNubState){
+        isRoomActive = state == PubNubState.STARTED
         jobs += CoroutineScope(Dispatchers.IO).launch{
             PubNubData._pubNubState.emit(state)
         }

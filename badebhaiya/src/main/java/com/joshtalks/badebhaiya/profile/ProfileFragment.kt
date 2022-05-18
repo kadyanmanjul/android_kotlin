@@ -49,6 +49,7 @@ import kotlinx.android.synthetic.main.activity_feed.*
 import kotlinx.android.synthetic.main.base_toolbar.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallback {
 
@@ -111,6 +112,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        Timber.d("THIS IS FCM TOKEN => ${PrefManager.getStringValue(com.joshtalks.badebhaiya.notifications.FCM_TOKEN)}")
         addObserver()
         viewModel.getProfileForUser(userId!!, isFromDeeplink)
         executePendingActions()
