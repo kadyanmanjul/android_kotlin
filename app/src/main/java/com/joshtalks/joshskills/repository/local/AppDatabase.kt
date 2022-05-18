@@ -11,8 +11,8 @@ import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
 import com.joshtalks.joshskills.core.abTest.VariableMap
 import com.joshtalks.joshskills.core.abTest.repository.ABTestCampaignDao
-import com.joshtalks.joshskills.core.notification.database.NotificationDao
-import com.joshtalks.joshskills.core.notification.model.NotificationModel
+import com.joshtalks.joshskills.core.notification.database.NotificationEventDao
+import com.joshtalks.joshskills.core.notification.model.NotificationEvent
 import com.joshtalks.joshskills.engage_notification.AppActivityDao
 import com.joshtalks.joshskills.engage_notification.AppActivityModel
 import com.joshtalks.joshskills.engage_notification.AppUsageDao
@@ -71,7 +71,7 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
         VoipAnalyticsEntity::class, GroupsAnalyticsEntity::class, GroupChatAnalyticsEntity::class,
         GroupsItem::class, TimeTokenRequest::class, ChatItem::class, GameAnalyticsEntity::class,
         ABTestCampaignData::class, GroupMember::class, SpecialPractice::class, ReadingVideo::class, CompressedVideo::class,
-        PhonebookContact::class, NotificationModel::class
+        PhonebookContact::class, NotificationEvent::class
     ],
     version = 49,
     exportSchema = true
@@ -636,7 +636,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun abCampaignDao(): ABTestCampaignDao
     abstract fun groupMemberDao(): GroupMemberDao
     abstract fun phonebookDao(): PhonebookDao
-    abstract fun notificationDao(): NotificationDao
+    abstract fun notificationEventDao(): NotificationEventDao
 }
 
 class MessageTypeConverters {

@@ -6,6 +6,7 @@ import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.LAST_FIRESTORE_NOTIFICATION_TIME
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.notification.FirebaseNotificationService
@@ -39,28 +40,24 @@ object FirestoreNotificationDB {
                 try {
                     querySnapshot.toObject(FirestoreNotificationObjectV2::class.java)?.let {
                         Timber.d("FirestoreNotificationDB : Notification : $it")
-                        Log.d("Manjul", "getNotification() FirestoreNotificationDB : Notification : $it")
+                        Log.d("Manjul", "FirestoreNotificationDB() FirestoreNotificationDB : Notification : $it")
                         saveCurrentNotificationTime(it.modified!!.seconds)
-                        removeNotificationAfterRead(mentorId)
+                        //removeNotificationAfterRead(mentorId)
                         CoroutineScope(Dispatchers.IO).launch {
-                            val notification = AppObjectController.appDatabase.notificationDao()
-                                .getNotification(it.id.toString())
-                            if (notification!=null){
-
+                            val notification = it.id?.let {
+                                NotificationAnalytics().getNotification(it.toString())
+                            }
+                            Log.d("Manjul", "From db FirestoreNotificationDB() FirestoreNotificationDB : notification : $it")
+                            if (notification?.isNullOrEmpty() == false){
+                                it.id?.let {
+                                    NotificationAnalytics().addAnalytics(
+                                        it.toString(),"app_discarded","firestore")
+                                }
                             } else {
                                 val nc = it.toNotificationObject(it.id.toString())
                                 /*if (nc.action == NotificationAction.INCOMING_CALL_NOTIFICATION)
                                     nc.actionData?.let { VoipAnalytics.pushIncomingCallAnalytics(it) }*/
-                                    AppObjectController.appDatabase.notificationDao().insertNotification(
-                                        NotificationModel(
-                                            nc.id.toString(),
-                                            "firestore",
-                                            System.currentTimeMillis(),
-                                            System.currentTimeMillis(),
-                                            "recieved",
-                                            0L
-                                        )
-                                    )
+                                NotificationAnalytics().addAnalytics(nc.id?.toString()?:EMPTY,"received","firestore")
                                 FirebaseNotificationService.sendFirestoreNotification(nc,AppObjectController.joshApplication)
                             }
                         }
@@ -84,6 +81,10 @@ object FirestoreNotificationDB {
             notificationListener = notificationsCollection
                 .document(mentorId)
                 .addSnapshotListener { querySnapshot, error ->
+                    Log.d(
+                        "Manjul",
+                        "setNotificationListener()  FirestoreNotificationDB called with: querySnapshot = $querySnapshot, error = $error"
+                    )
                     if (querySnapshot != null && error == null) {
                         try {
                             if (querySnapshot.metadata.isFromCache) {
@@ -94,7 +95,7 @@ object FirestoreNotificationDB {
                                     Timber.d("FirestoreNotificationDB : NotificationListener : $it")
                                     saveCurrentNotificationTime(it.modified!!.seconds)
                                     listener.onReceived(it)
-                                    removeNotificationAfterRead(mentorId)
+                                    //removeNotificationAfterRead(mentorId)
                             }
                         } catch (ex: Exception) {
                             Timber.w(ex)

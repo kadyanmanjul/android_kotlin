@@ -44,8 +44,10 @@ import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.custom_ui.FullScreenProgressDialog
 import com.joshtalks.joshskills.core.custom_ui.PointSnackbar
+import com.joshtalks.joshskills.core.firestore.NotificationAnalytics
 import com.joshtalks.joshskills.core.notification.HAS_NOTIFICATION
 import com.joshtalks.joshskills.core.notification.NOTIFICATION_ID
+import com.joshtalks.joshskills.core.notification.model.NotificationEvent
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.NPSEvent
@@ -411,9 +413,11 @@ abstract class BaseActivity :
                                     NOTIFICATION_ID
                             )
                     )
-                        AppObjectController.appDatabase.notificationDao().updateAction(
-                            mIntent.getStringExtra(NOTIFICATION_ID)!!,"Clicked"
-                        )
+                    val notificationId = mIntent.getStringExtra(NOTIFICATION_ID)!!
+                    val event = NotificationAnalytics().getNotification(notificationId)?.filter { it.action == "received" }?.get(0)
+                    event?.platform?.let { channel ->
+                        NotificationAnalytics().addAnalytics(notificationId = notificationId, event = "Clicked",channel = channel)
+                    }
                 }
             }
         } catch (ex: Throwable) {

@@ -55,6 +55,7 @@ import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.DismissNotifEventReceiver
 import com.joshtalks.joshskills.core.firestore.FirestoreDB
+import com.joshtalks.joshskills.core.firestore.NotificationAnalytics
 import com.joshtalks.joshskills.core.io.LastSyncPrefManager
 import com.joshtalks.joshskills.core.notification.model.NotificationModel
 import com.joshtalks.joshskills.core.startServiceForWebrtc
@@ -235,10 +236,14 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             nc.contentText = remoteData.notification?.body
             nc.id = nc.notificationId.toString()
             CoroutineScope(Dispatchers.IO).launch {
-                val notification = AppObjectController.appDatabase.notificationDao()
-                    .getNotification(nc.notificationId.toString())
-                if (notification!=null){
-
+                val notification = nc.notificationId?.let {
+                    NotificationAnalytics().getNotification(it.toString())
+                }
+                if (notification?.isNullOrEmpty() == false){
+                    nc.notificationId?.let {
+                        NotificationAnalytics().addAnalytics(
+                            it.toString(),"app_discarded","firestore")
+                    }
                 } else {
                     sendNotification(nc)
                     Log.d(FirebaseNotificationService::class.java.simpleName, "onMessageReceived nc() nc = ${nc.toString()}")
@@ -1097,16 +1102,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
 
     fun pushToDatabase(nc: NotificationObject, timeReceived: Long = System.currentTimeMillis()) {
         CoroutineScope(Dispatchers.IO).launch {
-            AppObjectController.appDatabase.notificationDao().insertNotification(
-                NotificationModel(
-                    nc.notificationId.toString(),
-                    "fcm",
-                    timeReceived,
-                    System.currentTimeMillis(),
-                    "recieved",
-                    0L
-                )
-            )
+            NotificationAnalytics().addAnalytics(nc.notificationId.toString(),"received","fcm")
         }
     }
 

@@ -18,10 +18,13 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.multidex.MultiDexApplication
 import com.freshchat.consumer.sdk.Freshchat
 import com.joshtalks.joshskills.BuildConfig
+import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.firestore.FirestoreNotificationDB
+import com.joshtalks.joshskills.core.firestore.NotificationAnalytics
 import com.joshtalks.joshskills.core.firestore.NotificationListener
 import com.joshtalks.joshskills.core.notification.FirebaseNotificationService
 import com.joshtalks.joshskills.core.notification.LocalNotificationAlarmReciever
+import com.joshtalks.joshskills.core.notification.model.NotificationEvent
 import com.joshtalks.joshskills.core.notification.model.NotificationModel
 import com.joshtalks.joshskills.core.service.NOTIFICATION_DELAY
 import com.joshtalks.joshskills.core.service.ServiceStartReceiver
@@ -70,40 +73,44 @@ class JoshApplication :
 
 
     private fun addFirestoreObserver() {
-        FirestoreNotificationDB.getNotification ()
-        FirestoreNotificationDB.setNotificationListener(listener = object : NotificationListener {
-            override fun onReceived(firestoreNotification: FirestoreNotificationObjectV2) {
-                CoroutineScope(Dispatchers.IO).launch {
-                    val notification = AppObjectController.appDatabase.notificationDao()
-                        .getNotification(firestoreNotification.id.toString())
-                    if (notification!=null){
-
-                    } else {
-                        try {
-                            val nc = firestoreNotification.toNotificationObject(firestoreNotification.id.toString())
-                            /*if (nc.action == NotificationAction.INCOMING_CALL_NOTIFICATION)
-                                nc.actionData?.let { VoipAnalytics.pushIncomingCallAnalytics(it) }*/
-
-                            AppObjectController.appDatabase.notificationDao().insertNotification(
-                                NotificationModel(
-                                    nc.notificationId.toString(),
-                                    "firestore",
-                                    System.currentTimeMillis(),
-                                    System.currentTimeMillis(),
-                                    "recieved",
-                                    0L
-                                )
-                            )
-                            FirebaseNotificationService.sendFirestoreNotification(nc,this@JoshApplication)
-                        } catch (ex:java.lang.Exception){
-                            ex.printStackTrace()
+        try {
+            //FirestoreNotificationDB.getNotification ()
+            FirestoreNotificationDB.setNotificationListener(listener = object : NotificationListener {
+                override fun onReceived(firestoreNotification: FirestoreNotificationObjectV2) {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        Log.d("Manjul", "onReceived() FirestoreNotificationDB ${firestoreNotification}")
+                        val notification = firestoreNotification.id?.let {
+                            NotificationAnalytics().getNotification(it.toString())
                         }
+                        Log.d("Manjul", "onReceived() FirestoreNotificationDB is in db  ${notification}")
 
+                        if (notification?.isNullOrEmpty() == false){
+                            firestoreNotification.id?.let {
+                                NotificationAnalytics().addAnalytics(
+                                    it.toString(),"app_discarded","firestore")
+                            }
+                        } else {
+                            try {
+                                val nc = firestoreNotification.toNotificationObject(firestoreNotification.id.toString())
+                                /*if (nc.action == NotificationAction.INCOMING_CALL_NOTIFICATION)
+                                    nc.actionData?.let { VoipAnalytics.pushIncomingCallAnalytics(it) }*/
+                                firestoreNotification.id?.let {
+                                    NotificationAnalytics().addAnalytics(
+                                        it.toString(),"received","firestore")
+                                }
+                                FirebaseNotificationService.sendFirestoreNotification(nc,this@JoshApplication)
+                            } catch (ex:java.lang.Exception){
+                                ex.printStackTrace()
+                            }
+
+                        }
                     }
-                }
 
-            }
-        })
+                }
+            })
+        } catch (ex:Exception){
+            LogException.catchException(ex)
+        }
     }
 
     override fun onTerminate() {

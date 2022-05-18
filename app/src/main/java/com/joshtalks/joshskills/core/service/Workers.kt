@@ -31,6 +31,7 @@ import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.LocalNotificationDismissEventReceiver
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
+import com.joshtalks.joshskills.core.firestore.NotificationAnalytics
 import com.joshtalks.joshskills.core.firestore.NotificationAnalyticsRequest
 import com.joshtalks.joshskills.core.notification.FCM_ACTIVE
 import com.joshtalks.joshskills.core.notification.FCM_TOKEN
@@ -977,23 +978,15 @@ class NotificationEngagementSyncWorker(context: Context, workerParams: WorkerPar
             user_action: "clicked" (when user clicked)
             user_action: "discarded" (when user discarded)
             user_action: "app_discarded" (when app discards it for being duplicate)*/
-            val db = AppObjectController.appDatabase
-            val listOfReceived = db.notificationDao().getUnsentAnalytics()?: emptyList()
-            val listOfClicked = db.notificationDao().getUnsyncedNotifications("Clicked%")?: emptyList()
-            val listDismissed = db.notificationDao().getUnsyncedNotifications("Dismissed%")?: emptyList()
-            if (listOfReceived.isEmpty() && listOfClicked.isEmpty() && listDismissed.isEmpty()) {
+            val database = AppObjectController.appDatabase.notificationEventDao()
+            val listOfReceived = database.getUnsyncEvent()
+            if (listOfReceived?.isEmpty() == true) {
                 return Result.success()
             }
 
             val request = ArrayList<NotificationAnalyticsRequest>()
-            listOfReceived.forEach {
-                request.add(NotificationAnalyticsRequest(it.id,it.time_received,"received",it.platform))
-            }
-            listOfClicked.forEach {
-                request.add(NotificationAnalyticsRequest(it.id,it.actionTime,"clicked",it.platform))
-            }
-            listDismissed.forEach {
-                request.add(NotificationAnalyticsRequest(it.id,it.actionTime,"discarded",it.platform))
+            listOfReceived?.forEach {
+                request.add(NotificationAnalyticsRequest(it.id.toString(),it.time_stamp,it.action,it.platform))
             }
             if (request.isEmpty()) {
                 return Result.success()
@@ -1001,14 +994,8 @@ class NotificationEngagementSyncWorker(context: Context, workerParams: WorkerPar
 
             val resp = AppObjectController.commonNetworkService.engageNewNotificationAsync(request)
             if (resp.isSuccessful) {
-                listOfReceived.forEach {
-                    db.notificationDao().updateEngagementStatus(it.id)
-                }
-                listOfClicked.forEach {
-                    db.notificationDao().updateSyncStatus(it.id)
-                }
-                listDismissed.forEach {
-                    db.notificationDao().updateSyncStatus(it.id)
+                listOfReceived?.forEach {
+                    AppObjectController.appDatabase.notificationEventDao().updateSyncStatus(it.notificationId)
                 }
             }
         } catch (ex: Throwable) {
