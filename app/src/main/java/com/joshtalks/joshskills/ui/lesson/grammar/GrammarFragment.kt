@@ -453,9 +453,10 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
                                 return
                             }
                             if (report.isAnyPermissionPermanentlyDenied) {
-                                PermissionUtils.permissionPermanentlyDeniedDialog(
-                                    requireActivity()
-                                )
+                                if (isAdded && activity != null)
+                                    PermissionUtils.permissionPermanentlyDeniedDialog(
+                                        requireActivity()
+                                    )
                                 return
                             }
                         }
