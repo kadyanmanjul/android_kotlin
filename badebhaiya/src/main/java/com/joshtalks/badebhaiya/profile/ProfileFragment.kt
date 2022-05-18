@@ -149,12 +149,16 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         dialogView.findViewById<AppCompatTextView>(R.id.submit).setOnClickListener{
             //TODO:implement the response API
             val msg:String
-            if(!binding.roomFrame.message.toString().isNullOrBlank())
-                 msg=binding.roomFrame.message.toString()
+//            if(!binding.roomFrame.message.toString().isNullOrBlank())
+//                 msg=binding.roomFrame.message.toString()
 
             //apicall(roomId,userId,msg)
             alertDialog.dismiss()
         }
+        dialogView.findViewById<AppCompatTextView>(R.id.Skip).setOnClickListener {
+            alertDialog.dismiss()
+        }
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -447,16 +451,6 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         viewModel.getProfileForUser(userId ?: (User.getInstance().userId),isFromDeeplink)
         }
 
-    }
-
-    override fun deleteReminder(room: RoomListResponseItem, view: View) {
-        viewModel.deleteReminder(
-            DeleteReminderRequest(
-                roomId=room.roomId.toString(),
-                userId=User.getInstance().userId
-            )
-        )
-        viewModel.getProfileForUser(userId ?: (User.getInstance().userId),isFromDeeplink)
     }
 
     override fun viewProfile(profile: String?, deeplink: Boolean) {

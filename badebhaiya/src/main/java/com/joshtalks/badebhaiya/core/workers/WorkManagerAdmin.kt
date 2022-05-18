@@ -1,5 +1,6 @@
 package com.joshtalks.badebhaiya.core.workers
 
+import android.util.Log
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.joshtalks.badebhaiya.core.AppObjectController
@@ -65,6 +66,7 @@ object WorkManagerAdmin {
 */
 
     fun forceRefreshFcmToken() {
+        Log.i("YAMI", "forceRefreshFcmToken: ")
         val workRequest = OneTimeWorkRequestBuilder<RefreshFCMTokenWorker>()
             .build()
         WorkManager.getInstance(AppObjectController.joshApplication).enqueue(workRequest)
