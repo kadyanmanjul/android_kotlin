@@ -29,6 +29,7 @@ import com.joshtalks.badebhaiya.core.startServiceForWebrtc
 import com.joshtalks.badebhaiya.core.NotificationChannelNames
 import com.joshtalks.badebhaiya.core.JoshSkillExecutors
 import com.joshtalks.badebhaiya.core.analytics.DismissNotifEventReceiver
+import com.joshtalks.badebhaiya.feed.FeedActivity
 import com.joshtalks.badebhaiya.profile.ProfileFragment
 import com.joshtalks.badebhaiya.repository.CommonRepository
 import com.joshtalks.badebhaiya.repository.model.FCMData
@@ -134,6 +135,10 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 notificationObject.actionData
             )
 
+
+
+            if (intent == null)
+                Timber.d("Intent null hai")
             intent?.run {
                 putExtra(HAS_NOTIFICATION, true)
                 putExtra(NOTIFICATION_ID, notificationObject.id)
@@ -239,36 +244,41 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             }
             NotificationAction.JOIN_CONVERSATION_ROOM -> {
                 if (!PrefManager.getBoolValue(PREF_IS_CONVERSATION_ROOM_ACTIVE) && User.getInstance().userId.isNotEmpty()
-                    && PrefManager.getBoolValue(IS_CONVERSATION_ROOM_ACTIVE_FOR_USER)
                 ) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         val intent = Intent(this, HeadsUpNotificationService::class.java).apply {
                             putExtra(ConfigKey.ROOM_DATA, actionData)
                         }
                         intent.startServiceForWebrtc()
+                        return intent
                     } else {
                         val roomId = JSONObject(actionData).getString("room_id")
                         val topic = JSONObject(actionData).getString("topic") ?: EMPTY
 
                         if (roomId.isNotBlank()) {
-//                            return ConversationLiveRoomActivity.getIntentForNotification(
-//                                AppObjectController.joshApplication,
-//                                roomId, topicName = topic
-//                            )
-                        } else return null
+                            Timber.d("YOYO")
+                            return FeedActivity.getIntentForNotification(
+                                AppObjectController.joshApplication,
+                                roomId, topicName = topic
+                            )
+                        } else {
+                            return null
+                        }
                     }
                 }
                 return null
             }
             NotificationAction.ROOM_IS_ABOUT_TO_START -> {
-                Intent(
-                    AppObjectController.joshApplication,
-                    ProfileFragment::class.java
-                ).apply {
-                    addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                    putExtra(HAS_NOTIFICATION, true)
-                    putExtra(NOTIFICATION_ID, notificationObject.userId)
-                }
+                val speakerUserId = JSONObject(actionData).getString("user_id")
+                return FeedActivity.getIntentForProfile(this, speakerUserId)
+//                Intent(
+//                    AppObjectController.joshApplication,
+//                    FeedActivity::class.java
+//                ).apply {
+//                    addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+//                    putExtra(HAS_NOTIFICATION, true)
+//                    putExtra(NOTIFICATION_ID, notificationObject.userId)
+//                }
             }
             else -> null
         }
