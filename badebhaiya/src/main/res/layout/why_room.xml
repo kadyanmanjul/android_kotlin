@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/_245sdp"
+    android:layout_margin="@dimen/_10sdp"
+    android:padding="@dimen/_10sdp"
+
+    android:background="@drawable/round_rectangle_for_clubhouse_images">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:paddingHorizontal="@dimen/_30sdp"
+        android:layout_marginTop="@dimen/_7sdp"
+        android:gravity="center"
+        android:text="आप इस जोश स्पीकर से क्यों बात करना चाहते हैं?"
+        android:textAppearance="@style/BB_Typography_Nunito_Sans_Bold"
+        android:textSize="@dimen/_14ssp"
+        android:textColor="#1E1D1B"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_marginTop="@dimen/_7sdp"
+        android:layout_marginBottom="@dimen/_7sdp"
+        android:layout_height="@dimen/_130sdp"
+        android:hint="Write Here"
+        android:background="@drawable/text_round"
+        android:textAppearance="@style/BB_Typography_Nunito_Sans_Regular"
+        android:gravity="top"
+        android:padding="@dimen/_7sdp"
+        android:backgroundTint="#EDEFF2"
+        android:textSize="@dimen/_13sdp"
+        android:id="@+id/message"
+        app:layout_constraintTop_toBottomOf="@+id/title" />
+
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/submit"
+        android:layout_width="@dimen/_130sdp"
+        android:layout_height="@dimen/_30sdp"
+        android:layout_marginHorizontal="@dimen/_16sdp"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/rect_round"
+        android:backgroundTint="#27AE61"
+        android:gravity="center"
+        android:text="SUBMIT"
+        android:shadowColor="@color/dark_grey"
+        android:shadowDy="2"
+        android:shadowRadius="2"
+        android:elevation="@dimen/_2sdp"
+        android:textAppearance="@style/BB_Typography_Nunito_Sans_Bold"
+        android:textColor="@color/white"
+        android:textSize="@dimen/_11ssp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/message" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
