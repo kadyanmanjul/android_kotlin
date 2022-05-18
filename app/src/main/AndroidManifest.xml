@@ -547,7 +547,7 @@
             android:resource="@drawable/ic_status_bar_notification" />
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_channel_id"
-            android:value="id-1" />
+            android:value="@string/default_notification_channel_id_" />
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/colorAccent" />
