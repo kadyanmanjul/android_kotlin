@@ -5,6 +5,8 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Context.ALARM_SERVICE
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -12,8 +14,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.text.HtmlCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -37,7 +41,6 @@ import com.joshtalks.badebhaiya.liveroom.viewmodel.LiveRoomViewModel
 import com.joshtalks.badebhaiya.profile.request.DeleteReminderRequest
 import com.joshtalks.badebhaiya.profile.request.ReminderRequest
 import com.joshtalks.badebhaiya.profile.response.ProfileResponse
-import com.joshtalks.badebhaiya.repository.CommonRepository
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomResponse
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.signup.SignUpActivity
@@ -50,9 +53,7 @@ import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import kotlinx.android.synthetic.main.activity_feed.*
 import kotlinx.android.synthetic.main.base_toolbar.view.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.android.synthetic.main.why_room.view.*
 
 class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallback {
 
@@ -84,8 +85,12 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         var mBundle: Bundle? = Bundle()
         mBundle = this.arguments
         userId=mBundle!!.getString("user")
-        isFromDeeplink=mBundle!!.getBoolean("isFromdeeplink")
+        isFromDeeplink=mBundle!!.getBoolean("deeplink")
         handleIntent()
+//        if(isFromDeeplink && User.getInstance().isLoggedIn())
+//        {
+//            showPopup(room.roomId, User.getInstance().userId)
+//        }
         viewModel.getProfileForUser(userId!!, isFromDeeplink)
         feedViewModel.setIsBadeBhaiyaSpeaker()
         binding.handler = this
@@ -125,6 +130,26 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         //setOnClickListener()
         return binding.root
 
+    }
+
+    fun showPopup(roomId: Int, userId: String) {
+        val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(binding.roomFrame.context)
+        val inflater = LayoutInflater.from(binding.roomFrame.context)
+        val dialogView = inflater.inflate(R.layout.why_room, null)
+        dialogBuilder.setView(dialogView)
+        val alertDialog: AlertDialog = dialogBuilder.create()
+        alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        alertDialog.show()
+
+        dialogView.findViewById<AppCompatTextView>(R.id.submit).setOnClickListener{
+            //TODO:implement the response API
+            val msg:String
+            if(!binding.roomFrame.message.toString().isNullOrBlank())
+                 msg=binding.roomFrame.message.toString()
+
+            //apicall(roomId,userId,msg)
+            alertDialog.dismiss()
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -364,13 +389,13 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
 
     override fun setReminder(room: RoomListResponseItem, view: View) {
         if (!User.getInstance().isLoggedIn()){
-
             userId?.let {
                 redirectToSignUp(SET_REMINDER, PendingPilotEventData(roomId = room.roomId, pilotUserId = it))
             }
             return
         }
-
+        if(isFromDeeplink)
+            showPopup(room.roomId,User.getInstance().userId)
         val alarmManager = activity?.applicationContext?.getSystemService(ALARM_SERVICE) as AlarmManager
         val notificationIntent = context?.let {
             NotificationHelper.getNotificationIntent(
