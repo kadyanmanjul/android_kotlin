@@ -776,17 +776,23 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
     }
 
     fun onContinueClick() {
-        val question = assessmentQuestions[currentQuizQuestion]
-        val selectedChoice = question.choiceList[
-                binding.quizRadioGroup.indexOfChild(
-                    binding.root.findViewById(binding.quizRadioGroup.checkedRadioButtonId)
-                )
-        ]
-        MixPanelTracker.publishEvent(MixPanelEvent.GRAMMAR_QUIZ_CONTINUE)
-            .addParam(ParamKeys.LESSON_ID,lessonID)
-            .addParam(ParamKeys.QUESTION_ID,selectedChoice.questionId)
-            .addParam(ParamKeys.ANSWER_SELECTED,selectedChoice.text)
-            .push()
+        try {
+            val question = assessmentQuestions[currentQuizQuestion]
+            if (question.choiceList.isNotEmpty()){
+                val selectedChoice = question.choiceList[
+                        binding.quizRadioGroup.indexOfChild(
+                            binding.root.findViewById(binding.quizRadioGroup.checkedRadioButtonId)
+                        )
+                ]
+                MixPanelTracker.publishEvent(MixPanelEvent.GRAMMAR_QUIZ_CONTINUE)
+                    .addParam(ParamKeys.LESSON_ID, lessonID)
+                    .addParam(ParamKeys.QUESTION_ID, selectedChoice.questionId)
+                    .addParam(ParamKeys.ANSWER_SELECTED, selectedChoice.text)
+                    .push()
+            }
+        }catch (ex:Exception){
+
+        }
 
         if (assessmentQuestions.size - 1 > currentQuizQuestion) {
             updateQuiz(assessmentQuestions[++currentQuizQuestion])
@@ -846,17 +852,23 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
             binding.showExplanationBtn.text = getString(R.string.show_explanation)
             binding.explanationLbl.visibility = View.GONE
             binding.explanationTv.visibility = View.GONE
-            val question = assessmentQuestions[currentQuizQuestion]
-            val selectedChoice = question.choiceList[
-                    binding.quizRadioGroup.indexOfChild(
-                        binding.root.findViewById(binding.quizRadioGroup.checkedRadioButtonId)
-                    )
-            ]
-            MixPanelTracker.publishEvent(MixPanelEvent.GRAMMAR_QUIZ_SHOW_EXPLANATION)
-                .addParam(ParamKeys.LESSON_ID,lessonID)
-                .addParam(ParamKeys.QUESTION_ID,selectedChoice.questionId)
-                .addParam(ParamKeys.ANSWER_SELECTED,selectedChoice.text)
-                .push()
+            try {
+                val question = assessmentQuestions[currentQuizQuestion]
+                if (question.choiceList.isNotEmpty()){
+                    val selectedChoice = question.choiceList[
+                            binding.quizRadioGroup.indexOfChild(
+                                binding.root.findViewById(binding.quizRadioGroup.checkedRadioButtonId)
+                            )
+                    ]
+                    MixPanelTracker.publishEvent(MixPanelEvent.GRAMMAR_QUIZ_SHOW_EXPLANATION)
+                        .addParam(ParamKeys.LESSON_ID,lessonID)
+                        .addParam(ParamKeys.QUESTION_ID,selectedChoice.questionId)
+                        .addParam(ParamKeys.ANSWER_SELECTED,selectedChoice.text)
+                        .push()
+                }
+            }catch (ex:Exception){
+
+            }
 
         } else {
             binding.showExplanationBtn.text = getString(R.string.hide_explanation)
@@ -864,17 +876,23 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
             binding.explanationTv.visibility = View.VISIBLE
             binding.explanationTv.requestFocus()
             requestFocus(binding.explanationTv)
-            val question = assessmentQuestions[currentQuizQuestion]
-            val selectedChoice = question.choiceList[
-                    binding.quizRadioGroup.indexOfChild(
-                        binding.root.findViewById(binding.quizRadioGroup.checkedRadioButtonId)
-                    )
-            ]
-            MixPanelTracker.publishEvent(MixPanelEvent.GRAMMAR_QUIZ_HIDE_EXPLANATION)
-                .addParam(ParamKeys.LESSON_ID,lessonID)
-                .addParam(ParamKeys.QUESTION_ID,selectedChoice.questionId)
-                .addParam(ParamKeys.ANSWER_SELECTED,selectedChoice.text)
-                .push()
+            try {
+                val question = assessmentQuestions[currentQuizQuestion]
+                if (question.choiceList.isNotEmpty()) {
+                    val selectedChoice = question.choiceList[
+                            binding.quizRadioGroup.indexOfChild(
+                                binding.root.findViewById(binding.quizRadioGroup.checkedRadioButtonId)
+                            )
+                    ]
+                    MixPanelTracker.publishEvent(MixPanelEvent.GRAMMAR_QUIZ_HIDE_EXPLANATION)
+                        .addParam(ParamKeys.LESSON_ID,lessonID)
+                        .addParam(ParamKeys.QUESTION_ID,selectedChoice.questionId)
+                        .addParam(ParamKeys.ANSWER_SELECTED,selectedChoice.text)
+                        .push()
+                }
+            }catch (ex:java.lang.Exception){
+
+            }
 
         }
     }

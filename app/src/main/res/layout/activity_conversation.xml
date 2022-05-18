@@ -877,7 +877,7 @@
                     android:visibility="gone"
                     app:layout_constraintStart_toStartOf="@+id/img_group_chat_btn"
                     app:layout_constraintTop_toTopOf="parent"
-                    tools:visibility="gone" />
+                    />
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/img_group_chat_btn"
@@ -890,7 +890,7 @@
                     android:visibility="gone"
                     app:layout_constraintEnd_toStartOf="@id/img_game_btn"
                     app:layout_constraintTop_toTopOf="parent"
-                    tools:visibility="gone" />
+                   />
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/img_activity_feed"
@@ -903,7 +903,7 @@
                     android:visibility="gone"
                     app:layout_constraintEnd_toStartOf="@id/img_group_chat_btn"
                     app:layout_constraintTop_toTopOf="parent"
-                    tools:visibility="gone" />
+                   />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/fpp_request_count_number"
@@ -919,7 +919,7 @@
                     app:layout_constraintEnd_toEndOf="@id/img_fpp_request"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:text="39"
-                    tools:visibility="gone" />
+                   />
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/img_fpp_request"
@@ -932,7 +932,7 @@
                     android:visibility="gone"
                     app:layout_constraintEnd_toStartOf="@id/img_activity_feed"
                     app:layout_constraintTop_toTopOf="parent"
-                    tools:visibility="gone" />
+                    />
 
                 <ImageView
                     android:id="@+id/img_pointer"
