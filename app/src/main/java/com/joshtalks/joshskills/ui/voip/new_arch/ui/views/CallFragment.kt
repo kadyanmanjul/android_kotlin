@@ -42,7 +42,7 @@ class CallFragment : BaseFragment() , SensorEventListener {
     private lateinit var sensorManager: SensorManager
     private lateinit var proximity: Sensor
     private lateinit var powerManager: PowerManager
-    private lateinit var lock: PowerManager.WakeLock
+    private  var lock: PowerManager.WakeLock? = null
     private val audioController by lazy {
         AudioController(CoroutineScope((Dispatchers.IO)))
     }
@@ -108,10 +108,17 @@ class CallFragment : BaseFragment() , SensorEventListener {
     }
 
     private fun setUpProximitySensor() {
-        sensorManager = context?.getSystemService(Context.SENSOR_SERVICE) as SensorManager
-        proximity = sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY)
-        powerManager = context?.getSystemService(Context.POWER_SERVICE) as PowerManager
-        lock = powerManager.newWakeLock(PowerManager.PROXIMITY_SCREEN_OFF_WAKE_LOCK,"simplewakelock:wakelocktag")
+        try {
+            sensorManager = context?.getSystemService(Context.SENSOR_SERVICE) as SensorManager
+            proximity = sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY)
+            powerManager = context?.getSystemService(Context.POWER_SERVICE) as PowerManager
+            lock = powerManager.newWakeLock(
+                PowerManager.PROXIMITY_SCREEN_OFF_WAKE_LOCK,
+                "simplewakelock:wakelocktag"
+            )
+        }catch (ex : NullPointerException){
+            ex.printStackTrace()
+        }
     }
 
     private fun startIncomingTimer() {
@@ -191,16 +198,16 @@ class CallFragment : BaseFragment() , SensorEventListener {
     override fun onAccuracyChanged(p0: Sensor?, p1: Int) {}
 
     private fun turnScreenOff() {
-        if (!lock.isHeld) lock.acquire(10 * 60 * 1000L /*10 minutes*/)
+        if (lock?.isHeld == false) lock?.acquire(10 * 60 * 1000L /*10 minutes*/)
     }
 
     private fun turnScreenOn() {
-        if (lock.isHeld) lock.release()
+        if (lock?.isHeld == true) lock?.release()
     }
 
     override fun onPause() {
         super.onPause()
         sensorManager.unregisterListener(this)
-        if(lock.isHeld) lock.release()
+        if(lock?.isHeld == true) lock?.release()
     }
 }
