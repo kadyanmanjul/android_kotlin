@@ -14,6 +14,8 @@ import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.databinding.LiBottomSheetRaisedHandsBinding
 import com.joshtalks.badebhaiya.feed.model.LiveRoomUser
 import com.joshtalks.badebhaiya.liveroom.viewmodel.LiveRoomViewModel
+import com.joshtalks.badebhaiya.pubnub.PubNubEventsManager
+import com.joshtalks.badebhaiya.pubnub.PubNubManager
 
 class RaisedHandsBottomSheet(
     private val onRaisedHand: HandRaiseSheetListener
@@ -111,14 +113,24 @@ class RaisedHandsBottomSheet(
         binding.raisedHandsList.apply {
             adapter = bottomSheetAdapter
         }
-        bottomSheetAdapter?.updateFullList(raisedHandList)
+        bottomSheetAdapter?.updateFullList(raisedHandList!!.distinct())
         bottomSheetAdapter?.setOnItemClickListener(object :
             RaisedHandsBottomSheetAdapter.RaisedHandsBottomSheetAction {
             override fun onItemClick(
                 liveRoomUser: LiveRoomUser,
                 position: Int
             ) {
-                onRaisedHand.onUserInvitedToSpeak(liveRoomUser)
+
+                if (PubNubManager.getLiveRoomProperties().isRoomCreatedByUser) {
+                    liveRoomUser.id?.let { PubNubEventsManager.sendInviteUserEvent(it) }
+                }
+                else {
+                    PubNubEventsManager.moveToSpeakerEvent()
+                    //LiveRoomFragment.isInviteRequestComeFromModerator = true
+                }
+                //.addToSpeaker.setImageResource(R.drawable.ic_selected_user)
+                //showToast("chalo")
+                //onRaisedHand.onUserInvitedToSpeak(liveRoomUser)
             }
 
         })

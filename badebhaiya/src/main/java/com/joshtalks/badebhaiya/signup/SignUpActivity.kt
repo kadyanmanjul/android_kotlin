@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
@@ -189,6 +190,7 @@ class SignUpActivity : AppCompatActivity() {
                             "registration_id" to PrefManager.getStringValue(FCM_TOKEN)
                         )
                     )
+                    Log.i("YAMI", "openNextActivity: ${result["message"]}")
                     if (result["message"] != FCM_ACTIVE)
                         WorkManagerAdmin.forceRefreshFcmToken()
 //

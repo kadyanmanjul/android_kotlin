@@ -66,6 +66,7 @@ class CheckFCMTokenInServerWorker(context: Context, workerParams: WorkerParamete
         try {
             val fcmToken = PrefManager.getStringValue(FCM_TOKEN)
             if (fcmToken.isBlank()) {
+                Log.i("YAMI", "doWork: isBlank")
                 WorkManagerAdmin.forceRefreshFcmToken()
                 return Result.success()
             }
@@ -76,12 +77,14 @@ class CheckFCMTokenInServerWorker(context: Context, workerParams: WorkerParamete
                     "registration_id" to fcmToken
                 )
             )
+            Log.i("YAMI", "doWork: ${result["message"]}")
             if (result["message"] != FCM_ACTIVE)
                 WorkManagerAdmin.forceRefreshFcmToken()
 
             return Result.success()
         } catch (ex: Exception) {
             return if (ex is HttpException && ex.code() == 500) {
+                Log.i("YAMI", "doWork: httpexception")
                 WorkManagerAdmin.forceRefreshFcmToken()
                 Result.success()
             } else

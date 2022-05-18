@@ -107,14 +107,7 @@ fun setConversationRoomCardActionButton(
                 }
                 view.setOnClickListener(null)
             } else {
-                view.setOnClickListener {
-                    roomListResponseItem.conversationRoomType = NOT_SCHEDULED
-                    view.text = view.context.getString(R.string.set_reminder)
-                    view.setTextColor(ColorStateList.valueOf(view.context.resources.getColor(R.color.white)))
-                    view.backgroundTintList =
-                        ColorStateList.valueOf(view.context.resources.getColor(R.color.reminder_on_button_color))
-                    callback?.deleteReminder(roomListResponseItem, view)
-                }
+
             }
             roomListResponseItem.startTime?.let { it1 -> setTimer(it1,view,roomListResponseItem,adapter,viewHolder,callback) }
         }
