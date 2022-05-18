@@ -2,10 +2,14 @@ package com.joshtalks.joshskills.base
 
 import android.os.Bundle
 import android.view.ViewGroup
+import androidx.annotation.Keep
 import androidx.fragment.app.DialogFragment
 import com.joshtalks.joshskills.R
 
 open class BaseDialogFragment : DialogFragment() {
+
+    @Keep
+    public class BaseDialogFragment(){}
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
