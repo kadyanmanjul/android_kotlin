@@ -536,6 +536,7 @@
             android:screenOrientation="portrait"
             android:showOnLockScreen="true"
             android:showWhenLocked="true"/>
+        <activity android:name=".ui.cohort_based_course.CommitmentFormActivity" />
 
         <meta-data
             android:name="CLEVERTAP_ACCOUNT_ID"
