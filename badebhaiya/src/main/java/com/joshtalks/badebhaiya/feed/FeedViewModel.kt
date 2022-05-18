@@ -159,7 +159,11 @@ class FeedViewModel : ViewModel() {
                 }
                 else
                 {
-                    showToast(response.errorMessage())
+                   // showToast(response.body().toString())
+                    if(response.code()==500)
+                        showToast("Room is not started yet")
+
+                    Log.i("YASHEN", "joinRoom: failed")
                 }
                 Log.d("sahil", "joinRoom:$response")
 

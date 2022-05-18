@@ -39,8 +39,8 @@
             android:background="@color/conversation_room_color">
 
             <androidx.appcompat.widget.AppCompatImageView
-                android:layout_width="37dp"
-                android:layout_height="43dp"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
                 android:layout_marginStart="@dimen/_10sdp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
@@ -48,22 +48,20 @@
                 android:focusable="true"
                 android:gravity="center_vertical|start"
                 android:onClick="@{() -> handler.onSearchPressed()}"
-                android:paddingTop="@dimen/_5sdp"
-                android:paddingBottom="@dimen/_5sdp"
                 android:visibility="visible"
                 app:layout_constraintBottom_toBottomOf="@+id/profile_iv"
                 app:layout_constraintEnd_toStartOf="@+id/profile_iv"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/profile_iv"
-                app:srcCompat="@drawable/ic_search"
+                app:srcCompat="@drawable/ic_vector_search"
                 app:tint="@color/black" />
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/profile_iv"
                 initialsFontSize="@{16}"
-                android:layout_width="21dp"
-                android:layout_height="21dp"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
                 android:onClick="@{() -> handler.onProfileClicked()}"
                 android:scaleType="centerCrop"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -81,7 +79,7 @@
                 onFeedItemClick="@{handler}"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginTop="@dimen/_5sdp"
                 android:clipToPadding="false"
                 android:paddingStart="@dimen/_8sdp"
                 android:paddingEnd="@dimen/_8sdp"

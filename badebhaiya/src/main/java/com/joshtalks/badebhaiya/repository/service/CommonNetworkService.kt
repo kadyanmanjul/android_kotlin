@@ -7,17 +7,18 @@ import com.joshtalks.badebhaiya.repository.model.FCMData
 import com.joshtalks.badebhaiya.repository.server.AmazonPolicyResponse
 import kotlinx.coroutines.Deferred
 import retrofit2.Response
-import retrofit2.http.Body
-import retrofit2.http.FieldMap
-import retrofit2.http.FormUrlEncoded
-import retrofit2.http.PATCH
-import retrofit2.http.POST
-import retrofit2.http.Path
+import retrofit2.http.*
 
 interface CommonNetworkService {
 
     @POST("$DIR/user/fcm/")
     suspend fun postFCMToken(@Body params: Map<String, String>): Response<FCMData>
+
+    @GET("$DIR/user/sign_out/")
+    suspend fun signOutUser(): Response<Void>
+
+    @POST("$DIR/user/fcm_verify/")
+    suspend fun checkFCMInServer(@Body params:Map<String,String>):Map<String,String>
 
     @PATCH("$DIR/user/fcm/{id}/")
     suspend fun patchFCMToken(

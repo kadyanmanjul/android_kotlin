@@ -23,6 +23,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.collection.arraySetOf
 import androidx.constraintlayout.motion.widget.MotionLayout
+import androidx.core.view.get
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
@@ -63,6 +64,7 @@ import com.joshtalks.badebhaiya.pubnub.PubNubState
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomResponse
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.utils.DEFAULT_NAME
+import com.joshtalks.badebhaiya.utils.setImage
 import com.joshtalks.badebhaiya.utils.setUserImageRectOrInitials
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -585,13 +587,21 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
     private fun updateUI() {
         setUpRecyclerView()
         setLeaveEndButton(PubNubManager.getLiveRoomProperties().isRoomCreatedByUser)
+        if(User.getInstance().profilePicUrl!=null) {
+            User.getInstance().apply {
+                profilePicUrl?.let { binding.userPhoto.setImage(it, radius = 16) }
+                //binding.profileIv.setUserImageOrInitials(profilePicUrl, firstName.toString())
+            }
+        }
         binding.userPhoto.clipToOutline = true
-        binding.userPhoto.setUserImageRectOrInitials(
-            User.getInstance().profilePicUrl,
-            User.getInstance().firstName ?: DEFAULT_NAME,
-            textColor = R.color.black,
-            bgColor = R.color.conversation_room_gray
-        )
+//        binding.userPhoto.setUserImageRectOrInitials(
+//            User.getInstance().profilePicUrl,
+//            User.getInstance().firstName ?: DEFAULT_NAME,
+//            textColor = R.color.black,
+//            bgColor = R.color.conversation_room_gray
+//        )
+
+
         binding.topic.text = PubNubManager.getLiveRoomProperties().channelTopic
 
 
@@ -686,7 +696,13 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
                     binding.apply {
                         handRaiseBtn.visibility = View.VISIBLE
                         handUnraiseBtn.visibility = View.GONE
-                        listener__recycler_view.raised_hands.visibility=View.VISIBLE
+
+                        for(i in audienceAdapter!!.audienceList)
+                            if(i.userId==User.getInstance().userId) {
+                                val pos=audienceAdapter!!.audienceList.indexOf(i)
+                                listener__recycler_view[pos].raised_hands.visibility= View.VISIBLE
+                            }
+
                     }
                     setNotificationWithoutAction(
                         String.format(
@@ -700,7 +716,11 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
                     binding.apply {
                         handRaiseBtn.visibility = View.GONE
                         handUnraiseBtn.visibility = View.VISIBLE
-                        listener__recycler_view.raised_hands.visibility=View.GONE
+                        for(i in audienceAdapter!!.audienceList)
+                            if(i.userId==User.getInstance().userId) {
+                                 val pos=audienceAdapter!!.audienceList.indexOf(i)
+                                listener__recycler_view[pos].raised_hands.visibility=View.GONE
+                            }
                     }
                 }
             }
@@ -924,7 +944,9 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
         binding.notificationBar.apply {
             visibility = View.VISIBLE
             setHeading("The Internet connection appears to be offline")
-            Intent(requireContext(), FeedActivity::class.java)
+           var int= Intent(requireContext(), FeedActivity::class.java)
+            startActivity(int)
+            finishFragment()
             setNotificationState(NotificationView.ConversationRoomNotificationState.NO_INTERNET_AVAILABLE)
             loadAnimationSlideDown()
             startSound()

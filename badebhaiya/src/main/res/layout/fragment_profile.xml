@@ -43,12 +43,13 @@
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/btnFollow"
-            android:layout_width="@dimen/_110sdp"
+            android:layout_width="@dimen/_100sdp"
             android:layout_height="@dimen/_24sdp"
             android:background="@drawable/follow_button_background"
             android:gravity="center"
             android:onClick="@{() -> handler.updateFollowStatus()}"
             android:text="@string/follow"
+            android:elevation="@dimen/_4sdp"
             android:textAppearance="@style/BB_Typography_Nunito_Semi_Bold"
             android:textColor="@color/follow_button_stroke"
             android:textSize="@dimen/_12ssp"
@@ -79,6 +80,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_11sdp"
             android:textSize="@dimen/_12ssp"
+            app:flow_verticalAlign="top"
             android:textColor="@color/profile_font_color"
             app:layout_constraintStart_toStartOf="@id/tvUserName"
             app:layout_constraintTop_toBottomOf="@id/tvUserName"
@@ -87,7 +89,7 @@
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvProfileBio"
-            android:layout_width="wrap_content"
+            android:layout_width="@dimen/_170sdp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_10sdp"
             android:visibility="@{(viewModel.isBadeBhaiyaSpeaker &amp;&amp; viewModel.isBioTextAvailable)? View.VISIBLE : View.GONE}"
@@ -114,14 +116,15 @@
             android:id="@+id/tvSpeakerRoomHeading"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/nunito_regular"
             android:layout_marginTop="@dimen/_12sdp"
-            android:visibility="@{viewModel.isBadeBhaiyaSpeaker ? View.VISIBLE : View.GONE}"
-            android:textSize="@dimen/_12ssp"
+            android:fontFamily="@font/nunito_regular"
+            android:text="@string/upcoming_rooms"
             android:textColor="@color/profile_font_color"
-            app:layout_constraintStart_toStartOf="@id/tvFollowers"
+            android:textSize="@dimen/_12ssp"
+            android:visibility="@{viewModel.isBadeBhaiyaSpeaker ? View.VISIBLE : View.GONE}"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/divider"
-            android:text="@string/upcoming_rooms" />
+            android:layout_margin="@dimen/_10sdp" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvSpeakerRoomList"
@@ -137,11 +140,13 @@
             app:layout_constraintTop_toBottomOf="@+id/tvSpeakerRoomHeading"
             app:layout_constraintBottom_toBottomOf="parent"
             tools:listitem="@layout/li_room_event" />
+
         <FrameLayout
+            android:id="@+id/room_frame"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/room_frame"
-            />
+            tools:layout_editor_absoluteX="0dp"
+            tools:layout_editor_absoluteY="-3dp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

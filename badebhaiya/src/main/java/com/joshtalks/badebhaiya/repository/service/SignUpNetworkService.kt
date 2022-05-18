@@ -26,6 +26,9 @@ interface SignUpNetworkService {
     @GET("$DIR/user/{id}/")
     suspend fun getUserProfile(@Path("id")userId: String): Response<User>
 
+    @GET("$DIR/user/sign_out/")
+    suspend fun signOutUser():Response<Void>
+
     @PATCH("$DIR/user/{id}/")
     suspend fun updateUserProfile(@Path("id")userId: String, @Body params: Map<String, String?>): Response<User>
 

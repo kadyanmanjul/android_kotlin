@@ -18,6 +18,8 @@ object WorkManagerAdmin {
             ).enqueue()
     }
 
+
+
     fun appStartWorker() {
         WorkManager.getInstance(AppObjectController.joshApplication)
             .beginWith(
@@ -30,7 +32,7 @@ object WorkManagerAdmin {
             )
             .then(
                 mutableListOf(
-                    OneTimeWorkRequestBuilder<RefreshFCMTokenWorker>().build())
+                    OneTimeWorkRequestBuilder<CheckFCMTokenInServerWorker>().build())
             )
             .enqueue()
     }

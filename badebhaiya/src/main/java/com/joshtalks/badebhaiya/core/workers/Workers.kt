@@ -7,18 +7,15 @@ import androidx.work.WorkerParameters
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.installations.FirebaseInstallations
 import com.google.firebase.messaging.FirebaseMessaging
-import com.joshtalks.badebhaiya.core.API_TOKEN
-import com.joshtalks.badebhaiya.core.FCM_TOKEN
-import com.joshtalks.badebhaiya.core.INSTALL_REFERRER_SYNC
-import com.joshtalks.badebhaiya.core.InstallReferralUtil
-import com.joshtalks.badebhaiya.core.LogException
-import com.joshtalks.badebhaiya.core.PrefManager
+import com.joshtalks.badebhaiya.core.*
 import com.joshtalks.badebhaiya.core.models.DeviceDetailsResponse
 import com.joshtalks.badebhaiya.core.models.InstallReferrerModel
 import com.joshtalks.badebhaiya.core.models.UpdateDeviceRequest
+import com.joshtalks.badebhaiya.notifications.FCM_ACTIVE
 import com.joshtalks.badebhaiya.repository.CommonRepository
 import com.joshtalks.badebhaiya.repository.model.FCMData
 import com.joshtalks.badebhaiya.repository.model.User
+import com.joshtalks.badebhaiya.repository.service.RetrofitInstance.Companion.signUpNetworkService
 import com.joshtalks.badebhaiya.utils.ApiRespStatus
 import com.joshtalks.badebhaiya.utils.TAG
 import com.joshtalks.badebhaiya.utils.Utils
@@ -27,6 +24,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 import timber.log.Timber
 
 class AppRunRequiredTaskWorker(var context: Context, workerParams: WorkerParameters) :
@@ -59,6 +57,36 @@ class JoshTalksInstallWorker(context: Context, workerParams: WorkerParameters) :
             }
         }
         return Result.success()
+    }
+}
+
+class CheckFCMTokenInServerWorker(context: Context, workerParams: WorkerParameters) :
+    CoroutineWorker(context, workerParams) {
+    override suspend fun doWork(): Result {
+        try {
+            val fcmToken = PrefManager.getStringValue(FCM_TOKEN)
+            if (fcmToken.isBlank()) {
+                WorkManagerAdmin.forceRefreshFcmToken()
+                return Result.success()
+            }
+
+            val result = CommonRepository().checkFCMInServer(
+                mapOf(
+                    "user_id" to User.getInstance().userId,
+                    "registration_id" to fcmToken
+                )
+            )
+            if (result["message"] != FCM_ACTIVE)
+                WorkManagerAdmin.forceRefreshFcmToken()
+
+            return Result.success()
+        } catch (ex: Exception) {
+            return if (ex is HttpException && ex.code() == 500) {
+                WorkManagerAdmin.forceRefreshFcmToken()
+                Result.success()
+            } else
+                Result.failure()
+        }
     }
 }
 

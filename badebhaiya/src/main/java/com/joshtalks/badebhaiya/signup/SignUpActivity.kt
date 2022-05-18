@@ -12,10 +12,15 @@ import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.core.*
 import com.joshtalks.badebhaiya.core.io.AppDirectory
+import com.joshtalks.badebhaiya.core.workers.WorkManagerAdmin
 import com.joshtalks.badebhaiya.databinding.ActivitySignUpBinding
 import com.joshtalks.badebhaiya.feed.FeedActivity
+import com.joshtalks.badebhaiya.notifications.FCM_ACTIVE
+import com.joshtalks.badebhaiya.notifications.FirebaseNotificationService
 import com.joshtalks.badebhaiya.privacyPolicy.WebViewFragment
 import com.joshtalks.badebhaiya.profile.ProfileFragment
+import com.joshtalks.badebhaiya.repository.CommonRepository
+import com.joshtalks.badebhaiya.repository.model.FCMData
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.signup.fragments.SignUpAddProfilePhotoFragment
 import com.joshtalks.badebhaiya.signup.fragments.SignUpEnterNameFragment
@@ -23,6 +28,7 @@ import com.joshtalks.badebhaiya.signup.fragments.SignUpEnterOTPFragment
 import com.joshtalks.badebhaiya.signup.fragments.SignUpEnterPhoneFragment
 import com.joshtalks.badebhaiya.signup.viewmodel.SignUpViewModel
 import com.joshtalks.badebhaiya.utils.PRIVACY_POLICY_URL
+import com.joshtalks.badebhaiya.utils.Utils
 import com.joshtalks.badebhaiya.utils.events.makeLinks
 import com.truecaller.android.sdk.ITrueCallback
 import com.truecaller.android.sdk.TrueError
@@ -31,6 +37,10 @@ import com.truecaller.android.sdk.TruecallerSDK
 import com.truecaller.android.sdk.TruecallerSdkScope
 import java.util.Locale
 import kotlinx.android.synthetic.main.activity_sign_up.btnWelcome
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import timber.log.Timber
 
 class SignUpActivity : AppCompatActivity() {
 
@@ -172,13 +182,23 @@ class SignUpActivity : AppCompatActivity() {
                 .commit()
         } else
             Intent(this, FeedActivity::class.java).also { it ->
-
+                CoroutineScope(Dispatchers.IO).launch {
+                    val result = CommonRepository().checkFCMInServer(
+                        mapOf(
+                            "user_id" to User.getInstance().userId,
+                            "registration_id" to PrefManager.getStringValue(FCM_TOKEN)
+                        )
+                    )
+                    if (result["message"] != FCM_ACTIVE)
+                        WorkManagerAdmin.forceRefreshFcmToken()
+//
+                    startActivity(it)
+//                    }
+                }
 //                SingleDataManager.pendingPilotAction?.let { event ->
 //                    val userId = SingleDataManager.pendingPilotEventData?.pilotUserId
 //                    it.putExtra("user", userId)
 //                }
-                startActivity(it)
-
             }
     }
 

@@ -23,6 +23,8 @@ import com.joshtalks.badebhaiya.feed.FeedActivity
 import com.joshtalks.badebhaiya.feed.model.ConversationRoomType
 import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
 import com.joshtalks.badebhaiya.feed.model.SpeakerData
+import com.joshtalks.badebhaiya.liveroom.service.ConvoWebRtcService
+import com.joshtalks.badebhaiya.liveroom.service.ConvoWebRtcService.Companion.roomQuestionId
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.utils.SingleDataManager
 import com.joshtalks.badebhaiya.utils.Utils
@@ -88,8 +90,13 @@ class FeedAdapter(private val fromProfile: Boolean = false, private val coroutin
             }
 
             item.root.setOnLongClickListener{
-                if(room.speakersData?.userId == User.getInstance().userId)
-                showPopup()
+//                if(room.speakersData?.userId == User.getInstance().userId) {
+//                    showPopup(room.roomId)
+//                }
+//                else {
+//                    if (room.conversationRoomType==ConversationRoomType.LIVE)
+//                    showLeavePopup(room.roomId,roomQuestionId)
+//                }
                 return@setOnLongClickListener true
             }
 
@@ -104,7 +111,7 @@ class FeedAdapter(private val fromProfile: Boolean = false, private val coroutin
                 SingleDataManager.pendingPilotEventData = null
             }
         }
-        fun showPopup(){
+        fun showPopup(roomId: Int) {
             val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(item.tvCardTopic.context)
             val inflater = LayoutInflater.from(item.tvCardTopic.context)
             val dialogView = inflater.inflate(R.layout.popup_room, null)
@@ -116,7 +123,26 @@ class FeedAdapter(private val fromProfile: Boolean = false, private val coroutin
                 alertDialog.dismiss()
             }
             dialogView.findViewById<AppCompatTextView>(R.id.delete_room).setOnClickListener{
-                //showToast("Kuch nhi hoga")
+                showToast("Ended the Room")
+                ConvoWebRtcService().endRoom(roomId)
+                alertDialog.dismiss()
+            }
+        }
+
+        fun showLeavePopup(roomId: Int, roomQuestionId: Int?) {
+            val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(item.tvCardTopic.context)
+            val inflater = LayoutInflater.from(item.tvCardTopic.context)
+            val dialogView = inflater.inflate(R.layout.leave_popup_room, null)
+            dialogBuilder.setView(dialogView)
+            val alertDialog: AlertDialog = dialogBuilder.create()
+            alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            alertDialog.show()
+            dialogView.findViewById<AppCompatTextView>(R.id.cancel_room).setOnClickListener {
+                alertDialog.dismiss()
+            }
+            dialogView.findViewById<AppCompatTextView>(R.id.delete_room).setOnClickListener{
+                showToast("Left the Room")
+                ConvoWebRtcService().leaveRoom(roomId,roomQuestionId)
                 alertDialog.dismiss()
             }
         }

@@ -5,6 +5,8 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Context.ALARM_SERVICE
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -12,8 +14,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.text.HtmlCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -42,6 +46,10 @@ import com.joshtalks.badebhaiya.repository.model.ConversationRoomResponse
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.signup.SignUpActivity
 import com.joshtalks.badebhaiya.utils.*
+import com.joshtalks.badebhaiya.signup.UserPicChooserFragment
+import com.joshtalks.badebhaiya.utils.SingleDataManager
+import com.joshtalks.badebhaiya.utils.Utils
+import com.joshtalks.badebhaiya.utils.setUserImageOrInitials
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
@@ -50,6 +58,7 @@ import kotlinx.android.synthetic.main.base_toolbar.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import kotlinx.android.synthetic.main.why_room.view.*
 
 class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallback {
 
@@ -81,8 +90,12 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         var mBundle: Bundle? = Bundle()
         mBundle = this.arguments
         userId=mBundle!!.getString("user")
-        isFromDeeplink=mBundle!!.getBoolean("isFromdeeplink")
+        isFromDeeplink=mBundle!!.getBoolean("deeplink")
         handleIntent()
+//        if(isFromDeeplink && User.getInstance().isLoggedIn())
+//        {
+//            showPopup(room.roomId, User.getInstance().userId)
+//        }
         viewModel.getProfileForUser(userId!!, isFromDeeplink)
         feedViewModel.setIsBadeBhaiyaSpeaker()
         binding.handler = this
@@ -105,9 +118,43 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
                 }
             }
         })
+
+//        binding.ivProfilePic.setOnLongClickListener{
+//            CoroutineScope(Dispatchers.IO).launch {
+//                val resp= CommonRepository().signOutUser()
+//                if(resp.isSuccessful) {
+//                    User.deleteUserCredentials(true)
+//                }
+//            }
+//            return@setOnLongClickListener true
+//        }
+        binding.ivProfilePic.setOnClickListener{
+            UserPicChooserFragment.showDialog(childFragmentManager, true)
+
+        }
         //setOnClickListener()
         return binding.root
 
+    }
+
+    fun showPopup(roomId: Int, userId: String) {
+        val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(binding.roomFrame.context)
+        val inflater = LayoutInflater.from(binding.roomFrame.context)
+        val dialogView = inflater.inflate(R.layout.why_room, null)
+        dialogBuilder.setView(dialogView)
+        val alertDialog: AlertDialog = dialogBuilder.create()
+        alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        alertDialog.show()
+
+        dialogView.findViewById<AppCompatTextView>(R.id.submit).setOnClickListener{
+            //TODO:implement the response API
+            val msg:String
+            if(!binding.roomFrame.message.toString().isNullOrBlank())
+                 msg=binding.roomFrame.message.toString()
+
+            //apicall(roomId,userId,msg)
+            alertDialog.dismiss()
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -154,7 +201,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
                 speakerUnfollowedUIChanges()
         }
         feedViewModel.singleLiveEvent.observe(viewLifecycleOwner) {
-            Log.d("ABC2", "Data class called with data message: ${it.what} bundle : ${it.data}")
+            Log.d("ABC2", "Data class called with profile data message: ${it.what} bundle : ${it.data}")
             when (it.what) {
                 OPEN_ROOM ->{
                     it.data?.let {
@@ -170,13 +217,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
                 }
 
                 ROOM_EXPAND->{
-                    Log.i("YASHENDRA", "addObserver: Expand")
-//                    activity?.run {
-//                        (activity as FeedActivity).swipeRefreshLayout.isEnabled=true
-//                        supportFragmentManager.beginTransaction().remove(this@ProfileActivity)
-//                            .commitAllowingStateLoss()
-//                    }
-                    liveRoomViewModel.liveRoomState.value=LiveRoomState.EXPANDED
+                 liveRoomViewModel.liveRoomState.value=LiveRoomState.EXPANDED
 //                    var live=LiveRoomFragment()
 //                    live.expandLiveRoom()
                 }
@@ -189,7 +230,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         binding.apply {
             if (profileResponse.isSpeaker) {
                 tvProfileBio.text = profileResponse.bioText
-                tvFollowers.text = HtmlCompat.fromHtml(getString(R.string.bb_followers, profileResponse.followersCount.toString()),
+                tvFollowers.text = HtmlCompat.fromHtml(getString(R.string.bb_followers, "<big>"+profileResponse.followersCount.toString()+"</big>"),
                     HtmlCompat.FROM_HTML_MODE_LEGACY)
                 if (profileResponse.isSpeakerFollowed) {
                     speakerFollowedUIChanges()
@@ -197,7 +238,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
                 else
                     speakerUnfollowedUIChanges()
             } else {
-                tvFollowers.text = HtmlCompat.fromHtml(getString(R.string.bb_following, profileResponse.followingCount.toString()),
+                tvFollowers.text = HtmlCompat.fromHtml(getString(R.string.bb_following, "<big>"+profileResponse.followingCount.toString()+"</big>"),
                     HtmlCompat.FROM_HTML_MODE_LEGACY)
             }
         }
@@ -219,7 +260,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
                 //binding.tvFollowers.setText("${it.followersCount-1} followers")
                 speakerUnfollowedUIChanges()
                 binding.tvFollowers.text =HtmlCompat.fromHtml(getString(R.string.bb_followers,
-                    (it.followersCount.minus(1)?:0).toString()),
+                    ("<big>"+it.followersCount.minus(1)?:0).toString()+"</big>"),
                     HtmlCompat.FROM_HTML_MODE_LEGACY)
             }
         else
@@ -227,7 +268,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
                 //is_followed=true
                 speakerFollowedUIChanges()
                 binding.tvFollowers.text =HtmlCompat.fromHtml(getString(R.string.bb_followers,
-                    (it.followersCount.plus(1)?:0).toString()),
+                    ("<big>"+it.followersCount.plus(1)?:0).toString()+"</big>"),
                     HtmlCompat.FROM_HTML_MODE_LEGACY)
                 //binding.tvFollowers.setText("${it.followersCount+1} followers")
             }
@@ -360,6 +401,8 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
             }
             return
         }
+        if(isFromDeeplink)
+            showPopup(room.roomId,User.getInstance().userId)
 
         lifecycleScope.launch(Dispatchers.IO) {
 

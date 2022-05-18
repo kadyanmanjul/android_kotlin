@@ -102,17 +102,14 @@ class RaisedHandsBottomSheet(
         val list = handRaisedList?.filter { it.isSpeaker==false && it.isHandRaised }
         this.raisedHandList = list?.sortedBy { it.sortOrder }
         setVisibilities()
-        bottomSheetAdapter?.updateFullList(raisedHandList)
+        bottomSheetAdapter?.updateFullList(raisedHandList!!.distinct())
 
     }
 
     private fun configureRecyclerView() {
         bottomSheetAdapter = RaisedHandsBottomSheetAdapter()
         binding.raisedHandsList.apply {
-            layoutManager = LinearLayoutManager(this.context)
-            setHasFixedSize(false)
             adapter = bottomSheetAdapter
-            itemAnimator = null
         }
         bottomSheetAdapter?.updateFullList(raisedHandList)
         bottomSheetAdapter?.setOnItemClickListener(object :
@@ -132,12 +129,12 @@ class RaisedHandsBottomSheet(
         if (raisedHandList == null || raisedHandList?.isEmpty() == true) {
             with(binding) {
                 noAuidenceText.visibility = android.view.View.VISIBLE
-                raisedHandsList.visibility = android.view.View.GONE
+                raisedHandsList.visibility=View.GONE
             }
         } else {
             with(binding) {
                 noAuidenceText.visibility = android.view.View.GONE
-                raisedHandsList.visibility = android.view.View.VISIBLE
+                raisedHandsList.visibility=View.VISIBLE
             }
         }
     }

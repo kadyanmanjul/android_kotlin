@@ -78,7 +78,7 @@
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/btnFollow"
-                android:layout_width="@dimen/_70sdp"
+                android:layout_width="@dimen/_65sdp"
                 android:layout_height="@dimen/_20sdp"
                 android:layout_marginBottom="25dp"
                 android:background="@drawable/follow_button_background"
@@ -94,8 +94,8 @@
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tvProfileBio"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="200dp"
+                android:layout_height="40dp"
                 android:layout_marginTop="3dp"
                 android:textAppearance="@style/BB_Typography_Nunito_Regular"
                 android:textColor="@color/profile_font_color"
