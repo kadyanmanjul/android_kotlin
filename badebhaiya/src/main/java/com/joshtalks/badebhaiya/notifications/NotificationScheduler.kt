@@ -42,9 +42,15 @@ class NotificationScheduler @Inject constructor(
             // Schedule notification for 5 Minutes Prior
 
             // Schedule notification for 15 Minutes Prior
-            alarmManager?.setExact(AlarmManager.RTC_WAKEUP, room.startTime!! - 10.minutesToMilliseconds(), getPendingIntent(activity, room, NotificationType.REMINDER, priorTo = "10 Mins"))
+            val tenMinutesPrior = room.startTime!! - 10.minutesToMilliseconds()
 
-            alarmManager?.setExact(AlarmManager.RTC_WAKEUP, room.startTime!! - 5.minutesToMilliseconds(), getPendingIntent(activity, room, NotificationType.REMINDER, priorTo = "5 Mins"))
+            if (System.currentTimeMillis() < tenMinutesPrior)
+                alarmManager?.setExact(AlarmManager.RTC_WAKEUP, tenMinutesPrior, getPendingIntent(activity, room, NotificationType.REMINDER, priorTo = "10 Mins"))
+
+            val fiveMinutesPrior = room.startTime!! - 5.minutesToMilliseconds()
+
+            if (System.currentTimeMillis() < fiveMinutesPrior)
+                alarmManager?.setExact(AlarmManager.RTC_WAKEUP, fiveMinutesPrior, getPendingIntent(activity, room, NotificationType.REMINDER, priorTo = "5 Mins"))
 
         }
     }
@@ -65,9 +71,19 @@ class NotificationScheduler @Inject constructor(
             val alarmManager2 = activity.getSystemService(AppCompatActivity.ALARM_SERVICE) as AlarmManager?
             val alarmManager3 = activity.getSystemService(AppCompatActivity.ALARM_SERVICE) as AlarmManager?
 
-            alarmManager2?.setExact(AlarmManager.RTC_WAKEUP, room.startTime!! - 15.minutesToMilliseconds(), getPendingIntent(activity, room, NotificationType.REMINDER, priorTo = "15 Mins"))
 
-            alarmManager3?.setExact(AlarmManager.RTC_WAKEUP, room.startTime!! - 5.minutesToMilliseconds(), getPendingIntent(activity, room, NotificationType.REMINDER, priorTo = "5 Mins"))
+
+            val fifteenMinutesPrior = room.startTime!! - 15.minutesToMilliseconds()
+
+            if (System.currentTimeMillis() < fifteenMinutesPrior)
+                alarmManager2?.setExact(AlarmManager.RTC_WAKEUP, fifteenMinutesPrior, getPendingIntent(activity, room, NotificationType.REMINDER, priorTo = "15 Mins"))
+
+
+
+            val fiveMinutesPrior = room.startTime!! - 5.minutesToMilliseconds()
+
+            if (System.currentTimeMillis() < fiveMinutesPrior)
+                alarmManager3?.setExact(AlarmManager.RTC_WAKEUP, fiveMinutesPrior, getPendingIntent(activity, room, NotificationType.REMINDER, priorTo = "5 Mins"))
 
         }
     }
