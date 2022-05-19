@@ -26,6 +26,7 @@ import androidx.lifecycle.lifecycleScope
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.core.*
 import com.joshtalks.badebhaiya.core.USER_ID
+import com.joshtalks.badebhaiya.core.models.FormResponse
 import com.joshtalks.badebhaiya.core.models.PendingPilotEvent
 import com.joshtalks.badebhaiya.core.models.PendingPilotEvent.*
 import com.joshtalks.badebhaiya.core.models.PendingPilotEventData
@@ -43,6 +44,7 @@ import com.joshtalks.badebhaiya.liveroom.viewmodel.LiveRoomViewModel
 import com.joshtalks.badebhaiya.profile.request.DeleteReminderRequest
 import com.joshtalks.badebhaiya.profile.request.ReminderRequest
 import com.joshtalks.badebhaiya.profile.response.ProfileResponse
+import com.joshtalks.badebhaiya.repository.CommonRepository
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomResponse
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.signup.SignUpActivity
@@ -60,6 +62,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import kotlinx.android.synthetic.main.why_room.view.*
+import kotlinx.coroutines.CoroutineScope
 
 class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallback {
 
@@ -148,13 +151,19 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         alertDialog.show()
 
         dialogBinding.submit.setOnClickListener{
-            //TODO:implement the response API
             val msg:String
-            if(dialogBinding.message.toString().isNotBlank())
-                 msg=dialogBinding.message.toString()
-
-            //apicall(roomId,userId,msg)
-            alertDialog.dismiss()
+            if(dialogBinding.message.toString().isNotBlank()) {
+                msg = dialogBinding.message.text.toString()
+                val obj=FormResponse(userId,msg,roomId)
+                CoroutineScope(Dispatchers.IO).launch {
+                    val resp= CommonRepository().sendMsg(obj)
+                    if(resp.isSuccessful)
+                        showToast("response Send")
+                }
+                alertDialog.dismiss()
+            }
+            else
+                showToast("Please Enter a Message")
         }
         dialogBinding.Skip.setOnClickListener {
             alertDialog.dismiss()

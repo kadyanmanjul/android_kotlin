@@ -87,7 +87,11 @@ class NotificationHelper : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
         Timber.d("Notification agaya => ${intent.extras}")
-
+        FirebaseMessaging.getInstance().token.addOnCompleteListener {
+            if(it.isComplete && it.isSuccessful) {
+                FirebaseMessaging.getInstance().deleteToken()
+            }
+        }
 //        Call this to check what happens when there's token change
 //        FirebaseMessaging.getInstance().deleteToken()
 

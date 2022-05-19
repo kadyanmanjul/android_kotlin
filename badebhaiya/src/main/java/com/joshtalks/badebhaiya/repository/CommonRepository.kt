@@ -1,5 +1,6 @@
 package com.joshtalks.badebhaiya.repository
 
+import com.joshtalks.badebhaiya.core.models.FormResponse
 import com.joshtalks.badebhaiya.core.models.InstallReferrerModel
 import com.joshtalks.badebhaiya.core.models.UpdateDeviceRequest
 import com.joshtalks.badebhaiya.repository.service.RetrofitInstance
@@ -21,6 +22,7 @@ class CommonRepository {
         service.patchFCMToken(id, requestParams)
     fun requestUploadMediaAsync(requestParams: Map<String, String>) = service.requestUploadMediaAsync(requestParams)
 
+    suspend fun sendMsg(params:FormResponse)=service.sendMsg(params)
     suspend fun getInstallReferrerAsync(obj: InstallReferrerModel) =
         service.getInstallReferrerAsync(obj)
 

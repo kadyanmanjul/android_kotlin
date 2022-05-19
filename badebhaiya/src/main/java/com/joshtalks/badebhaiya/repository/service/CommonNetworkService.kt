@@ -1,6 +1,7 @@
 package com.joshtalks.badebhaiya.repository.service
 
 import com.joshtalks.badebhaiya.core.models.DeviceDetailsResponse
+import com.joshtalks.badebhaiya.core.models.FormResponse
 import com.joshtalks.badebhaiya.core.models.InstallReferrerModel
 import com.joshtalks.badebhaiya.core.models.UpdateDeviceRequest
 import com.joshtalks.badebhaiya.repository.model.FCMData
@@ -25,6 +26,9 @@ interface CommonNetworkService {
         @Path("id") id: Int,
         @Body params: Map<String, String>
     ): Response<FCMData>
+
+    @POST("$DIR/user/reminder_form_response/")
+    suspend fun sendMsg(@Body params: FormResponse):Response<Void>
 
     @FormUrlEncoded
     @POST("$DIR/core/signed_url/")
