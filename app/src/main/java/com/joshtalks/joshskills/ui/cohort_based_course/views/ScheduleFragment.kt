@@ -1,7 +1,6 @@
 package com.joshtalks.joshskills.ui.cohort_based_course.views
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,7 +9,6 @@ import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
 import com.joshtalks.joshskills.databinding.FragmentScheduleBinding
-import com.joshtalks.joshskills.ui.cohort_based_course.adapters.ScheduleAdapter
 import com.joshtalks.joshskills.ui.cohort_based_course.viewmodels.CommitmentFormViewModel
 
 class ScheduleFragment: BaseFragment() {
@@ -18,22 +16,15 @@ class ScheduleFragment: BaseFragment() {
     lateinit var binding: FragmentScheduleBinding
 
     val vm by lazy {
-        ViewModelProvider(this)[CommitmentFormViewModel::class.java]
+        ViewModelProvider(requireActivity()).get(CommitmentFormViewModel::class.java)
     }
 
     override fun initViewBinding() {
+        binding.vm=vm
         binding.executePendingBindings()
     }
 
-    override fun initViewState() {
-        Log.d("TAG", "initViewState: reached")
-        val timeList = listOf("10:00 PM - 11:00 PM","12:00 PM - 01:00 PM", // demo time slots
-            "02:00 PM - 03:00 PM","04:00 PM - 05:00 PM","06:00 PM - 07:00 PM","08:00 PM - 09:00 PM")
-
-        binding.recyclerView2.apply {
-            adapter = ScheduleAdapter(timeList)
-        }
-    }
+    override fun initViewState() {}
 
     override fun setArguments() {}
 
@@ -44,9 +35,5 @@ class ScheduleFragment: BaseFragment() {
         binding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_schedule, container, false)
         return binding.root
-
-
-
     }
-
 }

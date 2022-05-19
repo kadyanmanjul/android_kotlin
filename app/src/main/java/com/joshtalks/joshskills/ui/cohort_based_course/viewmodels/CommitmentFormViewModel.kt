@@ -3,28 +3,30 @@ package com.joshtalks.joshskills.ui.cohort_based_course.viewmodels
 import android.os.Message
 import android.util.Log
 import android.view.View
+import androidx.databinding.ObservableField
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.constants.OPEN_PROMISE_FRAGMENT
 import com.joshtalks.joshskills.constants.OPEN_SCHEDULE_FRAGMENT
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.TAG
 import com.joshtalks.joshskills.ui.cohort_based_course.models.CohortItemModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+private const val TAG = "CommitmentFormViewModel"
 class CommitmentFormViewModel : ViewModel() {
 
     private var singleLiveEvent = EventLiveData
-    var reminder: String = "Yes"
-    val cohortBatchList by lazy {
-        getCohortBatches()
-    }
+    private var reminder : String = "Yes"
+    val shapath = ObservableField("Yes")
+    private var selectedSlot = ObservableField("")
+
+    var cohortBatchList :ArrayList<CohortItemModel>? = ArrayList()
 
     init {
-        cohortBatchList
+        getCohortBatches()
     }
 
     fun openPromiseFragment(v: View) {
@@ -46,12 +48,11 @@ class CommitmentFormViewModel : ViewModel() {
         }
     }
 
-    fun getCohortBatches(): ArrayList<CohortItemModel> {
-        var resp: ArrayList<CohortItemModel> = ArrayList()
+    fun getCohortBatches(){
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 try {
-                    resp =
+                    cohortBatchList =
                         AppObjectController.CbcNetworkService.getCohortBatches()
                             .body() as ArrayList<CohortItemModel>
 
@@ -60,7 +61,6 @@ class CommitmentFormViewModel : ViewModel() {
                 }
             }
         }
-        return resp
     }
 
     fun postSelectedBatch(map: HashMap<String, Any>) {
@@ -71,5 +71,27 @@ class CommitmentFormViewModel : ViewModel() {
                 ex.printStackTrace()
             }
         }
+    }
+
+    fun sendBatchSelected(v:View){
+        val  map: HashMap<String,Any> = HashMap()
+        map["time_slot"] = selectedSlot.get().toString()
+        map["reminder"] = reminder
+        postSelectedBatch(map)
+    }
+    val setShapath = fun(selection:String){
+        Log.d(TAG, "setShapath: 1 $selection")
+        shapath.set(selection)
+    }
+
+    val setReminder = fun(selection:String){
+        Log.d(TAG, "setShapath: 2 $selection")
+        reminder = selection
+
+    }
+
+    val selectSlot = fun(slot:String){
+        Log.d(TAG, "setShapath: 3 $slot")
+        selectedSlot.set(slot)
     }
 }
