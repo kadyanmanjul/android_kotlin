@@ -39,9 +39,9 @@ class CallFragment : BaseFragment() , SensorEventListener {
 
     lateinit var callBinding: FragmentCallBinding
     private var isAnimationCanceled = false
-    private lateinit var sensorManager: SensorManager
-    private lateinit var proximity: Sensor
-    private lateinit var powerManager: PowerManager
+    private var sensorManager: SensorManager? = null
+    private var proximity: Sensor? = null
+    private var powerManager: PowerManager? = null
     private  var lock: PowerManager.WakeLock? = null
     private val audioController by lazy {
         AudioController(CoroutineScope((Dispatchers.IO)))
@@ -110,9 +110,9 @@ class CallFragment : BaseFragment() , SensorEventListener {
     private fun setUpProximitySensor() {
         try {
             sensorManager = context?.getSystemService(Context.SENSOR_SERVICE) as SensorManager
-            proximity = sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY)
+            proximity = sensorManager?.getDefaultSensor(Sensor.TYPE_PROXIMITY)
             powerManager = context?.getSystemService(Context.POWER_SERVICE) as PowerManager
-            lock = powerManager.newWakeLock(
+            lock = powerManager?.newWakeLock(
                 PowerManager.PROXIMITY_SCREEN_OFF_WAKE_LOCK,
                 "simplewakelock:wakelocktag"
             )
@@ -163,8 +163,8 @@ class CallFragment : BaseFragment() , SensorEventListener {
 
     override fun onResume() {
         super.onResume()
-        proximity.also { proximity ->
-            sensorManager.registerListener(this, proximity, SensorManager.SENSOR_DELAY_NORMAL)
+        proximity?.also { proximity ->
+            sensorManager?.registerListener(this, proximity, SensorManager.SENSOR_DELAY_NORMAL)
         }
         if (callBinding.incomingTimerContainer.visibility == View.VISIBLE) {
             CoroutineScope(Dispatchers.Main).launch{
@@ -207,7 +207,7 @@ class CallFragment : BaseFragment() , SensorEventListener {
 
     override fun onPause() {
         super.onPause()
-        sensorManager.unregisterListener(this)
+        sensorManager?.unregisterListener(this)
         if(lock?.isHeld == true) lock?.release()
     }
 }
