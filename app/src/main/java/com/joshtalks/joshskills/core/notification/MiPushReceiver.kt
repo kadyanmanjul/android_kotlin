@@ -390,9 +390,6 @@ class MiPushReceiver : PushMessageReceiver() {
                     }
                     notificationManager.notify(uniqueInt, notificationBuilder.build())
                 }
-                if (PrefManager.getStringValue(API_TOKEN).isNotEmpty()) {
-                    EngagementNetworkHelper.receivedNotification(notificationObject)
-                }
             }
         }
 

@@ -29,7 +29,6 @@ import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.notification.LocalNotificationAlarmReciever
 import com.joshtalks.joshskills.core.pstn_states.PstnObserver
-import com.joshtalks.joshskills.core.service.BackgroundService
 import com.joshtalks.joshskills.core.service.NOTIFICATION_DELAY
 import com.joshtalks.joshskills.core.service.ServiceStartReceiver
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
@@ -37,8 +36,6 @@ import com.joshtalks.joshskills.di.ApplicationComponent
 import com.joshtalks.joshskills.di.DaggerApplicationComponent
 import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.ui.call.data.local.VoipPref
-import com.vanniktech.emoji.EmojiManager
-import com.vanniktech.emoji.ios.IosEmojiProvider
 import com.moengage.core.DataCenter
 import com.moengage.core.MoEngage
 import com.moengage.core.config.MiPushConfig

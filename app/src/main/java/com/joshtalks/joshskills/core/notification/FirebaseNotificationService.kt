@@ -19,7 +19,6 @@ import android.graphics.Rect
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
@@ -28,8 +27,6 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.clevertap.android.sdk.CleverTapAPI
 import com.facebook.share.internal.ShareConstants.ACTION_TYPE
 import com.freshchat.consumer.sdk.Freshchat
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.Gson
@@ -69,7 +66,6 @@ import com.joshtalks.joshskills.repository.local.model.NotificationChannelNames
 import com.joshtalks.joshskills.repository.local.model.NotificationObject
 import com.joshtalks.joshskills.repository.local.model.ShortNotificationObject
 import com.joshtalks.joshskills.repository.local.model.User
-import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.assessment.AssessmentActivity
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
@@ -101,11 +97,9 @@ import com.joshtalks.joshskills.ui.voip.RTC_UID_KEY
 import com.joshtalks.joshskills.ui.voip.RTC_WEB_GROUP_CALL_GROUP_NAME
 import com.joshtalks.joshskills.ui.voip.RTC_WEB_GROUP_PHOTO
 import com.joshtalks.joshskills.ui.voip.WebRtcService
-import com.joshtalks.joshskills.ui.voip.analytics.VoipAnalytics
 import com.joshtalks.joshskills.ui.voip.analytics.VoipAnalytics.pushIncomingCallAnalytics
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
 import com.joshtalks.joshskills.voip.constant.State
-import com.joshtalks.joshskills.util.Utils.jsonToMap
 import com.moengage.firebase.MoEFireBaseHelper
 import com.moengage.pushbase.MoEPushHelper
 import java.io.IOException
@@ -161,9 +155,6 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     CoroutineExceptionHandler { _, _ -> /* Do Nothing */ }
         ).launch {
             val userId = Mentor.getInstance().getId()
-//            val fcmResponse = FCMResponse.getInstance()
-//            fcmResponse?.apiStatus = ApiRespStatus.POST
-//            fcmResponse?.update()
             if (userId.isNotBlank()) {
                 try {
                     val data = mutableMapOf(
@@ -204,10 +195,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             if (Freshchat.isFreshchatNotification(remoteMessage))
                 Freshchat.handleFcmMessage(this, remoteMessage)
             else if (MoEPushHelper.getInstance().isFromMoEngagePlatform(remoteMessage.data) && remoteMessage.data.containsKey("isCustom")) {
-                val map = mutableMapOf<String, String>()
-                map["nType"] = remoteMessage.data["nType"].toString()
-                map["id"] = remoteMessage.data["id"].toString()
-                processRemoteMessage(map)
+                processRemoteMessage(remoteMessage)
                 MoEPushHelper.getInstance().logNotificationReceived(this, remoteMessage.data)
                 return
             } else if (MoEPushHelper.getInstance().isFromMoEngagePlatform(remoteMessage.data)) {
@@ -241,7 +229,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     }
                 }
                 sendNotification(nc)
-                //pushToDatabase(nc, timeReceived)
+                pushToDatabase(nc, timeReceived)
             }
         } else {
             val notificationTypeToken: Type = object : TypeToken<NotificationObject>() {}.type

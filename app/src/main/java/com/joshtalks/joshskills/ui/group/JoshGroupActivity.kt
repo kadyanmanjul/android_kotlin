@@ -72,18 +72,18 @@ class JoshGroupActivity : BaseGroupActivity() {
 
     override fun onCreated() {
         val channelId = intent.getStringExtra(CHANNEL_ID) ?: EMPTY
-        if (channelId.isEmpty()) {
+        if (channelId.isEmpty())
             openGroupListFragment()
-            initMoEnagageForGroups()
-        } else {
+        else {
             vm.mentorId = intent.getStringExtra(MENTOR_ID) ?: EMPTY
             vm.agoraId = intent.getIntExtra(AGORA_UID, 0)
             val chatData = intent.getParcelableExtra(DM_CHAT_DATA) as GroupItemData?
             openGroupChat(channelId, chatData)
         }
+        initMoEngageForGroups()
     }
 
-    private fun initMoEnagageForGroups() {
+    private fun initMoEngageForGroups() {
         if (!PrefManager.getBoolValue(MOENGAGE_USER_CREATED)) {
             vm.initializeMoEngageUser()
             PrefManager.put(MOENGAGE_USER_CREATED, true)
