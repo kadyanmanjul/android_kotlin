@@ -30,9 +30,9 @@ class CommitmentFormActivity : BaseActivity() {
         TODO("Not yet implemented")
     }
 
-    private fun addCallUserFragment() {
+    private fun addCommitmentFormLaunchFragment() {
         supportFragmentManager.commit {
-            add(R.id.voice_call_container, CallFragment(), "CallFragment")
+            add(R.id.commitment_form_container, CommitmentFormLaunchFragment(), "CommitmentFormLaunchFragment")
         }
     }
 }
