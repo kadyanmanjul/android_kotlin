@@ -245,6 +245,10 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
 
     override fun onDestroy() {
         Log.d(TAG, "onDestroy : Destroying channel and services")
+        if (this@CallingMediator::voipNotification.isInitialized) {
+            voipNotification.removeNotification()
+            stopAudio()
+        }
         networkEventChannel.onDestroy()
         try {
             fallbackEventChannel.onDestroy()
