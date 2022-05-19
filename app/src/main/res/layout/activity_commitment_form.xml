@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.cohort_based_course.CommitmentFormActivity">
+    tools:context=".ui.cohort_based_course.views.CommitmentFormActivity">
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
