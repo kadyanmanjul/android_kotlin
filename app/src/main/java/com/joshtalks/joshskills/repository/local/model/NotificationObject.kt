@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.repository.local.model
 
 import com.google.gson.annotations.SerializedName
+import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 
 class NotificationObject {
@@ -73,6 +74,10 @@ class NotificationObject {
 
     @SerializedName("additional_data")
     var extraData: String? = null
+
+    override fun toString(): String {
+            return AppObjectController.gsonMapper.toJson(this)
+        }
 }
 
 enum class NotificationAction(val type: String) {

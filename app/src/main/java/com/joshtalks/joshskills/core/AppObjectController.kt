@@ -33,14 +33,20 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.conversationRoom.network.ConversationRoomsNetworkService
 import com.joshtalks.joshskills.core.abTest.ABTestNetworkService
+import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.datetimeutils.DateTimeUtils
 import com.joshtalks.joshskills.core.io.LastSyncPrefManager
+import com.joshtalks.joshskills.core.firestore.FirestoreNotificationDB
+import com.joshtalks.joshskills.core.firestore.NotificationAnalytics
+import com.joshtalks.joshskills.core.firestore.NotificationListener
+import com.joshtalks.joshskills.core.notification.FirebaseNotificationService
 import com.joshtalks.joshskills.core.service.DownloadUtils
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.core.service.video_download.DownloadTracker
 import com.joshtalks.joshskills.core.service.video_download.VideoDownloadController
 import com.joshtalks.joshskills.repository.local.AppDatabase
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
+import com.joshtalks.joshskills.repository.local.model.FirestoreNewNotificationObject
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.service.ChatNetworkService
 import com.joshtalks.joshskills.repository.service.CommonNetworkService
@@ -367,7 +373,37 @@ class AppObjectController {
                     PrefManager.put(USER_LOCALE, "en")
                 }
                 Lingver.init(context, PrefManager.getStringValue(USER_LOCALE))
+                observeFirestore()
             }
+        }
+
+        fun observeFirestore() {
+                try {
+                    //FirestoreNotificationDB.getNotification ()
+                    FirestoreNotificationDB.setNotificationListener(listener = object :
+                        NotificationListener {
+                        override fun onReceived(fNotification: FirestoreNewNotificationObject) {
+                            CoroutineScope(Dispatchers.IO).launch {
+                                val isFistTimeNotification = NotificationAnalytics().addAnalytics(
+                                    notificationId = fNotification.id.toString(),
+                                    mEvent = NotificationAnalytics.Action.RECEIVED,
+                                    channel = NotificationAnalytics.Channel.FIRESTORE
+                                )
+                                if (isFistTimeNotification){
+                                    try {
+                                    val nc = fNotification.toNotificationObject(fNotification.id.toString())
+                                    FirebaseNotificationService.sendFirestoreNotification(nc,
+                                        joshApplication)
+                                    } catch (ex:java.lang.Exception){
+                                        ex.printStackTrace()
+                                    }
+                                }
+                            }
+                        }
+                    })
+                } catch (ex:Exception){
+                    LogException.catchException(ex)
+                }
         }
         private fun getNewArchVoipFlag(){
             try {
@@ -676,6 +712,7 @@ class AppObjectController {
         fun releaseInstance() {
             fetch = null
             freshChat = null
+            FirestoreNotificationDB.unsubscribe()
         }
     }
 }

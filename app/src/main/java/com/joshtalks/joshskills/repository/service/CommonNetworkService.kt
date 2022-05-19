@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.repository.service
 
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
+import com.joshtalks.joshskills.core.firestore.NotificationAnalyticsRequest
 import com.joshtalks.joshskills.engage_notification.AppUsageModel
 import com.joshtalks.joshskills.repository.local.model.GaIDMentorModel
 import com.joshtalks.joshskills.repository.local.model.RequestRegisterGAId
@@ -323,6 +324,11 @@ interface CommonNetworkService {
     @POST("$DIR/engage/course-user-activity/")
     suspend fun engageCourseUsageSession(
         @Body params: HashMap<String, List<CourseUsageSync>>
+    ): Response<Void>
+
+    @POST("$DIR/notification/analytics/")
+    suspend fun engageNewNotificationAsync(
+        @Body params: List<NotificationAnalyticsRequest>
     ): Response<Void>
 
     @POST("$DIR/mentor/gaid/")
