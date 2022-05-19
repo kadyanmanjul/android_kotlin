@@ -6,10 +6,13 @@ import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseActivity
 import com.joshtalks.joshskills.databinding.ActivityCommitmentFormBinding
+import com.joshtalks.joshskills.ui.cohort_based_course.utils.OPEN_PROMISE_FRAGMENT
+import com.joshtalks.joshskills.ui.cohort_based_course.utils.OPEN_SCHEDULE_FRAGMENT
 import com.joshtalks.joshskills.ui.cohort_based_course.viewmodels.CommitmentFormViewModel
-import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.CallFragment
+
 
 class CommitmentFormActivity : BaseActivity() {
+
     private val binding by lazy<ActivityCommitmentFormBinding> {
         DataBindingUtil.setContentView(this, R.layout.activity_commitment_form)
     }
@@ -23,11 +26,28 @@ class CommitmentFormActivity : BaseActivity() {
     }
 
     override fun onCreated() {
-        TODO("Not yet implemented")
+        addCommitmentFormLaunchFragment()
     }
 
     override fun initViewState() {
-        TODO("Not yet implemented")
+        event.observe(this) {
+            when (it.what) {
+                OPEN_PROMISE_FRAGMENT -> replaceWithPromiseFragment()
+                OPEN_SCHEDULE_FRAGMENT -> replaceWithScheduleFragment()
+            }
+        }
+    }
+
+    private fun replaceWithScheduleFragment() {
+        supportFragmentManager.commit {
+            replace(R.id.commitment_form_container, ScheduleFragment(), "ScheduleFragment")
+        }
+    }
+
+    private fun replaceWithPromiseFragment() {
+        supportFragmentManager.commit {
+            replace(R.id.commitment_form_container, PromiseFragment(), "PromiseFragment")
+        }
     }
 
     private fun addCommitmentFormLaunchFragment() {
