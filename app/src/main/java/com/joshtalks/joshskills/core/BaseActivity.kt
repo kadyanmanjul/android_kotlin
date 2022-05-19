@@ -48,6 +48,7 @@ import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.custom_ui.FullScreenProgressDialog
 import com.joshtalks.joshskills.core.custom_ui.PointSnackbar
+import com.joshtalks.joshskills.core.firestore.NotificationAnalytics
 import com.joshtalks.joshskills.core.notification.HAS_NOTIFICATION
 import com.joshtalks.joshskills.core.notification.NOTIFICATION_ID
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
@@ -413,10 +414,10 @@ abstract class BaseActivity :
                         mIntent.hasExtra(NOTIFICATION_ID) &&
                         mIntent.getStringExtra(NOTIFICATION_ID).isNullOrEmpty().not()
                 ) {
-                    EngagementNetworkHelper.clickNotification(
-                            mIntent.getStringExtra(
-                                    NOTIFICATION_ID
-                            )
+                    NotificationAnalytics().addAnalytics(
+                        notificationId = mIntent.getStringExtra(NOTIFICATION_ID)!!,
+                        mEvent = NotificationAnalytics.Action.CLICKED,
+                        channel = null
                     )
                 }
             }

@@ -3,9 +3,12 @@ package com.joshtalks.joshskills.core.analytics
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import com.joshtalks.joshskills.core.firestore.NotificationAnalytics
 import com.joshtalks.joshskills.core.notification.HAS_NOTIFICATION
 import com.joshtalks.joshskills.core.notification.NOTIFICATION_ID
-import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class DismissNotifEventReceiver : BroadcastReceiver() {
@@ -16,11 +19,13 @@ class DismissNotifEventReceiver : BroadcastReceiver() {
                     NOTIFICATION_ID
                 ) && mIntent.getStringExtra(NOTIFICATION_ID).isNullOrEmpty().not()
             ) {
-                EngagementNetworkHelper.seenNotificationAndDismissed(
-                    mIntent.getStringExtra(
-                        NOTIFICATION_ID
+                CoroutineScope(Dispatchers.IO).launch {
+                    NotificationAnalytics().addAnalytics(
+                        notificationId = mIntent.getStringExtra(NOTIFICATION_ID)!!,
+                        mEvent = NotificationAnalytics.Action.DISCARDED,
+                        channel = null
                     )
-                )
+                }
             }
         } catch (ex: Throwable) {
             LogException.catchException(ex)

@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.core.service
 
+import android.util.Log
 import androidx.work.BackoffPolicy
 import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
@@ -158,6 +159,13 @@ object WorkManagerAdmin {
                 CourseUsageSyncWorker::class.java.simpleName,
                 ExistingPeriodicWorkPolicy.KEEP,
                 workRequest
+            )
+    }
+
+    fun syncNotifiationEngagement() {
+        WorkManager.getInstance(AppObjectController.joshApplication)
+            .enqueue(
+                OneTimeWorkRequestBuilder<NotificationEngagementSyncWorker>().build()
             )
     }
 

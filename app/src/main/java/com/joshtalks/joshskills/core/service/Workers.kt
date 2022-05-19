@@ -31,6 +31,7 @@ import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.LocalNotificationDismissEventReceiver
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
+import com.joshtalks.joshskills.core.firestore.NotificationAnalytics
 import com.joshtalks.joshskills.core.notification.FCM_ACTIVE
 import com.joshtalks.joshskills.core.notification.FCM_TOKEN
 import com.joshtalks.joshskills.core.notification.FirebaseNotificationService
@@ -354,6 +355,7 @@ class WorkerInLandingScreen(context: Context, workerParams: WorkerParameters) :
         // SyncChatService.syncChatWithServer()
         WorkManagerAdmin.readMessageUpdating()
         WorkManagerAdmin.syncAppCourseUsage()
+        WorkManagerAdmin.syncNotifiationEngagement()
         AppAnalytics.updateUser()
         return Result.success()
     }
@@ -957,6 +959,25 @@ class CourseUsageSyncWorker(context: Context, workerParams: WorkerParameters) :
             val resp = AppObjectController.commonNetworkService.engageCourseUsageSession(body)
             if (resp.isSuccessful) {
                 AppObjectController.appDatabase.courseUsageDao().deleteAllSyncSession()
+            }
+        } catch (ex: Throwable) {
+            ex.printStackTrace()
+        }
+        return Result.success()
+    }
+}
+
+class NotificationEngagementSyncWorker(context: Context, workerParams: WorkerParameters) :
+    CoroutineWorker(context, workerParams) {
+    override suspend fun doWork(): Result {
+        try {
+            when(NotificationAnalytics().pushToServer()){
+                true ->{
+                    Result.success()
+                }
+                false ->{
+                    Result.failure()
+                }
             }
         } catch (ex: Throwable) {
             ex.printStackTrace()
