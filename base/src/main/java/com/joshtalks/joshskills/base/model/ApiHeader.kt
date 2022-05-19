@@ -8,4 +8,8 @@ data class ApiHeader(val token : String,
                      val versionName : String,
                      val versionCode : String,
                      val userAgent : String,
-                     val acceptLanguage : String) : Parcelable
+                     val acceptLanguage : String) : Parcelable {
+                         companion object {
+                             fun empty() = ApiHeader("","","","","")
+                         }
+                     }

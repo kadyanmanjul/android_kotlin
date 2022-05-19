@@ -713,6 +713,8 @@ inline fun Request.safeCall(block : (Request)->Response) : Response {
         return block(this)
     } catch (e : Exception) {
         e.printStackTrace()
+        FirebaseCrashlytics.getInstance().log(this.toString())
+        FirebaseCrashlytics.getInstance().recordException(e)
         var msg = ""
         if(e is UnknownHostException) {
             msg = "Unable to make a connection. Please check your internet"
