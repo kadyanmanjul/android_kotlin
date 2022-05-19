@@ -70,6 +70,8 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import com.joshtalks.joshskills.core.IS_FREE_TRIAL_CAMPAIGN_ACTIVE
 import com.joshtalks.joshskills.core.IS_EFT_VARIENT_ENABLED
+import com.joshtalks.joshskills.ui.cohort_based_course.views.CommitmentFormActivity
+import com.joshtalks.joshskills.ui.cohort_based_course.views.CommitmentFormLaunchFragment
 
 
 const val REGISTER_INFO_CODE = 2001
@@ -417,7 +419,10 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
             PrefManager.put(IS_FREE_TRIAL_CAMPAIGN_ACTIVE, true)
             ExtendFreeTrialActivity.startExtendFreeTrialActivity(this, inboxEntity)
         } else {
-            ConversationActivity.startConversionActivity(this, inboxEntity)
+//            ConversationActivity.startConversionActivity(this, inboxEntity)
+            val intent = Intent(this, CommitmentFormActivity::class.java)
+            startActivity(intent)
+
         }
     }
 

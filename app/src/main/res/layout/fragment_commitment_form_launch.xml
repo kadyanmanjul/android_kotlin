@@ -1,12 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.cohort_based_course.views.CommitmentFormLaunchFragment">
-
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <data>
+        <import type="android.view.View"/>
+        <variable
+            name="vm"
+            type="com.joshtalks.joshskills.ui.cohort_based_course.viewmodels.CommitmentFormViewModel" />
+    </data>
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="match_parent">
 
+        <TextView
+            android:id="@+id/text_head"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="@string/_90_day_english_learning"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5_Semi_Bold"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_16ssp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/text_sub"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.112"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/text_sub"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/_20sdp"
+            android:paddingRight="@dimen/_16sdp"
+            android:paddingLeft="@dimen/_16sdp"
+            android:text="@string/course_continue_steps"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Title_Message"
+            android:textColor="@color/grey_7A"
+            app:layout_constraintBottom_toTopOf="@+id/btn_continue"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_continue"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:backgroundTint="@color/colorAccent"
+            android:gravity="center"
+            android:onClick="@{vm::openPromiseFragment}"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:paddingVertical="@dimen/_14sdp"
+            android:text="@string/continue_text"
+            android:textAppearance="@style/TextAppearance.JoshTypography.ButtonSemiBold"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_12ssp"
+            android:visibility="visible"
+            app:cornerRadius="@dimen/_36sdp"
+            android:layout_marginLeft="@dimen/_16sdp"
+            android:layout_marginRight="@dimen/_16sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:rippleColor="@color/white" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
