@@ -71,25 +71,29 @@ fun Context.updateStartTime(startTime : Long) {
 }
 
 fun Context.getApiHeader(): ApiHeader {
-    val apiDataCursor = contentResolver.query(
-        Uri.parse(CONTENT_URI + API_HEADER),
-        null,
-        null,
-        null,
-        null
-    )
+    try {
+        val apiDataCursor = contentResolver.query(
+            Uri.parse(CONTENT_URI + API_HEADER),
+            null,
+            null,
+            null,
+            null
+        )
 
-    apiDataCursor?.moveToFirst()
-    val apiHeader = ApiHeader(
-        token = apiDataCursor.getStringData(AUTHORIZATION),
-        versionCode = apiDataCursor.getStringData(APP_VERSION_CODE),
-        versionName = apiDataCursor.getStringData(APP_VERSION_NAME),
-        userAgent = apiDataCursor.getStringData(APP_USER_AGENT),
-        acceptLanguage = apiDataCursor.getStringData(APP_ACCEPT_LANGUAGE)
-    )
+        apiDataCursor?.moveToFirst()
+        val apiHeader = ApiHeader(
+            token = apiDataCursor.getStringData(AUTHORIZATION),
+            versionCode = apiDataCursor.getStringData(APP_VERSION_CODE),
+            versionName = apiDataCursor.getStringData(APP_VERSION_NAME),
+            userAgent = apiDataCursor.getStringData(APP_USER_AGENT),
+            acceptLanguage = apiDataCursor.getStringData(APP_ACCEPT_LANGUAGE)
+        )
 
-    apiDataCursor?.close()
-    return apiHeader
+        apiDataCursor?.close()
+        return apiHeader
+    } catch (e : Exception) {
+        return ApiHeader.empty()
+    }
 }
 
 private fun Cursor?.getStringData(columnName : String) : String {
