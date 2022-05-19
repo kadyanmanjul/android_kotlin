@@ -5,8 +5,8 @@ import android.view.View
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.base.EventLiveData
-import com.joshtalks.joshskills.ui.cohort_based_course.utils.OPEN_PROMISE_FRAGMENT
-import com.joshtalks.joshskills.ui.cohort_based_course.utils.OPEN_SCHEDULE_FRAGMENT
+import com.joshtalks.joshskills.constants.OPEN_PROMISE_FRAGMENT
+import com.joshtalks.joshskills.constants.OPEN_SCHEDULE_FRAGMENT
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
