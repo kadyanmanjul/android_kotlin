@@ -814,12 +814,33 @@
             android:visibility="invisible"
             tools:visibility="invisible" />
 
+        <FrameLayout
+            android:id="@+id/cbcTooltip"
+            android:layout_width="@dimen/_180sdp"
+            android:layout_height="@dimen/_50sdp"
+            android:layout_below="@+id/toolbar_container"
+            android:layout_alignParentEnd="true"
+            android:layout_marginLeft="@dimen/_70sdp"
+            android:layout_marginTop="@dimen/_50sdp"
+            android:elevation="@dimen/_20sdp"
+            android:visibility="gone">
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingTop="@dimen/_2sdp"
+                app:lottie_autoPlay="true"
+                app:lottie_fileName="lottie/leaderboard_arrow.json"
+                app:lottie_imageAssetsFolder="lottie"
+                app:lottie_loop="true"
+                app:lottie_repeatMode="reverse" />
+        </FrameLayout>
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/root"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/toolbar_container"
-            android:layout_alignParentStart="true"
             android:layout_alignParentEnd="true"
             android:layout_marginTop="@dimen/_50sdp"
             android:backgroundTint="@color/white"
@@ -860,12 +881,12 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/img_main"
                 android:layout_width="wrap_content"
-                android:layout_height="@dimen/_68sdp"
+                android:layout_height="wrap_content"
                 android:elevation="@dimen/_15sdp"
-                android:visibility="invisible"
+                android:visibility="gone"
                 app:layout_constraintBottom_toTopOf="@+id/quickCardView"
                 app:layout_constraintEnd_toStartOf="@+id/floatingActionButtonAdd"
-                tools:visibility="invisible">
+                tools:visibility="visible">
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/img_game_btn"
@@ -910,12 +931,12 @@
                     android:layout_width="@dimen/_20sdp"
                     android:layout_height="@dimen/_15sdp"
                     android:background="@drawable/bg_quick_view_number"
+                    android:elevation="@dimen/_15sdp"
                     android:gravity="center"
+                    android:text="@string/zero"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
                     android:textColor="@color/white"
                     android:visibility="gone"
-                    android:text="@string/zero"
-                    android:elevation="@dimen/_15sdp"
                     app:layout_constraintEnd_toEndOf="@id/img_fpp_request"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:text="39"
@@ -948,6 +969,23 @@
                     app:layout_constraintTop_toBottomOf="@id/img_fpp_request" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/cbc_arrow"
+                android:layout_width="@dimen/_80sdp"
+                android:layout_height="@dimen/_50sdp"
+                android:rotation="90"
+                app:layout_constraintBottom_toTopOf="@+id/floatingActionButtonAdd"
+                app:layout_constraintEnd_toStartOf="@id/floatingActionButtonAdd"
+                app:lottie_autoPlay="true"
+                android:layout_marginRight="@dimen/_minus4sdp"
+                android:layout_marginBottom="@dimen/_minus4sdp"
+                app:lottie_fileName="lottie/leaderboard_arrow.json"
+                app:lottie_imageAssetsFolder="lottie"
+                android:visibility="gone"
+                app:lottie_loop="true"
+                app:lottie_repeatMode="reverse"
+                tools:visibility="visible" />
 
             <RelativeLayout
                 android:id="@+id/quickCardView"
