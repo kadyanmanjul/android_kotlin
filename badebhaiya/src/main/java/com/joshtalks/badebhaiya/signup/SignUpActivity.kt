@@ -195,10 +195,6 @@ class SignUpActivity : AppCompatActivity() {
                     startActivity(it)
 //                    }
                 }
-//                SingleDataManager.pendingPilotAction?.let { event ->
-//                    val userId = SingleDataManager.pendingPilotEventData?.pilotUserId
-//                    it.putExtra("user", userId)
-//                }
             }
     }
 

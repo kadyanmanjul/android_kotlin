@@ -6,6 +6,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.media.RingtoneManager
 import android.os.Build
 import android.os.Message
@@ -31,11 +32,13 @@ import com.joshtalks.badebhaiya.core.JoshSkillExecutors
 import com.joshtalks.badebhaiya.core.analytics.DismissNotifEventReceiver
 import com.joshtalks.badebhaiya.feed.FeedActivity
 import com.joshtalks.badebhaiya.profile.ProfileFragment
+import com.joshtalks.badebhaiya.pubnub.PubNubManager
 import com.joshtalks.badebhaiya.repository.CommonRepository
 import com.joshtalks.badebhaiya.repository.model.FCMData
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.utils.ApiRespStatus
 import com.joshtalks.badebhaiya.utils.Utils
+import com.joshtalks.badebhaiya.utils.urlToBitmap
 import kotlinx.coroutines.*
 import org.json.JSONObject
 import timber.log.Timber
@@ -135,8 +138,6 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 notificationObject.actionData
             )
 
-
-
             if (intent == null)
                 Timber.d("Intent null hai")
             intent?.run {
@@ -145,14 +146,14 @@ class FirebaseNotificationService : FirebaseMessagingService() {
 
                 val activityList = arrayOf(this)
 
-                if (notificationObject.action == NotificationAction.JOIN_CONVERSATION_ROOM) {
-                    val obj = JSONObject(notificationObject.actionData)
-                    val name = obj.getString("moderator_name")
-                    val topic = obj.getString("topic")
-                    notificationObject.contentTitle = getString(R.string.room_title)
-                    notificationObject.contentText =
-                        getString(R.string.convo_notification_title, name, topic)
-                }
+//                if (notificationObject.action == NotificationAction.JOIN_CONVERSATION_ROOM) {
+//                    val obj = JSONObject(notificationObject.actionData)
+//                    val name = obj.getString("moderator_name")
+//                    val topic = obj.getString("topic")
+//                    notificationObject.contentTitle = getString(R.string.room_title)
+//                    notificationObject.contentText =
+//                        getString(R.string.convo_notification_title, name, topic)
+//                }
 
                 val uniqueInt = (System.currentTimeMillis() and 0xfffffff).toInt()
                 val defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
@@ -162,10 +163,18 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     PendingIntent.FLAG_UPDATE_CURRENT
                 )
 
+
+
+                var imageBitmap: Bitmap? = null
+                if (!notificationObject.imageUrl.isNullOrEmpty()){
+                     imageBitmap = notificationObject.imageUrl!!.urlToBitmap()
+                }
+
                 val style = NotificationCompat.BigTextStyle()
                 style.setBigContentTitle(notificationObject.contentTitle)
                 style.bigText(notificationObject.contentText)
                 style.setSummaryText("")
+
 
                 val notificationBuilder =
                     NotificationCompat.Builder(
@@ -173,9 +182,10 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                         notificationChannelId
                     )
                         .setTicker(notificationObject.ticker)
-                        .setSmallIcon(R.drawable.ic_status_bar_notification)
+                        .setSmallIcon(R.drawable.ic_notification_icon)
                         .setContentTitle(notificationObject.contentTitle)
                         .setAutoCancel(true)
+                        .setLargeIcon(imageBitmap)
                         .setSound(defaultSound)
                         .setContentText(notificationObject.contentText)
                         .setContentIntent(pendingIntent)
@@ -185,7 +195,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                         .setColor(
                             ContextCompat.getColor(
                                 this@FirebaseNotificationService,
-                                R.color.colorAccent
+                                R.color.notification_icon
                             )
                         )
 
@@ -221,6 +231,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 when(notificationObject.action) {
                     else -> notificationManager.notify(uniqueInt, notificationBuilder.build())
                 }
+
             }
         }
     }
@@ -242,16 +253,16 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 }
                 return null
             }
-            NotificationAction.JOIN_CONVERSATION_ROOM -> {
-                if (!PrefManager.getBoolValue(PREF_IS_CONVERSATION_ROOM_ACTIVE) && User.getInstance().userId.isNotEmpty()
+            NotificationAction.JOIN_CONVERSATION_ROOM, NotificationAction.MODERATOR_JOINED_SCHEDULED_ROOM -> {
+                if (!PubNubManager.isRoomActive || PubNubManager.getLiveRoomProperties().roomId.toString() != JSONObject(actionData).getString("room_id")
                 ) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        val intent = Intent(this, HeadsUpNotificationService::class.java).apply {
-                            putExtra(ConfigKey.ROOM_DATA, actionData)
-                        }
-                        intent.startServiceForWebrtc()
-                        return intent
-                    } else {
+//                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//                        val intent = Intent(this, HeadsUpNotificationService::class.java).apply {
+//                            putExtra(ConfigKey.ROOM_DATA, actionData)
+//                        }
+//                        intent.startServiceForWebrtc()
+//                        return intent
+//                    } else {
                         val roomId = JSONObject(actionData).getString("room_id")
                         val topic = JSONObject(actionData).getString("topic") ?: EMPTY
 
@@ -261,14 +272,11 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                                 AppObjectController.joshApplication,
                                 roomId, topicName = topic
                             )
-                        } else {
-                            return null
-                        }
                     }
                 }
                 return null
             }
-            NotificationAction.ROOM_IS_ABOUT_TO_START -> {
+            NotificationAction.ROOM_SCHEDULED_NOTIFICATION -> {
                 val speakerUserId = JSONObject(actionData).getString("user_id")
                 return FeedActivity.getIntentForProfile(this, speakerUserId)
 //                Intent(
@@ -280,6 +288,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
 //                    putExtra(NOTIFICATION_ID, notificationObject.userId)
 //                }
             }
+
             else -> null
         }
     }

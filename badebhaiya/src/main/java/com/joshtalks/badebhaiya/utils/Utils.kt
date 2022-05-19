@@ -1224,7 +1224,7 @@ fun playWrongAnswerSound(context: Context) {
     }
 }
 
-suspend fun String.urlToBitmap(
+fun String.urlToBitmap(
     width: Int = 80,
     height: Int = 80,
     context: Context = AppObjectController.joshApplication,

@@ -44,6 +44,9 @@ class NotificationObject {
     @SerializedName("large_icon")
     var largeIcon: String? = null
 
+    @SerializedName("image_url")
+    var imageUrl: String? = null
+
     @SerializedName("notification_id")
     var notificationId = -1
 
@@ -64,9 +67,6 @@ class NotificationObject {
 
     @SerializedName("ticker")
     var ticker: String? = null
-
-    @SerializedName("image_url")
-    var bigPicture: String? = null
 
     @SerializedName("deep_link_url")
     var deeplink: String? = null
@@ -185,7 +185,13 @@ enum class NotificationAction(val type: String) {
     JOIN_CONVERSATION_ROOM("JOIN_CONVERSATION_ROOM"),
 
     @SerializedName("ROOM_ABOUT_TO_START")
-    ROOM_IS_ABOUT_TO_START("ROOM_ABOUT_TO_START")
+    ROOM_IS_ABOUT_TO_START("ROOM_ABOUT_TO_START"),
+
+    @SerializedName("ROOM_SCHEDULED_NOTIFICATION")
+    ROOM_SCHEDULED_NOTIFICATION("ROOM_SCHEDULED_NOTIFICATION"),
+
+    @SerializedName("MODERATOR_JOINED_SCHEDULED_ROOM")
+    MODERATOR_JOINED_SCHEDULED_ROOM("MODERATOR_JOINED_SCHEDULED_ROOM"),
 }
 
 enum class NotificationChannelNames(val type: String) {

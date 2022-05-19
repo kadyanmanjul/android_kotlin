@@ -147,6 +147,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
 //        var intent=Intent()
 //        var bundle=intent.extras
         var user = intent.getStringExtra("userId")
+        val mUserId = intent.getStringExtra(USER_ID)
 
         this.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_feed)
@@ -156,6 +157,8 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         Timber.d("FEED INTENT ${intent.extras}")
         if (user != null) {
             viewProfile(user, true)
+        } else if (mUserId != null){
+            viewProfile(mUserId, false)
         } else if (SingleDataManager.pendingPilotAction != null) {
             viewProfile(SingleDataManager.pendingPilotEventData!!.pilotUserId, true)
         }
