@@ -224,6 +224,7 @@ class Mentor {
     fun update() {
         val string: String = toString()
         PrefManager.put(MENTOR_PERSISTANT_KEY, string)
+        AppObjectController.observeFirestore()
     }
 
     fun updateUser(user: User): Mentor {

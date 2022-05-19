@@ -10,8 +10,8 @@ import android.content.IntentFilter
 import android.os.Build
 import android.os.StrictMode
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.OnLifecycleEvent
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.multidex.MultiDexApplication
@@ -36,7 +36,7 @@ const val TAG = "JoshSkill"
 
 class JoshApplication :
     MultiDexApplication(),
-    LifecycleObserver,
+    LifecycleEventObserver,
     ComponentCallbacks2/*, Configuration.Provider*/ {
     val applicationGraph: ApplicationComponent by lazy {
         DaggerApplicationComponent.create()
@@ -158,7 +158,6 @@ class JoshApplication :
         return LocalBroadcastManager.getInstance(this@JoshApplication)
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_START)
     fun onAppForegrounded() {
         Timber.tag(TAG).e("************* foregrounded")
         Timber.tag(TAG).e("************* ${isActivityVisible()}")
@@ -195,7 +194,6 @@ class JoshApplication :
         }
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     fun onAppBackgrounded() {
         Timber.tag(TAG).e("************* backgrounded")
         Timber.tag(TAG).e("************* ${isActivityVisible()}")
@@ -252,7 +250,6 @@ class JoshApplication :
             .not()
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     fun onAppDestroy() {
         Timber.tag(TAG).e("************* onAppDestroy")
         AppObjectController.releaseInstance()
@@ -288,4 +285,20 @@ class JoshApplication :
         EmojiManager.install(IosEmojiProvider())
         //GroupRepository().subscribeNotifications()
     }
+
+    override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
+        when(event){
+            Lifecycle.Event.ON_START ->{
+                onAppForegrounded()
+            }
+            Lifecycle.Event.ON_STOP ->{
+                onAppBackgrounded()
+            }
+            Lifecycle.Event.ON_DESTROY ->{
+                onAppDestroy()
+            }
+
+        }
+    }
 }
+
