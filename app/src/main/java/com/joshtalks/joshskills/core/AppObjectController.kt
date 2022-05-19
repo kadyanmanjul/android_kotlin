@@ -708,16 +708,15 @@ class HeaderInterceptor : Interceptor {
     }
 }
 
-inline fun Request.safeCall(block : (Request)->Response) : Response {
+inline fun Request.safeCall(block: (Request) -> Response): Response {
     try {
         return block(this)
-    } catch (e : Exception) {
+    } catch (e: Exception) {
         e.printStackTrace()
         FirebaseCrashlytics.getInstance().log(this.toString())
         FirebaseCrashlytics.getInstance().recordException(e)
-        var msg = ""
-        if(e is UnknownHostException) {
-            msg = "Unable to make a connection. Please check your internet"
+        if (e is IOException) {
+            val msg = "Unable to make a connection. Please check your internet"
             return Response.Builder()
                 .request(this)
                 .protocol(Protocol.HTTP_1_1)
