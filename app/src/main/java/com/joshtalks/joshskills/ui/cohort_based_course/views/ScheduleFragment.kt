@@ -4,11 +4,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.GridLayout
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.GridLayoutManager
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
 import com.joshtalks.joshskills.databinding.FragmentScheduleBinding
+import com.joshtalks.joshskills.ui.cohort_based_course.adapters.CbcBindingAdapter
 import com.joshtalks.joshskills.ui.cohort_based_course.viewmodels.CommitmentFormViewModel
 
 class ScheduleFragment: BaseFragment() {
@@ -33,6 +36,13 @@ class ScheduleFragment: BaseFragment() {
     ): View {
         binding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_schedule, container, false)
+
+        val timeList = listOf("10:00 PM - 11:00 PM","12:00 PM - 01:00 PM", // demo time slots
+            "02:00 PM - 03:00 PM","04:00 PM - 05:00 PM","06:00 PM - 07:00 PM","08:00 PM - 09:00 PM")
+        val adapter = CbcBindingAdapter(timeList)
+        binding.recyclerView2.adapter = adapter
+        binding.recyclerView2.layoutManager = GridLayoutManager(context,2)
+
         return binding.root
     }
 
