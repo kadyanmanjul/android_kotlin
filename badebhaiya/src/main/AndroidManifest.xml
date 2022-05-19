@@ -92,8 +92,6 @@
             android:exported="true" />
         <activity
             android:name=".feed.FeedActivity"
-            android:launchMode="singleTask"
-            android:taskAffinity=""
             android:screenOrientation="portrait"
             android:showOnLockScreen="true"
             android:showWhenLocked="true"

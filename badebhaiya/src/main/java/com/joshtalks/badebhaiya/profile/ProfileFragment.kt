@@ -156,7 +156,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
             //apicall(roomId,userId,msg)
             alertDialog.dismiss()
         }
-        dialogView.findViewById<AppCompatTextView>(R.id.Skip).setOnClickListener {
+        dialogBinding.Skip.setOnClickListener {
             alertDialog.dismiss()
         }
 
