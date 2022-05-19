@@ -276,7 +276,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 }
                 return null
             }
-            NotificationAction.ROOM_SCHEDULED_NOTIFICATION -> {
+            NotificationAction.ROOM_SCHEDULED_NOTIFICATION, NotificationAction.SPEAKER_GOT_FOLLOWED -> {
                 val speakerUserId = JSONObject(actionData).getString("user_id")
                 return FeedActivity.getIntentForProfile(this, speakerUserId)
 //                Intent(

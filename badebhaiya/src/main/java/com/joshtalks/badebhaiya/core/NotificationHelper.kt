@@ -12,6 +12,7 @@ import android.os.Parcelable
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.os.bundleOf
+import com.google.firebase.messaging.FirebaseMessaging
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.feed.FeedActivity
 import com.joshtalks.badebhaiya.notifications.NotificationLauncher
@@ -86,6 +87,9 @@ class NotificationHelper : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
         Timber.d("Notification agaya => ${intent.extras}")
+
+//        Call this to check what happens when there's token change
+//        FirebaseMessaging.getInstance().deleteToken()
 
         notificationLauncher.launchNotification(context, intent)
 
