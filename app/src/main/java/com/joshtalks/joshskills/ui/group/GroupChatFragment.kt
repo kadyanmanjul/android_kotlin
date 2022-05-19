@@ -17,7 +17,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
 import com.joshtalks.joshskills.constants.*
-import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.HAS_SEEN_GROUP_CALL_TOOLTIP
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.hideKeyboard
@@ -26,16 +25,12 @@ import com.joshtalks.joshskills.track.AGORA_UID
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.group.constants.*
 import com.joshtalks.joshskills.ui.group.viewmodels.GroupChatViewModel
-import com.joshtalks.joshskills.ui.userprofile.fragments.MENTOR_ID
 
 import com.vanniktech.emoji.EmojiPopup
-import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.*
 
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 private const val TAG = "GroupChatFragment"
 
@@ -45,6 +40,13 @@ class GroupChatFragment : BaseFragment() {
 
     val vm by lazy {
         ViewModelProvider(requireActivity())[GroupChatViewModel::class.java]
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        CoroutineScope(Dispatchers.IO).launch {
+            vm.chatAdapter.submitData(PagingData.empty())
+        }
+        super.onCreate(savedInstanceState)
     }
 
     override fun onCreateView(
@@ -209,12 +211,5 @@ class GroupChatFragment : BaseFragment() {
         super.onPause()
         vm.resetUnreadAndTimeToken()
         vm.resetUnreadLabel()
-    }
-
-    override fun onDestroy() {
-        CoroutineScope(Dispatchers.IO).launch {
-            vm.chatAdapter.submitData(PagingData.empty())
-        }
-        super.onDestroy()
     }
 }
