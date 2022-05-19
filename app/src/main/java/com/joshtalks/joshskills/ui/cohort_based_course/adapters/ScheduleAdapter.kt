@@ -5,11 +5,15 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.databinding.ItemTimePickBinding
+import com.joshtalks.joshskills.ui.cohort_based_course.models.CohortItemModel
 import com.joshtalks.joshskills.ui.voip.voip_rating.model.OptionModel
 
 class ScheduleAdapter(
-    private val timeStrings:List<String>
+
+    private val cohortItemModelList:ArrayList<CohortItemModel>
     ): RecyclerView.Adapter<ScheduleAdapter.ViewHolder>() {
+
+    var itemClick: ((String) -> Unit)? = null
 
     inner class ViewHolder(binding: ItemTimePickBinding):
         RecyclerView.ViewHolder(binding.root){
@@ -17,19 +21,23 @@ class ScheduleAdapter(
         }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        Log.d("TAG", "onCreateViewHolder: reached")
         val inflater = LayoutInflater.from(parent.context)
         val itemBinding = ItemTimePickBinding.inflate(inflater,parent,false)
         return ViewHolder(itemBinding)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        Log.d("TAG", "onBindViewHolder: Reached")
-        holder.text.text = timeStrings[position]
+        holder.text.text = cohortItemModelList[position].timeSlot
+        holder.itemView.setOnClickListener {
+            itemClick?.invoke(holder.text.text.toString())
+        }
     }
 
     override fun getItemCount(): Int {
-        Log.d("TAG", "getItemCount: reached")
-        return timeStrings.size
+        return cohortItemModelList.size
+    }
+
+    fun setClickListener(function:((timeSlot:String)->Unit)?){
+        itemClick=function
     }
 }

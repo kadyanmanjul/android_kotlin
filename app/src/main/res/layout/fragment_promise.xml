@@ -119,6 +119,7 @@
                         android:layout_weight="1"
                         setTextAdapter='@{" "}'
                         android:inputType="none"
+                        setSelectedText = "@{vm.setShapath}"
                         tools:layout_editor_absoluteX="5dp"
                         tools:layout_editor_absoluteY="156dp"
                         android:textEditSuggestionItemLayout="@layout/dropdown_item"
@@ -175,6 +176,7 @@
                         android:layout_weight="1"
                         android:inputType="none"
                         setTextAdapter='@{" "}'
+                        setSelectedText = "@{vm.setReminder}"
                         tools:layout_editor_absoluteX="5dp"
                         tools:layout_editor_absoluteY="156dp"
                         android:text="Yes" />
@@ -197,6 +199,7 @@
             android:gravity="center"
             android:insetTop="0dp"
             android:insetBottom="0dp"
+            setButtonBackground ='@{vm.shapath.equals("Yes") ? true : false}'
             android:onClick="@{vm::openScheduleFragment}"
             android:paddingVertical="@dimen/_14sdp"
             android:text="@string/promise_btn_text"

@@ -1,7 +1,6 @@
 package com.joshtalks.joshskills.ui.cohort_based_course.repository
 
 import com.joshtalks.joshskills.base.constants.DIR
-import com.joshtalks.joshskills.repository.server.voip.AgoraTokenRequest
 import com.joshtalks.joshskills.ui.cohort_based_course.models.CohortItemModel
 import retrofit2.Response
 import retrofit2.http.Body
@@ -13,6 +12,7 @@ interface CbcNetwork {
     @GET("$DIR/course/cohort_batch")
     suspend fun getCohortBatches(): Response<ArrayList<CohortItemModel>>
 
+    @JvmSuppressWildcards
     @POST("$DIR/course/cohort_batch")
     suspend fun postSelectedBatch(@Body params: Map<String, Any>): Response<Unit>
 

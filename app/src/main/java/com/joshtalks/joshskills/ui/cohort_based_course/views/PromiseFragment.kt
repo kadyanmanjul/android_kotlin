@@ -16,7 +16,7 @@ class PromiseFragment : BaseFragment() {
     lateinit var binding: FragmentPromiseBinding
 
     val vm by lazy {
-        ViewModelProvider(this)[CommitmentFormViewModel::class.java]
+        ViewModelProvider(requireActivity()).get(CommitmentFormViewModel::class.java)
     }
 
     override fun initViewBinding() {
