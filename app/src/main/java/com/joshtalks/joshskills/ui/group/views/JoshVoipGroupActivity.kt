@@ -51,6 +51,7 @@ class JoshVoipGroupActivity : BaseGroupActivity() {
     override fun initViewBinding() {
         binding.vm = vm
         vm.isFromVoip.set(true)
+        vm.newGroupVisible.set(true)
         binding.executePendingBindings()
     }
 

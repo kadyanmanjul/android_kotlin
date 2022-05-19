@@ -11,6 +11,8 @@ import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
 import com.joshtalks.joshskills.constants.REQUEST_GROUP_VALIDATION
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.databinding.GroupRequestFragmentBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.track.CONVERSATION_ID
@@ -37,6 +39,8 @@ class GroupRequestFragment : BaseFragment() {
 
     override fun initViewBinding() {
         binding.vm = vm
+        vm.requestQuestion.set(AppObjectController.getFirebaseRemoteConfig()
+            .getString(FirebaseRemoteConfigKey.REQUEST_TO_JOIN_QUESTION))
         binding.executePendingBindings()
     }
 

@@ -906,4 +906,12 @@
         <key>FREE_TRIAL_POPUP_HUNDRED_POINTS_TEXT_1880</key>
         <value>Josh Skills সেই students দের  পরিবার যারা serious নিজের life এ, যারা পরিশ্রম করতে চায় আর জীবনে এগিয়ে যেতে চায়।  এই কোর্স এ enroll হওয়ার পর আপনাকে এক দিন এই কোর্স টি use করতে হবে একদম  বিনামূল্যে ।\n  \n আমি দেখতে চাই যে, আপনি ইংলিশ শেখার জন্য serious কিনা । আপনাকে আজ 100  points earn করতে হবে। যদি আপনি 24 ঘন্টায়ে 100 points earn করেন তাহলে আপনি এই কোর্স এ অ্যাডমিশন নিতে পারবেন।</value>
     </entry>
+    <entry>
+        <key>SHOW_NEW_GROUP_BTN</key>
+        <value>false</value>
+    </entry>
+    <entry>
+        <key>REQUEST_TO_JOIN_QUESTION</key>
+        <value>Why do you want to join this group?</value>
+    </entry>
 </defaultsMap>

@@ -217,6 +217,8 @@ class FirebaseRemoteConfigKey {
 
         // GroupChat
         const val GROUP_CHAT_TAGLINE = "GROUP_CHAT_TAGLINE"
+        const val SHOW_NEW_GROUP_BTN = "SHOW_NEW_GROUP_BTN"
+        const val REQUEST_TO_JOIN_QUESTION = "REQUEST_TO_JOIN_QUESTION"
 
         // P2P
         const val VOIP_CALL_DISCONNECT_TIME = "VOIP_CALL_DISCONNECT_TIME"

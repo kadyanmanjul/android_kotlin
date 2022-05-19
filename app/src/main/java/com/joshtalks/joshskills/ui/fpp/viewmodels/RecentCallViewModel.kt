@@ -67,12 +67,11 @@ class RecentCallViewModel : BaseViewModel() {
         }
     }
 
-    fun sendFppRequest(receiverMentorId: String,position:Int) {
+    fun sendFppRequest(receiverMentorId: String, position:Int) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 recentCallsRepository.sendFppRequest(receiverMentorId)
-                //getRecentCall()
-                adapter.notifyItemChanged(position)
+                getRecentCall()
             } catch (ex: Throwable) {
                 ex.printStackTrace()
             }
@@ -83,7 +82,7 @@ class RecentCallViewModel : BaseViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 recentCallsRepository.deleteFppRequest(receiverMentorId)
-//                getRecentCall()
+                getRecentCall()
             } catch (ex: Throwable) {
                 ex.printStackTrace()
             }

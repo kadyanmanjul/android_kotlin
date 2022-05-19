@@ -63,6 +63,7 @@ class GroupChatViewModel : BaseViewModel() {
     var requestCount = ObservableField("")
     val memberAdapter = GroupMemberAdapter()
     val groupSubHeader = ObservableField("")
+    val requestQuestion = ObservableField("Why do you want to join this group?")
     val fetchingGrpInfo = ObservableBoolean(false)
     val showRequestsTab = ObservableBoolean(false)
     var scrollToEnd = false

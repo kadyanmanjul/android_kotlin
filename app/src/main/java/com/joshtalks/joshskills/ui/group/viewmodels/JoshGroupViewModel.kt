@@ -56,6 +56,7 @@ class JoshGroupViewModel : BaseViewModel() {
     val stateAdapter = GroupStateAdapter()
     val hasGroupData = ObservableBoolean(true)
     val addingNewGroup = ObservableBoolean(false)
+    val newGroupVisible = ObservableBoolean(false)
     val groupType = ObservableField("")
     var shouldRefreshGroupList = false
     val isFromVoip = ObservableBoolean(false)
