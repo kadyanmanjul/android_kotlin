@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.databinding.ItemTimePickBinding
 
-class CbcBindingAdapter(private val timeStrings:List<String>): RecyclerView.Adapter<CbcBindingAdapter.ViewHolder>() {
+class ScheduleAdapter(private val timeStrings:List<String>): RecyclerView.Adapter<ScheduleAdapter.ViewHolder>() {
     inner class ViewHolder(binding: ItemTimePickBinding):
             RecyclerView.ViewHolder(binding.root){
                 val time = binding.txtViewTimeSlot
