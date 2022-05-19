@@ -11,17 +11,17 @@ class NotificationAnalytics {
         AppObjectController.appDatabase.notificationEventDao()
     }
 
-    suspend fun addAnalytics(notificationId: String, mEvent: Action, channel: Channel?):Boolean {
-        var result : Boolean = true
-        var  event= mEvent
+    suspend fun addAnalytics(notificationId: String, mEvent: Action, channel: Channel?): Boolean {
+        var result = true
+        var event = mEvent
         var platformChannel = channel?.name
         val notification = getNotification(notificationId)
         if (notification != null && notification.isNotEmpty()) {
             if (event == Action.DISCARDED || event == Action.CLICKED) {
-                    notification.filter { it.action == Action.RECEIVED.name }.get(0).platform?.let {
-                        platformChannel = it
+                notification.filter { it.action == Action.RECEIVED.name }[0].platform?.let {
+                    platformChannel = it
                 }
-            } else if (event == Action.RECEIVED){
+            } else if (event == Action.RECEIVED) {
                 event = Action.APP_DISCARDED
             }
             result = false
@@ -88,7 +88,8 @@ class NotificationAnalytics {
 
     enum class Channel(action: String) {
         FCM("fcm"),
-        FIRESTORE("firestore")
+        FIRESTORE("firestore"),
+        MOENGAGE("moengage")
     }
 }
 

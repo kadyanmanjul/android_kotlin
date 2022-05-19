@@ -194,22 +194,28 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         try {
             if (Freshchat.isFreshchatNotification(remoteMessage))
                 Freshchat.handleFcmMessage(this, remoteMessage)
-            else if (MoEPushHelper.getInstance().isFromMoEngagePlatform(remoteMessage.data) && remoteMessage.data.containsKey("isCustom")) {
-                processRemoteMessage(remoteMessage)
+            else if (MoEPushHelper.getInstance().isFromMoEngagePlatform(remoteMessage.data) && JSONObject(remoteMessage.data["gcm_alert"]).has("isCustom")) {
+                val dataJson = JSONObject(remoteMessage.data["gcm_alert"])
+                remoteMessage.data["title"] = dataJson["title"].toString()
+                remoteMessage.data["body"] = dataJson["body"].toString()
+                remoteMessage.data["action"] = dataJson["client_action"].toString()
+                remoteMessage.data["action_data"] = dataJson["action_data"].toString()
+                remoteMessage.data["notification_id"] = dataJson["notification_id"].toString()
+                processRemoteMessage(remoteMessage, NotificationAnalytics.Channel.MOENGAGE)
                 MoEPushHelper.getInstance().logNotificationReceived(this, remoteMessage.data)
                 return
             } else if (MoEPushHelper.getInstance().isFromMoEngagePlatform(remoteMessage.data)) {
                 MoEFireBaseHelper.getInstance().passPushPayload(applicationContext, remoteMessage.data)
                 return
             } else {
-                processRemoteMessage(remoteMessage)
+                processRemoteMessage(remoteMessage, NotificationAnalytics.Channel.FCM)
             }
         } catch (ex: Exception) {
             ex.printStackTrace()
         }
     }
 
-    private fun processRemoteMessage(remoteData: RemoteMessage) {
+    private fun processRemoteMessage(remoteData: RemoteMessage, channel: NotificationAnalytics.Channel) {
         if (remoteData.data.containsKey("nType")) {
             if(remoteData.data["nType"] == "CR" && application.getVoipState() != State.IDLE)
                 return
@@ -229,7 +235,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     }
                 }
                 sendNotification(nc)
-                pushToDatabase(nc, timeReceived)
+                pushToDatabase(nc, timeReceived, channel)
             }
         } else {
             val notificationTypeToken: Type = object : TypeToken<NotificationObject>() {}.type
@@ -237,18 +243,18 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 AppObjectController.gsonMapper.toJson(remoteData.data),
                 notificationTypeToken
             )
-            nc.contentTitle = remoteData.notification?.title
-            nc.contentText = remoteData.notification?.body
+            nc.contentTitle = remoteData.notification?.title ?: remoteData.data["title"]
+            nc.contentText = remoteData.notification?.body ?: remoteData.data["body"]
             nc.id = nc.notificationId.toString()
             CoroutineScope(Dispatchers.IO).launch {
-                val isFistTimeNotification = NotificationAnalytics().addAnalytics(
+                val isFirstTimeNotification = NotificationAnalytics().addAnalytics(
                     notificationId = nc.notificationId.toString(),
                     mEvent = NotificationAnalytics.Action.RECEIVED,
-                    channel = NotificationAnalytics.Channel.FCM
+                    channel = channel
                 )
-                if (isFistTimeNotification){
+                if (isFirstTimeNotification) {
                     sendNotification(nc)
-                    pushToDatabase(nc)
+                    pushToDatabase(nc, channel = channel)
                 }
             }
         }
@@ -1094,12 +1100,16 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         return text.textDrawableBitmap(bgColor = color)!!
     }
 
-    fun pushToDatabase(nc: NotificationObject, timeReceived: Long = System.currentTimeMillis()) {
+    fun pushToDatabase(
+        nc: NotificationObject,
+        timeReceived: Long = System.currentTimeMillis(),
+        channel: NotificationAnalytics.Channel
+    ) {
         CoroutineScope(Dispatchers.IO).launch {
             NotificationAnalytics().addAnalytics(
                 notificationId = nc.notificationId.toString(),
                 mEvent = NotificationAnalytics.Action.RECEIVED,
-                channel = NotificationAnalytics.Channel.FCM
+                channel = channel
             )
         }
     }
