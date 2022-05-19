@@ -229,24 +229,6 @@ class FeedViewModel : ViewModel() {
     }
 
 
-    fun setTimer(){
-
-    }
-
-    fun searchRoom(query: String) {
-        viewModelScope.launch {
-            try {
-                val parems = mutableMapOf<String, String>()
-                parems["query"] = query
-                val response = repository.searchRoom(parems)
-                //if (response.isSuccessful)
-                    //showToast("Search API launched successfully")
-            } catch (ex: Exception) {
-
-            }
-        }
-    }
-
     fun searchUser(query: String) {
         val listUser= mutableListOf<Users>()
         viewModelScope.launch {
@@ -262,22 +244,6 @@ class FeedViewModel : ViewModel() {
                 }
             } catch (ex: Exception) {
 
-            }
-        }
-    }
-
-    fun deleteReminder(deleteReminderRequest: DeleteReminderRequest) {
-        viewModelScope.launch {
-            try {
-                val res = repository.deleteReminder(deleteReminderRequest)
-                if (res.isSuccessful && res.code() == 200) {
-                    //showToast("Reminder Deleted")
-                    feedAdapter.notifyDataSetChanged()
-                } else showToast("Error while Deleting Reminder")
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-                showToast("Error while Deleting Reminder")
-            } finally {
             }
         }
     }
