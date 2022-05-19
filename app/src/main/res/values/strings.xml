@@ -1225,11 +1225,20 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="continue_text"><![CDATA[Continue >]]></string>
     <string name="course_continue_steps">Course continue करने से पहले आपको अगले कुछ steps पुरे करने होंगे</string>
-    <string name="_90_day_english_learning">90-Day English Learning</string>
+    <string name="_90_day_english_learning">90-Day English Learning \n naman</string>
+    <string name="_90_day_english_learning_with_commitment">90-Day English Learning\nCommitment Promise</string>
+    <string name="shapath_text">क्या आप शपथ लेते हैं की आप Commitment पूरा करेंगे?</string>
+    <string name="shapat_detail">Commitment पूरा करने के लिए आपको हर रोज़ कमसेकम 1 Practice Partner Call करनी है, दिन में जब भी आप कर सकते है। इसका फल आपको पूरी ज़िन्दगी काम आएगा।</string>
+    <string name="reminder_text">Receive daily reminders?</string>
+    <string name="reminder_detail">मै हर रोज़ आपको याद दिलाऊंगा ताकि आपका Promise एक भी दिन न छूटे</string>
+    <string name="promise_btn_text">I commit to completing my promise!</string>
     <string name="live_classes_timing">I will attend Live class at this timing</string>
     <string name="Schedule_motive">इन Live Classes का मकसद है आपका Confidence बढ़ाना और अंग्रेजी में बात करने का डर ख़तम करना, तो ये सुनिश्चित करें की आप हर रोज़ ये Class में शामिल हो</string>
     <string name="Schedule_timings_selection">हर रोज़ इन timings पर Live Class होगी, अपनी पसंद की timing मुझे बताए</string>
     <string name="Schedule_learning_90days">90-Day English Learning Daily Class Schedule</string>
-
+    <string-array name="form_options">
+        <item>Yes</item>
+        <item>No</item>
+    </string-array>
 
 </resources>

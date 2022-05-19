@@ -20,6 +20,7 @@ class PromiseFragment : BaseFragment() {
     }
 
     override fun initViewBinding() {
+        binding.vm = vm
         binding.executePendingBindings()
     }
 
