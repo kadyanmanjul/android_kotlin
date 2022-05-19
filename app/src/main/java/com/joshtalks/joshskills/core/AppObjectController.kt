@@ -47,6 +47,7 @@ import com.joshtalks.joshskills.repository.service.CommonNetworkService
 import com.joshtalks.joshskills.repository.service.MediaDUNetworkService
 import com.joshtalks.joshskills.repository.service.P2PNetworkService
 import com.joshtalks.joshskills.repository.service.SignUpNetworkService
+import com.joshtalks.joshskills.ui.cohort_based_course.repository.CbcNetwork
 import com.joshtalks.joshskills.ui.group.analytics.data.network.GroupsAnalyticsService
 import com.joshtalks.joshskills.ui.group.data.GroupApiService
 import com.joshtalks.joshskills.ui.senior_student.data.SeniorStudentService
@@ -174,6 +175,10 @@ class AppObjectController {
 
         @JvmStatic
         lateinit var groupsAnalyticsNetworkService: GroupsAnalyticsService
+            private set
+
+        @JvmStatic
+            lateinit var CbcNetworkService: CbcNetwork
             private set
 
         @JvmStatic
@@ -332,7 +337,7 @@ class AppObjectController {
                     retrofit.create(ConversationRoomsNetworkService::class.java)
                 abTestNetworkService = retrofit.create(ABTestNetworkService::class.java)
 
-                groupsNetworkService = retrofit.create(GroupApiService::class.java)
+                CbcNetworkService = retrofit.create(CbcNetwork::class.java)
                 groupsAnalyticsNetworkService = retrofit.create(GroupsAnalyticsService::class.java)
 
                 val p2pRetrofitBuilder = Retrofit.Builder()
