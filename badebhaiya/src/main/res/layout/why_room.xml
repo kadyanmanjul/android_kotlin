@@ -27,17 +27,18 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:layout_width="match_parent"
-        android:layout_marginTop="@dimen/_7sdp"
-        android:layout_marginBottom="@dimen/_7sdp"
-        android:layout_height="@dimen/_130sdp"
-        android:hint="Write Here"
-        android:background="#EDEFF2"
-        android:textAppearance="@style/BB_Typography_Nunito_Sans_Regular"
-        android:gravity="top"
-        android:padding="@dimen/_7sdp"
-        android:textSize="@dimen/_13sdp"
         android:id="@+id/message"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/_130sdp"
+        android:layout_marginTop="@dimen/_7sdp"
+        android:background="#EDEFF2"
+        android:gravity="top"
+        android:hint="Write Here"
+        android:padding="@dimen/_7sdp"
+        android:textAppearance="@style/BB_Typography_Nunito_Sans_Regular"
+        android:textSize="@dimen/_13sdp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/title" />
 
 
@@ -72,7 +73,6 @@
         android:layout_marginBottom="@dimen/_7sdp"
         android:backgroundTint="@color/base_app_color"
         android:elevation="@dimen/_3sdp"
-
         android:shadowColor="@color/dark_grey"
         android:shadowDy="2"
         android:shadowRadius="2"

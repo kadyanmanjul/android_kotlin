@@ -30,6 +30,7 @@ import com.joshtalks.badebhaiya.core.models.PendingPilotEvent
 import com.joshtalks.badebhaiya.core.models.PendingPilotEvent.*
 import com.joshtalks.badebhaiya.core.models.PendingPilotEventData
 import com.joshtalks.badebhaiya.databinding.FragmentProfileBinding
+import com.joshtalks.badebhaiya.databinding.WhyRoomBinding
 import com.joshtalks.badebhaiya.feed.*
 import com.joshtalks.badebhaiya.feed.adapter.FeedAdapter
 import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
@@ -138,24 +139,24 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
     }
 
     fun showPopup(roomId: Int, userId: String) {
-        val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(binding.roomFrame.context)
-        val inflater = LayoutInflater.from(binding.roomFrame.context)
-        val dialogView = inflater.inflate(R.layout.why_room, null)
-        dialogBuilder.setView(dialogView)
+        val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
+        val dialogBinding = WhyRoomBinding.inflate(layoutInflater)
+//        val dialogView = inflater.inflate(R.layout.why_room, null)
+        dialogBuilder.setView(dialogBinding.root)
         val alertDialog: AlertDialog = dialogBuilder.create()
         alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         alertDialog.show()
 
-        dialogView.findViewById<AppCompatTextView>(R.id.submit).setOnClickListener{
+        dialogBinding.submit.setOnClickListener{
             //TODO:implement the response API
             val msg:String
-//            if(!binding.roomFrame.message.toString().isNullOrBlank())
-//                 msg=binding.roomFrame.message.toString()
+            if(dialogBinding.message.toString().isNotBlank())
+                 msg=dialogBinding.message.toString()
 
             //apicall(roomId,userId,msg)
             alertDialog.dismiss()
         }
-        dialogView.findViewById<AppCompatTextView>(R.id.Skip).setOnClickListener {
+        dialogBinding.Skip.setOnClickListener {
             alertDialog.dismiss()
         }
 
