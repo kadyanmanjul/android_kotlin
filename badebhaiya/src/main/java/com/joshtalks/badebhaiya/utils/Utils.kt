@@ -61,6 +61,7 @@ import com.bumptech.glide.load.DecodeFormat
 import com.bumptech.glide.load.MultiTransformation
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestListener
@@ -1228,7 +1229,8 @@ fun String.urlToBitmap(
     width: Int = 80,
     height: Int = 80,
     context: Context = AppObjectController.joshApplication,
-    makeItCircular: Boolean = false
+    makeItCircular: Boolean = false,
+    roundedCorners: Int = 78
 ): Bitmap? {
 
     val requestOptions = when(makeItCircular) {
@@ -1239,6 +1241,7 @@ fun String.urlToBitmap(
                 .disallowHardwareConfig().dontAnimate().encodeQuality(75)
         false ->
             RequestOptions()
+                .transform(CenterCrop(), RoundedCorners(roundedCorners))
                 .format(DecodeFormat.PREFER_RGB_565)
                 .disallowHardwareConfig().dontAnimate().encodeQuality(75)
     }
@@ -1252,10 +1255,10 @@ fun String.urlToBitmap(
         )
         // .override(Target.SIZE_ORIGINAL)
         .diskCacheStrategy(DiskCacheStrategy.ALL)
-//        .optionalTransform(
-//            WebpDrawable::class.java,
-////            WebpDrawableTransformation()
-//        )
+        .optionalTransform(
+            WebpDrawable::class.java,
+            WebpDrawableTransformation(RoundedCorners(roundedCorners))
+        )
         .submit().get(1500, TimeUnit.MILLISECONDS)
 }
 
