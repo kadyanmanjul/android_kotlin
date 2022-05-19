@@ -136,7 +136,7 @@ class RefreshFCMTokenWorker(context: Context, workerParams: WorkerParameters) :
                                 val userId = User.getInstance().userId
                                 if (userId.isNotBlank()) {
                                     try {
-                                        if (PrefManager.hasKey(FCM_TOKEN)) {
+                                        if (PrefManager.hasKey(FCM_TOKEN) && FCMData.getInstance() != null) {
                                             FCMData.getInstance()?.let { fcmData ->
                                                 val data = mutableMapOf(
                                                     "registration_id" to it

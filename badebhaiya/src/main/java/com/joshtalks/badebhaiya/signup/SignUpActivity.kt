@@ -173,6 +173,8 @@ class SignUpActivity : AppCompatActivity() {
     }
 
     private fun openNextActivity() {
+        Log.i("FCM", "openNextActivity: ")
+        WorkManagerAdmin.appStartWorker()
         if (intent.extras?.getString(REDIRECT) == REDIRECT_TO_PROFILE_ACTIVITY) {
             //ProfileActivity.openProfileActivity(this, intent.extras?.getString(USER_ID) ?: EMPTY)
             var bundle = Bundle()
@@ -183,20 +185,7 @@ class SignUpActivity : AppCompatActivity() {
                 .commit()
         } else
             Intent(this, FeedActivity::class.java).also { it ->
-                CoroutineScope(Dispatchers.IO).launch {
-                    val result = CommonRepository().checkFCMInServer(
-                        mapOf(
-                            "user_id" to User.getInstance().userId,
-                            "registration_id" to PrefManager.getStringValue(FCM_TOKEN)
-                        )
-                    )
-                    Log.i("YAMI", "openNextActivity: ${result["message"]}")
-                    if (result["message"] != FCM_ACTIVE)
-                        WorkManagerAdmin.forceRefreshFcmToken()
-//
-                    startActivity(it)
-//                    }
-                }
+                startActivity(it)
             }
     }
 
