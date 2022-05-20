@@ -26,6 +26,7 @@ class CommitmentFormViewModel : ViewModel() {
     private var selectedSlot = ObservableField("")
 
     var cohortBatchList :ArrayList<CohortItemModel>? = ArrayList()
+    var userName = ObservableField(EMPTY)
 
     init {
         getCohortBatches()
