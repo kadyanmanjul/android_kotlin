@@ -31,6 +31,7 @@ import android.widget.RemoteViews
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
@@ -294,6 +295,7 @@ class ConversationActivity :
                 conversationBinding.imgGroupChatBtn.startAnimation(toBottomAnimation)
                 conversationBinding.imgFppRequest.startAnimation(toBottomAnimation)
                 floatingActionButtonAdd.startAnimation(rotateCloseAnimation)
+                conversationBinding.cbcArrow.visibility = GONE
             }
         }
     }
@@ -475,6 +477,36 @@ class ConversationActivity :
                 }
             }
         }
+    }
+
+    private fun showCohortBaseCourse() {
+        if (!PrefManager.getBoolValue(HAS_SEEN_COHORT_BASE_COURSE_TOOLTIP)) {
+            conversationBinding.cbcTooltip.visibility = VISIBLE
+            conversationBinding.overlayLayout.visibility = VISIBLE
+
+            conversationBinding.overlayLayout.setOnClickListener {
+                conversationBinding.cbcTooltip.visibility = GONE
+                conversationBinding.overlayLayout.visibility = GONE
+                conversationBinding.overlayLayout.setOnClickListener(null)
+            }
+        }
+    }
+
+    fun hideCohortCourseTooltip() {
+        conversationBinding.cbcTooltip.visibility = GONE
+        conversationBinding.overlayLayout.visibility = GONE
+        PrefManager.put(HAS_SEEN_COHORT_BASE_COURSE_TOOLTIP, true)
+    }
+
+    private fun showCohortBaseInsideCourse() {
+        if (!PrefManager.getBoolValue(HAS_SEEN_COHORT_BASE_COURSE_INSIDE_TOOLTIP)) {
+            conversationBinding.cbcArrow.visibility = VISIBLE
+        }
+    }
+
+    fun hideCohortBaseInsideTooltip() {
+        conversationBinding.cbcArrow.visibility = GONE
+        PrefManager.put(HAS_SEEN_COHORT_BASE_COURSE_INSIDE_TOOLTIP, true)
     }
 
     fun hideLeaderboardTooltip() {
@@ -813,6 +845,7 @@ class ConversationActivity :
         }
 
         conversationBinding.imgGroupChatBtn.setOnSingleClickListener {
+            hideCohortBaseInsideTooltip()
             if (inboxEntity.isCourseBought.not() &&
                 inboxEntity.expiryDate != null &&
                 inboxEntity.expiryDate!!.time < System.currentTimeMillis()
@@ -1357,12 +1390,17 @@ class ConversationActivity :
     private fun blurViewOnClickListeners(userProfileData: UserProfileResponse) {
         conversationBinding.floatingActionButtonAdd.setOnClickListener {
             setExpandableButtons(userProfileData)
+            showCohortBaseInsideCourse()
+            hideCohortCourseTooltip()
             setButtonsAnimation()
         }
 
         conversationBinding.blurView.setOnClickListener {
             setExpandableButtons(userProfileData)
             setButtonsAnimation()
+            conversationBinding.cbcTooltip.visibility = GONE
+            conversationBinding.overlayLayout.visibility = GONE
+            conversationBinding.cbcArrow.visibility = GONE
         }
     }
 
@@ -1436,7 +1474,6 @@ class ConversationActivity :
         conversationBinding.fppRequestCountNumber.visibility = GONE
         if (requestCountNumber > 0) {
             lifecycleScope.launch(Dispatchers.Main) {
-                delay(350)
                 conversationBinding.allCountNumber.visibility = VISIBLE
             }
         }
@@ -1562,6 +1599,7 @@ class ConversationActivity :
     }
 
     private fun initScoreCardView(userData: UserProfileResponse) {
+        showCohortBaseCourse()
         userData.isContainerVisible?.let { isLeaderBoardActive ->
             if (isLeaderBoardActive) {
                 conversationBinding.points.text = userData.points.toString().plus(" Points")
@@ -2344,14 +2382,21 @@ class ConversationActivity :
     override fun onBackPressed() {
         MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
         audioPlayerManager?.onPause()
-        if (conversationBinding.overlayLayout.visibility == VISIBLE) {
-            hideLeaderBoardSpotlight()
-        } else if (conversationBinding.overlayView.visibility == VISIBLE)
-            conversationBinding.overlayView.visibility = INVISIBLE
-        else {
-            val resultIntent = Intent()
-            setResult(RESULT_OK, resultIntent)
-            this@ConversationActivity.finishAndRemoveTask()
+        when {
+            conversationBinding.overlayLayout.visibility == VISIBLE -> {
+                hideLeaderBoardSpotlight()
+            }
+            conversationBinding.overlayView.visibility == VISIBLE -> conversationBinding.overlayView.visibility = INVISIBLE
+            conversationBinding.quickCardView.isVisible || conversationBinding.cbcArrow.isVisible -> {
+                hideBlurOrQuickView()
+                setButtonsAnimation()
+                conversationBinding.cbcArrow.isVisible = false
+            }
+            else -> {
+                val resultIntent = Intent()
+                setResult(RESULT_OK, resultIntent)
+                this@ConversationActivity.finishAndRemoveTask()
+            }
         }
     }
 

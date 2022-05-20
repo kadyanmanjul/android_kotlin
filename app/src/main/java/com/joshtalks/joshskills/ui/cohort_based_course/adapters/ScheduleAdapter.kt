@@ -1,12 +1,10 @@
 package com.joshtalks.joshskills.ui.cohort_based_course.adapters
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.databinding.ItemTimePickBinding
 import com.joshtalks.joshskills.ui.cohort_based_course.models.CohortItemModel
-import com.joshtalks.joshskills.ui.voip.voip_rating.model.OptionModel
 
 class ScheduleAdapter(
 
@@ -15,10 +13,13 @@ class ScheduleAdapter(
 
     var itemClick: ((String) -> Unit)? = null
 
-    inner class ViewHolder(binding: ItemTimePickBinding):
-        RecyclerView.ViewHolder(binding.root){
-            val text =binding.txtViewTimeSlot
+    inner class ViewHolder(private val binding: ItemTimePickBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        fun bind(cohortItemModel: CohortItemModel) {
+            binding.itemData = cohortItemModel
+            binding.executePendingBindings()
         }
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -27,9 +28,9 @@ class ScheduleAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.text.text = cohortItemModelList[position].timeSlot
+        holder.bind(cohortItemModelList[position])
         holder.itemView.setOnClickListener {
-            itemClick?.invoke(holder.text.text.toString())
+            itemClick?.invoke(cohortItemModelList[position].name)
         }
     }
 
