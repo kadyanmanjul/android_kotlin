@@ -1,6 +1,8 @@
 package com.joshtalks.joshskills.core.firestore
 
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.SERVER_TIME_OFFSET
 import com.joshtalks.joshskills.core.notification.model.NotificationEvent
 import kotlinx.coroutines.CancellationException
 
@@ -45,10 +47,10 @@ class NotificationAnalytics {
         if (listOfReceived?.isEmpty() == true) {
             return true
         }
-
+        val serverOffsetTime = PrefManager.getLongValue(SERVER_TIME_OFFSET,true)
         val request = ArrayList<NotificationAnalyticsRequest>()
         listOfReceived?.forEach {
-            request.add(NotificationAnalyticsRequest(it.id, it.time_stamp, it.action, it.platform))
+            request.add(NotificationAnalyticsRequest(it.id, it.time_stamp.plus(serverOffsetTime), it.action, it.platform))
         }
         if (request.isEmpty()) {
             return true

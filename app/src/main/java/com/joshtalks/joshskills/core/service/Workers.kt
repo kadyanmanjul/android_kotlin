@@ -25,13 +25,41 @@ import com.google.firebase.installations.FirebaseInstallations
 import com.google.firebase.messaging.FirebaseMessaging
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.API_TOKEN
+import com.joshtalks.joshskills.core.ApiRespStatus
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.CALL_RINGTONE_NOT_MUTE
+import com.joshtalks.joshskills.core.COUNTRY_ISO
+import com.joshtalks.joshskills.core.COURSE_EXPIRY_TIME_IN_MS
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
+import com.joshtalks.joshskills.core.INSTANCE_ID
+import com.joshtalks.joshskills.core.IS_COURSE_BOUGHT
+import com.joshtalks.joshskills.core.InstallReferralUtil
+import com.joshtalks.joshskills.core.LAST_ACTIVE_API_TIME
+import com.joshtalks.joshskills.core.LOCAL_NOTIFICATION_INDEX
+import com.joshtalks.joshskills.core.LOGIN_ON
+import com.joshtalks.joshskills.core.ONBOARDING_STAGE
+import com.joshtalks.joshskills.core.OnBoardingStage
+import com.joshtalks.joshskills.core.P2P_LAST_CALL
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.RATING_DETAILS_KEY
+import com.joshtalks.joshskills.core.RESTORE_ID
+import com.joshtalks.joshskills.core.SERVER_GID_ID
+import com.joshtalks.joshskills.core.SERVER_TIME_OFFSET
+import com.joshtalks.joshskills.core.SUBSCRIPTION_TEST_ID
+import com.joshtalks.joshskills.core.USER_LOCALE
+import com.joshtalks.joshskills.core.USER_LOCALE_UPDATED
+import com.joshtalks.joshskills.core.USER_UNIQUE_ID
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.LocalNotificationDismissEventReceiver
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
+import com.joshtalks.joshskills.core.changeLocale
 import com.joshtalks.joshskills.core.firestore.NotificationAnalytics
+import com.joshtalks.joshskills.core.getDefaultCountryIso
 import com.joshtalks.joshskills.core.notification.FCM_ACTIVE
 import com.joshtalks.joshskills.core.notification.FCM_TOKEN
 import com.joshtalks.joshskills.core.notification.FirebaseNotificationService
@@ -1079,6 +1107,23 @@ class UpdateABTestCampaignsWorker(context: Context, workerParams: WorkerParamete
                     CampaignKeys.A2_C1.name
                 )
             )
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
+        return Result.success()
+    }
+}
+
+class UpdateServerTimeWorker(context: Context, workerParams: WorkerParameters) :
+    CoroutineWorker(context, workerParams) {
+    override suspend fun doWork(): Result {
+        try {
+            val serverTimeResponse = AppObjectController.utilsAPIService.getServerTime()
+            if (serverTimeResponse.isSuccessful && serverTimeResponse.body()!=null){
+                val offset = serverTimeResponse.body()!!.minus(System.currentTimeMillis())
+                PrefManager.put(SERVER_TIME_OFFSET, isConsistent = true, value = offset)
+                return Result.success()
+            }
         } catch (ex: Exception) {
             ex.printStackTrace()
         }

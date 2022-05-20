@@ -30,15 +30,20 @@ import com.google.gson.JsonParseException
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.base.constants.*
+import com.joshtalks.joshskills.base.constants.DIR
+import com.joshtalks.joshskills.base.constants.KEY_APP_ACCEPT_LANGUAGE
+import com.joshtalks.joshskills.base.constants.KEY_APP_USER_AGENT
+import com.joshtalks.joshskills.base.constants.KEY_APP_VERSION_CODE
+import com.joshtalks.joshskills.base.constants.KEY_APP_VERSION_NAME
+import com.joshtalks.joshskills.base.constants.KEY_AUTHORIZATION
 import com.joshtalks.joshskills.conversationRoom.network.ConversationRoomsNetworkService
 import com.joshtalks.joshskills.core.abTest.ABTestNetworkService
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.datetimeutils.DateTimeUtils
-import com.joshtalks.joshskills.core.io.LastSyncPrefManager
 import com.joshtalks.joshskills.core.firestore.FirestoreNotificationDB
 import com.joshtalks.joshskills.core.firestore.NotificationAnalytics
 import com.joshtalks.joshskills.core.firestore.NotificationListener
+import com.joshtalks.joshskills.core.io.LastSyncPrefManager
 import com.joshtalks.joshskills.core.notification.FirebaseNotificationService
 import com.joshtalks.joshskills.core.service.DownloadUtils
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
@@ -53,6 +58,7 @@ import com.joshtalks.joshskills.repository.service.CommonNetworkService
 import com.joshtalks.joshskills.repository.service.MediaDUNetworkService
 import com.joshtalks.joshskills.repository.service.P2PNetworkService
 import com.joshtalks.joshskills.repository.service.SignUpNetworkService
+import com.joshtalks.joshskills.repository.service.UtilsAPIService
 import com.joshtalks.joshskills.ui.group.analytics.data.network.GroupsAnalyticsService
 import com.joshtalks.joshskills.ui.group.data.GroupApiService
 import com.joshtalks.joshskills.ui.senior_student.data.SeniorStudentService
@@ -77,7 +83,9 @@ import java.lang.reflect.Constructor
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 import java.lang.reflect.Type
+import java.net.SocketTimeoutException
 import java.net.URL
+import java.net.UnknownHostException
 import java.text.DateFormat
 import java.util.Collections
 import java.util.Date
@@ -85,17 +93,23 @@ import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import okhttp3.*
+import okhttp3.Cache
+import okhttp3.CacheControl
+import okhttp3.CertificatePinner
+import okhttp3.CipherSuite
+import okhttp3.ConnectionSpec
+import okhttp3.Interceptor
+import okhttp3.OkHttpClient
+import okhttp3.Protocol
+import okhttp3.Request
+import okhttp3.Response
 import okhttp3.ResponseBody.Companion.toResponseBody
-import okhttp3.internal.http2.ConnectionShutdownException
+import okhttp3.TlsVersion
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.HttpException
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import timber.log.Timber
-import java.io.IOException
-import java.net.SocketTimeoutException
-import java.net.UnknownHostException
 
 private const val JOSH_SKILLS_CACHE = "joshskills-cache"
 private const val READ_TIMEOUT = 30L
@@ -174,6 +188,10 @@ class AppObjectController {
 
         @JvmStatic
         lateinit var abTestNetworkService: ABTestNetworkService
+            private set
+
+        @JvmStatic
+        lateinit var utilsAPIService: UtilsAPIService
             private set
 
         @JvmStatic
@@ -339,6 +357,7 @@ class AppObjectController {
                 conversationRoomsNetworkService =
                     retrofit.create(ConversationRoomsNetworkService::class.java)
                 abTestNetworkService = retrofit.create(ABTestNetworkService::class.java)
+                utilsAPIService = retrofit.create(UtilsAPIService::class.java)
 
                 groupsNetworkService = retrofit.create(GroupApiService::class.java)
                 groupsAnalyticsNetworkService = retrofit.create(GroupsAnalyticsService::class.java)

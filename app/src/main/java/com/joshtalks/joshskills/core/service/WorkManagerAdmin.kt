@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.core.service
 
-import android.util.Log
 import androidx.work.BackoffPolicy
 import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
@@ -40,7 +39,8 @@ object WorkManagerAdmin {
     fun appStartWorker(isUserLoggingOut: Boolean = false) {
         val workerList = mutableListOf(
             OneTimeWorkRequestBuilder<UniqueIdGenerationWorker>().build(),
-            OneTimeWorkRequestBuilder<AppRunRequiredTaskWorker>().build()
+            OneTimeWorkRequestBuilder<AppRunRequiredTaskWorker>().build(),
+            OneTimeWorkRequestBuilder<UpdateServerTimeWorker>().build()
         )
         if (isUserLoggingOut.not()) {
             workerList.add(OneTimeWorkRequestBuilder<UpdateABTestCampaignsWorker>().build())

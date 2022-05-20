@@ -1,10 +1,8 @@
 package com.joshtalks.joshskills.voip.communication.model
 
 import com.google.gson.annotations.SerializedName
-import com.joshtalks.joshskills.voip.communication.model.IncomingCallData
-import com.joshtalks.joshskills.voip.communication.model.IncorrectCommunicationDataException
 
-class IncomingCall (
+class IncomingCall(
     @field:SerializedName("call_id")
     private val callId: Int? = null,
 
@@ -17,10 +15,10 @@ class IncomingCall (
 ) : IncomingCallData {
 
     companion object {
-        fun fromMap(map: Map<String, Any?>?) : IncomingCall {
+        fun fromMap(map: Map<String, Any?>?): IncomingCall {
             return IncomingCall(
                 callId = map?.get("call_id").toString().toInt(),
-                type =  map?.get("type").toString().toInt(),
+                type = map?.get("type").toString().toInt(),
                 timeToken = map?.get("timetoken").toString().toLong(),
             )
         }
