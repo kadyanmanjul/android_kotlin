@@ -25,7 +25,7 @@
             android:layout_marginTop="@dimen/_28sdp"
             android:gravity="left"
             android:text="@string/Schedule_learning_90days"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Regular"
             android:textColor="#000000"
             android:textSize="@dimen/_16ssp"
             android:textStyle="bold"
@@ -113,6 +113,8 @@
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
             android:textSize="@dimen/_12ssp"
             android:textStyle="bold"
+            android:textColor="@color/white"
+            android:enabled="false"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />

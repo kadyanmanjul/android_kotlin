@@ -1235,7 +1235,7 @@
     <string name="live_classes_timing">I will attend Live class at this timing</string>
     <string name="Schedule_motive">इन Live Classes का मकसद है आपका Confidence बढ़ाना और अंग्रेजी में बात करने का डर ख़तम करना, तो ये सुनिश्चित करें की आप हर रोज़ ये Class में शामिल हो</string>
     <string name="Schedule_timings_selection">हर रोज़ इन timings पर Live Class होगी, अपनी पसंद की timing मुझे बताए</string>
-    <string name="Schedule_learning_90days">90-Day English Learning Daily Class Schedule</string>
+    <string name="Schedule_learning_90days">90-Day English Learning \nDaily Class Schedule</string>
     <string-array name="form_options">
         <item>Yes</item>
         <item>No</item>
