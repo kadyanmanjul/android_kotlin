@@ -62,8 +62,8 @@
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recyclerView2"
-                    setGridAdapter="@{vm.cohortBatchList}"
-                    setItemListener="@{vm.selectSlot}"
+                    setGridAdapter="@{vm.adapter}"
+                    setItemListener="@{vm.setItemListener}"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/_24sdp"
@@ -97,6 +97,7 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/button2"
+            setButtonBackground="@{vm.isButtonClickable()}"
             android:layout_width="0dp"
             android:layout_height="@dimen/_42sdp"
             android:layout_marginStart="@dimen/_9sdp"
@@ -104,6 +105,7 @@
             android:layout_marginBottom="@dimen/_32sdp"
             android:background="@drawable/rounded_state_button_bg"
             android:ellipsize="end"
+            android:enabled="false"
             android:insetTop="0dp"
             android:insetBottom="0dp"
             android:maxLines="1"
@@ -111,10 +113,9 @@
             android:text="@string/live_classes_timing"
             android:textAllCaps="false"
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
+            android:textColor="@color/white"
             android:textSize="@dimen/_12ssp"
             android:textStyle="bold"
-            android:textColor="@color/white"
-            android:enabled="false"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />

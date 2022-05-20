@@ -48,10 +48,14 @@ fun AutoCompleteTextView.setSelectedText(function: (a: String) -> Unit) {
 }
 
 @BindingAdapter("setGridAdapter","setItemListener", requireAll = false)
-fun RecyclerView.setGridAdapter( list: (ArrayList<CohortItemModel>)?,function: ((a: String) -> Unit)?) {
-    val adapter = list?.let { ScheduleAdapter(it,context) }
-    this.adapter = adapter
-    this.layoutManager = GridLayoutManager(context, 2)
-    adapter?.setClickListener(function)
+fun setGridAdapter(
+    view: RecyclerView,
+    adapter: ScheduleAdapter,
+    function: ((a: String) -> Unit)?
+) {
+    view.adapter = adapter
+    view.setHasFixedSize(true)
+    view.layoutManager = GridLayoutManager(view.context, 2)
+    adapter.setClickListener(function)
 
 }
