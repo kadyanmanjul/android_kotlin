@@ -9,11 +9,11 @@ import retrofit2.http.POST
 
 interface CbcNetwork {
 
-    @GET("$DIR/course/cohort_batch")
+    @GET("$DIR/course/cohort_batch/")
     suspend fun getCohortBatches(): Response<ArrayList<CohortItemModel>>
 
     @JvmSuppressWildcards
-    @POST("$DIR/course/cohort_batch")
+    @POST("$DIR/course/cohort_batch/")
     suspend fun postSelectedBatch(@Body params: Map<String, Any>): Response<Unit>
 
 }

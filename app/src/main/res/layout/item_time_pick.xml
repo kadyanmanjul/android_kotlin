@@ -1,35 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
 
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+        <variable
+            name="itemData"
+            type="com.joshtalks.joshskills.ui.cohort_based_course.models.CohortItemModel" />
+
+    </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/crdView_TimeSlot"
         android:layout_width="@dimen/_120sdp"
         android:layout_height="@dimen/_41sdp"
+        android:layout_margin="@dimen/_4sdp"
+        android:background="@drawable/round_rect_with_blueish_border"
         android:elevation="@dimen/_4sdp"
         app:cardCornerRadius="@dimen/_4sdp"
-        android:id="@+id/crdView_TimeSlot"
-        android:background="@drawable/round_rect_with_blueish_border"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" >
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/txtView_timeSlot"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="10:00 PM - 11:00 PM"
             android:textAppearance="@style/TextAppearance.JoshTypography.8_Caption_Normal"
             android:textColor="#5B6272"
             android:textSize="@dimen/_10sdp"
+            android:text="@{itemData.timeSlot}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="10:00 PM - 11:00 PM" />
     </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

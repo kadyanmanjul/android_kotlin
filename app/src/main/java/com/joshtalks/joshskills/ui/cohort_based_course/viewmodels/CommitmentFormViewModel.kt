@@ -10,6 +10,8 @@ import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.constants.OPEN_PROMISE_FRAGMENT
 import com.joshtalks.joshskills.constants.OPEN_SCHEDULE_FRAGMENT
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.ui.cohort_based_course.models.CohortItemModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -74,10 +76,14 @@ class CommitmentFormViewModel : ViewModel() {
     }
 
     fun sendBatchSelected(v:View){
-        val  map: HashMap<String,Any> = HashMap()
-        map["time_slot"] = selectedSlot.get().toString()
-        map["reminder"] = reminder
-        postSelectedBatch(map)
+        if (selectedSlot.get() != EMPTY){
+            val  map: HashMap<String,Any> = HashMap()
+            map["time_slot"] = selectedSlot.get().toString()
+            map["reminder"] = reminder
+            postSelectedBatch(map)
+        }else{
+            showToast("Please select a slot")
+        }
     }
     val setShapath = fun(selection:String){
         Log.d(TAG, "setShapath: 1 $selection")
