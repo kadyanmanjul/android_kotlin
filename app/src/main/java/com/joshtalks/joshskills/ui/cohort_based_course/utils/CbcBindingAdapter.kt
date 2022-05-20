@@ -5,6 +5,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import androidx.appcompat.content.res.AppCompatResources.getColorStateList
+import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -25,11 +26,14 @@ fun MaterialButton.setBackgroundState(boolean: Boolean) {
     when (boolean) {
         true -> {
             this.isEnabled = true
-            this.backgroundTintList = getColorStateList(context, R.color.colorPrimary);
+            this.backgroundTintList = getColorStateList(context, R.color.colorPrimary)
+            this.setTextColor(ContextCompat.getColor(context,R.color.white))
+            this.text = "Continue to course >"
         }
         false -> {
-            this.backgroundTintList = getColorStateList(context, R.color.gray_6F);
+            this.backgroundTintList = getColorStateList(context, R.color.gray_6F)
             this.isEnabled = false
+            this.setTextColor(ContextCompat.getColor(context,R.color.white))
         }
     }
 }
@@ -45,7 +49,7 @@ fun AutoCompleteTextView.setSelectedText(function: (a: String) -> Unit) {
 
 @BindingAdapter("setGridAdapter","setItemListener", requireAll = false)
 fun RecyclerView.setGridAdapter( list: (ArrayList<CohortItemModel>)?,function: ((a: String) -> Unit)?) {
-    val adapter = list?.let { ScheduleAdapter(it) }
+    val adapter = list?.let { ScheduleAdapter(it,context) }
     this.adapter = adapter
     this.layoutManager = GridLayoutManager(context, 2)
     adapter?.setClickListener(function)
