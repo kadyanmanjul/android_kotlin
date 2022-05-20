@@ -42,8 +42,8 @@ class ScheduleAdapter(
             holder.binding.crdViewTimeSlot.background = ContextCompat.getDrawable(context,R.drawable.round_rect_with_blue_border)
 
             if(prevHolder!=null && prevHolder!=holder){
-                prevHolder!!.binding.crdViewTimeSlot.background = ContextCompat.getDrawable(context,R.drawable.round_rect_with_blueish_border)
-                prevHolder!!.binding.txtViewTimeSlot.textColorSet( R.color.gray_cbc_text_timeslot)
+                prevHolder?.binding?.crdViewTimeSlot?.background = ContextCompat.getDrawable(context,R.drawable.round_rect_with_blueish_border)
+                prevHolder?.binding?.txtViewTimeSlot?.textColorSet( R.color.gray_cbc_text_timeslot)
             }
             prevHolder =  holder
         }
