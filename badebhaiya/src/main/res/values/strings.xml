@@ -109,5 +109,7 @@
     <string name="speak_with_them">%1$s. Speak with them?</string>
     <string name="reminder_for_your_call">Reminder for your scheduled call</string>
     <string name="your_call_will_start_in">Your call will start in %1$s</string>
+    <string name="title_activity_people_to_follow">PeopleToFollowActivity</string>
+    <string name="badebhaiyas_to_follow">BADE BHAIYAS TO FOLLOW</string>
 
 </resources>
