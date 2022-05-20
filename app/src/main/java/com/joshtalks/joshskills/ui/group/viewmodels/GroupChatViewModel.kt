@@ -146,9 +146,9 @@ class GroupChatViewModel : BaseViewModel() {
         message.data = Bundle().apply {
             putString(GROUPS_ID, groupId)
             putString(GROUPS_TITLE, groupHeader.get())
-            putString(GROUP_TYPE,groupType.get())
+            putString(GROUP_TYPE, groupType.get())
             if (groupId == DM_CHAT)
-                putInt(AGORA_UID,agoraId)
+                putInt(AGORA_UID, agoraId)
         }
         singleLiveEvent.value = message
     }
@@ -454,10 +454,9 @@ class GroupChatViewModel : BaseViewModel() {
 
     fun setRequestsTab() {
         when {
-            groupType.get().equals(OPENED_GROUP) -> showRequestsTab.set(false)
-            groupType.get().equals(DM_CHAT) -> showRequestsTab.set(false)
             adminId != Mentor.getInstance().getId() -> showRequestsTab.set(false)
-            else -> showRequestsTab.set(true)
+            groupType.get().equals(CLOSED_GROUP) -> showRequestsTab.set(true)
+            else -> showRequestsTab.set(false)
         }
     }
 

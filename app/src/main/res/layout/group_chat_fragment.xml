@@ -9,7 +9,7 @@
 
         <import type="com.joshtalks.joshskills.R" />
 
-        <import type="com.joshtalks.joshskills.ui.group.constants.GroupsConstantsKt"></import>
+        <import type="com.joshtalks.joshskills.ui.group.constants.GroupsConstantsKt" />
 
         <variable
             name="vm"
