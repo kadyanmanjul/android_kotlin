@@ -31,8 +31,8 @@ fun MaterialButton.setBackgroundState(boolean: Boolean) {
             this.text = "Continue to course >"
         }
         false -> {
-            this.backgroundTintList = getColorStateList(context, R.color.gray_6F)
             this.isEnabled = false
+            this.backgroundTintList = getColorStateList(context, R.color.light_shade_of_gray)
             this.setTextColor(ContextCompat.getColor(context,R.color.white))
         }
     }

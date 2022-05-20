@@ -18,7 +18,7 @@
         android:layout_height="match_parent">
 
         <TextView
-            android:id="@+id/textView17"
+            android:id="@+id/txt_schedule_heading"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_16sdp"
@@ -39,14 +39,14 @@
             android:layout_marginTop="@dimen/_28sdp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView17">
+            app:layout_constraintTop_toBottomOf="@+id/txt_schedule_heading">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
                 <TextView
-                    android:id="@+id/textView18"
+                    android:id="@+id/txt_choice_timing"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/_16sdp"
@@ -61,7 +61,7 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recyclerView2"
+                    android:id="@+id/rv_schedule_time"
                     setGridAdapter="@{vm.adapter}"
                     setItemListener="@{vm.setItemListener}"
                     android:layout_width="match_parent"
@@ -72,11 +72,11 @@
                     app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView18"
+                    app:layout_constraintTop_toBottomOf="@+id/txt_choice_timing"
                     app:spanCount="2" />
 
                 <TextView
-                    android:id="@+id/textView19"
+                    android:id="@+id/txt_class_motive"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/_16sdp"
@@ -89,20 +89,20 @@
                     android:textSize="@dimen/_12ssp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/recyclerView2" />
+                    app:layout_constraintTop_toBottomOf="@+id/rv_schedule_time" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
 
         </ScrollView>
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/button2"
+            android:id="@+id/btn_will_attend_classes"
             setButtonBackground="@{vm.isButtonClickable()}"
             android:layout_width="0dp"
             android:layout_height="@dimen/_42sdp"
             android:layout_marginStart="@dimen/_9sdp"
             android:layout_marginEnd="@dimen/_9sdp"
-            android:layout_marginBottom="@dimen/_32sdp"
+            android:layout_marginBottom="40dp"
             android:background="@drawable/rounded_state_button_bg"
             android:ellipsize="end"
             android:enabled="false"
@@ -112,12 +112,13 @@
             android:onClick="@{vm::sendBatchSelected}"
             android:text="@string/live_classes_timing"
             android:textAllCaps="false"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
             android:textColor="@color/white"
             android:textSize="@dimen/_12ssp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
