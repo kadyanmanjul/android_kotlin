@@ -10,12 +10,11 @@ import com.joshtalks.joshskills.core.textColorSet
 import com.joshtalks.joshskills.databinding.ItemTimePickBinding
 import com.joshtalks.joshskills.ui.cohort_based_course.models.CohortItemModel
 
-class ScheduleAdapter : RecyclerView.Adapter<ScheduleAdapter.ViewHolder>() {
+class ScheduleAdapter( private val cohortItemModelList:ArrayList<CohortItemModel>) : RecyclerView.Adapter<ScheduleAdapter.ViewHolder>() {
 
     var itemClick: ((String) -> Unit)? = null
     var prevHolder: ViewHolder? = null
     private val context = AppObjectController.joshApplication
-    private val cohortItemModelList: ArrayList<CohortItemModel> = ArrayList()
 
     inner class ViewHolder(val binding: ItemTimePickBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -57,11 +56,5 @@ class ScheduleAdapter : RecyclerView.Adapter<ScheduleAdapter.ViewHolder>() {
 
     fun setClickListener(function: ((timeSlot: String) -> Unit)?) {
         itemClick = function
-    }
-
-    fun setData(cohortItemModelList: ArrayList<CohortItemModel>) {
-        this.cohortItemModelList.clear()
-        this.cohortItemModelList.addAll(cohortItemModelList)
-        notifyDataSetChanged()
     }
 }
