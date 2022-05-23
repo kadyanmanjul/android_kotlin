@@ -77,7 +77,11 @@ class FavoriteListActivity : BaseFppActivity() {
             when (it.what) {
                 FAV_LIST_SCREEN_BACK_PRESSED -> popBackStack()
                 FAV_CLICK_ON_PROFILE -> openProfileScreen(it.obj.toString(),it.arg1)
-                OPEN_CALL_SCREEN -> callScreenOpen(it.obj as Int)
+                OPEN_CALL_SCREEN ->{
+                    if (it.obj != null) {
+                        callScreenOpen(it.obj as Int)
+                    }
+                }
                 OPEN_RECENT_SCREEN -> openRecentScreen()
                 ENABLE_ACTION_MODE -> enableMode()
                 SET_TEXT_ON_ENABLE_ACTION_MODE -> setTextOnActionMode(it.obj.toString())
