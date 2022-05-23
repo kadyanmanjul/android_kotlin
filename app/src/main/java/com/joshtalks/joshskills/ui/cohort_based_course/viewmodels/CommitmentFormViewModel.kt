@@ -3,10 +3,13 @@ package com.joshtalks.joshskills.ui.cohort_based_course.viewmodels
 import android.os.Message
 import android.view.View
 import androidx.databinding.ObservableArrayList
+import android.widget.Toast
+import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.base.EventLiveData
+import com.joshtalks.joshskills.constants.CLOSE_ACTIVITY
 import com.joshtalks.joshskills.constants.OPEN_PROMISE_FRAGMENT
 import com.joshtalks.joshskills.constants.OPEN_SCHEDULE_FRAGMENT
 import com.joshtalks.joshskills.core.AppObjectController
@@ -63,6 +66,8 @@ class CommitmentFormViewModel : ViewModel() {
                     }
                 } catch (ex: Exception) {
                     ex.printStackTrace()
+                    showToast("Something Went Wrong, Please try again later!",Toast.LENGTH_LONG)
+                    sendEvent(CLOSE_ACTIVITY)
                 }
         }
     }
@@ -73,6 +78,8 @@ class CommitmentFormViewModel : ViewModel() {
                 AppObjectController.CbcNetworkService.postSelectedBatch(map)
             } catch (ex: Exception) {
                 ex.printStackTrace()
+                showToast("Something Went Wrong, Please try again later!",Toast.LENGTH_LONG)
+                sendEvent(CLOSE_ACTIVITY)
             }
         }
     }

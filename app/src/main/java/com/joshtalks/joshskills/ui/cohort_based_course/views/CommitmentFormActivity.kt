@@ -5,6 +5,7 @@ import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseActivity
+import com.joshtalks.joshskills.constants.CLOSE_ACTIVITY
 import com.joshtalks.joshskills.constants.OPEN_PROMISE_FRAGMENT
 import com.joshtalks.joshskills.constants.OPEN_SCHEDULE_FRAGMENT
 import com.joshtalks.joshskills.databinding.ActivityCommitmentFormBinding
@@ -34,6 +35,7 @@ class CommitmentFormActivity : BaseActivity() {
             when (it.what) {
                 OPEN_PROMISE_FRAGMENT -> replaceWithPromiseFragment()
                 OPEN_SCHEDULE_FRAGMENT -> replaceWithScheduleFragment()
+                CLOSE_ACTIVITY -> finish()
             }
         }
     }

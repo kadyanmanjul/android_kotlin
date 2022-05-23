@@ -21,14 +21,15 @@ fun AutoCompleteTextView.setTextAdapter(a: String) {
     this.setAdapter(arrayAdapter)
 }
 
-@BindingAdapter("setButtonBackground")
-fun MaterialButton.setBackgroundState(boolean: Boolean) {
+@BindingAdapter("setButtonBackground", "buttonText", requireAll = false)
+fun MaterialButton.setBackgroundState(boolean: Boolean,string: String? = "") {
     when (boolean) {
         true -> {
             this.isEnabled = true
             this.backgroundTintList = getColorStateList(context, R.color.colorPrimary)
             this.setTextColor(ContextCompat.getColor(context,R.color.white))
-            this.text = "Continue to course >"
+            if (string?.isEmpty()?.not() == true)
+                this.text = "Continue to course >"
         }
         false -> {
             this.isEnabled = false
