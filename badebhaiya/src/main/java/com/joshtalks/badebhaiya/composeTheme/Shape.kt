@@ -1,4 +1,4 @@
-package com.joshtalks.badebhaiya.theme
+package com.joshtalks.badebhaiya.composeTheme
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Shapes

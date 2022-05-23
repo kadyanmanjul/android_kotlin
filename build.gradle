@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        compose_version = '1.0.1'
+        compose_version = '1.2.0-beta02'
     }
     ext.kotlin_version = '1.5.31'
     ext.hilt_version = '2.38.1'

@@ -1,4 +1,4 @@
-package com.joshtalks.badebhaiya.theme
+package com.joshtalks.badebhaiya.composeTheme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
