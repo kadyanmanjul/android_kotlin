@@ -93,11 +93,11 @@ class GroupChatViewModel : BaseViewModel() {
     }
 
     fun setChatAdapterType() {
-        chatAdapter.setType(groupType.get()?: OPENED_GROUP)
+        chatAdapter.setType(groupType.get() ?: OPENED_GROUP)
     }
 
     val openMemberPopup: (GroupMember, View) -> Unit = { it, view ->
-        if (it.mentorID != Mentor.getInstance().getId()) {
+        if (it.mentorID != Mentor.getInstance().getId() && !(groupType.get().equals(COHORT_GROUP) && adminId == it.mentorID)) {
             val builder = AlertDialog.Builder(view.context)
             var memberOptions = arrayOf("View Profile")
 
@@ -130,7 +130,7 @@ class GroupChatViewModel : BaseViewModel() {
         if (isCallOngoing(R.string.call_engage_initiate_call_message))
             return
 
-        if (groupType.get() != DM_CHAT){
+        if (groupType.get() != DM_CHAT) {
             val memberText = groupSubHeader.get() ?: "0"
             val memberCount = getMemberCount(memberText)
             if (memberCount == 0) {
@@ -343,7 +343,7 @@ class GroupChatViewModel : BaseViewModel() {
             .push()
     }
 
-    fun onRemoveFpp(){
+    fun onRemoveFpp() {
         message.what = REMOVE_DM_FPP
         singleLiveEvent.value = message
     }
@@ -544,9 +544,9 @@ class GroupChatViewModel : BaseViewModel() {
             "JOIN GROUP"
     }
 
-    fun removeFpp(uId: Int){
+    fun removeFpp(uId: Int) {
         try {
-            viewModelScope.launch (Dispatchers.IO){
+            viewModelScope.launch(Dispatchers.IO) {
                 repository.removeUserFormFppLit(uId)
                 withContext(Dispatchers.Main) {
                     message.what = REMOVE_GROUP_AND_CLOSE
@@ -555,6 +555,6 @@ class GroupChatViewModel : BaseViewModel() {
                     repository.startChatEventListener()
                 }
             }
-        }catch (ex:Exception){}
+        } catch (ex: Exception) { }
     }
 }

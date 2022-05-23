@@ -336,9 +336,9 @@ class AppObjectController {
                 conversationRoomsNetworkService =
                     retrofit.create(ConversationRoomsNetworkService::class.java)
                 abTestNetworkService = retrofit.create(ABTestNetworkService::class.java)
-
-                CbcNetworkService = retrofit.create(CbcNetwork::class.java)
+                groupsNetworkService = retrofit.create(GroupApiService::class.java)
                 groupsAnalyticsNetworkService = retrofit.create(GroupsAnalyticsService::class.java)
+                CbcNetworkService = retrofit.create(CbcNetwork::class.java)
 
                 val p2pRetrofitBuilder = Retrofit.Builder()
                     .baseUrl(BuildConfig.BASE_URL)
