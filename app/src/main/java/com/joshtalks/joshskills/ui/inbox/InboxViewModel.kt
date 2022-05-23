@@ -160,11 +160,23 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 GroupRepository().fireTimeTokenAPI()
-            } catch (ex:Exception){
+            } catch (ex: Exception) {
                 LogException.catchException(ex)
             }
         }
     }
 
-
+    fun handleBroadCastEvents() {
+        CoroutineScope(Dispatchers.IO).launch {
+            for (event in appDatabase.broadcastDao().getAllEvents()) {
+                try {
+                    val res = AppObjectController.commonNetworkService.saveBroadcastEvent(event)
+                    if (res.isSuccessful)
+                        appDatabase.broadcastDao().deleteEvent(event.id)
+                } catch (ex: Exception) {
+                    LogException.catchException(ex)
+                }
+            }
+        }
+    }
 }

@@ -69,9 +69,9 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
         VoipAnalyticsEntity::class, GroupsAnalyticsEntity::class, GroupChatAnalyticsEntity::class,
         GroupsItem::class, TimeTokenRequest::class, ChatItem::class, GameAnalyticsEntity::class,
         ABTestCampaignData::class, GroupMember::class, SpecialPractice::class, ReadingVideo::class, CompressedVideo::class,
-        PhonebookContact::class,
+        PhonebookContact::class, BroadCastEvent::class
     ],
-    version = 48,
+    version = 49,
     exportSchema = true
 )
 @TypeConverters(
@@ -166,7 +166,8 @@ abstract class AppDatabase : RoomDatabase() {
                                 MIGRATION_44_45,
                                 MIGRATION_45_46,
                                 MIGRATION_46_47,
-                                MIGRATION_47_48
+                                MIGRATION_47_48,
+                                MIGRATION_48_49
                             )
                             .fallbackToDestructiveMigration()
                             .addCallback(sRoomDatabaseCallback)
@@ -580,6 +581,12 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        private val MIGRATION_48_49: Migration = object :Migration(48, 49){
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("CREATE TABLE IF NOT EXISTS `broadcast_events` (`id` INTEGER NOT NULL PRIMARY KEY, `mentorId` TEXT NOT NULL, `eventName` TEXT)")
+            }
+        }
+
         fun clearDatabase() {
             INSTANCE?.clearAllTables()
         }
@@ -627,6 +634,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun abCampaignDao(): ABTestCampaignDao
     abstract fun groupMemberDao(): GroupMemberDao
     abstract fun phonebookDao(): PhonebookDao
+    abstract fun broadcastDao(): BroadCastDao
 }
 
 class MessageTypeConverters {

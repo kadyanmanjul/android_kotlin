@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.repository.service
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.joshtalks.joshskills.engage_notification.AppUsageModel
+import com.joshtalks.joshskills.repository.local.entity.BroadCastEvent
 import com.joshtalks.joshskills.repository.local.model.GaIDMentorModel
 import com.joshtalks.joshskills.repository.local.model.RequestRegisterGAId
 import com.joshtalks.joshskills.repository.local.model.nps.NPSQuestionModel
@@ -391,5 +392,5 @@ interface CommonNetworkService {
     suspend fun uploadContacts(@Body params: HashMap<String, Any>): Response<Any>
 
     @POST("$DIR/impression/track_broadcast_event/")
-    suspend fun saveBroadcastEvent(@Body params: Map<String, String?>): Response<Unit>
+    suspend fun saveBroadcastEvent(@Body params: BroadCastEvent): Response<Unit>
 }
