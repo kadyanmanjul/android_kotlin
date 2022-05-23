@@ -99,7 +99,11 @@ class FavoriteListActivity : BaseFppActivity() {
     }
 
     private fun popBackStack() {
-        onBackPressed()
+        if (supportFragmentManager.backStackEntryCount>0) {
+            supportFragmentManager.popBackStack()
+        } else {
+            onBackPressed()
+        }
     }
 
     override fun onRestart() {
