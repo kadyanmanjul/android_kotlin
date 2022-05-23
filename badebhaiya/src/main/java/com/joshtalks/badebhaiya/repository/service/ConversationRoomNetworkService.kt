@@ -1,9 +1,6 @@
 package com.joshtalks.badebhaiya.repository.service
 
-import com.joshtalks.badebhaiya.feed.model.RoomListResponse
-import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
-import com.joshtalks.badebhaiya.feed.model.SearchRoomsResponse
-import com.joshtalks.badebhaiya.feed.model.SearchRoomsResponseList
+import com.joshtalks.badebhaiya.feed.model.*
 import com.joshtalks.badebhaiya.profile.request.ReminderRequest
 import com.joshtalks.badebhaiya.profile.request.DeleteReminderRequest
 import com.joshtalks.badebhaiya.repository.model.ApiResponse
@@ -42,5 +39,8 @@ interface ConversationRoomNetworkService {
 
     @POST("$DIR/conversation_room/search/")
     suspend fun searchRoom(@Body parems:Map<String,String>):Response<SearchRoomsResponseList>
+
+    @POST("$DIR/speakers_list")
+    suspend fun speakersList():Response<List<Users>>
 
 }

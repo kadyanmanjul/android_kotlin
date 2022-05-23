@@ -8,7 +8,7 @@ apply plugin: 'dagger.hilt.android.plugin'
 
 def majorVersion = 0
 def minorVersion = 0
-def patchVersion = 8
+def patchVersion = 15
 
 android {
     compileSdk 32
@@ -44,6 +44,7 @@ android {
 
     buildFeatures {
         dataBinding = true
+        compose true
     }
 
     configurations.all {
@@ -127,6 +128,14 @@ android {
         maxProcessCount 8
         preDexLibraries true
     }
+    composeOptions {
+        kotlinCompilerExtensionVersion compose_version
+    }
+    packagingOptions {
+        resources {
+            excludes += '/META-INF/{AL2.0,LGPL2.1}'
+        }
+    }
 }
 
 dependencies {
@@ -143,6 +152,11 @@ dependencies {
     implementation 'com.google.firebase:firebase-config-ktx:21.0.2'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation "androidx.compose.ui:ui:$compose_version"
+    implementation "androidx.compose.material:material:$compose_version"
+    implementation "androidx.compose.ui:ui-tooling-preview:$compose_version"
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.1'
+    implementation 'androidx.activity:activity-compose:1.3.1'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
@@ -178,6 +192,7 @@ dependencies {
     implementation 'androidx.preference:preference-ktx:1.1.1'
     implementation 'com.facebook.stetho:stetho:1.6.0'
     implementation 'com.facebook.stetho:stetho-okhttp3:1.6.0'
+    androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
     debugImplementation 'com.itkacher.okhttpprofiler:okhttpprofiler:1.0.7'
 
     //Timber
@@ -187,6 +202,7 @@ dependencies {
     implementation('com.github.bumptech.glide:glide:4.12.0') {
         exclude group: "com.android.support"
     }
+    debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
     kapt 'com.github.bumptech.glide:compiler:4.12.0'
     implementation 'jp.wasabeef:glide-transformations:4.3.0'
     implementation 'com.zlc.glide:webpdecoder:1.6.4.9.0'
@@ -210,6 +226,9 @@ dependencies {
     // reactive network
     implementation 'com.github.pwittchen:reactivenetwork-rx2:3.0.8'
     implementation 'com.pnikosis:materialish-progress:1.7'
+
+    //paging 3
+    implementation "androidx.paging:paging-runtime-ktx:3.0.1"
 
     // dagger hilt
     implementation "com.google.dagger:hilt-android:$hilt_version"
