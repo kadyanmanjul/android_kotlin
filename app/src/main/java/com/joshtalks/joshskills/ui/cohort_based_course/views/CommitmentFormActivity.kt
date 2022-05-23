@@ -38,8 +38,10 @@ class CommitmentFormActivity : BaseActivity() {
             when (it.what) {
                 OPEN_PROMISE_FRAGMENT -> replaceWithPromiseFragment()
                 OPEN_SCHEDULE_FRAGMENT -> replaceWithScheduleFragment()
-                START_CONVERSATION_ACTIVITY -> {ConversationActivity.startConversionActivity(this,
-                    intent.extras?.get("inboxEntity") as InboxEntity)}
+                START_CONVERSATION_ACTIVITY -> {
+                    ConversationActivity.startConversionActivity(this,
+                    intent.extras?.get("inboxEntity") as InboxEntity)
+                }
                 CLOSE_ACTIVITY -> finish()
             }
         }

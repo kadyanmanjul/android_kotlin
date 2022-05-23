@@ -481,7 +481,7 @@ class ConversationActivity :
     }
 
     private fun showCohortBaseCourse() {
-        if (!PrefManager.getBoolValue(HAS_SEEN_COHORT_BASE_COURSE_TOOLTIP)) {
+        if (!PrefManager.getBoolValue(HAS_SEEN_COHORT_BASE_COURSE_TOOLTIP) && inboxEntity.isCourseBought) {
             conversationBinding.cbcTooltip.visibility = VISIBLE
             conversationBinding.overlayLayout.visibility = VISIBLE
 
