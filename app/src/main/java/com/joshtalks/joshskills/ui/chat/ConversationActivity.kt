@@ -662,7 +662,12 @@ class ConversationActivity :
         }
 
         var phoneNumber = User.getInstance().phoneNumber
-        phoneNumber = phoneNumber?.substring(3)
+        if(!phoneNumber.isNullOrEmpty()) {
+            if(phoneNumber[0]=='+' && phoneNumber[1]=='9' && phoneNumber[2]=='1')
+            phoneNumber = phoneNumber?.substring(3)
+            else if(phoneNumber[0]=='+' && phoneNumber[1]=='8' && phoneNumber[2]=='8' && phoneNumber[3]=='0')
+                phoneNumber = phoneNumber?.substring(4)
+        }
         val email = User.getInstance().email
         if(email.isNullOrEmpty() && phoneNumber.isNullOrEmpty()) {
             showToast(getString(R.string.course_restart_fail))
