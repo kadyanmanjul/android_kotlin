@@ -62,8 +62,8 @@
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rv_schedule_time"
-                    setGridAdapter="@{vm.adapter}"
-                    setItemListener="@{vm.setItemListener}"
+                    setGridAdapter="@{vm.cohortBatchList}"
+                    setItemListener="@{vm.selectSlot}"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/_24sdp"
@@ -97,7 +97,7 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_will_attend_classes"
-            setButtonBackground="@{vm.isButtonClickable()}"
+            setButtonBackground='@{vm.selectedSlot.equals("") ? false : true}'
             android:layout_width="0dp"
             android:layout_height="@dimen/_42sdp"
             android:layout_marginStart="@dimen/_9sdp"

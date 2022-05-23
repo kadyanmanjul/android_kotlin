@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.ui.cohort_based_course.viewmodels
 
 import android.os.Message
 import android.view.View
+import androidx.databinding.ObservableArrayList
 import android.widget.Toast
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
@@ -14,7 +15,7 @@ import com.joshtalks.joshskills.constants.OPEN_SCHEDULE_FRAGMENT
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.showToast
-import com.joshtalks.joshskills.ui.cohort_based_course.adapters.ScheduleAdapter
+import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.cohort_based_course.models.CohortItemModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -24,18 +25,16 @@ private const val TAG = "CommitmentFormViewModel"
 
 class CommitmentFormViewModel : ViewModel() {
 
-    private var singleLiveEvent = EventLiveData
+    private val singleLiveEvent = EventLiveData
     private var reminder: String = "Yes"
     val shapath = ObservableField("Yes")
-    private var selectedSlot = ObservableField("")
-    var isButtonClickable = ObservableBoolean(false)
-    var cohortBatchList: ArrayList<CohortItemModel> = ArrayList()
-    var userName = ObservableField(EMPTY)
-    val adapter = ScheduleAdapter()
-
+    val selectedSlot = ObservableField("")
+    val cohortBatchList = ObservableArrayList<CohortItemModel>()
+    val userName = ObservableField(EMPTY)
 
     init {
         getCohortBatches()
+        getUsername()
     }
 
     fun openPromiseFragment(v: View) {
@@ -58,15 +57,12 @@ class CommitmentFormViewModel : ViewModel() {
     }
 
     fun getCohortBatches() {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
                 try {
-                    cohortBatchList =
-                        AppObjectController.CbcNetworkService.getCohortBatches()
-                            .body() as ArrayList<CohortItemModel>
-
+                    val resp = AppObjectController.CbcNetworkService.getCohortBatches()
+                        .body() as ArrayList<CohortItemModel>
                     withContext(Dispatchers.Main) {
-                        adapter.setData(cohortBatchList)
+                        cohortBatchList.addAll(resp)
                     }
                     //throw Exception("Problem!")    to test the try catch block
 
@@ -75,12 +71,11 @@ class CommitmentFormViewModel : ViewModel() {
                     showToast("Something Went Wrong, Please try again later!",Toast.LENGTH_LONG)
                     sendEvent(CLOSE_ACTIVITY)
                 }
-            }
         }
     }
 
     fun postSelectedBatch(map: HashMap<String, Any>) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
                 AppObjectController.CbcNetworkService.postSelectedBatch(map)
             } catch (ex: Exception) {
@@ -110,8 +105,11 @@ class CommitmentFormViewModel : ViewModel() {
         reminder = selection
     }
 
-    val setItemListener: (item: String) -> Unit = {
+    val selectSlot: (item: String) -> Unit = {
         selectedSlot.set(it)
-        isButtonClickable.set(true)
+    }
+
+    fun getUsername(){
+        userName.set(User.getInstance().firstName ?: EMPTY)
     }
 }

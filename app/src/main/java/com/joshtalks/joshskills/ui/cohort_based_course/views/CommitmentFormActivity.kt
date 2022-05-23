@@ -8,9 +8,7 @@ import com.joshtalks.joshskills.base.BaseActivity
 import com.joshtalks.joshskills.constants.CLOSE_ACTIVITY
 import com.joshtalks.joshskills.constants.OPEN_PROMISE_FRAGMENT
 import com.joshtalks.joshskills.constants.OPEN_SCHEDULE_FRAGMENT
-import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.databinding.ActivityCommitmentFormBinding
-import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.cohort_based_course.viewmodels.CommitmentFormViewModel
 
 
@@ -49,7 +47,6 @@ class CommitmentFormActivity : BaseActivity() {
     }
 
     private fun replaceWithPromiseFragment() {
-        vm.userName.set(User.getInstance().firstName ?: EMPTY)
         supportFragmentManager.commit {
             replace(R.id.commitment_form_container, PromiseFragment(), "PromiseFragment")
         }
