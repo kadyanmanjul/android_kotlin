@@ -110,6 +110,7 @@ import retrofit2.HttpException
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import timber.log.Timber
+import java.io.IOException
 
 private const val JOSH_SKILLS_CACHE = "joshskills-cache"
 private const val READ_TIMEOUT = 30L
