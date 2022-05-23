@@ -186,6 +186,7 @@ class ConversationActivity :
         private var unlockOverlayJob: Job? = null
 
         fun startConversionActivity(activity: Activity, inboxEntity: InboxEntity) {
+            Log.e("Mihir", "startConversionActivity: $inboxEntity")
             val intent = Intent(activity, ConversationActivity::class.java).apply {
                 putExtra(CHAT_ROOM_OBJECT, inboxEntity)
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)

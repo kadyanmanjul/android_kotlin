@@ -423,6 +423,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                 ConversationActivity.startConversionActivity(this, inboxEntity)
             } else {
                 val intent = Intent(this, CommitmentFormActivity::class.java)
+                intent.putExtra("inboxEntity",inboxEntity)
                 startActivity(intent)
             }
         }

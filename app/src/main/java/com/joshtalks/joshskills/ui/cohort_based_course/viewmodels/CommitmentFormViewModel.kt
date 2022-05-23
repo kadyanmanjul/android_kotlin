@@ -12,11 +12,14 @@ import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.constants.CLOSE_ACTIVITY
 import com.joshtalks.joshskills.constants.OPEN_PROMISE_FRAGMENT
 import com.joshtalks.joshskills.constants.OPEN_SCHEDULE_FRAGMENT
+import com.joshtalks.joshskills.constants.START_CONVERSATION_ACTIVITY
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.model.User
+import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.cohort_based_course.models.CohortItemModel
+import com.joshtalks.joshskills.ui.inbox.OPEN_CONVERSATION_ACTIVITY
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -77,7 +80,10 @@ class CommitmentFormViewModel : ViewModel() {
     fun postSelectedBatch(map: HashMap<String, Any>) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                AppObjectController.CbcNetworkService.postSelectedBatch(map)
+                val resp = AppObjectController.CbcNetworkService.postSelectedBatch(map)
+                if(resp.isSuccessful){
+                    sendEvent(START_CONVERSATION_ACTIVITY)
+                }
             } catch (ex: Exception) {
                 ex.printStackTrace()
                 showToast("Something Went Wrong, Please try again later!",Toast.LENGTH_LONG)

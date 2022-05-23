@@ -8,7 +8,10 @@ import com.joshtalks.joshskills.base.BaseActivity
 import com.joshtalks.joshskills.constants.CLOSE_ACTIVITY
 import com.joshtalks.joshskills.constants.OPEN_PROMISE_FRAGMENT
 import com.joshtalks.joshskills.constants.OPEN_SCHEDULE_FRAGMENT
+import com.joshtalks.joshskills.constants.START_CONVERSATION_ACTIVITY
 import com.joshtalks.joshskills.databinding.ActivityCommitmentFormBinding
+import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
+import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.ui.cohort_based_course.viewmodels.CommitmentFormViewModel
 
 
@@ -35,6 +38,8 @@ class CommitmentFormActivity : BaseActivity() {
             when (it.what) {
                 OPEN_PROMISE_FRAGMENT -> replaceWithPromiseFragment()
                 OPEN_SCHEDULE_FRAGMENT -> replaceWithScheduleFragment()
+                START_CONVERSATION_ACTIVITY -> {ConversationActivity.startConversionActivity(this,
+                    intent.extras?.get("inboxEntity") as InboxEntity)}
                 CLOSE_ACTIVITY -> finish()
             }
         }
