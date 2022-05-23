@@ -43,13 +43,15 @@
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="Lesson 0 - Course Introduction" />
 
-            <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+            <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/text_message_body"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
                 android:layout_marginTop="@dimen/_2sdp"
+                android:autoLink="all"
                 android:gravity="center_vertical|start"
+                android:linksClickable="true"
                 android:text="@{itemData.message}"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Title_Message"
                 android:textColor="@color/black"
