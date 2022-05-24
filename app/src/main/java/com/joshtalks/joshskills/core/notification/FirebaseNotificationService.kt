@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.core.notification
 
-import android.app.*
 import android.app.ActivityManager
 import android.app.Notification
 import android.app.NotificationChannel
@@ -40,6 +39,7 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.COURSE_ID
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.IS_CONVERSATION_ROOM_ACTIVE_FOR_USER
+import com.joshtalks.joshskills.core.JoshApplication.Companion.isAppVisible
 import com.joshtalks.joshskills.core.JoshSkillExecutors
 import com.joshtalks.joshskills.core.ONBOARDING_STAGE
 import com.joshtalks.joshskills.core.OnBoardingStage
@@ -215,6 +215,36 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         }
     }
 
+    override fun handleIntent(intent: Intent) {
+        if (!isAppVisible) {
+            val data = mapOf(
+                Pair("action", intent.extras?.getString("action")),
+                Pair("action_data", intent.extras?.getString("action_data")),
+                Pair("id", intent.extras?.getString("id")),
+                Pair("content_title", intent.extras?.getString("gcm.notification.title")),
+                Pair("content_text", intent.extras?.getString("gcm.notification.body"))
+            )
+
+            val notificationTypeToken: Type = object : TypeToken<NotificationObject>() {}.type
+            val nc: NotificationObject = AppObjectController.gsonMapper.fromJson(
+                AppObjectController.gsonMapper.toJson(data),
+                notificationTypeToken
+            )
+
+            CoroutineScope(Dispatchers.IO).launch {
+                val isFirstTimeNotification = NotificationAnalytics().addAnalytics(
+                    notificationId = nc.id.toString(),
+                    mEvent = NotificationAnalytics.Action.RECEIVED,
+                    channel = NotificationAnalytics.Channel.FCM
+                )
+                if (isFirstTimeNotification)
+                    sendNotification(nc)
+            }
+            Timber.tag(FirebaseNotificationService::class.java.name).e("intent : ${intent.extras}")
+        } else
+            super.handleIntent(intent)
+    }
+
     private fun processRemoteMessage(remoteData: RemoteMessage, channel: NotificationAnalytics.Channel) {
         if (remoteData.data.containsKey("nType")) {
             if(remoteData.data["nType"] == "CR" && application.getVoipState() != State.IDLE)
@@ -242,17 +272,15 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             )
             nc.contentTitle = remoteData.notification?.title ?: remoteData.data["title"]
             nc.contentText = remoteData.notification?.body ?: remoteData.data["body"]
-            nc.id = nc.notificationId.toString()
+
             CoroutineScope(Dispatchers.IO).launch {
                 val isFirstTimeNotification = NotificationAnalytics().addAnalytics(
-                    notificationId = nc.notificationId.toString(),
+                    notificationId = nc.id.toString(),
                     mEvent = NotificationAnalytics.Action.RECEIVED,
                     channel = channel
                 )
-                if (isFirstTimeNotification) {
+                if (isFirstTimeNotification)
                     sendNotification(nc)
-//                    pushToDatabase(nc, channel = channel)
-                }
             }
         }
     }
@@ -1097,7 +1125,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         return text.textDrawableBitmap(bgColor = color)!!
     }
 
-    fun pushToDatabase(
+/*    fun pushToDatabase(
         nc: NotificationObject,
         channel: NotificationAnalytics.Channel
     ) {
@@ -1109,7 +1137,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             )
         }
     }
-
+*/
     public fun sendFirestoreNotificationNew(nc: NotificationObject) {
         sendNotification(nc)
     }
