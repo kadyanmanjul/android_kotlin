@@ -10,7 +10,7 @@ import retrofit2.http.POST
 interface CbcNetwork {
 
     @GET("$DIR/course/cohort_batch/")
-    suspend fun getCohortBatches(): Response<CohortModel>
+    suspend fun getCohortBatches(): CohortModel
 
     @JvmSuppressWildcards
     @POST("$DIR/course/cohort_batch/")

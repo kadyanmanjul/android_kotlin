@@ -60,18 +60,17 @@ class CommitmentFormViewModel : ViewModel() {
 
     fun getCohortBatches() {
         viewModelScope.launch(Dispatchers.IO) {
-                try {
-                    val resp = AppObjectController.CbcNetworkService.getCohortBatches().body()
-                    withContext(Dispatchers.Main) {
-                        cohortBatchList.addAll(resp?.slots as ArrayList<CohortItemModel>)
-                    }
-                    //throw Exception("Problem!")    to test the try catch block
-
-                } catch (ex: Exception) {
-                    ex.printStackTrace()
-                    showToast("Something Went Wrong, Please try again later!",Toast.LENGTH_LONG)
-                    sendEvent(CLOSE_ACTIVITY)
+            try {
+                val resp = AppObjectController.CbcNetworkService.getCohortBatches()
+                withContext(Dispatchers.Main) {
+                    cohortBatchList.addAll(resp.slots)
                 }
+
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+                showToast("Something Went Wrong, Please try again later!", Toast.LENGTH_LONG)
+                sendEvent(CLOSE_ACTIVITY)
+            }
         }
     }
 
@@ -79,12 +78,12 @@ class CommitmentFormViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val resp = AppObjectController.CbcNetworkService.postSelectedBatch(map)
-                if(resp.isSuccessful){
+                if (resp.isSuccessful) {
                     sendEvent(START_CONVERSATION_ACTIVITY)
                 }
             } catch (ex: Exception) {
                 ex.printStackTrace()
-                showToast("Something Went Wrong, Please try again later!",Toast.LENGTH_LONG)
+                showToast("Something Went Wrong, Please try again later!", Toast.LENGTH_LONG)
                 sendEvent(CLOSE_ACTIVITY)
             }
         }
@@ -113,7 +112,7 @@ class CommitmentFormViewModel : ViewModel() {
         selectedSlot.set(it)
     }
 
-    fun getUsername(){
+    fun getUsername() {
         userName.set(User.getInstance().firstName ?: EMPTY)
     }
 }
