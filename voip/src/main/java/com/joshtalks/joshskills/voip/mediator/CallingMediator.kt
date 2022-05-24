@@ -307,11 +307,6 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
 
                                         }
                                         ServerConstants.DISCONNECTED -> {
-                                            CallAnalytics.addAnalytics(
-                                                event = EventName.DISCONNECTED_BY_REMOTE_USER,
-                                                agoraCallId = callContext?.channelData?.getCallingId().toString(),
-                                                agoraMentorId = callContext?.channelData?.getAgoraUid().toString()
-                                            )
                                             val envelope = Envelope(Event.REMOTE_USER_DISCONNECTED_MESSAGE)
                                             stateChannel.send(envelope)
                                         }
@@ -459,11 +454,6 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                                             }
                                             // Remote User Disconnected
                                             ServerConstants.DISCONNECTED -> {
-                                                CallAnalytics.addAnalytics(
-                                                    event = EventName.DISCONNECTED_BY_REMOTE_USER,
-                                                    agoraCallId = callContext?.channelData?.getCallingId().toString(),
-                                                    agoraMentorId = callContext?.channelData?.getAgoraUid().toString()
-                                                )
                                                 val envelope = Envelope(Event.REMOTE_USER_DISCONNECTED_MESSAGE)
                                                 stateChannel.send(envelope)
                                             }

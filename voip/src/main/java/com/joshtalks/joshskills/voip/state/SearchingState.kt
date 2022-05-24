@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.voip.state
 
 import android.util.Log
 import com.joshtalks.joshskills.voip.Utils
+import com.joshtalks.joshskills.voip.Utils.Companion.ignoreException
 import com.joshtalks.joshskills.voip.communication.constants.ServerConstants
 import com.joshtalks.joshskills.voip.communication.model.ChannelData
 import com.joshtalks.joshskills.voip.communication.model.NetworkAction
@@ -19,6 +20,8 @@ import com.joshtalks.joshskills.voip.mediator.PeerToPeerCalling
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
 import kotlinx.coroutines.*
+import kotlinx.coroutines.sync.Mutex
+import okhttp3.internal.ignoreIoExceptions
 import retrofit2.HttpException
 import java.io.IOException
 import java.net.SocketTimeoutException
@@ -43,13 +46,13 @@ class SearchingState(val context: CallContext) : VoipState {
                 for (i in 1..12) {
                     delay(PER_USER_TIMEOUT_IN_MILLIS)
                     ensureActive()
-                    context.sendMessageToServer(timeout)
+                    ignoreException { context.sendMessageToServer(timeout) }
                 }
                 delay(PER_USER_TIMEOUT_IN_MILLIS)
                 disconnectNoUserFound()
                 cleanUpState()
             }
-            catch (e : Exception){
+            catch (e : Exception) {
                 if(e is CancellationException)
                     throw e
                 e.printStackTrace()
@@ -109,13 +112,49 @@ class SearchingState(val context: CallContext) : VoipState {
     override fun disconnect() {
         scope.launch {
             context.closeCallScreen()
-            backPress()
+            sendDataToServer()
         }
     }
 
     // TODO: What will happen if user pickup the call and press back button
     override fun backPress() {
         Log.d(TAG, "backPress: ")
+        CallAnalytics.addAnalytics(
+            event = EventName.BACK_PRESSED,
+            agoraCallId = "-1",
+            agoraMentorId = "-1",
+            extra = TAG
+        )
+        CallAnalytics.addAnalytics(
+            event = EventName.DISCONNECTED_BY_BACKPRESS,
+            agoraCallId = "-1",
+            agoraMentorId = "-1",
+            extra = TAG
+        )
+        sendDataToServer()
+    }
+
+    override fun onError() {
+        CallAnalytics.addAnalytics(
+            event = EventName.ON_ERROR,
+            agoraMentorId = "-1",
+            extra = TAG
+        )
+        scope.launch {
+            try{
+                context.closeCallScreen()
+                sendDataToServer()
+            }
+            catch (e : Exception){
+                if(e is CancellationException)
+                    throw e
+                e.printStackTrace()
+            }
+
+        }
+    }
+
+    private fun sendDataToServer() {
         if (context.direction == CallDirection.OUTGOING)
             timeoutTimer.cancel()
         val networkAction = NetworkAction(
@@ -125,28 +164,9 @@ class SearchingState(val context: CallContext) : VoipState {
             duration = 0,
             address = Utils.uuid ?: ""
         )
-        CallAnalytics.addAnalytics(
-            event = EventName.DISCONNECTED_BY_BACKPRESS,
-            agoraCallId = "-1",
-            agoraMentorId = "-1"
-        )
         context.sendMessageToServer(networkAction)
-        context.destroyContext()
-    }
-
-    override fun onError() {
-        scope.launch {
-            try{
-                context.closeCallScreen()
-                backPress()
-            }
-            catch (e : Exception){
-                if(e is CancellationException)
-                    throw e
-                e.printStackTrace()
-            }
-
-        }
+        context.closePipe()
+        onDestroy()
     }
 
     private fun observe() {
@@ -186,10 +206,17 @@ class SearchingState(val context: CallContext) : VoipState {
                             Log.d(TAG, "Received : ${event.type} switched to ${context.state}")
                             break@loop
                         }
-                        SYNC_UI_STATE -> {
-
+                        SYNC_UI_STATE -> {}
+                        else -> {
+                            val msg = "In $TAG but received ${event.type} expected $RECEIVED_CHANNEL_DATA"
+                            CallAnalytics.addAnalytics(
+                                event = EventName.ILLEGAL_EVENT_RECEIVED,
+                                agoraCallId = "-1",
+                                agoraMentorId = "-1",
+                                extra = msg
+                            )
+                            throw IllegalEventException(msg)
                         }
-                        else -> throw IllegalEventException("In $TAG but received ${event.type} expected $RECEIVED_CHANNEL_DATA")
                     }
                 }
                 scope.cancel()
@@ -220,7 +247,9 @@ class SearchingState(val context: CallContext) : VoipState {
         scope.launch {
             try{
                 context.closeCallScreen()
-                context.destroyContext()
+                context.closeCallScreen()
+                context.closePipe()
+                onDestroy()
             }
             catch (e : Exception){
                 if(e is CancellationException)
@@ -231,4 +260,3 @@ class SearchingState(val context: CallContext) : VoipState {
         }
     }
 }
-

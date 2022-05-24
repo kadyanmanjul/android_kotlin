@@ -206,7 +206,9 @@ class CallFragment : BaseFragment() , SensorEventListener {
 
     private fun setCurrentCallState() {
         if(isFragmentRestarted) {
-            if((PrefManager.getVoipState() == State.JOINED || PrefManager.getVoipState() == State.CONNECTED).not())
+            if(vm.source == FROM_INCOMING_CALL && (PrefManager.getVoipState() == State.SEARCHING || PrefManager.getVoipState() == State.JOINING))
+                return
+            else if((PrefManager.getVoipState() == State.JOINED || PrefManager.getVoipState() == State.CONNECTED).not())
                 requireActivity().finish()
         } else
             isFragmentRestarted = true
