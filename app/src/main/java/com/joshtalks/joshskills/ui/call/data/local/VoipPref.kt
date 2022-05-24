@@ -20,7 +20,6 @@ object VoipPref {
         val coroutineExceptionHandler = CoroutineExceptionHandler { _, e ->
             e.printStackTrace()
         }
-        val scope = CoroutineScope(Dispatchers.IO + coroutineExceptionHandler)
         val mutex = Mutex(false)
         var isListenerActivated = false
 
@@ -79,7 +78,7 @@ object VoipPref {
 
         // TODO: These function shouldn't be here
         private fun showDialogBox(totalSecond: Long) {
-                    scope.launch {
+            CoroutineScope(Dispatchers.IO + coroutineExceptionHandler).launch {
                         delay(500)
                         val currentActivity = ActivityLifecycleCallback.currentActivity
                         if (currentActivity != null) {

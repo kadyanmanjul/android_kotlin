@@ -75,13 +75,13 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
         binding.howCallTxt.text=getString(R.string.how_was_your_call_name,callerName)
         binding.callDurationText.text=getString(R.string.you_spoke_for_minutes,callDuration.toString())
         binding.block.text=getString(R.string.block_caller,callerName)
-        if(PrefManager.getBoolValue(IS_FREE_TRIAL)) {
+        if(PrefManager.getBoolValue(IS_COURSE_BOUGHT).not()) {
             binding.cross.visibility = VISIBLE
         }
         else {
             binding.cross.visibility = GONE
         }
-            binding.cImage.setImage(callerProfileUrl)
+            binding.cImage.setImage(VoipPref.getLastProfileImage())
 
     }
     private fun addListner() {

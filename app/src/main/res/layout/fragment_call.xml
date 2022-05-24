@@ -87,8 +87,10 @@
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/occupation_future_goals"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/_10sdp"
+            android:layout_marginRight="@dimen/_10sdp"
             android:gravity="center"
             android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
             android:textColor="@color/white"
