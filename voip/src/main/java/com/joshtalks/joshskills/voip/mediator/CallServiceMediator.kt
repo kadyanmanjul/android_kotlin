@@ -32,6 +32,7 @@ internal interface CallServiceMediator {
 enum class UserAction {
     BACK_PRESS,
     DISCONNECT,
+    RED_BUTTON_PRESSED,
     MUTE,
     UNMUTE,
     HOLD,

@@ -213,7 +213,8 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
         CallAnalytics.addAnalytics(
             event = EventName.DISCONNECTED_BY_RED_BUTTON,
             agoraCallId = PrefManager.getAgraCallId().toString(),
-            agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
+            agoraMentorId = PrefManager.getLocalUserAgoraId().toString(),
+            extra = PrefManager.getVoipState().name
         )
         disconnect()
     }

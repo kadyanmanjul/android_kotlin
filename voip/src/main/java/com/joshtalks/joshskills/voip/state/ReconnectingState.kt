@@ -11,6 +11,8 @@ import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.inSeconds
 import com.joshtalks.joshskills.voip.updateLastCallDetails
+import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
+import com.joshtalks.joshskills.voip.voipanalytics.EventName
 import kotlinx.coroutines.*
 
 // Some Temp. Network Problem
@@ -48,9 +50,21 @@ class ReconnectingState(val context: CallContext) : VoipState {
 
     override fun backPress() {
         Log.d(TAG, "backPress: ")
+        CallAnalytics.addAnalytics(
+            event = EventName.BACK_PRESSED,
+            agoraCallId = context.channelData.getCallingId().toString(),
+            agoraMentorId = context.channelData.getAgoraUid().toString(),
+            extra = TAG
+        )
     }
 
     override fun onError() {
+        CallAnalytics.addAnalytics(
+            event = EventName.ON_ERROR,
+            agoraCallId = context.channelData.getCallingId().toString(),
+            agoraMentorId = context.channelData.getAgoraUid().toString(),
+            extra = TAG
+        )
         disconnect()
     }
 
@@ -209,12 +223,43 @@ class ReconnectingState(val context: CallContext) : VoipState {
                             )
                             context.sendMessageToServer(userAction)
                         }
-                        REMOTE_USER_DISCONNECTED_AGORA, REMOTE_USER_DISCONNECTED_USER_LEFT, REMOTE_USER_DISCONNECTED_MESSAGE -> {
+                        REMOTE_USER_DISCONNECTED_AGORA -> {
                             Log.d(TAG, "observe: disconnect event ${event.type}")
                             ensureActive()
                             moveToLeavingState()
                         }
-                        else -> throw IllegalEventException("In $TAG but received ${event.type} expected $RECONNECTED")
+                        REMOTE_USER_DISCONNECTED_USER_LEFT -> {
+                            CallAnalytics.addAnalytics(
+                                event = EventName.DISCONNECTED_BY_AGORA_USER_OFFLINE,
+                                agoraCallId = context.channelData.getCallingId().toString(),
+                                agoraMentorId = context.channelData.getAgoraUid().toString(),
+                                extra = TAG
+                            )
+                            Log.d(TAG, "observe: disconnect event ${event.type}")
+                            ensureActive()
+                            moveToLeavingState()
+                        }
+                        REMOTE_USER_DISCONNECTED_MESSAGE -> {
+                            CallAnalytics.addAnalytics(
+                                event = EventName.DISCONNECTED_BY_REMOTE_USER,
+                                agoraCallId = context.channelData.getCallingId().toString(),
+                                agoraMentorId = context.channelData.getAgoraUid().toString(),
+                                extra = TAG
+                            )
+                            Log.d(TAG, "observe: disconnect event ${event.type}")
+                            ensureActive()
+                            moveToLeavingState()
+                        }
+                        else -> {
+                            val msg = "In $TAG but received ${event.type} expected $RECONNECTED"
+                            CallAnalytics.addAnalytics(
+                                event = EventName.ILLEGAL_EVENT_RECEIVED,
+                                agoraCallId = context.channelData.getCallingId().toString(),
+                                agoraMentorId = context.channelData.getAgoraUid().toString(),
+                                extra = msg
+                            )
+                            throw IllegalEventException(msg)
+                        }
                     }
 
                 }

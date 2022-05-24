@@ -11,6 +11,8 @@ import android.net.NetworkCapabilities
 import android.net.Uri
 import android.os.Build
 import android.util.Log
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.base.log.Feature
 import com.joshtalks.joshskills.base.model.ApiHeader
@@ -19,7 +21,12 @@ import com.joshtalks.joshskills.voip.data.CallingRemoteService
 import com.joshtalks.joshskills.base.log.JoshLog
 import com.joshtalks.joshskills.voip.constant.LEAVING
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -225,6 +232,27 @@ class Utils {
                 delay(1 * 60 * 1000L)
             }
             syncAnalytics()
+        }
+
+        inline fun Mutex.onMultipleBackPress(block : () -> Unit) {
+            if(this.isLocked) {
+                block()
+            } else {
+                Toast.makeText(context,"Please press back again", Toast.LENGTH_SHORT).show()
+                CoroutineScope(Dispatchers.Main).launch {
+                    this@onMultipleBackPress.withLock {
+                        delay(1000)
+                    }
+                }
+            }
+        }
+
+        inline fun ignoreException(block : ()->Unit) {
+            try {
+                block()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 }

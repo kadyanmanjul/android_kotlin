@@ -13,7 +13,9 @@ data class VoipAnalyticsEntity(
     @ColumnInfo(name = "agora_mentor")
     val agora_mentor: String,
     @ColumnInfo(name = "timestamp")
-    val timestamp: String
+    val timestamp: String,
+    @ColumnInfo(name = "extra")
+    val extra: String = ""
 ) {
     @PrimaryKey(autoGenerate = true)
     var id: Long = 0
