@@ -24,6 +24,7 @@ import com.joshtalks.badebhaiya.profile.request.DeleteReminderRequest
 import com.joshtalks.badebhaiya.profile.request.ReminderRequest
 import com.joshtalks.badebhaiya.pubnub.PubNubData
 import com.joshtalks.badebhaiya.pubnub.PubNubState
+import com.joshtalks.badebhaiya.repository.BBRepository
 import com.joshtalks.badebhaiya.repository.ConversationRoomRepository
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomRequest
 import com.joshtalks.badebhaiya.repository.model.User
@@ -53,10 +54,22 @@ class FeedViewModel : ViewModel() {
     val repository = ConversationRoomRepository()
     val scheduleRoomStartDate = ObservableField<String>()
     val scheduleRoomStartTime = ObservableField<String>()
+    val signUpRepository = BBRepository()
     var pubNubState = PubNubState.ENDED
 
     init {
         collectPubNubState()
+
+//            viewModelScope.launch {
+//                try{
+//                    val response = signUpRepository.getBBtoFollowList(1)
+//                    Timber.d("response => ${response.body()}")
+//
+//                } catch (e: Exception){
+//                    e.printStackTrace()
+//                }
+//            }
+
     }
 
     private fun collectPubNubState() {

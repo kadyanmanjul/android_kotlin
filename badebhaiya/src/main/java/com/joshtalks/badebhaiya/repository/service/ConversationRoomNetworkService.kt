@@ -1,9 +1,6 @@
 package com.joshtalks.badebhaiya.repository.service
 
-import com.joshtalks.badebhaiya.feed.model.RoomListResponse
-import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
-import com.joshtalks.badebhaiya.feed.model.SearchRoomsResponse
-import com.joshtalks.badebhaiya.feed.model.SearchRoomsResponseList
+import com.joshtalks.badebhaiya.feed.model.*
 import com.joshtalks.badebhaiya.profile.request.ReminderRequest
 import com.joshtalks.badebhaiya.profile.request.DeleteReminderRequest
 import com.joshtalks.badebhaiya.repository.model.ApiResponse
@@ -13,6 +10,7 @@ import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Query
 
 interface ConversationRoomNetworkService {
 

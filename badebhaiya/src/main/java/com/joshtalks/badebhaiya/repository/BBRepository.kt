@@ -2,6 +2,7 @@ package com.joshtalks.badebhaiya.repository
 
 import com.joshtalks.badebhaiya.profile.response.ProfileResponse
 import com.joshtalks.badebhaiya.repository.model.User
+import com.joshtalks.badebhaiya.repository.peopleToFollow.PeoplePagingSource
 import com.joshtalks.badebhaiya.repository.service.RetrofitInstance
 import com.joshtalks.badebhaiya.signup.request.VerifyOTPRequest
 import retrofit2.Response
@@ -22,4 +23,8 @@ class BBRepository {
     }
     suspend fun signOut()=service.signOutUser()
     suspend fun trueCallerLogin(params: Map<String, String>) = service.trueCallerLogin(params)
+
+    suspend fun getBBtoFollowList(page: Int) = service.speakersList(page)
+
+     fun bbToFollowPaginatedList() = PeoplePagingSource()
 }

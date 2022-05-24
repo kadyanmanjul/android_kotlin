@@ -1,18 +1,15 @@
 package com.joshtalks.badebhaiya.repository.service
 
+import com.joshtalks.badebhaiya.feed.model.Users
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.repository.server.AmazonPolicyResponse
 import com.joshtalks.badebhaiya.signup.request.VerifyOTPRequest
+import com.joshtalks.badebhaiya.signup.response.BBtoFollow
 import com.joshtalks.badebhaiya.signup.response.LoginResponse
 import com.joshtalks.badebhaiya.signup.response.OTPResponse
 import kotlinx.coroutines.Deferred
 import retrofit2.Response
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.PATCH
-import retrofit2.http.POST
-import retrofit2.http.Path
-import retrofit2.http.QueryMap
+import retrofit2.http.*
 
 const val DIR = "api/bbapp/v1"
 interface SignUpNetworkService {
@@ -34,4 +31,10 @@ interface SignUpNetworkService {
 
     @POST("$DIR/user/truecaller_login/")
     suspend fun trueCallerLogin(@Body params: Map<String, String>) : Response<LoginResponse>
+
+    @GET("$DIR/user/speakers_to_follow/")
+    suspend fun speakersList(
+        @Query("page") page: Int
+    ):Response<BBtoFollow>
+
 }

@@ -24,21 +24,26 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.itemsIndexed
 import coil.compose.AsyncImage
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.composeTheme.JoshBadeBhaiyaTheme
 import com.joshtalks.badebhaiya.composeTheme.NunitoSansFont
 import com.joshtalks.badebhaiya.feed.model.Users
+import com.joshtalks.badebhaiya.signup.viewmodel.SignUpViewModel
 import timber.log.Timber
 
 
 @Composable
-@Preview(showBackground = true)
-fun PeopleToFollowScreen(peopleList: Array<Users> = emptyArray()) {
+//@Preview(showBackground = true)
+fun PeopleToFollowScreen(peopleList: LazyPagingItems<Users> ?= null, signUpViewModel: SignUpViewModel) {
     JoshBadeBhaiyaTheme {
         Box(
             modifier = Modifier.fillMaxSize()
         ) {
+            val list = signUpViewModel.bbToFollow.collectAsLazyPagingItems()
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
@@ -50,9 +55,20 @@ fun PeopleToFollowScreen(peopleList: Array<Users> = emptyArray()) {
                         text = stringResource(id = R.string.badebhaiyas_to_follow)
                     )
                 }
-                itemsIndexed(peopleList){ index: Int, item: Users ->
-                    ItemBadeBhaiya(badeBhaiya = item, bottomPadding = getPeopleToFollowPadding(index, peopleList))
+//                itemsIndexed(peopleList){ index: Int, item: Users ->
+//                    ItemBadeBhaiya(badeBhaiya = item, bottomPadding = getPeopleToFollowPadding(index, peopleList))
+//                }
+//                list?.let {
+//
+//
+//                    }
+//                }
+
+            itemsIndexed(list) { index, value ->
+                value?.let {
+                    ItemBadeBhaiya(badeBhaiya = it, bottomPadding = 0.dp)
                 }
+            }
 
             }
             Box(
@@ -115,7 +131,7 @@ fun ItemBadeBhaiya(
         verticalAlignment = Alignment.CenterVertically
     ) {
         AsyncImage(
-            model = badeBhaiya.profilePic,
+            model = badeBhaiya.profilePic ?: "",
             modifier = Modifier
                 .size(62.dp)
                 .clip(RoundedCornerShape(dimensionResource(id = R.dimen._16sdp))),
@@ -129,8 +145,8 @@ fun ItemBadeBhaiya(
             verticalArrangement = Arrangement.Center,
             modifier = Modifier.fillMaxWidth(.8f)
         ) {
-            NameText(text = badeBhaiya.full_name)
-            ListBioText(text = badeBhaiya.bio)
+            NameText(text = badeBhaiya.full_name ?: "")
+            ListBioText(text = badeBhaiya.bio ?: "")
         }
     }
 }

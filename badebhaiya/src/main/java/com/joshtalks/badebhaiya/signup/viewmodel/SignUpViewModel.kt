@@ -6,6 +6,10 @@ import androidx.databinding.ObservableBoolean
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.joshtalks.badebhaiya.core.API_TOKEN
 import com.joshtalks.badebhaiya.core.ApiCallStatus
 import com.joshtalks.badebhaiya.core.EMPTY
@@ -14,6 +18,7 @@ import com.joshtalks.badebhaiya.core.SignUpStepStatus
 import com.joshtalks.badebhaiya.core.io.AppDirectory
 import com.joshtalks.badebhaiya.core.showToast
 import com.joshtalks.badebhaiya.core.workers.WorkManagerAdmin
+import com.joshtalks.badebhaiya.feed.model.Users
 import com.joshtalks.badebhaiya.repository.BBRepository
 import com.joshtalks.badebhaiya.repository.CommonRepository
 import com.joshtalks.badebhaiya.repository.model.User
@@ -28,6 +33,7 @@ import id.zelory.compressor.Compressor
 import java.io.File
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -61,6 +67,14 @@ class SignUpViewModel(application: Application): AndroidViewModel(application) {
             }
         }
     }
+
+    val bbToFollow: Flow<PagingData<Users>> = Pager(
+        config = PagingConfig(pageSize = 12, enablePlaceholders = false),
+        pagingSourceFactory = { repository.bbToFollowPaginatedList() }
+    )
+        .flow
+        .cachedIn(viewModelScope)
+
 
     fun verifyOTP(otp: String, phoneNumber: String) {
         viewModelScope.launch {
