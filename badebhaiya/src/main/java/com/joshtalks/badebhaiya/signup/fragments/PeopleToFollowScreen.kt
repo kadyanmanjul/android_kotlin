@@ -38,12 +38,12 @@ import timber.log.Timber
 
 @Composable
 //@Preview(showBackground = true)
-fun PeopleToFollowScreen(peopleList: LazyPagingItems<Users> ?= null, signUpViewModel: SignUpViewModel) {
+fun PeopleToFollowScreen(peopleList: LazyPagingItems<Users>, signUpViewModel: SignUpViewModel) {
     JoshBadeBhaiyaTheme {
         Box(
             modifier = Modifier.fillMaxSize()
         ) {
-            val list = signUpViewModel.bbToFollow.collectAsLazyPagingItems()
+            val list = peopleList
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
