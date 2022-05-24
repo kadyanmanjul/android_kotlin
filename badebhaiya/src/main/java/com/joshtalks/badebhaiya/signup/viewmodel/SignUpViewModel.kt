@@ -33,6 +33,7 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
+import timber.log.Timber
 
 class SignUpViewModel(application: Application): AndroidViewModel(application) {
     val repository = BBRepository()
@@ -49,12 +50,14 @@ class SignUpViewModel(application: Application): AndroidViewModel(application) {
                 mobileNumber = phoneNumber
                 val reqObj = mapOf("country_code" to countryCode, "mobile" to phoneNumber)
                  var resp=repository.sendPhoneNumberForOTP(reqObj)
+
                valid.set(resp.code()==500)
                 //showToast(resp.toString())
 
 
             } catch (ex: Exception) {
-
+                Log.d("sahil", "login via phone exception => ${ex.cause}")
+                ex.printStackTrace()
             }
         }
     }
@@ -77,7 +80,7 @@ class SignUpViewModel(application: Application): AndroidViewModel(application) {
                     }
                 }
             } catch (ex: Exception) {
-
+                ex.printStackTrace()
             }
         }
     }

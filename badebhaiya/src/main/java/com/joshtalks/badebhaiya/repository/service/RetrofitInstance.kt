@@ -81,7 +81,7 @@ class RetrofitInstance {
                 .hostnameVerifier { _, _ -> true }
                 .cache(cache())
 
-            if (BuildConfig.DEBUG) {
+            if (BuildConfig.BUILD_TYPE == "debug") {
                 builder.addInterceptor(getOkhttpToolInterceptor())
                 val logging = HttpLoggingInterceptor().apply {
                     level = HttpLoggingInterceptor.Level.BODY
@@ -124,7 +124,7 @@ class RetrofitInstance {
                 .followRedirects(true)
             //                .addInterceptor(StatusCodeInterceptor())
 
-            if (BuildConfig.DEBUG) {
+            if (BuildConfig.BUILD_TYPE == "debug") {
                 val logging =
                     HttpLoggingInterceptor { message ->
                     }.apply {
