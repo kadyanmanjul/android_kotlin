@@ -93,6 +93,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
 
     private fun addListeners() {
         val language = ChooseLanguages("784","Hindi (हिन्दी)")
+        languageActive = true //for testing and showing the language fragment
         btnStartTrial.setOnClickListener {
             if(languageActive){
                 openChooseLanguageFragment()
@@ -131,6 +132,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         viewModel.newLanguageABtestLiveData.observe(this){ abTestCampaignData ->
             abTestCampaignData?.let { map ->
                 languageActive =(map.variantKey == VariantKeys.NEW_LANGUAGE_ENABLED.NAME) && map.variableMap?.isEnabled == true
+                languageActive = true
             }
         }
         viewModel.eftABtestLiveData.observe(this){ abTestCampaignData ->
@@ -180,8 +182,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
 
         if(is100PointsActive && language.testId == HINDI_TO_ENGLISH_TEST_ID){
             dialogView.findViewById<TextView>(R.id.e_g_motivat).text =
-                AppObjectController.getFirebaseRemoteConfig()
-                    .getString(FREE_TRIAL_POPUP_HUNDRED_POINTS_TEXT + language.testId)
+                    getString(R.string.free_trial_popup_100_points_header)
                     .replace("\\n", "\n")
         }
         else {
@@ -199,6 +200,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
                 .getString(FREE_TRIAL_POPUP_YES_BUTTON_TEXT + language.testId)
 
         dialogView.findViewById<MaterialTextView>(R.id.yes).setOnClickListener {
+            PrefManager.put(USER_LOCALE,language.testId)
             requestWorkerForChangeLanguage(getLangCodeFromlangTestId(language.testId),canCreateActivity=false)
             MixPanelTracker.publishEvent(MixPanelEvent.JI_HAAN).push()
             if (Mentor.getInstance().getId().isNotEmpty()) {

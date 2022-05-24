@@ -52,6 +52,7 @@ import com.joshtalks.joshskills.constants.COURSE_RESTART_SUCCESS
 import com.joshtalks.joshskills.constants.INTERNET_FAILURE
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.Utils.getCurrentMediaVolume
+import com.joshtalks.joshskills.core.Utils.getLangCodeFromCourseId
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
@@ -2753,10 +2754,10 @@ class ConversationActivity :
         return if (titleBarHeight < 0) titleBarHeight * -1 else titleBarHeight
     }
 
-    fun getConversationTooltip(): String {
-        val courseId = PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID)
-        return AppObjectController
-            .getFirebaseRemoteConfig().getString(TOOLTIP_CONVERSAITON + courseId)
+    fun getConversationTooltip() : String {
+//        val courseId = PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID)
+//        requestWorkerForChangeLanguage(getLangCodeFromCourseId(courseId))
+        return getString(R.string.tooltip_conversation)
     }
 
 }

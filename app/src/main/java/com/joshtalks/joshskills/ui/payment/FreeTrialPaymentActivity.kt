@@ -968,6 +968,8 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
     }
 
     private fun navigateToStartCourseActivity() {
+        if(PrefManager.getStringValue(CURRENT_COURSE_ID) != DEFAULT_COURSE_ID)
+            index = 0
         StartCourseActivity.openStartCourseActivity(
             this,
             viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.courseName ?: EMPTY,

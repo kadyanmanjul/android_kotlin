@@ -73,11 +73,6 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-const val TOOLTIP_OPEN_PROFILE = "TOOLTIP_OPEN_PROFILE_"
-const val TOOLTIP_SEARCH_ANYONE = "TOOLTIP_SEARCH_ANYONE_"
-const val TOOLTIP_LEADERBOARD_SOTD = "TOOLTIP_LEADERBOARD_SOTD_"
-const val TOOLTIP_LEADERBOARD_SOTW = "TOOLTIP_LEADERBOARD_SOTW_"
-const val TOOLTIP_LEADERBOARD_SOTM = "TOOLTIP_LEADERBOARD_SOTM_"
 
 class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity(), ViewBitmap {
     private val TAG = "LeaderBoardViewPagerAct"
@@ -127,12 +122,9 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity(), ViewBitmap {
     }
 
     private fun addLeaderboardTooltips() {
-        tooltipTextList[0] =
-            AppObjectController.getFirebaseRemoteConfig().getString(TOOLTIP_LEADERBOARD_SOTD + getCourseId())
-        tooltipTextList[1] =
-            AppObjectController.getFirebaseRemoteConfig().getString(TOOLTIP_LEADERBOARD_SOTW + getCourseId())
-        tooltipTextList[2] =
-            AppObjectController.getFirebaseRemoteConfig().getString(TOOLTIP_LEADERBOARD_SOTM + getCourseId())
+        tooltipTextList[0] = getString(R.string.tooltip_leaderboard_sotd)
+        tooltipTextList[1] = getString(R.string.tooltip_leaderboard_sotw)
+        tooltipTextList[2] = getString(R.string.tooltip_leaderboard_sotm)
     }
 
 
@@ -292,8 +284,7 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity(), ViewBitmap {
         if (lbOpenCount >= 4 || isLastCall) {
             val balloon = Balloon.Builder(this)
                 .setText(
-                    AppObjectController.getFirebaseRemoteConfig()
-                        .getString(TOOLTIP_SEARCH_ANYONE + getCourseId())
+                        getString(R.string.tooltip_search_anyone)
                 )
                 .setTextSize(15F)
                 .setTextColor(ContextCompat.getColor(this, R.color.black))
@@ -970,10 +961,7 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity(), ViewBitmap {
         binding.itemTabOverlay.visibility = VISIBLE
         arrowView.visibility = VISIBLE
         itemImageView.visibility = VISIBLE
-        tooltipView.setTooltipText(
-            AppObjectController.getFirebaseRemoteConfig()
-                .getString(TOOLTIP_OPEN_PROFILE + getCourseId())
-        )
+        tooltipView.setTooltipText(getString(R.string.tooltip_open_profile))
 
         slideInAnimation(tooltipView)
         CoroutineScope(Dispatchers.IO).launch {

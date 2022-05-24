@@ -97,7 +97,6 @@ const val ROOM_POSITION = 5
 const val DEFAULT_SPOTLIGHT_DELAY_IN_MS = 1300L
 const val INTRO_VIDEO_ID = "-1"
 private const val TAG = "LessonActivity"
-const val TOOLTIP_LESSON_GRAMMAR = "TOOLTIP_LESSON_GRAMMAR_"
 val STORAGE_GRAMMER_REQUEST_CODE = 3456
 private val STORAGE_READING_REQUEST_CODE = 3457
 
@@ -1465,9 +1464,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
             binding.itemOverlay.visibility = View.VISIBLE
             arrowView.visibility = View.VISIBLE
             itemImageView.visibility = View.VISIBLE
-            tooltipView.setTooltipText(
-                AppObjectController.getFirebaseRemoteConfig()
-                    .getString(TOOLTIP_LESSON_GRAMMAR + courseId)
+            tooltipView.setTooltipText(getString(R.string.tooltip_lesson_grammar)
 
             )
             slideInAnimation(tooltipView)

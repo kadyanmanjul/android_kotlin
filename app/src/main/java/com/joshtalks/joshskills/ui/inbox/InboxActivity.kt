@@ -242,11 +242,11 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         if (items.isEmpty()) {
             return
         }
-        if(!PrefManager.getBoolValue(IS_LOCALE_UPDATED_IN_SETTINGS) && !PrefManager.getBoolValue(
-                IS_LOCALE_UPDATED_IN_INBOX)) {
-            PrefManager.put(IS_LOCALE_UPDATED_IN_INBOX,true)
-            requestWorkerForChangeLanguage(getLangCodeFromCourseId(items[0].courseId), canCreateActivity = false)
-        }
+//        if(!PrefManager.getBoolValue(IS_LOCALE_UPDATED_IN_SETTINGS) && !PrefManager.getBoolValue(
+//                IS_LOCALE_UPDATED_IN_INBOX)) {
+//            PrefManager.put(IS_LOCALE_UPDATED_IN_INBOX,true)
+//            requestWorkerForChangeLanguage(getLangCodeFromCourseId(items[0].courseId), canCreateActivity = false)
+//        }
 
         var haveFreeTrialCourse = false
         lifecycleScope.launch(Dispatchers.Default) {

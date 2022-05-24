@@ -34,7 +34,7 @@ import java.io.IOException
 
 
 const val REFERRAL_EARN_AMOUNT_KEY = "REFERRAL_EARN_AMOUNT"
-const val REFERRAL_SHARE_TEXT_KEY = "REFERRAL_SHARE_TEXT"
+const val REFERRAL_SHARE_TEXT_KEY = "REFERRAL_SHARE_TEXT_"
 const val REFERRAL_SHARE_TEXT_SHARABLE_VIDEO = "REFERRAL_SHARE_TEXT_SHARABLE_VIDEO"
 const val REFERRAL_IMAGE_URL_KEY = "REFERRAL_IMAGE_URL"
 const val VIDEO_URL = "https://www.youtube.com/watch?v=CMZohcIMQfc "
@@ -212,9 +212,10 @@ class ReferralActivity : BaseActivity() {
     }
 
     fun inviteFriends(packageString: String? = null, dynamicLink: String) {
-        var referralText = VIDEO_URL.plus("\n").plus(
-            AppObjectController.getFirebaseRemoteConfig().getString(REFERRAL_SHARE_TEXT_KEY)
-        )
+        var referralText = if(PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID || PrefManager.getBoolValue(IS_HINDI_SELECTED) || PrefManager.getBoolValue(IS_HINGLISH_SELECTED))
+            VIDEO_URL.plus("\n").plus(getString(R.string.referral_share_text))
+        else
+            getString(R.string.referral_share_text)
         val refAmount =
             AppObjectController.getFirebaseRemoteConfig().getLong(REFERRAL_EARN_AMOUNT_KEY)
                 .toString()

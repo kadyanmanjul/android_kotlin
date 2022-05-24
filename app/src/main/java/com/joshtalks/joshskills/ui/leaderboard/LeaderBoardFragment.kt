@@ -45,7 +45,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-const val TOOLTIP_ONLINE_STATUS = "TOOLTIP_ONLINE_STATUS_"
 
 class LeaderBoardFragment : Fragment(), ViewInflated {
     private val TAG = "LeaderBoardFragment"
@@ -486,8 +485,7 @@ class LeaderBoardFragment : Fragment(), ViewInflated {
                             binding.recyclerView.getViewResolverAtPosition(liveUserPosition) as LeaderBoardItemViewHolder
                         val balloon = Balloon.Builder(requireContext())
                             .setText(
-                                AppObjectController.getFirebaseRemoteConfig()
-                                    .getString(TOOLTIP_ONLINE_STATUS + (requireActivity() as LeaderBoardViewPagerActivity).getCourseId())
+                                    getString(R.string.tooltip_online_status)
                             )
                             .setTextSize(15F)
                             .setTextColor(ContextCompat.getColor(requireContext(), R.color.black))

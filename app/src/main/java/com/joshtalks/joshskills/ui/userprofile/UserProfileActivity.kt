@@ -1602,9 +1602,7 @@ UserProfileActivity : WebRtcMiddlewareActivity() {
     }
 
     fun getUserProfileTooltip() :String {
-        val courseId = PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID)
-        return AppObjectController.getFirebaseRemoteConfig()
-            .getString(TOOLTIP_USER_PROFILE_SCREEN + courseId)
+        return getString(R.string.tooltip_user_profile_screen)
     }
     override fun onBackPressed() {
         MixPanelTracker.publishEvent(MixPanelEvent.BACK)

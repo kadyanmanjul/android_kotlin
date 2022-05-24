@@ -148,6 +148,8 @@ const val TWENTY_MIN_CALL_ATTEMPTED_GOAL_POSTED = "twenty_min_call_attempted_goa
 const val IS_SPEAKING_SCREEN_CLICKED = "is_speaking_screen_clicked"
 const val CALL_BTN_CLICKED = "call_btn_clicked"
 const val IS_APP_OPENED_FOR_FIRST_TIME = "is_app_opened_for_first_time"
+const val IS_HINDI_SELECTED = "is_hindi_selected"
+const val IS_HINGLISH_SELECTED = "is_hinglish_selected"
 const val SERVER_TIME_OFFSET = "server_time_offset"
 const val IS_A2_C1_RETENTION_ENABLED = "is_a2_c1_retention_enabled"
 

@@ -477,4 +477,17 @@
     <string name="share_screen_tagline"><b>நான் ஒவ்வொரு நாளும்</b> speaking practice <b>செய்கிறேன் </b> <b>\nபுதிய </b> நபர்களுடன் <b>அழைப்பில்.</b></string>
     <string name="share_with_friends_text">நான் English கற்றுக்கொள்கிறேன்,  இந்த  environment மூலமாக. நீங்களும் ஆங்கிலத்தை கற்றுக்கொள்ளலாம்.</string>
 
+    <string name="free_trial_popup_100_points_header">Josh Skills என்பது வாழ்க்கையில் தீவிரமான மாணவர்களைக் கொண்ட குடும்பமாகும், அவர்கள் கடினமாக உழைத்து முன்னேற விரும்புகிறார்கள். இந்தப் படிப்பில் சேருவதற்கு முன், இந்தப் படிப்பை ஒரு நாள் பயன்படுத்த வேண்டும். இது முற்றிலும் இலவசம். நீங்கள் இன்று 100 புள்ளிகளைப் பெற முயறுங்கள். அடுத்த 24 மணி நேரத்தில் 100 புள்ளிகள் பெற்றால் இலவசமாக முழு கோர்ஸையும் பயன்படுத்தலாம்.</string>
+    <string name="tooltip_conversation">உங்கள் வகுப்பு தோழர்கள் யார் என்பதை இங்கே பார்க்கலாம்</string>
+    <string name="tooltip_lesson_grammar">இந்த பாடத்தில நீங்கள் உங்கள் Grammar திறமையை தெரிஞ்சு கொள்ளலாம் </string>
+    <string name="tooltip_leaderboard_sotd">அன்றைய நாளின் பரபரப்பான மாணவர் "அன்றைய மாணவர்".</string>
+    <string name="tooltip_leaderboard_sotm">ஒரு மாதத்தில் அதிக முயற்சி எடுக்கும் மாணவர் "மாதத்தின் மாணவர்"</string>
+    <string name="tooltip_leaderboard_sotw">ஒரு வாரத்தில் அதிக முயற்சி எடுக்கும் மாணவர் "வாரத்தின் மாணவர்" ஆவார்.</string>
+    <string name="tooltip_online_status">இப்பொழுது எந்த மாணவர்கள் online என்று, நாம் இங்கே பாக்கலாம்.</string>
+    <string name="tooltip_open_profile">நீங்கள் யாருடைய Profileயும் திறக்கலாம்</string>
+    <string name="tooltip_points_history_screen">மாணவர்கள் எத்தனை புள்ளிகளைப் பெற்றனர், எப்படிப் பெற்றார்கள் என்பதை இங்கே பார்க்கலாம்.</string>
+    <string name="tooltip_search_anyone">இங்கிருந்து நாம் நமது நண்பர்களையோ அல்லது மற்ற மாணவர்களையோ தேடலாம்</string>
+    <string name="tooltip_user_profile_screen">நீங்கள் எவ்வளவு அதிகமாக வேலை செய்கிறீர்களோ, அவ்வளவு Points பெறுவீர்கள்</string>
+    <string name="referral_share_text">நான் Bharat இன் சிறந்த ஆசிரியர்களிடம் ஸ்போக்கன் இங்கிலீஷ் மற்றும் ஆளுமை மேம்பாட்டைக் கற்றுக்கொள்கிறேன்  வாருங்கள் இன்றிலிருந்து நாம் சேர்ந்து கற்கலாம்  இதோ என்னிடமிருந்து உங்களுக்கான Rs. ** OFF:  Use my code ****. Download the app by clicking on the link:</string>
+
 </resources>
