@@ -419,12 +419,15 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
             PrefManager.put(IS_FREE_TRIAL_CAMPAIGN_ACTIVE, true)
             ExtendFreeTrialActivity.startExtendFreeTrialActivity(this, inboxEntity)
         } else {
-            if (inboxEntity.isCourseBought.not() && inboxEntity.formSubmitted.not()) {
-                ConversationActivity.startConversionActivity(this, inboxEntity)
-            } else {
-                val intent = Intent(this, CommitmentFormActivity::class.java)
-                intent.putExtra("inboxEntity",inboxEntity)
-                startActivity(intent)
+            when {
+                inboxEntity.isCourseBought && inboxEntity.formSubmitted.not() -> {
+                    val intent = Intent(this, CommitmentFormActivity::class.java)
+                    intent.putExtra("inboxEntity", inboxEntity)
+                    startActivity(intent)
+                }
+                else-> {
+                    ConversationActivity.startConversionActivity(this, inboxEntity)
+                }
             }
         }
     }

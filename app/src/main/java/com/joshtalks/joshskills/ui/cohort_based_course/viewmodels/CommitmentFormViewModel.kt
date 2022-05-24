@@ -4,7 +4,6 @@ import android.os.Message
 import android.view.View
 import androidx.databinding.ObservableArrayList
 import android.widget.Toast
-import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -62,10 +61,9 @@ class CommitmentFormViewModel : ViewModel() {
     fun getCohortBatches() {
         viewModelScope.launch(Dispatchers.IO) {
                 try {
-                    val resp = AppObjectController.CbcNetworkService.getCohortBatches()
-                        .body() as ArrayList<CohortItemModel>
+                    val resp = AppObjectController.CbcNetworkService.getCohortBatches().body()
                     withContext(Dispatchers.Main) {
-                        cohortBatchList.addAll(resp)
+                        cohortBatchList.addAll(resp?.slots as ArrayList<CohortItemModel>)
                     }
                     //throw Exception("Problem!")    to test the try catch block
 
@@ -96,7 +94,7 @@ class CommitmentFormViewModel : ViewModel() {
         if (selectedSlot.get() != EMPTY) {
             val map: HashMap<String, Any> = HashMap()
             map["time_slot"] = selectedSlot.get().toString()
-            map["reminder"] = reminder
+            map["reminder"] = reminder == "Yes"
             postSelectedBatch(map)
         } else {
             showToast("Please select a slot")
