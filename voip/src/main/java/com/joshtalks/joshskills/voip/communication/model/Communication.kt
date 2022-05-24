@@ -58,6 +58,8 @@ interface ChannelData : IncomingData {
     fun getPartnerUid() : Int
     fun getPartnerMentorId() : String
     fun getTopicImage() : String
+    fun getOccupation() : String
+    fun getAspiration() : String
 }
 
 class IncorrectCommunicationDataException(message: String) : Exception(message)

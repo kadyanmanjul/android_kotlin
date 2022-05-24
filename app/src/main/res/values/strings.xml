@@ -1222,5 +1222,11 @@
     <string name="remove_from_favorite">Remove from favorite</string>
     <string name="space">\u0020</string>
 
+    <string name="occupation_field">आप क्या काम करते हैं? (Occupation)</string>
+    <string name="occupation_filed_hint_text">e.g. Manager at Flipkart</string>
+    <string name="aspiration_filed">आपका सपना क्या है? (Aspiration)</string>
+    <string name="aspiration_filed_hint_text">e.g. IAS Officer </string>
+    <string name="occupation_error_toast">Occupation cannot be empty!</string>
+    <string name="aspiration_error_toast">Aspiration cannot be empty!</string>
 
 </resources>

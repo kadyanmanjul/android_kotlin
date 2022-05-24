@@ -173,7 +173,9 @@ class SearchingState(val context: CallContext) : VoipState {
                                 remoteUserName = context.channelData.getCallingPartnerName(),
                                 callType = context.channelData.getType(),
                                 topicName = context.channelData.getCallingTopic(),
-                                currentTopicImage = context.channelData.getTopicImage()
+                                currentTopicImage = context.channelData.getTopicImage(),
+                                occupation = context.channelData.getOccupation(),
+                                aspiration = context.channelData.getAspiration()
                             )
                             context.updateUIState(uiState)
                             if (context.direction == CallDirection.OUTGOING)

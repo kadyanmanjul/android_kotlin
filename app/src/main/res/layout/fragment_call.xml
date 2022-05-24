@@ -85,6 +85,23 @@
             tools:ignore="MissingPrefix"
             tools:text="User Name" />
 
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/occupation_future_goals"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_14ssp"
+            android:textAlignment="center"
+            android:visibility='@{vm.uiState.occupation.equals("") ? View.GONE : View.VISIBLE}'
+            android:text="@{vm.uiState.occupation}"
+            android:lines="2"
+            app:layout_constraintTop_toBottomOf="@+id/caller_name"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:ignore="MissingPrefix"
+            tools:text="Engineer, Dream - IAS Officer " />
         <TextView
             android:id="@+id/call_time"
             android:layout_width="wrap_content"
@@ -93,11 +110,11 @@
             android:text="@{vm.uiState.currentState}"
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
             android:textColor="@color/white"
-            android:visibility='@{!vm.uiState.currentState.equals("Timer") ? View.VISIBLE : View.GONE}'
+            android:visibility='@{!vm.uiState.currentState.equals("Timer") ? View.VISIBLE : View.INVISIBLE}'
             app:layout_constraintBottom_toTopOf="@id/incoming_timer_container"
             app:layout_constraintEnd_toStartOf="@+id/guideline5"
             app:layout_constraintStart_toStartOf="@+id/guideline4"
-            app:layout_constraintTop_toBottomOf="@id/caller_name"
+            app:layout_constraintTop_toBottomOf="@id/occupation_future_goals"
             app:layout_constraintVertical_bias="0.317"
             tools:ignore="MissingPrefix"
             tools:text="" />
@@ -110,11 +127,11 @@
             android:gravity="center"
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
             android:textColor="@color/white"
-            android:visibility='@{vm.uiState.currentState.equals("Timer") ? View.VISIBLE : View.GONE}'
+            android:visibility='@{vm.uiState.currentState.equals("Timer") ? View.VISIBLE : View.INVISIBLE}'
             app:layout_constraintBottom_toTopOf="@id/incoming_timer_container"
             app:layout_constraintEnd_toStartOf="@+id/guideline5"
             app:layout_constraintStart_toStartOf="@+id/guideline4"
-            app:layout_constraintTop_toBottomOf="@id/caller_name"
+            app:layout_constraintTop_toBottomOf="@id/occupation_future_goals"
             app:layout_constraintVertical_bias="0.317"
             tools:ignore="MissingPrefix" />
 
@@ -146,7 +163,6 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/_16sdp"
-            android:layout_marginTop="36dp"
             android:gravity="center"
             android:text="Discussion Topic"
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Bold"
@@ -155,7 +171,7 @@
             android:visibility="visible"
             app:layout_constraintEnd_toStartOf="@+id/guideline5"
             app:layout_constraintStart_toStartOf="@+id/guideline4"
-            app:layout_constraintTop_toBottomOf="@+id/caller_name" />
+            app:layout_constraintTop_toBottomOf="@+id/call_time1" />
 
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
@@ -275,6 +291,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="gone"
             app:layout_constraintVertical_bias="0.43">
 
             <com.google.android.material.progressindicator.CircularProgressIndicator
@@ -290,7 +307,8 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.43"
                 app:trackColor="#ffffff"
-                app:trackThickness="10dp" />
+                app:trackThickness="10dp"
+               />
 
             <TextView
                 android:id="@+id/incoming_timer_tv"

@@ -103,4 +103,18 @@ class CallUIState : BaseObservable() {
         field = value
         notifyPropertyChanged(BR.topicImage)
     }
+
+    @get:Bindable
+    var occupation:String = ""
+        set(value) {
+            field = value
+            notifyPropertyChanged(BR.occupation)
+        }
+
+    @get:Bindable
+    var aspiration:String = ""
+        set(value) {
+            field = value
+            notifyPropertyChanged(BR.aspiration)
+        }
 }
