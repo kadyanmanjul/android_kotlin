@@ -10,6 +10,7 @@ import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.firestore.NotificationAnalytics
 import com.joshtalks.joshskills.core.notification.FirebaseNotificationService.Companion.sendFirestoreNotification
 import com.joshtalks.joshskills.repository.local.model.NotificationObject
 import com.joshtalks.joshskills.repository.service.UtilsAPIService
@@ -79,7 +80,13 @@ class BackgroundService : Service() {
                     )
                     nc.contentTitle = item.title
                     nc.contentText = item.body
-                    sendFirestoreNotification(nc, this@BackgroundService)
+                    val isFirstTimeNotification = NotificationAnalytics().addAnalytics(
+                        notificationId = nc.id.toString(),
+                        mEvent = NotificationAnalytics.Action.RECEIVED,
+                        channel = NotificationAnalytics.Channel.API
+                    )
+                    if (isFirstTimeNotification)
+                        sendFirestoreNotification(nc, this@BackgroundService)
                 }
             }
         }
@@ -104,7 +111,7 @@ class BackgroundService : Service() {
                 .setDefaults(Notification.FLAG_ONGOING_EVENT)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            notificationBuilder.priority = NotificationManager.IMPORTANCE_HIGH
+            notificationBuilder.priority = NotificationManager.IMPORTANCE_LOW
         }
 
         val notificationManager =
@@ -114,7 +121,7 @@ class BackgroundService : Service() {
             val notificationChannel = NotificationChannel(
                 NOTIF_CHANNEL_ID,
                 NOTIF_CHANNEL_NAME,
-                NotificationManager.IMPORTANCE_HIGH
+                NotificationManager.IMPORTANCE_LOW
             )
 
             notificationBuilder.setChannelId(NOTIF_CHANNEL_ID)

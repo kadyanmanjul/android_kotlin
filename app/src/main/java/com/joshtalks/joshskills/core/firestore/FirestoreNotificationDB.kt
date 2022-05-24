@@ -40,7 +40,7 @@ object FirestoreNotificationDB {
                             val notification = it.id?.let {
                                 NotificationAnalytics().getNotification(it.toString())
                             }
-                            if (notification?.isNullOrEmpty() == false){
+                            if (notification?.isEmpty() == false){
                                 it.id?.let {
                                     NotificationAnalytics().addAnalytics(
                                         notificationId = it.toString(),

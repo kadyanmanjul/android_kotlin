@@ -254,7 +254,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 )
                 if (isFirstTimeNotification) {
                     sendNotification(nc)
-                    pushToDatabase(nc, channel = channel)
+                    //pushToDatabase(nc, channel = channel)
                 }
             }
         }
