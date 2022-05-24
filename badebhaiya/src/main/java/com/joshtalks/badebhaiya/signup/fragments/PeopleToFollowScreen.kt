@@ -54,15 +54,6 @@ fun PeopleToFollowScreen(peopleList: Array<Users> = emptyArray()) {
                     ItemBadeBhaiya(badeBhaiya = item, bottomPadding = getPeopleToFollowPadding(index, peopleList))
                 }
 
-//                --------------
-
-//                items(
-//                    count = peopleList.size,
-//                    itemContent = { index ->
-//                        val cartItemData = peopleList[index]
-//                        ItemBadeBhaiya(badeBhaiya = cartItemData, bottomPadding = getPeopleToFollowPadding(index, peopleList))
-//                    }
-//                )
             }
             Box(
                 modifier = Modifier.fillMaxSize(),
