@@ -11,7 +11,9 @@ import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.firestore.NotificationAnalytics
+import com.joshtalks.joshskills.core.firestore.NotificationAnalyticsRequest
 import com.joshtalks.joshskills.core.notification.FirebaseNotificationService.Companion.sendFirestoreNotification
+import com.joshtalks.joshskills.repository.local.AppDatabase
 import com.joshtalks.joshskills.repository.local.model.NotificationObject
 import com.joshtalks.joshskills.repository.service.UtilsAPIService
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
@@ -33,7 +35,7 @@ class BackgroundService : Service() {
 
     private val NOTIF_ID = 12301
     private val NOTIF_CHANNEL_ID = "12301"
-    private val NOTIF_CHANNEL_NAME = "Background_notif_service"
+    private val NOTIF_CHANNEL_NAME = "NOTIFICATION SERVICE"
 
     lateinit var apiService: UtilsAPIService
 
@@ -44,6 +46,7 @@ class BackgroundService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         startForeground()
         initRetrofit()
+        pushAnalyticsToServer()
         fetchMissedNotifications()
         return START_STICKY
     }
@@ -89,6 +92,8 @@ class BackgroundService : Service() {
                         sendFirestoreNotification(nc, this@BackgroundService)
                 }
             }
+            stopForeground(true)
+            stopSelf()
         }
     }
 
@@ -132,5 +137,36 @@ class BackgroundService : Service() {
         notification.flags = Notification.FLAG_NO_CLEAR
 
         return notification
+    }
+
+    fun pushAnalyticsToServer() {
+        CoroutineScope(Dispatchers.IO).launch {
+            val notificationDao = AppDatabase.getDatabase(this@BackgroundService)?.notificationEventDao()
+            val listOfReceived = notificationDao?.getUnsyncEvent()
+            if (listOfReceived?.isEmpty() == true)
+                return@launch
+
+            val serverOffsetTime = PrefManager.getLongValue(SERVER_TIME_OFFSET, true)
+            val request = ArrayList<NotificationAnalyticsRequest>()
+            listOfReceived?.forEach {
+                request.add(
+                    NotificationAnalyticsRequest(
+                        it.id,
+                        it.time_stamp.plus(serverOffsetTime),
+                        it.action,
+                        it.platform
+                    )
+                )
+            }
+            if (request.isEmpty())
+                return@launch
+
+            val resp = AppObjectController.utilsAPIService.engageNewNotificationAsync(request)
+            if (resp.isSuccessful) {
+                listOfReceived?.forEach {
+                    notificationDao.updateSyncStatus(it.notificationId)
+                }
+            }
+        }
     }
 }

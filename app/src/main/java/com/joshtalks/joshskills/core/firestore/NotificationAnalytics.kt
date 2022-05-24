@@ -56,7 +56,7 @@ class NotificationAnalytics {
             return true
         }
 
-        val resp = AppObjectController.commonNetworkService.engageNewNotificationAsync(request)
+        val resp = AppObjectController.utilsAPIService.engageNewNotificationAsync(request)
         if (resp.isSuccessful) {
             listOfReceived?.forEach {
                 notificationDao.updateSyncStatus(it.notificationId)

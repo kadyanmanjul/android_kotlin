@@ -327,11 +327,6 @@ interface CommonNetworkService {
         @Body params: HashMap<String, List<CourseUsageSync>>
     ): Response<Void>
 
-    @POST("$DIR/notification/analytics/")
-    suspend fun engageNewNotificationAsync(
-        @Body params: List<NotificationAnalyticsRequest>
-    ): Response<Void>
-
     @POST("$DIR/mentor/gaid/")
     suspend fun registerGAIdDetailsV2Async(@Body body: RequestRegisterGAId): GaIDMentorModel
 

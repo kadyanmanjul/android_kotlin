@@ -998,19 +998,15 @@ class CourseUsageSyncWorker(context: Context, workerParams: WorkerParameters) :
 class NotificationEngagementSyncWorker(context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
-        try {
-            when(NotificationAnalytics().pushToServer()){
-                true ->{
-                    Result.success()
-                }
-                false ->{
-                    Result.failure()
-                }
+        return try {
+            when(NotificationAnalytics().pushToServer()) {
+                true -> Result.success()
+                false -> Result.failure()
             }
         } catch (ex: Throwable) {
             ex.printStackTrace()
+            Result.failure()
         }
-        return Result.success()
     }
 }
 

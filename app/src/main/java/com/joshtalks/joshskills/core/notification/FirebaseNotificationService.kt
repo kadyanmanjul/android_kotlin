@@ -225,8 +225,6 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 notificationTypeToken
             )
 
-            val timeReceived = System.currentTimeMillis()
-
             FirestoreDB.getNotification {
                 val nc = it.toNotificationObject(shortNc.id)
                 if (remoteData.data["nType"] == "CR") {
@@ -235,7 +233,6 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     }
                 }
                 sendNotification(nc)
-                pushToDatabase(nc, timeReceived, channel)
             }
         } else {
             val notificationTypeToken: Type = object : TypeToken<NotificationObject>() {}.type
@@ -254,7 +251,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 )
                 if (isFirstTimeNotification) {
                     sendNotification(nc)
-                    //pushToDatabase(nc, channel = channel)
+//                    pushToDatabase(nc, channel = channel)
                 }
             }
         }
@@ -1102,7 +1099,6 @@ class FirebaseNotificationService : FirebaseMessagingService() {
 
     fun pushToDatabase(
         nc: NotificationObject,
-        timeReceived: Long = System.currentTimeMillis(),
         channel: NotificationAnalytics.Channel
     ) {
         CoroutineScope(Dispatchers.IO).launch {
