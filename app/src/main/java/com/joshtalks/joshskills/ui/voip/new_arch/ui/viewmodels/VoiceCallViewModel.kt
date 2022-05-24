@@ -137,6 +137,7 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                 uiState.topic = state.topicName
                 uiState.topicImage = state.currentTopicImage
                 uiState.type = state.callType
+                uiState.occupation = getOccupationText(state.aspiration,state.occupation)
                 uiState.title = when (state.callType) {
                     PEER_TO_PEER -> "Practice with Partner"
                     FPP -> "Favorite Practice Partner"
@@ -179,6 +180,17 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                 }
             }
         }
+    }
+
+    private fun getOccupationText(aspiration: String, occupation: String): String {
+        if (occupation != "" && aspiration != "") {
+           return "$occupation, Dream - $aspiration"
+        } else if (occupation == "" && aspiration != "") {
+            return "Dream - $aspiration"
+        } else if (occupation != "" && aspiration== "") {
+            return occupation
+        }
+        return ""
     }
 
     private fun getCallStatus(): Int {

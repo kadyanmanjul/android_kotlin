@@ -326,6 +326,76 @@
                         android:textColor="@color/dark_grey"
                         app:rippleColor="@color/white" />
                 </LinearLayout>
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/text_view_occupation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_6sdp"
+                    android:layout_marginTop="@dimen/_16sdp"
+                    android:gravity="start"
+                    android:text="@string/occupation_field"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+                    android:textColor="@color/dark_grey" />
+
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/occupation_edit_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_6sdp"
+                    android:background="@drawable/mobile_no_bg"
+                    android:gravity="start"
+                    android:hint="@string/occupation_filed_hint_text"
+                    android:imeOptions="actionNext"
+                    android:inputType="textCapWords"
+                    android:lines="1"
+                    android:digits="@string/allowed_name_characters"
+                    android:maxLength="24"
+                    android:maxLines="1"
+                    android:minLines="1"
+                    android:paddingStart="@dimen/_14sdp"
+                    android:paddingTop="@dimen/_10sdp"
+                    android:paddingEnd="@dimen/_14sdp"
+                    android:paddingBottom="@dimen/_10sdp"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/light_grey"
+                    android:textCursorDrawable="@drawable/cursor_drawable" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/text_view_aspiration"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_6sdp"
+                    android:layout_marginTop="@dimen/_16sdp"
+                    android:gravity="start"
+                    android:text="@string/aspiration_filed"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+                    android:textColor="@color/dark_grey" />
+
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/aspiration_edit_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_6sdp"
+                    android:background="@drawable/mobile_no_bg"
+                    android:gravity="start"
+                    android:hint="@string/aspiration_filed_hint_text"
+                    android:imeOptions="actionNext"
+                    android:inputType="textCapWords"
+                    android:lines="1"
+                    android:digits="@string/allowed_name_characters"
+                    android:maxLength="24"
+                    android:maxLines="1"
+                    android:minLines="1"
+                    android:paddingStart="@dimen/_14sdp"
+                    android:paddingTop="@dimen/_10sdp"
+                    android:paddingEnd="@dimen/_14sdp"
+                    android:paddingBottom="@dimen/_10sdp"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/light_grey"
+                    android:textCursorDrawable="@drawable/cursor_drawable" />
             </LinearLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout

@@ -38,7 +38,13 @@ data class Channel(
 	private val partnerId: String? = null,
 
 	@field:SerializedName("topic_image")
-   private val topicImage: String? = null
+   private val topicImage: String? = null,
+
+	@field:SerializedName("occupation")
+    private val occupation: String? = null,
+
+   @field:SerializedName("future_goals")
+   private val aspiration: String? = null
 
 ) : ChannelData {
 
@@ -56,7 +62,9 @@ data class Channel(
 				partnerUid = map?.get("partner_uid").toString().toInt(),
 				timeToken = map?.get("timetoken").toString().toLong(),
 				partnerId = map?.get("partner_id").toString(),
-				topicImage = map?.get("partner_id").toString(),
+				topicImage = map?.get("topic_image").toString(),
+				occupation = map?.get("occupation").toString(),
+				aspiration = map?.get("future_goals").toString(),
 				)
 		}
 	}
@@ -98,7 +106,7 @@ data class Channel(
 	}
 
 	override fun getTopicImage(): String {
-		return topicImage ?: throw IncorrectCommunicationDataException("Partner Mentor is NULL")
+		return topicImage ?: throw IncorrectCommunicationDataException("Topic Image is NULL")
 	}
 
 	override fun getType(): Int {
@@ -111,5 +119,13 @@ data class Channel(
 
 	override fun getChannel(): String {
 		return channelName ?: throw IncorrectCommunicationDataException("Channel is NULL")
+	}
+
+	override fun getOccupation(): String {
+		return occupation ?: ""
+	}
+
+	override fun getAspiration(): String {
+		return aspiration ?: ""
 	}
 }

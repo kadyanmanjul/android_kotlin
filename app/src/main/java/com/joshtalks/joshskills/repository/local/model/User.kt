@@ -32,6 +32,12 @@ open class User {
             return field ?: EMPTY
         }
 
+    @SerializedName("occupation")
+    var occupation: String? = EMPTY
+
+    @SerializedName("future_goals")
+    var aspiration: String? = EMPTY
+
     @SerializedName("photo_url")
     var photo: String? = null
 

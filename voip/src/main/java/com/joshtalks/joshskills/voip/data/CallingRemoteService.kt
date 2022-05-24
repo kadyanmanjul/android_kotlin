@@ -301,6 +301,8 @@ data class UIState(
     val topicName: String,
     val callType: Int,
     val currentTopicImage: String,
+    val occupation : String,
+    val aspiration : String,
     val isOnHold: Boolean = false,
     val isSpeakerOn: Boolean = false,
     val isRemoteUserMuted: Boolean = false,
@@ -309,7 +311,7 @@ data class UIState(
     val startTime: Long = 0L
 ) {
     companion object {
-        fun empty() = UIState("", null, "", 0,"")
+        fun empty() = UIState("", null, "", 0,"","","")
     }
 }
 
