@@ -40,7 +40,7 @@ interface ConversationRoomNetworkService {
     @POST("$DIR/conversation_room/search/")
     suspend fun searchRoom(@Body parems:Map<String,String>):Response<SearchRoomsResponseList>
 
-    @POST("$DIR/speakers_list")
-    suspend fun speakersList():Response<List<Users>>
+    @GET("$DIR/user/speakers_to_follow/?page=1")
+    suspend fun speakersList(page: Int):Response<List<Users>>
 
 }

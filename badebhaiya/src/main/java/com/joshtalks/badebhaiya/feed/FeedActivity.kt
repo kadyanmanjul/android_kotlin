@@ -34,11 +34,11 @@ import com.joshtalks.badebhaiya.profile.ProfileFragment
 import com.joshtalks.badebhaiya.profile.request.DeleteReminderRequest
 import com.joshtalks.badebhaiya.profile.request.ReminderRequest
 import com.joshtalks.badebhaiya.pubnub.PubNubState
+import com.joshtalks.badebhaiya.repository.ConversationRoomRepository
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomResponse
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.signup.PeopleToFollowActivity
 import com.joshtalks.badebhaiya.signup.fragments.PeopleToFollowFragment
-import com.joshtalks.badebhaiya.signup.fragments.PeopleToFollowScreen
 import com.joshtalks.badebhaiya.utils.SingleDataManager
 import com.joshtalks.badebhaiya.utils.setImage
 import com.karumi.dexter.MultiplePermissionsReport
@@ -157,11 +157,11 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         binding.handler = this
         binding.viewModel = viewModel
 
-        startActivity(Intent(this, PeopleToFollowActivity::class.java))
+        //startActivity(Intent(this, PeopleToFollowActivity::class.java)
 
-//        val fragmentTransaction: FragmentTransaction = supportFragmentManager.beginTransaction()
-//        fragmentTransaction.replace(R.id.root_view, PeopleToFollowFragment())
-//        fragmentTransaction.commit()
+        val fragmentTransaction: FragmentTransaction = supportFragmentManager.beginTransaction()
+        fragmentTransaction.replace(R.id.root_view, PeopleToFollowFragment())
+        fragmentTransaction.commit()
 
         Timber.d("FEED INTENT ${intent.extras}")
         if (user != null) {
