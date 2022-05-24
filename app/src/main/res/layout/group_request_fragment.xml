@@ -104,13 +104,14 @@
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/question_request_text"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_11sdp"
+            android:layout_marginHorizontal="@dimen/_12sdp"
             android:layout_marginTop="@dimen/_14sdp"
             android:text="@{vm.requestQuestion}"
             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Semi_Bold"
             android:textColor="@color/black"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/appCompatTextView3"
             tools:text="Why do you want to join this group?" />

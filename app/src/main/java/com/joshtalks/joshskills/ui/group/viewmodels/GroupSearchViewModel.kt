@@ -66,10 +66,10 @@ class GroupSearchViewModel : BaseViewModel() {
             .addParam(ParamKeys.GROUP_ID, it.getUniqueId())
 
         if (isSearching.get()) {
-            GroupAnalytics.push(GroupAnalytics.Event.OPEN_GROUP_FROM_SEARCH)
+            GroupAnalytics.push(GroupAnalytics.Event.OPEN_GROUP_FROM_SEARCH, it.getUniqueId())
             MixPanelTracker.push()
         } else {
-            GroupAnalytics.push(GroupAnalytics.Event.OPEN_GROUP_FROM_RECOMMENDATION)
+            GroupAnalytics.push(GroupAnalytics.Event.OPEN_GROUP_FROM_RECOMMENDATION, it.getUniqueId())
             MixPanelTracker.addParam(ParamKeys.SEARCH_KEY, queryLiveData.value).push()
         }
     }

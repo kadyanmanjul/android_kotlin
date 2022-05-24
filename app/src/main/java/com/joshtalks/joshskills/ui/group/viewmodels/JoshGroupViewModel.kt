@@ -104,6 +104,7 @@ class JoshGroupViewModel : BaseViewModel() {
 
     fun onSearch() {
         MixPanelTracker.publishEvent(MixPanelEvent.SEARCH_GROUPS).push()
+        GroupAnalytics.push(GroupAnalytics.Event.FIND_GROUPS_TO_JOIN)
         message.what = SEARCH_GROUP
         singleLiveEvent.value = message
     }
