@@ -130,8 +130,8 @@ class AlarmNotifierActivity : AppCompatActivity(),
 
     private fun Activity.turnScreenOffAndKeyguardOn() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
-            setShowWhenLocked(false)
-            setTurnScreenOn(false)
+            setShowWhenLocked(true)
+            setTurnScreenOn(true)
             window.clearFlags(
                 WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
                         or WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON

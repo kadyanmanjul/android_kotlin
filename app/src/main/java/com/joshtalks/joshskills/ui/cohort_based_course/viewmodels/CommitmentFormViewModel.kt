@@ -1,6 +1,8 @@
 package com.joshtalks.joshskills.ui.cohort_based_course.viewmodels
 
+import android.icu.number.NumberFormatter
 import android.os.Message
+import android.util.Log
 import android.view.View
 import androidx.databinding.ObservableArrayList
 import android.widget.Toast
@@ -16,12 +18,21 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.model.User
+import com.joshtalks.joshskills.repository.server.reminder.ReminderRequest
+import com.joshtalks.joshskills.repository.server.reminder.ReminderResponse
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.cohort_based_course.models.CohortItemModel
 import com.joshtalks.joshskills.ui.inbox.OPEN_CONVERSATION_ACTIVITY
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.text.NumberFormat
+import java.text.SimpleDateFormat
+import java.time.format.DateTimeFormatter
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
+import kotlin.reflect.KFunction3
 
 private const val TAG = "CommitmentFormViewModel"
 
@@ -30,7 +41,7 @@ class CommitmentFormViewModel : ViewModel() {
     private val singleLiveEvent = EventLiveData
     private var reminder: String = "Yes"
     val shapath = ObservableField("Yes")
-    val selectedSlot = ObservableField("")
+    val selectedSlot = ObservableField<CohortItemModel>()
     val cohortBatchList = ObservableArrayList<CohortItemModel>()
     val userName = ObservableField(EMPTY)
 
@@ -60,18 +71,18 @@ class CommitmentFormViewModel : ViewModel() {
 
     fun getCohortBatches() {
         viewModelScope.launch(Dispatchers.IO) {
-                try {
-                    val resp = AppObjectController.CbcNetworkService.getCohortBatches().body()
-                    withContext(Dispatchers.Main) {
-                        cohortBatchList.addAll(resp?.slots as ArrayList<CohortItemModel>)
-                    }
-                    //throw Exception("Problem!")    to test the try catch block
-
-                } catch (ex: Exception) {
-                    ex.printStackTrace()
-                    showToast("Something Went Wrong, Please try again later!",Toast.LENGTH_LONG)
-                    sendEvent(CLOSE_ACTIVITY)
+            try {
+                val resp = AppObjectController.CbcNetworkService.getCohortBatches().body()
+                withContext(Dispatchers.Main) {
+                    cohortBatchList.addAll(resp?.slots as ArrayList<CohortItemModel>)
                 }
+                //throw Exception("Problem!")    to test the try catch block
+
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+                showToast("Something Went Wrong, Please try again later!", Toast.LENGTH_LONG)
+                sendEvent(CLOSE_ACTIVITY)
+            }
         }
     }
 
@@ -79,21 +90,21 @@ class CommitmentFormViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val resp = AppObjectController.CbcNetworkService.postSelectedBatch(map)
-                if(resp.isSuccessful){
+                if (resp.isSuccessful) {
                     sendEvent(START_CONVERSATION_ACTIVITY)
                 }
             } catch (ex: Exception) {
                 ex.printStackTrace()
-                showToast("Something Went Wrong, Please try again later!",Toast.LENGTH_LONG)
+                showToast("Something Went Wrong, Please try again later!", Toast.LENGTH_LONG)
                 sendEvent(CLOSE_ACTIVITY)
             }
         }
     }
 
     fun sendBatchSelected(v: View) {
-        if (selectedSlot.get() != EMPTY) {
+        if (selectedSlot.get() != null) {
             val map: HashMap<String, Any> = HashMap()
-            map["time_slot"] = selectedSlot.get().toString()
+            map["time_slot"] = selectedSlot.get()!!.name.toString()
             map["reminder"] = reminder == "Yes"
             postSelectedBatch(map)
         } else {
@@ -109,11 +120,61 @@ class CommitmentFormViewModel : ViewModel() {
         reminder = selection
     }
 
-    val selectSlot: (item: String) -> Unit = {
+    val selectSlot: (item: CohortItemModel) -> Unit = {
         selectedSlot.set(it)
     }
 
-    fun getUsername(){
+    fun getUsername() {
         userName.set(User.getInstance().firstName ?: EMPTY)
+    }
+
+    fun submitReminder(
+        reminderId: Int,
+        timeSlot: String,
+        frequency: String,
+        status: String,
+        mentorId: String,
+        previousTime: String = EMPTY,
+        onAlarmSetSuccess: KFunction3<Int, Int, Int, Unit>
+    ) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val time =
+                    (selectedSlot.get()?.timeSlot ?: "09:00 PM - 10:00 PM").split(" -")[0].trim()
+                val calendar = Calendar.getInstance()
+                calendar.time = SimpleDateFormat("hh:mm aa", Locale.getDefault()).parse(time) as Date
+                val hour = calendar.get(Calendar.HOUR_OF_DAY)
+                val minute = calendar.get(Calendar.MINUTE)
+                val numberFormat = NumberFormat.getNumberInstance()
+                val startTime = "${numberFormat.format(hour)}:${numberFormat.format(minute)}:00"
+                val response = AppObjectController.commonNetworkService.setReminder(
+                    ReminderRequest(
+                        mentorId,
+                        startTime,
+                        frequency,
+                        status,
+                        previousTime
+                    )
+                )
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        if (it.success) {
+                            val id: Int =
+                                if (previousTime.isBlank()) it.responseData else reminderId
+                            onAlarmSetSuccess.invoke(id, hour, minute)
+                            AppObjectController.appDatabase.reminderDao().insertReminder(
+                                ReminderResponse(
+                                    id, mentorId, frequency, status, startTime
+                                )
+                            )
+                        } else {
+                            showToast(it.message)
+                        }
+                    }
+                }
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
+        }
     }
 }

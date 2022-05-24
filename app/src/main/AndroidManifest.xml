@@ -396,6 +396,7 @@
             android:autoRemoveFromRecents="true"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
+            android:showOnLockScreen="true"
             android:theme="@style/AppNoBarTheme"
             android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity

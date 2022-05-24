@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.ui.cohort_based_course.views
 
+import android.icu.number.NumberFormatter
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
@@ -9,10 +10,14 @@ import com.joshtalks.joshskills.constants.CLOSE_ACTIVITY
 import com.joshtalks.joshskills.constants.OPEN_PROMISE_FRAGMENT
 import com.joshtalks.joshskills.constants.OPEN_SCHEDULE_FRAGMENT
 import com.joshtalks.joshskills.constants.START_CONVERSATION_ACTIVITY
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.databinding.ActivityCommitmentFormBinding
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
+import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.ui.cohort_based_course.viewmodels.CommitmentFormViewModel
+import com.joshtalks.joshskills.util.ReminderUtil
+import kotlin.math.nextUp
 
 
 class CommitmentFormActivity : BaseActivity() {
@@ -39,13 +44,33 @@ class CommitmentFormActivity : BaseActivity() {
                 OPEN_PROMISE_FRAGMENT -> replaceWithPromiseFragment()
                 OPEN_SCHEDULE_FRAGMENT -> replaceWithScheduleFragment()
                 START_CONVERSATION_ACTIVITY -> {
-                    ConversationActivity.startConversionActivity(this,
-                    intent.extras?.get("inboxEntity") as InboxEntity)
-                    finish()
+                    vm.submitReminder(
+                        Math.random().nextUp().toInt(),
+                        vm.selectedSlot.get()!!.timeSlot,
+                        ReminderUtil.Companion.ReminderFrequency.EVERYDAY.name,
+                        ReminderUtil.Companion.ReminderStatus.ACTIVE.name,
+                        Mentor.getInstance().getId(),
+                        EMPTY,
+                        this::onAlarmSetSuccess
+                    )
                 }
                 CLOSE_ACTIVITY -> finish()
             }
         }
+    }
+
+    private fun onAlarmSetSuccess(reminderId: Int, startHour: Int, startMinute: Int) {
+        val reminderUtil = ReminderUtil(applicationContext)
+        reminderUtil.setAlarm(
+            ReminderUtil.Companion.ReminderFrequency.EVERYDAY,
+            reminderUtil.getAlarmPendingIntent(reminderId),
+            startHour,
+            startMinute
+        )
+        ConversationActivity.startConversionActivity(
+            this,
+            intent.extras?.get("inboxEntity") as InboxEntity
+        ).also { finish() }
     }
 
     private fun replaceWithScheduleFragment() {
@@ -62,7 +87,11 @@ class CommitmentFormActivity : BaseActivity() {
 
     private fun addCommitmentFormLaunchFragment() {
         supportFragmentManager.commit {
-            add(R.id.commitment_form_container, CommitmentFormLaunchFragment(), "CommitmentFormLaunchFragment")
+            add(
+                R.id.commitment_form_container,
+                CommitmentFormLaunchFragment(),
+                "CommitmentFormLaunchFragment"
+            )
         }
     }
 }

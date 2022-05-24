@@ -12,7 +12,7 @@ import com.joshtalks.joshskills.ui.cohort_based_course.models.CohortItemModel
 
 class ScheduleAdapter( private val cohortItemModelList:ArrayList<CohortItemModel>) : RecyclerView.Adapter<ScheduleAdapter.ViewHolder>() {
 
-    var itemClick: ((String) -> Unit)? = null
+    var itemClick: ((CohortItemModel) -> Unit)? = null
     var prevHolder: ViewHolder? = null
     private val context = AppObjectController.joshApplication
 
@@ -34,7 +34,7 @@ class ScheduleAdapter( private val cohortItemModelList:ArrayList<CohortItemModel
         holder.bind(cohortItemModelList[position])
         holder.binding.txtViewTimeSlot
         holder.itemView.setOnClickListener {
-            itemClick?.invoke(cohortItemModelList[position].name)
+            itemClick?.invoke(cohortItemModelList[position])
 
             holder.binding.txtViewTimeSlot.textColorSet(R.color.blue_cbc_text_timeslot)
             holder.binding.crdViewTimeSlot.background =
@@ -54,7 +54,7 @@ class ScheduleAdapter( private val cohortItemModelList:ArrayList<CohortItemModel
         return cohortItemModelList.size
     }
 
-    fun setClickListener(function: ((timeSlot: String) -> Unit)?) {
+    fun setClickListener(function: ((cohortItemModel: CohortItemModel) -> Unit)?) {
         itemClick = function
     }
 }

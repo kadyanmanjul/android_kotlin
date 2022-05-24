@@ -103,7 +103,7 @@ class AlarmReceiver : BroadcastReceiver() {
             .setAutoCancel(true)
             .setContentText(description)
             .setCategory(Notification.CATEGORY_REMINDER)
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setPriority(NotificationCompat.PRIORITY_MAX)
             .setSmallIcon(R.drawable.ic_status_bar_notification).setColor(
                 ContextCompat.getColor(
                     context,
