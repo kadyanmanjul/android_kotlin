@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.repository.service
 
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
+import com.joshtalks.joshskills.core.firestore.NotificationAnalyticsRequest
 import com.joshtalks.joshskills.engage_notification.AppUsageModel
 import com.joshtalks.joshskills.repository.local.entity.BroadCastEvent
 import com.joshtalks.joshskills.repository.local.model.GaIDMentorModel

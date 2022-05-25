@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.repository.local.model
 
 import com.google.gson.annotations.SerializedName
+import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 
 class NotificationObject {
@@ -73,6 +74,10 @@ class NotificationObject {
 
     @SerializedName("additional_data")
     var extraData: String? = null
+
+    override fun toString(): String {
+            return AppObjectController.gsonMapper.toJson(this)
+        }
 }
 
 enum class NotificationAction(val type: String) {
@@ -182,8 +187,16 @@ enum class NotificationAction(val type: String) {
     JOIN_CONVERSATION_ROOM("JOIN_CONVERSATION_ROOM"),
 
     @SerializedName("CALL_DECLINE_NOTIFICATION")
-    CALL_DECLINE_NOTIFICATION("CALL_DECLINE_NOTIFICATION")
+    CALL_DECLINE_NOTIFICATION("CALL_DECLINE_NOTIFICATION"),
 
+    @SerializedName("open_groups")
+    ACTION_OPEN_GROUPS("open_groups"),
+
+    @SerializedName("open_fpp_request_list")
+    ACTION_OPEN_FPP_REQUESTS("open_fpp_request_list"),
+
+    @SerializedName("open_fpp_list")
+    ACTION_OPEN_FPP_LIST("open_fpp_list")
 }
 
 enum class NotificationChannelNames(val type: String) {

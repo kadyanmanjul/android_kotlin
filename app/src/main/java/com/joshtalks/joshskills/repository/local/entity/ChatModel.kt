@@ -647,6 +647,7 @@ enum class LESSON_STATUS(val type: String) {
 
 enum class CHAT_TYPE(val type: String) {
     GR("GR"), // Grammar Practice
+    TR("TR"), // Translation Practice
     VP("VP"), // Vocabulary Practice
     RP("RP"), // Reading Practice
     SP("SP"), // Speaking Practice

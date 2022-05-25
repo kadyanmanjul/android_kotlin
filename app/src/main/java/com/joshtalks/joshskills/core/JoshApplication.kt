@@ -16,8 +16,8 @@ import android.os.StrictMode
 import android.text.TextUtils
 import android.util.Log
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.OnLifecycleEvent
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.multidex.MultiDexApplication
@@ -26,9 +26,9 @@ import com.facebook.stetho.Stetho
 import com.freshchat.consumer.sdk.Freshchat
 import com.google.firebase.FirebaseApp
 import com.joshtalks.joshskills.BuildConfig
+import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.notification.LocalNotificationAlarmReciever
 import com.joshtalks.joshskills.core.pstn_states.PstnObserver
-import com.joshtalks.joshskills.core.service.BackgroundService
 import com.joshtalks.joshskills.core.service.NOTIFICATION_DELAY
 import com.joshtalks.joshskills.core.service.ServiceStartReceiver
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
@@ -36,8 +36,10 @@ import com.joshtalks.joshskills.di.ApplicationComponent
 import com.joshtalks.joshskills.di.DaggerApplicationComponent
 import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.ui.call.data.local.VoipPref
-import com.vanniktech.emoji.EmojiManager
-import com.vanniktech.emoji.ios.IosEmojiProvider
+import com.moengage.core.DataCenter
+import com.moengage.core.MoEngage
+import com.moengage.core.config.MiPushConfig
+import com.moengage.core.config.NotificationConfig
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
 import java.lang.reflect.Method
 import java.util.Calendar
@@ -45,12 +47,14 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import com.vanniktech.emoji.ios.IosEmojiProvider
+import com.vanniktech.emoji.EmojiManager
 
 const val TAG = "JoshSkill"
 
 class JoshApplication :
     MultiDexApplication(),
-    LifecycleObserver,
+    LifecycleEventObserver,
     ComponentCallbacks2/*, Configuration.Provider*/ {
     val applicationGraph: ApplicationComponent by lazy {
         DaggerApplicationComponent.create()
@@ -82,6 +86,7 @@ class JoshApplication :
                 VoipPref.initVoipPref(this)
                 PstnObserver
                 registerBroadcastReceiver()
+                initMoEngage()
                 initGroups()
             } else {
                 FirebaseApp.initializeApp(this)
@@ -97,6 +102,16 @@ class JoshApplication :
 //
 //            }
 //        }
+    }
+
+    private fun initMoEngage() {
+        val moEngage = MoEngage.Builder(this, "DU9ICNBN2A9TTT38BS59KEU6")
+            .setDataCenter(DataCenter.DATA_CENTER_3)
+            .configureMiPush(MiPushConfig("2882303761518451933", "5761845183933", true))
+            .configureNotificationMetaData(NotificationConfig(R.drawable.ic_status_bar_notification, R.mipmap.ic_launcher_round))
+            .build()
+
+        MoEngage.initialiseDefaultInstance(moEngage)
     }
 
     override fun onTerminate() {
@@ -196,7 +211,6 @@ class JoshApplication :
         return LocalBroadcastManager.getInstance(this@JoshApplication)
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_START)
     fun onAppForegrounded() {
         Timber.tag(TAG).e("************* foregrounded")
         Timber.tag(TAG).e("************* ${isActivityVisible()}")
@@ -234,7 +248,6 @@ class JoshApplication :
         }
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     fun onAppBackgrounded() {
         Timber.tag(TAG).e("************* backgrounded")
         Timber.tag(TAG).e("************* ${isActivityVisible()}")
@@ -292,7 +305,6 @@ class JoshApplication :
             .not()
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     fun onAppDestroy() {
         Timber.tag(TAG).e("************* onAppDestroy")
         AppObjectController.releaseInstance()
@@ -328,6 +340,21 @@ class JoshApplication :
     fun initGroups() {
         EmojiManager.install(IosEmojiProvider())
         //GroupRepository().subscribeNotifications()
+    }
+
+    override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
+        when(event){
+            Lifecycle.Event.ON_START ->{
+                onAppForegrounded()
+            }
+            Lifecycle.Event.ON_STOP ->{
+                onAppBackgrounded()
+            }
+            Lifecycle.Event.ON_DESTROY ->{
+                onAppDestroy()
+            }
+
+        }
     }
 
     @SuppressLint("PrivateApi")

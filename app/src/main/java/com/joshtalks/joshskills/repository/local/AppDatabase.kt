@@ -11,6 +11,8 @@ import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
 import com.joshtalks.joshskills.core.abTest.VariableMap
 import com.joshtalks.joshskills.core.abTest.repository.ABTestCampaignDao
+import com.joshtalks.joshskills.core.notification.database.NotificationEventDao
+import com.joshtalks.joshskills.core.notification.model.NotificationEvent
 import com.joshtalks.joshskills.engage_notification.AppActivityDao
 import com.joshtalks.joshskills.engage_notification.AppActivityModel
 import com.joshtalks.joshskills.engage_notification.AppUsageDao
@@ -30,6 +32,7 @@ import com.joshtalks.joshskills.repository.local.model.assessment.Choice
 import com.joshtalks.joshskills.repository.local.type_converter.*
 import com.joshtalks.joshskills.repository.server.RequestEngage
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentIntro
+import com.joshtalks.joshskills.repository.server.assessment.OnlineTestRequest
 import com.joshtalks.joshskills.repository.server.assessment.ReviseConcept
 import com.joshtalks.joshskills.repository.server.engage.Graph
 import com.joshtalks.joshskills.repository.server.reminder.ReminderResponse
@@ -69,9 +72,9 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
         VoipAnalyticsEntity::class, GroupsAnalyticsEntity::class, GroupChatAnalyticsEntity::class,
         GroupsItem::class, TimeTokenRequest::class, ChatItem::class, GameAnalyticsEntity::class,
         ABTestCampaignData::class, GroupMember::class, SpecialPractice::class, ReadingVideo::class, CompressedVideo::class,
-        PhonebookContact::class, BroadCastEvent::class
+        PhonebookContact::class, BroadCastEvent::class, NotificationEvent::class, OnlineTestRequest::class
     ],
-    version = 49,
+    version = 50,
     exportSchema = true
 )
 @TypeConverters(
@@ -167,7 +170,8 @@ abstract class AppDatabase : RoomDatabase() {
                                 MIGRATION_45_46,
                                 MIGRATION_46_47,
                                 MIGRATION_47_48,
-                                MIGRATION_48_49
+                                MIGRATION_48_49,
+                                MIGRATION_49_50
                             )
                             .fallbackToDestructiveMigration()
                             .addCallback(sRoomDatabaseCallback)
@@ -575,15 +579,23 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
-        private val MIGRATION_47_48: Migration = object :Migration(47, 48){
+        private val MIGRATION_47_48: Migration = object : Migration(47, 48) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE `group_list_table` ADD COLUMN `agoraUid` INTEGER")
             }
         }
 
-        private val MIGRATION_48_49: Migration = object :Migration(48, 49){
+        private val MIGRATION_48_49: Migration = object : Migration(48, 49) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("CREATE TABLE IF NOT EXISTS `broadcast_events` (`id` INTEGER NOT NULL PRIMARY KEY, `mentorId` TEXT NOT NULL, `eventName` TEXT)")
+            }
+        }
+
+        private val MIGRATION_49_50: Migration = object : Migration(49, 50) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("CREATE TABLE IF NOT EXISTS `online_test_request` (`question_id` INTEGER NOT NULL, `lesson_id` INTEGER NOT NULL, `status` TEXT NOT NULL, `answer` TEXT NOT NULL, `rule_assessment_question_id` TEXT, `answer_order` TEXT NOT NULL, `time_taken` INTEGER, PRIMARY KEY (`lesson_id`))")
+                database.execSQL("ALTER TABLE `lessonmodel` ADD COLUMN `translationStatus` TEXT")
+                database.execSQL("CREATE TABLE IF NOT EXISTS `notification_table` (`id` TEXT PRIMARY KEY NOT NULL, `platform` TEXT NOT NULL, `time_received` INTEGER NOT NULL, `time_shown` INTEGER NOT NULL, `action` TEXT NOT NULL, `analytics_sent` INTEGER NOT NULL DEFAULT 0)")
             }
         }
 
@@ -634,6 +646,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun abCampaignDao(): ABTestCampaignDao
     abstract fun groupMemberDao(): GroupMemberDao
     abstract fun phonebookDao(): PhonebookDao
+    abstract fun notificationEventDao(): NotificationEventDao
     abstract fun broadcastDao(): BroadCastDao
 }
 
@@ -918,18 +931,29 @@ class PendingTaskRequestTypeConverter {
 
 class ListConverters {
     @TypeConverter
-    fun fromString(value: List<String>?): String {
+    fun fromStringList(value: List<String>?): String {
         val type = object : TypeToken<List<String>>() {}.type
         return AppObjectController.gsonMapper.toJson(value, type)
     }
 
     @TypeConverter
-    fun toString(value: String?): List<String> {
+    fun toStringList(value: String?): List<String> {
         if (value == null) {
             return Collections.emptyList()
         }
         val type = object : TypeToken<List<String>>() {}.type
         return AppObjectController.gsonMapper.fromJson(value, type)
+    }
+
+    @TypeConverter
+    fun toIntegerList(value: String): List<Int> {
+        val type = object : TypeToken<List<Int>>() {}.type
+        return AppObjectController.gsonMapper.fromJson(value, type)
+    }
+
+    @TypeConverter
+    fun fromIntegerList(list: List<Int>): String {
+        return AppObjectController.gsonMapper.toJson(list)
     }
 }
 

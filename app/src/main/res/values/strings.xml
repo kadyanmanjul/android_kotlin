@@ -501,6 +501,8 @@
     <string name="lessons">Lessons</string>
     <string name="exam">Certification Exam</string>
     <string name="congratulations">Congratulations </string>
+    <string name="amazing">Amazing</string>
+    <string name="rule_completed_message">Congratulations! You have completed another level</string>
     <string name="grammer_completions_message">Congratulations!!! you have completed grammar part.</string>
     <string name="unlock_next_lesson">Unlock next lesson</string>
     <string name="lesson_completed">Lesson Completed!</string>
@@ -1041,7 +1043,7 @@
     <string name="delete_popup">This photo will be deleted from your previous profile photos</string>
 
     <!-- p2p image share strings -->
-    <string name="share_screen_tagline"><b>मैं रोज़</b> speaking practice <b>कर रहा हूँ</b> call<b>\nपर</b> new new persons <b>के साथ</b>
+    <string name="share_screen_tagline"><b>मैं रोज़</b> speaking practice <b>कर रहा हूँ</b> call<b>\nपर</b> new persons <b>के साथ</b>
 </string>
     <string name="share_screen_line">If I can do it, You can do it</string>
     <string name="share_screen_heading"><![CDATA[\I Spoke in <b>English</b> for <br/> <b>%1$s minutes</b>\]]></string>
@@ -1227,6 +1229,15 @@
     <string name="no_contacts_found">No contacts found!</string>
     <string name="remove_from_favorite">Remove from favorite</string>
     <string name="space">\u0020</string>
+    <string name="slash">/</string>
+    <string name="_1_0x">1.0x</string>
+    <string name="_0_5x">0.5x</string>
+    <string name="_0_75x">0.75x</string>
+    <string name="_1_25x">1.25x</string>
+    <string name="_1_5x">1.5x</string>
+    <string name="_1_75x">1.75x</string>
+    <string name="_of_" formatted="false">%d of %d</string>
+    <string name="translation">Translation</string>
 
     <string name="occupation_field">आप क्या काम करते हैं? (Occupation)</string>
     <string name="occupation_filed_hint_text">e.g. Manager at Flipkart</string>

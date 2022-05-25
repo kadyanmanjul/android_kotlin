@@ -4,20 +4,28 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.joshtalks.joshskills.core.ApiCallStatus
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.SINGLE_SPACE
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.analytics.ParamKeys
+import com.joshtalks.joshskills.core.io.AppDirectory
+import com.joshtalks.joshskills.core.service.DownloadUtils
+import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
 import com.joshtalks.joshskills.repository.local.entity.LessonQuestion
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.assessment.Assessment
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.local.model.assessment.Choice
-import com.joshtalks.joshskills.repository.server.assessment.*
+import com.joshtalks.joshskills.repository.server.assessment.AssessmentStatus
+import com.joshtalks.joshskills.repository.server.assessment.AssessmentType
+import com.joshtalks.joshskills.repository.server.assessment.OnlineTestRequest
+import com.joshtalks.joshskills.repository.server.assessment.OnlineTestResponse
+import com.joshtalks.joshskills.ui.group.repository.ABTestRepository
 import com.joshtalks.joshskills.util.showAppropriateMsg
+import com.tonyodev.fetch2.NetworkType
+import com.tonyodev.fetch2.Priority
+import com.tonyodev.fetch2.Request
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -28,15 +36,15 @@ class OnlineTestViewModel(application: Application) : AndroidViewModel(applicati
     val grammarAssessmentLiveData: MutableLiveData<OnlineTestResponse> = MutableLiveData()
     val message: MutableLiveData<String> = MutableLiveData()
     val apiStatus: MutableLiveData<ApiCallStatus> = MutableLiveData()
+    val repository: ABTestRepository by lazy { ABTestRepository() }
 
 
-    fun fetchAssessmentDetails(lessonId: Int) {
+    private fun fetchAssessmentDetails(lessonId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 apiStatus.postValue(ApiCallStatus.START)
                 val params = mapOf("lesson_id" to lessonId)
                 val response = AppObjectController.chatNetworkService.getOnlineTestQuestion(params)
-
                 if (response.isSuccessful) {
                     apiStatus.postValue(ApiCallStatus.SUCCESS)
                     response.body()?.let {
@@ -52,52 +60,37 @@ class OnlineTestViewModel(application: Application) : AndroidViewModel(applicati
         }
     }
 
-    fun postAnswerAndGetNewQuestion(
-        assessmentQuestion: AssessmentQuestionWithRelations,
-        ruleAssessmentQuestionId: String?,
-        lessonId: Int
-    ) {
+    private fun postAnswerAndGetNewQuestion(lessonId: Int = 0) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 apiStatus.postValue(ApiCallStatus.START)
-                val choice = assessmentQuestion.choiceList.filter { it.isSelectedByUser }
-                    .sortedBy { it.userSelectedOrder }
-                var answerText: StringBuilder = StringBuilder(EMPTY)
-                val answerOrderList = arrayListOf<Int>()
-                choice.forEach {
-                    answerText = answerText.append(it.text).append(SINGLE_SPACE)
-                    answerOrderList.add(it.sortOrder)
-                }
-                if (assessmentQuestion.question.choiceType == ChoiceType.INPUT_TEXT) {
-                    answerText =
-                        answerText.clear().append(assessmentQuestion.choiceList.get(0).imageUrl)
-                }
-                val assessmentRequest = OnlineTestRequest(
-                    question = assessmentQuestion,
-                    answer = answerText.toString(),
-                    answerOrder = answerOrderList,
-                    ruleAssessmentQuestionId = ruleAssessmentQuestionId,
-                    lessonId = lessonId
-                )
-                val response =
-                    AppObjectController.chatNetworkService.postAndGetNextOnlineTestQuestion(
-                        assessmentRequest
-                    )
-                MixPanelTracker.publishEvent(MixPanelEvent.GRAMMAR_QUIZ_SUBMIT)
-                    .addParam(ParamKeys.LESSON_ID,lessonId)
-                    .addParam(ParamKeys.QUESTION_ID,assessmentQuestion.question.remoteId)
-                    .addParam(ParamKeys.IS_CORRECT_ANSWER,assessmentQuestion.question.isCorrect)
-                    .addParam(ParamKeys.ANSWER,answerText.toString())
-                    .push()
-                if (response.isSuccessful) {
-                    apiStatus.postValue(ApiCallStatus.SUCCESS)
-                    response.body()?.let {
-                        grammarAssessmentLiveData.postValue(it)
+                AppObjectController.appDatabase.chatDao().getOnlineTestRequest(lessonId)?.let {
+                    val response =
+                        AppObjectController.chatNetworkService.postAndGetNextOnlineTestQuestion(it)
+                    if (response.isSuccessful) {
+                        apiStatus.postValue(ApiCallStatus.SUCCESS)
+                        response.body()?.let { onlineTestResponse ->
+                            grammarAssessmentLiveData.postValue(onlineTestResponse)
+                        }
                     }
+                    AppObjectController.appDatabase.chatDao().deleteOnlineTestRequest(it)
+                } ?: run {
+                    apiStatus.postValue(ApiCallStatus.FAILED)
                 }
             } catch (ex: Throwable) {
                 apiStatus.postValue(ApiCallStatus.FAILED)
                 Timber.e(ex)
+                ex.showAppropriateMsg()
+            }
+        }
+    }
+
+    fun fetchQuestionsOrPostAnswer(lessonId: Int) {
+        viewModelScope.launch {
+            if (AppObjectController.appDatabase.chatDao().getOnlineTestRequest(lessonId) != null) {
+                postAnswerAndGetNewQuestion(lessonId = lessonId)
+            } else {
+                fetchAssessmentDetails(lessonId)
             }
         }
     }
@@ -163,6 +156,104 @@ class OnlineTestViewModel(application: Application) : AndroidViewModel(applicati
                 AppObjectController.commonNetworkService.saveImpression(requestData)
             } catch (ex: Exception) {
                 Timber.e(ex)
+            }
+        }
+    }
+
+    fun storeAnswerToDb(
+        assessmentQuestion: AssessmentQuestionWithRelations,
+        answerText: String? = null,
+        ruleAssessmentQuestionId: String? = null,
+        lessonId: Int = 0,
+        lessonNumber: Int = 0,
+        timeTaken: Long = 0,
+    ) {
+        val answerOrderList = arrayListOf<Int>()
+        assessmentQuestion.choiceList
+            .filter { it.isSelectedByUser }
+            .sortedBy { it.userSelectedOrder }
+            .forEach { answerOrderList.add(it.sortOrder) }
+        viewModelScope.launch {
+            AppObjectController.appDatabase.chatDao().insertOnlineTestAnswer(
+                OnlineTestRequest(
+                    question = assessmentQuestion,
+                    ruleAssessmentQuestionId = ruleAssessmentQuestionId,
+                    lessonId = lessonId,
+                    answer = answerText.toString(),
+                    answerOrder = answerOrderList,
+                    timeTaken = timeTaken
+                )
+            )
+            PrefManager.put(ONLINE_TEST_LAST_LESSON_ATTEMPTED, lessonNumber)
+        }
+    }
+
+    fun downloadAudioFileForNewGrammar(choiceList: List<Choice>) {
+        viewModelScope.launch {
+            try {
+                for (choice in choiceList) {
+                    choice.downloadStatus = DOWNLOAD_STATUS.DOWNLOADING
+                    AppObjectController.appDatabase.assessmentDao()
+                        .updateChoiceDownloadStatusForAudio(
+                            choice.remoteId,
+                            DOWNLOAD_STATUS.DOWNLOADING
+                        )
+                    val file =
+                        AppDirectory.getAudioReceivedFile(choice.audioUrl.toString()).absolutePath
+                    if (choice.downloadStatus == DOWNLOAD_STATUS.DOWNLOADED) {
+                        return@launch
+                    }
+
+                    val request = Request(choice.audioUrl.toString(), file)
+                    request.priority = Priority.HIGH
+                    request.networkType = NetworkType.ALL
+                    request.tag = choice.remoteId.toString()
+                    AppObjectController.getFetchObject().enqueue(request, {
+                        choice.localAudioUrl = it.file
+                        choice.downloadStatus = DOWNLOAD_STATUS.DOWNLOADED
+                        viewModelScope.launch(this.coroutineContext) {
+                            it.tag?.toInt()?.let { id ->
+                                AppObjectController.appDatabase.assessmentDao()
+                                    .updateChoiceDownloadStatusForAudio(
+                                        id,
+                                        DOWNLOAD_STATUS.DOWNLOADED
+                                    )
+                                AppObjectController.appDatabase.assessmentDao()
+                                    .updateChoiceLocalPathForAudio(id, it.file)
+                            }
+                        }
+                        DownloadUtils.objectFetchListener.remove(it.tag)
+                    }) {
+                        it.throwable?.printStackTrace()
+                        choice.downloadStatus = DOWNLOAD_STATUS.FAILED
+                        viewModelScope.launch(this.coroutineContext) {
+                            AppObjectController.appDatabase.assessmentDao()
+                                .updateAssessmentChoice(choice)
+                        }
+                    }
+                }
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
+        }
+    }
+
+    fun postGoal(goal: String, campaign: String?) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.postGoal(goal)
+            if (campaign != null) {
+                val data = ABTestRepository().getCampaignData(campaign)
+                data?.let {
+                    MixPanelTracker.publishEvent(MixPanelEvent.GOAL)
+                        .addParam(ParamKeys.VARIANT, data?.variantKey ?: EMPTY)
+                        .addParam(
+                            ParamKeys.VARIABLE,
+                            AppObjectController.gsonMapper.toJson(data?.variableMap)
+                        )
+                        .addParam(ParamKeys.CAMPAIGN, campaign)
+                        .addParam(ParamKeys.GOAL, goal)
+                        .push()
+                }
             }
         }
     }

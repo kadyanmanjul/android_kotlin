@@ -37,6 +37,9 @@ interface LessonDao {
     @Query("UPDATE lessonmodel SET grammarStatus = :status WHERE lesson_id= :lessonId")
     fun updateGrammarSectionStatus(lessonId: Int, status: LESSON_STATUS)
 
+    @Query("UPDATE lessonmodel SET translationStatus = :status WHERE lesson_id= :lessonId")
+    fun updateTranslationSectionStatus(lessonId: Int, status: LESSON_STATUS)
+
     @Query("UPDATE lessonmodel SET vocabularyStatus = :status WHERE lesson_id= :lessonId")
     fun updateVocabularySectionStatus(lessonId: Int, status: LESSON_STATUS)
 

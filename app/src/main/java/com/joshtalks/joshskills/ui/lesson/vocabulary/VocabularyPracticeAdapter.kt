@@ -742,7 +742,7 @@ class VocabularyPracticeAdapter(
                 Timber.d("Submit Button click completed")
             }
 
-            binding.videoPlayer.setPlayListener {
+            binding.videoPlayer.setFullScreenListener {
                 lessonQuestion?.let {
                     val videoId = it.videoList?.getOrNull(0)?.id
                     val videoUrl = it.videoList?.getOrNull(0)?.video_url
