@@ -32,30 +32,14 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.conversationRoom.liveRooms.ConversationLiveRoomActivity
-import com.joshtalks.joshskills.core.API_TOKEN
-import com.joshtalks.joshskills.core.ARG_PLACEHOLDER_URL
-import com.joshtalks.joshskills.core.ApiRespStatus
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.COURSE_ID
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.IS_CONVERSATION_ROOM_ACTIVE_FOR_USER
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.JoshApplication.Companion.isAppVisible
-import com.joshtalks.joshskills.core.JoshSkillExecutors
-import com.joshtalks.joshskills.core.ONBOARDING_STAGE
-import com.joshtalks.joshskills.core.OnBoardingStage
-import com.joshtalks.joshskills.core.PREF_IS_CONVERSATION_ROOM_ACTIVE
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.USER_ACTIVE_IN_GAME
-import com.joshtalks.joshskills.core.USER_UNIQUE_ID
-import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.DismissNotifEventReceiver
 import com.joshtalks.joshskills.core.firestore.FirestoreDB
 import com.joshtalks.joshskills.core.firestore.NotificationAnalytics
 import com.joshtalks.joshskills.core.io.LastSyncPrefManager
-import com.joshtalks.joshskills.core.startServiceForWebrtc
-import com.joshtalks.joshskills.core.textDrawableBitmap
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.Question
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
@@ -74,6 +58,8 @@ import com.joshtalks.joshskills.ui.conversation_practice.ConversationPracticeAct
 import com.joshtalks.joshskills.ui.conversation_practice.PRACTISE_ID
 import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
+import com.joshtalks.joshskills.ui.fpp.SeeAllRequestsActivity
+import com.joshtalks.joshskills.ui.group.JoshGroupActivity
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.ui.leaderboard.LeaderBoardViewPagerActivity
 import com.joshtalks.joshskills.ui.lesson.LessonActivity
@@ -98,6 +84,7 @@ import com.joshtalks.joshskills.ui.voip.RTC_WEB_GROUP_CALL_GROUP_NAME
 import com.joshtalks.joshskills.ui.voip.RTC_WEB_GROUP_PHOTO
 import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.joshtalks.joshskills.ui.voip.analytics.VoipAnalytics.pushIncomingCallAnalytics
+import com.joshtalks.joshskills.ui.voip.favorite.FavoriteListActivity
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
 import com.joshtalks.joshskills.voip.constant.State
 import com.moengage.firebase.MoEFireBaseHelper
@@ -635,9 +622,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 return null
             }
             NotificationAction.CALL_FORCE_CONNECT_NOTIFICATION -> {
-                //if (User.getInstance().isVerified) {
                 callForceConnect(notificationObject.actionData)
-                //}
                 return null
             }
             NotificationAction.CALL_FORCE_DISCONNECT_NOTIFICATION -> {
@@ -692,6 +677,20 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                     putExtra(HAS_NOTIFICATION, true)
                     putExtra(NOTIFICATION_ID, notificationObject.id)
+                }
+            }
+            NotificationAction.ACTION_OPEN_GROUPS -> {
+                return Intent(this, JoshGroupActivity::class.java).apply {
+                    putExtra(CONVERSATION_ID, notificationObject.actionData)
+                }
+            }
+            NotificationAction.ACTION_OPEN_FPP_REQUESTS -> {
+                return Intent(this, SeeAllRequestsActivity::class.java)
+            }
+            NotificationAction.ACTION_OPEN_FPP_LIST -> {
+                return Intent(this, FavoriteListActivity::class.java).apply {
+                    putExtra(CONVERSATION_ID, notificationObject.actionData)
+                    putExtra(IS_COURSE_BOUGHT, true)
                 }
             }
             else -> {
@@ -1625,6 +1624,20 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                         addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                         putExtra(HAS_NOTIFICATION, true)
                         putExtra(NOTIFICATION_ID, notificationObject.id)
+                    }
+                }
+                NotificationAction.ACTION_OPEN_GROUPS -> {
+                    Intent(AppObjectController.joshApplication, JoshGroupActivity::class.java).apply {
+                        putExtra(CONVERSATION_ID, notificationObject.actionData)
+                    }
+                }
+                NotificationAction.ACTION_OPEN_FPP_REQUESTS -> {
+                    Intent(AppObjectController.joshApplication, SeeAllRequestsActivity::class.java)
+                }
+                NotificationAction.ACTION_OPEN_FPP_LIST -> {
+                    Intent(AppObjectController.joshApplication, FavoriteListActivity::class.java).apply {
+                        putExtra(CONVERSATION_ID, notificationObject.actionData)
+                        putExtra(IS_COURSE_BOUGHT, true)
                     }
                 }
                 else -> {

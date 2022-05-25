@@ -141,6 +141,9 @@ data class FirestoreNewNotificationObject(
             NotificationAction.ACTION_OPEN_LESSON.type -> NotificationAction.ACTION_OPEN_LESSON
             NotificationAction.ACTION_OPEN_CONVERSATION.type -> NotificationAction.ACTION_OPEN_CONVERSATION
             NotificationAction.ACTION_OPEN_TEST.type -> NotificationAction.ACTION_OPEN_TEST
+            NotificationAction.ACTION_OPEN_GROUPS.type -> NotificationAction.ACTION_OPEN_GROUPS
+            NotificationAction.ACTION_OPEN_FPP_LIST.type -> NotificationAction.ACTION_OPEN_FPP_LIST
+            NotificationAction.ACTION_OPEN_FPP_REQUESTS.type -> NotificationAction.ACTION_OPEN_FPP_REQUESTS
             else -> null
         }
     }
