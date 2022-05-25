@@ -497,6 +497,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
     override fun setReminder(room: RoomListResponseItem, view: View) {
 
         showPopup(room.roomId,User.getInstance().userId)
+        Timber.d("ROOM KA STARTING TIME => ${room.currentTime}")
 
         notificationScheduler.scheduleNotificationAsListener(this, room)
         viewModel.setReminder(
@@ -537,13 +538,13 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                     val resp= CommonRepository().sendMsg(obj)
                     if(resp.isSuccessful)
                         alertDialog.dismiss()
-                    else
-                        showToast("An Error Occured")
+//                    else
+//                        showToast("An Error Occured")
                 }
 
             }
-            else
-                showToast("Please Enter a Message")
+//            else
+//                showToast("Please Enter a Message")
         }
         dialogBinding.Skip.setOnClickListener {
             alertDialog.dismiss()

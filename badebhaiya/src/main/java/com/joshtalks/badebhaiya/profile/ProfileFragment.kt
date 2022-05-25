@@ -44,6 +44,7 @@ import com.joshtalks.badebhaiya.liveroom.OPEN_ROOM
 import com.joshtalks.badebhaiya.liveroom.ROOM_EXPAND
 import com.joshtalks.badebhaiya.liveroom.model.StartingLiveRoomProperties
 import com.joshtalks.badebhaiya.liveroom.viewmodel.LiveRoomViewModel
+import com.joshtalks.badebhaiya.notifications.NotificationScheduler
 import com.joshtalks.badebhaiya.profile.request.DeleteReminderRequest
 import com.joshtalks.badebhaiya.profile.request.ReminderRequest
 import com.joshtalks.badebhaiya.profile.response.ProfileResponse
@@ -69,6 +70,7 @@ import timber.log.Timber
 import kotlinx.android.synthetic.main.why_room.view.*
 import kotlinx.coroutines.CoroutineScope
 import java.lang.Exception
+import javax.inject.Inject
 
 class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallback {
 
@@ -93,6 +95,9 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
     lateinit var binding: FragmentProfileBinding
 
     private var userId: String? = EMPTY
+
+    @Inject
+    lateinit var notificationScheduler: NotificationScheduler
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -197,13 +202,13 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
                 val obj=FormResponse(userId,msg,roomId)
                 CoroutineScope(Dispatchers.IO).launch {
                     val resp= CommonRepository().sendMsg(obj)
-                    if(resp.isSuccessful)
-                        showToast("response Send")
+//                    if(resp.isSuccessful)
+//                        showToast("response Send")
                 }
                 alertDialog.dismiss()
             }
-            else
-                showToast("Please Enter a Message")
+//            else
+//                showToast("Please Enter a Message")
         }
         dialogBinding.Skip.setOnClickListener {
             alertDialog.dismiss()
@@ -493,46 +498,16 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         }
         showPopup(room.roomId,User.getInstance().userId)
 
-        lifecycleScope.launch(Dispatchers.IO) {
-
-        val speakerBitmap = room.speakersData?.photoUrl?.urlToBitmap()
-        val alarmManager = activity?.applicationContext?.getSystemService(ALARM_SERVICE) as AlarmManager
-        val notificationIntent = context?.let {
-            NotificationHelper.getNotificationIntent(
-                it, Notification(
-                    title = room.topic ?: "Conversation Room Reminder",
-                    body = room.speakersData?.name ?: "Conversation Room Reminder",
-                    id = room.startedBy ?: 0,
-                    userId = room.speakersData?.userId ?: "",
-                    type = NotificationType.LIVE,
+        notificationScheduler.scheduleNotificationAsListener(requireActivity() as AppCompatActivity, room)
+            feedViewModel.setReminder(
+                ReminderRequest(
                     roomId = room.roomId.toString(),
-                    speakerPicture = speakerBitmap
+                    userId = User.getInstance().userId,
+                    reminderTime = room.startTimeDate,
+                    false
                 )
             )
-        }
-        val pendingIntent =
-            notificationIntent?.let {
-                PendingIntent.getBroadcast(
-                    requireActivity().applicationContext,
-                    0,
-                    it,
-                    PendingIntent.FLAG_UPDATE_CURRENT
-                )
-            }
-        alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + room.startTimeDate.minus(5 * 60 * 1000), pendingIntent)
-            .also {
-                //room.isScheduled = true
-                viewModel.setReminder(
-                    ReminderRequest(
-                        roomId = room.roomId.toString(),
-                        userId = User.getInstance().userId,
-                        reminderTime = room.startTimeDate.minus(5 * 60 * 1000),
-                        isFromDeeplink,
-                    )
-                )
-            }
         viewModel.getProfileForUser(userId ?: (User.getInstance().userId),isFromDeeplink)
-        }
 
     }
 
