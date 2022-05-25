@@ -20,6 +20,7 @@ import com.joshtalks.joshskills.base.log.JoshLog
 import com.joshtalks.joshskills.ui.call.repository.RepositoryConstants.*
 import com.joshtalks.joshskills.ui.call.repository.WebrtcRepository
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.models.CallUIState
+import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.constant.*
 import com.joshtalks.joshskills.voip.data.ServiceEvents
 import com.joshtalks.joshskills.voip.data.local.PrefManager
@@ -280,6 +281,10 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun getNewTopicImage(v:View){
+        if(Utils.isInternetAvailable().not()){
+            Utils.showToast("Seems like you have no internet")
+            return
+        }
         CallAnalytics.addAnalytics(
             event = EventName.NEXT_TOPIC_BTN_PRESS,
             agoraCallId = PrefManager.getAgraCallId().toString(),

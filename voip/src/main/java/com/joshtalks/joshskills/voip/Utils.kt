@@ -188,6 +188,10 @@ class Utils {
             this.context = application
         }
 
+        fun showToast(msg : String , length: Int = Toast.LENGTH_SHORT){
+        Toast.makeText(context,msg,length).show()
+        }
+
         fun isInternetAvailable(): Boolean {
             val connectivityManager =
                 context?.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
