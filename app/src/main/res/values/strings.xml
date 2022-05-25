@@ -1209,7 +1209,7 @@
 
     //call ratings strings
     <string name="how_was_your_call_name">How was your call with %s ?</string>
-    <string name="you_spoke_for_minutes">You spoke for %s minutes</string>
+    <string name="you_spoke_for_minutes">You spoke for %s seconds</string>
     <string name="very_bad">Very bad</string>
     <string name="block_caller">Block %s</string>
     <string name="excellent">Excellent</string>
@@ -1238,6 +1238,10 @@
     <string name="_1_75x">1.75x</string>
     <string name="_of_" formatted="false">%d of %d</string>
     <string name="translation">Translation</string>
+    <string name="groups_empty_text_1">Groups के ज़रिये हम अपने उन सहपाठिओं को खोज सकते हैं जिनके future के सपने हमसे मिलते हैं या जो हमारे interests share करते हैं</string>
+    <string name="share_with_friends_text">मैं English सीख रहा हूँ ,जहाँ environment मिलता है बेझिझक नए लोगों से बात करने का !तुम भी सीख सकते हो.</string>
+    <string name="we_will_get_new_lesson_here_everyday">हमें यहां हर रोज एक नया पाठ मिलेगा</string>
+    <string name="there_are_four_parts_in_every_lesson">हर पाठ में 4 भाग होते हैं\nGrammar, Vocabulary, Reading\nऔर Speaking</string>
 
     <string name="occupation_field">आप क्या काम करते हैं? (Occupation)</string>
     <string name="occupation_filed_hint_text">e.g. Manager at Flipkart</string>
@@ -1264,4 +1268,17 @@
         <item>Yes</item>
         <item>No</item>
     </string-array>
+    <string name="free_trial_popup_100_points_header">Josh skills उन students का परिवार है जो serious हैं अपनी life मे। जो मेहनत करना चाहते है और आगे बढ़ना चाहते हैं। इस course में enroll होने से पहले आपको एक दिन ये course use करना है। ये बिलकुल मुफ्त है।\n  \nमैं देखना चाहता हु की आप serious हैं english सीखने के लिए। आपको आज 100 points कमाने हैं। अगर आप अगले 24 घंटो में 100 points कमा लेते हैं तो आप कल course में admission ले सकते हैं।</string>
+    <string name="tooltip_conversation">आपके सहपाठी कौन है आप यहाँ से देख सकते है</string>
+    <string name="tooltip_lesson_grammar">आज इस भाग में हम अपने ग्रामर के लेवल का पता लगाएंगे</string>
+    <string name="tooltip_leaderboard_sotd">जो student एक दिन में सबसे ज़्यादा मेहनत करता है वह Student of the Day बनता है</string>
+    <string name="tooltip_leaderboard_sotm">जो student एक महीने में सबसे ज़्यादा मेहनत करता है वह Student of the Month बनता है</string>
+    <string name="tooltip_leaderboard_sotw">जो student एक हफ्ते में सबसे ज़्यादा मेहनत करता है वह Student of the Week बनता है</string>
+    <string name="tooltip_online_status">अब हम जान सकते हैं कि कौन से स्टूडेंट्स ऑनलाइन हैं |</string>
+    <string name="tooltip_open_profile">आप किसी की भी Profile खोल सकते हैं</string>
+    <string name="tooltip_points_history_screen">इस student ने points कैसे कमाए हम यहाँ से देख सकते है</string>
+    <string name="tooltip_search_anyone">यहाँ से हम अपने दोस्तों और बाकी स्टूडेंट्स को सर्च कर सकते हैं |</string>
+    <string name="tooltip_user_profile_screen">हम जितनी मेहनत करेंगे हमे उतने Points मिलेंगेै</string>
+    <string name="referral_share_text">"Mai Bharat 🇮🇳 ke best teachers se Spoken English aur Personality Development seekh raha hu. Mere saath seekhna abhi shuru karo 💪. Ye lo meri taraf se tumhe ₹** OFF: Use my code ****. Download the app by clicking on the link"</string>
+
 </resources>

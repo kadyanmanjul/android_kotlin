@@ -91,7 +91,6 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     val eventLiveData: MutableLiveData<Event<Boolean>> = MutableLiveData()
     var lessonIsConvoRoomActive: Boolean = false
     var isFreeTrail = false
-
     val introVideoLiveDataForSpeakingSection: MutableLiveData<VideoPopupItem> = MutableLiveData()
     val callBtnHideShowLiveData: MutableLiveData<Int> = MutableLiveData()
     val howToSpeakLiveData: MutableLiveData<Boolean> = MutableLiveData()
@@ -178,25 +177,26 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    fun getQuestions(lessonId: Int, isDemo: Boolean = false) {
+    fun getQuestions(lessonId: Int, isDemo: Boolean = false, retryCount: Int = 0) {
         viewModelScope.launch(Dispatchers.IO) {
             val questionsFromDB = getQuestionsFromDB(lessonId)
             //TODO remove below line and uncomment above code after getting correct data from API
             //val questionsFromDB = emptyList<LessonQuestion>()
             if (questionsFromDB.isNotEmpty()) {
                 lessonQuestionsLiveData.postValue(questionsFromDB)
+                return@launch
             }
 
-            var questionsFromAPI = emptyList<LessonQuestion>()
-            if (Utils.isInternetAvailable()) {
-                questionsFromAPI = getQuestionsFromAPI(lessonId, false)
-                if (questionsFromAPI.isNotEmpty()) {
-                    lessonQuestionsLiveData.postValue(questionsFromAPI)
-                }
+            val questionsFromAPI: List<LessonQuestion> = getQuestionsFromAPI(lessonId, false)
+            if (questionsFromAPI.isNotEmpty()) {
+                lessonQuestionsLiveData.postValue(questionsFromAPI)
+                return@launch
             }
-
             if (questionsFromDB.isEmpty() && questionsFromAPI.isEmpty()) {
-                showToast(AppObjectController.joshApplication.getString(R.string.generic_message_for_error))
+                if (retryCount == 0)
+                    getQuestions(lessonId, isDemo, retryCount + 1)
+                else
+                    showToast(AppObjectController.joshApplication.getString(R.string.generic_message_for_error))
             }
         }
     }

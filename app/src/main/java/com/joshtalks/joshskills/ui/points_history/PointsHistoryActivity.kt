@@ -50,7 +50,6 @@ import kotlinx.coroutines.withContext
 
 const val MENTOR_ID = "mentor_id"
 private const val TAG = "PointsHistoryActivity"
-const val TOOLTIP_POINTS_HISTORY_SCREEN = "TOOLTIP_POINTS_HISTORY_SCREEN_"
 
 class PointsHistoryActivity : WebRtcMiddlewareActivity() {
     private val viewModel: PointsViewModel by lazy {
@@ -215,10 +214,7 @@ class PointsHistoryActivity : WebRtcMiddlewareActivity() {
             arrowView.requestLayout()
             arrowView.visibility = View.VISIBLE
             binding.overlayView.visibility = View.VISIBLE
-            tooltipView.setTooltipText(
-                AppObjectController.getFirebaseRemoteConfig()
-                    .getString(TOOLTIP_POINTS_HISTORY_SCREEN + courseId)
-            )
+            tooltipView.setTooltipText(getString(R.string.tooltip_points_history_screen))
 
             slideInAnimation(tooltipView)
             PrefManager.put(HAS_SEEN_POINTS_HISTORY_ANIMATION, true)

@@ -245,7 +245,7 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
             binding.buyCourseLl.visibility = View.VISIBLE
             if (intent.hasExtra(WHATSAPP_URL) && intent.getStringExtra(WHATSAPP_URL)
                     .isNullOrBlank()
-                    .not()
+                    .not() && (PrefManager.getStringValue(CURRENT_COURSE_ID)== DEFAULT_COURSE_ID)
             ) {
                 binding.linkToWhatsapp.visibility = View.VISIBLE
             }

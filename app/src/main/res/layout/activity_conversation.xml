@@ -281,6 +281,61 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/imgGroupChatBtn"
+            android:elevation="@dimen/_8sdp"
+            android:layout_width="@dimen/_50sdp"
+            android:layout_height="@dimen/_50sdp"
+            android:layout_below="@+id/user_point_container"
+            android:layout_alignParentEnd="true"
+            android:layout_marginHorizontal="@dimen/_12sdp"
+            android:layout_marginTop="@dimen/_12sdp"
+            android:adjustViewBounds="true"
+            android:clickable="true"
+            android:focusable="true"
+            android:visibility="gone"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            android:gravity="center"
+            android:padding="@dimen/_4sdp"
+            app:srcCompat="@drawable/ic_groups_new_logo"
+            tools:visibility="visible" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/imgFppBtn"
+            android:elevation="@dimen/_8sdp"
+            android:layout_width="@dimen/_50sdp"
+            android:layout_height="@dimen/_50sdp"
+            android:layout_below="@+id/imgGroupChatBtn"
+            android:layout_alignParentEnd="true"
+            android:layout_marginHorizontal="@dimen/_12sdp"
+            android:layout_marginTop="@dimen/_7sdp"
+            android:adjustViewBounds="true"
+            android:clickable="true"
+            android:focusable="true"
+            android:visibility="gone"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            android:gravity="center"
+            android:padding="@dimen/_4sdp"
+            app:srcCompat="@drawable/ic_fpp_main_logo"
+            tools:visibility="visible" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/fpp_request_count_number"
+            android:layout_width="@dimen/_20sdp"
+            android:layout_height="@dimen/_15sdp"
+            android:background="@drawable/bg_quick_view_number"
+            android:elevation="@dimen/_15sdp"
+            android:gravity="center"
+            android:layout_marginHorizontal="@dimen/_12sdp"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:text="@string/zero"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
+            android:textColor="@color/white"
+            android:visibility="gone"
+            android:layout_below="@+id/imgGroupChatBtn"
+            android:layout_alignParentEnd="true"
+            tools:text="39" />
+
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -318,7 +373,7 @@
                     android:paddingHorizontal="@dimen/_12sdp"
                     android:paddingTop="@dimen/_18sdp"
                     android:paddingBottom="@dimen/_8sdp"
-                    android:text="हमें यहां हर रोज एक नया पाठ मिलेगा"
+                    android:text="@string/we_will_get_new_lesson_here_everyday"
                     android:textAlignment="center"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                     android:textColor="@color/black"
@@ -747,7 +802,7 @@
                     android:paddingHorizontal="@dimen/_8sdp"
                     android:paddingTop="@dimen/_18sdp"
                     android:paddingBottom="@dimen/_8sdp"
-                    android:text="हर पाठ में 4 भाग होते हैं\nGrammar, Vocabulary, Reading\nऔर Speaking"
+                    android:text="@string/there_are_four_parts_in_every_lesson"
                     android:textAlignment="center"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                     android:textColor="@color/black"

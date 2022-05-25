@@ -52,6 +52,8 @@ const val SELECTED_QUALITY = "selected_quality"
 const val CLEAR_CACHE = "is_clear_cache"
 const val USER_LOCALE = "user_locale"
 const val USER_LOCALE_UPDATED = "user_locale_update"
+const val IS_LOCALE_UPDATED_IN_SETTINGS="is_locale_updated_in_settings"
+const val IS_LOCALE_UPDATED_IN_INBOX="is_locale_updated_in_inbox"
 const val BETTERY_OPTIMIZATION_ALREADY_ASKED = "bettery_optimization_asked"
 const val RESUME_CERTIFICATION_EXAM = "resume_certification_exam_"
 const val LAST_ACTIVE_API_TIME = "last_active_time_"
@@ -149,7 +151,12 @@ const val TWENTY_MIN_CALL_ATTEMPTED_GOAL_POSTED = "twenty_min_call_attempted_goa
 const val IS_SPEAKING_SCREEN_CLICKED = "is_speaking_screen_clicked"
 const val CALL_BTN_CLICKED = "call_btn_clicked"
 const val IS_APP_OPENED_FOR_FIRST_TIME = "is_app_opened_for_first_time"
+const val IS_HINDI_SELECTED = "is_hindi_selected"
+const val IS_HINGLISH_SELECTED = "is_hinglish_selected"
+const val SERVER_TIME_OFFSET = "server_time_offset"
 const val IS_A2_C1_RETENTION_ENABLED = "is_a2_c1_retention_enabled"
+
+const val MOENGAGE_USER_CREATED = "MOENGAGE_USER_CREATED"
 
 object PrefManager {
 
@@ -220,11 +227,7 @@ object PrefManager {
         else prefManagerCommon.getInt(key, defValue)
     }
 
-    fun getSetValue(
-        key: String,
-        isConsistent: Boolean = false,
-        defValue: Set<String> = setOf()
-    ): Set<String> {
+    fun getSetValue(key: String, isConsistent: Boolean = false, defValue: Set<String> = setOf()): Set<String> {
         return if (isConsistent) prefManagerConsistent.getStringSet(key, defValue) ?: defValue
         else prefManagerCommon.getStringSet(key, defValue) ?: defValue
     }
@@ -349,8 +352,7 @@ object PrefManager {
             action = CALLING_SERVICE_ACTION
             putExtra(SERVICE_BROADCAST_KEY, STOP_SERVICE)
         }
-        LocalBroadcastManager.getInstance(AppObjectController.joshApplication)
-            .sendBroadcast(broadcastIntent)
+        LocalBroadcastManager.getInstance(AppObjectController.joshApplication).sendBroadcast(broadcastIntent)
     }
 
     fun getLastSyncTime(key: String): Pair<String, String> {

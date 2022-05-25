@@ -20,12 +20,12 @@ import com.joshtalks.joshskills.base.log.JoshLog
 import com.joshtalks.joshskills.ui.call.repository.RepositoryConstants.*
 import com.joshtalks.joshskills.ui.call.repository.WebrtcRepository
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.models.CallUIState
+import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.constant.*
 import com.joshtalks.joshskills.voip.data.ServiceEvents
 import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
-import com.mindorks.placeholderview.`$`.R.id.viewPager
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -183,14 +183,18 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     private fun getOccupationText(aspiration: String, occupation: String): String {
-        if (occupation != "" && aspiration != "") {
+        if (!checkIfNullOrEmpty(occupation) && !checkIfNullOrEmpty(aspiration)) {
            return "$occupation, Dream - $aspiration"
-        } else if (occupation == "" && aspiration != "") {
+        } else if (checkIfNullOrEmpty(occupation) && !checkIfNullOrEmpty(aspiration)) {
             return "Dream - $aspiration"
-        } else if (occupation != "" && aspiration== "") {
+        } else if (!checkIfNullOrEmpty(occupation) && checkIfNullOrEmpty(aspiration)) {
             return occupation
         }
         return ""
+    }
+
+    private fun checkIfNullOrEmpty(word : String) : Boolean{
+       return word == "" || word == "null"
     }
 
     private fun getCallStatus(): Int {
@@ -277,6 +281,15 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun getNewTopicImage(v:View){
+        if(Utils.isInternetAvailable().not()){
+            Utils.showToast("Seems like you have no internet")
+            return
+        }
+        CallAnalytics.addAnalytics(
+            event = EventName.NEXT_TOPIC_BTN_PRESS,
+            agoraCallId = PrefManager.getAgraCallId().toString(),
+            agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
+        )
         repository.getNewTopicImage()
     }
 

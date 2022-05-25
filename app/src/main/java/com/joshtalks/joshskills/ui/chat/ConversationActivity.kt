@@ -53,6 +53,7 @@ import com.joshtalks.joshskills.constants.COURSE_RESTART_SUCCESS
 import com.joshtalks.joshskills.constants.INTERNET_FAILURE
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.Utils.getCurrentMediaVolume
+import com.joshtalks.joshskills.core.Utils.getLangCodeFromCourseId
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
@@ -148,6 +149,7 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
 import org.json.JSONObject
+import timber.log.Timber
 import java.io.File
 import java.lang.ref.WeakReference
 import java.util.*
@@ -186,7 +188,6 @@ class ConversationActivity :
         private var unlockOverlayJob: Job? = null
 
         fun startConversionActivity(activity: Activity, inboxEntity: InboxEntity) {
-            Log.e("Mihir", "startConversionActivity: $inboxEntity")
             val intent = Intent(activity, ConversationActivity::class.java).apply {
                 putExtra(CHAT_ROOM_OBJECT, inboxEntity)
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -822,22 +823,7 @@ class ConversationActivity :
 //            val intent = Intent(this, JoshGroupActivity::class.java)
 //            startActivity(intent)
 //        }
-        conversationBinding.imgActivityFeed.setOnSingleClickListener {
-            if (inboxEntity.isCourseBought.not() &&
-                inboxEntity.expiryDate != null &&
-                inboxEntity.expiryDate!!.time < System.currentTimeMillis()
-            ) {
-                val nameArr = User.getInstance().firstName?.split(SINGLE_SPACE)
-                val firstName = if (nameArr != null) nameArr[0] else EMPTY
-                showToast(getString(R.string.feature_locked, firstName))
-            } else {
-                MixPanelTracker.publishEvent(MixPanelEvent.ACTIVITY_FEED).push()
-                val intent = Intent(this, ActivityFeedMainActivity::class.java)
-                startActivity(intent)
-            }
-        }
-
-        conversationBinding.imgFppRequest.setOnSingleClickListener {
+        conversationBinding.imgFppBtn.setOnSingleClickListener {
             if (inboxEntity.isCourseBought.not() &&
                 inboxEntity.expiryDate != null &&
                 inboxEntity.expiryDate!!.time < System.currentTimeMillis()
@@ -867,22 +853,6 @@ class ConversationActivity :
                     putExtra(CONVERSATION_ID, getConversationId())
                 }
                 GroupAnalytics.push(MAIN_GROUP_ICON)
-                startActivity(intent)
-            }
-        }
-
-        conversationBinding.imgGameBtn.setOnSingleClickListener {
-            if (inboxEntity.isCourseBought.not() &&
-                inboxEntity.expiryDate != null &&
-                inboxEntity.expiryDate!!.time < System.currentTimeMillis()
-            ) {
-                val nameArr = User.getInstance().firstName?.split(" ")
-                val firstName = if (nameArr != null) nameArr[0] else EMPTY
-                showToast(getString(R.string.feature_locked, firstName))
-            } else {
-                MixPanelTracker.publishEvent(MixPanelEvent.GAME_BUTTON_CLICKED).push()
-                val intent = Intent(this, StartActivity::class.java)
-                GameAnalytics.push(GameAnalytics.Event.CLICK_ON_MAIN_GAME_ICON)
                 startActivity(intent)
             }
         }
@@ -1223,11 +1193,27 @@ class ConversationActivity :
             }
         }
 
+        conversationViewModel.pendingRequestsList.observe(this) {
+            with(conversationBinding) {
+                if (it.pendingRequestsList.isNullOrEmpty()) {
+                    requestCountNumber = 0
+                    fppRequestCountNumber.visibility = GONE
+                }else {
+                    requestCountNumber = it.pendingRequestsList.size
+                    fppRequestCountNumber.text = requestCountNumber.toString()
+                    fppRequestCountNumber.visibility = VISIBLE
+                }
+            }
+        }
+
+
+
         lifecycleScope.launchWhenResumed {
             utilConversationViewModel.userData.collectLatest { userProfileData ->
                 this@ConversationActivity.userProfileData = userProfileData
-                if (userProfileData.hasGroupAccess) {
+                if (userProfileData.hasGroupAccess && PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID) {
                     conversationBinding.imgGroupChatBtn.visibility = VISIBLE
+                    conversationBinding.imgFppBtn.visibility = VISIBLE
                     if (PrefManager.getBoolValue(SHOULD_SHOW_AUTOSTART_POPUP, defValue = true)
                         && System.currentTimeMillis()
                             .minus(PrefManager.getLongValue(LAST_TIME_AUTOSTART_SHOWN)) > 259200000L
@@ -1238,60 +1224,15 @@ class ConversationActivity :
                     }
                 } else {
                     conversationBinding.imgGroupChatBtn.visibility = GONE
+                    conversationBinding.imgFppBtn.visibility = GONE
                 }
-                conversationBinding.floatingActionButtonAdd.visibility = VISIBLE
                 getAllPendingRequest()
-                blurViewOnClickListeners(userProfileData)
                 initScoreCardView(userProfileData)
                 if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE))
                     profileFeatureActiveView(true)
             }
         }
 
-        conversationViewModel.pendingRequestsList.observe(this) {
-            with(conversationBinding) {
-                if (it.pendingRequestsList.isNullOrEmpty()) {
-                    requestCountNumber = 0
-                    myRequestsLl.removeAllViews()
-                    quickViewNoRequests.visibility = VISIBLE
-                    fppRequestCountNumber.visibility = GONE
-                    allCountNumber.visibility = GONE
-                    viewAllRequests.text =
-                        getString(R.string.see_requests, it.pendingRequestsList.size.toString())
-                } else {
-                    requestCountNumber = it.pendingRequestsList.size
-                    quickViewNoRequests.visibility = INVISIBLE
-                    allCountNumber.text = it.pendingRequestsList.size.toString()
-                    myRequestsLl.visibility = VISIBLE
-                    viewAllRequests.text =
-                        getString(R.string.see_requests, it.pendingRequestsList.size.toString())
-                    horizontalLineForHeading.visibility = VISIBLE
-                    var countRequestsList = 0
-                    myRequestsLl.removeAllViews()
-                    it.pendingRequestsList.forEach {
-                        if (countRequestsList < 7) {
-                            val view = getPendingRequestItem(it)
-                            if (view != null) {
-                                conversationBinding.myRequestsLl.addView(view.root)
-                                countRequestsList++
-                            }
-                        }
-                    }
-                    if (isFirstTime) {
-                        isFirstTime = false
-                        allCountNumber.visibility = VISIBLE
-                    }
-                    fppRequestCountNumber.text =
-                        it.pendingRequestsList.size.toString()
-                }
-                viewAllRequests.setOnClickListener {
-                    MixPanelTracker.publishEvent(MixPanelEvent.SEE_ALL_REQUESTS).push()
-                    val intent =
-                        Intent(conversationBinding.root.context, SeeAllRequestsActivity::class.java)
-                    startActivity(intent)
-                }
-            }
-        }
         lifecycleScope.launchWhenCreated {
             conversationViewModel.userUnreadCourseChat.collectLatest { items ->
                 //  Start Add new Message UI add logic
@@ -1581,6 +1522,11 @@ class ConversationActivity :
                 {
                 }
             )
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+        getAllPendingRequest()
     }
 
     private fun profileFeatureActiveView(showLeaderboardMenu: Boolean) {
@@ -2390,9 +2336,6 @@ class ConversationActivity :
     }
 
     override fun onStop() {
-        hideBlurOrQuickView()
-        conversationBinding.imgMain.visibility = GONE
-        setButtonsAnimation()
         compositeDisposable.clear()
         readMessageTimerTask?.cancel()
         uiHandler.removeCallbacksAndMessages(null)
@@ -2799,10 +2742,10 @@ class ConversationActivity :
         return if (titleBarHeight < 0) titleBarHeight * -1 else titleBarHeight
     }
 
-    fun getConversationTooltip(): String {
-        val courseId = PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID)
-        return AppObjectController
-            .getFirebaseRemoteConfig().getString(TOOLTIP_CONVERSAITON + courseId)
+    fun getConversationTooltip() : String {
+//        val courseId = PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID)
+//        requestWorkerForChangeLanguage(getLangCodeFromCourseId(courseId))
+        return getString(R.string.tooltip_conversation)
     }
 
 }

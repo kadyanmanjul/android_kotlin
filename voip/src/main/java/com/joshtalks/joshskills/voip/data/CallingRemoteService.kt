@@ -56,9 +56,7 @@ class CallingRemoteService : Service() {
 
     // For Testing Purpose
     private val notificationData = TestNotification()
-    private val notification by lazy {
-        VoipNotification(notificationData, NotificationPriority.Low)
-    }
+    private val notification by lazy { VoipNotification(notificationData, NotificationPriority.Low) }
     private val binder = RemoteServiceBinder()
 
     override fun onCreate() {

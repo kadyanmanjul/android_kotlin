@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.core.notification
 
-import android.app.*
 import android.app.ActivityManager
 import android.app.Notification
 import android.app.NotificationChannel
@@ -27,36 +26,20 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.clevertap.android.sdk.CleverTapAPI
 import com.facebook.share.internal.ShareConstants.ACTION_TYPE
 import com.freshchat.consumer.sdk.Freshchat
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.conversationRoom.liveRooms.ConversationLiveRoomActivity
-import com.joshtalks.joshskills.core.API_TOKEN
-import com.joshtalks.joshskills.core.ARG_PLACEHOLDER_URL
-import com.joshtalks.joshskills.core.ApiRespStatus
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.COURSE_ID
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.IS_CONVERSATION_ROOM_ACTIVE_FOR_USER
-import com.joshtalks.joshskills.core.JoshSkillExecutors
-import com.joshtalks.joshskills.core.ONBOARDING_STAGE
-import com.joshtalks.joshskills.core.OnBoardingStage
-import com.joshtalks.joshskills.core.PREF_IS_CONVERSATION_ROOM_ACTIVE
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.USER_ACTIVE_IN_GAME
-import com.joshtalks.joshskills.core.USER_UNIQUE_ID
-import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.JoshApplication.Companion.isAppVisible
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.DismissNotifEventReceiver
 import com.joshtalks.joshskills.core.firestore.FirestoreDB
+import com.joshtalks.joshskills.core.firestore.NotificationAnalytics
 import com.joshtalks.joshskills.core.io.LastSyncPrefManager
-import com.joshtalks.joshskills.core.startServiceForWebrtc
-import com.joshtalks.joshskills.core.textDrawableBitmap
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.Question
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
@@ -67,7 +50,6 @@ import com.joshtalks.joshskills.repository.local.model.NotificationChannelNames
 import com.joshtalks.joshskills.repository.local.model.NotificationObject
 import com.joshtalks.joshskills.repository.local.model.ShortNotificationObject
 import com.joshtalks.joshskills.repository.local.model.User
-import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.assessment.AssessmentActivity
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
@@ -76,6 +58,8 @@ import com.joshtalks.joshskills.ui.conversation_practice.ConversationPracticeAct
 import com.joshtalks.joshskills.ui.conversation_practice.PRACTISE_ID
 import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
+import com.joshtalks.joshskills.ui.fpp.SeeAllRequestsActivity
+import com.joshtalks.joshskills.ui.group.JoshGroupActivity
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.ui.leaderboard.LeaderBoardViewPagerActivity
 import com.joshtalks.joshskills.ui.lesson.LessonActivity
@@ -100,8 +84,11 @@ import com.joshtalks.joshskills.ui.voip.RTC_WEB_GROUP_CALL_GROUP_NAME
 import com.joshtalks.joshskills.ui.voip.RTC_WEB_GROUP_PHOTO
 import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.joshtalks.joshskills.ui.voip.analytics.VoipAnalytics.pushIncomingCallAnalytics
+import com.joshtalks.joshskills.ui.voip.favorite.FavoriteListActivity
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
 import com.joshtalks.joshskills.voip.constant.State
+import com.moengage.firebase.MoEFireBaseHelper
+import com.moengage.pushbase.MoEPushHelper
 import java.io.IOException
 import java.io.InputStream
 import java.lang.reflect.Type
@@ -144,6 +131,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             e.printStackTrace()
         }
         PrefManager.put(FCM_TOKEN, token)
+        MoEFireBaseHelper.getInstance().passPushToken(applicationContext, token)
         CleverTapAPI.getDefaultInstance(this)?.pushFcmRegistrationId(token, true)
         if (AppObjectController.freshChat != null) {
             AppObjectController.freshChat?.setPushRegistrationToken(token)
@@ -154,9 +142,6 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     CoroutineExceptionHandler { _, _ -> /* Do Nothing */ }
         ).launch {
             val userId = Mentor.getInstance().getId()
-//            val fcmResponse = FCMResponse.getInstance()
-//            fcmResponse?.apiStatus = ApiRespStatus.POST
-//            fcmResponse?.update()
             if (userId.isNotBlank()) {
                 try {
                     val data = mutableMapOf(
@@ -190,32 +175,76 @@ class FirebaseNotificationService : FirebaseMessagingService() {
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
-        Timber.tag(FirebaseNotificationService::class.java.name).e("fcm : ${remoteMessage.data}")
+        Timber.tag(FirebaseNotificationService::class.java.name)
+            .e("fcm onMessageReceived data: ${remoteMessage.data}  remote body: ${remoteMessage.notification?.body}  title : ${remoteMessage.notification?.title}")
 
         try {
             if (Freshchat.isFreshchatNotification(remoteMessage))
                 Freshchat.handleFcmMessage(this, remoteMessage)
-            else {
-                processRemoteMessage(remoteMessage.data)
+            else if (MoEPushHelper.getInstance().isFromMoEngagePlatform(remoteMessage.data) && JSONObject(remoteMessage.data["gcm_alert"]).has("isCustom")) {
+                val dataJson = JSONObject(remoteMessage.data["gcm_alert"])
+                remoteMessage.data["title"] = dataJson["title"].toString()
+                remoteMessage.data["body"] = dataJson["body"].toString()
+                remoteMessage.data["action"] = dataJson["client_action"].toString()
+                remoteMessage.data["action_data"] = dataJson["action_data"].toString()
+                remoteMessage.data["notification_id"] = dataJson["notification_id"].toString()
+                processRemoteMessage(remoteMessage, NotificationAnalytics.Channel.MOENGAGE)
+                MoEPushHelper.getInstance().logNotificationReceived(this, remoteMessage.data)
+                return
+            } else if (MoEPushHelper.getInstance().isFromMoEngagePlatform(remoteMessage.data)) {
+                MoEFireBaseHelper.getInstance().passPushPayload(applicationContext, remoteMessage.data)
+                return
+            } else {
+                processRemoteMessage(remoteMessage, NotificationAnalytics.Channel.FCM)
             }
         } catch (ex: Exception) {
             ex.printStackTrace()
         }
     }
 
-    private fun processRemoteMessage(remoteData: MutableMap<String, String>) {
-        if (remoteData.containsKey("nType")) {
-            if(remoteData["nType"] == "CR" && application.getVoipState() != State.IDLE)
+    override fun handleIntent(intent: Intent) {
+        if (!isAppVisible) {
+            val data = mapOf(
+                Pair("action", intent.extras?.getString("action")),
+                Pair("action_data", intent.extras?.getString("action_data")),
+                Pair("id", intent.extras?.getString("id")),
+                Pair("content_title", intent.extras?.getString("gcm.notification.title")),
+                Pair("content_text", intent.extras?.getString("gcm.notification.body"))
+            )
+
+            val notificationTypeToken: Type = object : TypeToken<NotificationObject>() {}.type
+            val nc: NotificationObject = AppObjectController.gsonMapper.fromJson(
+                AppObjectController.gsonMapper.toJson(data),
+                notificationTypeToken
+            )
+
+            CoroutineScope(Dispatchers.IO).launch {
+                val isFirstTimeNotification = NotificationAnalytics().addAnalytics(
+                    notificationId = nc.id.toString(),
+                    mEvent = NotificationAnalytics.Action.RECEIVED,
+                    channel = NotificationAnalytics.Channel.FCM
+                )
+                if (isFirstTimeNotification)
+                    sendNotification(nc)
+            }
+            Timber.tag(FirebaseNotificationService::class.java.name).e("intent : ${intent.extras}")
+        } else
+            super.handleIntent(intent)
+    }
+
+    private fun processRemoteMessage(remoteData: RemoteMessage, channel: NotificationAnalytics.Channel) {
+        if (remoteData.data.containsKey("nType")) {
+            if(remoteData.data["nType"] == "CR" && application.getVoipState() != State.IDLE)
                 return
             val notificationTypeToken: Type = object : TypeToken<ShortNotificationObject>() {}.type
             val shortNc: ShortNotificationObject = AppObjectController.gsonMapper.fromJson(
-                AppObjectController.gsonMapper.toJson(remoteData),
+                AppObjectController.gsonMapper.toJson(remoteData.data),
                 notificationTypeToken
             )
 
             FirestoreDB.getNotification {
                 val nc = it.toNotificationObject(shortNc.id)
-                if (remoteData["nType"] == "CR") {
+                if (remoteData.data["nType"] == "CR") {
                     nc.actionData?.let {
                         pushIncomingCallAnalytics(it)
                     }
@@ -225,22 +254,31 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         } else {
             val notificationTypeToken: Type = object : TypeToken<NotificationObject>() {}.type
             val nc: NotificationObject = AppObjectController.gsonMapper.fromJson(
-                AppObjectController.gsonMapper.toJson(remoteData),
+                AppObjectController.gsonMapper.toJson(remoteData.data),
                 notificationTypeToken
             )
-            sendNotification(nc)
+            nc.contentTitle = remoteData.notification?.title ?: remoteData.data["title"]
+            nc.contentText = remoteData.notification?.body ?: remoteData.data["body"]
+
+            CoroutineScope(Dispatchers.IO).launch {
+                val isFirstTimeNotification = NotificationAnalytics().addAnalytics(
+                    notificationId = nc.id.toString(),
+                    mEvent = NotificationAnalytics.Action.RECEIVED,
+                    channel = channel
+                )
+                if (isFirstTimeNotification)
+                    sendNotification(nc)
+            }
         }
     }
 
     private fun sendNotification(notificationObject: NotificationObject) {
         executor.execute {
-
             val intent = getIntentAccordingAction(
                 notificationObject,
                 notificationObject.action,
                 notificationObject.actionData
             )
-
             intent?.run {
                 putExtra(HAS_NOTIFICATION, true)
                 putExtra(NOTIFICATION_ID, notificationObject.id)
@@ -365,9 +403,6 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                         notificationManager.notify(uniqueInt, notificationBuilder.build())
                     }
                 }
-            }
-            if (PrefManager.getStringValue(API_TOKEN).isNotEmpty()) {
-                EngagementNetworkHelper.receivedNotification(notificationObject)
             }
         }
     }
@@ -508,7 +543,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
 
              }*/
             NotificationAction.ACTION_DELETE_DATA -> {
-                if (User.getInstance().isVerified ) {
+                if (User.getInstance().isVerified) {
                     Mentor.deleteUserData()
                 }
                 return null
@@ -522,13 +557,13 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 return null
             }
             NotificationAction.ACTION_DELETE_USER -> {
-                if (User.getInstance().isVerified ) {
+                if (User.getInstance().isVerified) {
                     Mentor.deleteUserCredentials()
                 }
                 return null
             }
             NotificationAction.ACTION_DELETE_USER_AND_DATA -> {
-                if (Mentor.getInstance().hasId() && User.getInstance().isVerified ) {
+                if (Mentor.getInstance().hasId() && User.getInstance().isVerified) {
                     Mentor.deleteUserCredentials()
                     Mentor.deleteUserData()
                 }
@@ -587,9 +622,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 return null
             }
             NotificationAction.CALL_FORCE_CONNECT_NOTIFICATION -> {
-                //if (User.getInstance().isVerified) {
                 callForceConnect(notificationObject.actionData)
-                //}
                 return null
             }
             NotificationAction.CALL_FORCE_DISCONNECT_NOTIFICATION -> {
@@ -644,6 +677,20 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                     putExtra(HAS_NOTIFICATION, true)
                     putExtra(NOTIFICATION_ID, notificationObject.id)
+                }
+            }
+            NotificationAction.ACTION_OPEN_GROUPS -> {
+                return Intent(this, JoshGroupActivity::class.java).apply {
+                    putExtra(CONVERSATION_ID, notificationObject.actionData)
+                }
+            }
+            NotificationAction.ACTION_OPEN_FPP_REQUESTS -> {
+                return Intent(this, SeeAllRequestsActivity::class.java)
+            }
+            NotificationAction.ACTION_OPEN_FPP_LIST -> {
+                return Intent(this, FavoriteListActivity::class.java).apply {
+                    putExtra(CONVERSATION_ID, notificationObject.actionData)
+                    putExtra(IS_COURSE_BOUGHT, true)
                 }
             }
             else -> {
@@ -1018,246 +1065,6 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         return false
     }
 
-//    private fun showGroupChatNotification(data: String) {
-//        executor.execute {
-//            try {
-//                val baseMessage = CometChatHelper.processMessage(JSONObject(data))
-//                val group = baseMessage.receiver as Group
-//                val message = if (
-//                    baseMessage.category == CometChatConstants.CATEGORY_MESSAGE &&
-//                    baseMessage.type == CometChatConstants.MESSAGE_TYPE_TEXT
-//                ) {
-//                    (baseMessage as TextMessage).text.trim()
-//                } else if (
-//                    baseMessage.category == CometChatConstants.CATEGORY_MESSAGE &&
-//                    baseMessage.type == CometChatConstants.MESSAGE_TYPE_AUDIO
-//                ) {
-//                    var voiceMessage: String? =
-//                        String.format(this.resources.getString(R.string.shared_a_audio), "")
-//                    if (baseMessage.metadata.has("audioDurationInMs")) {
-//                        val audioDurationInMs: Long =
-//                            baseMessage.metadata.getLong("audioDurationInMs")
-//                        voiceMessage = String.format(
-//                            this.resources.getString(R.string.shared_a_audio),
-//                            "(" + formatDuration(audioDurationInMs.toInt()) + ")"
-//                        )
-//                    }
-//                    voiceMessage
-//                } else {
-//                    null
-//                }
-//                if (Utils.isMessageVisible(baseMessage) && message != null) {
-//                    unreadMessageList.add(baseMessage)
-//                }
-//                val clickIntent =
-//                    Intent(applicationContext, InboxActivity::class.java).apply {
-//                        putExtra(NOTIFICATION_ID, baseMessage.receiverUid)
-//                        putExtra(HAS_NOTIFICATION, true)
-//                        putExtra(StringContract.IntentStrings.GUID, baseMessage.receiverUid)
-//                        addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-//                    }
-//                val uniqueRequestCode = (System.currentTimeMillis() and 0xfffffff).toInt()
-//                val pendingClickIntent = PendingIntent.getActivities(
-//                    applicationContext,
-//                    uniqueRequestCode,
-//                    arrayOf(clickIntent),
-//                    PendingIntent.FLAG_UPDATE_CURRENT
-//                )
-//                val dismissIntent = Intent(
-//                    applicationContext,
-//                    DismissNotifEventReceiver::class.java
-//                ).apply {
-//                    putExtra(NOTIFICATION_ID, baseMessage.receiverUid)
-//                    putExtra(HAS_NOTIFICATION, true)
-//                }
-//                val pendingDismissIntent: PendingIntent = PendingIntent.getBroadcast(
-//                    applicationContext,
-//                    uniqueRequestCode,
-//                    dismissIntent,
-//                    0
-//                )
-//                val defaultSound =
-//                    RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-//                val iconUrl =
-//                    "https://s3.ap-south-1.amazonaws.com/www.static.skills.com/skills+logo.png"
-//                val notificationManager =
-//                    getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-//
-//                val style = NotificationCompat.BigTextStyle()
-//                    .setBigContentTitle(baseMessage.sender.name)
-//                    .setSummaryText(group.name)
-//                    .bigText(message)
-//
-//                val chatGroupIcon: Bitmap? = if (baseMessage.sender.avatar.isNullOrEmpty()) {
-//                    getNameInitialBitmap(baseMessage.sender.name, null)
-//                } else {
-//                    getBitmapFromURL(baseMessage.sender.avatar)?.run { getCroppedBitmap(this) }
-//                }
-//
-//                val chatGroup = Person.Builder()
-//                    .setImportant(true)
-//                    .setName(
-//                        HtmlCompat.fromHtml(
-//                            "<b>${(baseMessage.receiver as Group).name}</b>",
-//                            HtmlCompat.FROM_HTML_MODE_COMPACT
-//                        )
-//                    )
-//                    .setKey(baseMessage.receiverUid)
-//                    .setIcon(IconCompat.createWithBitmap(chatGroupIcon))
-//                    .build()
-//
-//                val conversationTitle =
-//                    if (unreadMessageList.size > 1) group.name + " (${unreadMessageList.size} Messages)" else group.name
-//                val messagingStyle = NotificationCompat.MessagingStyle(chatGroup)
-//                    .setConversationTitle(conversationTitle)
-//                    .setGroupConversation(true)
-//
-//                unreadMessageList.listIterator().forEach {
-//                    val messageText = if (
-//                        it.category == CometChatConstants.CATEGORY_MESSAGE &&
-//                        it.type == CometChatConstants.MESSAGE_TYPE_TEXT
-//                    ) {
-//                        (it as TextMessage).text.trim()
-//                    } else if (
-//                        it.category == CometChatConstants.CATEGORY_MESSAGE &&
-//                        it.type == CometChatConstants.MESSAGE_TYPE_AUDIO
-//                    ) {
-//                        var voiceMessage: String? =
-//                            String.format(this.resources.getString(R.string.shared_a_audio), "")
-//                        if (it.metadata.has("audioDurationInMs")) {
-//                            val audioDurationInMs: Long =
-//                                it.metadata.getLong("audioDurationInMs")
-//                            voiceMessage = String.format(
-//                                this.resources.getString(R.string.shared_a_audio),
-//                                "(" + formatDuration(audioDurationInMs.toInt()) + ")"
-//                            )
-//                        }
-//                        voiceMessage
-//                    } else {
-//                        null
-//                    }
-//                    val senderColor =
-//                        if (it.sender.metadata != null && it.sender.metadata.has("color_code"))
-//                            it.sender.metadata.getString("color_code")
-//                        else
-//                            "#" + Integer.toHexString(
-//                                ContextCompat.getColor(
-//                                    this,
-//                                    R.color.colorPrimary
-//                                )
-//                            )
-//
-//                    val senderIcon: Bitmap? = if (it.sender.avatar.isNullOrEmpty()) {
-//                        getNameInitialBitmap(it.sender.name, senderColor)
-//                    } else {
-//                        getBitmapFromURL(it.sender.avatar)?.run { getCroppedBitmap(this) }
-//                    }
-//
-//                    val sender = Person.Builder()
-//                        .setImportant(true)
-//                        .setName(
-//                            HtmlCompat.fromHtml(
-//                                "<b><font color=$senderColor>${it.sender.name}</font></b>",
-//                                HtmlCompat.FROM_HTML_MODE_COMPACT
-//                            )
-//                        )
-//                        .setKey(it.sender.uid)
-//                        .setIcon(IconCompat.createWithBitmap(senderIcon))
-//                        .build()
-//
-//                    val notificationMessage = NotificationCompat.MessagingStyle.Message(
-//                        messageText,
-//                        it.sentAt * 1000L,
-//                        sender
-//                    )
-//                    messagingStyle.addMessage(notificationMessage)
-//                }
-//
-//                val notificationBuilder = NotificationCompat.Builder(
-//                    this@FirebaseNotificationService,
-//                    groupChatChannelId
-//                ).apply {
-//                    setTicker("You have a new message")
-//                    setSmallIcon(R.drawable.ic_status_bar_notification)
-//                    setLargeIcon(getBitmapFromURL(group.icon)?.run { getCroppedBitmap(this) })
-//                    setContentTitle(group.name)
-//                    setContentText(message)
-//                    setContentIntent(pendingClickIntent) // intent that will fire when user taps the notification
-//                    setDeleteIntent(pendingDismissIntent)
-//                    setAutoCancel(true)    // automatically removes the notification when the user taps it
-//                    setSound(defaultSound)
-//                    setStyle(style)
-//                    setWhen(baseMessage.sentAt * 1000L)
-//                    setDefaults(Notification.DEFAULT_ALL)
-//                    setCategory(NotificationCompat.CATEGORY_MESSAGE)
-//                    setGroup(groupChatChannelName)
-//                    setOnlyAlertOnce(false) // Interrupts the user (with sound, vibration, or visual clues) only the first time
-//                    color = ContextCompat.getColor(
-//                        this@FirebaseNotificationService,
-//                        R.color.colorAccent
-//                    )
-//                }
-//
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-//                    notificationBuilder.priority = NotificationManager.IMPORTANCE_HIGH
-//                    notificationBuilder.setStyle(messagingStyle)
-//                }
-//
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//
-//                    var channelIndex: Int =
-//                        PrefManager.getIntValue("group_chat_notification_channel_index")
-//                    val existingNotificationChannel =
-//                        notificationManager.getNotificationChannel(groupChatChannelId + channelIndex)
-//                    if (existingNotificationChannel != null) {
-//                        notificationManager.deleteNotificationChannel(groupChatChannelId + channelIndex)
-//                        channelIndex++
-//                        PrefManager.put("group_chat_notification_channel_index", channelIndex)
-//                    }
-//
-//                    // Create the NotificationChannel
-//                    val newNotificationChannel = NotificationChannel(
-//                        groupChatChannelId + channelIndex,
-//                        groupChatChannelName,
-//                        NotificationManager.IMPORTANCE_HIGH
-//                    ).apply {
-//                        description = "Notifications for group chat messages"
-//                        enableLights(true)
-//                        enableVibration(true)
-//                        setBypassDnd(true)
-//                    }
-//
-//                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-//                        newNotificationChannel.setAllowBubbles(true)
-//                    }
-//
-//                    try {
-//                        // Register the channel with the system
-//                        notificationManager.createNotificationChannel(newNotificationChannel)
-//                    } catch (e: java.lang.Exception) {
-//                        this.stopSelf()
-//                    }
-//
-//                    // Set Channel Id of Notification
-//                    notificationBuilder.setChannelId(groupChatChannelId + channelIndex)
-//                }
-//
-// //                val isChatScreenOpen =
-// //                    AppObjectController.currentActivityClass == CometChatMessageListActivity::class.simpleName
-//                val isChatScreenOpen = false
-//                val isNotificationMuted = getBoolValue(IS_GROUP_NOTIFICATION_MUTED, false, false)
-//                if (Utils.isMessageVisible(baseMessage) && message != null && isChatScreenOpen.not() && isNotificationMuted.not()) {
-//                    notificationManager.notify(
-//                        group.guid.hashCode(),
-//                        notificationBuilder.build()
-//                    )
-//                }
-//            } catch (e: java.lang.Exception) {
-//                e.printStackTrace()
-//            }
-//        }
-//    }
-
     private fun getBitmapFromURL(strURL: String?): Bitmap? {
         return if (strURL != null) {
             try {
@@ -1317,6 +1124,23 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         return text.textDrawableBitmap(bgColor = color)!!
     }
 
+/*    fun pushToDatabase(
+        nc: NotificationObject,
+        channel: NotificationAnalytics.Channel
+    ) {
+        CoroutineScope(Dispatchers.IO).launch {
+            NotificationAnalytics().addAnalytics(
+                notificationId = nc.notificationId.toString(),
+                mEvent = NotificationAnalytics.Action.RECEIVED,
+                channel = channel
+            )
+        }
+    }
+*/
+    public fun sendFirestoreNotificationNew(nc: NotificationObject) {
+        sendNotification(nc)
+    }
+
     companion object {
         private val executor: ExecutorService by lazy {
             JoshSkillExecutors.newCachedSingleThreadExecutor("Josh-Notification")
@@ -1334,7 +1158,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         ) {
             executor.execute {
 
-                val intent = getIntentForNotificationAction(
+                val intent = getIntentAccordingAction(
                     notificationObject,
                     notificationObject.action,
                     notificationObject.actionData
@@ -1432,9 +1256,6 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     }
                     notificationManager.notify(uniqueInt, notificationBuilder.build())
                 }
-                if (PrefManager.getStringValue(API_TOKEN).isNotEmpty()) {
-                    EngagementNetworkHelper.receivedNotification(notificationObject)
-                }
             }
         }
 
@@ -1531,6 +1352,296 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 }
                 else -> {
                     null
+                }
+            }
+        }
+
+        private fun getIntentAccordingAction(
+            notificationObject: NotificationObject,
+            action: NotificationAction?,
+            actionData: String?
+        ): Intent? {
+
+            return when (action) {
+                NotificationAction.ACTION_OPEN_TEST -> {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        importance = NotificationManager.IMPORTANCE_HIGH
+                    }
+                    notificationChannelId = NotificationAction.ACTION_OPEN_TEST.type
+                    CourseDetailsActivity.getIntent(
+                        AppObjectController.joshApplication,
+                        actionData!!.toInt(),
+                        "Notification",
+                        arrayOf(Intent.FLAG_ACTIVITY_CLEAR_TOP, Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                    )
+                }
+                NotificationAction.ACTION_OPEN_CONVERSATION,
+                NotificationAction.ACTION_OPEN_COURSE_REPORT,
+                NotificationAction.ACTION_OPEN_QUESTION -> {
+                    if (PrefManager.getStringValue(API_TOKEN).isEmpty()) {
+                        return null
+                    }
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        importance = NotificationManager.IMPORTANCE_HIGH
+                    }
+                    notificationChannelId = action.name
+                    return null
+                }
+                NotificationAction.ACTION_OPEN_LESSON -> {
+                    if (PrefManager.getStringValue(API_TOKEN).isEmpty()) {
+                        return null
+                    }
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        importance = NotificationManager.IMPORTANCE_HIGH
+                    }
+                    notificationChannelId = action.name
+                    return null
+                }
+                NotificationAction.ACTION_OPEN_SPEAKING_SECTION -> {
+                    if (PrefManager.getStringValue(API_TOKEN).isEmpty()) {
+                        return null
+                    }
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        importance = NotificationManager.IMPORTANCE_HIGH
+                    }
+                    notificationChannelId = action.name
+                    return null
+                }
+                NotificationAction.ACTION_OPEN_PAYMENT_PAGE -> {
+                    if (PrefManager.getStringValue(API_TOKEN).isEmpty()) {
+                        return null
+                    }
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        importance = NotificationManager.IMPORTANCE_HIGH
+                    }
+                    notificationChannelId = action.name
+                    return null
+                }
+                NotificationAction.ACTION_OPEN_COURSE_EXPLORER -> {
+                    notificationChannelId = NotificationAction.ACTION_OPEN_COURSE_EXPLORER.name
+                    return Intent(AppObjectController.joshApplication, CourseExploreActivity::class.java).apply {
+                        flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+                    }
+                }
+                NotificationAction.ACTION_OPEN_URL -> {
+                    notificationChannelId = NotificationAction.ACTION_OPEN_URL.name
+                    val intent = Intent(Intent.ACTION_VIEW).apply {
+                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    }
+                    if (actionData!!.trim().startsWith("http://").not()) {
+                        intent.data = Uri.parse("http://" + actionData.replace("https://", "").trim())
+                    } else {
+                        intent.data = Uri.parse(actionData.trim())
+                    }
+                    return intent
+                }
+                NotificationAction.ACTION_OPEN_CONVERSATION_LIST -> {
+                    if (PrefManager.getStringValue(API_TOKEN).isEmpty()) {
+                        return null
+                    }
+                    notificationChannelId = NotificationAction.ACTION_OPEN_CONVERSATION_LIST.name
+                    Intent(AppObjectController.joshApplication, InboxActivity::class.java).apply {
+                        addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                        putExtra(HAS_NOTIFICATION, true)
+                        putExtra(NOTIFICATION_ID, notificationObject.id)
+                    }
+                }
+                NotificationAction.ACTION_UP_SELLING_POPUP -> {
+                    if (PrefManager.getStringValue(API_TOKEN).isEmpty()) {
+                        return null
+                    }
+                    notificationChannelId = NotificationAction.ACTION_UP_SELLING_POPUP.name
+                    Intent(AppObjectController.joshApplication, InboxActivity::class.java).apply {
+                        addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                        putExtra(HAS_NOTIFICATION, true)
+                        putExtra(NOTIFICATION_ID, notificationObject.id)
+                        putExtra(COURSE_ID, actionData)
+                        putExtra(ACTION_TYPE, action)
+                        putExtra(ARG_PLACEHOLDER_URL, notificationObject.bigPicture)
+                        notificationObject.bigPicture?.run {
+                            Glide.with(AppObjectController.joshApplication).load(this)
+                                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                .submit()
+                        }
+                    }
+                }
+                NotificationAction.ACTION_OPEN_REFERRAL -> {
+                    notificationChannelId = NotificationAction.ACTION_OPEN_REFERRAL.name
+                    return Intent(AppObjectController.joshApplication, ReferralActivity::class.java).apply {
+                        flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+                    }
+                }
+                /* NotificationAction.ACTION_OPEN_QUESTION -> {
+
+                     if (PrefManager.getStringValue(API_TOKEN).isEmpty()) {
+                         return null
+                     }
+                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                         importance = NotificationManager.IMPORTANCE_HIGH
+                     }
+                     notificationChannelId = action.name
+                     return processQuestionTypeNotification(notificationObject, action, actionData)
+
+                 }*/
+                NotificationAction.ACTION_DELETE_DATA -> {
+                    if (User.getInstance().isVerified) {
+                        Mentor.deleteUserData()
+                    }
+                    return null
+                }
+                NotificationAction.ACTION_DELETE_CONVERSATION_DATA -> {
+                    actionData?.let {
+                        println("action = ${action}")
+                        println("actionData = ${actionData}")
+                        //deleteConversationData(it)
+                    }
+                    return null
+                }
+                NotificationAction.ACTION_DELETE_USER -> {
+                    if (User.getInstance().isVerified) {
+                        Mentor.deleteUserCredentials()
+                    }
+                    return null
+                }
+                NotificationAction.ACTION_DELETE_USER_AND_DATA -> {
+                    if (Mentor.getInstance().hasId() && User.getInstance().isVerified) {
+                        Mentor.deleteUserCredentials()
+                        Mentor.deleteUserData()
+                    }
+                    return null
+                }
+                NotificationAction.ACTION_LOGOUT_USER -> {
+                    if (Mentor.getInstance().hasId() && User.getInstance().isVerified) {
+                        Mentor.deleteUserCredentials(true)
+                        Mentor.deleteUserData()
+                    }
+                    return null
+                }
+                NotificationAction.ACTION_OPEN_REMINDER -> {
+                    if (PrefManager.getStringValue(API_TOKEN).isEmpty()) {
+                        return null
+                    }
+                    notificationChannelId = NotificationAction.ACTION_OPEN_REFERRAL.name
+                    return Intent(AppObjectController.joshApplication, ReminderListActivity::class.java).apply {
+                        flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+                    }
+                }
+                NotificationAction.INCOMING_CALL_NOTIFICATION -> {
+                    if (!PrefManager.getBoolValue(
+                            PREF_IS_CONVERSATION_ROOM_ACTIVE
+                        ) && !PrefManager.getBoolValue(USER_ACTIVE_IN_GAME)
+                    ) {
+                        incomingCallNotificationAction(notificationObject.actionData)
+                    }
+                    return null
+                }
+                NotificationAction.JOIN_CONVERSATION_ROOM -> {
+                    if (!PrefManager.getBoolValue(PREF_IS_CONVERSATION_ROOM_ACTIVE) && User.getInstance().isVerified
+                        && PrefManager.getBoolValue(IS_CONVERSATION_ROOM_ACTIVE_FOR_USER)
+                    ) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            val intent = Intent(AppObjectController.joshApplication, HeadsUpNotificationService::class.java).apply {
+                                putExtra(ConfigKey.ROOM_DATA, actionData)
+                            }
+                            intent.startServiceForWebrtc()
+                        } else {
+                            val roomId = JSONObject(actionData).getString("room_id")
+                            val topic = JSONObject(actionData).getString("topic") ?: EMPTY
+
+                            if (roomId.isNotBlank()) {
+                                return ConversationLiveRoomActivity.getIntentForNotification(
+                                    AppObjectController.joshApplication,
+                                    roomId, topicName = topic
+                                )
+                            } else return null
+                        }
+                    }
+                    return null
+                }
+                NotificationAction.CALL_DISCONNECT_NOTIFICATION -> {
+                    callDisconnectNotificationAction()
+                    return null
+                }
+                NotificationAction.CALL_FORCE_CONNECT_NOTIFICATION -> {
+                    //if (User.getInstance().isVerified) {
+                    callForceConnect(notificationObject.actionData)
+                    //}
+                    return null
+                }
+                NotificationAction.CALL_FORCE_DISCONNECT_NOTIFICATION -> {
+                    callForceDisconnect()
+                    return null
+                }
+                NotificationAction.CALL_DECLINE_NOTIFICATION -> {
+                    callDeclineDisconnect()
+                    return null
+                }
+                NotificationAction.CALL_NO_USER_FOUND_NOTIFICATION -> {
+                    WebRtcService.noUserFoundCallDisconnect()
+                    return null
+                }
+                NotificationAction.CALL_ON_HOLD_NOTIFICATION -> {
+                    WebRtcService.holdCall()
+                    return null
+                }
+                NotificationAction.CALL_RESUME_NOTIFICATION -> {
+                    WebRtcService.resumeCall()
+                    return null
+                }
+                NotificationAction.CALL_CONNECTED_NOTIFICATION -> {
+                    if (notificationObject.actionData != null) {
+                        try {
+                            val obj = JSONObject(notificationObject.actionData!!)
+                            WebRtcService.userJoined(obj.getInt(OPPOSITE_USER_UID))
+                        } catch (ex: Exception) {
+                            ex.printStackTrace()
+                        }
+                    }
+                    return null
+                }
+                NotificationAction.AUDIO_FEEDBACK_REPORT -> {
+                    // deleteUserCredentials()
+                    // deleteUserData()
+                    return null
+                }
+                NotificationAction.AWARD_DECLARE -> {
+                    Intent(AppObjectController.joshApplication, LeaderBoardViewPagerActivity::class.java).apply {
+                        addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                        putExtra(HAS_NOTIFICATION, true)
+                        putExtra(NOTIFICATION_ID, notificationObject.id)
+                    }
+                    return null
+                }
+                NotificationAction.ACTION_OPEN_FREE_TRIAL_SCREEN -> {
+                    Intent(
+                        AppObjectController.joshApplication,
+                        FreeTrialOnBoardActivity::class.java
+                    ).apply {
+                        addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                        putExtra(HAS_NOTIFICATION, true)
+                        putExtra(NOTIFICATION_ID, notificationObject.id)
+                    }
+                }
+                NotificationAction.ACTION_OPEN_GROUPS -> {
+                    Intent(AppObjectController.joshApplication, JoshGroupActivity::class.java).apply {
+                        putExtra(CONVERSATION_ID, notificationObject.actionData)
+                    }
+                }
+                NotificationAction.ACTION_OPEN_FPP_REQUESTS -> {
+                    Intent(AppObjectController.joshApplication, SeeAllRequestsActivity::class.java)
+                }
+                NotificationAction.ACTION_OPEN_FPP_LIST -> {
+                    Intent(AppObjectController.joshApplication, FavoriteListActivity::class.java).apply {
+                        putExtra(CONVERSATION_ID, notificationObject.actionData)
+                        putExtra(IS_COURSE_BOUGHT, true)
+                    }
+                }
+                else -> {
+                    return null
                 }
             }
         }
