@@ -85,12 +85,15 @@ fun setConversationRoomCardActionButton(
                     ColorStateList.valueOf(view.context.resources.getColor(R.color.base_app_color))
                 callback?.setReminder(roomListResponseItem, view)
                 view.setOnClickListener {
-                    callback?.viewRoom(roomListResponseItem, view)
+                    Timber.d("room type is => $type")
+//                    callback?.viewRoom(roomListResponseItem, view)
                 }
             }
             roomListResponseItem.startTime?.let { it1 -> setTimer(it1,view,roomListResponseItem,adapter,viewHolder,callback) }
         }
         SCHEDULED -> {
+            Timber.d("room is scheduled already")
+
             view.text = view.context.getString(R.string.reminder_on)
             view.setTextColor(ColorStateList.valueOf(view.context.resources.getColor(R.color.reminder_on_button_color)))
             view.backgroundTintList =

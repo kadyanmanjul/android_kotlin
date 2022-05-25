@@ -16,6 +16,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.core.widget.addTextChangedListener
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
@@ -516,6 +517,16 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         val alertDialog: AlertDialog = dialogBuilder.create()
         alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         alertDialog.show()
+
+        dialogBinding.message.addTextChangedListener {
+            if (it.toString().trim().isEmpty()){
+                dialogBinding.Skip.isEnabled = true
+                dialogBinding.submit.isEnabled = false
+            } else {
+                dialogBinding.Skip.isEnabled = false
+                dialogBinding.submit.isEnabled = true
+            }
+        }
 
         dialogBinding.submit.setOnClickListener{
             val msg:String

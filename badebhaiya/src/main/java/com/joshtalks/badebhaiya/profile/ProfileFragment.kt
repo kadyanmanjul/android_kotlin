@@ -20,6 +20,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.text.HtmlCompat
+import androidx.core.widget.addTextChangedListener
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -178,6 +179,16 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         val alertDialog: AlertDialog = dialogBuilder.create()
         alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         alertDialog.show()
+
+        dialogBinding.message.addTextChangedListener {
+            if (it.toString().trim().isEmpty()){
+                dialogBinding.Skip.isEnabled = true
+                dialogBinding.submit.isEnabled = false
+            } else {
+                dialogBinding.Skip.isEnabled = false
+                dialogBinding.submit.isEnabled = true
+            }
+        }
 
         dialogBinding.submit.setOnClickListener{
             val msg:String
