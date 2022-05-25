@@ -564,12 +564,14 @@ class ConversationActivity :
             conversationBinding.textMessageTitle.text = inboxEntity.course_name
             conversationBinding.imageViewLogo.setImageWithPlaceholder(inboxEntity.course_icon)
             conversationBinding.imageViewLogo.visibility = VISIBLE
-            conversationBinding.imageViewLogo.setOnClickListener {
-                openCourseProgressListingScreen()
-            }
-            conversationBinding.textMessageTitle.setOnClickListener {
-                MixPanelTracker.publishEvent(MixPanelEvent.COURSE_OVERVIEW).push()
-                openCourseProgressListingScreen()
+            if (inboxEntity.isCapsuleCourse) {
+                conversationBinding.imageViewLogo.setOnClickListener {
+                    openCourseProgressListingScreen()
+                }
+                conversationBinding.textMessageTitle.setOnClickListener {
+                    MixPanelTracker.publishEvent(MixPanelEvent.COURSE_OVERVIEW).push()
+                    openCourseProgressListingScreen()
+                }
             }
 
             conversationBinding.ivBack.setOnClickListener {
@@ -667,10 +669,10 @@ class ConversationActivity :
         }
 
         var phoneNumber = User.getInstance().phoneNumber
-        if(!phoneNumber.isNullOrEmpty()) {
-            if(phoneNumber[0]=='+' && phoneNumber[1]=='9' && phoneNumber[2]=='1')
-            phoneNumber = phoneNumber?.substring(3)
-            else if(phoneNumber[0]=='+' && phoneNumber[1]=='8' && phoneNumber[2]=='8' && phoneNumber[3]=='0')
+        if (!phoneNumber.isNullOrEmpty()) {
+            if (phoneNumber[0] == '+' && phoneNumber[1] == '9' && phoneNumber[2] == '1')
+                phoneNumber = phoneNumber?.substring(3)
+            else if (phoneNumber[0] == '+' && phoneNumber[1] == '8' && phoneNumber[2] == '8' && phoneNumber[3] == '0')
                 phoneNumber = phoneNumber?.substring(4)
         }
         val email = User.getInstance().email
@@ -2754,7 +2756,7 @@ class ConversationActivity :
         return if (titleBarHeight < 0) titleBarHeight * -1 else titleBarHeight
     }
 
-    fun getConversationTooltip() : String {
+    fun getConversationTooltip(): String {
 //        val courseId = PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID)
 //        requestWorkerForChangeLanguage(getLangCodeFromCourseId(courseId))
         return getString(R.string.tooltip_conversation)
