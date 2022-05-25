@@ -9,27 +9,15 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="com.joshtalks.permission.READ_WRITE_CONTENT"/>
+    <uses-permission android:name="android.permission.BLUETOOTH"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT"/>
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
 
 
     <application>
         <service android:name=".data.CallingRemoteService"
             android:process=":joshSkillsCallingService"
             android:foregroundServiceType="phoneCall"/>
-        <!-- Audio Control Module Receivers -->
-        <receiver
-            android:name="com.joshtalks.joshskills.voip.audiocontroller.HeadsetReceiver"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="android.intent.action.HEADSET_PLUG" />
-            </intent-filter>
-        </receiver>
-        <receiver
-            android:name="com.joshtalks.joshskills.voip.audiocontroller.BluetoothReceiver"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="android.media.ACTION_CONNECTION_STATE_CHANGED" />
-            </intent-filter>
-        </receiver>
         <provider
             android:authorities="com.joshtalks.joshskills.voipstate"
             android:name=".contentprovider.VoipStateContentProvider"

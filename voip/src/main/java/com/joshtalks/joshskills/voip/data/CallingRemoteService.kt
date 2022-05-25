@@ -14,6 +14,7 @@ import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_INCOMING_CALL_DECL
 import com.joshtalks.joshskills.voip.*
 import com.joshtalks.joshskills.voip.audiocontroller.AudioController
 import com.joshtalks.joshskills.voip.audiocontroller.AudioControllerInterface
+import com.joshtalks.joshskills.voip.audiocontroller.AudioRouteConstants
 import com.joshtalks.joshskills.voip.calldetails.IncomingCallData
 import com.joshtalks.joshskills.voip.communication.model.*
 import com.joshtalks.joshskills.voip.constant.Event.*
@@ -70,6 +71,7 @@ class CallingRemoteService : Service() {
         }
         registerReceivers()
         observerPstnService()
+        observeAudio()
         showNotification()
         Log.d(TAG, "onCreate: Creating Service")
     }
@@ -200,6 +202,34 @@ class CallingRemoteService : Service() {
                                 PrefManager.savePstnState(PSTN_STATE_ONCALL)
                                 mediator.userAction(Action.HOLD)
                             }
+                        }
+                    }
+                    catch (e : Exception){
+                        if(e is CancellationException)
+                            throw e
+                        e.printStackTrace()
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                if(e is CancellationException)
+                    throw e
+            }
+        }
+    }
+
+    private fun observeAudio() {
+        ioScope.launch {
+            try {
+                audioController.observeAudioRoute().collect {
+                    try{
+                        Log.d(TAG, "observeAudio: $it")
+                        when (it) {
+                            AudioRouteConstants.BluetoothAudio -> {}
+                            AudioRouteConstants.Default -> {}
+                            AudioRouteConstants.EarpieceAudio -> {}
+                            AudioRouteConstants.HeadsetAudio -> {}
+                            AudioRouteConstants.SpeakerAudio -> {}
                         }
                     }
                     catch (e : Exception){
