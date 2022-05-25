@@ -220,9 +220,11 @@
                 android:drawablePadding="@dimen/_8sdp"
                 android:paddingVertical="@dimen/_4sdp"
                 android:paddingStart="@dimen/_14sdp"
-                android:paddingEnd="@dimen/_14sdp"
+                android:paddingEnd="@dimen/_12sdp"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7"
-                android:textColor="#D86464"
+                android:textColor="#EB5A5C"
+                android:textSize="@dimen/_14sdp"
+                android:fontFamily="@font/nunito_sans_extrabold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 tools:text="Leave quietly" />

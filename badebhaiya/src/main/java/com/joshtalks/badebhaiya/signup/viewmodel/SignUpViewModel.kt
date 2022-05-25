@@ -1,6 +1,7 @@
 package com.joshtalks.badebhaiya.signup.viewmodel
 
 import android.app.Application
+import android.os.Bundle
 import android.util.Log
 import androidx.databinding.ObservableBoolean
 import androidx.lifecycle.AndroidViewModel
@@ -10,6 +11,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.core.API_TOKEN
 import com.joshtalks.badebhaiya.core.ApiCallStatus
 import com.joshtalks.badebhaiya.core.EMPTY
@@ -19,6 +21,7 @@ import com.joshtalks.badebhaiya.core.io.AppDirectory
 import com.joshtalks.badebhaiya.core.showToast
 import com.joshtalks.badebhaiya.core.workers.WorkManagerAdmin
 import com.joshtalks.badebhaiya.feed.model.Users
+import com.joshtalks.badebhaiya.profile.ProfileFragment
 import com.joshtalks.badebhaiya.repository.BBRepository
 import com.joshtalks.badebhaiya.repository.CommonRepository
 import com.joshtalks.badebhaiya.repository.model.User
@@ -47,6 +50,7 @@ class SignUpViewModel(application: Application): AndroidViewModel(application) {
     var mobileNumber = EMPTY
     val profilePicUploadApiCallStatus = MutableLiveData<ApiCallStatus>()
     var firstName = EMPTY
+    var isFirstTime:Boolean=false
     var lastName = EMPTY
     var valid: ObservableBoolean = ObservableBoolean()
 
@@ -75,6 +79,9 @@ class SignUpViewModel(application: Application): AndroidViewModel(application) {
         .flow
         .cachedIn(viewModelScope)
 
+    fun openProfile(){
+
+    }
 
     fun verifyOTP(otp: String, phoneNumber: String) {
         viewModelScope.launch {
@@ -84,6 +91,7 @@ class SignUpViewModel(application: Application): AndroidViewModel(application) {
                 Log.i(TAG, "verifyOTP: $response")
                 if (response.isSuccessful) {
                     response.body()?.let {
+                        isFirstTime=it.isUserExist.not()
                         updateUserFromLoginResponse(it)
                     }
                     return@launch
@@ -94,7 +102,7 @@ class SignUpViewModel(application: Application): AndroidViewModel(application) {
                     }
                 }
             } catch (ex: Exception) {
-                ex.printStackTrace()
+
             }
         }
     }

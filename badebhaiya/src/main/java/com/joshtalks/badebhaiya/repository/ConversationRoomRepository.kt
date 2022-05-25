@@ -35,4 +35,7 @@ class ConversationRoomRepository {
 
     suspend fun searchRoom(parems:Map<String,String>)=
         service.searchRoom(parems)
+
+    suspend fun speakersList(page:Int)=
+        service.speakersList(page)
 }

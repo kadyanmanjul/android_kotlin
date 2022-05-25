@@ -227,6 +227,11 @@ dependencies {
     implementation 'com.github.pwittchen:reactivenetwork-rx2:3.0.8'
     implementation 'com.pnikosis:materialish-progress:1.7'
 
+    //paging 3
+    implementation "androidx.paging:paging-runtime-ktx:3.0.1"
+
+    implementation "androidx.navigation:navigation-compose:2.4.2"
+
     // dagger hilt
     implementation "com.google.dagger:hilt-android:$hilt_version"
     kapt "com.google.dagger:hilt-compiler:$hilt_version"
