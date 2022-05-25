@@ -147,6 +147,7 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
 import org.json.JSONObject
+import timber.log.Timber
 import java.io.File
 import java.lang.ref.WeakReference
 import java.util.*
@@ -276,26 +277,6 @@ class ConversationActivity :
         }
         init()
         showRestartButton()
-    }
-
-    //Setting the animation on the buttons
-    private fun setButtonsAnimation() {
-        with(conversationBinding) {
-            if (!buttonClicked) {
-                conversationBinding.imgActivityFeed.startAnimation(fromBottomAnimation)
-                conversationBinding.imgGameBtn.startAnimation(fromBottomAnimation)
-                conversationBinding.imgGroupChatBtn.startAnimation(fromBottomAnimation)
-                conversationBinding.imgFppRequest.startAnimation(fromBottomAnimation)
-                floatingActionButtonAdd.startAnimation(rotateOpenAnimation)
-
-            } else {
-                conversationBinding.imgActivityFeed.startAnimation(toBottomAnimation)
-                conversationBinding.imgGameBtn.startAnimation(toBottomAnimation)
-                conversationBinding.imgGroupChatBtn.startAnimation(toBottomAnimation)
-                conversationBinding.imgFppRequest.startAnimation(toBottomAnimation)
-                floatingActionButtonAdd.startAnimation(rotateCloseAnimation)
-            }
-        }
     }
 
     override fun getConversationId(): String {
@@ -782,22 +763,7 @@ class ConversationActivity :
 //            val intent = Intent(this, JoshGroupActivity::class.java)
 //            startActivity(intent)
 //        }
-        conversationBinding.imgActivityFeed.setOnSingleClickListener {
-            if (inboxEntity.isCourseBought.not() &&
-                inboxEntity.expiryDate != null &&
-                inboxEntity.expiryDate!!.time < System.currentTimeMillis()
-            ) {
-                val nameArr = User.getInstance().firstName?.split(SINGLE_SPACE)
-                val firstName = if (nameArr != null) nameArr[0] else EMPTY
-                showToast(getString(R.string.feature_locked, firstName))
-            } else {
-                MixPanelTracker.publishEvent(MixPanelEvent.ACTIVITY_FEED).push()
-                val intent = Intent(this, ActivityFeedMainActivity::class.java)
-                startActivity(intent)
-            }
-        }
-
-        conversationBinding.imgFppRequest.setOnSingleClickListener {
+        conversationBinding.imgFppBtn.setOnSingleClickListener {
             if (inboxEntity.isCourseBought.not() &&
                 inboxEntity.expiryDate != null &&
                 inboxEntity.expiryDate!!.time < System.currentTimeMillis()
@@ -826,22 +792,6 @@ class ConversationActivity :
                     putExtra(CONVERSATION_ID, getConversationId())
                 }
                 GroupAnalytics.push(MAIN_GROUP_ICON)
-                startActivity(intent)
-            }
-        }
-
-        conversationBinding.imgGameBtn.setOnSingleClickListener {
-            if (inboxEntity.isCourseBought.not() &&
-                inboxEntity.expiryDate != null &&
-                inboxEntity.expiryDate!!.time < System.currentTimeMillis()
-            ) {
-                val nameArr = User.getInstance().firstName?.split(" ")
-                val firstName = if (nameArr != null) nameArr[0] else EMPTY
-                showToast(getString(R.string.feature_locked, firstName))
-            } else {
-                MixPanelTracker.publishEvent(MixPanelEvent.GAME_BUTTON_CLICKED).push()
-                val intent = Intent(this, StartActivity::class.java)
-                GameAnalytics.push(GameAnalytics.Event.CLICK_ON_MAIN_GAME_ICON)
                 startActivity(intent)
             }
         }
@@ -1182,11 +1132,27 @@ class ConversationActivity :
             }
         }
 
+        conversationViewModel.pendingRequestsList.observe(this) {
+            with(conversationBinding) {
+                if (it.pendingRequestsList.isNullOrEmpty()) {
+                    requestCountNumber = 0
+                    fppRequestCountNumber.visibility = GONE
+                }else {
+                    requestCountNumber = it.pendingRequestsList.size
+                    fppRequestCountNumber.text = requestCountNumber.toString()
+                    fppRequestCountNumber.visibility = VISIBLE
+                }
+            }
+        }
+
+
+
         lifecycleScope.launchWhenResumed {
             utilConversationViewModel.userData.collectLatest { userProfileData ->
                 this@ConversationActivity.userProfileData = userProfileData
                 if (userProfileData.hasGroupAccess) {
                     conversationBinding.imgGroupChatBtn.visibility = VISIBLE
+                    conversationBinding.imgFppBtn.visibility = VISIBLE
                     if (PrefManager.getBoolValue(SHOULD_SHOW_AUTOSTART_POPUP, defValue = true)
                         && System.currentTimeMillis().minus(PrefManager.getLongValue(LAST_TIME_AUTOSTART_SHOWN)) > 259200000L
                         && PrefManager.getBoolValue(HAS_SEEN_UNLOCK_CLASS_ANIMATION)) {
@@ -1195,60 +1161,15 @@ class ConversationActivity :
                     }
                 } else {
                     conversationBinding.imgGroupChatBtn.visibility = GONE
+                    conversationBinding.imgFppBtn.visibility = GONE
                 }
-                conversationBinding.floatingActionButtonAdd.visibility = VISIBLE
                 getAllPendingRequest()
-                blurViewOnClickListeners(userProfileData)
                 initScoreCardView(userProfileData)
                 if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE))
                     profileFeatureActiveView(true)
             }
         }
 
-        conversationViewModel.pendingRequestsList.observe(this) {
-            with(conversationBinding) {
-                if (it.pendingRequestsList.isNullOrEmpty()) {
-                    requestCountNumber = 0
-                    myRequestsLl.removeAllViews()
-                    quickViewNoRequests.visibility = VISIBLE
-                    fppRequestCountNumber.visibility = GONE
-                    allCountNumber.visibility = GONE
-                    viewAllRequests.text =
-                        getString(R.string.see_requests, it.pendingRequestsList.size.toString())
-                } else {
-                    requestCountNumber = it.pendingRequestsList.size
-                    quickViewNoRequests.visibility = INVISIBLE
-                    allCountNumber.text = it.pendingRequestsList.size.toString()
-                    myRequestsLl.visibility = VISIBLE
-                    viewAllRequests.text =
-                        getString(R.string.see_requests, it.pendingRequestsList.size.toString())
-                    horizontalLineForHeading.visibility = VISIBLE
-                    var countRequestsList = 0
-                    myRequestsLl.removeAllViews()
-                    it.pendingRequestsList.forEach {
-                        if (countRequestsList < 7) {
-                            val view = getPendingRequestItem(it)
-                            if (view != null) {
-                                conversationBinding.myRequestsLl.addView(view.root)
-                                countRequestsList++
-                            }
-                        }
-                    }
-                    if (isFirstTime) {
-                        isFirstTime = false
-                        allCountNumber.visibility = VISIBLE
-                    }
-                    fppRequestCountNumber.text =
-                        it.pendingRequestsList.size.toString()
-                }
-                viewAllRequests.setOnClickListener {
-                    MixPanelTracker.publishEvent(MixPanelEvent.SEE_ALL_REQUESTS).push()
-                    val intent =
-                        Intent(conversationBinding.root.context, SeeAllRequestsActivity::class.java)
-                    startActivity(intent)
-                }
-            }
-        }
         lifecycleScope.launchWhenCreated {
             conversationViewModel.userUnreadCourseChat.collectLatest { items ->
                 //  Start Add new Message UI add logic
@@ -1354,148 +1275,6 @@ class ConversationActivity :
         }
     }
 
-    private fun blurViewOnClickListeners(userProfileData: UserProfileResponse) {
-        conversationBinding.floatingActionButtonAdd.setOnClickListener {
-            setExpandableButtons(userProfileData)
-            setButtonsAnimation()
-        }
-
-        conversationBinding.blurView.setOnClickListener {
-            setExpandableButtons(userProfileData)
-            setButtonsAnimation()
-        }
-    }
-
-
-    private fun setExpandableButtons(userProfileData: UserProfileResponse) {
-        with(conversationBinding) {
-            if (buttonClicked) {
-                MixPanelTracker.publishEvent(MixPanelEvent.MORE_BUTTON_CLICKED).push()
-                getAllPendingRequest()
-                conversationBinding.root.setOnClickListener {}
-                showBlurOrQuickView()
-                if (activityFeedControl) imgActivityFeed.visibility =
-                    VISIBLE else conversationBinding.imgActivityFeed.visibility = GONE
-                imgFppRequest.visibility = VISIBLE
-
-                if (userProfileData.isGameActive)
-                    imgGameBtn.visibility = VISIBLE
-
-                if (userProfileData.hasGroupAccess)
-                    imgGroupChatBtn.visibility = VISIBLE
-            } else {
-                MixPanelTracker.publishEvent(MixPanelEvent.CANCEL).push()
-                conversationBinding.root.onFocusChangeListener = null
-                hideBlurOrQuickView()
-                imgActivityFeed.visibility = GONE
-                imgFppRequest.visibility = GONE
-
-                if (userProfileData.isGameActive)
-                    imgGameBtn.visibility = GONE
-
-                if (userProfileData.hasGroupAccess)
-                    imgGroupChatBtn.visibility = GONE
-            }
-        }
-    }
-
-    private fun showBlurOrQuickView() {
-        conversationBinding.allCountNumber.visibility = GONE
-        conversationBinding.userPointContainer.elevation = 0f
-        conversationBinding.imgMain.visibility = VISIBLE
-        conversationBinding.imgPointer.visibility = VISIBLE
-        conversationBinding.root.setOnClickListener { }
-        lifecycleScope.launchWhenCreated {
-            conversationBinding.blurView.visibility = VISIBLE
-            Blurry.with(this@ConversationActivity).radius(25).sampling(3)
-                .onto(conversationBinding.blurView, conversationBinding.rootView)
-        }
-
-        buttonClicked = false
-        conversationBinding.quickCardView.visibility = VISIBLE
-
-        if (requestCountNumber > 0) {
-            lifecycleScope.launch(Dispatchers.Main) {
-                delay(200)
-                conversationBinding.fppRequestCountNumber.visibility = VISIBLE
-            }
-        }
-    }
-
-    private fun hideBlurOrQuickView() {
-        conversationBinding.root.setOnClickListener(null)
-        Blurry.delete(conversationBinding.blurView)
-        conversationBinding.imgPointer.visibility = INVISIBLE
-        conversationBinding.userPointContainer.elevation = 3f
-        conversationBinding.blurView.visibility = GONE
-        buttonClicked = true
-        conversationBinding.quickCardView.visibility = GONE
-        conversationBinding.imgMain.visibility = GONE
-        conversationBinding.imgMain.setOnClickListener(null)
-        conversationBinding.root.onFocusChangeListener = null
-        conversationBinding.fppRequestCountNumber.visibility = GONE
-        if (requestCountNumber > 0) {
-            lifecycleScope.launch(Dispatchers.Main) {
-                delay(350)
-                conversationBinding.allCountNumber.visibility = VISIBLE
-            }
-        }
-
-    }
-
-
-    private fun getPendingRequestItem(pendingRequestDetail: PendingRequestDetail): FppQuickViewListsItemBinding {
-        val view =
-            FppQuickViewListsItemBinding.inflate(
-                LayoutInflater.from(conversationBinding.root.context),
-                conversationBinding.root,
-                false
-            )
-        with(view) {
-            itemData = pendingRequestDetail
-            fppRequestContainer.setOnClickListener {
-                openUserProfileActivity(
-                    pendingRequestDetail.senderMentorId ?: "",
-                    FAVOURITE_REQUEST
-                )
-            }
-            profileImage.setUserImageOrInitials(
-                pendingRequestDetail.photoUrl ?: "",
-                pendingRequestDetail.fullName ?: ""
-            )
-            btnConfirmRequest.setOnClickListener {
-                MixPanelTracker.publishEvent(MixPanelEvent.FPP_REQUEST_CONFIRM)
-                    .addParam(ParamKeys.MENTOR_ID, pendingRequestDetail.senderMentorId)
-                    .addParam(ParamKeys.VIA,"quick view")
-                    .push()
-                btnConfirmRequest.visibility = GONE
-                btnNotNow.visibility = GONE
-                tvSpokenTime.text = getString(R.string.now_fpp)
-                fppRequestContainer.setBackgroundColor(resources.getColor(R.color.request_respond))
-                conversationViewModel.confirmOrRejectFppRequest(
-                    pendingRequestDetail.senderMentorId!!,
-                    IS_ACCEPTED, QUICK_VIEW
-                )
-            }
-            btnNotNow.setOnClickListener {
-                MixPanelTracker.publishEvent(MixPanelEvent.FPP_REQUEST_NOT_NOW)
-                    .addParam(ParamKeys.MENTOR_ID, pendingRequestDetail.senderMentorId)
-                    .addParam(ParamKeys.VIA,"quick view")
-                    .push()
-                btnConfirmRequest.visibility = GONE
-                btnNotNow.visibility = GONE
-                tvSpokenTime.text = getString(R.string.request_removed)
-                fppRequestContainer.setBackgroundColor(resources.getColor(R.color.request_respond))
-                conversationViewModel.confirmOrRejectFppRequest(
-                    pendingRequestDetail.senderMentorId!!,
-                    IS_REJECTED, QUICK_VIEW
-                )
-
-            }
-        }
-        return view
-    }
-
     private fun addRVPatch(count: Int) {
         if (count <= 3) {
             linearLayoutManager.stackFromEnd = false
@@ -1524,6 +1303,11 @@ class ConversationActivity :
                 {
                 }
             )
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+        getAllPendingRequest()
     }
 
     private fun profileFeatureActiveView(showLeaderboardMenu: Boolean) {
@@ -2323,9 +2107,6 @@ class ConversationActivity :
     }
 
     override fun onStop() {
-        hideBlurOrQuickView()
-        conversationBinding.imgMain.visibility = GONE
-        setButtonsAnimation()
         compositeDisposable.clear()
         readMessageTimerTask?.cancel()
         uiHandler.removeCallbacksAndMessages(null)
