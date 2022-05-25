@@ -14,6 +14,7 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.repository.local.entity.*
 import com.joshtalks.joshskills.repository.local.minimalentity.CourseContentEntity
+import com.joshtalks.joshskills.repository.server.assessment.OnlineTestRequest
 import com.joshtalks.joshskills.ui.special_practice.model.SpecialPractice
 import java.util.Date
 
@@ -332,6 +333,15 @@ interface ChatDao {
             )
         }
     }
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertOnlineTestAnswer(onlineTestRequest: OnlineTestRequest)
+
+    @Query("SELECT * FROM `online_test_request` WHERE `lesson_id`= :lessonId")
+    suspend fun getOnlineTestRequest(lessonId: Int): OnlineTestRequest?
+
+    @Delete(entity = OnlineTestRequest::class)
+    suspend fun deleteOnlineTestRequest(onlineTestRequest: OnlineTestRequest)
 
     @Query(value = "SELECT * FROM chat_table where conversation_id= :conversationId AND  message_time >= :messageTime AND  is_delete_message=0 AND is_seen= 0  ORDER BY message_time ASC,question_id ASC ")
     suspend fun getUnreadReadMessages(conversationId: String, messageTime: Double): List<ChatModel>

@@ -390,7 +390,7 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
                             binding.videoPlayer.setVideoId(video.id)
                             // binding.videoPlayer.setCourseId(course_id)
                             binding.videoPlayer.fitToScreen()
-                            binding.videoPlayer.setPlayListener {
+                            binding.videoPlayer.setFullScreenListener {
                                 val currentVideoProgressPosition = binding.videoPlayer.getProgress()
                                 openVideoPlayerActivity.launch(
                                     VideoPlayerActivity.getActivityIntent(

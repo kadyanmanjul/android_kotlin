@@ -420,6 +420,8 @@
     <string name="exam">परीक्षा</string>
     <string name="congratulations">बधाई हो</string>
     <string name="grammer_completions_message">बहुत बढ़िया !!! आपने व्याकरण भाग पूरा कर लिया है</string>
+    <string name="amazing">बहुत खूब!</string>
+    <string name="rule_completed_message">आपने एक नया Level पार करा! ऐसे ही मेहनत करते रहें।</string>
     <string name="today_reading_practise">आज का पठन अभ्यास</string>
 
     <string name="unlock_next_lesson">अगले पाठ को अनलॉक करें</string>

@@ -277,7 +277,7 @@ class SpecialPracticeViewModel : BaseViewModel() {
             view.setUrl(videoUrl)
             view.onStart()
             view.fitToScreen()
-            view.setPlayListener {
+            view.setFullScreenListener {
                 if (isRecordVideo) {
                     message.what = SHOW_RECORDED_SPECIAL_VIDEO
                     singleLiveEvent.value = message

@@ -430,7 +430,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:visibility="invisible" />
+            tools:visibility="gone" />
 
         <FrameLayout
             android:id="@+id/tooltip_frame"
@@ -507,7 +507,7 @@
             android:elevation="@dimen/_7sdp"
             android:focusable="true"
             android:visibility="gone"
-            tools:visibility="visible" />
+            tools:visibility="gone" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/video_btn_tooltip"
@@ -519,7 +519,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            tools:visibility="visible">
+            tools:visibility="gone">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/text_container"
@@ -660,10 +660,13 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center_horizontal"
+            android:background="@color/transparent_blue_alpha_75"
+            android:clickable="true"
+            android:focusable="true"
             android:gravity="center"
             android:orientation="vertical"
             android:visibility="gone"
-            tools:visibility="gone">
+            tools:visibility="visible">
 
             <ImageView
                 android:id="@+id/imageView_close"

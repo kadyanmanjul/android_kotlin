@@ -7,6 +7,8 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatTextView
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.IS_A2_C1_RETENTION_ENABLED
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.LessonModel
 import com.joshtalks.joshskills.repository.local.eventbus.LessonItemClickEventBus
@@ -16,6 +18,7 @@ class LessonCompleteView : FrameLayout {
     private lateinit var rootView: FrameLayout
     private var lessonModel: LessonModel? = null
     private lateinit var roomStatus: ImageView
+    private lateinit var translationStatus: ImageView
 
     constructor(context: Context) : super(context) {
         init()
@@ -39,10 +42,11 @@ class LessonCompleteView : FrameLayout {
         View.inflate(context, R.layout.lesson_complete_view, this)
         lessonNameTvCompleted = findViewById(R.id.lesson_name_tv__completed)
         roomStatus = findViewById(R.id.view15)
+        translationStatus = findViewById(R.id.view12)
         rootView = findViewById(R.id.root_view_completed)
         rootView.setOnClickListener {
             lessonModel?.let {
-                RxBus2.publish(LessonItemClickEventBus(it.id,it.isNewGrammar,true))
+                RxBus2.publish(LessonItemClickEventBus(it.id, it.isNewGrammar, true))
             }
         }
     }
@@ -52,6 +56,8 @@ class LessonCompleteView : FrameLayout {
         lessonNameTvCompleted.text =
             context.getString(R.string.lesson_name, message.lessonNo, message.lessonName)
         roomStatus.visibility = if (isConversationRoomActive) View.VISIBLE else View.INVISIBLE
+        translationStatus.visibility = if (message.isNewGrammar && PrefManager.hasKey(IS_A2_C1_RETENTION_ENABLED) && PrefManager.getBoolValue(
+                IS_A2_C1_RETENTION_ENABLED)) View.VISIBLE else View.GONE
     }
 
 }

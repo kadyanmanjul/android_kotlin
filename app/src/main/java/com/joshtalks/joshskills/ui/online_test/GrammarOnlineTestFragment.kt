@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.ColorStateList
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -16,56 +15,42 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.CoreJoshFragment
-import com.joshtalks.joshskills.core.FREE_TRIAL_TEST_SCORE
-import com.joshtalks.joshskills.core.HAS_SEEN_GRAMMAR_TOOLTIP
-import com.joshtalks.joshskills.core.IS_FREE_TRIAL
-import com.joshtalks.joshskills.core.ONLINE_TEST_LAST_LESSON_ATTEMPTED
-import com.joshtalks.joshskills.core.ONLINE_TEST_LAST_LESSON_COMPLETED
-import com.joshtalks.joshskills.core.PermissionUtils
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.Utils
-import com.joshtalks.joshskills.core.playSnackbarSound
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.GRAMMAR_CONTINUE_BUTTON_TEXT
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.GRAMMAR_START_BUTTON_TEXT
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.GRAMMAR_TEST_COMPLETE_DESCRIPTION
+import com.joshtalks.joshskills.core.abTest.CampaignKeys
+import com.joshtalks.joshskills.databinding.FragmentGrammarOnlineTestBinding
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.analytics.ParamKeys
-import com.joshtalks.joshskills.databinding.FragmentGrammarOnlineTestBinding
+import com.joshtalks.joshskills.ui.assessment.view.Stub
 import com.joshtalks.joshskills.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
+import com.joshtalks.joshskills.ui.group.repository.ABTestRepository
 import com.joshtalks.joshskills.ui.leaderboard.ItemOverlay
 import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_GRAMMAR_ANIMATION
-import com.joshtalks.joshskills.ui.lesson.GRAMMAR_POSITION
-import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
-import com.joshtalks.joshskills.ui.lesson.LessonViewModel
+import com.joshtalks.joshskills.ui.lesson.*
+import com.joshtalks.joshskills.ui.online_test.util.A2C1Impressions
+import com.joshtalks.joshskills.ui.online_test.util.TestCompletedListener
+import com.joshtalks.joshskills.ui.special_practice.utils.ErrorView
 import com.joshtalks.joshskills.ui.tooltip.TooltipUtils
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import com.joshtalks.joshskills.core.CURRENT_COURSE_ID
-import com.joshtalks.joshskills.core.DEFAULT_COURSE_ID
+import kotlinx.coroutines.*
 
-private const val TAG = "GrammarOnlineTest"
-
-class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineTestInterface {
+class GrammarOnlineTestFragment : CoreJoshFragment(), TestCompletedListener {
     private lateinit var binding: FragmentGrammarOnlineTestBinding
     private var lessonActivityListener: LessonActivityListener? = null
     private val viewModel: LessonViewModel by lazy {
         ViewModelProvider(requireActivity()).get(LessonViewModel::class.java)
     }
     private var lessonNumber: Int = -1
-    private var lessonId : Int = -1
+    private var lessonId: Int = -1
     private var scoreText: Int = -1
     private var pointsList: String? = null
+    private var errorView: Stub<ErrorView>? = null
 
     private var currentTooltipIndex = 0
     private var grammarAnimationListener: GrammarAnimation? = null
@@ -136,6 +121,9 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
             scoreText = it.getInt(SCORE_TEXT, -1)
             pointsList = it.getString(POINTS_LIST)
         }
+        lessonId = if (requireActivity().intent.hasExtra(LessonActivity.LESSON_ID)) {
+            requireActivity().intent.getIntExtra(LessonActivity.LESSON_ID, 0)
+        } else 0
         binding =
             DataBindingUtil.inflate(
                 inflater,
@@ -143,11 +131,13 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
                 container,
                 false
             )
-        binding.lifecycleOwner = this
+        errorView = Stub(binding.rootView.findViewById(R.id.error_view))
+        binding.lifecycleOwner = viewLifecycleOwner
         binding.handler = this
         return binding.root
     }
 
+    @SuppressLint("SetTextI18n", "ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.continueBtn.setOnTouchListener(onTouchListener3)
@@ -172,13 +162,14 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
                 ONLINE_TEST_LAST_LESSON_COMPLETED
             ) >= lessonNumber) -> {
                 binding.startTestContainer.visibility = View.GONE
-//                if (PrefManager.hasKey(IS_FREE_TRIAL) && PrefManager.getBoolValue(
-//                        IS_FREE_TRIAL,
-//                        false,
-//                        false
-//                    )
-//                ) {
+                if (PrefManager.hasKey(IS_FREE_TRIAL) && PrefManager.getBoolValue(
+                        IS_FREE_TRIAL,
+                        isConsistent = false,
+                        defValue = false
+                    )
+                ) {
                     binding.testScoreContainer.visibility = View.VISIBLE
+                    binding.testCompletedContainer.visibility = View.GONE
                     if (scoreText != -1) {
                         binding.score.text = getString(R.string.test_score, scoreText)
 
@@ -193,19 +184,23 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
                         showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, pointsList)
                         playSnackbarSound(requireContext())
                     }
-//                } else {
-//                    binding.testCompletedContainer.visibility = View.VISIBLE
-//                }
+                } else {
+                    binding.testCompletedContainer.visibility = View.VISIBLE
+                    binding.testScoreContainer.visibility = View.GONE
+                    binding.confetti.playAnimation()
+                    binding.lottieAnimationView.playAnimation()
+                }
                 completeGrammarCardLogic()
             }
             else -> {
                 binding.startTestContainer.visibility = View.VISIBLE
                 binding.testCompletedContainer.visibility = View.GONE
                 binding.testScoreContainer.visibility = View.GONE
+                binding.lockTestCard.visibility = View.VISIBLE
                 if (BuildConfig.DEBUG && BuildConfig.VERSION_CODE >= 50006) {
                     binding.startBtn.isEnabled = true
                     binding.startBtn.isClickable = true
-                    binding.description.text =
+                    binding.lockTestMessage.text =
                         "This will work in debug version. You will have to complete lesson ${
                             PrefManager.getIntValue(
                                 ONLINE_TEST_LAST_LESSON_COMPLETED
@@ -220,28 +215,27 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
                             R.color.light_shade_of_gray
                         )
                     )
-                    binding.description.text = getString(
+                    binding.lockTestMessage.text = getString(
                         R.string.grammar_lock_text, PrefManager.getIntValue(
                             ONLINE_TEST_LAST_LESSON_COMPLETED
                         ).plus(1)
                     )
                 }
-                binding.description.visibility = View.VISIBLE
             }
         }
 
         binding.btnNextStep.setOnClickListener {
             showNextTooltip()
         }
-        viewModel.grammarSpotlightClickLiveData.observe(viewLifecycleOwner, {
+        viewModel.grammarSpotlightClickLiveData.observe(viewLifecycleOwner) {
             startOnlineExamTest()
-        })
+        }
 
-        viewModel.eventLiveData.observe(viewLifecycleOwner, { event->
+        viewModel.eventLiveData.observe(viewLifecycleOwner) { event ->
             event?.getContentIfNotHandledOrReturnNull()?.let {
                 binding.startBtn.performClick()
             }
-        })
+        }
 
         viewModel.lessonId.observe(
             viewLifecycleOwner
@@ -267,8 +261,11 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
                 if (lessonNumber == 1) {
                     withContext(Dispatchers.Main) {
                         binding.joshTextView.text = lessonTooltipList[currentTooltipIndex]
-                        binding.txtTooltipIndex.text =
-                            "${currentTooltipIndex + 1} of ${lessonTooltipList.size}"
+                        binding.txtTooltipIndex.text = getString(
+                            R.string._of_,
+                            (currentTooltipIndex + 1),
+                            lessonTooltipList.size
+                        )
                         binding.lessonTooltipLayout.visibility = View.VISIBLE
                     }
                 }
@@ -287,7 +284,6 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
         animationJob = CoroutineScope(Dispatchers.Main).launch {
             try {
                 val overlayButtonItem = TooltipUtils.getOverlayItemFromView(binding.startBtn)
-                Log.d(TAG, "showGrammarAnimation: $overlayButtonItem")
                 overlayButtonItem?.let {
                     grammarAnimationListener?.showGrammarAnimation(it)
                 }
@@ -302,7 +298,7 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
             currentTooltipIndex++
             binding.joshTextView.text = lessonTooltipList[currentTooltipIndex]
             binding.txtTooltipIndex.text =
-                "${currentTooltipIndex + 1} of ${lessonTooltipList.size}"
+                getString(R.string._of_, (currentTooltipIndex + 1), lessonTooltipList.size)
         } else {
             binding.lessonTooltipLayout.visibility = View.GONE
             PrefManager.put(HAS_SEEN_GRAMMAR_TOOLTIP, true)
@@ -319,13 +315,16 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
             QUESTION_STATUS.AT,
             questionId
         )*/
-        lessonActivityListener?.onSectionStatusUpdate(GRAMMAR_POSITION, true)
+        lessonActivityListener?.onSectionStatusUpdate(
+            if (PrefManager.getBoolValue(IS_A2_C1_RETENTION_ENABLED)) TRANSLATION_POSITION else GRAMMAR_POSITION,
+            true
+        )
     }
 
     fun startOnlineExamTest() {
         MixPanelTracker.publishEvent(MixPanelEvent.GRAMMAR_QUIZ_START)
-            .addParam(ParamKeys.LESSON_ID,lessonId)
-            .addParam(ParamKeys.LESSON_NUMBER,lessonNumber)
+            .addParam(ParamKeys.LESSON_ID, lessonId)
+            .addParam(ParamKeys.LESSON_NUMBER, lessonNumber)
             .push()
 
         if (PermissionUtils.isStoragePermissionEnabled(AppObjectController.joshApplication).not()) {
@@ -333,7 +332,6 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
             return
         }
         moveToOnlineTestFragment()
-
     }
 
     fun moveToOnlineTestFragment() {
@@ -342,6 +340,10 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
             binding.startTestContainer.visibility = View.GONE
             binding.testCompletedContainer.visibility = View.GONE
             binding.testScoreContainer.visibility = View.GONE
+            A2C1Impressions.saveImpression(A2C1Impressions.Impressions.START_LESSON_QUESTIONS)
+            if (PrefManager.hasKey(IS_A2_C1_RETENTION_ENABLED) && PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID) {
+                viewModel.postGoal("RULE_${lessonNumber}_STARTED", CampaignKeys.A2_C1.name)
+            }
             fragmentManager
                 .beginTransaction()
                 .replace(
@@ -391,12 +393,12 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
     private fun showGrammarCompleteLayout() {
         binding.parentContainer.visibility = View.GONE
         binding.startTestContainer.visibility = View.GONE
-//        if (PrefManager.hasKey(IS_FREE_TRIAL) && PrefManager.getBoolValue(
-//                IS_FREE_TRIAL,
-//                false,
-//                false
-//            )
-//        ) {
+        if (PrefManager.hasKey(IS_FREE_TRIAL) && PrefManager.getBoolValue(
+                IS_FREE_TRIAL,
+                isConsistent = false,
+                defValue = false
+            )
+        ) {
             binding.testScoreContainer.visibility = View.VISIBLE
             if (scoreText != -1) {
                 binding.score.text = getString(R.string.test_score, scoreText)
@@ -413,16 +415,23 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
                 showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, pointsList)
                 playSnackbarSound(requireContext())
             }
-//        } else {
-//            binding.testCompletedContainer.visibility = View.VISIBLE
-//        }
+        } else {
+            binding.testCompletedContainer.visibility = View.VISIBLE
+            binding.confetti.playAnimation()
+            binding.lottieAnimationView.playAnimation()
+        }
     }
 
     fun onGrammarContinueClick() {
         MixPanelTracker.publishEvent(MixPanelEvent.GRAMMAR_CONTINUE)
-            .addParam(ParamKeys.LESSON_ID,lessonId)
+            .addParam(ParamKeys.LESSON_ID, lessonId)
             .push()
-        lessonActivityListener?.onNextTabCall(GRAMMAR_POSITION)
+        lessonActivityListener?.onNextTabCall(
+            if (PrefManager.hasKey(IS_A2_C1_RETENTION_ENABLED) && PrefManager.getBoolValue(
+                    IS_A2_C1_RETENTION_ENABLED
+                )
+            ) TRANSLATION_POSITION else GRAMMAR_POSITION
+        )
     }
 
     companion object {
@@ -450,105 +459,32 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), OnlineTestFragment.OnlineT
         }
     }
 
-    override fun testCompleted() {
+    override fun onTestCompleted() {
         showGrammarCompleteLayout()
     }
 
-    /*private suspend fun setOverlayAnimation() {
-        delay(1000)
-        withContext(Dispatchers.Main) {
-                val overlayButtonItem = TooltipUtils.getOverlayItemFromView(binding.startBtn)
-                val overlayImageView =
-                    binding.grammarBtnAnimation.findViewById<ImageView>(R.id.card_item_image)
-                val overlayButtonImageView =
-                    binding.grammarBtnAnimation.findViewById<ImageView>(R.id.button_item_image)
-                overlayImageView.visibility = View.GONE
-                overlayButtonImageView.visibility = View.INVISIBLE
-                binding.grammarBtnAnimation.setOnClickListener {
-                    binding.grammarBtnAnimation.visibility = View.INVISIBLE
-                }
-                overlayButtonImageView.setOnClickListener {
-                    binding.grammarBtnAnimation.visibility = View.INVISIBLE
-                    binding.startBtn.performClick()
-                }
-                setOverlayView(
-                    overlayButtonItem,
-                    overlayButtonImageView
-                )
-        }
-    }
-
-    @SuppressLint("LongLogTag")
-    fun setOverlayView(overlayButtonItem : ItemOverlay, overlayButtonImageView : ImageView) {
-        val STATUS_BAR_HEIGHT = getStatusBarHeight()
-        Log.d(TAG, "setOverlayView: ${STATUS_BAR_HEIGHT}")
-        binding.grammarBtnAnimation.visibility = View.INVISIBLE
-        binding.grammarBtnAnimation.setOnClickListener{
-            binding.grammarBtnAnimation.visibility = View.INVISIBLE
-        }
-        val arrowView = binding.grammarBtnAnimation.findViewById<ImageView>(R.id.arrow_animation_unlock_class)
-        val tooltipView = binding.grammarBtnAnimation.findViewById<JoshTooltip>(R.id.tooltip)
-        overlayButtonImageView.setImageBitmap(overlayButtonItem.viewBitmap)
-        //arrowView.x = overlayButtonItem.x.toFloat() - resources.getDimension(R.dimen._40sdp) + (overlayButtonImageView.width / 2.0).toFloat() - resources.getDimension(R.dimen._45sdp)
-        arrowView.y = overlayButtonItem.y - STATUS_BAR_HEIGHT - resources.getDimension(R.dimen._32sdp)
-        overlayButtonImageView.x =  (getScreenHeightAndWidth().second / 2.0).toFloat() //overlayButtonItem.x.toFloat()
-        overlayButtonImageView.y = (getScreenHeightAndWidth().first / 2.0).toFloat() //overlayButtonItem.y.toFloat() - STATUS_BAR_HEIGHT
-        overlayButtonImageView.requestLayout()
-        arrowView.requestLayout()
-        tooltipView.y = arrowView.y - STATUS_BAR_HEIGHT - resources.getDimension(R.dimen._80sdp)
-        binding.grammarBtnAnimation.visibility = View.VISIBLE
-        arrowView.visibility = View.VISIBLE
-        overlayButtonImageView.visibility = View.VISIBLE
-        tooltipView.setTooltipText("बस ना? नहीं अभी भी नहीं. और तेज़ी से आगे बड़ने के लिए आप कल का lesson भी अभी कर सकते हैं")
-        tooltipView.requestLayout()
-        slideInAnimation(tooltipView)
-    }
-
-    fun getScreenHeightAndWidth(): Pair<Int, Int> {
-        val metrics = DisplayMetrics()
-        activity?.windowManager?.defaultDisplay?.getMetrics(metrics)
-        return metrics.heightPixels to metrics.widthPixels
-    }
-
-    fun slideInAnimation(tooltipView : JoshTooltip) {
-        tooltipView.visibility = View.INVISIBLE
-        val start = getScreenHeightAndWidth().second
-        val mid = start * 0.2 * -1
-        val end = tooltipView.x
-        tooltipView.x = start.toFloat()
-        tooltipView.requestLayout()
-        tooltipView.visibility = View.VISIBLE
-        val valueAnimation = ValueAnimator.ofFloat(start.toFloat(), mid.toFloat(), end).apply {
-            interpolator = AccelerateInterpolator()
-            duration = 500
-            addUpdateListener {
-                tooltipView.x = it.animatedValue as Float
-                tooltipView.requestLayout()
-            }
-        }
-        valueAnimation.start()
-    }
-
-    fun getStatusBarHeight() : Int {
-        val rectangle = Rect()
-        activity?.window?.decorView?.getWindowVisibleDisplayFrame(rectangle)
-        val statusBarHeight = rectangle.top
-        val contentViewTop: Int = activity?.window?.findViewById<View>(Window.ID_ANDROID_CONTENT)?.top
-            ?: 0
-        val titleBarHeight = contentViewTop - statusBarHeight
-        return if(titleBarHeight < 0) titleBarHeight * -1 else titleBarHeight
-    }*/
-
     fun getStartButtonText() = AppObjectController.getFirebaseRemoteConfig().getString(
-        GRAMMAR_START_BUTTON_TEXT + PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID)
+        GRAMMAR_START_BUTTON_TEXT + PrefManager.getStringValue(
+            CURRENT_COURSE_ID,
+            false,
+            DEFAULT_COURSE_ID
+        )
     )
 
     fun getContinueButtonText() = AppObjectController.getFirebaseRemoteConfig().getString(
-        GRAMMAR_CONTINUE_BUTTON_TEXT + PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID)
+        GRAMMAR_CONTINUE_BUTTON_TEXT + PrefManager.getStringValue(
+            CURRENT_COURSE_ID,
+            false,
+            DEFAULT_COURSE_ID
+        )
     )
 
     fun getTestCompletedDescription() = AppObjectController.getFirebaseRemoteConfig().getString(
-        GRAMMAR_TEST_COMPLETE_DESCRIPTION + PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID)
+        GRAMMAR_TEST_COMPLETE_DESCRIPTION + PrefManager.getStringValue(
+            CURRENT_COURSE_ID,
+            false,
+            DEFAULT_COURSE_ID
+        )
     ).replace("\\n", "\n")
 
 }
