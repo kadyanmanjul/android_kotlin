@@ -86,7 +86,7 @@ class JoshVoipGroupActivity : BaseGroupActivity() {
                 SEARCH_GROUP -> openGroupSearchFragment()
                 SHOW_PROGRESS_BAR -> showProgressDialog(it.obj as String)
                 DISMISS_PROGRESS_BAR -> dismissProgressDialog()
-                OPEN_GROUP_REQUEST -> showToast("Open groups to send request for private groups")
+                OPEN_GROUP_REQUEST -> openGroupRequestFragment()
                 REFRESH_GRP_LIST_HIDE_INFO -> {
                     vm.hasGroupData.set(it.data.getBoolean(SHOW_NEW_INFO))
                     vm.hasGroupData.notifyChange()
@@ -174,7 +174,10 @@ class JoshVoipGroupActivity : BaseGroupActivity() {
     }
 
     private fun openGroupChat(data: GroupItemData?) {
-        Log.e("sagar", "openGroupChat: $data")
+        if (data?.getJoinedStatus() == NOT_JOINED_GROUP && data.getGroupCategory() == CLOSED_GROUP) {
+            openGroupRequestFragment(data)
+            return
+        }
         supportFragmentManager.commit {
             setReorderingAllowed(true)
             val bundle = Bundle().apply {
@@ -194,6 +197,24 @@ class JoshVoipGroupActivity : BaseGroupActivity() {
             val fragment = GroupChatFragment()
             fragment.arguments = bundle
             replace(R.id.group_fragment_container, fragment, CHAT_FRAGMENT)
+            addToBackStack(GROUPS_STACK)
+        }
+    }
+
+    private fun openGroupRequestFragment(data: GroupItemData? = null) {
+        supportFragmentManager.commit {
+            setReorderingAllowed(true)
+
+            val bundle = Bundle().apply {
+                putString(GROUPS_TITLE, data?.getTitle())
+                putString(GROUPS_IMAGE, data?.getImageUrl())
+                putString(GROUPS_ID, data?.getUniqueId())
+                putString(CLOSED_GROUP_TEXT, data?.getGroupText())
+            }
+
+            val fragment = GroupRequestFragment()
+            fragment.arguments = bundle
+            add(R.id.group_fragment_container, fragment, GROUP_REQUEST_FRAGMENT)
             addToBackStack(GROUPS_STACK)
         }
     }

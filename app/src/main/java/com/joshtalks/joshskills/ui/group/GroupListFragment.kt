@@ -86,7 +86,7 @@ class GroupListFragment : BaseFragment() {
     }
 
     private fun initTooltip() {
-        if (!PrefManager.getBoolValue(HAS_SEEN_GROUP_TOOLTIP)) {
+        if (!PrefManager.getBoolValue(HAS_SEEN_GROUP_TOOLTIP) && !vm.isFromVoip.get()) {
             if (AppObjectController.getFirebaseRemoteConfig()
                     .getBoolean(FirebaseRemoteConfigKey.SHOW_NEW_GROUP_BTN)
             ) {

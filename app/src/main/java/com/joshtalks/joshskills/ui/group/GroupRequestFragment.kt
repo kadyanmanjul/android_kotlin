@@ -16,6 +16,10 @@ import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.databinding.GroupRequestFragmentBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.track.CONVERSATION_ID
+import com.joshtalks.joshskills.ui.group.constants.CLOSED_GROUP_TEXT
+import com.joshtalks.joshskills.ui.group.constants.GROUPS_ID
+import com.joshtalks.joshskills.ui.group.constants.GROUPS_IMAGE
+import com.joshtalks.joshskills.ui.group.constants.GROUPS_TITLE
 import com.joshtalks.joshskills.ui.group.model.GroupJoinRequest
 import com.joshtalks.joshskills.ui.group.viewmodels.GroupChatViewModel
 
@@ -68,8 +72,13 @@ class GroupRequestFragment : BaseFragment() {
     }
 
     override fun setArguments() {
-        arguments.let { args ->
-            vm.conversationId = args?.getString(CONVERSATION_ID, "") ?: ""
+        arguments?.let { args ->
+            vm.conversationId = args.getString(CONVERSATION_ID, "") ?: ""
+
+            vm.imageUrl.set(args.getString(GROUPS_IMAGE, ""))
+            vm.groupHeader.set(args.getString(GROUPS_TITLE, ""))
+            vm.groupId = args.getString(GROUPS_ID, "")
+            vm.groupText = args.getString(CLOSED_GROUP_TEXT, "")
         }
     }
 

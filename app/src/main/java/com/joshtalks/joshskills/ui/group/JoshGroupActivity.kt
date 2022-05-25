@@ -224,6 +224,10 @@ class JoshGroupActivity : BaseGroupActivity() {
     }
 
     private fun openGroupChat(groupId: String = EMPTY, data: GroupItemData?) {
+        if (data?.getJoinedStatus() == NOT_JOINED_GROUP && data.getGroupCategory() == CLOSED_GROUP) {
+            openGroupRequestFragment(data)
+            return
+        }
         supportFragmentManager.commit {
             setReorderingAllowed(true)
             val bundle = Bundle().apply {
@@ -284,11 +288,19 @@ class JoshGroupActivity : BaseGroupActivity() {
         }
     }
 
-    private fun openGroupRequestFragment() {
+    private fun openGroupRequestFragment(data: GroupItemData? = null) {
         supportFragmentManager.commit {
             setReorderingAllowed(true)
 
+            val bundle = Bundle().apply {
+                putString(GROUPS_TITLE, data?.getTitle())
+                putString(GROUPS_IMAGE, data?.getImageUrl())
+                putString(GROUPS_ID, data?.getUniqueId())
+                putString(CLOSED_GROUP_TEXT, data?.getGroupText())
+            }
+
             val fragment = GroupRequestFragment()
+            fragment.arguments = bundle
             add(R.id.group_fragment_container, fragment, GROUP_REQUEST_FRAGMENT)
             addToBackStack(GROUPS_STACK)
         }
