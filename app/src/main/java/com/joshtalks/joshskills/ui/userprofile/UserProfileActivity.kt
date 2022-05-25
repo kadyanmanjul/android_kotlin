@@ -707,7 +707,6 @@ UserProfileActivity : WebRtcMiddlewareActivity() {
         viewModel.apiCallStatusLiveData.observe(this) {
             if (it == ApiCallStatus.SUCCESS) {
                 binding.profileShimmer.visibility = GONE
-                binding.profileContainer.visibility = VISIBLE
                 binding.previousProfilePicLayout.visibility = VISIBLE
                 binding.profileShimmer.stopShimmer()
                 if (isFirstTimeToGetProfileData) {
@@ -716,7 +715,6 @@ UserProfileActivity : WebRtcMiddlewareActivity() {
                 }
             } else if (it == ApiCallStatus.START) {
                 binding.profileShimmer.visibility = VISIBLE
-                binding.profileContainer.visibility = GONE
                 binding.previousProfilePicLayout.visibility = GONE
                 binding.profileShimmer.startShimmer()
             }
