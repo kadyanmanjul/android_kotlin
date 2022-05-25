@@ -37,7 +37,7 @@ class AudioController(val coroutineScope : CoroutineScope) : AudioControllerInte
         HeadsetReceiver(coroutineScope)
     }
     private val bluetoothReceiver by lazy {
-        HeadsetReceiver(coroutineScope)
+        BluetoothReceiver(coroutineScope)
     }
 
     init {
@@ -67,7 +67,7 @@ class AudioController(val coroutineScope : CoroutineScope) : AudioControllerInte
         }
         coroutineScope.launch {
             try{
-                bluetoothReceiver.observeHeadsetEvents().collect {
+                bluetoothReceiver.observeBluetoothEvents().collect {
                     try{
                         when(it) {
                             AudioRouteConstants.Default -> checkAudioRoute()
@@ -106,7 +106,7 @@ class AudioController(val coroutineScope : CoroutineScope) : AudioControllerInte
         applicationContext?.unregisterReceiver(bluetoothReceiver)
     }
 
-    override fun observeAudioRoute(): MutableSharedFlow<AudioRouteConstants> {
+    override fun observeAudioRoute(): SharedFlow<AudioRouteConstants> {
         return audioRouteFlow
     }
 

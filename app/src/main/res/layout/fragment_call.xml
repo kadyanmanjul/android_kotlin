@@ -327,7 +327,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="@{vm.uiState.startTime &lt;= 0 &amp;&amp; vm.source == ConstantsKt.FROM_INCOMING_CALL ? View.INVISIBLE : View.VISIBLE }"
-            app:constraint_referenced_ids="topic_header,c_image"
+            app:constraint_referenced_ids="topic_header, c_image, topic_viewpager, occupation_future_goals, next_topic_btn"
             tools:visibility="visible" />
 
         <androidx.constraintlayout.widget.Guideline
