@@ -29,7 +29,15 @@ class LeavingState(val context: CallContext) : VoipState {
     }
 
     override fun onError() {
-        context.destroyContext()
+        CallAnalytics.addAnalytics(
+            event = EventName.ON_ERROR,
+            agoraCallId = context.channelData.getCallingId().toString(),
+            agoraMentorId = context.channelData.getAgoraUid().toString(),
+            extra = TAG
+        )
+        scope.launch { context.closeCallScreen() }
+        context.closePipe()
+        onDestroy()
     }
 
     override fun onDestroy() {
@@ -57,11 +65,19 @@ class LeavingState(val context: CallContext) : VoipState {
                         ensureActive()
                         PrefManager.setVoipState(State.IDLE)
                         Log.d(TAG, "OBSERVE : ${event.type} switched to IDLE STATE")
-                        context.destroyContext()
+                        context.closeCallScreen()
+                        onDestroy()
                         break@loop
                     } else {
                         ensureActive()
-                        throw IllegalEventException("In $TAG but received ${event.type} expected $CALL_DISCONNECTED")
+                        val msg = "In $TAG but received ${event.type} expected $CALL_DISCONNECTED"
+                        CallAnalytics.addAnalytics(
+                            event = EventName.ILLEGAL_EVENT_RECEIVED,
+                            agoraCallId = context.channelData.getCallingId().toString(),
+                            agoraMentorId = context.channelData.getAgoraUid().toString(),
+                            extra = msg
+                        )
+                        throw IllegalEventException(msg)
                     }
                 } catch (e: Throwable) {
                     if (e is CancellationException)
@@ -72,7 +88,9 @@ class LeavingState(val context: CallContext) : VoipState {
                         e.printStackTrace()
                         PrefManager.setVoipState(State.IDLE)
                         Log.d(TAG, "EXCEPTION : $e switched to IDLE STATE")
-                        context.destroyContext()
+                        context.closeCallScreen()
+                        context.closePipe()
+                        onDestroy()
                     }
                 }
             }

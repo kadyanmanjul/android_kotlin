@@ -124,6 +124,10 @@ class WebrtcRepository(scope : CoroutineScope) {
     fun clearRepository() {
         //ioScope.cancel()
     }
+
+    fun getNewTopicImage() {
+        mService?.changeTopicImage()
+    }
 }
 
 enum class RepositoryConstants {

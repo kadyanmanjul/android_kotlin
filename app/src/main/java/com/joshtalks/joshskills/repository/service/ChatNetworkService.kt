@@ -16,6 +16,7 @@ import com.joshtalks.joshskills.ui.lesson.speaking.VideoPopupItem
 import kotlinx.coroutines.Deferred
 import retrofit2.Response
 import retrofit2.http.*
+import java.util.HashMap
 
 @JvmSuppressWildcards
 interface ChatNetworkService {
@@ -179,6 +180,9 @@ interface ChatNetworkService {
     @PATCH("$DIR/course/extend_free_trial/")
     suspend fun extendFreeTrial(
         @Body id: Map<String, String>
-    ):Response<Any>
+    ): Response<Any>
+
+    @POST("$DIR/impression/track_a2c1_retention_impression/")
+    suspend fun saveA2C1Impression(@Body requestData: HashMap<String, String>)
 
 }

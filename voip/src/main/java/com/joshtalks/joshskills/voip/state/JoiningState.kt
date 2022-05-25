@@ -52,9 +52,25 @@ class JoiningState(val context: CallContext) : VoipState {
     }
 
     // Join Channel Already Called
-    override fun backPress() { moveToLeavingState() }
+    override fun backPress() {
+        CallAnalytics.addAnalytics(
+            event = EventName.BACK_PRESSED,
+            agoraCallId = context.channelData.getCallingId().toString(),
+            agoraMentorId = context.channelData.getAgoraUid().toString(),
+            extra = TAG
+        )
+        moveToLeavingState()
+    }
 
-    override fun onError() { backPress() }
+    override fun onError() {
+        CallAnalytics.addAnalytics(
+            event = EventName.ON_ERROR,
+            agoraCallId = context.channelData.getCallingId().toString(),
+            agoraMentorId = context.channelData.getAgoraUid().toString(),
+            extra = TAG
+        )
+        moveToLeavingState()
+    }
 
     override fun onDestroy() {
         scope.cancel()
@@ -84,7 +100,13 @@ class JoiningState(val context: CallContext) : VoipState {
                         // TODO: Not a fix
                         RECEIVED_CHANNEL_DATA -> {
                             // Ignore
-                            Log.d(TAG, "In $TAG but received ${event.type} expected $CALL_INITIATED_EVENT")
+                            val msg = "In $TAG but received ${event.type} { with channel - ${context.channelData.getChannel()} } expected $CALL_INITIATED_EVENT"
+                            CallAnalytics.addAnalytics(
+                                event = EventName.ILLEGAL_EVENT_RECEIVED,
+                                agoraCallId = context.channelData.getCallingId().toString(),
+                                agoraMentorId = context.channelData.getAgoraUid().toString(),
+                                extra = msg
+                            )
                         }
                         MUTE -> {
                             ensureActive()
@@ -161,6 +183,20 @@ class JoiningState(val context: CallContext) : VoipState {
                             )
                             context.sendMessageToServer(userAction)
                         }
+                        TOPIC_IMAGE_RECEIVED -> {
+                            ensureActive()
+                            val uiState = context.currentUiState.copy(currentTopicImage = event.data.toString())
+                            context.updateUIState(uiState = uiState)
+                        }
+                        TOPIC_IMAGE_CHANGE_REQUEST ->{
+                            ensureActive()
+                            val userAction = UserAction(
+                                ServerConstants.TOPIC_IMAGE_REQUEST,
+                                context.channelData.getChannel(),
+                                address = context.channelData.getPartnerMentorId()
+                            )
+                            context.sendMessageToServer(userAction)
+                        }
                         SYNC_UI_STATE -> {
                             ensureActive()
                             context.sendMessageToServer(
@@ -192,7 +228,16 @@ class JoiningState(val context: CallContext) : VoipState {
                             )
                             context.updateUIState(uiState = uiState)
                         }
-                        else ->throw IllegalEventException("In $TAG but received ${event.type} expected $CALL_INITIATED_EVENT")
+                        else -> {
+                            val msg = "In $TAG but received ${event.type} expected $CALL_INITIATED_EVENT"
+                            CallAnalytics.addAnalytics(
+                                event = EventName.ILLEGAL_EVENT_RECEIVED,
+                                agoraCallId = context.channelData.getCallingId().toString(),
+                                agoraMentorId = context.channelData.getAgoraUid().toString(),
+                                extra = msg
+                            )
+                            throw IllegalEventException(msg)
+                        }
                     }
                 }
                 scope.cancel()

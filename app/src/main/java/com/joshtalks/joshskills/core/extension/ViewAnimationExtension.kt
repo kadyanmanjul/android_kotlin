@@ -12,8 +12,9 @@ import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.Utils
-import com.joshtalks.joshskills.ui.lesson.grammar_new.CustomLayout
-import com.joshtalks.joshskills.ui.lesson.grammar_new.CustomWord
+import com.joshtalks.joshskills.ui.online_test.vh.AtsOptionView
+import com.joshtalks.joshskills.ui.online_test.util.addViewAt
+import com.nex3z.flowlayout.FlowLayout
 
 fun View.moveViewToScreenCenter(imgGroupChat: AppCompatImageView, txtUnreadCount: TextView) {
     val animSet = AnimationSet(false)
@@ -183,8 +184,8 @@ fun View.transaltionAnimation(fromLocation: IntArray, toLocation: IntArray) {
 
 fun View.translationAnimationNew(
     toLocation: IntArray,
-    customWord: CustomWord,
-    optionLayout: CustomLayout?,
+    atsOptionView: AtsOptionView,
+    optionLayout: FlowLayout? = null,
     doOnAnimationEnd: (() -> Unit)? = null
 ) {
     this@translationAnimationNew.visibility = View.VISIBLE
@@ -200,13 +201,13 @@ fun View.translationAnimationNew(
     slideSet.addListener(object : AnimatorListenerAdapter() {
         override fun onAnimationEnd(animation: Animator) {
             optionLayout?.let {
-                optionLayout.addViewAt(customWord, customWord.choice.sortOrder - 1)
-                customWord.updateView(isSelected = true)
+                optionLayout.addViewAt(atsOptionView, atsOptionView.choice.sortOrder - 1)
+                atsOptionView.updateView(isSelected = true)
             }
             if (doOnAnimationEnd != null)
                 doOnAnimationEnd()
             this@translationAnimationNew.visibility = View.GONE
-            customWord.visibility = View.VISIBLE
+            atsOptionView.visibility = View.VISIBLE
         }
     })
     slideSet.start()

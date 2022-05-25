@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.lesson.grammar_new
+package com.joshtalks.joshskills.ui.online_test.vh
 
 import android.content.Context
 import android.view.Gravity
@@ -11,11 +11,13 @@ import androidx.core.content.ContextCompat
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.eventbus.AnimateAtsOtionViewEvent
 import com.joshtalks.joshskills.repository.local.model.assessment.Choice
+import com.joshtalks.joshskills.ui.online_test.util.AnimateAtsOptionViewEvent
+import com.joshtalks.joshskills.ui.online_test.util.addViewAt
+import com.joshtalks.joshskills.ui.online_test.util.removeView
 import com.nex3z.flowlayout.FlowLayout
 
-class CustomWord : AppCompatTextView {
+class AtsOptionView : AppCompatTextView {
 
     lateinit var choice: Choice
 
@@ -34,27 +36,28 @@ class CustomWord : AppCompatTextView {
     }
 
     fun changeViewGroup(
-        optionsLayout: CustomLayout,
+        optionsLayout: FlowLayout,
         answerLayout: FlowLayout,
+        selectedOption: Boolean = true
     ) {
-        if (parent is CustomLayout) {
+        if (selectedOption) {
             /**
              * Answer Selected
              */
             val fromLocation = IntArray(2)
             this.getLocationInWindow(fromLocation)
             updateView(isSelected = true)
-            optionsLayout.removeViewCustomLayout(this, choice)
+            optionsLayout.removeView(this, choice)
             answerLayout.addView(this)
             //this.invalidate()
             post {
-            choice.apply {
-                this.userSelectedOrder = answerLayout.childCount
-                this.isSelectedByUser = true
-            }
+                choice.apply {
+                    this.userSelectedOrder = answerLayout.childCount
+                    this.isSelectedByUser = true
+                }
             }
             this.visibility = View.INVISIBLE
-            RxBus2.publish(AnimateAtsOtionViewEvent(fromLocation, this.height, this.width, this))
+            RxBus2.publish(AnimateAtsOptionViewEvent(fromLocation, this.height, this.width, this))
         } else {
             /**
              * Answer Unselected
@@ -70,7 +73,7 @@ class CustomWord : AppCompatTextView {
             }
             this.visibility = View.VISIBLE
             RxBus2.publish(
-                AnimateAtsOtionViewEvent(
+                AnimateAtsOptionViewEvent(
                     fromLocation,
                     this.height,
                     this.width,
@@ -118,7 +121,6 @@ class CustomWord : AppCompatTextView {
     }
 
     companion object {
-        private const val TAG = "CustomWord"
         var mPaddingTop = Utils.sdpToPx(R.dimen._10sdp).toInt()
         var mPaddingBottom = Utils.sdpToPx(R.dimen._10sdp).toInt()
         var mPaddingLeft = Utils.sdpToPx(R.dimen._14sdp).toInt()

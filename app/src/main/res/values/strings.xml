@@ -501,6 +501,8 @@
     <string name="lessons">Lessons</string>
     <string name="exam">Certification Exam</string>
     <string name="congratulations">Congratulations </string>
+    <string name="amazing">Amazing</string>
+    <string name="rule_completed_message">Congratulations! You have completed another level</string>
     <string name="grammer_completions_message">Congratulations!!! you have completed grammar part.</string>
     <string name="unlock_next_lesson">Unlock next lesson</string>
     <string name="lesson_completed">Lesson Completed!</string>
@@ -1041,7 +1043,7 @@
     <string name="delete_popup">This photo will be deleted from your previous profile photos</string>
 
     <!-- p2p image share strings -->
-    <string name="share_screen_tagline"><b>मैं रोज़</b> speaking practice <b>कर रहा हूँ</b> call<b>\nपर</b> new new persons <b>के साथ</b>
+    <string name="share_screen_tagline"><b>मैं रोज़</b> speaking practice <b>कर रहा हूँ</b> call<b>\nपर</b> new persons <b>के साथ</b>
 </string>
     <string name="share_screen_line">If I can do it, You can do it</string>
     <string name="share_screen_heading"><![CDATA[\I Spoke in <b>English</b> for <br/> <b>%1$s minutes</b>\]]></string>
@@ -1205,7 +1207,13 @@
     <string name="reject_call">Reject</string>
     <string name="submit_report_btn">Submit</string>
 
-   <!-- Voip Preference-->
+    //call ratings strings
+    <string name="how_was_your_call_name">How was your call with %s ?</string>
+    <string name="you_spoke_for_minutes">You spoke for %s minutes</string>
+    <string name="very_bad">Very bad</string>
+    <string name="block_caller">Block %s</string>
+    <string name="excellent">Excellent</string>
+    <string name="submit_call_rating">Submit</string>
 
     <string name="voip_shared_pref_file_name">com.joshtalks.joshskills.new_arch_voip_shared_pref_file</string>
     <string name="permission_denied_contacts">Permission to access contacts is required to invite friends.</string>
@@ -1221,6 +1229,21 @@
     <string name="no_contacts_found">No contacts found!</string>
     <string name="remove_from_favorite">Remove from favorite</string>
     <string name="space">\u0020</string>
+    <string name="slash">/</string>
+    <string name="_1_0x">1.0x</string>
+    <string name="_0_5x">0.5x</string>
+    <string name="_0_75x">0.75x</string>
+    <string name="_1_25x">1.25x</string>
+    <string name="_1_5x">1.5x</string>
+    <string name="_1_75x">1.75x</string>
+    <string name="_of_" formatted="false">%d of %d</string>
+    <string name="translation">Translation</string>
 
+    <string name="occupation_field">आप क्या काम करते हैं? (Occupation)</string>
+    <string name="occupation_filed_hint_text">e.g. Manager at Flipkart</string>
+    <string name="aspiration_filed">आपका सपना क्या है? (Aspiration)</string>
+    <string name="aspiration_filed_hint_text">e.g. IAS Officer </string>
+    <string name="occupation_error_toast">Occupation cannot be empty!</string>
+    <string name="aspiration_error_toast">Aspiration cannot be empty!</string>
 
 </resources>

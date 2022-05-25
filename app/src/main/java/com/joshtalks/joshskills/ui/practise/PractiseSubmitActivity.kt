@@ -377,7 +377,7 @@ class PractiseSubmitActivity :
                     this.videoList?.getOrNull(0)?.video_url?.let {
                         binding.videoPlayer.setUrl(it)
                         binding.videoPlayer.fitToScreen()
-                        binding.videoPlayer.setPlayListener {
+                        binding.videoPlayer.setFullScreenListener {
                             val videoId = this.videoList?.getOrNull(0)?.id
                             val videoUrl = this.videoList?.getOrNull(0)?.video_url
                             VideoPlayerActivity.startVideoActivity(
@@ -574,7 +574,7 @@ class PractiseSubmitActivity :
                         filePath?.run {
                             binding.videoPlayerSubmit.setUrl(filePath)
                             binding.videoPlayerSubmit.fitToScreen()
-                            binding.videoPlayerSubmit.setPlayListener {
+                            binding.videoPlayerSubmit.setFullScreenListener {
                                 VideoPlayerActivity.startVideoActivity(
                                     this@PractiseSubmitActivity,
                                     null,
@@ -1046,7 +1046,7 @@ class PractiseSubmitActivity :
         binding.videoPlayerSubmit.setUrl(filePath)
         binding.videoPlayerSubmit.fitToScreen()
         binding.videoPlayerSubmit.downloadStreamButNotPlay()
-        binding.videoPlayerSubmit.setPlayListener {
+        binding.videoPlayerSubmit.setFullScreenListener {
             VideoPlayerActivity.startVideoActivity(
                 this@PractiseSubmitActivity,
                 null,

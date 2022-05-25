@@ -9,6 +9,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.MarginPageTransformer
 import androidx.viewpager2.widget.ViewPager2
+import androidx.viewpager2.widget.ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
@@ -78,7 +79,7 @@ class CExamMainActivity : BaseActivity(), CertificationExamListener {
             intent.getParcelableExtra(CERTIFICATION_EXAM_QUESTION) as CertificationQuestionModel?
         examView =
             (intent.getSerializableExtra(ARG_EXAM_VIEW) as CertificationExamView?)
-            ?: CertificationExamView.EXAM_VIEW
+                ?: CertificationExamView.EXAM_VIEW
         openQuestionId = intent.getIntExtra(ARG_OPEN_QUESTION_ID, 0)
         attemptSequence = intent.getIntExtra(ARG_ATTEMPT_SEQUENCE, -1)
 
@@ -152,7 +153,7 @@ class CExamMainActivity : BaseActivity(), CertificationExamListener {
                 cq.correctOptionId = cq.answers.find { it.isCorrect }?.id ?: -1
                 cq.userSelectedOption =
                     cq.userSubmittedAnswer?.find { it.attemptSeq == attemptSequence }?.answerId
-                    ?: -1
+                        ?: -1
             }
         }
         CoroutineScope(Dispatchers.Main).launch {
@@ -176,24 +177,24 @@ class CExamMainActivity : BaseActivity(), CertificationExamListener {
                 }
             )
             question_view_pager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
-            question_view_pager.offscreenPageLimit = questions.size
+            question_view_pager.offscreenPageLimit = if (questions.isNotEmpty()) questions.size else OFFSCREEN_PAGE_LIMIT_DEFAULT
             question_view_pager.setPageTransformer(MarginPageTransformer(Utils.dpToPx(40)))
             question_view_pager.registerOnPageChangeCallback(object :
-                    ViewPager2.OnPageChangeCallback() {
-                    override fun onPageSelected(position: Int) {
-                        super.onPageSelected(position)
-                        updateBookmarkIV(questions, position)
-                        val cPage = position + 1
-                        tv_question.text = "$cPage/${questions.size}"
+                ViewPager2.OnPageChangeCallback() {
+                override fun onPageSelected(position: Int) {
+                    super.onPageSelected(position)
+                    updateBookmarkIV(questions, position)
+                    val cPage = position + 1
+                    tv_question.text = "$cPage/${questions.size}"
 
-                        if (CertificationExamView.EXAM_VIEW == examView) {
-                            val obj = questions.findLast { it.isAttempted.not() }
-                            if (obj == null && cPage == question_view_pager.adapter?.itemCount) {
-                                openQuestionListBottomSheet()
-                            }
+                    if (CertificationExamView.EXAM_VIEW == examView) {
+                        val obj = questions.findLast { it.isAttempted.not() }
+                        if (obj == null && cPage == question_view_pager.adapter?.itemCount) {
+                            openQuestionListBottomSheet()
                         }
                     }
-                })
+                }
+            })
             question_view_pager.adapter = adapter
             setupUIAsExamView()
         }
@@ -229,7 +230,7 @@ class CExamMainActivity : BaseActivity(), CertificationExamListener {
                         "%02d:%02d",
                         TimeUnit.MILLISECONDS.toMinutes(millis),
                         TimeUnit.MILLISECONDS.toSeconds(millis) -
-                            TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis))
+                                TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis))
                     )
                 }
             }

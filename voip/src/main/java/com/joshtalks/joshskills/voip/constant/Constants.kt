@@ -68,6 +68,8 @@ enum class Event {
     UNHOLD_REQUEST,
     MUTE_REQUEST,
     UNMUTE_REQUEST,
+    TOPIC_IMAGE_CHANGE_REQUEST,
+    TOPIC_IMAGE_RECEIVED,
 }
 
 enum class State {

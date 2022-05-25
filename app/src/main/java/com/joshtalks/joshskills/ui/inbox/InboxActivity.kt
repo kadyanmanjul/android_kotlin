@@ -259,6 +259,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                         }
                         if (inboxEntity.isCourseBought.not()) {
                             haveFreeTrialCourse = true
+                            PrefManager.put(IS_FREE_TRIAL, true)
                         }
                     }
                     temp.addAll(courseList)

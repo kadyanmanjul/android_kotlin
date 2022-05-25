@@ -1,5 +1,9 @@
 package com.joshtalks.joshskills.core.custom_ui;
 
+import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
+import static com.joshtalks.joshskills.messaging.RxBus2.publish;
+
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
@@ -8,15 +12,21 @@ import android.net.Uri;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.OrientationEventListener;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
+import android.widget.TextView;
+
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.RenderersFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -45,12 +55,12 @@ import com.joshtalks.joshskills.repository.local.entity.VideoEngage;
 import com.joshtalks.joshskills.repository.local.eventbus.MediaProgressEventBus;
 import com.joshtalks.joshskills.repository.server.engage.Graph;
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
+
 import javax.annotation.Nullable;
-import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
-import static com.joshtalks.joshskills.messaging.RxBus2.publish;
 
 public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener, View.OnClickListener {
     private final Handler timeHandler = new Handler();
@@ -64,6 +74,7 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
     private OrientationEventListener mOrientationListener;
     private ScreenOrientation screenOrientation = ScreenOrientation.PORTRAIT;
     private SimpleExoPlayer player;
+    private boolean isVideoEnded = false;
 
     private final Runnable timeRunnable = new Runnable() {
         @Override
@@ -83,7 +94,6 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
             if (!(getContext() instanceof PlayerListener)) {
                 return;
             }
-
             if (currentPosition == lastPosition)
                 return;
 
@@ -102,6 +112,7 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
     private PlayerControlViewVisibilityListener playerControlViewVisibilityListener;
     private PlayerFullScreenListener playerFullScreenListener;
     private PlayerEventCallback playerEventCallback;
+    private PlayerCompletionCallback playerCompletionCallback;
     private String videoId;
     @Nullable
     private Graph graph;
@@ -150,7 +161,7 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
     public void init() {
         fullScreenToggle = findViewById(R.id.ivFullScreenToggle);
         DefaultTimeBar defaultTimeBar = findViewById(R.id.exo_progress);
-
+        isVideoEnded = false;
         appAnalytics = AppAnalytics.create(AnalyticsEvent.VIDEO_VIEW.getNAME())
                 .addBasicParam()
                 .addUserDetails();
@@ -174,7 +185,10 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
                 e.printStackTrace();
             }
 
-
+            findViewById(R.id.playAgain).setOnClickListener(this);
+            findViewById(R.id.playbackSpeed).setOnClickListener(this);
+            findViewById(R.id.playAgain).setVisibility(GONE);
+            findViewById(R.id.llControlsContainer).setVisibility(VISIBLE);
             player.addListener(new PlayerEventListener());
             player.setPlayWhenReady(true);
             setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIXED_WIDTH);
@@ -341,7 +355,6 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
             player.release();
         }
         player = null;
-
     }
 
     private void pushAnalyticsEvents() {
@@ -398,6 +411,7 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
             if (player != null) {
                 player.seekTo(0);
                 player.setPlayWhenReady(false);
+                isVideoEnded = false;
             }
         } catch (Throwable e) {
             e.printStackTrace();
@@ -418,12 +432,11 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
         }
     }
 
-    public void setPlayListener(PlayerFullScreenListener playerFullScreenListener) {
+    public void setFullScreenListener(PlayerFullScreenListener playerFullScreenListener) {
         findViewById(R.id.exo_play).setOnClickListener(this);
         findViewById(R.id.ivFullScreenToggleOp).setOnClickListener(this);
         findViewById(R.id.ivFullScreenToggleOp).setVisibility(VISIBLE);
         this.playerFullScreenListener = playerFullScreenListener;
-
     }
 
     @Override
@@ -447,10 +460,10 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
         return false;
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onClick(View v) {
         try {
-
             if (v.getId() == R.id.ivFullScreenToggle) {
                 if (getContext() instanceof FullscreenToggleListener)
                     ((FullscreenToggleListener) getContext()).onFullscreenToggle();
@@ -461,6 +474,26 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
             } else if (v.getId() == R.id.ivFullScreenToggleOp) {
                 if (playerFullScreenListener != null) {
                     playerFullScreenListener.onFullScreen();
+                }
+            } else if (v.getId() == R.id.playAgain) {
+                if (player != null) {
+                    seekToStart();
+                    player.setPlayWhenReady(true);
+                    findViewById(R.id.playAgain).setVisibility(GONE);
+                    findViewById(R.id.llControlsContainer).setVisibility(VISIBLE);
+                }
+            } else if (v.getId() == R.id.playbackSpeed) {
+                if (player != null) {
+                    PopupMenu popup = new PopupMenu(getContext(), v, Gravity.TOP);
+                    popup.getMenuInflater().inflate(R.menu.playback_speed_menu, popup.getMenu());
+                    popup.setOnMenuItemClickListener(item -> {
+                        String t = item.getTitle().toString().replace("x", "");
+                        float speed = Float.parseFloat(t);
+                        player.setPlaybackParameters(new PlaybackParameters(speed));
+                        ((TextView) findViewById(R.id.playbackSpeed)).setText(t + "x");
+                        return true;
+                    });
+                    popup.show();
                 }
             }
         } catch (Exception e) {
@@ -494,6 +527,19 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
 
     public void setPlayerEventCallback(PlayerEventCallback playerEventCallback) {
         this.playerEventCallback = playerEventCallback;
+    }
+
+    public void setSkipCallback(View.OnClickListener skipVideoListener) {
+        findViewById(R.id.skip).setVisibility(View.VISIBLE);
+        findViewById(R.id.skip).setOnClickListener(skipVideoListener);
+    }
+
+    public void setPlayerCompletionCallback(PlayerCompletionCallback playerCompletionCallback) {
+        this.playerCompletionCallback = playerCompletionCallback;
+    }
+
+    public long getSecondsWatched() {
+        return countUpTimer.getTime() / 1000;
     }
 
     @Override
@@ -560,6 +606,10 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
         void onReceiveEvent(int event, boolean playbackState);
     }
 
+    public interface PlayerCompletionCallback {
+        void onCompleted();
+    }
+
     private class PlayerEventListener implements Player.EventListener {
 
         @Override
@@ -588,8 +638,12 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
             if (playerEventCallback != null) {
                 playerEventCallback.onReceiveEvent(playbackState, playWhenReady);
             }
-            if (playbackState == Player.STATE_ENDED) {
-                seekToStart();
+            if (playbackState == Player.STATE_ENDED && !isVideoEnded) {
+                isVideoEnded = true;
+                if (playerCompletionCallback != null)
+                    playerCompletionCallback.onCompleted();
+                findViewById(R.id.playAgain).setVisibility(VISIBLE);
+                findViewById(R.id.llControlsContainer).setVisibility(GONE);
             }
         }
 

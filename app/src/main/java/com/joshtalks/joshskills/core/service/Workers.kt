@@ -1054,8 +1054,8 @@ class UpdateABTestCampaignsWorker(context: Context, workerParams: WorkerParamete
                     CampaignKeys.EXTEND_FREE_TRIAL.name,
                     CampaignKeys.ACTIVITY_FEED_V2.name,
                     CampaignKeys.TWENTY_MIN_TARGET.NAME,
-                    CampaignKeys.NEW_LANGUAGE.name
-
+                    CampaignKeys.NEW_LANGUAGE.name,
+                    CampaignKeys.A2_C1.name
                 )
             )
         } catch (ex: Exception) {
