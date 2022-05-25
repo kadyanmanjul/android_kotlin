@@ -5,6 +5,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
@@ -131,7 +132,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         viewModel.newLanguageABtestLiveData.observe(this){ abTestCampaignData ->
             abTestCampaignData?.let { map ->
                 languageActive =(map.variantKey == VariantKeys.NEW_LANGUAGE_ENABLED.NAME) && map.variableMap?.isEnabled == true
-                languageActive = true
+                Log.e("Ayaaz","$languageActive")
             }
         }
         viewModel.eftABtestLiveData.observe(this){ abTestCampaignData ->
@@ -239,6 +240,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
 
     private fun openTrueCallerBottomSheet() {
         showProgressBar()
+        viewModel.saveTrueCallerImpression(TC_BOTTOMSHEET_SHOWED)
         TruecallerSDK.getInstance().getUserProfile(this)
     }
 
