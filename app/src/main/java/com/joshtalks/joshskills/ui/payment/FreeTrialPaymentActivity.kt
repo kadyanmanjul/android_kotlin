@@ -555,7 +555,6 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                     val data2 = it.getOrNull(1)
                     if (data2 == null) {
                         index = 0
-                        if(PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID)!=DEFAULT_COURSE_ID)
                            subscriptionCard.visibility = View.GONE
                     } else {
                         subscriptionCard.card.performClick()
@@ -618,6 +617,8 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                 }else {
                     binding.oldViewCourseInfo.visibility = View.VISIBLE
                       binding.seeCourseList.visibility = View.VISIBLE
+                    if(PrefManager.getStringValue(CURRENT_COURSE_ID) != DEFAULT_COURSE_ID)
+                        binding.seeCourseList.visibility = View.GONE
                     it.subHeadings?.let { list ->
                         for (i in list.indices) {
                             val infoTextView : AppCompatTextView = createTextViewsDynamically()
