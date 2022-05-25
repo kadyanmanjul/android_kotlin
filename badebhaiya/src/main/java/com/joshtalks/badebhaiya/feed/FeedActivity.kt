@@ -4,6 +4,8 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -11,7 +13,9 @@ import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
@@ -21,8 +25,10 @@ import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.SearchFragment
 import com.joshtalks.badebhaiya.core.EMPTY
 import com.joshtalks.badebhaiya.core.PermissionUtils
+import com.joshtalks.badebhaiya.core.models.FormResponse
 import com.joshtalks.badebhaiya.core.showToast
 import com.joshtalks.badebhaiya.databinding.ActivityFeedBinding
+import com.joshtalks.badebhaiya.databinding.WhyRoomBinding
 import com.joshtalks.badebhaiya.feed.adapter.FeedAdapter
 import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
 import com.joshtalks.badebhaiya.liveroom.*
@@ -34,6 +40,7 @@ import com.joshtalks.badebhaiya.profile.ProfileFragment
 import com.joshtalks.badebhaiya.profile.request.DeleteReminderRequest
 import com.joshtalks.badebhaiya.profile.request.ReminderRequest
 import com.joshtalks.badebhaiya.pubnub.PubNubState
+import com.joshtalks.badebhaiya.repository.CommonRepository
 import com.joshtalks.badebhaiya.repository.ConversationRoomRepository
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomResponse
 import com.joshtalks.badebhaiya.repository.model.User
@@ -49,6 +56,9 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.karumi.dexter.listener.single.PermissionListener
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -160,7 +170,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         //startActivity(Intent(this, PeopleToFollowActivity::class.java)
 
         val fragmentTransaction: FragmentTransaction = supportFragmentManager.beginTransaction()
-        fragmentTransaction.replace(R.id.root_view, PeopleToFollowFragment())
+        fragmentTransaction.replace(R.id.root_view, PeopleToFollowFragment()).addToBackStack(null)
         fragmentTransaction.commit()
 
         Timber.d("FEED INTENT ${intent.extras}")
@@ -490,6 +500,8 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
 
     override fun setReminder(room: RoomListResponseItem, view: View) {
 
+        showPopup(room.roomId,User.getInstance().userId)
+
         notificationScheduler.scheduleNotificationAsListener(this, room)
         viewModel.setReminder(
             ReminderRequest(
@@ -499,6 +511,38 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                 false
             )
         )
+    }
+
+    fun showPopup(roomId: Int, userId: String) {
+        val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(binding.feedRoot.context)
+        val dialogBinding = WhyRoomBinding.inflate(layoutInflater)
+//        val dialogView = inflater.inflate(R.layout.why_room, null)
+        dialogBuilder.setView(dialogBinding.root)
+        val alertDialog: AlertDialog = dialogBuilder.create()
+        alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        alertDialog.show()
+
+        dialogBinding.submit.setOnClickListener{
+            val msg:String
+            if(dialogBinding.message.toString().isNotBlank()) {
+                msg = dialogBinding.message.text.toString()
+                val obj= FormResponse(userId,msg,roomId)
+                CoroutineScope(Dispatchers.IO).launch {
+                    val resp= CommonRepository().sendMsg(obj)
+                    if(resp.isSuccessful)
+                        alertDialog.dismiss()
+                    else
+                        showToast("An Error Occured")
+                }
+
+            }
+            else
+                showToast("Please Enter a Message")
+        }
+        dialogBinding.Skip.setOnClickListener {
+            alertDialog.dismiss()
+        }
+
     }
 
     fun openProfile(profile: String) {

@@ -23,7 +23,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -31,14 +30,19 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.fragment.app.commit
+import androidx.lifecycle.ViewModelProvider
 import coil.compose.rememberAsyncImagePainter
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.composeTheme.JoshBadeBhaiyaTheme
 import com.joshtalks.badebhaiya.composeTheme.NunitoSansFont
+import com.joshtalks.badebhaiya.core.showToast
 import com.joshtalks.badebhaiya.feed.model.Users
+import com.joshtalks.badebhaiya.signup.viewmodel.SignUpViewModel
 import timber.log.Timber
 
 class PeopleToFollowFragment : Fragment() {
+
 
 
     override fun onCreateView(
@@ -140,6 +144,7 @@ fun ItemBadeBhaiya(
     Row(
         modifier = modifier
             .clickable {
+                openProfile(badeBhaiya.user_id)
                 onClick(badeBhaiya)
             }
             .padding(
@@ -169,6 +174,9 @@ fun ItemBadeBhaiya(
             ListBioText(text = badeBhaiya.bio)
         }
     }
+}
+
+fun openProfile(userId: String) {
 }
 
 @Composable

@@ -253,7 +253,7 @@ class FeedViewModel : ViewModel() {
             try {
                 val res = repository.setReminder(reminderRequest)
                 if (res.isSuccessful && res.code() == 201) {
-                    //showToast("Reminder set successfully")
+                    showToast("Reminder Set")
                     feedAdapter.notifyDataSetChanged()
                 } else showToast("Error while setting reminder")
             } catch (ex: Exception) {

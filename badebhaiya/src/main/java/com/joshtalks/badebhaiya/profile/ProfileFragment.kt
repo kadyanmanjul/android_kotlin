@@ -409,20 +409,16 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
 
     override fun setReminder(room: RoomListResponseItem, view: View) {
         if (!User.getInstance().isLoggedIn()){
-
             userId?.let {
                 redirectToSignUp(SET_REMINDER, PendingPilotEventData(roomId = room.roomId, pilotUserId = it))
             }
             return
         }
-        if(isFromDeeplink)
-            showPopup(room.roomId,User.getInstance().userId)
+        showPopup(room.roomId,User.getInstance().userId)
 
         lifecycleScope.launch(Dispatchers.IO) {
 
-
         val speakerBitmap = room.speakersData?.photoUrl?.urlToBitmap()
-
         val alarmManager = activity?.applicationContext?.getSystemService(ALARM_SERVICE) as AlarmManager
         val notificationIntent = context?.let {
             NotificationHelper.getNotificationIntent(

@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.badebhaiya.R
@@ -15,6 +16,7 @@ import com.joshtalks.badebhaiya.core.*
 import com.joshtalks.badebhaiya.core.io.AppDirectory
 import com.joshtalks.badebhaiya.core.workers.WorkManagerAdmin
 import com.joshtalks.badebhaiya.databinding.ActivitySignUpBinding
+import com.joshtalks.badebhaiya.feed.Call
 import com.joshtalks.badebhaiya.feed.FeedActivity
 import com.joshtalks.badebhaiya.notifications.FCM_ACTIVE
 import com.joshtalks.badebhaiya.notifications.FirebaseNotificationService
@@ -23,10 +25,7 @@ import com.joshtalks.badebhaiya.profile.ProfileFragment
 import com.joshtalks.badebhaiya.repository.CommonRepository
 import com.joshtalks.badebhaiya.repository.model.FCMData
 import com.joshtalks.badebhaiya.repository.model.User
-import com.joshtalks.badebhaiya.signup.fragments.SignUpAddProfilePhotoFragment
-import com.joshtalks.badebhaiya.signup.fragments.SignUpEnterNameFragment
-import com.joshtalks.badebhaiya.signup.fragments.SignUpEnterOTPFragment
-import com.joshtalks.badebhaiya.signup.fragments.SignUpEnterPhoneFragment
+import com.joshtalks.badebhaiya.signup.fragments.*
 import com.joshtalks.badebhaiya.signup.viewmodel.SignUpViewModel
 import com.joshtalks.badebhaiya.utils.PRIVACY_POLICY_URL
 import com.joshtalks.badebhaiya.utils.Utils
@@ -43,7 +42,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-class SignUpActivity : AppCompatActivity() {
+class SignUpActivity : AppCompatActivity(), Call {
 
     private lateinit var binding: ActivitySignUpBinding
     private val viewModel by lazy {
@@ -126,6 +125,10 @@ class SignUpActivity : AppCompatActivity() {
 //                    finish()
                     this@SignUpActivity.finishAffinity()
                 }
+
+                SignUpStepStatus.SpeakerFollowed ->{
+                    openSpeakerToFollow()
+                }
             }
         }
     }
@@ -160,6 +163,13 @@ class SignUpActivity : AppCompatActivity() {
                 SignUpEnterNameFragment::class.java.name
             )
         }
+    }
+
+    private fun openSpeakerToFollow()
+    {
+        val fragmentTransaction: FragmentTransaction = supportFragmentManager.beginTransaction()
+        fragmentTransaction.replace(R.id.root_view, PeopleToFollowFragment()).addToBackStack(null)
+        fragmentTransaction.commit()
     }
 
     private fun openUploadProfilePicFragment() {
@@ -263,5 +273,16 @@ class SignUpActivity : AppCompatActivity() {
             Intent(context, SignUpActivity::class.java)
                 .putExtra(REDIRECT, redirect)
                 .putExtra(USER_ID, userId)
+    }
+
+    override fun itemClick(userId: String) {
+        val nextFrag = ProfileFragment()
+        val bundle = Bundle()
+        bundle.putString("user", userId) // use as per your need
+        nextFrag.arguments = bundle
+        this.supportFragmentManager.beginTransaction()
+            .replace(R.id.find, nextFrag, "findThisFragment")
+            //?.addToBackStack(null)
+            .commit()
     }
 }
