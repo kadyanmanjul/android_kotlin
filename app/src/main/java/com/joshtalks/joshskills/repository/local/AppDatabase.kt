@@ -595,7 +595,7 @@ abstract class AppDatabase : RoomDatabase() {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("CREATE TABLE IF NOT EXISTS `online_test_request` (`question_id` INTEGER NOT NULL, `lesson_id` INTEGER NOT NULL, `status` TEXT NOT NULL, `answer` TEXT NOT NULL, `rule_assessment_question_id` TEXT, `answer_order` TEXT NOT NULL, `time_taken` INTEGER, PRIMARY KEY (`lesson_id`))")
                 database.execSQL("ALTER TABLE `lessonmodel` ADD COLUMN `translationStatus` TEXT")
-                database.execSQL("CREATE TABLE IF NOT EXISTS `notification_table` (`id` TEXT PRIMARY KEY NOT NULL, `platform` TEXT NOT NULL, `time_received` INTEGER NOT NULL, `time_shown` INTEGER NOT NULL, `action` TEXT NOT NULL, `analytics_sent` INTEGER NOT NULL DEFAULT 0)")
+                database.execSQL("CREATE TABLE IF NOT EXISTS `notification_event_table` (`id` TEXT PRIMARY KEY NOT NULL, `platform` TEXT NOT NULL, `time_received` INTEGER NOT NULL, `time_shown` INTEGER NOT NULL, `action` TEXT NOT NULL, `analytics_sent` INTEGER NOT NULL DEFAULT 0)")
             }
         }
 
