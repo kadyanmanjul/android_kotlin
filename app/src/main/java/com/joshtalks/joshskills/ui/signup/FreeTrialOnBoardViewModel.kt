@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.ui.signup
 
 import android.app.Application
 import android.os.Message
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -10,6 +11,7 @@ import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker.mixPanel
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.model.DeviceDetailsResponse
 import com.joshtalks.joshskills.repository.local.model.FCMResponse
@@ -216,6 +218,25 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
                     availableLanguages.value = response.body()
             } catch (ex: Throwable) {
                 ex.showAppropriateMsg()
+            }
+        }
+    }
+
+    fun getGuestMentor() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response = service.getGuestMentor()
+                if(response.isSuccessful ){
+                    Log.e("Ayaaz","${response.body()?.guestMentorId}")
+                    mixPanel.alias(
+                        response.body()?.guestMentorId,
+                        response.body()?.guestMentorId
+                    )
+                    mixPanel.identify(response.body()?.guestMentorId)
+                    mixPanel.people.identify(response.body()?.guestMentorId)
+                }
+            }catch (ex:Exception){
+                ex.printStackTrace()
             }
         }
     }

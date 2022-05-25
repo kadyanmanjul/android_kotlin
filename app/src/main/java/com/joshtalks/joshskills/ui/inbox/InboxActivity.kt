@@ -104,6 +104,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         addAfterTime()
         viewModel.handleGroupTimeTokens()
         viewModel.handleBroadCastEvents()
+        viewModel.getGuestMentor()
     }
 
     private fun initABTest() {

@@ -181,4 +181,7 @@ interface SignUpNetworkService {
 
     @GET("$DIR/course/language/")
     suspend fun getAvailableLanguageCourses() : Response<List<ChooseLanguages>>
+
+    @GET("$DIR/mentor/get_guest_mentor/")
+    suspend fun getGuestMentor() : Response<GetGuestMentorIdResponse>
 }

@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.ui.inbox
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -179,4 +180,24 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
             }
         }
     }
+
+    fun getGuestMentor() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response = AppObjectController.signUpNetworkService.getGuestMentor()
+                if(response.isSuccessful ){
+                    Log.e("Ayaaz inbox","${response.body()?.guestMentorId}")
+                    MixPanelTracker.mixPanel.alias(
+                        response.body()?.guestMentorId,
+                        response.body()?.guestMentorId
+                    )
+                    MixPanelTracker.mixPanel.identify(response.body()?.guestMentorId)
+                    MixPanelTracker.mixPanel.people.identify(response.body()?.guestMentorId)
+                }
+            }catch (ex:Exception){
+                ex.printStackTrace()
+            }
+        }
+    }
+
 }

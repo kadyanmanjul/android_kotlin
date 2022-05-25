@@ -82,6 +82,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
             }
         }
         initTrueCallerUI()
+        viewModel.getGuestMentor()
         viewModel.saveImpression(IMPRESSION_OPEN_FREE_TRIAL_SCREEN)
     }
 

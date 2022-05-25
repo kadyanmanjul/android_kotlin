@@ -67,16 +67,21 @@ class FreeTrialPaymentViewModel(application: Application) : AndroidViewModel(app
 
     fun postGoal(goal: String, campaign: String?) {
         viewModelScope.launch(Dispatchers.IO) {
-            repository.postGoal(goal)
             if (campaign != null) {
                 val data = ABTestRepository().getCampaignData(campaign)
                 data?.let {
-                    MixPanelTracker.publishEvent(MixPanelEvent.GOAL)
-                        .addParam(ParamKeys.VARIANT, data?.variantKey ?: EMPTY)
-                        .addParam(ParamKeys.VARIABLE, AppObjectController.gsonMapper.toJson(data?.variableMap))
-                        .addParam(ParamKeys.CAMPAIGN, campaign)
-                        .addParam(ParamKeys.GOAL, goal)
-                        .push()
+                    if(data.isCampaignActive) {
+                        repository.postGoal(goal)
+                        MixPanelTracker.publishEvent(MixPanelEvent.GOAL)
+                            .addParam(ParamKeys.VARIANT, data?.variantKey ?: EMPTY)
+                            .addParam(
+                                ParamKeys.VARIABLE,
+                                AppObjectController.gsonMapper.toJson(data?.variableMap)
+                            )
+                            .addParam(ParamKeys.CAMPAIGN, campaign)
+                            .addParam(ParamKeys.GOAL, goal)
+                            .push()
+                    }
                 }
             }
         }
