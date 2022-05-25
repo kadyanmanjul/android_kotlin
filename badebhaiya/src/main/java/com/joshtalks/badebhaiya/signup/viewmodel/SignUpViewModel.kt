@@ -12,13 +12,8 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.joshtalks.badebhaiya.R
-import com.joshtalks.badebhaiya.core.API_TOKEN
-import com.joshtalks.badebhaiya.core.ApiCallStatus
-import com.joshtalks.badebhaiya.core.EMPTY
-import com.joshtalks.badebhaiya.core.PrefManager
-import com.joshtalks.badebhaiya.core.SignUpStepStatus
+import com.joshtalks.badebhaiya.core.*
 import com.joshtalks.badebhaiya.core.io.AppDirectory
-import com.joshtalks.badebhaiya.core.showToast
 import com.joshtalks.badebhaiya.core.workers.WorkManagerAdmin
 import com.joshtalks.badebhaiya.feed.model.Users
 import com.joshtalks.badebhaiya.profile.ProfileFragment
@@ -50,9 +45,11 @@ class SignUpViewModel(application: Application): AndroidViewModel(application) {
     var mobileNumber = EMPTY
     val profilePicUploadApiCallStatus = MutableLiveData<ApiCallStatus>()
     var firstName = EMPTY
-    var isFirstTime:Boolean=false
     var lastName = EMPTY
     var valid: ObservableBoolean = ObservableBoolean()
+    val openProfile = MutableLiveData<String>()
+    private var followedSpeakers = 0
+    val isNextEnabled = MutableLiveData<Boolean>(false)
 
     fun sendPhoneNumberForOTP(phoneNumber: String, countryCode: String) {
         viewModelScope.launch {
@@ -72,6 +69,26 @@ class SignUpViewModel(application: Application): AndroidViewModel(application) {
         }
     }
 
+    fun followSpeaker(){
+        followedSpeakers++
+        if (followedSpeakers > 0){
+            isNextEnabled.value = true
+        }
+    }
+
+    fun unfollowSpeaker(){
+        followedSpeakers--
+        if(followedSpeakers <= 0){
+            isNextEnabled.value = false
+        }
+    }
+
+    fun openProfile(userId: String){
+        openProfile.value = userId
+    }
+
+
+
     val bbToFollow: Flow<PagingData<Users>> = Pager(
         config = PagingConfig(pageSize = 12, enablePlaceholders = false),
         pagingSourceFactory = { repository.bbToFollowPaginatedList() }
@@ -79,9 +96,6 @@ class SignUpViewModel(application: Application): AndroidViewModel(application) {
         .flow
         .cachedIn(viewModelScope)
 
-    fun openProfile(){
-
-    }
 
     fun verifyOTP(otp: String, phoneNumber: String) {
         viewModelScope.launch {
@@ -91,7 +105,7 @@ class SignUpViewModel(application: Application): AndroidViewModel(application) {
                 Log.i(TAG, "verifyOTP: $response")
                 if (response.isSuccessful) {
                     response.body()?.let {
-                        isFirstTime=it.isUserExist.not()
+                        PrefManager.put(IS_NEW_USER, it.isUserExist.not())
                         updateUserFromLoginResponse(it)
                     }
                     return@launch
@@ -102,7 +116,7 @@ class SignUpViewModel(application: Application): AndroidViewModel(application) {
                     }
                 }
             } catch (ex: Exception) {
-
+                ex.printStackTrace()
             }
         }
     }
@@ -129,7 +143,7 @@ class SignUpViewModel(application: Application): AndroidViewModel(application) {
                 }
                 return@launch
             } catch (ex: Exception) {
-
+                ex.printStackTrace()
             }
         }
     }

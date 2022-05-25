@@ -167,11 +167,6 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         binding.handler = this
         binding.viewModel = viewModel
 
-        //startActivity(Intent(this, PeopleToFollowActivity::class.java)
-
-        val fragmentTransaction: FragmentTransaction = supportFragmentManager.beginTransaction()
-        fragmentTransaction.replace(R.id.root_view, PeopleToFollowFragment()).addToBackStack(null)
-        fragmentTransaction.commit()
 
         Timber.d("FEED INTENT ${intent.extras}")
         if (user != null) {

@@ -1,15 +1,16 @@
 package com.joshtalks.badebhaiya.signup.fragments
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -17,28 +18,31 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.paging.compose.LazyPagingItems
-import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemsIndexed
 import coil.compose.AsyncImage
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.composeTheme.JoshBadeBhaiyaTheme
 import com.joshtalks.badebhaiya.composeTheme.NunitoSansFont
 import com.joshtalks.badebhaiya.feed.model.Users
-import com.joshtalks.badebhaiya.signup.viewmodel.SignUpViewModel
 import timber.log.Timber
 
 
 @Composable
 //@Preview(showBackground = true)
-fun PeopleToFollowScreen(peopleList: LazyPagingItems<Users>) {
+fun PeopleToFollowScreen(
+    peopleList: LazyPagingItems<Users>,
+    onItemClick: (Users) -> Unit = {},
+    onNextClick: () -> Unit = {},
+    isNextEnabled: State<Boolean>
+) {
     JoshBadeBhaiyaTheme {
         Box(
             modifier = Modifier.fillMaxSize()
@@ -58,7 +62,7 @@ fun PeopleToFollowScreen(peopleList: LazyPagingItems<Users>) {
 
             itemsIndexed(list) { index, value ->
                 value?.let {
-                    ItemBadeBhaiya(badeBhaiya = it, bottomPadding = 0.dp)
+                    ItemBadeBhaiya(badeBhaiya = it, bottomPadding = 0.dp, onClick = onItemClick)
                 }
             }
 
@@ -67,7 +71,7 @@ fun PeopleToFollowScreen(peopleList: LazyPagingItems<Users>) {
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.BottomCenter
             ) {
-                MediumButton(modifier = Modifier.padding(vertical = 20.dp), text = stringResource(id = R.string.next))
+                MediumButton(modifier = Modifier.padding(vertical = 20.dp), text = stringResource(id = R.string.next), onClick = onNextClick, isNextEnabled)
             }
         }
     }
@@ -122,14 +126,24 @@ fun ItemBadeBhaiya(
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        AsyncImage(
-            model = badeBhaiya.profilePic ?: "",
-            modifier = Modifier
-                .size(62.dp)
-                .clip(RoundedCornerShape(dimensionResource(id = R.dimen._16sdp))),
-            contentDescription = "BadeBhaiya Profile Picture",
-            contentScale = ContentScale.Crop
-        )
+        if (badeBhaiya.profilePic != null)
+            AsyncImage(
+                model = badeBhaiya.profilePic,
+                modifier = Modifier
+                    .size(62.dp)
+                    .clip(RoundedCornerShape(dimensionResource(id = R.dimen._16sdp))),
+                contentDescription = "BadeBhaiya Profile Picture",
+                contentScale = ContentScale.Crop
+            )
+        else
+            Image(
+                painter = painterResource(id = R.drawable.profile_dummy_dp),
+                modifier = Modifier
+                    .size(62.dp)
+                    .clip(RoundedCornerShape(dimensionResource(id = R.dimen._16sdp))),
+                contentDescription = "BadeBhaiya Profile Picture",
+                contentScale = ContentScale.Crop
+            )
 
         Spacer(modifier = Modifier.size(16.dp))
 
@@ -160,7 +174,12 @@ fun ListBioText(modifier: Modifier = Modifier, text: String) {
 }
 
 @Composable
-fun MediumButton(modifier: Modifier = Modifier, text: String, onClick: () -> Unit = {}){
+fun MediumButton(
+    modifier: Modifier = Modifier,
+    text: String,
+    onClick: () -> Unit = {},
+    isNextEnabled: State<Boolean>
+){
     Button(
         modifier = modifier,
         onClick = onClick,
@@ -169,6 +188,7 @@ fun MediumButton(modifier: Modifier = Modifier, text: String, onClick: () -> Uni
             disabledBackgroundColor = colorResource(id = R.color.next_button_disabled)
         ),
         shape = RoundedCornerShape(36.dp),
+        enabled = isNextEnabled.value
     ) {
         Text(
             text = text,

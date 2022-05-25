@@ -11,7 +11,7 @@ data class Users(
     @SerializedName("full_name")
     val full_name:String = "",
     @SerializedName("photo_url")
-    val profilePic:String,
+    val profilePic:String?,
     @SerializedName("bio")
     val bio:String?  = "",
     @SerializedName("is_speaker_followed")

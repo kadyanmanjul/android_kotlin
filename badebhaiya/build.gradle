@@ -6,9 +6,9 @@ apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
 apply plugin: 'dagger.hilt.android.plugin'
 
-def majorVersion = 0
+def majorVersion = 1
 def minorVersion = 0
-def patchVersion = 15
+def patchVersion = 0
 
 android {
     compileSdk 32
@@ -242,5 +242,7 @@ dependencies {
     implementation "androidx.paging:paging-runtime-ktx:$paging_version"
     // optional - Jetpack Compose integration
     implementation "androidx.paging:paging-compose:1.0.0-alpha14"
+
+    implementation "androidx.compose.runtime:runtime-livedata:$compose_version"
 
 }

@@ -14,6 +14,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.annotation.IdRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
@@ -21,6 +22,7 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.text.HtmlCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.joshtalks.badebhaiya.R
@@ -50,6 +52,8 @@ import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.signup.SignUpActivity
 import com.joshtalks.badebhaiya.utils.*
 import com.joshtalks.badebhaiya.signup.UserPicChooserFragment
+import com.joshtalks.badebhaiya.signup.fragments.PeopleToFollowFragment
+import com.joshtalks.badebhaiya.signup.viewmodel.SignUpViewModel
 import com.joshtalks.badebhaiya.utils.SingleDataManager
 import com.joshtalks.badebhaiya.utils.Utils
 import com.joshtalks.badebhaiya.utils.setUserImageOrInitials
@@ -63,6 +67,7 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import kotlinx.android.synthetic.main.why_room.view.*
 import kotlinx.coroutines.CoroutineScope
+import java.lang.Exception
 
 class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallback {
 
@@ -79,6 +84,11 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
     private val feedViewModel by lazy {
         ViewModelProvider(requireActivity())[FeedViewModel::class.java]
     }
+
+    private val signUpViewModel by lazy {
+        ViewModelProvider(requireActivity()).get(SignUpViewModel::class.java)
+    }
+
     lateinit var binding: FragmentProfileBinding
 
     private var userId: String? = EMPTY
@@ -88,7 +98,11 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        (activity as FeedActivity).swipeRefreshLayout.isEnabled=false
+        try {
+            (activity as FeedActivity).swipeRefreshLayout.isEnabled=false
+        } catch (e: Exception){
+
+        }
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_profile, container, false)
         super.onCreate(savedInstanceState)
         var mBundle: Bundle? = Bundle()
@@ -107,7 +121,11 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         //addObserver()
         binding.toolbar.iv_back.setOnClickListener{
             activity?.run {
-                (activity as FeedActivity).swipeRefreshLayout.isEnabled=true
+                try {
+                    (activity as FeedActivity).swipeRefreshLayout.isEnabled=true
+                } catch (e: Exception){
+
+                }
 //                supportFragmentManager.beginTransaction().remove(this@ProfileFragment)
 //                    .commitAllowingStateLoss()
                 onBackPressed()
@@ -116,9 +134,20 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 activity?.run {
-                    (activity as FeedActivity).swipeRefreshLayout.isEnabled=true
-                    supportFragmentManager.beginTransaction().remove(this@ProfileFragment)
-                        .commitAllowingStateLoss()
+                    if (this is FeedActivity){
+                        Timber.d("back from profile and is feed activity")
+
+                        try {
+                            (activity as FeedActivity).swipeRefreshLayout.isEnabled=true
+                        } catch (e: Exception){
+
+                        }
+                        supportFragmentManager.beginTransaction().remove(this@ProfileFragment)
+                            .commitAllowingStateLoss()
+                    } else  {
+                        Timber.d("back from profile")
+                        supportFragmentManager.popBackStack()
+                    }
                 }
             }
         })
@@ -272,6 +301,8 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
             viewModel.userProfileData.value?.let {
                 //is_followed=false
                 //binding.tvFollowers.setText("${it.followersCount-1} followers")
+                signUpViewModel.unfollowSpeaker()
+
                 speakerUnfollowedUIChanges()
                 binding.tvFollowers.text =HtmlCompat.fromHtml(getString(R.string.bb_followers,
                     ("<big>"+it.followersCount.minus(1)?:0).toString()+"</big>"),
@@ -280,6 +311,8 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         else
             viewModel.userProfileData.value?.let {
                 //is_followed=true
+                signUpViewModel.followSpeaker()
+
                 speakerFollowedUIChanges()
                 binding.tvFollowers.text =HtmlCompat.fromHtml(getString(R.string.bb_followers,
                     ("<big>"+it.followersCount.plus(1)?:0).toString()+"</big>"),
@@ -314,6 +347,9 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
     }
 
     companion object {
+        const val TAG = "ProfileFragment"
+        const val USER = "user"
+
         const val FROM_DEEPLINK = "from_deeplink"
         fun openProfileActivity(context: Context, userId: String = EMPTY) {
             Intent(context, ProfileFragment::class.java).apply {
@@ -322,12 +358,42 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
                 context.startActivity(this)
             }
         }
-        fun getIntent(context: Context, userId: String = EMPTY, isFromDeeplink: Boolean = false): Intent {
-            return Intent(context, ProfileFragment::class.java).apply {
-                putExtra(USER_ID, userId)
-                putExtra(FROM_DEEPLINK, isFromDeeplink)
-            }
+
+        fun open(supportFragmentManager: FragmentManager, @IdRes containerId: Int, userId: String){
+            val fragment = ProfileFragment() // replace your custom fragment class
+
+            val bundle = Bundle()
+            bundle.putString(USER, userId)
+
+            fragment.arguments = bundle
+
+            supportFragmentManager
+                .beginTransaction()
+                .replace(containerId, fragment)
+                .addToBackStack(TAG)
+                .commit()
         }
+
+        fun openOnTop(supportFragmentManager: FragmentManager, @IdRes containerId: Int, userId: String){
+            val fragment = ProfileFragment() // replace your custom fragment class
+
+            val bundle = Bundle()
+            bundle.putString(USER, userId)
+
+            fragment.arguments = bundle
+
+            supportFragmentManager
+                .beginTransaction()
+                .add(containerId, fragment)
+                .addToBackStack(TAG)
+                .commit()
+        }
+//        fun getIntent(context: Context, userId: String = EMPTY, isFromDeeplink: Boolean = false): Intent {
+//            return Intent(context, ProfileFragment::class.java).apply {
+//                putExtra(USER_ID, userId)
+//                putExtra(FROM_DEEPLINK, isFromDeeplink)
+//            }
+//        }
     }
 
 //    override fun joinRoom(room: RoomListResponseItem, view: View   ) {

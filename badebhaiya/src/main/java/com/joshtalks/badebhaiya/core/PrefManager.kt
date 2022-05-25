@@ -9,6 +9,7 @@ const val API_TOKEN = "api_token"
 const val FCM_TOKEN = "fcmToken"
 const val INSTALL_REFERRER_SYNC = "install_referrer_sync"
 const val SKIP="Skip"
+const val IS_NEW_USER = "is_new_user"
 const val PREF_IS_CONVERSATION_ROOM_ACTIVE = "is_conversation_room_active"
 const val IS_CONVERSATION_ROOM_ACTIVE_FOR_USER = "is_conversation_room_active_for_user"
 

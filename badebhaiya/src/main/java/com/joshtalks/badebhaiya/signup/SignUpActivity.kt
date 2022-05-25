@@ -123,13 +123,16 @@ class SignUpActivity : AppCompatActivity(), Call {
                 SignUpStepStatus.ProfilePicSkipped, SignUpStepStatus.ProfileCompleted, SignUpStepStatus.ProfilePicUploaded -> {
                     openNextActivity()
 //                    finish()
-                    this@SignUpActivity.finishAffinity()
                 }
 
                 SignUpStepStatus.SpeakerFollowed ->{
                     openSpeakerToFollow()
                 }
             }
+        }
+
+        viewModel.openProfile.observe(this){
+            ProfileFragment.openOnTop(supportFragmentManager, R.id.container, it)
         }
     }
 
@@ -185,18 +188,29 @@ class SignUpActivity : AppCompatActivity(), Call {
     private fun openNextActivity() {
         Log.i("FCM", "openNextActivity: ")
         WorkManagerAdmin.appStartWorker()
-        if (intent.extras?.getString(REDIRECT) == REDIRECT_TO_PROFILE_ACTIVITY) {
-            //ProfileActivity.openProfileActivity(this, intent.extras?.getString(USER_ID) ?: EMPTY)
-            var bundle = Bundle()
-            bundle.putString("user", intent.extras?.getString(USER_ID))
-            supportFragmentManager.findFragmentByTag(ProfileFragment::class.java.simpleName)
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.root_view, ProfileFragment(), ProfileFragment::class.java.simpleName)
-                .commit()
-        } else
-            Intent(this, FeedActivity::class.java).also { it ->
-                startActivity(it)
+        when {
+            PrefManager.getBoolValue(IS_NEW_USER) -> {
+                PeopleToFollowFragment.open(supportFragmentManager, R.id.container)
             }
+            intent.extras?.getString(REDIRECT) == REDIRECT_TO_PROFILE_ACTIVITY -> {
+                //ProfileActivity.openProfileActivity(this, intent.extras?.getString(USER_ID) ?: EMPTY)
+                var bundle = Bundle()
+                bundle.putString("user", intent.extras?.getString(USER_ID))
+                supportFragmentManager.findFragmentByTag(ProfileFragment::class.java.simpleName)
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.root_view, ProfileFragment(), ProfileFragment::class.java.simpleName)
+                    .commit()
+
+                this@SignUpActivity.finishAffinity()
+
+            }
+            else -> Intent(this, FeedActivity::class.java).also { it ->
+                startActivity(it)
+
+                this@SignUpActivity.finishAffinity()
+
+            }
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
