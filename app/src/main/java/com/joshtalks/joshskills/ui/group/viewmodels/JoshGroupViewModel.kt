@@ -284,4 +284,9 @@ class JoshGroupViewModel : BaseViewModel() {
 
     suspend fun deleteExtraMessages() = repository.removeExtraMessages()
 
+    fun initializeMoEngageUser() {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.createMoEngageUser()
+        }
+    }
 }

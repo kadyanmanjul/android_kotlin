@@ -16,6 +16,7 @@ import com.github.dhaval2404.imagepicker.ImagePicker
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.constants.*
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.MOENGAGE_USER_CREATED
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
@@ -45,6 +46,7 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import com.moengage.core.analytics.MoEAnalyticsHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -73,10 +75,19 @@ class JoshGroupActivity : BaseGroupActivity() {
         if (channelId.isEmpty())
             openGroupListFragment()
         else {
-            vm.mentorId = intent.getStringExtra(MENTOR_ID)?: EMPTY
-            vm.agoraId = intent.getIntExtra(AGORA_UID,0)
+            vm.mentorId = intent.getStringExtra(MENTOR_ID) ?: EMPTY
+            vm.agoraId = intent.getIntExtra(AGORA_UID, 0)
             val chatData = intent.getParcelableExtra(DM_CHAT_DATA) as GroupItemData?
             openGroupChat(channelId, chatData)
+        }
+        initMoEngageForGroups()
+    }
+
+    private fun initMoEngageForGroups() {
+        if (!PrefManager.getBoolValue(MOENGAGE_USER_CREATED)) {
+            vm.initializeMoEngageUser()
+            PrefManager.put(MOENGAGE_USER_CREATED, true)
+            MoEAnalyticsHelper.setUniqueId(this, Mentor.getInstance().getId())
         }
     }
 

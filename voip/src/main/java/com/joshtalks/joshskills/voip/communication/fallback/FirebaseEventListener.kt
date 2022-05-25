@@ -6,7 +6,11 @@ import com.google.firebase.firestore.EventListener
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.gson.Gson
 import com.joshtalks.joshskills.voip.communication.constants.ServerConstants
-import com.joshtalks.joshskills.voip.communication.model.*
+import com.joshtalks.joshskills.voip.communication.model.Channel
+import com.joshtalks.joshskills.voip.communication.model.Communication
+import com.joshtalks.joshskills.voip.communication.model.Error
+import com.joshtalks.joshskills.voip.communication.model.IncomingCall
+import com.joshtalks.joshskills.voip.communication.model.Message
 import com.joshtalks.joshskills.voip.data.local.PrefManager
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope

@@ -18,8 +18,11 @@ import com.joshtalks.joshskills.constants.SHOW_PROGRESS_BAR
 import com.joshtalks.joshskills.constants.DISMISS_PROGRESS_BAR
 import com.joshtalks.joshskills.constants.OPEN_GROUP_REQUEST
 import com.joshtalks.joshskills.constants.REFRESH_GRP_LIST_HIDE_INFO
+import com.joshtalks.joshskills.core.MOENGAGE_USER_CREATED
 import com.joshtalks.joshskills.core.PermissionUtils
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.databinding.ActivityJoshVoipGroupctivityBinding
+import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.group.*
 import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics
@@ -33,6 +36,7 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import com.moengage.core.analytics.MoEAnalyticsHelper
 
 private const val TAG = "JoshVoipGroupActivity"
 
@@ -57,6 +61,15 @@ class JoshVoipGroupActivity : BaseGroupActivity() {
 
     override fun onCreated() {
         openGroupListFragment()
+        initMoEnagageForGroups()
+    }
+
+    private fun initMoEnagageForGroups() {
+        if (!PrefManager.getBoolValue(MOENGAGE_USER_CREATED)) {
+            vm.initializeMoEngageUser()
+            PrefManager.put(MOENGAGE_USER_CREATED, true)
+            MoEAnalyticsHelper.setUniqueId(this, Mentor.getInstance().getId())
+        }
     }
 
     override fun initViewState() {

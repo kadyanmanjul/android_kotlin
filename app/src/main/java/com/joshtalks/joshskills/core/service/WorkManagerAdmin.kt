@@ -39,7 +39,8 @@ object WorkManagerAdmin {
     fun appStartWorker(isUserLoggingOut: Boolean = false) {
         val workerList = mutableListOf(
             OneTimeWorkRequestBuilder<UniqueIdGenerationWorker>().build(),
-            OneTimeWorkRequestBuilder<AppRunRequiredTaskWorker>().build()
+            OneTimeWorkRequestBuilder<AppRunRequiredTaskWorker>().build(),
+            OneTimeWorkRequestBuilder<UpdateServerTimeWorker>().build()
         )
         if (isUserLoggingOut.not()) {
             workerList.add(OneTimeWorkRequestBuilder<UpdateABTestCampaignsWorker>().build())
@@ -158,6 +159,13 @@ object WorkManagerAdmin {
                 CourseUsageSyncWorker::class.java.simpleName,
                 ExistingPeriodicWorkPolicy.KEEP,
                 workRequest
+            )
+    }
+
+    fun syncNotifiationEngagement() {
+        WorkManager.getInstance(AppObjectController.joshApplication)
+            .enqueue(
+                OneTimeWorkRequestBuilder<NotificationEngagementSyncWorker>().build()
             )
     }
 

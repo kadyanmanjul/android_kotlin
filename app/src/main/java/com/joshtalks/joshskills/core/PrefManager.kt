@@ -146,7 +146,10 @@ const val TWENTY_MIN_CALL_ATTEMPTED_GOAL_POSTED = "twenty_min_call_attempted_goa
 const val IS_SPEAKING_SCREEN_CLICKED = "is_speaking_screen_clicked"
 const val CALL_BTN_CLICKED = "call_btn_clicked"
 const val IS_APP_OPENED_FOR_FIRST_TIME = "is_app_opened_for_first_time"
+const val SERVER_TIME_OFFSET = "server_time_offset"
 const val IS_A2_C1_RETENTION_ENABLED = "is_a2_c1_retention_enabled"
+
+const val MOENGAGE_USER_CREATED = "MOENGAGE_USER_CREATED"
 
 object PrefManager {
 
@@ -217,11 +220,7 @@ object PrefManager {
         else prefManagerCommon.getInt(key, defValue)
     }
 
-    fun getSetValue(
-        key: String,
-        isConsistent: Boolean = false,
-        defValue: Set<String> = setOf()
-    ): Set<String> {
+    fun getSetValue(key: String, isConsistent: Boolean = false, defValue: Set<String> = setOf()): Set<String> {
         return if (isConsistent) prefManagerConsistent.getStringSet(key, defValue) ?: defValue
         else prefManagerCommon.getStringSet(key, defValue) ?: defValue
     }
@@ -346,8 +345,7 @@ object PrefManager {
             action = CALLING_SERVICE_ACTION
             putExtra(SERVICE_BROADCAST_KEY, STOP_SERVICE)
         }
-        LocalBroadcastManager.getInstance(AppObjectController.joshApplication)
-            .sendBroadcast(broadcastIntent)
+        LocalBroadcastManager.getInstance(AppObjectController.joshApplication).sendBroadcast(broadcastIntent)
     }
 
     fun getLastSyncTime(key: String): Pair<String, String> {
