@@ -1,10 +1,15 @@
 package com.joshtalks.joshskills.ui.settings.adapter
 
 import android.content.Context
+import android.os.Message
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.joshtalks.joshskills.base.EventLiveData
+import com.joshtalks.joshskills.constants.SHOW_PROGRESS_BAR
+import com.joshtalks.joshskills.core.IS_HINDI_SELECTED
+import com.joshtalks.joshskills.core.IS_HINGLISH_SELECTED
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.USER_LOCALE
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
@@ -17,10 +22,8 @@ import com.joshtalks.joshskills.repository.server.LanguageItem
 class LanguageAdapter(
     val itemList: List<LanguageItem>,
     private var onItemClick: (item: LanguageItem) -> Unit
-) :
-    RecyclerView.Adapter<LanguageAdapter.LanguageViewHolder>() {
+) : RecyclerView.Adapter<LanguageAdapter.LanguageViewHolder>() {
 
-    var inProgress = false
     var context: Context? = null
     var selectedItem: String
 
@@ -39,7 +42,7 @@ class LanguageAdapter(
     }
 
     override fun onBindViewHolder(holder: LanguageViewHolder, position: Int) {
-        holder.bind(itemList[position], position)
+        holder.bind(itemList[position])
     }
 
     override fun getItemCount(): Int {
@@ -48,30 +51,41 @@ class LanguageAdapter(
 
     inner class LanguageViewHolder(val binding: StringAdapterItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: LanguageItem, position: Int) {
+        fun bind(item: LanguageItem) {
             binding.itemNameTv.text = item.name
-            if (selectedItem == item.code && !inProgress) {
+            if (selectedItem == item.code) {
+                binding.root.isClickable = false
                 binding.tickIv.visibility = View.VISIBLE
             } else
                 binding.tickIv.visibility = View.GONE
 
             binding.root.setOnClickListener {
-                if (!inProgress) {
-                    selectedItem = item.code
-                    if(item.name == "Hinglish")
+                selectedItem = item.code
+                onItemClick(item)
+
+                val message = Message()
+                message.what = SHOW_PROGRESS_BAR
+                EventLiveData.value = message
+
+                when (item.name) {
+                    "Hinglish" -> {
+                        PrefManager.put(IS_HINGLISH_SELECTED,true)
                         MixPanelTracker.publishEvent(MixPanelEvent.HINGLISH).push()
-                    else if(item.name == "Hindi")
+                    }
+                    "Hindi" -> {
+                        PrefManager.put(IS_HINDI_SELECTED,true)
                         MixPanelTracker.publishEvent(MixPanelEvent.HINDI).push()
-                    AppAnalytics.create(AnalyticsEvent.SELECT_LANGUAGE_CHANGED.name)
-                        .addBasicParam()
-                        .addUserDetails()
-                        .addParam("selected_value", selectedItem)
-                        .push()
-                    binding.progressBar.visibility = View.VISIBLE
-                    onItemClick(item)
-                    notifyDataSetChanged()
-                    inProgress = true
+                    }
+                    else -> {
+                        PrefManager.put(IS_HINDI_SELECTED,false)
+                        PrefManager.put(IS_HINGLISH_SELECTED,false)
+                    }
                 }
+                AppAnalytics.create(AnalyticsEvent.SELECT_LANGUAGE_CHANGED.name)
+                    .addBasicParam()
+                    .addUserDetails()
+                    .addParam("selected_value", selectedItem)
+                    .push()
             }
         }
     }

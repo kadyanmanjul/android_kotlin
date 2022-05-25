@@ -124,9 +124,9 @@ abstract class AssessmentDao {
     abstract fun countOfAssessment(assessmentId: Int? = -1): Int
 
     @Query(value = "UPDATE assessment_choice SET downloadStatus = :status where remoteId= :choiceId ")
-    abstract fun updateChoiceDownloadStatusForAudio(choiceId: Int, status: DOWNLOAD_STATUS)
+    abstract suspend fun updateChoiceDownloadStatusForAudio(choiceId: Int, status: DOWNLOAD_STATUS)
 
     @Query(value = "UPDATE assessment_choice SET localAudioUrl = :localPath where remoteId= :choiceId ")
-    abstract fun updateChoiceLocalPathForAudio(choiceId: Int, localPath: String)
+    abstract suspend fun updateChoiceLocalPathForAudio(choiceId: Int, localPath: String)
 
 }

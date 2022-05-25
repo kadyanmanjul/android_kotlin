@@ -94,7 +94,11 @@ class RecentCallActivity : BaseFppActivity() {
     }
 
     private fun popBackStack() {
-        onBackPressed()
+        if (supportFragmentManager.backStackEntryCount>0) {
+            supportFragmentManager.popBackStack()
+        } else {
+            onBackPressed()
+        }
     }
 
     fun openUserProfileActivity(id: String) {

@@ -501,6 +501,8 @@
     <string name="lessons">Lessons</string>
     <string name="exam">Certification Exam</string>
     <string name="congratulations">Congratulations </string>
+    <string name="amazing">Amazing</string>
+    <string name="rule_completed_message">Congratulations! You have completed another level</string>
     <string name="grammer_completions_message">Congratulations!!! you have completed grammar part.</string>
     <string name="unlock_next_lesson">Unlock next lesson</string>
     <string name="lesson_completed">Lesson Completed!</string>
@@ -1041,7 +1043,7 @@
     <string name="delete_popup">This photo will be deleted from your previous profile photos</string>
 
     <!-- p2p image share strings -->
-    <string name="share_screen_tagline"><b>मैं रोज़</b> speaking practice <b>कर रहा हूँ</b> call<b>\nपर</b> new new persons <b>के साथ</b>
+    <string name="share_screen_tagline"><b>मैं रोज़</b> speaking practice <b>कर रहा हूँ</b> call<b>\nपर</b> new persons <b>के साथ</b>
 </string>
     <string name="share_screen_line">If I can do it, You can do it</string>
     <string name="share_screen_heading"><![CDATA[\I Spoke in <b>English</b> for <br/> <b>%1$s minutes</b>\]]></string>
@@ -1205,7 +1207,13 @@
     <string name="reject_call">Reject</string>
     <string name="submit_report_btn">Submit</string>
 
-   <!-- Voip Preference-->
+    //call ratings strings
+    <string name="how_was_your_call_name">How was your call with %s ?</string>
+    <string name="you_spoke_for_minutes">You spoke for %s seconds</string>
+    <string name="very_bad">Very bad</string>
+    <string name="block_caller">Block %s</string>
+    <string name="excellent">Excellent</string>
+    <string name="submit_call_rating">Submit</string>
 
     <string name="voip_shared_pref_file_name">com.joshtalks.joshskills.new_arch_voip_shared_pref_file</string>
     <string name="permission_denied_contacts">Permission to access contacts is required to invite friends.</string>
@@ -1221,6 +1229,38 @@
     <string name="no_contacts_found">No contacts found!</string>
     <string name="remove_from_favorite">Remove from favorite</string>
     <string name="space">\u0020</string>
+    <string name="slash">/</string>
+    <string name="_1_0x">1.0x</string>
+    <string name="_0_5x">0.5x</string>
+    <string name="_0_75x">0.75x</string>
+    <string name="_1_25x">1.25x</string>
+    <string name="_1_5x">1.5x</string>
+    <string name="_1_75x">1.75x</string>
+    <string name="_of_" formatted="false">%d of %d</string>
+    <string name="translation">Translation</string>
+    <string name="groups_empty_text_1">Groups के ज़रिये हम अपने उन सहपाठिओं को खोज सकते हैं जिनके future के सपने हमसे मिलते हैं या जो हमारे interests share करते हैं</string>
+    <string name="share_with_friends_text">मैं English सीख रहा हूँ ,जहाँ environment मिलता है बेझिझक नए लोगों से बात करने का !तुम भी सीख सकते हो.</string>
+    <string name="we_will_get_new_lesson_here_everyday">हमें यहां हर रोज एक नया पाठ मिलेगा</string>
+    <string name="there_are_four_parts_in_every_lesson">हर पाठ में 4 भाग होते हैं\nGrammar, Vocabulary, Reading\nऔर Speaking</string>
 
+    <string name="occupation_field">आप क्या काम करते हैं? (Occupation)</string>
+    <string name="occupation_filed_hint_text">e.g. Manager at Flipkart</string>
+    <string name="aspiration_filed">आपका सपना क्या है? (Aspiration)</string>
+    <string name="aspiration_filed_hint_text">e.g. IAS Officer </string>
+    <string name="occupation_error_toast">Occupation cannot be empty!</string>
+    <string name="aspiration_error_toast">Aspiration cannot be empty!</string>
+
+    <string name="free_trial_popup_100_points_header">Josh skills उन students का परिवार है जो serious हैं अपनी life मे। जो मेहनत करना चाहते है और आगे बढ़ना चाहते हैं। इस course में enroll होने से पहले आपको एक दिन ये course use करना है। ये बिलकुल मुफ्त है।\n  \nमैं देखना चाहता हु की आप serious हैं english सीखने के लिए। आपको आज 100 points कमाने हैं। अगर आप अगले 24 घंटो में 100 points कमा लेते हैं तो आप कल course में admission ले सकते हैं।</string>
+    <string name="tooltip_conversation">आपके सहपाठी कौन है आप यहाँ से देख सकते है</string>
+    <string name="tooltip_lesson_grammar">आज इस भाग में हम अपने ग्रामर के लेवल का पता लगाएंगे</string>
+    <string name="tooltip_leaderboard_sotd">जो student एक दिन में सबसे ज़्यादा मेहनत करता है वह Student of the Day बनता है</string>
+    <string name="tooltip_leaderboard_sotm">जो student एक महीने में सबसे ज़्यादा मेहनत करता है वह Student of the Month बनता है</string>
+    <string name="tooltip_leaderboard_sotw">जो student एक हफ्ते में सबसे ज़्यादा मेहनत करता है वह Student of the Week बनता है</string>
+    <string name="tooltip_online_status">अब हम जान सकते हैं कि कौन से स्टूडेंट्स ऑनलाइन हैं |</string>
+    <string name="tooltip_open_profile">आप किसी की भी Profile खोल सकते हैं</string>
+    <string name="tooltip_points_history_screen">इस student ने points कैसे कमाए हम यहाँ से देख सकते है</string>
+    <string name="tooltip_search_anyone">यहाँ से हम अपने दोस्तों और बाकी स्टूडेंट्स को सर्च कर सकते हैं |</string>
+    <string name="tooltip_user_profile_screen">हम जितनी मेहनत करेंगे हमे उतने Points मिलेंगेै</string>
+    <string name="referral_share_text">"Mai Bharat 🇮🇳 ke best teachers se Spoken English aur Personality Development seekh raha hu. Mere saath seekhna abhi shuru karo 💪. Ye lo meri taraf se tumhe ₹** OFF: Use my code ****. Download the app by clicking on the link"</string>
 
 </resources>

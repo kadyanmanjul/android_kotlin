@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:animateLayoutChanges="true">
 
     <FrameLayout
@@ -19,6 +20,20 @@
                 android:layout_height="match_parent"
                 android:background="@drawable/media_controller_background" />
 
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/skip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:padding="@dimen/_8sdp"
+                android:clickable="true"
+                android:focusable="true"
+                android:text="@string/skip"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
+                android:textColor="@color/white"
+                android:visibility="gone"
+                tools:visibility="visible" />
+
             <LinearLayout
                 android:id="@+id/llControlsContainer"
                 android:layout_width="match_parent"
@@ -26,7 +41,8 @@
                 android:layout_gravity="center"
                 android:animateLayoutChanges="true"
                 android:gravity="center"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                tools:visibility="gone">
 
                 <FrameLayout
                     android:layout_width="0dp"
@@ -43,8 +59,7 @@
                         android:clickable="true"
                         android:focusable="true"
                         android:padding="10dp"
-
-                        android:tint="#fff"
+                        android:tint="@color/white"
                         app:srcCompat="@drawable/ic_rewind" />
 
 
@@ -55,7 +70,7 @@
                         android:gravity="center"
                         android:text="10"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
-                        android:textColor="#fff" />
+                        android:textColor="@color/white" />
 
                 </FrameLayout>
 
@@ -66,7 +81,7 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:padding="20dp"
-                    android:tint="#ffffff"
+                    android:tint="@color/white"
                     app:srcCompat="@drawable/ic_play_24dp" />
 
                 <androidx.appcompat.widget.AppCompatImageView
@@ -76,7 +91,7 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:padding="20dp"
-                    android:tint="#fff"
+                    android:tint="@color/white"
                     app:srcCompat="@drawable/ic_pause" />
 
                 <FrameLayout
@@ -94,7 +109,7 @@
                         android:clickable="true"
                         android:focusable="true"
                         android:padding="10dp"
-                        android:tint="#fff"
+                        android:tint="@color/white"
                         app:srcCompat="@drawable/ic_forward" />
 
                     <TextView
@@ -105,11 +120,24 @@
                         android:gravity="center"
                         android:text="10"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
-                        android:textColor="#fff" />
+                        android:textColor="@color/white" />
 
                 </FrameLayout>
 
             </LinearLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/playAgain"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:layout_gravity="center"
+                android:drawableTop="@drawable/ic_replay_black_24dp_1"
+                android:text="Watch Again"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
+                android:textColor="@color/white"
+                app:elevation="0dp" />
 
         </FrameLayout>
 
@@ -130,43 +158,56 @@
                     android:id="@id/exo_position"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
                     android:includeFontPadding="false"
-                    android:paddingLeft="@dimen/_10sdp"
-                    android:paddingRight="4dp"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
-                    android:textColor="#fff" />
+                    android:textColor="@color/white"
+                    tools:text="00:20" />
 
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="1dp"
-                    android:layout_weight="1" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/slash"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
+                    android:textColor="@color/white" />
 
                 <TextView
                     android:id="@id/exo_duration"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="@dimen/_10sdp"
                     android:includeFontPadding="false"
-                    android:paddingLeft="4dp"
-                    android:paddingRight="4dp"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
-                    android:textColor="#fff" />
+                    android:textColor="@color/white"
+                    tools:text="15:00" />
 
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="36dp"
+                android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/_6sdp"
                 android:gravity="center"
-                android:paddingHorizontal="@dimen/_4sdp"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:paddingHorizontal="@dimen/_4sdp">
 
                 <com.google.android.exoplayer2.ui.DefaultTimeBar
                     android:id="@id/exo_progress"
                     android:layout_width="0dp"
-                    android:layout_height="36dp"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/playbackSpeed"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:minEms="3"
+                    android:padding="@dimen/_4sdp"
+                    android:text="@string/_1_0x"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
+                    android:textColor="@color/white" />
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/ivFullScreenToggle"
@@ -176,9 +217,10 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:padding="10dp"
-                    android:tint="#fff"
+                    android:tint="@color/white"
                     android:visibility="gone"
-                    app:srcCompat="@drawable/ic_fullscreen" />
+                    app:srcCompat="@drawable/ic_fullscreen"
+                    tools:visibility="visible" />
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/ivFullScreenToggleOp"
@@ -188,7 +230,7 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:padding="10dp"
-                    android:tint="#fff"
+                    android:tint="@color/white"
                     android:visibility="gone"
                     app:srcCompat="@drawable/ic_fullscreen" />
 

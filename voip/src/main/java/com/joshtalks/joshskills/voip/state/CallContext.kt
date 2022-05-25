@@ -33,28 +33,27 @@ data class CallContext(val callType: Int, val direction : CallDirection, val req
 
 
     fun connect() {
-        Log.d(TAG, "connect")
-
+        Log.d(TAG, "connect - ${state}")
         state.connect()
     }
 
     fun disconnect() {
-        Log.d(TAG, "disconnect")
+        Log.d(TAG, "disconnect - - ${state}")
         state.disconnect()
     }
 
     fun backPress() {
-        Log.d(TAG, "Back pressed")
+        Log.d(TAG, "Back pressed - - ${state}")
         state.backPress()
     }
 
     suspend fun disconnectCall() {
-        Log.d(TAG, "disconnect Call From Webrtc ")
+        Log.d(TAG, "disconnect Call From Webrtc - - ${state}")
         mediator.disconnectCallFromWebrtc()
     }
 
     fun updateUIState(uiState: UIState) {
-        Log.d(TAG, "Updating UI state $uiState ")
+        Log.d(TAG, "Updating UI (Current - ${state}) state $uiState ")
         currentUiState = uiState
         mediator.uiStateFlow.value = currentUiState
     }
@@ -65,26 +64,26 @@ data class CallContext(val callType: Int, val direction : CallDirection, val req
     }
 
     fun destroyContext() {
-        Log.d(TAG, "destroyContext: ")
+        Log.d(TAG, "destroyContext: ${state}")
         closePipe()
         destroyState()
         // Change Current State to Idle
     }
 
     fun destroyState() {
-        Log.d(TAG, "Destroy State ")
+        Log.d(TAG, "Destroy State - ${state}")
         state.onDestroy()
     }
 
     fun onError() {
-        Log.d(TAG, "OnError ")
+        Log.d(TAG, "OnError - ${state}")
         state.onError()
     }
 
     fun closePipe() {
-        Log.d(TAG, "closePipe: Closing")
+        Log.d(TAG, "closePipe: Closing - ${state}")
         mediator.stateChannel.close()
-        Log.d(TAG, "closePipe: Closed")
+        Log.d(TAG, "closePipe: Closed - ${state}")
     }
 
     fun reconnecting() {
@@ -114,23 +113,23 @@ data class CallContext(val callType: Int, val direction : CallDirection, val req
     }
 
     suspend fun closeCallScreen() {
-        Log.d(TAG, "closeCallScreen ")
+        Log.d(TAG, "closeCallScreen - - ${state}")
         val envelope = Envelope(Event.CLOSE_CALL_SCREEN)
         sendEventToUI(envelope)
     }
 
     fun getStreamPipe()  : Channel<Envelope<Event>> {
-        Log.d(TAG, "Get Stream Pipe ${mediator.stateChannel} ")
+        Log.d(TAG, "Get Stream Pipe ${mediator.stateChannel} - ${state}")
         return mediator.stateChannel
     }
 
     fun sendMessageToServer(event : OutgoingData) {
-        Log.d(TAG, "sendMessageToServer $event} ")
+        Log.d(TAG, "sendMessageToServer $event} - ${state}")
         mediator.sendEventToServer(event)
     }
 
     suspend fun sendEventToUI(event : Envelope<Event>) {
-        Log.d(TAG, "sendEventToUI $event} ")
+        Log.d(TAG, "sendEventToUI(${state}) $event   ")
         mediator.flow.emit(event)
     }
 

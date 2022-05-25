@@ -24,14 +24,18 @@ object CallAnalytics : CallAnalyticsInterface {
         Utils.context?.let { VoipDatabase.getDatabase(it.applicationContext) }
     }
 
-    private val mutex = Mutex()
-
-    override fun addAnalytics(event: EventName, agoraMentorId: String?, agoraCallId: String?) {
+    override fun addAnalytics(
+        event: EventName,
+        agoraMentorId: String?,
+        agoraCallId: String?,
+        extra: String
+    ) {
         val callEvent = CallEvents(
             event = event,
             timestamp = Utils.getCurrentTimeStamp(),
             agoraCallId = agoraCallId,
-            agoraMentorId = agoraMentorId
+            agoraMentorId = agoraMentorId,
+            extra = extra
         )
         pushAnalytics(callEvent)
     }
@@ -70,7 +74,8 @@ object CallAnalytics : CallAnalyticsInterface {
                     type = event.event.eventName,
                     agora_call = event.agoraCallId ?: "",
                     agora_mentor = event.agoraMentorId ?: "",
-                    timestamp = event.timestamp.toString()
+                    timestamp = event.timestamp.toString(),
+                    extra = event.extra
                 )
                 database?.voipAnalyticsDao()?.saveAnalytics(analyticsData)
             } catch (e: Exception) {

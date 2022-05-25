@@ -48,6 +48,7 @@ import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.custom_ui.FullScreenProgressDialog
 import com.joshtalks.joshskills.core.custom_ui.PointSnackbar
+import com.joshtalks.joshskills.core.firestore.NotificationAnalytics
 import com.joshtalks.joshskills.core.notification.HAS_NOTIFICATION
 import com.joshtalks.joshskills.core.notification.NOTIFICATION_ID
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
@@ -91,6 +92,7 @@ import com.joshtalks.joshskills.ui.userprofile.fragments.ShowAnimatedLeaderBoard
 import com.joshtalks.joshskills.ui.userprofile.fragments.ShowAwardFragment
 import com.joshtalks.joshskills.ui.userprofile.models.Award
 import com.joshtalks.joshskills.ui.voip.WebRtcActivity
+import com.moengage.core.MoECoreHelper
 import com.joshtalks.joshskills.voip.*
 import com.patloew.colocation.CoLocation
 import io.branch.referral.Branch
@@ -413,10 +415,10 @@ abstract class BaseActivity :
                         mIntent.hasExtra(NOTIFICATION_ID) &&
                         mIntent.getStringExtra(NOTIFICATION_ID).isNullOrEmpty().not()
                 ) {
-                    EngagementNetworkHelper.clickNotification(
-                            mIntent.getStringExtra(
-                                    NOTIFICATION_ID
-                            )
+                    NotificationAnalytics().addAnalytics(
+                        notificationId = mIntent.getStringExtra(NOTIFICATION_ID)!!,
+                        mEvent = NotificationAnalytics.Action.CLICKED,
+                        channel = null
                     )
                 }
             }
@@ -676,15 +678,16 @@ abstract class BaseActivity :
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 putExtra(FLOW_FROM, "CourseExploreActivity")
             }
-            
+
             try {
+                MoECoreHelper.logoutUser(this@BaseActivity)
                 AppObjectController.signUpNetworkService.signoutUser(Mentor.getInstance().getId())
                 val broadcastIntent=Intent().apply {
                     action = CALLING_SERVICE_ACTION
                     putExtra(SERVICE_BROADCAST_KEY, STOP_SERVICE)
                 }
                 LocalBroadcastManager.getInstance(this@BaseActivity).sendBroadcast(broadcastIntent)
-                
+
                 PrefManager.clearUser()
                 AppObjectController.joshApplication.startActivity(intent)
             } catch (e: Exception) {

@@ -6,16 +6,12 @@ import android.util.Log
 import androidx.fragment.app.FragmentActivity
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.constants.*
-import com.joshtalks.joshskills.base.model.VoipUIState
 import com.joshtalks.joshskills.core.ActivityLifecycleCallback
-import com.joshtalks.joshskills.core.IS_COURSE_BOUGHT
-import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.call_rating.CallRatingsFragment
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.feedback.FeedbackDialogFragment
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.report.VoipReportDialogFragment
-import com.joshtalks.joshskills.voip.constant.IDLE
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 
 private const val TAG = "VoipPref"
 
@@ -24,7 +20,6 @@ object VoipPref {
         val coroutineExceptionHandler = CoroutineExceptionHandler { _, e ->
             e.printStackTrace()
         }
-        val scope = CoroutineScope(Dispatchers.IO + coroutineExceptionHandler)
         val mutex = Mutex(false)
         var isListenerActivated = false
 
@@ -75,6 +70,7 @@ object VoipPref {
             editor.commit()
 
             // TODO: These logic shouldn't be here
+
             if (duration != 0L) {
                 showDialogBox(duration)
             }
@@ -82,7 +78,7 @@ object VoipPref {
 
         // TODO: These function shouldn't be here
         private fun showDialogBox(totalSecond: Long) {
-                    scope.launch {
+            CoroutineScope(Dispatchers.IO + coroutineExceptionHandler).launch {
                         delay(500)
                         val currentActivity = ActivityLifecycleCallback.currentActivity
                         if (currentActivity != null) {
@@ -97,14 +93,29 @@ object VoipPref {
 
         // TODO: These function shouldn't be here
         private fun FragmentActivity.showVoipDialog(totalSecond: Long) {
-            if (totalSecond < 120L && PrefManager.getBoolValue(IS_COURSE_BOUGHT)) {
-                showReportDialog(this)
-            } else {
-                showFeedBackDialog(this)
-            }
+//            if (totalSecond < 120L && PrefManager.getBoolValue(IS_COURSE_BOUGHT)) {
+//                showReportDialog(this)
+//            } else {
+//                showFeedBackDialog(this)
+//            }
+
+//            Call Rating Screen
+            showCallRatingDialog(this)
+
         }
 
-        private fun showReportDialog(fragmentActivity: FragmentActivity) {
+    private fun showCallRatingDialog(fragmentActivity: FragmentActivity) {
+        CallRatingsFragment.newInstance(
+            getLastRemoteUserName(),
+            getLastCallDurationInSec().toInt(),
+            getLastCallId(),
+            getLastProfileImage(),
+            getLastRemoteUserAgoraId().toString(),
+            getLocalUserAgoraId().toString()
+        ).show(fragmentActivity.supportFragmentManager, "CallRatingsFragment")
+    }
+
+    private fun showReportDialog(fragmentActivity: FragmentActivity) {
 
             val function = fun() {
                 showFeedBackDialog(fragmentActivity)

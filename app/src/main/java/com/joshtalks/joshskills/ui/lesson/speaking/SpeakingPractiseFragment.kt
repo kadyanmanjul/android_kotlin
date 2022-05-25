@@ -576,7 +576,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
     }
 
     private fun initDemoViews(it: Int) {
-        if (it == 1 && isIntroVideoEnabled) {
+        if (it == 1 && isIntroVideoEnabled && PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID) {
             lessonActivityListener?.showIntroVideo()
             lessonNo = it
             binding.btnCallDemo.visibility = View.GONE
@@ -613,6 +613,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         } else {
             binding.btnCallDemo.visibility = View.GONE
         }
+        if((PrefManager.getStringValue(CURRENT_COURSE_ID) != DEFAULT_COURSE_ID))binding.btnGroupCall.visibility=GONE else binding.btnGroupCall.visibility=VISIBLE
     }
 
     private fun speakingSectionComplete() {

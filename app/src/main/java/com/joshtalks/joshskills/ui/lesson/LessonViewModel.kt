@@ -6,7 +6,6 @@ import android.net.Uri
 import android.os.Message
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.R
@@ -42,7 +41,6 @@ import com.joshtalks.joshskills.repository.service.NetworkRequestHelper
 import com.joshtalks.joshskills.ui.group.repository.ABTestRepository
 import com.joshtalks.joshskills.ui.lesson.speaking.VideoPopupItem
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.callbar.CallBar
-import com.joshtalks.joshskills.ui.referral.USER_SHARE_SHORT_URL
 import com.joshtalks.joshskills.util.AudioRecording
 import com.joshtalks.joshskills.util.DeepLinkUtil
 import com.joshtalks.joshskills.util.FileUploadService
@@ -52,10 +50,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.json.JSONObject
 import timber.log.Timber
-import androidx.databinding.ObservableField
-import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.ParamKeys
 import java.io.File
@@ -96,7 +91,6 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     val eventLiveData: MutableLiveData<Event<Boolean>> = MutableLiveData()
     var lessonIsConvoRoomActive: Boolean = false
     var isFreeTrail = false
-
     val introVideoLiveDataForSpeakingSection: MutableLiveData<VideoPopupItem> = MutableLiveData()
     val callBtnHideShowLiveData: MutableLiveData<Int> = MutableLiveData()
     val howToSpeakLiveData: MutableLiveData<Boolean> = MutableLiveData()
@@ -106,7 +100,9 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
         CallBar()
     }
 
-    fun practicePartnerCallDurationFromNewScreen(time: Long) = practicePartnerCallDurationLiveData.postValue(time)
+    fun practicePartnerCallDurationFromNewScreen(time: Long) =
+        practicePartnerCallDurationLiveData.postValue(time)
+
     fun isD2pIntroVideoComplete(event: Boolean) = introVideoCompleteLiveData.postValue(event)
     fun isHowToSpeakClicked(event: Boolean) = howToSpeakLiveData.postValue(event)
     fun showHideSpeakingFragmentCallButtons(event: Int) = callBtnHideShowLiveData.postValue(event)
@@ -181,25 +177,26 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    fun getQuestions(lessonId: Int, isDemo: Boolean = false) {
+    fun getQuestions(lessonId: Int, isDemo: Boolean = false, retryCount: Int = 0) {
         viewModelScope.launch(Dispatchers.IO) {
             val questionsFromDB = getQuestionsFromDB(lessonId)
             //TODO remove below line and uncomment above code after getting correct data from API
             //val questionsFromDB = emptyList<LessonQuestion>()
             if (questionsFromDB.isNotEmpty()) {
                 lessonQuestionsLiveData.postValue(questionsFromDB)
+                return@launch
             }
 
-            var questionsFromAPI = emptyList<LessonQuestion>()
-            if (Utils.isInternetAvailable()) {
-                questionsFromAPI = getQuestionsFromAPI(lessonId, false)
-                if (questionsFromAPI.isNotEmpty()) {
-                    lessonQuestionsLiveData.postValue(questionsFromAPI)
-                }
+            val questionsFromAPI: List<LessonQuestion> = getQuestionsFromAPI(lessonId, false)
+            if (questionsFromAPI.isNotEmpty()) {
+                lessonQuestionsLiveData.postValue(questionsFromAPI)
+                return@launch
             }
-
             if (questionsFromDB.isEmpty() && questionsFromAPI.isEmpty()) {
-                showToast(AppObjectController.joshApplication.getString(R.string.generic_message_for_error))
+                if (retryCount == 0)
+                    getQuestions(lessonId, isDemo, retryCount + 1)
+                else
+                    showToast(AppObjectController.joshApplication.getString(R.string.generic_message_for_error))
             }
         }
     }
@@ -292,6 +289,13 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                             }
                         }
                     }
+                    if (lesson?.translationStatus == LESSON_STATUS.CO) {
+                        updatedQuestions.filter { it.chatType == CHAT_TYPE.TR }.forEach {
+                            if (it.status == QUESTION_STATUS.NA) {
+                                lesson.vocabStatus = LESSON_STATUS.AT
+                            }
+                        }
+                    }
                     if (lesson?.vocabStatus == LESSON_STATUS.CO) {
                         updatedQuestions.filter { it.chatType == CHAT_TYPE.VP }.forEach {
                             if (it.status == QUESTION_STATUS.NA) {
@@ -315,6 +319,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                     }
                     if (
                         lesson?.grammarStatus == LESSON_STATUS.AT ||
+                        lesson?.translationStatus == LESSON_STATUS.AT ||
                         lesson?.vocabStatus == LESSON_STATUS.AT ||
                         lesson?.readingStatus == LESSON_STATUS.AT ||
                         lesson?.speakingStatus == LESSON_STATUS.AT
@@ -395,6 +400,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
 
     fun updateSectionStatus(lessonId: Int, status: LESSON_STATUS, tabPosition: Int) {
         viewModelScope.launch(Dispatchers.IO) {
+            val isTranslationDisabled = if (lessonLiveData.value?.isNewGrammar == true) 0 else 1
             when (tabPosition) {
                 GRAMMAR_POSITION -> {
                     if (lessonLiveData.value?.grammarStatus != LESSON_STATUS.CO && status == LESSON_STATUS.CO) {
@@ -407,7 +413,15 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                         }
                     )
                 }
-                VOCAB_POSITION -> {
+                TRANSLATION_POSITION -> {
+                    appDatabase.lessonDao().updateTranslationSectionStatus(lessonId, status)
+                    lessonLiveData.postValue(
+                        lessonLiveData.value?.apply {
+                            this.translationStatus = status
+                        }
+                    )
+                }
+                VOCAB_POSITION - isTranslationDisabled -> {
                     appDatabase.lessonDao().updateVocabularySectionStatus(lessonId, status)
                     lessonLiveData.postValue(
                         lessonLiveData.value?.apply {
@@ -415,7 +429,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                         }
                     )
                 }
-                READING_POSITION -> {
+                READING_POSITION - isTranslationDisabled -> {
                     appDatabase.lessonDao().updateReadingSectionStatus(lessonId, status)
                     lessonLiveData.postValue(
                         lessonLiveData.value?.apply {
@@ -423,7 +437,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                         }
                     )
                 }
-                SPEAKING_POSITION -> {
+                SPEAKING_POSITION - isTranslationDisabled -> {
                     if (lessonLiveData.value?.speakingStatus != LESSON_STATUS.CO && status == LESSON_STATUS.CO) {
                         MarketingAnalytics.logSpeakingSectionCompleted()
                     }
@@ -434,7 +448,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                         }
                     )
                 }
-                ROOM_POSITION -> {
+                ROOM_POSITION - isTranslationDisabled -> {
                     appDatabase.lessonDao().updateRoomSectionStatus(lessonId, status)
                     lessonLiveData.postValue(
                         lessonLiveData.value?.apply {
@@ -736,6 +750,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
             lessonLiveData.postValue(
                 lessonLiveData.value?.apply {
                     var lessonCompleted = this.grammarStatus == LESSON_STATUS.CO &&
+                            this.translationStatus == LESSON_STATUS.CO &&
                             this.vocabStatus == LESSON_STATUS.CO &&
                             this.readingStatus == LESSON_STATUS.CO &&
                             this.speakingStatus == LESSON_STATUS.CO
@@ -885,7 +900,10 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                 data?.let {
                     MixPanelTracker.publishEvent(MixPanelEvent.GOAL)
                         .addParam(ParamKeys.VARIANT, data?.variantKey ?: EMPTY)
-                        .addParam(ParamKeys.VARIABLE, AppObjectController.gsonMapper.toJson(data?.variableMap))
+                        .addParam(
+                            ParamKeys.VARIABLE,
+                            AppObjectController.gsonMapper.toJson(data?.variableMap)
+                        )
                         .addParam(ParamKeys.CAMPAIGN, campaign)
                         .addParam(ParamKeys.GOAL, goal)
                         .push()

@@ -10,6 +10,10 @@
         <variable
             name="handler"
             type="com.joshtalks.joshskills.ui.online_test.OnlineTestFragment" />
+
+        <variable
+            name="viewModel"
+            type="com.joshtalks.joshskills.ui.online_test.OnlineTestViewModel" />
     </data>
 
 
@@ -21,16 +25,29 @@
         <ProgressBar
             android:id="@+id/question_progress_bar"
             style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="@dimen/_12sdp"
             android:layout_marginHorizontal="@dimen/_22sdp"
             android:layout_marginTop="@dimen/_18sdp"
             android:progress="0"
             android:progressDrawable="@drawable/grammar_rating_progress_bar_drawable"
             app:layout_constraintBottom_toTopOf="@id/scroll_view"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/mark_as_correct"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/mark_as_correct"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/_16sdp"
+            android:src="@drawable/ic_tick_small"
+            app:fabSize="mini"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/question_progress_bar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/question_progress_bar"
+            tools:visibility="visible" />
 
         <ScrollView
             android:id="@+id/scroll_view"
@@ -46,7 +63,7 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/choice_container"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="wrap_content">
 
                 <ViewStub
                     android:id="@+id/heading_view"
@@ -116,7 +133,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/transparent_black"
-            tools:visibility="visible">
+            tools:visibility="gone">
 
             <com.pnikosis.materialishprogress.ProgressWheel
                 android:id="@+id/progress_bar"
@@ -130,47 +147,17 @@
 
         </FrameLayout>
 
-        <FrameLayout
-            android:id="@+id/parent_Container"
+        <ViewStub
+            android:id="@+id/rule_completed"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/white"
-            android:visibility="gone"
+            android:inflatedId="@+id/rule_completed"
+            android:layout="@layout/rule_completed_view"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0" />
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/video_Container"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:background="@color/transparent_black"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:visibility="visible">
-
-            <com.joshtalks.joshskills.core.custom_ui.JoshGrammarVideoPlayer
-                android:id="@+id/video_player"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_marginHorizontal="@dimen/_10sdp"
-                android:background="#000"
-                android:focusable="true"
-                android:paddingHorizontal="@dimen/_1sdp"
-                app:controller_layout_id="@layout/layout_live_grammar_player_controller"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintDimensionRatio="1.78"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.4"
-                tools:visibility="visible" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            tools:visibility="gone" />
 
         <ViewStub
             android:id="@+id/error_view"
@@ -183,5 +170,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:visibility="visible" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

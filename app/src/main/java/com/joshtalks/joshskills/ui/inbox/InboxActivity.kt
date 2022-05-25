@@ -19,6 +19,7 @@ import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.Utils.getLangCodeFromCourseId
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.AppObjectController
@@ -241,6 +242,12 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         if (items.isEmpty()) {
             return
         }
+//        if(!PrefManager.getBoolValue(IS_LOCALE_UPDATED_IN_SETTINGS) && !PrefManager.getBoolValue(
+//                IS_LOCALE_UPDATED_IN_INBOX)) {
+//            PrefManager.put(IS_LOCALE_UPDATED_IN_INBOX,true)
+//            requestWorkerForChangeLanguage(getLangCodeFromCourseId(items[0].courseId), canCreateActivity = false)
+//        }
+
         var haveFreeTrialCourse = false
         lifecycleScope.launch(Dispatchers.Default) {
             val temp: ArrayList<InboxEntity> = arrayListOf()
@@ -259,6 +266,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                         }
                         if (inboxEntity.isCourseBought.not()) {
                             haveFreeTrialCourse = true
+                            PrefManager.put(IS_FREE_TRIAL, true)
                         }
                     }
                     temp.addAll(courseList)

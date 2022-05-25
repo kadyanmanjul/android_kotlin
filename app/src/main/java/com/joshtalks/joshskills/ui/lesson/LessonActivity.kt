@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.ui.lesson
 
-import android.Manifest.*
 import android.animation.ValueAnimator
 import android.app.Activity
 import android.content.Context
@@ -22,6 +21,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
@@ -53,14 +53,13 @@ import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
 import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
 import com.joshtalks.joshskills.repository.local.entity.LessonModel
 import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
-import com.joshtalks.joshskills.repository.local.eventbus.AnimateAtsOtionViewEvent
 import com.joshtalks.joshskills.repository.local.eventbus.MediaProgressEventBus
+import com.joshtalks.joshskills.repository.server.course_detail.VideoModel
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.chat.CHAT_ROOM_ID
 import com.joshtalks.joshskills.ui.leaderboard.ItemOverlay
 import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_GRAMMAR_ANIMATION
 import com.joshtalks.joshskills.ui.lesson.grammar.GrammarFragment
-import com.joshtalks.joshskills.ui.lesson.grammar_new.CustomWord
 import com.joshtalks.joshskills.ui.lesson.lesson_completed.LessonCompletedActivity
 import com.joshtalks.joshskills.ui.lesson.reading.ReadingFragmentWithoutFeedback
 import com.joshtalks.joshskills.ui.lesson.room.ConversationRoomListingPubNubFragment
@@ -68,6 +67,9 @@ import com.joshtalks.joshskills.ui.lesson.speaking.SpeakingPractiseFragment
 import com.joshtalks.joshskills.ui.lesson.vocabulary.VocabularyFragment
 import com.joshtalks.joshskills.ui.online_test.GrammarAnimation
 import com.joshtalks.joshskills.ui.online_test.GrammarOnlineTestFragment
+import com.joshtalks.joshskills.ui.online_test.util.A2C1Impressions
+import com.joshtalks.joshskills.ui.online_test.util.AnimateAtsOptionViewEvent
+import com.joshtalks.joshskills.ui.online_test.vh.AtsOptionView
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.ui.pdfviewer.CURRENT_VIDEO_PROGRESS_POSITION
 import com.joshtalks.joshskills.ui.tooltip.JoshTooltip
@@ -81,20 +83,20 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import java.util.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 const val GRAMMAR_POSITION = 0
-const val SPEAKING_POSITION = 1
-const val VOCAB_POSITION = 2
-const val READING_POSITION = 3
-const val ROOM_POSITION = 4
+const val TRANSLATION_POSITION = 1
+const val SPEAKING_POSITION = 2
+const val VOCAB_POSITION = 3
+const val READING_POSITION = 4
+const val ROOM_POSITION = 5
 const val DEFAULT_SPOTLIGHT_DELAY_IN_MS = 1300L
+const val INTRO_VIDEO_ID = "-1"
 private const val TAG = "LessonActivity"
-const val TOOLTIP_LESSON_GRAMMAR = "TOOLTIP_LESSON_GRAMMAR_"
 val STORAGE_GRAMMER_REQUEST_CODE = 3456
 private val STORAGE_READING_REQUEST_CODE = 3457
 
@@ -112,12 +114,11 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
     var d2pIntroVideoWatchedDuration = 0L
     lateinit var titleView: TextView
     private var isDemo = false
-    private var isNewGrammar = false
     private var isLesssonCompleted = false
     private var testId = -1
     private var whatsappUrl = EMPTY
     private val compositeDisposable = CompositeDisposable()
-//    private var customView: CustomWord? = null
+
     var lesson: LessonModel? = null // Do not use this var
     private lateinit var tabs: ViewGroup
     val arrayFragment = arrayListOf<Fragment>()
@@ -132,6 +133,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
     private var isTwentyMinFtuCallActive = false
     private var getLessonId = -1
     private var isIntroVideoCmpleted = false
+    private var isTranslationDisabled: Int = 1
     private val adapter: LessonPagerAdapter by lazy {
         LessonPagerAdapter(
             supportFragmentManager,
@@ -181,7 +183,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         binding.viewbinding = this
 
         event.observe(this) {
-            when(it.what) {
+            when (it.what) {
                 PERMISSION_FROM_READING -> requestStoragePermission(STORAGE_READING_REQUEST_CODE)
             }
         }
@@ -193,15 +195,18 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
             // InboxActivity.startInboxActivity(this)
             finish()
         }
-        viewModel.isFreeTrail = if (intent.hasExtra(IS_FREE_TRAIL)) intent.getBooleanExtra(
+        viewModel.isFreeTrail = PrefManager.hasKey(IS_FREE_TRAIL) && PrefManager.getBoolValue(
             IS_FREE_TRAIL,
             false
-        ) else false
+        )
         isDemo = if (intent.hasExtra(IS_DEMO)) intent.getBooleanExtra(IS_DEMO, false) else false
-        isNewGrammar = if (intent.hasExtra(IS_NEW_GRAMMAR)) intent.getBooleanExtra(
+        lessonIsNewGrammar = if (intent.hasExtra(IS_NEW_GRAMMAR)) intent.getBooleanExtra(
             IS_NEW_GRAMMAR,
             false
         ) else false
+        if (lessonIsNewGrammar) {
+            A2C1Impressions.saveImpression(A2C1Impressions.Impressions.START_LESSON_CLICKED)
+        }
 
         if (intent.hasExtra(IS_LESSON_COMPLETED)) {
             isLesssonCompleted = intent.getBooleanExtra(IS_LESSON_COMPLETED, false)
@@ -224,7 +229,11 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         setObservers()
         viewModel.getWhatsappRemarketingCampaign(CampaignKeys.WHATSAPP_REMARKETING.name)
         viewModel.getLesson(lessonId)
-        viewModel.getTwentyMinFtuCallCampaignData(CampaignKeys.TWENTY_MIN_TARGET.NAME, lessonId, isDemo)
+        viewModel.getTwentyMinFtuCallCampaignData(
+            CampaignKeys.TWENTY_MIN_TARGET.NAME,
+            lessonId,
+            isDemo
+        )
 
         val helpIv: ImageView = findViewById(R.id.iv_help)
         helpIv.visibility = View.GONE
@@ -242,6 +251,9 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
             binding.tooltipTv.setOnClickListener { showVideoToolTip(false) }
         }
         viewModel.saveImpression(IMPRESSION_OPEN_GRAMMAR_SCREEN)
+        binding.imageViewClose.setOnClickListener {
+            closeVideoPopUpUi()
+        }
         viewModel.lessonId.postValue(getLessonId)
     }
 
@@ -281,28 +293,28 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
 
     private fun subscribeRxBus() {
         compositeDisposable.add(
-             RxBus2.listenWithoutDelay(AnimateAtsOtionViewEvent::class.java)
-                 .subscribeOn(Schedulers.io())
-                 .observeOn(AndroidSchedulers.mainThread())
-                 .subscribe { event ->
-                    CustomWord(this, event.customWord.choice).apply {
+            RxBus2.listenWithoutDelay(AnimateAtsOptionViewEvent::class.java)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { event ->
+                    AtsOptionView(this, event.atsOptionView.choice).apply {
                         binding.rootView.addView(this)
-                         this.text = event.customWord.choice.text
-                         this.x = event.fromLocation[0].toFloat()
-                         this.y = event.fromLocation[1].toFloat() - event.height.toFloat()
-                         val toLocation = IntArray(2)
-                         event.customWord.getLocationOnScreen(toLocation)
+                        this.text = event.atsOptionView.choice.text
+                        this.x = event.fromLocation[0].toFloat()
+                        this.y = event.fromLocation[1].toFloat() - event.height.toFloat()
+                        val toLocation = IntArray(2)
+                        event.atsOptionView.getLocationOnScreen(toLocation)
                         toLocation[1] = toLocation[1] - getStatusBarHeight()
                         this.translationAnimationNew(
-                             toLocation,
-                             event.customWord,
+                            toLocation,
+                            event.atsOptionView,
                             event.optionLayout,
                             doOnAnimationEnd = {
                                 binding.rootView.removeView(this)
                             }
-                         )
-                     }
-                 }
+                        )
+                    }
+                }
         )
     }
 
@@ -323,8 +335,8 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                 lessonIsNewGrammar = it.isNewGrammar
             }
             MixPanelTracker.publishEvent(MixPanelEvent.GRAMMAR_OPENED)
-                .addParam(ParamKeys.LESSON_ID,getLessonId)
-                .addParam(ParamKeys.LESSON_NUMBER,lessonNumber)
+                .addParam(ParamKeys.LESSON_ID, getLessonId)
+                .addParam(ParamKeys.LESSON_NUMBER, lessonNumber)
                 .push()
             viewModel.lessonIsConvoRoomActive =
                 (it.filter { it.chatType == CHAT_TYPE.CR }.isNotEmpty()
@@ -575,13 +587,15 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                 }
 
                 LessonSpotlightState.SPEAKING_SPOTLIGHT_PART2 -> {
-                    if(introVideoControl){
+                    if (introVideoControl) {
                         if (introVideoUrl.isNullOrBlank().not()) {
-                        viewModel.saveIntroVideoFlowImpression(SPEAKING_TAB_CLICKED_FOR_FIRST_TIME)
-                        viewModel.showHideSpeakingFragmentCallButtons(1)
-                        showIntroVideoUi()
+                            viewModel.saveIntroVideoFlowImpression(
+                                SPEAKING_TAB_CLICKED_FOR_FIRST_TIME
+                            )
+                            viewModel.showHideSpeakingFragmentCallButtons(1)
+                            showIntroVideoUi()
                         }
-                    }else if(PrefManager.getBoolValue(REMOVE_TOOLTIP_FOR_TWENTY_MIN_CALL)){
+                    } else if (PrefManager.getBoolValue(REMOVE_TOOLTIP_FOR_TWENTY_MIN_CALL)) {
                         binding.overlayLayout.visibility = View.VISIBLE
                         binding.spotlightTabGrammar.visibility = View.INVISIBLE
                         binding.spotlightTabSpeaking.visibility = View.INVISIBLE
@@ -667,6 +681,66 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                 PrefManager.put(IS_TWENTY_MIN_CALL_ENABLED, isTwentyMinFtuCallActive)
             }
         }
+        videoEvent.observe(this) { event ->
+            event.getContentIfNotHandledOrReturnNull()?.let {
+                binding.apply {
+                    spotlightTabGrammar.visibility = View.INVISIBLE
+                    spotlightTabSpeaking.visibility = View.INVISIBLE
+                    spotlightTabVocab.visibility = View.INVISIBLE
+                    spotlightTabReading.visibility = View.INVISIBLE
+                    spotlightCallBtn.visibility = View.GONE
+                    spotlightCallBtnText.visibility = View.GONE
+                    viewModel.showHideSpeakingFragmentCallButtons(1)
+                    videoPopup.visibility = View.VISIBLE
+                    videoPopup.startAnimation(
+                        AnimationUtils.loadAnimation(
+                            root.context,
+                            R.anim.fade_in
+                        )
+                    )
+                    videoView.seekToStart()
+                    videoView.apply {
+                        setUrl(it.video_url)
+                        setVideoId(it.id)
+                        if (it.video_height != 0 && it.video_width != 0) {
+                            (layoutParams as ConstraintLayout.LayoutParams).dimensionRatio =
+                                (it.video_width / it.video_height).toString()
+                        }
+                        onStart()
+                        setFullScreenListener {
+                            val currentVideoProgressPosition = binding.videoView.progress
+                            openVideoPlayerActivity.launch(
+                                VideoPlayerActivity.getActivityIntent(
+                                    root.context,
+                                    "",
+                                    it.id,
+                                    it.video_url,
+                                    currentVideoProgressPosition,
+                                    conversationId = getConversationId()
+                                )
+                            )
+                        }
+                        setPlayerCompletionCallback {
+                            if (it.id != INTRO_VIDEO_ID) {
+                                PrefManager.appendToSet(
+                                    LAST_SEEN_VIDEO_ID,
+                                    it.id,
+                                    false
+                                )
+                                A2C1Impressions.saveImpression(A2C1Impressions.Impressions.RULE_VIDEO_COMPLETED)
+                            }
+                        }
+                        downloadStreamPlay()
+                        outlineProvider = object : ViewOutlineProvider() {
+                            override fun getOutline(view: View, outline: Outline) {
+                                outline.setRoundRect(0, 0, view.width, view.height, 15f)
+                            }
+                        }
+                        clipToOutline = true
+                    }
+                }
+            }
+        }
     }
 
     private fun hideSpotlight() {
@@ -686,7 +760,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
     fun callPracticePartner() {
         viewModel.lessonSpotlightStateLiveData.postValue(null)
         viewModel.speakingSpotlightClickLiveData.postValue(Unit)
-        if(introVideoControl) closeIntroVideoPopUpUi()
+        if (introVideoControl) closeVideoPopUpUi()
     }
 
     private fun setUpNewGrammarLayouts(
@@ -718,11 +792,15 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                         lessonCompleted = lessonCompleted &&
                                 lesson.conversationStatus == LESSON_STATUS.CO
                     }
+                    if (PrefManager.getBoolValue(IS_A2_C1_RETENTION_ENABLED)) {
+                        lessonCompleted = lessonCompleted &&
+                                lesson.translationStatus == LESSON_STATUS.CO
+                    }
 
                     if (lessonCompleted) {
                         PrefManager.put(LESSON_COMPLETED_FOR_NOTIFICATION, true)
                         if (lesson.status != LESSON_STATUS.CO) {
-                            MarketingAnalytics.logLessonCompletedEvent(lesson.lessonNo,lesson.id)
+                            MarketingAnalytics.logLessonCompletedEvent(lesson.lessonNo, lesson.id)
                         }
                         lesson.status = LESSON_STATUS.CO
                         viewModel.updateLesson(lesson)
@@ -746,6 +824,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
             CoroutineScope(Dispatchers.IO).launch {
                 viewModel.lessonLiveData.value?.let { lesson ->
                     var lessonCompleted = lesson.grammarStatus == LESSON_STATUS.CO &&
+                            lesson.translationStatus == LESSON_STATUS.CO &&
                             lesson.vocabStatus == LESSON_STATUS.CO &&
                             lesson.readingStatus == LESSON_STATUS.CO &&
                             lesson.speakingStatus == LESSON_STATUS.CO
@@ -757,7 +836,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
 
                     if (lessonCompleted) {
                         if (lesson.status != LESSON_STATUS.CO) {
-                            MarketingAnalytics.logLessonCompletedEvent(lesson.lessonNo,lesson.id)
+                            MarketingAnalytics.logLessonCompletedEvent(lesson.lessonNo, lesson.id)
                         }
                         lesson.status = LESSON_STATUS.CO
                         viewModel.updateLesson(lesson)
@@ -802,12 +881,12 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
     }
 
     override fun showIntroVideo() {
-            introVideoControl  = true
-            setUpVideoProgressListener()
-            viewModel.getVideoData()
+        introVideoControl = true
+        setUpVideoProgressListener()
+        viewModel.getVideoData()
     }
 
-    override fun introVideoCmplt(){
+    override fun introVideoCmplt() {
         isIntroVideoCmpleted = false
     }
 
@@ -831,6 +910,10 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                     videoClickListener()
                 }
             }
+            wrongAnswerTitle.isVisible = wrongAnswerHeading.isNullOrEmpty().not()
+            explanationTitle.isVisible = wrongAnswerSubHeading.isNullOrEmpty().not()
+            wrongAnswerDesc.isVisible = wrongAnswerText.isNullOrEmpty().not()
+            explanationText.isVisible = wrongAnswerDescription.isNullOrEmpty().not()
             wrongAnswerTitle.text = wrongAnswerHeading
             explanationTitle.text = wrongAnswerSubHeading
             wrongAnswerDesc.text = wrongAnswerText
@@ -846,25 +929,26 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                     GRAMMAR_POSITION -> {
                         if (lesson.grammarStatus != LESSON_STATUS.CO && status == LESSON_STATUS.CO) {
                             MarketingAnalytics.logGrammarSectionCompleted()
-                            if(isWhatsappRemarketingActive){
+                            if (isWhatsappRemarketingActive) {
                                 MarketingAnalytics.logWhatsappRemarketing()
                             }
                         }
                         lesson.grammarStatus = status
                     }
-                    VOCAB_POSITION -> lesson.vocabStatus = status
-                    READING_POSITION -> lesson.readingStatus = status
-                    SPEAKING_POSITION -> {
+                    TRANSLATION_POSITION -> lesson.translationStatus = status
+                    VOCAB_POSITION - isTranslationDisabled -> lesson.vocabStatus = status
+                    READING_POSITION - isTranslationDisabled -> lesson.readingStatus = status
+                    SPEAKING_POSITION - isTranslationDisabled -> {
                         if (lesson.speakingStatus != LESSON_STATUS.CO && status == LESSON_STATUS.CO) {
                             MarketingAnalytics.logSpeakingSectionCompleted()
                             MixPanelTracker.publishEvent(MixPanelEvent.SPEAKING_COMPLETED)
                                 .addParam(ParamKeys.LESSON_ID, getLessonId)
-                                .addParam(ParamKeys.LESSON_NUMBER,lesson.lessonNo)
+                                .addParam(ParamKeys.LESSON_NUMBER, lesson.lessonNo)
                                 .push()
                         }
                         lesson.speakingStatus = status
                     }
-                    ROOM_POSITION -> lesson.conversationStatus = status
+                    ROOM_POSITION - isTranslationDisabled -> lesson.conversationStatus = status
                 }
                 viewModel.updateSectionStatus(lesson.id, status, tabPosition)
             }
@@ -880,29 +964,35 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         isTestCompleted: Boolean = false
     ) {
 
-        if (lessonIsNewGrammar) {
-            if (isTestCompleted.not()) {
-                arrayFragment.add(GRAMMAR_POSITION, GrammarOnlineTestFragment.getInstance(lessonNo))
-            } else if (PrefManager.getIntValue(
-                    ONLINE_TEST_LAST_LESSON_COMPLETED
-                ) >= lessonNumber
-            ) {
-                arrayFragment.add(GRAMMAR_POSITION, GrammarOnlineTestFragment.getInstance(lessonNo))
-
-            } else arrayFragment.add(GRAMMAR_POSITION, GrammarFragment.getInstance())
+        isTranslationDisabled = 1
+        if (PrefManager.getBoolValue(IS_COURSE_BOUGHT) && lessonIsNewGrammar &&
+            PrefManager.hasKey(IS_A2_C1_RETENTION_ENABLED) &&
+            PrefManager.getBoolValue(IS_A2_C1_RETENTION_ENABLED)
+        ) {
+            arrayFragment.add(GRAMMAR_POSITION, GrammarFragment.getInstance())
+            arrayFragment.add(TRANSLATION_POSITION, GrammarOnlineTestFragment.getInstance(lessonNo))
+            isTranslationDisabled = 0
+        } else if (lessonIsNewGrammar) {
+            arrayFragment.add(GRAMMAR_POSITION, GrammarOnlineTestFragment.getInstance(lessonNo))
         } else {
             arrayFragment.add(GRAMMAR_POSITION, GrammarFragment.getInstance())
         }
 
-        arrayFragment.add(SPEAKING_POSITION, SpeakingPractiseFragment.newInstance())
-        arrayFragment.add(VOCAB_POSITION, VocabularyFragment.getInstance())
-        arrayFragment.add(READING_POSITION, ReadingFragmentWithoutFeedback.getInstance())
+        arrayFragment.add(
+            SPEAKING_POSITION - isTranslationDisabled,
+            SpeakingPractiseFragment.newInstance()
+        )
+        arrayFragment.add(VOCAB_POSITION - isTranslationDisabled, VocabularyFragment.getInstance())
+        arrayFragment.add(
+            READING_POSITION - isTranslationDisabled,
+            ReadingFragmentWithoutFeedback.getInstance()
+        )
         if (viewModel.lessonIsConvoRoomActive) {
             arrayFragment.add(ROOM_POSITION, ConversationRoomListingPubNubFragment.getInstance())
         }
         binding.lessonViewpager.adapter = adapter
         binding.lessonViewpager.requestTransparentRegion(binding.lessonViewpager)
-        binding.lessonViewpager.offscreenPageLimit = 4
+        binding.lessonViewpager.offscreenPageLimit = arrayFragment.size
         binding.lessonViewpager.recyclerView.enforceSingleScrollDirection()
 
         tabs = binding.lessonTabLayout.getChildAt(0) as ViewGroup
@@ -927,29 +1017,34 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                         AppObjectController.getFirebaseRemoteConfig()
                             .getString(FirebaseRemoteConfigKey.GRAMMAR_TITLE)
                 }
-                VOCAB_POSITION -> {
+                VOCAB_POSITION - isTranslationDisabled -> {
                     setUnselectedColor(tab)
                     tab.view.findViewById<TextView>(R.id.title_tv).text =
                         AppObjectController.getFirebaseRemoteConfig()
                             .getString(FirebaseRemoteConfigKey.VOCABULARY_TITLE)
                 }
-                READING_POSITION -> {
+                READING_POSITION - isTranslationDisabled -> {
                     setUnselectedColor(tab)
                     tab.view.findViewById<TextView>(R.id.title_tv).text =
                         AppObjectController.getFirebaseRemoteConfig()
                             .getString(FirebaseRemoteConfigKey.READING_TITLE)
                 }
-                SPEAKING_POSITION -> {
+                SPEAKING_POSITION - isTranslationDisabled -> {
                     setUnselectedColor(tab)
                     tab.view.findViewById<TextView>(R.id.title_tv).text =
                         AppObjectController.getFirebaseRemoteConfig()
                             .getString(FirebaseRemoteConfigKey.SPEAKING_TITLE)
                 }
-                ROOM_POSITION -> {
+                ROOM_POSITION - isTranslationDisabled -> {
                     setUnselectedColor(tab)
                     tab.view.findViewById<TextView>(R.id.title_tv)?.text =
                         AppObjectController.getFirebaseRemoteConfig()
                             .getString(FirebaseRemoteConfigKey.ROOM_TITLE)
+                }
+                TRANSLATION_POSITION -> {
+                    setUnselectedColor(tab)
+                    tab.view.findViewById<TextView>(R.id.title_tv).text =
+                        getString(R.string.translation)
                 }
             }
         }.attach()
@@ -1004,30 +1099,41 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                             } else {
                                 nextTabIndex++
                             }
-                        VOCAB_POSITION ->
-                            if (lesson.vocabStatus != LESSON_STATUS.CO) {
-                                binding.lessonViewpager.currentItem = VOCAB_POSITION
-                                return
-                            } else {
-                                nextTabIndex++
-                            }
-                        READING_POSITION ->
-                            if (lesson.readingStatus != LESSON_STATUS.CO) {
-                                binding.lessonViewpager.currentItem = READING_POSITION
-                                return
-                            } else {
-                                nextTabIndex++
-                            }
-                        SPEAKING_POSITION ->
+                        SPEAKING_POSITION - isTranslationDisabled ->
                             if (lesson.speakingStatus != LESSON_STATUS.CO) {
-                                binding.lessonViewpager.currentItem = SPEAKING_POSITION
+                                binding.lessonViewpager.currentItem =
+                                    SPEAKING_POSITION - isTranslationDisabled
                                 return
                             } else {
                                 nextTabIndex++
                             }
-                        ROOM_POSITION ->
+                        VOCAB_POSITION - isTranslationDisabled ->
+                            if (lesson.vocabStatus != LESSON_STATUS.CO) {
+                                binding.lessonViewpager.currentItem =
+                                    VOCAB_POSITION - isTranslationDisabled
+                                return
+                            } else {
+                                nextTabIndex++
+                            }
+                        READING_POSITION - isTranslationDisabled ->
+                            if (lesson.readingStatus != LESSON_STATUS.CO) {
+                                binding.lessonViewpager.currentItem =
+                                    READING_POSITION - isTranslationDisabled
+                                return
+                            } else {
+                                nextTabIndex++
+                            }
+                        ROOM_POSITION - isTranslationDisabled ->
                             if (lesson.conversationStatus != LESSON_STATUS.CO) {
-                                binding.lessonViewpager.currentItem = ROOM_POSITION
+                                binding.lessonViewpager.currentItem =
+                                    ROOM_POSITION - isTranslationDisabled
+                                return
+                            } else {
+                                nextTabIndex++
+                            }
+                        TRANSLATION_POSITION ->
+                            if (lesson.translationStatus != LESSON_STATUS.CO) {
+                                binding.lessonViewpager.currentItem = TRANSLATION_POSITION
                                 return
                             } else {
                                 nextTabIndex++
@@ -1053,19 +1159,23 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                     lesson.grammarStatus == LESSON_STATUS.CO
                 )
                 setTabCompletionStatus(
-                    tabs.getChildAt(VOCAB_POSITION),
+                    tabs.getChildAt(TRANSLATION_POSITION),
+                    lesson.translationStatus == LESSON_STATUS.CO
+                )
+                setTabCompletionStatus(
+                    tabs.getChildAt(VOCAB_POSITION - isTranslationDisabled),
                     lesson.vocabStatus == LESSON_STATUS.CO
                 )
                 setTabCompletionStatus(
-                    tabs.getChildAt(READING_POSITION),
+                    tabs.getChildAt(READING_POSITION - isTranslationDisabled),
                     lesson.readingStatus == LESSON_STATUS.CO
                 )
                 setTabCompletionStatus(
-                    tabs.getChildAt(SPEAKING_POSITION),
+                    tabs.getChildAt(SPEAKING_POSITION - isTranslationDisabled),
                     lesson.speakingStatus == LESSON_STATUS.CO
                 )
                 setTabCompletionStatus(
-                    tabs.getChildAt(ROOM_POSITION),
+                    tabs.getChildAt(ROOM_POSITION - isTranslationDisabled),
                     lesson.conversationStatus == LESSON_STATUS.CO
                 )
             }
@@ -1099,28 +1209,28 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                         ContextCompat.getDrawable(this, R.drawable.capsule_selection_tab)
                     viewModel.saveImpression(IMPRESSION_OPEN_GRAMMAR_SCREEN)
                     MixPanelTracker.publishEvent(MixPanelEvent.GRAMMAR_OPENED)
-                        .addParam(ParamKeys.LESSON_ID,getLessonId)
-                        .addParam(ParamKeys.LESSON_NUMBER,lessonNumber)
+                        .addParam(ParamKeys.LESSON_ID, getLessonId)
+                        .addParam(ParamKeys.LESSON_NUMBER, lessonNumber)
                         .push()
                 }
-                VOCAB_POSITION -> {
+                VOCAB_POSITION - isTranslationDisabled -> {
                     tab.view.background =
                         ContextCompat.getDrawable(this, R.drawable.vocabulary_tab_bg)
                     viewModel.saveImpression(IMPRESSION_OPEN_VOCABULARY_SCREEN)
                     MixPanelTracker.publishEvent(MixPanelEvent.VOCABULARY_OPENED)
-                        .addParam(ParamKeys.LESSON_ID,getLessonId)
-                        .addParam(ParamKeys.LESSON_NUMBER,lessonNumber)
+                        .addParam(ParamKeys.LESSON_ID, getLessonId)
+                        .addParam(ParamKeys.LESSON_NUMBER, lessonNumber)
                         .push()
                 }
-                READING_POSITION -> {
+                READING_POSITION - isTranslationDisabled -> {
                     tab.view.background = ContextCompat.getDrawable(this, R.drawable.reading_tab_bg)
                     viewModel.saveImpression(IMPRESSION_OPEN_READING_SCREEN)
                     MixPanelTracker.publishEvent(MixPanelEvent.READING_OPENED)
-                        .addParam(ParamKeys.LESSON_ID,getLessonId)
-                        .addParam(ParamKeys.LESSON_NUMBER,lessonNumber)
+                        .addParam(ParamKeys.LESSON_ID, getLessonId)
+                        .addParam(ParamKeys.LESSON_NUMBER, lessonNumber)
                         .push()
                 }
-                ROOM_POSITION -> {
+                ROOM_POSITION - isTranslationDisabled -> {
                     tab.view.background =
                         ContextCompat.getDrawable(this, R.drawable.convo_room_tab_bg)
                     viewModel.saveImpression(IMPRESSION_OPEN_ROOM_SCREEN)
@@ -1130,20 +1240,24 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                         showConvoRoomSpotlight()
                     }
                 }
-                SPEAKING_POSITION -> {
+                SPEAKING_POSITION - isTranslationDisabled -> {
                     tab.view.background =
                         ContextCompat.getDrawable(this, R.drawable.speaking_tab_bg)
                     viewModel.saveImpression(IMPRESSION_OPEN_SPEAKING_SCREEN)
                     PrefManager.put(IS_SPEAKING_SCREEN_CLICKED, true)
                     MixPanelTracker.publishEvent(MixPanelEvent.SPEAKING_OPENED)
-                        .addParam(ParamKeys.LESSON_ID,getLessonId)
-                        .addParam(ParamKeys.LESSON_NUMBER,lessonNumber)
+                        .addParam(ParamKeys.LESSON_ID, getLessonId)
+                        .addParam(ParamKeys.LESSON_NUMBER, lessonNumber)
                         .push()
                     if (PrefManager.getBoolValue(HAS_SEEN_SPEAKING_SPOTLIGHT)) {
                         hideSpotlight()
                     } else {
                         showSpeakingSpotlight()
                     }
+                }
+                TRANSLATION_POSITION -> {
+                    tab.view.background =
+                        ContextCompat.getDrawable(this, R.drawable.convo_room_tab_bg)
                 }
             }
         }
@@ -1205,12 +1319,16 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
             val lessonId = if (intent.hasExtra(LESSON_ID)) intent.getIntExtra(LESSON_ID, 0) else 0
 
             viewModel.getLesson(lessonId)
-            viewModel.getTwentyMinFtuCallCampaignData(CampaignKeys.TWENTY_MIN_TARGET.NAME, lessonId, isDemo)
+            viewModel.getTwentyMinFtuCallCampaignData(
+                CampaignKeys.TWENTY_MIN_TARGET.NAME,
+                lessonId,
+                isDemo
+            )
         }
     }
 
     override fun onPause() {
-        if(introVideoControl) binding.videoView.onPause()
+        if (introVideoControl) binding.videoView.onPause()
         super.onPause()
     }
 
@@ -1219,8 +1337,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         when {
             binding.itemOverlay.isVisible -> binding.itemOverlay.isVisible = false
             binding.overlayTooltipLayout.isVisible -> showVideoToolTip(false)
-            binding.videoPopup.isVisible -> closeIntroVideoPopUpUi()
-            isVideoVisible.value == true -> isVideoVisible.value = false
+            binding.videoPopup.isVisible -> closeVideoPopUpUi()
             binding.overlayLayout.isVisible -> hideSpotlight()
             else -> {
                 val resultIntent = Intent()
@@ -1254,7 +1371,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         private const val TEST_ID = "test_id"
         const val LAST_LESSON_STATUS = "last_lesson_status"
         const val LESSON_SECTION = "lesson_section"
-        val isVideoVisible = MutableLiveData(true)
+        val videoEvent: MutableLiveData<Event<VideoModel>> = MutableLiveData()
 
         fun getActivityIntent(
             context: Context,
@@ -1264,7 +1381,6 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
             testId: Int? = null,
             conversationId: String? = null,
             isNewGrammar: Boolean = false,
-            isFreeTrail: Boolean = false,
             isLessonCompleted: Boolean = false
         ) = Intent(context, LessonActivity::class.java).apply {
             // TODO: Pass Free Trail Status
@@ -1273,7 +1389,6 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
             putExtra(IS_NEW_GRAMMAR, isNewGrammar)
             putExtra(IS_LESSON_COMPLETED, isLessonCompleted)
             putExtra(CONVERSATION_ID, conversationId)
-            putExtra(IS_FREE_TRAIL, isFreeTrail)
             if (isDemo) {
                 putExtra(WHATSAPP_URL, whatsappUrl)
                 putExtra(TEST_ID, testId)
@@ -1349,9 +1464,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
             binding.itemOverlay.visibility = View.VISIBLE
             arrowView.visibility = View.VISIBLE
             itemImageView.visibility = View.VISIBLE
-            tooltipView.setTooltipText(
-                AppObjectController.getFirebaseRemoteConfig()
-                    .getString(TOOLTIP_LESSON_GRAMMAR + courseId)
+            tooltipView.setTooltipText(getString(R.string.tooltip_lesson_grammar)
 
             )
             slideInAnimation(tooltipView)
@@ -1360,68 +1473,23 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
     }
 
     private fun showIntroVideoUi() {
-        binding.overlayLayout.visibility = View.GONE
-        binding.overlayLayoutSpeaking.visibility = View.VISIBLE
-        viewModel.showHideSpeakingFragmentCallButtons(1)
-        binding.videoPopup.visibility = View.VISIBLE
-        binding.videoView.seekToStart()
-        binding.spotlightTabGrammar.visibility = View.INVISIBLE
-        binding.spotlightTabSpeaking.visibility = View.INVISIBLE
-        binding.spotlightTabVocab.visibility = View.INVISIBLE
-        binding.spotlightTabReading.visibility = View.INVISIBLE
-        binding.spotlightCallBtn.visibility = View.GONE
-        binding.spotlightCallBtnText.visibility = View.GONE
-
-        binding.videoView.setUrl(introVideoUrl)
-        binding.videoView.onStart()
-        MixPanelTracker.publishEvent(MixPanelEvent.SPEAKING_VIDEO_PLAY)
-            .addParam(ParamKeys.LESSON_ID,getLessonId)
-            .addParam(ParamKeys.LESSON_NUMBER,lessonNumber)
-            .push()
         viewModel.saveIntroVideoFlowImpression(INTRO_VIDEO_STARTED_PLAYING)
-        binding.videoView.setPlayListener {
-            val currentVideoProgressPosition = binding.videoView.progress
-            openVideoPlayerActivity.launch(
-                VideoPlayerActivity.getActivityIntent(
-                    this,
-                    "",
-                    null,
-                    introVideoUrl,
-                    currentVideoProgressPosition,
-                    conversationId = getConversationId()
-                )
-            )
-        }
-
-        lifecycleScope.launchWhenStarted {
-            binding.videoView.downloadStreamPlay()
-        }
-
-        binding.imageViewClose.setOnClickListener {
-            MixPanelTracker.publishEvent(MixPanelEvent.CANCEL).push()
-            closeIntroVideoPopUpUi()
-        }
-
-        binding.videoView.outlineProvider = object : ViewOutlineProvider() {
-            override fun getOutline(view: View, outline: Outline) {
-                outline.setRoundRect(0, 0, view.width, view.height, 15f)
-            }
-        }
-        binding.videoView.clipToOutline = true
-
+        videoEvent.postValue(
+            Event(VideoModel(video_url = introVideoUrl, id = INTRO_VIDEO_ID))
+        )
         binding.videoCallBtn.setOnClickListener {
             PrefManager.put(IS_CALL_BTN_CLICKED_FROM_NEW_SCREEN, true)
             viewModel.saveIntroVideoFlowImpression(CALL_BUTTON_CLICKED_FROM_NEW_SCREEN)
             callPracticePartner()
             MixPanelTracker.publishEvent(MixPanelEvent.CALL_PRACTICE_PARTNER)
-                .addParam(ParamKeys.LESSON_ID,getLessonId)
-                .addParam(ParamKeys.LESSON_NUMBER,lessonNumber)
-                .addParam(ParamKeys.VIA,"intro video complete")
+                .addParam(ParamKeys.LESSON_ID, getLessonId)
+                .addParam(ParamKeys.LESSON_NUMBER, lessonNumber)
+                .addParam(ParamKeys.VIA, "intro video complete")
                 .push()
         }
     }
 
-    private fun closeIntroVideoPopUpUi() {
+    private fun closeVideoPopUpUi() {
         binding.videoPopup.visibility = View.GONE
         binding.spotlightCallBtn.visibility = View.GONE
         binding.spotlightCallBtnText.visibility = View.GONE
@@ -1432,14 +1500,16 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         binding.overlayLayout.visibility = View.GONE
         binding.overlayLayoutSpeaking.visibility = View.GONE
         binding.videoView.onStop()
-        if (lastVideoWatchedDuration > d2pIntroVideoWatchedDuration) {
-            lastVideoWatchedDuration = 0
+        if (videoEvent.value?.peekContent()?.id == INTRO_VIDEO_ID) {
+            if (lastVideoWatchedDuration > d2pIntroVideoWatchedDuration) {
+                lastVideoWatchedDuration = 0
+            }
+            viewModel.saveIntroVideoFlowImpression(
+                TIME_SPENT_ON_INTRO_VIDEO,
+                (d2pIntroVideoWatchedDuration - lastVideoWatchedDuration)
+            )
+            lastVideoWatchedDuration = d2pIntroVideoWatchedDuration
         }
-        viewModel.saveIntroVideoFlowImpression(
-            TIME_SPENT_ON_INTRO_VIDEO,
-            (d2pIntroVideoWatchedDuration - lastVideoWatchedDuration)
-        )
-        lastVideoWatchedDuration = d2pIntroVideoWatchedDuration
     }
 
     private fun setUpVideoProgressListener() {
@@ -1460,7 +1530,6 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                                 binding.videoView.player?.duration!!
                             ).toInt()
 
-
                         if (percentVideoWatched != 0) {
                             d2pIntroVideoWatchedDuration = mediaProgressEvent.watchTime
                         }
@@ -1473,8 +1542,8 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                         }
                         if (videoPercent != 0 && videoPercent >= 80 && !isIntroVideoCmpleted) {
                             MixPanelTracker.publishEvent(MixPanelEvent.SPEAKING_VIDEO_COMPLETE)
-                                .addParam(ParamKeys.LESSON_ID,getLessonId)
-                                .addParam(ParamKeys.LESSON_NUMBER,lessonNumber)
+                                .addParam(ParamKeys.LESSON_ID, getLessonId)
+                                .addParam(ParamKeys.LESSON_NUMBER, lessonNumber)
                                 .push()
                             isIntroVideoCmpleted = true
                         }

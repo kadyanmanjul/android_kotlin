@@ -39,7 +39,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_19sdp"
                 android:layout_marginEnd="@dimen/_6sdp"
-                android:visibility="visible"
+                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/flag_iv"
                 app:layout_constraintTop_toTopOf="@id/flag_iv"
@@ -50,7 +50,7 @@
                 android:id="@+id/animated_video_iv"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:visibility="visible"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="@id/video_iv"
                 app:layout_constraintEnd_toEndOf="@id/video_iv"
                 app:layout_constraintStart_toStartOf="@id/video_iv"
@@ -216,6 +216,20 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/text_container" />
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/blue_new_btn_pressed_state"
+            android:padding="@dimen/_12sdp"
+            android:visibility="gone"
+            android:indeterminateTint="@color/white"
+            app:layout_constraintBottom_toBottomOf="@id/grammar_btn"
+            app:layout_constraintEnd_toEndOf="@id/grammar_btn"
+            app:layout_constraintStart_toStartOf="@id/grammar_btn"
+            app:layout_constraintTop_toTopOf="@id/grammar_btn"
+            tools:visibility="visible" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>

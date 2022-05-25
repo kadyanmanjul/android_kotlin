@@ -5,11 +5,11 @@ import android.app.Application
 import android.os.Message
 import android.util.Log
 import android.view.View
+import androidx.databinding.ObservableArrayList
 import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.joshtalks.joshskills.base.BaseViewModel
 import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.base.constants.FPP
 import com.joshtalks.joshskills.base.constants.FROM_INCOMING_CALL
@@ -20,17 +20,17 @@ import com.joshtalks.joshskills.base.log.JoshLog
 import com.joshtalks.joshskills.ui.call.repository.RepositoryConstants.*
 import com.joshtalks.joshskills.ui.call.repository.WebrtcRepository
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.models.CallUIState
+import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.constant.*
 import com.joshtalks.joshskills.voip.data.ServiceEvents
 import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.util.*
-import kotlin.collections.HashMap
+
 
 const val CONNECTING = 1
 const val ONGOING = 2
@@ -46,6 +46,7 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
     private val mutex = Mutex(false)
     val callType = ObservableField("")
     val callStatus = ObservableInt(getCallStatus())
+    var imageList = ObservableArrayList<String>()
     val callData = HashMap<String, Any>()
     val uiState by lazy { CallUIState() }
     val pendingEvents = ArrayDeque<Int>()
@@ -134,7 +135,9 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                 uiState.name = state.remoteUserName
                 uiState.profileImage = state.remoteUserImage ?: ""
                 uiState.topic = state.topicName
+                uiState.topicImage = state.currentTopicImage
                 uiState.type = state.callType
+                uiState.occupation = getOccupationText(state.aspiration,state.occupation)
                 uiState.title = when (state.callType) {
                     PEER_TO_PEER -> "Practice with Partner"
                     FPP -> "Favorite Practice Partner"
@@ -179,6 +182,21 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
+    private fun getOccupationText(aspiration: String, occupation: String): String {
+        if (!checkIfNullOrEmpty(occupation) && !checkIfNullOrEmpty(aspiration)) {
+           return "$occupation, Dream - $aspiration"
+        } else if (checkIfNullOrEmpty(occupation) && !checkIfNullOrEmpty(aspiration)) {
+            return "Dream - $aspiration"
+        } else if (!checkIfNullOrEmpty(occupation) && checkIfNullOrEmpty(aspiration)) {
+            return occupation
+        }
+        return ""
+    }
+
+    private fun checkIfNullOrEmpty(word : String) : Boolean{
+       return word == "" || word == "null"
+    }
+
     private fun getCallStatus(): Int {
         val status = PrefManager.getVoipState()
         return if (status == State.CONNECTED) {
@@ -199,7 +217,8 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
         CallAnalytics.addAnalytics(
             event = EventName.DISCONNECTED_BY_RED_BUTTON,
             agoraCallId = PrefManager.getAgraCallId().toString(),
-            agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
+            agoraMentorId = PrefManager.getLocalUserAgoraId().toString(),
+            extra = PrefManager.getVoipState().name
         )
         disconnect()
     }
@@ -261,6 +280,19 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
         repository.backPress()
     }
 
+    fun getNewTopicImage(v:View){
+        if(Utils.isInternetAvailable().not()){
+            Utils.showToast("Seems like you have no internet")
+            return
+        }
+        CallAnalytics.addAnalytics(
+            event = EventName.NEXT_TOPIC_BTN_PRESS,
+            agoraCallId = PrefManager.getAgraCallId().toString(),
+            agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
+        )
+        repository.getNewTopicImage()
+    }
+
     fun boundService(activity: Activity) {
         voipLog?.log("binding Service")
         repository.startService(activity)
@@ -270,7 +302,6 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
         voipLog?.log("unbound Service")
         repository.stopService(activity)
     }
-
     override fun onCleared() {
         Log.d(TAG, "onCleared: ")
         super.onCleared()

@@ -495,7 +495,7 @@ class LauncherActivity : CoreJoshActivity() {
 
     private fun changeLanguageOfApp() {
         requestWorkerForChangeLanguage(
-            "hi",
+            PrefManager.getStringValue(USER_LOCALE),
             canCreateActivity = false,
             successCallback = {
                 AppObjectController.isSettingUpdate = true

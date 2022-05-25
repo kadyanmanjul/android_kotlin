@@ -86,6 +86,11 @@ class ABTestRepository {
                                 prop.put("20_MIN_TARGET",i.variantKey)
                             }
                         }
+                        "A2_C1"->{
+                            if(i.isCampaignActive){
+                                prop.put("A2_C1",i.variantKey)
+                            }
+                        }
                     }
                 }
 

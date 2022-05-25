@@ -44,6 +44,19 @@ data class UI(
 	private val address : String
 
 ) : UIState {
+
+	companion object {
+		fun fromMap(map: Map<String, Any?>?) : UI {
+			return UI(
+				channelName = map?.get("channelName").toString(),
+				type =  map?.get("type").toString().toInt(),
+				isHold = map?.get("is_hold").toString().toInt(),
+				isMute = map?.get("is_mute").toString().toInt(),
+				address = ""
+			)
+		}
+	}
+
 	override fun getType(): Int {
 		return type
 	}
