@@ -1,32 +1,25 @@
 package com.joshtalks.joshskills.ui.online_test
 
-import android.animation.Animator
-import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator
+import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.ViewTreeObserver
+import android.view.*
+import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
-import com.google.android.exoplayer2.ExoPlayer
+import com.airbnb.lottie.LottieAnimationView
+import com.google.android.material.textview.MaterialTextView
 import com.google.gson.reflect.TypeToken
+import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
-import com.joshtalks.joshskills.core.analytics.MixPanelEvent
-import com.joshtalks.joshskills.core.analytics.MixPanelTracker
-import com.joshtalks.joshskills.core.analytics.ParamKeys
-import com.joshtalks.joshskills.core.custom_ui.JoshGrammarVideoPlayer
-import com.joshtalks.joshskills.core.io.AppDirectory
-import com.joshtalks.joshskills.core.service.DownloadUtils
+import com.joshtalks.joshskills.core.abTest.CampaignKeys
+import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
 import com.joshtalks.joshskills.databinding.FragmentOnlineTestBinding
-import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
+import com.joshtalks.joshskills.repository.local.entity.AudioType
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.local.model.assessment.Choice
 import com.joshtalks.joshskills.repository.server.assessment.ChoiceType
@@ -34,61 +27,65 @@ import com.joshtalks.joshskills.repository.server.assessment.OnlineTestType
 import com.joshtalks.joshskills.repository.server.assessment.QuestionStatus
 import com.joshtalks.joshskills.repository.server.course_detail.VideoModel
 import com.joshtalks.joshskills.ui.assessment.view.Stub
-import com.joshtalks.joshskills.ui.chat.vh.*
+import com.joshtalks.joshskills.ui.chat.vh.GrammarHeadingView
 import com.joshtalks.joshskills.ui.lesson.LessonActivity
 import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
-import com.joshtalks.joshskills.ui.lesson.grammar_new.McqChoiceView
+import com.joshtalks.joshskills.ui.online_test.util.*
+import com.joshtalks.joshskills.ui.online_test.vh.AtsChoiceView
+import com.joshtalks.joshskills.ui.online_test.vh.GrammarButtonView
+import com.joshtalks.joshskills.ui.online_test.vh.McqChoiceView
+import com.joshtalks.joshskills.ui.online_test.vh.SubjectiveChoiceView
 import com.joshtalks.joshskills.ui.special_practice.utils.ErrorView
-import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
+import com.joshtalks.joshskills.util.ExoAudioPlayer2
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import com.tonyodev.fetch2.NetworkType
-import com.tonyodev.fetch2.Priority
-import com.tonyodev.fetch2.Request
+import com.muddzdev.styleabletoast.StyleableToast
 import com.userexperior.utilities.SecureViewBucket
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import timber.log.Timber
 import java.lang.reflect.Type
+import kotlin.random.Random
 
-class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedListener {
+class OnlineTestFragment :
+    CoreJoshFragment(),
+    GrammarSubmitButtonListener,
+    GrammarButtonViewCallback,
+    ViewTreeObserver.OnScrollChangedListener, AudioPlayerEventListener {
 
-    lateinit var binding: FragmentOnlineTestBinding
+    private lateinit var binding: FragmentOnlineTestBinding
+
     private val viewModel: OnlineTestViewModel by lazy {
         ViewModelProvider(requireActivity()).get(OnlineTestViewModel::class.java)
     }
-    private var assessmentQuestions: AssessmentQuestionWithRelations? = null
-    private var ruleAssessmentQuestionId: String? = null
-    private var totalQuestion: Int? = null
-    private var totalAnsweredQuestions: Int? = null
     private var lessonNumber: Int = -1
     private var lessonId: Int = -1
     private var headingView: Stub<GrammarHeadingView>? = null
-    private var mcqChoiceView: Stub<McqChoiceView>? = null
-    private var atsChoiceView: Stub<AtsChoiceView>? = null
-    private var subjectiveChoiceView: Stub<SubjectiveChoiceView>? = null
     private var buttonView: Stub<GrammarButtonView>? = null
     private var errorView: Stub<ErrorView>? = null
-    private var isFirstTime: Boolean = true
+    private var lessonActivityListener: LessonActivityListener? = null
+    private var testCompletedListener: TestCompletedListener? = null
+    private var ruleAssessmentQuestionId: String? = null
+    private var assessmentQuestion: AssessmentQuestionWithRelations? = null
+    private var audioManager: ExoAudioPlayer2? = null
+    private var atsChoiceView: Stub<AtsChoiceView>? = null
+    private var mcqChoiceView: Stub<McqChoiceView>? = null
+    private var subjectiveChoiceView: Stub<SubjectiveChoiceView>? = null
+    private var reviseVideoObject: VideoModel? = null
     private var isTestCompleted: Boolean = false
     private var scoreText: Int? = 0
     private var pointsList: String? = null
-    private var testCallback: OnlineTestInterface? = null
-    private var lessonActivityListener: LessonActivityListener? = null
-    var reviseVideoObject: VideoModel? = null
     private var previousId: Int = -1
-    private var completed = false
-    private var questionId = -1
+    private var isAttempted: Boolean = false
+    private var questionStartTime: Long = 0
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if (context is OnlineTestInterface)
-            testCallback = context
-
-        if (context is LessonActivityListener)
+        if (context is LessonActivityListener) {
             lessonActivityListener = context
+        }
+        if (context is TestCompletedListener) {
+            testCompletedListener = context
+        }
     }
 
     override fun onCreateView(
@@ -103,19 +100,18 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
         lessonId = if (requireActivity().intent.hasExtra(LessonActivity.LESSON_ID)) {
             requireActivity().intent.getIntExtra(LessonActivity.LESSON_ID, 0)
         } else 0
-
-        binding =
-            DataBindingUtil.inflate(
-                inflater,
-                R.layout.fragment_online_test,
-                container,
-                false
-            )
+        binding = DataBindingUtil.inflate(
+            inflater,
+            R.layout.fragment_online_test,
+            container,
+            false
+        )
         binding.handler = this
         binding.lifecycleOwner = this
         setObservers()
         binding.progressContainer.visibility = View.VISIBLE
-        viewModel.fetchAssessmentDetails(lessonId)
+        viewModel.fetchQuestionsOrPostAnswer(lessonId)
+        audioManager = ExoAudioPlayer2.getInstance()
         return binding.root
     }
 
@@ -124,32 +120,59 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
         initViews()
     }
 
-    private fun initViews() {
+    fun initViews() {
         headingView = Stub(binding.choiceContainer.findViewById(R.id.heading_view))
-        mcqChoiceView = Stub(binding.choiceContainer.findViewById(R.id.mcq_choice_view))
-        atsChoiceView = Stub(binding.choiceContainer.findViewById(R.id.ats_choice_view))
-        subjectiveChoiceView =
-            Stub(binding.choiceContainer.findViewById(R.id.subjective_choice_view))
         buttonView = Stub(binding.container.findViewById(R.id.button_action_views))
         errorView = Stub(binding.container.findViewById(R.id.error_view))
+        atsChoiceView = Stub(binding.container.findViewById(R.id.ats_choice_view))
+        mcqChoiceView = Stub(binding.container.findViewById(R.id.mcq_choice_view))
+        subjectiveChoiceView = Stub(binding.container.findViewById(R.id.subjective_choice_view))
     }
 
     private fun setObservers() {
         viewModel.grammarAssessmentLiveData.observe(viewLifecycleOwner) { onlineTestResponse ->
             this.ruleAssessmentQuestionId = onlineTestResponse.ruleAssessmentQuestionId
             this.reviseVideoObject = onlineTestResponse.videoObject
-            this.totalQuestion = onlineTestResponse.totalQuestions
-            this.totalAnsweredQuestions = onlineTestResponse.totalAnswered ?: 0
-            questionId = onlineTestResponse.question?.id?:-1
-            animateProgress()
+            binding.questionProgressBar.apply {
+                max =
+                    (onlineTestResponse.totalQuestions ?: 0).times(100)
+                isVisible = onlineTestResponse.totalQuestions != null
+                animateProgress(onlineTestResponse.totalAnswered ?: 0)
+            }
+            binding.markAsCorrect.isVisible = BuildConfig.DEBUG
+            binding.markAsCorrect.setOnClickListener {
+//                 TODO: STOPSHIP this is a temporary fix for marking as correct
+                buttonView?.get()?.showAnswerFeedbackView(true)
+                buttonView?.get()?.toggleSubmitButton(true)
+                assessmentQuestion!!.question.isCorrect = true
+                assessmentQuestion!!.question.status = QuestionStatus.CORRECT
+                playSnackbarSound(requireActivity())
+                getViewStub()?.lockViews()
+                binding.markAsCorrect.isEnabled = false
+                val answerText: String? = when (assessmentQuestion!!.question.choiceType) {
+                    ChoiceType.SINGLE_SELECTION_TEXT -> assessmentQuestion!!.choiceList.first { it.isCorrect }.text
+                    ChoiceType.ARRANGE_THE_SENTENCE -> assessmentQuestion!!.question.listOfAnswers?.first()
+                    ChoiceType.INPUT_TEXT -> assessmentQuestion!!.choiceList.first().text
+                    else -> ""
+                }
+                viewModel.storeAnswerToDb(
+                    assessmentQuestion = assessmentQuestion!!,
+                    lessonId = lessonId,
+                    lessonNumber = lessonNumber,
+                    answerText = answerText ?: "",
+                    ruleAssessmentQuestionId = ruleAssessmentQuestionId,
+                    timeTaken = System.currentTimeMillis() - questionStartTime
+                )
+                isAttempted = true
+            }
             if (onlineTestResponse.completed) {
                 PrefManager.put(ONLINE_TEST_LAST_LESSON_COMPLETED, lessonNumber)
                 if (onlineTestResponse.ruleAssessmentId != null) {
                     addNewRuleCompleted(onlineTestResponse.ruleAssessmentId)
                 }
                 isTestCompleted = onlineTestResponse.completed
-                scoreText = onlineTestResponse.scoreText
                 onlineTestResponse.scoreText?.let {
+                    scoreText = it
                     PrefManager.put(
                         FREE_TRIAL_TEST_SCORE, it, false
                     )
@@ -162,8 +185,7 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
                         false
                     )
                 }
-
-
+                showGrammarCompleteFragment()
             } else {
                 if (onlineTestResponse.ruleAssessmentId != null) {
                     if (previousId != onlineTestResponse.ruleAssessmentId &&
@@ -174,77 +196,46 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
                     previousId = onlineTestResponse.ruleAssessmentId
                 }
                 onlineTestResponse.question?.let {
-                    this.assessmentQuestions = AssessmentQuestionWithRelations(it, 10)
-                    this.assessmentQuestions?.choiceList?.let { list ->
+                    this.assessmentQuestion = AssessmentQuestionWithRelations(it, 10)
+                    this.assessmentQuestion?.choiceList?.let { list ->
                         viewModel.insertChoicesToDB(
-                            list, this.assessmentQuestions
+                            list, this.assessmentQuestion
                         )
                     }
-                    if (isFirstTime) {
-                        setupViews(assessmentQuestions!!)
-                    }
+                    moveToNextGrammarQuestion()
                 }
             }
-
-            isFirstTime = false
         }
-
-        viewModel.apiStatus.observe(viewLifecycleOwner) {
+        viewModel.apiStatus.observe(viewLifecycleOwner)
+        {
             when (it) {
                 ApiCallStatus.START -> {
-                    //binding.progressContainer.visibility = View.VISIBLE
                     binding.progressContainer.visibility = View.GONE
+                    toggleLoading(true)
                 }
                 ApiCallStatus.FAILED -> {
                     binding.progressContainer.visibility = View.GONE
+                    toggleLoading(false)
                     errorView?.resolved()?.let {
                         errorView!!.get().onFailure(object : ErrorView.ErrorCallback {
                             override fun onRetryButtonClicked() {
-                                if (assessmentQuestions != null) {
-                                    viewModel.postAnswerAndGetNewQuestion(
-                                        assessmentQuestions!!,
-                                        ruleAssessmentQuestionId,
-                                        lessonId
-                                    )
-                                } else {
-                                    viewModel.fetchAssessmentDetails(lessonId)
-                                }
+                                viewModel.fetchQuestionsOrPostAnswer(lessonId)
                             }
                         })
                     }
                 }
                 ApiCallStatus.SUCCESS -> {
+                    toggleLoading(false)
                     binding.progressContainer.visibility = View.GONE
                     errorView?.resolved()?.let {
                         errorView!!.get().onSuccess()
                     }
                 }
                 else -> {
+                    toggleLoading(false)
                     binding.progressContainer.visibility = View.GONE
                 }
             }
-        }
-    }
-
-    private fun addNewRuleCompleted(ruleCompletedId: Int) {
-        completed = true
-        val mapTypeToken: Type = object : TypeToken<List<Int>?>() {}.type
-        val list: List<Int>? = AppObjectController.gsonMapper.fromJson(
-            PrefManager.getStringValue(ONLINE_TEST_LIST_OF_COMPLETED_RULES),
-            mapTypeToken
-        )
-        val newupdateList = mutableSetOf<Int>()
-        if (list.isNullOrEmpty().not()) {
-            newupdateList.addAll(list!!)
-        }
-        val isRuleAlreadyCompleted = newupdateList.contains(ruleCompletedId)
-        if (isRuleAlreadyCompleted.not()) {
-            newupdateList.add(ruleCompletedId)
-            PrefManager.put(
-                ONLINE_TEST_LIST_OF_COMPLETED_RULES,
-                newupdateList.toString()
-            )
-            viewModel.sendCompletedRuleIdsToBAckend(ruleCompletedId)
         }
     }
 
@@ -253,13 +244,8 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
             showGrammarCompleteFragment()
             return
         }
-        if (totalQuestion != null) {
-            binding.questionProgressBar.visibility = View.VISIBLE
-            binding.questionProgressBar.max = (totalQuestion ?: 0).times(100)
-        } else {
-            binding.questionProgressBar.visibility = View.VISIBLE
-        }
         downloadAudios(assessmentQuestions.choiceList)
+        questionStartTime = System.currentTimeMillis()
         headingView?.resolved().let {
             headingView!!.get().setup(
                 assessmentQuestions.question.mediaUrl,
@@ -269,229 +255,55 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
                 assessmentQuestions.question.isNewHeader
             )
         }
-        binding.videoContainer.setOnClickListener {
-            LessonActivity.isVideoVisible.postValue(false)
+        getViewStub()?.apply {
+            setup(assessmentQuestions)
+            addGrammarTestCallback(this@OnlineTestFragment)
         }
-        when (assessmentQuestions.question.choiceType) {
-            ChoiceType.ARRANGE_THE_SENTENCE -> {
-                mcqChoiceView?.get()?.visibility = View.GONE
-                subjectiveChoiceView?.get()?.visibility = View.GONE
-                subjectiveChoiceView?.let {
-                    SecureViewBucket.removeFromSecureViewBucket(it.get())
-                }
-                atsChoiceView?.resolved().let {
-                    atsChoiceView?.get()?.visibility = View.VISIBLE
-                    atsChoiceView!!.get().setup(assessmentQuestions)
-                    atsChoiceView!!.get().addImpressionCallback(object : TrackUndoImpression {
-                        override fun trackUndoImpression() {
-                            viewModel.saveImpression(IMPRESSION_UNDO_ATS_OPTION)
-                        }
-                    })
-                    atsChoiceView!!.get()
-                        .addCallback(object : EnableDisableGrammarButtonCallback {
-                            override fun disableGrammarButton() {
-                                buttonView?.get()?.disableBtn()
-                            }
-
-                            override fun enableGrammarButton() {
-                                buttonView?.get()?.enableBtn()
-                            }
-
-                            override fun alreadyAttempted(isCorrectAnswer: Boolean) {
-                                CoroutineScope(Dispatchers.Main).launch {
-                                    buttonView?.get()?.setAlreadyAttemptedView(isCorrectAnswer)
-                                }
-                            }
-
-                        })
-                }
-            }
-            ChoiceType.SINGLE_SELECTION_TEXT -> {
-                atsChoiceView?.get()?.visibility = View.GONE
-                subjectiveChoiceView?.get()?.visibility = View.GONE
-                subjectiveChoiceView?.let {
-                    SecureViewBucket.removeFromSecureViewBucket(it.get())
-                }
-                mcqChoiceView?.resolved().let {
-                    mcqChoiceView?.get()?.visibility = View.VISIBLE
-                    mcqChoiceView!!.get().setup(assessmentQuestions)
-                    mcqChoiceView!!.get()
-                        .addCallback(object : EnableDisableGrammarButtonCallback {
-                            override fun disableGrammarButton() {
-                                buttonView?.get()?.disableBtn()
-                            }
-
-                            override fun enableGrammarButton() {
-                                buttonView?.get()?.enableBtn()
-                            }
-
-                            override fun alreadyAttempted(isCorrectAnswer: Boolean) {
-                                CoroutineScope(Dispatchers.Main).launch {
-                                    buttonView?.get()?.setAlreadyAttemptedView(isCorrectAnswer)
-                                }
-                            }
-
-                        })
-                }
-            }
-            ChoiceType.INPUT_TEXT -> {
-                atsChoiceView?.get()?.visibility = View.GONE
-                mcqChoiceView?.get()?.visibility = View.GONE
-                subjectiveChoiceView?.resolved().let {
-                    subjectiveChoiceView?.get()?.visibility = View.VISIBLE
-                    subjectiveChoiceView!!.get().setup(assessmentQuestions)
-                    subjectiveChoiceView!!.get()
-                        .addCallback(object : EnableDisableGrammarButtonCallback {
-                            override fun disableGrammarButton() {
-                                buttonView?.get()?.disableBtn()
-                            }
-
-                            override fun enableGrammarButton() {
-                                buttonView?.get()?.enableBtn()
-                            }
-
-                            override fun alreadyAttempted(isCorrectAnswer: Boolean) {
-                                CoroutineScope(Dispatchers.Main).launch {
-                                    buttonView?.get()?.setAlreadyAttemptedView(isCorrectAnswer)
-                                }
-                            }
-
-                        })
-                }
-            }
-            else -> {
-                atsChoiceView?.get()?.visibility = View.GONE
-                subjectiveChoiceView?.get()?.visibility = View.GONE
-                mcqChoiceView?.get()?.visibility = View.GONE
-            }
-        }
-
-        buttonView?.resolved().let {
-            buttonView!!.get().setup(assessmentQuestions, reviseVideoObject)
-            buttonView!!.get().addCallback(object : GrammarButtonView.CheckQuestionCallback {
-                override fun checkQuestionCallBack(): Boolean? {
-                    return when (assessmentQuestions.question.choiceType) {
-                        ChoiceType.ARRANGE_THE_SENTENCE -> atsChoiceView?.get()?.isCorrectAnswer()
-                            ?.apply {
-                                onCheckQuestion(assessmentQuestions, this)
-                            }
-                        ChoiceType.SINGLE_SELECTION_TEXT -> {
-                            mcqChoiceView?.get()?.isCorrectAnswer()?.apply {
-                                onCheckQuestion(assessmentQuestions, this)
-                            }
-                        }
-                        ChoiceType.INPUT_TEXT -> {
-                            subjectiveChoiceView?.get()?.isCorrectAnswer()?.apply {
-                                onCheckQuestion(assessmentQuestions, this)
-                            }
-                        }
-                        else -> null
-                    }
-                }
-
-                override fun nextQuestion() {
-                    MixPanelTracker.publishEvent(MixPanelEvent.GRAMMAR_QUIZ_CONTINUE)
-                        .addParam(ParamKeys.LESSON_ID,lessonId)
-                        .addParam(ParamKeys.QUESTION_ID,questionId)
-                        .push()
-                    moveToNextGrammarQuestion()
-                }
-
-                override fun onVideoButtonAppear(
-                    wrongAnswerHeading: String?,
-                    wrongAnswerSubHeading: String?,
-                    wrongAnswerText: String?,
-                    wrongAnswerDescription: String?
-                ) {
-                    if (PrefManager.hasKey(
-                            HAS_SEEN_QUIZ_VIDEO_TOOLTIP,
-                        ).not()
-                    ) {
-                        lessonActivityListener?.showVideoToolTip(
-                            shouldShow = true,
-                            wrongAnswerHeading = wrongAnswerHeading,
-                            wrongAnswerSubHeading = wrongAnswerSubHeading,
-                            wrongAnswerText = wrongAnswerText,
-                            wrongAnswerDescription = wrongAnswerDescription,
-                            videoClickListener = { buttonView!!.get().viewVideo() }
-                        )
-                    }
-                }
-
-                override fun onVideoButtonClicked() {
-                    binding.progressContainer.isVisible = true
-                    LessonActivity.isVideoVisible.value = true
-                    reviseVideoObject?.let {
-                        with(binding.videoPlayer) {
-                            setUrl(it.video_url)
-                            setVideoId(it.id)
-                            setVideoThumbnail(it.video_image_url)
-                            fitToScreen()
-                            if (it.video_height != 0 && it.video_width != 0) {
-                                (binding.videoPlayer.layoutParams as ConstraintLayout.LayoutParams).dimensionRatio =
-                                    (it.video_width / it.video_height).toString()
-                            }
-                            downloadStreamPlay()
-                            setPlayerEventCallback { event, _ ->
-                                if (event == ExoPlayer.STATE_ENDED) {
-                                    LessonActivity.isVideoVisible.value = false
-                                    PrefManager.appendToSet(
-                                        LAST_SEEN_VIDEO_ID,
-                                        it.id, false
-                                    )
-                                }
-                            }
-                            setPlayListener(object :
-                                JoshGrammarVideoPlayer.PlayerFullScreenListener {
-                                override fun onFullScreen() {
-                                    val currentVideoProgressPosition = binding.videoPlayer.progress
-                                    startActivity(
-                                        VideoPlayerActivity.getActivityIntent(
-                                            requireContext(),
-                                            "",
-                                            it.id,
-                                            it.video_url,
-                                            currentVideoProgressPosition,
-                                            conversationId = getConversationId()
-                                        )
-                                    )
-                                    LessonActivity.isVideoVisible.value = false
-                                }
-
-                                override fun onClose() {
-                                    onPause()
-                                    LessonActivity.isVideoVisible.value = false
-                                }
-                            })
-                        }
-                    } ?: showToast("Error playing video")
-                }
-            })
+        binding.markAsCorrect.isEnabled = true
+        buttonView?.resolved()?.let {
+            buttonView!!.get().setup(assessmentQuestions, reviseVideoObject?.id)
+            buttonView!!.get().addCallback(this)
         }
     }
 
-    private fun setVideoThumbnail(thumbnailUrl: String?) {
-        lifecycleScope.launch(Dispatchers.IO) {
-            try {
-                val thumbnailDrawable: Drawable? =
-                    Utils.getDrawableFromUrl(thumbnailUrl)
-                if (thumbnailDrawable != null) {
-                    AppObjectController.uiHandler.post {
-                        binding.videoPlayer.useArtwork = true
-                        binding.videoPlayer.defaultArtwork = thumbnailDrawable
-//                    val imgArtwork: ImageView = binding.videoPlayer.findViewById(R.id.exo_artwork) as ImageView
-//                    imgArtwork.setImageDrawable(thumbnailDrawable)
-//                    imgArtwork.visibility = View.VISIBLE
-                    }
-                }
-            } catch (e: java.lang.Exception) {
-            }
-        }
+    fun showGrammarCompleteFragment() {
+        activity?.supportFragmentManager?.beginTransaction()?.replace(
+            R.id.parent_Container,
+            GrammarOnlineTestFragment.getInstance(lessonNumber, scoreText, pointsList),
+            GrammarOnlineTestFragment.TAG
+        )?.addToBackStack(GrammarOnlineTestFragment.TAG)?.commitAllowingStateLoss()
+        testCompletedListener?.onTestCompleted()
     }
 
-    private fun animateProgress() {
+    private fun addNewRuleCompleted(ruleCompletedId: Int) {
+        animateProgress(0)
+        val mapTypeToken: Type = object : TypeToken<List<Int>?>() {}.type
+        val list: List<Int>? = AppObjectController.gsonMapper.fromJson(
+            PrefManager.getStringValue(ONLINE_TEST_LIST_OF_COMPLETED_RULES),
+            mapTypeToken
+        )
+        val newUpdateList = mutableSetOf<Int>()
+        if (list.isNullOrEmpty().not()) {
+            newUpdateList.addAll(list!!)
+        }
+        if (newUpdateList.contains(ruleCompletedId).not()) {
+            newUpdateList.add(ruleCompletedId)
+            PrefManager.put(
+                ONLINE_TEST_LIST_OF_COMPLETED_RULES,
+                newUpdateList.toString()
+            )
+            viewModel.sendCompletedRuleIdsToBAckend(ruleCompletedId)
+        }
+        if (PrefManager.hasKey(IS_A2_C1_RETENTION_ENABLED) && PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID) {
+            viewModel.postGoal("RULE_${lessonNumber}_COMPLETED", CampaignKeys.A2_C1.name)
+        }
+        showGrammarCompleteFragment()
+    }
+
+    @SuppressLint("Recycle")
+    private fun animateProgress(answeredCount: Int) {
         val currentProgress = binding.questionProgressBar.progress
-        val finalProgress = (totalAnsweredQuestions ?: 0).times(100)
+        val finalProgress = answeredCount.times(100)
         ValueAnimator.ofInt(currentProgress, finalProgress).apply {
             duration = 400
             addUpdateListener {
@@ -501,67 +313,155 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
         }
     }
 
+    private fun isAudioPlaying(): Boolean =
+        this.checkIsPlayer() && this.audioManager!!.isPlaying()
+
+    private fun checkIsPlayer(): Boolean =
+        audioManager != null
+
+    private fun onPlayAudio(
+        audioObject: AudioType
+    ) {
+        audioManager?.playerListener = this
+        audioManager?.play(
+            audioObject.audio_url,
+            playbackSpeed = AppObjectController.getFirebaseRemoteConfig()
+                .getDouble(FirebaseRemoteConfigKey.GRAMMAR_CHOICE_PLAYBACK_SPEED).toFloat()
+        )
+    }
+
+    override fun toggleSubmitButton(isEnabled: Boolean) {
+        buttonView?.get()?.toggleSubmitButton(isEnabled)
+    }
+
+    override fun toggleLoading(isLoading: Boolean) {
+        buttonView?.get()?.toggleLoading(isLoading)
+    }
+
+    fun isCorrectAnswer(): Boolean = getViewStub()?.isAnswerCorrect() ?: false
+
+    fun getAnswerText(): String = getViewStub()?.getAnswerText() ?: ""
+
+    override fun playAudio(audioUrl: String?, localAudioPath: String?) {
+        val audioUrl2 = localAudioPath ?: audioUrl?.replace(" ".toRegex(), "%20")
+        audioUrl2?.let { url ->
+            if (Utils.getCurrentMediaVolume(AppObjectController.joshApplication) <= 0) {
+                StyleableToast.Builder(AppObjectController.joshApplication)
+                    .gravity(Gravity.BOTTOM)
+                    .text(AppObjectController.joshApplication.getString(R.string.volume_up_message))
+                    .cornerRadius(16)
+                    .length(Toast.LENGTH_LONG)
+                    .solidBackground().show()
+            }
+            if (isAudioPlaying())
+                audioManager?.onPause()
+            val audioType = AudioType()
+            audioType.audio_url = url
+            audioType.downloadedLocalPath = url
+            audioType.duration = 1_00
+            audioType.id = Random.nextInt().toString()
+            onPlayAudio(audioType)
+        }
+    }
+
+    companion object {
+        const val TAG = "OnlineTestFragment"
+
+        @JvmStatic
+        fun getInstance(lessonNumber: Int): OnlineTestFragment {
+            val args = Bundle()
+            args.putInt(GrammarOnlineTestFragment.CURRENT_LESSON_NUMBER, lessonNumber)
+            val fragment = OnlineTestFragment()
+            fragment.arguments = args
+            return fragment
+        }
+    }
+
+    override fun onGrammarButtonClick() {
+        if (isAttempted) {
+            viewModel.fetchQuestionsOrPostAnswer(lessonId)
+        } else {
+            isCorrectAnswer().run {
+                assessmentQuestion!!.question.status =
+                    if (this) QuestionStatus.CORRECT else QuestionStatus.WRONG
+                if (this)
+                    playSnackbarSound(requireActivity())
+                else
+                    playWrongAnswerSound(requireActivity())
+                buttonView?.get()?.showAnswerFeedbackView(this)
+                viewModel.storeAnswerToDb(
+                    assessmentQuestion = assessmentQuestion!!,
+                    answerText = getAnswerText(),
+                    lessonId = lessonId,
+                    lessonNumber = lessonNumber,
+                    ruleAssessmentQuestionId = ruleAssessmentQuestionId,
+                    timeTaken = System.currentTimeMillis() - questionStartTime
+                )
+            }
+            isAttempted = true
+        }
+    }
+
+    private fun moveToNextGrammarQuestion() {
+        isAttempted = false
+        lessonActivityListener?.onLessonUpdate()
+        assessmentQuestion?.let { setupViews(it) } ?: showGrammarCompleteFragment()
+    }
+
+    override fun showTooltip(
+        wrongAnswerTitle: String?,
+        wrongAnswerDescription: String?,
+        explanationTitle: String?,
+        explanationText: String?,
+    ) {
+        if (PrefManager.hasKey(
+                HAS_SEEN_QUIZ_VIDEO_TOOLTIP,
+            ).not()
+        ) {
+            lessonActivityListener?.showVideoToolTip(
+                shouldShow = true,
+                wrongAnswerHeading = wrongAnswerTitle,
+                wrongAnswerSubHeading = wrongAnswerDescription,
+                wrongAnswerText = explanationText,
+                wrongAnswerDescription = wrongAnswerDescription,
+                videoClickListener = { onVideoButtonClicked() }
+            )
+        }
+    }
+
+    fun getViewStub(): AssessmentQuestionViewCallback? {
+        return when (assessmentQuestion?.question?.choiceType) {
+            ChoiceType.ARRANGE_THE_SENTENCE -> atsChoiceView?.get()?.also {
+                it.visibility = View.VISIBLE
+                mcqChoiceView?.get()?.visibility = View.GONE
+                subjectiveChoiceView?.get()?.visibility = View.GONE
+            }
+            ChoiceType.SINGLE_SELECTION_TEXT -> mcqChoiceView?.get()?.also {
+                it.visibility = View.VISIBLE
+                atsChoiceView?.get()?.visibility = View.GONE
+                subjectiveChoiceView?.get()?.visibility = View.GONE
+            }
+            ChoiceType.INPUT_TEXT -> subjectiveChoiceView?.get()?.also {
+                it.visibility = View.VISIBLE
+                SecureViewBucket.removeFromSecureViewBucket(it)
+                atsChoiceView?.get()?.visibility = View.GONE
+                mcqChoiceView?.get()?.visibility = View.GONE
+            }
+            else -> null
+        }
+    }
+
+    override fun onVideoButtonClicked() {
+        A2C1Impressions.saveImpression(A2C1Impressions.Impressions.RULE_VIDEO_PLAYED)
+        reviseVideoObject?.let { LessonActivity.videoEvent.postValue(Event(it)) }
+    }
+
     private fun downloadAudios(choiceList: List<Choice>) {
         if (PermissionUtils.isStoragePermissionEnabled(AppObjectController.joshApplication).not()) {
             askStoragePermission(choiceList)
             return
         }
-        downloadAudioFileForNewGrammar(choiceList)
-    }
-
-    private fun downloadAudioFileForNewGrammar(choiceList: List<Choice>) {
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                if (PermissionUtils.isStoragePermissionEnabled(requireContext()).not()) {
-                    return@launch
-                }
-                for (choice in choiceList) {
-                    choice.downloadStatus = DOWNLOAD_STATUS.DOWNLOADING
-                    AppObjectController.appDatabase.assessmentDao()
-                        .updateChoiceDownloadStatusForAudio(
-                            choice.remoteId,
-                            DOWNLOAD_STATUS.DOWNLOADING
-                        )
-                    val file =
-                        AppDirectory.getAudioReceivedFile(choice.audioUrl.toString()).absolutePath
-                    if (choice.downloadStatus == DOWNLOAD_STATUS.DOWNLOADED) {
-                        return@launch
-                    }
-
-                    val request = Request(choice.audioUrl.toString(), file)
-                    request.priority = Priority.HIGH
-                    request.networkType = NetworkType.ALL
-                    request.tag = choice.remoteId.toString()
-                    AppObjectController.getFetchObject().enqueue(request, {
-                        choice.localAudioUrl = it.file
-                        choice.downloadStatus = DOWNLOAD_STATUS.DOWNLOADED
-                        CoroutineScope(Dispatchers.IO).launch {
-                            it.tag?.toInt()?.let { id ->
-                                AppObjectController.appDatabase.assessmentDao()
-                                    .updateChoiceDownloadStatusForAudio(
-                                        id,
-                                        DOWNLOAD_STATUS.DOWNLOADED
-                                    )
-                                AppObjectController.appDatabase.assessmentDao()
-                                    .updateChoiceLocalPathForAudio(id, it.file)
-                            }
-                        }
-                        DownloadUtils.objectFetchListener.remove(it.tag)
-                        Timber.e(it.url + "   " + it.file)
-                    },
-                        {
-                            it.throwable?.printStackTrace()
-                            choice.downloadStatus = DOWNLOAD_STATUS.FAILED
-                            CoroutineScope(Dispatchers.IO).launch {
-                                AppObjectController.appDatabase.assessmentDao()
-                                    .updateAssessmentChoice(choice)
-                            }
-                        })
-                }
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-            }
-        }
+        viewModel.downloadAudioFileForNewGrammar(choiceList)
     }
 
     private fun askStoragePermission(choiceList: List<Choice>) {
@@ -571,7 +471,7 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
                 override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                     report?.areAllPermissionsGranted()?.let { flag ->
                         if (flag) {
-                            downloadAudioFileForNewGrammar(choiceList)
+                            viewModel.downloadAudioFileForNewGrammar(choiceList)
                             return
                         }
                         if (report.isAnyPermissionPermanentlyDenied) {
@@ -598,109 +498,16 @@ class OnlineTestFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedL
         )
     }
 
-    fun showGrammarCompleteFragment() {
-        activity?.supportFragmentManager?.beginTransaction()?.replace(
-            R.id.parent_Container,
-            GrammarOnlineTestFragment.getInstance(lessonNumber, scoreText, pointsList),
-            GrammarOnlineTestFragment.TAG
-        )?.addToBackStack(TAG)?.commitAllowingStateLoss()
-    }
-
-    private fun onCheckQuestion(
-        assessmentQuestions: AssessmentQuestionWithRelations,
-        status: Boolean
-    ) {
-        if (completed) {
-            completed = false
-            totalAnsweredQuestions = 0
-            animateProgress()
-        }
-        assessmentQuestions.question.status =
-            if (status) QuestionStatus.CORRECT else QuestionStatus.WRONG
-        if (status) {
-            playSnackbarSound(requireActivity())
-        } else {
-            playWrongAnswerSound(requireActivity())
-        }
-        viewModel.postAnswerAndGetNewQuestion(
-            assessmentQuestions,
-            ruleAssessmentQuestionId,
-            lessonId
-        )
-        PrefManager.put(ONLINE_TEST_LAST_LESSON_ATTEMPTED, lessonNumber)
-    }
-
-    private fun moveToNextGrammarQuestion() {
-        if (completed) {
-            completed = false
-            totalAnsweredQuestions = 0
-            animateProgress()
-        }
-        lessonActivityListener?.onLessonUpdate()
-        setupViews(assessmentQuestions!!)
-    }
-
-    override fun onPause() {
-        binding.videoPlayer.onPause()
-        super.onPause()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        Runtime.getRuntime().gc()
-        addObserver()
-    }
-
-    private fun addObserver() {
-        LessonActivity.isVideoVisible.observe(viewLifecycleOwner) { isVideoVisible ->
-            if (!isVideoVisible) {
-                binding.videoPlayer.onPause()
-                if (binding.videoContainer.isVisible)
-                    binding.videoContainer
-                        .animate()
-                        .alpha(0.0f)
-                        .setDuration(200)
-                        .setListener(object : AnimatorListenerAdapter() {
-                            override fun onAnimationEnd(animation: Animator?) {
-                                super.onAnimationEnd(animation)
-                                binding.videoContainer.visibility = View.GONE
-                            }
-                        })
-                        .start()
-            } else if (binding.videoContainer.isVisible.not()) {
-                binding.videoContainer
-                    .animate()
-                    .alpha(1.0f)
-                    .setDuration(500)
-                    .setListener(object : AnimatorListenerAdapter() {
-                        override fun onAnimationEnd(animation: Animator?) {
-                            super.onAnimationEnd(animation)
-                            binding.videoContainer.visibility = View.VISIBLE
-                            binding.progressContainer.isVisible = false
-                        }
-                    })
-                    .start()
-            }
-        }
-    }
-
     override fun onScrollChanged() {
     }
 
-    interface OnlineTestInterface {
-        fun testCompleted()
+    override fun onPause() {
+        audioManager?.onPause()
+        super.onPause()
     }
 
-    companion object {
-        const val TAG = "OnlineTestFragment"
-
-        @JvmStatic
-        fun getInstance(lessonNumber: Int): OnlineTestFragment {
-            val args = Bundle()
-            args.putInt(GrammarOnlineTestFragment.CURRENT_LESSON_NUMBER, lessonNumber)
-            val fragment = OnlineTestFragment()
-            fragment.arguments = args
-            return fragment
-        }
+    override fun onStop() {
+        audioManager?.onPause()
+        super.onStop()
     }
 }

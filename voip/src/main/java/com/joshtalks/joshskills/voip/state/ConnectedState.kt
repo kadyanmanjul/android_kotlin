@@ -11,6 +11,8 @@ import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.inSeconds
 import com.joshtalks.joshskills.voip.updateLastCallDetails
+import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
+import com.joshtalks.joshskills.voip.voipanalytics.EventName
 import kotlinx.coroutines.*
 
 // Remote User Joined the Channel and can talk
@@ -34,9 +36,21 @@ class ConnectedState(val context: CallContext) : VoipState {
     override fun backPress() {
         // Do nothing because users talking
         Log.d(TAG, "backPress: ")
+        CallAnalytics.addAnalytics(
+            event = EventName.BACK_PRESSED,
+            agoraCallId = context.channelData.getCallingId().toString(),
+            agoraMentorId = context.channelData.getAgoraUid().toString(),
+            extra = TAG
+        )
     }
 
     override fun onError() {
+        CallAnalytics.addAnalytics(
+            event = EventName.ON_ERROR,
+            agoraCallId = context.channelData.getCallingId().toString(),
+            agoraMentorId = context.channelData.getAgoraUid().toString(),
+            extra = TAG
+        )
         disconnect()
     }
 
@@ -73,6 +87,11 @@ class ConnectedState(val context: CallContext) : VoipState {
                         UNHOLD -> {
                             ensureActive()
                             val uiState = context.currentUiState.copy(isOnHold = false)
+                            context.updateUIState(uiState = uiState)
+                        }
+                        TOPIC_IMAGE_RECEIVED -> {
+                            ensureActive()
+                            val uiState = context.currentUiState.copy(currentTopicImage = event.data.toString())
                             context.updateUIState(uiState = uiState)
                         }
                         RECONNECTING -> {
@@ -140,6 +159,15 @@ class ConnectedState(val context: CallContext) : VoipState {
                             )
                             context.sendMessageToServer(userAction)
                         }
+                        TOPIC_IMAGE_CHANGE_REQUEST ->{
+                            ensureActive()
+                            val userAction = UserAction(
+                                ServerConstants.TOPIC_IMAGE_REQUEST,
+                                context.channelData.getChannel(),
+                                address = context.channelData.getPartnerMentorId()
+                            )
+                            context.sendMessageToServer(userAction)
+                        }
                         SYNC_UI_STATE -> {
                             ensureActive()
                             context.sendMessageToServer(
@@ -171,7 +199,29 @@ class ConnectedState(val context: CallContext) : VoipState {
                             )
                             context.updateUIState(uiState = uiState)
                         }
-                        REMOTE_USER_DISCONNECTED_AGORA, REMOTE_USER_DISCONNECTED_USER_LEFT, REMOTE_USER_DISCONNECTED_MESSAGE -> {
+                        REMOTE_USER_DISCONNECTED_AGORA -> {
+                            ensureActive()
+                            Log.d(TAG, "Received : ${event.type} switched to Leaving State")
+                            moveToLeavingState()
+                        }
+                        REMOTE_USER_DISCONNECTED_USER_LEFT -> {
+                            CallAnalytics.addAnalytics(
+                                event = EventName.DISCONNECTED_BY_AGORA_USER_OFFLINE,
+                                agoraCallId = context.channelData.getCallingId().toString(),
+                                agoraMentorId = context.channelData.getAgoraUid().toString(),
+                                extra = TAG
+                            )
+                            ensureActive()
+                            Log.d(TAG, "Received : ${event.type} switched to Leaving State")
+                            moveToLeavingState()
+                        }
+                        REMOTE_USER_DISCONNECTED_MESSAGE -> {
+                            CallAnalytics.addAnalytics(
+                                event = EventName.DISCONNECTED_BY_REMOTE_USER,
+                                agoraCallId = context.channelData.getCallingId().toString(),
+                                agoraMentorId = context.channelData.getAgoraUid().toString(),
+                                extra = TAG
+                            )
                             ensureActive()
                             Log.d(TAG, "Received : ${event.type} switched to Leaving State")
                             moveToLeavingState()
@@ -179,7 +229,16 @@ class ConnectedState(val context: CallContext) : VoipState {
                         RECONNECTED -> {
                             // Ignore this event as we are already in Connected State
                         }
-                        else -> throw IllegalEventException("In $TAG but received ${event.type} event don't know how to process")
+                        else -> {
+                            val msg = "In $TAG but received ${event.type} event don't know how to process"
+                            CallAnalytics.addAnalytics(
+                                event = EventName.ILLEGAL_EVENT_RECEIVED,
+                                agoraCallId = context.channelData.getCallingId().toString(),
+                                agoraMentorId = context.channelData.getAgoraUid().toString(),
+                                extra = msg
+                            )
+                            throw IllegalEventException(msg)
+                        }
                     }
                 }
                 scope.cancel()

@@ -56,6 +56,7 @@ class JoshGroupViewModel : BaseViewModel() {
     val stateAdapter = GroupStateAdapter()
     val hasGroupData = ObservableBoolean(true)
     val addingNewGroup = ObservableBoolean(false)
+    val newGroupVisible = ObservableBoolean(false)
     val groupType = ObservableField("")
     var shouldRefreshGroupList = false
     val isFromVoip = ObservableBoolean(false)
@@ -103,6 +104,7 @@ class JoshGroupViewModel : BaseViewModel() {
 
     fun onSearch() {
         MixPanelTracker.publishEvent(MixPanelEvent.SEARCH_GROUPS).push()
+        GroupAnalytics.push(GroupAnalytics.Event.FIND_GROUPS_TO_JOIN)
         message.what = SEARCH_GROUP
         singleLiveEvent.value = message
     }

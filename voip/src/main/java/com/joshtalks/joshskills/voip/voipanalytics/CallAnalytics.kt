@@ -24,9 +24,12 @@ object CallAnalytics : CallAnalyticsInterface {
         Utils.context?.let { VoipDatabase.getDatabase(it.applicationContext) }
     }
 
-    private val mutex = Mutex()
-
-    override fun addAnalytics(event: EventName, agoraMentorId: String?, agoraCallId: String?) {
+    override fun addAnalytics(
+        event: EventName,
+        agoraMentorId: String?,
+        agoraCallId: String?,
+        extra: String
+    ) {
         val callEvent = CallEvents(
             event = event,
             timestamp = Utils.getCurrentTimeStamp(),

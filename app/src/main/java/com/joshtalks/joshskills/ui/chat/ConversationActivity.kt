@@ -370,6 +370,7 @@ class ConversationActivity :
 
     private fun initABTest() {
         conversationViewModel.getCampaignData(CampaignKeys.ACTIVITY_FEED_V2.name)
+        conversationViewModel.getCampaignData(CampaignKeys.A2_C1.name)
     }
 
     private fun getAllPendingRequest() {
@@ -400,6 +401,7 @@ class ConversationActivity :
     }
 
     private fun initFreeTrialTimer() {
+        PrefManager.put(IS_FREE_TRIAL, inboxEntity.isCourseBought.not())
         if (inboxEntity.isCourseBought.not() &&
             inboxEntity.expiryDate != null &&
             inboxEntity.expiryDate!!.time >= System.currentTimeMillis()
@@ -580,10 +582,10 @@ class ConversationActivity :
         MixPanelTracker.mixPanel.identify(PrefManager.getStringValue(USER_UNIQUE_ID))
         MixPanelTracker.mixPanel.people.identify(PrefManager.getStringValue(USER_UNIQUE_ID))
         var obj = JSONObject()
-        if(inboxEntity.isCourseBought) {
-            obj.put("is paid",true)
+        if (inboxEntity.isCourseBought) {
+            obj.put("is paid", true)
         } else {
-            obj.put("is paid",false)
+            obj.put("is paid", false)
         }
         MixPanelTracker.mixPanel.people.set(obj)
         MixPanelTracker.mixPanel.registerSuperProperties(obj)
@@ -661,9 +663,11 @@ class ConversationActivity :
                     }
                     R.id.menu_restart_course -> {
                         MixPanelTracker.publishEvent(MixPanelEvent.RESTART_COURSE_CLICKED)
-                            .addParam(ParamKeys.CLICKED_FROM,"3 dot")
+                            .addParam(ParamKeys.CLICKED_FROM, "3 dot")
                             .push()
-                        conversationViewModel.saveRestartCourseImpression(IMPRESSION_CLICK_RESTART_COURSE_DOT)
+                        conversationViewModel.saveRestartCourseImpression(
+                            IMPRESSION_CLICK_RESTART_COURSE_DOT
+                        )
                         restartCourse(false)
                     }
                 }
@@ -687,28 +691,31 @@ class ConversationActivity :
     }
 
     fun restartCourse(isFromRestartButton: Boolean) {
-        if(isFromRestartButton) {
+        if (isFromRestartButton) {
             conversationViewModel.saveRestartCourseImpression(IMPRESSION_CLICK_RESTART_90LESSONS)
             MixPanelTracker.publishEvent(MixPanelEvent.RESTART_COURSE_CLICKED)
-                .addParam(ParamKeys.CLICKED_FROM,"button")
+                .addParam(ParamKeys.CLICKED_FROM, "button")
                 .push()
         }
 
         var phoneNumber = User.getInstance().phoneNumber
-        phoneNumber = phoneNumber?.substring(3)
-        val email = User.getInstance().email
-        if(email.isNullOrEmpty() && phoneNumber.isNullOrEmpty()) {
-            showToast(getString(R.string.course_restart_fail))
+        if(!phoneNumber.isNullOrEmpty()) {
+            if(phoneNumber[0]=='+' && phoneNumber[1]=='9' && phoneNumber[2]=='1')
+            phoneNumber = phoneNumber?.substring(3)
+            else if(phoneNumber[0]=='+' && phoneNumber[1]=='8' && phoneNumber[2]=='8' && phoneNumber[3]=='0')
+                phoneNumber = phoneNumber?.substring(4)
         }
-        else {
+        val email = User.getInstance().email
+        if (email.isNullOrEmpty() && phoneNumber.isNullOrEmpty()) {
+            showToast(getString(R.string.course_restart_fail))
+        } else {
             MaterialDialog(this@ConversationActivity).show {
                 message(R.string.restart_course_message)
                 positiveButton(R.string.restart_now) {
-                    if(email.isNullOrEmpty() && !phoneNumber.isNullOrEmpty()) {
+                    if (email.isNullOrEmpty() && !phoneNumber.isNullOrEmpty()) {
                         conversationBinding.btnRestartCourse.visibility = View.GONE
                         conversationViewModel.restartCourse(phoneNumber.toString(), "MobileNumber")
-                    }
-                    else if (phoneNumber.isNullOrEmpty() && !email.isNullOrEmpty()) {
+                    } else if (phoneNumber.isNullOrEmpty() && !email.isNullOrEmpty()) {
                         conversationBinding.btnRestartCourse.visibility = View.GONE
                         conversationViewModel.restartCourse(email, "Email")
                     }
@@ -732,8 +739,8 @@ class ConversationActivity :
 
     fun showRestartButton() {
         CoroutineScope(Dispatchers.IO).launch {
-            val lastLesson= conversationViewModel.getLastLessonForCourse()
-            if(lastLesson == 90 && inboxEntity.isCapsuleCourse && inboxEntity.isCourseBought ) {
+            val lastLesson = conversationViewModel.getLastLessonForCourse()
+            if (lastLesson == 90 && inboxEntity.isCapsuleCourse && inboxEntity.isCourseBought) {
                 withContext(Dispatchers.Main) {
                     conversationBinding.btnRestartCourse.visibility = VISIBLE
                     conversationBinding.messageButton.visibility = GONE
@@ -800,7 +807,7 @@ class ConversationActivity :
 
         if (inboxEntity.isCourseBought.not()) {
             conversationBinding.root.visibility = GONE
-        }else{
+        } else {
             conversationBinding.root.visibility = VISIBLE
         }
 
@@ -1222,8 +1229,10 @@ class ConversationActivity :
                 if (userProfileData.hasGroupAccess) {
                     conversationBinding.imgGroupChatBtn.visibility = VISIBLE
                     if (PrefManager.getBoolValue(SHOULD_SHOW_AUTOSTART_POPUP, defValue = true)
-                        && System.currentTimeMillis().minus(PrefManager.getLongValue(LAST_TIME_AUTOSTART_SHOWN)) > 259200000L
-                        && PrefManager.getBoolValue(HAS_SEEN_UNLOCK_CLASS_ANIMATION)) {
+                        && System.currentTimeMillis()
+                            .minus(PrefManager.getLongValue(LAST_TIME_AUTOSTART_SHOWN)) > 259200000L
+                        && PrefManager.getBoolValue(HAS_SEEN_UNLOCK_CLASS_ANIMATION)
+                    ) {
                         PrefManager.put(LAST_TIME_AUTOSTART_SHOWN, System.currentTimeMillis())
                         checkForOemNotifications(AUTO_START_POPUP)
                     }
@@ -1382,8 +1391,18 @@ class ConversationActivity :
 
         conversationViewModel.abTestCampaignliveData.observe(this) { abTestCampaignData ->
             abTestCampaignData?.let { map ->
-                activityFeedControl =
-                    (map.variantKey == VariantKeys.AF2_ENABLED.name) && map.variableMap?.isEnabled == true
+                if (abTestCampaignData.campaignKey == CampaignKeys.ACTIVITY_FEED_V2.name) {
+                    activityFeedControl =
+                        (map.variantKey == VariantKeys.AF2_ENABLED.name) && map.variableMap?.isEnabled == true
+                } else if (abTestCampaignData.campaignKey == CampaignKeys.A2_C1.name) {
+                    if (abTestCampaignData.isCampaignActive)
+                        PrefManager.put(
+                            IS_A2_C1_RETENTION_ENABLED,
+                            (map.variantKey == VariantKeys.A2_C1_RETENTION.name) && map.variableMap?.isEnabled == true
+                        )
+                    else
+                        PrefManager.removeKey(IS_A2_C1_RETENTION_ENABLED)
+                }
             }
         }
     }
@@ -1504,7 +1523,7 @@ class ConversationActivity :
             btnConfirmRequest.setOnClickListener {
                 MixPanelTracker.publishEvent(MixPanelEvent.FPP_REQUEST_CONFIRM)
                     .addParam(ParamKeys.MENTOR_ID, pendingRequestDetail.senderMentorId)
-                    .addParam(ParamKeys.VIA,"quick view")
+                    .addParam(ParamKeys.VIA, "quick view")
                     .push()
                 btnConfirmRequest.visibility = GONE
                 btnNotNow.visibility = GONE
@@ -1518,7 +1537,7 @@ class ConversationActivity :
             btnNotNow.setOnClickListener {
                 MixPanelTracker.publishEvent(MixPanelEvent.FPP_REQUEST_NOT_NOW)
                     .addParam(ParamKeys.MENTOR_ID, pendingRequestDetail.senderMentorId)
-                    .addParam(ParamKeys.VIA,"quick view")
+                    .addParam(ParamKeys.VIA, "quick view")
                     .push()
                 btnConfirmRequest.visibility = GONE
                 btnNotNow.visibility = GONE
@@ -1588,12 +1607,11 @@ class ConversationActivity :
         }
     }
 
-    private fun showRestartMenuOption(){
-        if(inboxEntity.isCourseBought && inboxEntity.isCapsuleCourse) {
+    private fun showRestartMenuOption() {
+        if (inboxEntity.isCourseBought && inboxEntity.isCapsuleCourse) {
             conversationBinding.toolbar.menu.findItem(R.id.menu_restart_course).isVisible = true
             conversationBinding.toolbar.menu.findItem(R.id.menu_restart_course).isEnabled = true
-        }
-        else {
+        } else {
             conversationBinding.toolbar.menu.findItem(R.id.menu_restart_course).isVisible = false
             conversationBinding.toolbar.menu.findItem(R.id.menu_restart_course).isEnabled = false
         }
@@ -1622,22 +1640,25 @@ class ConversationActivity :
                                 )
                             ) {
                                 delay(1000)
-                            if (status == LESSON_STATUS.CO && !PrefManager.getBoolValue(HAS_SEEN_UNLOCK_CLASS_ANIMATION)) {
-                                delay(1000)
-                                setOverlayAnimation()
-                            } else if (PrefManager.getBoolValue(
-                                    SHOULD_SHOW_AUTOSTART_POPUP,
-                                    defValue = true
-                                )
-                                && System.currentTimeMillis()
-                                    .minus(PrefManager.getLongValue(LAST_TIME_AUTOSTART_SHOWN)) > 259200000L
-                            ) {
-                                PrefManager.put(
-                                    LAST_TIME_AUTOSTART_SHOWN,
-                                    System.currentTimeMillis()
-                                )
-                                checkForOemNotifications(AUTO_START_POPUP)
-                            }
+                                if (status == LESSON_STATUS.CO && !PrefManager.getBoolValue(
+                                        HAS_SEEN_UNLOCK_CLASS_ANIMATION
+                                    )
+                                ) {
+                                    delay(1000)
+                                    setOverlayAnimation()
+                                } else if (PrefManager.getBoolValue(
+                                        SHOULD_SHOW_AUTOSTART_POPUP,
+                                        defValue = true
+                                    )
+                                    && System.currentTimeMillis()
+                                        .minus(PrefManager.getLongValue(LAST_TIME_AUTOSTART_SHOWN)) > 259200000L
+                                ) {
+                                    PrefManager.put(
+                                        LAST_TIME_AUTOSTART_SHOWN,
+                                        System.currentTimeMillis()
+                                    )
+                                    checkForOemNotifications(AUTO_START_POPUP)
+                                }
                             }
                         }
                     }
@@ -2105,8 +2126,9 @@ class ConversationActivity :
                             showToast(getFeatureLockedText(inboxEntity.courseId, firstName))
                         } else {
                             MixPanelTracker.publishEvent(MixPanelEvent.LESSON_OPENED)
-                                .addParam(ParamKeys.LESSON_ID,it.lessonId)
+                                .addParam(ParamKeys.LESSON_ID, it.lessonId)
                                 .push()
+                            PrefManager.put(IS_FREE_TRIAL, inboxEntity.isCourseBought.not())
                             startActivityForResult(
                                 LessonActivity.getActivityIntent(
                                     this,
@@ -2114,7 +2136,6 @@ class ConversationActivity :
                                     conversationId = inboxEntity.conversation_id,
                                     isNewGrammar = it.isNewGrammar,
                                     isLessonCompleted = it.isLessonCompleted,
-                                    isFreeTrail = inboxEntity.isCourseBought.not()
                                 ),
                                 LESSON_REQUEST_CODE
                             )
@@ -2182,8 +2203,11 @@ class ConversationActivity :
 
     private fun logUnlockCardEvent() {
         MixPanelTracker.publishEvent(MixPanelEvent.UNLOCK_NEXT_LESSON)
-            .addParam(ParamKeys.LESSON_NUMBER,conversationAdapter.getLastLesson()?.lessonNo?.plus(1))
-            .addParam(ParamKeys.COURSE_NAME,inboxEntity.course_name)
+            .addParam(
+                ParamKeys.LESSON_NUMBER,
+                conversationAdapter.getLastLesson()?.lessonNo?.plus(1)
+            )
+            .addParam(ParamKeys.COURSE_NAME, inboxEntity.course_name)
             .push()
 
         AppAnalytics.create(AnalyticsEvent.UNLOCK_CARD_CLICKED.NAME)
@@ -2300,7 +2324,12 @@ class ConversationActivity :
                             ImagePicker.with(this@ConversationActivity)
                                 .crop()
                                 .cameraOnly()
-                                .saveDir(File(getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!, "ImagePicker"))
+                                .saveDir(
+                                    File(
+                                        getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!,
+                                        "ImagePicker"
+                                    )
+                                )
                                 .start(ImagePicker.REQUEST_CODE)
                             return
                         }
@@ -2335,13 +2364,12 @@ class ConversationActivity :
                     COURSE_RESTART_FAILURE -> {
                         showToast(getString(R.string.course_restart_fail))
                     }
-                    INTERNET_FAILURE->{
+                    INTERNET_FAILURE -> {
                         showToast(getString(R.string.internet_not_available_msz))
                     }
                 }
             }
-        }
-        catch (ex:Exception) {
+        } catch (ex: Exception) {
             ex.printStackTrace()
         }
     }
@@ -2579,7 +2607,7 @@ class ConversationActivity :
             chatModel = message
         )
         MixPanelTracker.publishEvent(MixPanelEvent.CHAT_ENTERED)
-            .addParam(ParamKeys.CHAT_TEXT,conversationBinding.chatEdit.text.toString())
+            .addParam(ParamKeys.CHAT_TEXT, conversationBinding.chatEdit.text.toString())
             .push()
         conversationBinding.chatEdit.setText(EMPTY)
         scrollToEnd()
@@ -2771,7 +2799,7 @@ class ConversationActivity :
         return if (titleBarHeight < 0) titleBarHeight * -1 else titleBarHeight
     }
 
-    fun getConversationTooltip() : String {
+    fun getConversationTooltip(): String {
         val courseId = PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID)
         return AppObjectController
             .getFirebaseRemoteConfig().getString(TOOLTIP_CONVERSAITON + courseId)

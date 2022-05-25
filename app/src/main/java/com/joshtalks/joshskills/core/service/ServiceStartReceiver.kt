@@ -3,10 +3,10 @@ package com.joshtalks.joshskills.core.service
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.os.Build
-import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.LAST_TIME_WORK_MANAGER_START
 import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.repository.local.AppDatabase
+import com.joshtalks.joshskills.repository.local.entity.BroadCastEvent
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -18,16 +18,17 @@ class ServiceStartReceiver : BroadcastReceiver() {
         try {
             if (System.currentTimeMillis() - PrefManager.getLongValue(LAST_TIME_WORK_MANAGER_START) >= 30*60*1000L) {
                 WorkManagerAdmin.setBackgroundServiceWorker()
+                PrefManager.put(LAST_TIME_WORK_MANAGER_START, System.currentTimeMillis())
                 CoroutineScope(Dispatchers.IO).launch {
                     Timber.tag("ReceiverCheck").e("${intent.action} : ${intent.dataString}")
 
-                    val request = mapOf(
-                        Pair("mentor_id", Mentor.getInstance().getId()),
-                        Pair("event_name", intent.action)
+                    AppDatabase.getDatabase(context)?.broadcastDao()?.insertBroadcastEvent(
+                        BroadCastEvent(
+                            Mentor.getInstance().getId(),
+                            intent.action
+                        )
                     )
-                    AppObjectController.commonNetworkService.saveBroadcastEvent(request)
                 }
-                PrefManager.put(LAST_TIME_WORK_MANAGER_START, System.currentTimeMillis())
             }
         } catch (ex: Throwable) {
             ex.printStackTrace()

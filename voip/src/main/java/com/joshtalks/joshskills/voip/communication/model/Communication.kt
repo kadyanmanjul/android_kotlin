@@ -17,6 +17,9 @@ class Error(val errorType : Int = -1) : Communication {
 
 sealed interface IncomingData : Communication {
     fun getChannel() : String
+    fun getMsgData() : String{
+        return ""
+    }
 }
 
 sealed interface OutgoingData : Communication {
@@ -54,6 +57,9 @@ interface ChannelData : IncomingData {
     fun getAgoraUid() : Int
     fun getPartnerUid() : Int
     fun getPartnerMentorId() : String
+    fun getTopicImage() : String
+    fun getOccupation() : String
+    fun getAspiration() : String
 }
 
 class IncorrectCommunicationDataException(message: String) : Exception(message)

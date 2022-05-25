@@ -653,7 +653,7 @@ class ReadingFragmentWithoutFeedback :
                             setVideoThumbnail(video.video_image_url)
                             binding.videoPlayer.setUrl(it)
                             binding.videoPlayer.fitToScreen()
-                            binding.videoPlayer.setPlayListener {
+                            binding.videoPlayer.setFullScreenListener {
                                 val videoId = this.videoList?.getOrNull(0)?.id
                                 val videoUrl = this.videoList?.getOrNull(0)?.video_url
                                 val currentVideoProgressPosition = binding.videoPlayer.progress

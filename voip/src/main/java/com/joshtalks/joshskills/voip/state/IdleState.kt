@@ -1,9 +1,12 @@
 package com.joshtalks.joshskills.voip.state
 
 import android.util.Log
+import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.constant.IDLE
 import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.local.PrefManager
+import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
+import com.joshtalks.joshskills.voip.voipanalytics.EventName
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -26,11 +29,17 @@ class IdleState(val context: CallContext) : VoipState {
     }
 
     override fun onError() {
+        CallAnalytics.addAnalytics(
+            event = EventName.ON_ERROR,
+            agoraMentorId = "-1",
+            extra = PrefManager.getVoipState().name
+        )
         scope.launch {
             try{
                 Log.d(TAG, "onError call screen close and context destroy")
                 context.closeCallScreen()
-                context.destroyContext()
+                context.closePipe()
+                onDestroy()
             }
             catch (e : Exception){
                 if(e is CancellationException)

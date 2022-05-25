@@ -16,14 +16,17 @@ import com.joshtalks.joshskills.base.constants.INTENT_DATA_TOPIC_ID
 import com.joshtalks.joshskills.databinding.ActivityVoiceCallBinding
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.VoiceCallViewModel
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.voipLog
+import com.joshtalks.joshskills.voip.Utils.Companion.onMultipleBackPress
 import com.joshtalks.joshskills.voip.constant.*
 import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
+import kotlinx.coroutines.sync.Mutex
 
 private const val TAG = "VoiceCallActivity"
 
 class VoiceCallActivity : BaseActivity() {
+    private val backPressMutex = Mutex(false)
     private val voiceCallBinding by lazy<ActivityVoiceCallBinding> {
         DataBindingUtil.setContentView(this, R.layout.activity_voice_call)
     }
@@ -42,7 +45,8 @@ class VoiceCallActivity : BaseActivity() {
         vm.source = getSource()
         Log.d(TAG, "getArguments: ${vm.source}")
         when (vm.source) {
-            FROM_CALL_BAR -> {}
+            FROM_CALL_BAR -> {
+            }
             FROM_INCOMING_CALL -> {
                 val incomingCallId = PrefManager.getIncomingCallId()
                 // TODO: Might be wrong
@@ -82,7 +86,7 @@ class VoiceCallActivity : BaseActivity() {
         Log.d(TAG, "onCreated: ${vm.source}")
         if (vm.source == FROM_INCOMING_CALL || vm.source == FROM_CALL_BAR) {
             addCallUserFragment()
-        } else if(vm.source == FROM_ACTIVITY) {
+        } else if (vm.source == FROM_ACTIVITY) {
             addSearchingUserFragment()
         }
     }
@@ -131,7 +135,14 @@ class VoiceCallActivity : BaseActivity() {
     }
 
     override fun onBackPressed() {
-        super.onBackPressed()
-        vm.backPress()
+        if (PrefManager.getVoipState() == State.IDLE || PrefManager.getVoipState() == State.SEARCHING || PrefManager.getVoipState() == State.JOINING)
+            backPressMutex.onMultipleBackPress {
+                super.onBackPressed()
+                vm.backPress()
+            }
+        else {
+            super.onBackPressed()
+            vm.backPress()
+        }
     }
 }

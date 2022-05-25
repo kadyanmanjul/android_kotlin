@@ -4,6 +4,7 @@ import android.util.Log
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.EventListener
 import com.google.firebase.firestore.FirebaseFirestoreException
+import com.google.gson.Gson
 import com.joshtalks.joshskills.voip.communication.constants.ServerConstants
 import com.joshtalks.joshskills.voip.communication.model.*
 import com.joshtalks.joshskills.voip.data.local.PrefManager
@@ -57,6 +58,7 @@ class FirebaseEventListener(val scope : CoroutineScope) : EventListener<Document
         return when(messageMap?.get("type").toString().toInt()) {
             ServerConstants.CHANNEL -> Channel.fromMap(messageMap)
             ServerConstants.INCOMING_CALL -> IncomingCall.fromMap(messageMap)
+            ServerConstants.UI_STATE_UPDATED, ServerConstants.ACK_UI_STATE_UPDATED -> UI.fromMap(messageMap)
             else -> Message.fromMap(messageMap)
         }
     }

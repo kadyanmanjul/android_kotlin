@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.location.Location
 import android.os.Bundle
-import android.os.Process
 import android.view.View
 import android.view.View.GONE
 import androidx.appcompat.widget.PopupMenu
@@ -54,7 +53,6 @@ import com.joshtalks.joshskills.ui.referral.ReferralViewModel
 import com.joshtalks.joshskills.ui.settings.SettingsActivity
 import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.joshtalks.joshskills.util.FileUploadService
-import com.joshtalks.joshskills.voip.data.CallingRemoteService
 import io.agora.rtc.RtcEngine
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.activity_inbox.recycler_view_inbox
@@ -66,13 +64,11 @@ import kotlinx.android.synthetic.main.inbox_toolbar.iv_reminder
 import kotlinx.android.synthetic.main.inbox_toolbar.iv_setting
 import kotlinx.android.synthetic.main.inbox_toolbar.text_message_title
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import com.joshtalks.joshskills.core.IS_FREE_TRIAL_CAMPAIGN_ACTIVE
 import com.joshtalks.joshskills.core.IS_EFT_VARIENT_ENABLED
 import com.joshtalks.joshskills.ui.cohort_based_course.views.CommitmentFormActivity
 import com.joshtalks.joshskills.ui.cohort_based_course.views.CommitmentFormLaunchFragment
-
 
 const val REGISTER_INFO_CODE = 2001
 const val COURSE_EXPLORER_CODE = 2002
@@ -109,6 +105,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         addLiveDataObservable()
         addAfterTime()
         viewModel.handleGroupTimeTokens()
+        viewModel.handleBroadCastEvents()
     }
 
     private fun initABTest() {
@@ -264,6 +261,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                         }
                         if (inboxEntity.isCourseBought.not()) {
                             haveFreeTrialCourse = true
+                            PrefManager.put(IS_FREE_TRIAL, true)
                         }
                     }
                     temp.addAll(courseList)

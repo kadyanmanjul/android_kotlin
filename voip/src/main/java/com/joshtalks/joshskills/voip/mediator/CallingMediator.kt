@@ -21,7 +21,6 @@ import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.notification.NotificationPriority
 import com.joshtalks.joshskills.voip.notification.VoipNotification
 import com.joshtalks.joshskills.voip.state.CallContext
-import com.joshtalks.joshskills.voip.voipLog
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
 import com.joshtalks.joshskills.voip.webrtc.*
@@ -203,6 +202,10 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                         val envelope = Envelope(Event.SPEAKER_OFF_REQUEST)
                         stateChannel.send(envelope)
                     }
+                    UserAction.TOPIC_IMAGE_CHANGE -> {
+                        val envelope = Envelope(Event.TOPIC_IMAGE_CHANGE_REQUEST)
+                        stateChannel.send(envelope)
+                    }
                 }
             } catch (e: Exception) {
                 Log.d(TAG, "userAction : $e")
@@ -245,6 +248,10 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
 
     override fun onDestroy() {
         Log.d(TAG, "onDestroy : Destroying channel and services")
+        if (this@CallingMediator::voipNotification.isInitialized) {
+            voipNotification.removeNotification()
+            stopAudio()
+        }
         networkEventChannel.onDestroy()
         try {
             fallbackEventChannel.onDestroy()
@@ -294,12 +301,12 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                                             val envelope = Envelope(Event.UNMUTE)
                                             stateChannel.send(envelope)
                                         }
+                                        ServerConstants.TOPIC_IMAGE_RECEIVED ->{
+                                               val envelope= Envelope(Event.TOPIC_IMAGE_RECEIVED, it.getMsgData())
+                                                stateChannel.send(envelope)
+
+                                        }
                                         ServerConstants.DISCONNECTED -> {
-                                            CallAnalytics.addAnalytics(
-                                                event = EventName.DISCONNECTED_BY_REMOTE_USER,
-                                                agoraCallId = callContext?.channelData?.getCallingId().toString(),
-                                                agoraMentorId = callContext?.channelData?.getAgoraUid().toString()
-                                            )
                                             val envelope = Envelope(Event.REMOTE_USER_DISCONNECTED_MESSAGE)
                                             stateChannel.send(envelope)
                                         }
@@ -441,13 +448,12 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                                                 val envelope = Envelope(Event.UNMUTE)
                                                 stateChannel.send(envelope)
                                             }
+                                            ServerConstants.TOPIC_IMAGE_RECEIVED ->{
+                                                val envelope = Envelope(Event.TOPIC_IMAGE_RECEIVED,event.getMsgData())
+                                                stateChannel.send(envelope)
+                                            }
                                             // Remote User Disconnected
                                             ServerConstants.DISCONNECTED -> {
-                                                CallAnalytics.addAnalytics(
-                                                    event = EventName.DISCONNECTED_BY_REMOTE_USER,
-                                                    agoraCallId = callContext?.channelData?.getCallingId().toString(),
-                                                    agoraMentorId = callContext?.channelData?.getAgoraUid().toString()
-                                                )
                                                 val envelope = Envelope(Event.REMOTE_USER_DISCONNECTED_MESSAGE)
                                                 stateChannel.send(envelope)
                                             }

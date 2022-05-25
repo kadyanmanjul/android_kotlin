@@ -12,6 +12,6 @@ class LessonPagerAdapter(
     val lessonIsConvoRoomActive: Boolean
 ) : FragmentStateAdapter(fragmentManager, lifecycle) {
 
-    override fun getItemCount() = if (lessonIsConvoRoomActive) 5 else 4
+    override fun getItemCount() = fragmentList.size
     override fun createFragment(position: Int) = fragmentList.get(position)
 }

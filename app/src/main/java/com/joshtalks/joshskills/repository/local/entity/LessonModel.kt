@@ -47,6 +47,10 @@ data class LessonModel(
     @SerializedName("grammarStatus")
     var grammarStatus: LESSON_STATUS? = LESSON_STATUS.NO,
 
+    @ColumnInfo(name = "translationStatus")
+    @SerializedName("translationStatus")
+    var translationStatus: LESSON_STATUS? = LESSON_STATUS.NO,
+
     @ColumnInfo(name = "vocabularyStatus")
     @SerializedName("vocabularyStatus")
     var vocabStatus: LESSON_STATUS? = LESSON_STATUS.NO,

@@ -230,6 +230,9 @@
     <color name="basic_details">#F2F2F2</color>
     <color name="grey_button">#E4E4E4</color>
     <color name="black_0.7_alpha">#4C4C4C</color>
+    <color name="parrot_green_color">#08D003</color>
+    <color name="topic_btn_blue">#107BE5</color>
+    <color name="bottom_sheet_color">#003A7D</color>
 
     <color name="blue_cbc_text_timeslot">#0D63B9</color>
     <color name="gray_cbc_text_timeslot">#5B6272</color>

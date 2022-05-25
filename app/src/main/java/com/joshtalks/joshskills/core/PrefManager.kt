@@ -149,6 +149,7 @@ const val TWENTY_MIN_CALL_ATTEMPTED_GOAL_POSTED = "twenty_min_call_attempted_goa
 const val IS_SPEAKING_SCREEN_CLICKED = "is_speaking_screen_clicked"
 const val CALL_BTN_CLICKED = "call_btn_clicked"
 const val IS_APP_OPENED_FOR_FIRST_TIME = "is_app_opened_for_first_time"
+const val IS_A2_C1_RETENTION_ENABLED = "is_a2_c1_retention_enabled"
 
 object PrefManager {
 
@@ -219,7 +220,11 @@ object PrefManager {
         else prefManagerCommon.getInt(key, defValue)
     }
 
-    fun getSetValue(key: String, isConsistent: Boolean = false, defValue: Set<String> = setOf()): Set<String> {
+    fun getSetValue(
+        key: String,
+        isConsistent: Boolean = false,
+        defValue: Set<String> = setOf()
+    ): Set<String> {
         return if (isConsistent) prefManagerConsistent.getStringSet(key, defValue) ?: defValue
         else prefManagerCommon.getStringSet(key, defValue) ?: defValue
     }
@@ -286,21 +291,24 @@ object PrefManager {
         else prefManagerCommon.edit().putStringSet(key, value).apply()
     }
 
-    fun putPrefObject(key: String, objects: Any){
+    fun putPrefObject(key: String, objects: Any) {
         val gson = Gson()
         val jsonString = gson.toJson(objects)
-        put(key = key, value=jsonString)
+        put(key = key, value = jsonString)
     }
-    fun getPrefObject(key: String):ReportModel?{
+
+    fun getPrefObject(key: String): ReportModel? {
         val gson = Gson()
-        val json: String = getStringValue(key=key, defaultValue = "") as String
+        val json: String = getStringValue(key = key, defaultValue = "") as String
         return gson.fromJson(json, ReportModel::class.java)
     }
-    fun getVoipPrefObject(key: String):VoipReportModel?{
+
+    fun getVoipPrefObject(key: String): VoipReportModel? {
         val gson = Gson()
-        val json: String = getStringValue(key=key, defaultValue = "") as String
+        val json: String = getStringValue(key = key, defaultValue = "") as String
         return gson.fromJson(json, VoipReportModel::class.java)
     }
+
     fun getClientToken(): String {
         return BuildConfig.CLIENT_TOKEN
     }
@@ -335,13 +343,16 @@ object PrefManager {
         else prefManagerCommon.edit().remove(key).apply()
 
     }
-     private fun sendBroadcast(){
-         val broadcastIntent= Intent().apply {
-             action = CALLING_SERVICE_ACTION
-             putExtra(SERVICE_BROADCAST_KEY, STOP_SERVICE)
-         }
-         LocalBroadcastManager.getInstance(AppObjectController.joshApplication).sendBroadcast(broadcastIntent)
-     }
+
+    private fun sendBroadcast() {
+        val broadcastIntent = Intent().apply {
+            action = CALLING_SERVICE_ACTION
+            putExtra(SERVICE_BROADCAST_KEY, STOP_SERVICE)
+        }
+        LocalBroadcastManager.getInstance(AppObjectController.joshApplication)
+            .sendBroadcast(broadcastIntent)
+    }
+
     fun getLastSyncTime(key: String): Pair<String, String> {
         return try {
             val time = getStringValue(key)

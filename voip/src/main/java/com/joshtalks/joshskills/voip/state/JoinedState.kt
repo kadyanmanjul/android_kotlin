@@ -35,6 +35,12 @@ class JoinedState(val context: CallContext) : VoipState {
                 Log.d(TAG, "Connecting Timer Started")
                 delay(CONNECTING_TIMER)
                 ensureActive()
+                CallAnalytics.addAnalytics(
+                    event = EventName.DISCONNECTED_BY_CONNECTING_TIMEOUT,
+                    agoraCallId = context.channelData.getCallingId().toString(),
+                    agoraMentorId = context.channelData.getAgoraUid().toString(),
+                    extra = TAG
+                )
                 context.closeCallScreen()
                 moveToLeavingState()
             }
@@ -59,7 +65,6 @@ class JoinedState(val context: CallContext) : VoipState {
 
     // Red Button Pressed
     override fun disconnect() {
-        Log.d(TAG, "disconnect: Red Button Pressed")
         scope.launch {
             try{
                 Log.d(TAG, "disconnect : User Red Press switching to Leaving State")
@@ -77,9 +82,21 @@ class JoinedState(val context: CallContext) : VoipState {
     // Showing user connecting and then user pressed back
     override fun backPress() {
         Log.d(TAG, "backPress: Ignore")
+        CallAnalytics.addAnalytics(
+            event = EventName.BACK_PRESSED,
+            agoraCallId = context.channelData.getCallingId().toString(),
+            agoraMentorId = context.channelData.getAgoraUid().toString(),
+            extra = TAG
+        )
     }
 
     override fun onError() {
+        CallAnalytics.addAnalytics(
+            event = EventName.ON_ERROR,
+            agoraCallId = context.channelData.getCallingId().toString(),
+            agoraMentorId = context.channelData.getAgoraUid().toString(),
+            extra = TAG
+        )
         connectingTimer.cancel()
         disconnect()
     }
@@ -194,6 +211,20 @@ class JoinedState(val context: CallContext) : VoipState {
                             )
                             context.sendMessageToServer(userAction)
                         }
+                        TOPIC_IMAGE_RECEIVED -> {
+                            ensureActive()
+                            val uiState = context.currentUiState.copy(currentTopicImage = event.data.toString())
+                            context.updateUIState(uiState = uiState)
+                        }
+                        TOPIC_IMAGE_CHANGE_REQUEST ->{
+                            ensureActive()
+                            val userAction = UserAction(
+                                ServerConstants.TOPIC_IMAGE_REQUEST,
+                                context.channelData.getChannel(),
+                                address = context.channelData.getPartnerMentorId()
+                            )
+                            context.sendMessageToServer(userAction)
+                        }
                         SYNC_UI_STATE -> {
                             ensureActive()
                             context.sendMessageToServer(
@@ -227,9 +258,25 @@ class JoinedState(val context: CallContext) : VoipState {
                         }
                         RECONNECTED -> {
                             // Ignore Error Event from Agora
-                            Log.d(TAG, "Ignoring : In $TAG but received ${event.type} expected $CALL_INITIATED_EVENT")
+                            val msg = "Ignoring : In $TAG but received ${event.type} expected $CALL_CONNECTED_EVENT"
+                            CallAnalytics.addAnalytics(
+                                event = EventName.ILLEGAL_EVENT_RECEIVED,
+                                agoraCallId = context.channelData.getCallingId().toString(),
+                                agoraMentorId = context.channelData.getAgoraUid().toString(),
+                                extra = msg
+                            )
+                            Log.d(TAG, "Ignoring : In $TAG but received ${event.type} expected $CALL_CONNECTED_EVENT")
                         }
-                        else -> throw IllegalEventException("In $TAG but received ${event.type} expected $CALL_INITIATED_EVENT")
+                        else -> {
+                            val msg = "In $TAG but received ${event.type} expected $CALL_CONNECTED_EVENT"
+                            CallAnalytics.addAnalytics(
+                                event = EventName.ILLEGAL_EVENT_RECEIVED,
+                                agoraCallId = context.channelData.getCallingId().toString(),
+                                agoraMentorId = context.channelData.getAgoraUid().toString(),
+                                extra = msg
+                            )
+                            throw IllegalEventException(msg)
+                        }
                     }
                 }
                 scope.cancel()

@@ -19,6 +19,8 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
 import com.joshtalks.joshskills.constants.INIT_LIST_TOOLTIP
 import com.joshtalks.joshskills.constants.OPEN_POPUP_MENU
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.core.HAS_SEEN_GROUP_TOOLTIP
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.databinding.FragmentGroupListBinding
@@ -85,6 +87,13 @@ class GroupListFragment : BaseFragment() {
 
     private fun initTooltip() {
         if (!PrefManager.getBoolValue(HAS_SEEN_GROUP_TOOLTIP)) {
+            if (AppObjectController.getFirebaseRemoteConfig()
+                    .getBoolean(FirebaseRemoteConfigKey.SHOW_NEW_GROUP_BTN)
+            ) {
+                binding.overlayGroupTooltip.setTooltipText("You can search groups and create new group from here")
+                binding.overlayNewGroup.visibility = VISIBLE
+            }
+
             binding.animLayout.visibility = VISIBLE
             binding.overlayGroupTooltip.visibility = VISIBLE
             binding.overlayLayout.visibility = VISIBLE
@@ -103,6 +112,8 @@ class GroupListFragment : BaseFragment() {
     override fun initViewBinding() {
         binding.let {
             binding.vm = vm
+            if (!AppObjectController.getFirebaseRemoteConfig().getBoolean(FirebaseRemoteConfigKey.SHOW_NEW_GROUP_BTN))
+                vm.newGroupVisible.set(true)
             binding.executePendingBindings()
         }
     }

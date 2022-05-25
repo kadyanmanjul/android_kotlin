@@ -104,7 +104,7 @@ class ViewAndShareVideoFragment : BaseKFactorFragment(), Player.EventListener {
     }
 
     private fun playRecordedVideo() {
-        binding.videoView.setPlayListener {
+        binding.videoView.setFullScreenListener {
             val currentVideoProgressPosition = binding.videoView.progress
             openVideoPlayerActivity.launch(
                 VideoPlayerActivity.getActivityIntent(

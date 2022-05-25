@@ -100,7 +100,9 @@ private const val CALL_TIMEOUT = 60L
 private val IGNORE_UNAUTHORISED = setOf(
     "$DIR/reputation/vp_rp_snackbar",
     "$DIR/voicecall/agora_call_feedback/",
-    "$DIR/voicecall/agora_call_feedback_submit/"
+    "$DIR/voicecall/agora_call_feedback_submit/",
+    "$DIR/voicecall/call_rating/",
+    "$DIR/fpp/block/"
 )
 
 class AppObjectController {
@@ -713,16 +715,19 @@ class HeaderInterceptor : Interceptor {
     }
 }
 
-inline fun Request.safeCall(block : (Request)->Response) : Response {
+inline fun Request.safeCall(block: (Request) -> Response): Response {
     try {
         return block(this)
-    } catch (e : Exception) {
+    } catch (e: Exception) {
         e.printStackTrace()
-        FirebaseCrashlytics.getInstance().log(this.toString())
-        FirebaseCrashlytics.getInstance().recordException(e)
-        var msg = ""
-        if(e is UnknownHostException) {
-            msg = "Unable to make a connection. Please check your internet"
+        try {
+            FirebaseCrashlytics.getInstance().log(this.toString())
+            FirebaseCrashlytics.getInstance().recordException(e)
+        } catch (t: Throwable) {
+            t.printStackTrace()
+        }
+        if (e is IOException) {
+            val msg = "Unable to make a connection. Please check your internet"
             return Response.Builder()
                 .request(this)
                 .protocol(Protocol.HTTP_1_1)
