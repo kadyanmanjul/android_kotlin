@@ -46,17 +46,17 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
     val repository: ABTestRepository by lazy { ABTestRepository() }
     fun get100PCampaignData(campaign: String, campaignEft: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            try{
+            try {
                 repository.getCampaignData(campaignEft)?.let { campaign ->
                     eftABtestLiveData.postValue(campaign)
                 }
                 val response = repository.getCampaignData(campaign)
-                if(response != null ){
+                if (response != null) {
                     points100ABtestLiveData.postValue(response)
-                }else {
+                } else {
                     points100ABtestLiveData.postValue(null)
                 }
-            }catch (ex : Exception){
+            } catch (ex: Exception) {
                 ex.printStackTrace()
                 points100ABtestLiveData.postValue(null)
             }
@@ -68,8 +68,12 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
             try {
                 repository.getCampaignData(campaign)?.let { campaign ->
                     newLanguageABtestLiveData.postValue(campaign)
+                } ?: run {
+                    AppObjectController.abTestNetworkService.getCampaignData(campaign).let { response ->
+                        newLanguageABtestLiveData.postValue(response.body())
+                    }
                 }
-            }catch (ex: Exception){
+            } catch (ex: Exception) {
                 ex.printStackTrace()
                 newLanguageABtestLiveData.postValue(null)
             }
@@ -104,9 +108,9 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
         }
     }
 
-     fun verifyUserViaTrueCaller(profile: TrueProfile) {
+    fun verifyUserViaTrueCaller(profile: TrueProfile) {
         progressBarStatus.postValue(true)
-         viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
                 val trueCallerLoginRequest = TrueCallerLoginRequest(
                     profile.payload,
@@ -117,9 +121,9 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
                 val response = service.verifyViaTrueCaller(trueCallerLoginRequest)
                 if (response.isSuccessful && response.body() != null) {
                     isUserExist = response.body()?.isUserExist ?: false
-                    if(isUserExist) {
+                    if (isUserExist) {
                         val msg = Message()
-                        msg.what =  IS_USER_EXIST
+                        msg.what = IS_USER_EXIST
                         liveEvent.postValue(msg)
                     }
                     response.body()?.run {

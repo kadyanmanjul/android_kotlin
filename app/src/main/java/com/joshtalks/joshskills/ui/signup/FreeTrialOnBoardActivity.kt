@@ -69,9 +69,9 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         ) {
             openProfileDetailFragment()
         }
+        initABTest()
         addViewModelObservers()
         PrefManager.put(ONBOARDING_STAGE, OnBoardingStage.APP_INSTALLED.value)
-        initABTest()
         addListeners()
     }
 
@@ -93,7 +93,6 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
 
     private fun addListeners() {
         val language = ChooseLanguages("784","Hindi (हिन्दी)")
-        languageActive = true //for testing and showing the language fragment
         btnStartTrial.setOnClickListener {
             if(languageActive){
                 openChooseLanguageFragment()
