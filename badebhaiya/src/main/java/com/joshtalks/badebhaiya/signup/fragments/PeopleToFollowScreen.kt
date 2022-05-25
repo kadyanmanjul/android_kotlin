@@ -38,7 +38,7 @@ import timber.log.Timber
 
 @Composable
 //@Preview(showBackground = true)
-fun PeopleToFollowScreen(peopleList: LazyPagingItems<Users>, signUpViewModel: SignUpViewModel) {
+fun PeopleToFollowScreen(peopleList: LazyPagingItems<Users>) {
     JoshBadeBhaiyaTheme {
         Box(
             modifier = Modifier.fillMaxSize()
@@ -55,14 +55,6 @@ fun PeopleToFollowScreen(peopleList: LazyPagingItems<Users>, signUpViewModel: Si
                         text = stringResource(id = R.string.badebhaiyas_to_follow)
                     )
                 }
-//                itemsIndexed(peopleList){ index: Int, item: Users ->
-//                    ItemBadeBhaiya(badeBhaiya = item, bottomPadding = getPeopleToFollowPadding(index, peopleList))
-//                }
-//                list?.let {
-//
-//
-//                    }
-//                }
 
             itemsIndexed(list) { index, value ->
                 value?.let {

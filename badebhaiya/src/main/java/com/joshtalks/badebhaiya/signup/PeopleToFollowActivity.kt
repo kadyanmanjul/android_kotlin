@@ -44,7 +44,7 @@ class PeopleToFollowActivity : ComponentActivity() {
 
             val peopleList = viewModel.bbToFollow.collectAsLazyPagingItems()
 
-            PeopleToFollowScreen(peopleList, viewModel)
+            PeopleToFollowScreen(peopleList)
 
         }
     }
