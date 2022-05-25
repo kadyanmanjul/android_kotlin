@@ -2,6 +2,8 @@ package com.joshtalks.joshskills.voip.data.local
 
 import android.content.Context
 import androidx.room.*
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.joshtalks.joshskills.voip.voipanalytics.data.local.VoipAnalyticsDao
 import com.joshtalks.joshskills.voip.voipanalytics.data.local.VoipAnalyticsEntity
 
@@ -9,7 +11,7 @@ import com.joshtalks.joshskills.voip.voipanalytics.data.local.VoipAnalyticsEntit
 const val PENDING = 0
 const val SYNCED = 1
 
-@Database(entities = [DisconnectCallEntity::class,VoipAnalyticsEntity::class], version = 3, exportSchema = true)
+@Database(entities = [DisconnectCallEntity::class,VoipAnalyticsEntity::class], version = 4, exportSchema = true)
 abstract class VoipDatabase : RoomDatabase() {
     abstract fun getDisconnectCallDao() : DisconnectCallDao
     abstract fun voipAnalyticsDao() : VoipAnalyticsDao
@@ -26,10 +28,17 @@ abstract class VoipDatabase : RoomDatabase() {
                     context.applicationContext,
                     VoipDatabase::class.java,
                     "voip_database"
-                ).fallbackToDestructiveMigration()
+                ).addMigrations(MIGRATION_3_4)
+                    .fallbackToDestructiveMigration()
                     .build()
                 INSTANCE = instance
                 instance
+            }
+        }
+
+        private val MIGRATION_3_4: Migration = object : Migration(3, 4) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE voip_analytics ADD COLUMN extra TEXT NOT NULL DEFAULT ''")
             }
         }
     }
