@@ -41,6 +41,7 @@ class CommitmentFormActivity : BaseActivity() {
                 START_CONVERSATION_ACTIVITY -> {
                     ConversationActivity.startConversionActivity(this,
                     intent.extras?.get("inboxEntity") as InboxEntity)
+                    finish()
                 }
                 CLOSE_ACTIVITY -> finish()
             }
