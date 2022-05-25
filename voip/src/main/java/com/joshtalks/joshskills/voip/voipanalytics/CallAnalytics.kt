@@ -34,7 +34,8 @@ object CallAnalytics : CallAnalyticsInterface {
             event = event,
             timestamp = Utils.getCurrentTimeStamp(),
             agoraCallId = agoraCallId,
-            agoraMentorId = agoraMentorId
+            agoraMentorId = agoraMentorId,
+            extra = extra
         )
         pushAnalytics(callEvent)
     }
@@ -73,7 +74,8 @@ object CallAnalytics : CallAnalyticsInterface {
                     type = event.event.eventName,
                     agora_call = event.agoraCallId ?: "",
                     agora_mentor = event.agoraMentorId ?: "",
-                    timestamp = event.timestamp.toString()
+                    timestamp = event.timestamp.toString(),
+                    extra = event.extra
                 )
                 database?.voipAnalyticsDao()?.saveAnalytics(analyticsData)
             } catch (e: Exception) {

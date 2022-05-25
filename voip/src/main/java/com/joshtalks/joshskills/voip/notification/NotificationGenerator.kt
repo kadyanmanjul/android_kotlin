@@ -103,6 +103,7 @@ internal class NotificationGenerator {
                     NotificationCompat.Builder(context!!,
                         context.getString(R.string.CHANNEL_ID_OTHERS))
                         .setPriority(NotificationCompat.PRIORITY_MIN)
+                        .setSilent(true)
                         .setOnlyAlertOnce(true)
                         .setOngoing(false)
                         .setShowWhen(true)
@@ -172,6 +173,7 @@ internal class NotificationGenerator {
     fun connected(username : String, notificationBuiltObj: NotificationBuiltObj, onTap: PendingIntent, onNegativeAction : PendingIntent) {
         notificationBuiltObj.notificationBuilder.setContentTitle(username)
         notificationBuiltObj.notificationBuilder.setContentText("Ongoing p2p call")
+        notificationBuiltObj.notificationBuilder.setSilent(true)
         notificationBuiltObj.notificationBuilder.setContentIntent(onTap)
         notificationBuiltObj.notificationBuilder.setUsesChronometer(true)
         notificationBuiltObj.notificationBuilder.setWhen(System.currentTimeMillis())
@@ -185,6 +187,7 @@ internal class NotificationGenerator {
     fun idle(notificationBuiltObj: NotificationBuiltObj) {
         notificationBuiltObj.notificationBuilder.setContentTitle("Josh Skills")
         notificationBuiltObj.notificationBuilder.setContentText("Learn Spoken English")
+        notificationBuiltObj.notificationBuilder.setSilent(true)
         notificationBuiltObj.notificationBuilder.setContentIntent(null)
         notificationBuiltObj.notificationBuilder.setUsesChronometer(false)
         notificationBuiltObj.notificationBuilder.setShowWhen(false)
