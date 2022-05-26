@@ -1,19 +1,14 @@
 package com.joshtalks.joshskills.ui.chat
 
-import android.Manifest
 import android.animation.ValueAnimator
 import android.app.Activity
-import android.app.PendingIntent
-import android.content.Context
 import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.ActivityInfo
-import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.Rect
 import android.net.Uri
 import android.os.Bundle
-import android.os.Handler
 import android.os.Environment
 import android.text.Editable
 import android.text.TextWatcher
@@ -27,11 +22,9 @@ import android.view.animation.AccelerateInterpolator
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
-import android.widget.RemoteViews
+import android.widget.TextView
 import android.widget.Toast
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
@@ -53,14 +46,9 @@ import com.joshtalks.joshskills.constants.COURSE_RESTART_SUCCESS
 import com.joshtalks.joshskills.constants.INTERNET_FAILURE
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.Utils.getCurrentMediaVolume
-import com.joshtalks.joshskills.core.Utils.getLangCodeFromCourseId
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
-import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
-import com.joshtalks.joshskills.core.analytics.AppAnalytics
-import com.joshtalks.joshskills.core.analytics.MixPanelEvent
-import com.joshtalks.joshskills.core.analytics.MixPanelTracker
-import com.joshtalks.joshskills.core.analytics.ParamKeys
+import com.joshtalks.joshskills.core.analytics.*
 import com.joshtalks.joshskills.core.countdowntimer.CountdownTimerBack
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.core.custom_ui.decorator.SmoothScrollingLinearLayoutManager
@@ -75,10 +63,7 @@ import com.joshtalks.joshskills.core.notification.HAS_COURSE_REPORT
 import com.joshtalks.joshskills.core.playback.PlaybackInfoListener.State.PAUSED
 import com.joshtalks.joshskills.core.service.video_download.VideoDownloadController
 import com.joshtalks.joshskills.databinding.ActivityConversationBinding
-import com.joshtalks.joshskills.databinding.FppQuickViewListsItemBinding
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.quizgame.StartActivity
-import com.joshtalks.joshskills.quizgame.analytics.GameAnalytics
 import com.joshtalks.joshskills.repository.local.DatabaseUtils
 import com.joshtalks.joshskills.repository.local.entity.*
 import com.joshtalks.joshskills.repository.local.eventbus.*
@@ -90,7 +75,6 @@ import com.joshtalks.joshskills.repository.server.chat_message.TChatMessage
 import com.joshtalks.joshskills.repository.server.chat_message.TImageMessage
 import com.joshtalks.joshskills.repository.server.chat_message.TVideoMessage
 import com.joshtalks.joshskills.track.CONVERSATION_ID
-import com.joshtalks.joshskills.ui.activity_feed.ActivityFeedMainActivity
 import com.joshtalks.joshskills.ui.assessment.AssessmentActivity
 import com.joshtalks.joshskills.ui.certification_exam.CertificationBaseActivity
 import com.joshtalks.joshskills.ui.chat.adapter.ConversationAdapter
@@ -102,9 +86,6 @@ import com.joshtalks.joshskills.ui.extra.AUTO_START_POPUP
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
 import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.ui.fpp.SeeAllRequestsActivity
-import com.joshtalks.joshskills.ui.fpp.constants.*
-import com.joshtalks.joshskills.ui.fpp.model.PendingRequestDetail
-import com.joshtalks.joshskills.ui.fpp.utils.Blurry
 import com.joshtalks.joshskills.ui.group.JoshGroupActivity
 import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics
 import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics.Event.MAIN_GROUP_ICON
@@ -129,12 +110,8 @@ import com.joshtalks.joshskills.ui.video_player.VIDEO_OBJECT
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 import com.joshtalks.joshskills.ui.voip.IS_DEMO_P2P
 import com.joshtalks.joshskills.ui.voip.favorite.FavoriteListActivity
-import com.joshtalks.joshskills.ui.voip.new_arch.ui.callbar.CallBar
-import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity
 import com.joshtalks.joshskills.util.ExoAudioPlayer
 import com.joshtalks.joshskills.util.StickyHeaderDecoration
-import com.joshtalks.joshskills.voip.notification.NotificationData
-import com.joshtalks.joshskills.voip.voipLog
 import com.joshtalks.recordview.CustomImageButton.FIRST_STATE
 import com.joshtalks.recordview.CustomImageButton.SECOND_STATE
 import com.joshtalks.recordview.OnRecordListener
@@ -146,10 +123,10 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.muddzdev.styleabletoast.StyleableToast
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.list_item.view.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
 import org.json.JSONObject
-import timber.log.Timber
 import java.io.File
 import java.lang.ref.WeakReference
 import java.util.*
@@ -279,27 +256,6 @@ class ConversationActivity :
         }
         init()
         showRestartButton()
-    }
-
-    //Setting the animation on the buttons
-    private fun setButtonsAnimation() {
-        with(conversationBinding) {
-            if (!buttonClicked) {
-                conversationBinding.imgActivityFeed.startAnimation(fromBottomAnimation)
-                conversationBinding.imgGameBtn.startAnimation(fromBottomAnimation)
-                conversationBinding.imgGroupChatBtn.startAnimation(fromBottomAnimation)
-                conversationBinding.imgFppRequest.startAnimation(fromBottomAnimation)
-                floatingActionButtonAdd.startAnimation(rotateOpenAnimation)
-
-            } else {
-                conversationBinding.imgActivityFeed.startAnimation(toBottomAnimation)
-                conversationBinding.imgGameBtn.startAnimation(toBottomAnimation)
-                conversationBinding.imgGroupChatBtn.startAnimation(toBottomAnimation)
-                conversationBinding.imgFppRequest.startAnimation(toBottomAnimation)
-                floatingActionButtonAdd.startAnimation(rotateCloseAnimation)
-                conversationBinding.cbcArrow.visibility = GONE
-            }
-        }
     }
 
     override fun getConversationId(): String {
@@ -484,7 +440,7 @@ class ConversationActivity :
     }
 
     private fun showCohortBaseCourse() {
-        if (!PrefManager.getBoolValue(HAS_SEEN_COHORT_BASE_COURSE_TOOLTIP) && inboxEntity.isCourseBought) {
+        if (!PrefManager.getBoolValue(HAS_SEEN_COHORT_BASE_COURSE_TOOLTIP)) {
             conversationBinding.cbcTooltip.visibility = VISIBLE
             conversationBinding.overlayLayout.visibility = VISIBLE
 
@@ -499,18 +455,8 @@ class ConversationActivity :
     fun hideCohortCourseTooltip() {
         conversationBinding.cbcTooltip.visibility = GONE
         conversationBinding.overlayLayout.visibility = GONE
+        conversationBinding.overlayLayout.setOnClickListener(null)
         PrefManager.put(HAS_SEEN_COHORT_BASE_COURSE_TOOLTIP, true)
-    }
-
-    private fun showCohortBaseInsideCourse() {
-        if (!PrefManager.getBoolValue(HAS_SEEN_COHORT_BASE_COURSE_INSIDE_TOOLTIP)) {
-            conversationBinding.cbcArrow.visibility = VISIBLE
-        }
-    }
-
-    fun hideCohortBaseInsideTooltip() {
-        conversationBinding.cbcArrow.visibility = GONE
-        PrefManager.put(HAS_SEEN_COHORT_BASE_COURSE_INSIDE_TOOLTIP, true)
     }
 
     fun hideLeaderboardTooltip() {
@@ -839,7 +785,7 @@ class ConversationActivity :
         }
 
         conversationBinding.imgGroupChatBtn.setOnSingleClickListener {
-            hideCohortBaseInsideTooltip()
+            hideCohortCourseTooltip()
             if (inboxEntity.isCourseBought.not() &&
                 inboxEntity.expiryDate != null &&
                 inboxEntity.expiryDate!!.time < System.currentTimeMillis()
@@ -1222,6 +1168,7 @@ class ConversationActivity :
                         PrefManager.put(LAST_TIME_AUTOSTART_SHOWN, System.currentTimeMillis())
                         checkForOemNotifications(AUTO_START_POPUP)
                     }
+                    showCohortBaseCourse()
                 } else {
                     conversationBinding.imgGroupChatBtn.visibility = GONE
                     conversationBinding.imgFppBtn.visibility = GONE
@@ -1348,152 +1295,6 @@ class ConversationActivity :
         }
     }
 
-    private fun blurViewOnClickListeners(userProfileData: UserProfileResponse) {
-        conversationBinding.floatingActionButtonAdd.setOnClickListener {
-            setExpandableButtons(userProfileData)
-            showCohortBaseInsideCourse()
-            hideCohortCourseTooltip()
-            setButtonsAnimation()
-        }
-
-        conversationBinding.blurView.setOnClickListener {
-            setExpandableButtons(userProfileData)
-            setButtonsAnimation()
-            conversationBinding.cbcTooltip.visibility = GONE
-            conversationBinding.overlayLayout.visibility = GONE
-            conversationBinding.cbcArrow.visibility = GONE
-        }
-    }
-
-
-    private fun setExpandableButtons(userProfileData: UserProfileResponse) {
-        with(conversationBinding) {
-            if (buttonClicked) {
-                MixPanelTracker.publishEvent(MixPanelEvent.MORE_BUTTON_CLICKED).push()
-                getAllPendingRequest()
-                conversationBinding.root.setOnClickListener {}
-                showBlurOrQuickView()
-                if (activityFeedControl) imgActivityFeed.visibility =
-                    VISIBLE else conversationBinding.imgActivityFeed.visibility = GONE
-                imgFppRequest.visibility = VISIBLE
-
-                if (userProfileData.isGameActive)
-                    imgGameBtn.visibility = VISIBLE
-
-                if (userProfileData.hasGroupAccess)
-                    imgGroupChatBtn.visibility = VISIBLE
-            } else {
-                MixPanelTracker.publishEvent(MixPanelEvent.CANCEL).push()
-                conversationBinding.root.onFocusChangeListener = null
-                hideBlurOrQuickView()
-                imgActivityFeed.visibility = GONE
-                imgFppRequest.visibility = GONE
-
-                if (userProfileData.isGameActive)
-                    imgGameBtn.visibility = GONE
-
-                if (userProfileData.hasGroupAccess)
-                    imgGroupChatBtn.visibility = GONE
-            }
-        }
-    }
-
-    private fun showBlurOrQuickView() {
-        conversationBinding.allCountNumber.visibility = GONE
-        conversationBinding.userPointContainer.elevation = 0f
-        conversationBinding.imgMain.visibility = VISIBLE
-        conversationBinding.imgPointer.visibility = VISIBLE
-        conversationBinding.root.setOnClickListener { }
-        lifecycleScope.launchWhenCreated {
-            conversationBinding.blurView.visibility = VISIBLE
-            Blurry.with(this@ConversationActivity).radius(25).sampling(3)
-                .onto(conversationBinding.blurView, conversationBinding.rootView)
-        }
-
-        buttonClicked = false
-        conversationBinding.quickCardView.visibility = VISIBLE
-
-        if (requestCountNumber > 0) {
-            lifecycleScope.launch(Dispatchers.Main) {
-                delay(200)
-                conversationBinding.fppRequestCountNumber.visibility = VISIBLE
-            }
-        }
-    }
-
-    private fun hideBlurOrQuickView() {
-        conversationBinding.root.setOnClickListener(null)
-        Blurry.delete(conversationBinding.blurView)
-        conversationBinding.imgPointer.visibility = INVISIBLE
-        conversationBinding.userPointContainer.elevation = 3f
-        conversationBinding.blurView.visibility = GONE
-        buttonClicked = true
-        conversationBinding.quickCardView.visibility = GONE
-        conversationBinding.imgMain.visibility = GONE
-        conversationBinding.imgMain.setOnClickListener(null)
-        conversationBinding.root.onFocusChangeListener = null
-        conversationBinding.fppRequestCountNumber.visibility = GONE
-        if (requestCountNumber > 0) {
-            lifecycleScope.launch(Dispatchers.Main) {
-                conversationBinding.allCountNumber.visibility = VISIBLE
-            }
-        }
-
-    }
-
-
-    private fun getPendingRequestItem(pendingRequestDetail: PendingRequestDetail): FppQuickViewListsItemBinding {
-        val view =
-            FppQuickViewListsItemBinding.inflate(
-                LayoutInflater.from(conversationBinding.root.context),
-                conversationBinding.root,
-                false
-            )
-        with(view) {
-            itemData = pendingRequestDetail
-            fppRequestContainer.setOnClickListener {
-                openUserProfileActivity(
-                    pendingRequestDetail.senderMentorId ?: "",
-                    FAVOURITE_REQUEST
-                )
-            }
-            profileImage.setUserImageOrInitials(
-                pendingRequestDetail.photoUrl ?: "",
-                pendingRequestDetail.fullName ?: ""
-            )
-            btnConfirmRequest.setOnClickListener {
-                MixPanelTracker.publishEvent(MixPanelEvent.FPP_REQUEST_CONFIRM)
-                    .addParam(ParamKeys.MENTOR_ID, pendingRequestDetail.senderMentorId)
-                    .addParam(ParamKeys.VIA, "quick view")
-                    .push()
-                btnConfirmRequest.visibility = GONE
-                btnNotNow.visibility = GONE
-                tvSpokenTime.text = getString(R.string.now_fpp)
-                fppRequestContainer.setBackgroundColor(resources.getColor(R.color.request_respond))
-                conversationViewModel.confirmOrRejectFppRequest(
-                    pendingRequestDetail.senderMentorId!!,
-                    IS_ACCEPTED, QUICK_VIEW
-                )
-            }
-            btnNotNow.setOnClickListener {
-                MixPanelTracker.publishEvent(MixPanelEvent.FPP_REQUEST_NOT_NOW)
-                    .addParam(ParamKeys.MENTOR_ID, pendingRequestDetail.senderMentorId)
-                    .addParam(ParamKeys.VIA, "quick view")
-                    .push()
-                btnConfirmRequest.visibility = GONE
-                btnNotNow.visibility = GONE
-                tvSpokenTime.text = getString(R.string.request_removed)
-                fppRequestContainer.setBackgroundColor(resources.getColor(R.color.request_respond))
-                conversationViewModel.confirmOrRejectFppRequest(
-                    pendingRequestDetail.senderMentorId!!,
-                    IS_REJECTED, QUICK_VIEW
-                )
-
-            }
-        }
-        return view
-    }
-
     private fun addRVPatch(count: Int) {
         if (count <= 3) {
             linearLayoutManager.stackFromEnd = false
@@ -1564,7 +1365,6 @@ class ConversationActivity :
     }
 
     private fun initScoreCardView(userData: UserProfileResponse) {
-        showCohortBaseCourse()
         userData.isContainerVisible?.let { isLeaderBoardActive ->
             if (isLeaderBoardActive) {
                 conversationBinding.points.text = userData.points.toString().plus(" Points")
@@ -1572,8 +1372,13 @@ class ConversationActivity :
                 // conversationBinding.userPointContainer.slideInAnimation()
                 conversationBinding.userPointContainer.visibility = VISIBLE
                 // showLeaderBoardTooltip()
-                if (!PrefManager.getBoolValue(HAS_SEEN_LEADERBOARD_ANIMATION))
-                    showLeaderBoardSpotlight()
+                if (!PrefManager.getBoolValue(HAS_SEEN_LEADERBOARD_ANIMATION)) {
+                    if (PrefManager.getBoolValue(HAS_SEEN_COHORT_BASE_COURSE_TOOLTIP))
+                        showLeaderBoardSpotlight()
+                    else {
+
+                    }
+                }
                 else {
                     CoroutineScope(Dispatchers.IO).launch {
                         delay(1000)
@@ -1725,6 +1530,27 @@ class ConversationActivity :
                 )
         )
 
+        compositeDisposable.add(
+            RxBus2.listen(TextTooltipEvent::class.java)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    {
+                        if (it.chatModel.type == BASE_MESSAGE_TYPE.Q) {
+                            lifecycleScope.launch(Dispatchers.IO) {
+                                withContext(Dispatchers.Main) {
+                                    showToast(R.string.ACCOUNT_KIT_CLIENT_TOKEN.toString())
+                                    setOverlayAnimation()
+                                }
+                            }
+                        }
+                    },
+                    {
+                        showToast(it.message.toString())
+                        it.printStackTrace()
+                    }
+             )
+        )
         compositeDisposable.add(
             RxBus2.listen(DownloadMediaEventBus::class.java)
                 .subscribeOn(Schedulers.io())
@@ -2359,11 +2185,6 @@ class ConversationActivity :
                 hideLeaderBoardSpotlight()
             }
             conversationBinding.overlayView.visibility == VISIBLE -> conversationBinding.overlayView.visibility = INVISIBLE
-            conversationBinding.quickCardView.isVisible || conversationBinding.cbcArrow.isVisible -> {
-                hideBlurOrQuickView()
-                setButtonsAnimation()
-                conversationBinding.cbcArrow.isVisible = false
-            }
             else -> {
                 val resultIntent = Intent()
                 setResult(RESULT_OK, resultIntent)
@@ -2632,38 +2453,22 @@ class ConversationActivity :
             var i = 0
             while (true) {
                 val view = conversationBinding.chatRv.getChildAt(i) ?: break
-                if (view.id == R.id.unlock_class_item_container) {
+                if (view.id == R.id.root_view) {
                     val overlayItem = TooltipUtils.getOverlayItemFromView(view)
                     overlayItem?.let {
                         val overlayImageView =
-                            conversationBinding.overlayView.findViewById<ImageView>(R.id.card_item_image)
-                        val overlayButtonImageView =
-                            conversationBinding.overlayView.findViewById<ImageView>(R.id.button_item_image)
-                        val unlockBtnView = view.findViewById<MaterialButton>(R.id.btn_start)
-                        val overlayButtonItem = TooltipUtils.getOverlayItemFromView(unlockBtnView)
+                            conversationBinding.overlayView.findViewById<TextView>(R.id.root_sub_view)
                         overlayImageView.visibility = INVISIBLE
-                        overlayButtonImageView.visibility = INVISIBLE
                         conversationBinding.overlayView.setOnClickListener {
-                            conversationBinding.overlayView.visibility = INVISIBLE
+                         ///   conversationBinding.overlayView.visibility = INVISIBLE
                         }
                         overlayImageView.setOnClickListener {
-                            conversationBinding.overlayView.visibility = INVISIBLE
-                        }
-                        overlayButtonImageView.setOnClickListener {
-                            conversationBinding.overlayView.visibility = INVISIBLE
-                            unlockBtnView.performClick()
-                        }
-                        overlayButtonItem?.let {
-                            setOverlayView(
-                                overlayItem,
-                                overlayImageView,
-                                overlayButtonItem,
-                                overlayButtonImageView
-                            )
+                          //  conversationBinding.overlayView.visibility = INVISIBLE
                         }
                     }
                     break
-                }
+                }else
+                    showToast(view.id.toString())
                 i++
             }
         }
