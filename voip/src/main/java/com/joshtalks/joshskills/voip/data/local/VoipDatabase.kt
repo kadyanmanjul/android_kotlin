@@ -28,7 +28,7 @@ abstract class VoipDatabase : RoomDatabase() {
                     context.applicationContext,
                     VoipDatabase::class.java,
                     "voip_database"
-                ).addMigrations(MIGRATION_3_4)
+                )//.addMigrations(MIGRATION_3_4)
                     .fallbackToDestructiveMigration()
                     .build()
                 INSTANCE = instance
