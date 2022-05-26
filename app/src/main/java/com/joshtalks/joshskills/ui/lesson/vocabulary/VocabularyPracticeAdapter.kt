@@ -708,7 +708,7 @@ class VocabularyPracticeAdapter(
                     expandCardPosition = positionInList + 1
                     val duration = Utils.getDurationOfMedia(context, it.filePath)?.toInt() ?: 0
                     if (it.filePath == null || duration < 1000) {
-                        showToast(AppObjectController.joshApplication.getString(R.string.submit_practise_msz))
+                        showToast(AppObjectController.joshApplication.getString(R.string.recording_short))
                         return@setOnClickListener
                     }
 
