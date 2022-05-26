@@ -21,9 +21,12 @@ import android.view.View.VISIBLE
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.widget.AppCompatTextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
@@ -32,6 +35,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
+import com.airbnb.lottie.LottieAnimationView
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.offline.Download
@@ -89,8 +93,11 @@ import com.joshtalks.joshskills.ui.fpp.SeeAllRequestsActivity
 import com.joshtalks.joshskills.ui.group.JoshGroupActivity
 import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics
 import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics.Event.MAIN_GROUP_ICON
+import com.joshtalks.joshskills.ui.leaderboard.Event
 import com.joshtalks.joshskills.ui.leaderboard.ItemOverlay
+import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_TEXT_VIEW_CLASS_ANIMATION
 import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_UNLOCK_CLASS_ANIMATION
+import com.joshtalks.joshskills.ui.leaderboard.constants.NEED_VIEW_BITMAP
 import com.joshtalks.joshskills.ui.lesson.LessonActivity
 import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
 import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
@@ -445,6 +452,7 @@ class ConversationActivity :
             conversationBinding.overlayLayout.visibility = VISIBLE
 
             conversationBinding.overlayLayout.setOnClickListener {
+                conversationBinding.welcomeContainer.visibility = INVISIBLE
                 conversationBinding.cbcTooltip.visibility = GONE
                 conversationBinding.overlayLayout.visibility = GONE
                 conversationBinding.overlayLayout.setOnClickListener(null)
@@ -453,6 +461,7 @@ class ConversationActivity :
     }
 
     fun hideCohortCourseTooltip() {
+        conversationBinding.welcomeContainer.visibility = INVISIBLE
         conversationBinding.cbcTooltip.visibility = GONE
         conversationBinding.overlayLayout.visibility = GONE
         conversationBinding.overlayLayout.setOnClickListener(null)
@@ -1167,7 +1176,9 @@ class ConversationActivity :
                         PrefManager.put(LAST_TIME_AUTOSTART_SHOWN, System.currentTimeMillis())
                         checkForOemNotifications(AUTO_START_POPUP)
                     }
-                    showCohortBaseCourse()
+                    if(PrefManager.getBoolValue(HAS_SEEN_TEXT_VIEW_CLASS_ANIMATION)){
+                        showCohortBaseCourse()
+                    }
                 } else {
                     conversationBinding.imgGroupChatBtn.visibility = GONE
                     conversationBinding.imgFppBtn.visibility = GONE
@@ -1528,6 +1539,28 @@ class ConversationActivity :
                 )
         )
 
+        compositeDisposable.add(
+            RxBus2.listen(TextTooltipEvent::class.java)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    {
+                        if (it.chatModel.type == BASE_MESSAGE_TYPE.Q) {
+                            lifecycleScope.launch(Dispatchers.IO) {
+                                withContext(Dispatchers.Main) {
+                                    if(!PrefManager.getBoolValue(HAS_SEEN_TEXT_VIEW_CLASS_ANIMATION)){
+                                        setOverlayAnimationOnText()
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    {
+                        showToast(it.message.toString())
+                        it.printStackTrace()
+                    }
+             )
+        )
         compositeDisposable.add(
             RxBus2.listen(DownloadMediaEventBus::class.java)
                 .subscribeOn(Schedulers.io())
@@ -2464,6 +2497,30 @@ class ConversationActivity :
                     break
                 }
                 i++
+            }
+        }
+    }
+
+    private suspend fun setOverlayAnimationOnText() {
+        conversationBinding.overlayView.visibility = INVISIBLE
+        withContext(Dispatchers.Main) {
+            val welcomeTextView =
+                conversationBinding.chatRv.getChildAt(conversationAdapter.getLastItemPosition())
+            val STATUS_BAR_HEIGHT = getStatusBarHeight()
+            conversationBinding.welcomeContainer.visibility = INVISIBLE
+            val overlayImageView =
+                conversationBinding.welcomeContainer.findViewById<ImageView>(R.id.welcome_item)
+            val overlayItem = TooltipUtils.getOverlayItemFromView(welcomeTextView)
+            conversationBinding.welcomeContainer.setOnClickListener {
+                conversationBinding.welcomeContainer.visibility = INVISIBLE
+            }
+            PrefManager.put(HAS_SEEN_TEXT_VIEW_CLASS_ANIMATION, true)
+            overlayItem?.let {
+                overlayImageView.setImageBitmap(it.viewBitmap)
+                overlayImageView.x = it.x.toFloat()
+                overlayImageView.y = it.y.toFloat() - STATUS_BAR_HEIGHT
+                overlayImageView.requestLayout()
+                conversationBinding.welcomeContainer.visibility = VISIBLE
             }
         }
     }

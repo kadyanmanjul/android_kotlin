@@ -87,6 +87,14 @@ class ConversationAdapter(private val activityRef: WeakReference<FragmentActivit
         }
     }
 
+    fun getLastItemPosition(): Int {
+        return try {
+            messageList.lastIndex
+        } catch (ex: NoSuchElementException) {
+            -1
+        }
+    }
+
     fun getLastItemV2(): ChatModel? {
         return messageList.findLast { it.chatId.isNotEmpty() }
     }
