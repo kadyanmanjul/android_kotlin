@@ -105,16 +105,7 @@ object VoipPref {
 
         // TODO: These function shouldn't be here
         private fun FragmentActivity.showVoipDialog(totalSecond: Long) {
-            Log.d(TAG, "showVoipDialog: 7")
-
-            if (getFppFlag()=="true") {
-                Log.d(TAG, "showVoipDialog: 3")
-                showFeedBackDialog(this)
-            } else {
-                Log.d(TAG, "showVoipDialog: 5")
-
                 showCallRatingDialog(this)
-            }
         }
 
     private fun showCallRatingDialog(fragmentActivity: FragmentActivity) {

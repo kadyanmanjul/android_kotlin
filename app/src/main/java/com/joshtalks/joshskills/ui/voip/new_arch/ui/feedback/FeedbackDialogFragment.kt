@@ -90,14 +90,6 @@ class FeedbackDialogFragment(val function: () -> Unit) : BaseDialogFragment() {
     }
 
     fun closeDialog() {
-        CallRatingsFragment.newInstance(
-            VoipPref.getLastRemoteUserName(),
-            VoipPref.getLastCallDurationInSec().toInt(),
-            VoipPref.getLastCallId(),
-            VoipPref.getLastProfileImage(),
-            VoipPref.getLastRemoteUserAgoraId().toString(),
-            VoipPref.getLocalUserAgoraId().toString()
-        ).show(requireActivity().supportFragmentManager, "CallRatingsFragment")
         super.dismiss()
     }
 

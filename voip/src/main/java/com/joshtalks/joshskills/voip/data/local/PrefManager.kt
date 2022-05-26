@@ -3,8 +3,6 @@ package com.joshtalks.joshskills.voip.data.local
 import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
-import com.joshtalks.joshskills.base.constants.CALL_ID
-import com.joshtalks.joshskills.base.constants.PREF_KEY_LOCAL_USER_AGORA_ID
 import com.joshtalks.joshskills.voip.R
 import com.joshtalks.joshskills.voip.constant.*
 import kotlinx.coroutines.*
@@ -94,17 +92,6 @@ class PrefManager {
         fun getPstnState(): String {
             Log.d(TAG, "Getting pstn State")
             return preferenceManager.getString(PREF_KEY_PSTN_STATE, PSTN_STATE_IDLE).toString()
-        }
-
-        fun saveFppFlag(flag: String) {
-            val editor = preferenceManager.edit()
-            editor.putString(PREF_KEY_FPP_FLAG, flag)
-            editor.commit()
-        }
-
-        fun getFppFlag(): String {
-            Log.d(TAG, "Getting flag State")
-            return preferenceManager.getString(PREF_KEY_FPP_FLAG, "true").toString()
         }
     }
 }
