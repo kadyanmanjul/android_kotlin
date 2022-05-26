@@ -756,12 +756,6 @@ class ConversationActivity :
 
     private fun initView() {
 
-        if (inboxEntity.isCourseBought.not()) {
-            conversationBinding.root.visibility = GONE
-        } else {
-            conversationBinding.root.visibility = VISIBLE
-        }
-
         conversationBinding.scrollToEndButton.setOnClickListener {
             scrollToEnd()
         }
