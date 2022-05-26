@@ -44,7 +44,7 @@ import com.joshtalks.joshskills.core.firestore.FirestoreNotificationDB
 import com.joshtalks.joshskills.core.firestore.NotificationAnalytics
 import com.joshtalks.joshskills.core.firestore.NotificationListener
 import com.joshtalks.joshskills.core.io.LastSyncPrefManager
-import com.joshtalks.joshskills.core.notification.FirebaseNotificationService
+import com.joshtalks.joshskills.core.notification.NotificationUtils
 import com.joshtalks.joshskills.core.service.DownloadUtils
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.core.service.video_download.DownloadTracker
@@ -80,6 +80,7 @@ import io.github.inflationx.calligraphy3.CalligraphyConfig
 import io.github.inflationx.calligraphy3.CalligraphyInterceptor
 import io.github.inflationx.viewpump.ViewPump
 import java.io.File
+import java.io.IOException
 import java.lang.reflect.Constructor
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
@@ -111,7 +112,6 @@ import retrofit2.HttpException
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import timber.log.Timber
-import java.io.IOException
 
 private const val JOSH_SKILLS_CACHE = "joshskills-cache"
 private const val READ_TIMEOUT = 30L
@@ -136,7 +136,7 @@ class AppObjectController {
 
         @JvmStatic
         lateinit var joshApplication: JoshApplication
-            //private set
+        //private set
 
         @JvmStatic
         lateinit var appDatabase: AppDatabase
@@ -406,34 +406,38 @@ class AppObjectController {
         }
 
         fun observeFirestore() {
-                try {
-                    //FirestoreNotificationDB.getNotification ()
-                    FirestoreNotificationDB.setNotificationListener(listener = object :
-                        NotificationListener {
-                        override fun onReceived(fNotification: FirestoreNewNotificationObject) {
-                            CoroutineScope(Dispatchers.IO).launch {
-                                val isFistTimeNotification = NotificationAnalytics().addAnalytics(
-                                    notificationId = fNotification.id.toString(),
-                                    mEvent = NotificationAnalytics.Action.RECEIVED,
-                                    channel = NotificationAnalytics.Channel.FIRESTORE
-                                )
-                                if (isFistTimeNotification){
-                                    try {
-                                    val nc = fNotification.toNotificationObject(fNotification.id.toString())
-                                    FirebaseNotificationService.sendFirestoreNotification(nc,
-                                        joshApplication)
-                                    } catch (ex:java.lang.Exception){
-                                        ex.printStackTrace()
-                                    }
+            try {
+                //FirestoreNotificationDB.getNotification ()
+                Log.d("Manjul", "observeFirestore() called")
+                FirestoreNotificationDB.setNotificationListener(listener = object :
+                    NotificationListener {
+                    override fun onReceived(fNotification: FirestoreNewNotificationObject) {
+                        CoroutineScope(Dispatchers.IO).launch {
+                            Log.d("Manjul", "observeFirestore onReceived() called ${fNotification}")
+                            val isFistTimeNotification = NotificationAnalytics().addAnalytics(
+                                notificationId = fNotification.id.toString(),
+                                mEvent = NotificationAnalytics.Action.RECEIVED,
+                                channel = NotificationAnalytics.Channel.FIRESTORE
+                            )
+                            if (isFistTimeNotification) {
+                                try {
+                                    val nc =
+                                        fNotification.toNotificationObject(fNotification.id.toString())
+                                    Log.d("Manjul", "onReceived() nc ${nc}")
+                                    NotificationUtils(joshApplication).sendNotification(nc)
+                                } catch (ex: java.lang.Exception) {
+                                    ex.printStackTrace()
                                 }
                             }
                         }
-                    })
-                } catch (ex:Exception){
-                    LogException.catchException(ex)
-                }
+                    }
+                })
+            } catch (ex: Exception) {
+                LogException.catchException(ex)
+            }
         }
-        private fun getNewArchVoipFlag(){
+
+        private fun getNewArchVoipFlag() {
             try {
                 CoroutineScope(Dispatchers.IO).launch {
                     try {
@@ -453,7 +457,7 @@ class AppObjectController {
                         }
                     }
                 }
-            }catch (ex:Exception) {
+            } catch (ex: Exception) {
                 ex.printStackTrace()
             }
         }
@@ -720,9 +724,9 @@ class AppObjectController {
 
                 DateTimeUtils.setTimeZone("UTC")
                 try {
-                    if (VideoDownloadController.getInstance().downloadTracker!=null)
-                      videoDownloadTracker = VideoDownloadController.getInstance().downloadTracker
-                }catch (ex:Exception){
+                    if (VideoDownloadController.getInstance().downloadTracker != null)
+                        videoDownloadTracker = VideoDownloadController.getInstance().downloadTracker
+                } catch (ex: Exception) {
                     Log.e("AppObjectController", "initObjectInThread: referrer")
                 }
                 InstallReferralUtil.installReferrer(context)
@@ -816,7 +820,10 @@ class StatusCodeInterceptor : Interceptor {
                         WorkManagerAdmin.appStartWorker()
                         if (JoshApplication.isAppVisible) {
                             val intent =
-                                Intent(AppObjectController.joshApplication, SignUpActivity::class.java)
+                                Intent(
+                                    AppObjectController.joshApplication,
+                                    SignUpActivity::class.java
+                                )
                             intent.apply {
                                 addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)

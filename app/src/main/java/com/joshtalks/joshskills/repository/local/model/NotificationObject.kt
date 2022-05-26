@@ -45,9 +45,6 @@ class NotificationObject {
     @SerializedName("large_icon")
     var largeIcon: String? = null
 
-    @SerializedName("notification_id")
-    var notificationId = -1
-
     @SerializedName("is_strict")
     val isStrict: Boolean = false
 
@@ -74,6 +71,12 @@ class NotificationObject {
 
     @SerializedName("additional_data")
     var extraData: String? = null
+
+    @SerializedName("channelId")
+    var channelId: String? = null
+
+    @SerializedName("priority")
+    var priority: Int? = null
 
     override fun toString(): String {
             return AppObjectController.gsonMapper.toJson(this)

@@ -38,9 +38,6 @@ data class FirestoreNotificationObject(
     @SerializedName("largeIcon")
     var largeIcon: String? = null,
 
-    @SerializedName("notificationId")
-    var notificationId: Int = -1,
-
     @SerializedName("isStrict")
     val isStrict: Boolean = false,
 
@@ -97,7 +94,6 @@ data class FirestoreNotificationObject(
         it.isClicked = isClicked
         it.actionData = actionData
         it.largeIcon = largeIcon
-        it.notificationId = notificationId
         it.isOngoing = isOngoing
         it.total = total
         it.progress = progress

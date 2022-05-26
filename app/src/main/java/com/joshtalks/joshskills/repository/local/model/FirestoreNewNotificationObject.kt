@@ -4,7 +4,7 @@ import com.google.firebase.Timestamp
 import com.google.gson.annotations.SerializedName
 
 data class FirestoreNewNotificationObject(
-
+    @SerializedName("id")
     var id: Int? = null,
 
     @SerializedName("name")
@@ -36,9 +36,6 @@ data class FirestoreNewNotificationObject(
 
     @SerializedName("largeIcon")
     var largeIcon: String? = null,
-
-    @SerializedName("id")
-    var notificationId: Int = -1,
 
     @SerializedName("isStrict")
     val isStrict: Boolean = false,
@@ -96,7 +93,6 @@ data class FirestoreNewNotificationObject(
         it.isClicked = isClicked
         it.actionData = action_data
         it.largeIcon = largeIcon
-        it.notificationId = notificationId
         it.isOngoing = isOngoing
         it.total = total
         it.progress = progress

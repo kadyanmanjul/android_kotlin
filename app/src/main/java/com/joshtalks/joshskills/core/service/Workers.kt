@@ -62,10 +62,10 @@ import com.joshtalks.joshskills.core.firestore.NotificationAnalytics
 import com.joshtalks.joshskills.core.getDefaultCountryIso
 import com.joshtalks.joshskills.core.notification.FCM_ACTIVE
 import com.joshtalks.joshskills.core.notification.FCM_TOKEN
-import com.joshtalks.joshskills.core.notification.FirebaseNotificationService
 import com.joshtalks.joshskills.core.notification.HAS_LOCAL_NOTIFICATION
 import com.joshtalks.joshskills.core.notification.HAS_NOTIFICATION
 import com.joshtalks.joshskills.core.notification.NOTIFICATION_ID
+import com.joshtalks.joshskills.core.notification.NotificationUtils
 import com.joshtalks.joshskills.engage_notification.AppUsageModel
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.NPSEvent
@@ -1026,7 +1026,7 @@ class FakeCallNotificationWorker(
                 try {
                     val resp = AppObjectController.p2pNetworkService.getFakeCall()
                     val nc = resp.toNotificationObject(null)
-                    FirebaseNotificationService.sendFirestoreNotification(nc, context)
+                    NotificationUtils(context).sendNotification(nc)
                 }catch (ex:Exception){}
             }
         } catch (ex: Throwable) {
@@ -1043,30 +1043,30 @@ class LocalNotificationWorker(
     CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
         try {
-            checkOnBoardingStage()
+            checkOnBoardingStage(context)
         } catch (ex: Throwable) {
             ex.printStackTrace()
         }
         return Result.success()
     }
 
-    private fun checkOnBoardingStage() {
+    private fun checkOnBoardingStage(context: Context) {
         val onBoardingStage = PrefManager.getStringValue(ONBOARDING_STAGE)
         val isOnBoardingUnfinished = onBoardingStage == OnBoardingStage.APP_INSTALLED.value ||
                 onBoardingStage == OnBoardingStage.START_NOW_CLICKED.value ||
                 onBoardingStage == OnBoardingStage.JI_HAAN_CLICKED.value
         if (User.getInstance().isVerified.not() && isOnBoardingUnfinished) {
-            showOnBoardingCompletionNotification()
+            showOnBoardingCompletionNotification(context)
         }
     }
 
-    private fun showOnBoardingCompletionNotification() {
+    private fun showOnBoardingCompletionNotification(context: Context) {
         val nc = NotificationObject().apply {
             contentTitle = "You are just one step away from"
             contentText = "Fulfilling your dream of speaking in English"
             action = NotificationAction.ACTION_COMPLETE_ONBOARDING
         }
-        FirebaseNotificationService.sendFirestoreNotification(nc, context)
+        NotificationUtils(context).sendNotification(nc)
     }
 }
 

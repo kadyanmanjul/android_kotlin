@@ -1,9 +1,13 @@
 package com.joshtalks.joshskills.ui.voip
 
 import android.annotation.SuppressLint
-import android.app.*
+import android.app.Activity
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.app.NotificationManager.IMPORTANCE_HIGH
 import android.app.NotificationManager.IMPORTANCE_LOW
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ServiceInfo
@@ -11,7 +15,13 @@ import android.graphics.Bitmap
 import android.media.AudioAttributes
 import android.media.AudioFocusRequest
 import android.media.AudioManager
-import android.os.*
+import android.os.Binder
+import android.os.Build
+import android.os.Handler
+import android.os.HandlerThread
+import android.os.IBinder
+import android.os.Message
+import android.os.SystemClock
 import android.telephony.PhoneStateListener
 import android.telephony.TelephonyManager
 import android.text.Spannable
@@ -29,16 +39,26 @@ import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.conversationRoom.liveRooms.ConversationLiveRoomActivity
 import com.joshtalks.joshskills.conversationRoom.model.JoinConversionRoomRequest
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.CallType
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
+import com.joshtalks.joshskills.core.HAS_SEEN_CONVO_ROOM_POINTS
+import com.joshtalks.joshskills.core.IS_COURSE_BOUGHT
+import com.joshtalks.joshskills.core.JoshApplication
+import com.joshtalks.joshskills.core.PREF_IS_CONVERSATION_ROOM_ACTIVE
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.LogException
-import com.joshtalks.joshskills.core.analytics.MixPanelEvent
-import com.joshtalks.joshskills.core.analytics.MixPanelTracker
-import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.core.firestore.AgoraNotificationListener
 import com.joshtalks.joshskills.core.firestore.FirestoreDB
-import com.joshtalks.joshskills.core.notification.FirebaseNotificationService
+import com.joshtalks.joshskills.core.getRandomName
 import com.joshtalks.joshskills.core.notification.HAS_NOTIFICATION
+import com.joshtalks.joshskills.core.notification.NotificationUtils
+import com.joshtalks.joshskills.core.printAll
+import com.joshtalks.joshskills.core.startServiceForWebrtc
+import com.joshtalks.joshskills.core.textDrawableBitmap
+import com.joshtalks.joshskills.core.urlToBitmap
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.ConvoRoomPointsEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.WebrtcEventBus
@@ -59,20 +79,33 @@ import com.joshtalks.joshskills.ui.voip.util.NotificationUtil
 import com.joshtalks.joshskills.ui.voip.util.TelephonyUtil
 import com.joshtalks.joshskills.util.DateUtils
 import io.agora.rtc.Constants
-import io.agora.rtc.Constants.*
+import io.agora.rtc.Constants.AUDIO_PROFILE_SPEECH_STANDARD
+import io.agora.rtc.Constants.AUDIO_ROUTE_HEADSET
+import io.agora.rtc.Constants.AUDIO_ROUTE_HEADSETBLUETOOTH
+import io.agora.rtc.Constants.AUDIO_SCENARIO_EDUCATION
+import io.agora.rtc.Constants.CHANNEL_PROFILE_COMMUNICATION
+import io.agora.rtc.Constants.CONNECTION_CHANGED_INTERRUPTED
+import io.agora.rtc.Constants.CONNECTION_STATE_RECONNECTING
+import io.agora.rtc.Constants.USER_OFFLINE_QUIT
 import io.agora.rtc.IRtcEngineEventHandler
 import io.agora.rtc.RtcEngine
 import io.reactivex.Completable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.*
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
-import timber.log.Timber
 import java.lang.ref.WeakReference
-import java.util.*
+import java.util.LinkedList
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.collections.set
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import timber.log.Timber
 
 
 const val RTC_TOKEN_KEY = "token"
@@ -1024,7 +1057,7 @@ class WebRtcService : BaseWebRtcService() {
                 val nc = firestoreNotification.toNotificationObject(null)
                 if (nc.action == NotificationAction.INCOMING_CALL_NOTIFICATION)
                     nc.actionData?.let { VoipAnalytics.pushIncomingCallAnalytics(it) }
-                FirebaseNotificationService.sendFirestoreNotification(nc, this@WebRtcService)
+                NotificationUtils(this@WebRtcService).sendNotification(nc)
             }
         })
     }

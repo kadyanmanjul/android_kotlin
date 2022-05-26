@@ -1,6 +1,10 @@
 package com.joshtalks.joshskills.core.service
 
-import android.app.*
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.os.Build
@@ -9,22 +13,27 @@ import androidx.core.app.NotificationCompat
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.HeaderInterceptor
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.SERVER_TIME_OFFSET
+import com.joshtalks.joshskills.core.StatusCodeInterceptor
 import com.joshtalks.joshskills.core.firestore.NotificationAnalytics
 import com.joshtalks.joshskills.core.firestore.NotificationAnalyticsRequest
-import com.joshtalks.joshskills.core.notification.FirebaseNotificationService.Companion.sendFirestoreNotification
+import com.joshtalks.joshskills.core.getStethoInterceptor
+import com.joshtalks.joshskills.core.notification.NotificationUtils
 import com.joshtalks.joshskills.repository.local.AppDatabase
 import com.joshtalks.joshskills.repository.local.model.NotificationObject
 import com.joshtalks.joshskills.repository.service.UtilsAPIService
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
+import java.lang.reflect.Type
+import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.lang.reflect.Type
-import java.util.concurrent.TimeUnit
 
 private const val CONNECTION_TIMEOUT = 30L
 private const val CALL_TIMEOUT = 60L
@@ -89,7 +98,7 @@ class BackgroundService : Service() {
                         channel = NotificationAnalytics.Channel.API
                     )
                     if (isFirstTimeNotification)
-                        sendFirestoreNotification(nc, this@BackgroundService)
+                        NotificationUtils(this@BackgroundService).sendNotification(nc)
                 }
             }
             stopForeground(true)
