@@ -18,6 +18,7 @@ import com.joshtalks.badebhaiya.core.workers.WorkManagerAdmin
 import com.joshtalks.badebhaiya.databinding.ActivitySignUpBinding
 import com.joshtalks.badebhaiya.feed.Call
 import com.joshtalks.badebhaiya.feed.FeedActivity
+import com.joshtalks.badebhaiya.impressions.ImpressionsManager
 import com.joshtalks.badebhaiya.notifications.FCM_ACTIVE
 import com.joshtalks.badebhaiya.notifications.FirebaseNotificationService
 import com.joshtalks.badebhaiya.privacyPolicy.WebViewFragment
@@ -41,6 +42,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import javax.inject.Inject
 
 class SignUpActivity : AppCompatActivity(), Call {
 
@@ -48,6 +50,9 @@ class SignUpActivity : AppCompatActivity(), Call {
     private val viewModel by lazy {
         ViewModelProvider(this).get(SignUpViewModel::class.java)
     }
+
+    @Inject
+    lateinit var impressionsManager: ImpressionsManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

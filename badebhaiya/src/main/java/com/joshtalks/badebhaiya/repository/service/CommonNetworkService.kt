@@ -42,4 +42,6 @@ interface CommonNetworkService {
 
     @PATCH("$DIR/user/devices/{device_id}/")
     suspend fun patchDeviceDetails( @Path("device_id") deviceId: Int, @Body obj: UpdateDeviceRequest): DeviceDetailsResponse
+
+
 }
