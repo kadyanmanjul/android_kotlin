@@ -1209,7 +1209,7 @@
 
     //call ratings strings
     <string name="how_was_your_call_name">How was your call with %s ?</string>
-    <string name="you_spoke_for_minutes">You spoke for %s seconds</string>
+    <string name="you_spoke_for_minutes">You spoke for %s</string>
     <string name="very_bad">Very bad</string>
     <string name="block_caller">Block %s</string>
     <string name="excellent">Excellent</string>

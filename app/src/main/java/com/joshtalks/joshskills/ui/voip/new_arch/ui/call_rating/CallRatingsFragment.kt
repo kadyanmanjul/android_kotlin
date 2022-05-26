@@ -73,7 +73,7 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
         agoraMentorId = mArgs.getString(AGORA_MENTOR_ID).toString()
 
         binding.howCallTxt.text=getString(R.string.how_was_your_call_name,callerName)
-        binding.callDurationText.text=getString(R.string.you_spoke_for_minutes,callDuration.toString())
+        binding.callDurationText.text=getString(R.string.you_spoke_for_minutes,vm.getCallDurationString())
         binding.block.text=getString(R.string.block_caller,callerName)
         if(PrefManager.getBoolValue(IS_COURSE_BOUGHT).not()) {
             binding.cross.visibility = VISIBLE
