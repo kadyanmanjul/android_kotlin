@@ -6,10 +6,7 @@ import android.util.Log
 import com.joshtalks.joshskills.base.constants.CALL_ID
 import com.joshtalks.joshskills.base.constants.PREF_KEY_LOCAL_USER_AGORA_ID
 import com.joshtalks.joshskills.voip.R
-import com.joshtalks.joshskills.voip.constant.IDLE
-import com.joshtalks.joshskills.voip.constant.PREF_KEY_PSTN_STATE
-import com.joshtalks.joshskills.voip.constant.PSTN_STATE_IDLE
-import com.joshtalks.joshskills.voip.constant.State
+import com.joshtalks.joshskills.voip.constant.*
 import kotlinx.coroutines.*
 
 const val LATEST_PUBNUB_MESSAGE_TIME = "josh_pref_key_latest_pubnub_message_time"
@@ -24,7 +21,7 @@ private const val TAG = "PrefManager"
 class PrefManager {
     companion object {
         lateinit var preferenceManager: SharedPreferences
-        val coroutineExceptionHandler = CoroutineExceptionHandler{_ , e ->
+        val coroutineExceptionHandler = CoroutineExceptionHandler { _, e ->
             e.printStackTrace()
         }
         val scope = CoroutineScope(Dispatchers.IO + coroutineExceptionHandler)
@@ -37,24 +34,24 @@ class PrefManager {
             )
         }
 
-        fun getLatestPubnubMessageTime() : Long {
+        fun getLatestPubnubMessageTime(): Long {
             return preferenceManager.getLong(LATEST_PUBNUB_MESSAGE_TIME, 0L)
         }
 
-        fun setLatestPubnubMessageTime(timetoken : Long) {
+        fun setLatestPubnubMessageTime(timetoken: Long) {
             val editor = preferenceManager.edit()
             editor.putLong(LATEST_PUBNUB_MESSAGE_TIME, timetoken)
             editor.apply()
         }
 
-        fun getVoipState() : State {
+        fun getVoipState(): State {
             val ordinal = preferenceManager.getInt(VOIP_STATE, State.IDLE.ordinal)
             Log.d(TAG, "getVoipState: $ordinal")
             Log.d(TAG, "getVoipState: ${State.values()}")
             return State.values()[ordinal]
         }
 
-        fun setVoipState(state : State) {
+        fun setVoipState(state: State) {
             Log.d(TAG, "Setting Voip State : $state")
             Log.d(TAG, "Setting Voip State : ${state.ordinal}")
             val editor = preferenceManager.edit()
@@ -62,24 +59,25 @@ class PrefManager {
             editor.commit()
         }
 
-        fun getIncomingCallId() : Int {
+        fun getIncomingCallId(): Int {
             return preferenceManager.getInt(INCOMING_CALL, -1)
         }
 
-        fun setIncomingCallId(callId : Int) {
+        fun setIncomingCallId(callId: Int) {
             val editor = preferenceManager.edit()
             editor.putInt(INCOMING_CALL, callId)
             editor.commit()
         }
 
-        fun getLocalUserAgoraId() : Int {
+        fun getLocalUserAgoraId(): Int {
             return preferenceManager.getInt(LOCAL_USER_AGORA_ID, -1)
         }
-        fun getAgraCallId() : Int {
+
+        fun getAgraCallId(): Int {
             return preferenceManager.getInt(AGORA_CALL_ID, -1)
         }
 
-        fun setLocalUserAgoraIdAndCallId(localUserAgoraId : Int,callId: Int) {
+        fun setLocalUserAgoraIdAndCallId(localUserAgoraId: Int, callId: Int) {
             val editor = preferenceManager.edit()
             editor.putInt(LOCAL_USER_AGORA_ID, localUserAgoraId)
             editor.putInt(AGORA_CALL_ID, callId)
@@ -89,12 +87,24 @@ class PrefManager {
         fun savePstnState(state: String) {
             Log.d(TAG, "Setting pstn State : $state")
             val editor = preferenceManager.edit()
-                editor.putString(PREF_KEY_PSTN_STATE, state)
-               editor.commit()
+            editor.putString(PREF_KEY_PSTN_STATE, state)
+            editor.commit()
         }
-        fun getPstnState() : String {
+
+        fun getPstnState(): String {
             Log.d(TAG, "Getting pstn State")
             return preferenceManager.getString(PREF_KEY_PSTN_STATE, PSTN_STATE_IDLE).toString()
+        }
+
+        fun saveFppFlag(flag: String) {
+            val editor = preferenceManager.edit()
+            editor.putString(PREF_KEY_FPP_FLAG, flag)
+            editor.commit()
+        }
+
+        fun getFppFlag(): String {
+            Log.d(TAG, "Getting flag State")
+            return preferenceManager.getString(PREF_KEY_FPP_FLAG, "true").toString()
         }
     }
 }
