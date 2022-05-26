@@ -15,18 +15,12 @@ import android.text.TextWatcher
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.*
-import android.view.View.GONE
-import android.view.View.INVISIBLE
-import android.view.View.VISIBLE
+import android.view.View.*
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
-import android.widget.FrameLayout
 import android.widget.ImageView
-import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.widget.AppCompatTextView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
@@ -35,7 +29,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.materialdialogs.MaterialDialog
-import com.airbnb.lottie.LottieAnimationView
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.offline.Download
@@ -52,11 +45,7 @@ import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.Utils.getCurrentMediaVolume
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
-import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
-import com.joshtalks.joshskills.core.analytics.AppAnalytics
-import com.joshtalks.joshskills.core.analytics.MixPanelEvent
-import com.joshtalks.joshskills.core.analytics.MixPanelTracker
-import com.joshtalks.joshskills.core.analytics.ParamKeys
+import com.joshtalks.joshskills.core.analytics.*
 import com.joshtalks.joshskills.core.countdowntimer.CountdownTimerBack
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.core.custom_ui.decorator.SmoothScrollingLinearLayoutManager
@@ -97,11 +86,9 @@ import com.joshtalks.joshskills.ui.fpp.SeeAllRequestsActivity
 import com.joshtalks.joshskills.ui.group.JoshGroupActivity
 import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics
 import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics.Event.MAIN_GROUP_ICON
-import com.joshtalks.joshskills.ui.leaderboard.Event
 import com.joshtalks.joshskills.ui.leaderboard.ItemOverlay
 import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_TEXT_VIEW_CLASS_ANIMATION
 import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_UNLOCK_CLASS_ANIMATION
-import com.joshtalks.joshskills.ui.leaderboard.constants.NEED_VIEW_BITMAP
 import com.joshtalks.joshskills.ui.lesson.LessonActivity
 import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
 import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
@@ -134,7 +121,6 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.muddzdev.styleabletoast.StyleableToast
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.list_item.view.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
 import org.json.JSONObject
@@ -370,26 +356,25 @@ class ConversationActivity :
 
     private fun initFreeTrialTimer() {
         PrefManager.put(IS_FREE_TRIAL, inboxEntity.isCourseBought.not())
-        if (inboxEntity.isCourseBought.not() || inboxEntity.courseId != DEFAULT_COURSE_ID) {
+        if (inboxEntity.isCourseBought.not() || inboxEntity.courseId != DEFAULT_COURSE_ID)
             PrefManager.removeKey(IS_A2_C1_RETENTION_ENABLED)
-            if (inboxEntity.isCourseBought.not() &&
-                inboxEntity.expiryDate != null &&
-                inboxEntity.expiryDate!!.time >= System.currentTimeMillis()
-            ) {
-                conversationBinding.freeTrialContainer.visibility = VISIBLE
-                conversationBinding.imgGroupChat.shiftGroupChatIconDown(conversationBinding.txtUnreadCount)
-                startTimer(inboxEntity.expiryDate!!.time - System.currentTimeMillis())
-            } else if (inboxEntity.isCourseBought.not() &&
-                inboxEntity.expiryDate != null &&
-                inboxEntity.expiryDate!!.time < System.currentTimeMillis()
-            ) {
-                PrefManager.put(COURSE_EXPIRY_TIME_IN_MS, inboxEntity.expiryDate!!.time)
-                PrefManager.put(IS_COURSE_BOUGHT, inboxEntity.isCourseBought)
-                conversationBinding.freeTrialContainer.visibility = VISIBLE
-                conversationBinding.imgGroupChat.shiftGroupChatIconDown(conversationBinding.txtUnreadCount)
-                conversationBinding.freeTrialText.text = getString(R.string.free_trial_ended)
-                conversationBinding.freeTrialExpiryLayout.visibility = VISIBLE
-            }
+        if (inboxEntity.isCourseBought.not() &&
+            inboxEntity.expiryDate != null &&
+            inboxEntity.expiryDate!!.time >= System.currentTimeMillis()
+        ) {
+            conversationBinding.freeTrialContainer.visibility = VISIBLE
+            conversationBinding.imgGroupChat.shiftGroupChatIconDown(conversationBinding.txtUnreadCount)
+            startTimer(inboxEntity.expiryDate!!.time - System.currentTimeMillis())
+        } else if (inboxEntity.isCourseBought.not() &&
+            inboxEntity.expiryDate != null &&
+            inboxEntity.expiryDate!!.time < System.currentTimeMillis()
+        ) {
+            PrefManager.put(COURSE_EXPIRY_TIME_IN_MS, inboxEntity.expiryDate!!.time)
+            PrefManager.put(IS_COURSE_BOUGHT, inboxEntity.isCourseBought)
+            conversationBinding.freeTrialContainer.visibility = VISIBLE
+            conversationBinding.imgGroupChat.shiftGroupChatIconDown(conversationBinding.txtUnreadCount)
+            conversationBinding.freeTrialText.text = getString(R.string.free_trial_ended)
+            conversationBinding.freeTrialExpiryLayout.visibility = VISIBLE
         }
     }
 
@@ -665,10 +650,10 @@ class ConversationActivity :
         }
 
         var phoneNumber = User.getInstance().phoneNumber
-        if(!phoneNumber.isNullOrEmpty()) {
-            if(phoneNumber[0]=='+' && phoneNumber[1]=='9' && phoneNumber[2]=='1')
-            phoneNumber = phoneNumber?.substring(3)
-            else if(phoneNumber[0]=='+' && phoneNumber[1]=='8' && phoneNumber[2]=='8' && phoneNumber[3]=='0')
+        if (!phoneNumber.isNullOrEmpty()) {
+            if (phoneNumber[0] == '+' && phoneNumber[1] == '9' && phoneNumber[2] == '1')
+                phoneNumber = phoneNumber?.substring(3)
+            else if (phoneNumber[0] == '+' && phoneNumber[1] == '8' && phoneNumber[2] == '8' && phoneNumber[3] == '0')
                 phoneNumber = phoneNumber?.substring(4)
         }
         val email = User.getInstance().email
@@ -1186,7 +1171,7 @@ class ConversationActivity :
                         PrefManager.put(LAST_TIME_AUTOSTART_SHOWN, System.currentTimeMillis())
                         checkForOemNotifications(AUTO_START_POPUP)
                     }
-                    if(PrefManager.getBoolValue(HAS_SEEN_TEXT_VIEW_CLASS_ANIMATION)){
+                    if (PrefManager.getBoolValue(HAS_SEEN_TEXT_VIEW_CLASS_ANIMATION)) {
                         showCohortBaseCourse()
                     }
                 } else {
@@ -1560,7 +1545,7 @@ class ConversationActivity :
                             lifecycleScope.launch(Dispatchers.IO) {
                                 withContext(Dispatchers.Main) {
 //                                    if(!PrefManager.getBoolValue(HAS_SEEN_TEXT_VIEW_CLASS_ANIMATION)){
-                                        setOverlayAnimationOnText()
+                                    setOverlayAnimationOnText()
 //                                    }
                                 }
                             }
@@ -1570,7 +1555,7 @@ class ConversationActivity :
                         showToast(it.message.toString())
                         it.printStackTrace()
                     }
-             )
+                )
         )
         compositeDisposable.add(
             RxBus2.listen(DownloadMediaEventBus::class.java)
