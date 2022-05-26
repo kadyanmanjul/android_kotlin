@@ -596,6 +596,7 @@ abstract class AppDatabase : RoomDatabase() {
                 database.execSQL("CREATE TABLE IF NOT EXISTS `online_test_request` (`question_id` INTEGER NOT NULL, `lesson_id` INTEGER NOT NULL, `status` TEXT NOT NULL, `answer` TEXT NOT NULL, `rule_assessment_question_id` TEXT, `answer_order` TEXT NOT NULL, `time_taken` INTEGER, PRIMARY KEY (`lesson_id`))")
                 database.execSQL("ALTER TABLE `lessonmodel` ADD COLUMN `translationStatus` TEXT")
                 database.execSQL("CREATE TABLE IF NOT EXISTS `notification_event_table` (`id` TEXT NOT NULL, `platform` TEXT, `time_stamp` INTEGER NOT NULL, `action` TEXT NOT NULL, `analytics_sent` INTEGER NOT NULL DEFAULT 0, `notificationId` INTEGER NOT NULL PRIMARY KEY)")
+                database.execSQL("ALTER TABLE course ADD COLUMN form_submitted INTEGER NOT NULL DEFAULT 0")
             }
         }
 

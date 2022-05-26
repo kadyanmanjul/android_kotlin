@@ -30,7 +30,7 @@ class TextViewHolder(view: View, userId: String) : BaseViewHolder(view, userId) 
         titleView.visibility = GONE
 
         if (message.text.isNullOrEmpty()) {
-            RxBus2.publish(TextTooltipEvent(message))
+//            RxBus2.publish(TextTooltipEvent(message))
             message.question?.run {
                 this.qText?.let {
                     messageBody.text =

@@ -1559,9 +1559,9 @@ class ConversationActivity :
                         if (it.chatModel.type == BASE_MESSAGE_TYPE.Q) {
                             lifecycleScope.launch(Dispatchers.IO) {
                                 withContext(Dispatchers.Main) {
-                                    if(!PrefManager.getBoolValue(HAS_SEEN_TEXT_VIEW_CLASS_ANIMATION)){
+//                                    if(!PrefManager.getBoolValue(HAS_SEEN_TEXT_VIEW_CLASS_ANIMATION)){
                                         setOverlayAnimationOnText()
-                                    }
+//                                    }
                                 }
                             }
                         }
