@@ -87,6 +87,8 @@ class JoshContentProvider : ContentProvider() {
                 val topicName = values?.getAsString(TOPIC_NAME) ?: ""
                 val channelName = values?.getAsString(CHANNEL_NAME) ?: ""
                 val currentUserAgoraId = values?.getAsInteger(CURRENT_USER_AGORA_ID) ?: -1
+                val fppFlag = values?.getAsString(FPP_SHOW_FLAG) ?: "true"
+
                 VoipPref.updateLastCallDetails(
                     duration = duration,
                     remoteUserImage = remoteUserImage,
@@ -96,7 +98,8 @@ class JoshContentProvider : ContentProvider() {
                     callType = callType,
                     localUserAgoraId = currentUserAgoraId,
                     channelName = channelName,
-                    topicName = topicName
+                    topicName = topicName,
+                    showFpp = fppFlag
                 )
             }
         }

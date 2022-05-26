@@ -11,6 +11,7 @@ import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
+import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.databinding.TopicImageViewpagerItemBinding
 
 class TopicImageAdapter(val imageList:ArrayList<String> ,val context:Context):RecyclerView.Adapter<TopicImageAdapter.TopicImageViewHolder>() {
@@ -33,9 +34,9 @@ class TopicImageAdapter(val imageList:ArrayList<String> ,val context:Context):Re
         fun bind(imageUrl: String) {
             Glide.with(context)
                 .load(imageUrl)
+                .error(R.drawable.ic_img_not_loading)
                 .listener(object : RequestListener<Drawable> {
                     override fun onLoadFailed(p0: GlideException?, p1: Any?, p2: Target<Drawable>?, p3: Boolean): Boolean {
-                        //do something if error loading
                         binding.progress.visibility = View.GONE
                         return false
                     }

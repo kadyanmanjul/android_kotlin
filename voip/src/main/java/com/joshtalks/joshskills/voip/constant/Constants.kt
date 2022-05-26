@@ -41,6 +41,9 @@ const val PSTN_STATE_IDLE = "pstn_state_Idle"
 const val PSTN_STATE_ONCALL = "pstn_state_oncall"
 const val PREF_KEY_PSTN_STATE = "pstn_state_pstn_state"
 
+// FPP Flag Key
+const val PREF_KEY_FPP_FLAG = "fpp_flag_state"
+
 
 enum class Event {
     ERROR,

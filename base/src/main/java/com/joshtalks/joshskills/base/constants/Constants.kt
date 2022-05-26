@@ -38,6 +38,7 @@ const val REMOTE_USER_AGORA_ID = "josh_remote_user_agora_id"
 const val CALL_ID = "josh_call_id"
 const val CALL_TYPE = "josh_call_type"
 const val CURRENT_USER_AGORA_ID = "josh_current_user_agora_id"
+const val FPP_SHOW_FLAG = "josh_fpp_flag_id"
 const val TOPIC_NAME = "josh_topic_name"
 const val CHANNEL_NAME = "josh_channel_name"
 const val AUTHORIZATION = "josh_authorization"
@@ -62,6 +63,8 @@ const val PREF_KEY_LAST_REMOTE_USER_AGORA_ID = "josh_last_remote_user_agora_id"
 const val PREF_KEY_LAST_CHANNEL_NAME = "josh_last_channel_name"
 const val PREF_KEY_LAST_TOPIC_NAME= "josh_last_topic_name"
 const val PREF_KEY_LAST_CALL_DURATION= "josh_last_call_duration"
+// FPP Flag Key
+const val PREF_KEY_FPP_FLAG = "fpp_flag_state"
 
 // Recent Incoming Call Details
 const val PREF_KEY_INCOMING_CALL_ID = "josh_recent_incoming_call_id"

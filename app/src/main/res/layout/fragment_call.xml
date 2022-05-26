@@ -82,6 +82,8 @@
             app:layout_constraintEnd_toStartOf="@+id/guideline5"
             app:layout_constraintStart_toStartOf="@+id/guideline4"
             app:layout_constraintTop_toBottomOf="@id/c_image"
+            app:layout_constraintVertical_bias="0.113"
+            android:layout_marginBottom="@dimen/_5sdp"
             tools:ignore="MissingPrefix"
             tools:text="User Name" />
 
@@ -96,14 +98,15 @@
             android:textColor="@color/white"
             android:textSize="@dimen/_14ssp"
             android:textAlignment="center"
-            android:visibility='@{vm.uiState.occupation.equals("") ? View.GONE : View.VISIBLE}'
+            android:visibility='@{vm.uiState.occupation.equals("")  ? View.GONE : View.VISIBLE}'
             android:text="@{vm.uiState.occupation}"
             android:lines="2"
             app:layout_constraintTop_toBottomOf="@+id/caller_name"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             tools:ignore="MissingPrefix"
-            tools:text="Engineer, Dream - IAS Officer " />
+            tools:visibility="gone"
+            tools:text="Engineer, Dream - IAS Officer" />
         <TextView
             android:id="@+id/call_time"
             android:layout_width="wrap_content"
@@ -134,21 +137,22 @@
             app:layout_constraintEnd_toStartOf="@+id/guideline5"
             app:layout_constraintStart_toStartOf="@+id/guideline4"
             app:layout_constraintTop_toBottomOf="@id/occupation_future_goals"
-            app:layout_constraintVertical_bias="0.317"
+            app:layout_constraintVertical_bias="0.076"
             tools:ignore="MissingPrefix" />
 
         <androidx.constraintlayout.widget.Barrier
             android:id="@+id/barrier"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:barrierDirection="top"
+            app:layout_constraintTop_toBottomOf="@id/occupation_future_goals"
             app:constraint_referenced_ids="call_time1,call_time" />
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/c_image"
             setProfileImage="@{vm.uiState.profileImage}"
-            android:layout_width="110dp"
-            android:layout_height="110dp"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             android:layout_marginTop="@dimen/_20sdp"
             android:background="@drawable/circle"
             android:backgroundTint="@color/colorPrimaryDark"
@@ -329,7 +333,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="@{vm.uiState.startTime &lt;= 0 &amp;&amp; vm.source == ConstantsKt.FROM_INCOMING_CALL ? View.INVISIBLE : View.VISIBLE }"
-            app:constraint_referenced_ids="topic_header, c_image, topic_viewpager, occupation_future_goals, next_topic_btn"
+            app:constraint_referenced_ids="topic_header, c_image, topic_viewpager, next_topic_btn"
             tools:visibility="visible" />
 
         <androidx.constraintlayout.widget.Guideline
