@@ -2,12 +2,16 @@ package com.joshtalks.joshskills.ui.voip.new_arch.ui.call_rating
 
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.base.BaseViewModel
+import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.ui.call.data.local.VoipPref
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class CallRatingsViewModel: BaseViewModel() {
+
     private val callRatingsRepository by lazy { CallRatingsRepository() }
+    var ifDialogShow : String = "false"
+
     fun blockUser(toMentorId: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -20,6 +24,7 @@ class CallRatingsViewModel: BaseViewModel() {
         }
     }
     fun getCallDurationString() : String{
+        getFppDialogFlag()
         val mTime = StringBuilder()
         var second = VoipPref.getLastCallDurationInSec()
         val minute = getDurationInMin()
@@ -48,6 +53,20 @@ class CallRatingsViewModel: BaseViewModel() {
             return " minutes "
         }
         return " minute "
+    }
+
+    private fun getFppDialogFlag() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val map: java.util.HashMap<String, Int?> = java.util.HashMap()
+                map["agora_call_id"] = VoipPref.getLastCallId()
+                val resp = AppObjectController.p2pNetworkService.showFppDialogNew(map).body()?.get("show_fpp_dialog")
+                    .toString()
+                ifDialogShow = resp
+            }catch (ex: Throwable) {
+                ex.printStackTrace()
+            }
+        }
     }
 
     private fun getSecondString(sec: Long): String {
