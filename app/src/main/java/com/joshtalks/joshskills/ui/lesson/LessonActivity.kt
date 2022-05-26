@@ -792,6 +792,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                         lessonCompleted = lessonCompleted &&
                                 lesson.conversationStatus == LESSON_STATUS.CO
                     }
+
                     if (PrefManager.getBoolValue(IS_A2_C1_RETENTION_ENABLED)) {
                         lessonCompleted = lessonCompleted &&
                                 lesson.translationStatus == LESSON_STATUS.CO
@@ -935,7 +936,6 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                         }
                         lesson.grammarStatus = status
                     }
-                    TRANSLATION_POSITION -> lesson.translationStatus = status
                     VOCAB_POSITION - isTranslationDisabled -> lesson.vocabStatus = status
                     READING_POSITION - isTranslationDisabled -> lesson.readingStatus = status
                     SPEAKING_POSITION - isTranslationDisabled -> {
@@ -949,6 +949,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                         lesson.speakingStatus = status
                     }
                     ROOM_POSITION - isTranslationDisabled -> lesson.conversationStatus = status
+                    TRANSLATION_POSITION -> lesson.translationStatus = status
                 }
                 viewModel.updateSectionStatus(lesson.id, status, tabPosition)
             }

@@ -75,6 +75,7 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
     private ScreenOrientation screenOrientation = ScreenOrientation.PORTRAIT;
     private SimpleExoPlayer player;
     private boolean isVideoEnded = false;
+    private float playbackSpeed = 1f;
 
     private final Runnable timeRunnable = new Runnable() {
         @Override
@@ -88,7 +89,7 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
             long currentPosition = player.getCurrentPosition();
             publish(
                     new MediaProgressEventBus(
-                            Download.STATE_DOWNLOADING, "0", currentPosition, countUpTimer.getTime()
+                            Download.STATE_DOWNLOADING, "0", currentPosition, (long) (countUpTimer.getTime() * playbackSpeed)
                     )
             );
             if (!(getContext() instanceof PlayerListener)) {
@@ -228,7 +229,7 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
                     try {
                         publish(
                                 new MediaProgressEventBus(
-                                        Download.STATE_DOWNLOADING, "0", position, countUpTimer.getTime()
+                                        Download.STATE_DOWNLOADING, "0", position, (long) (countUpTimer.getTime() * playbackSpeed)
                                 )
                         );
                         PlayerListener listener = (PlayerListener) getContext();
@@ -488,8 +489,8 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
                     popup.getMenuInflater().inflate(R.menu.playback_speed_menu, popup.getMenu());
                     popup.setOnMenuItemClickListener(item -> {
                         String t = item.getTitle().toString().replace("x", "");
-                        float speed = Float.parseFloat(t);
-                        player.setPlaybackParameters(new PlaybackParameters(speed));
+                        playbackSpeed = Float.parseFloat(t);
+                        player.setPlaybackParameters(new PlaybackParameters(playbackSpeed));
                         ((TextView) findViewById(R.id.playbackSpeed)).setText(t + "x");
                         return true;
                     });
@@ -539,7 +540,7 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
     }
 
     public long getSecondsWatched() {
-        return countUpTimer.getTime() / 1000;
+        return (long) (countUpTimer.getTime() * playbackSpeed) / 1000;
     }
 
     @Override

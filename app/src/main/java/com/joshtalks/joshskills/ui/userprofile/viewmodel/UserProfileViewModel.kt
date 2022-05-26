@@ -40,7 +40,7 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
 import com.joshtalks.joshskills.repository.server.AnimatedLeaderBoardResponse
-import com.joshtalks.joshskills.ui.group.repository.ABTestRepository
+import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
 import com.joshtalks.joshskills.ui.userprofile.adapters.EnrolledCoursesListAdapter
 import com.joshtalks.joshskills.ui.userprofile.adapters.MyGroupsListAdapter
 import com.joshtalks.joshskills.ui.userprofile.models.UserProfileResponse

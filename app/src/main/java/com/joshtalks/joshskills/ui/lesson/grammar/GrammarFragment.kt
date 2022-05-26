@@ -6,6 +6,7 @@ import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -758,10 +759,10 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
             requestFocus(binding.showExplanationBtn)
 
             MixPanelTracker.publishEvent(MixPanelEvent.GRAMMAR_QUIZ_SUBMIT)
-                .addParam(ParamKeys.LESSON_ID,lessonID)
-                .addParam(ParamKeys.QUESTION_ID,selectedChoice.questionId)
-                .addParam(ParamKeys.ANSWER_SELECTED,selectedChoice.text)
-                .addParam(ParamKeys.IS_CORRECT_ANSWER,question.question.status.toString())
+                .addParam(ParamKeys.LESSON_ID, lessonID)
+                .addParam(ParamKeys.QUESTION_ID, selectedChoice.questionId)
+                .addParam(ParamKeys.ANSWER_SELECTED, selectedChoice.text)
+                .addParam(ParamKeys.IS_CORRECT_ANSWER, question.question.status.toString())
                 .push()
         }
     }
@@ -779,7 +780,7 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
     fun onContinueClick() {
         try {
             val question = assessmentQuestions[currentQuizQuestion]
-            if (question.choiceList.isNotEmpty()){
+            if (question.choiceList.isNotEmpty()) {
                 val selectedChoice = question.choiceList[
                         binding.quizRadioGroup.indexOfChild(
                             binding.root.findViewById(binding.quizRadioGroup.checkedRadioButtonId)
@@ -791,7 +792,7 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
                     .addParam(ParamKeys.ANSWER_SELECTED, selectedChoice.text)
                     .push()
             }
-        }catch (ex:Exception){
+        } catch (ex: Exception) {
 
         }
 
@@ -805,7 +806,7 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
 
     fun onGrammarContinueClick() {
         MixPanelTracker.publishEvent(MixPanelEvent.GRAMMAR_CONTINUE)
-            .addParam(ParamKeys.LESSON_ID,lessonID)
+            .addParam(ParamKeys.LESSON_ID, lessonID)
             .push()
 
         lessonActivityListener?.onNextTabCall(GRAMMAR_POSITION)
@@ -826,13 +827,13 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
         updateQuiz(assessmentQuestions[0])
         binding.grammarCompleteLayout.visibility = View.GONE
         MixPanelTracker.publishEvent(MixPanelEvent.GRAMMAR_QUIZ_REDO)
-            .addParam(ParamKeys.LESSON_ID,lessonID)
+            .addParam(ParamKeys.LESSON_ID, lessonID)
             .push()
     }
 
     private fun showQuizCompleteLayout() {
         MixPanelTracker.publishEvent(MixPanelEvent.GRAMMAR_COMPLETE)
-            .addParam(ParamKeys.LESSON_ID,lessonID)
+            .addParam(ParamKeys.LESSON_ID, lessonID)
             .push()
         binding.grammarCompleteLayout.visibility = View.VISIBLE
         binding.submitAnswerBtn.isEnabled = false
@@ -855,19 +856,19 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
             binding.explanationTv.visibility = View.GONE
             try {
                 val question = assessmentQuestions[currentQuizQuestion]
-                if (question.choiceList.isNotEmpty()){
+                if (question.choiceList.isNotEmpty()) {
                     val selectedChoice = question.choiceList[
                             binding.quizRadioGroup.indexOfChild(
                                 binding.root.findViewById(binding.quizRadioGroup.checkedRadioButtonId)
                             )
                     ]
                     MixPanelTracker.publishEvent(MixPanelEvent.GRAMMAR_QUIZ_SHOW_EXPLANATION)
-                        .addParam(ParamKeys.LESSON_ID,lessonID)
-                        .addParam(ParamKeys.QUESTION_ID,selectedChoice.questionId)
-                        .addParam(ParamKeys.ANSWER_SELECTED,selectedChoice.text)
+                        .addParam(ParamKeys.LESSON_ID, lessonID)
+                        .addParam(ParamKeys.QUESTION_ID, selectedChoice.questionId)
+                        .addParam(ParamKeys.ANSWER_SELECTED, selectedChoice.text)
                         .push()
                 }
-            }catch (ex:Exception){
+            } catch (ex: Exception) {
 
             }
 
@@ -886,12 +887,12 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
                             )
                     ]
                     MixPanelTracker.publishEvent(MixPanelEvent.GRAMMAR_QUIZ_HIDE_EXPLANATION)
-                        .addParam(ParamKeys.LESSON_ID,lessonID)
-                        .addParam(ParamKeys.QUESTION_ID,selectedChoice.questionId)
-                        .addParam(ParamKeys.ANSWER_SELECTED,selectedChoice.text)
+                        .addParam(ParamKeys.LESSON_ID, lessonID)
+                        .addParam(ParamKeys.QUESTION_ID, selectedChoice.questionId)
+                        .addParam(ParamKeys.ANSWER_SELECTED, selectedChoice.text)
                         .push()
                 }
-            }catch (ex:java.lang.Exception){
+            } catch (ex: java.lang.Exception) {
 
             }
 
@@ -954,21 +955,21 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
 
     fun showNextQuestion() {
         MixPanelTracker.publishEvent(MixPanelEvent.GRAMMAR_QUIZ_NEXT_QUESTION)
-            .addParam(ParamKeys.LESSON_ID,lessonID)
+            .addParam(ParamKeys.LESSON_ID, lessonID)
             .push()
         updateQuiz(assessmentQuestions[++currentQuizQuestion])
     }
 
     fun showPreviousQuestion() {
         MixPanelTracker.publishEvent(MixPanelEvent.GRAMMAR_QUIZ_PREVIOUS_QUESTION)
-            .addParam(ParamKeys.LESSON_ID,lessonID)
+            .addParam(ParamKeys.LESSON_ID, lessonID)
             .push()
         updateQuiz(assessmentQuestions[--currentQuizQuestion])
     }
 
     fun onClickPdfContainer() {
         MixPanelTracker.publishEvent(MixPanelEvent.GRAMMAR_NOTES)
-            .addParam(ParamKeys.LESSON_ID,lessonID)
+            .addParam(ParamKeys.LESSON_ID, lessonID)
             .push()
         if (PermissionUtils.isStoragePermissionEnabled(requireActivity())) {
             PermissionUtils.storageReadAndWritePermission(

@@ -26,7 +26,6 @@ import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.ui.assessment.view.Stub
 import com.joshtalks.joshskills.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
-import com.joshtalks.joshskills.ui.group.repository.ABTestRepository
 import com.joshtalks.joshskills.ui.leaderboard.ItemOverlay
 import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_GRAMMAR_ANIMATION
 import com.joshtalks.joshskills.ui.lesson.*
@@ -341,7 +340,10 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), TestCompletedListener {
             binding.testCompletedContainer.visibility = View.GONE
             binding.testScoreContainer.visibility = View.GONE
             A2C1Impressions.saveImpression(A2C1Impressions.Impressions.START_LESSON_QUESTIONS)
-            if (PrefManager.hasKey(IS_A2_C1_RETENTION_ENABLED) && PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID) {
+            if (PrefManager.hasKey(IS_A2_C1_RETENTION_ENABLED) && PrefManager.getStringValue(
+                    CURRENT_COURSE_ID
+                ) == DEFAULT_COURSE_ID
+            ) {
                 viewModel.postGoal("RULE_${lessonNumber}_STARTED", CampaignKeys.A2_C1.name)
             }
             fragmentManager

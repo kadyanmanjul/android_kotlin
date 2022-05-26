@@ -2,21 +2,15 @@ package com.joshtalks.joshskills.ui.voip.share_call
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.analytics.ParamKeys
-import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.repository.server.LinkAttribution
-import com.joshtalks.joshskills.ui.group.repository.ABTestRepository
-import com.joshtalks.joshskills.ui.referral.ReferralViewModel
+import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.json.JSONObject
-import timber.log.Timber
 
 class ShareWithFriendsViewModel(application: Application) : AndroidViewModel(application) {
 

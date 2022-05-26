@@ -352,12 +352,12 @@ class ConversationActivity :
         initToolbar()
         //  groupChatHintLogic()    //Group chat hint UI
         // initCourseProgressTooltip()    // course progress tooltip
+        initABTest()
         initRV()
         initView()
         initFuture()
         addObservable()
         initFreeTrialTimer()
-        initABTest()
         fetchMessage()
         readMessageDatabaseUpdate()
         addIssuesToSharedPref()
@@ -400,23 +400,26 @@ class ConversationActivity :
 
     private fun initFreeTrialTimer() {
         PrefManager.put(IS_FREE_TRIAL, inboxEntity.isCourseBought.not())
-        if (inboxEntity.isCourseBought.not() &&
-            inboxEntity.expiryDate != null &&
-            inboxEntity.expiryDate!!.time >= System.currentTimeMillis()
-        ) {
-            conversationBinding.freeTrialContainer.visibility = VISIBLE
-            conversationBinding.imgGroupChat.shiftGroupChatIconDown(conversationBinding.txtUnreadCount)
-            startTimer(inboxEntity.expiryDate!!.time - System.currentTimeMillis())
-        } else if (inboxEntity.isCourseBought.not() &&
-            inboxEntity.expiryDate != null &&
-            inboxEntity.expiryDate!!.time < System.currentTimeMillis()
-        ) {
-            PrefManager.put(COURSE_EXPIRY_TIME_IN_MS, inboxEntity.expiryDate!!.time)
-            PrefManager.put(IS_COURSE_BOUGHT, inboxEntity.isCourseBought)
-            conversationBinding.freeTrialContainer.visibility = VISIBLE
-            conversationBinding.imgGroupChat.shiftGroupChatIconDown(conversationBinding.txtUnreadCount)
-            conversationBinding.freeTrialText.text = getString(R.string.free_trial_ended)
-            conversationBinding.freeTrialExpiryLayout.visibility = VISIBLE
+        if (inboxEntity.isCourseBought.not() || inboxEntity.courseId != DEFAULT_COURSE_ID) {
+            PrefManager.removeKey(IS_A2_C1_RETENTION_ENABLED)
+            if (inboxEntity.isCourseBought.not() &&
+                inboxEntity.expiryDate != null &&
+                inboxEntity.expiryDate!!.time >= System.currentTimeMillis()
+            ) {
+                conversationBinding.freeTrialContainer.visibility = VISIBLE
+                conversationBinding.imgGroupChat.shiftGroupChatIconDown(conversationBinding.txtUnreadCount)
+                startTimer(inboxEntity.expiryDate!!.time - System.currentTimeMillis())
+            } else if (inboxEntity.isCourseBought.not() &&
+                inboxEntity.expiryDate != null &&
+                inboxEntity.expiryDate!!.time < System.currentTimeMillis()
+            ) {
+                PrefManager.put(COURSE_EXPIRY_TIME_IN_MS, inboxEntity.expiryDate!!.time)
+                PrefManager.put(IS_COURSE_BOUGHT, inboxEntity.isCourseBought)
+                conversationBinding.freeTrialContainer.visibility = VISIBLE
+                conversationBinding.imgGroupChat.shiftGroupChatIconDown(conversationBinding.txtUnreadCount)
+                conversationBinding.freeTrialText.text = getString(R.string.free_trial_ended)
+                conversationBinding.freeTrialExpiryLayout.visibility = VISIBLE
+            }
         }
     }
 
@@ -606,7 +609,8 @@ class ConversationActivity :
                         )
                     }
                     R.id.menu_clear_media -> {
-                        MixPanelTracker.publishEvent(MixPanelEvent.CLEAR_ALL_MEDIA_CLICKED).push()
+                        MixPanelTracker.publishEvent(MixPanelEvent.CLEAR_ALL_MEDIA_CLICKED)
+                            .push()
                         clearMediaFromInternal(inboxEntity.conversation_id)
                     }
                     R.id.menu_help -> {
@@ -684,7 +688,10 @@ class ConversationActivity :
                 positiveButton(R.string.restart_now) {
                     if (email.isNullOrEmpty() && !phoneNumber.isNullOrEmpty()) {
                         conversationBinding.btnRestartCourse.visibility = View.GONE
-                        conversationViewModel.restartCourse(phoneNumber.toString(), "MobileNumber")
+                        conversationViewModel.restartCourse(
+                            phoneNumber.toString(),
+                            "MobileNumber"
+                        )
                     } else if (phoneNumber.isNullOrEmpty() && !email.isNullOrEmpty()) {
                         conversationBinding.btnRestartCourse.visibility = View.GONE
                         conversationViewModel.restartCourse(email, "Email")
@@ -733,7 +740,10 @@ class ConversationActivity :
         conversationBinding.chatRv.itemAnimator = null
         conversationBinding.chatRv.setHasFixedSize(false)
 
-        conversationBinding.chatRv.addItemDecoration(StickyHeaderDecoration(conversationAdapter), 0)
+        conversationBinding.chatRv.addItemDecoration(
+            StickyHeaderDecoration(conversationAdapter),
+            0
+        )
         conversationAdapter.initializePool(conversationBinding.chatRv.recycledViewPool)
         conversationBinding.chatRv.adapter = conversationAdapter
         conversationBinding.chatRv.layoutManager?.isMeasurementCacheEnabled = false
@@ -1015,7 +1025,11 @@ class ConversationActivity :
         conversationBinding.recordView.setSmallMicColor(Color.parseColor("#c2185b"))
         conversationBinding.recordView.setLessThanSecondAllowed(false)
         conversationBinding.recordView.setSlideToCancelText(getString(R.string.slide_to_cancel))
-        conversationBinding.recordView.setCustomSounds(R.raw.record_start, R.raw.record_finished, 0)
+        conversationBinding.recordView.setCustomSounds(
+            R.raw.record_start,
+            R.raw.record_finished,
+            0
+        )
         conversationBinding.recordButton.isListenForRecord =
             PermissionUtils.checkPermissionForAudioRecord(this@ConversationActivity)
         conversationBinding.recordView.setOnRecordListener(object : OnRecordListener {
@@ -1195,7 +1209,10 @@ class ConversationActivity :
         lifecycleScope.launchWhenResumed {
             utilConversationViewModel.userData.collectLatest { userProfileData ->
                 this@ConversationActivity.userProfileData = userProfileData
-                if (userProfileData.hasGroupAccess && PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID) {
+                if (userProfileData.hasGroupAccess && PrefManager.getStringValue(
+                        CURRENT_COURSE_ID
+                    ) == DEFAULT_COURSE_ID
+                ) {
                     conversationBinding.imgGroupChatBtn.visibility = VISIBLE
                     if (PrefManager.getBoolValue(SHOULD_SHOW_AUTOSTART_POPUP, defValue = true)
                         && System.currentTimeMillis()
@@ -1256,7 +1273,10 @@ class ConversationActivity :
                 viewAllRequests.setOnClickListener {
                     MixPanelTracker.publishEvent(MixPanelEvent.SEE_ALL_REQUESTS).push()
                     val intent =
-                        Intent(conversationBinding.root.context, SeeAllRequestsActivity::class.java)
+                        Intent(
+                            conversationBinding.root.context,
+                            SeeAllRequestsActivity::class.java
+                        )
                     startActivity(intent)
                 }
             }
@@ -1364,13 +1384,14 @@ class ConversationActivity :
                     activityFeedControl =
                         (map.variantKey == VariantKeys.AF2_ENABLED.name) && map.variableMap?.isEnabled == true
                 } else if (abTestCampaignData.campaignKey == CampaignKeys.A2_C1.name) {
-                    if (abTestCampaignData.isCampaignActive)
+                    if (inboxEntity.isCourseBought && inboxEntity.courseId == DEFAULT_COURSE_ID && abTestCampaignData.isCampaignActive) {
                         PrefManager.put(
                             IS_A2_C1_RETENTION_ENABLED,
                             (map.variantKey == VariantKeys.A2_C1_RETENTION.name) && map.variableMap?.isEnabled == true
                         )
-                    else
+                    } else {
                         PrefManager.removeKey(IS_A2_C1_RETENTION_ENABLED)
+                    }
                 }
             }
         }
@@ -1555,8 +1576,10 @@ class ConversationActivity :
             conversationBinding.toolbar.menu.findItem(R.id.profile_setting).isVisible = true
             conversationBinding.toolbar.menu.findItem(R.id.profile_setting).isEnabled = true
         } else {
-            conversationBinding.toolbar.menu.findItem(R.id.leaderboard_setting).isVisible = false
-            conversationBinding.toolbar.menu.findItem(R.id.leaderboard_setting).isEnabled = false
+            conversationBinding.toolbar.menu.findItem(R.id.leaderboard_setting).isVisible =
+                false
+            conversationBinding.toolbar.menu.findItem(R.id.leaderboard_setting).isEnabled =
+                false
             conversationBinding.toolbar.menu.findItem(R.id.profile_setting).isVisible = false
             conversationBinding.toolbar.menu.findItem(R.id.profile_setting).isEnabled = false
         }
@@ -1577,8 +1600,10 @@ class ConversationActivity :
             conversationBinding.toolbar.menu.findItem(R.id.menu_restart_course).isVisible = true
             conversationBinding.toolbar.menu.findItem(R.id.menu_restart_course).isEnabled = true
         } else {
-            conversationBinding.toolbar.menu.findItem(R.id.menu_restart_course).isVisible = false
-            conversationBinding.toolbar.menu.findItem(R.id.menu_restart_course).isEnabled = false
+            conversationBinding.toolbar.menu.findItem(R.id.menu_restart_course).isVisible =
+                false
+            conversationBinding.toolbar.menu.findItem(R.id.menu_restart_course).isEnabled =
+                false
         }
     }
 
@@ -1615,7 +1640,11 @@ class ConversationActivity :
                                         defValue = true
                                     )
                                     && System.currentTimeMillis()
-                                        .minus(PrefManager.getLongValue(LAST_TIME_AUTOSTART_SHOWN)) > 259200000L
+                                        .minus(
+                                            PrefManager.getLongValue(
+                                                LAST_TIME_AUTOSTART_SHOWN
+                                            )
+                                        ) > 259200000L
                                 ) {
                                     PrefManager.put(
                                         LAST_TIME_AUTOSTART_SHOWN,
@@ -2654,7 +2683,8 @@ class ConversationActivity :
                         val overlayButtonImageView =
                             conversationBinding.overlayView.findViewById<ImageView>(R.id.button_item_image)
                         val unlockBtnView = view.findViewById<MaterialButton>(R.id.btn_start)
-                        val overlayButtonItem = TooltipUtils.getOverlayItemFromView(unlockBtnView)
+                        val overlayButtonItem =
+                            TooltipUtils.getOverlayItemFromView(unlockBtnView)
                         overlayImageView.visibility = INVISIBLE
                         overlayButtonImageView.visibility = INVISIBLE
                         conversationBinding.overlayView.setOnClickListener {
@@ -2696,7 +2726,8 @@ class ConversationActivity :
         }
         val arrowView =
             conversationBinding.overlayView.findViewById<ImageView>(R.id.arrow_animation_unlock_class)
-        val tooltipView = conversationBinding.overlayView.findViewById<JoshTooltip>(R.id.tooltip)
+        val tooltipView =
+            conversationBinding.overlayView.findViewById<JoshTooltip>(R.id.tooltip)
         overlayImageView.setImageBitmap(overlayItem.viewBitmap)
         overlayButtonImageView.setImageBitmap(overlayButtonItem.viewBitmap)
         arrowView.x =
