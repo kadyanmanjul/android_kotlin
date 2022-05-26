@@ -130,7 +130,6 @@ class CommitmentFormViewModel : ViewModel() {
 
     fun submitReminder(
         reminderId: Int,
-        timeSlot: String,
         frequency: String,
         status: String,
         mentorId: String,
@@ -139,36 +138,38 @@ class CommitmentFormViewModel : ViewModel() {
     ) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val time =
-                    (selectedSlot.get()?.timeSlot ?: "09:00 PM - 10:00 PM").split(" -")[0].trim()
-                val calendar = Calendar.getInstance()
-                calendar.time = SimpleDateFormat("hh:mm aa", Locale.getDefault()).parse(time) as Date
-                val hour = calendar.get(Calendar.HOUR_OF_DAY)
-                val minute = calendar.get(Calendar.MINUTE)
-                val numberFormat = NumberFormat.getNumberInstance()
-                val startTime = "${numberFormat.format(hour)}:${numberFormat.format(minute)}:00"
-                val response = AppObjectController.commonNetworkService.setReminder(
-                    ReminderRequest(
-                        mentorId,
-                        startTime,
-                        frequency,
-                        status,
-                        previousTime
+                (selectedSlot.get()?.timeSlot)?.split(" -")?.get(0)?.trim()?.let {
+                    val calendar = Calendar.getInstance()
+                    calendar.time =
+                        SimpleDateFormat("hh:mm aa", Locale.getDefault()).parse(it) as Date
+                    calendar.add(Calendar.MINUTE, -2)
+                    val hour = calendar.get(Calendar.HOUR_OF_DAY)
+                    val minute = calendar.get(Calendar.MINUTE)
+                    val startTime =
+                        "${if (hour < 10) "0" else ""}${hour}:${if (minute < 10) "0" else ""}${minute}:00"
+                    val response = AppObjectController.commonNetworkService.setReminder(
+                        ReminderRequest(
+                            mentorId,
+                            startTime,
+                            frequency,
+                            status,
+                            previousTime
+                        )
                     )
-                )
-                if (response.isSuccessful) {
-                    response.body()?.let {
-                        if (it.success) {
-                            val id: Int =
-                                if (previousTime.isBlank()) it.responseData else reminderId
-                            onAlarmSetSuccess.invoke(id, hour, minute)
-                            AppObjectController.appDatabase.reminderDao().insertReminder(
-                                ReminderResponse(
-                                    id, mentorId, frequency, status, startTime
+                    if (response.isSuccessful) {
+                        response.body()?.let { response1 ->
+                            if (response1.success) {
+                                val id: Int =
+                                    if (previousTime.isBlank()) response1.responseData else reminderId
+                                onAlarmSetSuccess.invoke(id, hour, minute)
+                                AppObjectController.appDatabase.reminderDao().insertReminder(
+                                    ReminderResponse(
+                                        id, mentorId, frequency, status, startTime
+                                    )
                                 )
-                            )
-                        } else {
-                            showToast(it.message)
+                            } else {
+                                showToast(response1.message)
+                            }
                         }
                     }
                 }

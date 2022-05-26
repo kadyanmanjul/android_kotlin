@@ -1144,7 +1144,7 @@ class ConversationActivity :
                 if (it.pendingRequestsList.isNullOrEmpty()) {
                     requestCountNumber = 0
                     fppRequestCountNumber.visibility = GONE
-                }else {
+                } else {
                     requestCountNumber = it.pendingRequestsList.size
                     fppRequestCountNumber.text = requestCountNumber.toString()
                     fppRequestCountNumber.visibility = VISIBLE
@@ -1378,8 +1378,7 @@ class ConversationActivity :
                     else {
 
                     }
-                }
-                else {
+                } else {
                     CoroutineScope(Dispatchers.IO).launch {
                         delay(1000)
                         val status =
@@ -1530,27 +1529,6 @@ class ConversationActivity :
                 )
         )
 
-        compositeDisposable.add(
-            RxBus2.listen(TextTooltipEvent::class.java)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    {
-                        if (it.chatModel.type == BASE_MESSAGE_TYPE.Q) {
-                            lifecycleScope.launch(Dispatchers.IO) {
-                                withContext(Dispatchers.Main) {
-                                    showToast(R.string.ACCOUNT_KIT_CLIENT_TOKEN.toString())
-                                    setOverlayAnimation()
-                                }
-                            }
-                        }
-                    },
-                    {
-                        showToast(it.message.toString())
-                        it.printStackTrace()
-                    }
-             )
-        )
         compositeDisposable.add(
             RxBus2.listen(DownloadMediaEventBus::class.java)
                 .subscribeOn(Schedulers.io())
@@ -2184,7 +2162,8 @@ class ConversationActivity :
             conversationBinding.overlayLayout.visibility == VISIBLE -> {
                 hideLeaderBoardSpotlight()
             }
-            conversationBinding.overlayView.visibility == VISIBLE -> conversationBinding.overlayView.visibility = INVISIBLE
+            conversationBinding.overlayView.visibility == VISIBLE -> conversationBinding.overlayView.visibility =
+                INVISIBLE
             else -> {
                 val resultIntent = Intent()
                 setResult(RESULT_OK, resultIntent)
@@ -2453,22 +2432,38 @@ class ConversationActivity :
             var i = 0
             while (true) {
                 val view = conversationBinding.chatRv.getChildAt(i) ?: break
-                if (view.id == R.id.root_view) {
+                if (view.id == R.id.unlock_class_item_container) {
                     val overlayItem = TooltipUtils.getOverlayItemFromView(view)
                     overlayItem?.let {
                         val overlayImageView =
-                            conversationBinding.overlayView.findViewById<TextView>(R.id.root_sub_view)
+                            conversationBinding.overlayView.findViewById<ImageView>(R.id.card_item_image)
+                        val overlayButtonImageView =
+                            conversationBinding.overlayView.findViewById<ImageView>(R.id.button_item_image)
+                        val unlockBtnView = view.findViewById<MaterialButton>(R.id.btn_start)
+                        val overlayButtonItem = TooltipUtils.getOverlayItemFromView(unlockBtnView)
                         overlayImageView.visibility = INVISIBLE
+                        overlayButtonImageView.visibility = INVISIBLE
                         conversationBinding.overlayView.setOnClickListener {
-                         ///   conversationBinding.overlayView.visibility = INVISIBLE
+                            conversationBinding.overlayView.visibility = INVISIBLE
                         }
                         overlayImageView.setOnClickListener {
-                          //  conversationBinding.overlayView.visibility = INVISIBLE
+                            conversationBinding.overlayView.visibility = INVISIBLE
+                        }
+                        overlayButtonImageView.setOnClickListener {
+                            conversationBinding.overlayView.visibility = INVISIBLE
+                            unlockBtnView.performClick()
+                        }
+                        overlayButtonItem?.let {
+                            setOverlayView(
+                                overlayItem,
+                                overlayImageView,
+                                overlayButtonItem,
+                                overlayButtonImageView
+                            )
                         }
                     }
                     break
-                }else
-                    showToast(view.id.toString())
+                }
                 i++
             }
         }
@@ -2547,7 +2542,7 @@ class ConversationActivity :
         return if (titleBarHeight < 0) titleBarHeight * -1 else titleBarHeight
     }
 
-    fun getConversationTooltip() : String {
+    fun getConversationTooltip(): String {
 //        val courseId = PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID)
 //        requestWorkerForChangeLanguage(getLangCodeFromCourseId(courseId))
         return getString(R.string.tooltip_conversation)

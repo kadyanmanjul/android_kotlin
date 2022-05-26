@@ -46,7 +46,6 @@ class CommitmentFormActivity : BaseActivity() {
                 START_CONVERSATION_ACTIVITY -> {
                     vm.submitReminder(
                         Math.random().nextUp().toInt(),
-                        vm.selectedSlot.get()!!.timeSlot,
                         ReminderUtil.Companion.ReminderFrequency.EVERYDAY.name,
                         ReminderUtil.Companion.ReminderStatus.ACTIVE.name,
                         Mentor.getInstance().getId(),
@@ -60,13 +59,14 @@ class CommitmentFormActivity : BaseActivity() {
     }
 
     private fun onAlarmSetSuccess(reminderId: Int, startHour: Int, startMinute: Int) {
-        val reminderUtil = ReminderUtil(applicationContext)
-        reminderUtil.setAlarm(
-            ReminderUtil.Companion.ReminderFrequency.EVERYDAY,
-            reminderUtil.getAlarmPendingIntent(reminderId),
-            startHour,
-            startMinute
-        )
+        ReminderUtil(applicationContext).apply {
+            setAlarm(
+                ReminderUtil.Companion.ReminderFrequency.EVERYDAY,
+                getAlarmPendingIntent(reminderId),
+                startHour,
+                startMinute
+            )
+        }
         ConversationActivity.startConversionActivity(
             this,
             intent.extras?.get("inboxEntity") as InboxEntity
