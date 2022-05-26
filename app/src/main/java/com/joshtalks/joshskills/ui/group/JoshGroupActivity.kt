@@ -6,7 +6,6 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
-import android.util.Log
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
@@ -301,7 +300,7 @@ class JoshGroupActivity : BaseGroupActivity() {
 
             val fragment = GroupRequestFragment()
             fragment.arguments = bundle
-            add(R.id.group_fragment_container, fragment, GROUP_REQUEST_FRAGMENT)
+            replace(R.id.group_fragment_container, fragment, GROUP_REQUEST_FRAGMENT)
             addToBackStack(GROUPS_STACK)
         }
     }

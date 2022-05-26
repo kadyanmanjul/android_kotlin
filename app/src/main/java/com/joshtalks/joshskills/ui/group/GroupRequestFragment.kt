@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.ui.group
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 
@@ -46,6 +47,14 @@ class GroupRequestFragment : BaseFragment() {
         vm.requestQuestion.set(AppObjectController.getFirebaseRemoteConfig()
             .getString(FirebaseRemoteConfigKey.REQUEST_TO_JOIN_QUESTION))
         binding.executePendingBindings()
+
+        binding.answerText.setOnTouchListener { view, event ->
+            view.parent.requestDisallowInterceptTouchEvent(true)
+            if ((event.action and MotionEvent.ACTION_MASK) == MotionEvent.ACTION_UP) {
+                view.parent.requestDisallowInterceptTouchEvent(false)
+            }
+            return@setOnTouchListener false
+        }
     }
 
     override fun initViewState() {
