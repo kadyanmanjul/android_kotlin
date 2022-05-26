@@ -120,7 +120,7 @@
             app:layout_constraintEnd_toStartOf="@+id/guideline5"
             app:layout_constraintStart_toStartOf="@+id/guideline4"
             app:layout_constraintTop_toBottomOf="@id/occupation_future_goals"
-            app:layout_constraintVertical_bias="0.317"
+            app:layout_constraintVertical_bias="0.076"
             tools:ignore="MissingPrefix"
             tools:text="" />
 
