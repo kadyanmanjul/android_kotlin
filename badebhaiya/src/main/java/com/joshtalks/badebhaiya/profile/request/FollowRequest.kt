@@ -6,5 +6,9 @@ class FollowRequest(
     @SerializedName("followee")
     val followeeId: String,
     @SerializedName("follower")
-    val followerId: String
+    val followerId: String,
+    @SerializedName("is_from_speakers_to_follow_page")
+    val isFromBBPage: Boolean,
+    @SerializedName("is_from_deeplink")
+    val isFromDeepLink:Boolean
 )

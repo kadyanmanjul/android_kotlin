@@ -20,7 +20,7 @@ class ImpressionsManager @Inject constructor(
 
     }
 
-    fun sendWelcomeEvent(){
+    fun sendDeepWelcomeEvent(){
         sendEvent(
             Impression(
             Event.WELCOME,
@@ -28,6 +28,48 @@ class ImpressionsManager @Inject constructor(
                 "deeplink" to true
             )
         ))
+    }
+
+    fun sendWelcomeEvent(){
+        sendEvent(
+            Impression(
+                Event.WELCOME,
+                mapOf(
+                    "deeplink" to false
+                )
+            ))
+    }
+
+
+    fun sendDeepLaunchEvent(){
+        sendEvent(
+            Impression(
+                Event.LAUNCH,
+                mapOf(
+                   "deeplink" to true
+                )
+            )
+        )
+    }
+
+    fun sendLaunchEvent(){
+        sendEvent(
+            Impression(
+                Event.LAUNCH,
+                mapOf(
+                    "deeplink" to false
+                )
+            )
+        )
+    }
+    fun sendTrueUsedEvent(){
+        sendEvent(
+            Impression(
+                Event.TC_USED,
+                mapOf()
+            )
+        )
+
     }
 
 }

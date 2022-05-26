@@ -1,9 +1,6 @@
 package com.joshtalks.badebhaiya.profile
 
-import android.app.AlarmManager
-import android.app.PendingIntent
 import android.content.Context
-import android.content.Context.ALARM_SERVICE
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -18,14 +15,12 @@ import androidx.annotation.IdRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
-import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.text.HtmlCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.core.*
 import com.joshtalks.badebhaiya.core.USER_ID
@@ -45,16 +40,13 @@ import com.joshtalks.badebhaiya.liveroom.ROOM_EXPAND
 import com.joshtalks.badebhaiya.liveroom.model.StartingLiveRoomProperties
 import com.joshtalks.badebhaiya.liveroom.viewmodel.LiveRoomViewModel
 import com.joshtalks.badebhaiya.notifications.NotificationScheduler
-import com.joshtalks.badebhaiya.profile.request.DeleteReminderRequest
 import com.joshtalks.badebhaiya.profile.request.ReminderRequest
 import com.joshtalks.badebhaiya.profile.response.ProfileResponse
 import com.joshtalks.badebhaiya.repository.CommonRepository
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomResponse
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.signup.SignUpActivity
-import com.joshtalks.badebhaiya.utils.*
 import com.joshtalks.badebhaiya.signup.UserPicChooserFragment
-import com.joshtalks.badebhaiya.signup.fragments.PeopleToFollowFragment
 import com.joshtalks.badebhaiya.signup.viewmodel.SignUpViewModel
 import com.joshtalks.badebhaiya.utils.SingleDataManager
 import com.joshtalks.badebhaiya.utils.Utils
@@ -67,7 +59,6 @@ import kotlinx.android.synthetic.main.base_toolbar.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import kotlinx.android.synthetic.main.why_room.view.*
 import kotlinx.coroutines.CoroutineScope
 import java.lang.Exception
 import javax.inject.Inject
@@ -75,6 +66,7 @@ import javax.inject.Inject
 class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallback {
 
     private var isFromDeeplink = false
+    private var isFromBBPage=false
 
     private val liveRoomViewModel by lazy {
         ViewModelProvider(requireActivity())[LiveRoomViewModel::class.java]
@@ -115,6 +107,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         mBundle = this.arguments
         userId=mBundle!!.getString("user")
         isFromDeeplink=mBundle!!.getBoolean("deeplink")
+        isFromBBPage= mBundle.getBoolean("BBPage")
         handleIntent()
 //        if(isFromDeeplink && User.getInstance().isLoggedIn())
 //        {
@@ -224,7 +217,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         executePendingActions()
     }
 
-    private fun executePendingActions() {
+    private fun executePendingActions( ) {
         SingleDataManager.pendingPilotAction?.let {
             when(it){
                 FOLLOW -> followPilot()
@@ -232,7 +225,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         }
     }
 
-    private fun followPilot(){
+    private fun followPilot() {
         SingleDataManager.pendingPilotAction = null
         updateFollowStatus()
     }
@@ -312,7 +305,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         }
 
 
-        viewModel.updateFollowStatus(userId ?: (User.getInstance().userId))
+        viewModel.updateFollowStatus(userId ?: (User.getInstance().userId),isFromBBPage,isFromDeeplink)
         if(viewModel.speakerFollowed.value == true)
             viewModel.userProfileData.value?.let {
                 //is_followed=false
@@ -395,6 +388,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
 
             val bundle = Bundle()
             bundle.putString(USER, userId)
+            bundle.putBoolean("BBPage", true)
 
             fragment.arguments = bundle
 

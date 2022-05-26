@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.joshtalks.badebhaiya.core.hideKeyboard
 import com.joshtalks.badebhaiya.databinding.LiSearchEventBinding
 import com.joshtalks.badebhaiya.feed.Call
 import com.joshtalks.badebhaiya.feed.model.SearchRoomsResponse
@@ -23,7 +22,6 @@ import com.joshtalks.badebhaiya.liveroom.OPEN_PROFILE
 import com.joshtalks.badebhaiya.profile.request.FollowRequest
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.repository.service.RetrofitInstance
-import com.joshtalks.badebhaiya.utils.setImage
 import com.joshtalks.badebhaiya.utils.setUserInitialInRect
 import kotlinx.android.synthetic.main.li_search_event.*
 import kotlinx.android.synthetic.main.li_search_event.view.*
@@ -143,7 +141,12 @@ class SearchAdapter(private val searchResult: List<Users>,var call: Call): ListA
                         if (searchResult[position].is_speaker_followed.not()) {
                             try {
                                 val followRequest =
-                                    FollowRequest(searchResult[position].user_id, User.getInstance().userId)
+                                    FollowRequest(
+                                        searchResult[position].user_id,
+                                        User.getInstance().userId,
+                                        false,
+                                        false
+                                    )
                                 val response =
                                     RetrofitInstance.profileNetworkService.updateFollowStatus(followRequest)
                                 if (response.isSuccessful) {
@@ -158,7 +161,9 @@ class SearchAdapter(private val searchResult: List<Users>,var call: Call): ListA
                                     val followRequest =
                                         FollowRequest(
                                             searchResult[position].user_id,
-                                            User.getInstance().userId
+                                            User.getInstance().userId,
+                                            false,
+                                            false
                                         )
                                     val response = RetrofitInstance.profileNetworkService.updateUnfollowStatus(followRequest)
                                     if (response.isSuccessful) {

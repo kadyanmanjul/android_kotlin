@@ -20,7 +20,6 @@ import com.joshtalks.badebhaiya.repository.BBRepository
 import com.joshtalks.badebhaiya.repository.ConversationRoomRepository
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.repository.service.RetrofitInstance
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class ProfileViewModel : ViewModel() {
@@ -54,13 +53,13 @@ class ProfileViewModel : ViewModel() {
             }
         }
     }
-    fun updateFollowStatus(userId:String) {
+    fun updateFollowStatus(userId: String, isFromBBPage: Boolean, isFromDeeplink: Boolean) {
         speakerFollowed.value?.let {
             if (it.not()) {
                 viewModelScope.launch {
                     try {
                         val followRequest =
-                            FollowRequest(userId, User.getInstance().userId)
+                            FollowRequest(userId, User.getInstance().userId,isFromBBPage,isFromDeeplink)
                         val response = service.updateFollowStatus(followRequest)
                         if (response.isSuccessful) {
                             speakerFollowed.value = true
@@ -76,7 +75,7 @@ class ProfileViewModel : ViewModel() {
                 viewModelScope.launch {
                     try {
                         val followRequest =
-                            FollowRequest(userId, User.getInstance().userId)
+                            FollowRequest(userId, User.getInstance().userId, isFromBBPage, isFromDeeplink)
                         val response=service.updateUnfollowStatus(followRequest)
                         if(response.isSuccessful)
                         {
@@ -141,38 +140,38 @@ class ProfileViewModel : ViewModel() {
             }
         }
     }
-    fun deleteReminder(deleteReminderRequest: DeleteReminderRequest)
-    {
-        viewModelScope.launch {
-            try{
-                isLoading.set(true)
-                val res=convoRepo.deleteReminder(deleteReminderRequest)
-                if (res.isSuccessful && res.code()==200){
-                    speakerProfileRoomsAdapter.notifyDataSetChanged()
-                } else showToast("Error while Deleting Reminder")
-            } catch (ex:Exception){
-                ex.printStackTrace()
-                showToast("Error while Deleting Reminder")
-            } finally {
-                isLoading.set(false)
-            }
-        }
-    }
+//    fun deleteReminder(deleteReminderRequest: DeleteReminderRequest)
+//    {
+//        viewModelScope.launch {
+//            try{
+//                isLoading.set(true)
+//                val res=convoRepo.deleteReminder(deleteReminderRequest)
+//                if (res.isSuccessful && res.code()==200){
+//                    speakerProfileRoomsAdapter.notifyDataSetChanged()
+//                } else showToast("Error while Deleting Reminder")
+//            } catch (ex:Exception){
+//                ex.printStackTrace()
+//                showToast("Error while Deleting Reminder")
+//            } finally {
+//                isLoading.set(false)
+//            }
+//        }
+//    }
 
-    fun setReminder(reminderRequest: ReminderRequest) {
-        viewModelScope.launch {
-            try {
-                isLoading.set(true)
-                val res = convoRepo.setReminder(reminderRequest)
-                if (res.isSuccessful && res.code() == 201) {
-                    speakerProfileRoomsAdapter.notifyDataSetChanged()
-                } else showToast("Error while setting reminder")
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-                showToast("Error while setting reminder")
-            } finally {
-                isLoading.set(false)
-            }
-        }
-    }
+//    fun setReminder(reminderRequest: ReminderRequest) {
+//        viewModelScope.launch {
+//            try {
+//                isLoading.set(true)
+//                val res = convoRepo.setReminder(reminderRequest)
+//                if (res.isSuccessful && res.code() == 201) {
+//                    speakerProfileRoomsAdapter.notifyDataSetChanged()
+//                } else showToast("Error while setting reminder")
+//            } catch (ex: Exception) {
+//                ex.printStackTrace()
+//                showToast("Error while setting reminder")
+//            } finally {
+//                isLoading.set(false)
+//            }
+//        }
+//    }
 }
