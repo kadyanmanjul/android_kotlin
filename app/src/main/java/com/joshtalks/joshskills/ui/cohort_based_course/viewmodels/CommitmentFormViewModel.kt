@@ -1,11 +1,9 @@
 package com.joshtalks.joshskills.ui.cohort_based_course.viewmodels
 
-import android.icu.number.NumberFormatter
 import android.os.Message
-import android.util.Log
 import android.view.View
-import androidx.databinding.ObservableArrayList
 import android.widget.Toast
+import androidx.databinding.ObservableArrayList
 import androidx.databinding.ObservableField
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -20,18 +18,12 @@ import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.reminder.ReminderRequest
 import com.joshtalks.joshskills.repository.server.reminder.ReminderResponse
-import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.cohort_based_course.models.CohortItemModel
-import com.joshtalks.joshskills.ui.inbox.OPEN_CONVERSATION_ACTIVITY
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.text.NumberFormat
 import java.text.SimpleDateFormat
-import java.time.format.DateTimeFormatter
 import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 import kotlin.reflect.KFunction3
 
 private const val TAG = "CommitmentFormViewModel"
@@ -92,6 +84,9 @@ class CommitmentFormViewModel : ViewModel() {
                 val resp = AppObjectController.CbcNetworkService.postSelectedBatch(map)
                 if (resp.isSuccessful) {
                     sendEvent(START_CONVERSATION_ACTIVITY)
+                } else {
+                    showToast("Something Went Wrong, Please try again later!", Toast.LENGTH_LONG)
+                    sendEvent(CLOSE_ACTIVITY)
                 }
             } catch (ex: Exception) {
                 ex.printStackTrace()
