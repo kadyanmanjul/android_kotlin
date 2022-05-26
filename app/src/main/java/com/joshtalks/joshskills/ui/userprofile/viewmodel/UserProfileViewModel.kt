@@ -40,7 +40,7 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
 import com.joshtalks.joshskills.repository.server.AnimatedLeaderBoardResponse
-import com.joshtalks.joshskills.ui.group.repository.ABTestRepository
+import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
 import com.joshtalks.joshskills.ui.userprofile.adapters.EnrolledCoursesListAdapter
 import com.joshtalks.joshskills.ui.userprofile.adapters.MyGroupsListAdapter
 import com.joshtalks.joshskills.ui.userprofile.models.UserProfileResponse
@@ -68,7 +68,6 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
-import org.json.JSONObject
 import java.io.File
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
@@ -107,8 +106,7 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
     val isProgressBarShow = ObservableBoolean(false)
     val enrolledAdapter = EnrolledCoursesListAdapter()
     val myGroupAdapter = MyGroupsListAdapter()
-    val fetchingGroupList = ObservableBoolean(false)
-    val fetchingEnrolledCourseList = ObservableBoolean(false)
+    val isProfileLoading = ObservableBoolean(false)
     private var startTime = System.currentTimeMillis()
     private var impressionId: String? = null
 
@@ -120,7 +118,12 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
     val helpCountAbTestliveData = MutableLiveData<ABTestCampaignData?>()
     val repository: ABTestRepository by lazy { ABTestRepository() }
     var count = ObservableField(0)
-    fun getHelpCountCampaignData(campaign: String, mentorId:String, intervalType: String?, previousPage: String?) {
+    fun getHelpCountCampaignData(
+        campaign: String,
+        mentorId: String,
+        intervalType: String?,
+        previousPage: String?
+    ) {
         viewModelScope.launch(Dispatchers.IO) {
             repository.getCampaignData(campaign)?.let { campaign ->
                 helpCountAbTestliveData.postValue(campaign)
@@ -176,6 +179,7 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
             uploadCompressedMedia(compressImagePath)
         }
     }
+
     private fun uploadCompressedMedia(
         mediaPath: String
     ) {
@@ -185,10 +189,10 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
                 val responseObj = userProfileRepo.requestMediaRequest(obj)
                 val statusCode: Int = uploadOnS3Server(responseObj, mediaPath)
                 if (statusCode in 200..210) {
-val url = responseObj.url.plus(File.separator).plus(responseObj.fields["key"])
+                    val url = responseObj.url.plus(File.separator).plus(responseObj.fields["key"])
                     var updateProfilePayload = UpdateProfilePayload()
                     var date: String? = null
-                    if(userData.value!=null) {
+                    if (userData.value != null) {
                         updateProfilePayload.apply {
                             if (userData.value?.dateOfBirth != null) {
                                 date =
@@ -205,7 +209,7 @@ val url = responseObj.url.plus(File.separator).plus(responseObj.fields["key"])
                             educationDetails = null
                             occupationDetails = null
                         }
-                    }else{
+                    } else {
                         updateProfilePayload.apply {
                             val user = User.getInstance()
                             basicDetails?.apply {
@@ -216,8 +220,8 @@ val url = responseObj.url.plus(File.separator).plus(responseObj.fields["key"])
                                 futureGoals = null
                                 favouriteJoshTalk = null
                             }
-                            educationDetails=null
-                            occupationDetails=null
+                            educationDetails = null
+                            occupationDetails = null
                         }
                     }
                     saveProfileInfo(updateProfilePayload)
@@ -437,6 +441,7 @@ val url = responseObj.url.plus(File.separator).plus(responseObj.fields["key"])
         this.intervalType = intervalType
         this.previousPage = previousPage
         apiCallStatusLiveData.postValue(ApiCallStatus.START)
+        isProfileLoading.set(true)
         jobs += viewModelScope.launch(Dispatchers.IO) {
             try {
                 val response = AppObjectController.commonNetworkService.getUserProfileDataV3(
@@ -454,6 +459,7 @@ val url = responseObj.url.plus(File.separator).plus(responseObj.fields["key"])
                     if (mentorId.equals(Mentor.getInstance().getId()))
                         PrefManager.put(USER_SCORE, response.body()!!.points.toString())
                     userProfileUrl.postValue(response.body()!!.photoUrl)
+                    isProfileLoading.set(false)
                     return@launch
                 } else if (response.errorBody() != null
                     && response.errorBody()!!.string().contains("mentor_id is not valid")
@@ -468,6 +474,7 @@ val url = responseObj.url.plus(File.separator).plus(responseObj.fields["key"])
             } catch (ex: Throwable) {
                 ex.showAppropriateMsg()
             }
+            isProfileLoading.set(false)
             apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)
         }
     }
@@ -632,7 +639,8 @@ val url = responseObj.url.plus(File.separator).plus(responseObj.fields["key"])
             if (startTime > 0 && impressionId?.isBlank()?.not() == true) {
                 engageUserProfileSectionTime(impressionId!!, startTime.toString())
             }
-        }catch (ex:Exception){ }
+        } catch (ex: Exception) {
+        }
     }
 
     val onItemClick: (CourseEnrolled, Int) -> Unit = { it, type ->
@@ -674,7 +682,8 @@ val url = responseObj.url.plus(File.separator).plus(responseObj.fields["key"])
             }
 
             waIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-            waIntent.putExtra(Intent.EXTRA_TEXT,
+            waIntent.putExtra(
+                Intent.EXTRA_TEXT,
                 "Mai har roz angrezi mei baat karke angrezi seekh rha hu. Mai chahta hu aap bhi mere saath angrezi seekhe. Is link ko click karke yeh app download kare -\n$dynamicLink"
             )
             waIntent.type = "text/plain"
@@ -696,7 +705,10 @@ val url = responseObj.url.plus(File.separator).plus(responseObj.fields["key"])
                 data?.let {
                     MixPanelTracker.publishEvent(MixPanelEvent.GOAL)
                         .addParam(ParamKeys.VARIANT, data?.variantKey ?: EMPTY)
-                        .addParam(ParamKeys.VARIABLE, AppObjectController.gsonMapper.toJson(data?.variableMap))
+                        .addParam(
+                            ParamKeys.VARIABLE,
+                            AppObjectController.gsonMapper.toJson(data?.variableMap)
+                        )
                         .addParam(ParamKeys.CAMPAIGN, campaign)
                         .addParam(ParamKeys.GOAL, goal)
                         .push()
@@ -705,18 +717,19 @@ val url = responseObj.url.plus(File.separator).plus(responseObj.fields["key"])
         }
     }
 
-    fun removeFpp(uId: Int){
+    fun removeFpp(uId: Int) {
         try {
-            viewModelScope.launch (Dispatchers.IO){
+            viewModelScope.launch(Dispatchers.IO) {
                 val requestParams: HashMap<String, List<Int>> = HashMap()
                 requestParams["mentor_ids"] = uId.let { return@let listOf(uId) }
                 val response = favoriteCallerRepository.removeUserFormFppLit(requestParams)
                 if (response.isSuccessful) {
                     favoriteCallerDao.removeFromFavorite(uId.let { return@let listOf(uId) })
                     getFppStatusInProfile(mentorId)
-                    getProfileData(mentorId,null,null)
+                    getProfileData(mentorId, null, null)
                 }
             }
-        }catch (ex:Exception){}
+        } catch (ex: Exception) {
+        }
     }
 }

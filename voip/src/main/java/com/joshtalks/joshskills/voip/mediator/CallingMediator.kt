@@ -302,9 +302,11 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                                             stateChannel.send(envelope)
                                         }
                                         ServerConstants.TOPIC_IMAGE_RECEIVED ->{
-                                               val envelope= Envelope(Event.TOPIC_IMAGE_RECEIVED, it.getMsgData())
+                                                val envelope = Envelope(
+                                                    Event.TOPIC_IMAGE_RECEIVED,
+                                                    it.getMsgData()
+                                                )
                                                 stateChannel.send(envelope)
-
                                         }
                                         ServerConstants.DISCONNECTED -> {
                                             val envelope = Envelope(Event.REMOTE_USER_DISCONNECTED_MESSAGE)
@@ -449,8 +451,11 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                                                 stateChannel.send(envelope)
                                             }
                                             ServerConstants.TOPIC_IMAGE_RECEIVED ->{
-                                                val envelope = Envelope(Event.TOPIC_IMAGE_RECEIVED,event.getMsgData())
-                                                stateChannel.send(envelope)
+                                                    val envelope = Envelope(
+                                                        Event.TOPIC_IMAGE_RECEIVED,
+                                                        event.getMsgData()
+                                                    )
+                                                    stateChannel.send(envelope)
                                             }
                                             // Remote User Disconnected
                                             ServerConstants.DISCONNECTED -> {

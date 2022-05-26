@@ -170,6 +170,7 @@
     <string name="first_time_user_hint">Aapko apne course se related saari videos aur claases isko click karke milengi</string>
     <string name="certificate_tooltip_hint">Iss course ke lessons aur practices %s complete karne par aapko ek digital certificate milega.</string>
     <string name="course_overview">Course Overview</string>
+    <string name="recording_short">The recording should be more than one second!</string>
     <string name="submit_practise_msz">Please complete your task before Submitting</string>
     <string name="generic_message_for_error">An error occurred, please try again!</string>
     <string name="referral_header" formatted="false">Do you want your friends to grow too?</string>
@@ -1130,7 +1131,7 @@
     <string name="my_formatted_text">
         <font color="@android:color/black">I want to</font>
         <font color="#107BE5">speak english confidently</font>
-        <font color ="@android:color/black">from ...</font>
+        <font color="@android:color/black">from ...</font>
     </string>
     <string name="buy_now">Buy now</string>
     <string name="your_free_trial_has_ended">Your Free Trial has ended</string>
@@ -1193,7 +1194,7 @@
     <string name="discussion_topic">Discussion Topic</string>
     <string name="partnerKey">P31uP46c15762366b41fdba957b16b9a7c620</string>
 
-<!--    Notification Module-->
+    <!--    Notification Module-->
     <string name="channel_name_calls">Calls</string>
     <string name="channel__calls_description">Calls Notification</string>
     <string name="CHANNEL_ID_CALLS">10001</string>
@@ -1202,14 +1203,14 @@
     <string name="channel_others_description">some other updates</string>
     <string name="CHANNEL_ID_OTHERS">10002</string>
     <string name="notification_title">Notification Title</string>
-    <string name="notification_content" >Notification Content</string>
+    <string name="notification_content">Notification Content</string>
     <string name="accept_call">Accept</string>
     <string name="reject_call">Reject</string>
     <string name="submit_report_btn">Submit</string>
 
     //call ratings strings
     <string name="how_was_your_call_name">How was your call with %s ?</string>
-    <string name="you_spoke_for_minutes">You spoke for %s seconds</string>
+    <string name="you_spoke_for_minutes">You spoke for %s</string>
     <string name="very_bad">Very bad</string>
     <string name="block_caller">Block %s</string>
     <string name="excellent">Excellent</string>

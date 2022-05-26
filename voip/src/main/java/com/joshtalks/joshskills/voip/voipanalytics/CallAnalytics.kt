@@ -5,6 +5,7 @@ import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.data.api.VoipNetwork
 import com.joshtalks.joshskills.voip.data.local.VoipDatabase
+import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics.serializeToMap
 import com.joshtalks.joshskills.voip.voipanalytics.data.local.VoipAnalyticsEntity
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
@@ -37,7 +38,23 @@ object CallAnalytics : CallAnalyticsInterface {
             agoraMentorId = agoraMentorId,
             extra = extra
         )
-        pushAnalytics(callEvent)
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val eventHashMap = VoipAnalyticsEntity(
+                    type = callEvent.event.eventName,
+                    timestamp = callEvent.timestamp,
+                    agora_call = callEvent.agoraCallId.toString(),
+                    extra = callEvent.extra,
+                    agora_mentor = callEvent.agoraMentorId.toString()
+                ).serializeToMap()
+                val response = callAnalyticsApi(eventHashMap)
+                if(response.isSuccessful.not())
+                    pushAnalytics(callEvent)
+            } catch (e : Exception) {
+                e.printStackTrace()
+                pushAnalytics(callEvent)
+            }
+        }
     }
 
     override suspend fun uploadAnalyticsToServer() {

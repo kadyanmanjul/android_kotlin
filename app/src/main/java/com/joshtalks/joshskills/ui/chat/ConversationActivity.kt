@@ -52,7 +52,11 @@ import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.Utils.getCurrentMediaVolume
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
-import com.joshtalks.joshskills.core.analytics.*
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.core.countdowntimer.CountdownTimerBack
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.core.custom_ui.decorator.SmoothScrollingLinearLayoutManager
@@ -318,12 +322,12 @@ class ConversationActivity :
         initToolbar()
         //  groupChatHintLogic()    //Group chat hint UI
         // initCourseProgressTooltip()    // course progress tooltip
+        initABTest()
         initRV()
         initView()
         initFuture()
         addObservable()
         initFreeTrialTimer()
-        initABTest()
         fetchMessage()
         readMessageDatabaseUpdate()
         addIssuesToSharedPref()
@@ -366,23 +370,26 @@ class ConversationActivity :
 
     private fun initFreeTrialTimer() {
         PrefManager.put(IS_FREE_TRIAL, inboxEntity.isCourseBought.not())
-        if (inboxEntity.isCourseBought.not() &&
-            inboxEntity.expiryDate != null &&
-            inboxEntity.expiryDate!!.time >= System.currentTimeMillis()
-        ) {
-            conversationBinding.freeTrialContainer.visibility = VISIBLE
-            conversationBinding.imgGroupChat.shiftGroupChatIconDown(conversationBinding.txtUnreadCount)
-            startTimer(inboxEntity.expiryDate!!.time - System.currentTimeMillis())
-        } else if (inboxEntity.isCourseBought.not() &&
-            inboxEntity.expiryDate != null &&
-            inboxEntity.expiryDate!!.time < System.currentTimeMillis()
-        ) {
-            PrefManager.put(COURSE_EXPIRY_TIME_IN_MS, inboxEntity.expiryDate!!.time)
-            PrefManager.put(IS_COURSE_BOUGHT, inboxEntity.isCourseBought)
-            conversationBinding.freeTrialContainer.visibility = VISIBLE
-            conversationBinding.imgGroupChat.shiftGroupChatIconDown(conversationBinding.txtUnreadCount)
-            conversationBinding.freeTrialText.text = getString(R.string.free_trial_ended)
-            conversationBinding.freeTrialExpiryLayout.visibility = VISIBLE
+        if (inboxEntity.isCourseBought.not() || inboxEntity.courseId != DEFAULT_COURSE_ID) {
+            PrefManager.removeKey(IS_A2_C1_RETENTION_ENABLED)
+            if (inboxEntity.isCourseBought.not() &&
+                inboxEntity.expiryDate != null &&
+                inboxEntity.expiryDate!!.time >= System.currentTimeMillis()
+            ) {
+                conversationBinding.freeTrialContainer.visibility = VISIBLE
+                conversationBinding.imgGroupChat.shiftGroupChatIconDown(conversationBinding.txtUnreadCount)
+                startTimer(inboxEntity.expiryDate!!.time - System.currentTimeMillis())
+            } else if (inboxEntity.isCourseBought.not() &&
+                inboxEntity.expiryDate != null &&
+                inboxEntity.expiryDate!!.time < System.currentTimeMillis()
+            ) {
+                PrefManager.put(COURSE_EXPIRY_TIME_IN_MS, inboxEntity.expiryDate!!.time)
+                PrefManager.put(IS_COURSE_BOUGHT, inboxEntity.isCourseBought)
+                conversationBinding.freeTrialContainer.visibility = VISIBLE
+                conversationBinding.imgGroupChat.shiftGroupChatIconDown(conversationBinding.txtUnreadCount)
+                conversationBinding.freeTrialText.text = getString(R.string.free_trial_ended)
+                conversationBinding.freeTrialExpiryLayout.visibility = VISIBLE
+            }
         }
     }
 
@@ -552,12 +559,14 @@ class ConversationActivity :
             conversationBinding.textMessageTitle.text = inboxEntity.course_name
             conversationBinding.imageViewLogo.setImageWithPlaceholder(inboxEntity.course_icon)
             conversationBinding.imageViewLogo.visibility = VISIBLE
-            conversationBinding.imageViewLogo.setOnClickListener {
-                openCourseProgressListingScreen()
-            }
-            conversationBinding.textMessageTitle.setOnClickListener {
-                MixPanelTracker.publishEvent(MixPanelEvent.COURSE_OVERVIEW).push()
-                openCourseProgressListingScreen()
+            if (inboxEntity.isCapsuleCourse) {
+                conversationBinding.imageViewLogo.setOnClickListener {
+                    openCourseProgressListingScreen()
+                }
+                conversationBinding.textMessageTitle.setOnClickListener {
+                    MixPanelTracker.publishEvent(MixPanelEvent.COURSE_OVERVIEW).push()
+                    openCourseProgressListingScreen()
+                }
             }
 
             conversationBinding.ivBack.setOnClickListener {
@@ -592,7 +601,8 @@ class ConversationActivity :
                         )
                     }
                     R.id.menu_clear_media -> {
-                        MixPanelTracker.publishEvent(MixPanelEvent.CLEAR_ALL_MEDIA_CLICKED).push()
+                        MixPanelTracker.publishEvent(MixPanelEvent.CLEAR_ALL_MEDIA_CLICKED)
+                            .push()
                         clearMediaFromInternal(inboxEntity.conversation_id)
                     }
                     R.id.menu_help -> {
@@ -1293,13 +1303,14 @@ class ConversationActivity :
                     activityFeedControl =
                         (map.variantKey == VariantKeys.AF2_ENABLED.name) && map.variableMap?.isEnabled == true
                 } else if (abTestCampaignData.campaignKey == CampaignKeys.A2_C1.name) {
-                    if (abTestCampaignData.isCampaignActive)
+                    if (inboxEntity.isCourseBought && inboxEntity.courseId == DEFAULT_COURSE_ID && abTestCampaignData.isCampaignActive) {
                         PrefManager.put(
                             IS_A2_C1_RETENTION_ENABLED,
                             (map.variantKey == VariantKeys.A2_C1_RETENTION.name) && map.variableMap?.isEnabled == true
                         )
-                    else
+                    } else {
                         PrefManager.removeKey(IS_A2_C1_RETENTION_ENABLED)
+                    }
                 }
             }
         }
@@ -2538,7 +2549,8 @@ class ConversationActivity :
         }
         val arrowView =
             conversationBinding.overlayView.findViewById<ImageView>(R.id.arrow_animation_unlock_class)
-        val tooltipView = conversationBinding.overlayView.findViewById<JoshTooltip>(R.id.tooltip)
+        val tooltipView =
+            conversationBinding.overlayView.findViewById<JoshTooltip>(R.id.tooltip)
         overlayImageView.setImageBitmap(overlayItem.viewBitmap)
         overlayButtonImageView.setImageBitmap(overlayButtonItem.viewBitmap)
         arrowView.x =

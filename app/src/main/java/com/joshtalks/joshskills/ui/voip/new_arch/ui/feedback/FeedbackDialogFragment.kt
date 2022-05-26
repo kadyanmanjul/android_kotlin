@@ -16,6 +16,7 @@ import com.joshtalks.joshskills.quizgame.util.UtilsQuiz.showSnackBar
 import com.joshtalks.joshskills.repository.local.model.KFactor
 import com.joshtalks.joshskills.ui.call.data.local.VoipPref
 import com.joshtalks.joshskills.ui.practise.PracticeViewModel
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.call_rating.CallRatingsFragment
 import com.joshtalks.joshskills.ui.voip.share_call.ShareWithFriendsActivity
 import retrofit2.Response
 
@@ -52,11 +53,7 @@ class FeedbackDialogFragment(val function: () -> Unit) : BaseDialogFragment() {
 
     private fun addObserver() {
         vm.responseLiveData.observe(viewLifecycleOwner) {
-            if(it!=null){
-                startShareActivity(it)
-            }else{
-                closeDialog()
-            }
+           closeDialog()
         }
         practiceViewModel.pointsSnackBarText.observe(
             this

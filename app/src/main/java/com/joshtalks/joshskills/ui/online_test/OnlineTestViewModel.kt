@@ -20,12 +20,11 @@ import com.joshtalks.joshskills.repository.server.assessment.AssessmentStatus
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentType
 import com.joshtalks.joshskills.repository.server.assessment.OnlineTestRequest
 import com.joshtalks.joshskills.repository.server.assessment.OnlineTestResponse
-import com.joshtalks.joshskills.ui.group.repository.ABTestRepository
+import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import com.tonyodev.fetch2.NetworkType
 import com.tonyodev.fetch2.Priority
 import com.tonyodev.fetch2.Request
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber

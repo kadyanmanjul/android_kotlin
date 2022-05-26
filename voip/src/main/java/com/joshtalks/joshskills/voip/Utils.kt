@@ -20,6 +20,7 @@ import com.joshtalks.joshskills.voip.calldetails.IncomingCallData
 import com.joshtalks.joshskills.voip.data.CallingRemoteService
 import com.joshtalks.joshskills.base.log.JoshLog
 import com.joshtalks.joshskills.voip.constant.LEAVING
+import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -63,6 +64,8 @@ fun Context.updateLastCallDetails(
         put(CHANNEL_NAME, channelName)
         put(TOPIC_NAME, topicName)
         put(CURRENT_USER_AGORA_ID, localUserAgoraId)
+        put(FPP_SHOW_FLAG, PrefManager.getFppFlag())
+
     }
     val data = contentResolver.insert(
         Uri.parse(CONTENT_URI + CALL_DISCONNECTED_URI),

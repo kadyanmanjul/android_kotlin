@@ -11,7 +11,7 @@ import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.userprofile.models.UserProfileResponse
-import com.joshtalks.joshskills.ui.group.repository.ABTestRepository
+import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
 import com.joshtalks.joshskills.ui.group.repository.GroupRepository
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*

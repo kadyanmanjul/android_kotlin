@@ -42,6 +42,7 @@ const val PSTN_STATE_ONCALL = "pstn_state_oncall"
 const val PREF_KEY_PSTN_STATE = "pstn_state_pstn_state"
 
 
+
 enum class Event {
     ERROR,
     CALL_INITIATED_EVENT,

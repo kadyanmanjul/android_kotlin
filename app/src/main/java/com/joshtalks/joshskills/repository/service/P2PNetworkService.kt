@@ -106,4 +106,7 @@ interface P2PNetworkService {
 
     @GET("$DIR/p2p/status/")
     suspend fun getVoipNewArchFlag(): HashMap<String,Int>
+
+    @POST("$DIR/fpp/fpp_dialog/")
+    suspend fun showFppDialogNew(@Body params: HashMap<String, Int?>) : Response<HashMap<String,String>>
 }

@@ -19,6 +19,7 @@ import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.databinding.CallRatingDialogBinding
 import com.joshtalks.joshskills.quizgame.util.MyBounceInterpolator
 import com.joshtalks.joshskills.ui.call.data.local.VoipPref
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.feedback.FeedbackDialogFragment
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -73,7 +74,7 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
         agoraMentorId = mArgs.getString(AGORA_MENTOR_ID).toString()
 
         binding.howCallTxt.text=getString(R.string.how_was_your_call_name,callerName)
-        binding.callDurationText.text=getString(R.string.you_spoke_for_minutes,callDuration.toString())
+        binding.callDurationText.text=getString(R.string.you_spoke_for_minutes,vm.getCallDurationString())
         binding.block.text=getString(R.string.block_caller,callerName)
         if(PrefManager.getBoolValue(IS_COURSE_BOUGHT).not()) {
             binding.cross.visibility = VISIBLE
@@ -117,7 +118,7 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
                    block.visibility= GONE
                    submit.visibility= GONE
                    vm.submitCallRatings(VoipPref.getLastCallId().toString(), selectedRating, VoipPref.getLastRemoteUserAgoraId().toString())
-                   dismiss()
+                   closeSheet()
                }
                checked =checkedId
 
@@ -134,13 +135,29 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
                    vm.submitCallRatings(VoipPref.getLastCallId().toString(), selectedRating, VoipPref.getLastRemoteUserAgoraId().toString())
                }
 
-               dismiss()
+               closeSheet()
            }
            cross.setOnClickListener{
-               dismiss()
+               closeSheet()
            }
        }
     }
+    
+    private fun closeSheet(){
+        if(vm.ifDialogShow=="true"){
+            showFeedBackDialog()
+            dismiss()
+        }else{
+            dismiss()
+        }
+    }
+
+    private fun showFeedBackDialog() {
+        val function = fun() {}
+        FeedbackDialogFragment.newInstance(function)
+            .show(requireActivity().supportFragmentManager, "FeedBackDialogFragment")
+    }
+    
     private fun addObserver() {}
 
     companion object {
@@ -173,7 +190,7 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
             setOnKeyListener { dialogInterface, keyCode, keyEvent ->
                 if(keyCode == KeyEvent.KEYCODE_BACK) {
                     if(count>=3) {
-                        this@CallRatingsFragment.dismiss()
+                        closeSheet()
                     }
                     count+=1
                 }

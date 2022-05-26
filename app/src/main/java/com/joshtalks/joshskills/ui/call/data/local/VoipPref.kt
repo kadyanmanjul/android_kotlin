@@ -54,7 +54,8 @@ object VoipPref {
             remoteUserAgoraId: Int,
             localUserAgoraId: Int,
             channelName: String,
-            topicName: String
+            topicName: String,
+            showFpp : String
         ) {
             val editor = preferenceManager.edit()
             editor.putLong(PREF_KEY_CURRENT_CALL_START_TIME, 0L)
@@ -67,6 +68,7 @@ object VoipPref {
             editor.putString(PREF_KEY_LAST_CHANNEL_NAME, channelName)
             editor.putInt(PREF_KEY_LOCAL_USER_AGORA_ID, localUserAgoraId)
             editor.putString(PREF_KEY_LAST_TOPIC_NAME, topicName)
+            editor.putString(PREF_KEY_FPP_FLAG, showFpp)
             editor.commit()
 
             // TODO: These logic shouldn't be here
@@ -81,27 +83,29 @@ object VoipPref {
             CoroutineScope(Dispatchers.IO + coroutineExceptionHandler).launch {
                         delay(500)
                         val currentActivity = ActivityLifecycleCallback.currentActivity
-                        if (currentActivity != null) {
+                        if(currentActivity.isDestroyed || currentActivity.isFinishing){
+                            Log.d(TAG, "showDialogBox: 1")
+                            delay(500)
+                            val newCurrentActivity = ActivityLifecycleCallback.currentActivity
+                            val newFragmentActivity = newCurrentActivity as? FragmentActivity
+                            withContext(Dispatchers.Main) {
+                                newFragmentActivity?.showVoipDialog(totalSecond)
+                            }
+                        }
+                        else if (currentActivity != null) {
+                            Log.d(TAG, "showDialogBox: 2")
                             val newFragmentActivity = currentActivity as? FragmentActivity
                            withContext(Dispatchers.Main) {
                             newFragmentActivity?.showVoipDialog(totalSecond)
-
                     }
-                }
+
+                        }
             }
         }
 
         // TODO: These function shouldn't be here
         private fun FragmentActivity.showVoipDialog(totalSecond: Long) {
-//            if (totalSecond < 120L && PrefManager.getBoolValue(IS_COURSE_BOUGHT)) {
-//                showReportDialog(this)
-//            } else {
-//                showFeedBackDialog(this)
-//            }
-
-//            Call Rating Screen
-            showCallRatingDialog(this)
-
+                showCallRatingDialog(this)
         }
 
     private fun showCallRatingDialog(fragmentActivity: FragmentActivity) {
@@ -188,4 +192,8 @@ object VoipPref {
                 preferenceManager.registerOnSharedPreferenceChangeListener(VoipPrefListener)
             }
         }
+
+   private fun getFppFlag(): String {
+        return preferenceManager.getString(PREF_KEY_FPP_FLAG, "true").toString()
+    }
 }
