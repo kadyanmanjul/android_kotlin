@@ -201,6 +201,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
 
         dialogView.findViewById<MaterialTextView>(R.id.yes).setOnClickListener {
             PrefManager.put(USER_LOCALE,language.testId)
+            if(language.testId!="784")
             requestWorkerForChangeLanguage(getLangCodeFromlangTestId(language.testId),canCreateActivity=false)
             MixPanelTracker.publishEvent(MixPanelEvent.JI_HAAN).push()
             if (Mentor.getInstance().getId().isNotEmpty()) {
