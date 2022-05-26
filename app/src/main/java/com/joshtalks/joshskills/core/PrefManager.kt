@@ -153,6 +153,7 @@ const val IS_HINDI_SELECTED = "is_hindi_selected"
 const val IS_HINGLISH_SELECTED = "is_hinglish_selected"
 const val SERVER_TIME_OFFSET = "server_time_offset"
 const val IS_A2_C1_RETENTION_ENABLED = "is_a2_c1_retention_enabled"
+const val ONE_GROUP_REQUEST_SENT = "ONE_GROUP_REQUEST_SENT"
 
 const val MOENGAGE_USER_CREATED = "MOENGAGE_USER_CREATED"
 

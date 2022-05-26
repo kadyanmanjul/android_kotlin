@@ -22,15 +22,16 @@ import com.joshtalks.joshskills.constants.OPEN_POPUP_MENU
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.core.HAS_SEEN_GROUP_TOOLTIP
+import com.joshtalks.joshskills.core.ONE_GROUP_REQUEST_SENT
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.databinding.FragmentGroupListBinding
-import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics.Event.*
 import com.joshtalks.joshskills.ui.group.model.GroupItemData
 import com.joshtalks.joshskills.ui.group.viewmodels.JoshGroupViewModel
 import kotlinx.coroutines.Dispatchers
 
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 private const val TAG = "GroupListFragment"
@@ -80,7 +81,7 @@ class GroupListFragment : BaseFragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_group_list, container, false)
         return binding.root
     }
@@ -106,6 +107,11 @@ class GroupListFragment : BaseFragment() {
                 binding.overlayLayout.visibility = GONE
                 binding.overlayLayout.setOnClickListener(null)
             }
+        }
+
+        lifecycleScope.launch(Dispatchers.Main) {
+            if (vm.getClosedGroupCount() == 0 && !PrefManager.getBoolValue(ONE_GROUP_REQUEST_SENT))
+                binding.bellsGroup.visibility = VISIBLE
         }
     }
 

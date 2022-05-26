@@ -479,4 +479,8 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
     suspend fun checkIfFirstMsg(groupId: String): Boolean {
         return dateStartOfDay().time.times(10000) > (database.groupChatDao().getRecentMessageTime(groupId) ?: 0)
     }
+
+    suspend fun getClosedGrpCount(): Int {
+        return database.groupListDao().getClosedGroupCount()
+    }
 }

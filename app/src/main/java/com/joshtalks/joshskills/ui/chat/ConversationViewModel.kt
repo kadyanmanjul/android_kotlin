@@ -483,4 +483,6 @@ class ConversationViewModel(
             Timber.e(ex)
         }
     }
+
+    suspend fun getClosedGroupCount() = appDatabase.groupListDao().getClosedGroupCount()
 }

@@ -18,6 +18,8 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseViewModel
 import com.joshtalks.joshskills.constants.*
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.ONE_GROUP_REQUEST_SENT
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.analytics.ParamKeys
@@ -289,4 +291,8 @@ class JoshGroupViewModel : BaseViewModel() {
             repository.createMoEngageUser()
         }
     }
+
+    suspend fun getClosedGroupCount() = repository.getClosedGrpCount()
+
+    fun getOneGrpReqStatus() = PrefManager.getBoolValue(ONE_GROUP_REQUEST_SENT)
 }

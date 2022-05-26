@@ -765,10 +765,6 @@ class ConversationActivity :
             PrefManager.put(IS_COURSE_BOUGHT, true)
         }
 
-//        conversationBinding.imgGroupChat.setOnClickListener {
-//            val intent = Intent(this, JoshGroupActivity::class.java)
-//            startActivity(intent)
-//        }
         conversationBinding.imgFppBtn.setOnSingleClickListener {
             if (inboxEntity.isCourseBought.not() &&
                 inboxEntity.expiryDate != null &&
@@ -782,6 +778,11 @@ class ConversationActivity :
                 val intent = Intent(this, SeeAllRequestsActivity::class.java)
                 startActivity(intent)
             }
+        }
+
+        lifecycleScope.launch(Dispatchers.Main) {
+            if (!PrefManager.getBoolValue(ONE_GROUP_REQUEST_SENT) && conversationViewModel.getClosedGroupCount() == 0)
+                conversationBinding.ringingIcon.visibility = VISIBLE
         }
 
         conversationBinding.imgGroupChatBtn.setOnSingleClickListener {
@@ -1151,8 +1152,6 @@ class ConversationActivity :
                 }
             }
         }
-
-
 
         lifecycleScope.launchWhenResumed {
             utilConversationViewModel.userData.collectLatest { userProfileData ->

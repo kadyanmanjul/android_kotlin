@@ -173,14 +173,13 @@
             android:id="@+id/ringing_icon_2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="@{(vm.groupListCount > 3 || vm.groupListCount == 0 || vm.getOneGrpReqStatus()) ? View.INVISIBLE : View.VISIBLE, default=invisible}"
+            android:layout_marginStart="@dimen/_minus18sdp"
             android:layout_marginBottom="@dimen/_minus16sdp"
-            android:visibility="@{(vm.groupListCount > 3 || vm.groupListCount == 0) ? View.GONE : View.VISIBLE}"
             app:cardCornerRadius="@dimen/_50sdp"
             app:cardElevation="@dimen/_8sdp"
             app:layout_constraintBottom_toTopOf="@+id/materialButton2"
-            app:layout_constraintEnd_toEndOf="@id/materialButton2"
-            app:layout_constraintHorizontal_bias="1.1"
-            app:layout_constraintStart_toStartOf="@+id/materialButton2">
+            app:layout_constraintStart_toEndOf="@id/materialButton2">
 
             <com.airbnb.lottie.LottieAnimationView
                 android:layout_width="@dimen/_28sdp"
@@ -198,6 +197,7 @@
             android:id="@+id/bells_group"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             app:constraint_referenced_ids="ringing_icon_1,ringing_icon_2" />
 
         <FrameLayout

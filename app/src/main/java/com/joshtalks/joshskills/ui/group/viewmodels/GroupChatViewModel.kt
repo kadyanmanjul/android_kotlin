@@ -18,6 +18,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseViewModel
 import com.joshtalks.joshskills.constants.*
+import com.joshtalks.joshskills.core.ONE_GROUP_REQUEST_SENT
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.analytics.ParamKeys
@@ -216,6 +218,7 @@ class GroupChatViewModel : BaseViewModel() {
                 } else
                     showToast("Error in sending request")
                 dismissProgressDialog()
+                PrefManager.put(ONE_GROUP_REQUEST_SENT, true)
                 GroupAnalytics.push(GroupAnalytics.Event.REQUEST_TO_JOIN, groupId)
                 MixPanelTracker.publishEvent(MixPanelEvent.REQUEST_TO_JOIN_SUBMIT)
                     .addParam(ParamKeys.GROUP_ID, groupId)

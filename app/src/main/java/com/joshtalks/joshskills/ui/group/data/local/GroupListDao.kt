@@ -28,6 +28,9 @@ interface GroupListDao {
     @Query("SELECT count(groupId) FROM group_list_table")
     suspend fun getGroupsCount(): Int
 
+    @Query("SELECT count(groupId) FROM group_list_table WHERE groupType = 'closed'")
+    suspend fun getClosedGroupCount(): Int
+
     @Query("UPDATE group_list_table SET unreadCount = unreadCount+1, lastMessage = :lastMessage, lastMsgTime = :lastMsgTime WHERE groupId = :id")
     suspend fun updateGroupItem(id: String, lastMessage: String, lastMsgTime: Long): Int
 

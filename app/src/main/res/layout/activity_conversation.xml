@@ -4,7 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <import type="android.view.View"/>
+
+        <import type="android.view.View" />
+
         <variable
             name="handler"
             type="com.joshtalks.joshskills.ui.chat.ConversationActivity" />
@@ -19,6 +21,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
+
         <include
             android:id="@+id/overlay_view"
             layout="@layout/unlock_class_tooltip"
@@ -38,15 +41,18 @@
             android:scaleType="centerCrop"
             android:tintMode="multiply"
             app:srcCompat="@drawable/chat_bg_final" />
+
         <LinearLayout
             android:id="@+id/toolbar_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+
             <com.joshtalks.joshskills.ui.voip.new_arch.ui.callbar.util.CallBarLayout
+                android:id="@+id/call_bar_layout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/call_bar_layout"/>
+                android:layout_height="wrap_content" />
+
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
@@ -283,7 +289,6 @@
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/imgGroupChatBtn"
-            android:elevation="@dimen/_8sdp"
             android:layout_width="@dimen/_50sdp"
             android:layout_height="@dimen/_50sdp"
             android:layout_below="@+id/user_point_container"
@@ -292,17 +297,40 @@
             android:layout_marginTop="@dimen/_12sdp"
             android:adjustViewBounds="true"
             android:clickable="true"
+            android:elevation="@dimen/_8sdp"
             android:focusable="true"
-            android:visibility="gone"
             android:foreground="?attr/selectableItemBackgroundBorderless"
             android:gravity="center"
             android:padding="@dimen/_4sdp"
+            android:visibility="gone"
             app:srcCompat="@drawable/ic_groups_new_logo"
             tools:visibility="visible" />
 
+        <androidx.cardview.widget.CardView
+            android:id="@+id/ringing_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/user_point_container"
+            android:layout_alignParentEnd="true"
+            android:layout_marginHorizontal="@dimen/_11sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:visibility="gone"
+            app:cardCornerRadius="@dimen/_50sdp"
+            app:cardElevation="@dimen/_10sdp">
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:layout_width="@dimen/_20sdp"
+                android:layout_height="@dimen/_20sdp"
+                android:background="#FF5722"
+                android:padding="@dimen/_2sdp"
+                app:lottie_autoPlay="true"
+                app:lottie_fileName="lottie/ringing_bell.json"
+                app:lottie_imageAssetsFolder="lottie"
+                app:lottie_loop="true" />
+        </androidx.cardview.widget.CardView>
+
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/imgFppBtn"
-            android:elevation="@dimen/_8sdp"
             android:layout_width="@dimen/_50sdp"
             android:layout_height="@dimen/_50sdp"
             android:layout_below="@+id/imgGroupChatBtn"
@@ -311,11 +339,12 @@
             android:layout_marginTop="@dimen/_7sdp"
             android:adjustViewBounds="true"
             android:clickable="true"
+            android:elevation="@dimen/_8sdp"
             android:focusable="true"
-            android:visibility="gone"
             android:foreground="?attr/selectableItemBackgroundBorderless"
             android:gravity="center"
             android:padding="@dimen/_4sdp"
+            android:visibility="gone"
             app:srcCompat="@drawable/ic_fpp_main_logo"
             tools:visibility="visible" />
 
@@ -323,17 +352,17 @@
             android:id="@+id/fpp_request_count_number"
             android:layout_width="@dimen/_20sdp"
             android:layout_height="@dimen/_15sdp"
+            android:layout_below="@+id/imgGroupChatBtn"
+            android:layout_alignParentEnd="true"
+            android:layout_marginHorizontal="@dimen/_12sdp"
+            android:layout_marginTop="@dimen/_5sdp"
             android:background="@drawable/bg_quick_view_number"
             android:elevation="@dimen/_15sdp"
             android:gravity="center"
-            android:layout_marginHorizontal="@dimen/_12sdp"
-            android:layout_marginTop="@dimen/_5sdp"
             android:text="@string/zero"
             android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
             android:textColor="@color/white"
-            android:visibility="gone"
-            android:layout_below="@+id/imgGroupChatBtn"
-            android:layout_alignParentEnd="true"
+            android:visibility="visible"
             tools:text="39" />
 
         <FrameLayout
@@ -475,8 +504,8 @@
                 android:textAllCaps="false"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Button"
                 android:textColor="@color/white"
-                app:cornerRadius="@dimen/_32sdp"
                 android:visibility="gone"
+                app:cornerRadius="@dimen/_32sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
