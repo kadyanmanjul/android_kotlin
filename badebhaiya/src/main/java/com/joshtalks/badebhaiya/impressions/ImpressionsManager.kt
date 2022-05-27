@@ -1,5 +1,6 @@
 package com.joshtalks.badebhaiya.impressions
 
+import com.google.gson.annotations.SerializedName
 import javax.inject.Inject
 
 /**
@@ -7,70 +8,8 @@ import javax.inject.Inject
 */
 
 data class Impression(
-    val event: String,
-    val eventProperties: Map<Any, Any>,
+    @SerializedName("from_page")
+    val from_page: String,
+    @SerializedName("event_name")
+    val event_name: String,
 )
-
-class ImpressionsManager @Inject constructor(
-
-) {
-
-    fun sendEvent(impressionData: Impression){
-
-
-    }
-
-    fun sendDeepWelcomeEvent(){
-        sendEvent(
-            Impression(
-            Event.WELCOME,
-            mapOf(
-                "deeplink" to true
-            )
-        ))
-    }
-
-    fun sendWelcomeEvent(){
-        sendEvent(
-            Impression(
-                Event.WELCOME,
-                mapOf(
-                    "deeplink" to false
-                )
-            ))
-    }
-
-
-    fun sendDeepLaunchEvent(){
-        sendEvent(
-            Impression(
-                Event.LAUNCH,
-                mapOf(
-                   "deeplink" to true
-                )
-            )
-        )
-    }
-
-    fun sendLaunchEvent(){
-        sendEvent(
-            Impression(
-                Event.LAUNCH,
-                mapOf(
-                    "deeplink" to false
-                )
-            )
-        )
-    }
-    fun sendTrueUsedEvent(){
-        sendEvent(
-            Impression(
-                Event.TC_USED,
-                mapOf()
-            )
-        )
-
-    }
-
-}
-

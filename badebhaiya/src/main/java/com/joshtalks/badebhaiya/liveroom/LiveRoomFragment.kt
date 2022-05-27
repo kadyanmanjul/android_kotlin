@@ -1295,6 +1295,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
         val nextFrag = ProfileFragment()
         val bundle = Bundle()
         bundle.putString("user", userId) // use as per your need
+         bundle.putString("source","LIVE_ROOM")
         nextFrag.arguments = bundle
         activity?.supportFragmentManager?.beginTransaction()
             ?.replace(R.id.root_view, nextFrag, "findThisFragment")

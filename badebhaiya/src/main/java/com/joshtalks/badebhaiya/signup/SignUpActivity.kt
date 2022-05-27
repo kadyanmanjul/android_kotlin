@@ -18,7 +18,6 @@ import com.joshtalks.badebhaiya.core.workers.WorkManagerAdmin
 import com.joshtalks.badebhaiya.databinding.ActivitySignUpBinding
 import com.joshtalks.badebhaiya.feed.Call
 import com.joshtalks.badebhaiya.feed.FeedActivity
-import com.joshtalks.badebhaiya.impressions.ImpressionsManager
 import com.joshtalks.badebhaiya.notifications.FCM_ACTIVE
 import com.joshtalks.badebhaiya.notifications.FirebaseNotificationService
 import com.joshtalks.badebhaiya.privacyPolicy.WebViewFragment
@@ -51,8 +50,8 @@ class SignUpActivity : AppCompatActivity(), Call {
         ViewModelProvider(this).get(SignUpViewModel::class.java)
     }
 
-    @Inject
-    lateinit var impressionsManager: ImpressionsManager
+//    @Inject
+//    lateinit var impressionsManager: ImpressionsManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

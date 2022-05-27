@@ -33,6 +33,7 @@ import com.joshtalks.badebhaiya.databinding.WhyRoomBinding
 import com.joshtalks.badebhaiya.feed.*
 import com.joshtalks.badebhaiya.feed.adapter.FeedAdapter
 import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
+import com.joshtalks.badebhaiya.impressions.Impression
 import com.joshtalks.badebhaiya.liveroom.LiveRoomFragment
 import com.joshtalks.badebhaiya.liveroom.LiveRoomState
 import com.joshtalks.badebhaiya.liveroom.OPEN_ROOM
@@ -67,6 +68,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
 
     private var isFromDeeplink = false
     private var isFromBBPage=false
+    private lateinit var source:String
 
     private val liveRoomViewModel by lazy {
         ViewModelProvider(requireActivity())[LiveRoomViewModel::class.java]
@@ -108,6 +110,8 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         userId=mBundle!!.getString("user")
         isFromDeeplink=mBundle!!.getBoolean("deeplink")
         isFromBBPage= mBundle.getBoolean("BBPage")
+        source= mBundle.getString("source").toString()
+
         handleIntent()
 //        if(isFromDeeplink && User.getInstance().isLoggedIn())
 //        {
@@ -311,7 +315,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
                 //is_followed=false
                 //binding.tvFollowers.setText("${it.followersCount-1} followers")
                 signUpViewModel.unfollowSpeaker()
-
+                viewModel.sendEvent(Impression("PROFILE_SCREEN","CLICKED_UNFOLLOW"))
                 speakerUnfollowedUIChanges()
                 binding.tvFollowers.text =HtmlCompat.fromHtml(getString(R.string.bb_followers,
                     ("<big>"+it.followersCount.minus(1)?:0).toString()+"</big>"),
@@ -321,7 +325,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
             viewModel.userProfileData.value?.let {
                 //is_followed=true
                 signUpViewModel.followSpeaker()
-
+                viewModel.sendEvent(Impression("PROFILE_SCREEN","CLICKED_FOLLOW"))
                 speakerFollowedUIChanges()
                 binding.tvFollowers.text =HtmlCompat.fromHtml(getString(R.string.bb_followers,
                     ("<big>"+it.followersCount.plus(1)?:0).toString()+"</big>"),
@@ -389,6 +393,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
             val bundle = Bundle()
             bundle.putString(USER, userId)
             bundle.putBoolean("BBPage", true)
+            bundle.putString("source","BB_TO_FOLLOW")
 
             fragment.arguments = bundle
 
@@ -417,7 +422,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
     private fun takePermissions(room: String? = null, roomTopic: String) {
         if (PermissionUtils.isCallingPermissionWithoutLocationEnabled(requireContext())) {
             if (room != null) {
-                feedViewModel.joinRoom(room, roomTopic)
+                feedViewModel.joinRoom(room, roomTopic,"PROFILE_SCREEN")
             }
             return
         }
@@ -429,7 +434,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
                     report?.areAllPermissionsGranted()?.let { flag ->
                         if (flag) {
                             if (room != null) {
-                                feedViewModel.joinRoom(room, roomTopic)
+                                feedViewModel.joinRoom(room, roomTopic,"PROFILE_SCREEN")
                             }
                             return
                         }
@@ -456,6 +461,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
     }
 
     fun takePermissionsXml() {
+        viewModel.sendEvent(Impression("PROFILE_SCREEN", "CLICKED_JOIN"))
         PermissionUtils.onlyCallingFeaturePermission(
             (requireActivity() as AppCompatActivity),
             object : MultiplePermissionsListener {

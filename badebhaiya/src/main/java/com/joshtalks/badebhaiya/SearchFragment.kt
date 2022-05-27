@@ -161,6 +161,7 @@ class SearchFragment : Fragment(), Call {
         val nextFrag = ProfileFragment()
         val bundle = Bundle()
         bundle.putString("user", userId) // use as per your need
+        bundle.putString("source","SEARCH")
         nextFrag.arguments = bundle
         activity?.supportFragmentManager?.beginTransaction()
             ?.replace(R.id.find, nextFrag, "findThisFragment")
