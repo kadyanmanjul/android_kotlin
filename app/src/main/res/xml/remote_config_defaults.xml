@@ -914,4 +914,8 @@
         <key>REQUEST_TO_JOIN_QUESTION</key>
         <value>Why do you want to join this group?</value>
     </entry>
+    <entry>
+        <key>ADD_PROFILE_PHOTO_TEXT_151</key>
+        <value>आपके टीचर और कोर्स के बाकी स्टूडेंट्स आपको इस फोटो से पेहचानेंगे</value>
+    </entry>
 </defaultsMap>
