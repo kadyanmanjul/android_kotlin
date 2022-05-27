@@ -313,9 +313,11 @@
             android:id="@+id/overlay_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:clickable="true"
+            android:focusable="true"
             android:background="@color/transparent_blue_alpha_75"
             android:elevation="@dimen/_10sdp"
-            android:visibility="visible">
+            android:visibility="gone">
 
             <ImageView
                 android:id="@+id/group_tooltip_item"

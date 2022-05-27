@@ -1257,7 +1257,7 @@
     <string name="_90_day_english_learning">90-Day English Learning</string>
     <string name="_90_day_english_learning_with_commitment">90-Day English Learning\nCommitment Promise</string>
     <string name="shapath_text">क्या आप शपथ लेते हैं की आप Commitment पूरा करेंगे?</string>
-    <string name="shapat_detail">Commitment पूरा करने के लिए आपको हर रोज़ कमसेकम 1 Practice Partner Call करनी है, दिन में जब भी आप कर सकते है। इसका फल आपको पूरी ज़िन्दगी काम आएगा।</string>
+    <string name="shapat_detail">Commitment पूरा करने के लिए आपको हर रोज़ कमसेकम <b>1 Practice Partner Call</b> करनी है, दिन में जब भी आप कर सकते है। इसका फल आपको पूरी ज़िन्दगी काम आएगा।</string>
     <string name="reminder_text">Receive daily reminders?</string>
     <string name="reminder_detail">मै हर रोज़ आपको याद दिलाऊंगा ताकि आपका Promise एक भी दिन न छूटे</string>
     <string name="promise_btn_text">I commit to completing my promise!</string>

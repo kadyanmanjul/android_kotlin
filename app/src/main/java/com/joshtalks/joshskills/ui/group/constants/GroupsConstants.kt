@@ -33,6 +33,7 @@ const val OPENED_GROUP = "open"
 const val CLOSED_GROUP = "closed"
 const val DM_CHAT = "fpp"
 const val COHORT_GROUP = "cohort"
+const val PROJECT_GROUP = "project"
 
 const val REQUESTED_GROUP = "requested"
 const val JOINED_GROUP = "joined"

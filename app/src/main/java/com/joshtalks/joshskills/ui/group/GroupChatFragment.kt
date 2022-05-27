@@ -68,7 +68,7 @@ class GroupChatFragment : BaseFragment() {
     }
 
     private fun initTooltip() {
-        if (!PrefManager.getBoolValue(HAS_SEEN_GROUP_CALL_TOOLTIP)) {
+        if (!PrefManager.getBoolValue(HAS_SEEN_GROUP_CALL_TOOLTIP) && vm.groupType.get() != COHORT_GROUP && vm.groupType.get() != PROJECT_GROUP) {
             binding.animLayout.visibility = VISIBLE
             binding.overlayGroupTooltip.visibility = VISIBLE
             binding.overlayLayout.visibility = VISIBLE
