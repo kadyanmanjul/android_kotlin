@@ -210,7 +210,12 @@ class ReadingFragment : CoreJoshFragment(), ReadingPractiseCallback {
     }
 
     override fun onContinue() {
-        lessonActivityListener?.onNextTabCall(READING_POSITION)
+        lessonActivityListener?.onNextTabCall(
+            READING_POSITION.minus(
+                if (PrefManager.getBoolValue(IS_A2_C1_RETENTION_ENABLED)) 0
+                else 1
+            )
+        )
     }
 
     override fun onPracticeSubmitted() {

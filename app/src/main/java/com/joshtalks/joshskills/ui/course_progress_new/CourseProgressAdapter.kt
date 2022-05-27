@@ -9,6 +9,8 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.IS_A2_C1_RETENTION_ENABLED
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.databinding.CourseProgressItemBinding
 import com.joshtalks.joshskills.repository.local.entity.CExamStatus
 import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
@@ -120,6 +122,8 @@ class CourseProgressAdapter(
                 binding.progressIv.visibility = View.GONE
                 binding.radialProgressView.visibility = View.VISIBLE
                 val item = itemList[position]
+                val isTranslationDisabled: Int =
+                    if (PrefManager.getBoolValue(IS_A2_C1_RETENTION_ENABLED)) 0 else 1
                 when (GRAMMAR_POSITION) {
                     0 -> {
                         binding.radialProgressView.setOuterProgress(
@@ -149,7 +153,7 @@ class CourseProgressAdapter(
                     }
                 }
 
-                when (VOCAB_POSITION) {
+                when (VOCAB_POSITION - isTranslationDisabled) {
                     0 -> {
                         binding.radialProgressView.setOuterProgress(
                             item.vocabPercentage.toDouble().toInt()
@@ -178,7 +182,7 @@ class CourseProgressAdapter(
                     }
                 }
 
-                when (READING_POSITION) {
+                when (READING_POSITION - isTranslationDisabled) {
                     0 -> {
                         binding.radialProgressView.setOuterProgress(
                             item.readingPercentage.toDouble().toInt()
@@ -210,7 +214,7 @@ class CourseProgressAdapter(
                 if (item.speakingPercentage == null) {
                     binding.radialProgressView.hasThreeProgressView(true)
                 } else {
-                    when (SPEAKING_POSITION) {
+                    when (SPEAKING_POSITION - isTranslationDisabled) {
                         0 -> {
                             binding.radialProgressView.setOuterProgress(
                                 item.speakingPercentage!!.toDouble().toInt()

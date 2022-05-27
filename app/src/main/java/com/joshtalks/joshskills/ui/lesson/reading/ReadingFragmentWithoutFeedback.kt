@@ -51,11 +51,7 @@ import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.constants.PERMISSION_FROM_READING_GRANTED
 import com.joshtalks.joshskills.constants.SHARE_VIDEO
 import com.joshtalks.joshskills.core.*
-import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
-import com.joshtalks.joshskills.core.analytics.AppAnalytics
-import com.joshtalks.joshskills.core.analytics.MixPanelEvent
-import com.joshtalks.joshskills.core.analytics.MixPanelTracker
-import com.joshtalks.joshskills.core.analytics.ParamKeys
+import com.joshtalks.joshskills.core.analytics.*
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
 import com.joshtalks.joshskills.core.extension.setImageAndFitCenter
 import com.joshtalks.joshskills.core.io.AppDirectory
@@ -104,7 +100,6 @@ import timber.log.Timber
 import java.io.File
 import java.io.IOException
 import java.lang.Runnable
-import java.lang.System
 import java.nio.ByteBuffer
 import java.util.concurrent.TimeUnit
 
@@ -581,9 +576,9 @@ class ReadingFragmentWithoutFeedback :
                         AppObjectController.uiHandler.post {
                             try {
                                 MixPanelTracker.publishEvent(MixPanelEvent.READING_RECORDING_DELETE)
-                                    .addParam(ParamKeys.LESSON_ID,lessonID)
+                                    .addParam(ParamKeys.LESSON_ID, lessonID)
                                     .push()
-                                if (binding.audioListRv[it.index] != null){
+                                if (binding.audioListRv[it.index] != null) {
                                     binding.audioListRv.removeViewAt(it.index)
                                     currentLessonQuestion?.run {
                                         if (this.practiceEngagement.isNullOrEmpty()) {
@@ -1344,8 +1339,8 @@ class ReadingFragmentWithoutFeedback :
                             AppDirectory.copy(it.absolutePath, filePath!!)
                             audioAttachmentInit()
                             MixPanelTracker.publishEvent(MixPanelEvent.READING_RECORD)
-                                .addParam(ParamKeys.LESSON_ID,lessonID)
-                                .addParam(ParamKeys.RECORD_DURATION,timeDifference)
+                                .addParam(ParamKeys.LESSON_ID, lessonID)
+                                .addParam(ParamKeys.RECORD_DURATION, timeDifference)
                                 .push()
                             AppObjectController.uiHandler.postDelayed(
                                 {
@@ -1502,12 +1497,11 @@ class ReadingFragmentWithoutFeedback :
                     .solidBackground().show()
             }
             appAnalytics?.addParam(AnalyticsEvent.PRACTICE_EXTRA.NAME, "Audio Played")
-            if(binding.btnPlayInfo.state == MaterialPlayPauseDrawable.State.Play) {
+            if (binding.btnPlayInfo.state == MaterialPlayPauseDrawable.State.Play) {
                 MixPanelTracker.publishEvent(MixPanelEvent.READING_PLAY)
                     .addParam(ParamKeys.LESSON_ID, lessonID)
                     .push()
-            }
-            else {
+            } else {
                 MixPanelTracker.publishEvent(MixPanelEvent.READING_PAUSE)
                     .addParam(ParamKeys.LESSON_ID, lessonID)
                     .push()
@@ -1626,7 +1620,7 @@ class ReadingFragmentWithoutFeedback :
 
     fun submitPractise() {
         MixPanelTracker.publishEvent(MixPanelEvent.READING_SUBMIT)
-            .addParam(ParamKeys.LESSON_ID,lessonID)
+            .addParam(ParamKeys.LESSON_ID, lessonID)
             .push()
         CoroutineScope(Dispatchers.IO).launch {
             currentLessonQuestion?.expectedEngageType?.let {
@@ -1651,7 +1645,7 @@ class ReadingFragmentWithoutFeedback :
                     )
 
                     MixPanelTracker.publishEvent(MixPanelEvent.READING_COMPLETED)
-                        .addParam(ParamKeys.LESSON_ID,lessonID)
+                        .addParam(ParamKeys.LESSON_ID, lessonID)
                         .push()
                     val requestEngage = RequestEngage()
                     if (it == EXPECTED_ENGAGE_TYPE.VI) {
@@ -1699,9 +1693,14 @@ class ReadingFragmentWithoutFeedback :
 
     fun onReadingContinueClick() {
         MixPanelTracker.publishEvent(MixPanelEvent.READING_CONTINUE)
-            .addParam(ParamKeys.LESSON_ID,lessonID)
+            .addParam(ParamKeys.LESSON_ID, lessonID)
             .push()
-        lessonActivityListener?.onNextTabCall(READING_POSITION)
+        lessonActivityListener?.onNextTabCall(
+            READING_POSITION.minus(
+                if (PrefManager.getBoolValue(IS_A2_C1_RETENTION_ENABLED)) 0
+                else 1
+            )
+        )
     }
 
 /*
@@ -1751,7 +1750,7 @@ class ReadingFragmentWithoutFeedback :
 
     override fun onProgressUpdate(progress: Long) {
         binding.practiseSeekbar.progress = progress.toInt()
-        lifecycleScope.launchWhenStarted {  }
+        lifecycleScope.launchWhenStarted { }
     }
 
     override fun onDurationUpdate(duration: Long?) {

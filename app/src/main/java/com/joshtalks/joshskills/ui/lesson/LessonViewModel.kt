@@ -16,8 +16,11 @@ import com.joshtalks.joshskills.constants.SHARE_VIDEO
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.AppObjectController.Companion.appDatabase
 import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
+import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.core.custom_ui.m4aRecorder.M4ABaseAudioRecording
 import com.joshtalks.joshskills.core.custom_ui.recorder.OnAudioRecordListener
 import com.joshtalks.joshskills.core.custom_ui.recorder.RecordingItem
@@ -38,7 +41,6 @@ import com.joshtalks.joshskills.repository.server.engage.Graph
 import com.joshtalks.joshskills.repository.server.introduction.DemoOnboardingData
 import com.joshtalks.joshskills.repository.server.voip.SpeakingTopic
 import com.joshtalks.joshskills.repository.service.NetworkRequestHelper
-import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
 import com.joshtalks.joshskills.ui.lesson.speaking.VideoPopupItem
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.callbar.CallBar
 import com.joshtalks.joshskills.util.AudioRecording
@@ -51,8 +53,6 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
-import com.joshtalks.joshskills.core.analytics.MixPanelEvent
-import com.joshtalks.joshskills.core.analytics.ParamKeys
 import java.io.File
 
 
@@ -400,7 +400,6 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
 
     fun updateSectionStatus(lessonId: Int, status: LESSON_STATUS, tabPosition: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            val isTranslationDisabled = if (lessonLiveData.value?.isNewGrammar == true) 0 else 1
             when (tabPosition) {
                 GRAMMAR_POSITION -> {
                     if (lessonLiveData.value?.grammarStatus != LESSON_STATUS.CO && status == LESSON_STATUS.CO) {
@@ -413,15 +412,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                         }
                     )
                 }
-                TRANSLATION_POSITION -> {
-                    appDatabase.lessonDao().updateTranslationSectionStatus(lessonId, status)
-                    lessonLiveData.postValue(
-                        lessonLiveData.value?.apply {
-                            this.translationStatus = status
-                        }
-                    )
-                }
-                VOCAB_POSITION - isTranslationDisabled -> {
+                VOCAB_POSITION -> {
                     appDatabase.lessonDao().updateVocabularySectionStatus(lessonId, status)
                     lessonLiveData.postValue(
                         lessonLiveData.value?.apply {
@@ -429,7 +420,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                         }
                     )
                 }
-                READING_POSITION - isTranslationDisabled -> {
+                READING_POSITION -> {
                     appDatabase.lessonDao().updateReadingSectionStatus(lessonId, status)
                     lessonLiveData.postValue(
                         lessonLiveData.value?.apply {
@@ -437,7 +428,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                         }
                     )
                 }
-                SPEAKING_POSITION - isTranslationDisabled -> {
+                SPEAKING_POSITION -> {
                     if (lessonLiveData.value?.speakingStatus != LESSON_STATUS.CO && status == LESSON_STATUS.CO) {
                         MarketingAnalytics.logSpeakingSectionCompleted()
                     }
@@ -448,11 +439,19 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                         }
                     )
                 }
-                ROOM_POSITION - isTranslationDisabled -> {
+                ROOM_POSITION -> {
                     appDatabase.lessonDao().updateRoomSectionStatus(lessonId, status)
                     lessonLiveData.postValue(
                         lessonLiveData.value?.apply {
                             this.conversationStatus = status
+                        }
+                    )
+                }
+                TRANSLATION_POSITION -> {
+                    appDatabase.lessonDao().updateTranslationSectionStatus(lessonId, status)
+                    lessonLiveData.postValue(
+                        lessonLiveData.value?.apply {
+                            this.translationStatus = status
                         }
                     )
                 }

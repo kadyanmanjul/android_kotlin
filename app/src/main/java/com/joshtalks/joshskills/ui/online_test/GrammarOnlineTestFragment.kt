@@ -20,10 +20,10 @@ import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.GRAMMAR_C
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.GRAMMAR_START_BUTTON_TEXT
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.GRAMMAR_TEST_COMPLETE_DESCRIPTION
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
-import com.joshtalks.joshskills.databinding.FragmentGrammarOnlineTestBinding
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.analytics.ParamKeys
+import com.joshtalks.joshskills.databinding.FragmentGrammarOnlineTestBinding
 import com.joshtalks.joshskills.ui.assessment.view.Stub
 import com.joshtalks.joshskills.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
 import com.joshtalks.joshskills.ui.leaderboard.ItemOverlay
@@ -165,7 +165,7 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), TestCompletedListener {
                         IS_FREE_TRIAL,
                         isConsistent = false,
                         defValue = false
-                    )
+                    ) || PrefManager.getStringValue(CURRENT_COURSE_ID) != DEFAULT_COURSE_ID
                 ) {
                     binding.testScoreContainer.visibility = View.VISIBLE
                     binding.testCompletedContainer.visibility = View.GONE

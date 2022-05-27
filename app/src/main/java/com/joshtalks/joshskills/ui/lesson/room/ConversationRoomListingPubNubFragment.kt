@@ -33,7 +33,9 @@ import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.conversationRoom.liveRooms.ConversationLiveRoomActivity
 import com.joshtalks.joshskills.conversationRoom.model.RoomListResponseItem
-import com.joshtalks.joshskills.conversationRoom.roomsListing.*
+import com.joshtalks.joshskills.conversationRoom.roomsListing.ConversationRoomListingNavigation
+import com.joshtalks.joshskills.conversationRoom.roomsListing.ConversationRoomListingViewModel
+import com.joshtalks.joshskills.conversationRoom.roomsListing.ConversationRoomsListAdapter
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.custom_ui.FullScreenProgressDialog
@@ -72,7 +74,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.*
-import kotlin.collections.ArrayList
 
 class ConversationRoomListingPubNubFragment : CoreJoshFragment(),
     ConversationRoomListAction {
@@ -408,7 +409,15 @@ class ConversationRoomListingPubNubFragment : CoreJoshFragment(),
             continueBtn.apply {
                 clipToOutline = true
                 setOnSingleClickListener {
-                    lessonActivityListener?.onNextTabCall(ROOM_POSITION)
+                    lessonActivityListener?.onNextTabCall(
+                        ROOM_POSITION.minus(
+                            if (PrefManager.getBoolValue(
+                                    IS_A2_C1_RETENTION_ENABLED
+                                )
+                            ) 0
+                            else 1
+                        )
+                    )
                 }
             }
             showNoRoomAvailableText()

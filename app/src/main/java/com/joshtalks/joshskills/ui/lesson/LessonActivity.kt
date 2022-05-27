@@ -936,9 +936,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                         }
                         lesson.grammarStatus = status
                     }
-                    VOCAB_POSITION - isTranslationDisabled -> lesson.vocabStatus = status
-                    READING_POSITION - isTranslationDisabled -> lesson.readingStatus = status
-                    SPEAKING_POSITION - isTranslationDisabled -> {
+                    SPEAKING_POSITION -> {
                         if (lesson.speakingStatus != LESSON_STATUS.CO && status == LESSON_STATUS.CO) {
                             MarketingAnalytics.logSpeakingSectionCompleted()
                             MixPanelTracker.publishEvent(MixPanelEvent.SPEAKING_COMPLETED)
@@ -948,7 +946,9 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                         }
                         lesson.speakingStatus = status
                     }
-                    ROOM_POSITION - isTranslationDisabled -> lesson.conversationStatus = status
+                    VOCAB_POSITION -> lesson.vocabStatus = status
+                    READING_POSITION -> lesson.readingStatus = status
+                    ROOM_POSITION -> lesson.conversationStatus = status
                     TRANSLATION_POSITION -> lesson.translationStatus = status
                 }
                 viewModel.updateSectionStatus(lesson.id, status, tabPosition)
@@ -968,7 +968,8 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         isTranslationDisabled = 1
         if (PrefManager.getBoolValue(IS_COURSE_BOUGHT) && lessonIsNewGrammar &&
             PrefManager.hasKey(IS_A2_C1_RETENTION_ENABLED) &&
-            PrefManager.getBoolValue(IS_A2_C1_RETENTION_ENABLED)
+            PrefManager.getBoolValue(IS_A2_C1_RETENTION_ENABLED) &&
+            PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID
         ) {
             arrayFragment.add(GRAMMAR_POSITION, GrammarFragment.getInstance())
             arrayFragment.add(TRANSLATION_POSITION, GrammarOnlineTestFragment.getInstance(lessonNo))
@@ -1018,6 +1019,12 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                         AppObjectController.getFirebaseRemoteConfig()
                             .getString(FirebaseRemoteConfigKey.GRAMMAR_TITLE)
                 }
+                SPEAKING_POSITION - isTranslationDisabled -> {
+                    setUnselectedColor(tab)
+                    tab.view.findViewById<TextView>(R.id.title_tv).text =
+                        AppObjectController.getFirebaseRemoteConfig()
+                            .getString(FirebaseRemoteConfigKey.SPEAKING_TITLE)
+                }
                 VOCAB_POSITION - isTranslationDisabled -> {
                     setUnselectedColor(tab)
                     tab.view.findViewById<TextView>(R.id.title_tv).text =
@@ -1029,12 +1036,6 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                     tab.view.findViewById<TextView>(R.id.title_tv).text =
                         AppObjectController.getFirebaseRemoteConfig()
                             .getString(FirebaseRemoteConfigKey.READING_TITLE)
-                }
-                SPEAKING_POSITION - isTranslationDisabled -> {
-                    setUnselectedColor(tab)
-                    tab.view.findViewById<TextView>(R.id.title_tv).text =
-                        AppObjectController.getFirebaseRemoteConfig()
-                            .getString(FirebaseRemoteConfigKey.SPEAKING_TITLE)
                 }
                 ROOM_POSITION - isTranslationDisabled -> {
                     setUnselectedColor(tab)
@@ -1465,7 +1466,8 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
             binding.itemOverlay.visibility = View.VISIBLE
             arrowView.visibility = View.VISIBLE
             itemImageView.visibility = View.VISIBLE
-            tooltipView.setTooltipText(getString(R.string.tooltip_lesson_grammar)
+            tooltipView.setTooltipText(
+                getString(R.string.tooltip_lesson_grammar)
 
             )
             slideInAnimation(tooltipView)

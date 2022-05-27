@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.core.view.isVisible
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.IS_A2_C1_RETENTION_ENABLED
 import com.joshtalks.joshskills.core.PrefManager
@@ -55,9 +56,9 @@ class LessonCompleteView : FrameLayout {
         this.lessonModel = message
         lessonNameTvCompleted.text =
             context.getString(R.string.lesson_name, message.lessonNo, message.lessonName)
-        roomStatus.visibility = if (isConversationRoomActive) View.VISIBLE else View.INVISIBLE
-        translationStatus.visibility = if (message.isNewGrammar && PrefManager.hasKey(IS_A2_C1_RETENTION_ENABLED) && PrefManager.getBoolValue(
-                IS_A2_C1_RETENTION_ENABLED)) View.VISIBLE else View.GONE
+        roomStatus.isVisible = isConversationRoomActive
+        translationStatus.isVisible = PrefManager.hasKey(IS_A2_C1_RETENTION_ENABLED) &&
+                PrefManager.getBoolValue(IS_A2_C1_RETENTION_ENABLED)
     }
 
 }
