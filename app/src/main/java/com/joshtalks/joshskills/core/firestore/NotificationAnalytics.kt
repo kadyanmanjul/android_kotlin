@@ -1,10 +1,12 @@
 package com.joshtalks.joshskills.core.firestore
 
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.SERVER_TIME_OFFSET
 import com.joshtalks.joshskills.core.notification.model.NotificationEvent
 import kotlinx.coroutines.CancellationException
+import timber.log.Timber
 
 private const val TAG = "NotificationAnalytics"
 
@@ -14,11 +16,12 @@ class NotificationAnalytics {
     }
 
     suspend fun addAnalytics(notificationId: String, mEvent: Action, channel: Channel?): Boolean {
+        Timber.tag(TAG).d("addAnalytics() called with: notificationId = $notificationId, mEvent = $mEvent, channel = $channel")
         var result = true
         var event = mEvent
-        var platformChannel = channel?.name
+        var platformChannel = channel?.name?: EMPTY
         val notification = getNotification(notificationId)
-        if (notification != null && notification.isNotEmpty()) {
+        if (notification != null && notification.isNotEmpty() && platformChannel.equals(Channel.DEEP_LINK.name).not()) {
             if (event == Action.DISCARDED || event == Action.CLICKED) {
                 notification.filter { it.action == Action.RECEIVED.name }[0].platform?.let {
                     platformChannel = it
@@ -27,6 +30,10 @@ class NotificationAnalytics {
                 event = Action.APP_DISCARDED
             }
             result = false
+        } else if(platformChannel.equals(Channel.DEEP_LINK.name)){
+            if (notification != null && notification.isNotEmpty()){
+                return false
+            }
         }
         val notificationEvent = NotificationEvent(
             action = event.name,
@@ -44,6 +51,7 @@ class NotificationAnalytics {
 
     suspend fun pushToServer(): Boolean {
         val listOfReceived = notificationDao.getUnsyncEvent()
+
         if (listOfReceived?.isEmpty() == true) {
             return true
         }
@@ -92,7 +100,8 @@ class NotificationAnalytics {
         FCM("fcm"),
         FIRESTORE("firestore"),
         MOENGAGE("moengage"),
-        API("API")
+        API("API"),
+        DEEP_LINK("deeplink"),
     }
 }
 

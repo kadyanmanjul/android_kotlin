@@ -408,12 +408,10 @@ class AppObjectController {
         fun observeFirestore() {
             try {
                 //FirestoreNotificationDB.getNotification ()
-                Log.d("Manjul", "observeFirestore() called")
                 FirestoreNotificationDB.setNotificationListener(listener = object :
                     NotificationListener {
                     override fun onReceived(fNotification: FirestoreNewNotificationObject) {
                         CoroutineScope(Dispatchers.IO).launch {
-                            Log.d("Manjul", "observeFirestore onReceived() called ${fNotification}")
                             val isFistTimeNotification = NotificationAnalytics().addAnalytics(
                                 notificationId = fNotification.id.toString(),
                                 mEvent = NotificationAnalytics.Action.RECEIVED,
@@ -423,7 +421,6 @@ class AppObjectController {
                                 try {
                                     val nc =
                                         fNotification.toNotificationObject(fNotification.id.toString())
-                                    Log.d("Manjul", "onReceived() nc ${nc}")
                                     NotificationUtils(joshApplication).sendNotification(nc)
                                 } catch (ex: java.lang.Exception) {
                                     ex.printStackTrace()

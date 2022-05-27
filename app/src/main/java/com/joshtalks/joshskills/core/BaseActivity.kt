@@ -59,9 +59,11 @@ import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.local.model.nps.NPSQuestionModel
-import com.joshtalks.joshskills.repository.server.*
+import com.joshtalks.joshskills.repository.server.OutrankedDataResponse
+import com.joshtalks.joshskills.repository.server.ProfileResponse
+import com.joshtalks.joshskills.repository.server.SearchLocality
+import com.joshtalks.joshskills.repository.server.UpdateUserLocality
 import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
-import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.track.TrackActivity
 import com.joshtalks.joshskills.ui.assessment.AssessmentActivity
@@ -85,7 +87,6 @@ import com.joshtalks.joshskills.ui.reminder.set_reminder.ReminderActivity
 import com.joshtalks.joshskills.ui.settings.SettingsActivity
 import com.joshtalks.joshskills.ui.signup.FLOW_FROM
 import com.joshtalks.joshskills.ui.signup.FreeTrialOnBoardActivity
-import com.joshtalks.joshskills.ui.signup.OnBoardActivity
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.ui.termsandconditions.WebViewFragment
 import com.joshtalks.joshskills.ui.userprofile.fragments.ShowAnimatedLeaderBoardFragment
@@ -93,19 +94,20 @@ import com.joshtalks.joshskills.ui.userprofile.fragments.ShowAwardFragment
 import com.joshtalks.joshskills.ui.userprofile.models.Award
 import com.joshtalks.joshskills.ui.voip.WebRtcActivity
 import com.moengage.core.MoECoreHelper
-import com.joshtalks.joshskills.voip.*
 import com.patloew.colocation.CoLocation
 import io.branch.referral.Branch
 import io.branch.referral.Defines
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.collectLatest
-import timber.log.Timber
 import java.lang.ref.WeakReference
 import java.lang.reflect.Type
-import java.util.*
-import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_STOP_SERVICE
-import com.joshtalks.joshskills.base.constants.SERVICE_BROADCAST_KEY
+import java.util.Locale
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import timber.log.Timber
 
 const val HELP_ACTIVITY_REQUEST_CODE = 9010
 const val COURSE_EXPLORER_NEW = 2008
@@ -317,7 +319,6 @@ abstract class BaseActivity :
             is InboxActivity -> ActivityEnum.Inbox
             is LauncherActivity -> ActivityEnum.Launcher
             is CourseDetailsActivity -> ActivityEnum.CourseDetails
-            is OnBoardActivity -> ActivityEnum.Onboard
             is SignUpActivity -> ActivityEnum.Signup
             else -> ActivityEnum.Empty
         }
@@ -338,7 +339,7 @@ abstract class BaseActivity :
                         Intent(this, FreeTrialOnBoardActivity::class.java)
                     }
                     else -> {
-                        Intent(this, OnBoardActivity::class.java)
+                        Intent(this, SignUpActivity::class.java)
                     }
                 }
             }

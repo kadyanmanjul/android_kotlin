@@ -379,11 +379,11 @@ class WorkerAfterLoginInApp(context: Context, workerParams: WorkerParameters) :
 class WorkerInLandingScreen(context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
+        WorkManagerAdmin.syncNotifiationEngagement()
         AppObjectController.clearDownloadMangerCallback()
         // SyncChatService.syncChatWithServer()
         WorkManagerAdmin.readMessageUpdating()
         WorkManagerAdmin.syncAppCourseUsage()
-        WorkManagerAdmin.syncNotifiationEngagement()
         AppAnalytics.updateUser()
         return Result.success()
     }

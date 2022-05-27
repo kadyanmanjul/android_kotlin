@@ -19,13 +19,32 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.constants.CALLING_SERVICE_ACTION
 import com.joshtalks.joshskills.base.constants.SERVICE_BROADCAST_KEY
 import com.joshtalks.joshskills.base.constants.START_SERVICE
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.API_TOKEN
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.COURSE_EXPLORER_NEW
+import com.joshtalks.joshskills.core.CoreJoshActivity
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.EXPLORE_TYPE
+import com.joshtalks.joshskills.core.HAS_SEEN_LOCAL_NOTIFICATION
+import com.joshtalks.joshskills.core.INSTANCE_ID
+import com.joshtalks.joshskills.core.IS_APP_OPENED_FOR_FIRST_TIME
+import com.joshtalks.joshskills.core.IS_COURSE_BOUGHT
+import com.joshtalks.joshskills.core.IS_FREE_TRIAL
+import com.joshtalks.joshskills.core.LAST_FAKE_CALL_INVOKE_TIME
+import com.joshtalks.joshskills.core.LOCAL_NOTIFICATION_INDEX
+import com.joshtalks.joshskills.core.LogSaver
+import com.joshtalks.joshskills.core.PREF_IS_CONVERSATION_ROOM_ACTIVE
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.SERVER_GID_ID
+import com.joshtalks.joshskills.core.USER_LOCALE
+import com.joshtalks.joshskills.core.USER_UNIQUE_ID
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.firestore.NotificationAnalytics
 import com.joshtalks.joshskills.core.notification.HAS_LOCAL_NOTIFICATION
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.model.ExploreCardType
@@ -84,7 +103,7 @@ class LauncherActivity : CoreJoshActivity() {
                 PrefManager.put(LAST_FAKE_CALL_INVOKE_TIME, getCurrentTimeInMillis, true)
                 WorkManagerAdmin.setFakeCallNotificationWorker()
             }
-            Branch.getInstance(applicationContext).resetUserSession()
+            Branch.getAutoInstance(AppObjectController.joshApplication).resetUserSession()
             logAppLaunchEvent(getNetworkOperatorName())
             if (PrefManager.hasKey(IS_FREE_TRIAL).not() && User.getInstance().isVerified.not()) {
                 PrefManager.put(IS_FREE_TRIAL, true, false)
@@ -199,6 +218,8 @@ class LauncherActivity : CoreJoshActivity() {
                                 if (it.has(Defines.Jsonkey.UTMCampaign.key))
                                     installReferrerModel.utmTerm =
                                         it.getString(Defines.Jsonkey.UTMCampaign.key)
+                                if (it.has("notification_id"))
+                                    addDeepLinkNotificationAnalytics(it.getString(("notification_id")))
                                 InstallReferrerModel.update(installReferrerModel)
                             }
                             if (isFinishing.not()) {
@@ -235,6 +256,16 @@ class LauncherActivity : CoreJoshActivity() {
         }
     }
 
+    private fun addDeepLinkNotificationAnalytics(notificationID: String) {
+        lifecycleScope.launch(Dispatchers.IO) {
+            NotificationAnalytics().addAnalytics(
+                notificationId = notificationID,
+                mEvent = NotificationAnalytics.Action.CLICKED,
+                channel = NotificationAnalytics.Channel.DEEP_LINK
+            )
+        }
+    }
+
     private fun initReferral(
         testId: String? = null,
         exploreType: String? = null,
@@ -250,7 +281,7 @@ class LauncherActivity : CoreJoshActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         this.intent = intent
-//        intent.putExtra("branch_force_new_session", true)
+        intent.putExtra("branch_force_new_session", true)
         handleIntent()
     }
 

@@ -151,9 +151,6 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppNoBarTheme"
             android:windowSoftInputMode="stateAlwaysHidden" />
-        <activity
-            android:name=".ui.online_test.OnlineTestActivity"
-            android:windowSoftInputMode="adjustResize" />
         <activity android:name=".ui.points_history.PointsInfoActivity" />
         <activity android:name=".ui.introduction.DemoSpeakingPractiseActivity" />
         <activity android:name=".ui.points_history.PointsHistoryActivity" />
@@ -247,12 +244,6 @@
                 <action android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".ui.signup.OnBoardActivity"
-            android:alwaysRetainTaskState="true"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
-            android:launchMode="singleTop"
-            android:theme="@style/AppNoBarTheme" />
         <activity
             android:name=".ui.video_player.VideoPlayerActivity"
             android:alwaysRetainTaskState="true"

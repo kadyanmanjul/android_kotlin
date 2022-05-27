@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.core.firestore
 
-import android.util.Log
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -9,7 +8,7 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import timber.log.Timber
 
 const val COLLECTION_NOTIFICATION = "NotificationsV2"
-private const val TAG = "Manjul"
+private const val TAG = "FirestoreNotificationDB"
 
 object FirestoreNotificationDB {
 
@@ -21,10 +20,6 @@ object FirestoreNotificationDB {
         mentorId: String = Mentor.getInstance().getId(),
         listener: NotificationListener
     ) {
-        Log.d(
-            "Manjul",
-            "setNotificationListener() called with: mentorId = $mentorId, listener = $listener"
-        )
         notificationListener?.remove()
         if (mentorId.isBlank()){
             return

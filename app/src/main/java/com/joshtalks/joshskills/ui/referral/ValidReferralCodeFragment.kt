@@ -1,16 +1,24 @@
 package com.joshtalks.joshskills.ui.referral
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.SpannableStringBuilder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.FragmentValidReferralCodeBinding
 import com.joshtalks.joshskills.repository.server.ReferralCouponDetailResponse
-import com.joshtalks.joshskills.ui.signup.OnBoardActivity
+import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
+import com.joshtalks.joshskills.ui.signup.FLOW_FROM
+import com.joshtalks.joshskills.ui.signup.SignUpActivity
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 class ValidReferralCodeFragment : BottomSheetDialogFragment() {
@@ -54,11 +62,30 @@ class ValidReferralCodeFragment : BottomSheetDialogFragment() {
     }
 
     fun openCourseExplore() {
-        (requireActivity() as OnBoardActivity).openCourseExplore()
+        lifecycleScope.launch(Dispatchers.IO) {
+            AppAnalytics.create(AnalyticsEvent.EXPLORE_BTN_CLICKED.NAME)
+                .addParam("name", this.javaClass.simpleName)
+                .addBasicParam()
+                .addUserDetails()
+                .push()
+            startActivity(Intent(requireActivity(), CourseExploreActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+            })
+        }
     }
 
     fun signUp() {
-        (requireActivity() as OnBoardActivity).signUp()
+        lifecycleScope.launch(Dispatchers.IO) {
+            AppAnalytics.create(AnalyticsEvent.LOGIN_INITIATED.NAME)
+                .addBasicParam()
+                .addUserDetails()
+                .addParam(AnalyticsEvent.FLOW_FROM_PARAM.NAME, this.javaClass.simpleName)
+                .push()
+            val intent = Intent(requireActivity(), SignUpActivity::class.java).apply {
+                putExtra(FLOW_FROM, "onboarding journey")
+            }
+            startActivity(intent)
+        }
     }
 
     companion object {

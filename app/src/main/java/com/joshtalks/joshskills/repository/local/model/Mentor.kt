@@ -29,7 +29,6 @@ import com.joshtalks.joshskills.core.notification.HAS_NOTIFICATION
 import com.joshtalks.joshskills.core.notification.NOTIFICATION_ID
 import com.joshtalks.joshskills.repository.local.model.googlelocation.Locality
 import com.joshtalks.joshskills.repository.server.signup.LoginResponse
-import com.joshtalks.joshskills.ui.signup.OnBoardActivity
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.userexperior.UserExperior
 import kotlinx.coroutines.CoroutineScope
@@ -135,7 +134,7 @@ class Mentor {
 
         fun showLogoutNotification() {
             val activityList = arrayOf(
-                Intent(joshApplication, OnBoardActivity::class.java).apply {
+                Intent(joshApplication, SignUpActivity::class.java).apply {
                     addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                     addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 }

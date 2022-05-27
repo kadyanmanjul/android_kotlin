@@ -146,7 +146,6 @@ class NotificationUtils(val context: Context) {
 
     fun sendNotification(notificationObject: NotificationObject) {
         executor.execute {
-            Log.d("Manjul", "sendNotification() called")
             val intent = getIntentAccordingAction(
                 notificationObject,
                 notificationObject.action,
@@ -575,7 +574,7 @@ class NotificationUtils(val context: Context) {
 
     private fun isNotificationCrash(): Class<*> {
         val isNotificationCrash =
-            AppObjectController.getFirebaseRemoteConfig().getBoolean("IS_NOTIFICATION_CRASH")
+            false
         return if (isNotificationCrash) {
             InboxActivity::class.java
         } else {
@@ -585,8 +584,7 @@ class NotificationUtils(val context: Context) {
 
     private fun isOpenPaymentNotificationCrash(): Class<*> {
         val isNotificationCrash =
-            AppObjectController.getFirebaseRemoteConfig()
-                .getBoolean("IS_OPEN_PAYMENT_PAGE_NOTIFICATION_CRASH")
+            false
         return if (isNotificationCrash) {
             InboxActivity::class.java
         } else {
@@ -596,8 +594,7 @@ class NotificationUtils(val context: Context) {
 
     private fun isOpenLessonNotificationCrash(): Class<*> {
         val isNotificationCrash =
-            AppObjectController.getFirebaseRemoteConfig()
-                .getBoolean("IS_OPEN_LESSON_NOTIFICATION_CRASH")
+            false
         return if (isNotificationCrash) {
             InboxActivity::class.java
         } else {
@@ -607,8 +604,7 @@ class NotificationUtils(val context: Context) {
 
     private fun isOpenSpeakingSectionNotificationCrash(): Class<*> {
         val isNotificationCrash =
-            AppObjectController.getFirebaseRemoteConfig()
-                .getBoolean("IS_OPEN_SPEAKING_SECTION_NOTIFICATION_CRASH")
+            false
         return if (isNotificationCrash) {
             InboxActivity::class.java
         } else {
@@ -670,11 +666,6 @@ class NotificationUtils(val context: Context) {
     ): Intent? {
         val obj: InboxEntity = AppObjectController.appDatabase.courseDao()
             .chooseRegisterCourseMinimal(actionData!!) ?: return null
-        /*
-        JobScheduler 100 job limit exceeded issue
-        obj?.run {
-            WorkManagerAdmin.updatedCourseForConversation(this.conversation_id)
-        }*/
 
         val rIntnet = Intent(context.applicationContext, isNotificationCrash()).apply {
             putExtra(UPDATED_CHAT_ROOM_OBJECT, obj)
