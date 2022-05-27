@@ -1,9 +1,6 @@
 package com.joshtalks.joshskills.core.abTest.repository
 
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.IS_A2_C1_RETENTION_ENABLED
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.USER_UNIQUE_ID
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
 import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
@@ -94,6 +91,11 @@ class ABTestRepository {
                                     IS_A2_C1_RETENTION_ENABLED,
                                     (i.variantKey == VariantKeys.A2_C1_RETENTION.name) && i.variableMap?.isEnabled == true
                                 )
+                            }
+                        }
+                        "INCREASE_COURSE_PRICE" -> {
+                            if(i.isCampaignActive) {
+                                PrefManager.put(INCREASE_COURSE_PRICE_CAMPAIGN_ACTIVE,i.isCampaignActive)
                             }
                         }
                     }

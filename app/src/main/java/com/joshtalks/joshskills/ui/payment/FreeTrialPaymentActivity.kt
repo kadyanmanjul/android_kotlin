@@ -72,6 +72,7 @@ import java.io.File
 import java.math.BigDecimal
 
 const val FREE_TRIAL_PAYMENT_TEST_ID = "102"
+const val SUBSCRIPTION_TEST_ID = "10"
 const val IS_FAKE_CALL = "is_fake_call"
 
 class FreeTrialPaymentActivity : CoreJoshActivity(),
@@ -180,6 +181,9 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
 
     private fun initABTest() {
         viewModel.getAllCampaigns(testId)
+        if(PrefManager.getBoolValue(INCREASE_COURSE_PRICE_CAMPAIGN_ACTIVE)) {
+            viewModel.postGoal("ICP_BUY_PAGE_SEEN",CampaignKeys.INCREASE_COURSE_PRICE.name)
+        }
     }
 
     private fun forceDisconnectCall() {
@@ -886,6 +890,15 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             .addParam(ParamKeys.IS_COUPON_APPLIED,viewModel.paymentDetailsLiveData.value?.couponDetails?.isPromoCode)
             .addParam(ParamKeys.IS_100_POINTS_OBTAINED_IN_FREE_TRIAL,isPointsScoredMoreThanEqualTo100)
             .push()
+
+        if(viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.testId == FREE_TRIAL_PAYMENT_TEST_ID) {
+            if(PrefManager.getBoolValue(INCREASE_COURSE_PRICE_CAMPAIGN_ACTIVE))
+            viewModel.postGoal("ICP_COURSE_BOUGHT",CampaignKeys.INCREASE_COURSE_PRICE.name)
+        }
+        else if(viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.testId == SUBSCRIPTION_TEST_ID) {
+            if(PrefManager.getBoolValue(INCREASE_COURSE_PRICE_CAMPAIGN_ACTIVE))
+                viewModel.postGoal("ICP_SUBSCRIPTION_BOUGHT",CampaignKeys.INCREASE_COURSE_PRICE.name)
+        }
 
         var obj = JSONObject()
         obj.put("is paid",true)

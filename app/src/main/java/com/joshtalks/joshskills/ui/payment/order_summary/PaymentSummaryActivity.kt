@@ -89,6 +89,7 @@ import retrofit2.HttpException
 const val TRANSACTION_ID = "TRANSACTION_ID"
 const val ENGLISH_COURSE_TEST_ID = "102"
 const val ENGLISH_FREE_TRIAL_1D_TEST_ID = "784"
+const val SUBSCRIPTION_TEST_ID = "10"
 
 class PaymentSummaryActivity : CoreJoshActivity(),
     PaymentResultListener {
@@ -483,6 +484,12 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                 startPayment()
             }
             true
+        }
+
+        if(binding.materialButton.text != AppObjectController.getFirebaseRemoteConfig().getString(FREE_TRIAL_PAYMENT_BTN_TXT)) {
+            if(PrefManager.getBoolValue(INCREASE_COURSE_PRICE_CAMPAIGN_ACTIVE)) {
+                viewModel.postGoal("ICP_BUY_PAGE_SEEN",CampaignKeys.INCREASE_COURSE_PRICE.name)
+            }
         }
     }
 
@@ -925,6 +932,15 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             .addParam(ParamKeys.AMOUNT_PAID, viewModel.getCourseDiscountedAmount())
             .addParam(ParamKeys.IS_100_POINTS_OBTAINED_IN_FREE_TRIAL,is100PointsObtained)
             .push()
+
+        if(viewModel.getPaymentTestId() == ENGLISH_COURSE_TEST_ID) {
+            PrefManager.getBoolValue(INCREASE_COURSE_PRICE_CAMPAIGN_ACTIVE)
+            viewModel.postGoal("ICP_COURSE_BOUGHT",CampaignKeys.INCREASE_COURSE_PRICE.name)
+        }
+        else if(viewModel.getPaymentTestId() == SUBSCRIPTION_TEST_ID) {
+            PrefManager.getBoolValue(INCREASE_COURSE_PRICE_CAMPAIGN_ACTIVE)
+            viewModel.postGoal("ICP_SUBSCRIPTION_BOUGHT",CampaignKeys.INCREASE_COURSE_PRICE.name)
+        }
 
         val obj = JSONObject()
         obj.put("is paid",true)
