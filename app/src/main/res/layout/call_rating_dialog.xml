@@ -162,6 +162,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_6sdp"
             android:text="@string/you_spoke_for_minutes"
+            android:gravity="center"
             android:textAlignment="center"
             android:paddingHorizontal="@dimen/_8sdp"
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
@@ -179,6 +180,7 @@
             android:paddingHorizontal="@dimen/_8sdp"
             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5_Semi_Bold"
             android:textAlignment="center"
+            android:gravity="center"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/c_image" />
