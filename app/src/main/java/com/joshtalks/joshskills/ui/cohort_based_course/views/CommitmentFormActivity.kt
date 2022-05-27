@@ -44,21 +44,25 @@ class CommitmentFormActivity : BaseActivity() {
                 OPEN_PROMISE_FRAGMENT -> replaceWithPromiseFragment()
                 OPEN_SCHEDULE_FRAGMENT -> replaceWithScheduleFragment()
                 START_CONVERSATION_ACTIVITY -> {
-                    vm.submitReminder(
-                        Math.random().nextUp().toInt(),
-                        ReminderUtil.Companion.ReminderFrequency.EVERYDAY.name,
-                        ReminderUtil.Companion.ReminderStatus.ACTIVE.name,
-                        Mentor.getInstance().getId(),
-                        EMPTY,
-                        this::onAlarmSetSuccess
-                    )
+                    ConversationActivity.startConversionActivity(
+                    this,
+                    intent.extras?.get("inboxEntity") as InboxEntity
+                ).also { finish() }
+//                    vm.submitReminder(
+//                        Math.random().nextUp().toInt(),
+//                        ReminderUtil.Companion.ReminderFrequency.EVERYDAY.name,
+//                        ReminderUtil.Companion.ReminderStatus.ACTIVE.name,
+//                        Mentor.getInstance().getId(),
+//                        EMPTY,
+//                        this::onAlarmSetSuccess
+//                    )
                 }
                 CLOSE_ACTIVITY -> finish()
             }
         }
     }
 
-    private fun onAlarmSetSuccess(reminderId: Int, startHour: Int, startMinute: Int) {
+    /*private fun onAlarmSetSuccess(reminderId: Int, startHour: Int, startMinute: Int) {
         ReminderUtil(applicationContext).apply {
             setAlarm(
                 ReminderUtil.Companion.ReminderFrequency.EVERYDAY,
@@ -71,7 +75,7 @@ class CommitmentFormActivity : BaseActivity() {
             this,
             intent.extras?.get("inboxEntity") as InboxEntity
         ).also { finish() }
-    }
+    }*/
 
     private fun replaceWithScheduleFragment() {
         supportFragmentManager.commit {

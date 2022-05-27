@@ -123,7 +123,7 @@ class CommitmentFormViewModel : ViewModel() {
         userName.set(User.getInstance().firstName ?: EMPTY)
     }
 
-    fun submitReminder(
+   /* fun submitReminder(
         reminderId: Int,
         frequency: String,
         status: String,
@@ -172,5 +172,5 @@ class CommitmentFormViewModel : ViewModel() {
                 ex.printStackTrace()
             }
         }
-    }
+    }*/
 }
