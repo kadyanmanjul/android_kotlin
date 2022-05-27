@@ -313,14 +313,37 @@
             android:id="@+id/overlay_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="gone"
             android:background="@color/transparent_blue_alpha_75"
-            android:elevation="@dimen/_10sdp">
+            android:elevation="@dimen/_10sdp"
+            android:visibility="visible">
 
             <ImageView
                 android:id="@+id/group_tooltip_item"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/cbc_arrow_lottie"
+                android:layout_width="@dimen/_150sdp"
+                android:layout_height="@dimen/_240sdp"
+                android:layout_centerHorizontal="true"
+                android:paddingTop="@dimen/_2sdp"
+                android:rotation="270"
+                app:lottie_autoPlay="true"
+                app:lottie_fileName="lottie/leaderboard_arrow.json"
+                app:lottie_imageAssetsFolder="lottie"
+                app:lottie_loop="true"
+                app:lottie_repeatMode="reverse" />
+
+            <com.joshtalks.joshskills.ui.tooltip.JoshTooltip
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/cbc_arrow_lottie"
+                android:layout_marginHorizontal="@dimen/_28sdp"
+                android:elevation="@dimen/_12sdp"
+                android:gravity="center"
+                android:visibility="visible"
+                app:tooltipText="Introduce yourself in your batch and meet your batchmates" />
 
         </RelativeLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>

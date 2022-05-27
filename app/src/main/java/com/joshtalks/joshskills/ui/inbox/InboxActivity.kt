@@ -70,6 +70,8 @@ import com.joshtalks.joshskills.core.IS_FREE_TRIAL_CAMPAIGN_ACTIVE
 import com.joshtalks.joshskills.core.IS_EFT_VARIENT_ENABLED
 import com.joshtalks.joshskills.ui.cohort_based_course.views.CommitmentFormActivity
 import com.joshtalks.joshskills.ui.cohort_based_course.views.CommitmentFormLaunchFragment
+import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_GROUP_LIST_CBC_TOOLTIP
+import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_TEXT_VIEW_CLASS_ANIMATION
 
 const val REGISTER_INFO_CODE = 2001
 const val COURSE_EXPLORER_CODE = 2002
@@ -432,6 +434,8 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                 }
                 else -> {
                     ConversationActivity.startConversionActivity(this, inboxEntity)
+                    PrefManager.put(HAS_SEEN_TEXT_VIEW_CLASS_ANIMATION, true)
+                    PrefManager.put(HAS_SEEN_GROUP_LIST_CBC_TOOLTIP, true)
                 }
             }
         }

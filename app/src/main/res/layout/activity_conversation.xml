@@ -313,7 +313,7 @@
             android:layout_marginTop="@dimen/_12sdp"
             android:adjustViewBounds="true"
             android:clickable="true"
-            android:elevation="@dimen/_8sdp"
+            android:elevation="@dimen/_9sdp"
             android:focusable="true"
             android:foreground="?attr/selectableItemBackgroundBorderless"
             android:gravity="center"
@@ -332,7 +332,7 @@
             android:layout_marginTop="@dimen/_10sdp"
             android:visibility="gone"
             app:cardCornerRadius="@dimen/_50sdp"
-            app:cardElevation="@dimen/_9sdp">
+            app:cardElevation="@dimen/_12sdp">
 
             <com.airbnb.lottie.LottieAnimationView
                 android:layout_width="@dimen/_20sdp"
@@ -355,7 +355,7 @@
             android:layout_marginTop="@dimen/_7sdp"
             android:adjustViewBounds="true"
             android:clickable="true"
-            android:elevation="@dimen/_8sdp"
+            android:elevation="@dimen/_7sdp"
             android:focusable="true"
             android:foreground="?attr/selectableItemBackgroundBorderless"
             android:gravity="center"
@@ -726,7 +726,7 @@
             android:alpha="1"
             android:background="@color/transparent_blue_alpha_75"
             android:clickable="true"
-            android:elevation="@dimen/_4sdp"
+            android:elevation="@dimen/_8sdp"
             android:focusable="true"
             android:visibility="gone"
             tools:visibility="gone">
@@ -908,10 +908,10 @@
             android:id="@+id/cbcTooltip"
             android:layout_width="@dimen/_180sdp"
             android:layout_height="@dimen/_50sdp"
-            android:layout_below="@+id/toolbar_container"
+            android:layout_below="@+id/user_point_container"
             android:layout_alignParentEnd="true"
             android:layout_marginLeft="@dimen/_70sdp"
-            android:layout_marginTop="@dimen/_50sdp"
+            android:layout_marginTop="@dimen/_12sdp"
             android:elevation="@dimen/_20sdp"
             android:visibility="gone">
 

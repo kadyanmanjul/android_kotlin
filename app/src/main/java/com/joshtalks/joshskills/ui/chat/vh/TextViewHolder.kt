@@ -16,7 +16,6 @@ import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.eventbus.TextTooltipEvent
 import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_TEXT_VIEW_CLASS_ANIMATION
-import timber.log.Timber
 
 class TextViewHolder(view: View, userId: String) : BaseViewHolder(view, userId) {
     val rootSubView: FrameLayout = view.findViewById(R.id.root_sub_view)
@@ -31,8 +30,6 @@ class TextViewHolder(view: View, userId: String) : BaseViewHolder(view, userId) 
         }
         titleView.text = EMPTY
         titleView.visibility = GONE
-
-        Timber.tag("SukeshTest").e("${message.text} : Check 0")
 
         if (message.text.isNullOrEmpty()) {
             message.question?.run {
