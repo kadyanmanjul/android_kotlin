@@ -21,7 +21,7 @@
         android:layout_height="match_parent"
         android:fitsSystemWindows="true"
         android:orientation="vertical"
-        tools:background="@drawable/voip_bg">
+        android:background="#0D5CB8">
 
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/topic_viewpager"
