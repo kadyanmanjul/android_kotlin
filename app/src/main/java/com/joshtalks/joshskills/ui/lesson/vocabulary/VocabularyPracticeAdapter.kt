@@ -37,7 +37,10 @@ import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentWith
 import com.joshtalks.joshskills.repository.local.model.assessment.Choice
 import com.joshtalks.joshskills.repository.server.assessment.QuestionStatus
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.VoipUtils
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
 import com.joshtalks.joshskills.util.ExoAudioPlayer
+import com.joshtalks.joshskills.voip.constant.State
 import com.muddzdev.styleabletoast.StyleableToast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -1290,7 +1293,8 @@ class VocabularyPracticeAdapter(
 
             binding.recordTransparentContainer.setOnTouchListener { _, event ->
                 Log.d(TAG, "setAudioRecordTouchListener: START")
-                if (isCallOngoing()) {
+                if (isCallOngoing() || context.getVoipState()!=State.IDLE) {
+                    showToast("Cannot submit answer while on a call")
                     return@setOnTouchListener false
                 }
                 if (PermissionUtils.isAudioAndStoragePermissionEnable(context).not()) {

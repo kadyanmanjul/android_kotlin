@@ -33,6 +33,9 @@ import com.joshtalks.joshskills.repository.local.entity.practise.PracticeEngagem
 import com.joshtalks.joshskills.repository.local.entity.practise.PractiseType
 import com.joshtalks.joshskills.repository.local.eventbus.ViewPagerDisableEventBus
 import com.joshtalks.joshskills.ui.practise.PracticeViewModel
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.VoipUtils
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
+import com.joshtalks.joshskills.voip.constant.State
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -214,7 +217,7 @@ class RecordAndFeedbackFragment : Fragment(), OnAudioRecordListener {
 
     private fun setUpAudioRecordTouchListener() {
         binding.imgRecordButton.setOnClickListener {
-            if (isCallOngoing()) {
+            if (isCallOngoing() || requireActivity().getVoipState()!=State.IDLE) {
                 return@setOnClickListener
             }
             if (practiceViewModel.isRecordingStarted()) {
