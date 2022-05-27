@@ -273,7 +273,7 @@ class JoshGroupViewModel : BaseViewModel() {
     fun setGroupsCount() = viewModelScope.launch(Dispatchers.IO) {
         groupListCount.set(repository.getGroupsCount())
         withContext(Dispatchers.Main) {
-            if (groupListCount.get()!! > 1) {
+            if ((groupListCount.get() ?: 0) > 3) {
                 message.what = INIT_LIST_TOOLTIP
                 singleLiveEvent.value = message
             }

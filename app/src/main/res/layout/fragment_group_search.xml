@@ -165,7 +165,7 @@
             android:id="@+id/group2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="@{vm.hasGroupData || !vm.isSearching ? View.GONE : View.VISIBLE}"
+            android:visibility="@{vm.hasGroupData || !vm.isSearching ? View.GONE : View.GONE}"
             app:constraint_referenced_ids="no_group_lable,btn_create_group" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
