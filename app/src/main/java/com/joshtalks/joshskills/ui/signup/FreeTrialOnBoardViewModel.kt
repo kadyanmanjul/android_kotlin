@@ -42,6 +42,7 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
     val points100ABtestLiveData = MutableLiveData<ABTestCampaignData?>()
     val eftABtestLiveData = MutableLiveData<ABTestCampaignData?>()
     var newLanguageABtestLiveData = MutableLiveData<ABTestCampaignData?>()
+    var increaseCoursePriceABtestLiveData = MutableLiveData<ABTestCampaignData?>()
 
     val repository: ABTestRepository by lazy { ABTestRepository() }
     fun get100PCampaignData(campaign: String, campaignEft: String) {
@@ -76,6 +77,24 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
             } catch (ex: Exception) {
                 ex.printStackTrace()
                 newLanguageABtestLiveData.postValue(null)
+            }
+        }
+    }
+
+    fun getICPABTest(campaign: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                repository.getCampaignData(campaign)?.let { campaign ->
+                    increaseCoursePriceABtestLiveData.postValue(campaign)
+                } ?: run {
+                    AppObjectController.abTestNetworkService.getCampaignData(campaign).let { response ->
+                        increaseCoursePriceABtestLiveData.postValue(response.body())
+
+                    }
+                }
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+                increaseCoursePriceABtestLiveData.postValue(null)
             }
         }
     }

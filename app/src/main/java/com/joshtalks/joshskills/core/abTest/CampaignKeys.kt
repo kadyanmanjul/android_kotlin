@@ -14,4 +14,5 @@ enum class CampaignKeys(val NAME: String) {
     TWENTY_MIN_TARGET("20_MIN_TARGET"),
     NEW_LANGUAGE("NEW_LANGUAGE"),
     A2_C1("A2_C1"),
+    INCREASE_COURSE_PRICE("INCREASE_COURSE_PRICE")
 }

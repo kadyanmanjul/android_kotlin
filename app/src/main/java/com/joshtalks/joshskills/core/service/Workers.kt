@@ -1100,7 +1100,8 @@ class UpdateABTestCampaignsWorker(context: Context, workerParams: WorkerParamete
                     CampaignKeys.ACTIVITY_FEED_V2.name,
                     CampaignKeys.TWENTY_MIN_TARGET.NAME,
                     CampaignKeys.NEW_LANGUAGE.name,
-                    CampaignKeys.A2_C1.name
+                    CampaignKeys.A2_C1.name,
+                    CampaignKeys.INCREASE_COURSE_PRICE.name
                 )
             )
         } catch (ex: Exception) {

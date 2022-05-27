@@ -55,6 +55,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
     private var languageActive = false
     private var eftActive = false
     private var is100PointsActive = false
+    private var increaseCoursePrice = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -132,7 +133,6 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         viewModel.newLanguageABtestLiveData.observe(this){ abTestCampaignData ->
             abTestCampaignData?.let { map ->
                 languageActive =(map.variantKey == VariantKeys.NEW_LANGUAGE_ENABLED.NAME) && map.variableMap?.isEnabled == true
-                Log.e("Ayaaz","$languageActive")
             }
         }
         viewModel.eftABtestLiveData.observe(this){ abTestCampaignData ->
@@ -143,6 +143,13 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         }
         viewModel.points100ABtestLiveData.observe(this) { map ->
                 is100PointsActive = (map?.variantKey == VariantKeys.POINTS_HUNDRED_ENABLED.NAME) && map.variableMap?.isEnabled == true
+        }
+
+        viewModel.increaseCoursePriceABtestLiveData.observe(this) { abTestCampaignData ->
+            abTestCampaignData?.let { map ->
+                increaseCoursePrice = (map.variantKey == VariantKeys.ICP_ENABLED.NAME) && map.variableMap?.isEnabled == true
+                PrefManager.put(INCREASE_COURSE_PRICE_ABTEST,increaseCoursePrice)
+            }
         }
     }
 
@@ -187,9 +194,14 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         }
         else {
             dialogView.findViewById<TextView>(R.id.e_g_motivat).text =
-                AppObjectController.getFirebaseRemoteConfig()
-                    .getString(FREE_TRIAL_POPUP_BODY_TEXT + language.testId)
-                    .replace("\\n", "\n")
+                if(PrefManager.getBoolValue(INCREASE_COURSE_PRICE_ABTEST) && language.testId == "784"){
+                    getString(R.string.free_trial_popup_for_icp)
+                }
+                else {
+                    AppObjectController.getFirebaseRemoteConfig()
+                        .getString(FREE_TRIAL_POPUP_BODY_TEXT + language.testId)
+                        .replace("\\n", "\n")
+                }
         }
         dialogView.findViewById<TextView>(R.id.add_a_topic).text =
             AppObjectController.getFirebaseRemoteConfig()
@@ -347,5 +359,6 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
     fun initABTest() {
         viewModel.getNewLanguageABTest(CampaignKeys.NEW_LANGUAGE.name)
         viewModel.get100PCampaignData(CampaignKeys.HUNDRED_POINTS.NAME, CampaignKeys.EXTEND_FREE_TRIAL.name)
+        viewModel.getICPABTest(CampaignKeys.INCREASE_COURSE_PRICE.name)
     }
 }

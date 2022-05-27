@@ -92,6 +92,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
     private val courseListSet: MutableSet<InboxEntity> = hashSetOf()
     private val inboxAdapter: InboxAdapter by lazy { InboxAdapter(this, this) }
     private var isExtendFreeTrialActive = false
+    private var increaseCoursePrice = false
 
     private val refViewModel: ReferralViewModel by lazy {
         ViewModelProvider(this).get(ReferralViewModel::class.java)
@@ -113,6 +114,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
 
     private fun initABTest() {
         viewModel.getEFTCampaignData(CampaignKeys.EXTEND_FREE_TRIAL.name)
+        viewModel.getICPABTest(CampaignKeys.INCREASE_COURSE_PRICE.name)
     }
 
     private fun addAfterTime() {
@@ -238,6 +240,13 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                 isExtendFreeTrialActive =
                     (map.variantKey == VariantKeys.EFT_ENABLED.name) && map.variableMap?.isEnabled == true
                 PrefManager.put(IS_EFT_VARIENT_ENABLED, isExtendFreeTrialActive)
+            }
+        }
+
+        viewModel.increaseCoursePriceABtestLiveData.observe(this) { abTestCampaignData ->
+            abTestCampaignData?.let { map ->
+                increaseCoursePrice = (map.variantKey == VariantKeys.ICP_ENABLED.NAME) && map.variableMap?.isEnabled == true
+                PrefManager.put(INCREASE_COURSE_PRICE_ABTEST,increaseCoursePrice)
             }
         }
     }

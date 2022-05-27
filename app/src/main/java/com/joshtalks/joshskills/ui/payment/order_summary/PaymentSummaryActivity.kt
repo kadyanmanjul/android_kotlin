@@ -854,9 +854,14 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                 .getString(FirebaseRemoteConfigKey.FREE_TRIAL_POPUP_HUNDRED_POINTS_TEXT + testId)
                 .replace("\\n", "\n")
         }else{
-            popUpText =   AppObjectController.getFirebaseRemoteConfig()
-                .getString(FirebaseRemoteConfigKey.FREE_TRIAL_POPUP_BODY_TEXT + testId)
-                .replace("\\n", "\n")
+            popUpText =   if(PrefManager.getBoolValue(INCREASE_COURSE_PRICE_ABTEST) && testId == "784"){
+                getString(R.string.free_trial_popup_for_icp)
+            }
+            else {
+                AppObjectController.getFirebaseRemoteConfig()
+                    .getString(FirebaseRemoteConfigKey.FREE_TRIAL_POPUP_BODY_TEXT + testId)
+                    .replace("\\n", "\n")
+            }
         }
         dialogView.findViewById<TextView>(R.id.e_g_motivat).text = popUpText
 

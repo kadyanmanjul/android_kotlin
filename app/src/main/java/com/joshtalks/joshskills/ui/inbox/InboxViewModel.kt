@@ -24,6 +24,7 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
     val apiCallStatusLiveData: MutableLiveData<ApiCallStatus> = MutableLiveData()
     val userData: MutableLiveData<UserProfileResponse> = MutableLiveData()
     val groupIdLiveData: MutableLiveData<String> = MutableLiveData()
+    var increaseCoursePriceABtestLiveData = MutableLiveData<ABTestCampaignData?>()
 
     private val _overAllWatchTime = MutableSharedFlow<Long>(replay = 0)
     val overAllWatchTime: SharedFlow<Long>
@@ -46,6 +47,24 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
                 extendFreeTrialAbTestLiveData.postValue(campaign)
             }
             getRegisterCourses()
+        }
+    }
+
+    fun getICPABTest(campaign: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                repository.getCampaignData(campaign)?.let { campaign ->
+                    increaseCoursePriceABtestLiveData.postValue(campaign)
+                } ?: run {
+                    AppObjectController.abTestNetworkService.getCampaignData(campaign).let { response ->
+                        increaseCoursePriceABtestLiveData.postValue(response.body())
+
+                    }
+                }
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+                increaseCoursePriceABtestLiveData.postValue(null)
+            }
         }
     }
 
