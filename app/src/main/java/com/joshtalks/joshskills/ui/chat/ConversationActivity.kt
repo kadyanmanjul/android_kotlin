@@ -1153,7 +1153,7 @@ class ConversationActivity :
                         && PrefManager.getBoolValue(HAS_SEEN_UNLOCK_CLASS_ANIMATION)
                     ) {
                         PrefManager.put(LAST_TIME_AUTOSTART_SHOWN, System.currentTimeMillis())
-                        checkForOemNotifications(AUTO_START_POPUP)
+//                        checkForOemNotifications(AUTO_START_POPUP)
                     }
                 } else {
                     conversationBinding.imgGroupChatBtn.visibility = GONE
@@ -1394,7 +1394,7 @@ class ConversationActivity :
                                         LAST_TIME_AUTOSTART_SHOWN,
                                         System.currentTimeMillis()
                                     )
-                                    checkForOemNotifications(AUTO_START_POPUP)
+//                                    checkForOemNotifications(AUTO_START_POPUP)
                                 }
                             }
                         }
