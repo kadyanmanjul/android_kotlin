@@ -109,7 +109,7 @@
             android:layout_marginStart="@dimen/_minus18sdp"
             android:layout_marginBottom="@dimen/_minus16sdp"
             app:cardCornerRadius="@dimen/_50sdp"
-            app:cardElevation="@dimen/_8sdp"
+            app:cardElevation="@dimen/_7sdp"
             app:layout_constraintBottom_toTopOf="@+id/find_groups_btn"
             app:layout_constraintStart_toEndOf="@+id/find_groups_btn">
 
@@ -173,11 +173,11 @@
             android:id="@+id/ringing_icon_2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="@{(vm.groupListCount > 3 || vm.groupListCount == 0 || vm.getOneGrpReqStatus()) ? View.INVISIBLE : View.VISIBLE, default=invisible}"
             android:layout_marginStart="@dimen/_minus18sdp"
             android:layout_marginBottom="@dimen/_minus16sdp"
+            android:visibility="@{(vm.groupListCount > 3 || vm.groupListCount == 0 || vm.getOneGrpReqStatus()) ? View.INVISIBLE : View.VISIBLE, default=invisible}"
             app:cardCornerRadius="@dimen/_50sdp"
-            app:cardElevation="@dimen/_8sdp"
+            app:cardElevation="@dimen/_7sdp"
             app:layout_constraintBottom_toTopOf="@+id/materialButton2"
             app:layout_constraintStart_toEndOf="@id/materialButton2">
 
@@ -253,7 +253,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/_28sdp"
             android:layout_marginTop="@dimen/_60sdp"
-            android:elevation="@dimen/_8sdp"
+            android:elevation="@dimen/_12sdp"
             android:gravity="center"
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
@@ -268,7 +268,7 @@
             android:alpha="1"
             android:background="@color/transparent_blue_alpha_75"
             android:clickable="true"
-            android:elevation="@dimen/_4sdp"
+            android:elevation="@dimen/_8sdp"
             android:focusable="true"
             android:visibility="gone">
 
@@ -278,7 +278,7 @@
                 android:layout_gravity="bottom|center"
                 android:layout_marginHorizontal="@dimen/_12sdp"
                 android:layout_marginVertical="@dimen/_60sdp"
-                android:elevation="@dimen/_8sdp"
+                android:elevation="@dimen/_10sdp"
                 android:shadowColor="#BD6674"
                 android:shadowDx="0"
                 android:shadowDy="0"
@@ -309,6 +309,19 @@
                 android:layout_gravity="center" />
         </FrameLayout>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        <RelativeLayout
+            android:id="@+id/overlay_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            android:background="@color/transparent_blue_alpha_75"
+            android:elevation="@dimen/_10sdp">
 
+            <ImageView
+                android:id="@+id/group_tooltip_item"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </RelativeLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

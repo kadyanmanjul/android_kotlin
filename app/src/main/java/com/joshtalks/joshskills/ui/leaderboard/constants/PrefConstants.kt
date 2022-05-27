@@ -13,3 +13,4 @@ const val HAS_SEEN_GRAMMAR_ANIMATION = "grammar_pref_has_seen_grammar_button_ani
 const val HAS_SEEN_LEADERBOARD_TOOLTIP_1_ANIMATION = "conversion_pref_has_seen_leaderboard_tooltip_1_animation"
 const val HAS_SEEN_LEADERBOARD_TOOLTIP_2_ANIMATION = "conversion_pref_has_seen_leaderboard_tooltip_2_animation"
 const val HAS_SEEN_TEXT_VIEW_CLASS_ANIMATION = "conversion_text_view_class_animation"
+const val HAS_SEEN_GROUP_LIST_CBC_TOOLTIP = "group_list_cbc_tooltip"

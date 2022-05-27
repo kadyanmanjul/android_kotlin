@@ -778,11 +778,6 @@ class ConversationActivity :
             }
         }
 
-        lifecycleScope.launch(Dispatchers.Main) {
-            if (!PrefManager.getBoolValue(ONE_GROUP_REQUEST_SENT) && conversationViewModel.getClosedGroupCount() == 0)
-                conversationBinding.ringingIcon.visibility = VISIBLE
-        }
-
         conversationBinding.imgGroupChatBtn.setOnSingleClickListener {
             hideCohortCourseTooltip()
             if (inboxEntity.isCourseBought.not() &&
@@ -831,13 +826,6 @@ class ConversationActivity :
 
         conversationBinding.imgGroupChat.visibility = GONE
 
-//        conversationBinding.imgGroupChat.setOnClickListener {
-//            utilConversationViewModel.initCometChat()
-//        }
-//        conversationBinding.imgGroupChatOverlay.setOnClickListener {
-//            conversationBinding.overlayLayout.visibility = GONE
-//            utilConversationViewModel.initCometChat()
-//        }
         conversationBinding.refreshLayout.setOnRefreshListener {
             if (internetAvailableFlag) {
                 conversationBinding.refreshLayout.isRefreshing = true
@@ -1157,6 +1145,8 @@ class ConversationActivity :
                 if (userProfileData.hasGroupAccess && PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID) {
                     conversationBinding.imgGroupChatBtn.visibility = VISIBLE
                     conversationBinding.imgFppBtn.visibility = VISIBLE
+                    if (!PrefManager.getBoolValue(ONE_GROUP_REQUEST_SENT) && conversationViewModel.getClosedGroupCount() == 0)
+                        conversationBinding.ringingIcon.visibility = VISIBLE
                     if (PrefManager.getBoolValue(SHOULD_SHOW_AUTOSTART_POPUP, defValue = true)
                         && System.currentTimeMillis()
                             .minus(PrefManager.getLongValue(LAST_TIME_AUTOSTART_SHOWN)) > 259200000L
@@ -1164,9 +1154,6 @@ class ConversationActivity :
                     ) {
                         PrefManager.put(LAST_TIME_AUTOSTART_SHOWN, System.currentTimeMillis())
                         checkForOemNotifications(AUTO_START_POPUP)
-                    }
-                    if (PrefManager.getBoolValue(HAS_SEEN_TEXT_VIEW_CLASS_ANIMATION)) {
-                        showCohortBaseCourse()
                     }
                 } else {
                     conversationBinding.imgGroupChatBtn.visibility = GONE
@@ -1533,24 +1520,19 @@ class ConversationActivity :
             RxBus2.listen(TextTooltipEvent::class.java)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    {
-                        if (it.chatModel.type == BASE_MESSAGE_TYPE.Q) {
-                            lifecycleScope.launch(Dispatchers.IO) {
-                                withContext(Dispatchers.Main) {
-//                                    if(!PrefManager.getBoolValue(HAS_SEEN_TEXT_VIEW_CLASS_ANIMATION)){
-                                    setOverlayAnimationOnText()
-//                                    }
-                                }
-                            }
+                .subscribe({
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        withContext(Dispatchers.Main) {
+                            if (inboxEntity.isCourseBought && !inboxEntity.formSubmitted)
+                                setOverlayAnimationOnText(it.chatModel)
                         }
-                    },
-                    {
-                        showToast(it.message.toString())
-                        it.printStackTrace()
                     }
-                )
+                }, {
+                    showToast(it.message.toString())
+                    it.printStackTrace()
+                })
         )
+
         compositeDisposable.add(
             RxBus2.listen(DownloadMediaEventBus::class.java)
                 .subscribeOn(Schedulers.io())
@@ -1611,8 +1593,7 @@ class ConversationActivity :
                                 }
                             )
                         }
-                        else -> {
-                        }
+                        else -> {}
                     }
                 }
         )
@@ -2491,18 +2472,18 @@ class ConversationActivity :
         }
     }
 
-    private suspend fun setOverlayAnimationOnText() {
+    private suspend fun setOverlayAnimationOnText(chatModel: ChatModel) {
         conversationBinding.overlayView.visibility = INVISIBLE
         withContext(Dispatchers.Main) {
-            val welcomeTextView =
-                conversationBinding.chatRv.getChildAt(conversationAdapter.getLastItemPosition())
+            conversationBinding.chatRv.scrollToPosition(conversationAdapter.getLastItemPosition())
+            val welcomeTextView = conversationBinding.chatRv.findViewHolderForAdapterPosition(conversationAdapter.getLastItemPosition()) ?: return@withContext
             val STATUS_BAR_HEIGHT = getStatusBarHeight()
-            conversationBinding.welcomeContainer.visibility = INVISIBLE
-            val overlayImageView =
-                conversationBinding.welcomeContainer.findViewById<ImageView>(R.id.welcome_item)
-            val overlayItem = TooltipUtils.getOverlayItemFromView(welcomeTextView)
+            conversationBinding.welcomeContainer.visibility = VISIBLE
+            val overlayImageView = conversationBinding.welcomeContainer.findViewById<ImageView>(R.id.welcome_item)
+            val overlayItem = TooltipUtils.getOverlayItemFromView(welcomeTextView.itemView)
             conversationBinding.welcomeContainer.setOnClickListener {
                 conversationBinding.welcomeContainer.visibility = INVISIBLE
+                showCohortBaseCourse()
             }
             PrefManager.put(HAS_SEEN_TEXT_VIEW_CLASS_ANIMATION, true)
             overlayItem?.let {

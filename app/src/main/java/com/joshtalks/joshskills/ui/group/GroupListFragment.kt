@@ -1,12 +1,18 @@
 package com.joshtalks.joshskills.ui.group
 
+import android.graphics.Rect
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
+import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.view.Window
+import android.widget.ImageView
 
 import androidx.appcompat.widget.PopupMenu
 import androidx.databinding.DataBindingUtil
@@ -17,6 +23,7 @@ import androidx.paging.map
 
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
+import com.joshtalks.joshskills.constants.INIT_GROUP_CBC_TOOLTIP
 import com.joshtalks.joshskills.constants.INIT_LIST_TOOLTIP
 import com.joshtalks.joshskills.constants.OPEN_POPUP_MENU
 import com.joshtalks.joshskills.core.AppObjectController
@@ -27,12 +34,12 @@ import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.databinding.FragmentGroupListBinding
 import com.joshtalks.joshskills.ui.group.model.GroupItemData
 import com.joshtalks.joshskills.ui.group.viewmodels.JoshGroupViewModel
-import kotlinx.coroutines.Dispatchers
+import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_GROUP_LIST_CBC_TOOLTIP
+import com.joshtalks.joshskills.ui.tooltip.TooltipUtils
+import kotlinx.coroutines.*
 
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 private const val TAG = "GroupListFragment"
 
@@ -87,7 +94,9 @@ class GroupListFragment : BaseFragment() {
     }
 
     private fun initTooltip() {
-        if (!PrefManager.getBoolValue(HAS_SEEN_GROUP_TOOLTIP) && !vm.isFromVoip.get()) {
+        if (!PrefManager.getBoolValue(HAS_SEEN_GROUP_TOOLTIP) && !vm.isFromVoip.get()
+            && PrefManager.getBoolValue(HAS_SEEN_GROUP_LIST_CBC_TOOLTIP)
+        ) {
             if (AppObjectController.getFirebaseRemoteConfig()
                     .getBoolean(FirebaseRemoteConfigKey.SHOW_NEW_GROUP_BTN)
             ) {
@@ -133,6 +142,7 @@ class GroupListFragment : BaseFragment() {
             when (it.what) {
                 OPEN_POPUP_MENU -> openPopupMenu()
                 INIT_LIST_TOOLTIP -> initTooltip()
+                INIT_GROUP_CBC_TOOLTIP -> setOverlayAnimationOnGroup()
             }
         }
     }
@@ -171,5 +181,37 @@ class GroupListFragment : BaseFragment() {
                 withContext(Dispatchers.Main) { vm.adapter.submitData(PagingData.from(groupList)) }
             }
         }
+    }
+
+    private fun setOverlayAnimationOnGroup() {
+        Handler(Looper.getMainLooper()).post {
+            binding.overlayLayout.visibility = INVISIBLE
+            val welcomeTextView = binding.groupRv.getChildAt(0) ?: return@post
+            val STATUS_BAR_HEIGHT = getStatusBarHeight()
+            binding.overlayContainer.visibility = VISIBLE
+            val overlayImageView =
+                binding.overlayContainer.findViewById<ImageView>(R.id.group_tooltip_item)
+            val overlayItem = TooltipUtils.getOverlayItemFromView(welcomeTextView)
+            binding.overlayContainer.setOnClickListener {
+                binding.overlayContainer.visibility = INVISIBLE
+                PrefManager.put(HAS_SEEN_GROUP_LIST_CBC_TOOLTIP, true)
+            }
+            overlayItem?.let {
+                overlayImageView.setImageBitmap(it.viewBitmap)
+                overlayImageView.x = it.x.toFloat()
+                overlayImageView.y = it.y.toFloat() - STATUS_BAR_HEIGHT
+                overlayImageView.requestLayout()
+                binding.overlayContainer.visibility = VISIBLE
+            }
+        }
+    }
+
+    fun getStatusBarHeight(): Int {
+        val rectangle = Rect()
+        requireActivity().window.decorView.getWindowVisibleDisplayFrame(rectangle)
+        val statusBarHeight = rectangle.top
+        val contentViewTop: Int = requireActivity().window.findViewById<View>(Window.ID_ANDROID_CONTENT).top
+        val titleBarHeight = contentViewTop - statusBarHeight
+        return if (titleBarHeight < 0) titleBarHeight * -1 else titleBarHeight
     }
 }

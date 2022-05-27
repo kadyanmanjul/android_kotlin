@@ -9,11 +9,14 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.text.HtmlCompat
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.eventbus.TextTooltipEvent
+import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_TEXT_VIEW_CLASS_ANIMATION
+import timber.log.Timber
 
 class TextViewHolder(view: View, userId: String) : BaseViewHolder(view, userId) {
     val rootSubView: FrameLayout = view.findViewById(R.id.root_sub_view)
@@ -29,8 +32,9 @@ class TextViewHolder(view: View, userId: String) : BaseViewHolder(view, userId) 
         titleView.text = EMPTY
         titleView.visibility = GONE
 
+        Timber.tag("SukeshTest").e("${message.text} : Check 0")
+
         if (message.text.isNullOrEmpty()) {
-//            RxBus2.publish(TextTooltipEvent(message))
             message.question?.run {
                 this.qText?.let {
                     messageBody.text =
@@ -44,10 +48,10 @@ class TextViewHolder(view: View, userId: String) : BaseViewHolder(view, userId) 
                 }
             }
         } else {
-            if (message.text.isNullOrEmpty().not()) {
-                messageBody.text =
-                    HtmlCompat.fromHtml(message.text!!, HtmlCompat.FROM_HTML_MODE_LEGACY)
-                messageBody.visibility = VISIBLE
+            messageBody.text = HtmlCompat.fromHtml(message.text!!, HtmlCompat.FROM_HTML_MODE_LEGACY)
+            messageBody.visibility = VISIBLE
+            if(!PrefManager.getBoolValue(HAS_SEEN_TEXT_VIEW_CLASS_ANIMATION)) {
+                RxBus2.publish(TextTooltipEvent(message))
             }
         }
 

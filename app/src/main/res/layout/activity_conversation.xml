@@ -21,24 +21,21 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:elevation="10dp"
-        android:visibility="visible"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:visibility="visible">
 
-        <RelativeLayout android:id="@+id/welcome_container"
-            xmlns:android="http://schemas.android.com/apk/res/android"
+        <RelativeLayout
+            android:id="@+id/welcome_container"
             android:layout_width="match_parent"
-            android:background="@color/transparent_blue_alpha_75"
             android:layout_height="match_parent"
-            android:visibility="gone"
+            android:background="@color/transparent_blue_alpha_75"
             android:elevation="@dimen/_10sdp"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            xmlns:tools="http://schemas.android.com/tools">
+            android:visibility="gone">
 
             <ImageView
                 android:id="@+id/welcome_item"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                />
+                android:layout_height="wrap_content" />
         </RelativeLayout>
 
         <include
@@ -335,7 +332,7 @@
             android:layout_marginTop="@dimen/_10sdp"
             android:visibility="gone"
             app:cardCornerRadius="@dimen/_50sdp"
-            app:cardElevation="@dimen/_10sdp">
+            app:cardElevation="@dimen/_9sdp">
 
             <com.airbnb.lottie.LottieAnimationView
                 android:layout_width="@dimen/_20sdp"
@@ -381,8 +378,9 @@
             android:text="@string/zero"
             android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
             android:textColor="@color/white"
-            android:visibility="visible"
-            tools:text="39" />
+            android:visibility="gone"
+            tools:text="39"
+            tools:visibility="visible" />
 
         <FrameLayout
             android:layout_width="match_parent"

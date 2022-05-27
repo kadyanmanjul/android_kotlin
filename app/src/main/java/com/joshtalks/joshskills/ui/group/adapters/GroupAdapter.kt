@@ -1,5 +1,8 @@
 package com.joshtalks.joshskills.ui.group.adapters
 
+import android.os.Handler
+import android.os.Looper
+import android.os.Message
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,9 +11,14 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.base.EventLiveData
+import com.joshtalks.joshskills.constants.INIT_GROUP_CBC_TOOLTIP
+import com.joshtalks.joshskills.constants.REMOVE_GROUP_AND_CLOSE
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.databinding.GroupItemBinding
 import com.joshtalks.joshskills.ui.group.model.GroupItemData
+import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_GROUP_LIST_CBC_TOOLTIP
 
 class GroupAdapter(diffCallback: DiffUtil.ItemCallback<GroupItemData>,var search:String = EMPTY) : PagingDataAdapter<GroupItemData, GroupAdapter.GroupViewHolder>(
     diffCallback
@@ -22,6 +30,14 @@ class GroupAdapter(diffCallback: DiffUtil.ItemCallback<GroupItemData>,var search
            item.itemData = data
             item.groupItemContainer.setOnClickListener {
                 itemClick?.invoke(data)
+            }
+
+            if (!PrefManager.getBoolValue(HAS_SEEN_GROUP_LIST_CBC_TOOLTIP)) {
+                Handler(Looper.getMainLooper()).post {
+                    val messageObj = Message()
+                    messageObj.what = INIT_GROUP_CBC_TOOLTIP
+                    EventLiveData.value = messageObj
+                }
             }
 
             if (search == "search") {
