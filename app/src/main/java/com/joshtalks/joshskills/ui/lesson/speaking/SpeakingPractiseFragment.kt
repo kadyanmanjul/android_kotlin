@@ -6,7 +6,6 @@ import android.content.Intent
 import android.graphics.Paint
 import android.graphics.drawable.ClipDrawable
 import android.graphics.drawable.GradientDrawable
-import android.graphics.drawable.LayerDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -24,10 +23,15 @@ import androidx.lifecycle.lifecycleScope
 import com.afollestad.materialdialogs.MaterialDialog
 import com.airbnb.lottie.LottieCompositionFactory
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.CoreJoshFragment
-import com.joshtalks.joshskills.base.constants.*
+import com.joshtalks.joshskills.base.constants.FROM_ACTIVITY
+import com.joshtalks.joshskills.base.constants.INTENT_DATA_COURSE_ID
+import com.joshtalks.joshskills.base.constants.INTENT_DATA_TOPIC_ID
+import com.joshtalks.joshskills.base.constants.STARTING_POINT
 import com.joshtalks.joshskills.core.*
-import com.joshtalks.joshskills.core.abTest.*
+import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
+import com.joshtalks.joshskills.core.abTest.CampaignKeys
+import com.joshtalks.joshskills.core.abTest.GoalKeys
+import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.analytics.ParamKeys
@@ -64,8 +68,10 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.karumi.dexter.listener.single.PermissionListener
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.*
 
 const val NOT_ATTEMPTED = "NA"
@@ -116,8 +122,9 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
     }
 
     fun onReceiveABTestData(abTestCampaignData: ABTestCampaignData?) {
-        abTestCampaignData?.let { map->
-            isIntroVideoEnabled = (map.variantKey == VariantKeys.SIV_ENABLED.name )&& map.variableMap?.isEnabled == true
+        abTestCampaignData?.let { map ->
+            isIntroVideoEnabled =
+                (map.variantKey == VariantKeys.SIV_ENABLED.name) && map.variableMap?.isEnabled == true
         }
         initDemoViews(lessonNo)
 
@@ -225,7 +232,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                 .addParam(ParamKeys.LESSON_NUMBER, lessonNo)
                 .addParam(ParamKeys.VIA, "speaking screen")
                 .push()
-            if(PrefManager.getIntValue(IS_VOIP_NEW_ARCH_ENABLED, defValue = 1) == 1) {
+            if (PrefManager.getIntValue(IS_VOIP_NEW_ARCH_ENABLED, defValue = 1) == 1) {
                 val state = getVoipState()
                 Log.d(TAG, " Start Call Button - Voip State $state")
                 if (state == State.IDLE && WebRtcService.isCallOnGoing.value == false) {
@@ -240,7 +247,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                     }
                 } else
                     showToast("Wait for last call to get disconnected")
-            }else{
+            } else {
                 viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
                 if (getVoipState() == State.IDLE && WebRtcService.isCallOnGoing.value == false)
                     startPractise()
@@ -267,7 +274,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         }
 
         viewModel.speakingSpotlightClickLiveData.observe(viewLifecycleOwner) {
-            if(PrefManager.getIntValue(IS_VOIP_NEW_ARCH_ENABLED, defValue = 1) == 1) {
+            if (PrefManager.getIntValue(IS_VOIP_NEW_ARCH_ENABLED, defValue = 1) == 1) {
                 val state = getVoipState()
                 Log.d(TAG, " Start Call Button - Voip State $state")
                 if (state == State.IDLE && WebRtcService.isCallOnGoing.value == false) {
@@ -282,7 +289,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                     }
                 } else
                     showToast("Wait for last call to get disconnected")
-            }else{
+            } else {
                 viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
                 if (getVoipState() == State.IDLE && WebRtcService.isCallOnGoing.value == false)
                     startPractise()
@@ -315,169 +322,171 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                     showToast(AppObjectController.joshApplication.getString(R.string.generic_message_for_error))
                 } else {
                     try {
-                        if(response.alreadyTalked < twoMinutes){
+                        if (response.alreadyTalked < twoMinutes) {
                             beforeTwoMinTalked = 0
                             afterTwoMinTalked = 0
-                        }else if(response.alreadyTalked >= twoMinutes){
+                        } else if (response.alreadyTalked >= twoMinutes) {
                             beforeTwoMinTalked = afterTwoMinTalked
                             afterTwoMinTalked = 1
                         }
 
-                    if (beforeTwoMinTalked == 0 && afterTwoMinTalked == 1 && topicId != null && topicId == LESSON_ONE_TOPIC_ID && PrefManager.getBoolValue(
-                            IS_FREE_TRIAL_CAMPAIGN_ACTIVE
-                        )
-                    ) {
-                        viewModel.postGoal(
-                            GoalKeys.EFT_GT_2MIN.name,
-                            CampaignKeys.EXTEND_FREE_TRIAL.name
-                        )
-                        PrefManager.put(IS_FREE_TRIAL_CAMPAIGN_ACTIVE, false)
-                    }
+                        if (beforeTwoMinTalked == 0 && afterTwoMinTalked == 1 && topicId != null && topicId == LESSON_ONE_TOPIC_ID && PrefManager.getBoolValue(
+                                IS_FREE_TRIAL_CAMPAIGN_ACTIVE
+                            )
+                        ) {
+                            viewModel.postGoal(
+                                GoalKeys.EFT_GT_2MIN.name,
+                                CampaignKeys.EXTEND_FREE_TRIAL.name
+                            )
+                            PrefManager.put(IS_FREE_TRIAL_CAMPAIGN_ACTIVE, false)
+                        }
 
-                    binding.tvTodayTopic.text = response.topicName
+                        binding.tvTodayTopic.text = response.topicName
 
-                    if (!isTwentyMinFtuCallActive || response.callDurationStatus == UPGRADED_USER) {
-                        PrefManager.put(
-                            REMOVE_TOOLTIP_FOR_TWENTY_MIN_CALL, true
-                        )
-                        binding.tvPractiseTime.text =
-                            response.alreadyTalked.toString().plus(" / ")
-                                .plus(response.duration.toString())
-                                .plus("\n Minutes")
-                        binding.progressBar.progress = response.alreadyTalked.toFloat()
-                        binding.progressBar.progressMax = response.duration.toFloat()
+                        if (!isTwentyMinFtuCallActive || response.callDurationStatus == UPGRADED_USER) {
+                            PrefManager.put(
+                                REMOVE_TOOLTIP_FOR_TWENTY_MIN_CALL, true
+                            )
+                            binding.tvPractiseTime.text =
+                                response.alreadyTalked.toString().plus(" / ")
+                                    .plus(response.duration.toString())
+                                    .plus("\n Minutes")
+                            binding.progressBar.progress = response.alreadyTalked.toFloat()
+                            binding.progressBar.progressMax = response.duration.toFloat()
 
-                        binding.textView.text = if (response.duration >= 10) {
-                            getString(R.string.pp_messages, response.duration.toString())
+                            binding.textView.text = if (response.duration >= 10) {
+                                getString(R.string.pp_messages, response.duration.toString())
+                            } else {
+                                getString(R.string.pp_message, response.duration.toString())
+                            }
                         } else {
-                            getString(R.string.pp_message, response.duration.toString())
-                        }
-                    } else {
-                        if (binding.txtHowToSpeak.visibility == VISIBLE) {
+                            if (binding.txtHowToSpeak.visibility == VISIBLE) {
+                                val layoutParams: ConstraintLayout.LayoutParams =
+                                    binding.txtHowToSpeak.layoutParams as ConstraintLayout.LayoutParams
+                                layoutParams.topToBottom = binding.ftuTwentyMinStatus.id
+                            }
+
                             val layoutParams: ConstraintLayout.LayoutParams =
-                                binding.txtHowToSpeak.layoutParams as ConstraintLayout.LayoutParams
-                            layoutParams.topToBottom = binding.ftuTwentyMinStatus.id
-                        }
-
-                        val layoutParams: ConstraintLayout.LayoutParams =
-                            binding.infoContainer.layoutParams as ConstraintLayout.LayoutParams
-                        if (binding.txtHowToSpeak.visibility == VISIBLE) layoutParams.topToBottom =
-                            binding.txtHowToSpeak.id
-                        else {
-                            layoutParams.topToBottom = binding.ftuTwentyMinStatus.id
-                        }
-
-                        binding.ftuTwentyMinStatus.visibility = VISIBLE
-                        binding.twentyMinFtuText.visibility = VISIBLE
-                        binding.textView.visibility = GONE
-                        binding.tvPractiseTime.visibility = View.INVISIBLE
-                        binding.imageView.visibility = GONE
-                        binding.infoContainer.backgroundTintList = null
-                        postSpeakingScreenSeenGoal()
-                        when (response.callDurationStatus) {
-                            NOT_ATTEMPTED -> {
-                                binding.ftuTwentyMinStatus.pauseAnimation()
-                                binding.twentyMinFtuText.text =
-                                    getString(R.string.twenty_min_call_target)
-                                showTwentyMinAnimation("lottie/not_attempted.json")
-                                binding.ftuTwentyMinStatus.setMinAndMaxProgress(0.0f, 0.7f)
+                                binding.infoContainer.layoutParams as ConstraintLayout.LayoutParams
+                            if (binding.txtHowToSpeak.visibility == VISIBLE) layoutParams.topToBottom =
+                                binding.txtHowToSpeak.id
+                            else {
+                                layoutParams.topToBottom = binding.ftuTwentyMinStatus.id
                             }
-                            COMPLETED -> {
-                                binding.ftuTwentyMinStatus.pauseAnimation()
-                                binding.twentyMinFtuText.text =
-                                    getString(R.string.twenty_min_call_completed)
-                                showTwentyMinAnimation("lottie/twenty_min_call_completed.json")
-                                if (PrefManager.getBoolValue(TWENTY_MIN_CALL_GOAL_POSTED)
-                                        .not() && PrefManager.getBoolValue(CALL_BTN_CLICKED)
-                                ) {
-                                    viewModel.postGoal(
-                                        GoalKeys.TWENTY_MIN_CALL.NAME,
-                                        CampaignKeys.TWENTY_MIN_TARGET.NAME
-                                    )
-                                    PrefManager.put(TWENTY_MIN_CALL_GOAL_POSTED, true)
+
+                            binding.ftuTwentyMinStatus.visibility = VISIBLE
+                            binding.twentyMinFtuText.visibility = VISIBLE
+                            binding.textView.visibility = GONE
+                            binding.tvPractiseTime.visibility = View.INVISIBLE
+                            binding.imageView.visibility = GONE
+                            binding.infoContainer.backgroundTintList = null
+                            postSpeakingScreenSeenGoal()
+                            when (response.callDurationStatus) {
+                                NOT_ATTEMPTED -> {
+                                    binding.ftuTwentyMinStatus.pauseAnimation()
+                                    binding.twentyMinFtuText.text =
+                                        getString(R.string.twenty_min_call_target)
+                                    showTwentyMinAnimation("lottie/not_attempted.json")
+                                    binding.ftuTwentyMinStatus.setMinAndMaxProgress(0.0f, 0.7f)
+                                }
+                                COMPLETED -> {
+                                    binding.ftuTwentyMinStatus.pauseAnimation()
+                                    binding.twentyMinFtuText.text =
+                                        getString(R.string.twenty_min_call_completed)
+                                    showTwentyMinAnimation("lottie/twenty_min_call_completed.json")
+                                    if (PrefManager.getBoolValue(TWENTY_MIN_CALL_GOAL_POSTED)
+                                            .not() && PrefManager.getBoolValue(CALL_BTN_CLICKED)
+                                    ) {
+                                        viewModel.postGoal(
+                                            GoalKeys.TWENTY_MIN_CALL.NAME,
+                                            CampaignKeys.TWENTY_MIN_TARGET.NAME
+                                        )
+                                        PrefManager.put(TWENTY_MIN_CALL_GOAL_POSTED, true)
+                                    }
+                                }
+                                ATTEMPTED -> {
+                                    binding.ftuTwentyMinStatus.pauseAnimation()
+                                    binding.twentyMinFtuText.text =
+                                        getString(R.string.twenty_min_call_incomplete)
+                                    showTwentyMinAnimation("lottie/twenty_call_min_missed.json")
+                                    if (PrefManager.getBoolValue(
+                                            TWENTY_MIN_CALL_ATTEMPTED_GOAL_POSTED
+                                        )
+                                            .not() && PrefManager.getBoolValue(CALL_BTN_CLICKED)
+                                    ) {
+                                        viewModel.postGoal(
+                                            GoalKeys.CALL_ATTEMPTED.name,
+                                            CampaignKeys.TWENTY_MIN_TARGET.NAME
+                                        )
+                                        PrefManager.put(TWENTY_MIN_CALL_ATTEMPTED_GOAL_POSTED, true)
+                                    }
                                 }
                             }
-                            ATTEMPTED -> {
-                                binding.ftuTwentyMinStatus.pauseAnimation()
-                                binding.twentyMinFtuText.text =
-                                    getString(R.string.twenty_min_call_incomplete)
-                                showTwentyMinAnimation("lottie/twenty_call_min_missed.json")
-                                if (PrefManager.getBoolValue(TWENTY_MIN_CALL_ATTEMPTED_GOAL_POSTED)
-                                        .not() && PrefManager.getBoolValue(CALL_BTN_CLICKED)
-                                ) {
-                                    viewModel.postGoal(
-                                        GoalKeys.CALL_ATTEMPTED.name,
-                                        CampaignKeys.TWENTY_MIN_TARGET.NAME
-                                    )
-                                    PrefManager.put(TWENTY_MIN_CALL_ATTEMPTED_GOAL_POSTED, true)
-                                }
+                        }
+                    } catch (ex: Exception) {
+                        ex.printStackTrace()
+                    }
+                    binding.groupTwo.visibility = VISIBLE
+                    if ((!isTwentyMinFtuCallActive || response.callDurationStatus == UPGRADED_USER) && response.alreadyTalked.toFloat() >= response.duration.toFloat()) {
+                        binding.progressBar.visibility = View.INVISIBLE
+                        binding.tvPractiseTime.visibility = GONE
+                        binding.progressBarAnim.visibility = VISIBLE
+                        if (!isAnimationShown) {
+                            binding.progressBarAnim.playAnimation()
+                            isAnimationShown = true
+                        }
+                    }
+
+                    if (isTwentyMinFtuCallActive && response.callDurationStatus != UPGRADED_USER) binding.progressBar.visibility =
+                        View.INVISIBLE
+
+                    val points = PrefManager.getStringValue(SPEAKING_POINTS, defaultValue = EMPTY)
+                    if (points.isNotEmpty()) {
+                        // showSnackBar(root_view, Snackbar.LENGTH_LONG, points)
+                        PrefManager.put(SPEAKING_POINTS, EMPTY)
+                    }
+
+                    if (isTwentyMinFtuCallActive && response.callDurationStatus == COMPLETED) {
+                        speakingSectionComplete()
+                    } else if ((!isTwentyMinFtuCallActive || response.callDurationStatus == UPGRADED_USER) && response.alreadyTalked >= response.duration && response.isFromDb.not()) {
+                        speakingSectionComplete()
+                    } else {
+                        binding.btnStart.playAnimation()
+                    }
+
+                    if (response.isNewStudentCallsActivated) {
+                        binding.txtLabelNewStudentCalls.visibility = VISIBLE
+                        binding.progressNewStudentCalls.visibility = VISIBLE
+                        binding.progressNewStudentCalls.progress = response.totalNewStudentCalls
+                        binding.progressNewStudentCalls.max = response.requiredNewStudentCalls
+                        binding.txtProgressCount.visibility = VISIBLE
+                        binding.txtProgressCount.text =
+                            "${response.totalNewStudentCalls}/${response.requiredNewStudentCalls}"
+                        binding.txtCallsLeft.visibility = VISIBLE
+                        binding.txtCallsLeft.text = when (val dayOfWeek =
+                            Calendar.getInstance().get(Calendar.DAY_OF_WEEK)) {
+                            Calendar.SUNDAY ->
+                                "1 day left"
+                            else -> {
+                                "${7 - (dayOfWeek - 1)} days left"
                             }
                         }
+                        binding.txtLabelBecomeSeniorStudent.paintFlags =
+                            binding.txtLabelBecomeSeniorStudent.paintFlags or Paint.UNDERLINE_TEXT_FLAG
+                        binding.txtLabelBecomeSeniorStudent.visibility = VISIBLE
+                        binding.btnNewStudent.visibility = VISIBLE
+                        binding.infoContainer.visibility = GONE
+                    } else {
+                        binding.txtLabelNewStudentCalls.visibility = GONE
+                        binding.progressNewStudentCalls.visibility = GONE
+                        binding.txtProgressCount.visibility = GONE
+                        binding.txtCallsLeft.visibility = GONE
+                        binding.txtLabelBecomeSeniorStudent.visibility = GONE
+                        binding.btnNewStudent.visibility = GONE
+                        binding.infoContainer.visibility = VISIBLE
                     }
-                } catch (ex: Exception) {
-                    ex.printStackTrace()
                 }
-                binding.groupTwo.visibility = VISIBLE
-                if ((!isTwentyMinFtuCallActive || response.callDurationStatus == UPGRADED_USER) && response.alreadyTalked.toFloat() >= response.duration.toFloat()) {
-                    binding.progressBar.visibility = View.INVISIBLE
-                    binding.tvPractiseTime.visibility = GONE
-                    binding.progressBarAnim.visibility = VISIBLE
-                    if (!isAnimationShown) {
-                        binding.progressBarAnim.playAnimation()
-                        isAnimationShown = true
-                    }
-                }
-
-                if (isTwentyMinFtuCallActive && response.callDurationStatus != UPGRADED_USER) binding.progressBar.visibility =
-                    View.INVISIBLE
-
-                val points = PrefManager.getStringValue(SPEAKING_POINTS, defaultValue = EMPTY)
-                if (points.isNotEmpty()) {
-                    // showSnackBar(root_view, Snackbar.LENGTH_LONG, points)
-                    PrefManager.put(SPEAKING_POINTS, EMPTY)
-                }
-
-                if (isTwentyMinFtuCallActive && response.callDurationStatus == COMPLETED) {
-                    speakingSectionComplete()
-                } else if ((!isTwentyMinFtuCallActive || response.callDurationStatus == UPGRADED_USER) && response.alreadyTalked >= response.duration && response.isFromDb.not()) {
-                    speakingSectionComplete()
-                } else {
-                    binding.btnStart.playAnimation()
-                }
-
-                if (response.isNewStudentCallsActivated) {
-                    binding.txtLabelNewStudentCalls.visibility = VISIBLE
-                    binding.progressNewStudentCalls.visibility = VISIBLE
-                    binding.progressNewStudentCalls.progress = response.totalNewStudentCalls
-                    binding.progressNewStudentCalls.max = response.requiredNewStudentCalls
-                    binding.txtProgressCount.visibility = VISIBLE
-                    binding.txtProgressCount.text =
-                        "${response.totalNewStudentCalls}/${response.requiredNewStudentCalls}"
-                    binding.txtCallsLeft.visibility = VISIBLE
-                    binding.txtCallsLeft.text = when (val dayOfWeek =
-                        Calendar.getInstance().get(Calendar.DAY_OF_WEEK)) {
-                        Calendar.SUNDAY ->
-                            "1 day left"
-                        else -> {
-                            "${7 - (dayOfWeek - 1)} days left"
-                        }
-                    }
-                    binding.txtLabelBecomeSeniorStudent.paintFlags =
-                        binding.txtLabelBecomeSeniorStudent.paintFlags or Paint.UNDERLINE_TEXT_FLAG
-                    binding.txtLabelBecomeSeniorStudent.visibility = VISIBLE
-                    binding.btnNewStudent.visibility = VISIBLE
-                    binding.infoContainer.visibility = GONE
-                } else {
-                    binding.txtLabelNewStudentCalls.visibility = GONE
-                    binding.progressNewStudentCalls.visibility = GONE
-                    binding.txtProgressCount.visibility = GONE
-                    binding.txtCallsLeft.visibility = GONE
-                    binding.txtLabelBecomeSeniorStudent.visibility = GONE
-                    binding.btnNewStudent.visibility = GONE
-                    binding.infoContainer.visibility = VISIBLE
-                }
-            }
-        })
+            })
         binding.btnFavorite.setOnClickListener {
             FavoriteListActivity.openFavoriteCallerActivity(
                 requireActivity(),
@@ -593,7 +602,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             }
 
             try {
-                viewModel.callBtnHideShowLiveData.observe(viewLifecycleOwner, {
+                viewModel.callBtnHideShowLiveData.observe(viewLifecycleOwner) {
                     try {
                         if (it == 1) {
                             requireActivity().runOnUiThread {
@@ -607,13 +616,19 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                                 binding.btnCallDemo.visibility = View.GONE
                             }
                         }
-                    }catch (ex:Exception){}
-                })
-            }catch (ex:Exception){}
+                    } catch (ex: Exception) {
+                    }
+                }
+            } catch (ex: Exception) {
+            }
         } else {
             binding.btnCallDemo.visibility = View.GONE
         }
-        if((PrefManager.getStringValue(CURRENT_COURSE_ID) != DEFAULT_COURSE_ID))binding.btnGroupCall.visibility=GONE else binding.btnGroupCall.visibility=VISIBLE
+        binding.btnGroupCall.isVisible =
+            PrefManager.getBoolValue(IS_FREE_TRIAL) && PrefManager.getStringValue(CURRENT_COURSE_ID) != DEFAULT_COURSE_ID
+
+        binding.btnFavorite.isVisible =
+            PrefManager.getBoolValue(IS_FREE_TRIAL) && PrefManager.getStringValue(CURRENT_COURSE_ID) != DEFAULT_COURSE_ID
     }
 
     private fun speakingSectionComplete() {
@@ -664,13 +679,17 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         PrefManager.put(HAS_SEEN_SPEAKING_TOOLTIP, true)
     }
 
-    private fun startPractise(favoriteUserCall: Boolean = false, isNewUserCall: Boolean = false,isNewArch:Boolean = false) {
+    private fun startPractise(
+        favoriteUserCall: Boolean = false,
+        isNewUserCall: Boolean = false,
+        isNewArch: Boolean = false
+    ) {
         PrefManager.put(CALL_BTN_CLICKED, true)
         if (PermissionUtils.isCallingPermissionEnabled(requireContext())) {
             if (isNewArch) {
                 startPracticeCall()
                 return
-            }else{
+            } else {
                 startPractiseSearchScreen(
                     favoriteUserCall = favoriteUserCall,
                     isNewUserCall = isNewUserCall
@@ -692,10 +711,10 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                             return
                         }
                         if (flag) {
-                            if (isNewArch){
+                            if (isNewArch) {
                                 startPracticeCall()
                                 return
-                            }else{
+                            } else {
                                 startPractiseSearchScreen(
                                     favoriteUserCall = favoriteUserCall,
                                     isNewUserCall = isNewUserCall
@@ -746,6 +765,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         mCurrentLevel = 0
         mAnimator?.start()
     }
+
     fun fillButton() {
         mCurrentLevel = MAX_LEVEL
         mAnimator?.start()

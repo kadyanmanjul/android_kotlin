@@ -64,8 +64,6 @@ fun Context.updateLastCallDetails(
         put(CHANNEL_NAME, channelName)
         put(TOPIC_NAME, topicName)
         put(CURRENT_USER_AGORA_ID, localUserAgoraId)
-//        put(FPP_SHOW_FLAG, PrefManager.getFppFlag())
-
     }
     val data = contentResolver.insert(
         Uri.parse(CONTENT_URI + CALL_DISCONNECTED_URI),
