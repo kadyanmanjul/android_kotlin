@@ -13,6 +13,13 @@ import android.view.animation.AnimationUtils
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import androidx.lifecycle.ViewModelProvider
+import com.bumptech.glide.Glide
+import com.bumptech.glide.integration.webp.decoder.WebpDrawable
+import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
+import com.bumptech.glide.load.DecodeFormat
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.resource.bitmap.CircleCrop
+import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
@@ -20,6 +27,7 @@ import com.joshtalks.joshskills.databinding.CallRatingDialogBinding
 import com.joshtalks.joshskills.quizgame.util.MyBounceInterpolator
 import com.joshtalks.joshskills.ui.call.data.local.VoipPref
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.feedback.FeedbackDialogFragment
+import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -197,5 +205,21 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
                 true
             }
         }
+    }
+
+    private fun CircleImageView.setImage(url: String) {
+        val requestOptions = RequestOptions().placeholder(R.drawable.ic_call_placeholder)
+            .error(R.drawable.ic_call_placeholder)
+            .format(DecodeFormat.PREFER_RGB_565)
+            .disallowHardwareConfig().dontAnimate().encodeQuality(75)
+        Glide.with(this)
+            .load(url)
+            .optionalTransform(
+                WebpDrawable::class.java,
+                WebpDrawableTransformation(CircleCrop())
+            )
+            .apply(requestOptions)
+            .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+            .into(this)
     }
 }
