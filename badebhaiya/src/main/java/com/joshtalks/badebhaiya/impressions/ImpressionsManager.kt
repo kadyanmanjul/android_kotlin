@@ -3,8 +3,8 @@ package com.joshtalks.badebhaiya.impressions
 import javax.inject.Inject
 
 /**
-    This class is responsible to send events.
-*/
+This class is responsible to send events.
+ */
 
 data class Impression(
     val event: String,
@@ -15,7 +15,7 @@ class ImpressionsManager @Inject constructor(
 
 ) {
 
-    fun sendEvent(impressionData: Impression){
+    fun sendEvent(impressionData: Impression) {
 
 
     }
@@ -23,14 +23,15 @@ class ImpressionsManager @Inject constructor(
     fun sendDeepWelcomeEvent(){
         sendEvent(
             Impression(
-            Event.WELCOME,
-            mapOf(
-                "deeplink" to true
+                Event.WELCOME,
+                mapOf(
+                    "deeplink" to true
+                )
             )
-        ))
+        )
     }
 
-    fun sendWelcomeEvent(){
+    fun sendWelcomeEvent() {
         sendEvent(
             Impression(
                 Event.WELCOME,

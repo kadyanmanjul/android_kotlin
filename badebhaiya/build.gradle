@@ -8,7 +8,7 @@ apply plugin: 'dagger.hilt.android.plugin'
 
 def majorVersion = 1
 def minorVersion = 0
-def patchVersion = 2
+def patchVersion = 3
 
 android {
     compileSdk 32
@@ -97,6 +97,7 @@ android {
             buildConfigField "boolean", "PLAY_STORE_DISABLED", "false"
             manifestPlaceholders = [enableCrashReporting: "true"]
             buildConfigField "String", "BASE_URL", "\"http://bbapp-stg.joshtalks.org\""
+            buildConfigField "String", "USER_EXPERIOR_API_KEY","\"e032f073-ccbc-442a-8089-cadae2e39e97\""
             applicationVariants.all { variant ->
                 variant.outputs.all {
                     outputFileName = "josh-bade-bhaiya-dev${majorVersion}.${minorVersion}.${patchVersion}.apk"
@@ -107,6 +108,8 @@ android {
             buildConfigField "boolean", "PLAY_STORE_DISABLED", "false"
             manifestPlaceholders = [enableCrashReporting: "true"]
             buildConfigField "String", "BASE_URL", "\"http://bbapp-prod.joshtalks.org\""
+            buildConfigField "String", "USER_EXPERIOR_API_KEY", "\"a3f29b8c-66a3-45f8-b1bf-0b2b774146e0\""
+
             applicationVariants.all { variant ->
                 variant.outputs.all {
                     outputFileName = "josh-bade-bhaiya-release${majorVersion}.${minorVersion}.${patchVersion}.apk"
