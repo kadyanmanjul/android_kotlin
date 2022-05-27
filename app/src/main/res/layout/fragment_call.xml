@@ -152,7 +152,7 @@
             android:id="@+id/c_image"
             setProfileImage="@{vm.uiState.startTime &lt;= 0 ? null : vm.uiState.profileImage}"
             android:layout_width="100dp"
-            android:layout_height="110dp"
+            android:layout_height="100dp"
             android:layout_marginTop="@dimen/_20sdp"
             android:background="@drawable/circle"
             android:backgroundTint="@color/colorPrimaryDark"
