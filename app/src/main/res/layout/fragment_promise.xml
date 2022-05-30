@@ -106,29 +106,30 @@
                     android:id="@+id/input_one"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                     android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:layout_marginLeft="@dimen/_16sdp"
+                    android:layout_marginRight="@dimen/_16sdp"
+                    android:padding="0dp"
+                    android:drawableEnd="@drawable/ic_baseline_keyboard_arrow_down_24"
                     app:endIconDrawable="@drawable/ic_baseline_keyboard_arrow_down_24"
                     app:endIconMode="dropdown_menu"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/_16sdp"
-                    android:layout_marginTop="@dimen/_5sdp"
-                    android:drawableEnd="@drawable/ic_baseline_keyboard_arrow_down_24"
-                    android:layout_marginRight="@dimen/_16sdp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/text_grey">
 
                     <AutoCompleteTextView
                         android:id="@+id/autoCompleteTextView_first"
+                        setSelectedText="@{vm.setShapath}"
+                        setTextAdapter='@{" "}'
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="@drawable/dropdown_cbc_form"
                         android:layout_weight="1"
-                        setTextAdapter='@{" "}'
+                        android:background="@drawable/round_rect_with_blueish_border"
                         android:drawableEnd="@drawable/ic_baseline_keyboard_arrow_down_24"
                         android:inputType="none"
-                        setSelectedText = "@{vm.setShapath}"
-                        tools:layout_editor_absoluteX="5dp"
-                        tools:layout_editor_absoluteY="156dp"
-                        android:textEditSuggestionItemLayout="@layout/dropdown_item"
-                        android:text="Yes" />
+                        android:text="Yes"
+                        android:textEditSuggestionItemLayout="@layout/dropdown_item" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -166,11 +167,14 @@
                 <com.google.android.material.textfield.TextInputLayout
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                     android:layout_width="match_parent"
-                    app:endIconDrawable="@drawable/dropdown_cbc_form"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/_16sdp"
                     android:layout_marginTop="@dimen/_5sdp"
+                    android:padding="0dp"
+                    android:layout_marginLeft="@dimen/_16sdp"
                     android:layout_marginRight="@dimen/_16sdp"
+                    app:endIconDrawable="@drawable/dropdown_cbc_form"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/text_grey1">
 
                     <AutoCompleteTextView
@@ -181,9 +185,7 @@
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:inputType="none"
-                        android:text="Yes"
-                        tools:layout_editor_absoluteX="5dp"
-                        tools:layout_editor_absoluteY="156dp" />
+                        android:text="Yes" />
 
                 </com.google.android.material.textfield.TextInputLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
