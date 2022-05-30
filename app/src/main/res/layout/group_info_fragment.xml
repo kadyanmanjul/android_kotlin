@@ -133,7 +133,7 @@
                     android:gravity="center_vertical"
                     android:onClick="@{vm::showExitDialog}"
                     android:orientation="horizontal"
-                    android:visibility="@{vm.adminId.equals(Mentor.getInstance().getId()) ? View.GONE : View.VISIBLE, default=gone}"
+                    android:visibility="@{vm.adminId.equals(Mentor.getInstance().getId()) || vm.groupType.equals(`cohort`) || vm.groupType.equals(`project`) ? View.GONE : View.VISIBLE, default=gone}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/expand_members_list"

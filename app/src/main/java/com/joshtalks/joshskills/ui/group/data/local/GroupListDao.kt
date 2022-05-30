@@ -10,8 +10,8 @@ interface GroupListDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertGroupItem(items: GroupsItem)
 
-    @Query("SELECT * FROM group_list_table ORDER BY CASE WHEN groupType = 'cohort' THEN 1 ELSE 2 END, lastMsgTime DESC")
-    fun getPagedGroupList(): PagingSource<Int, GroupsItem>
+    @Query("SELECT * FROM group_list_table ORDER BY CASE WHEN (groupType = 'cohort' AND createdAt - :time > 1209600) THEN 1 ELSE 2 END, lastMsgTime DESC")
+    fun getPagedGroupList(time: Long = System.currentTimeMillis().div(1000)): PagingSource<Int, GroupsItem>
 
     @Query("SELECT * FROM group_list_table ORDER BY lastMsgTime DESC")
     fun getGroupListLocal(): List<GroupsItem>
