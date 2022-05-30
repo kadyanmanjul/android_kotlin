@@ -11,8 +11,8 @@ class RecentCallsRepository {
     suspend fun fetchRecentCallsFromApi(): Response<RecentCallResponse> =
         p2pNetworkService.getRecentCallsList(Mentor.getInstance().getId())
 
-    suspend fun sendFppRequest(receiverMentorId: String) =
-        p2pNetworkService.sendFppRequest(receiverMentorId)
+    suspend fun sendFppRequest(receiverMentorId: String,map: HashMap<String, String>) =
+        p2pNetworkService.sendFppRequest(receiverMentorId,map)
 
     suspend fun deleteFppRequest(receiverMentorId: String) =
         p2pNetworkService.deleteFppRequest(receiverMentorId)

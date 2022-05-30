@@ -13,6 +13,6 @@ class CallRatingsRepository {
        p2pNetworkService.submitCallRatings(map)
     }
 
-    suspend fun sendFppRequest(receiverMentorId: String) =
-        p2pNetworkService.sendFppRequest(receiverMentorId)
+    suspend fun sendFppRequest(receiverMentorId: String,map: HashMap<String, String>) =
+        p2pNetworkService.sendFppRequest(receiverMentorId,map)
 }

@@ -70,7 +70,9 @@ class RecentCallViewModel : BaseViewModel() {
     fun sendFppRequest(receiverMentorId: String, position:Int) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                recentCallsRepository.sendFppRequest(receiverMentorId)
+                val map =  HashMap<String,String>()
+                map["page_type"] = "RECENT_CALL"
+                recentCallsRepository.sendFppRequest(receiverMentorId,map)
                 getRecentCall()
             } catch (ex: Throwable) {
                 ex.printStackTrace()

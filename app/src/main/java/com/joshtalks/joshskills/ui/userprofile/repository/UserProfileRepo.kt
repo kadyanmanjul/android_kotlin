@@ -60,11 +60,11 @@ class UserProfileRepo {
     suspend fun userProfileSectionImpression(map: HashMap<String, String>) =
         commService.userProfileSectionImpression(map)
 
-    suspend fun engageUserProfileSectionTime(map: HashMap<String, String>) =
+    suspend fun engageUserProfileSectionTime(map: HashMap<String, String>,) =
         commService.engageUserProfileSectionTime(map)
 
-    suspend fun sendFppRequest(receiverMentorId: String) =
-        p2pNetwork.sendFppRequest(receiverMentorId)
+    suspend fun sendFppRequest(receiverMentorId: String,map: HashMap<String, String>) =
+        p2pNetwork.sendFppRequest(receiverMentorId,map)
 
     suspend fun deleteFppRequest(receiverMentorId: String) =
         p2pNetwork.deleteFppRequest(receiverMentorId)

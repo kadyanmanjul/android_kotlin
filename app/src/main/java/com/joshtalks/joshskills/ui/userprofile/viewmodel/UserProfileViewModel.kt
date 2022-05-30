@@ -576,7 +576,9 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
     fun sendFppRequest(receiverMentorId: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                p2pNetworkService.sendFppRequest(receiverMentorId)
+                val map =  HashMap<String,String>()
+                map["page_type"] = "USER_PROFILE"
+                p2pNetworkService.sendFppRequest(receiverMentorId,map)
             } catch (ex: Throwable) {
                 ex.printStackTrace()
             }

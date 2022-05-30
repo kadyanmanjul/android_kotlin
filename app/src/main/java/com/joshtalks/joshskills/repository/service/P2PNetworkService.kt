@@ -76,7 +76,7 @@ interface P2PNetworkService {
     suspend fun getRecentCallsList(@Query("mentor_id") mentorId: String) : Response<RecentCallResponse>
 
     @POST("$DIR/fpp/requests/{reciever_mentor_id}/")
-    suspend fun sendFppRequest(@Path("reciever_mentor_id") mentorId: String):Response<Any>
+    suspend fun sendFppRequest(@Path("reciever_mentor_id") mentorId: String,@Body params: Map<String, String>):Response<Any>
 
     @DELETE("$DIR/fpp/requests/{reciever_mentor_id}/")
     suspend fun deleteFppRequest(@Path("reciever_mentor_id") mentorId: String):Response<Any>
@@ -107,6 +107,6 @@ interface P2PNetworkService {
     @GET("$DIR/p2p/status/")
     suspend fun getVoipNewArchFlag(): HashMap<String,Int>
 
-    @POST("$DIR/fpp/fpp_dialog/")
-    suspend fun showFppDialogNew(@Body params: HashMap<String, Int?>) : Response<HashMap<String,String>>
+    @POST("$DIR/fpp/fpp_option/")
+    suspend fun showFppDialogNew(@Body params: HashMap<String, Int?>) : Response<HashMap<String,Int>>
 }
