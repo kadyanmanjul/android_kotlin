@@ -9,6 +9,7 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.RadioButton
 import android.widget.RadioGroup
@@ -133,21 +134,20 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
                    block.visibility= VISIBLE
                    submit.visibility= VISIBLE
                }else if(selectedRating in 7..8){
-                   block.visibility= GONE
-                   CoroutineScope(Dispatchers.Main).launch{
-                       showToast("Your feedback has been successfully submitted")
-                   }
-                   group.findViewById<RadioButton>(checkedId).startAnimation(myAnim)
-                   submit.visibility= GONE
-                   vm.submitCallRatings(VoipPref.getLastCallId().toString(), selectedRating, VoipPref.getLastRemoteUserAgoraId().toString())
-                   closeSheet()
+                   isBlockSelected = false
+                   submitAutomatically(checkedId,group,myAnim)
                }
                else{
-                   if(prevSelectedRating in 0..6)
-                       unSelectChange("fpp")
-                   block.text = resources.getText(R.string.send_fpp_text)
-                   block.visibility= VISIBLE
-                   submit.visibility= VISIBLE
+                   if(vm.ifDialogShow==1) {
+                       if (prevSelectedRating in 0..6)
+                           unSelectChange("fpp")
+                       block.text = resources.getText(R.string.send_fpp_text)
+                       block.visibility = VISIBLE
+                       submit.visibility= VISIBLE
+                   }else{
+                       isBlockSelected = false
+                       submitAutomatically(checkedId,group,myAnim)
+                   }
                }
                prevSelectedRating = selectedRating
                checked =checkedId
@@ -176,8 +176,19 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
        }
     }
 
+    private fun submitAutomatically(checkedId: Int, group: RadioGroup, myAnim: Animation) {
+        binding.block.visibility= GONE
+        CoroutineScope(Dispatchers.Main).launch{
+            showToast("Your feedback has been successfully submitted")
+        }
+        group.findViewById<RadioButton>(checkedId).startAnimation(myAnim)
+        binding. submit.visibility= GONE
+        vm.submitCallRatings(VoipPref.getLastCallId().toString(), selectedRating, VoipPref.getLastRemoteUserAgoraId().toString())
+        closeSheet()
+    }
+
     private fun selectChange(s: String) {
-        if(s == "fpp"){
+        if(s == "fpp" && vm.ifDialogShow==1){
             binding.block.chipStrokeColor = AppCompatResources.getColorStateList(requireContext(), R.color.colorPrimary)
             binding.block.chipBackgroundColor = AppCompatResources.getColorStateList(requireContext(), R.color.white)
             binding.block.setTextColor(resources.getColor(R.color.colorPrimary))
@@ -190,7 +201,7 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
 
     }
     private fun unSelectChange(s: String) {
-        if(s=="fpp"){
+        if(s=="fpp"&& vm.ifDialogShow==1){
             binding.block.chipStrokeColor = AppCompatResources.getColorStateList(requireContext(), R.color.pitch_black)
             binding.block.setTextColor(resources.getColor(R.color.pitch_black))
             binding.block.setTextColor(Color.BLACK)
@@ -206,7 +217,7 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
     }
 
     private fun closeSheet(){
-        if(vm.ifDialogShow=="true"){
+        if(vm.ifDialogShow==0){
             showFeedBackDialog()
             dismiss()
         }else{
