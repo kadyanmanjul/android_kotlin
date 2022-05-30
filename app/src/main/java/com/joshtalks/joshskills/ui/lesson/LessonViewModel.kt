@@ -749,10 +749,14 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
             lessonLiveData.postValue(
                 lessonLiveData.value?.apply {
                     var lessonCompleted = this.grammarStatus == LESSON_STATUS.CO &&
-                            this.translationStatus == LESSON_STATUS.CO &&
                             this.vocabStatus == LESSON_STATUS.CO &&
                             this.readingStatus == LESSON_STATUS.CO &&
                             this.speakingStatus == LESSON_STATUS.CO
+
+                    if (this.isNewGrammar && PrefManager.getBoolValue(IS_A2_C1_RETENTION_ENABLED)) {
+                        lessonCompleted = lessonCompleted &&
+                                this.translationStatus == LESSON_STATUS.CO
+                    }
 
                     if (lessonIsConvoRoomActive) {
                         lessonCompleted = lessonCompleted &&
