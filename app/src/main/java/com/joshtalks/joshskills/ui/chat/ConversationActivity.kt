@@ -1148,8 +1148,10 @@ class ConversationActivity :
                 if (userProfileData.hasGroupAccess && PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID) {
                     conversationBinding.imgGroupChatBtn.visibility = VISIBLE
                     conversationBinding.imgFppBtn.visibility = VISIBLE
-                    if (!PrefManager.getBoolValue(ONE_GROUP_REQUEST_SENT) && conversationViewModel.getClosedGroupCount() == 0)
+                    if (!PrefManager.getBoolValue(ONE_GROUP_REQUEST_SENT)) {
+                        PrefManager.put(ONE_GROUP_REQUEST_SENT, conversationViewModel.getClosedGroupCount() != 0)
                         conversationBinding.ringingIcon.visibility = VISIBLE
+                    }
                     if (PrefManager.getBoolValue(SHOULD_SHOW_AUTOSTART_POPUP, defValue = true)
                         && System.currentTimeMillis()
                             .minus(PrefManager.getLongValue(LAST_TIME_AUTOSTART_SHOWN)) > 259200000L

@@ -52,12 +52,13 @@ class GroupListFragment : BaseFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         lifecycleScope.launchWhenStarted {
-            vm.setGroupsCount()
             if (vm.isFromVoip.get()) {
+                vm.setGroupsCount()
                 loadListWhenFromVoip()
             } else {
                 vm.getGroupData().distinctUntilChanged().collectLatest {
                     Log.d(TAG, "onCreate: $it")
+                    vm.setGroupsCount()
                     withContext(Dispatchers.IO) {
                         val groupList = it.map { data -> data as GroupItemData }
                         withContext(Dispatchers.Main) {
@@ -92,6 +93,11 @@ class GroupListFragment : BaseFragment() {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_group_list, container, false)
         return binding.root
     }
+
+//    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+//        super.onViewCreated(view, savedInstanceState)
+//        Timber.tag("SukeshTest").e("${vm.groupListCount.get()} : Count")
+//    }
 
     private fun initTooltip() {
         if (!PrefManager.getBoolValue(HAS_SEEN_GROUP_TOOLTIP) && !vm.isFromVoip.get()
