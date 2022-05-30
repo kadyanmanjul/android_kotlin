@@ -19,6 +19,7 @@ import com.joshtalks.joshskills.base.model.ApiHeader
 import com.joshtalks.joshskills.voip.calldetails.IncomingCallData
 import com.joshtalks.joshskills.voip.data.CallingRemoteService
 import com.joshtalks.joshskills.base.log.JoshLog
+import com.joshtalks.joshskills.base.model.NotificationData
 import com.joshtalks.joshskills.voip.constant.LEAVING
 import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
@@ -104,6 +105,29 @@ fun Context.getApiHeader(): ApiHeader {
         return apiHeader
     } catch (e : Exception) {
         return ApiHeader.empty()
+    }
+}
+
+fun Context.getNotificationData(): NotificationData {
+    try {
+        val notificationDataCursor = contentResolver.query(
+            Uri.parse(CONTENT_URI + NOTIFICATION_DATA),
+            null,
+            null,
+            null,
+            null
+        )
+
+        notificationDataCursor?.moveToFirst()
+        val notificationData = NotificationData(
+            title = notificationDataCursor.getStringData(NOTIFICATION_TITLE_COLUMN),
+            subTitle = notificationDataCursor.getStringData(NOTIFICATION_SUBTITLE_COLUMN),
+        )
+        notificationDataCursor?.close()
+        return notificationData
+    } catch (e : Exception) {
+        e.printStackTrace()
+        return NotificationData.default()
     }
 }
 

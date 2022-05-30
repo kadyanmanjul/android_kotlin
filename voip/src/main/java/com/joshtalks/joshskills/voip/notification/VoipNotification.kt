@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.voip.notification
 import android.app.PendingIntent
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
+import com.joshtalks.joshskills.base.model.NotificationData as Data
 
 class VoipNotification : NotificationInterface {
 
@@ -72,8 +73,8 @@ class VoipNotification : NotificationInterface {
         notificationHelper.connected(username, notificationBuiltObj, onTap, onNegativeAction)
     }
 
-    fun idle() {
-        notificationHelper.idle(notificationBuiltObj)
+    fun idle(notificationData: Data) {
+        notificationHelper.idle(notificationBuiltObj, notificationData)
     }
 
 

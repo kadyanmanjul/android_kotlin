@@ -12,6 +12,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.joshtalks.joshskills.voip.R
 import com.joshtalks.joshskills.voip.Utils
+import com.joshtalks.joshskills.base.model.NotificationData as Data
 
 internal class NotificationGenerator {
     private lateinit var notificationBuilder : NotificationCompat.Builder
@@ -184,9 +185,9 @@ internal class NotificationGenerator {
     }
 
     @SuppressLint("RestrictedApi")
-    fun idle(notificationBuiltObj: NotificationBuiltObj) {
-        notificationBuiltObj.notificationBuilder.setContentTitle("Josh Skills")
-        notificationBuiltObj.notificationBuilder.setContentText("Learn Spoken English")
+    fun idle(notificationBuiltObj: NotificationBuiltObj, notificationData: Data) {
+        notificationBuiltObj.notificationBuilder.setContentTitle(notificationData.title)
+        notificationBuiltObj.notificationBuilder.setContentText(notificationData.subTitle)
         notificationBuiltObj.notificationBuilder.setSilent(true)
         notificationBuiltObj.notificationBuilder.setContentIntent(null)
         notificationBuiltObj.notificationBuilder.setUsesChronometer(false)

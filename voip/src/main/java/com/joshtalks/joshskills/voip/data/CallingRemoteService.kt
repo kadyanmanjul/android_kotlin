@@ -37,6 +37,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import com.joshtalks.joshskills.voip.mediator.UserAction as Action
 import timber.log.Timber
+import com.joshtalks.joshskills.base.model.NotificationData as Data
 
 private const val TAG = "CallingRemoteService"
 const val SERVICE_ALONE_LIFE_TIME = 1 * 60 * 1000L
@@ -56,7 +57,7 @@ class CallingRemoteService : Service() {
     private val serviceEvents = MutableSharedFlow<ServiceEvents>(replay = 0)
 
     // For Testing Purpose
-    private val notificationData = TestNotification()
+    private val notificationData by lazy { TestNotification(getNotificationData()) }
     private val notification by lazy { VoipNotification(notificationData, NotificationPriority.Low) }
     private val binder = RemoteServiceBinder()
 
@@ -147,11 +148,11 @@ class CallingRemoteService : Service() {
                                 }
                                 CLOSE_CALL_SCREEN -> {
                                     serviceEvents.emit(ServiceEvents.CLOSE_CALL_SCREEN)
-                                    notification.idle()
+                                    notification.idle(getNotificationData())
                                 }
                                 RECONNECTING_FAILED -> {
                                     serviceEvents.emit(ServiceEvents.RECONNECTING_FAILED)
-                                    notification.idle()
+                                    notification.idle(getNotificationData())
                                 }
                                 // TODO: Might have to refactor
                                 INCOMING_CALL -> {
@@ -258,7 +259,7 @@ class CallingRemoteService : Service() {
     }
 
     fun disconnectCall() {
-        notification.idle()
+        notification.idle(getNotificationData())
         mediator.userAction(Action.DISCONNECT)
     }
 
@@ -312,13 +313,13 @@ class CallingRemoteService : Service() {
 }
 
 // TODO: Need to Change
-class TestNotification : NotificationData {
+class TestNotification(val data : Data) : NotificationData {
     override fun setTitle(): String {
-        return "Josh Skills"
+        return data.title
     }
 
     override fun setContent(): String {
-        return "Learn Spoken English"
+        return data.subTitle
     }
 }
 

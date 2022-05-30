@@ -13,3 +13,15 @@ data class ApiHeader(val token : String,
                              fun empty() = ApiHeader("","","","","")
                          }
                      }
+
+
+data class NotificationData(val title : String, val subTitle : String) {
+    companion object {
+        fun default() : NotificationData {
+            return NotificationData(
+                title = "Undertake",
+                subTitle = "Practice word of the day"
+            )
+        }
+    }
+}

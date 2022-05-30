@@ -12,6 +12,7 @@ import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.base.model.ApiHeader
 import com.joshtalks.joshskills.core.API_TOKEN
+import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.USER_LOCALE
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -27,6 +28,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
 private const val TAG = "JoshContentProvider"
+
 class JoshContentProvider : ContentProvider() {
     val mutex = Mutex(false)
 
@@ -44,7 +46,7 @@ class JoshContentProvider : ContentProvider() {
         selectionArgs: Array<out String>?,
         sortOrder: String?
     ): Cursor? {
-        when(uri.path) {
+        when (uri.path) {
             API_HEADER -> {
                 val apiHeader = ApiHeader(
                     token = "JWT " + PrefManager.getStringValue(API_TOKEN),
@@ -54,8 +56,24 @@ class JoshContentProvider : ContentProvider() {
                     acceptLanguage = PrefManager.getStringValue(USER_LOCALE)
                 )
 
-                val cursor = MatrixCursor(arrayOf(AUTHORIZATION, APP_VERSION_NAME, APP_VERSION_CODE, APP_USER_AGENT, APP_ACCEPT_LANGUAGE))
-                cursor.addRow(arrayOf(apiHeader.token, apiHeader.versionName, apiHeader.versionCode, apiHeader.userAgent, apiHeader.acceptLanguage))
+                val cursor = MatrixCursor(
+                    arrayOf(
+                        AUTHORIZATION,
+                        APP_VERSION_NAME,
+                        APP_VERSION_CODE,
+                        APP_USER_AGENT,
+                        APP_ACCEPT_LANGUAGE
+                    )
+                )
+                cursor.addRow(
+                    arrayOf(
+                        apiHeader.token,
+                        apiHeader.versionName,
+                        apiHeader.versionCode,
+                        apiHeader.userAgent,
+                        apiHeader.acceptLanguage
+                    )
+                )
                 Log.d(TAG, "query: Api Header --> $apiHeader")
                 return cursor
             }
@@ -64,15 +82,30 @@ class JoshContentProvider : ContentProvider() {
                 cursor.addRow(arrayOf(Mentor.getInstance().getId()))
                 return cursor
             }
+            NOTIFICATION_DATA -> {
+                val cursor =
+                    MatrixCursor(arrayOf(NOTIFICATION_TITLE_COLUMN, NOTIFICATION_SUBTITLE_COLUMN))
+                val word = AppObjectController.appDatabase.lessonQuestionDao().getRandomWord()
+                Log.d(TAG, "query: Word ---> ${word?.filterNotNull()?.last()}")
+                cursor.addRow(
+                    arrayOf(
+                        word?.filterNotNull()?.last() ?: "Undertake",
+                        "Practice word of the day"
+                    )
+                )
+                return cursor
+            }
         }
         return null
     }
 
-    override fun getType(uri: Uri): String? { return null }
+    override fun getType(uri: Uri): String? {
+        return null
+    }
 
     override fun insert(uri: Uri, values: ContentValues?): Uri? {
         voipLog?.log("INSERT")
-        when(uri.path) {
+        when (uri.path) {
             START_CALL_TIME_URI -> {
                 val startCallTimestamp = values?.getAsLong(CALL_START_TIME) ?: 0L
                 VoipPref.updateCurrentCallStartTime(startCallTimestamp)

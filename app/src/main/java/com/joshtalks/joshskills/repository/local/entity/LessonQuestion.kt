@@ -187,6 +187,9 @@ interface LessonQuestionDao {
     @Query("UPDATE lesson_question set status = :questionStatus WHERE id=:questionId")
     suspend fun updateQuestionStatus(questionId: String, questionStatus: QUESTION_STATUS)
 
+    @Query("SELECT practice_word FROM lesson_question")
+    fun getRandomWord() : List<String?>?
+
     @Query("SELECT lessonId FROM lesson_question WHERE id = :questionId")
     fun getLessonIdOfQuestion(questionId: String): Int
 

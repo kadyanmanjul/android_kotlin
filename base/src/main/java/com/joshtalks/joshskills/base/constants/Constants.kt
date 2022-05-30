@@ -28,6 +28,7 @@ const val START_CALL_TIME_URI = "/start_call_time"
 const val CALL_DISCONNECTED_URI = "/call_disconnect"
 const val API_HEADER = "/api_header"
 const val MENTOR_ID = "/mentor_id"
+const val NOTIFICATION_DATA = "/notification_data"
 
 // Content Values
 const val CALL_START_TIME = "josh_call_start_time"
@@ -85,6 +86,8 @@ const val OUTGOING = 2
 
 // Cursor Column Name
 const val MENTOR_ID_COLUMN = "MENTOR_ID"
+const val NOTIFICATION_TITLE_COLUMN = "NOTIFICATION_TITLE_COLUMN"
+const val NOTIFICATION_SUBTITLE_COLUMN = "NOTIFICATION_SUBTITLE_COLUMN"
 
 // Broadcast Receiver
 const val SERVICE_BROADCAST_KEY = "service_broadcast_key"
