@@ -138,7 +138,7 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
                    submitAutomatically(checkedId,group,myAnim)
                }
                else{
-                   if(vm.ifDialogShow==1) {
+                   if(vm.ifDialogShow==1 && PrefManager.getBoolValue(IS_COURSE_BOUGHT)) {
                        if (prevSelectedRating in 0..6)
                            unSelectChange("fpp")
                        block.text = resources.getText(R.string.send_fpp_text)
@@ -201,7 +201,7 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
 
     }
     private fun unSelectChange(s: String) {
-        if(s=="fpp"&& vm.ifDialogShow==1){
+        if(s=="fpp"&& vm.ifDialogShow==1 && PrefManager.getBoolValue(IS_COURSE_BOUGHT)){
             binding.block.chipStrokeColor = AppCompatResources.getColorStateList(requireContext(), R.color.pitch_black)
             binding.block.setTextColor(resources.getColor(R.color.pitch_black))
             binding.block.setTextColor(Color.BLACK)
@@ -230,7 +230,7 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
         FeedbackDialogFragment.newInstance(function)
             .show(requireActivity().supportFragmentManager, "FeedBackDialogFragment")
     }
-    
+
     private fun addObserver() {}
 
     companion object {
