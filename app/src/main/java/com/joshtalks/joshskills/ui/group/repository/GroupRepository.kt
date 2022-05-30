@@ -458,14 +458,6 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
         }
     }
 
-    suspend fun createMoEngageUser() {
-        try {
-            apiService.createMoEngageUser(Mentor.getInstance().getId())
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
-
     suspend fun removeUserFormFppLit(uId: Int) {
         val requestParams: HashMap<String, List<Int>> = HashMap()
         requestParams["mentor_ids"] = uId.let { return@let listOf(uId) }

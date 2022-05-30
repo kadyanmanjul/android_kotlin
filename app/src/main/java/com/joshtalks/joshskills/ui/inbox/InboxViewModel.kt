@@ -198,4 +198,16 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
             }
         }
     }
+
+    fun initializeMoEngageUser() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                AppObjectController.groupsNetworkService.createMoEngageUser(
+                    Mentor.getInstance().getId()
+                )
+            } catch (ex: Exception) {
+                LogException.catchException(ex)
+            }
+        }
+    }
 }

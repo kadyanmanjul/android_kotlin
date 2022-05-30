@@ -19,7 +19,6 @@ import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.core.*
-import com.joshtalks.joshskills.core.Utils.getLangCodeFromCourseId
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.AppObjectController
@@ -43,7 +42,6 @@ import com.joshtalks.joshskills.core.interfaces.OnOpenCourseListener
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.repository.server.*
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.inbox.adapter.InboxAdapter
@@ -69,9 +67,9 @@ import kotlinx.coroutines.launch
 import com.joshtalks.joshskills.core.IS_FREE_TRIAL_CAMPAIGN_ACTIVE
 import com.joshtalks.joshskills.core.IS_EFT_VARIENT_ENABLED
 import com.joshtalks.joshskills.ui.cohort_based_course.views.CommitmentFormActivity
-import com.joshtalks.joshskills.ui.cohort_based_course.views.CommitmentFormLaunchFragment
 import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_GROUP_LIST_CBC_TOOLTIP
 import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_TEXT_VIEW_CLASS_ANIMATION
+import com.moengage.core.analytics.MoEAnalyticsHelper
 
 const val REGISTER_INFO_CODE = 2001
 const val COURSE_EXPLORER_CODE = 2002
@@ -218,6 +216,14 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         handelIntentAction()
     }
 
+    private fun initMoEngage() {
+        if (!PrefManager.getBoolValue(MOENGAGE_USER_CREATED)) {
+            viewModel.initializeMoEngageUser()
+            PrefManager.put(MOENGAGE_USER_CREATED, true)
+            MoEAnalyticsHelper.setUniqueId(this, Mentor.getInstance().getId())
+        }
+    }
+
     private fun addLiveDataObservable() {
         lifecycleScope.launchWhenStarted {
             viewModel.registerCourseNetworkData.collect {
@@ -342,12 +348,11 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         }
         try {
             inboxAdapter.notifyDataSetChanged()
-
         } catch (ex: Exception) {
-
         }
         Runtime.getRuntime().gc()
         initABTest()
+        initMoEngage()
         viewModel.getProfileData(Mentor.getInstance().getId())
     }
 
