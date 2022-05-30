@@ -793,7 +793,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                                 lesson.conversationStatus == LESSON_STATUS.CO
                     }
 
-                    if (PrefManager.getBoolValue(IS_A2_C1_RETENTION_ENABLED)) {
+                    if (lesson.isNewGrammar && PrefManager.getBoolValue(IS_A2_C1_RETENTION_ENABLED)) {
                         lessonCompleted = lessonCompleted &&
                                 lesson.translationStatus == LESSON_STATUS.CO
                     }

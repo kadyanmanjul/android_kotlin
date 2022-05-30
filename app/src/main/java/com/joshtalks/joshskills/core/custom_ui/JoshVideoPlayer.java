@@ -413,6 +413,8 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
                 player.seekTo(0);
                 player.setPlayWhenReady(false);
                 isVideoEnded = false;
+                findViewById(R.id.playAgain).setVisibility(View.GONE);
+                findViewById(R.id.llControlsContainer).setVisibility(View.VISIBLE);
             }
         } catch (Throwable e) {
             e.printStackTrace();
@@ -480,8 +482,6 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
                 if (player != null) {
                     seekToStart();
                     player.setPlayWhenReady(true);
-                    findViewById(R.id.playAgain).setVisibility(GONE);
-                    findViewById(R.id.llControlsContainer).setVisibility(VISIBLE);
                 }
             } else if (v.getId() == R.id.playbackSpeed) {
                 if (player != null) {
