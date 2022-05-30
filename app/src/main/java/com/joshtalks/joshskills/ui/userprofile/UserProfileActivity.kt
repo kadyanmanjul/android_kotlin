@@ -629,10 +629,7 @@ UserProfileActivity : WebRtcMiddlewareActivity() {
 
         viewModel.userData.observe(this) {
             viewModel.isCourseBought.set(it.isCourseBought.not())
-            if (it.isCourseBought.not() &&
-                it.expiryDate != null &&
-                it.expiryDate.time < System.currentTimeMillis()
-            ) {
+            if (it.isCourseBought.not()) {
                 binding.sentRequestCard.visibility = GONE
             } else {
                 viewModel.fppRequest.observe(this) {

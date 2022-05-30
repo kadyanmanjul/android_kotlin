@@ -198,7 +198,6 @@ class ConversationActivity :
         )
     }
     private var isFirstTime: Boolean = true
-    private var requestCountNumber = 0
     private var countdownTimerBack: CountdownTimerBack? = null
     private lateinit var conversationViewModel: ConversationViewModel
     private lateinit var utilConversationViewModel: UtilConversationViewModel
@@ -1131,13 +1130,11 @@ class ConversationActivity :
 
         conversationViewModel.pendingRequestsList.observe(this) {
             with(conversationBinding) {
-                if (it.pendingRequestsList.isNullOrEmpty()) {
-                    requestCountNumber = 0
-                    fppRequestCountNumber.visibility = GONE
-                } else {
-                    requestCountNumber = it.pendingRequestsList.size
-                    fppRequestCountNumber.text = requestCountNumber.toString()
+                if (it.pendingRequestsList.isNotEmpty() && inboxEntity.isCourseBought && inboxEntity.isCapsuleCourse) {
+                    fppRequestCountNumber.text = it.pendingRequestsList.size.toString()
                     fppRequestCountNumber.visibility = VISIBLE
+                } else {
+                    fppRequestCountNumber.visibility = GONE
                 }
             }
         }
