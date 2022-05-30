@@ -1,11 +1,11 @@
 package com.joshtalks.joshskills.core.notification
 
-
 import android.content.Intent
 import com.clevertap.android.sdk.CleverTapAPI
 import com.freshchat.consumer.sdk.Freshchat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import com.google.gson.*
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.core.ApiRespStatus
 import com.joshtalks.joshskills.core.AppObjectController
@@ -30,6 +30,9 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import timber.log.Timber
+import java.lang.reflect.Modifier
+import java.text.DateFormat
+import java.util.*
 
 const val FCM_TOKEN = "fcmToken"
 const val HAS_NOTIFICATION = "has_notification"
@@ -148,8 +151,27 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             )
 
             val notificationTypeToken: Type = object : TypeToken<NotificationObject>() {}.type
-            val nc: NotificationObject = AppObjectController.gsonMapper.fromJson(
-                AppObjectController.gsonMapper.toJson(data),
+            val gsonMapper = GsonBuilder()
+                .enableComplexMapKeySerialization()
+                .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+                .registerTypeAdapter(Date::class.java, object : JsonDeserializer<Date> {
+                    @Throws(JsonParseException::class)
+                    override fun deserialize(
+                        json: JsonElement,
+                        typeOfT: Type,
+                        context: JsonDeserializationContext
+                    ): Date {
+                        return Date(json.asJsonPrimitive.asLong * 1000)
+                    }
+                })
+                .excludeFieldsWithModifiers(Modifier.TRANSIENT)
+                .setDateFormat(DateFormat.LONG)
+                .setPrettyPrinting()
+                .serializeNulls()
+                .create()
+
+            val nc: NotificationObject = gsonMapper.fromJson(
+                gsonMapper.toJson(data),
                 notificationTypeToken
             )
 
