@@ -227,6 +227,7 @@ class SignUpActivity : AppCompatActivity(), Call {
             return
         }
 
+//        PrefManager.put(IS_TC_INSTALLED, TruecallerSDK.getInstance().isUsable)
         if (TruecallerSDK.getInstance().isUsable) {
             TruecallerSDK.getInstance()
                 .onActivityResultObtained(this, requestCode, resultCode, data)
