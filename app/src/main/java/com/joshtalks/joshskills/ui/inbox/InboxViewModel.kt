@@ -179,6 +179,7 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 GroupRepository().fireTimeTokenAPI()
+                GroupRepository().subscribeNotifications()
             } catch (ex: Exception) {
                 LogException.catchException(ex)
             }
