@@ -442,6 +442,8 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         } else {
             when {
                 inboxEntity.isCourseBought && inboxEntity.formSubmitted.not() -> {
+                    PrefManager.put(HAS_SEEN_TEXT_VIEW_CLASS_ANIMATION, false)
+                    PrefManager.put(HAS_SEEN_GROUP_LIST_CBC_TOOLTIP, false)
                     val intent = Intent(this, CommitmentFormActivity::class.java)
                     intent.putExtra("inboxEntity", inboxEntity)
                     startActivity(intent)

@@ -488,6 +488,9 @@ class ConversationActivity :
             conversationBinding.overlayLayout.setOnClickListener {
                 PrefManager.put(HAS_SEEN_LEADERBOARD_ANIMATION, true)
                 hideLeaderBoardSpotlight()
+                conversationBinding.imgGroupChatBtn.elevation = 8f
+                conversationBinding.imgFppBtn.elevation = 8f
+                conversationBinding.ringingIcon.elevation = 12f
             }
             conversationBinding.labelTapToDismiss.visibility = VISIBLE
             conversationBinding.labelTapToDismiss.startAnimation(
@@ -1358,10 +1361,17 @@ class ConversationActivity :
                 //conversationBinding.imgGroupChat.shiftGroupChatIconDown(conversationBinding.txtUnreadCount)
                 // conversationBinding.userPointContainer.slideInAnimation()
                 conversationBinding.userPointContainer.visibility = VISIBLE
+                conversationBinding.imgGroupChatBtn.elevation = 8f
+                conversationBinding.imgFppBtn.elevation = 8f
+                conversationBinding.ringingIcon.elevation = 12f
                 // showLeaderBoardTooltip()
                 if (!PrefManager.getBoolValue(HAS_SEEN_LEADERBOARD_ANIMATION)) {
-                    if (PrefManager.getBoolValue(HAS_SEEN_COHORT_BASE_COURSE_TOOLTIP))
+                    if (PrefManager.getBoolValue(HAS_SEEN_COHORT_BASE_COURSE_TOOLTIP)){
                         showLeaderBoardSpotlight()
+                        conversationBinding.imgGroupChatBtn.elevation = 3f
+                        conversationBinding.imgFppBtn.elevation = 3f
+                        conversationBinding.ringingIcon.elevation = 3f
+                    }
                     else {
 
                     }
