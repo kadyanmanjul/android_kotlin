@@ -320,8 +320,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             MixPanelTracker.publishEvent(MixPanelEvent.VIEW_RECENT_CALLS).push()
             RecentCallActivity.openRecentCallActivity(
                 requireActivity(),
-                CONVERSATION_ID,
-                viewModel.isFreeTrail
+                CONVERSATION_ID
             )
         }
 
@@ -501,8 +500,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         binding.btnFavorite.setOnClickListener {
             FavoriteListActivity.openFavoriteCallerActivity(
                 requireActivity(),
-                CONVERSATION_ID,
-                viewModel.isFreeTrail
+                CONVERSATION_ID
             )
             viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
 //            if (haveAnyFavCaller) {

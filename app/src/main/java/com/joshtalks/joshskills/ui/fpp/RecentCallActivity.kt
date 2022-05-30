@@ -13,7 +13,6 @@ import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.button.MaterialButton
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.IS_FREE_TRIAL
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.analytics.ParamKeys
@@ -47,7 +46,6 @@ class RecentCallActivity : BaseFppActivity() {
 
     override fun setIntentExtras() {
         conversationId1 = intent.extras?.get(CONVERSATION_ID) as String
-        viewModel.isFreeTrial.set(intent.extras?.get(IS_FREE_TRIAL) as Boolean)
     }
 
     override fun initViewBinding() {
@@ -83,10 +81,9 @@ class RecentCallActivity : BaseFppActivity() {
     }
 
     companion object {
-        fun openRecentCallActivity(activity: Activity, conversationId: String,isFreeTrial:Boolean) {
+        fun openRecentCallActivity(activity: Activity, conversationId: String) {
             Intent(activity, RecentCallActivity::class.java).apply {
                 putExtra(CONVERSATION_ID, conversationId)
-                putExtra(IS_FREE_TRIAL, isFreeTrial)
             }.also {
                 activity.startActivity(it)
             }

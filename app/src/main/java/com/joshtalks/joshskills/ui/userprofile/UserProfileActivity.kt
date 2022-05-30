@@ -278,16 +278,14 @@ UserProfileActivity : WebRtcMiddlewareActivity() {
         binding.fppListLayout.setOnClickListener {
             FavoriteListActivity.openFavoriteCallerActivity(
                 this,
-                CONVERSATION_ID,
-                viewModel.isCourseBought.get().not()
+                CONVERSATION_ID
             )
         }
 
         binding.viewAllFpp.setOnClickListener {
             FavoriteListActivity.openFavoriteCallerActivity(
                 this,
-                CONVERSATION_ID,
-                viewModel.isCourseBought.get().not()
+                CONVERSATION_ID
             )
         }
 
@@ -628,8 +626,7 @@ UserProfileActivity : WebRtcMiddlewareActivity() {
         }
 
         viewModel.userData.observe(this) {
-            viewModel.isCourseBought.set(it.isCourseBought.not())
-            if (it.isCourseBought.not()) {
+            if (PrefManager.getBoolValue(IS_FREE_TRIAL)) {
                 binding.sentRequestCard.visibility = GONE
             } else {
                 viewModel.fppRequest.observe(this) {

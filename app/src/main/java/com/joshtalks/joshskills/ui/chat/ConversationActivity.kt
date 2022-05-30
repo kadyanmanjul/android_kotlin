@@ -79,7 +79,6 @@ import com.joshtalks.joshskills.ui.chat.service.DownloadMediaService
 import com.joshtalks.joshskills.ui.conversation_practice.ConversationPracticeActivity
 import com.joshtalks.joshskills.ui.course_progress_new.CourseProgressActivityNew
 import com.joshtalks.joshskills.ui.courseprogress.CourseProgressActivity
-import com.joshtalks.joshskills.ui.extra.AUTO_START_POPUP
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
 import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.ui.fpp.SeeAllRequestsActivity
@@ -610,8 +609,7 @@ class ConversationActivity :
                         MixPanelTracker.publishEvent(MixPanelEvent.FAVORITE_LIST).push()
                         FavoriteListActivity.openFavoriteCallerActivity(
                             this,
-                            inboxEntity.conversation_id,
-                            inboxEntity.isCourseBought.not()
+                            inboxEntity.conversation_id
                         )
                     }
                     R.id.menu_restart_course -> {

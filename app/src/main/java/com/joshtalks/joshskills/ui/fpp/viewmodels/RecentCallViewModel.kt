@@ -6,9 +6,7 @@ import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.base.BaseViewModel
-import com.joshtalks.joshskills.core.ApiCallStatus
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.ui.fpp.adapters.RecentCallsAdapter
 import com.joshtalks.joshskills.ui.fpp.constants.*
 import com.joshtalks.joshskills.ui.fpp.model.RecentCall
@@ -29,7 +27,6 @@ class RecentCallViewModel : BaseViewModel() {
     val mainDispatcher: CoroutineDispatcher by lazy { Dispatchers.Main }
     var itemPosition = 0
     var isFirstTime = true
-    val isFreeTrial = ObservableBoolean(false)
     var partnerUid = ObservableField(0)
     private var favoriteCallerDao = AppObjectController.appDatabase.favoriteCallerDao()
 
@@ -41,7 +38,7 @@ class RecentCallViewModel : BaseViewModel() {
                 if (response.isSuccessful && response.body()?.arrayList != null) {
                     withContext(mainDispatcher) {
                         if (isFirstTime) {
-                            adapter.addRecentCallToList(response.body()?.arrayList!!,isFreeTrial.get())
+                            adapter.addRecentCallToList(response.body()?.arrayList!!, PrefManager.getBoolValue(IS_FREE_TRIAL))
                             isFirstTime = false
                         } else {
                             adapter.updateList(response.body()!!.arrayList)

@@ -21,7 +21,6 @@ import com.joshtalks.joshskills.ui.voip.WebRtcActivity
 class FavoriteListActivity : BaseFppActivity() {
 
     private var conversationId1: String = EMPTY
-    private var isCourseBought:Boolean = false
 
     private var actionMode: ActionMode? = null
 
@@ -60,7 +59,6 @@ class FavoriteListActivity : BaseFppActivity() {
 
     override fun setIntentExtras() {
         conversationId1 = intent.getStringExtra(CONVERSATION_ID).toString()
-        isCourseBought = intent.getBooleanExtra(IS_COURSE_BOUGHT,false)
     }
 
     override fun initViewBinding() {
@@ -91,11 +89,7 @@ class FavoriteListActivity : BaseFppActivity() {
     }
 
     private fun openRecentScreen() {
-        RecentCallActivity.openRecentCallActivity(
-            this,
-            conversationId1,
-            isCourseBought
-        )
+        RecentCallActivity.openRecentCallActivity(this, conversationId1)
     }
 
     private fun popBackStack() {
@@ -140,10 +134,9 @@ class FavoriteListActivity : BaseFppActivity() {
     }
 
     companion object {
-        fun openFavoriteCallerActivity(activity: Activity, conversationId: String,isCourseBought:Boolean) {
+        fun openFavoriteCallerActivity(activity: Activity, conversationId: String) {
             Intent(activity, FavoriteListActivity::class.java).apply {
                 putExtra(CONVERSATION_ID, conversationId)
-                putExtra(IS_COURSE_BOUGHT, isCourseBought)
             }.also {
                 activity.startActivity(it)
             }
