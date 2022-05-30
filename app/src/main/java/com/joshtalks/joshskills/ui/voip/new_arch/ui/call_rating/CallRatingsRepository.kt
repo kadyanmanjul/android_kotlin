@@ -12,4 +12,7 @@ class CallRatingsRepository {
     suspend fun submitCallRating(map: HashMap<String, String>) {
        p2pNetworkService.submitCallRatings(map)
     }
+
+    suspend fun sendFppRequest(receiverMentorId: String) =
+        p2pNetworkService.sendFppRequest(receiverMentorId)
 }

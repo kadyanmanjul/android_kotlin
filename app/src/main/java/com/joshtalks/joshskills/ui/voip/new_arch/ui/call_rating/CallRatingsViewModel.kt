@@ -1,16 +1,20 @@
 package com.joshtalks.joshskills.ui.voip.new_arch.ui.call_rating
 
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.base.BaseViewModel
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.repository.local.model.KFactor
 import com.joshtalks.joshskills.ui.call.data.local.VoipPref
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import retrofit2.Response
 
 class CallRatingsViewModel: BaseViewModel() {
 
     private val callRatingsRepository by lazy { CallRatingsRepository() }
     var ifDialogShow : String = "false"
+    var responseLiveData = MutableLiveData<Response<KFactor>?>()
+
 
     fun blockUser(toMentorId: String) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -90,4 +94,13 @@ class CallRatingsViewModel: BaseViewModel() {
         }
     }
 
-}
+    fun sendFppRequest(mentorId: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+                try {
+                      callRatingsRepository.sendFppRequest(mentorId)
+                } catch (ex: Throwable) {
+                    ex.printStackTrace()
+                }
+            }
+        }
+    }

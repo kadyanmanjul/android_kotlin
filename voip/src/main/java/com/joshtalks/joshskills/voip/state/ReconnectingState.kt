@@ -299,8 +299,8 @@ class ReconnectingState(val context: CallContext) : VoipState {
                     remoteUserAgoraId = context.channelData.getPartnerUid(),
                     localUserAgoraId = context.channelData.getAgoraUid(),
                     channelName = context.channelData.getChannel(),
-                    topicName = context.channelData.getCallingTopic()
-
+                    topicName = context.channelData.getCallingTopic(),
+                    remotesUserMentorId = context.channelData.getPartnerMentorId()
                 )
                 context.disconnectCall()
                 PrefManager.setVoipState(State.LEAVING)

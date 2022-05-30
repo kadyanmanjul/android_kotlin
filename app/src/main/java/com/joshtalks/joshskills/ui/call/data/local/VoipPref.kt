@@ -55,7 +55,8 @@ object VoipPref {
             localUserAgoraId: Int,
             channelName: String,
             topicName: String,
-            showFpp : String
+            showFpp : String,
+            remoteUserMentorId : String
         ) {
             val editor = preferenceManager.edit()
             editor.putLong(PREF_KEY_CURRENT_CALL_START_TIME, 0L)
@@ -69,6 +70,7 @@ object VoipPref {
             editor.putInt(PREF_KEY_LOCAL_USER_AGORA_ID, localUserAgoraId)
             editor.putString(PREF_KEY_LAST_TOPIC_NAME, topicName)
             editor.putString(PREF_KEY_FPP_FLAG, showFpp)
+            editor.putString(PREF_KEY_LAST_REMOTE_USER_MENTOR_ID, remoteUserMentorId)
             editor.commit()
 
             // TODO: These logic shouldn't be here
@@ -184,6 +186,10 @@ object VoipPref {
             Log.d(TAG, "getLastCallDurationInSec: $duration")
             return duration
         }
+
+    fun getLastRemoteUserMentorId(): String {
+        return preferenceManager.getString(PREF_KEY_LAST_REMOTE_USER_MENTOR_ID, "").toString()
+    }
 
         fun startListener() {
             if(isListenerActivated.not()) {

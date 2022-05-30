@@ -46,12 +46,13 @@ fun Context.updateLastCallDetails(
     duration: Long,
     remoteUserName: String,
     remoteUserImage: String?,
+    remotesUserMentorId : String,
     callId: Int,
     callType: Int,
     remoteUserAgoraId: Int,
     localUserAgoraId: Int,
     channelName: String,
-    topicName: String
+    topicName: String,
 ) {
     Log.d(TAG, "updateStartCallTime: ")
     val values = ContentValues(9).apply {
@@ -64,6 +65,8 @@ fun Context.updateLastCallDetails(
         put(CHANNEL_NAME, channelName)
         put(TOPIC_NAME, topicName)
         put(CURRENT_USER_AGORA_ID, localUserAgoraId)
+        put(REMOTE_USER_MENTOR_ID, remotesUserMentorId)
+
     }
     val data = contentResolver.insert(
         Uri.parse(CONTENT_URI + CALL_DISCONNECTED_URI),

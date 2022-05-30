@@ -88,6 +88,8 @@ class JoshContentProvider : ContentProvider() {
                 val channelName = values?.getAsString(CHANNEL_NAME) ?: ""
                 val currentUserAgoraId = values?.getAsInteger(CURRENT_USER_AGORA_ID) ?: -1
                 val fppFlag = values?.getAsString(FPP_SHOW_FLAG) ?: "true"
+                val remoteUserMentorId = values?.getAsString(REMOTE_USER_MENTOR_ID) ?: ""
+
 
                 VoipPref.updateLastCallDetails(
                     duration = duration,
@@ -99,7 +101,8 @@ class JoshContentProvider : ContentProvider() {
                     localUserAgoraId = currentUserAgoraId,
                     channelName = channelName,
                     topicName = topicName,
-                    showFpp = fppFlag
+                    showFpp = fppFlag,
+                    remoteUserMentorId = remoteUserMentorId
                 )
             }
         }

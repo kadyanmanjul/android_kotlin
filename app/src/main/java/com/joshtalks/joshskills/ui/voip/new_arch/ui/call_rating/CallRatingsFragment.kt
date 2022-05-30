@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import android.widget.RadioButton
 import android.widget.RadioGroup
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.integration.webp.decoder.WebpDrawable
@@ -43,6 +44,8 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
     lateinit var binding : CallRatingDialogBinding
     var isBlockSelected = false
     var selectedRating = 0
+    var prevSelectedRating = 0
+
     var callerName = EMPTY
     var callDuration = 0
     var agoraCallId = 0
@@ -97,13 +100,20 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
        with(binding) {
            block.setOnClickListener {
                if (!isBlockSelected) {
-                   block.setBackground(context?.getDrawable(R.drawable.block_button_round_stroke))
-                   block.setTextColor(Color.WHITE)
-               } else {
-                   block.setBackground(context?.getDrawable(R.drawable.rectangle_with_grey_round_stroke))
-                   block.setTextColor(Color.BLACK)
+                   if(binding.block.text.equals(getString(R.string.block_caller,callerName))){
+                        selectChange("block")
+                   }else{
+                       selectChange("fpp")
+                   }
+
+               }else{
+                   if(binding.block.text.equals(getString(R.string.block_caller,callerName))){
+                       unSelectChange("block")
+
+                   }else{
+                       unSelectChange("fpp")
+                   }
                }
-               isBlockSelected = !isBlockSelected
            }
            ratingList.setOnCheckedChangeListener(RadioGroup.OnCheckedChangeListener { group, checkedId ->
                val myAnim = AnimationUtils.loadAnimation(activity, R.anim.zoom_in)
@@ -116,25 +126,40 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
                selectedRating=group.findViewById<RadioButton>(checkedId).text.toString().toInt()
                group.findViewById<RadioButton>(checkedId).setTextColor(resources.getColor(R.color.white))
                if(selectedRating<=6){
-                   block.visibility=VISIBLE
+                   if(prevSelectedRating in 9..10)
+                       unSelectChange("block")
+
+                   block.text = getString(R.string.block_caller,callerName)
+                   block.visibility= VISIBLE
                    submit.visibility= VISIBLE
-               }else{
+               }else if(selectedRating in 7..8){
+                   block.visibility= GONE
                    CoroutineScope(Dispatchers.Main).launch{
                        showToast("Your feedback has been successfully submitted")
                    }
                    group.findViewById<RadioButton>(checkedId).startAnimation(myAnim)
-                   block.visibility= GONE
                    submit.visibility= GONE
                    vm.submitCallRatings(VoipPref.getLastCallId().toString(), selectedRating, VoipPref.getLastRemoteUserAgoraId().toString())
                    closeSheet()
                }
+               else{
+                   if(prevSelectedRating in 0..6)
+                       unSelectChange("fpp")
+                   block.text = resources.getText(R.string.send_fpp_text)
+                   block.visibility= VISIBLE
+                   submit.visibility= VISIBLE
+               }
+               prevSelectedRating = selectedRating
                checked =checkedId
-
            })
 
            submit.setOnClickListener {
                if(isBlockSelected){
-                   vm.blockUser(VoipPref.getLastRemoteUserAgoraId().toString())
+                   if(binding.block.text.equals(getString(R.string.block_caller,callerName))){
+                       vm.blockUser(VoipPref.getLastRemoteUserAgoraId().toString())
+                   }else{
+                       vm.sendFppRequest(VoipPref.getLastRemoteUserMentorId())
+                   }
                }
                if (selectedRating >= 0){
                    CoroutineScope(Dispatchers.Main).launch{
@@ -150,7 +175,36 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
            }
        }
     }
-    
+
+    private fun selectChange(s: String) {
+        if(s == "fpp"){
+            binding.block.chipStrokeColor = AppCompatResources.getColorStateList(requireContext(), R.color.colorPrimary)
+            binding.block.chipBackgroundColor = AppCompatResources.getColorStateList(requireContext(), R.color.white)
+            binding.block.setTextColor(resources.getColor(R.color.colorPrimary))
+        }else{
+            binding.block.chipStrokeColor = AppCompatResources.getColorStateList(requireContext(), R.color.pitch_black)
+            binding.block.chipBackgroundColor = AppCompatResources.getColorStateList(requireContext(), R.color.pitch_black)
+            binding.block.setTextColor(Color.WHITE)
+        }
+        isBlockSelected = true
+
+    }
+    private fun unSelectChange(s: String) {
+        if(s=="fpp"){
+            binding.block.chipStrokeColor = AppCompatResources.getColorStateList(requireContext(), R.color.pitch_black)
+            binding.block.setTextColor(resources.getColor(R.color.pitch_black))
+            binding.block.setTextColor(Color.BLACK)
+            binding.block.background = AppCompatResources.getDrawable(requireContext(),R.drawable.rectangle_with_grey_round_stroke)
+            binding.block.chipBackgroundColor = AppCompatResources.getColorStateList(requireContext(), R.color.white)
+        }else{
+            binding.block.chipStrokeColor = AppCompatResources.getColorStateList(requireContext(), R.color.pitch_black)
+            binding.block.background = AppCompatResources.getDrawable(requireContext(),R.drawable.rectangle_with_grey_round_stroke)
+            binding.block.chipBackgroundColor = AppCompatResources.getColorStateList(requireContext(), R.color.white)
+            binding.block.setTextColor(Color.BLACK)
+        }
+        isBlockSelected = false
+    }
+
     private fun closeSheet(){
         if(vm.ifDialogShow=="true"){
             showFeedBackDialog()

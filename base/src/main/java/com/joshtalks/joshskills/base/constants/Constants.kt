@@ -46,6 +46,8 @@ const val APP_VERSION_CODE = "josh_app_version_code"
 const val APP_VERSION_NAME = "josh_app_version_name"
 const val APP_USER_AGENT = "josh_user_agent"
 const val APP_ACCEPT_LANGUAGE = "josh_accept_language"
+const val REMOTE_USER_MENTOR_ID = "josh_remote_user_mentor_id"
+
 
 // Pref Keys
 const val PREF_KEY_LOCAL_USER_AGORA_ID= "josh_local_user_id"
@@ -63,6 +65,8 @@ const val PREF_KEY_LAST_REMOTE_USER_AGORA_ID = "josh_last_remote_user_agora_id"
 const val PREF_KEY_LAST_CHANNEL_NAME = "josh_last_channel_name"
 const val PREF_KEY_LAST_TOPIC_NAME= "josh_last_topic_name"
 const val PREF_KEY_LAST_CALL_DURATION= "josh_last_call_duration"
+const val PREF_KEY_LAST_REMOTE_USER_MENTOR_ID= "josh_last_remote_user_mentor_id"
+
 // FPP Flag Key
 const val PREF_KEY_FPP_FLAG = "fpp_flag_state"
 

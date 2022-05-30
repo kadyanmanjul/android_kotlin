@@ -211,13 +211,14 @@
 
         <com.google.android.material.chip.Chip
             android:id="@+id/block"
-            style="@style/BlockButtonChipStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/block_caller"
+            app:chipBackgroundColor="@color/white"
             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H11_Semi_Bold"
             android:textColor="@color/black"
             android:visibility="gone"
+            tools:visibility="visible"
             app:chipStrokeColor="@color/pitch_black"
             app:chipStrokeWidth="1dp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -243,6 +244,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/block"
+            tools:visibility="visible"
             app:rippleColor="@color/white" />
 
         <ImageView
@@ -253,6 +255,7 @@
             android:layout_marginEnd="@dimen/_14sdp"
             android:src="@drawable/ic_cross_rating"
             android:visibility="gone"
+            tools:visibility="visible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_goneMarginTop="@dimen/_14sdp" />
