@@ -122,7 +122,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         binding.handler = this
         binding.viewModel = viewModel
         //addObserver()
-        binding.toolbar.iv_back.setOnClickListener{
+        binding.profileToolbar.iv_back.setOnClickListener{
             activity?.run {
                 try {
                     (activity as FeedActivity).swipeRefreshLayout.isEnabled=true
