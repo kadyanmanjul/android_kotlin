@@ -19,24 +19,24 @@ class NotificationAnalytics {
         Timber.tag(TAG).d("addAnalytics() called with: notificationId = $notificationId, mEvent = $mEvent, channel = $channel")
         var result = true
         var event = mEvent
-        var platformChannel = channel?.name?: EMPTY
+        var platformChannel = channel?.action?: EMPTY
         val notification = getNotification(notificationId)
-        if (notification != null && notification.isNotEmpty() && platformChannel.equals(Channel.DEEP_LINK.name).not()) {
+        if (notification != null && notification.isNotEmpty() && platformChannel.equals(Channel.DEEP_LINK.action).not()) {
             if (event == Action.DISCARDED || event == Action.CLICKED) {
-                notification.filter { it.action == Action.RECEIVED.name }[0].platform?.let {
+                notification.filter { it.action == Action.RECEIVED.action }[0].platform?.let {
                     platformChannel = it
                 }
             } else if (event == Action.RECEIVED) {
                 event = Action.APP_DISCARDED
             }
             result = false
-        } else if(platformChannel.equals(Channel.DEEP_LINK.name)){
+        } else if(platformChannel.equals(Channel.DEEP_LINK.action)){
             if (notification != null && notification.isNotEmpty()){
                 return false
             }
         }
         val notificationEvent = NotificationEvent(
-            action = event.name,
+            action = event.action,
             time_stamp = System.currentTimeMillis(),
             platform = platformChannel,
             id = notificationId
@@ -88,7 +88,7 @@ class NotificationAnalytics {
         }
     }
 
-    enum class Action(action: String) {
+    enum class Action(val action: String) {
         RECEIVED("received"),
         DISPLAYED("displayed"),
         CLICKED("clicked"),
@@ -96,7 +96,7 @@ class NotificationAnalytics {
         APP_DISCARDED("app_discarded")
     }
 
-    enum class Channel(action: String) {
+    enum class Channel(val action: String) {
         FCM("fcm"),
         FIRESTORE("firestore"),
         MOENGAGE("moengage"),
