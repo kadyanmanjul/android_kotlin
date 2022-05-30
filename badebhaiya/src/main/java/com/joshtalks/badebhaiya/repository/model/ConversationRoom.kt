@@ -15,7 +15,9 @@ data class ConversationRoomRequest(
     val topic: String? = null,
 
     @SerializedName("start_time")
-    val startTime: String? = null
+    val startTime: String? = null,
+    @SerializedName("from_page")
+    val fromPage:String? = null
 )
 @Parcelize
 data class ConversationRoomResponse(

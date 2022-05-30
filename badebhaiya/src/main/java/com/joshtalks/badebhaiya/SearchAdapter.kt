@@ -18,6 +18,7 @@ import com.joshtalks.badebhaiya.databinding.LiSearchEventBinding
 import com.joshtalks.badebhaiya.feed.Call
 import com.joshtalks.badebhaiya.feed.model.SearchRoomsResponse
 import com.joshtalks.badebhaiya.feed.model.Users
+import com.joshtalks.badebhaiya.impressions.Impression
 import com.joshtalks.badebhaiya.liveroom.OPEN_PROFILE
 import com.joshtalks.badebhaiya.profile.request.FollowRequest
 import com.joshtalks.badebhaiya.repository.model.User
@@ -147,6 +148,7 @@ class SearchAdapter(private val searchResult: List<Users>,var call: Call): ListA
                                         false,
                                         false
                                     )
+                                RetrofitInstance.profileNetworkService.sendEvent(Impression("SEARCH_FRAGMENT","CLICKED_FOLLOW"))
                                 val response =
                                     RetrofitInstance.profileNetworkService.updateFollowStatus(followRequest)
                                 if (response.isSuccessful) {
@@ -165,6 +167,8 @@ class SearchAdapter(private val searchResult: List<Users>,var call: Call): ListA
                                             false,
                                             false
                                         )
+                                    RetrofitInstance.profileNetworkService.sendEvent(Impression("SEARCH_FRAGMENT","CLICKED_UNFOLLOW"))
+
                                     val response = RetrofitInstance.profileNetworkService.updateUnfollowStatus(followRequest)
                                     if (response.isSuccessful) {
                                         searchResult[position].is_speaker_followed=false

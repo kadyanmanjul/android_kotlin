@@ -1,6 +1,7 @@
 package com.joshtalks.badebhaiya.repository.service
 
 import com.joshtalks.badebhaiya.feed.model.Users
+import com.joshtalks.badebhaiya.impressions.Impression
 import com.joshtalks.badebhaiya.profile.request.FollowRequest
 import com.joshtalks.badebhaiya.profile.request.ReminderRequest
 import com.joshtalks.badebhaiya.profile.response.ProfileResponse
@@ -23,5 +24,8 @@ interface ProfileNetworkService {
 
     @POST("$DIR/reminder/set_reminder/")
     suspend fun setReminderForRoom(@Body reminderRequest: ReminderRequest): Response<Any>
+
+    @POST("$DIR/impressions/track_impressions/")
+    suspend fun sendEvent(@Body event:Impression):Response<Void>
 
 }

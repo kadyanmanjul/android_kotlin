@@ -34,7 +34,7 @@
         android:gravity="center"
         android:paddingVertical="@dimen/_10sdp"
         android:text="@string/leave_room_button"
-        android:textAppearance="@style/BB_Typography_Nunito_Sans_Regular"
+        android:textAppearance="@style/BB_Typography_Nunito_Sans_ExtraBold"
         android:textSize="@dimen/_12ssp"
         android:textColor="#ED6362"
         app:layout_constraintEnd_toEndOf="parent"

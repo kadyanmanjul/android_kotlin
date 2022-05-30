@@ -47,6 +47,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.flow.single
+import timber.log.Timber
 import java.util.*
 
 /**
@@ -148,23 +149,41 @@ object PubNubManager {
         jobs += CoroutineScope(Dispatchers.IO).launch {
             val membersList = pubnub.channelMembers.channel(liveRoomProperties?.channelName)
                 ?.includeCustom(true)
-                ?.sync()
+                ?.async { result, status ->
 
-            val tempSpeakerList = ArraySet<LiveRoomUser>()
-            val tempAudienceList = ArraySet<LiveRoomUser>()
-            membersList?.data?.forEach {
-                Log.d("lvroom", "getLatestUserList() called with: memberList = $it ")
-                refreshUsersList(it.uuid.id, it.custom)?.let { user ->
-                    if (user.isSpeaker == true) {
-                        tempSpeakerList.add(user)
-                    } else {
-                        tempAudienceList.add(user)
+                    Timber.d("Status hai => $status")
+
+                    Timber.d("Memebers List Itne aye hai aur size => ${result?.data?.size}")
+                    Timber.d("Memebers List Itne aye hai  => ${result?.data}")
+
+                    val tempSpeakerList = ArraySet<LiveRoomUser>()
+                    val tempAudienceList = ArraySet<LiveRoomUser>()
+                    result?.data?.forEach {
+                        Timber.d("Memebers List ind aur uid=> ${it.uuid}")
+                        Timber.d("Memebers List ind aur banda=> $it")
+
+                        Log.d("lvroom", "getLatestUserList() called with: memberList = $it ")
+                        refreshUsersList(it.uuid.id, it.custom)?.let { user ->
+                            Timber.d("Memebers List let k andr=> ${it.uuid}")
+
+                            if (user.isSpeaker == true) {
+                                Timber.d("Memebers List and speaker h=> ${it.uuid}")
+
+                                tempSpeakerList.add(user)
+                            } else {
+                                Timber.d("Memebers List and audience h=> ${it.uuid}")
+
+                                tempAudienceList.add(user)
+                            }
+                        }
                     }
+                    // post to a shared flow instead of live data
+                    postToSpeakersList(tempSpeakerList)
+                    postToAudienceList(tempAudienceList)
                 }
-            }
-            // post to a shared flow instead of live data
-            postToSpeakersList(tempSpeakerList)
-            postToAudienceList(tempAudienceList)
+
+
+
         }
 
     }
@@ -214,7 +233,12 @@ object PubNubManager {
     }
 
     fun addNewUserToAudience(msg: JsonObject) {
+
+        Timber.d("added new user to audience and json is => $msg")
+
         val data = msg["data"].asJsonObject
+
+        Timber.d("added new user extracted data => $data")
         val matType = object : TypeToken<LiveRoomUser>() {}.type
         if (data == null) {
             return
@@ -232,6 +256,9 @@ object PubNubManager {
         if (user.isSpeaker == true) {
             val list = speakersList
             list.add(user)
+
+            Timber.d("added new user it is a speaker => $data")
+
             postToSpeakersList(list)
             //speakerAdapter?.updateFullList(ArrayList(getSpeakerList()))
         } else {
@@ -241,11 +268,14 @@ object PubNubManager {
 
             val list = audienceList
             list.add(user)
+            Timber.d("added new user it is a audience => $data")
+
             postToAudienceList(list)
         }
     }
 
     private fun postToSpeakersList(list: ArraySet<LiveRoomUser>) {
+        Timber.d("post to speaker list => $list")
         jobs += CoroutineScope(Dispatchers.IO).launch {
             _speakersList.emit(list)
         }

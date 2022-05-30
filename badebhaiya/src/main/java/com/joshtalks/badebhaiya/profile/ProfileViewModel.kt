@@ -10,6 +10,7 @@ import com.joshtalks.badebhaiya.core.showToast
 import com.joshtalks.badebhaiya.feed.adapter.FeedAdapter
 import com.joshtalks.badebhaiya.feed.model.ConversationRoomType
 import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
+import com.joshtalks.badebhaiya.impressions.Impression
 import com.joshtalks.badebhaiya.profile.request.DeleteReminderRequest
 import com.joshtalks.badebhaiya.profile.request.FollowRequest
 import com.joshtalks.badebhaiya.profile.request.ReminderRequest
@@ -138,6 +139,14 @@ class ProfileViewModel : ViewModel() {
             } catch(ex: Exception) {
                 speakerProfileRoomsAdapter.submitList(emptyList())
             }
+        }
+    }
+
+    fun sendEvent(source: Impression) {
+        viewModelScope.launch {
+            val resp=service.sendEvent(source)
+            if(!resp.isSuccessful)
+                showToast("Failed event sending")
         }
     }
 //    fun deleteReminder(deleteReminderRequest: DeleteReminderRequest)

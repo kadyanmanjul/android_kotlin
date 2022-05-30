@@ -18,7 +18,7 @@
 
     <ConstraintSet android:id="@+id/expanded">
         <Constraint
-            android:id="@+id/toolbar"
+            android:id="@+id/scene_toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/base_app_color"

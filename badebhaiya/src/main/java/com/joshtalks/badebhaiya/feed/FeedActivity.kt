@@ -32,12 +32,14 @@ import com.joshtalks.badebhaiya.databinding.ActivityFeedBinding
 import com.joshtalks.badebhaiya.databinding.WhyRoomBinding
 import com.joshtalks.badebhaiya.feed.adapter.FeedAdapter
 import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
+import com.joshtalks.badebhaiya.impressions.Impression
 import com.joshtalks.badebhaiya.liveroom.*
 import com.joshtalks.badebhaiya.liveroom.bottomsheet.CreateRoom
 import com.joshtalks.badebhaiya.liveroom.model.StartingLiveRoomProperties
 import com.joshtalks.badebhaiya.liveroom.viewmodel.LiveRoomViewModel
 import com.joshtalks.badebhaiya.notifications.NotificationScheduler
 import com.joshtalks.badebhaiya.profile.ProfileFragment
+import com.joshtalks.badebhaiya.profile.ProfileViewModel
 import com.joshtalks.badebhaiya.profile.request.DeleteReminderRequest
 import com.joshtalks.badebhaiya.profile.request.ReminderRequest
 import com.joshtalks.badebhaiya.pubnub.PubNubState
@@ -140,6 +142,9 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
 
     private val viewModel by lazy {
         ViewModelProvider(this)[FeedViewModel::class.java]
+    }
+    private val profileViewModel by lazy{
+        ViewModelProvider(this)[ProfileViewModel::class.java]
     }
 
     private var pendingIntent: PendingIntent? = null
@@ -263,10 +268,12 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
 
     fun onProfileClicked() {
         val fragment = ProfileFragment() // replace your custom fragment class
+        profileViewModel.sendEvent(Impression("FEED_SCREEN","CLICKED_OWN_PROFILE"))
 
         val bundle = Bundle()
         val fragmentTransaction: FragmentTransaction = supportFragmentManager.beginTransaction()
         bundle.putString("user", User.getInstance().userId) // use as per your need
+        bundle.putString("source","FEED_SCREEN")
 
         fragment.arguments = bundle
         fragmentTransaction.addToBackStack(null)
@@ -275,6 +282,8 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
     }
 
     fun onSearchPressed() {
+        profileViewModel.sendEvent(Impression("FEED_SCREEN","CLICKED_SEARCH"))
+
         if (liveRoomViewModel.pubNubState.value != null && liveRoomViewModel.pubNubState.value == PubNubState.STARTED) {
             liveRoomViewModel.liveRoomState.value = LiveRoomState.EXPANDED
         } else {
@@ -413,6 +422,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
     }
 
     override fun joinRoom(room: RoomListResponseItem, view: View) {
+        profileViewModel.sendEvent(Impression("FEED_SCREEN","CLICKED_JOIN"))
         takePermissions(room.roomId.toString(), room.topic)
     }
 
@@ -420,7 +430,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         if (PermissionUtils.isCallingPermissionWithoutLocationEnabled(this)) {
             if (roomId == null) {
                 openCreateRoomDialog()
-            } else viewModel.joinRoom(roomId, roomTopic!!)
+            } else viewModel.joinRoom(roomId, roomTopic!!,"FEED_SCREEN")
             return
         }
 
@@ -432,7 +442,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                         if (flag) {
                             if (roomId == null) {
                                 openCreateRoomDialog()
-                            } else viewModel.joinRoom(roomId, roomTopic!!)
+                            } else viewModel.joinRoom(roomId, roomTopic!!,"FEED_SCREEN")
                             return
                         }
                         if (report.isAnyPermissionPermanentlyDenied) {
@@ -458,6 +468,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
     }
 
     fun takePermissionsXml() {
+        profileViewModel.sendEvent(Impression("FEED_SCREEN","CLICKED_START"))
         if (PermissionUtils.isCallingPermissionWithoutLocationEnabled(this)) {
             openCreateRoomDialog()
             return
@@ -495,7 +506,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
     }
 
     override fun setReminder(room: RoomListResponseItem, view: View) {
-
+        profileViewModel.sendEvent(Impression("FEED_SCREEN","CLICKED_SET_REMINDER"))
         showPopup(room.roomId,User.getInstance().userId)
         Timber.d("ROOM KA STARTING TIME => ${room.currentTime}")
 
@@ -585,12 +596,13 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
 //            }
 //
 //        }
-
+        profileViewModel.sendEvent(Impression("FEED_SCREEN","CLICKED_CARD"))
         val fragment = ProfileFragment() // replace your custom fragment class
 
         val bundle = Bundle()
         val fragmentTransaction: FragmentTransaction = supportFragmentManager.beginTransaction()
         bundle.putString("user", room.speakersData?.userId) // use as per your need
+        bundle.putString("source","FEED_SCREEN")
 
         fragment.arguments = bundle
         fragmentTransaction.addToBackStack(null)

@@ -138,7 +138,7 @@ class FeedViewModel : ViewModel() {
         }
     }
 
-    fun joinRoom(roomId: String, topic: String = "sahil") {
+    fun joinRoom(roomId: String, topic: String = "sahil", source:String) {
         Timber.d("JOIN ROOM PARAMS => room: $roomId and Topic => $topic")
         if (pubNubState == PubNubState.STARTED){
             showToast("Please Leave Current Room")
@@ -151,7 +151,8 @@ class FeedViewModel : ViewModel() {
                 val response = repository.joinRoom(
                     ConversationRoomRequest(
                         userId = User.getInstance().userId,
-                        roomId = roomId.toInt()
+                        roomId = roomId.toInt(),
+                        fromPage = source
                     )
                 )
                 if (response.isSuccessful) {

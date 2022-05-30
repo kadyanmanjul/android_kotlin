@@ -21,7 +21,7 @@
         android:background="@color/base_app_color">
 
         <include
-            android:id="@+id/toolbar"
+            android:id="@+id/profile_toolbar"
             layout="@layout/base_toolbar" />
 
         <com.google.android.material.imageview.ShapeableImageView
@@ -37,7 +37,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.08"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/toolbar"
+            app:layout_constraintTop_toBottomOf="@id/profile_toolbar"
             app:shapeAppearanceOverlay="@style/roundedCornersImageView_28dp"
             tools:background="@drawable/user_profile_background" />
 
@@ -58,7 +58,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.933"
             app:layout_constraintStart_toStartOf="@id/iv_profile_pic"
-            app:layout_constraintTop_toBottomOf="@id/toolbar"
+            app:layout_constraintTop_toBottomOf="@id/profile_toolbar"
             app:layout_constraintVertical_bias="1.0" />
 
         <androidx.appcompat.widget.AppCompatTextView
