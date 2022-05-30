@@ -164,10 +164,10 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
 //            }
 //            return@setOnLongClickListener true
 //        }
-        binding.ivProfilePic.setOnClickListener{
+       /* binding.ivProfilePic.setOnClickListener{
             UserPicChooserFragment.showDialog(childFragmentManager, true)
 
-        }
+        }*/
         //setOnClickListener()
         return binding.root
 

@@ -111,10 +111,6 @@ class SignUpViewModel(application: Application): AndroidViewModel(application) {
                         PrefManager.put(IS_NEW_USER, it.isUserExist.not())
                         updateUserFromLoginResponse(it)
                     }
-                    if (TruecallerSDK.getInstance().isUsable)
-                        ProfileViewModel().sendEvent(Impression("ONBOARDING","TC_EXIST"))
-                    else
-                        ProfileViewModel().sendEvent(Impression("ONBOARDING","TC_NOT_EXIST"))
                     return@launch
                 } else {
                     if (response.code() == 400) {
