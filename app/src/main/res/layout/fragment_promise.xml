@@ -33,9 +33,8 @@
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5_Semi_Bold"
                     android:textColor="@color/black"
                     android:textSize="@dimen/_16ssp"
+                    android:layout_marginLeft="@dimen/_16sdp"
                     android:textStyle="bold"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.085"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -44,16 +43,15 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/_16sdp"
-                    android:layout_marginTop="24dp"
                     android:layout_marginRight="@dimen/_16sdp"
+                    android:layout_marginTop="@dimen/_4sdp"
                     android:background="@drawable/rectangle_with_blue_stroke"
                     android:digits="@string/allowed_name_characters"
+                    android:enabled="false"
                     android:gravity="start"
                     android:hint="@string/hint_name_field"
-                    android:text="@{vm.userName}"
                     android:imeOptions="actionNext"
                     android:inputType="textCapWords"
-                    android:enabled="false"
                     android:lines="1"
                     android:maxLength="24"
                     android:maxLines="1"
@@ -62,20 +60,21 @@
                     android:paddingTop="@dimen/_10sdp"
                     android:paddingEnd="@dimen/_14sdp"
                     android:paddingBottom="@dimen/_10sdp"
+                    android:text="@{vm.userName}"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
                     android:textColor="@color/light_grey"
                     android:textColorHint="@color/light_grey"
                     android:textCursorDrawable="@drawable/cursor_drawable"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintHorizontal_bias="0.512"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/text_head" />
+                    app:layout_constraintTop_toBottomOf="@+id/textView17" />
 
                 <TextView
                     android:id="@+id/text_sub"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="40dp"
+                    android:layout_marginTop="@dimen/_28sdp"
                     android:paddingLeft="@dimen/_16sdp"
                     android:paddingRight="@dimen/_16sdp"
                     android:text="@string/shapath_text"
@@ -90,7 +89,7 @@
                     android:id="@+id/text_grey"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="@dimen/_4sdp"
                     android:paddingLeft="@dimen/_16sdp"
                     android:paddingRight="@dimen/_16sdp"
                     android:text="@string/shapat_detail"
@@ -107,7 +106,7 @@
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_5sdp"
+                    android:layout_marginTop="@dimen/_8sdp"
                     android:layout_marginLeft="@dimen/_16sdp"
                     android:layout_marginRight="@dimen/_16sdp"
                     android:padding="0dp"
@@ -137,7 +136,7 @@
                     android:id="@+id/text_sub1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="40dp"
+                    android:layout_marginTop="@dimen/_28sdp"
                     android:paddingLeft="@dimen/_16sdp"
                     android:paddingRight="@dimen/_16sdp"
                     android:text="@string/reminder_text"
@@ -152,7 +151,7 @@
                     android:id="@+id/text_grey1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="@dimen/_4sdp"
                     android:paddingLeft="@dimen/_16sdp"
                     android:paddingRight="@dimen/_16sdp"
                     android:text="@string/reminder_detail"
@@ -168,10 +167,9 @@
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_5sdp"
-                    android:padding="0dp"
                     android:layout_marginLeft="@dimen/_16sdp"
                     android:layout_marginRight="@dimen/_16sdp"
+                    android:layout_marginTop="@dimen/_8sdp"
                     app:endIconDrawable="@drawable/dropdown_cbc_form"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -188,6 +186,18 @@
                         android:text="Yes" />
 
                 </com.google.android.material.textfield.TextInputLayout>
+
+                <TextView
+                    android:id="@+id/textView17"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_28sdp"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Title_Message"
+                    android:textColor="@color/black"
+                    android:layout_marginLeft="@dimen/_16sdp"
+                    android:text="आपका नाम"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/text_head" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </ScrollView>

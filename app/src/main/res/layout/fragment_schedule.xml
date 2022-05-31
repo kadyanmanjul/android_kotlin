@@ -67,12 +67,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/_24sdp"
-                    android:layout_marginTop="@dimen/_36sdp"
+                    android:layout_marginTop="@dimen/_24sdp"
                     android:layout_marginEnd="@dimen/_24sdp"
                     app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/txt_choice_timing"
+                    tools:listitem="@layout/item_time_pick"
+                    tools:itemCount="5"
+                    app:layout_constraintTop_toBottomOf="@+id/txt_class_motive"
                     app:spanCount="2" />
 
                 <TextView
@@ -80,7 +82,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/_16sdp"
-                    android:layout_marginTop="@dimen/_24sdp"
+                    android:layout_marginTop="@dimen/_16sdp"
                     android:layout_marginEnd="@dimen/_16sdp"
                     android:fontFamily="@font/open_sans"
                     android:gravity="left"
@@ -89,7 +91,7 @@
                     android:textSize="@dimen/_12ssp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/rv_schedule_time" />
+                    app:layout_constraintTop_toBottomOf="@+id/txt_choice_timing" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
 
