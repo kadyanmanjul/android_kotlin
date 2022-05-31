@@ -13,6 +13,7 @@ import android.text.SpannableStringBuilder
 import android.text.method.LinkMovementMethod
 import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -701,7 +702,6 @@ UserProfileActivity : WebRtcMiddlewareActivity() {
         viewModel.apiCallStatusLiveData.observe(this) {
             if (it == ApiCallStatus.SUCCESS) {
                 binding.profileShimmer.visibility = GONE
-                binding.previousProfilePicLayout.visibility = VISIBLE
                 binding.profileShimmer.stopShimmer()
                 if (isFirstTimeToGetProfileData) {
                     isFirstTimeToGetProfileData = false
@@ -960,11 +960,14 @@ UserProfileActivity : WebRtcMiddlewareActivity() {
                 }
             }
         }
-        if (userData.profilePicturesCount != 0) {
+        Log.d(TAG, "initView: ${userData.profilePicturesCount}")
+        if ((userData.profilePicturesCount ?: 0) > 0) {
+            Log.d(TAG, "initView: ${userData.profilePicturesCount} if case")
             binding.previousProfilePicLayout.visibility = View.VISIBLE
             binding.labelPreviousDp.text =
                 getString(R.string.previous_profile_text, userData.profilePicturesCount.toString())
         } else {
+            Log.d(TAG, "initView: ${userData.profilePicturesCount} else case")
             binding.previousProfilePicLayout.visibility = View.GONE
         }
 
