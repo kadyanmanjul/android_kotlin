@@ -34,7 +34,7 @@ class TopicImageAdapter(val imageList:ArrayList<String> ,val context:Context):Re
         fun bind(imageUrl: String) {
             Glide.with(context)
                 .load(imageUrl)
-                .error(R.drawable.ic_img_not_loading)
+                .error(R.drawable.ic_img_loading_error)
                 .listener(object : RequestListener<Drawable> {
                     override fun onLoadFailed(p0: GlideException?, p1: Any?, p2: Target<Drawable>?, p3: Boolean): Boolean {
                         binding.progress.visibility = View.GONE
