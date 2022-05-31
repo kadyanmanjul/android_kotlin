@@ -111,5 +111,7 @@
     <string name="your_call_will_start_in">Your call will start in %1$s</string>
     <string name="title_activity_people_to_follow">PeopleToFollowActivity</string>
     <string name="badebhaiyas_to_follow">BADE BHAIYAS TO FOLLOW</string>
+    <string name="reminder_notification_body_for_listener">Call par judkar unse apne sawaal puchen</string>
+    <string name="speakers_call_starts_in">%1$s’s call starts in %2$s mins</string>
 
 </resources>
