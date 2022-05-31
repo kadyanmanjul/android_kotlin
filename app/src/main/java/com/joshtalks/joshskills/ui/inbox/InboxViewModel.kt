@@ -93,11 +93,6 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
                     _registerCourseNetworkData.emit(emptyList())
                     return@launch
                 }
-                courseListResponse.forEach {
-                    if (it.formSubmitted){
-                        PrefManager.put(HAS_COMMITMENT_FORM_SUBMITTED, true)
-                    }
-                }
                 appDatabase.courseDao().insertRegisterCourses(courseListResponse).let {
                     delay(1000)
                     _registerCourseNetworkData.emit(

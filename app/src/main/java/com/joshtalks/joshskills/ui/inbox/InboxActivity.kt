@@ -452,8 +452,6 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                 }
                 else -> {
                     ConversationActivity.startConversionActivity(this, inboxEntity)
-                    PrefManager.put(HAS_SEEN_TEXT_VIEW_CLASS_ANIMATION, true)
-                    PrefManager.put(HAS_SEEN_GROUP_LIST_CBC_TOOLTIP, true)
                 }
             }
         }

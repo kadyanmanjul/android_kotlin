@@ -33,6 +33,7 @@ import com.joshtalks.joshskills.ui.group.constants.OPENED_GROUP
 import com.joshtalks.joshskills.ui.group.model.*
 import com.joshtalks.joshskills.ui.group.utils.GroupItemComparator
 import com.joshtalks.joshskills.ui.group.repository.GroupRepository
+import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_GROUP_LIST_CBC_TOOLTIP
 
 import kotlinx.android.synthetic.main.group_type_dialog.*
 import kotlinx.coroutines.Dispatchers
@@ -169,6 +170,7 @@ class JoshGroupViewModel : BaseViewModel() {
     }
 
     fun onTooltipClick(view: View) {
+        PrefManager.put(HAS_SEEN_GROUP_LIST_CBC_TOOLTIP, true)
         adapter.peek(0)?.let { onItemClick.invoke(it) }
     }
 
