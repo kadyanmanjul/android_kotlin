@@ -1253,17 +1253,17 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="continue_text"><![CDATA[Continue >]]></string>
-    <string name="course_continue_steps">Course continue करने से पहले हमें कुछ steps पुरे करने हैं। सबसे पहले हम एक शपथ लेंगे।</string>
+    <string name="course_continue_steps">Course continue करने से पहले हमें कुछ steps पुरे करने हैं।</string>
     <string name="_90_day_english_learning">90-Day Ultimate Spoken English \nCourse</string>
     <string name="_90_day_english_learning_with_commitment">सबसे पहले हम एक शपथ लेंगे</string>
     <string name="shapath_text">क्या आप यह शपथ लेते हैं?</string>
-    <string name="shapat_detail">नीचे Yes बोलकर मैं शपथ लेता हूँ की मै हर रोज़ कम से कम <b>1 Practice Partner Call</b> करूँगा। दिन में जब भी time मिले आउंगा और एक भी दिन miss नहीं करूंगा। इसका फल मुझे पूरी ज़िन्दगी मिलेगा।</string>
+    <string name="shapat_detail">नीचे Yes बोलकर मैं शपथ लेता हूँ की मै हर रोज़ कम से कम <b>1 Practice Partner Call</b> करूँगा। दिन में जब भी time मिले आऊंगा और एक भी दिन miss नहीं करूंगा। इसका फल मुझे पूरी ज़िन्दगी मिलेगा।</string>
     <string name="reminder_text">Receive daily reminders?</string>
     <string name="reminder_detail">क्या आप चाहते हैं की मै आपकी यह शपथ पूरी करने में मदद करूँ और आपको रोज़ याद दिलाऊं ताकि हम एक भी दिन न miss करें</string>
     <string name="promise_btn_text">हाँ, मैं शपथ लेता हूँ</string>
     <string name="live_classes_timing">I will attend Live class at this timing</string>
-    <string name="Schedule_motive">इन live classes का मकसद है हमारा confidence बढ़ाना और अंग्रेजी में बात करने का डर खत्म करना। तो ये सुनिक्षित करें की आप वह समय चुनें जहाँ पर आप रोज़ class में शामिल हो पाएं।</string>
-    <string name="Schedule_timings_selection">हर रोज़ इन timings पर group live class होगी। अपनी पसंद का समय बताएं।</string>
+    <string name="Schedule_motive">इन live classes का मकसद है हमारा confidence बढ़ाना और अंग्रेजी में बात करने का डर खत्म करना। तो ये सुनिश्चित करें की आप वह समय चुनें जहाँ पर आप रोज़ class में शामिल हो पाएं।</string>
+    <string name="Schedule_timings_selection">हर रोज़ इन timings पर group live class होगी। अपने पसंद का समय बताएं।</string>
     <string name="Schedule_learning_90days">90-Day English Learning \nDaily Class Schedule</string>
     <string-array name="form_options">
         <item>Yes</item>
