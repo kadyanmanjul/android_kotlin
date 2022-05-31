@@ -506,6 +506,7 @@ class ConversationActivity :
         conversationBinding.overlayLeaderboardContainer.visibility = GONE
         conversationBinding.labelTapToDismiss.visibility = GONE
         conversationBinding.overlayLeaderboardTooltip.visibility = GONE
+        conversationBinding.cbcTooltip.visibility = GONE
 
     }
 
@@ -1352,6 +1353,9 @@ class ConversationActivity :
     }
 
     private fun initScoreCardView(userData: UserProfileResponse) {
+        if (PrefManager.getBoolValue(HAS_SEEN_TEXT_VIEW_CLASS_ANIMATION) && !PrefManager.getBoolValue(HAS_SEEN_COHORT_BASE_COURSE_TOOLTIP) && inboxEntity.isCourseBought && !inboxEntity.isCapsuleCourse) {
+            showCohortBaseCourse()
+        }
         userData.isContainerVisible?.let { isLeaderBoardActive ->
             if (isLeaderBoardActive) {
                 conversationBinding.points.text = userData.points.toString().plus(" Points")
@@ -2171,9 +2175,17 @@ class ConversationActivity :
         when {
             conversationBinding.overlayLayout.visibility == VISIBLE -> {
                 hideLeaderBoardSpotlight()
+                return
             }
-            conversationBinding.overlayView.visibility == VISIBLE -> conversationBinding.overlayView.visibility =
-                INVISIBLE
+            conversationBinding.overlayView.visibility == VISIBLE -> {
+                conversationBinding.overlayView.visibility = INVISIBLE
+                return
+            }
+            conversationBinding.welcomeContainer.visibility == VISIBLE -> {
+                conversationBinding.welcomeContainer.visibility = INVISIBLE
+                conversationBinding.overlayView.visibility = INVISIBLE
+                return
+            }
             else -> {
                 val resultIntent = Intent()
                 setResult(RESULT_OK, resultIntent)

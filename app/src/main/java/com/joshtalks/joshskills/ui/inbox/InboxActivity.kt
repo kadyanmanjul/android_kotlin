@@ -67,6 +67,7 @@ import kotlinx.coroutines.launch
 import com.joshtalks.joshskills.core.IS_FREE_TRIAL_CAMPAIGN_ACTIVE
 import com.joshtalks.joshskills.core.IS_EFT_VARIENT_ENABLED
 import com.joshtalks.joshskills.ui.cohort_based_course.views.CommitmentFormActivity
+import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_COMMITMENT_FORM_SUBMITTED
 import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_GROUP_LIST_CBC_TOOLTIP
 import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_TEXT_VIEW_CLASS_ANIMATION
 import com.moengage.core.analytics.MoEAnalyticsHelper
@@ -441,7 +442,8 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
             ExtendFreeTrialActivity.startExtendFreeTrialActivity(this, inboxEntity)
         } else {
             when {
-                inboxEntity.isCourseBought && inboxEntity.formSubmitted.not() -> {
+                inboxEntity.isCourseBought && inboxEntity.formSubmitted.not()
+                        && PrefManager.getBoolValue(HAS_COMMITMENT_FORM_SUBMITTED).not() -> {
                     PrefManager.put(HAS_SEEN_TEXT_VIEW_CLASS_ANIMATION, false)
                     PrefManager.put(HAS_SEEN_GROUP_LIST_CBC_TOOLTIP, false)
                     val intent = Intent(this, CommitmentFormActivity::class.java)

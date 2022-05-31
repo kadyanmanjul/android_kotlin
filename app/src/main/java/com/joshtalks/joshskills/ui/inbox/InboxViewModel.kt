@@ -13,6 +13,7 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.userprofile.models.UserProfileResponse
 import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
 import com.joshtalks.joshskills.ui.group.repository.GroupRepository
+import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_COMMITMENT_FORM_SUBMITTED
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import org.json.JSONObject
@@ -91,6 +92,11 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
                 if (courseListResponse.isEmpty()) {
                     _registerCourseNetworkData.emit(emptyList())
                     return@launch
+                }
+                courseListResponse.forEach {
+                    if (it.formSubmitted){
+                        PrefManager.put(HAS_COMMITMENT_FORM_SUBMITTED, true)
+                    }
                 }
                 appDatabase.courseDao().insertRegisterCourses(courseListResponse).let {
                     delay(1000)
