@@ -569,7 +569,9 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
         webrtcService.disconnectCall()
     }
 
-    fun changeSpeaker() {}
+    fun changeSpeaker(isEnable:Boolean) {
+        webrtcService.enableSpeaker(isEnable)
+    }
 
     private fun HashMap<String, Any>.direction(): CallDirection {
         return if (get(INTENT_DATA_INCOMING_CALL_ID) != null)

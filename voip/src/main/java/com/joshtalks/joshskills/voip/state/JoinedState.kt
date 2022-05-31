@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.voip.state
 import android.os.Message
 import android.os.SystemClock
 import android.util.Log
+import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.communication.constants.ServerConstants
 import com.joshtalks.joshskills.voip.communication.model.NetworkAction
 import com.joshtalks.joshskills.voip.communication.model.UI
@@ -159,10 +160,12 @@ class JoinedState(val context: CallContext) : VoipState {
                         SPEAKER_ON_REQUEST -> {
                             ensureActive()
                             val uiState = context.currentUiState.copy(isSpeakerOn = true)
+                            context.enableSpeaker(true)
                             context.updateUIState(uiState = uiState)
                         }
                         SPEAKER_OFF_REQUEST -> {
                             val uiState = context.currentUiState.copy(isSpeakerOn = false)
+                            context.enableSpeaker(false)
                             context.updateUIState(uiState = uiState)
                         }
                         MUTE_REQUEST -> {
@@ -221,7 +224,7 @@ class JoinedState(val context: CallContext) : VoipState {
                             val userAction = UserAction(
                                 ServerConstants.TOPIC_IMAGE_REQUEST,
                                 context.channelData.getChannel(),
-                                address = context.channelData.getPartnerMentorId()
+                                address = Utils.uuid ?: ""
                             )
                             context.sendMessageToServer(userAction)
                         }

@@ -156,10 +156,12 @@ class ReconnectingState(val context: CallContext) : VoipState {
                         }
                         SPEAKER_ON_REQUEST -> {
                             ensureActive()
+                            context.enableSpeaker(true)
                             val uiState = context.currentUiState.copy(isSpeakerOn = true)
                             context.updateUIState(uiState = uiState)
                         }
                         SPEAKER_OFF_REQUEST -> {
+                            context.enableSpeaker(false)
                             val uiState = context.currentUiState.copy(isSpeakerOn = false)
                             context.updateUIState(uiState = uiState)
                         }
@@ -219,7 +221,7 @@ class ReconnectingState(val context: CallContext) : VoipState {
                             val userAction = UserAction(
                                 ServerConstants.TOPIC_IMAGE_REQUEST,
                                 context.channelData.getChannel(),
-                                address = context.channelData.getPartnerMentorId()
+                                address = Utils.uuid ?: ""
                             )
                             context.sendMessageToServer(userAction)
                         }

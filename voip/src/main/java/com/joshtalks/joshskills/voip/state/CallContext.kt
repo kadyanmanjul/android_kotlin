@@ -143,8 +143,13 @@ data class CallContext(val callType: Int, val direction : CallDirection, val req
     }
 
     fun changeMicState(isMuted : Boolean) {
-        Log.d(TAG, "sendMessageToServer $isMuted} ")
+        Log.d(TAG, "changeMicState $isMuted} ")
         mediator.muteAudio(isMuted)
+    }
+
+    fun enableSpeaker(isEnable : Boolean) {
+        Log.d(TAG, "enableSpeaker $isEnable} ")
+        mediator.changeSpeaker(isEnable)
     }
 }
 
