@@ -321,7 +321,8 @@
             <ImageView
                 android:id="@+id/group_tooltip_item"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:onClick="@{vm::onTooltipClick}" />
 
             <com.airbnb.lottie.LottieAnimationView
                 android:id="@+id/cbc_arrow_lottie"

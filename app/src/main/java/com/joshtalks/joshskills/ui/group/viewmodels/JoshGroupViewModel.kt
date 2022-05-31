@@ -168,6 +168,10 @@ class JoshGroupViewModel : BaseViewModel() {
         singleLiveEvent.value = message
     }
 
+    fun onTooltipClick(view: View) {
+        adapter.peek(0)?.let { onItemClick.invoke(it) }
+    }
+
     fun openTypeChooser(view: View) {
         val groupTypeDialog = AlertDialog.Builder(view.context)
             .setView(R.layout.group_type_dialog)
