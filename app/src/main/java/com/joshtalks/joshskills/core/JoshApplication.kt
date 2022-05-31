@@ -5,11 +5,7 @@ import android.app.ActivityManager
 import android.app.AlarmManager
 import android.app.Application
 import android.app.PendingIntent
-import android.content.BroadcastReceiver
-import android.content.ComponentCallbacks2
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.content.*
 import android.os.Build
 import android.os.Process
 import android.os.StrictMode
@@ -34,21 +30,22 @@ import com.joshtalks.joshskills.core.service.ServiceStartReceiver
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.di.ApplicationComponent
 import com.joshtalks.joshskills.di.DaggerApplicationComponent
-import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.ui.call.data.local.VoipPref
+import com.joshtalks.joshskills.voip.Utils
 import com.moengage.core.DataCenter
 import com.moengage.core.MoEngage
 import com.moengage.core.config.MiPushConfig
 import com.moengage.core.config.NotificationConfig
+import com.vanniktech.emoji.EmojiManager
+import com.vanniktech.emoji.ios.IosEmojiProvider
+import io.branch.referral.Branch
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
-import java.lang.reflect.Method
-import java.util.Calendar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import com.vanniktech.emoji.ios.IosEmojiProvider
-import com.vanniktech.emoji.EmojiManager
+import java.lang.reflect.Method
+import java.util.*
 
 const val TAG = "JoshSkill"
 
@@ -78,16 +75,21 @@ class JoshApplication :
         super.onCreate()
         //enableLog(Feature.VOIP)
         Log.d(TAG, "onCreate: STARTING MAIN PROCESS CHECK ${this.hashCode()}")
-            if(isMainProcess()) {
-                Log.d(TAG, "onCreate: END ...IS MAIN PROCESS")
-                turnOnStrictMode()
-                ProcessLifecycleOwner.get().lifecycle.addObserver(this@JoshApplication)
-                AppObjectController.init(this@JoshApplication)
-                VoipPref.initVoipPref(this)
-                PstnObserver
-                registerBroadcastReceiver()
-                initMoEngage()
-                initGroups()
+        if (BuildConfig.DEBUG) {
+            Branch.enableTestMode()
+            Branch.enableLogging()
+        }
+        Branch.getAutoInstance(this)
+        if (isMainProcess()) {
+            Log.d(TAG, "onCreate: END ...IS MAIN PROCESS")
+            turnOnStrictMode()
+            ProcessLifecycleOwner.get().lifecycle.addObserver(this@JoshApplication)
+            AppObjectController.init(this@JoshApplication)
+            VoipPref.initVoipPref(this)
+            PstnObserver
+            registerBroadcastReceiver()
+            initMoEngage()
+            initGroups()
             } else {
                 FirebaseApp.initializeApp(this)
                 Timber.plant(Timber.DebugTree())

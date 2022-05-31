@@ -10,7 +10,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
 import android.util.DisplayMetrics
-import android.util.Log
 import android.view.View
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -28,7 +27,6 @@ import androidx.work.WorkManager
 import com.android.installreferrer.api.InstallReferrerClient
 import com.google.android.gms.location.LocationRequest
 import com.google.firebase.crashlytics.FirebaseCrashlytics
-import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.google.firebase.inappmessaging.FirebaseInAppMessaging
 import com.google.firebase.inappmessaging.FirebaseInAppMessagingClickListener
 import com.google.firebase.inappmessaging.FirebaseInAppMessagingImpressionListener
@@ -41,11 +39,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.constants.CALLING_SERVICE_ACTION
 import com.joshtalks.joshskills.base.constants.SERVICE_BROADCAST_KEY
 import com.joshtalks.joshskills.base.constants.STOP_SERVICE
-import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
-import com.joshtalks.joshskills.core.analytics.AppAnalytics
-import com.joshtalks.joshskills.core.analytics.LogException
-import com.joshtalks.joshskills.core.analytics.MixPanelEvent
-import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.*
 import com.joshtalks.joshskills.core.custom_ui.FullScreenProgressDialog
 import com.joshtalks.joshskills.core.custom_ui.PointSnackbar
 import com.joshtalks.joshskills.core.firestore.NotificationAnalytics
@@ -55,7 +49,6 @@ import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.NPSEvent
 import com.joshtalks.joshskills.repository.local.entity.NPSEventModel
-import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.local.model.nps.NPSQuestionModel
@@ -97,18 +90,12 @@ import com.joshtalks.joshskills.ui.voip.WebRtcActivity
 import com.moengage.core.MoECoreHelper
 import com.patloew.colocation.CoLocation
 import io.branch.referral.Branch
-import io.branch.referral.Defines
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
-import java.lang.ref.WeakReference
-import java.lang.reflect.Type
-import java.util.Locale
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.async
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.lang.reflect.Type
+import java.util.*
 
 const val HELP_ACTIVITY_REQUEST_CODE = 9010
 const val COURSE_EXPLORER_NEW = 2008
@@ -164,12 +151,6 @@ abstract class BaseActivity :
             initUserForCrashlytics()
             initIdentifierForTools()
             InstallReferralUtil.installReferrer(applicationContext)
-            try {
-                processBranchDynamicLinks()
-                processFirebaseDynamicLinks()
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-            }
             //addScreenRecording()
         }
     }
@@ -213,60 +194,6 @@ abstract class BaseActivity :
             }
         }
     }*/
-
-    private fun processFirebaseDynamicLinks() {
-        FirebaseDynamicLinks.getInstance()
-                .getDynamicLink(intent)
-                .addOnSuccessListener {
-                    try {
-                        val referralCode = it?.utmParameters?.getString("utm_source", EMPTY)
-                                ?: EMPTY
-                        //it.
-                        val installReferrerModel =
-                                InstallReferrerModel.getPrefObject() ?: InstallReferrerModel()
-                        if (referralCode != EMPTY) {
-                            installReferrerModel.utmSource = referralCode
-                        }
-                        InstallReferrerModel.update(installReferrerModel)
-                        Timber.d("DeepLink : $referralCode")
-                        Timber.d("installReferrerModel : $installReferrerModel")
-                    } catch (ex: java.lang.Exception) {
-                        Timber.e(ex)
-                    }
-                }
-                .addOnFailureListener {
-                    Timber.w("getDynamicLink:onFailure : $it")
-                }
-    }
-
-    private fun processBranchDynamicLinks() {
-        Branch.sessionBuilder(WeakReference(this@BaseActivity).get())
-                .withCallback { referringParams, error ->
-                    try {
-                        val jsonParams =
-                                referringParams ?: (Branch.getInstance().firstReferringParams
-                                        ?: Branch.getInstance().latestReferringParams)
-                        val installReferrerModel =
-                                InstallReferrerModel.getPrefObject() ?: InstallReferrerModel()
-                        jsonParams?.let {
-                            AppObjectController.uiHandler.removeCallbacksAndMessages(null)
-                            if (it.has(Defines.Jsonkey.ReferralCode.key))
-                                installReferrerModel.utmSource = it.getString(Defines.Jsonkey.ReferralCode.key)
-                            if (it.has(Defines.Jsonkey.UTMMedium.key))
-                                installReferrerModel.utmMedium = it.getString(Defines.Jsonkey.UTMMedium.key)
-                            if (it.has(Defines.Jsonkey.UTMCampaign.key))
-                                installReferrerModel.utmTerm = it.getString(Defines.Jsonkey.UTMCampaign.key)
-                        }
-                        if (isFinishing.not()) {
-                            Log.i(TAG, "processBranchDynamicLinks: $installReferrerModel")
-                            InstallReferrerModel.update(installReferrerModel)
-                        }
-                    } catch (ex: Throwable) {
-                        ex.printStackTrace()
-                        LogException.catchException(ex)
-                    }
-                }.withData(this@BaseActivity.intent.data).init()
-    }
 
 
     private fun initIdentifierForTools() {

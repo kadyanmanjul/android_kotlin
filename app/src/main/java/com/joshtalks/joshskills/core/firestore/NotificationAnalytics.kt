@@ -5,7 +5,6 @@ import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.SERVER_TIME_OFFSET
 import com.joshtalks.joshskills.core.notification.model.NotificationEvent
-import kotlinx.coroutines.CancellationException
 import timber.log.Timber
 
 private const val TAG = "NotificationAnalytics"
@@ -21,7 +20,7 @@ class NotificationAnalytics {
         var event = mEvent
         var platformChannel = channel?.action?: EMPTY
         val notification = getNotification(notificationId)
-        if (notification != null && notification.isNotEmpty() && platformChannel.equals(Channel.DEEP_LINK.action).not()) {
+        if (notification != null && notification.isNotEmpty()) {
             if (event == Action.DISCARDED || event == Action.CLICKED) {
                 notification.filter { it.action == Action.RECEIVED.action }[0].platform?.let {
                     platformChannel = it
@@ -30,10 +29,6 @@ class NotificationAnalytics {
                 event = Action.APP_DISCARDED
             }
             result = false
-        } else if(platformChannel.equals(Channel.DEEP_LINK.action)){
-            if (notification != null && notification.isNotEmpty()){
-                return false
-            }
         }
         val notificationEvent = NotificationEvent(
             action = event.action,
@@ -43,6 +38,22 @@ class NotificationAnalytics {
         )
         pushAnalytics(notificationEvent)
         return result
+    }
+
+    suspend fun addAnalytics(notificationId: String, mEvent: Action, channel: String) {
+        Timber.tag(TAG)
+            .d("addAnalytics() called with: notificationId = $notificationId, mEvent = $mEvent, channel = $channel")
+        val notification = getNotification(notificationId)
+        if (notification != null && notification.isNotEmpty()) {
+            return
+        }
+        val notificationEvent = NotificationEvent(
+            action = mEvent.action,
+            time_stamp = System.currentTimeMillis(),
+            platform = channel,
+            id = notificationId
+        )
+        pushAnalytics(notificationEvent)
     }
 
     suspend fun getNotification(notificationId: String): List<NotificationEvent>? {
@@ -82,8 +93,7 @@ class NotificationAnalytics {
         try {
             notificationDao.insertNotificationEvent(event)
         } catch (e: Exception) {
-            if (e is CancellationException)
-                throw e
+            Timber.tag("Yash").e(e)
             e.printStackTrace()
         }
     }
@@ -100,8 +110,7 @@ class NotificationAnalytics {
         FCM("fcm"),
         FIRESTORE("firestore"),
         MOENGAGE("moengage"),
-        API("API"),
-        DEEP_LINK("deeplink"),
+        API("API")
     }
 }
 

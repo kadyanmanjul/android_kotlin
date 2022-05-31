@@ -19,60 +19,30 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.constants.CALLING_SERVICE_ACTION
 import com.joshtalks.joshskills.base.constants.SERVICE_BROADCAST_KEY
 import com.joshtalks.joshskills.base.constants.START_SERVICE
-import com.joshtalks.joshskills.core.API_TOKEN
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.COURSE_EXPLORER_NEW
-import com.joshtalks.joshskills.core.CoreJoshActivity
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.EXPLORE_TYPE
-import com.joshtalks.joshskills.core.HAS_SEEN_LOCAL_NOTIFICATION
-import com.joshtalks.joshskills.core.INSTANCE_ID
-import com.joshtalks.joshskills.core.IS_APP_OPENED_FOR_FIRST_TIME
-import com.joshtalks.joshskills.core.IS_COURSE_BOUGHT
-import com.joshtalks.joshskills.core.IS_FREE_TRIAL
-import com.joshtalks.joshskills.core.LAST_FAKE_CALL_INVOKE_TIME
-import com.joshtalks.joshskills.core.LOCAL_NOTIFICATION_INDEX
-import com.joshtalks.joshskills.core.LogSaver
-import com.joshtalks.joshskills.core.PREF_IS_CONVERSATION_ROOM_ACTIVE
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.SERVER_GID_ID
-import com.joshtalks.joshskills.core.USER_LOCALE
-import com.joshtalks.joshskills.core.USER_UNIQUE_ID
-import com.joshtalks.joshskills.core.Utils
-import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
-import com.joshtalks.joshskills.core.analytics.AppAnalytics
-import com.joshtalks.joshskills.core.analytics.LogException
-import com.joshtalks.joshskills.core.analytics.MixPanelEvent
-import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.analytics.*
 import com.joshtalks.joshskills.core.firestore.NotificationAnalytics
 import com.joshtalks.joshskills.core.notification.HAS_LOCAL_NOTIFICATION
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
-import com.joshtalks.joshskills.repository.local.model.ExploreCardType
-import com.joshtalks.joshskills.repository.local.model.GaIDMentorModel
-import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel
-import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.repository.local.model.RequestRegisterGAId
-import com.joshtalks.joshskills.repository.local.model.User
+import com.joshtalks.joshskills.repository.local.model.*
 import com.joshtalks.joshskills.ui.call.CallingServiceReceiver
 import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.ui.newonboarding.OnBoardingActivityNew
 import io.branch.referral.Branch
+import io.branch.referral.BranchError
 import io.branch.referral.Defines
-import java.lang.ref.WeakReference
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Date
-import java.util.concurrent.atomic.AtomicBoolean
-import kotlinx.android.synthetic.main.activity_launcher.progress_bar
-import kotlinx.android.synthetic.main.activity_launcher.retry
+import kotlinx.android.synthetic.main.activity_launcher.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import timber.log.Timber
+import java.text.SimpleDateFormat
+import java.util.*
+import java.util.concurrent.atomic.AtomicBoolean
 
 private const val TAG = "LauncherActivity"
 
-class LauncherActivity : CoreJoshActivity() {
+class LauncherActivity : CoreJoshActivity(), Branch.BranchReferralInitListener {
     private var testId: String? = null
     private val apiRun: AtomicBoolean = AtomicBoolean(false)
 
@@ -110,10 +80,10 @@ class LauncherActivity : CoreJoshActivity() {
             }
         }
 
-        var isAppOpenedForFirstTime = PrefManager.getBoolValue(IS_APP_OPENED_FOR_FIRST_TIME,true)
+        var isAppOpenedForFirstTime = PrefManager.getBoolValue(IS_APP_OPENED_FOR_FIRST_TIME, true)
         MixPanelTracker.mixPanel.track("app session")
-        if(isAppOpenedForFirstTime) {
-            PrefManager.put(IS_APP_OPENED_FOR_FIRST_TIME,false,true)
+        if (isAppOpenedForFirstTime) {
+            PrefManager.put(IS_APP_OPENED_FOR_FIRST_TIME, false, true)
             MixPanelTracker.publishEvent(MixPanelEvent.APP_OPENED_FOR_FIRST_TIME).push()
         }
     }
@@ -185,83 +155,17 @@ class LauncherActivity : CoreJoshActivity() {
                 PrefManager.getIntValue(LOCAL_NOTIFICATION_INDEX, defValue = 0).plus(1)
             )
         }
-        lifecycleScope.launch(Dispatchers.IO) {
-            try {
-                Branch.sessionBuilder(WeakReference(this@LauncherActivity).get())
-                    .withCallback { referringParams, error ->
-                        try {
-                            val jsonParams =
-                                referringParams ?: (Branch.getInstance().firstReferringParams
-                                    ?: Branch.getInstance().latestReferringParams)
-                            Timber.tag("BranchDeepLinkParams : ")
-                                .d("jsonParams = $jsonParams, error = $error")
-                            var testId: String? = null
-                            var exploreType: String? = null
-                            val installReferrerModel =
-                                InstallReferrerModel.getPrefObject() ?: InstallReferrerModel()
-                            jsonParams?.let {
-                                AppObjectController.uiHandler.removeCallbacksAndMessages(null)
-                                if (it.has(Defines.Jsonkey.AndroidDeepLinkPath.key)) {
-                                    testId =
-                                        it.getString(Defines.Jsonkey.AndroidDeepLinkPath.key)
-                                } else if (it.has(Defines.Jsonkey.ContentType.key)) {
-                                    exploreType = if (it.has(Defines.Jsonkey.ContentType.key)) {
-                                        it.getString(Defines.Jsonkey.ContentType.key)
-                                    } else null
-                                }
-                                if (it.has(Defines.Jsonkey.ReferralCode.key))
-                                    installReferrerModel.utmSource =
-                                        it.getString(Defines.Jsonkey.ReferralCode.key)
-                                if (it.has(Defines.Jsonkey.UTMMedium.key))
-                                    installReferrerModel.utmMedium =
-                                        it.getString(Defines.Jsonkey.UTMMedium.key)
-                                if (it.has(Defines.Jsonkey.UTMCampaign.key))
-                                    installReferrerModel.utmTerm =
-                                        it.getString(Defines.Jsonkey.UTMCampaign.key)
-                                if (it.has("notification_id"))
-                                    addDeepLinkNotificationAnalytics(it.getString(("notification_id")))
-                                InstallReferrerModel.update(installReferrerModel)
-                            }
-                            if (isFinishing.not()) {
-                                initReferral(testId = testId, exploreType = exploreType, jsonParams)
-                                initAfterBranch(testId = testId, exploreType = exploreType)
-                            }
-                        } catch (ex: Throwable) {
-                            ex.printStackTrace()
-                            startNextActivity()
-                            LogException.catchException(ex)
-                        }
-                    }.withData(this@LauncherActivity.intent.data).init()
-                /*Firebase.dynamicLinks
-                    .getDynamicLink(intent)
-                    .addOnSuccessListener { pendingDynamicLinkData ->
-                        var deepLink: Uri? = null
-                        if (pendingDynamicLinkData != null) {
-                            deepLink = pendingDynamicLinkData.link
-                        }
-                        if (deepLink != null) {
-                            Snackbar.make(findViewById(android.R.id.content),
-                                "Found deep link!$deepLink", Snackbar.LENGTH_LONG).show()
-                            Log.e(TAG, "initApp: ${pendingDynamicLinkData.toString()}")
-                            Log.e(TAG, "initApp: deepLink=> ${pendingDynamicLinkData.link}")
-                            Log.e(TAG, "initApp: utmParameters=> ${pendingDynamicLinkData.utmParameters}")
-                            Log.e(TAG, "initApp: clickTimestamp=> ${pendingDynamicLinkData.clickTimestamp}")
-                            Log.e(TAG, "initApp: extensions=> ${pendingDynamicLinkData.extensions}")
-                        } else {
-                            Log.d(TAG, "getDynamicLink: no link found")
-                        }
-                    }
-                    .addOnFailureListener { e -> Log.w(TAG, *//*"getDynamicLink:onFailure", e) }*/
-            }catch (ex:Exception){}
-        }
     }
 
-    private fun addDeepLinkNotificationAnalytics(notificationID: String) {
+    private fun addDeepLinkNotificationAnalytics(
+        notificationID: String,
+        notificationChannel: String
+    ) {
         lifecycleScope.launch(Dispatchers.IO) {
             NotificationAnalytics().addAnalytics(
                 notificationId = notificationID,
                 mEvent = NotificationAnalytics.Action.CLICKED,
-                channel = NotificationAnalytics.Channel.DEEP_LINK
+                channel = notificationChannel
             )
         }
     }
@@ -281,7 +185,12 @@ class LauncherActivity : CoreJoshActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         this.intent = intent
-        intent.putExtra("branch_force_new_session", true)
+        if (intent.hasExtra("branch_force_new_session") && intent.getBooleanExtra(
+                "branch_force_new_session",
+                false
+            )
+        )
+            Branch.sessionBuilder(this).withCallback(this@LauncherActivity).reInit()
         handleIntent()
     }
 
@@ -289,18 +198,24 @@ class LauncherActivity : CoreJoshActivity() {
         super.onStart()
         LocalBroadcastManager.getInstance(this@LauncherActivity)
             .registerReceiver(CallingServiceReceiver(), IntentFilter(CALLING_SERVICE_ACTION))
-        val isCourseBought = PrefManager.getBoolValue(IS_COURSE_BOUGHT,false)
+        val isCourseBought = PrefManager.getBoolValue(IS_COURSE_BOUGHT, false)
         val courseExpiryTime =
             PrefManager.getLongValue(com.joshtalks.joshskills.core.COURSE_EXPIRY_TIME_IN_MS)
-        if ((isCourseBought && User.getInstance().isVerified) ||  courseExpiryTime != 0L &&
-            courseExpiryTime >= System.currentTimeMillis()) {
-            val broadcastIntent=Intent().apply {
+        if ((isCourseBought && User.getInstance().isVerified) || courseExpiryTime != 0L &&
+            courseExpiryTime >= System.currentTimeMillis()
+        ) {
+            val broadcastIntent = Intent().apply {
                 action = CALLING_SERVICE_ACTION
                 putExtra(SERVICE_BROADCAST_KEY, START_SERVICE)
             }
             LocalBroadcastManager.getInstance(this@LauncherActivity).sendBroadcast(broadcastIntent)
         }
+        Branch.sessionBuilder(this)
+            .withCallback(this@LauncherActivity)
+            .withData(this.intent?.data)
+            .init()
     }
+
     override fun onStop() {
         super.onStop()
         Branch.sessionBuilder(null)
@@ -507,7 +422,7 @@ class LauncherActivity : CoreJoshActivity() {
                 } else {
                     navigateToCourseDetailsScreen(testId)
                 }
-            } catch (ex:Exception){
+            } catch (ex: Exception) {
                 LogException.catchException(ex)
             }
         }
@@ -534,6 +449,56 @@ class LauncherActivity : CoreJoshActivity() {
                 startNextActivity()
             }
         )
+    }
+
+    override fun onInitFinished(referringParams: JSONObject?, error: BranchError?) {
+        try {
+            val jsonParams =
+                referringParams ?: (Branch.getInstance().firstReferringParams
+                    ?: Branch.getInstance().latestReferringParams)
+            Timber.tag("BranchDeepLinkParams : ")
+                .d("jsonParams = $jsonParams, error = $error")
+            var testId: String? = null
+            var exploreType: String? = null
+            val installReferrerModel =
+                InstallReferrerModel.getPrefObject() ?: InstallReferrerModel()
+            jsonParams?.let {
+                AppObjectController.uiHandler.removeCallbacksAndMessages(null)
+                if (it.has(Defines.Jsonkey.AndroidDeepLinkPath.key)) {
+                    testId =
+                        it.getString(Defines.Jsonkey.AndroidDeepLinkPath.key)
+                } else if (it.has(Defines.Jsonkey.ContentType.key)) {
+                    exploreType = if (it.has(Defines.Jsonkey.ContentType.key)) {
+                        it.getString(Defines.Jsonkey.ContentType.key)
+                    } else null
+                }
+                if (it.has(Defines.Jsonkey.ReferralCode.key))
+                    installReferrerModel.utmSource =
+                        it.getString(Defines.Jsonkey.ReferralCode.key)
+                if (it.has(Defines.Jsonkey.UTMMedium.key))
+                    installReferrerModel.utmMedium =
+                        it.getString(Defines.Jsonkey.UTMMedium.key)
+                if (it.has(Defines.Jsonkey.UTMCampaign.key))
+                    installReferrerModel.utmTerm =
+                        it.getString(Defines.Jsonkey.UTMCampaign.key)
+                if (it.has("notification_id") && it.has("notification_channel"))
+                    addDeepLinkNotificationAnalytics(
+                        it.getString(
+                            ("notification_id")
+                        ),
+                        it.getString("notification_channel")
+                    )
+                InstallReferrerModel.update(installReferrerModel)
+            }
+            if (isFinishing.not()) {
+                initReferral(testId = testId, exploreType = exploreType, jsonParams)
+                initAfterBranch(testId = testId, exploreType = exploreType)
+            }
+        } catch (ex: Throwable) {
+            ex.printStackTrace()
+            startNextActivity()
+            LogException.catchException(ex)
+        }
     }
 }
 
