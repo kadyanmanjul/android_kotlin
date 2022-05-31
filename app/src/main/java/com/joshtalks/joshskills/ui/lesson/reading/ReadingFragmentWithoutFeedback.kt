@@ -13,10 +13,7 @@ import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
-import android.media.MediaCodec
-import android.media.MediaExtractor
-import android.media.MediaFormat
-import android.media.MediaMuxer
+import android.media.*
 import android.net.NetworkInfo
 import android.net.Uri
 import android.os.Build
@@ -1480,8 +1477,33 @@ class ReadingFragmentWithoutFeedback :
         binding.playBtn.visibility = INVISIBLE
         binding.mergedVideo.start()
     }
+    private fun gainAudioFocus() {
+        val mAudioManager =
+            context?.getSystemService(Context.AUDIO_SERVICE) as AudioManager?
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            mAudioManager!!.requestAudioFocus(
+                AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
+                    .setAudioAttributes(
+                        AudioAttributes.Builder()
+                            .setUsage(AudioAttributes.USAGE_MEDIA)
+                            .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                            .build()
+                    )
+                    .setAcceptsDelayedFocusGain(true)
+                    .setOnAudioFocusChangeListener {
+                    }.build()
+            )
+        } else {
+            mAudioManager?.requestAudioFocus(
+                { },
+                AudioManager.STREAM_MUSIC,
+                AudioManager.AUDIOFOCUS_GAIN
+            )
+        }
+    }
 
     fun playPracticeAudio() {
+        gainAudioFocus()
         if (PrefManager.hasKey(HAS_SEEN_READING_PLAY_ANIMATION).not() || PrefManager.getBoolValue(
                 HAS_SEEN_READING_PLAY_ANIMATION
             ).not()
