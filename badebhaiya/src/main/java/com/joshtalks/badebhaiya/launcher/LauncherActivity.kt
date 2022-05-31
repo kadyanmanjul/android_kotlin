@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.work.WorkManager
+import com.joshtalks.badebhaiya.BuildConfig
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.core.workers.WorkManagerAdmin
 import com.joshtalks.badebhaiya.feed.FeedActivity
@@ -24,7 +25,7 @@ class LauncherActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_launcher)
 
-        UserExperior.startRecording(getApplicationContext(), "ad556094-72d3-4a13-973d-1a759a00329a")
+        UserExperior.startRecording(getApplicationContext(), BuildConfig.USER_EXPERIOR_API_KEY)
 
         //if(Settings.Global.getInt(getContentResolver(), Settings.Global.AUTO_TIME) == 1)
         //     {

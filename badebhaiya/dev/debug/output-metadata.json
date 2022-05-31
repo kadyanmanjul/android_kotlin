@@ -11,9 +11,9 @@
       "type": "SINGLE",
       "filters": [],
       "attributes": [],
-      "versionCode": 8,
-      "versionName": "0.0.8.Dev_Debug",
-      "outputFile": "josh-bade-bhaiya-release0.0.8.apk"
+      "versionCode": 10002,
+      "versionName": "1.0.2.Dev_Debug",
+      "outputFile": "josh-bade-bhaiya-release1.0.2.apk"
     }
   ],
   "elementType": "File"
