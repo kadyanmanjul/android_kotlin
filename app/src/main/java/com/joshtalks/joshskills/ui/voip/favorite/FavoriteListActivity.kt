@@ -74,7 +74,10 @@ class FavoriteListActivity : BaseFppActivity() {
         event.observe(this) {
             when (it.what) {
                 FAV_LIST_SCREEN_BACK_PRESSED -> popBackStack()
-                FAV_CLICK_ON_PROFILE -> openProfileScreen(it.obj.toString(),it.arg1)
+                FAV_CLICK_ON_PROFILE ->{
+                    if (it.obj != null)
+                        openProfileScreen(it.obj.toString(), it.arg1)
+                }
                 OPEN_CALL_SCREEN ->{
                     if (it.obj != null) {
                         callScreenOpen(it.obj as Int)
@@ -82,7 +85,11 @@ class FavoriteListActivity : BaseFppActivity() {
                 }
                 OPEN_RECENT_SCREEN -> openRecentScreen()
                 ENABLE_ACTION_MODE -> enableMode()
-                SET_TEXT_ON_ENABLE_ACTION_MODE -> setTextOnActionMode(it.obj.toString())
+                SET_TEXT_ON_ENABLE_ACTION_MODE -> {
+                    if (it.obj != null) {
+                        setTextOnActionMode(it.obj.toString())
+                    }
+                }
                 FINISH_ACTION_MODE -> finishActionMode()
             }
         }
