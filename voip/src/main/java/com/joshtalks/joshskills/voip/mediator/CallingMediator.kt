@@ -49,7 +49,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
         FirebaseChannelService(scope)
     }
 
-    private var calling = PeerToPeerCalling()
+    private var calling = PeerToPeerCall()
     val flow by lazy {
         MutableSharedFlow<Envelope<Event>>(replay = 0)
     }

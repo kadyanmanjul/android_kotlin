@@ -18,7 +18,7 @@ import java.util.*
 import kotlin.collections.HashMap
 
 private const val TAG = "PeerToPeerCalling"
-class PeerToPeerCalling : Calling {
+class PeerToPeerCall : CallCategory {
     val voipNetwork = VoipNetwork.getVoipApi()
 
     override fun notificationLayout(data: IncomingCall): RemoteViews {
@@ -35,7 +35,6 @@ class PeerToPeerCalling : Calling {
     override suspend fun onPreCallConnect(callData: HashMap<String, Any>, direction: CallDirection) {
         Log.d(TAG, "Calling API ---- $callData")
         if(direction == CallDirection.INCOMING) {
-
             Log.d(TAG, "onPreCallConnect: INCOMING")
             val request = CallActionRequest(
                 callId = callData[INTENT_DATA_INCOMING_CALL_ID] as Int,
@@ -70,11 +69,13 @@ class PeerToPeerCalling : Calling {
         if (response.isSuccessful)
             Log.d(TAG, "onCallDecline: Sucessfull")
     }
+
     private fun getRandomName(): String {
         val name = "ABCDFGHIJKLMNOPRSTUVZ"
         val ename = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
         return name.random().toString().plus(ename.random().toString())
     }
+
     private fun String.textDrawableBitmap(
         width: Int = 48,
         height: Int = 48,

@@ -15,7 +15,7 @@ enum class CallDirection {
     OUTGOING
 }
 
-interface Calling {
+interface CallCategory {
     fun notificationLayout(data: IncomingCall) : RemoteViews? {
         return null
     }
