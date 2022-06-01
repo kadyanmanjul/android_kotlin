@@ -6,6 +6,10 @@ import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.database.Cursor
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Typeface
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.Uri
@@ -202,6 +206,43 @@ fun getDeclineCallIntent(): PendingIntent {
         intent,
         PendingIntent.FLAG_CANCEL_CURRENT
     )
+}
+
+fun getRandomName(): String {
+    val name = "ABCDFGHIJKLMNOPRSTUVZ"
+    val ename = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    return name.random().toString().plus(ename.random().toString())
+}
+
+fun String.textDrawableBitmap(
+    width: Int = 48,
+    height: Int = 48,
+    bgColor: Int = -1
+): Bitmap? {
+    val rnd = Random()
+    val color = if (bgColor == -1)
+        Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
+    else
+        bgColor
+
+    val font = Typeface.createFromAsset(
+        Utils.context?.assets,
+        "fonts/OpenSans-SemiBold.ttf"
+    )
+    val drawable = TextDrawable.builder()
+        .beginConfig()
+        .textColor(Color.WHITE)
+        .fontSize(20)
+        .useFont(font)
+        .toUpperCase()
+        .endConfig()
+        .buildRound(this, color)
+
+    val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+    val canvas = Canvas(bitmap)
+    drawable.setBounds(0, 0, canvas.width, canvas.height)
+    drawable.draw(canvas)
+    return bitmap
 }
 
 class Utils {
