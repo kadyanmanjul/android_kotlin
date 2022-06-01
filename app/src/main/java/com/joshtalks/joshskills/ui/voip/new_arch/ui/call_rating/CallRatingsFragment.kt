@@ -116,6 +116,7 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
                    }
                }
            }
+
            ratingList.setOnCheckedChangeListener(RadioGroup.OnCheckedChangeListener { group, checkedId ->
                val myAnim = AnimationUtils.loadAnimation(activity, R.anim.zoom_in)
                val interpolator = MyBounceInterpolator(0.8, 10.0)
@@ -198,8 +199,8 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
             binding.block.setTextColor(Color.WHITE)
         }
         isBlockSelected = true
-
     }
+
     private fun unSelectChange(s: String) {
         if(s=="fpp"&& vm.ifDialogShow==1 && PrefManager.getBoolValue(IS_COURSE_BOUGHT)){
             binding.block.chipStrokeColor = AppCompatResources.getColorStateList(requireContext(), R.color.pitch_black)

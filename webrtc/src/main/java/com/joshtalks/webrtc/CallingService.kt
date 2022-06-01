@@ -13,20 +13,6 @@ interface CallRequest {
     fun getChannel() : String
 }
 
-/*
-enum class CallState {
-    IDLE,
-    HOLD,
-    UNHOLD,
-    MUTE,
-    UNMUTE,
-    RECONNECTING,
-    RECONNECTED,
-    INITIATED, // Local User Join The Channel
-    CONNECTED, // Remote User Join The Channel
-    DISCONNECTED,
-}*/
-
 sealed class CallState {
     object Idle : CallState()
     object OnHold : CallState()
