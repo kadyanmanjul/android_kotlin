@@ -4,9 +4,6 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.repository.local.AppDatabase
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.group.analytics.data.local.GroupsAnalyticsEntity
-import com.joshtalks.joshskills.ui.group.analytics.data.network.GROUPS_ANALYTICS_EVENTS_API_KEY
-import com.joshtalks.joshskills.ui.group.analytics.data.network.GROUPS_ANALYTICS_GROUP_ID_API_KEY
-import com.joshtalks.joshskills.ui.group.analytics.data.network.GROUPS_ANALYTICS_MENTOR_ID_API_KEY
 import com.joshtalks.joshskills.ui.group.repository.GroupRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -16,6 +13,10 @@ import kotlinx.coroutines.sync.withLock
 import timber.log.Timber
 
 private const val TAG = "GroupsAnalytics"
+
+const val GROUPS_ANALYTICS_MENTOR_ID_API_KEY = "mentor_id"
+const val GROUPS_ANALYTICS_EVENTS_API_KEY = "group_event_name"
+const val GROUPS_ANALYTICS_GROUP_ID_API_KEY = "group_id"
 
 object GroupAnalytics {
     // TODO: Inject using Dagger2
