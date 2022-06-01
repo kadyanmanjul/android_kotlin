@@ -48,6 +48,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.browser.customtabs.CustomTabsIntent
+import androidx.collection.ArraySet
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.RoundedBitmapDrawable
@@ -114,6 +115,10 @@ val DATE_FORMATTER_2 = SimpleDateFormat("dd - MMM - yyyy")
 val TWENTY_FOUR_HOUR_CLOCK_TIME = SimpleDateFormat("kk:mm")
 
 const val IMPRESSION_OPEN_FREE_TRIAL_SCREEN = "OPEN_FREE_TRIAL_SCREEN"
+
+//fun <T>ArraySet<T>.distintLatest(): ArraySet<T>{
+//    return this.reversed().distinctBy { it.userId }.reversed().toSet()
+//}
 
 object Utils {
 

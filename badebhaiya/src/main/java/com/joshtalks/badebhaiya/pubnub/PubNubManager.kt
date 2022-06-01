@@ -28,6 +28,7 @@ import com.joshtalks.badebhaiya.pubnub.PubNubData._speakersList
 import com.joshtalks.badebhaiya.pubnub.PubNubData.audienceList
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.utils.DEFAULT_NAME
+import com.joshtalks.badebhaiya.utils.UniqueList
 import com.pubnub.api.PNConfiguration
 import com.pubnub.api.PubNub
 import com.pubnub.api.callbacks.SubscribeCallback
@@ -42,10 +43,7 @@ import com.pubnub.api.models.consumer.pubsub.PNSignalResult
 import com.pubnub.api.models.consumer.pubsub.files.PNFileEventResult
 import com.pubnub.api.models.consumer.pubsub.message_actions.PNMessageActionResult
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.last
-import kotlinx.coroutines.flow.single
+import kotlinx.coroutines.flow.*
 import timber.log.Timber
 import java.util.*
 
@@ -226,7 +224,8 @@ object PubNubManager {
 
     fun getSpeakerList() {
         jobs += CoroutineScope(Dispatchers.IO).launch {
-            PubNubData.speakerList.collect {
+            PubNubData.speakerList
+                .collect {
                 speakersList = it
             }
         }
@@ -284,14 +283,16 @@ object PubNubManager {
 
     private fun postToSpeakersList(list: ArraySet<LiveRoomUser>) {
         Timber.d("post to speaker list => $list")
+        val distinctedList = list.reversed().distinctBy { it.userId }.reversed().toSet()
         jobs += CoroutineScope(Dispatchers.IO).launch {
-            _speakersList.emit(list)
+            _speakersList.emit(ArraySet(distinctedList))
         }
     }
 
     private fun postToAudienceList(list: ArraySet<LiveRoomUser>) {
         jobs += CoroutineScope(Dispatchers.IO).launch {
-            _audienceList.emit(list)
+            val distinctedList = list.reversed().distinctBy { it.userId }.reversed().toSet()
+            _audienceList.emit(ArraySet(distinctedList))
         }
     }
 

@@ -17,7 +17,7 @@ data class ConversationUserDiffCallback(
 
     override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
 
-        return mOldUserList[oldItemPosition] == mNewUserList[newItemPosition]
+        return mOldUserList[oldItemPosition].userId == mNewUserList[newItemPosition].userId
     }
 
     override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
