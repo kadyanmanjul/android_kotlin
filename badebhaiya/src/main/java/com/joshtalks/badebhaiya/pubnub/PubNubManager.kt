@@ -6,7 +6,6 @@ import android.os.Message
 import android.util.Log
 import androidx.collection.ArraySet
 import androidx.collection.arraySetOf
-import androidx.lifecycle.viewModelScope
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.google.gson.reflect.TypeToken
@@ -102,6 +101,7 @@ object PubNubManager {
         pnConf.subscribeKey = BuildConfig.PUBNUB_SUB_API_KEY
         pnConf.publishKey = BuildConfig.PUBNUB_PUB_API_KEY
         pnConf.uuid = User.getInstance().userId
+        pnConf.connectTimeout = 10
         pnConf.isSecure = false
         pubnub = PubNub(pnConf)
 
@@ -109,16 +109,20 @@ object PubNubManager {
             pubnub.addListener(it)
         }
 
+        jobs += CoroutineScope(Dispatchers.IO).launch {
+
         pubnub.subscribe().channels(
             listOf(liveRoomProperties?.channelName, liveRoomProperties?.agoraUid.toString())
-        )?.withPresence()
-            ?.execute()
+        ).withPresence().execute()
 
         getLatestUserList()
         getSpeakerList()
         getAudienceList()
 //        collectPubNubEvents()
         changePubNubState(PubNubState.STARTED)
+
+        }
+
     }
 
     private fun changePubNubState(state: PubNubState){
@@ -147,7 +151,9 @@ object PubNubManager {
 
     private fun getLatestUserList() {
         jobs += CoroutineScope(Dispatchers.IO).launch {
-            val membersList = pubnub.channelMembers.channel(liveRoomProperties?.channelName)
+            try {
+
+            pubnub.channelMembers.channel(liveRoomProperties?.channelName)
                 ?.includeCustom(true)
                 ?.async { result, status ->
 
@@ -178,11 +184,13 @@ object PubNubManager {
                         }
                     }
                     // post to a shared flow instead of live data
+                    Timber.d("THIS IS WITH MEMBERS LIST SPEAKER => $tempSpeakerList AND AUDIENCE => $tempAudienceList")
                     postToSpeakersList(tempSpeakerList)
                     postToAudienceList(tempAudienceList)
                 }
-
-
+            } catch (e: Exception){
+                e.printStackTrace()
+            }
 
         }
 
@@ -365,12 +373,17 @@ object PubNubManager {
 
     fun sendCustomMessage(state: JsonElement, channel: String = liveRoomProperties!!.channelName) {
         jobs += CoroutineScope(Dispatchers.IO).launch() {
-            channel.let {
-                pubnub.publish()
-                    .message(state)
-                    ?.channel(it)
-                    ?.sync()
+            try {
+                channel.let {
+                    pubnub.publish()
+                        .message(state)
+                        ?.channel(it)
+                        ?.sync()
+                }
+            } catch (e: Exception){
+                e.printStackTrace()
             }
+
         }
     }
 

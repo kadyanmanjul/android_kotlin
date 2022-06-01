@@ -18,11 +18,14 @@ import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.core.*
 import com.joshtalks.badebhaiya.feed.FeedActivity
 import com.joshtalks.badebhaiya.liveroom.LiveRoomFragment
+import com.joshtalks.badebhaiya.liveroom.adapter.PubNubEvent
 import com.joshtalks.badebhaiya.liveroom.service.NotificationId.Companion.INCOMING_CALL_NOTIFICATION_ID
 import com.joshtalks.badebhaiya.liveroom.service.NotificationId.Companion.ROOM_CALL_NOTIFICATION_ID
 import com.joshtalks.badebhaiya.liveroom.service.NotificationId.Companion.ROOM_NOTIFICATION_CHANNEL
 import com.joshtalks.badebhaiya.liveroom.service.util.TelephonyUtil
 import com.joshtalks.badebhaiya.liveroom.service.util.WebRtcAudioManager
+import com.joshtalks.badebhaiya.pubnub.PubNubEventsManager
+import com.joshtalks.badebhaiya.pubnub.PubNubManager
 import com.joshtalks.badebhaiya.repository.ConversationRoomRepository
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomRequest
 import com.joshtalks.badebhaiya.repository.model.User
@@ -305,15 +308,18 @@ class ConvoWebRtcService : Service() {
 
                 }
                 TelephonyManager.CALL_STATE_OFFHOOK -> {
-                    if (isRoomCreatedByUser) {
-                        Log.d(
-                            TAG,
-                            "CALL_STATE_OFFHOOK  called with: state = $state, phoneNumber = $phoneNumber"
-                        )
-                        endRoom(roomId, roomQuestionId)
-                    } else {
-                        leaveRoom(roomId, roomQuestionId)
+                    if(PubNubManager.isRoomActive){
+                        PubNubEventsManager.sendMuteEvent(false)
                     }
+//                    if (isRoomCreatedByUser) {
+//                        Log.d(
+//                            TAG,
+//                            "CALL_STATE_OFFHOOK  called with: state = $state, phoneNumber = $phoneNumber"
+//                        )
+//                        endRoom(roomId, roomQuestionId)
+//                    } else {
+//                        leaveRoom(roomId, roomQuestionId)
+//                    }
 
                 }
                 TelephonyManager.CALL_STATE_RINGING -> {

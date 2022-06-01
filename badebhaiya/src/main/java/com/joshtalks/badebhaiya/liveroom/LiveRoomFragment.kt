@@ -1144,7 +1144,9 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
     }
 
     private fun finishFragment(){
-        requireActivity().supportFragmentManager.popBackStack()
+        if (isAdded){
+            requireActivity().supportFragmentManager.popBackStack()
+        }
     }
 
     private fun showLeaveRoomPopup() {
