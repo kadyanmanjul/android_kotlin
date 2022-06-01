@@ -340,6 +340,8 @@ UserProfileActivity : WebRtcMiddlewareActivity() {
                 )
             }
             startActivity(intent)
+            if (previousPage == GROUP)
+                this.finish()
         }
 
         binding.btnSentRequest.setOnClickListener {
