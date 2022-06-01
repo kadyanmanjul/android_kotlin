@@ -47,4 +47,7 @@ interface GroupApiService {
 
     @GET("$DIR/group/create_moengage_mentor/")
     suspend fun createMoEngageUser(@Query("mentor_id") mentorId: String): Response<Void>
+
+    @POST("$DIR/impression/track_group_impressions/")
+    suspend fun groupImpressionDetails(@Body params: Map<String, Any?>): Response<Unit>
 }

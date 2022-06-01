@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <declare-styleable name="CodeInputField">
         <attr name="cell_count" format="integer" />
         <attr name="left_margin" format="float" />
         <attr name="right_margin" format="float" />
         <attr name="font_size" format="dimension" />
-
     </declare-styleable>
 
     <declare-styleable name="JoshTooltip">
@@ -15,15 +13,14 @@
 
     <declare-styleable name="GroupsAppBar">
         <attr name="title" format="string" />
-        <attr name="sub_title" format="string"/>
-        <attr name="img_url" format="string"/>
+        <attr name="sub_title" format="string" />
+        <attr name="img_url" format="string" />
     </declare-styleable>
 
     <declare-styleable name="AttachmentView">
         <attr name="image_src" format="reference" />
         <attr name="text" format="string" />
         <attr name="tag" format="string" />
-
     </declare-styleable>
 
     <declare-styleable name="BlurImageView">
@@ -48,7 +45,6 @@
         </attr>
     </declare-styleable>
 
-
     <attr name="superBottomSheet_dim" format="float" />
     <attr name="superBottomSheet_backgroundColor" format="color" />
     <attr name="superBottomSheet_cornerRadius" format="dimension" />
@@ -59,7 +55,6 @@
     <attr name="superBottomSheet_cancelable" format="boolean" />
     <attr name="superBottomSheet_statusBarColor" format="color" />
     <attr name="superBottomSheet_peekHeight" format="dimension" />
-
 
     <declare-styleable name="JcPlayerView">
         <attr name="text_audio_title_color" format="color" />
@@ -88,8 +83,8 @@
 
         <attr name="show_random_button" format="boolean" />
         <attr name="show_repeat_button" format="boolean" />
-
     </declare-styleable>
+
     <declare-styleable name="CountryCodePicker">
         <!--{@deprecated Use defaultNameCode instead.}-->
         <attr name="ccp_defaultPhoneCode" format="integer" />
@@ -124,7 +119,6 @@
             <enum name="UAN" value="9" />
             <enum name="VOICEMAIL" value="10" />
             <enum name="UNKNOWN" value="11" />
-
         </attr>
 
         <!--CCP bool properties-->
@@ -250,10 +244,10 @@
         <attr name="tileBackgroundColor" format="color" />
     </declare-styleable>
 
-
     <declare-styleable name="PractiseRatingView">
         <attr name="rating_title" format="string" />
     </declare-styleable>
+
     <declare-styleable name="RatingBar">
         <attr name="starImageSize" format="dimension" />
         <attr name="starImageWidth" format="dimension" />
@@ -282,7 +276,6 @@
         <attr name="centerMaxProgress" format="integer" />
         <attr name="centerEmptyProgressColor" format="color" />
 
-
         <!--inner view-->
         <attr name="innerProgress" format="integer" />
         <attr name="innerProgressColor" format="color" />
@@ -290,14 +283,12 @@
         <attr name="innerMaxProgress" format="integer" />
         <attr name="innerEmptyProgressColor" format="color" />
 
-
         <!--innerMost view-->
         <attr name="innerMostProgress" format="integer" />
         <attr name="innerMostProgressColor" format="color" />
         <attr name="innerMostProgressStartAngle" format="integer" />
         <attr name="innerMostMaxProgress" format="integer" />
         <attr name="innerMostEmptyProgressColor" format="color" />
-
 
         <!-- Common Attrs-->
         <attr name="useRoundedCorner" format="boolean" />
@@ -316,13 +307,10 @@
         <attr name="avatar_initials" format="string" />
         <attr name="border_color" format="color" />
         <attr name="border_width" format="dimension" />
-
-
     </declare-styleable>
 
     <declare-styleable name="StatusIndicator">
         <attr name="user_status" format="string" />
-
     </declare-styleable>
 
     <declare-styleable name="CometChatUserList">
@@ -336,14 +324,12 @@
         <attr name="showReadReceipt" format="boolean" />
     </declare-styleable>
 
-
     <declare-styleable name="CometChatConversationList">
         <attr name="conversationlist" format="reference" />
-
     </declare-styleable>
+
     <declare-styleable name="CometChatGroupList">
         <attr name="grouplist" format="reference" />
-
     </declare-styleable>
 
     <declare-styleable name="SmartReplyList">
@@ -360,13 +346,11 @@
         <attr name="count_size" format="dimension" />
         <attr name="count_color" format="color" />
         <attr name="count_background_color" format="color" />
-
     </declare-styleable>
 
     <declare-styleable name="ComposeBox">
         <attr name="color" format="color" />
     </declare-styleable>
-
 
     <declare-styleable name="SwipeRevealLayout">
         <attr name="dragEdge">
@@ -382,7 +366,6 @@
         </attr>
 
         <attr name="flingVelocity" format="integer" />
-
         <attr name="minDistRequestDisallowParent" format="dimension" />
     </declare-styleable>
 
@@ -393,17 +376,13 @@
         <attr name="slide_to_cancel_bounds" format="dimension" />
         <attr name="slide_to_cancel_arrow_color" format="color" />
         <attr name="counter_time_color" format="color" />
-
     </declare-styleable>
 
     <declare-styleable name="RecordMic">
-
         <attr name="mic_icon" format="reference" />
-
     </declare-styleable>
 
     <declare-styleable name="AudioRecordView">
-
         <attr name="chunkWidth" format="dimension" />
         <attr name="chunkMaxHeight" format="dimension" />
         <attr name="chunkMinHeight" format="dimension" />
@@ -433,7 +412,6 @@
         <attr name="maskSpecs_startDelayed" format="integer" />
     </declare-styleable>
 
-
     <!--New GrammarButton-->
     <declare-styleable name="GrammarButton">
         <attr name="shadowEnabled" format="boolean" />
@@ -443,7 +421,6 @@
         <attr name="cornerRadius" format="dimension" />
     </declare-styleable>
 
-
     <declare-styleable name="DashedUnderlinedTextView">
         <attr name="underlineWidth" format="dimension" />
         <attr name="underlineColor" format="color" />
@@ -451,12 +428,11 @@
     </declare-styleable>
 
     <declare-styleable name="TextViewOutline">
-        <attr name="outlineSize" format="dimension"/>
-        <attr name="outlineColor" format="color|reference"/>
-        <attr name="android:shadowRadius"/>
-        <attr name="android:shadowDx"/>
-        <attr name="android:shadowDy"/>
-        <attr name="android:shadowColor"/>
+        <attr name="outlineSize" format="dimension" />
+        <attr name="outlineColor" format="color|reference" />
+        <attr name="android:shadowRadius" />
+        <attr name="android:shadowDx" />
+        <attr name="android:shadowDy" />
+        <attr name="android:shadowColor" />
     </declare-styleable>
-
 </resources>
