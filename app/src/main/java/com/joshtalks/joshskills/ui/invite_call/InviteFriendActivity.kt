@@ -75,7 +75,7 @@ class InviteFriendActivity : BaseActivity(), ContactsAdapter.OnContactClickListe
     override fun onContactClick(contact: PhonebookContact) {
         if (isPhoneNumberValid(contact.phoneNumber).not()) return
         viewModel.isLoading.set(true)
-        DeepLinkUtil(this)
+        DeepLinkUtil
             .setReferralCode(Mentor.getInstance().referralCode)
             .setReferralCampaign()
             .setListener(object : DeepLinkUtil.OnDeepLinkListener {

@@ -109,7 +109,7 @@ class ViewAndShareViewModel : BaseViewModel() {
     }
 
     fun getDeepLinkAndInviteFriends(view: View) {
-        DeepLinkUtil(AppObjectController.joshApplication)
+        DeepLinkUtil
             .setReferralCode(Mentor.getInstance().referralCode)
             .setReferralCampaign()
             .setListener(object : DeepLinkUtil.OnDeepLinkListener {

@@ -15,6 +15,7 @@ import com.joshtalks.joshskills.constants.COURSE_RESTART_SUCCESS
 import com.joshtalks.joshskills.constants.INTERNET_FAILURE
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
+import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
 import com.joshtalks.joshskills.core.custom_ui.recorder.AudioRecording
 import com.joshtalks.joshskills.core.custom_ui.recorder.OnAudioRecordListener
 import com.joshtalks.joshskills.core.custom_ui.recorder.RecordingItem
@@ -32,7 +33,6 @@ import com.joshtalks.joshskills.repository.server.chat_message.BaseMediaMessage
 import com.joshtalks.joshskills.repository.service.NetworkRequestHelper
 import com.joshtalks.joshskills.repository.service.SyncChatService
 import com.joshtalks.joshskills.ui.fpp.model.PendingRequestResponse
-import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
 import com.joshtalks.joshskills.ui.userprofile.models.UserProfileResponse
 import id.zelory.compressor.Compressor
 import kotlinx.coroutines.*
@@ -444,7 +444,7 @@ class ConversationViewModel(
 
     suspend fun getLastLessonForCourse(): Int {
         return AppObjectController.appDatabase.lessonDao()
-            .getLastLessonForCourse(inboxEntity.courseId.toInt())
+            .getLastLessonNoForCourse(inboxEntity.courseId.toInt())
     }
 
     fun isRecordingStarted(): Boolean {

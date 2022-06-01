@@ -27,7 +27,10 @@ import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.model.*
 import com.joshtalks.joshskills.ui.call.CallingServiceReceiver
 import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
-import com.joshtalks.joshskills.ui.newonboarding.OnBoardingActivityNew
+import com.joshtalks.joshskills.ui.signup.FreeTrialOnBoardActivity
+import com.joshtalks.joshskills.ui.signup.SignUpActivity
+import com.joshtalks.joshskills.util.DeepLinkData
+import com.joshtalks.joshskills.util.DeepLinkRedirectUtil
 import io.branch.referral.Branch
 import io.branch.referral.BranchError
 import io.branch.referral.Defines
@@ -55,9 +58,6 @@ class LauncherActivity : CoreJoshActivity(), Branch.BranchReferralInitListener {
         initAppInFirstTime()
         handleIntent()
         PrefManager.put(PREF_IS_CONVERSATION_ROOM_ACTIVE, false)
-        AppObjectController.uiHandler.postDelayed({
-            analyzeAppRequirement()
-        }, 700)
     }
 
     private fun initApp() {
@@ -127,7 +127,6 @@ class LauncherActivity : CoreJoshActivity(), Branch.BranchReferralInitListener {
 
     private fun analyzeAppRequirement() {
         lifecycleScope.launch(Dispatchers.IO) {
-            Log.i(TAG, "analyzeAppRequirement: ")
             when {
                 PrefManager.getStringValue(INSTANCE_ID).isEmpty() -> {
                     if (intent.data == null)
@@ -233,12 +232,47 @@ class LauncherActivity : CoreJoshActivity(), Branch.BranchReferralInitListener {
         this.finishAndRemoveTask()
     }
 
-    private fun startNextActivity() {
+    private fun startNextActivity(jsonParams: JSONObject? = null) {
         lifecycleScope.launch(Dispatchers.IO) {
             WorkManagerAdmin.appStartWorker()
             AppObjectController.uiHandler.removeCallbacksAndMessages(null)
-            val intent = getIntentForState()
-            startActivity(intent)
+            Log.d(TAG, "YASH => startNextActivity() called $jsonParams")
+            when {
+                User.getInstance().isVerified.not() -> {
+                    when {
+                        (PrefManager.getBoolValue(IS_GUEST_ENROLLED, false) &&
+                                PrefManager.getBoolValue(IS_PAYMENT_DONE, false).not()) -> {
+
+                            getInboxActivityIntent()
+                        }
+                        PrefManager.getBoolValue(IS_PAYMENT_DONE, false) -> {
+                            startActivity(Intent(this@LauncherActivity, SignUpActivity::class.java))
+                        }
+                        PrefManager.getBoolValue(IS_FREE_TRIAL, false, false) -> {
+                            startActivity(
+                                Intent(
+                                    this@LauncherActivity,
+                                    FreeTrialOnBoardActivity::class.java
+                                )
+                            )
+                        }
+                        else -> {
+                            startActivity(Intent(this@LauncherActivity, SignUpActivity::class.java))
+                        }
+                    }
+                }
+                isUserProfileNotComplete() -> {
+                    startActivity(Intent(this@LauncherActivity, SignUpActivity::class.java))
+                }
+                containsFavUserCallBackUrl() -> {
+                    startActivity(getWebRtcActivityIntent())
+                }
+                jsonParams != null -> DeepLinkRedirectUtil.getIntent(
+                    this@LauncherActivity,
+                    jsonParams
+                ) ?: startActivity(getInboxActivityIntent())
+                else -> startActivity(getInboxActivityIntent())
+            }
             this@LauncherActivity.finishAndRemoveTask()
         }
     }
@@ -289,7 +323,11 @@ class LauncherActivity : CoreJoshActivity(), Branch.BranchReferralInitListener {
         }
     }
 
-    private fun initAfterBranch(testId: String? = null, exploreType: String? = null) {
+    private fun initAfterBranch(
+        testId: String? = null,
+        exploreType: String? = null,
+        jsonParams: JSONObject? = null
+    ) {
         lifecycleScope.launch(Dispatchers.IO) {
             when {
                 testId != null -> {
@@ -297,13 +335,13 @@ class LauncherActivity : CoreJoshActivity(), Branch.BranchReferralInitListener {
                 }
                 PrefManager.hasKey(SERVER_GID_ID) -> {
                     if (PrefManager.hasKey(API_TOKEN)) {
-                        startNextActivity()
+                        startNextActivity(jsonParams)
                     } else {
                         getMentorForUser(PrefManager.getStringValue(INSTANCE_ID), testId)
                     }
                 }
                 Mentor.getInstance().hasId() -> {
-                    startNextActivity()
+                    startNextActivity(jsonParams)
                 }
                 else -> {
                     initGaid(testId)
@@ -367,25 +405,23 @@ class LauncherActivity : CoreJoshActivity(), Branch.BranchReferralInitListener {
             InstallReferrerModel.getPrefObject()?.let {
                 obj.installOn = it.installOn
                 obj.utmMedium =
-                    if (it.utmMedium.isNullOrEmpty() && it.otherInfo != null && it.otherInfo!!.containsKey(
-                            "utm_medium"
-                        )
-                    )
-                        it.otherInfo!!["utm_medium"]
-                    else it.utmMedium
+                    if (it.utmMedium.isNullOrEmpty() &&
+                        it.otherInfo != null &&
+                        it.otherInfo!!.containsKey("utm_medium")
+                    ) it.otherInfo!!["utm_medium"]
+                    else
+                        it.utmMedium
                 obj.utmSource =
-                    if (it.utmSource.isNullOrEmpty() && it.otherInfo != null && it.otherInfo!!.containsKey(
-                            "utm_source"
-                        )
-                    )
-                        it.otherInfo!!["utm_source"]
+                    if (it.utmSource.isNullOrEmpty() &&
+                        it.otherInfo != null &&
+                        it.otherInfo!!.containsKey("utm_source")
+                    ) it.otherInfo!!["utm_source"]
                     else it.utmSource
                 obj.utmTerm =
-                    if (it.utmTerm.isNullOrEmpty() && it.otherInfo != null && it.otherInfo!!.containsKey(
-                            "utm_campaign"
-                        )
-                    )
-                        it.otherInfo!!["utm_campaign"]
+                    if (it.utmTerm.isNullOrEmpty() &&
+                        it.otherInfo != null &&
+                        it.otherInfo!!.containsKey("utm_campaign")
+                    ) it.otherInfo!!["utm_campaign"]
                     else it.utmTerm
             }
 
@@ -428,30 +464,12 @@ class LauncherActivity : CoreJoshActivity(), Branch.BranchReferralInitListener {
         }
     }
 
-    private fun startOnboardingNewActivity() {
-        OnBoardingActivityNew.startOnBoardingActivity(
-            this@LauncherActivity,
-            COURSE_EXPLORER_NEW,
-            false
-        )
-        this@LauncherActivity.finish()
-    }
-
-    private fun changeLanguageOfApp() {
-        requestWorkerForChangeLanguage(
-            PrefManager.getStringValue(USER_LOCALE),
-            canCreateActivity = false,
-            successCallback = {
-                AppObjectController.isSettingUpdate = true
-                startNextActivity()
-            },
-            errorCallback = {
-                startNextActivity()
-            }
-        )
-    }
-
     override fun onInitFinished(referringParams: JSONObject?, error: BranchError?) {
+        if (error != null) {
+            Log.i(TAG, "onInitFinished: error ${error.message}")
+            analyzeAppRequirement()
+            return
+        }
         try {
             val jsonParams =
                 referringParams ?: (Branch.getInstance().firstReferringParams
@@ -460,8 +478,6 @@ class LauncherActivity : CoreJoshActivity(), Branch.BranchReferralInitListener {
                 .d("jsonParams = $jsonParams, error = $error")
             var testId: String? = null
             var exploreType: String? = null
-            val installReferrerModel =
-                InstallReferrerModel.getPrefObject() ?: InstallReferrerModel()
             jsonParams?.let {
                 AppObjectController.uiHandler.removeCallbacksAndMessages(null)
                 if (it.has(Defines.Jsonkey.AndroidDeepLinkPath.key)) {
@@ -472,27 +488,29 @@ class LauncherActivity : CoreJoshActivity(), Branch.BranchReferralInitListener {
                         it.getString(Defines.Jsonkey.ContentType.key)
                     } else null
                 }
-                if (it.has(Defines.Jsonkey.ReferralCode.key))
-                    installReferrerModel.utmSource =
-                        it.getString(Defines.Jsonkey.ReferralCode.key)
-                if (it.has(Defines.Jsonkey.UTMMedium.key))
-                    installReferrerModel.utmMedium =
-                        it.getString(Defines.Jsonkey.UTMMedium.key)
-                if (it.has(Defines.Jsonkey.UTMCampaign.key))
-                    installReferrerModel.utmTerm =
-                        it.getString(Defines.Jsonkey.UTMCampaign.key)
-                if (it.has("notification_id") && it.has("notification_channel"))
+                updateReferralModel(jsonParams)
+                if (it.has(DeepLinkData.NOTIFICATION_ID.key) && it.has(DeepLinkData.NOTIFICATION_CHANNEL.key)) {
                     addDeepLinkNotificationAnalytics(
-                        it.getString(
-                            ("notification_id")
-                        ),
-                        it.getString("notification_channel")
+                        it.getString((DeepLinkData.NOTIFICATION_ID.key)),
+                        it.getString(DeepLinkData.NOTIFICATION_CHANNEL.key)
                     )
-                InstallReferrerModel.update(installReferrerModel)
+                }
+
+//                if (it.has(Defines.Jsonkey.Clicked_Branch_Link.key).not() ||
+//                    it.getBoolean(Defines.Jsonkey.Clicked_Branch_Link.key).not()
+//                ) {
+                AppObjectController.uiHandler.postDelayed({
+                    analyzeAppRequirement()
+                }, 700)
+//                }
+
             }
             if (isFinishing.not()) {
                 initReferral(testId = testId, exploreType = exploreType, jsonParams)
-                initAfterBranch(testId = testId, exploreType = exploreType)
+                initAfterBranch(
+                    testId = testId, exploreType = exploreType,
+                    jsonParams = if (jsonParams.has(DeepLinkData.REDIRECT_TO.key)) jsonParams else null
+                )
             }
         } catch (ex: Throwable) {
             ex.printStackTrace()
@@ -500,56 +518,20 @@ class LauncherActivity : CoreJoshActivity(), Branch.BranchReferralInitListener {
             LogException.catchException(ex)
         }
     }
-}
 
-/*private fun logNotificationData() {
-    lifecycleScope.launchWhenStarted {
-        try {
-            val isNotificationEnabled =
-                NotificationManagerCompat.from(AppObjectController.joshApplication)
-                    .areNotificationsEnabled()
-            AppAnalytics.create(AnalyticsEvent.ARE_NOTIFICATIONS_ENABLED.NAME)
-                .addUserDetails()
-                .addBasicParam()
-                .addParam("is_enabled", isNotificationEnabled)
-                .push()
+    private fun updateReferralModel(jsonParams: JSONObject) {
+        (InstallReferrerModel.getPrefObject() ?: InstallReferrerModel()).let {
+            if (jsonParams.has(Defines.Jsonkey.ReferralCode.key))
+                it.utmSource =
+                    jsonParams.getString(Defines.Jsonkey.ReferralCode.key)
+            if (jsonParams.has(Defines.Jsonkey.UTMMedium.key))
+                it.utmMedium =
+                    jsonParams.getString(Defines.Jsonkey.UTMMedium.key)
 
-            if (isNotificationEnabled && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                val a = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-                val channels = a.notificationChannels
-                if (channels.isNullOrEmpty().not() && channels.size > 0) {
-                    val listChannelsOff = ArrayList<String?>()
-                    val listChannelsOn = ArrayList<String?>()
-                    for (channel in channels) {
-                        if ((channel.importance == NotificationManager.IMPORTANCE_NONE)) {
-                            listChannelsOff.add(channel.name.toString())
-                        } else {
-                            listChannelsOn.add(channel.name.toString())
-                        }
-                    }
-                    AppAnalytics.create(AnalyticsEvent.ARE_NOTIFICATION_CHANNEL_ENABLED.NAME)
-                        .addUserDetails()
-                        .addBasicParam()
-                        .addParam(
-                            AnalyticsEvent.TOTAL_NOTIFICATION_CHANNELS.NAME,
-                            channels.size
-                        )
-                        .addParam(AnalyticsEvent.CHANNELS_ENABLED.NAME, listChannelsOn)
-                        .addParam(
-                            AnalyticsEvent.CHANNELS_ENABLED_SIZE.NAME,
-                            listChannelsOn.size
-                        )
-                        .addParam(AnalyticsEvent.CHANNELS_DISABLED.NAME, listChannelsOff)
-                        .addParam(
-                            AnalyticsEvent.CHANNELS_DISABLED_SIZE.NAME,
-                            listChannelsOff.size
-                        )
-                        .push()
-                }
-            }
-        } catch (ex: Exception) {
-            LogException.catchException(ex)
+            if (jsonParams.has(Defines.Jsonkey.UTMCampaign.key))
+                it.utmTerm =
+                    jsonParams.getString(Defines.Jsonkey.UTMCampaign.key)
+            InstallReferrerModel.update(it)
         }
     }
 }
-*/

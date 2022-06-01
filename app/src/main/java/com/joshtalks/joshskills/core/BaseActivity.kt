@@ -80,7 +80,6 @@ import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.reminder.set_reminder.ReminderActivity
 import com.joshtalks.joshskills.ui.settings.SettingsActivity
 import com.joshtalks.joshskills.ui.signup.FLOW_FROM
-import com.joshtalks.joshskills.ui.signup.FreeTrialOnBoardActivity
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.ui.termsandconditions.WebViewFragment
 import com.joshtalks.joshskills.ui.userprofile.fragments.ShowAnimatedLeaderBoardFragment
@@ -128,7 +127,7 @@ abstract class BaseActivity :
     }
 
     var openSettingActivity: ActivityResultLauncher<Intent> = registerForActivityResult(
-            ActivityResultContracts.StartActivityForResult()
+        ActivityResultContracts.StartActivityForResult()
     ) { result ->
         if (AppObjectController.isSettingUpdate) {
             reCreateActivity()
@@ -252,39 +251,6 @@ abstract class BaseActivity :
         }
     }
 
-    fun getIntentForState(): Intent {
-        val intent: Intent = when {
-            User.getInstance().isVerified.not() -> {
-                when {
-                    (PrefManager.getBoolValue(IS_GUEST_ENROLLED, false) &&
-                            PrefManager.getBoolValue(IS_PAYMENT_DONE, false).not()) -> {
-                        getInboxActivityIntent()
-                    }
-                    PrefManager.getBoolValue(IS_PAYMENT_DONE, false) -> {
-                        Intent(this, SignUpActivity::class.java)
-                    }
-                    PrefManager.getBoolValue(IS_FREE_TRIAL, false, false) -> {
-                        Intent(this, FreeTrialOnBoardActivity::class.java)
-                    }
-                    else -> {
-                        Intent(this, SignUpActivity::class.java)
-                    }
-                }
-            }
-            isUserProfileNotComplete() -> {
-                Intent(this, SignUpActivity::class.java)
-            }
-            containsFavUserCallBackUrl() -> {
-                getWebRtcActivityIntent()
-            }
-            else -> getInboxActivityIntent()
-        }
-        return intent.apply {
-            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        }
-    }
-
     fun isUserProfileNotComplete(): Boolean {
         try {
             val user = User.getInstance()
@@ -341,8 +307,8 @@ abstract class BaseActivity :
         try {
             lifecycleScope.launch(Dispatchers.IO) {
                 if (mIntent != null && mIntent.hasExtra(HAS_NOTIFICATION) &&
-                        mIntent.hasExtra(NOTIFICATION_ID) &&
-                        mIntent.getStringExtra(NOTIFICATION_ID).isNullOrEmpty().not()
+                    mIntent.hasExtra(NOTIFICATION_ID) &&
+                    mIntent.getStringExtra(NOTIFICATION_ID).isNullOrEmpty().not()
                 ) {
                     NotificationAnalytics().addAnalytics(
                         notificationId = mIntent.getStringExtra(NOTIFICATION_ID)!!,
@@ -373,18 +339,18 @@ abstract class BaseActivity :
                 firebaseCrashlytics.setCustomKey("username", user.username)
                 firebaseCrashlytics.setCustomKey("user_type", user.userType)
                 firebaseCrashlytics.setCustomKey(
-                        "age",
-                        AppAnalytics.getAge(user.dateOfBirth).toString() + ""
+                    "age",
+                    AppAnalytics.getAge(user.dateOfBirth).toString() + ""
                 )
                 user.dateOfBirth?.let { firebaseCrashlytics.setCustomKey("date_of_birth", it) }
                 firebaseCrashlytics.setCustomKey(
-                        "gender",
-                        if (user.gender == "M") "MALE" else "FEMALE"
+                    "gender",
+                    if (user.gender == "M") "MALE" else "FEMALE"
                 )
                 FirebaseCrashlytics.getInstance().setUserId(
-                        PrefManager.getStringValue(
-                                USER_UNIQUE_ID
-                        )
+                    PrefManager.getStringValue(
+                        USER_UNIQUE_ID
+                    )
                 )
             } catch (ex: Throwable) {
                 LogException.catchException(ex)
@@ -400,8 +366,8 @@ abstract class BaseActivity :
         lifecycleScope.launch(Dispatchers.IO) {
             AppAnalytics.create(AnalyticsEvent.CLICK_HELPLINE_SELECTED.NAME).push()
             Utils.call(
-                    this@BaseActivity,
-                    AppObjectController.getFirebaseRemoteConfig().getString("helpline_number")
+                this@BaseActivity,
+                AppObjectController.getFirebaseRemoteConfig().getString("helpline_number")
             )
         }
     }
@@ -420,16 +386,16 @@ abstract class BaseActivity :
         return lifecycleScope.async(Dispatchers.IO) {
             val currentState: NPSEvent? = getCurrentNpsState(nps) ?: return@async false
             val minNpsInADay = AppObjectController.getFirebaseRemoteConfig()
-                    .getDouble("MINIMUM_NPS_IN_A_DAY_COUNT").toInt()
+                .getDouble("MINIMUM_NPS_IN_A_DAY_COUNT").toInt()
             val totalCountToday =
-                    AppObjectController.appDatabase.npsEventModelDao().getTotalCountOfRows()
+                AppObjectController.appDatabase.npsEventModelDao().getTotalCountOfRows()
             if (totalCountToday >= minNpsInADay) {
                 return@async false
             }
             val npsEventModel =
-                    NPSEventModel.getAllNpaList()?.filter { it.enable }
-                            ?.find { it.event == currentState }
-                            ?: return@async false
+                NPSEventModel.getAllNpaList()?.filter { it.enable }
+                    ?.find { it.event == currentState }
+                    ?: return@async false
             npsEventModel.eventId = id
             getQuestionForNPS(npsEventModel)
             return@async true
@@ -445,7 +411,7 @@ abstract class BaseActivity :
     }
 
     private fun getQuestionForNPS(
-            eventModel: NPSEventModel
+        eventModel: NPSEventModel
     ) {
         lifecycleScope.launch(Dispatchers.IO) {
             val observer = Observer<WorkInfo> { workInfo ->
@@ -457,13 +423,13 @@ abstract class BaseActivity :
                             if (output.isNullOrEmpty().not()) {
                                 NPSEventModel.removeCurrentNPA()
                                 val questionList =
-                                        NPSQuestionModel.getNPSQuestionModelList(output!!)
+                                    NPSQuestionModel.getNPSQuestionModelList(output!!)
                                 if (questionList.isNullOrEmpty().not()) {
                                     lifecycleScope.launch(Dispatchers.Main) {
                                         showNPSFragment(eventModel, questionList!!)
                                     }
                                     AppObjectController.appDatabase.npsEventModelDao()
-                                            .insertNPSEvent(eventModel)
+                                        .insertNPSEvent(eventModel)
                                 }
                             }
                         }
@@ -472,25 +438,25 @@ abstract class BaseActivity :
                     }
 
                     WorkManager.getInstance(applicationContext)
-                            .getWorkInfoByIdLiveData(WorkManagerAdmin.getQuestionNPA(eventModel.eventName))
-                            .removeObservers(this@BaseActivity)
+                        .getWorkInfoByIdLiveData(WorkManagerAdmin.getQuestionNPA(eventModel.eventName))
+                        .removeObservers(this@BaseActivity)
                 }
             }
             WorkManager.getInstance(applicationContext)
-                    .getWorkInfoByIdLiveData(WorkManagerAdmin.getQuestionNPA(eventModel.eventName))
-                    .observe(this@BaseActivity, observer)
+                .getWorkInfoByIdLiveData(WorkManagerAdmin.getQuestionNPA(eventModel.eventName))
+                .observe(this@BaseActivity, observer)
         }
     }
 
     private fun showNPSFragment(
-            npsModel: NPSEventModel,
-            questionList: List<NPSQuestionModel>
+        npsModel: NPSEventModel,
+        questionList: List<NPSQuestionModel>
     ) {
         if (isFinishing) {
             return
         }
         val prev =
-                supportFragmentManager.findFragmentByTag(NetPromoterScoreFragment::class.java.name)
+            supportFragmentManager.findFragmentByTag(NetPromoterScoreFragment::class.java.name)
         if (prev != null) {
             return
         }
@@ -500,7 +466,7 @@ abstract class BaseActivity :
 
     fun showSignUpDialog() {
         if (AppObjectController.getFirebaseRemoteConfig()
-                        .getBoolean(FirebaseRemoteConfigKey.FORCE_SIGN_IN_FEATURE_ENABLE)
+                .getBoolean(FirebaseRemoteConfigKey.FORCE_SIGN_IN_FEATURE_ENABLE)
         )
             SignUpPermissionDialogFragment.showDialog(supportFragmentManager)
     }
@@ -564,23 +530,23 @@ abstract class BaseActivity :
         return false
     }
 
-    fun isRegProfileComplete():Boolean {
+    fun isRegProfileComplete(): Boolean {
         val user = User.getInstance()
         return (!user.firstName.isNullOrEmpty() && !user.phoneNumber.isNullOrEmpty() && !user.dateOfBirth.isNullOrEmpty() && !user.gender.isNullOrEmpty())
     }
 
     fun replaceFragment(
-            containerId: Int,
-            fragment: Fragment,
-            newFragmentTag: String,
-            currentFragmentTag: String? = null
+        containerId: Int,
+        fragment: Fragment,
+        newFragmentTag: String,
+        currentFragmentTag: String? = null
     ) {
         if (currentFragmentTag == null) {
             supportFragmentManager.beginTransaction().replace(containerId, fragment, newFragmentTag)
-                    .commit()
+                .commit()
         } else {
             supportFragmentManager.beginTransaction().replace(containerId, fragment, newFragmentTag)
-                    .addToBackStack(currentFragmentTag).commit()
+                .addToBackStack(currentFragmentTag).commit()
         }
     }
 
@@ -588,7 +554,7 @@ abstract class BaseActivity :
         if (User.getInstance().isVerified && PrefManager.getBoolValue(IS_GUEST_ENROLLED)) {
             return true
         } else if (User.getInstance().isVerified && PrefManager.getBoolValue(IS_GUEST_ENROLLED)
-                        .not()
+                .not()
         ) {
             return false
         }
@@ -612,7 +578,7 @@ abstract class BaseActivity :
             try {
                 MoECoreHelper.logoutUser(this@BaseActivity)
                 AppObjectController.signUpNetworkService.signoutUser(Mentor.getInstance().getId())
-                val broadcastIntent=Intent().apply {
+                val broadcastIntent = Intent().apply {
                     action = CALLING_SERVICE_ACTION
                     putExtra(SERVICE_BROADCAST_KEY, STOP_SERVICE)
                 }
@@ -652,9 +618,9 @@ abstract class BaseActivity :
                     this == getString(R.string.conversation_open_dlink) -> {
                         val courseId = inAppMessage.data?.getOrElse("data", { EMPTY }) ?: EMPTY
                         AppObjectController.appDatabase.courseDao().getCourseAccordingId(courseId)
-                                ?.let {
-                                    ConversationActivity.startConversionActivity(this@BaseActivity, it)
-                                }
+                            ?.let {
+                                ConversationActivity.startConversionActivity(this@BaseActivity, it)
+                            }
                     }
                     this == getString(R.string.setting_dlink) -> {
                         openSettingActivity.launch(SettingsActivity.getIntent(this@BaseActivity))
@@ -671,9 +637,9 @@ abstract class BaseActivity :
                         val id = inAppMessage.data?.getOrElse("data", { EMPTY }) ?: EMPTY
                         if (id.isNotEmpty()) {
                             AssessmentActivity.startAssessmentActivity(
-                                    this@BaseActivity,
-                                    10001,
-                                    id.toInt()
+                                this@BaseActivity,
+                                10001,
+                                id.toInt()
                             )
                         }
                     }
@@ -681,8 +647,8 @@ abstract class BaseActivity :
                         val id = inAppMessage.data?.getOrElse("data", { EMPTY }) ?: EMPTY
                         if (id.isNotEmpty()) {
                             CourseDetailsActivity.startCourseDetailsActivity(
-                                    this@BaseActivity, id.toInt(),
-                                    flags = arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
+                                this@BaseActivity, id.toInt(),
+                                flags = arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
                             )
                         }
                     }
@@ -690,7 +656,7 @@ abstract class BaseActivity :
                         val id = inAppMessage.data?.getOrElse("data", { EMPTY }) ?: EMPTY
                         if (id.isNotEmpty()) {
                             PaymentSummaryActivity.startPaymentSummaryActivity(
-                                    this@BaseActivity, id
+                                this@BaseActivity, id
                             )
                         }
                     }
@@ -710,10 +676,10 @@ abstract class BaseActivity :
                     }
                     this == getString(R.string.course_explore_dlink) -> {
                         CourseExploreActivity.startCourseExploreActivity(
-                                this@BaseActivity,
-                                COURSE_EXPLORER_CODE,
-                                null,
-                                state = ActivityEnum.DeepLink
+                            this@BaseActivity,
+                            COURSE_EXPLORER_CODE,
+                            null,
+                            state = ActivityEnum.DeepLink
                         )
                     }
                     else -> {
@@ -725,10 +691,10 @@ abstract class BaseActivity :
     }
 
     fun requestWorkerForChangeLanguage(
-            lCode: String,
-            successCallback: (() -> Unit)? = null,
-            errorCallback: (() -> Unit)? = null,
-            canCreateActivity: Boolean = true
+        lCode: String,
+        successCallback: (() -> Unit)? = null,
+        errorCallback: (() -> Unit)? = null,
+        canCreateActivity: Boolean = true
     ) {
         val uuid = WorkManagerAdmin.getLanguageChangeWorker(lCode)
         val observer = Observer<WorkInfo> { workInfo ->
@@ -744,8 +710,8 @@ abstract class BaseActivity :
             }
         }
         WorkManager.getInstance(applicationContext)
-                .getWorkInfoByIdLiveData(uuid)
-                .observe(this, observer)
+            .getWorkInfoByIdLiveData(uuid)
+            .observe(this, observer)
     }
 
     protected fun reCreateActivity() {
@@ -785,9 +751,9 @@ abstract class BaseActivity :
             // TODO add when awards functionality is over
             // if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE)) {
             ShowAwardFragment.showDialog(
-                    supportFragmentManager,
-                    awarList,
-                    isFromUserProfile
+                supportFragmentManager,
+                awarList,
+                isFromUserProfile
             )
         }
     }
@@ -797,16 +763,16 @@ abstract class BaseActivity :
     }
 
     fun showLeaderboardAchievement(
-            outrankData: OutrankedDataResponse,
-            lessonInterval: Int,
-            chatId: String,
-            lessonNo: Int
+        outrankData: OutrankedDataResponse,
+        lessonInterval: Int,
+        chatId: String,
+        lessonNo: Int
     ) {
         if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE)) {
             // if (PrefManager.getBoolValue(IS_PROFILE_FEATURE_ACTIVE)) {
             ShowAnimatedLeaderBoardFragment.showDialog(
-                    supportFragmentManager,
-                    outrankData, lessonInterval, chatId, lessonNo
+                supportFragmentManager,
+                outrankData, lessonInterval, chatId, lessonNo
             )
         }
     }
@@ -828,8 +794,8 @@ abstract class BaseActivity :
     }
     private val locationRequest: LocationRequest by lazy {
         LocationRequest.create()
-                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setInterval(5000)
+            .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+            .setInterval(5000)
     }
 
     @SuppressLint("MissingPermission")
@@ -876,15 +842,15 @@ abstract class BaseActivity :
         try {
             val request = UpdateUserLocality()
             request.locality =
-                    SearchLocality(location.latitude, location.longitude)
+                SearchLocality(location.latitude, location.longitude)
             AppAnalytics.setLocation(
-                    location.latitude,
-                    location.longitude
+                location.latitude,
+                location.longitude
             )
             val response: ProfileResponse =
-                    AppObjectController.signUpNetworkService.updateUserAddressAsync(
-                            Mentor.getInstance().getId(), request
-                    )
+                AppObjectController.signUpNetworkService.updateUserAddressAsync(
+                    Mentor.getInstance().getId(), request
+                )
             Mentor.getInstance().setLocality(response.locality).update()
         } catch (e: Exception) {
             e.printStackTrace()

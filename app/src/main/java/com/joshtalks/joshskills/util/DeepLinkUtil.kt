@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.util
 
-import android.content.Context
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.PrefManager
@@ -14,7 +13,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class DeepLinkUtil(private val context: Context) {
+object DeepLinkUtil {
     private var timestamp: Long = System.currentTimeMillis()
     private var feature = "sharing"
     private var referralCode: String? = null
@@ -82,7 +81,7 @@ class DeepLinkUtil(private val context: Context) {
             .addControlParameter(Defines.Jsonkey.UTMMedium.key, medium)
 
         branchUniversalObject
-            .generateShortUrl(context, lp) { url, error ->
+            .generateShortUrl(AppObjectController.joshApplication, lp) { url, error ->
                 val deepLink = when {
                     error == null -> url
                     PrefManager.hasKey(USER_SHARE_SHORT_URL) -> PrefManager.getStringValue(

@@ -53,7 +53,10 @@ interface LessonDao {
     fun updateRoomSectionStatus(lessonId: Int, status: LESSON_STATUS)
 
     @Query("SELECT MAX(lesson_no) FROM lessonmodel WHERE course =:courseId")
-    fun getLastLessonForCourse(courseId: Int): Int
+    fun getLastLessonNoForCourse(courseId: Int): Int
+
+    @Query("SELECT lesson_id FROM lessonmodel WHERE lesson_no = (SELECT MAX(lesson_no) FROM lessonmodel WHERE course =:courseId)")
+    fun getLastLessonIdForCourse(courseId: Int): Int
 
     @Query(value = "SELECT COUNT(lesson_id) FROM lessonmodel where course= :courseId  AND interval>:interval")
     suspend fun nextLessonIntervalExist(courseId: String, interval: Int): Long

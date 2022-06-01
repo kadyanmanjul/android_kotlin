@@ -27,11 +27,7 @@ import com.google.android.exoplayer2.offline.Download
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
-import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
-import com.joshtalks.joshskills.core.analytics.AppAnalytics
-import com.joshtalks.joshskills.core.analytics.MixPanelEvent
-import com.joshtalks.joshskills.core.analytics.MixPanelTracker
-import com.joshtalks.joshskills.core.analytics.UsbEventReceiver
+import com.joshtalks.joshskills.core.analytics.*
 import com.joshtalks.joshskills.core.interfaces.UsbEventListener
 import com.joshtalks.joshskills.core.io.LastSyncPrefManager
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
@@ -545,7 +541,7 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
     }
 
     fun getDeepLinkAndInviteFriends() {
-        DeepLinkUtil(this)
+        DeepLinkUtil
             .setReferralCode(Mentor.getInstance().referralCode)
             .setReferralCampaign()
             .setListener(object : DeepLinkUtil.OnDeepLinkListener {

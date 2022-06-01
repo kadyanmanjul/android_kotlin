@@ -198,7 +198,7 @@ class ReferralActivity : BaseActivity() {
     }
 
     fun getDeepLinkAndInviteFriends(packageString: String? = null) {
-        DeepLinkUtil(this)
+        DeepLinkUtil
             .setReferralCode(Mentor.getInstance().referralCode)
             .setReferralCampaign()
             .setListener(object : DeepLinkUtil.OnDeepLinkListener {

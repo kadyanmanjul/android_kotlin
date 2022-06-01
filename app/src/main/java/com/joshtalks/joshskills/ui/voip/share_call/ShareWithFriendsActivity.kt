@@ -68,7 +68,7 @@ class ShareWithFriendsActivity : AppCompatActivity() {
         else {
             MixPanelTracker.publishEvent(MixPanelEvent.SHARE_WITH_FRIENDS_ICON).push()
         }
-        DeepLinkUtil(this)
+        DeepLinkUtil
             .setReferralCode(Mentor.getInstance().referralCode)
             .setReferralCampaign()
             .setListener(object : DeepLinkUtil.OnDeepLinkListener {
