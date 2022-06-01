@@ -1,8 +1,5 @@
 package com.joshtalks.joshskills.repository.service
 
-import com.google.gson.JsonArray
-import com.google.gson.JsonObject
-import com.joshtalks.joshskills.core.firestore.NotificationAnalyticsRequest
 import com.joshtalks.joshskills.engage_notification.AppUsageModel
 import com.joshtalks.joshskills.repository.local.entity.BroadCastEvent
 import com.joshtalks.joshskills.repository.local.model.GaIDMentorModel
@@ -15,7 +12,6 @@ import com.joshtalks.joshskills.repository.server.conversation_practice.SubmitCo
 import com.joshtalks.joshskills.repository.server.conversation_practice.SubmittedConversationPractiseModel
 import com.joshtalks.joshskills.repository.server.course_detail.CourseDetailsResponseV2
 import com.joshtalks.joshskills.repository.server.course_detail.demoCourseDetails.DemoCourseDetailsResponse
-import com.joshtalks.joshskills.repository.server.feedback.FeedbackStatusResponse
 import com.joshtalks.joshskills.repository.server.feedback.RatingDetails
 import com.joshtalks.joshskills.repository.server.feedback.UserFeedbackRequest
 import com.joshtalks.joshskills.repository.server.onboarding.CourseEnrolledRequest
@@ -26,11 +22,9 @@ import com.joshtalks.joshskills.repository.server.points.PointsInfoResponse
 import com.joshtalks.joshskills.repository.server.points.SpokenMinutesHistoryResponse
 import com.joshtalks.joshskills.repository.server.reminder.DeleteReminderRequest
 import com.joshtalks.joshskills.repository.server.reminder.ReminderRequest
-import com.joshtalks.joshskills.repository.server.reminder.ReminderResponse
 import com.joshtalks.joshskills.repository.server.translation.WordDetailsResponse
 import com.joshtalks.joshskills.repository.server.voip.RequestVoipRating
 import com.joshtalks.joshskills.repository.server.voip.SpeakingTopic
-import com.joshtalks.joshskills.repository.server.voip.VoipCallDetailModel
 import com.joshtalks.joshskills.track.CourseUsageSync
 import com.joshtalks.joshskills.ui.activity_feed.model.ActivityFeedList
 import com.joshtalks.joshskills.ui.special_practice.model.SaveVideoModel
@@ -46,9 +40,6 @@ interface CommonNetworkService {
     @GET("$DIR/support/category_v2/")
     suspend fun getHelpCategoryV2(): Response<List<FAQCategory>>
 
-    @POST("$DIR/support/complaint/")
-    suspend fun submitComplaint(@Body requestComplaint: RequestComplaint): ComplaintResponse
-
     @POST("$DIR/mentor/gaid/")
     fun registerGAIdAsync(@Body requestRegisterGAId: RequestRegisterGAId): Deferred<RequestRegisterGAId>
 
@@ -61,9 +52,6 @@ interface CommonNetworkService {
         @Path("id") id: String,
         @FieldMap params: Map<String, String?>
     ): FreshChatRestoreIDResponse
-
-    @POST("$DIR/mentor/gaid_detail/")
-    fun registerGAIdDetailsAsync(@Body params: Map<String, String>): Deferred<GaIDMentorModel>
 
     @PATCH("$DIR/mentor/gaid_detail/{id}/")
     suspend fun patchMentorWithGAIdAsync(
@@ -78,9 +66,6 @@ interface CommonNetworkService {
     @POST("$DIR/payment/verify_v2/")
     suspend fun verifyPayment(@Body params: Map<String, String>): Any
 
-    @GET("$DIR/payment/verify_razorpay_order/")
-    suspend fun verifyErrorPayment(@Body params: Map<String, String>): Any
-
     @POST("$DIR/course/certificate/generate/")
     suspend fun certificateGenerate(@Body requestCertificateGenerate: RequestCertificateGenerate): Response<CertificateDetail>
 
@@ -89,9 +74,6 @@ interface CommonNetworkService {
 
     @POST("$DIR/feedback/response/")
     suspend fun postUserFeedback(@Body userFeedbackRequest: UserFeedbackRequest): Response<Any>
-
-    @GET("$DIR/feedback/")
-    suspend fun getQuestionFeedbackStatus(@Query("question_id") id: String): Response<FeedbackStatusResponse>
 
     @GET("$DIR/feedback/nps/details/")
     suspend fun getQuestionNPSEvent(@Query("event_name") eventName: String): Response<List<NPSQuestionModel>>
@@ -137,14 +119,8 @@ interface CommonNetworkService {
     @POST("$DIR/mentor/reminders/")
     suspend fun setReminder(@Body requestSetReminderRequest: ReminderRequest): Response<BaseResponse<Int>>
 
-    @GET("$DIR/mentor/reminders/")
-    suspend fun getReminders(@Query("mentor_id") mentorId: String): BaseResponse<List<ReminderResponse>>
-
     @POST("$DIR/mentor/delete_reminders/")
     suspend fun deleteReminders(@Body deleteReminderRequest: DeleteReminderRequest): Response<BaseResponse<*>>
-
-    @GET("$DIR/mentor/voicecall/initiate/")
-    suspend fun voipInitDetails(@QueryMap params: Map<String, String>): VoipCallDetailModel
 
     @GET("$DIR/leaderboard/get_leaderboard/")
     suspend fun getLeaderBoardData(
@@ -179,12 +155,6 @@ interface CommonNetworkService {
 
     @GET("$DIR/voicecall/topic/v2/{id}/")
     suspend fun getTopicDetail(@Path("id") id: String): SpeakingTopic
-
-    @GET("$DIR/voicecall/recipient_mentor")
-    suspend fun getP2PUser(@QueryMap params: Map<String, String?>): VoipCallDetailModel
-
-    @GET("$DIR/voicecall/mentor_topicinfo")
-    suspend fun callMentorInfo(@Query("mobileuuid") id: String): HashMap<String, String?>
 
     @GET("$DIR/certificateexam/{id}/")
     suspend fun getCertificateExamDetails(@Path("id") id: Int): CertificationQuestionModel
@@ -257,17 +227,8 @@ interface CommonNetworkService {
     @GET("$DIR/reputation/get_points_working/")
     suspend fun getPointsInfo(): Response<PointsInfoResponse>
 
-    @FormUrlEncoded
-    @PATCH("$DIR/voicecall/recipient_mentor")
-    suspend fun postCallInitAsync(@FieldMap params: Map<String, String?>): Any
-
     @POST("$DIR/mentor/delete_mentor/")
     suspend fun deleteMentor(@Body params: Map<String, String>): Response<Void>
-
-    @GET("$DIR/group/{group_id}/pinnedmessages/")
-    suspend fun getPinnedMessages(
-        @Path("group_id") groupId: String
-    ): Response<JsonArray>
 
     @PATCH("$DIR/reputation/award_mentor/")
     suspend fun patchAwardDetails(
@@ -316,13 +277,6 @@ interface CommonNetworkService {
         @Query("award_mentor_id") awardMentorId: String
     ): String
 
-    @FormUrlEncoded
-    @PUT("$DIR/group/voicenote/notification/")
-    suspend fun audioPlayed(
-        @Field("group_id") groupId: String,
-        @Field("message_id") messageId: Int
-    ): Response<Any>
-
     @POST("$DIR/engage/user-activity/")
     suspend fun engageUserSession(
         @Body params: HashMap<String, List<AppUsageModel>>
@@ -335,14 +289,6 @@ interface CommonNetworkService {
 
     @POST("$DIR/mentor/gaid/")
     suspend fun registerGAIdDetailsV2Async(@Body body: RequestRegisterGAId): GaIDMentorModel
-
-    @POST("$DIR/group/updatelastmessage/")
-    suspend fun updateLastReadMessage(@Body params: Map<String, Any>): Response<JsonObject>
-
-    @GET("$DIR/group/{conversation_id}/unread_message/ ")
-    suspend fun getUnreadMessageCount(
-        @Path("conversation_id") conversationId: String
-    ): Response<JsonObject>
 
     @GET("$DIR/leaderboard/get_filtered_leaderboard/")
     suspend fun searchLeaderboardMember(

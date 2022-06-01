@@ -1,7 +1,5 @@
 package com.joshtalks.joshskills.repository.service
 
-import com.google.gson.JsonArray
-import com.google.gson.JsonObject
 import com.joshtalks.joshskills.base.constants.DIR
 import com.joshtalks.joshskills.repository.local.entity.CertificationExamDetailModel
 import com.joshtalks.joshskills.repository.local.entity.Course
@@ -15,7 +13,6 @@ import com.joshtalks.joshskills.repository.server.*
 import com.joshtalks.joshskills.repository.server.assessment.*
 import com.joshtalks.joshskills.repository.server.chat_message.UpdateQuestionStatus
 import com.joshtalks.joshskills.repository.server.course_overview.CourseOverviewBaseResponse
-import com.joshtalks.joshskills.repository.server.groupchat.GroupDetails
 import com.joshtalks.joshskills.repository.server.introduction.DemoOnboardingData
 import com.joshtalks.joshskills.voip.data.api.CallRecordingRequest
 import com.joshtalks.joshskills.ui.lesson.speaking.spf_models.UserRating
@@ -34,12 +31,6 @@ interface ChatNetworkService {
     @POST("$DIR/chat/message/")
     suspend fun sendMessageAsync(@Body messageObject: Any): ChatMessageReceiver
 
-    @PATCH("$DIR/chat/message/{id}")
-    suspend fun deleteMessage(
-        @Path("id") id: String,
-        @FieldMap params: Map<String, String>
-    ): ChatMessageReceiver
-
     @GET("$DIR/chat/v2/{id}/")
     suspend fun getUnReceivedMessageAsync(
         @Path("id") id: String,
@@ -49,9 +40,6 @@ interface ChatNetworkService {
     @FormUrlEncoded
     @POST("$DIR/core/signed_url/")
     fun requestUploadMediaAsync(@FieldMap params: Map<String, String>): Deferred<AmazonPolicyResponse>
-
-    @POST("$DIR/engage/video/")
-    suspend fun engageVideo(@Body messageObject: Any)
 
     @POST("$DIR/engage/video_course/")
     suspend fun engageVideoApiV2(@Body messageObject: Any)
@@ -68,13 +56,6 @@ interface ChatNetworkService {
     @POST("$DIR/engage/image/")
     suspend fun engageImage(@Body messageObject: Any)
 
-    @FormUrlEncoded
-    @PATCH("$DIR/notification/{id}/")
-    suspend fun engageNotificationAsync(
-        @Path("id") id: String,
-        @FieldMap params: Map<String, String>
-    )
-
     @PATCH("$DIR/chat/message/list/")
     suspend fun updateMessagesStatus(@Body messageObject: Any)
 
@@ -86,7 +67,6 @@ interface ChatNetworkService {
 
     @POST("$DIR/practice/audio_practice_feedback/")
     suspend fun getAudioFeedback(@Body params: Map<String, String>): PracticeFeedback2
-
 
     @GET("$DIR/chat/conversation/{id}/")
     suspend fun getCourseProgressDetailsAsync(@Path("id") cId: String): Response<CoursePerformanceResponse>
@@ -109,18 +89,11 @@ interface ChatNetworkService {
     @PATCH("$DIR/chat/add_next_class/{id}/")
     suspend fun changeBatchRequest(@Path("id") conversationId: String): Response<Void>
 
-    @GET("$DIR/chat/lessons/")
-    suspend fun getLessonList(
-        @Query("mentor_id") mentorId: String,
-        @Query("course_id") courseId: String
-    ): BaseResponse<List<LessonModel>>
-
     @GET("$DIR/chat/v2/lesson_questions/")
     suspend fun getQuestionsForLesson(
         @Query("last_question_time") latestModifiedTime: String,
         @Query("lesson_id") lessonId: Int
     ): GetLessonQuestionsResponse
-
 
     @POST("$DIR/chat/v2/update_lesson/")
     suspend fun updateQuestionStatus(
@@ -133,22 +106,8 @@ interface ChatNetworkService {
         @Query("course_id") courseId: Int
     ): CourseOverviewBaseResponse
 
-    @POST("$DIR/group/cometchat_add_member/")
-    suspend fun getGroupDetails(@Body params: Map<String, String>): GroupDetails
-
     @GET("$DIR/certificateexam/chatcard-report")
     suspend fun getCertificateExamCardDetails(@QueryMap params: Map<String, String>): CertificationExamDetailModel
-
-    @POST("$DIR/group/message_list/")
-    suspend fun getGroupMessagesList(@Body params: Map<String, Any>): Response<JsonArray>
-
-    @POST("$DIR/group/updatelastmessage/")
-    suspend fun updateLastReadMessage(@Body params: Map<String, Any>): Response<JsonObject>
-
-    @GET("$DIR/group/{conversation_id}/unread_message/ ")
-    suspend fun getUnreadMessageCount(
-        @Path("conversation_id") conversationId: String
-    ): Response<JsonObject>
 
     @GET("$DIR/reputation/vp_rp_snackbar/")
     suspend fun getSnackBarText(

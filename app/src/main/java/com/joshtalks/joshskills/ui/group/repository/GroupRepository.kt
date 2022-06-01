@@ -35,7 +35,6 @@ private const val TAG = "GroupRepository"
 class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
     // TODO: Will use dagger2 for injecting apiService
     private val apiService by lazy { AppObjectController.groupsNetworkService }
-    private val analyticsService by lazy { AppObjectController.groupsAnalyticsNetworkService }
     private val mentorId = Mentor.getInstance().getId()
     private val chatService: ChatService = PubNubService
     private val database = AppObjectController.appDatabase
@@ -314,7 +313,7 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
     }
 
     suspend fun pushAnalyticsToServer(request: Map<String, Any?>) =
-        analyticsService.groupImpressionDetails(request)
+        apiService.groupImpressionDetails(request)
 
     private fun getCompressImage(path: String): String {
         return try {
