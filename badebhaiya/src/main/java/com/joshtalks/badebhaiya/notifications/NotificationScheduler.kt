@@ -117,7 +117,8 @@ class NotificationScheduler @Inject constructor(
                 type = notificationType,
                 roomId = room.roomId.toString(),
                 speakerBitmap,
-                remainingTime = priorTo
+                remainingTime = priorTo,
+                speakerName = room.speakersData?.shortName ?: "Speaker"
             )
         )
     }

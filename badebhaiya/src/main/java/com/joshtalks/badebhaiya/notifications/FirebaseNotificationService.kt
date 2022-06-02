@@ -165,6 +165,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
 
 
 
+                val initialLetter = notificationObject.name
                 var imageBitmap: Bitmap? = null
                 if (!notificationObject.imageUrl.isNullOrEmpty()){
                      imageBitmap = notificationObject.imageUrl!!.urlToBitmap()

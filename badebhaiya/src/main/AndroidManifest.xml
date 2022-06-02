@@ -4,7 +4,6 @@
     package="com.joshtalks.badebhaiya">
 
     <uses-sdk tools:overrideLibrary="com.truecaller.android.sdk" />
-    <!-- <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> -->
     <uses-permission
         android:name="android.permission.BROADCAST_CLOSE_SYSTEM_DIALOGS"
         tools:ignore="ProtectedPermissions" />
@@ -93,9 +92,6 @@
             android:screenOrientation="portrait"
             android:showOnLockScreen="true"
             android:showWhenLocked="true" />
-        <activity
-            android:name=".TemporaryFeedActivity"
-            android:exported="true" />
 
         <meta-data
             android:name="io.branch.sdk.BranchKey"

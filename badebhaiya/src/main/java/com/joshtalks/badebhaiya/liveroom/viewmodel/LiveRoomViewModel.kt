@@ -55,6 +55,9 @@ import java.util.Arrays
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 const val NOTIFICATION_ID = "notification_id"
@@ -136,16 +139,21 @@ class LiveRoomViewModel(application: Application) : AndroidViewModel(application
     private fun collectData(){
         Log.d("sahil", "collectData called: ")
         viewModelScope.launch {
-            PubNubData.audienceList.collect {
+            PubNubData.audienceList
+                .map { it.reversed().distinctBy { it.userId }.reversed()}
+                .collect() {
                 Log.d("sahil", "audience list => $it")
-                audienceList.postValue(it)
+
+                audienceList.postValue(ArraySet(it))
             }
         }
 
         viewModelScope.launch {
-            PubNubData.speakerList.collect {
+            PubNubData.speakerList
+                .map { it.reversed().distinctBy { it.userId }.reversed() }
+                .collect {
                 Log.d("sahil", "speakers list =>$it")
-                speakersList.postValue(it)
+                speakersList.postValue(ArraySet(it))
             }
         }
         viewModelScope.launch {

@@ -6,7 +6,6 @@ import android.os.Message
 import android.util.Log
 import androidx.collection.ArraySet
 import androidx.collection.arraySetOf
-import androidx.lifecycle.viewModelScope
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.google.gson.reflect.TypeToken
@@ -29,6 +28,7 @@ import com.joshtalks.badebhaiya.pubnub.PubNubData._speakersList
 import com.joshtalks.badebhaiya.pubnub.PubNubData.audienceList
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.utils.DEFAULT_NAME
+import com.joshtalks.badebhaiya.utils.UniqueList
 import com.pubnub.api.PNConfiguration
 import com.pubnub.api.PubNub
 import com.pubnub.api.callbacks.SubscribeCallback
@@ -43,10 +43,7 @@ import com.pubnub.api.models.consumer.pubsub.PNSignalResult
 import com.pubnub.api.models.consumer.pubsub.files.PNFileEventResult
 import com.pubnub.api.models.consumer.pubsub.message_actions.PNMessageActionResult
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.last
-import kotlinx.coroutines.flow.single
+import kotlinx.coroutines.flow.*
 import timber.log.Timber
 import java.util.*
 
@@ -102,6 +99,8 @@ object PubNubManager {
         pnConf.subscribeKey = BuildConfig.PUBNUB_SUB_API_KEY
         pnConf.publishKey = BuildConfig.PUBNUB_PUB_API_KEY
         pnConf.uuid = User.getInstance().userId
+        pnConf.connectTimeout = 10
+        pnConf.maximumConnections = Int.MAX_VALUE
         pnConf.isSecure = false
         pubnub = PubNub(pnConf)
 
@@ -109,16 +108,20 @@ object PubNubManager {
             pubnub.addListener(it)
         }
 
+        jobs += CoroutineScope(Dispatchers.IO).launch {
+
         pubnub.subscribe().channels(
             listOf(liveRoomProperties?.channelName, liveRoomProperties?.agoraUid.toString())
-        )?.withPresence()
-            ?.execute()
+        ).withPresence().execute()
 
         getLatestUserList()
         getSpeakerList()
         getAudienceList()
 //        collectPubNubEvents()
         changePubNubState(PubNubState.STARTED)
+
+        }
+
     }
 
     private fun changePubNubState(state: PubNubState){
@@ -147,7 +150,9 @@ object PubNubManager {
 
     private fun getLatestUserList() {
         jobs += CoroutineScope(Dispatchers.IO).launch {
-            val membersList = pubnub.channelMembers.channel(liveRoomProperties?.channelName)
+            try {
+
+            pubnub.channelMembers.channel(liveRoomProperties?.channelName)
                 ?.includeCustom(true)
                 ?.async { result, status ->
 
@@ -178,11 +183,13 @@ object PubNubManager {
                         }
                     }
                     // post to a shared flow instead of live data
+                    Timber.d("THIS IS WITH MEMBERS LIST SPEAKER => $tempSpeakerList AND AUDIENCE => $tempAudienceList")
                     postToSpeakersList(tempSpeakerList)
                     postToAudienceList(tempAudienceList)
                 }
-
-
+            } catch (e: Exception){
+                e.printStackTrace()
+            }
 
         }
 
@@ -218,7 +225,8 @@ object PubNubManager {
 
     fun getSpeakerList() {
         jobs += CoroutineScope(Dispatchers.IO).launch {
-            PubNubData.speakerList.collect {
+            PubNubData.speakerList
+                .collect {
                 speakersList = it
             }
         }
@@ -276,14 +284,16 @@ object PubNubManager {
 
     private fun postToSpeakersList(list: ArraySet<LiveRoomUser>) {
         Timber.d("post to speaker list => $list")
+        val distinctedList = list.reversed().distinctBy { it.userId }.reversed().toSet()
         jobs += CoroutineScope(Dispatchers.IO).launch {
-            _speakersList.emit(list)
+            _speakersList.emit(ArraySet(distinctedList))
         }
     }
 
     private fun postToAudienceList(list: ArraySet<LiveRoomUser>) {
         jobs += CoroutineScope(Dispatchers.IO).launch {
-            _audienceList.emit(list)
+            val distinctedList = list.reversed().distinctBy { it.userId }.reversed().toSet()
+            _audienceList.emit(ArraySet(distinctedList))
         }
     }
 
@@ -365,12 +375,17 @@ object PubNubManager {
 
     fun sendCustomMessage(state: JsonElement, channel: String = liveRoomProperties!!.channelName) {
         jobs += CoroutineScope(Dispatchers.IO).launch() {
-            channel.let {
-                pubnub.publish()
-                    .message(state)
-                    ?.channel(it)
-                    ?.sync()
+            try {
+                channel.let {
+                    pubnub.publish()
+                        .message(state)
+                        ?.channel(it)
+                        ?.sync()
+                }
+            } catch (e: Exception){
+                e.printStackTrace()
             }
+
         }
     }
 

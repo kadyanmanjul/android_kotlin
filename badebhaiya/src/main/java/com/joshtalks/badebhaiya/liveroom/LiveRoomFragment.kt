@@ -16,6 +16,7 @@ import android.os.IBinder
 import android.os.Looper
 import android.util.Log
 import android.view.View
+import android.view.WindowManager
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.addCallback
 import androidx.appcompat.app.AlertDialog
@@ -49,12 +50,7 @@ import com.joshtalks.badebhaiya.liveroom.model.ConversationRoomListingNavigation
 import com.joshtalks.badebhaiya.liveroom.model.StartingLiveRoomProperties
 import com.joshtalks.badebhaiya.liveroom.service.ConversationRoomCallback
 import com.joshtalks.badebhaiya.liveroom.service.ConvoWebRtcService
-import com.joshtalks.badebhaiya.liveroom.viewmodel.LiveRoomViewModel
-import com.joshtalks.badebhaiya.liveroom.viewmodel.NOTIFICATION_BOOLEAN
-import com.joshtalks.badebhaiya.liveroom.viewmodel.NOTIFICATION_ID
-import com.joshtalks.badebhaiya.liveroom.viewmodel.NOTIFICATION_NAME
-import com.joshtalks.badebhaiya.liveroom.viewmodel.NOTIFICATION_TYPE
-import com.joshtalks.badebhaiya.liveroom.viewmodel.NOTIFICATION_USER
+import com.joshtalks.badebhaiya.liveroom.viewmodel.*
 import com.joshtalks.badebhaiya.notifications.HeadsUpNotificationService
 import com.joshtalks.badebhaiya.profile.ProfileFragment
 import com.joshtalks.badebhaiya.profile.ProfileViewModel
@@ -63,9 +59,7 @@ import com.joshtalks.badebhaiya.pubnub.PubNubManager
 import com.joshtalks.badebhaiya.pubnub.PubNubState
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomResponse
 import com.joshtalks.badebhaiya.repository.model.User
-import com.joshtalks.badebhaiya.utils.DEFAULT_NAME
 import com.joshtalks.badebhaiya.utils.setImage
-import com.joshtalks.badebhaiya.utils.setUserImageRectOrInitials
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
@@ -79,6 +73,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
+
 
 class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel>(
     R.layout.fragment_live_room
@@ -121,12 +116,21 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+//        requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+//        requireActivity().window.addFlags(
+//            WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+//                    or WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON
+//        )
+
+
+
         attachBackPressedDispatcher()
         ConvoWebRtcService.initLibrary()
         removeIncomingNotification()
         isBackPressed = false
 
     }
+
 
     override fun onInitDataBinding(viewBinding: FragmentLiveRoomBinding) {
         // View is initialized
@@ -188,7 +192,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
     private fun addViewModelObserver() {
         vm.audienceList.observe(this, androidx.lifecycle.Observer {
             val list = it.sortedBy { it.sortOrder }
-            audienceAdapter?.updateFullList(list)
+            audienceAdapter?.updateFullList(list.toList())
             PubNubManager.getLiveRoomProperties().let {
                 if (it.isModerator){
                     val int = vm.getRaisedHandAudienceSize()
@@ -200,7 +204,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
 
         vm.speakersList.observe(this, androidx.lifecycle.Observer {
             val list = it.sortedBy { it.sortOrder }
-            speakerAdapter?.updateFullList(list)
+            speakerAdapter?.updateFullList(list.toList())
         })
 
         vm.liveRoomState.observe(this){
@@ -1144,7 +1148,9 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
     }
 
     private fun finishFragment(){
-        requireActivity().supportFragmentManager.popBackStack()
+        if (isAdded){
+            requireActivity().supportFragmentManager.popBackStack()
+        }
     }
 
     private fun showLeaveRoomPopup() {

@@ -52,6 +52,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.RoundedBitmapDrawable
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
+import androidx.core.graphics.drawable.toBitmap
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.integration.webp.decoder.WebpDrawable
@@ -114,6 +115,10 @@ val DATE_FORMATTER_2 = SimpleDateFormat("dd - MMM - yyyy")
 val TWENTY_FOUR_HOUR_CLOCK_TIME = SimpleDateFormat("kk:mm")
 
 const val IMPRESSION_OPEN_FREE_TRIAL_SCREEN = "OPEN_FREE_TRIAL_SCREEN"
+
+//fun <T>ArraySet<T>.distintLatest(): ArraySet<T>{
+//    return this.reversed().distinctBy { it.userId }.reversed().toSet()
+//}
 
 object Utils {
 
@@ -1246,20 +1251,24 @@ fun String.urlToBitmap(
                 .disallowHardwareConfig().dontAnimate().encodeQuality(75)
     }
 
-    return Glide.with(context)
-        .asBitmap()
-        .load(this)
-        .override(Utils.dpToPx(width), Utils.dpToPx(height))
-        .apply(
-            requestOptions
-        )
-        // .override(Target.SIZE_ORIGINAL)
-        .diskCacheStrategy(DiskCacheStrategy.ALL)
-        .optionalTransform(
-            WebpDrawable::class.java,
-            WebpDrawableTransformation(RoundedCorners(roundedCorners))
-        )
-        .submit().get(1500, TimeUnit.MILLISECONDS)
+    return try {
+        Glide.with(context)
+            .asBitmap()
+            .load(this)
+            .override(Utils.dpToPx(width), Utils.dpToPx(height))
+            .apply(
+                requestOptions
+            )
+            // .override(Target.SIZE_ORIGINAL)
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
+            .optionalTransform(
+                WebpDrawable::class.java,
+                WebpDrawableTransformation(RoundedCorners(roundedCorners))
+            )
+            .submit().get(1500, TimeUnit.MILLISECONDS)
+    } catch (e: Exception){
+        return AppCompatResources.getDrawable(context, R.drawable.profile_dummy_dp)?.toBitmap()
+    }
 }
 
 fun Int.toBoolean() = this == 1

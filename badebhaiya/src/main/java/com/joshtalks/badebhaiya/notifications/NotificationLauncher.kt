@@ -44,7 +44,7 @@ class NotificationLauncher @Inject constructor(
 
     private fun getTitle(notificationData: Notification): String =
         when(notificationData.type){
-            REMINDER -> applicationContext.getString(R.string.reminder_for_your_call)
+            REMINDER -> if (notificationData.isSpeaker()) applicationContext.getString(R.string.reminder_for_your_call) else applicationContext.getString(R.string.speakers_call_starts_in, notificationData.speakerName, notificationData.remainingTime)
             LIVE -> String.format(getTitleForLive(), notificationData.title)
         }
 
@@ -106,7 +106,11 @@ class NotificationLauncher @Inject constructor(
     private fun getBody(notificationData: Notification): String {
         return when(notificationData.type){
             REMINDER -> notificationData.remainingTime?.let { remaining ->
-                String.format(applicationContext.getString(R.string.your_call_will_start_in, remaining))
+                if (notificationData.isSpeaker()){
+                    String.format(applicationContext.getString(R.string.your_call_will_start_in, remaining))
+                } else {
+                    applicationContext.getString(R.string.reminder_notification_body_for_listener)
+                }
             } ?: String.format(applicationContext.getString(R.string.your_call_will_start_in, "Soon"))
             LIVE -> String.format(applicationContext.getString(R.string.speak_with_them), notificationData.body)
         }

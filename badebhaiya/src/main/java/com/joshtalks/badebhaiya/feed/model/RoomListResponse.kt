@@ -3,6 +3,7 @@ package com.joshtalks.badebhaiya.feed.model
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.badebhaiya.core.EMPTY
+import com.joshtalks.badebhaiya.utils.UniqueList
 import kotlinx.android.parcel.Parcelize
 
 data class RoomListResponse(

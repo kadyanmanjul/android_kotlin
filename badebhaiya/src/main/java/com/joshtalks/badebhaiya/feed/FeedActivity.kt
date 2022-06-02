@@ -51,6 +51,7 @@ import com.joshtalks.badebhaiya.signup.PeopleToFollowActivity
 import com.joshtalks.badebhaiya.signup.fragments.PeopleToFollowFragment
 import com.joshtalks.badebhaiya.utils.SingleDataManager
 import com.joshtalks.badebhaiya.utils.setImage
+import com.joshtalks.badebhaiya.utils.urlToBitmap
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionDeniedResponse
@@ -167,7 +168,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         var user = intent.getStringExtra("userId")
         val mUserId = intent.getStringExtra(USER_ID)
 
-        this.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+//        this.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_feed)
         binding.lifecycleOwner = this
         binding.handler = this

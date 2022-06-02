@@ -33,7 +33,8 @@ data class Notification(
     val type: NotificationType,
     val roomId: String,
     val speakerPicture: Bitmap?,
-    val remainingTime: String? = null
+    val speakerName: String,
+    val remainingTime: String? = null,
 ) : Parcelable {
     fun isSpeaker(): Boolean = userId == User.getInstance().userId
 }

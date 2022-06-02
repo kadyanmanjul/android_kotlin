@@ -40,7 +40,7 @@ class SignUpEnterNameFragment: Fragment() {
         binding.handler = this
         //showToast("${binding.etFirstName.toString()}")
 
-        activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+        activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(false) {
             override fun handleOnBackPressed() {
                 (activity as SignUpActivity).btnWelcome.visibility=View.VISIBLE
                 //showToast("Back Pressed")

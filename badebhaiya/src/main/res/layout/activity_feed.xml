@@ -57,6 +57,7 @@
                 app:srcCompat="@drawable/ic_vector_search"
                 app:tint="@color/black" />
 
+
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/profile_iv"
                 initialsFontSize="@{16}"
