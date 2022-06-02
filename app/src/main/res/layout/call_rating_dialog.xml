@@ -213,6 +213,7 @@
             android:id="@+id/block"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            style="@style/BlockButtonChipStyle"
             android:text="@string/block_caller"
             app:chipBackgroundColor="@color/white"
             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H11_Semi_Bold"

@@ -69,8 +69,10 @@ import com.joshtalks.joshskills.ui.lesson.READING_POSITION
 import com.joshtalks.joshskills.ui.pdfviewer.CURRENT_VIDEO_PROGRESS_POSITION
 import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
 import com.joshtalks.joshskills.util.ExoAudioPlayer
 import com.joshtalks.joshskills.util.ExoAudioPlayer.ProgressUpdateListener
+import com.joshtalks.joshskills.voip.constant.State
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -1258,7 +1260,7 @@ class ReadingFragmentWithoutFeedback :
     @SuppressLint("ClickableViewAccessibility")
     private fun audioRecordTouchListener() {
         binding.recordTransparentContainer.setOnTouchListener { _, event ->
-            if (isCallOngoing()) {
+            if (isCallOngoing() || requireActivity().getVoipState()!= State.IDLE) {
                 return@setOnTouchListener false
             }
             if (isAdded) {
