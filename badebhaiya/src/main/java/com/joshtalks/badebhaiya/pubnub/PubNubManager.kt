@@ -100,6 +100,7 @@ object PubNubManager {
         pnConf.publishKey = BuildConfig.PUBNUB_PUB_API_KEY
         pnConf.uuid = User.getInstance().userId
         pnConf.connectTimeout = 10
+        pnConf.maximumConnections = Int.MAX_VALUE
         pnConf.isSecure = false
         pubnub = PubNub(pnConf)
 

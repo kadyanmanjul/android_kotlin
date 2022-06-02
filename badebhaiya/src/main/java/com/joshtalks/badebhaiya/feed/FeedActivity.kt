@@ -167,7 +167,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         var user = intent.getStringExtra("userId")
         val mUserId = intent.getStringExtra(USER_ID)
 
-        this.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+//        this.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_feed)
         binding.lifecycleOwner = this
         binding.handler = this

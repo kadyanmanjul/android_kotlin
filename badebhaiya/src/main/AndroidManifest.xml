@@ -92,9 +92,6 @@
             android:screenOrientation="portrait"
             android:showOnLockScreen="true"
             android:showWhenLocked="true" />
-        <activity
-            android:name=".TemporaryFeedActivity"
-            android:exported="true" />
 
         <meta-data
             android:name="io.branch.sdk.BranchKey"
