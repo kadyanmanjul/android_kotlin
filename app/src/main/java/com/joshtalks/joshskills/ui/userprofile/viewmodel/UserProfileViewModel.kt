@@ -468,7 +468,6 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
                     showToast(AppObjectController.joshApplication.getString(R.string.user_does_not_exist))
                 } else {
                     apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)
-                    showToast(AppObjectController.joshApplication.getString(R.string.something_went_wrong))
                 }
 
             } catch (ex: Throwable) {
@@ -485,13 +484,14 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
                 val response =
                     AppObjectController.commonNetworkService.getFppStatusInProfile(mentorId)
                 if (response.isSuccessful && response.body() != null) {
-                    if (response.body()?.fppList.isNullOrEmpty()) {
-                        response.body()?.fppRequest?.let {
-                            fppRequest.postValue(it)
-                        }
-                    } else if (response.body()?.fppRequest == null) {
+                    if (response.body()?.fppList!=null) {
                         response.body()?.fppList?.let {
                             fppList.postValue(it)
+                        }
+                    }
+                    if (response.body()?.fppRequest != null) {
+                        response.body()?.fppRequest?.let {
+                            fppRequest.postValue(it)
                         }
                     }
                 } else if (response.errorBody() != null

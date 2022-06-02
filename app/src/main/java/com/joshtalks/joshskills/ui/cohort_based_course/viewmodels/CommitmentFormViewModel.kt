@@ -14,6 +14,7 @@ import com.joshtalks.joshskills.constants.OPEN_SCHEDULE_FRAGMENT
 import com.joshtalks.joshskills.constants.START_CONVERSATION_ACTIVITY
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.cohort_based_course.models.CohortItemModel
@@ -39,11 +40,17 @@ class CommitmentFormViewModel : ViewModel() {
     }
 
     fun openPromiseFragment(v: View) {
-        sendEvent(OPEN_PROMISE_FRAGMENT)
+        if (Utils.isInternetAvailable())
+            sendEvent(OPEN_PROMISE_FRAGMENT)
+        else
+            showToast("No internet connection")
     }
 
     fun openScheduleFragment(v: View) {
-        sendEvent(OPEN_SCHEDULE_FRAGMENT)
+        if (Utils.isInternetAvailable())
+            sendEvent(OPEN_SCHEDULE_FRAGMENT)
+        else
+            showToast("No internet connection")
     }
 
     private fun sendEvent(fragment: Int) {
@@ -64,8 +71,6 @@ class CommitmentFormViewModel : ViewModel() {
                 withContext(Dispatchers.Main) {
                     cohortBatchList.addAll(resp?.slots as ArrayList<CohortItemModel>)
                 }
-                //throw Exception("Problem!")    to test the try catch block
-
             } catch (ex: Exception) {
                 ex.printStackTrace()
                 showToast("Something Went Wrong, Please try again later!", Toast.LENGTH_LONG)
@@ -77,12 +82,16 @@ class CommitmentFormViewModel : ViewModel() {
     fun postSelectedBatch(map: HashMap<String, Any>) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val resp = AppObjectController.CbcNetworkService.postSelectedBatch(map)
-                if (resp.isSuccessful) {
-                    sendEvent(START_CONVERSATION_ACTIVITY)
-                } else {
-                    showToast("Something Went Wrong, Please try again later!", Toast.LENGTH_LONG)
-                    sendEvent(CLOSE_ACTIVITY)
+                if (Utils.isInternetAvailable()){
+                    val resp = AppObjectController.CbcNetworkService.postSelectedBatch(map)
+                    if (resp.isSuccessful) {
+                        sendEvent(START_CONVERSATION_ACTIVITY)
+                    } else {
+                        showToast("Something Went Wrong, Please try again later!", Toast.LENGTH_LONG)
+                        sendEvent(CLOSE_ACTIVITY)
+                    }
+                }else{
+                    showToast("No Internet Connection!", Toast.LENGTH_LONG)
                 }
             } catch (ex: Exception) {
                 ex.printStackTrace()

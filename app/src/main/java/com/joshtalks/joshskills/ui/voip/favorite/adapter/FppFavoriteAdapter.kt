@@ -10,6 +10,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.databinding.FppItemListBinding
 import com.joshtalks.joshskills.repository.local.entity.practise.FavoriteCaller
+import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.ui.fpp.constants.FAV_CLICK_ON_CALL
 import com.joshtalks.joshskills.ui.fpp.constants.FAV_CLICK_ON_PROFILE
 import com.joshtalks.joshskills.ui.fpp.constants.FAV_USER_LONG_PRESS_CLICK
@@ -94,7 +95,7 @@ class FppFavoriteAdapter : RecyclerView.Adapter<FppFavoriteAdapter.FavoriteItemV
                     itemClick?.invoke(favoriteCaller, FAV_CLICK_ON_PROFILE, position)
                 }
 
-                fppCallIcon.setOnClickListener {
+                fppCallIcon.setOnSingleClickListener {
                     itemClick?.invoke(favoriteCaller, FAV_CLICK_ON_CALL, position)
                 }
 
@@ -135,5 +136,13 @@ class FppFavoriteAdapter : RecyclerView.Adapter<FppFavoriteAdapter.FavoriteItemV
             }
             return string.toString()
         }
+    }
+     fun clearItem(position: Int) {
+         try {
+             items.removeAt(position)
+             notifyItemRemoved(position)
+         } catch (e: Exception) {
+             e.printStackTrace()
+         }
     }
 }
