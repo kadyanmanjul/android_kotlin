@@ -440,7 +440,7 @@ class JoshGroupActivity : BaseGroupActivity() {
             previousPage = GROUP,
             conversationId = null
         )
-        if (isDm)
+        if (supportFragmentManager.backStackEntryCount < 1 && isDm)
             this.finish()
     }
 

@@ -30,7 +30,7 @@ android {
         debug {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            buildConfigField "String", "BASE_URL", "${rootProject.ext.prod_base_url}"
+            buildConfigField "String", "BASE_URL", "${rootProject.ext.voip_debug_base_url}"
             buildConfigField "String", "PUBNUB_PUB_P2P_KEY", "\"pub-c-d49381a1-56bf-4854-96bb-3400c5facddd\""
             buildConfigField "String", "PUBNUB_SUB_P2P_KEY", "\"sub-c-2069fa10-9b9b-11ec-879a-86a1e6519840\""
         }
