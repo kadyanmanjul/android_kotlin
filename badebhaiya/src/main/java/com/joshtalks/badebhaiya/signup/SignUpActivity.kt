@@ -108,9 +108,10 @@ class SignUpActivity : AppCompatActivity(), Call {
     override fun onStart() {
         super.onStart()
         initTrueCallerUI()
-        if (intent.getBooleanExtra(IS_REDIRECTED, false)){
-            openTrueCallerBottomSheet()
-        }
+//        if (intent.getBooleanExtra(IS_REDIRECTED, false))
+
+//            openTrueCallerBottomSheet()
+//        }
     }
 
     private fun addObservers() {
@@ -229,12 +230,12 @@ class SignUpActivity : AppCompatActivity(), Call {
             return
         }
 
-//        PrefManager.put(IS_TC_INSTALLED, TruecallerSDK.getInstance().isUsable)
-        if (TruecallerSDK.getInstance().isUsable) {
-            TruecallerSDK.getInstance()
-                .onActivityResultObtained(this, requestCode, resultCode, data)
-            return
-        }
+        PrefManager.put(IS_TC_INSTALLED, TruecallerSDK.getInstance().isUsable)
+//        if (TruecallerSDK.getInstance().isUsable) {
+//            TruecallerSDK.getInstance()
+//                .onActivityResultObtained(this, requestCode, resultCode, data)
+//            return
+//        }
     }
 
     private fun initTrueCallerUI() {
@@ -252,9 +253,9 @@ class SignUpActivity : AppCompatActivity(), Call {
     }
 
     fun openTrueCallerBottomSheet() {
-        if (TruecallerSDK.getInstance().isUsable) {
-            TruecallerSDK.getInstance().getUserProfile(this)
-        } else
+//        if (TruecallerSDK.getInstance().isUsable) {
+//            TruecallerSDK.getInstance().getUserProfile(this)
+//        } else
             openEnterPhoneNumberFragment()
     }
 
@@ -268,7 +269,7 @@ class SignUpActivity : AppCompatActivity(), Call {
         }
 
         override fun onSuccessProfileShared(trueProfile: TrueProfile) {
-            viewModel.trueCallerLogin(trueProfile)
+//            viewModel.trueCallerLogin(trueProfile)
         }
     }
 

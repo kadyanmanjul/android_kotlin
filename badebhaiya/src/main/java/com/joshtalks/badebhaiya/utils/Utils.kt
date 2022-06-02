@@ -48,11 +48,11 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.browser.customtabs.CustomTabsIntent
-import androidx.collection.ArraySet
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.RoundedBitmapDrawable
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
+import androidx.core.graphics.drawable.toBitmap
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.integration.webp.decoder.WebpDrawable
@@ -1251,20 +1251,24 @@ fun String.urlToBitmap(
                 .disallowHardwareConfig().dontAnimate().encodeQuality(75)
     }
 
-    return Glide.with(context)
-        .asBitmap()
-        .load(this)
-        .override(Utils.dpToPx(width), Utils.dpToPx(height))
-        .apply(
-            requestOptions
-        )
-        // .override(Target.SIZE_ORIGINAL)
-        .diskCacheStrategy(DiskCacheStrategy.ALL)
-        .optionalTransform(
-            WebpDrawable::class.java,
-            WebpDrawableTransformation(RoundedCorners(roundedCorners))
-        )
-        .submit().get(1500, TimeUnit.MILLISECONDS)
+    return try {
+        Glide.with(context)
+            .asBitmap()
+            .load(this)
+            .override(Utils.dpToPx(width), Utils.dpToPx(height))
+            .apply(
+                requestOptions
+            )
+            // .override(Target.SIZE_ORIGINAL)
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
+            .optionalTransform(
+                WebpDrawable::class.java,
+                WebpDrawableTransformation(RoundedCorners(roundedCorners))
+            )
+            .submit().get(1500, TimeUnit.MILLISECONDS)
+    } catch (e: Exception){
+        return AppCompatResources.getDrawable(context, R.drawable.profile_dummy_dp)?.toBitmap()
+    }
 }
 
 fun Int.toBoolean() = this == 1

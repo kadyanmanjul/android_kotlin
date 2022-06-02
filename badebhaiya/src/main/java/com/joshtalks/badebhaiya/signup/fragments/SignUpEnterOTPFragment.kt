@@ -12,6 +12,7 @@ import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.github.razir.progressbutton.DrawableButton
 import com.github.razir.progressbutton.hideProgress
 import com.github.razir.progressbutton.showProgress
@@ -30,6 +31,8 @@ import kotlinx.android.synthetic.main.activity_sign_up.*
 import kotlinx.android.synthetic.main.fragment_signup_enter_otp.*
 import kotlinx.android.synthetic.main.fragment_signup_enter_otp.btnNext
 import kotlinx.android.synthetic.main.fragment_signup_enter_phone.*
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class SignUpEnterOTPFragment: Fragment() {
     private var compositeDisposable = CompositeDisposable()
@@ -67,9 +70,14 @@ class SignUpEnterOTPFragment: Fragment() {
         binding.tvPhoneNumberText.text = getString(R.string.verify_otp_for_phone_text, viewModel.mobileNumber)
         processOTP()
         addOTPObserver()
-        Handler().postDelayed({
-              binding.resend.isVisible=true
-        },30000)
+//        Handler().postDelayed({
+//        },30000)
+
+        lifecycleScope.launch {
+            delay(30000)
+            binding.resend.isVisible=true
+
+        }
 
         binding.resend.setOnClickListener{
             showToast("OTP Resent Successfully on +91${viewModel.mobileNumber}")
