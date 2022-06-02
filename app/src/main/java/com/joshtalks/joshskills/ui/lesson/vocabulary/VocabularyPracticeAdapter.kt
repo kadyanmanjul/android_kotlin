@@ -13,7 +13,10 @@ import android.view.*
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.animation.AnimationUtils
-import android.widget.*
+import android.widget.RadioButton
+import android.widget.RadioGroup
+import android.widget.SeekBar
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.core.view.children
@@ -21,11 +24,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
-import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
-import com.joshtalks.joshskills.core.analytics.AppAnalytics
-import com.joshtalks.joshskills.core.analytics.MixPanelEvent
-import com.joshtalks.joshskills.core.analytics.MixPanelTracker
-import com.joshtalks.joshskills.core.analytics.ParamKeys
+import com.joshtalks.joshskills.core.analytics.*
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
 import com.joshtalks.joshskills.core.extension.setImageAndFitCenter
 import com.joshtalks.joshskills.core.io.AppDirectory
@@ -37,7 +36,6 @@ import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentWith
 import com.joshtalks.joshskills.repository.local.model.assessment.Choice
 import com.joshtalks.joshskills.repository.server.assessment.QuestionStatus
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
-import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.VoipUtils
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
 import com.joshtalks.joshskills.util.ExoAudioPlayer
 import com.joshtalks.joshskills.voip.constant.State
@@ -244,25 +242,28 @@ class VocabularyPracticeAdapter(
                     onSubmitQuizClick(lessonQuestion!!, assessmentWithRelations!!.questionList[0])
                 }
                 MixPanelTracker.publishEvent(MixPanelEvent.VOCAB_REV_SUBMIT)
-                    .addParam(ParamKeys.LESSON_ID,lessonQuestion?.lessonId)
-                    .addParam(ParamKeys.QUESTION_ID,lessonQuestion?.questionId)
-                    .addParam(ParamKeys.ANSWER_ID,binding.quizRadioGroup.checkedRadioButtonId)
-                    .addParam(ParamKeys.IS_CORRECT_ANSWER,assessmentWithRelations!!.questionList[0].question.status == QuestionStatus.CORRECT)
+                    .addParam(ParamKeys.LESSON_ID, lessonQuestion?.lessonId)
+                    .addParam(ParamKeys.QUESTION_ID, lessonQuestion?.questionId)
+                    .addParam(ParamKeys.ANSWER_ID, binding.quizRadioGroup.checkedRadioButtonId)
+                    .addParam(
+                        ParamKeys.IS_CORRECT_ANSWER,
+                        assessmentWithRelations!!.questionList[0].question.status == QuestionStatus.CORRECT
+                    )
                     .push()
             }
             binding.showExplanationBtn.setOnClickListener {
                 MixPanelTracker.publishEvent(MixPanelEvent.VOCAB_SHOW_EXPLANATION)
-                    .addParam(ParamKeys.LESSON_ID,lessonQuestion?.lessonId)
-                    .addParam(ParamKeys.QUESTION_ID,lessonQuestion?.questionId)
+                    .addParam(ParamKeys.LESSON_ID, lessonQuestion?.lessonId)
+                    .addParam(ParamKeys.QUESTION_ID, lessonQuestion?.questionId)
                     .push()
                 showExplanation()
             }
             binding.continueBtn.setOnClickListener {
                 MixPanelTracker.publishEvent(MixPanelEvent.VOCAB_REV_CONTINUE)
-                    .addParam(ParamKeys.LESSON_ID,lessonQuestion?.lessonId)
-                    .addParam(ParamKeys.QUESTION_ID,lessonQuestion?.questionId)
+                    .addParam(ParamKeys.LESSON_ID, lessonQuestion?.lessonId)
+                    .addParam(ParamKeys.QUESTION_ID, lessonQuestion?.questionId)
                     .push()
-                if (lessonQuestion != null && assessmentWithRelations != null) {
+                if (lessonQuestion != null && assessmentWithRelations != null && assessmentWithRelations!!.questionList.isNotEmpty()) {
                     binding.continueBtn.visibility = GONE
                     expandCardPosition = positionInList + 1
                     val hasNextItem = positionInList < itemList.size - 1
@@ -653,15 +654,15 @@ class VocabularyPracticeAdapter(
                     val state =
                         if (it.isPlaying || isAudioPlaying()) {
                             MixPanelTracker.publishEvent(MixPanelEvent.VOCAB_WORD_RECORDING_PLAY)
-                                .addParam(ParamKeys.LESSON_ID,lessonQuestion?.lessonId)
-                                .addParam(ParamKeys.QUESTION_ID,lessonQuestion?.questionId)
+                                .addParam(ParamKeys.LESSON_ID, lessonQuestion?.lessonId)
+                                .addParam(ParamKeys.QUESTION_ID, lessonQuestion?.questionId)
                                 .push()
                             currentQuestion?.isPlaying = true
                             MaterialPlayPauseDrawable.State.Pause
                         } else {
                             MixPanelTracker.publishEvent(MixPanelEvent.VOCAB_WORD_RECORDING_PAUSE)
-                                .addParam(ParamKeys.LESSON_ID,lessonQuestion?.lessonId)
-                                .addParam(ParamKeys.QUESTION_ID,lessonQuestion?.questionId)
+                                .addParam(ParamKeys.LESSON_ID, lessonQuestion?.lessonId)
+                                .addParam(ParamKeys.QUESTION_ID, lessonQuestion?.questionId)
                                 .push()
                             currentQuestion?.isPlaying = false
                             MaterialPlayPauseDrawable.State.Play
@@ -739,8 +740,8 @@ class VocabularyPracticeAdapter(
                     }
                 }
                 MixPanelTracker.publishEvent(MixPanelEvent.VOCAB_WORD_SUBMIT)
-                    .addParam(ParamKeys.LESSON_ID,lessonQuestion?.lessonId)
-                    .addParam(ParamKeys.QUESTION_ID,lessonQuestion?.questionId)
+                    .addParam(ParamKeys.LESSON_ID, lessonQuestion?.lessonId)
+                    .addParam(ParamKeys.QUESTION_ID, lessonQuestion?.questionId)
                     .push()
                 Timber.d("Submit Button click completed")
             }
@@ -800,8 +801,8 @@ class VocabularyPracticeAdapter(
                     playPronunciationAudio(it, layoutPosition)
                 }
                 MixPanelTracker.publishEvent(MixPanelEvent.VOCAB_WORD_PLAY_PRONOUNCIATION)
-                    .addParam(ParamKeys.LESSON_ID,lessonQuestion?.lessonId)
-                    .addParam(ParamKeys.QUESTION_ID,lessonQuestion?.questionId)
+                    .addParam(ParamKeys.LESSON_ID, lessonQuestion?.lessonId)
+                    .addParam(ParamKeys.QUESTION_ID, lessonQuestion?.questionId)
                     .push()
             }
         }
@@ -1293,7 +1294,7 @@ class VocabularyPracticeAdapter(
 
             binding.recordTransparentContainer.setOnTouchListener { _, event ->
                 Log.d(TAG, "setAudioRecordTouchListener: START")
-                if (isCallOngoing() || context.getVoipState()!=State.IDLE) {
+                if (isCallOngoing() || context.getVoipState() != State.IDLE) {
                     showToast("Cannot submit answer while on a call")
                     return@setOnTouchListener false
                 }
@@ -1332,8 +1333,8 @@ class VocabularyPracticeAdapter(
                                 ?.push()
 
                             MixPanelTracker.publishEvent(MixPanelEvent.VOCAB_WORD_RECORD)
-                                .addParam(ParamKeys.LESSON_ID,it.lessonId)
-                                .addParam(ParamKeys.QUESTION_ID,it.questionId)
+                                .addParam(ParamKeys.LESSON_ID, it.lessonId)
+                                .addParam(ParamKeys.QUESTION_ID, it.questionId)
                                 .push()
                         }
                         MotionEvent.ACTION_MOVE -> {
@@ -1417,8 +1418,8 @@ class VocabularyPracticeAdapter(
                 ?.addParam("question_id", lessonQuestion.id)
                 ?.push()
             MixPanelTracker.publishEvent(MixPanelEvent.VOCAB_RECORDING_DELETE)
-                .addParam(ParamKeys.LESSON_ID,lessonQuestion?.lessonId)
-                .addParam(ParamKeys.QUESTION_ID,lessonQuestion?.questionId)
+                .addParam(ParamKeys.LESSON_ID, lessonQuestion?.lessonId)
+                .addParam(ParamKeys.QUESTION_ID, lessonQuestion?.questionId)
                 .push()
         }
 
