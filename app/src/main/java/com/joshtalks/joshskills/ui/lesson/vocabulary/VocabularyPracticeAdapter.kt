@@ -240,16 +240,16 @@ class VocabularyPracticeAdapter(
                     assessmentWithRelations?.questionList.isNullOrEmpty().not()
                 ) {
                     onSubmitQuizClick(lessonQuestion!!, assessmentWithRelations!!.questionList[0])
+                    MixPanelTracker.publishEvent(MixPanelEvent.VOCAB_REV_SUBMIT)
+                        .addParam(ParamKeys.LESSON_ID, lessonQuestion?.lessonId)
+                        .addParam(ParamKeys.QUESTION_ID, lessonQuestion?.questionId)
+                        .addParam(ParamKeys.ANSWER_ID, binding.quizRadioGroup.checkedRadioButtonId)
+                        .addParam(
+                            ParamKeys.IS_CORRECT_ANSWER,
+                            assessmentWithRelations!!.questionList[0].question.status == QuestionStatus.CORRECT
+                        )
+                        .push()
                 }
-                MixPanelTracker.publishEvent(MixPanelEvent.VOCAB_REV_SUBMIT)
-                    .addParam(ParamKeys.LESSON_ID, lessonQuestion?.lessonId)
-                    .addParam(ParamKeys.QUESTION_ID, lessonQuestion?.questionId)
-                    .addParam(ParamKeys.ANSWER_ID, binding.quizRadioGroup.checkedRadioButtonId)
-                    .addParam(
-                        ParamKeys.IS_CORRECT_ANSWER,
-                        assessmentWithRelations!!.questionList[0].question.status == QuestionStatus.CORRECT
-                    )
-                    .push()
             }
             binding.showExplanationBtn.setOnClickListener {
                 MixPanelTracker.publishEvent(MixPanelEvent.VOCAB_SHOW_EXPLANATION)
@@ -259,11 +259,11 @@ class VocabularyPracticeAdapter(
                 showExplanation()
             }
             binding.continueBtn.setOnClickListener {
-                MixPanelTracker.publishEvent(MixPanelEvent.VOCAB_REV_CONTINUE)
-                    .addParam(ParamKeys.LESSON_ID, lessonQuestion?.lessonId)
-                    .addParam(ParamKeys.QUESTION_ID, lessonQuestion?.questionId)
-                    .push()
                 if (lessonQuestion != null && assessmentWithRelations != null && assessmentWithRelations!!.questionList.isNotEmpty()) {
+                    MixPanelTracker.publishEvent(MixPanelEvent.VOCAB_REV_CONTINUE)
+                        .addParam(ParamKeys.LESSON_ID, lessonQuestion?.lessonId)
+                        .addParam(ParamKeys.QUESTION_ID, lessonQuestion?.questionId)
+                        .push()
                     binding.continueBtn.visibility = GONE
                     expandCardPosition = positionInList + 1
                     val hasNextItem = positionInList < itemList.size - 1
