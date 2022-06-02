@@ -228,9 +228,18 @@ class ConnectedState(val context: CallContext) : VoipState {
                             Log.d(TAG, "Received : ${event.type} switched to Leaving State")
                             moveToLeavingState()
                         }
-                        RECONNECTED -> {
-                            // Ignore this event as we are already in Connected State
+                        RECONNECTED,RECEIVED_CHANNEL_DATA-> {
+                            // Ignore Error Event from Agora
+                            val msg = "Ignoring : In $TAG but received ${event.type} event don't know how to process"
+                            CallAnalytics.addAnalytics(
+                                event = EventName.ILLEGAL_EVENT_RECEIVED,
+                                agoraCallId = context.channelData.getCallingId().toString(),
+                                agoraMentorId = context.channelData.getAgoraUid().toString(),
+                                extra = msg
+                            )
+                            Log.d(TAG, "Ignoring : In $TAG but received ${event.type} event don't know how to process")
                         }
+
                         else -> {
                             val msg = "In $TAG but received ${event.type} event don't know how to process"
                             CallAnalytics.addAnalytics(

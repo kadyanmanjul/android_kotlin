@@ -206,7 +206,16 @@ class SearchingState(val context: CallContext) : VoipState {
                             Log.d(TAG, "Received : ${event.type} switched to ${context.state}")
                             break@loop
                         }
-                        SYNC_UI_STATE -> {}
+                        TOPIC_IMAGE_RECEIVED,SYNC_UI_STATE-> {
+                            val msg = "Ignoring : In $TAG but received ${event.type} expected $RECEIVED_CHANNEL_DATA"
+                            CallAnalytics.addAnalytics(
+                                event = EventName.ILLEGAL_EVENT_RECEIVED,
+                                agoraCallId = context.channelData.getCallingId().toString(),
+                                agoraMentorId = context.channelData.getAgoraUid().toString(),
+                                extra = msg
+                            )
+                            Log.d(TAG, "Ignoring : In $TAG but received ${event.type} expected $RECEIVED_CHANNEL_DATA")
+                        }
                         else -> {
                             val msg = "In $TAG but received ${event.type} expected $RECEIVED_CHANNEL_DATA"
                             CallAnalytics.addAnalytics(

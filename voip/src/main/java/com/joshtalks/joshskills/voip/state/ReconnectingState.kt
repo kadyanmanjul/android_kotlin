@@ -252,6 +252,16 @@ class ReconnectingState(val context: CallContext) : VoipState {
                             ensureActive()
                             moveToLeavingState()
                         }
+                        RECONNECTING-> {
+                            val msg = "Ignoring : In $TAG but received ${event.type} expected $RECONNECTED"
+                            CallAnalytics.addAnalytics(
+                                event = EventName.ILLEGAL_EVENT_RECEIVED,
+                                agoraCallId = context.channelData.getCallingId().toString(),
+                                agoraMentorId = context.channelData.getAgoraUid().toString(),
+                                extra = msg
+                            )
+                            Log.d(TAG, "Ignoring : In $TAG but received ${event.type} expected $RECONNECTED")
+                        }
                         else -> {
                             val msg = "In $TAG but received ${event.type} expected $RECONNECTED"
                             CallAnalytics.addAnalytics(
