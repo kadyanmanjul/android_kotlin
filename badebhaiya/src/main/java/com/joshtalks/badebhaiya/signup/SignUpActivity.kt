@@ -61,9 +61,9 @@ class SignUpActivity : AppCompatActivity(), Call {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_sign_up)
         binding.handler = this
         binding.viewModel = viewModel
-        handleIntent()
+        //handleIntent()
         addObservers()
-        setOnClickListeners()
+        //setOnClickListeners()
 
     }
 
@@ -81,16 +81,26 @@ class SignUpActivity : AppCompatActivity(), Call {
 
     private fun setOnClickListeners() {
         setSpanText()
-        binding.btnWelcome.setOnClickListener {
-            binding.btnWelcome.visibility = View.GONE
-            if (User.getInstance().userId.isNullOrEmpty()
-                    .not() && User.getInstance().firstName.isNullOrEmpty()
-            )
-                openEnterNameFragment()
-            else
-                openTrueCallerBottomSheet()
-
-        }
+    //        binding.btnWelcome.setOnClickListener {
+    //
+    //                Log.i("SIGNUPActivity", "setOnClickListeners: ${viewModel.redirect}")
+    //                if (viewModel.redirect == "ENTER_NAME") {
+    //                    binding.btnWelcome.visibility = View.GONE
+    //                    openEnterNameFragment()
+    //                }
+    //                if (viewModel.redirect == "ENTER_PIC") {
+    //                    binding.btnWelcome.visibility = View.GONE
+    //                    openUploadProfilePicFragment()
+    //                }
+    //            binding.btnWelcome.visibility = View.GONE
+    //            if (User.getInstance().userId.isNullOrEmpty()
+    //                    .not() && User.getInstance().firstName.isNullOrEmpty()
+    //            )
+    //                openEnterNameFragment()
+    //            else
+    //                openTrueCallerBottomSheet()
+    //
+    //        }
 
     }
 
@@ -256,7 +266,18 @@ class SignUpActivity : AppCompatActivity(), Call {
 //        if (TruecallerSDK.getInstance().isUsable) {
 //            TruecallerSDK.getInstance().getUserProfile(this)
 //        } else
+        Log.i("SIGNUPActivity", "openTrueCallerBottomSheet: ${viewModel.redirect}")
+        if (viewModel.redirect == "ENTER_NAME") {
+            binding.btnWelcome.visibility = View.GONE
+            openEnterNameFragment()
+        }
+        else if (viewModel.redirect == "ENTER_PIC") {
+            binding.btnWelcome.visibility = View.GONE
+            openUploadProfilePicFragment()
+        }
+        else
             openEnterPhoneNumberFragment()
+
     }
 
     private val sdkCallback: ITrueCallback = object : ITrueCallback {

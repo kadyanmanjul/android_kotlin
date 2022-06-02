@@ -10,6 +10,7 @@ import android.graphics.Bitmap
 import android.media.RingtoneManager
 import android.os.Build
 import android.os.Message
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
@@ -132,6 +133,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
 
     private fun sendNotification(notificationObject: NotificationObject) {
         executor.execute {
+            Log.i("CHECKNOTIFICATION", "sendNotification: $notificationObject")
             val intent = getIntentAccordingAction(
                 notificationObject,
                 notificationObject.action,
@@ -242,6 +244,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         action: NotificationAction?,
         actionData: String?
     ): Intent? {
+        Log.i("CHECKNOTIFICATION", "getIntentAccordingAction: notification data:-$notificationObject  ------- actionData:$actionData ------- action:-$action")
         return when(action) {
             NotificationAction.ACTION_LOGOUT_USER -> {
                 if (User.getInstance().userId.isNotEmpty()) {
@@ -269,6 +272,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
 
                         if (roomId.isNotBlank()) {
                             Timber.d("YOYO")
+                            Log.i("CHECKNOTIFICATION", "getIntentAccordingAction: $roomId  && $topic")
                             return FeedActivity.getIntentForNotification(
                                 AppObjectController.joshApplication,
                                 roomId, topicName = topic

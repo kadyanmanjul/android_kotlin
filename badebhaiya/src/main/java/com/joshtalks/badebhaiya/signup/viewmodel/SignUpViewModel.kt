@@ -53,6 +53,7 @@ class SignUpViewModel(application: Application): AndroidViewModel(application) {
     val profilePicUploadApiCallStatus = MutableLiveData<ApiCallStatus>()
     var firstName = EMPTY
     var lastName = EMPTY
+    var redirect:String=EMPTY
     var valid: ObservableBoolean = ObservableBoolean()
     val openProfile = MutableLiveData<String>()
     private var followedSpeakers = 0

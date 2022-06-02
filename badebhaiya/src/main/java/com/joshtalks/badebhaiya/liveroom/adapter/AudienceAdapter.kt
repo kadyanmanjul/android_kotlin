@@ -9,6 +9,7 @@ import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.core.setOnSingleClickListener
 import com.joshtalks.badebhaiya.databinding.LiAudienceItemBinding
 import com.joshtalks.badebhaiya.feed.model.LiveRoomUser
+import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.utils.DEFAULT_NAME
 import com.joshtalks.badebhaiya.utils.setUserImageRectOrInitials
 
@@ -20,11 +21,25 @@ class AudienceAdapter(
     private var listenerUserAction: OnUserItemClickListener? = null
 
     fun updateFullList(newList: List<LiveRoomUser>) {
+        var fullName= User.getInstance().firstName+" "+ User.getInstance().lastName
+        var me= LiveRoomUser(123,
+            false,
+            User.getInstance().firstName,
+            fullName,
+            User.getInstance().profilePicUrl,
+            sortOrder = null,
+            false,
+            false,
+            false,
+            false,
+            User.getInstance().userId,
+        )
         newList.sortedByDescending { it.sortOrder }
         val diffCallback = ConversationUserDiffCallback(audienceList, newList)
         val diffResult = DiffUtil.calculateDiff(diffCallback)
         audienceList.clear()
         audienceList.addAll(newList)
+        audienceList.remove(me)
         diffResult.dispatchUpdatesTo(this)
     }
 
