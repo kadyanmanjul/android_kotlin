@@ -17,7 +17,6 @@ import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
-import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.core.countdowntimer.CountdownTimerBack
 import com.joshtalks.joshskills.core.interfaces.CertificationExamListener
 import com.joshtalks.joshskills.core.service.CONVERSATION_ID
@@ -28,13 +27,12 @@ import com.joshtalks.joshskills.ui.certification_exam.CERTIFICATION_EXAM_QUESTIO
 import com.joshtalks.joshskills.ui.certification_exam.CertificationExamViewModel
 import com.joshtalks.joshskills.ui.certification_exam.questionlistbottom.Callback
 import com.joshtalks.joshskills.ui.certification_exam.questionlistbottom.QuestionListBottomSheet
-import java.util.*
-import java.util.concurrent.TimeUnit
 import kotlinx.android.synthetic.main.activity_cexam_main.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.util.concurrent.TimeUnit
 
 const val ARG_EXAM_VIEW = "exam_view"
 const val ARG_OPEN_QUESTION_ID = "open_question_id"
@@ -122,9 +120,11 @@ class CExamMainActivity : BaseActivity(), CertificationExamListener {
     private fun setupUI() {
         iv_bookmark.setOnClickListener {
             questionsList.let { questions ->
-                questions[question_view_pager.currentItem].let {
-                    it.isBookmarked = it.isBookmarked.not()
-                    updateBookmarkIV(questions, question_view_pager.currentItem)
+                if (questions.size > question_view_pager.currentItem) {
+                    questions[question_view_pager.currentItem].let {
+                        it.isBookmarked = it.isBookmarked.not()
+                        updateBookmarkIV(questions, question_view_pager.currentItem)
+                    }
                 }
             }
         }
@@ -177,7 +177,8 @@ class CExamMainActivity : BaseActivity(), CertificationExamListener {
                 }
             )
             question_view_pager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
-            question_view_pager.offscreenPageLimit = if (questions.isNotEmpty()) questions.size else OFFSCREEN_PAGE_LIMIT_DEFAULT
+            question_view_pager.offscreenPageLimit =
+                if (questions.isNotEmpty()) questions.size else OFFSCREEN_PAGE_LIMIT_DEFAULT
             question_view_pager.setPageTransformer(MarginPageTransformer(Utils.dpToPx(40)))
             question_view_pager.registerOnPageChangeCallback(object :
                 ViewPager2.OnPageChangeCallback() {
