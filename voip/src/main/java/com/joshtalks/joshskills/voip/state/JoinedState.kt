@@ -259,7 +259,7 @@ class JoinedState(val context: CallContext) : VoipState {
                             )
                             context.updateUIState(uiState = uiState)
                         }
-                        RECONNECTED -> {
+                        RECONNECTED,RECEIVED_CHANNEL_DATA,RECONNECTING-> {
                             // Ignore Error Event from Agora
                             val msg = "Ignoring : In $TAG but received ${event.type} expected $CALL_CONNECTED_EVENT"
                             CallAnalytics.addAnalytics(
