@@ -14,6 +14,7 @@ import android.view.animation.AnimationUtils
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.integration.webp.decoder.WebpDrawable
@@ -24,7 +25,10 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.IS_COURSE_BOUGHT
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.CallRatingDialogBinding
 import com.joshtalks.joshskills.quizgame.util.MyBounceInterpolator
 import com.joshtalks.joshskills.ui.call.data.local.VoipPref
@@ -188,7 +192,7 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
     }
 
     private fun selectChange(s: String) {
-        if(s == "fpp" && vm.ifDialogShow==1){
+        if(s == "fpp" && vm.ifDialogShow==1  && PrefManager.getBoolValue(IS_COURSE_BOUGHT)){
             binding.block.chipStrokeColor = AppCompatResources.getColorStateList(requireContext(), R.color.colorPrimary)
             binding.block.chipBackgroundColor = AppCompatResources.getColorStateList(requireContext(), R.color.white)
             binding.block.setTextColor(resources.getColor(R.color.colorPrimary))
@@ -272,6 +276,11 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
         }
     }
 
+    override fun show(manager: FragmentManager, tag: String?) {
+        val ft = manager.beginTransaction()
+        ft.add(this, tag)
+        ft.commitAllowingStateLoss()
+    }
     private fun CircleImageView.setImage(url: String) {
         val requestOptions = RequestOptions().placeholder(R.drawable.ic_call_placeholder)
             .error(R.drawable.ic_call_placeholder)

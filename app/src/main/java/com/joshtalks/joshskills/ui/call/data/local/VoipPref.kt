@@ -86,7 +86,6 @@ object VoipPref {
                         delay(500)
                         val currentActivity = ActivityLifecycleCallback.currentActivity
                         if(currentActivity.isDestroyed || currentActivity.isFinishing){
-                            Log.d(TAG, "showDialogBox: 1")
                             delay(500)
                             val newCurrentActivity = ActivityLifecycleCallback.currentActivity
                             val newFragmentActivity = newCurrentActivity as? FragmentActivity
@@ -95,7 +94,6 @@ object VoipPref {
                             }
                         }
                         else if (currentActivity != null) {
-                            Log.d(TAG, "showDialogBox: 2")
                             val newFragmentActivity = currentActivity as? FragmentActivity
                            withContext(Dispatchers.Main) {
                             newFragmentActivity?.showVoipDialog(totalSecond)
@@ -120,7 +118,6 @@ object VoipPref {
             getLocalUserAgoraId().toString()
         ).show(fragmentActivity.supportFragmentManager, "CallRatingsFragment")
     }
-
     private fun showReportDialog(fragmentActivity: FragmentActivity) {
 
             val function = fun() {

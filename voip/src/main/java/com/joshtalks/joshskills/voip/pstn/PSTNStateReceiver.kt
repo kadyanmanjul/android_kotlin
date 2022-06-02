@@ -24,7 +24,7 @@ class PSTNStateReceiver(val scope: CoroutineScope) : PhoneStateListener() {
 
     var state = 0
 
-    override fun onCallStateChanged(newstate: Int, incomingNumber: String) {
+    override fun onCallStateChanged(newstate: Int, incomingNumber: String?) {
         when (newstate) {
             TelephonyManager.CALL_STATE_IDLE -> {
                 Log.d("DEBUG", "IDLE")
