@@ -10,6 +10,7 @@ import android.os.Bundle
 import android.text.method.ScrollingMovementMethod
 import android.view.MotionEvent
 import android.view.View
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
@@ -92,6 +93,7 @@ class CertificateDetailActivity : BaseActivity(), FileDownloadCallback {
             }
         }
         findViewById<AppCompatTextView>(R.id.text_message_title).text = "Certificate Details"
+        findViewById<AppCompatImageView>(R.id.iv_icon_referral).visibility = View.GONE
 
         mCredentialsApiClient = Credentials.getClient(this)
         binding.etMobile.setOnFocusChangeListener { v, hasFocus ->

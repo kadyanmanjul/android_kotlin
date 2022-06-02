@@ -108,6 +108,7 @@ class CertificationBaseActivity : BaseActivity() {
             }
         }
         text_message_title.text = getString(R.string.ce_header)
+        iv_icon_referral.visibility = View.GONE
     }
 
     private fun addObserver() {
