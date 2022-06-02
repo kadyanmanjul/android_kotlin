@@ -40,7 +40,7 @@ data class AssessmentQuestionResponse(
     val choiceType: ChoiceType,
 
     @SerializedName("choices")
-    val choices: List<ChoiceResponse>,
+    var choices: List<ChoiceResponse>,
 
     @SerializedName("revise_concept")
     val reviseConcept: ReviseConceptResponse?,

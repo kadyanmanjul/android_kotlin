@@ -95,9 +95,13 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
             if (!(getContext() instanceof PlayerListener)) {
                 return;
             }
-            if (currentPosition == lastPosition)
+            if (currentPosition == lastPosition) {
                 return;
-
+            }
+            if (currentPosition != getExoPlayer().getDuration()) {
+                findViewById(R.id.playAgain).setVisibility(View.GONE);
+                findViewById(R.id.llControlsContainer).setVisibility(View.VISIBLE);
+            }
             PlayerListener listener = (PlayerListener) getContext();
             listener.onCurrentTimeUpdated(currentPosition);
 
@@ -187,8 +191,8 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
             }
 
             findViewById(R.id.playAgain).setOnClickListener(this);
-            findViewById(R.id.playbackSpeed).setOnClickListener(this);
             findViewById(R.id.playAgain).setVisibility(GONE);
+            findViewById(R.id.playbackSpeed).setOnClickListener(this);
             findViewById(R.id.llControlsContainer).setVisibility(VISIBLE);
             player.addListener(new PlayerEventListener());
             player.setPlayWhenReady(true);
@@ -413,8 +417,6 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
                 player.seekTo(0);
                 player.setPlayWhenReady(false);
                 isVideoEnded = false;
-                findViewById(R.id.playAgain).setVisibility(View.GONE);
-                findViewById(R.id.llControlsContainer).setVisibility(View.VISIBLE);
             }
         } catch (Throwable e) {
             e.printStackTrace();
@@ -480,8 +482,11 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
                 }
             } else if (v.getId() == R.id.playAgain) {
                 if (player != null) {
-                    seekToStart();
+                    findViewById(R.id.playAgain).setVisibility(View.GONE);
+                    findViewById(R.id.llControlsContainer).setVisibility(View.VISIBLE);
+                    player.seekTo(0);
                     player.setPlayWhenReady(true);
+                    isVideoEnded = false;
                 }
             } else if (v.getId() == R.id.playbackSpeed) {
                 if (player != null) {

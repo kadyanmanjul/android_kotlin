@@ -21,7 +21,7 @@ data class ChoiceResponse(
     val isCorrect: Boolean,
 
     @SerializedName("sort_order")
-    val sortOrder: Int,
+    var sortOrder: Int,
 
     @SerializedName("answer_order")
     val correctAnswerOrder: Int,

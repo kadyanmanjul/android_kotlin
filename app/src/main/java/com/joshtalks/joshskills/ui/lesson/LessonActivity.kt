@@ -727,6 +727,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                                 A2C1Impressions.saveImpression(A2C1Impressions.Impressions.RULE_VIDEO_COMPLETED)
                             }
                         }
+                        seekToStart()
                         downloadStreamPlay()
                         outlineProvider = object : ViewOutlineProvider() {
                             override fun getOutline(view: View, outline: Outline) {

@@ -57,8 +57,9 @@ class LessonCompleteView : FrameLayout {
         lessonNameTvCompleted.text =
             context.getString(R.string.lesson_name, message.lessonNo, message.lessonName)
         roomStatus.isVisible = isConversationRoomActive
-        translationStatus.isVisible = PrefManager.hasKey(IS_A2_C1_RETENTION_ENABLED) &&
-                PrefManager.getBoolValue(IS_A2_C1_RETENTION_ENABLED)
+        translationStatus.isVisible =
+            message.isNewGrammar && PrefManager.hasKey(IS_A2_C1_RETENTION_ENABLED) &&
+                    PrefManager.getBoolValue(IS_A2_C1_RETENTION_ENABLED)
     }
 
 }
