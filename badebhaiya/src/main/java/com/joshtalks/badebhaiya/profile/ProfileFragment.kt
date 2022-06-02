@@ -117,17 +117,10 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         source= mBundle.getString("source").toString()
 
         handleIntent()
-//        if(isFromDeeplink && User.getInstance().isLoggedIn())
-//        {
-//            showPopup(room.roomId, User.getInstance().userId)
-//        }
         viewModel.getProfileForUser(userId!!, source)
         feedViewModel.setIsBadeBhaiyaSpeaker()
         binding.handler = this
         binding.viewModel = viewModel
-        //addObserver()
-//        if(liveRoomViewModel.pubNubState.value==PubNubState.STARTED)
-//        setpadding()
 
         binding.profileToolbar.iv_back.setOnClickListener{
             activity?.run {
@@ -136,8 +129,6 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
                 } catch (e: Exception){
 
                 }
-//                supportFragmentManager.beginTransaction().remove(this@ProfileFragment)
-//                    .commitAllowingStateLoss()
                 onBackPressed()
             }
         }
@@ -161,27 +152,11 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
                 }
             }
         })
-
-//        binding.ivProfilePic.setOnLongClickListener{
-//            CoroutineScope(Dispatchers.IO).launch {
-//                val resp= CommonRepository().signOutUser()
-//                if(resp.isSuccessful) {
-//                    User.deleteUserCredentials(true)
-//                }
-//            }
-//            return@setOnLongClickListener true
-//        }
-       /* binding.ivProfilePic.setOnClickListener{
-            UserPicChooserFragment.showDialog(childFragmentManager, true)
-
-        }*/
-        //setOnClickListener()
         return binding.root
 
     }
 
     fun setpadding(){
-
         binding.rvSpeakerRoomList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
@@ -197,7 +172,6 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
     }
 
     fun unsetPadding(){
-
         binding.view.updateLayoutParams { height=1 }
         binding.rvSpeakerRoomList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
@@ -215,7 +189,6 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
     fun showPopup(roomId: Int, userId: String) {
         val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
         val dialogBinding = WhyRoomBinding.inflate(layoutInflater)
-//        val dialogView = inflater.inflate(R.layout.why_room, null)
         dialogBuilder.setView(dialogBinding.root)
         val alertDialog: AlertDialog = dialogBuilder.create()
         alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
@@ -247,8 +220,6 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
                 }
                 alertDialog.dismiss()
             }
-//            else
-//                showToast("Please Enter a Message")
         }
         dialogBinding.Skip.setOnClickListener {
             alertDialog.dismiss()
@@ -260,7 +231,6 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         super.onViewCreated(view, savedInstanceState)
         Timber.d("THIS IS FCM TOKEN => ${PrefManager.getStringValue(com.joshtalks.badebhaiya.notifications.FCM_TOKEN)}")
         addObserver()
-//        viewModel.getProfileForUser(userId!!, source)
         executePendingActions()
     }
 
@@ -310,6 +280,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
                 }
                 if (isAdded){
                     requireActivity().supportFragmentManager.beginTransaction().remove(this).commit()
+                    feedViewModel.isBackPressed.value = false
                 }
 //                feedViewModel.isBackPressed.value=false
             }
@@ -322,30 +293,6 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
             else
                 unsetPadding()
         }
-        feedViewModel.singleLiveEvent.observe(viewLifecycleOwner) {
-            Log.d("ABC2", "Data class called with profile data message: ${it.what} bundle : ${it.data}")
-            when (it.what) {
-//                OPEN_ROOM ->{
-//                    it.data?.let {
-//                        Log.i("YASHENDRA", "addObserver: ")
-//                        it.getParcelable<ConversationRoomResponse>(ROOM_DETAILS)?.let { room ->
-//                            val liveRoomProperties = StartingLiveRoomProperties.createFromRoom(
-//                                room,
-//                                it.getString(TOPIC)!!
-//                            )
-//                            LiveRoomFragment.launch((requireActivity() as AppCompatActivity), liveRoomProperties, liveRoomViewModel)
-//                        }
-//                    }
-//                }
-
-                ROOM_EXPAND->{
-                 liveRoomViewModel.liveRoomState.value=LiveRoomState.EXPANDED
-//                    var live=LiveRoomFragment()
-//                    live.expandLiveRoom()
-                }
-            }
-        }
-
     }
 
     private fun handleSpeakerProfile(profileResponse: ProfileResponse) {
@@ -378,8 +325,6 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         viewModel.updateFollowStatus(userId ?: (User.getInstance().userId),isFromBBPage,isFromDeeplink)
         if(viewModel.speakerFollowed.value == true)
             viewModel.userProfileData.value?.let {
-                //is_followed=false
-                //binding.tvFollowers.setText("${it.followersCount-1} followers")
                 signUpViewModel.unfollowSpeaker()
                 viewModel.sendEvent(Impression("PROFILE_SCREEN","CLICKED_UNFOLLOW"))
                 speakerUnfollowedUIChanges()
@@ -389,14 +334,12 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
             }
         else
             viewModel.userProfileData.value?.let {
-                //is_followed=true
                 signUpViewModel.followSpeaker()
                 viewModel.sendEvent(Impression("PROFILE_SCREEN","CLICKED_FOLLOW"))
                 speakerFollowedUIChanges()
                 binding.tvFollowers.text =HtmlCompat.fromHtml(getString(R.string.bb_followers,
                     ("<big>"+it.followersCount.plus(1)?:0).toString()+"</big>"),
                     HtmlCompat.FROM_HTML_MODE_LEGACY)
-                //binding.tvFollowers.setText("${it.followersCount+1} followers")
             }
         viewModel.getProfileForUser(userId ?: (User.getInstance().userId), source)
     }
@@ -470,17 +413,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
                 .addToBackStack(TAG)
                 .commit()
         }
-//        fun getIntent(context: Context, userId: String = EMPTY, isFromDeeplink: Boolean = false): Intent {
-//            return Intent(context, ProfileFragment::class.java).apply {
-//                putExtra(USER_ID, userId)
-//                putExtra(FROM_DEEPLINK, isFromDeeplink)
-//            }
-//        }
     }
-
-//    override fun joinRoom(room: RoomListResponseItem, view: View   ) {
-//        feedViewModel.joinRoom(room, OPEN_ROOM_PROFILE)
-//    }
 
     override fun joinRoom(room: RoomListResponseItem, view: View) {
         feedViewModel.source="Profile"

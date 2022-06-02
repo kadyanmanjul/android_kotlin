@@ -1404,6 +1404,11 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
                         .addToBackStack(null)
                         .commit()
                 }
+                else
+                {
+                    showToast("inflated")
+                    activity.supportFragmentManager.beginTransaction().show(frag)
+                }
             }
         }
 
