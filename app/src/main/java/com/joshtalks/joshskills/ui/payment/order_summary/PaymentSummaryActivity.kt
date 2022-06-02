@@ -732,12 +732,12 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                     R.drawable.ic_small_tick,
                     R.color.green
                 ),
-                22
+                18
             ), 0, text.length,
             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
         )
         textView.text = spanString
-        textView.setPadding(2, 2, 0, 2)
+        textView.setPadding(3, 2, 50, 2)
         textView.setLineSpacing(
             TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_DIP,
