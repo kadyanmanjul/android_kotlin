@@ -3,12 +3,14 @@ package com.joshtalks.badebhaiya.liveroom.bottomsheet
 import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatTextView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.joshtalks.badebhaiya.R
+import com.joshtalks.badebhaiya.pubnub.PubNubManager
 import com.joshtalks.badebhaiya.utils.setImage
 import de.hdodenhof.circleimageview.CircleImageView
 
@@ -49,6 +51,7 @@ class ConversationRoomBottomSheet : BottomSheetDialogFragment() {
         if (roomUserInfo?.userPhoto?.isNotEmpty() == true) {
             userPhoto?.setImage(roomUserInfo?.userPhoto ?: "")
         }
+        Log.i("MOVETOAUDIENCE", "setupDialog: ${PubNubManager.currentUser?.isModerator}")
         userName?.text = roomUserInfo?.userName
         openProfileButton?.visibility = View.VISIBLE
 
@@ -58,24 +61,27 @@ class ConversationRoomBottomSheet : BottomSheetDialogFragment() {
                     moveToAudienceButton?.visibility = View.GONE
                     moveToSpeakerButton?.visibility = View.GONE
                 }else{
-                    when(roomUserInfo?.toSpeaker){
-                        true -> {
-                            moveToAudienceButton?.visibility = View.VISIBLE
-                            moveToSpeakerButton?.visibility = View.GONE
+                        when(roomUserInfo?.toSpeaker){
+                            true -> {
+                                moveToAudienceButton?.visibility = View.VISIBLE
+                                moveToSpeakerButton?.visibility = View.GONE
 
+                            }
+                            false -> {
+                                moveToAudienceButton?.visibility = View.GONE
+                                moveToSpeakerButton?.visibility = View.VISIBLE
+                            }
                         }
-                        false -> {
-                            moveToAudienceButton?.visibility = View.GONE
-                            moveToSpeakerButton?.visibility = View.VISIBLE
-                        }
-                    }
                 }
             }
             false -> {
                 when(roomUserInfo?.fromSpeaker){
                     true -> {
                         if(roomUserInfo?.isSelf == true){
-                            moveToAudienceButton?.visibility = View.VISIBLE
+                            if(PubNubManager.currentUser?.isModerator==false)
+                            moveToAudienceButton?.visibility = View.GONE
+                            else
+                                moveToAudienceButton?.visibility=View.VISIBLE
                             moveToSpeakerButton?.visibility = View.GONE
                         }else{
                             moveToAudienceButton?.visibility = View.GONE
