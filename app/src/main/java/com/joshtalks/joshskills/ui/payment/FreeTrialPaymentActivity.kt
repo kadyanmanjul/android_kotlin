@@ -806,6 +806,8 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             phoneNumber = "+919999999999"
         }
 
+        if(PrefManager.getStringValue(CURRENT_COURSE_ID) != DEFAULT_COURSE_ID)
+            index = 0
         viewModel.getOrderDetails(
             viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.testId ?: testId,
             phoneNumber,
