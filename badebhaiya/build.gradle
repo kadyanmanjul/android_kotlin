@@ -8,7 +8,7 @@ apply plugin: 'dagger.hilt.android.plugin'
 
 def majorVersion = 1
 def minorVersion = 0
-def patchVersion = 4
+def patchVersion = 5
 
 android {
     compileSdk 32
