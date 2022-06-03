@@ -96,7 +96,7 @@
     <string name="bb_following"><![CDATA[\<b>%s</b> following\]]></string>
     <string name="bb_followers"><![CDATA[\<b>%s</b> followers\]]></string>
     <string name="welcome_in_string">🎉 Welcome in!</string>
-    <string name="bb_tagline">Connect with your role models directly</string>
+    <string name="bb_tagline">Connect with your Favorite Josh Talks Speakers</string>
     <string name="unable_to_load">Unable to load, Please try again</string>
     <string name="room_card_top_title_header">%s… %s at %s</string>
     <string name="schedule_your_room">Schedule your Room</string>

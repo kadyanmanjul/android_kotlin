@@ -18,6 +18,14 @@
         android:layout_height="match_parent"
         android:background="@color/base_app_color">
 
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineStart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintStart_toStartOf="parent" />
+
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/imageView"
             android:layout_width="@dimen/_270sdp"
@@ -34,13 +42,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/bb_tagline"
+            android:textAlignment="center"
             android:textAppearance="@style/BB_Typography_Nunito_Sans_Semi_Bold"
-            android:textSize="@dimen/_14sdp"
+            android:textSize="@dimen/_12sdp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.64" />
+            app:layout_constraintVertical_bias="0.642" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnWelcome"
@@ -59,28 +68,6 @@
             app:layout_constraintBottom_toTopOf="@+id/termsOfServiceText"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
-
-       <!-- <CheckBox
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:translationX="@dimen/_12sdp"
-            android:text="@null"/>-->
-<!--
-
-        <CheckBox
-            android:id="@+id/termsOfServiceCheckbox"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_20sdp"
-            android:checked="true"
-            android:text="@null"
-            android:translationX="@dimen/_12sdp"
-            app:layout_constraintBottom_toBottomOf="@+id/termsOfServiceText"
-            app:layout_constraintEnd_toStartOf="@+id/termsOfServiceText"
-            app:layout_constraintHorizontal_chainStyle="packed"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/termsOfServiceText" />
--->
 
         <TextView
             android:id="@+id/termsOfServiceText"
