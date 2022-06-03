@@ -1254,8 +1254,10 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
                         return
                     }
                     if (binding.leaveEndRoomBtn.text == getString(R.string.end_room)) {
+                        feedViewModel.isBackPressed.value=false
                         showEndRoomPopup()
                     } else {
+                        feedViewModel.isBackPressed.value=false
                         showLeaveRoomPopup()
                     }
                 }
