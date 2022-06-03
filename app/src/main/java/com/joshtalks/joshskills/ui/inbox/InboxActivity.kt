@@ -8,31 +8,22 @@ import android.os.Bundle
 import android.view.View
 import android.view.View.GONE
 import androidx.appcompat.widget.PopupMenu
-import androidx.lifecycle.*
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.observe
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.base.constants.*
+import com.joshtalks.joshskills.base.constants.CALLING_SERVICE_ACTION
+import com.joshtalks.joshskills.base.constants.SERVICE_BROADCAST_KEY
+import com.joshtalks.joshskills.base.constants.START_SERVICE
+import com.joshtalks.joshskills.base.constants.STOP_SERVICE
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.COURSE_EXPLORER_NEW
-import com.joshtalks.joshskills.core.CURRENT_COURSE_ID
-import com.joshtalks.joshskills.core.PAID_COURSE_TEST_ID
-import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
-import com.joshtalks.joshskills.core.IMPRESSION_REFER_VIA_INBOX_ICON
-import com.joshtalks.joshskills.core.IMPRESSION_REFER_VIA_INBOX_MENU
-import com.joshtalks.joshskills.core.INBOX_SCREEN_VISIT_COUNT
-import com.joshtalks.joshskills.core.ONBOARDING_STAGE
-import com.joshtalks.joshskills.core.OnBoardingStage
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
@@ -43,8 +34,12 @@ import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
+import com.joshtalks.joshskills.ui.cohort_based_course.views.CommitmentFormActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.inbox.adapter.InboxAdapter
+import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_COMMITMENT_FORM_SUBMITTED
+import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_GROUP_LIST_CBC_TOOLTIP
+import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_TEXT_VIEW_CLASS_ANIMATION
 import com.joshtalks.joshskills.ui.newonboarding.OnBoardingActivityNew
 import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
@@ -52,25 +47,14 @@ import com.joshtalks.joshskills.ui.referral.ReferralViewModel
 import com.joshtalks.joshskills.ui.settings.SettingsActivity
 import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.joshtalks.joshskills.util.FileUploadService
+import com.moengage.core.analytics.MoEAnalyticsHelper
 import io.agora.rtc.RtcEngine
 import io.reactivex.disposables.CompositeDisposable
-import kotlinx.android.synthetic.main.activity_inbox.recycler_view_inbox
-import kotlinx.android.synthetic.main.find_more_layout.buy_english_course
-import kotlinx.android.synthetic.main.find_more_layout.find_more
-import kotlinx.android.synthetic.main.find_more_layout.find_more_new
-import kotlinx.android.synthetic.main.inbox_toolbar.iv_icon_referral
-import kotlinx.android.synthetic.main.inbox_toolbar.iv_reminder
-import kotlinx.android.synthetic.main.inbox_toolbar.iv_setting
-import kotlinx.android.synthetic.main.inbox_toolbar.text_message_title
+import kotlinx.android.synthetic.main.activity_inbox.*
+import kotlinx.android.synthetic.main.find_more_layout.*
+import kotlinx.android.synthetic.main.inbox_toolbar.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import com.joshtalks.joshskills.core.IS_FREE_TRIAL_CAMPAIGN_ACTIVE
-import com.joshtalks.joshskills.core.IS_EFT_VARIENT_ENABLED
-import com.joshtalks.joshskills.ui.cohort_based_course.views.CommitmentFormActivity
-import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_COMMITMENT_FORM_SUBMITTED
-import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_GROUP_LIST_CBC_TOOLTIP
-import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_TEXT_VIEW_CLASS_ANIMATION
-import com.moengage.core.analytics.MoEAnalyticsHelper
 
 const val REGISTER_INFO_CODE = 2001
 const val COURSE_EXPLORER_CODE = 2002
@@ -114,6 +98,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
     private fun initABTest() {
         viewModel.getEFTCampaignData(CampaignKeys.EXTEND_FREE_TRIAL.name)
         viewModel.getICPABTest(CampaignKeys.INCREASE_COURSE_PRICE.name)
+        viewModel.getA2C1CampaignData(CampaignKeys.A2_C1.name)
     }
 
     private fun addAfterTime() {
