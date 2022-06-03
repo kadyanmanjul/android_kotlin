@@ -11,14 +11,12 @@ import com.joshtalks.joshskills.voip.constant.JOINED
 import com.joshtalks.joshskills.voip.constant.JOINING
 import com.joshtalks.joshskills.voip.constant.LEAVING
 import com.joshtalks.joshskills.voip.constant.LEAVING_AND_JOINING
-import com.joshtalks.joshskills.voip.data.local.PrefManager
-import com.joshtalks.joshskills.voip.voipLog
+import io.agora.rtc.Constants
 import io.agora.rtc.RtcEngine
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.collect
-import timber.log.Timber
+
 
 private const val JOINING_CHANNEL_SUCCESS = 0
 private const val USER_ALREADY_IN_A_CHANNEL = -17
@@ -156,6 +154,7 @@ internal class AgoraWebrtcService(val scope: CoroutineScope) : WebrtcService {
             val currentVolume = audio.getStreamVolume(AudioManager.STREAM_VOICE_CALL)
             adjustPlaybackSignalVolume((95 / maxVolume) * currentVolume)
             adjustRecordingSignalVolume(400)
+            setAudioProfile(Constants.AUDIO_PROFILE_DEFAULT, Constants.AUDIO_SCENARIO_DEFAULT)
 //            TODO:SOUND PROBLEM
             enableDeepLearningDenoise(false)
         }

@@ -795,7 +795,6 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                         lessonCompleted = lessonCompleted &&
                                 lesson.translationStatus == LESSON_STATUS.CO
                     }
-
                     if (lessonCompleted) {
                         PrefManager.put(LESSON_COMPLETED_FOR_NOTIFICATION, true)
                         if (lesson.status != LESSON_STATUS.CO) {
@@ -832,7 +831,6 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                         lessonCompleted = lessonCompleted &&
                                 lesson.conversationStatus == LESSON_STATUS.CO
                     }
-
                     if (lessonCompleted) {
                         if (lesson.status != LESSON_STATUS.CO) {
                             MarketingAnalytics.logLessonCompletedEvent(lesson.lessonNo, lesson.id)
@@ -1287,13 +1285,18 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
     }
 
     private fun openLessonCompleteScreen(lesson: LessonModel) {
-        this.lesson = lesson
-        openLessonCompletedActivity.launch(
-            LessonCompletedActivity.getActivityIntent(
-                this,
-                lesson
+        if(PrefManager.getBoolValue("DelayLessonCompletedActivity")){
+            PrefManager.put("OpenLessonCompletedActivity",true)
+            PrefManager.putPrefObject("lessonObject",lesson)
+        }else {
+            this.lesson = lesson
+            openLessonCompletedActivity.launch(
+                LessonCompletedActivity.getActivityIntent(
+                    this,
+                    lesson
+                )
             )
-        )
+        }
     }
 
     fun buyCourse() {
