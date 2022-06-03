@@ -66,10 +66,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_12sdp"
+            android:textAppearance="@style/BB_Typography_Nunito_Bold"
             android:textColor="@color/profile_font_color"
             android:textSize="@dimen/_12ssp"
-            android:layout_marginStart="@dimen/_2sdp"
-            android:textAppearance="@style/BB_Typography_Nunito_Bold"
             app:layout_constraintStart_toStartOf="@id/iv_profile_pic"
             app:layout_constraintTop_toBottomOf="@id/iv_profile_pic"
             tools:text="Akhand Swarup Pandit" />
@@ -116,6 +115,8 @@
             android:id="@+id/tvSpeakerRoomHeading"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_10sdp"
+            android:paddingStart="12dp"
             android:layout_marginTop="@dimen/_12sdp"
             android:fontFamily="@font/nunito_regular"
             android:text="@string/upcoming_rooms"
@@ -123,8 +124,7 @@
             android:textSize="@dimen/_12ssp"
             android:visibility="@{viewModel.isBadeBhaiyaSpeaker ? View.VISIBLE : View.GONE}"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/divider"
-            android:layout_margin="@dimen/_10sdp" />
+            app:layout_constraintTop_toBottomOf="@id/divider" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvSpeakerRoomList"
@@ -141,12 +141,12 @@
             app:layout_constraintBottom_toBottomOf="parent"
             tools:listitem="@layout/li_room_event" />
 
-        <FrameLayout
-            android:id="@+id/room_frame"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:layout_editor_absoluteX="0dp"
-            tools:layout_editor_absoluteY="-3dp" />
+<!--        <FrameLayout-->
+<!--            android:id="@+id/room_frame"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            tools:layout_editor_absoluteX="0dp"-->
+<!--            tools:layout_editor_absoluteY="-3dp" />-->
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

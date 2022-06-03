@@ -43,6 +43,7 @@ import com.joshtalks.badebhaiya.liveroom.viewmodel.LiveRoomViewModel
 import com.joshtalks.badebhaiya.notifications.NotificationScheduler
 import com.joshtalks.badebhaiya.profile.request.ReminderRequest
 import com.joshtalks.badebhaiya.profile.response.ProfileResponse
+import com.joshtalks.badebhaiya.pubnub.PubNubState
 import com.joshtalks.badebhaiya.repository.CommonRepository
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomResponse
 import com.joshtalks.badebhaiya.repository.model.User
@@ -55,6 +56,7 @@ import com.joshtalks.badebhaiya.utils.setUserImageOrInitials
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_feed.*
 import kotlinx.android.synthetic.main.base_toolbar.view.*
 import kotlinx.coroutines.Dispatchers
@@ -64,6 +66,7 @@ import kotlinx.coroutines.CoroutineScope
 import java.lang.Exception
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallback {
 
     private var isFromDeeplink = false
@@ -217,7 +220,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         super.onViewCreated(view, savedInstanceState)
         Timber.d("THIS IS FCM TOKEN => ${PrefManager.getStringValue(com.joshtalks.badebhaiya.notifications.FCM_TOKEN)}")
         addObserver()
-        viewModel.getProfileForUser(userId!!, isFromDeeplink)
+//        viewModel.getProfileForUser(userId!!, isFromDeeplink)
         executePendingActions()
     }
 
@@ -250,27 +253,38 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
             }
         }
         viewModel.speakerFollowed.observe(requireActivity()) {
+            Log.i("LIVEROOMSouRCE", "addObserver: followed ${viewModel.speakerFollowed.value}")
+
             if (it == true) {
                 speakerFollowedUIChanges()
             }
             else
                 speakerUnfollowedUIChanges()
         }
+
+        feedViewModel.isBackPressed.observe(requireActivity()){
+            Log.i("LIVEROOMSouRCE", "addObserver: ${feedViewModel.isBackPressed.value}")
+            if(it==true) {
+    requireActivity().supportFragmentManager.beginTransaction().remove(this).commit()
+                feedViewModel.isBackPressed.value=false
+            }
+
+        }
         feedViewModel.singleLiveEvent.observe(viewLifecycleOwner) {
             Log.d("ABC2", "Data class called with profile data message: ${it.what} bundle : ${it.data}")
             when (it.what) {
-                OPEN_ROOM ->{
-                    it.data?.let {
-                        Log.i("YASHENDRA", "addObserver: ")
-                        it.getParcelable<ConversationRoomResponse>(ROOM_DETAILS)?.let { room ->
-                            val liveRoomProperties = StartingLiveRoomProperties.createFromRoom(
-                                room,
-                                it.getString(TOPIC)!!
-                            )
-                            LiveRoomFragment.launch((requireActivity() as AppCompatActivity), liveRoomProperties, liveRoomViewModel)
-                        }
-                    }
-                }
+//                OPEN_ROOM ->{
+//                    it.data?.let {
+//                        Log.i("YASHENDRA", "addObserver: ")
+//                        it.getParcelable<ConversationRoomResponse>(ROOM_DETAILS)?.let { room ->
+//                            val liveRoomProperties = StartingLiveRoomProperties.createFromRoom(
+//                                room,
+//                                it.getString(TOPIC)!!
+//                            )
+//                            LiveRoomFragment.launch((requireActivity() as AppCompatActivity), liveRoomProperties, liveRoomViewModel)
+//                        }
+//                    }
+//                }
 
                 ROOM_EXPAND->{
                  liveRoomViewModel.liveRoomState.value=LiveRoomState.EXPANDED
@@ -416,6 +430,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
 //    }
 
     override fun joinRoom(room: RoomListResponseItem, view: View) {
+        feedViewModel.source="Profile"
         takePermissions(room.roomId.toString(), room.topic.toString())
     }
 
@@ -497,7 +512,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
             return
         }
         showPopup(room.roomId,User.getInstance().userId)
-
+        viewModel.sendEvent(Impression("PROFILE_SCREEN","CLICKED_SET_REMINDER"))
         notificationScheduler.scheduleNotificationAsListener(requireActivity() as AppCompatActivity, room)
             feedViewModel.setReminder(
                 ReminderRequest(

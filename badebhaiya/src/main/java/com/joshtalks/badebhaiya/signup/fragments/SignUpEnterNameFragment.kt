@@ -1,6 +1,7 @@
 package com.joshtalks.badebhaiya.signup.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -42,12 +43,15 @@ class SignUpEnterNameFragment: Fragment() {
 
         activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(false) {
             override fun handleOnBackPressed() {
+                viewModel.redirect="ENTER_NAME"
                 (activity as SignUpActivity).btnWelcome.visibility=View.VISIBLE
                 //showToast("Back Pressed")
                 activity?.run {
-                    supportFragmentManager.beginTransaction().remove(this@SignUpEnterNameFragment)
-                        .commitAllowingStateLoss()
-                    SignUpActivity.start(requireContext(), SignUpActivity.REDIRECT_TO_ENTER_NAME)
+                    Log.i("SIGNUPActivity", "handleOnBackPressed: ${viewModel.redirect}")
+                    requireActivity().supportFragmentManager.beginTransaction().remove(this@SignUpEnterNameFragment).commit()
+                    //supportFragmentManager.beginTransaction().remove(this@SignUpEnterNameFragment)
+//                        .commitAllowingStateLoss()
+                    //SignUpActivity.start(requireContext(), SignUpActivity.REDIRECT_TO_ENTER_NAME)
                 }
             }
         })

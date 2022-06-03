@@ -177,12 +177,24 @@
                     tools:itemCount="2"
                     tools:listitem="@layout/li_audience_item" />
 
+                <TextView
+                    android:id="@+id/audience_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingRight="@dimen/_27sdp"
+                    android:textAlignment="center"
+                    android:textAppearance="@style/BB_Typography_Nunito_Sans_Bold"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_10ssp"
+                    app:layout_constraintBottom_toTopOf="@+id/listener__recycler_view"
+                    app:layout_constraintStart_toEndOf="@+id/audienceTextView" />
+
                 <FrameLayout
                     android:id="@+id/live_frame"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    tools:layout_editor_absoluteX="-122dp"
-                    tools:layout_editor_absoluteY="-198dp" />
+                    tools:layout_editor_absoluteX="31dp"
+                    tools:layout_editor_absoluteY="0dp" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>
 

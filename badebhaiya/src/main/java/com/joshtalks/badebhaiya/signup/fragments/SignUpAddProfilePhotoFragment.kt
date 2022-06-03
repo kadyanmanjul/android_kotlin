@@ -1,6 +1,8 @@
 package com.joshtalks.badebhaiya.signup.fragments
 
 import android.os.Bundle
+import android.os.Message
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -41,9 +43,13 @@ class SignUpAddProfilePhotoFragment: Fragment() {
                 (activity as SignUpActivity).btnWelcome.visibility=View.VISIBLE
                 //showToast("Back Pressed")
                 activity?.run {
-                    supportFragmentManager.beginTransaction().remove(this@SignUpAddProfilePhotoFragment)
-                        .commitAllowingStateLoss()
-                    SignUpActivity.start(requireContext(), SignUpActivity.REDIRECT_TO_ENTER_PROFILE_PIC)
+//                    supportFragmentManager.beginTransaction().remove(this@SignUpAddProfilePhotoFragment)
+//                        .commitAllowingStateLoss()
+                    viewModel.redirect= "ENTER_PIC"
+                    Log.i("SIGNUPActivity", "handleOnBackPressed: ${viewModel.redirect}")
+                    requireActivity().supportFragmentManager.beginTransaction().remove(this@SignUpAddProfilePhotoFragment).commit()
+
+                    //SignUpActivity.start(requireContext(), SignUpActivity.REDIRECT_TO_ENTER_PROFILE_PIC)
                 }
             }
         })

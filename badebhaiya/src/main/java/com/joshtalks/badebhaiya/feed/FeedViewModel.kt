@@ -8,18 +8,17 @@ import androidx.databinding.ObservableField
 import androidx.lifecycle.*
 import com.google.gson.Gson
 import com.joshtalks.badebhaiya.R
-import com.joshtalks.badebhaiya.core.AppObjectController
-import com.joshtalks.badebhaiya.core.errorMessage
+import com.joshtalks.badebhaiya.core.*
 import com.joshtalks.badebhaiya.core.models.ErrorBody
-import com.joshtalks.badebhaiya.core.showAppropriateMsg
-import com.joshtalks.badebhaiya.core.showToast
 import com.joshtalks.badebhaiya.feed.adapter.FeedAdapter
 import com.joshtalks.badebhaiya.feed.model.*
+import com.joshtalks.badebhaiya.impressions.Impression
 import com.joshtalks.badebhaiya.liveroom.OPEN_PROFILE
 import com.joshtalks.badebhaiya.liveroom.OPEN_ROOM
 import com.joshtalks.badebhaiya.liveroom.ROOM_EXPAND
 import com.joshtalks.badebhaiya.liveroom.SCROLL_TO_TOP
 import com.joshtalks.badebhaiya.liveroom.bottomsheet.CreateRoom
+import com.joshtalks.badebhaiya.profile.ProfileViewModel
 import com.joshtalks.badebhaiya.profile.request.DeleteReminderRequest
 import com.joshtalks.badebhaiya.profile.request.ReminderRequest
 import com.joshtalks.badebhaiya.pubnub.PubNubData
@@ -43,10 +42,12 @@ const val TOPIC = "topic"
 
 class FeedViewModel : ViewModel() {
 
+    var source:String= EMPTY
     val isRoomsAvailable = ObservableBoolean(true)
     val isLoading = ObservableBoolean(false)
     val isBadeBhaiyaSpeaker = ObservableBoolean(false)
     var userID:String=""
+    var isBackPressed=MutableLiveData(false)
     val searchResponse=MutableLiveData<SearchRoomsResponseList>()
     val feedAdapter = FeedAdapter()
     var message = Message()
@@ -196,6 +197,7 @@ class FeedViewModel : ViewModel() {
             try {
                 isLoading.set(true)
                 isRoomsAvailable.set(true)
+                ProfileViewModel().sendEvent(Impression("FEED_SCREEN","REFRESH_CALLED"))
                 val res = repository.getRoomList()
                 if (res.isSuccessful) {
                     res.body()?.let {

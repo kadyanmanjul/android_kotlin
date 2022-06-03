@@ -15,8 +15,10 @@ import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
+import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.addCallback
 import androidx.appcompat.app.AlertDialog
@@ -34,10 +36,7 @@ import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.core.*
 import com.joshtalks.badebhaiya.core.base.BaseFragment
 import com.joshtalks.badebhaiya.databinding.FragmentLiveRoomBinding
-import com.joshtalks.badebhaiya.feed.FeedActivity
-import com.joshtalks.badebhaiya.feed.NotificationView
-import com.joshtalks.badebhaiya.feed.ROOM_DETAILS
-import com.joshtalks.badebhaiya.feed.TOPIC
+import com.joshtalks.badebhaiya.feed.*
 import com.joshtalks.badebhaiya.feed.model.LiveRoomUser
 import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
 import com.joshtalks.badebhaiya.liveroom.adapter.AudienceAdapter
@@ -81,10 +80,14 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
     NotificationView.NotificationViewAction,
     RaisedHandsBottomSheet.HandRaiseSheetListener {
 
-    private val FeedViewModel by lazy {
+    private val profileViewModel by lazy {
         ViewModelProvider(requireActivity())[ProfileViewModel::class.java]
     }
-
+    private val feedViewModel by lazy {
+        ViewModelProvider(requireActivity())[FeedViewModel::class.java]
+    }
+    private var from:String= EMPTY
+    private var isSpeaker:Boolean=false
 
     private var mServiceBound: Boolean = false
     private lateinit var binding: FragmentLiveRoomBinding
@@ -114,16 +117,39 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
 
     private val badgeDrawable: BadgeDrawable by lazy { BadgeDrawable.create(requireActivity()) }
 
+    var fullName= User.getInstance().firstName+" "+ User.getInstance().lastName
+    var me= LiveRoomUser(123,
+        false,
+        User.getInstance().firstName,
+        fullName,
+        User.getInstance().profilePicUrl,
+        sortOrder = null,
+        false,
+        false,
+        false,
+        false,
+        User.getInstance().userId,
+    )
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        //audienceAdapter?.audienceList?.add(me)
+        User.getInstance().profilePicUrl?.let { listener__recycler_view.user_image.setImage(it) }
+        return super.onCreateView(inflater, container, savedInstanceState)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-//        requireActivity().window.addFlags(
-//            WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
-//                    or WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON
-//        )
-
-
-
+        var mBundle: Bundle? = Bundle()
+        mBundle = this.arguments
+        from = mBundle?.getString("source").toString()
+        User.getInstance().profilePicUrl?.let { listener__recycler_view.user_image.setImage(it) }
+        isSpeaker= mBundle?.getBoolean("isSpeaker") == true
+        Log.i("LIVEROOMSOURCE", "onCreate: from:-$from")
+        //audienceAdapter?.audienceList?.add(me)
         attachBackPressedDispatcher()
         ConvoWebRtcService.initLibrary()
         removeIncomingNotification()
@@ -191,8 +217,12 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
 
     private fun addViewModelObserver() {
         vm.audienceList.observe(this, androidx.lifecycle.Observer {
+            it.add(me)
             val list = it.sortedBy { it.sortOrder }
             audienceAdapter?.updateFullList(list.toList())
+            audienceAdapter?.updateFullList(list)
+            Log.i("AUDIENCE", "addViewModelObserver: ${it}")
+            binding.audienceCount.text= "("+audienceAdapter?.audienceList?.size.toString()+")"
             PubNubManager.getLiveRoomProperties().let {
                 if (it.isModerator){
                     val int = vm.getRaisedHandAudienceSize()
@@ -518,7 +548,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
 
     }
     fun addObserver(){
-        FeedViewModel.singleLiveEvent.observe(viewLifecycleOwner) {
+        profileViewModel.singleLiveEvent.observe(viewLifecycleOwner) {
             Log.d("ABC2", "Data class called with data message: ${it.what} bundle : ${it.data}")
             when (it.what) {
                 OPEN_ROOM ->{
@@ -529,7 +559,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
                                 room,
                                 it.getString(TOPIC)!!
                             )
-                            launch((requireActivity() as AppCompatActivity), liveRoomProperties, vm)
+                            launch((requireActivity() as AppCompatActivity), liveRoomProperties, vm,"Live",isSpeaker)
                         }
                     }
                 }
@@ -1219,17 +1249,26 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
                 collapseLiveRoom()
             } else {
                 // Live is already minimized ask if user wants to quit live room.
-                if (!internetAvailableFlag) {
-                    mBoundService?.endService()
+                if(from=="Profile")
+                {
+                    Log.i("LIVEROOMSOURCE", "handleBackPress: set value $from")
+                    feedViewModel.isBackPressed.value=true
+                    from="None"
+                    Log.i("LIVEROOMSOURCE", "handleBackPress: set value ${feedViewModel.isBackPressed.value}")
+                }
+                else
+                {
+                    if (!internetAvailableFlag) {
+                        mBoundService?.endService()
 //                    requireActivity().onBackPressed()
-                    finishFragment()
-                    return
-                }
-                if (binding.leaveEndRoomBtn.text == getString(R.string.end_room)) {
-                    showEndRoomPopup()
-                }
-                else {
-                    showLeaveRoomPopup()
+                        finishFragment()
+                        return
+                    }
+                    if (binding.leaveEndRoomBtn.text == getString(R.string.end_room)) {
+                        showEndRoomPopup()
+                    } else {
+                        showLeaveRoomPopup()
+                    }
                 }
             }
         }
@@ -1273,19 +1312,27 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
         fun launch(
             activity: AppCompatActivity,
             liveRoomProperties: StartingLiveRoomProperties,
-            liveRoomViewModel: LiveRoomViewModel
+            liveRoomViewModel: LiveRoomViewModel,
+            from:String,
+            isSpeaker:Boolean
         ) {
             if (liveRoomViewModel.pubNubState.value == PubNubState.STARTED){
                 showToast("Please Leave Current Room")
             } else {
-
+                Log.i("LIVEROOMSOURCE", "launch: $from")
                 var frag=activity.supportFragmentManager.findFragmentById(R.id.liveRoomRootView)
                 if(frag==null) {
+
+                    val fragment = LiveRoomFragment() // replace your custom fragment class
+                    val bundle = Bundle()
+                    bundle.putString("source", from) // use as per your need
+                    bundle.putBoolean("isSpeaker",isSpeaker)
+                    fragment.arguments = bundle
                     PubNubManager.warmUp(liveRoomProperties)
                     activity
                         .supportFragmentManager
                         .beginTransaction()
-                        .replace(R.id.fragmentContainer, LiveRoomFragment())
+                        .replace(R.id.fragmentContainer, fragment)
                         .addToBackStack(null)
                         .commit()
                 }
