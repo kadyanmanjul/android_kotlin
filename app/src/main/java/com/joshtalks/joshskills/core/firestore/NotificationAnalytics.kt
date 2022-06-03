@@ -61,29 +61,34 @@ class NotificationAnalytics {
     }
 
     suspend fun pushToServer(): Boolean {
-        val listOfReceived = notificationDao.getUnsyncEvent()
+        try {
+            val listOfReceived = notificationDao.getUnsyncEvent()
 
-        if (listOfReceived?.isEmpty() == true) {
-            return true
-        }
-        val serverOffsetTime = PrefManager.getLongValue(SERVER_TIME_OFFSET,true)
-        val request = ArrayList<NotificationAnalyticsRequest>()
-        listOfReceived?.forEach {
-            request.add(NotificationAnalyticsRequest(it.id, it.time_stamp.plus(serverOffsetTime), it.action, it.platform))
-        }
-        if (request.isEmpty()) {
-            return true
-        }
-
-        val resp = AppObjectController.utilsAPIService.engageNewNotificationAsync(request)
-        if (resp.isSuccessful) {
-            listOfReceived?.forEach {
-                notificationDao.updateSyncStatus(it.notificationId)
+            if (listOfReceived?.isEmpty() == true) {
+                return true
             }
-        } else {
+            val serverOffsetTime = PrefManager.getLongValue(SERVER_TIME_OFFSET, true)
+            val request = ArrayList<NotificationAnalyticsRequest>()
+            listOfReceived?.forEach {
+                request.add(NotificationAnalyticsRequest(it.id, it.time_stamp.plus(serverOffsetTime), it.action, it.platform))
+            }
+            if (request.isEmpty()) {
+                return true
+            }
+
+            val resp = AppObjectController.utilsAPIService.engageNewNotificationAsync(request)
+            if (resp.isSuccessful) {
+                listOfReceived?.forEach {
+                    notificationDao.updateSyncStatus(it.notificationId)
+                }
+            } else {
+                return false
+            }
+            return true
+        } catch (ex: Exception) {
+            ex.printStackTrace()
             return false
         }
-        return true
     }
 
     suspend fun pushAnalytics(event: NotificationEvent) {
