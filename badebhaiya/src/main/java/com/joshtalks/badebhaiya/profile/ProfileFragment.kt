@@ -265,8 +265,13 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         feedViewModel.isBackPressed.observe(requireActivity()){
             Log.i("LIVEROOMSouRCE", "addObserver: ${feedViewModel.isBackPressed.value}")
             if(it==true) {
-    requireActivity().supportFragmentManager.beginTransaction().remove(this).commit()
-                feedViewModel.isBackPressed.value=false
+                try {
+                    (activity as FeedActivity).swipeRefreshLayout.isEnabled=true
+                } catch (e: Exception){
+
+                }
+                requireActivity().supportFragmentManager.beginTransaction().remove(this).commit()
+//                feedViewModel.isBackPressed.value=false
             }
 
         }
