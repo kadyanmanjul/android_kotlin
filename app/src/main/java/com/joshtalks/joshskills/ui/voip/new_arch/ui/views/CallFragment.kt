@@ -7,6 +7,10 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import android.media.AudioAttributes
+import android.media.AudioFocusRequest
+import android.media.AudioManager
+import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
 import android.util.Log
@@ -21,11 +25,9 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
 import com.joshtalks.joshskills.base.constants.FROM_INCOMING_CALL
 import com.joshtalks.joshskills.databinding.FragmentCallBinding
-import com.joshtalks.joshskills.ui.voip.new_arch.ui.callbar.CallBar
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.VoiceCallViewModel
 import com.joshtalks.joshskills.voip.audiocontroller.AudioController
 import com.joshtalks.joshskills.voip.audiocontroller.AudioRouteConstants
-import com.joshtalks.joshskills.voip.constant.CALL_CONNECTED_EVENT
 import com.joshtalks.joshskills.voip.constant.CANCEL_INCOMING_TIMER
 import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.local.PrefManager
@@ -44,15 +46,20 @@ class CallFragment : BaseFragment() , SensorEventListener {
     private var proximity: Sensor? = null
     private var powerManager: PowerManager? = null
     private  var lock: PowerManager.WakeLock? = null
+    private var audioRequest :AudioFocusRequest? = null
+    private var isFragmentRestarted = false
+
+    private val audioManager by lazy {
+        requireActivity().getSystemService(Context.AUDIO_SERVICE) as AudioManager
+    }
     private val audioController by lazy {
         AudioController(CoroutineScope((Dispatchers.IO)))
     }
 
-    private var isFragmentRestarted = false
-
     val vm by lazy {
         ViewModelProvider(requireActivity())[VoiceCallViewModel::class.java]
     }
+
     private val progressAnimator by lazy<ValueAnimator> {
         ValueAnimator.ofFloat(0f, 1f).apply {
             duration = 1000
@@ -99,7 +106,8 @@ class CallFragment : BaseFragment() , SensorEventListener {
 
     override fun initViewState() {
         setUpProximitySensor()
-        addViewPagerCallbacks()
+        gainAudioFocus()
+
         liveData.observe(viewLifecycleOwner) {
             when (it.what) {
                 CANCEL_INCOMING_TIMER -> {
@@ -110,22 +118,31 @@ class CallFragment : BaseFragment() , SensorEventListener {
         }
     }
 
-    private fun addViewPagerCallbacks() {
-        callBinding.topicViewpager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                super.onPageSelected(position)
+    private fun gainAudioFocus() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+           audioRequest =  AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN).run {
+                setAudioAttributes(
+                    AudioAttributes.Builder().run {
+                        setUsage(AudioAttributes.USAGE_VOICE_COMMUNICATION)
+                        setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                        build()
+                    }
+                )
+                setAcceptsDelayedFocusGain(true)
+                setOnAudioFocusChangeListener{}.build()
             }
+            audioRequest?.acceptsDelayedFocusGain()
+            val result = audioRequest?.let { audioManager.requestAudioFocus(it) }
+            Log.d(TAG, "gainAudioFocus 1: request result $result")
+        } else {
+            val result = audioManager.requestAudioFocus(
+                { },
+                AudioManager.STREAM_VOICE_CALL,
+                AudioManager.AUDIOFOCUS_GAIN
+            )
+            Log.d(TAG, "gainAudioFocus 2: request result $result")
 
-            override fun onPageScrollStateChanged(state: Int) {
-                super.onPageScrollStateChanged(state)
-            }
-
-            override fun onPageScrolled(position: Int,
-                                        positionOffset: Float,
-                                        positionOffsetPixels: Int) {
-                super.onPageScrolled(position, positionOffset, positionOffsetPixels)
-            }
-        })
+        }
     }
 
     private fun setUpProximitySensor() {
@@ -237,5 +254,12 @@ class CallFragment : BaseFragment() , SensorEventListener {
         super.onPause()
         sensorManager?.unregisterListener(this)
         if(lock?.isHeld == true) lock?.release()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            audioRequest?.let { audioManager.abandonAudioFocusRequest(it) }
+        }
     }
 }

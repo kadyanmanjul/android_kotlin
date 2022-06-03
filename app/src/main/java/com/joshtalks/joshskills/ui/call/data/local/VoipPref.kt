@@ -10,6 +10,7 @@ import com.joshtalks.joshskills.core.ActivityLifecycleCallback
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.call_rating.CallRatingsFragment
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.feedback.FeedbackDialogFragment
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.report.VoipReportDialogFragment
+import com.joshtalks.joshskills.voip.inSeconds
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 
@@ -181,7 +182,11 @@ object VoipPref {
         fun getLastCallDurationInSec(): Long {
             val duration = preferenceManager.getLong(PREF_KEY_LAST_CALL_DURATION, 0)
             Log.d(TAG, "getLastCallDurationInSec: $duration")
-            return duration
+            return if(duration.inSeconds()>0){
+                duration.inSeconds()
+            }else{
+                1
+            }
         }
 
     fun getLastRemoteUserMentorId(): String {
