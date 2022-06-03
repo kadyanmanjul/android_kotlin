@@ -132,19 +132,24 @@ object PubNubManager {
     }
 
     fun endPubNub() {
-        PubNubData.pubNubEvents.resetReplayCache()
-        PubNubData._liveEvent.resetReplayCache()
-        pubNubEventJob?.cancel()
-        jobs.forEach {
-            it.cancel()
+        try {
+            PubNubData.pubNubEvents.resetReplayCache()
+            PubNubData._liveEvent.resetReplayCache()
+            pubNubEventJob?.cancel()
+            jobs.forEach {
+                it.cancel()
+            }
+            jobs.clear()
+            speakersList.clear()
+            audienceList.clear()
+            pubNubCallback?.let {
+                pubnub.removeListener(it)
+            }
+            changePubNubState(PubNubState.ENDED)
+        } catch (e: Exception){
+
         }
-        jobs.clear()
-        speakersList.clear()
-        audienceList.clear()
-        pubNubCallback?.let {
-            pubnub.removeListener(it)
-        }
-        changePubNubState(PubNubState.ENDED)
+
     }
 
 

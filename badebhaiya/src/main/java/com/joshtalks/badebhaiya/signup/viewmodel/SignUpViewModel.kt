@@ -42,10 +42,6 @@ import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import timber.log.Timber
 
-data class BBtoFollow(
-    val userId: String,
-)
-
 class SignUpViewModel(application: Application): AndroidViewModel(application) {
     val repository = BBRepository()
     val signUpStatus = MutableLiveData<SignUpStepStatus>()
