@@ -26,9 +26,12 @@ import com.joshtalks.badebhaiya.liveroom.viewmodel.*
 import com.joshtalks.badebhaiya.pubnub.PubNubData._audienceList
 import com.joshtalks.badebhaiya.pubnub.PubNubData._speakersList
 import com.joshtalks.badebhaiya.pubnub.PubNubData.audienceList
+import com.joshtalks.badebhaiya.repository.PubNubExceptionRepository
+import com.joshtalks.badebhaiya.repository.model.PubNubExceptionRequest
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.utils.DEFAULT_NAME
 import com.joshtalks.badebhaiya.utils.UniqueList
+import com.joshtalks.badebhaiya.utils.Utils
 import com.pubnub.api.PNConfiguration
 import com.pubnub.api.PubNub
 import com.pubnub.api.callbacks.SubscribeCallback
@@ -193,7 +196,7 @@ object PubNubManager {
                     postToAudienceList(tempAudienceList)
                 }
             } catch (e: Exception){
-                e.printStackTrace()
+                sendPubNubException(e)
             }
 
         }
@@ -671,5 +674,21 @@ object PubNubManager {
     private fun isModerator(): Boolean =
         liveRoomProperties?.moderatorId == liveRoomProperties?.agoraUid
 
+    private fun sendPubNubException(e: Exception){
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                PubNubExceptionRepository().sendPubNubException(
+                    PubNubExceptionRequest(
+                        android_version = Build.VERSION.RELEASE.toDouble(),
+                        app_version_code = BuildConfig.VERSION_CODE,
+                        device_id = Utils.getDeviceId(),
+                        stack_tree = e.stackTraceToString()
+                    )
+                )
+            } catch (e: Exception){
+
+            }
+        }
+    }
 
 }

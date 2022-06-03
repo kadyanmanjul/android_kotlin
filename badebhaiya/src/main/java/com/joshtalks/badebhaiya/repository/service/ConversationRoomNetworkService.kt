@@ -6,6 +6,7 @@ import com.joshtalks.badebhaiya.profile.request.DeleteReminderRequest
 import com.joshtalks.badebhaiya.repository.model.ApiResponse
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomRequest
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomResponse
+import com.joshtalks.badebhaiya.repository.model.PubNubExceptionRequest
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -43,5 +44,8 @@ interface ConversationRoomNetworkService {
 
     @GET("$DIR/user/speakers_to_follow/?page=1")
     suspend fun speakersList(page: Int):Response<List<Users>>
+
+    @POST("$DIR/conversation_room/pubnub_exception/")
+    suspend fun sendPubNubException(@Body params: PubNubExceptionRequest): Response<*>
 
 }
