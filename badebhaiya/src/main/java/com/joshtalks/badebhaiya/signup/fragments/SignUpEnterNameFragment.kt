@@ -41,7 +41,7 @@ class SignUpEnterNameFragment: Fragment() {
         binding.handler = this
         //showToast("${binding.etFirstName.toString()}")
 
-        activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(false) {
+        activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 viewModel.redirect="ENTER_NAME"
                 (activity as SignUpActivity).btnWelcome.visibility=View.VISIBLE

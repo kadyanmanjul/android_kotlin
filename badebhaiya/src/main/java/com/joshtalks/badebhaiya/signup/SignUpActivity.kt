@@ -67,17 +67,16 @@ class SignUpActivity : AppCompatActivity(), Call {
 
     }
 
-    private fun handleIntent() {
-        if (intent.getStringExtra(REDIRECT) == REDIRECT_TO_ENTER_NAME) {
-            binding.btnWelcome.visibility = View.GONE
-            openEnterNameFragment()
-        }
-        if (intent.getStringExtra(REDIRECT) == REDIRECT_TO_ENTER_PROFILE_PIC) {
-            binding.btnWelcome.visibility = View.GONE
-            openUploadProfilePicFragment()
-        }
-
-    }
+//    private fun handleIntent() {
+//        if (intent.getStringExtra(REDIRECT) == REDIRECT_TO_ENTER_NAME) {
+//            binding.btnWelcome.visibility = View.GONE
+//            openEnterNameFragment()
+//        }
+//        if (intent.getStringExtra(REDIRECT) == REDIRECT_TO_ENTER_PROFILE_PIC) {
+//            binding.btnWelcome.visibility = View.GONE
+//            openUploadProfilePicFragment()
+//        }
+//    }
 
     private fun setOnClickListeners() {
         setSpanText()
