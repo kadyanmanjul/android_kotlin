@@ -17,7 +17,10 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.assessment.Assessment
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.local.model.assessment.Choice
-import com.joshtalks.joshskills.repository.server.assessment.*
+import com.joshtalks.joshskills.repository.server.assessment.AssessmentStatus
+import com.joshtalks.joshskills.repository.server.assessment.AssessmentType
+import com.joshtalks.joshskills.repository.server.assessment.OnlineTestRequest
+import com.joshtalks.joshskills.repository.server.assessment.OnlineTestResponse
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import com.tonyodev.fetch2.NetworkType
 import com.tonyodev.fetch2.Priority
@@ -46,7 +49,6 @@ class OnlineTestViewModel(application: Application) : AndroidViewModel(applicati
                     response.body()?.let {
                         if (it.totalQuestions == it.totalAnswered)
                             it.totalAnswered = 0
-                        it.question?.choices?.let { choices -> randomizeChoices(choices) }
                         grammarAssessmentLiveData.postValue(it)
                     }
                 }
@@ -67,11 +69,6 @@ class OnlineTestViewModel(application: Application) : AndroidViewModel(applicati
                     if (response.isSuccessful) {
                         apiStatus.postValue(ApiCallStatus.SUCCESS)
                         response.body()?.let { onlineTestResponse ->
-                            onlineTestResponse.question?.choices?.let { choices ->
-                                randomizeChoices(
-                                    choices
-                                )
-                            }
                             grammarAssessmentLiveData.postValue(onlineTestResponse)
                         }
                     }
@@ -85,14 +82,6 @@ class OnlineTestViewModel(application: Application) : AndroidViewModel(applicati
                 ex.showAppropriateMsg()
             }
         }
-    }
-
-    fun randomizeChoices(choiceList: List<ChoiceResponse>) {
-        val shuffledList = choiceList.shuffled()
-        shuffledList.forEachIndexed { index, choiceResponse ->
-            choiceResponse.sortOrder = index
-        }
-        grammarAssessmentLiveData.value?.question?.choices = shuffledList
     }
 
     fun fetchQuestionsOrPostAnswer(lessonId: Int) {
