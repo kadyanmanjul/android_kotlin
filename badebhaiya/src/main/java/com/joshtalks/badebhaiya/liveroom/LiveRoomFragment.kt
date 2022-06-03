@@ -131,22 +131,12 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
         User.getInstance().userId,
     )
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        //audienceAdapter?.audienceList?.add(me)
-        User.getInstance().profilePicUrl?.let { listener__recycler_view.user_image.setImage(it) }
-        return super.onCreateView(inflater, container, savedInstanceState)
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         var mBundle: Bundle? = Bundle()
         mBundle = this.arguments
         from = mBundle?.getString("source").toString()
-        User.getInstance().profilePicUrl?.let { listener__recycler_view.user_image.setImage(it) }
         isSpeaker= mBundle?.getBoolean("isSpeaker") == true
         Log.i("LIVEROOMSOURCE", "onCreate: from:-$from")
         //audienceAdapter?.audienceList?.add(me)
