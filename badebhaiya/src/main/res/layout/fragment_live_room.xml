@@ -184,7 +184,7 @@
                     android:paddingRight="@dimen/_27sdp"
                     android:textAlignment="center"
                     android:textAppearance="@style/BB_Typography_Nunito_Sans_Bold"
-                    android:textColor="@color/black"
+                    android:textColor="#E7E4D5"
                     android:textSize="@dimen/_10ssp"
                     app:layout_constraintBottom_toTopOf="@+id/listener__recycler_view"
                     app:layout_constraintStart_toEndOf="@+id/audienceTextView" />
