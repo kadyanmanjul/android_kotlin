@@ -63,7 +63,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import kotlinx.coroutines.CoroutineScope
-import java.lang.Exception
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -201,9 +200,13 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
                 msg = dialogBinding.message.text.toString()
                 val obj=FormResponse(userId,msg,roomId)
                 CoroutineScope(Dispatchers.IO).launch {
-                    val resp= CommonRepository().sendMsg(obj)
-//                    if(resp.isSuccessful)
-//                        showToast("response Send")
+                    try {
+                        val resp= CommonRepository().sendMsg(obj)
+                        if(resp.isSuccessful)
+                            showToast("response Send")
+                    } catch (e: Exception){
+
+                    }
                 }
                 alertDialog.dismiss()
             }

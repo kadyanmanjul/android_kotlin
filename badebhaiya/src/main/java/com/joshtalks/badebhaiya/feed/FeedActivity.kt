@@ -552,9 +552,16 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                 msg = dialogBinding.message.text.toString()
                 val obj= FormResponse(userId,msg,roomId)
                 CoroutineScope(Dispatchers.IO).launch {
-                    val resp= CommonRepository().sendMsg(obj)
-                    if(resp.isSuccessful)
-                        alertDialog.dismiss()
+                    try {
+                        val resp= CommonRepository().sendMsg(obj)
+                        if(resp.isSuccessful)
+                            showToast("response Send")
+
+                    }catch (e: Exception){
+
+                    }
+                    alertDialog.dismiss()
+
 //                    else
 //                        showToast("An Error Occured")
                 }
