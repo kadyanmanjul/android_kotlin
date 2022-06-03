@@ -148,7 +148,11 @@ class SearchAdapter(private val searchResult: List<Users>,var call: Call): ListA
                                         false,
                                         false
                                     )
-                                RetrofitInstance.profileNetworkService.sendEvent(Impression("SEARCH_FRAGMENT","CLICKED_FOLLOW"))
+                                try {
+                                    RetrofitInstance.profileNetworkService.sendEvent(Impression("SEARCH_FRAGMENT","CLICKED_FOLLOW"))
+                                } catch (e: Exception){
+
+                                }
                                 val response =
                                     RetrofitInstance.profileNetworkService.updateFollowStatus(followRequest)
                                 if (response.isSuccessful) {
@@ -167,7 +171,12 @@ class SearchAdapter(private val searchResult: List<Users>,var call: Call): ListA
                                             false,
                                             false
                                         )
-                                    RetrofitInstance.profileNetworkService.sendEvent(Impression("SEARCH_FRAGMENT","CLICKED_UNFOLLOW"))
+
+                                    try {
+                                        RetrofitInstance.profileNetworkService.sendEvent(Impression("SEARCH_FRAGMENT","CLICKED_UNFOLLOW"))
+                                    } catch (e: Exception){
+
+                                    }
 
                                     val response = RetrofitInstance.profileNetworkService.updateUnfollowStatus(followRequest)
                                     if (response.isSuccessful) {

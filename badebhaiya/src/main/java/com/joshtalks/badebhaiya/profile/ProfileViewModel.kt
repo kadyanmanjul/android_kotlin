@@ -144,9 +144,11 @@ class ProfileViewModel : ViewModel() {
 
     fun sendEvent(source: Impression) {
         viewModelScope.launch {
-            val resp=service.sendEvent(source)
-            if(!resp.isSuccessful)
-                showToast("Failed event sending")
+            try {
+               service.sendEvent(source)
+            } catch (e: Exception){
+
+            }
         }
     }
 //    fun deleteReminder(deleteReminderRequest: DeleteReminderRequest)

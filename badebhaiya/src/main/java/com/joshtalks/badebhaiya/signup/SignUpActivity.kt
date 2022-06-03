@@ -63,6 +63,7 @@ class SignUpActivity : AppCompatActivity(), Call {
         binding.viewModel = viewModel
         //handleIntent()
         addObservers()
+        setSpanText()
         //setOnClickListeners()
 
     }
@@ -78,30 +79,6 @@ class SignUpActivity : AppCompatActivity(), Call {
 //        }
 //    }
 
-    private fun setOnClickListeners() {
-        setSpanText()
-    //        binding.btnWelcome.setOnClickListener {
-    //
-    //                Log.i("SIGNUPActivity", "setOnClickListeners: ${viewModel.redirect}")
-    //                if (viewModel.redirect == "ENTER_NAME") {
-    //                    binding.btnWelcome.visibility = View.GONE
-    //                    openEnterNameFragment()
-    //                }
-    //                if (viewModel.redirect == "ENTER_PIC") {
-    //                    binding.btnWelcome.visibility = View.GONE
-    //                    openUploadProfilePicFragment()
-    //                }
-    //            binding.btnWelcome.visibility = View.GONE
-    //            if (User.getInstance().userId.isNullOrEmpty()
-    //                    .not() && User.getInstance().firstName.isNullOrEmpty()
-    //            )
-    //                openEnterNameFragment()
-    //            else
-    //                openTrueCallerBottomSheet()
-    //
-    //        }
-
-    }
 
     private fun setSpanText() {
         binding.termsOfServiceText.makeLinks(
