@@ -24,6 +24,7 @@ import com.joshtalks.joshskills.voip.calldetails.IncomingCallData
 import com.joshtalks.joshskills.voip.data.CallingRemoteService
 import com.joshtalks.joshskills.base.log.JoshLog
 import com.joshtalks.joshskills.base.model.NotificationData
+import com.joshtalks.joshskills.voip.constant.Category
 import com.joshtalks.joshskills.voip.constant.LEAVING
 import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
@@ -53,7 +54,7 @@ fun Context.updateLastCallDetails(
     remoteUserImage: String?,
     remotesUserMentorId : String,
     callId: Int,
-    callType: Int,
+    callType: Category,
     remoteUserAgoraId: Int,
     localUserAgoraId: Int,
     channelName: String,
@@ -66,7 +67,7 @@ fun Context.updateLastCallDetails(
         put(REMOTE_USER_IMAGE, remoteUserImage)
         put(REMOTE_USER_AGORA_ID, remoteUserAgoraId)
         put(CALL_ID, callId)
-        put(CALL_TYPE, callType)
+        put(CALL_TYPE, callType.ordinal)
         put(CHANNEL_NAME, channelName)
         put(TOPIC_NAME, topicName)
         put(CURRENT_USER_AGORA_ID, localUserAgoraId)

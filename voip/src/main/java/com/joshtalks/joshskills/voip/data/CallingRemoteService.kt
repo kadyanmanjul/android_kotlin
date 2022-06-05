@@ -166,6 +166,11 @@ class CallingRemoteService : Service() {
                                     val data = IncomingCall(callId = IncomingCallData.callId)
                                     mediator.showIncomingCall(data)
                                 }
+                                FPP_INCOMING_CALL -> {
+                                    PrefManager.setIncomingCallId(IncomingCallData.callId)
+                                    val data = IncomingCall(callId = IncomingCallData.callId)
+                                    mediator.showIncomingCall(data)
+                                }
                                 CALL_INITIATED_EVENT -> {
                                     serviceEvents.emit(ServiceEvents.CALL_INITIATED_EVENT)
                                 }

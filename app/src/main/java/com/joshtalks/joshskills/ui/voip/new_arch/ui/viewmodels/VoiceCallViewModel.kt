@@ -22,6 +22,7 @@ import com.joshtalks.joshskills.ui.call.repository.WebrtcRepository
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.models.CallUIState
 import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.constant.*
+import com.joshtalks.joshskills.voip.constant.Category.*
 import com.joshtalks.joshskills.voip.data.ServiceEvents
 import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
@@ -44,7 +45,7 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
     lateinit var source: String
     private val repository = WebrtcRepository(viewModelScope)
     private val mutex = Mutex(false)
-    val callType = ObservableField("")
+    var callType : Category = Category.PEER_TO_PEER
     val callStatus = ObservableInt(getCallStatus())
     var imageList = ObservableArrayList<String>()
     val callData = HashMap<String, Any>()
@@ -57,7 +58,7 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
             mutex.withLock {
                 if (PrefManager.getVoipState() == State.IDLE && isConnectionRequestSent.not()) {
                     Log.d(TAG, " connectCallJob : Inside - $callData")
-                    repository.connectCall(callData)
+                    repository.connectCall(callData,callType)
                     isConnectionRequestSent = true
                 }
             }
@@ -65,6 +66,7 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     init {
+        uiState.currentState = "Ringing..."
         listenRepositoryEvents()
     }
 

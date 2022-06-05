@@ -1,9 +1,7 @@
 package com.joshtalks.joshskills.voip.mediator
 
 import android.util.Log
-import com.joshtalks.joshskills.base.constants.GROUP
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_INCOMING_CALL_ID
-import com.joshtalks.joshskills.base.constants.PEER_TO_PEER
 import com.joshtalks.joshskills.voip.communication.fallback.FirebaseChannelService
 import com.joshtalks.joshskills.voip.audiomanager.SOUND_TYPE_RINGTONE
 import com.joshtalks.joshskills.voip.audiomanager.SoundManager
@@ -109,7 +107,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                 mutex.withLock {
                     calling = when(callCategory) {
                         Category.PEER_TO_PEER -> PeerToPeerCall()
-                        Category.FPP -> GroupCall()
+                        Category.FPP -> FavoriteCall()
                         Category.GROUP -> GroupCall()
                     }
                     PrefManager.setCallCategory(callCategory)
@@ -350,6 +348,22 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                                     Log.d(TAG, "handlePubnubEvent: Incoming Call -> $it")
                                     IncomingCallData.set(it.getCallId(), Category.GROUP)
                                     val envelope = Envelope(Event.GROUP_INCOMING_CALL,it)
+                                    flow.emit(envelope)
+                                }
+                            }
+                            is FppIncomingCall -> {
+                                if (isShowingIncomingCall.not() && PrefManager.getVoipState() == State.IDLE) {
+                                    calling = FavoriteCall()
+                                    PrefManager.setCallCategory(Category.FPP)
+                                    CallAnalytics.addAnalytics(
+                                        event = EventName.INCOMING_CALL_RECEIVED,
+                                        agoraCallId = IncomingCallData.callId.toString(),
+                                        agoraMentorId = "-1"
+                                    )
+                                    updateIncomingCallState(true)
+                                    Log.d(TAG, "handlePubnubEvent: Incoming Call -> $it")
+                                    IncomingCallData.set(it.getCallId(), Category.FPP)
+                                    val envelope = Envelope(Event.FPP_INCOMING_CALL,it)
                                     flow.emit(envelope)
                                 }
                             }
