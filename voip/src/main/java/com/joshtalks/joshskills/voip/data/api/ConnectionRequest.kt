@@ -1,7 +1,6 @@
 package com.joshtalks.joshskills.voip.data.api
 
 import com.google.gson.annotations.SerializedName
-import java.time.Duration
 
 data class ConnectionRequest(
 

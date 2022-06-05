@@ -7,12 +7,7 @@ import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseActivity
-import com.joshtalks.joshskills.base.constants.FROM_ACTIVITY
-import com.joshtalks.joshskills.base.constants.FROM_CALL_BAR
-import com.joshtalks.joshskills.base.constants.FROM_INCOMING_CALL
-import com.joshtalks.joshskills.base.constants.INTENT_DATA_COURSE_ID
-import com.joshtalks.joshskills.base.constants.INTENT_DATA_INCOMING_CALL_ID
-import com.joshtalks.joshskills.base.constants.INTENT_DATA_TOPIC_ID
+import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.databinding.ActivityVoiceCallBinding
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.VoiceCallViewModel
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.voipLog
@@ -43,6 +38,8 @@ class VoiceCallActivity : BaseActivity() {
     // TODO: Need to refactor
     override fun getArguments() {
         vm.source = getSource()
+        vm.callType = Category.values()[intent.getIntExtra(INTENT_DATA_CALL_CATEGORY,PrefManager.getCallCategory().ordinal)]
+
         Log.d(TAG, "getArguments: ${vm.source}")
         when (vm.source) {
             FROM_CALL_BAR -> {
@@ -84,8 +81,22 @@ class VoiceCallActivity : BaseActivity() {
 
     override fun onCreated() {
         Log.d(TAG, "onCreated: ${vm.source}")
+        when(vm.callType){
+            Category.PEER_TO_PEER ->{
+                openFragment { addCallUserFragment() }
+            }
+            Category.FPP ->{
+               addFppCallFragment()
+            }
+            Category.GROUP ->{
+//                openFragment { addGroupCallFragment() }
+            }
+        }
+    }
+
+    private fun openFragment(fragment: ()->Unit) {
         if (vm.source == FROM_INCOMING_CALL || vm.source == FROM_CALL_BAR) {
-            addCallUserFragment()
+            fragment.invoke()
         } else if (vm.source == FROM_ACTIVITY) {
             addSearchingUserFragment()
         }
@@ -117,6 +128,13 @@ class VoiceCallActivity : BaseActivity() {
             add(R.id.voice_call_container, CallFragment(), "CallFragment")
         }
     }
+
+    private fun addFppCallFragment() {
+        supportFragmentManager.commit {
+            add(R.id.voice_call_container, FppCallFragment(), "FppCallFragment")
+        }
+    }
+
 
     private fun replaceCallUserFragment() {
         supportFragmentManager.commit {
