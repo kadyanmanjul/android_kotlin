@@ -18,5 +18,7 @@ class ServerConstants {
         val ACK_UI_STATE_UPDATED = 13
         val TOPIC_IMAGE_REQUEST = 14
         val TOPIC_IMAGE_RECEIVED = 15
+        val GROUP_INCOMING_CALL = 16
+        val FPP_INCOMING_CALL = 17
     }
 }

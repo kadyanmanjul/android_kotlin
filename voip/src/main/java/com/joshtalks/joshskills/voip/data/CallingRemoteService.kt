@@ -17,11 +17,12 @@ import com.joshtalks.joshskills.voip.audiocontroller.AudioControllerInterface
 import com.joshtalks.joshskills.voip.audiocontroller.AudioRouteConstants
 import com.joshtalks.joshskills.voip.calldetails.IncomingCallData
 import com.joshtalks.joshskills.voip.communication.model.*
+import com.joshtalks.joshskills.voip.constant.*
 import com.joshtalks.joshskills.voip.constant.Event.*
-import com.joshtalks.joshskills.voip.constant.IDLE
-import com.joshtalks.joshskills.voip.constant.PSTN_STATE_IDLE
-import com.joshtalks.joshskills.voip.constant.PSTN_STATE_ONCALL
-import com.joshtalks.joshskills.voip.constant.State
+import com.joshtalks.joshskills.voip.constant.Event.CALL_CONNECTED_EVENT
+import com.joshtalks.joshskills.voip.constant.Event.CALL_INITIATED_EVENT
+import com.joshtalks.joshskills.voip.constant.Event.CLOSE_CALL_SCREEN
+import com.joshtalks.joshskills.voip.constant.Event.RECONNECTING_FAILED
 import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.mediator.CallServiceMediator
 import com.joshtalks.joshskills.voip.mediator.CallingMediator
@@ -160,6 +161,11 @@ class CallingRemoteService : Service() {
                                     val data = IncomingCall(callId = IncomingCallData.callId)
                                     mediator.showIncomingCall(data)
                                 }
+                                GROUP_INCOMING_CALL -> {
+                                    PrefManager.setIncomingCallId(IncomingCallData.callId)
+                                    val data = IncomingCall(callId = IncomingCallData.callId)
+                                    mediator.showIncomingCall(data)
+                                }
                                 CALL_INITIATED_EVENT -> {
                                     serviceEvents.emit(ServiceEvents.CALL_INITIATED_EVENT)
                                 }
@@ -250,9 +256,9 @@ class CallingRemoteService : Service() {
     /**
      * Events Which Repository can Use --- Start
      */
-    fun connectCall(callData: HashMap<String, Any>) {
+    fun connectCall(callData: HashMap<String, Any>, category: Category = Category.PEER_TO_PEER) {
         if (callData != null) {
-            mediator.connectCall(PEER_TO_PEER, callData)
+            mediator.connectCall(category, callData)
             Log.d(TAG, "Connecting Call Data --> $callData")
         } else
             Log.d(TAG, "connectCall: Call Data is Null")

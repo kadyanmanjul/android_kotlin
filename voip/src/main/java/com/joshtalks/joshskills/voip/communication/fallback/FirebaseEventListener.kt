@@ -58,6 +58,7 @@ class FirebaseEventListener(val scope : CoroutineScope) : EventListener<Document
         return when(messageMap?.get("type").toString().toInt()) {
             ServerConstants.CHANNEL -> Channel.fromMap(messageMap)
             ServerConstants.INCOMING_CALL -> IncomingCall.fromMap(messageMap)
+            ServerConstants.GROUP_INCOMING_CALL -> GroupIncomingCall.fromMap(messageMap)
             ServerConstants.UI_STATE_UPDATED, ServerConstants.ACK_UI_STATE_UPDATED -> UI.fromMap(messageMap)
             else -> Message.fromMap(messageMap)
         }
