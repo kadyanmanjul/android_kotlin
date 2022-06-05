@@ -71,6 +71,8 @@ enum class Event {
     UNMUTE_REQUEST,
     TOPIC_IMAGE_CHANGE_REQUEST,
     TOPIC_IMAGE_RECEIVED,
+    GROUP_INCOMING_CALL,
+    FPP_INCOMING_CALL,
 }
 
 enum class State {
@@ -81,4 +83,10 @@ enum class State {
     CONNECTED,
     RECONNECTING,
     LEAVING,
+}
+
+enum class Category {
+    PEER_TO_PEER,
+    FPP,
+    GROUP,
 }

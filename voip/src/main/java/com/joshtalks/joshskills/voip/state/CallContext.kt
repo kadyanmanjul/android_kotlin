@@ -4,6 +4,7 @@ import android.os.SystemClock
 import android.util.Log
 import com.joshtalks.joshskills.voip.communication.model.ChannelData
 import com.joshtalks.joshskills.voip.communication.model.OutgoingData
+import com.joshtalks.joshskills.voip.constant.Category
 import com.joshtalks.joshskills.voip.constant.Event
 import com.joshtalks.joshskills.voip.data.UIState
 import com.joshtalks.joshskills.voip.data.local.PrefManager
@@ -16,7 +17,7 @@ import com.joshtalks.joshskills.voip.webrtc.RECONNECTING_TIMEOUT_IN_MILLIS
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 
-data class CallContext(val callType: Int, val direction : CallDirection, val request: HashMap<String, Any>, private val mediator: CallingMediator)  {
+data class CallContext(val callType: Category, val direction : CallDirection, val request: HashMap<String, Any>, private val mediator: CallingMediator)  {
     private val TAG = "CallContext"
 
     var state : VoipState = IdleState(this)

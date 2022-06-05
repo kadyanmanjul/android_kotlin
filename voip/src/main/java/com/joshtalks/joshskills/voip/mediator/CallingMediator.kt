@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.voip.mediator
 
 import android.util.Log
+import com.joshtalks.joshskills.base.constants.GROUP
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_INCOMING_CALL_ID
 import com.joshtalks.joshskills.base.constants.PEER_TO_PEER
 import com.joshtalks.joshskills.voip.communication.fallback.FirebaseChannelService
@@ -49,7 +50,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
         FirebaseChannelService(scope)
     }
 
-    private var calling = PeerToPeerCall()
+    private var calling : CallCategory = PeerToPeerCall()
     val flow by lazy {
         MutableSharedFlow<Envelope<Event>>(replay = 0)
     }
@@ -99,13 +100,19 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
         return flow
     }
 
-    override fun connectCall(callType: Int, callData: HashMap<String, Any>) {
+    override fun connectCall(callCategory: Category, callData: HashMap<String, Any>) {
         Log.d(TAG, "connectCall: ${scope.isActive} ")
         // TODO: IMPORTANT- We have to make sure that in any case this should not be called twice
         scope.launch {
             Log.d(TAG, "connectCall : Inside Scope")
             try{
                 mutex.withLock {
+                    calling = when(callCategory) {
+                        Category.PEER_TO_PEER -> PeerToPeerCall()
+                        Category.FPP -> GroupCall()
+                        Category.GROUP -> GroupCall()
+                    }
+                    PrefManager.setCallCategory(callCategory)
                     /**
                      * Using State Pattern
                      */
@@ -117,7 +124,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                     callContext?.destroyContext()
                     stateChannel = Channel(Channel.UNLIMITED)
                     callContext = CallContext(
-                        callType = callType,
+                        callType = callCategory,
                         request = callData,
                         direction = callData.direction(),
                         mediator = this@CallingMediator
@@ -325,8 +332,24 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                                     )
                                     updateIncomingCallState(true)
                                     Log.d(TAG, "handlePubnubEvent: Incoming Call -> $it")
-                                    IncomingCallData.set(it.getCallId(), PEER_TO_PEER)
+                                    IncomingCallData.set(it.getCallId(), Category.PEER_TO_PEER)
                                     val envelope = Envelope(Event.INCOMING_CALL)
+                                    flow.emit(envelope)
+                                }
+                            }
+                            is GroupIncomingCall -> {
+                                if (isShowingIncomingCall.not() && PrefManager.getVoipState() == State.IDLE) {
+                                    calling = GroupCall()
+                                    PrefManager.setCallCategory(Category.GROUP)
+                                    CallAnalytics.addAnalytics(
+                                        event = EventName.INCOMING_CALL_RECEIVED,
+                                        agoraCallId = IncomingCallData.callId.toString(),
+                                        agoraMentorId = "-1"
+                                    )
+                                    updateIncomingCallState(true)
+                                    Log.d(TAG, "handlePubnubEvent: Incoming Call -> $it")
+                                    IncomingCallData.set(it.getCallId(), Category.GROUP)
+                                    val envelope = Envelope(Event.GROUP_INCOMING_CALL,it)
                                     flow.emit(envelope)
                                 }
                             }
@@ -473,8 +496,23 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                                             agoraMentorId = "-1"
                                         )
                                         updateIncomingCallState(true)
-                                        IncomingCallData.set(event.getCallId(), PEER_TO_PEER)
+                                        IncomingCallData.set(event.getCallId(), Category.PEER_TO_PEER)
                                         val envelope = Envelope(Event.INCOMING_CALL,event)
+                                        flow.emit(envelope)
+                                    }
+                                }
+                                is GroupIncomingCall -> {
+                                    if (isShowingIncomingCall.not() && PrefManager.getVoipState() == State.IDLE) {
+                                        calling = GroupCall()
+                                        PrefManager.setCallCategory(Category.GROUP)
+                                        CallAnalytics.addAnalytics(
+                                            event = EventName.INCOMING_CALL_RECEIVED,
+                                            agoraCallId = IncomingCallData.callId.toString(),
+                                            agoraMentorId = "-1"
+                                        )
+                                        updateIncomingCallState(true)
+                                        IncomingCallData.set(event.getCallId(), Category.GROUP)
+                                        val envelope = Envelope(Event.GROUP_INCOMING_CALL,event)
                                         flow.emit(envelope)
                                     }
                                 }
