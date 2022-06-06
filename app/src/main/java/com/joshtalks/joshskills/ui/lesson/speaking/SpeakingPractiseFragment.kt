@@ -316,7 +316,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                 .addParam(ParamKeys.LESSON_NUMBER, lessonNo)
                 .push()
         }
-        binding.imgRecentCallsHistory.setOnClickListener {
+        binding.imgRecentCallsHistory.setOnSingleClickListener {
             MixPanelTracker.publishEvent(MixPanelEvent.VIEW_RECENT_CALLS).push()
             RecentCallActivity.openRecentCallActivity(
                 requireActivity(),

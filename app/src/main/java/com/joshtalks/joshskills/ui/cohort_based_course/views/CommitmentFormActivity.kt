@@ -75,12 +75,14 @@ class CommitmentFormActivity : BaseActivity() {
     private fun replaceWithScheduleFragment() {
         supportFragmentManager.commit {
             replace(R.id.commitment_form_container, ScheduleFragment(), "ScheduleFragment")
+            addToBackStack("ScheduleFragment")
         }
     }
 
     private fun replaceWithPromiseFragment() {
         supportFragmentManager.commit {
             replace(R.id.commitment_form_container, PromiseFragment(), "PromiseFragment")
+            addToBackStack("PromiseFragment")
         }
     }
 

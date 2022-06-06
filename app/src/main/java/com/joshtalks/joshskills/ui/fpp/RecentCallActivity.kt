@@ -30,6 +30,7 @@ import com.joshtalks.joshskills.ui.fpp.constants.IS_ACCEPTED
 import com.joshtalks.joshskills.ui.fpp.model.RecentCall
 import com.joshtalks.joshskills.ui.fpp.viewmodels.RecentCallViewModel
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
+import java.lang.Exception
 
 class RecentCallActivity : BaseFppActivity() {
 
@@ -91,10 +92,14 @@ class RecentCallActivity : BaseFppActivity() {
     }
 
     private fun popBackStack() {
-        if (supportFragmentManager.backStackEntryCount>0) {
-            supportFragmentManager.popBackStack()
-        } else {
-            onBackPressed()
+        try {
+            if (supportFragmentManager.backStackEntryCount>0) {
+                supportFragmentManager.popBackStack()
+            } else {
+                onBackPressed()
+            }
+        }catch (ex:Exception){
+            ex.printStackTrace()
         }
     }
 
