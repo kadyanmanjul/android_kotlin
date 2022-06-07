@@ -6,14 +6,39 @@ import com.joshtalks.joshskills.voip.communication.constants.ServerConstants
 import com.joshtalks.joshskills.voip.communication.model.NetworkAction
 import com.joshtalks.joshskills.voip.communication.model.UI
 import com.joshtalks.joshskills.voip.communication.model.UserAction
-import com.joshtalks.joshskills.voip.constant.Event.*
+import com.joshtalks.joshskills.voip.constant.Event.HOLD
+import com.joshtalks.joshskills.voip.constant.Event.HOLD_REQUEST
+import com.joshtalks.joshskills.voip.constant.Event.MUTE
+import com.joshtalks.joshskills.voip.constant.Event.MUTE_REQUEST
+import com.joshtalks.joshskills.voip.constant.Event.RECEIVED_CHANNEL_DATA
+import com.joshtalks.joshskills.voip.constant.Event.RECONNECTED
+import com.joshtalks.joshskills.voip.constant.Event.RECONNECTING
+import com.joshtalks.joshskills.voip.constant.Event.REMOTE_USER_DISCONNECTED_AGORA
+import com.joshtalks.joshskills.voip.constant.Event.REMOTE_USER_DISCONNECTED_MESSAGE
+import com.joshtalks.joshskills.voip.constant.Event.REMOTE_USER_DISCONNECTED_USER_LEFT
+import com.joshtalks.joshskills.voip.constant.Event.SPEAKER_OFF_REQUEST
+import com.joshtalks.joshskills.voip.constant.Event.SPEAKER_ON_REQUEST
+import com.joshtalks.joshskills.voip.constant.Event.SYNC_UI_STATE
+import com.joshtalks.joshskills.voip.constant.Event.TOPIC_IMAGE_CHANGE_REQUEST
+import com.joshtalks.joshskills.voip.constant.Event.TOPIC_IMAGE_RECEIVED
+import com.joshtalks.joshskills.voip.constant.Event.UI_STATE_UPDATED
+import com.joshtalks.joshskills.voip.constant.Event.UNHOLD
+import com.joshtalks.joshskills.voip.constant.Event.UNHOLD_REQUEST
+import com.joshtalks.joshskills.voip.constant.Event.UNMUTE
+import com.joshtalks.joshskills.voip.constant.Event.UNMUTE_REQUEST
 import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.inSeconds
 import com.joshtalks.joshskills.voip.updateLastCallDetails
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.launch
 
 // Remote User Joined the Channel and can talk
 class ConnectedState(val context: CallContext) : VoipState {

@@ -17,20 +17,30 @@ import com.joshtalks.joshskills.base.constants.GROUP
 import com.joshtalks.joshskills.base.constants.PEER_TO_PEER
 import com.joshtalks.joshskills.base.log.Feature
 import com.joshtalks.joshskills.base.log.JoshLog
-import com.joshtalks.joshskills.ui.call.repository.RepositoryConstants.*
+import com.joshtalks.joshskills.core.showToast
+import com.joshtalks.joshskills.ui.call.repository.RepositoryConstants.CONNECTION_ESTABLISHED
 import com.joshtalks.joshskills.ui.call.repository.WebrtcRepository
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.models.CallUIState
+import com.joshtalks.joshskills.util.CallRecording
 import com.joshtalks.joshskills.voip.Utils
-import com.joshtalks.joshskills.voip.constant.*
+import com.joshtalks.joshskills.voip.constant.CALL_INITIATED_EVENT
+import com.joshtalks.joshskills.voip.constant.CANCEL_INCOMING_TIMER
+import com.joshtalks.joshskills.voip.constant.CLOSE_CALL_SCREEN
+import com.joshtalks.joshskills.voip.constant.RECONNECTING_FAILED
+import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.ServiceEvents
 import com.joshtalks.joshskills.voip.data.local.PrefManager
+import com.joshtalks.joshskills.voip.getTempFileForCallRecording
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
-import kotlinx.coroutines.*
+import java.io.File
+import java.util.ArrayDeque
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import java.util.*
-
+import kotlinx.coroutines.withContext
 
 const val CONNECTING = 1
 const val ONGOING = 2
@@ -51,6 +61,7 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
     val uiState by lazy { CallUIState() }
     val pendingEvents = ArrayDeque<Int>()
     private var singleLiveEvent = EventLiveData
+    var recordFile: File? = null
 
     private val connectCallJob by lazy {
         viewModelScope.launch(start = CoroutineStart.LAZY) {
@@ -119,9 +130,40 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                             singleLiveEvent.value = msg
                         }
                     }
+                    ServiceEvents.START_RECORDING -> {
+                        updateRecordingUI()
+                    }
+                    ServiceEvents.STOP_RECORDING -> {
+                        stopRecording()
+                        updateRecordingUI()
+                    }
+                    ServiceEvents.CALL_RECORDING_ACCEPT -> {
+                        startRecording()
+                        updateRecordingUI()
+                    }
+                    ServiceEvents.CALL_RECORDING_REJECT -> {
+                        showToast("User declined the request to record")
+                    }
                 }
             }
         }
+    }
+
+    private fun updateRecordingUI() {
+            // TODO either remove this function and change the observable parameters
+    }
+
+    private fun startRecording() {
+        Utils.context?.getTempFileForCallRecording()?.let { file ->
+            recordFile = file
+            CallRecording.audioRecording.startPlayer(recordFile, Utils.context!!)
+        }
+    }
+
+    fun stopRecording() {
+        CallRecording.audioRecording.stopPlaying()
+        //TODO shave the file path to db and send to server 'recordFile'
+        Log.d(TAG, "stopRecording() called  $recordFile")
     }
 
     private fun listenUIState() {
@@ -248,6 +290,29 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                 agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
             )
             repository.turnOnSpeaker()
+        }
+    }
+
+    // User Action
+    fun recordCall(v: View) {
+        Log.d(TAG, "recordCall")
+        val isRecordingInitiated = uiState.isRecording
+        uiState.isRecording = isRecordingInitiated.not()
+        if (isRecordingInitiated) {
+            CallAnalytics.addAnalytics(
+                event = EventName.RECORDING_STOPPED,
+                agoraCallId = PrefManager.getAgraCallId().toString(),
+                agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
+            )
+            repository.stopCallRecording()
+        }
+        else {
+            CallAnalytics.addAnalytics(
+                event = EventName.RECORDING_INITIATED,
+                agoraCallId = PrefManager.getAgraCallId().toString(),
+                agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
+            )
+            repository.startCallRecording()
         }
     }
 

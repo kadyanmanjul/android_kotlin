@@ -10,11 +10,14 @@ import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.base.constants.*
+import com.joshtalks.joshskills.base.constants.FPP
+import com.joshtalks.joshskills.base.constants.FROM_INCOMING_CALL
+import com.joshtalks.joshskills.base.constants.GROUP
+import com.joshtalks.joshskills.base.constants.PEER_TO_PEER
+import com.joshtalks.joshskills.base.constants.STARTING_POINT
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.adapter.TopicImageAdapter
 import de.hdodenhof.circleimageview.CircleImageView
-import java.util.ArrayList
 
 @BindingAdapter("setProfileImage")
 fun CircleImageView.setProfileImage(imageUrl: String?) {
@@ -76,6 +79,15 @@ fun AppCompatImageButton.setMicImage(isMute: Boolean) {
             ContextCompat.getColorStateList(context, R.color.white)
         this.imageTintList =
             ContextCompat.getColorStateList(context, R.color.grey_61)    }
+}
+
+@BindingAdapter("setRecordButtonImage")
+fun AppCompatImageButton.setRecordButtonImage(isRecording: Boolean) {
+    if (!isRecording) {
+        this.setImageResource(R.drawable.ic_record_btn)
+    } else {
+        this.setImageResource(R.drawable.ic_stop_record)
+    }
 }
 
 @BindingAdapter("startTimer")
