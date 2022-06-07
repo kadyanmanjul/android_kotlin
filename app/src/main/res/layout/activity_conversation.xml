@@ -322,7 +322,7 @@
             app:srcCompat="@drawable/ic_groups_new_logo"
             tools:visibility="visible" />
 
-        <androidx.cardview.widget.CardView
+        <RelativeLayout
             android:id="@+id/ringing_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -331,19 +331,19 @@
             android:layout_marginHorizontal="@dimen/_11sdp"
             android:layout_marginTop="@dimen/_10sdp"
             android:visibility="gone"
-            app:cardCornerRadius="@dimen/_50sdp"
+            android:background="@drawable/well_btn_background"
+            android:elevation="@dimen/_12sdp"
             app:cardElevation="@dimen/_12sdp">
 
             <com.airbnb.lottie.LottieAnimationView
                 android:layout_width="@dimen/_20sdp"
                 android:layout_height="@dimen/_20sdp"
-                android:background="#FF5722"
                 android:padding="@dimen/_2sdp"
                 app:lottie_autoPlay="true"
                 app:lottie_fileName="lottie/ringing_bell.json"
                 app:lottie_imageAssetsFolder="lottie"
                 app:lottie_loop="true" />
-        </androidx.cardview.widget.CardView>
+        </RelativeLayout>
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/imgFppBtn"
