@@ -3,18 +3,26 @@ package com.joshtalks.joshskills.voip.mediator
 import android.util.Log
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_INCOMING_CALL_ID
 import com.joshtalks.joshskills.base.constants.PEER_TO_PEER
-import com.joshtalks.joshskills.voip.communication.fallback.FirebaseChannelService
 import com.joshtalks.joshskills.voip.audiomanager.SOUND_TYPE_RINGTONE
 import com.joshtalks.joshskills.voip.audiomanager.SoundManager
 import com.joshtalks.joshskills.voip.calldetails.IncomingCallData
 import com.joshtalks.joshskills.voip.communication.EventChannel
 import com.joshtalks.joshskills.voip.communication.PubNubChannelService
-import com.joshtalks.joshskills.voip.communication.PubnubState.*
 import com.joshtalks.joshskills.voip.communication.PubnubState.CONNECTED
+import com.joshtalks.joshskills.voip.communication.PubnubState.DISCONNECTED
 import com.joshtalks.joshskills.voip.communication.PubnubState.RECONNECTED
 import com.joshtalks.joshskills.voip.communication.constants.ServerConstants
-import com.joshtalks.joshskills.voip.communication.model.*
-import com.joshtalks.joshskills.voip.constant.*
+import com.joshtalks.joshskills.voip.communication.fallback.FirebaseChannelService
+import com.joshtalks.joshskills.voip.communication.model.ChannelData
+import com.joshtalks.joshskills.voip.communication.model.Communication
+import com.joshtalks.joshskills.voip.communication.model.Error
+import com.joshtalks.joshskills.voip.communication.model.IncomingCall
+import com.joshtalks.joshskills.voip.communication.model.MessageData
+import com.joshtalks.joshskills.voip.communication.model.OutgoingData
+import com.joshtalks.joshskills.voip.communication.model.PeerToPeerCallRequest
+import com.joshtalks.joshskills.voip.communication.model.UI
+import com.joshtalks.joshskills.voip.constant.Event
+import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.ServiceEvents
 import com.joshtalks.joshskills.voip.data.UIState
 import com.joshtalks.joshskills.voip.data.local.PrefManager
@@ -23,17 +31,22 @@ import com.joshtalks.joshskills.voip.notification.VoipNotification
 import com.joshtalks.joshskills.voip.state.CallContext
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
-import com.joshtalks.joshskills.voip.webrtc.*
 import com.joshtalks.joshskills.voip.webrtc.AgoraWebrtcService
 import com.joshtalks.joshskills.voip.webrtc.CallState
+import com.joshtalks.joshskills.voip.webrtc.Envelope
 import com.joshtalks.joshskills.voip.webrtc.WebrtcService
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.*
-import kotlin.Exception
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import kotlin.collections.HashMap
 
 const val PER_USER_TIMEOUT_IN_MILLIS = 10 * 1000L
 private const val TAG = "CallingMediator"
@@ -207,6 +220,22 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                         val envelope = Envelope(Event.TOPIC_IMAGE_CHANGE_REQUEST)
                         stateChannel.send(envelope)
                     }
+                    UserAction.START_RECORDING -> {
+                        val envelope = Envelope(Event.START_RECORDING)
+                        stateChannel.send(envelope)
+                    }
+                    UserAction.STOP_RECORDING -> {
+                        val envelope = Envelope(Event.STOP_RECORDING)
+                        stateChannel.send(envelope)
+                    }
+                    UserAction.RECORDING_REQUEST_ACCEPTED -> {
+                        val envelope = Envelope(Event.CALL_RECORDING_ACCEPT)
+                        stateChannel.send(envelope)
+                    }
+                    UserAction.RECORDING_REQUEST_REJECTED -> {
+                        val envelope = Envelope(Event.CALL_RECORDING_REJECT)
+                        stateChannel.send(envelope)
+                    }
                 }
             } catch (e: Exception) {
                 Log.d(TAG, "userAction : $e")
@@ -312,6 +341,22 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                                         ServerConstants.DISCONNECTED -> {
                                             val envelope = Envelope(Event.REMOTE_USER_DISCONNECTED_MESSAGE)
                                             stateChannel.send(envelope)
+                                        }
+                                        ServerConstants.START_RECORDING -> {
+                                            val envelope = Envelope(Event.START_RECORDING)
+                                            flow.emit(envelope)
+                                        }
+                                        ServerConstants.STOP_RECORDING -> {
+                                            val envelope = Envelope(Event.STOP_RECORDING)
+                                            flow.emit(envelope)
+                                        }
+                                        ServerConstants.CALL_RECORDING_ACCEPT -> {
+                                            val envelope = Envelope(Event.CALL_RECORDING_ACCEPT)
+                                            flow.emit(envelope)
+                                        }
+                                        ServerConstants.CALL_RECORDING_REJECT -> {
+                                            val envelope = Envelope(Event.CALL_RECORDING_REJECT)
+                                            flow.emit(envelope)
                                         }
                                     }
                                 }

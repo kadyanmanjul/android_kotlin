@@ -99,6 +99,13 @@ class CallUIState : BaseObservable() {
         }
 
     @get:Bindable
+    var isRecording: Boolean = false
+        set(value) {
+            field = value
+            notifyPropertyChanged(BR.recording)
+        }
+
+    @get:Bindable
     var isSpeakerOn: Boolean = false
         set(value) {
             field = value
