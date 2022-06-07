@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.voip.state
 
 import android.util.Log
+import com.joshtalks.joshskills.base.constants.INTENT_DATA_PREVIOUS_CALL_ID
 import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.Utils.Companion.ignoreException
 import com.joshtalks.joshskills.voip.communication.constants.ServerConstants
@@ -65,6 +66,8 @@ class SearchingState(val context: CallContext) : VoipState {
                     agoraCallId = "",
                     agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
                 )
+                if(context.isRetrying)
+                    context.request[INTENT_DATA_PREVIOUS_CALL_ID] = context.channelData.getCallingId()
                 calling.onPreCallConnect(context.request, context.direction)
                 ensureActive()
             } catch (e: Exception) {

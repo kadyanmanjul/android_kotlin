@@ -11,7 +11,10 @@ data class ConnectionRequest(
     val mentorId: String? = null,
 
     @field:SerializedName("topic_id")
-    val topicId: Int? = null
+    val topicId: Int? = null,
+
+    @field:SerializedName("old_call_id")
+    val oldCallId: Int? = null
 )
 
 data class CallActionRequest(

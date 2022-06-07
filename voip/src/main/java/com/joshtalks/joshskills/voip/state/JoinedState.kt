@@ -5,9 +5,7 @@ import android.os.SystemClock
 import android.util.Log
 import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.communication.constants.ServerConstants
-import com.joshtalks.joshskills.voip.communication.model.NetworkAction
-import com.joshtalks.joshskills.voip.communication.model.UI
-import com.joshtalks.joshskills.voip.communication.model.UserAction
+import com.joshtalks.joshskills.voip.communication.model.*
 import com.joshtalks.joshskills.voip.constant.Event.*
 import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.local.PrefManager
@@ -20,7 +18,7 @@ import com.joshtalks.joshskills.voip.webrtc.USER_QUIT_CHANNEL
 import kotlinx.coroutines.*
 
 // User Joined the Agora Channel
-const val CONNECTING_TIMER = 10 * 1000L
+const val CONNECTING_TIMER = 5 * 1000L
 
 class JoinedState(val context: CallContext) : VoipState {
     private val TAG = "JoinedState"
@@ -36,14 +34,17 @@ class JoinedState(val context: CallContext) : VoipState {
                 Log.d(TAG, "Connecting Timer Started")
                 delay(CONNECTING_TIMER)
                 ensureActive()
+                context.channelData = (context.channelData as Channel).removeChannel()
                 CallAnalytics.addAnalytics(
-                    event = EventName.DISCONNECTED_BY_CONNECTING_TIMEOUT,
+                    event = EventName.NEXT_CHANNEL_REQUESTED,
                     agoraCallId = context.channelData.getCallingId().toString(),
                     agoraMentorId = context.channelData.getAgoraUid().toString(),
                     extra = TAG
                 )
-                context.closeCallScreen()
-                moveToLeavingState()
+                listenerJob?.cancel()
+                context.isRetrying = true
+                PrefManager.setVoipState(State.SEARCHING)
+                context.state = SearchingState(context)
             }
             catch (e : Exception){
                 if(e is CancellationException)
@@ -89,6 +90,7 @@ class JoinedState(val context: CallContext) : VoipState {
             agoraMentorId = context.channelData.getAgoraUid().toString(),
             extra = TAG
         )
+        disconnect()
     }
 
     override fun onError() {
@@ -134,7 +136,6 @@ class JoinedState(val context: CallContext) : VoipState {
                             PrefManager.setVoipState(State.CONNECTED)
                             context.state = ConnectedState(context)
                        Log.d(TAG, "Received : ${event.type} switched to ${context.state}")
-
                        break@loop
                         }
                         MUTE -> {

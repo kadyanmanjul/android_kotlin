@@ -26,6 +26,7 @@ data class CallContext(val callType: Category, val direction : CallDirection, va
     private set
     val scope = CoroutineScope(Dispatchers.IO)
     private lateinit var reconnectingJob : Job
+    var isRetrying = false
     val durationInMillis by lazy {
         callDurationInMillis()
     }
