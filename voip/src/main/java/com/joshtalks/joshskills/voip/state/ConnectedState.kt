@@ -13,7 +13,13 @@ import com.joshtalks.joshskills.voip.inSeconds
 import com.joshtalks.joshskills.voip.updateLastCallDetails
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.launch
 
 // Remote User Joined the Channel and can talk
 class ConnectedState(val context: CallContext) : VoipState {
@@ -239,7 +245,38 @@ class ConnectedState(val context: CallContext) : VoipState {
                             )
                             Log.d(TAG, "Ignoring : In $TAG but received ${event.type} event don't know how to process")
                         }
-
+                        START_RECORDING->{
+                            val userAction = UserAction(
+                                ServerConstants.START_RECORDING,
+                                context.channelData.getChannel(),
+                                address = context.channelData.getPartnerMentorId()
+                            )
+                            context.sendMessageToServer(userAction)
+                        }
+                        STOP_RECORDING->{
+                            val userAction = UserAction(
+                                ServerConstants.STOP_RECORDING,
+                                context.channelData.getChannel(),
+                                address = context.channelData.getPartnerMentorId()
+                            )
+                            context.sendMessageToServer(userAction)
+                        }
+                        CALL_RECORDING_ACCEPT->{
+                            val userAction = UserAction(
+                                ServerConstants.CALL_RECORDING_ACCEPT,
+                                context.channelData.getChannel(),
+                                address = context.channelData.getPartnerMentorId()
+                            )
+                            context.sendMessageToServer(userAction)
+                        }
+                        CALL_RECORDING_REJECT->{
+                            val userAction = UserAction(
+                                ServerConstants.CALL_RECORDING_REJECT,
+                                context.channelData.getChannel(),
+                                address = context.channelData.getPartnerMentorId()
+                            )
+                            context.sendMessageToServer(userAction)
+                        }
                         else -> {
                             val msg = "In $TAG but received ${event.type} event don't know how to process"
                             CallAnalytics.addAnalytics(

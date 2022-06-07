@@ -5,39 +5,55 @@ import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
 import android.util.Log
-import com.joshtalks.joshskills.base.constants.INTENT_DATA_API_HEADER
-import com.joshtalks.joshskills.base.constants.INTENT_DATA_MENTOR_ID
 import com.joshtalks.joshskills.base.constants.PEER_TO_PEER
-import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_STOP_SERVICE
 import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_DISCONNECT_CALL
 import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_INCOMING_CALL_DECLINE
-import com.joshtalks.joshskills.voip.*
+import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_STOP_SERVICE
+import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.audiocontroller.AudioController
 import com.joshtalks.joshskills.voip.audiocontroller.AudioControllerInterface
 import com.joshtalks.joshskills.voip.audiocontroller.AudioRouteConstants
 import com.joshtalks.joshskills.voip.calldetails.IncomingCallData
-import com.joshtalks.joshskills.voip.communication.model.*
-import com.joshtalks.joshskills.voip.constant.Event.*
-import com.joshtalks.joshskills.voip.constant.IDLE
+import com.joshtalks.joshskills.voip.communication.model.IncomingCall
+import com.joshtalks.joshskills.voip.constant.Event.CALL_CONNECTED_EVENT
+import com.joshtalks.joshskills.voip.constant.Event.CALL_INITIATED_EVENT
+import com.joshtalks.joshskills.voip.constant.Event.CALL_RECORDING_ACCEPT
+import com.joshtalks.joshskills.voip.constant.Event.CALL_RECORDING_REJECT
+import com.joshtalks.joshskills.voip.constant.Event.CLOSE_CALL_SCREEN
+import com.joshtalks.joshskills.voip.constant.Event.INCOMING_CALL
+import com.joshtalks.joshskills.voip.constant.Event.RECONNECTING_FAILED
+import com.joshtalks.joshskills.voip.constant.Event.START_RECORDING
+import com.joshtalks.joshskills.voip.constant.Event.STOP_RECORDING
 import com.joshtalks.joshskills.voip.constant.PSTN_STATE_IDLE
 import com.joshtalks.joshskills.voip.constant.PSTN_STATE_ONCALL
 import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.local.PrefManager
+import com.joshtalks.joshskills.voip.getHangUpIntent
+import com.joshtalks.joshskills.voip.getNotificationData
 import com.joshtalks.joshskills.voip.mediator.CallServiceMediator
 import com.joshtalks.joshskills.voip.mediator.CallingMediator
 import com.joshtalks.joshskills.voip.notification.NotificationData
 import com.joshtalks.joshskills.voip.notification.NotificationPriority
 import com.joshtalks.joshskills.voip.notification.VoipNotification
+import com.joshtalks.joshskills.voip.openCallScreen
 import com.joshtalks.joshskills.voip.pstn.PSTNController
 import com.joshtalks.joshskills.voip.pstn.PSTNState
 import com.joshtalks.joshskills.voip.state.CallConnectData
+import com.joshtalks.joshskills.voip.updateStartTime
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
-import com.joshtalks.joshskills.voip.mediator.UserAction as Action
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import com.joshtalks.joshskills.base.model.NotificationData as Data
+import com.joshtalks.joshskills.voip.mediator.UserAction as Action
 
 private const val TAG = "CallingRemoteService"
 const val SERVICE_ALONE_LIFE_TIME = 1 * 60 * 1000L
@@ -163,6 +179,18 @@ class CallingRemoteService : Service() {
                                 CALL_INITIATED_EVENT -> {
                                     serviceEvents.emit(ServiceEvents.CALL_INITIATED_EVENT)
                                 }
+                                START_RECORDING -> {
+                                    serviceEvents.emit(ServiceEvents.START_RECORDING)
+                                }
+                                STOP_RECORDING -> {
+                                    serviceEvents.emit(ServiceEvents.STOP_RECORDING)
+                                }
+                                CALL_RECORDING_ACCEPT -> {
+                                    serviceEvents.emit(ServiceEvents.CALL_RECORDING_ACCEPT)
+                                }
+                                CALL_RECORDING_REJECT -> {
+                                    serviceEvents.emit(ServiceEvents.CALL_RECORDING_REJECT)
+                                }
                             }
                         }
                         catch (e : Exception){
@@ -277,7 +305,15 @@ class CallingRemoteService : Service() {
 
     fun backPress() { mediator.userAction(Action.BACK_PRESS) }
 
+    fun startRecording() { mediator.userAction(Action.START_RECORDING) }
+
+    fun stopRecording() { mediator.userAction(Action.STOP_RECORDING) }
+
     fun changeTopicImage() { mediator.userAction(Action.TOPIC_IMAGE_CHANGE) }
+
+    fun acceptCallRecording() { mediator.userAction(Action.RECORDING_REQUEST_ACCEPTED) }
+
+    fun rejectCallRecording() { mediator.userAction(Action.RECORDING_REQUEST_REJECTED) }
 
     override fun onTaskRemoved(rootIntent: Intent?) {
         super.onTaskRemoved(rootIntent)
@@ -348,5 +384,9 @@ enum class ServiceEvents {
     CALL_INITIATED_EVENT,
     CALL_CONNECTED_EVENT,
     RECONNECTING_FAILED,
-    CLOSE_CALL_SCREEN
+    CLOSE_CALL_SCREEN,
+    START_RECORDING,
+    STOP_RECORDING,
+    CALL_RECORDING_ACCEPT,
+    CALL_RECORDING_REJECT
 }

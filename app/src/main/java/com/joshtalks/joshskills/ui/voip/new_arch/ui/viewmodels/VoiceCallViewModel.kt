@@ -3,7 +3,6 @@ package com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels
 import android.app.Activity
 import android.app.AlertDialog
 import android.app.Application
-import android.content.DialogInterface
 import android.os.Message
 import android.util.Log
 import android.view.LayoutInflater
@@ -21,21 +20,24 @@ import com.joshtalks.joshskills.base.constants.GROUP
 import com.joshtalks.joshskills.base.constants.PEER_TO_PEER
 import com.joshtalks.joshskills.base.log.Feature
 import com.joshtalks.joshskills.base.log.JoshLog
-import com.joshtalks.joshskills.ui.call.repository.RepositoryConstants.*
+import com.joshtalks.joshskills.core.showToast
+import com.joshtalks.joshskills.ui.call.repository.RepositoryConstants.CONNECTION_ESTABLISHED
 import com.joshtalks.joshskills.ui.call.repository.WebrtcRepository
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.models.CallUIState
+import com.joshtalks.joshskills.util.CallRecording
 import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.constant.*
 import com.joshtalks.joshskills.voip.data.ServiceEvents
 import com.joshtalks.joshskills.voip.data.local.PrefManager
+import com.joshtalks.joshskills.voip.getTempFileForCallRecording
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
 import kotlinx.android.synthetic.main.fragment_call.view.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import java.util.*
-
+import kotlinx.coroutines.withContext
+import java.io.File
 
 const val CONNECTING = 1
 const val ONGOING = 2
@@ -57,6 +59,7 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
     val pendingEvents = ArrayDeque<Int>()
     var recordCnclStop = 0 // 0 = record, 1 = cancel, 2 = stop
     private var singleLiveEvent = EventLiveData
+    var recordFile: File? = null
     var visibleCrdView = false
 
     private val connectCallJob by lazy {
@@ -71,49 +74,24 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
-    fun showAlertDialogBox(v: View) {
-        val builder: AlertDialog.Builder =
-            AlertDialog.Builder(v.context)
-
-        val customLayout: View = LayoutInflater.from(v.context)
-            .inflate(R.layout.dialog_record_call, null)
-
-        builder.setView(customLayout)
-
-        builder.setPositiveButton("ACCEPT") { p0, p1 ->
-            // TODO: ACCEPTED
-        }
-
-        builder.setNegativeButton("DECLINE") { p0, p1 ->
-            // TODO: DECLINED
-        }
-
-        val dialog: AlertDialog = builder.create()
-        dialog.show()
-    }
-
-    fun showRecordCallCardview(v: View) {
-        Log.i("RECORD CALL: ", "started!")
-        when(recordCnclStop) {
-            1-> {
-                uiState.visibleCrdView = false
-                recordCnclStop = 0
-                uiState.recordBtnImg = R.drawable.call_fragment_record
-                uiState.recordBtnTxt = "Record"
-            }
-            0 -> {
-                uiState.visibleCrdView = true
-                recordCnclStop = 1
-                uiState.recordBtnImg = R.drawable.ic_cancel_record
-                uiState.recordBtnTxt = "Cancel"
-                sendRecordCallRequest()
-            }
-        }
-    }
-
-    fun sendRecordCallRequest() {
-
-    }
+//    fun showRecordCallCardview(v: View) {
+//        Log.i("RECORD CALL: ", "started!")
+//        when(recordCnclStop) {
+//            1-> {
+//                uiState.visibleCrdView = false
+//                recordCnclStop = 0
+//                uiState.recordBtnImg = R.drawable.call_fragment_record
+//                uiState.recordBtnTxt = "Record"
+//            }
+//            0 -> {
+//                uiState.visibleCrdView = true
+//                recordCnclStop = 1
+//                uiState.recordBtnImg = R.drawable.ic_cancel_record
+//                uiState.recordBtnTxt = "Cancel"
+//                sendRecordCallRequest()
+//            }
+//        }
+//    }
 
     init {
         listenRepositoryEvents()
@@ -155,6 +133,7 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                         uiState.currentState = "Timer"
                     }
                     ServiceEvents.CLOSE_CALL_SCREEN -> {
+                        Log.i("call_cut", "listenVoipEvents: $it")
                         val msg = Message.obtain().apply {
                             what = CLOSE_CALL_SCREEN
                         }
@@ -170,9 +149,46 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                             singleLiveEvent.value = msg
                         }
                     }
+                    // remote user event
+                    ServiceEvents.START_RECORDING -> {
+                        // showDialogBox
+                        val msg = Message.obtain().apply {
+                            what = SHOW_RECORDING_PERMISSION_DIALOG
+                        }
+                        Log.i("startrec", "listenVoipEvents: hogya")
+                    }
+                    ServiceEvents.STOP_RECORDING -> {
+                        stopRecording()
+                        updateRecordingUI()
+                    }
+                    ServiceEvents.CALL_RECORDING_ACCEPT -> {
+                        recordCnclStop = 2
+                        startRecording()
+                        updateRecordingUI()
+                    }
+                    ServiceEvents.CALL_RECORDING_REJECT -> {
+                        showToast("User declined the request to record")
+                    }
                 }
             }
         }
+    }
+
+    private fun updateRecordingUI() {
+
+    }
+
+    private fun startRecording() {
+        Utils.context?.getTempFileForCallRecording()?.let { file ->
+            recordFile = file
+            CallRecording.audioRecording.startPlayer(recordFile, Utils.context!!)
+        }
+    }
+
+    fun stopRecording() {
+        CallRecording.audioRecording.stopPlaying()
+        //TODO shave the file path to db and send to server 'recordFile'
+        Log.d(TAG, "stopRecording() called  $recordFile")
     }
 
     private fun listenUIState() {
@@ -303,6 +319,29 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     // User Action
+    fun recordCall(v: View) {
+        Log.d("recordCallBruh", "recordCall")
+        val isRecordingInitiated = uiState.isRecording
+        uiState.isRecording = isRecordingInitiated.not()
+        if (isRecordingInitiated) {
+            CallAnalytics.addAnalytics(
+                event = EventName.RECORDING_STOPPED,
+                agoraCallId = PrefManager.getAgraCallId().toString(),
+                agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
+            )
+            repository.stopCallRecording()
+        }
+        else {
+            CallAnalytics.addAnalytics(
+                event = EventName.RECORDING_INITIATED,
+                agoraCallId = PrefManager.getAgraCallId().toString(),
+                agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
+            )
+            repository.startCallRecording()
+        }
+    }
+
+    // User Action
     fun switchMic(v: View) {
         Log.d(TAG, "switchMic")
         val isOnMute = uiState.isMute
@@ -357,5 +396,13 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
         Log.d(TAG, "onCleared: ")
         super.onCleared()
         repository.clearRepository()
+    }
+
+    fun acceptCallRecording() {
+        repository.acceptCallRecording()
+    }
+
+    fun rejectCallRecording() {
+        repository.rejectCallRecording()
     }
 }

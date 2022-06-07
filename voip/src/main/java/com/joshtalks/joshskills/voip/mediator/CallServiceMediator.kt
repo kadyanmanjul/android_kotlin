@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.voip.mediator
 
-import com.joshtalks.joshskills.voip.communication.PubnubState
 import com.joshtalks.joshskills.voip.communication.model.IncomingCall
 import com.joshtalks.joshskills.voip.constant.Event
 import com.joshtalks.joshskills.voip.data.ServiceEvents
@@ -40,4 +39,8 @@ enum class UserAction {
     SPEAKER_ON,
     SPEAKER_OFF,
     TOPIC_IMAGE_CHANGE,
+    START_RECORDING,
+    STOP_RECORDING,
+    RECORDING_REQUEST_ACCEPTED,
+    RECORDING_REQUEST_REJECTED
 }

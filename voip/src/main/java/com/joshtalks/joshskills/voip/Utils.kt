@@ -12,27 +12,50 @@ import android.net.Uri
 import android.os.Build
 import android.util.Log
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import com.joshtalks.joshskills.base.constants.*
+import com.joshtalks.joshskills.base.constants.API_HEADER
+import com.joshtalks.joshskills.base.constants.APP_ACCEPT_LANGUAGE
+import com.joshtalks.joshskills.base.constants.APP_USER_AGENT
+import com.joshtalks.joshskills.base.constants.APP_VERSION_CODE
+import com.joshtalks.joshskills.base.constants.APP_VERSION_NAME
+import com.joshtalks.joshskills.base.constants.AUTHORIZATION
+import com.joshtalks.joshskills.base.constants.CALL_DISCONNECTED_URI
+import com.joshtalks.joshskills.base.constants.CALL_DURATION
+import com.joshtalks.joshskills.base.constants.CALL_ID
+import com.joshtalks.joshskills.base.constants.CALL_START_TIME
+import com.joshtalks.joshskills.base.constants.CALL_TYPE
+import com.joshtalks.joshskills.base.constants.CHANNEL_NAME
+import com.joshtalks.joshskills.base.constants.CONTENT_URI
+import com.joshtalks.joshskills.base.constants.CURRENT_USER_AGORA_ID
+import com.joshtalks.joshskills.base.constants.MENTOR_ID
+import com.joshtalks.joshskills.base.constants.MENTOR_ID_COLUMN
+import com.joshtalks.joshskills.base.constants.NOTIFICATION_DATA
+import com.joshtalks.joshskills.base.constants.NOTIFICATION_SUBTITLE_COLUMN
+import com.joshtalks.joshskills.base.constants.NOTIFICATION_TITLE_COLUMN
+import com.joshtalks.joshskills.base.constants.REMOTE_USER_AGORA_ID
+import com.joshtalks.joshskills.base.constants.REMOTE_USER_IMAGE
+import com.joshtalks.joshskills.base.constants.REMOTE_USER_MENTOR_ID
+import com.joshtalks.joshskills.base.constants.REMOTE_USER_NAME
+import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_DISCONNECT_CALL
+import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_INCOMING_CALL_DECLINE
+import com.joshtalks.joshskills.base.constants.START_CALL_TIME_URI
+import com.joshtalks.joshskills.base.constants.TOPIC_NAME
 import com.joshtalks.joshskills.base.log.Feature
-import com.joshtalks.joshskills.base.model.ApiHeader
-import com.joshtalks.joshskills.voip.calldetails.IncomingCallData
-import com.joshtalks.joshskills.voip.data.CallingRemoteService
 import com.joshtalks.joshskills.base.log.JoshLog
+import com.joshtalks.joshskills.base.model.ApiHeader
 import com.joshtalks.joshskills.base.model.NotificationData
-import com.joshtalks.joshskills.voip.constant.LEAVING
-import com.joshtalks.joshskills.voip.data.local.PrefManager
+import com.joshtalks.joshskills.voip.data.CallingRemoteService
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
+import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import java.text.SimpleDateFormat
-import java.util.*
-import java.util.concurrent.TimeUnit
-import kotlin.NoSuchElementException
 
 // TODO: Must Refactor
 val voipLog = JoshLog.getInstanceIfEnable(Feature.VOIP)
@@ -189,6 +212,10 @@ fun Context.getHangUpIntent(): PendingIntent {
         intent,
         PendingIntent.FLAG_CANCEL_CURRENT
     )
+}
+
+fun Context.getTempFileForCallRecording(): File? {
+    return File.createTempFile("record", ".aac", this.cacheDir)
 }
 
 fun getDeclineCallIntent(): PendingIntent {
