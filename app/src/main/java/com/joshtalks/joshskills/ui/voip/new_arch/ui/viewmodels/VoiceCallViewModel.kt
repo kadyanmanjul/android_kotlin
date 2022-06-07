@@ -1,15 +1,19 @@
 package com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.app.Application
+import android.content.DialogInterface
 import android.os.Message
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
 import androidx.databinding.ObservableArrayList
 import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.base.constants.FPP
 import com.joshtalks.joshskills.base.constants.FROM_INCOMING_CALL
@@ -33,11 +37,8 @@ import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.getTempFileForCallRecording
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
-import java.io.File
-import java.util.ArrayDeque
-import kotlinx.coroutines.CoroutineStart
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.android.synthetic.main.fragment_call.view.*
+import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
@@ -60,8 +61,10 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
     val callData = HashMap<String, Any>()
     val uiState by lazy { CallUIState() }
     val pendingEvents = ArrayDeque<Int>()
+    var recordCnclStop = 0 // 0 = record, 1 = cancel, 2 = stop
     private var singleLiveEvent = EventLiveData
     var recordFile: File? = null
+    var visibleCrdView = false
 
     private val connectCallJob by lazy {
         viewModelScope.launch(start = CoroutineStart.LAZY) {
@@ -71,6 +74,45 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                     repository.connectCall(callData)
                     isConnectionRequestSent = true
                 }
+            }
+        }
+    }
+
+    fun showAlertDialogBox(v: View) {
+        val builder: AlertDialog.Builder =
+            AlertDialog.Builder(v.context)
+
+        val customLayout: View = LayoutInflater.from(v.context)
+            .inflate(R.layout.dialog_record_call, null)
+
+        builder.setView(customLayout)
+
+        builder.setPositiveButton("ACCEPT") { p0, p1 ->
+            // TODO: ACCEPTED
+        }
+
+        builder.setNegativeButton("DECLINE") { p0, p1 ->
+            // TODO: DECLINED
+        }
+
+        val dialog: AlertDialog = builder.create()
+        dialog.show()
+    }
+
+    fun showRecordCallCardview(v: View) {
+        Log.i("RECORD CALL: ", "started!")
+        when(recordCnclStop) {
+            1-> {
+                uiState.visibleCrdView = false
+                recordCnclStop = 0
+                uiState.recordBtnImg = R.drawable.call_fragment_record
+                uiState.recordBtnTxt = "Record"
+            }
+            0 -> {
+                uiState.visibleCrdView = true
+                recordCnclStop = 1
+                uiState.recordBtnImg = R.drawable.cancel_record
+                uiState.recordBtnTxt = "Cancel"
             }
         }
     }

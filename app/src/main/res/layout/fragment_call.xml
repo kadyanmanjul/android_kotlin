@@ -133,12 +133,50 @@
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
             android:textColor="@color/white"
             android:visibility='@{vm.uiState.currentState.equals("Timer") ? View.VISIBLE : View.INVISIBLE}'
-            app:layout_constraintBottom_toTopOf="@id/incoming_timer_container"
+            app:layout_constraintBottom_toTopOf="@id/record_call_cardview"
             app:layout_constraintEnd_toStartOf="@+id/guideline5"
             app:layout_constraintStart_toStartOf="@+id/guideline4"
             app:layout_constraintTop_toBottomOf="@id/occupation_future_goals"
-            app:layout_constraintVertical_bias="0.076"
             tools:ignore="MissingPrefix" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/record_call_cardview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="93dp"
+            android:layout_marginTop="7.81dp"
+            android:layout_marginBottom="7.81dp"
+            android:visibility="@{vm.uiState.visibleCrdView  ? View.VISIBLE : View.INVISIBLE}"
+            app:layout_constraintEnd_toEndOf="@+id/call_time1"
+            app:layout_constraintStart_toStartOf="@+id/call_time1"
+            app:layout_constraintTop_toBottomOf="@id/call_time1"
+            app:layout_constraintBottom_toTopOf="@id/topic_header"
+            >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/black"
+                android:orientation="horizontal"
+                android:padding="10dp">
+
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/circle2" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="7.65dp"
+                    android:layout_marginRight="7.65dp"
+                    android:text="Waiting for your partner to accept"
+                    android:textColor="@color/white"
+                    android:textSize="12sp" />
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
 
         <androidx.constraintlayout.widget.Barrier
             android:id="@+id/barrier"
@@ -177,7 +215,7 @@
             android:visibility="visible"
             app:layout_constraintEnd_toStartOf="@+id/guideline5"
             app:layout_constraintStart_toStartOf="@+id/guideline4"
-            app:layout_constraintTop_toBottomOf="@+id/call_time1" />
+            app:layout_constraintTop_toBottomOf="@+id/record_call_cardview" />
 
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
@@ -193,107 +231,120 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-            <androidx.appcompat.widget.AppCompatImageButton
-                android:id="@+id/btn_action"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/circle2"
-                android:backgroundTint="@color/checkbox_color"
-                android:onClick="@{vm::disconnectCall}"
-                android:padding="@dimen/_14sdp"
-                android:textAllCaps="false"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Button"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintHorizontal_bias="0.9"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_baseline_call"
-                tools:ignore="SpeakableTextPresentCheck" />
+                <androidx.appcompat.widget.AppCompatImageButton
+                    android:id="@+id/btn_action"
+                    android:layout_width="@dimen/_45sdp"
+                    android:layout_height="@dimen/_45sdp"
+                    android:background="@drawable/circle2"
+                    android:backgroundTint="@color/checkbox_color"
+                    android:onClick="@{vm::disconnectCall}"
+                    android:padding="@dimen/_14sdp"
+                    android:textAllCaps="false"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Button"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toEndOf="@+id/btn_mute"
+                    app:layout_constraintTop_toTopOf="@+id/btn_mute"
+                    app:srcCompat="@drawable/ic_baseline_call"
+                    tools:ignore="SpeakableTextPresentCheck" />
 
-            <androidx.appcompat.widget.AppCompatImageButton
-                android:id="@+id/btn_record"
-                setRecordButtonImage="@{vm.uiState.isRecording}"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/circle2"
-                android:backgroundTint="@color/dis_color_10f"
-                android:clickable="true"
-                android:focusable="true"
-                android:onClick="@{vm::recordCall}"
-                android:padding="@dimen/_14sdp"
-                app:layout_constraintBottom_toBottomOf="@id/btn_action"
-                app:layout_constraintEnd_toStartOf="@id/btn_speaker"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/btn_action"
-                app:srcCompat="@drawable/ic_record_btn" />
+                <androidx.appcompat.widget.AppCompatImageButton
+                    android:id="@+id/btn_speaker"
+                    android:layout_width="@dimen/_45sdp"
+                    android:layout_height="@dimen/_45sdp"
+                    android:background="@drawable/circle2"
+                    android:backgroundTint="@color/dis_color_10f"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:onClick="@{vm::switchSpeaker}"
+                    android:padding="@dimen/_14sdp"
+                    app:layout_constraintEnd_toStartOf="@+id/btn_mute"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toEndOf="@+id/btn_record_call"
+                    app:layout_constraintTop_toTopOf="@+id/btn_record_call"
+                    app:srcCompat="@drawable/ic_baseline_speaker_on" />
 
-            <androidx.appcompat.widget.AppCompatImageButton
-                android:id="@+id/btn_speaker"
-                setSpeakerImage="@{vm.uiState.speakerOn}"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/circle2"
-                android:backgroundTint="@color/dis_color_10f"
-                android:clickable="true"
-                android:focusable="true"
-                android:onClick="@{vm::switchSpeaker}"
-                android:padding="@dimen/_14sdp"
-                app:layout_constraintBottom_toBottomOf="@id/btn_action"
-                app:layout_constraintEnd_toStartOf="@id/btn_mute"
-                app:layout_constraintStart_toEndOf="@id/btn_record"
-                app:layout_constraintTop_toTopOf="@id/btn_action"
-                app:srcCompat="@drawable/ic_baseline_speaker_on" />
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/btn_record_call"
+                    android:layout_width="@dimen/_45sdp"
+                    android:layout_height="@dimen/_45sdp"
+                    android:background="@drawable/circle2"
+                    android:backgroundTint="@color/dis_color_10f"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:onClick="@{vm::showRecordCallCardview}"
+                    android:padding="@dimen/_14sdp"
+                    android:visibility="visible"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/btn_speaker"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:imageResource="@{vm.uiState.recordBtnImg}" />
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/txt_speaker"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:paddingTop="@dimen/_4sdp"
-                android:text="@string/speaker"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
-                android:textColor="@color/white"
-                android:visibility="visible"
-                app:layout_constraintEnd_toEndOf="@+id/btn_speaker"
-                app:layout_constraintStart_toStartOf="@+id/btn_speaker"
-                app:layout_constraintTop_toBottomOf="@+id/btn_speaker"
-                tools:ignore="MissingPrefix"
-                tools:visibility="visible" />
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/txt_speaker"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingTop="@dimen/_4sdp"
+                    android:text="@string/speaker"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                    android:textColor="@color/white"
+                    android:visibility="visible"
+                    app:layout_constraintEnd_toEndOf="@+id/btn_speaker"
+                    app:layout_constraintStart_toStartOf="@+id/btn_speaker"
+                    app:layout_constraintTop_toBottomOf="@+id/btn_speaker"
+                    tools:ignore="MissingPrefix"
+                    tools:visibility="visible" />
 
-            <androidx.appcompat.widget.AppCompatImageButton
-                android:id="@+id/btn_mute"
-                setMicImage="@{vm.uiState.mute}"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/circle2"
-                android:backgroundTint="@color/dis_color_10f"
-                android:clickable="true"
-                android:focusable="true"
-                android:onClick="@{vm::switchMic}"
-                android:padding="@dimen/_14sdp"
-                app:layout_constraintBottom_toBottomOf="@id/btn_action"
-                app:layout_constraintStart_toEndOf="@id/btn_speaker"
-                app:layout_constraintEnd_toStartOf="@id/btn_action"
-                app:layout_constraintTop_toTopOf="@id/btn_action"
-                app:layout_constraintVertical_bias="0.9"
-                app:srcCompat="@drawable/ic_baseline_mic_off" />
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/text_record_call"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingTop="@dimen/_4sdp"
+                    android:text="@{vm.uiState.recordBtnTxt}"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                    android:textColor="@color/white"
+                    android:visibility="visible"
+                    android:layout_marginBottom="10dp"
+                    app:layout_constraintEnd_toEndOf="@+id/btn_record_call"
+                    app:layout_constraintStart_toStartOf="@+id/btn_record_call"
+                    app:layout_constraintTop_toBottomOf="@+id/btn_record_call"
+                    tools:ignore="MissingPrefix" />
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/txt_mute"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:paddingTop="@dimen/_4sdp"
-                android:text="@string/mute"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
-                android:textColor="@color/white"
-                android:visibility="visible"
-                app:layout_constraintEnd_toEndOf="@+id/btn_mute"
-                app:layout_constraintStart_toStartOf="@+id/btn_mute"
-                app:layout_constraintTop_toBottomOf="@+id/btn_mute"
-                tools:ignore="MissingPrefix"
-                tools:visibility="visible" />
+                <androidx.appcompat.widget.AppCompatImageButton
+                    android:id="@+id/btn_mute"
+                    android:layout_width="@dimen/_45sdp"
+                    android:layout_height="@dimen/_45sdp"
+                    android:background="@drawable/circle2"
+                    android:backgroundTint="@color/dis_color_10f"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:onClick="@{vm::switchMic}"
+                    android:padding="@dimen/_14sdp"
+                    app:layout_constraintEnd_toStartOf="@+id/btn_action"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toEndOf="@+id/btn_speaker"
+                    app:layout_constraintTop_toTopOf="@+id/btn_speaker"
+                    app:srcCompat="@drawable/ic_baseline_mic_off" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/txt_mute"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingTop="@dimen/_4sdp"
+                    android:text="@string/mute"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                    android:textColor="@color/white"
+                    android:visibility="visible"
+                    app:layout_constraintEnd_toEndOf="@+id/btn_mute"
+                    app:layout_constraintStart_toStartOf="@+id/btn_mute"
+                    app:layout_constraintTop_toBottomOf="@+id/btn_mute"
+                    tools:ignore="MissingPrefix"
+                    tools:visibility="visible" />
 
                 <androidx.constraintlayout.widget.Group
                     android:id="@+id/group_for_outgoing"
