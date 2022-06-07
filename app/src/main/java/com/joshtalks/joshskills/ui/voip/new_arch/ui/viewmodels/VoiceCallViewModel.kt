@@ -111,10 +111,15 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
             0 -> {
                 uiState.visibleCrdView = true
                 recordCnclStop = 1
-                uiState.recordBtnImg = R.drawable.cancel_record
+                uiState.recordBtnImg = R.drawable.ic_cancel_record
                 uiState.recordBtnTxt = "Cancel"
+                sendRecordCallRequest()
             }
         }
+    }
+
+    fun sendRecordCallRequest() {
+
     }
 
     init {
