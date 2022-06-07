@@ -23,7 +23,12 @@ import com.joshtalks.joshskills.ui.call.repository.WebrtcRepository
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.models.CallUIState
 import com.joshtalks.joshskills.util.CallRecording
 import com.joshtalks.joshskills.voip.Utils
-import com.joshtalks.joshskills.voip.constant.*
+import com.joshtalks.joshskills.voip.constant.CALL_INITIATED_EVENT
+import com.joshtalks.joshskills.voip.constant.CANCEL_INCOMING_TIMER
+import com.joshtalks.joshskills.voip.constant.CLOSE_CALL_SCREEN
+import com.joshtalks.joshskills.voip.constant.RECONNECTING_FAILED
+import com.joshtalks.joshskills.voip.constant.SHOW_RECORDING_PERMISSION_DIALOG
+import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.ServiceEvents
 import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.getTempFileForCallRecording
@@ -37,7 +42,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
-import java.io.File
 
 const val CONNECTING = 1
 const val ONGOING = 2
@@ -163,7 +167,9 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                         val msg = Message.obtain().apply {
                             what = SHOW_RECORDING_PERMISSION_DIALOG
                         }
-                        Log.i("startrec", "listenVoipEvents: hogya")
+                        withContext(Dispatchers.Main) {
+                            singleLiveEvent.value = msg
+                        }
                     }
                     ServiceEvents.STOP_RECORDING -> {
                         stopRecording()
@@ -197,6 +203,15 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
         CallRecording.audioRecording.stopPlaying()
         //TODO shave the file path to db and send to server 'recordFile'
         Log.d(TAG, "stopRecording() called  $recordFile")
+    }
+
+    fun acceptCallRecording() {
+        repository.acceptCallRecording()
+        startRecording()
+    }
+
+    fun rejectCallRecording() {
+        repository.rejectCallRecording()
     }
 
     private fun listenUIState() {
@@ -404,13 +419,5 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
         Log.d(TAG, "onCleared: ")
         super.onCleared()
         repository.clearRepository()
-    }
-
-    fun acceptCallRecording() {
-        repository.acceptCallRecording()
-    }
-
-    fun rejectCallRecording() {
-        repository.rejectCallRecording()
     }
 }
