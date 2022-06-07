@@ -17,9 +17,11 @@ import com.joshtalks.joshskills.base.constants.GROUP
 import com.joshtalks.joshskills.base.constants.PEER_TO_PEER
 import com.joshtalks.joshskills.base.log.Feature
 import com.joshtalks.joshskills.base.log.JoshLog
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.ui.call.repository.RepositoryConstants.CONNECTION_ESTABLISHED
 import com.joshtalks.joshskills.ui.call.repository.WebrtcRepository
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.models.CallUIState
+import com.joshtalks.joshskills.util.CallRecording
 import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.constant.CALL_INITIATED_EVENT
 import com.joshtalks.joshskills.voip.constant.CANCEL_INCOMING_TIMER
@@ -28,25 +30,16 @@ import com.joshtalks.joshskills.voip.constant.RECONNECTING_FAILED
 import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.ServiceEvents
 import com.joshtalks.joshskills.voip.data.local.PrefManager
+import com.joshtalks.joshskills.voip.getTempFileForCallRecording
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
+import java.io.File
 import java.util.ArrayDeque
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import kotlinx.coroutines.withContext
-import com.joshtalks.joshskills.core.showToast
-import com.joshtalks.joshskills.ui.call.repository.RepositoryConstants.CONNECTION_ESTABLISHED
-import com.joshtalks.joshskills.util.CallRecording
-import com.joshtalks.joshskills.voip.constant.CALL_INITIATED_EVENT
-import com.joshtalks.joshskills.voip.constant.CANCEL_INCOMING_TIMER
-import com.joshtalks.joshskills.voip.constant.CLOSE_CALL_SCREEN
-import com.joshtalks.joshskills.voip.constant.RECONNECTING_FAILED
-import com.joshtalks.joshskills.voip.getTempFileForCallRecording
-import java.io.File
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 const val CONNECTING = 1
@@ -69,8 +62,8 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
     val pendingEvents = ArrayDeque<Int>()
     var recordCnclStop = 0 // 0 = record, 1 = cancel, 2 = stop
     private var singleLiveEvent = EventLiveData
-    var visibleCrdView = false
     var recordFile: File? = null
+    var visibleCrdView = false
 
     private val connectCallJob by lazy {
         viewModelScope.launch(start = CoroutineStart.LAZY) {
