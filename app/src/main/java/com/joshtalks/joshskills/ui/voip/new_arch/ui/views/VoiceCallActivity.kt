@@ -1,7 +1,10 @@
 package com.joshtalks.joshskills.ui.voip.new_arch.ui.views
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
@@ -141,6 +144,7 @@ class VoiceCallActivity : BaseActivity() {
         event.observe(this) {
             when (it.what) {
                 CALL_CONNECTED_EVENT -> replaceCallUserFragment()
+                SHOW_RECORDING_PERMISSION_DIALOG -> showRecordingPermissionDialog()
                 CLOSE_CALL_SCREEN -> finish()
                 else -> {
                     if (it.what < 0) {
@@ -150,6 +154,29 @@ class VoiceCallActivity : BaseActivity() {
                 }
             }
         }
+    }
+
+    private fun showRecordingPermissionDialog() {
+        val builder: AlertDialog.Builder =
+            AlertDialog.Builder(this)
+
+        val customLayout: View = LayoutInflater.from(this)
+            .inflate(R.layout.dialog_record_call, null)
+
+        builder.setView(customLayout)
+
+        builder.setPositiveButton("ACCEPT") { p0, _ ->
+            vm.acceptCallRecording()
+            p0.dismiss()
+        }
+
+        builder.setNegativeButton("DECLINE") { p0, _ ->
+            vm.rejectCallRecording()
+            p0.dismiss()
+        }
+
+        val dialog: AlertDialog = builder.create()
+        dialog.show()
     }
 
     private fun addSearchingUserFragment() {

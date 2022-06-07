@@ -272,13 +272,14 @@
                     android:backgroundTint="@color/dis_color_10f"
                     android:clickable="true"
                     android:focusable="true"
-                    android:onClick="@{vm::showRecordCallCardview}"
+                    android:onClick="@{vm::recordCall}"
                     android:padding="@dimen/_14sdp"
                     android:visibility="visible"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/btn_speaker"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
+                    tools:src="@drawable/ic_rec_mic"
                     app:layout_constraintTop_toTopOf="parent"
                     app:imageResource="@{vm.uiState.recordBtnImg}" />
 

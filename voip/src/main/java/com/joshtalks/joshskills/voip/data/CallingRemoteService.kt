@@ -312,6 +312,10 @@ class CallingRemoteService : Service() {
 
     fun changeTopicImage() { mediator.userAction(Action.TOPIC_IMAGE_CHANGE) }
 
+    fun acceptCallRecording() { mediator.userAction(Action.RECORDING_REQUEST_ACCEPTED) }
+
+    fun rejectCallRecording() { mediator.userAction(Action.RECORDING_REQUEST_REJECTED) }
+
     override fun onTaskRemoved(rootIntent: Intent?) {
         super.onTaskRemoved(rootIntent)
         stopForeground(true)

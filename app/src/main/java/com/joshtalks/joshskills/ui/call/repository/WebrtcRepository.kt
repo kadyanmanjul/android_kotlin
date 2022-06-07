@@ -111,6 +111,16 @@ class WebrtcRepository(scope : CoroutineScope) {
         mService?.stopRecording()
     }
 
+    fun acceptCallRecording(){
+        Log.d(TAG, "acceptCallRecording: ")
+        mService?.acceptCallRecording()
+    }
+
+    fun rejectCallRecording(){
+        Log.d(TAG, "acceptCallRecording: ")
+        mService?.rejectCallRecording()
+    }
+
     fun turnOnSpeaker() {
         Log.d(TAG, "turnOnSpeaker: ")
         mService?.changeSpeakerState(true)
