@@ -185,8 +185,8 @@ internal class AgoraWebrtcService(val scope: CoroutineScope) : WebrtcService {
                                 } else {
                                     state.emit(IDLE)
                                     currentState = IDLE
+                                    eventFlow.emit(callState)
                                 }
-                                eventFlow.emit(callState)
                             }
                             CallState.CallConnected -> {
                                 //TODO: Use Reconnecting

@@ -8,6 +8,7 @@ import android.util.Log
 import android.widget.RemoteViews
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_COURSE_ID
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_INCOMING_CALL_ID
+import com.joshtalks.joshskills.base.constants.INTENT_DATA_PREVIOUS_CALL_ID
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_TOPIC_ID
 import com.joshtalks.joshskills.voip.*
 import com.joshtalks.joshskills.voip.communication.model.IncomingCall
@@ -50,7 +51,8 @@ class PeerToPeerCalling : Calling {
             val request = ConnectionRequest(
                 topicId = (callData[INTENT_DATA_TOPIC_ID] as String).toInt(),
                 mentorId = Utils.uuid,
-                courseId = (callData[INTENT_DATA_COURSE_ID] as String).toInt()
+                courseId = (callData[INTENT_DATA_COURSE_ID] as String).toInt(),
+                oldCallId = (callData[INTENT_DATA_PREVIOUS_CALL_ID] as? Int)?.toInt(),
             )
             val response = voipNetwork.setUpConnection(request)
             Log.d(TAG, "onPreCallConnect: $response")

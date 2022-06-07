@@ -129,3 +129,6 @@ data class Channel(
 		return aspiration ?: ""
 	}
 }
+
+// TODO: Need to Change
+fun Channel.removeChannel() = this.copy(channelName = "")

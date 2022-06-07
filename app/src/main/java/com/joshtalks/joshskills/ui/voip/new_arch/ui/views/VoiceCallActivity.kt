@@ -136,7 +136,7 @@ class VoiceCallActivity : BaseActivity() {
     override fun initViewState() {
         event.observe(this) {
             when (it.what) {
-                CALL_INITIATED_EVENT -> replaceCallUserFragment()
+                CALL_CONNECTED_EVENT -> replaceCallUserFragment()
                 CLOSE_CALL_SCREEN -> finish()
                 else -> {
                     if (it.what < 0) {
@@ -177,7 +177,7 @@ class VoiceCallActivity : BaseActivity() {
     }
 
     override fun onBackPressed() {
-        if (PrefManager.getVoipState() == State.IDLE || PrefManager.getVoipState() == State.SEARCHING || PrefManager.getVoipState() == State.JOINING)
+        if (PrefManager.getVoipState() == State.IDLE || PrefManager.getVoipState() == State.SEARCHING || PrefManager.getVoipState() == State.JOINING || PrefManager.getVoipState() == State.JOINED)
             backPressMutex.onMultipleBackPress {
                 super.onBackPressed()
                 vm.backPress()

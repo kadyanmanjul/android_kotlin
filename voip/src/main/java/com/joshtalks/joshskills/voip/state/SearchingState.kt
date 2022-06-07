@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.voip.state
 
 import android.util.Log
+import com.joshtalks.joshskills.base.constants.INTENT_DATA_PREVIOUS_CALL_ID
 import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.Utils.Companion.ignoreException
 import com.joshtalks.joshskills.voip.communication.constants.ServerConstants
@@ -34,13 +35,15 @@ import java.net.SocketTimeoutException
  */
 class SearchingState(val context: CallContext) : VoipState {
     private val TAG = "SearchingState"
-    private val scope = CoroutineScope(Dispatchers.IO + CoroutineExceptionHandler { coroutineContext, throwable ->
-        Log.d(TAG, "CoroutineExceptionHandler : $throwable")
-        throwable.printStackTrace()
-    })
+    private val scope =
+        CoroutineScope(Dispatchers.IO + CoroutineExceptionHandler { coroutineContext, throwable ->
+            Log.d(TAG, "CoroutineExceptionHandler : $throwable")
+            throwable.printStackTrace()
+        })
+    private var listenerJob: Job? = null
     private val timeoutTimer by lazy {
         scope.launch(start = CoroutineStart.LAZY) {
-            try{
+            try {
                 ensureActive()
                 val timeout = Timeout(ServerConstants.TIMEOUT)
                 for (i in 1..12) {
@@ -51,9 +54,8 @@ class SearchingState(val context: CallContext) : VoipState {
                 delay(PER_USER_TIMEOUT_IN_MILLIS)
                 disconnectNoUserFound()
                 cleanUpState()
-            }
-            catch (e : Exception) {
-                if(e is CancellationException)
+            } catch (e: Exception) {
+                if (e is CancellationException)
                     throw e
                 e.printStackTrace()
             }
@@ -69,11 +71,14 @@ class SearchingState(val context: CallContext) : VoipState {
                     agoraCallId = "",
                     agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
                 )
+                if (context.isRetrying)
+                    context.request[INTENT_DATA_PREVIOUS_CALL_ID] =
+                        context.channelData.getCallingId()
                 calling.onPreCallConnect(context.request, context.direction)
                 ensureActive()
             } catch (e: Exception) {
                 e.printStackTrace()
-                when(e) {
+                when (e) {
                     is HttpException, is SocketTimeoutException -> {
                         Log.d(TAG, " Exception : API failed")
                         e.printStackTrace()
@@ -81,7 +86,9 @@ class SearchingState(val context: CallContext) : VoipState {
                         disconnectNoUserFound()
                         cleanUpState()
                     }
-                    is CancellationException -> { throw e }
+                    is CancellationException -> {
+                        throw e
+                    }
                     else -> {
                         ensureActive()
                         disconnectNoUserFound()
@@ -141,12 +148,12 @@ class SearchingState(val context: CallContext) : VoipState {
             extra = TAG
         )
         scope.launch {
-            try{
+            try {
                 context.closeCallScreen()
                 sendDataToServer()
-            }
-            catch (e : Exception){
-                if(e is CancellationException)
+                moveToLeavingState()
+            } catch (e: Exception) {
+                if (e is CancellationException)
                     throw e
                 e.printStackTrace()
             }
@@ -171,12 +178,12 @@ class SearchingState(val context: CallContext) : VoipState {
 
     private fun observe() {
         Log.d(TAG, "Started Observing")
-        scope.launch {
+        listenerJob = scope.launch {
             try {
                 loop@ while (true) {
                     val event = context.getStreamPipe().receive()
                     Log.d(TAG, "Received after observing : ${event.type}")
-                    when(event.type) {
+                    when (event.type) {
                         RECEIVED_CHANNEL_DATA -> {
                             Log.d(TAG, "observe: Received Channel Data")
                             apiCallJob.cancel()
@@ -187,7 +194,10 @@ class SearchingState(val context: CallContext) : VoipState {
                                 agoraCallId = context.channelData.getCallingId().toString(),
                                 agoraMentorId = context.channelData.getAgoraUid().toString()
                             )
-                            PrefManager.setLocalUserAgoraIdAndCallId(context.channelData.getAgoraUid(),context.channelData.getCallingId())
+                            PrefManager.setLocalUserAgoraIdAndCallId(
+                                context.channelData.getAgoraUid(),
+                                context.channelData.getCallingId()
+                            )
                             val uiState = UIState(
                                 remoteUserImage = context.channelData.getCallingPartnerImage(),
                                 remoteUserName = context.channelData.getCallingPartnerName(),
@@ -206,18 +216,23 @@ class SearchingState(val context: CallContext) : VoipState {
                             Log.d(TAG, "Received : ${event.type} switched to ${context.state}")
                             break@loop
                         }
-                        TOPIC_IMAGE_RECEIVED,SYNC_UI_STATE-> {
-                            val msg = "Ignoring : In $TAG but received ${event.type} expected $RECEIVED_CHANNEL_DATA"
+                        TOPIC_IMAGE_RECEIVED, SYNC_UI_STATE -> {
+                            val msg =
+                                "Ignoring : In $TAG but received ${event.type} expected $RECEIVED_CHANNEL_DATA"
                             CallAnalytics.addAnalytics(
                                 event = EventName.ILLEGAL_EVENT_RECEIVED,
                                 agoraCallId = context.channelData.getCallingId().toString(),
                                 agoraMentorId = context.channelData.getAgoraUid().toString(),
                                 extra = msg
                             )
-                            Log.d(TAG, "Ignoring : In $TAG but received ${event.type} expected $RECEIVED_CHANNEL_DATA")
+                            Log.d(
+                                TAG,
+                                "Ignoring : In $TAG but received ${event.type} expected $RECEIVED_CHANNEL_DATA"
+                            )
                         }
                         else -> {
-                            val msg = "In $TAG but received ${event.type} expected $RECEIVED_CHANNEL_DATA"
+                            val msg =
+                                "In $TAG but received ${event.type} expected $RECEIVED_CHANNEL_DATA"
                             CallAnalytics.addAnalytics(
                                 event = EventName.ILLEGAL_EVENT_RECEIVED,
                                 agoraCallId = "-1",
@@ -230,7 +245,7 @@ class SearchingState(val context: CallContext) : VoipState {
                 }
                 scope.cancel()
             } catch (e: Throwable) {
-                if(e is CancellationException)
+                if (e is CancellationException)
                     throw e
                 e.printStackTrace()
                 cleanUpState()
@@ -249,23 +264,38 @@ class SearchingState(val context: CallContext) : VoipState {
 
     override fun onDestroy() {
         PrefManager.setVoipState(State.IDLE)
-        scope.cancel()
+        scope.launch { moveToLeavingState() }
     }
 
     private fun cleanUpState() {
         scope.launch {
-            try{
+            try {
                 context.closeCallScreen()
                 context.closeCallScreen()
                 context.closePipe()
                 onDestroy()
-            }
-            catch (e : Exception){
-                if(e is CancellationException)
+            } catch (e: Exception) {
+                if (e is CancellationException)
                     throw e
                 e.printStackTrace()
             }
 
+        }
+    }
+
+    private suspend fun moveToLeavingState() {
+        try {
+            if (context.hasChannelData() && context.channelData.getChannel().isBlank()) {
+                context.disconnectCall()
+                PrefManager.setVoipState(State.LEAVING)
+                context.state = LeavingState(context)
+                Log.d(TAG, "Received : switched to ${context.state}")
+                scope.cancel()
+            }
+        } catch (e: Exception) {
+            if (e is CancellationException)
+                throw e
+            e.printStackTrace()
         }
     }
 }
