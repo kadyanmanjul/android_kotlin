@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.ui.voip.new_arch.ui.models
 import androidx.databinding.BaseObservable
 import androidx.databinding.Bindable
 import com.joshtalks.joshskills.BR
+import com.joshtalks.joshskills.R
 
 interface CallData{
     fun getProfileImage(): String?
@@ -63,10 +64,31 @@ class CallUIState : BaseObservable() {
         }
 
     @get:Bindable
+    var visibleCrdView: Boolean = false
+        set(value) {
+            field = value
+            notifyPropertyChanged(BR.visibleCrdView)
+        }
+
+    @get:Bindable
     var startTime : Long = 0L
         set(value) {
             field = value
             notifyPropertyChanged(BR.startTime)
+        }
+
+    @get:Bindable
+    var recordBtnImg: Int = R.drawable.call_fragment_record
+        set(value) {
+            field = value
+            notifyPropertyChanged(BR.recordBtnImg)
+        }
+
+    @get:Bindable
+    var recordBtnTxt: String = "Record"
+        set(value) {
+            field = value
+            notifyPropertyChanged(BR.recordBtnTxt)
         }
 
     @get:Bindable
