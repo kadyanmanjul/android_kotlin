@@ -4,23 +4,20 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseActivity
-import com.joshtalks.joshskills.base.constants.FROM_ACTIVITY
-import com.joshtalks.joshskills.base.constants.FROM_CALL_BAR
-import com.joshtalks.joshskills.base.constants.FROM_INCOMING_CALL
-import com.joshtalks.joshskills.base.constants.INTENT_DATA_COURSE_ID
-import com.joshtalks.joshskills.base.constants.INTENT_DATA_INCOMING_CALL_ID
-import com.joshtalks.joshskills.base.constants.INTENT_DATA_TOPIC_ID
+import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.databinding.ActivityVoiceCallBinding
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.VoiceCallViewModel
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.voipLog
 import com.joshtalks.joshskills.voip.Utils.Companion.onMultipleBackPress
-import com.joshtalks.joshskills.voip.constant.*
+import com.joshtalks.joshskills.voip.constant.CALL_INITIATED_EVENT
+import com.joshtalks.joshskills.voip.constant.CLOSE_CALL_SCREEN
+import com.joshtalks.joshskills.voip.constant.SHOW_RECORDING_PERMISSION_DIALOG
+import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
@@ -111,26 +108,21 @@ class VoiceCallActivity : BaseActivity() {
     }
 
     private fun showRecordingPermissionDialog() {
-        val builder: AlertDialog.Builder =
-            AlertDialog.Builder(this)
-
-        val customLayout: View = LayoutInflater.from(this)
-            .inflate(R.layout.dialog_record_call, null)
-
-        builder.setView(customLayout)
-
-        builder.setPositiveButton("ACCEPT") { p0, _ ->
-            vm.acceptCallRecording()
-            p0.dismiss()
+        AlertDialog.Builder(this).apply {
+            setView(
+                LayoutInflater.from(this@VoiceCallActivity)
+                    .inflate(R.layout.dialog_record_call, null)
+            )
+            setPositiveButton("ACCEPT") { dialog, _ ->
+                vm.acceptCallRecording()
+                dialog.dismiss()
+            }
+            setNegativeButton("DECLINE") { dialog, _ ->
+                vm.rejectCallRecording()
+                dialog.dismiss()
+            }
+            create().show()
         }
-
-        builder.setNegativeButton("DECLINE") { p0, _ ->
-            vm.rejectCallRecording()
-            p0.dismiss()
-        }
-
-        val dialog: AlertDialog = builder.create()
-        dialog.show()
     }
 
     private fun addSearchingUserFragment() {

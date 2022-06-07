@@ -1,18 +1,15 @@
 package com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels
 
 import android.app.Activity
-import android.app.AlertDialog
 import android.app.Application
 import android.os.Message
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
 import androidx.databinding.ObservableArrayList
 import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.base.constants.FPP
 import com.joshtalks.joshskills.base.constants.FROM_INCOMING_CALL
@@ -32,8 +29,9 @@ import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.getTempFileForCallRecording
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
-import kotlinx.android.synthetic.main.fragment_call.view.*
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
@@ -155,7 +153,9 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                         val msg = Message.obtain().apply {
                             what = SHOW_RECORDING_PERMISSION_DIALOG
                         }
-                        Log.i("startrec", "listenVoipEvents: hogya")
+                        withContext(Dispatchers.Main) {
+                            singleLiveEvent.value = msg
+                        }
                     }
                     ServiceEvents.STOP_RECORDING -> {
                         stopRecording()
@@ -189,6 +189,15 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
         CallRecording.audioRecording.stopPlaying()
         //TODO shave the file path to db and send to server 'recordFile'
         Log.d(TAG, "stopRecording() called  $recordFile")
+    }
+
+    fun acceptCallRecording() {
+        repository.acceptCallRecording()
+        startRecording()
+    }
+
+    fun rejectCallRecording() {
+        repository.rejectCallRecording()
     }
 
     private fun listenUIState() {
@@ -396,13 +405,5 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
         Log.d(TAG, "onCleared: ")
         super.onCleared()
         repository.clearRepository()
-    }
-
-    fun acceptCallRecording() {
-        repository.acceptCallRecording()
-    }
-
-    fun rejectCallRecording() {
-        repository.rejectCallRecording()
     }
 }
