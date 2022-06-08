@@ -33,6 +33,7 @@ import java.io.FileOutputStream
 import java.io.IOException
 
 
+const val REFERRAL_WHATAPP_MESSAGE = "REFERRAL_WHATAPP_MESSAGE"
 const val REFERRAL_EARN_AMOUNT_KEY = "REFERRAL_EARN_AMOUNT"
 const val REFERRAL_SHARE_TEXT_KEY = "REFERRAL_SHARE_TEXT_"
 const val REFERRAL_SHARE_TEXT_SHARABLE_VIDEO = "REFERRAL_SHARE_TEXT_SHARABLE_VIDEO"
@@ -213,7 +214,7 @@ class ReferralActivity : BaseActivity() {
 
     fun inviteFriends(packageString: String? = null, dynamicLink: String) {
         var referralText = if(PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID || PrefManager.getBoolValue(IS_HINDI_SELECTED) || PrefManager.getBoolValue(IS_HINGLISH_SELECTED))
-            VIDEO_URL.plus("\n").plus(getString(R.string.referral_share_text))
+            AppObjectController.getFirebaseRemoteConfig().getString(REFERRAL_WHATAPP_MESSAGE)
         else
             getString(R.string.referral_share_text)
         val refAmount =

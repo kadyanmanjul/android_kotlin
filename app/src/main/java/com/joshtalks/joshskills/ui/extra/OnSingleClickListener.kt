@@ -7,7 +7,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 @BindingAdapter("onSingleClick")
 fun View.setOnSingleClickListener(clickListener: View.OnClickListener?) {
     clickListener?.also {
-        setOnClickListener(OnSingleClickListener(it))
+        setOnClickListener(OnSingleClickListener(it, 4000))
     } ?: setOnClickListener(null)
 }
 

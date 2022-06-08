@@ -183,12 +183,14 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
             //TODO remove below line and uncomment above code after getting correct data from API
             //val questionsFromDB = emptyList<LessonQuestion>()
             if (questionsFromDB.isNotEmpty()) {
+                apiStatus.postValue(ApiCallStatus.SUCCESS)
                 lessonQuestionsLiveData.postValue(questionsFromDB)
                 return@launch
             }
 
             val questionsFromAPI: List<LessonQuestion> = getQuestionsFromAPI(lessonId, false)
             if (questionsFromAPI.isNotEmpty()) {
+                apiStatus.postValue(ApiCallStatus.SUCCESS)
                 lessonQuestionsLiveData.postValue(questionsFromAPI)
                 return@launch
             }
@@ -329,9 +331,13 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                     lesson?.let {
                         updateLesson(it)
                     }
+                    apiStatus.postValue(ApiCallStatus.SUCCESS)
                     return@withContext updatedQuestions
+                } else {
+                    apiStatus.postValue(ApiCallStatus.FAILED)
                 }
             } catch (ex: Throwable) {
+                apiStatus.postValue(ApiCallStatus.FAILED)
                 ex.printStackTrace()
             }
             return@withContext emptyList<LessonQuestion>()

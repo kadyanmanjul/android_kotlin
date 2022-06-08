@@ -179,13 +179,16 @@ object PubNubService : ChatService {
         history?.messages?.map {
             try {
                 val messageItem = Gson().fromJson(it.entry.asJsonObject, MessageItem::class.java)
+                var messageTime = it.timetoken
+                if (it.meta.asString == FROM_BACKEND_MSG_TIME)
+                    messageTime = messageItem.msg.toLong().times(10000000)
                 val message = ChatItem(
                     sender = it.meta.asString,
                     msgType = messageItem.getMessageType(),
                     message = messageItem.msg,
-                    msgTime = it.timetoken,
+                    msgTime = messageTime,
                     groupId = groupId,
-                    messageId = "${it.timetoken}_${groupId}_${messageItem.mentorId}"
+                    messageId = "${messageTime}_${groupId}_${messageItem.mentorId}"
                 )
                 messages.add(message)
             } catch (e: Exception) {
@@ -214,13 +217,16 @@ object PubNubService : ChatService {
         history?.messages?.map {
             try {
                 val messageItem = Gson().fromJson(it.entry.asJsonObject, MessageItem::class.java)
+                var messageTime = it.timetoken
+                if (it.meta.asString == FROM_BACKEND_MSG_TIME)
+                    messageTime = messageItem.msg.toLong().times(10000000)
                 val message = ChatItem(
                     sender = it.meta.asString,
                     msgType = messageItem.getMessageType(),
                     message = messageItem.msg,
-                    msgTime = it.timetoken,
+                    msgTime = messageTime,
                     groupId = groupId,
-                    messageId = "${it.timetoken}_${groupId}_${messageItem.mentorId}"
+                    messageId = "${messageTime}_${groupId}_${messageItem.mentorId}"
                 )
                 messages.add(message)
             } catch (e: Exception) {

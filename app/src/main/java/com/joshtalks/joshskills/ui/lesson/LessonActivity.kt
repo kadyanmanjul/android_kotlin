@@ -38,6 +38,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.constants.PERMISSION_FROM_READING
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.ApiCallStatus.*
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
@@ -320,11 +321,29 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
     }
 
     private fun setObservers() {
-
+        viewModel.apiStatus.observe(this) {
+            when (it) {
+                START -> {
+                    binding.progressView.visibility = View.GONE
+                }
+                FAILED -> {
+                    binding.progressView.visibility = View.GONE
+                    AppObjectController.uiHandler.post {
+                        showToast(getString(R.string.internet_not_available_msz))
+                    }
+                    finish()
+                }
+                SUCCESS -> {
+                    binding.progressView.visibility = View.GONE
+                }
+                else -> {
+                    binding.progressView.visibility = View.GONE
+                }
+            }
+        }
         viewModel.lessonQuestionsLiveData.observe(
             this
         ) {
-            binding.progressView.visibility = View.GONE
             viewModel.lessonLiveData.value?.let {
                 titleView.text =
                     getString(R.string.lesson_no, it.lessonNo)
@@ -795,7 +814,6 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                         lessonCompleted = lessonCompleted &&
                                 lesson.translationStatus == LESSON_STATUS.CO
                     }
-
                     if (lessonCompleted) {
                         PrefManager.put(LESSON_COMPLETED_FOR_NOTIFICATION, true)
                         if (lesson.status != LESSON_STATUS.CO) {
@@ -832,7 +850,6 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                         lessonCompleted = lessonCompleted &&
                                 lesson.conversationStatus == LESSON_STATUS.CO
                     }
-
                     if (lessonCompleted) {
                         if (lesson.status != LESSON_STATUS.CO) {
                             MarketingAnalytics.logLessonCompletedEvent(lesson.lessonNo, lesson.id)
@@ -1287,13 +1304,18 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
     }
 
     private fun openLessonCompleteScreen(lesson: LessonModel) {
-        this.lesson = lesson
-        openLessonCompletedActivity.launch(
-            LessonCompletedActivity.getActivityIntent(
-                this,
-                lesson
+        if (PrefManager.getBoolValue("DelayLessonCompletedActivity")) {
+            PrefManager.put("OpenLessonCompletedActivity", true)
+            PrefManager.putPrefObject("lessonObject", lesson)
+        } else {
+            this.lesson = lesson
+            openLessonCompletedActivity.launch(
+                LessonCompletedActivity.getActivityIntent(
+                    this,
+                    lesson
+                )
             )
-        )
+        }
     }
 
     fun buyCourse() {

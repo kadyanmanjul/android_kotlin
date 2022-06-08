@@ -303,7 +303,7 @@ class ReconnectingState(val context: CallContext) : VoipState {
                 context.sendMessageToServer(networkAction)
                 // Show Dialog
                 Utils.context?.updateLastCallDetails(
-                    duration = context.durationInMillis.inSeconds(),
+                    duration = context.durationInMillis,
                     remoteUserName = context.channelData.getCallingPartnerName(),
                     remoteUserImage = context.channelData.getCallingPartnerImage(),
                     callId = context.channelData.getCallingId(),

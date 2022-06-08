@@ -260,24 +260,24 @@ class SignUpProfileFragment : BaseSignUpFragment() {
     }
 
     fun submitProfile() {
-        if (binding.nameEditText.text.isNullOrEmpty()) {
+        if (binding.nameEditText.text?.trim().isNullOrEmpty()) {
             showToast(getString(R.string.name_error_toast))
             return
         }
-        if (binding.occupationEditText.text.isNullOrEmpty()) {
+        if (binding.occupationEditText.text?.trim().isNullOrEmpty()) {
             showToast(getString(R.string.occupation_error_toast))
             return
         }
 
-        if (binding.aspirationEditText.text.isNullOrEmpty()) {
+        if (binding.aspirationEditText.text?.trim().isNullOrEmpty()) {
             showToast(getString(R.string.aspiration_error_toast))
             return
         }
-        if (binding.phoneNumberEt.text.isNullOrEmpty() && binding.emailEditText.text.isNullOrEmpty()) {
+        if (binding.phoneNumberEt.text?.trim().isNullOrEmpty() && binding.emailEditText.text?.trim().isNullOrEmpty()) {
             showToast(getString(R.string.enter_valid_email_toast))
         }
 
-        if (binding.dobEditText.text.isNullOrEmpty()) {
+        if (binding.dobEditText.text?.trim().isNullOrEmpty()) {
             showToast(getString(R.string.dob_error_toast))
             return
         }

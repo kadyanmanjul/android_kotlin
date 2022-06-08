@@ -1,8 +1,11 @@
 package com.joshtalks.joshskills.ui.voip.new_arch.ui.call_rating
 
 import android.app.Dialog
+import android.content.DialogInterface
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
@@ -13,6 +16,9 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.RadioButton
 import android.widget.RadioGroup
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
@@ -31,7 +37,13 @@ import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.CallRatingDialogBinding
 import com.joshtalks.joshskills.quizgame.util.MyBounceInterpolator
+import com.joshtalks.joshskills.repository.local.entity.LessonModel
 import com.joshtalks.joshskills.ui.call.data.local.VoipPref
+import com.joshtalks.joshskills.ui.chat.CHAT_ROOM_ID
+import com.joshtalks.joshskills.ui.lesson.LessonActivity
+import com.joshtalks.joshskills.ui.lesson.lesson_completed.LessonCompletedActivity
+import com.joshtalks.joshskills.ui.video_player.IS_BATCH_CHANGED
+import com.joshtalks.joshskills.ui.video_player.LAST_LESSON_INTERVAL
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.feedback.FeedbackDialogFragment
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.coroutines.CoroutineScope
@@ -46,6 +58,7 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
     val PROFILE_URL = "profile_url"
     val CALLER_MENTOR_ID = "caller_mentor_id"
     val AGORA_MENTOR_ID = "agora_mentor_id"
+    var lesson :LessonModel? = null
     lateinit var binding : CallRatingDialogBinding
     var isBlockSelected = false
     var selectedRating = 0
@@ -78,6 +91,12 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
         initView()
         addListner()
         addObserver()
+        saveFlagToSharedPref()
+    }
+
+    private fun saveFlagToSharedPref() {
+        Log.d(TAG, "onDismiss: 10")
+        PrefManager.put("DelayLessonCompletedActivity",true)
     }
 
     private fun initView() {
@@ -226,6 +245,47 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
             dismiss()
         }else{
             dismiss()
+        }
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        if(PrefManager.getBoolValue("OpenLessonCompletedActivity")){
+            PrefManager.put("OpenLessonCompletedActivity",false)
+            PrefManager.put("DelayLessonCompletedActivity",false)
+            openLessonCompleteScreen(PrefManager.getLessonObject("lessonObject"))
+        }else{
+            PrefManager.put("DelayLessonCompletedActivity",false)
+        }
+    }
+
+    private fun openLessonCompleteScreen(lesson: LessonModel?) {
+        openLessonCompletedActivity.launch(
+            lesson?.let {
+                LessonCompletedActivity.getActivityIntent(
+                    requireActivity(),
+                    it
+                )
+            }
+        )
+    }
+
+    var openLessonCompletedActivity: ActivityResultLauncher<Intent> =
+    registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == AppCompatActivity.RESULT_OK && result.data!!.hasExtra(
+                IS_BATCH_CHANGED
+            )) {
+            requireActivity().setResult(
+                AppCompatActivity.RESULT_OK,
+                Intent().apply {
+                    putExtra(IS_BATCH_CHANGED, false)
+                    putExtra(LAST_LESSON_INTERVAL, lesson?.interval)
+                    putExtra(LessonActivity.LAST_LESSON_STATUS, true)
+                    putExtra(LESSON__CHAT_ID, lesson?.chatId)
+                    putExtra(CHAT_ROOM_ID, lesson?.chatId)
+                }
+            )
+            requireActivity().finish()
         }
     }
 

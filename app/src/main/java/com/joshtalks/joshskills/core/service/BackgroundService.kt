@@ -107,24 +107,28 @@ class BackgroundService : Service() {
 
     private fun fetchMissedNotifications() {
         CoroutineScope(Dispatchers.IO).launch {
-            val notifications = apiService.getMissedNotifications().body()
-            if (notifications?.isNotEmpty() == true) {
-                for (item in notifications) {
-                    val notificationTypeToken: Type = object : TypeToken<NotificationObject>() {}.type
-                    val nc: NotificationObject = gsonMapper.fromJson(
-                        gsonMapper.toJson(item),
-                        notificationTypeToken
-                    )
-                    nc.contentTitle = item.title
-                    nc.contentText = item.body
-                    val isFirstTimeNotification = NotificationAnalytics().addAnalytics(
-                        notificationId = nc.id.toString(),
-                        mEvent = NotificationAnalytics.Action.RECEIVED,
-                        channel = NotificationAnalytics.Channel.API
-                    )
-                    if (isFirstTimeNotification)
-                        NotificationUtils(this@BackgroundService).sendNotification(nc)
+            try {
+                val notifications = apiService.getMissedNotifications().body()
+                if (notifications?.isNotEmpty() == true) {
+                    for (item in notifications) {
+                        val notificationTypeToken: Type = object : TypeToken<NotificationObject>() {}.type
+                        val nc: NotificationObject = gsonMapper.fromJson(
+                            gsonMapper.toJson(item),
+                            notificationTypeToken
+                        )
+                        nc.contentTitle = item.title
+                        nc.contentText = item.body
+                        val isFirstTimeNotification = NotificationAnalytics().addAnalytics(
+                            notificationId = nc.id.toString(),
+                            mEvent = NotificationAnalytics.Action.RECEIVED,
+                            channel = NotificationAnalytics.Channel.API
+                        )
+                        if (isFirstTimeNotification)
+                            NotificationUtils(this@BackgroundService).sendNotification(nc)
+                    }
                 }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
             stopForeground(true)
             stopSelf()
@@ -175,31 +179,35 @@ class BackgroundService : Service() {
 
     fun pushAnalyticsToServer() {
         CoroutineScope(Dispatchers.IO).launch {
-            val notificationDao = AppDatabase.getDatabase(this@BackgroundService)?.notificationEventDao()
-            val listOfReceived = notificationDao?.getUnsyncEvent()
-            if (listOfReceived?.isEmpty() == true)
-                return@launch
+            try {
+                val notificationDao = AppDatabase.getDatabase(this@BackgroundService)?.notificationEventDao()
+                val listOfReceived = notificationDao?.getUnsyncEvent()
+                if (listOfReceived?.isEmpty() == true)
+                    return@launch
 
-            val serverOffsetTime = PrefManager.getLongValue(SERVER_TIME_OFFSET, true)
-            val request = ArrayList<NotificationAnalyticsRequest>()
-            listOfReceived?.forEach {
-                request.add(
-                    NotificationAnalyticsRequest(
-                        it.id,
-                        it.time_stamp.plus(serverOffsetTime),
-                        it.action,
-                        it.platform
-                    )
-                )
-            }
-            if (request.isEmpty())
-                return@launch
-
-            val resp = apiService.engageNewNotificationAsync(request)
-            if (resp.isSuccessful) {
+                val serverOffsetTime = PrefManager.getLongValue(SERVER_TIME_OFFSET, true)
+                val request = ArrayList<NotificationAnalyticsRequest>()
                 listOfReceived?.forEach {
-                    notificationDao.updateSyncStatus(it.notificationId)
+                    request.add(
+                        NotificationAnalyticsRequest(
+                            it.id,
+                            it.time_stamp.plus(serverOffsetTime),
+                            it.action,
+                            it.platform
+                        )
+                    )
                 }
+                if (request.isEmpty())
+                    return@launch
+
+                val resp = apiService.engageNewNotificationAsync(request)
+                if (resp.isSuccessful) {
+                    listOfReceived?.forEach {
+                        notificationDao.updateSyncStatus(it.notificationId)
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
     }
