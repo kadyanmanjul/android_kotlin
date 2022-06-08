@@ -6,7 +6,30 @@ import com.joshtalks.joshskills.voip.communication.constants.ServerConstants
 import com.joshtalks.joshskills.voip.communication.model.NetworkAction
 import com.joshtalks.joshskills.voip.communication.model.UI
 import com.joshtalks.joshskills.voip.communication.model.UserAction
-import com.joshtalks.joshskills.voip.constant.Event.*
+import com.joshtalks.joshskills.voip.constant.Event.CALL_RECORDING_ACCEPT
+import com.joshtalks.joshskills.voip.constant.Event.CALL_RECORDING_REJECT
+import com.joshtalks.joshskills.voip.constant.Event.HOLD
+import com.joshtalks.joshskills.voip.constant.Event.HOLD_REQUEST
+import com.joshtalks.joshskills.voip.constant.Event.MUTE
+import com.joshtalks.joshskills.voip.constant.Event.MUTE_REQUEST
+import com.joshtalks.joshskills.voip.constant.Event.RECEIVED_CHANNEL_DATA
+import com.joshtalks.joshskills.voip.constant.Event.RECONNECTED
+import com.joshtalks.joshskills.voip.constant.Event.RECONNECTING
+import com.joshtalks.joshskills.voip.constant.Event.REMOTE_USER_DISCONNECTED_AGORA
+import com.joshtalks.joshskills.voip.constant.Event.REMOTE_USER_DISCONNECTED_MESSAGE
+import com.joshtalks.joshskills.voip.constant.Event.REMOTE_USER_DISCONNECTED_USER_LEFT
+import com.joshtalks.joshskills.voip.constant.Event.SPEAKER_OFF_REQUEST
+import com.joshtalks.joshskills.voip.constant.Event.SPEAKER_ON_REQUEST
+import com.joshtalks.joshskills.voip.constant.Event.START_RECORDING
+import com.joshtalks.joshskills.voip.constant.Event.STOP_RECORDING
+import com.joshtalks.joshskills.voip.constant.Event.SYNC_UI_STATE
+import com.joshtalks.joshskills.voip.constant.Event.TOPIC_IMAGE_CHANGE_REQUEST
+import com.joshtalks.joshskills.voip.constant.Event.TOPIC_IMAGE_RECEIVED
+import com.joshtalks.joshskills.voip.constant.Event.UI_STATE_UPDATED
+import com.joshtalks.joshskills.voip.constant.Event.UNHOLD
+import com.joshtalks.joshskills.voip.constant.Event.UNHOLD_REQUEST
+import com.joshtalks.joshskills.voip.constant.Event.UNMUTE
+import com.joshtalks.joshskills.voip.constant.Event.UNMUTE_REQUEST
 import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.inSeconds
@@ -245,7 +268,10 @@ class ConnectedState(val context: CallContext) : VoipState {
                             )
                             Log.d(TAG, "Ignoring : In $TAG but received ${event.type} event don't know how to process")
                         }
-                        START_RECORDING->{
+                        START_RECORDING -> {
+                            ensureActive()
+                            val uiState = context.currentUiState.copy(isRecordingPermissionSent = true)
+                            context.updateUIState(uiState = uiState)
                             val userAction = UserAction(
                                 ServerConstants.START_RECORDING,
                                 context.channelData.getChannel(),
@@ -253,7 +279,10 @@ class ConnectedState(val context: CallContext) : VoipState {
                             )
                             context.sendMessageToServer(userAction)
                         }
-                        STOP_RECORDING->{
+                        STOP_RECORDING-> {
+                            ensureActive()
+                            val uiState = context.currentUiState.copy(isRecordingStarted = false)
+                            context.updateUIState(uiState = uiState)
                             val userAction = UserAction(
                                 ServerConstants.STOP_RECORDING,
                                 context.channelData.getChannel(),
@@ -261,7 +290,10 @@ class ConnectedState(val context: CallContext) : VoipState {
                             )
                             context.sendMessageToServer(userAction)
                         }
-                        CALL_RECORDING_ACCEPT->{
+                        CALL_RECORDING_ACCEPT-> {
+                            ensureActive()
+                            val uiState = context.currentUiState.copy(isRecordingStarted = true , isRecordingPermissionSent = true)
+                            context.updateUIState(uiState = uiState)
                             val userAction = UserAction(
                                 ServerConstants.CALL_RECORDING_ACCEPT,
                                 context.channelData.getChannel(),
@@ -269,7 +301,10 @@ class ConnectedState(val context: CallContext) : VoipState {
                             )
                             context.sendMessageToServer(userAction)
                         }
-                        CALL_RECORDING_REJECT->{
+                        CALL_RECORDING_REJECT-> {
+                            ensureActive()
+                            val uiState = context.currentUiState.copy(isRecordingPermissionSent = false , isRecordingStarted = false)
+                            context.updateUIState(uiState = uiState)
                             val userAction = UserAction(
                                 ServerConstants.CALL_RECORDING_REJECT,
                                 context.channelData.getChannel(),

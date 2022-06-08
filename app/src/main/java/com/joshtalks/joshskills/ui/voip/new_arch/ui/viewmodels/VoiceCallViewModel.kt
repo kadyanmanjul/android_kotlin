@@ -10,6 +10,7 @@ import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.base.constants.FPP
 import com.joshtalks.joshskills.base.constants.FROM_INCOMING_CALL
@@ -17,25 +18,29 @@ import com.joshtalks.joshskills.base.constants.GROUP
 import com.joshtalks.joshskills.base.constants.PEER_TO_PEER
 import com.joshtalks.joshskills.base.log.Feature
 import com.joshtalks.joshskills.base.log.JoshLog
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.ui.call.repository.RepositoryConstants.CONNECTION_ESTABLISHED
 import com.joshtalks.joshskills.ui.call.repository.WebrtcRepository
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.models.CallUIState
 import com.joshtalks.joshskills.util.CallRecording
 import com.joshtalks.joshskills.voip.Utils
-import com.joshtalks.joshskills.voip.constant.*
+import com.joshtalks.joshskills.voip.constant.CALL_INITIATED_EVENT
+import com.joshtalks.joshskills.voip.constant.CANCEL_INCOMING_TIMER
+import com.joshtalks.joshskills.voip.constant.CLOSE_CALL_SCREEN
+import com.joshtalks.joshskills.voip.constant.RECONNECTING_FAILED
+import com.joshtalks.joshskills.voip.constant.SHOW_RECORDING_PERMISSION_DIALOG
+import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.ServiceEvents
 import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.getTempFileForCallRecording
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
+import java.io.File
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
-import java.io.File
 
 const val CONNECTING = 1
 const val ONGOING = 2
@@ -71,25 +76,6 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
             }
         }
     }
-
-//    fun showRecordCallCardview(v: View) {
-//        Log.i("RECORD CALL: ", "started!")
-//        when(recordCnclStop) {
-//            1-> {
-//                uiState.visibleCrdView = false
-//                recordCnclStop = 0
-//                uiState.recordBtnImg = R.drawable.call_fragment_record
-//                uiState.recordBtnTxt = "Record"
-//            }
-//            0 -> {
-//                uiState.visibleCrdView = true
-//                recordCnclStop = 1
-//                uiState.recordBtnImg = R.drawable.ic_cancel_record
-//                uiState.recordBtnTxt = "Cancel"
-//                sendRecordCallRequest()
-//            }
-//        }
-//    }
 
     init {
         listenRepositoryEvents()
@@ -167,7 +153,7 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                         updateRecordingUI()
                     }
                     ServiceEvents.CALL_RECORDING_REJECT -> {
-                        showToast("User declined the request to record")
+                        recordFile = null
                     }
                 }
             }
@@ -187,8 +173,7 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun stopRecording() {
         CallRecording.audioRecording.stopPlaying()
-        //TODO shave the file path to db and send to server 'recordFile'
-        Log.d(TAG, "stopRecording() called  $recordFile")
+        Log.d(TAG, "stopRecording called  $recordFile")
     }
 
     fun acceptCallRecording() {
@@ -208,6 +193,8 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                 Log.d(TAG, "listenUIState: State --> $voipState")
                 if (uiState.startTime != state.startTime)
                     uiState.startTime = state.startTime
+                if (uiState.recordingStartTime != state.recordingStartTime)
+                    uiState.recordingStartTime = state.recordingStartTime
                 uiState.name = state.remoteUserName
                 uiState.profileImage = state.remoteUserImage ?: ""
                 uiState.topic = state.topicName
@@ -232,6 +219,30 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                 } else {
                     if (voipState == State.CONNECTED || voipState == State.RECONNECTING)
                         uiState.currentState = "Timer"
+                }
+                Log.d(TAG, "listenUIState called with: state = $state")
+                if (state.isRecordingPermissionSent && state.isRecordingStarted.not()){
+                    uiState.recordingCurrentState = "Waiting for your partner to accept"
+                    uiState.isRecordingPermissionSent = true
+                    uiState.isRecording = false
+                    uiState.visibleCrdView = true
+                    uiState.recordBtnImg = R.drawable.ic_cancel_record
+                    uiState.recordBtnTxt = "Cancel"
+
+                } else if (state.isRecordingStarted){
+                    uiState.recordingCurrentState = "Timer"
+                    uiState.isRecordingPermissionSent = false
+                    uiState.isRecording = true
+                    uiState.visibleCrdView = true
+                    uiState.recordBtnImg = R.drawable.ic_stop_record
+                    uiState.recordBtnTxt = "Stop"
+                } else {
+                    uiState.recordingCurrentState = "Ideal"
+                    uiState.isRecordingPermissionSent = false
+                    uiState.isRecording = false
+                    uiState.visibleCrdView = false
+                    uiState.recordBtnImg = R.drawable.ic_record_btn
+                    uiState.recordBtnTxt = "Record"
                 }
 
                 if (uiState.isSpeakerOn != state.isSpeakerOn) {
@@ -329,9 +340,10 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
 
     // User Action
     fun recordCall(v: View) {
-        Log.d("recordCallBruh", "recordCall")
+        Log.d(TAG, "recordCall")
         val isRecordingInitiated = uiState.isRecording
         uiState.isRecording = isRecordingInitiated.not()
+        Log.d(TAG, "recordCall() called with: v = $isRecordingInitiated ${uiState.isRecording}")
         if (isRecordingInitiated) {
             CallAnalytics.addAnalytics(
                 event = EventName.RECORDING_STOPPED,
