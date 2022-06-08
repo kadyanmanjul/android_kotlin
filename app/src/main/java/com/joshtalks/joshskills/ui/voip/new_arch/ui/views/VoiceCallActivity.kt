@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseActivity
 import com.joshtalks.joshskills.base.constants.*
@@ -14,10 +15,7 @@ import com.joshtalks.joshskills.databinding.ActivityVoiceCallBinding
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.VoiceCallViewModel
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.voipLog
 import com.joshtalks.joshskills.voip.Utils.Companion.onMultipleBackPress
-import com.joshtalks.joshskills.voip.constant.CALL_INITIATED_EVENT
-import com.joshtalks.joshskills.voip.constant.CLOSE_CALL_SCREEN
-import com.joshtalks.joshskills.voip.constant.SHOW_RECORDING_PERMISSION_DIALOG
-import com.joshtalks.joshskills.voip.constant.State
+import com.joshtalks.joshskills.voip.constant.*
 import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
@@ -96,6 +94,7 @@ class VoiceCallActivity : BaseActivity() {
             when (it.what) {
                 CALL_INITIATED_EVENT -> replaceCallUserFragment()
                 SHOW_RECORDING_PERMISSION_DIALOG -> showRecordingPermissionDialog()
+                SHOW_RECORDING_REJECTED_DIALOG -> showRecordingRejectedDialog()
                 CLOSE_CALL_SCREEN -> finish()
                 else -> {
                     if (it.what < 0) {
@@ -105,6 +104,17 @@ class VoiceCallActivity : BaseActivity() {
                 }
             }
         }
+    }
+
+    private fun showRecordingRejectedDialog() {
+        MaterialAlertDialogBuilder(this)
+            .setTitle("Recording request rejected")
+            .setMessage("User declined your request to start recording")
+            .setPositiveButton("Dismiss") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
+
     }
 
     private fun showRecordingPermissionDialog() {

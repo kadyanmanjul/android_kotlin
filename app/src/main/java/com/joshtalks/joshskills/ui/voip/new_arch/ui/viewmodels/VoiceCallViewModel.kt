@@ -18,7 +18,6 @@ import com.joshtalks.joshskills.base.constants.GROUP
 import com.joshtalks.joshskills.base.constants.PEER_TO_PEER
 import com.joshtalks.joshskills.base.log.Feature
 import com.joshtalks.joshskills.base.log.JoshLog
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.ui.call.repository.RepositoryConstants.CONNECTION_ESTABLISHED
 import com.joshtalks.joshskills.ui.call.repository.WebrtcRepository
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.models.CallUIState
@@ -168,7 +167,12 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                     }
                     ServiceEvents.CALL_RECORDING_REJECT -> {
                         stoppedRecUIchanges()
-                        showToast("User declined the request to record")
+                        val msg = Message.obtain().apply {
+                            what = SHOW_RECORDING_REJECTED_DIALOG
+                        }
+                        withContext(Dispatchers.Main) {
+                            singleLiveEvent.value = msg
+                        }
                     }
                 }
             }
