@@ -281,7 +281,7 @@ class ConnectedState(val context: CallContext) : VoipState {
                         }
                         STOP_RECORDING-> {
                             ensureActive()
-                            val uiState = context.currentUiState.copy(isRecordingStarted = false)
+                            val uiState = context.currentUiState.copy(isRecordingStopped = true)
                             context.updateUIState(uiState = uiState)
                             val userAction = UserAction(
                                 ServerConstants.STOP_RECORDING,
