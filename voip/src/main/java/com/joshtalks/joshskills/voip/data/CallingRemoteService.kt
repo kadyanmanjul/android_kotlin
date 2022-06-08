@@ -375,6 +375,7 @@ data class UIState(
     val isReconnecting: Boolean = false,
     val startTime: Long = 0L,
     val isRecordingStarted :Boolean = false,
+    val isRecordingStopped :Boolean = false,
     val isRecordingPermissionSent : Boolean = false,
     val recordingStartTime : Long = 0L
 ) {

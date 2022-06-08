@@ -135,7 +135,8 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                     }
                     // remote user event
                     ServiceEvents.START_RECORDING -> {
-                        // showDialogBox
+                        updateStartRecordingUIState()
+                        uiState.currentState = "Timer"
                         val msg = Message.obtain().apply {
                             what = SHOW_RECORDING_PERMISSION_DIALOG
                         }
@@ -144,15 +145,16 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                         }
                     }
                     ServiceEvents.STOP_RECORDING -> {
+                        updateStopRecordingUIState()
                         stopRecording()
-                        updateRecordingUI()
                     }
                     ServiceEvents.CALL_RECORDING_ACCEPT -> {
                         recordCnclStop = 2
+                        updateAcceptRecordingUI()
                         startRecording()
-                        updateRecordingUI()
                     }
                     ServiceEvents.CALL_RECORDING_REJECT -> {
+                        updateStopRecordingUIState()
                         recordFile = null
                     }
                 }
@@ -160,8 +162,26 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
-    private fun updateRecordingUI() {
+    private fun updateStartRecordingUIState() {
 
+    }
+
+    private fun updateStopRecordingUIState() {
+        uiState.recordingCurrentState = "Ideal"
+        uiState.isRecordingPermissionSent = false
+        uiState.isRecording = false
+        uiState.visibleCrdView = false
+        uiState.recordBtnImg = R.drawable.ic_record_btn
+        uiState.recordBtnTxt = "Record"
+    }
+
+    private fun updateAcceptRecordingUI() {
+        uiState.recordingCurrentState = "Timer"
+        uiState.isRecordingPermissionSent = false
+        uiState.isRecording = true
+        uiState.visibleCrdView = true
+        uiState.recordBtnImg = R.drawable.ic_stop_record
+        uiState.recordBtnTxt = "Stop"
     }
 
     private fun startRecording() {
@@ -221,7 +241,14 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                         uiState.currentState = "Timer"
                 }
                 Log.d(TAG, "listenUIState called with: state = $state")
-                if (state.isRecordingPermissionSent && state.isRecordingStarted.not()){
+                if (state.isRecordingStopped) {
+                    uiState.recordingCurrentState = "Ideal"
+                    uiState.isRecordingPermissionSent = false
+                    uiState.isRecording = false
+                    uiState.visibleCrdView = false
+                    uiState.recordBtnImg = R.drawable.ic_record_btn
+                    uiState.recordBtnTxt = "Record"
+                } else if (state.isRecordingPermissionSent && state.isRecordingStarted.not()){
                     uiState.recordingCurrentState = "Waiting for your partner to accept"
                     uiState.isRecordingPermissionSent = true
                     uiState.isRecording = false
