@@ -30,6 +30,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.databinding.CallRatingDialogBinding
@@ -39,6 +40,7 @@ import com.joshtalks.joshskills.ui.call.data.local.VoipPref
 import com.joshtalks.joshskills.ui.chat.CHAT_ROOM_ID
 import com.joshtalks.joshskills.ui.lesson.LessonActivity
 import com.joshtalks.joshskills.ui.lesson.lesson_completed.LessonCompletedActivity
+import com.joshtalks.joshskills.ui.practise.PracticeViewModel
 import com.joshtalks.joshskills.ui.video_player.IS_BATCH_CHANGED
 import com.joshtalks.joshskills.ui.video_player.LAST_LESSON_INTERVAL
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.feedback.FeedbackDialogFragment
@@ -72,6 +74,9 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
 
     val vm : CallRatingsViewModel by lazy {
         ViewModelProvider(requireActivity())[CallRatingsViewModel::class.java]
+    }
+    private val practiceViewModel: PracticeViewModel by lazy {
+        ViewModelProvider(this).get(PracticeViewModel::class.java)
     }
 
     override fun onCreateView(
@@ -292,7 +297,23 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
             .show(requireActivity().supportFragmentManager, "FeedBackDialogFragment")
     }
 
-    private fun addObserver() {}
+    private fun addObserver() {
+        practiceViewModel.getPointsForVocabAndReading(null, channelName = VoipPref.getLastCallChannelName())
+
+        practiceViewModel.pointsSnackBarText.observe(
+            this
+        ) {
+            if (it.pointsList.isNullOrEmpty().not()) {
+                PrefManager.put(
+                    LESSON_COMPLETE_SNACKBAR_TEXT_STRING,
+                    it.pointsList!!.last(),
+                    false
+                )
+
+            }
+        }
+
+    }
 
     companion object {
         @JvmStatic
