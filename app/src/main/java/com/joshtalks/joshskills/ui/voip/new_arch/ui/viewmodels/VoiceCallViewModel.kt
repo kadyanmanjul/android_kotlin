@@ -162,7 +162,12 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                     }
                     ServiceEvents.CALL_RECORDING_REJECT -> {
                         stoppedRecUIchanges()
-                        showToast("User declined the request to record")
+                        val msg = Message.obtain().apply {
+                            what = SHOW_RECORDING_REJECTED_DIALOG
+                        }
+                        withContext(Dispatchers.Main) {
+                            singleLiveEvent.value = msg
+                        }
                     }
                 }
             }

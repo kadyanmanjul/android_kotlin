@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.afollestad.materialdialogs.MaterialDialog
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseActivity
@@ -148,6 +149,7 @@ class VoiceCallActivity : BaseActivity() {
             when (it.what) {
                 CALL_CONNECTED_EVENT -> replaceCallUserFragment()
                 SHOW_RECORDING_PERMISSION_DIALOG -> showRecordingPermissionDialog()
+                SHOW_RECORDING_REJECTED_DIALOG -> showRecordingRejectedDialog()
                 CLOSE_CALL_SCREEN -> finish()
                 else -> {
                     if (it.what < 0) {
@@ -157,6 +159,17 @@ class VoiceCallActivity : BaseActivity() {
                 }
             }
         }
+    }
+
+    private fun showRecordingRejectedDialog() {
+        MaterialAlertDialogBuilder(this)
+            .setTitle("Recording request rejected")
+            .setMessage("User declined your request to start recording")
+            .setPositiveButton("Dismiss") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
+
     }
 
     private fun showRecordingPermissionDialog() {

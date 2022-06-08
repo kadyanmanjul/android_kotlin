@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.ui.voip.new_arch.ui.utils
 
 import android.content.Intent
+import android.os.SystemClock
 import android.widget.Chronometer
 import androidx.appcompat.widget.AppCompatImageButton
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -35,23 +36,23 @@ fun CircleImageView.setProfileImage(imageUrl: String?) {
 
 @BindingAdapter("setCallBackground")
 fun ConstraintLayout.setCallBackground(callType: Int) {
-        when (callType) {
-             PEER_TO_PEER -> {
+    when (callType) {
+        PEER_TO_PEER -> {
 //                 Normal Call
-                 this.setBackgroundColor(resources.getColor(R.color.colorPrimary))
-             }
-             FPP -> {
-//                 FPP
-                 this.setBackgroundResource(R.drawable.voip_bg)
-             }
-             GROUP -> {
-//                 Group Call
-                 this.setBackgroundColor(resources.getColor(R.color.colorPrimary))
-            }
-            else ->{
-                this.setBackgroundColor(resources.getColor(R.color.colorPrimary))
-            }
+            this.setBackgroundColor(resources.getColor(R.color.colorPrimary))
         }
+        FPP -> {
+//                 FPP
+            this.setBackgroundResource(R.drawable.voip_bg)
+        }
+        GROUP -> {
+//                 Group Call
+            this.setBackgroundColor(resources.getColor(R.color.colorPrimary))
+        }
+        else -> {
+            this.setBackgroundColor(resources.getColor(R.color.colorPrimary))
+        }
+    }
 }
 
 @BindingAdapter("setSpeakerImage")
@@ -78,7 +79,8 @@ fun AppCompatImageButton.setMicImage(isMute: Boolean) {
         this.backgroundTintList =
             ContextCompat.getColorStateList(context, R.color.white)
         this.imageTintList =
-            ContextCompat.getColorStateList(context, R.color.grey_61)    }
+            ContextCompat.getColorStateList(context, R.color.grey_61)
+    }
 }
 
 @BindingAdapter("setRecordButtonImage")
@@ -92,7 +94,7 @@ fun AppCompatImageButton.setRecordButtonImage(isRecording: Boolean) {
 
 @BindingAdapter("startTimer")
 fun Chronometer.startTimer(baseTime: Long) {
-    if(baseTime > 0) {
+    if (baseTime > 0) {
         base = baseTime
         start()
     }
@@ -101,6 +103,7 @@ fun Chronometer.startTimer(baseTime: Long) {
 @BindingAdapter("recordTimeStarts")
 fun Chronometer.recordTimeStarts(b: Boolean) {
     if (b) {
+        this.base = SystemClock.elapsedRealtime()
         this.start()
     }
 }
@@ -109,7 +112,7 @@ fun Chronometer.recordTimeStarts(b: Boolean) {
 @BindingAdapter("acceptCall")
 fun AppCompatImageButton.acceptCall(isAccept: Boolean?) {
     this.setOnClickListener {
-        if(isAccept == true){
+        if (isAccept == true) {
             val intent = Intent(context, VoiceCallActivity::class.java).apply {
                 putExtra(STARTING_POINT, FROM_INCOMING_CALL)
             }
@@ -117,14 +120,15 @@ fun AppCompatImageButton.acceptCall(isAccept: Boolean?) {
         }
     }
 }
+
 @BindingAdapter("setViewPagerAdapter")
 fun ViewPager2.setViewPagerAdapter(image: String?) {
     val imageList = ArrayList<String>()
     if (image != null) {
         imageList.add(image)
     }
-    if(!imageList.isNullOrEmpty()) {
+    if (!imageList.isNullOrEmpty()) {
         val adapter = TopicImageAdapter(imageList, context)
-        this.adapter=adapter
+        this.adapter = adapter
     }
 }
