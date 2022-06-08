@@ -60,6 +60,7 @@ interface ChannelData : IncomingData {
     fun getTopicImage() : String
     fun getOccupation() : String
     fun getAspiration() : String
+    fun isNewSearchingEnabled() : Boolean
 }
 
 class IncorrectCommunicationDataException(message: String) : Exception(message)

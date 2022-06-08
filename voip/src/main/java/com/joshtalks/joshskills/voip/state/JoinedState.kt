@@ -18,7 +18,8 @@ import com.joshtalks.joshskills.voip.webrtc.USER_QUIT_CHANNEL
 import kotlinx.coroutines.*
 
 // User Joined the Agora Channel
-const val CONNECTING_TIMER = 5 * 1000L
+const val CONNECTING_TIMER = 10 * 1000L
+const val RETRY_TIMER = 5 * 1000L
 
 class JoinedState(val context: CallContext) : VoipState {
     private val TAG = "JoinedState"
@@ -31,20 +32,34 @@ class JoinedState(val context: CallContext) : VoipState {
     private val connectingTimer by lazy {
         scope.launch(start = CoroutineStart.LAZY) {
             try{
-                Log.d(TAG, "Connecting Timer Started")
-                delay(CONNECTING_TIMER)
-                ensureActive()
-                context.channelData = (context.channelData as Channel).removeChannel()
-                CallAnalytics.addAnalytics(
-                    event = EventName.NEXT_CHANNEL_REQUESTED,
-                    agoraCallId = context.channelData.getCallingId().toString(),
-                    agoraMentorId = context.channelData.getAgoraUid().toString(),
-                    extra = TAG
-                )
-                listenerJob?.cancel()
-                context.isRetrying = true
-                PrefManager.setVoipState(State.SEARCHING)
-                context.state = SearchingState(context)
+                if(context.channelData.isNewSearchingEnabled()) {
+                    Log.d(TAG, "Retry Timer Started")
+                    delay(RETRY_TIMER)
+                    ensureActive()
+                    context.channelData = (context.channelData as Channel).removeChannel()
+                    CallAnalytics.addAnalytics(
+                        event = EventName.NEXT_CHANNEL_REQUESTED,
+                        agoraCallId = context.channelData.getCallingId().toString(),
+                        agoraMentorId = context.channelData.getAgoraUid().toString(),
+                        extra = TAG
+                    )
+                    listenerJob?.cancel()
+                    context.isRetrying = true
+                    PrefManager.setVoipState(State.SEARCHING)
+                    context.state = SearchingState(context)
+                } else {
+                    Log.d(TAG, "Connecting Timer Started")
+                    delay(CONNECTING_TIMER)
+                    ensureActive()
+                    CallAnalytics.addAnalytics(
+                        event = EventName.DISCONNECTED_BY_CONNECTING_TIMEOUT,
+                        agoraCallId = context.channelData.getCallingId().toString(),
+                        agoraMentorId = context.channelData.getAgoraUid().toString(),
+                        extra = TAG
+                    )
+                    context.closeCallScreen()
+                    moveToLeavingState()
+                }
             }
             catch (e : Exception){
                 if(e is CancellationException)
@@ -90,7 +105,9 @@ class JoinedState(val context: CallContext) : VoipState {
             agoraMentorId = context.channelData.getAgoraUid().toString(),
             extra = TAG
         )
-        disconnect()
+        // TODO: Will Remove
+        if(context.channelData.isNewSearchingEnabled())
+            disconnect()
     }
 
     override fun onError() {

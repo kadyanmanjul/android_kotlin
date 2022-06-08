@@ -151,7 +151,6 @@ class SearchingState(val context: CallContext) : VoipState {
             try {
                 context.closeCallScreen()
                 sendDataToServer()
-                moveToLeavingState()
             } catch (e: Exception) {
                 if (e is CancellationException)
                     throw e
@@ -285,7 +284,7 @@ class SearchingState(val context: CallContext) : VoipState {
 
     private suspend fun moveToLeavingState() {
         try {
-            if (context.hasChannelData() && context.channelData.getChannel().isBlank()) {
+            if (context.isRetrying) {
                 context.disconnectCall()
                 PrefManager.setVoipState(State.LEAVING)
                 context.state = LeavingState(context)
