@@ -261,6 +261,17 @@ class JoinedState(val context: CallContext) : VoipState {
                             )
                             context.updateUIState(uiState = uiState)
                         }
+                        REMOTE_USER_DISCONNECTED_MESSAGE-> {
+                            // Ignore Error Event from Agora
+                            val msg = "Ignoring : In $TAG but received ${event.type} expected $CALL_CONNECTED_EVENT"
+                            CallAnalytics.addAnalytics(
+                                event = EventName.ILLEGAL_EVENT_RECEIVED,
+                                agoraCallId = context.channelData.getCallingId().toString(),
+                                agoraMentorId = context.channelData.getAgoraUid().toString(),
+                                extra = msg
+                            )
+                            Log.d(TAG, "Ignoring : In $TAG but received ${event.type} expected $CALL_CONNECTED_EVENT")
+                        }
                         RECONNECTED,RECEIVED_CHANNEL_DATA,RECONNECTING-> {
                             // Ignore Error Event from Agora
                             val msg = "Ignoring : In $TAG but received ${event.type} expected $CALL_CONNECTED_EVENT"
