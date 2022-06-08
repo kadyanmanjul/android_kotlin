@@ -84,10 +84,24 @@ class CallUIState : BaseObservable() {
         }
 
     @get:Bindable
+    var recordTime : Long = 0L
+        set(value) {
+            field = value
+            notifyPropertyChanged(BR.recordTime)
+        }
+
+    @get:Bindable
     var recordBtnImg: Int = R.drawable.call_fragment_record
         set(value) {
             field = value
             notifyPropertyChanged(BR.recordBtnImg)
+        }
+
+    @get:Bindable
+    var recordCrdViewTxt: String = "Waiting for your partner to accept"
+        set(value) {
+            field = value
+            notifyPropertyChanged(BR.recordCrdViewTxt)
         }
 
     @get:Bindable
@@ -165,5 +179,12 @@ class CallUIState : BaseObservable() {
         set(value) {
             field = value
             notifyPropertyChanged(BR.aspiration)
+        }
+
+    @get:Bindable
+    var timerStarts: Boolean = false
+        set(value) {
+            field = value
+            notifyPropertyChanged(BR.timerStarts)
         }
 }

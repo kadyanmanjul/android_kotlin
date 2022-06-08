@@ -98,6 +98,13 @@ fun Chronometer.startTimer(baseTime: Long) {
     }
 }
 
+@BindingAdapter("recordTimeStarts")
+fun Chronometer.recordTimeStarts(b: Boolean) {
+    if (b) {
+        this.start()
+    }
+}
+
 
 @BindingAdapter("acceptCall")
 fun AppCompatImageButton.acceptCall(isAccept: Boolean?) {
