@@ -115,7 +115,11 @@ class VoiceCallActivity : BaseActivity() {
                             return
                         }
                         if (flag) {
-                            addCallUserFragment()
+                            if (vm.source == FROM_INCOMING_CALL || vm.source == FROM_CALL_BAR) {
+                                addCallUserFragment()
+                            } else if (vm.source == FROM_ACTIVITY) {
+                                addSearchingUserFragment()
+                            }
                             return
                         } else {
                             finish()
