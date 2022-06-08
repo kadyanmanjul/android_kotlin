@@ -90,9 +90,7 @@
         <activity
             android:name=".feed.FeedActivity"
             android:exported="true"
-            android:screenOrientation="portrait"
-            android:showOnLockScreen="true"
-            android:showWhenLocked="true" />
+            android:screenOrientation="portrait" />
 
         <meta-data
             android:name="io.branch.sdk.BranchKey"

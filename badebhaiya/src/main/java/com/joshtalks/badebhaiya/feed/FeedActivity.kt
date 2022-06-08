@@ -21,6 +21,8 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.SearchFragment
@@ -170,6 +172,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         val mUserId = intent.getStringExtra(USER_ID)
 
 //        this.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        val db = Firebase.firestore
         binding = DataBindingUtil.setContentView(this, R.layout.activity_feed)
         binding.lifecycleOwner = this
         binding.handler = this

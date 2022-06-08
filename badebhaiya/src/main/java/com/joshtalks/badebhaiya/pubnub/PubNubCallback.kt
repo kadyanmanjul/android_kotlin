@@ -15,6 +15,7 @@ import com.pubnub.api.models.consumer.pubsub.PNPresenceEventResult
 import com.pubnub.api.models.consumer.pubsub.PNSignalResult
 import com.pubnub.api.models.consumer.pubsub.files.PNFileEventResult
 import com.pubnub.api.models.consumer.pubsub.message_actions.PNMessageActionResult
+import timber.log.Timber
 
 /**
     This object handles all the callbacks from PubNub.
@@ -34,10 +35,14 @@ class PubNubCallback: SubscribeCallback() {
                     "ABCEvent",
                     "message() called with: pubnub = $pubnub, pnMessageResult = $pnMessageResult"
                 )
+//                PubNubManager.eventExists()
+                Timber.d("ABC Event ka msg hai => $msg and PN message result is => $pnMessageResult")
+//                PubNubData.eventsMap[pnMessageResult.timetoken] = msg
                 PubNubManager.postToPubNubEvent(
                     ConversationRoomPubNubEventBus(
                         PubNubEvent.valueOf(act),
-                        msg
+                        msg,
+                        pnMessageResult.timetoken
                     )
                 )
             }
