@@ -195,6 +195,9 @@ enum class NotificationAction(val type: String) {
     @SerializedName("open_groups")
     ACTION_OPEN_GROUPS("open_groups"),
 
+    @SerializedName("open_group_chat_client")
+    ACTION_OPEN_GROUP_CHAT_CLIENT("open_group_chat_client"),
+
     @SerializedName("open_fpp_request_list")
     ACTION_OPEN_FPP_REQUESTS("open_fpp_request_list"),
 

@@ -132,6 +132,11 @@ class NotificationUtils(val context: Context) {
             nc.contentTitle = remoteData.notification?.title ?: remoteData.data["title"]
             nc.contentText = remoteData.notification?.body ?: remoteData.data["body"]
 
+            if (channel == NotificationAnalytics.Channel.GROUPS) {
+                sendNotification(nc)
+                return
+            }
+
             CoroutineScope(Dispatchers.IO).launch {
                 val isFirstTimeNotification = NotificationAnalytics().addAnalytics(
                     notificationId = nc.id.toString(),
@@ -404,8 +409,8 @@ class NotificationUtils(val context: Context) {
             }
             NotificationAction.ACTION_DELETE_CONVERSATION_DATA -> {
                 actionData?.let {
-                    println("action = ${action}")
-                    println("actionData = ${actionData}")
+                    println("action = $action")
+                    println("actionData = $actionData")
                     deleteConversationData(it)
                 }
                 return null
@@ -535,7 +540,7 @@ class NotificationUtils(val context: Context) {
             }
             NotificationAction.ACTION_OPEN_GROUPS -> {
                 return Intent(context, JoshGroupActivity::class.java).apply {
-                    putExtra(CONVERSATION_ID, notificationObject.actionData)
+                    putExtra(CONVERSATION_ID, actionData)
                 }
             }
             NotificationAction.ACTION_OPEN_FPP_REQUESTS -> {
@@ -543,8 +548,15 @@ class NotificationUtils(val context: Context) {
             }
             NotificationAction.ACTION_OPEN_FPP_LIST -> {
                 return Intent(context, FavoriteListActivity::class.java).apply {
-                    putExtra(CONVERSATION_ID, notificationObject.actionData)
+                    putExtra(CONVERSATION_ID, actionData)
                     putExtra(IS_COURSE_BOUGHT, true)
+                }
+            }
+            NotificationAction.ACTION_OPEN_GROUP_CHAT_CLIENT -> {
+                if (actionData.equals(Mentor.getInstance().getId()))
+                    return null
+                return Intent(context, JoshGroupActivity::class.java).apply {
+                    putExtra(CONVERSATION_ID, actionData)
                 }
             }
             else -> {

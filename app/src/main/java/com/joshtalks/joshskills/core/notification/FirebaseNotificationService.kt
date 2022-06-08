@@ -109,9 +109,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             if (Freshchat.isFreshchatNotification(remoteMessage))
                 Freshchat.handleFcmMessage(this, remoteMessage)
             else if (MoEPushHelper.getInstance()
-                    .isFromMoEngagePlatform(remoteMessage.data) && JSONObject(remoteMessage.data["gcm_alert"]).has(
-                    "isCustom"
-                )
+                    .isFromMoEngagePlatform(remoteMessage.data) && JSONObject(remoteMessage.data["gcm_alert"]).has("isCustom")
             ) {
                 val dataJson = JSONObject(remoteMessage.data["gcm_alert"])
                 remoteMessage.data["title"] = dataJson["title"].toString()
@@ -119,21 +117,20 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 remoteMessage.data["action"] = dataJson["client_action"].toString()
                 remoteMessage.data["action_data"] = dataJson["action_data"].toString()
                 remoteMessage.data["notification_id"] = dataJson["notification_id"].toString()
-                NotificationUtils(this).processRemoteMessage(
-                    remoteMessage,
-                    NotificationAnalytics.Channel.MOENGAGE
-                )
+                NotificationUtils(this)
+                    .processRemoteMessage(remoteMessage, NotificationAnalytics.Channel.MOENGAGE)
                 MoEPushHelper.getInstance().logNotificationReceived(this, remoteMessage.data)
                 return
             } else if (MoEPushHelper.getInstance().isFromMoEngagePlatform(remoteMessage.data)) {
-                MoEFireBaseHelper.getInstance()
-                    .passPushPayload(applicationContext, remoteMessage.data)
+                MoEFireBaseHelper.getInstance().passPushPayload(applicationContext, remoteMessage.data)
+                return
+            } else if (remoteMessage.data.containsKey("is_group")) {
+                NotificationUtils(this)
+                    .processRemoteMessage(remoteMessage, NotificationAnalytics.Channel.GROUPS)
                 return
             } else {
-                NotificationUtils(this).processRemoteMessage(
-                    remoteMessage,
-                    NotificationAnalytics.Channel.FCM
-                )
+                NotificationUtils(this)
+                    .processRemoteMessage(remoteMessage, NotificationAnalytics.Channel.FCM)
             }
         } catch (ex: Exception) {
             ex.printStackTrace()
@@ -174,6 +171,11 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 gsonMapper.toJson(data),
                 notificationTypeToken
             )
+
+            if (intent.extras?.containsKey("is_group") == true) {
+                NotificationUtils(this@FirebaseNotificationService).sendNotification(nc)
+                return
+            }
 
             CoroutineScope(Dispatchers.IO).launch {
                 val isFirstTimeNotification = NotificationAnalytics().addAnalytics(

@@ -98,7 +98,6 @@ class NotificationAnalytics {
         try {
             notificationDao.insertNotificationEvent(event)
         } catch (e: Exception) {
-            Timber.tag("Yash").e(e)
             e.printStackTrace()
         }
     }
@@ -115,7 +114,9 @@ class NotificationAnalytics {
         FCM("fcm"),
         FIRESTORE("firestore"),
         MOENGAGE("moengage"),
-        API("API")
+        API("API"),
+        GROUPS("groups"),
+        PUBNUB("PUBNUB")
     }
 }
 

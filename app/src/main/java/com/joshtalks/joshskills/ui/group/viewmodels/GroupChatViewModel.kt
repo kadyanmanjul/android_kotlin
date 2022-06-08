@@ -514,7 +514,13 @@ class GroupChatViewModel : BaseViewModel() {
                 this.setTitle("${groupHeader.get()}")
                 this.setBody("${Mentor.getInstance().getUser()?.firstName} : $msg")
             })
-
+                .setData(
+                    mapOf(
+                        Pair("is_group", "true"),
+                        Pair("action", "open_group_chat_client"),
+                        Pair("action_data", Mentor.getInstance().getId())
+                    )
+                )
         }
         pushPayloadHelper.setFcmPayload(fcmPayload)
 
