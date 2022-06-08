@@ -34,6 +34,12 @@ class CallUIState : BaseObservable() {
             field = value
             notifyPropertyChanged(BR.currentState)
         }
+    @get:Bindable
+    var recordingCurrentState : String = "Waiting for your partner to accept"
+        set(value) {
+            field = value
+            notifyPropertyChanged(BR.recordingCurrentState)
+        }
 
     @get:Bindable
     var name : String = ""
@@ -103,6 +109,20 @@ class CallUIState : BaseObservable() {
         set(value) {
             field = value
             notifyPropertyChanged(BR.recording)
+        }
+
+    @get:Bindable
+    var isRecordingPermissionSent: Boolean = false
+        set(value) {
+            field = value
+            notifyPropertyChanged(BR.recordingPermissionSent)
+        }
+
+    @get:Bindable
+    var recordingStartTime : Long = 0L
+        set(value) {
+            field = value
+            notifyPropertyChanged(BR.startTime)
         }
 
     @get:Bindable

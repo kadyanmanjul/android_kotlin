@@ -389,7 +389,10 @@ data class UIState(
     val isRemoteUserMuted: Boolean = false,
     val isOnMute: Boolean = false,
     val isReconnecting: Boolean = false,
-    val startTime: Long = 0L
+    val startTime: Long = 0L,
+    val isRecordingStarted :Boolean = false,
+    val isRecordingPermissionSent : Boolean = false,
+    val recordingStartTime : Long = 0L
 ) {
     companion object {
         fun empty() = UIState("", null, "", 0,"","","")
