@@ -36,7 +36,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class CallFragment : BaseFragment() , SensorEventListener {
+class   CallFragment : BaseFragment() , SensorEventListener {
     private val TAG = "CallFragment"
 
     lateinit var callBinding: FragmentCallBinding

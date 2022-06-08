@@ -166,6 +166,7 @@ class VoiceCallActivity : BaseActivity() {
                     .inflate(R.layout.dialog_record_call, null)
             )
             setPositiveButton("ACCEPT") { dialog, _ ->
+                vm.recordingStartedUIChanges()
                 vm.acceptCallRecording()
                 dialog.dismiss()
             }

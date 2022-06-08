@@ -170,9 +170,23 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="7.65dp"
                     android:layout_marginRight="7.65dp"
-                    android:text="Waiting for your partner to accept"
+                    android:text="@{vm.uiState.recordCrdViewTxt}"
+                    tools:text="Waiting for your partner to accept"
                     android:textColor="@color/white"
                     android:textSize="12sp" />
+
+                <Chronometer
+                    android:id="@+id/call_time2"
+                    recordTimeStarts="@{vm.uiState.timerStarts}"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="12sp"
+                    android:gravity="center"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+                    android:textColor="@color/white"
+                    tools:visibility="gone"
+                    android:visibility='@{vm.uiState.timerStarts ? View.VISIBLE : View.GONE}'
+                    tools:ignore="MissingPrefix" />
 
             </LinearLayout>
 
