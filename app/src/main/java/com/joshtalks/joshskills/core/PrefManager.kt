@@ -7,6 +7,7 @@ import android.content.SharedPreferences
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.preference.PreferenceManager
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.base.constants.CALLING_SERVICE_ACTION
 import com.joshtalks.joshskills.base.constants.SERVICE_BROADCAST_KEY
@@ -155,6 +156,7 @@ const val IS_HINGLISH_SELECTED = "is_hinglish_selected"
 const val SERVER_TIME_OFFSET = "server_time_offset"
 const val IS_A2_C1_RETENTION_ENABLED = "is_a2_c1_retention_enabled"
 const val ONE_GROUP_REQUEST_SENT = "ONE_GROUP_REQUEST_SENT"
+const val GROUP_NOTIFICATION_TIMES = "GROUP_NOTIFICATION_TIMES"
 
 const val MOENGAGE_USER_CREATED = "MOENGAGE_USER_CREATED"
 const val INCREASE_COURSE_PRICE_ABTEST = "INCREASE_COURSE_PRICE_ABTEST"
@@ -307,11 +309,19 @@ object PrefManager {
         val json: String = getStringValue(key = key, defaultValue = "") as String
         return gson.fromJson(json, ReportModel::class.java)
     }
+
+    fun getPrefMap(key: String): MutableMap<String, Any?>? {
+        val gson = Gson()
+        val json: String = getStringValue(key = key, defaultValue = "") as String
+        return gson.fromJson(json, object : TypeToken<MutableMap<String, Any?>>() {}.type)
+    }
+
     fun getLessonObject(key: String): LessonModel? {
         val gson = Gson()
         val json: String = getStringValue(key = key, defaultValue = "") as String
         return gson.fromJson(json, LessonModel::class.java)
     }
+
     fun getVoipPrefObject(key: String): VoipReportModel? {
         val gson = Gson()
         val json: String = getStringValue(key = key, defaultValue = "") as String
