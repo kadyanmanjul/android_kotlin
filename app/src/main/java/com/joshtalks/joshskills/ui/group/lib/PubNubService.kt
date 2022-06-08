@@ -129,6 +129,32 @@ object PubNubService : ChatService {
         }
     }
 
+    override fun removeNotifications(groups: List<String>) {
+        try {
+            if (groups.isNotEmpty())
+                pubnub.removePushNotificationsFromChannels()
+                    .pushType(PNPushType.FCM)
+                    .channels(groups)
+                    .deviceId(PrefManager.getStringValue(FCM_TOKEN))
+                    .sync()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Log.e(TAG, "Error in removing notifications")
+        }
+    }
+
+    override fun cancelAllPubNubNotifications() {
+        try {
+            pubnub.removeAllPushNotificationsFromDeviceWithPushToken()
+                .pushType(PNPushType.FCM)
+                .deviceId(PrefManager.getStringValue(FCM_TOKEN))
+                .sync()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Log.e(TAG, "Error in canceling notifications")
+        }
+    }
+
     override fun getLastMessageDetail(groupId: String,groupType:String): Pair<String, Long> {
         val msg = pubnub.fetchMessages()
             .channels(listOf(groupId))

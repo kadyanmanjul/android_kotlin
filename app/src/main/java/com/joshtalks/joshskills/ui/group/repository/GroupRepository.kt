@@ -292,6 +292,7 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
         val response = apiService.leaveGroup(request)
         if (response.isSuccessful) {
             leaveGroupFromLocal(request.groupId)
+            chatService.removeNotifications(listOf(request.groupId))
             return database.groupListDao().getGroupsCount()
         }
         return null

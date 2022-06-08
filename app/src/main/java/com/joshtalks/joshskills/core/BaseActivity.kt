@@ -601,7 +601,7 @@ abstract class BaseActivity :
             AppAnalytics.create(AnalyticsEvent.LOGOUT_CLICKED.NAME)
                     .addUserDetails()
                     .addParam(AnalyticsEvent.USER_LOGGED_OUT.NAME, true).push()
-            PubNubService.dispatchNotifications(emptyList())
+            PubNubService.cancelAllPubNubNotifications()
             val intent = Intent(AppObjectController.joshApplication, SignUpActivity::class.java)
             intent.apply {
                 addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
