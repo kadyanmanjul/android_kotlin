@@ -29,7 +29,7 @@ class CallRecording {
                 recorder?.setAudioChannels(1)
                 recorder?.setAudioSamplingRate(16000)
                 recorder?.setAudioEncodingBitRate(32000)
-                recorder?.setAudioSource(MediaRecorder.AudioSource.VOICE_CALL)
+                recorder?.setAudioSource(MediaRecorder.AudioSource.VOICE_COMMUNICATION)
                 recorder?.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
                 recorder?.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
                 recorder?.setOutputFile(recordFile?.absolutePath)
