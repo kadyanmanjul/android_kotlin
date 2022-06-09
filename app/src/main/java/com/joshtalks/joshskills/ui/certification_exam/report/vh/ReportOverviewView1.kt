@@ -10,9 +10,13 @@ import android.view.View
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
+import androidx.preference.PreferenceManager
 import com.google.android.material.button.MaterialButton
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.IS_CERTIFICATE_GENERATED
+import com.joshtalks.joshskills.core.IS_FIRST_TIME_CERTIFICATE
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.analytics.ParamKeys
@@ -25,6 +29,8 @@ import com.joshtalks.joshskills.repository.server.certification_exam.Certificati
 import com.mindorks.placeholderview.annotations.Click
 import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
+import timber.log.Timber
+import java.text.DecimalFormat
 
 @SuppressLint("NonConstantResourceId")
 @Layout(R.layout.layout_report_overview_view1)
@@ -55,12 +61,12 @@ class ReportOverviewView1(private val certificateExamReport: CertificateExamRepo
         certificateExamReport.run {
             headerTv.text = heading
             resultInfo.text = HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_LEGACY)
-            if (isExamPass) {
+            if (isExamPass) { //change for test
                 cDownloadGroup.visibility = View.VISIBLE
                 checkExamDetails.setTextColor(
                     ContextCompat.getColor(
                         context,
-                        R.color.colorAccent
+                        R.color.blue_btn_text_check_exam_details
                     )
                 )
                 checkExamDetails.backgroundTintList = ColorStateList.valueOf(
@@ -69,19 +75,37 @@ class ReportOverviewView1(private val certificateExamReport: CertificateExamRepo
                         R.color.white
                     )
                 )
+
+                checkExamDetails.strokeColor = ColorStateList.valueOf(
+                    ContextCompat.getColor(
+                        context,
+                        R.color.blue_btn_text_check_exam_details
+                    )
+                )
+
+                checkExamDetails.strokeWidth = 2
+
                 if (certificateURL.isNullOrEmpty()) {
                     downloadCertificateBtn.visibility = View.GONE
                 }
+                if (PrefManager.getBoolValue(IS_CERTIFICATE_GENERATED, defValue = true)) {
+                    checkExamDetails.visibility = View.GONE
+                }else{
+                    downloadCertificateBtn.text = "Show Certificate"
+                    checkExamDetails.visibility = View.VISIBLE
+                }
             }
-            checkExamDetails.visibility = View.VISIBLE
+
             scoreTv.text = getScoreText(score, maxScore)
         }
     }
 
     private fun getScoreText(score: Double, maxScore: Int): SpannableString? {
         val string1 = context.getString(R.string.your_score)
-        val string2 = score.toString().plus("/").plus(maxScore.toString())
-        val s = SpannableString(string1 + string2)
+        val format = DecimalFormat("0.#") // to remove trailing zeroes
+        val formattedScore = format.format(score)
+        val string2 = formattedScore.toString().plus(" / ").plus(maxScore.toString())
+        val s = SpannableString(string1 + "\n" + string2)
         s.setSpan(
             AbsoluteSizeSpan(24, true),
             string1.length,
@@ -93,6 +117,7 @@ class ReportOverviewView1(private val certificateExamReport: CertificateExamRepo
 
     @Click(R.id.btn_download_certificate)
     fun downloadCertificate() {
+        Timber.tag("MihirTag").e("Here 1")
         RxBus2.publish(
             DownloadFileEventBus(
                 id = certificateExamReport.reportId,

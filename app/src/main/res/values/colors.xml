@@ -237,4 +237,6 @@
     <color name="blue_cbc_text_timeslot">#0D63B9</color>
     <color name="gray_cbc_text_timeslot">#5B6272</color>
 
+    <color name="blue_btn_text_check_exam_details">#117CDE</color>
+
 </resources>

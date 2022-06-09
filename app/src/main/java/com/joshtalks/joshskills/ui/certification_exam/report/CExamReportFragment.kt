@@ -9,6 +9,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.databinding.FragmentCexamReportBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.EmptyEventBus
@@ -52,6 +53,8 @@ class CExamReportFragment : Fragment() {
     private var certificateExamReport: CertificateExamReportModel? = null
     private var questionList: List<CertificationQuestion> = emptyList()
     private var compositeDisposable = CompositeDisposable()
+    private var id:Int? =null
+    private lateinit var url:String
     private val viewModel: CertificationExamViewModel by lazy {
         ViewModelProvider(requireActivity()).get(CertificationExamViewModel::class.java)
     }
@@ -80,6 +83,8 @@ class CExamReportFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        id = certificateExamReport!!.reportId
+        url = certificateExamReport!!.certificateURL?:EMPTY
         certificateExamReport?.run {
             binding.chatRv.addView(ReportOverviewView1(this))
             binding.chatRv.addView(ReportOverviewView2(this, questionList))

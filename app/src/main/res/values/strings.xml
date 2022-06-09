@@ -518,7 +518,7 @@
     <string name="finish_exam">Finish Exam</string>
     <string name="resume_examination">Resume Examination</string>
     <string name="your_score">Your Score</string>
-    <string name="download_certificate_2">Download Certificate</string>
+    <string name="download_certificate_2">Generate Certificate</string>
     <string name="check_exam_details">Check exam details</string>
     <string name="examination_result">Examination Result</string>
     <string name="check_answer">Check Answer</string>

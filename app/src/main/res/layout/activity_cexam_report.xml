@@ -12,16 +12,20 @@
             type="com.joshtalks.joshskills.ui.certification_exam.report.CExamReportActivity" />
     </data>
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/root_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fitsSystemWindows="true">
 
         <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appBarLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/colorPrimary"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
             <com.google.android.material.appbar.MaterialToolbar
@@ -103,19 +107,19 @@
                 app:tabPaddingStart="@dimen/_8sdp"
                 app:tabSelectedTextColor="@color/black"
                 app:tabTextAppearance="@style/TabLayoutStyleReport"
-                app:tabTextColor="@color/light_grey"></com.google.android.material.tabs.TabLayout>
+                app:tabTextColor="@color/light_grey" />
         </com.google.android.material.appbar.AppBarLayout>
 
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/exam_report_list"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
             android:background="@android:color/white"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tab_layout"
+            app:layout_constraintTop_toBottomOf="@id/appBarLayout"
             tools:listitem="@layout/course_explorer_view_holder" />
 
         <com.pnikosis.materialishprogress.ProgressWheel
@@ -127,10 +131,10 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/appBarLayout"
             wheel:matProg_barColor="@color/button_color"
             wheel:matProg_fillRadius="true"
             wheel:matProg_linearProgress="false"
             wheel:matProg_progressIndeterminate="true" />
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

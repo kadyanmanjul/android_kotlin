@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.ui.certification_exam.report.udetail
 
 import android.app.PendingIntent
+import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
@@ -14,8 +15,12 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentTransaction
+import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import com.facebook.appevents.codeless.internal.ViewHierarchy.setOnClickListener
 import com.google.android.gms.auth.api.credentials.Credential
 import com.google.android.gms.auth.api.credentials.CredentialPickerConfig
 import com.google.android.gms.auth.api.credentials.Credentials
@@ -27,14 +32,25 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.POSTAL_ADDRESS
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.POSTAL_ADDRESS_SUBHEADING_CERT_FORM
+import com.joshtalks.joshskills.base.BaseFragment
+import com.joshtalks.joshskills.core.ApiCallStatus
+import com.joshtalks.joshskills.core.BaseActivity
+import com.joshtalks.joshskills.core.DATE_FORMATTER
+import com.joshtalks.joshskills.core.DATE_FORMATTER_2
+import com.joshtalks.joshskills.core.EMAIL_HINT
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.MAX_YEAR
+import com.joshtalks.joshskills.core.RC_HINT
 import com.joshtalks.joshskills.core.custom_ui.spinnerdatepicker.DatePickerDialog
 import com.joshtalks.joshskills.core.custom_ui.spinnerdatepicker.SpinnerDatePickerDialogBuilder
 import com.joshtalks.joshskills.core.interfaces.FileDownloadCallback
 import com.joshtalks.joshskills.core.service.CONVERSATION_ID
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityCertificateDetailBinding
 import com.joshtalks.joshskills.repository.server.certification_exam.CertificationUserDetail
 import com.joshtalks.joshskills.ui.certification_exam.CertificationExamViewModel
-import com.joshtalks.joshskills.ui.certification_exam.view.CertificateDownloadDialog
+import com.joshtalks.joshskills.ui.certification_exam.constants.*
+import com.joshtalks.joshskills.ui.certification_exam.view.CertificateShareFragment
 import java.text.ParseException
 import java.util.Calendar
 import java.util.Date
@@ -61,6 +77,7 @@ class CertificateDetailActivity : BaseActivity(), FileDownloadCallback {
     private var mCredentialsApiClient: CredentialsClient? = null
     private var emailHintShowing = false
     private var isPostalRequire = false
+    var progressDialog: ProgressDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         requestedOrientation = if (Build.VERSION.SDK_INT == 26) {
@@ -73,10 +90,17 @@ class CertificateDetailActivity : BaseActivity(), FileDownloadCallback {
             DataBindingUtil.setContentView(this, R.layout.activity_certificate_detail)
         binding.lifecycleOwner = this
         binding.handler = this
-        initDOBPicker()
-        initView()
-        addObserver()
-        viewModel.getCertificateUserDetails()
+        if (intent.hasExtra(CERTIFICATE_URL)){
+            intent.getStringExtra(CERTIFICATE_URL)?.let { openCertificateShareFragment(it) }
+            initView()
+        }
+        else{
+            initView()
+            initDOBPicker()
+            addObserver()
+            viewModel.getCertificateUserDetails()
+        }
+
     }
 
     private fun initView() {
@@ -88,26 +112,32 @@ class CertificateDetailActivity : BaseActivity(), FileDownloadCallback {
         }
         findViewById<AppCompatTextView>(R.id.text_message_title).text = "Certificate Details"
         findViewById<AppCompatImageView>(R.id.iv_icon_referral).visibility = View.GONE
-
-        mCredentialsApiClient = Credentials.getClient(this)
-        binding.etMobile.setOnFocusChangeListener { v, hasFocus ->
-            if (hasFocus)
-                requestHint()
-        }
-        binding.etEmail.setOnFocusChangeListener { v, hasFocus ->
-            if (hasFocus)
-                emailChooser()
-        }
-
-        binding.etPostal.overScrollMode = View.OVER_SCROLL_ALWAYS
-        binding.etPostal.scrollBarStyle = View.SCROLLBARS_INSIDE_INSET
-        binding.etPostal.movementMethod = ScrollingMovementMethod.getInstance()
-        binding.etPostal.setOnTouchListener { view, motionEvent ->
-            view.parent.requestDisallowInterceptTouchEvent(true)
-            if (motionEvent.action and MotionEvent.ACTION_UP !== 0 && motionEvent.actionMasked and MotionEvent.ACTION_UP !== 0) {
-                view.parent.requestDisallowInterceptTouchEvent(false)
+        if (intent.hasExtra(CERTIFICATE_URL)) {
+            findViewById<AppCompatTextView>(R.id.text_message_title).text = "Examination Certificate"
+            hideProgressBar()
+            binding.progressBar.visibility = View.GONE
+        }else {
+            findViewById<AppCompatTextView>(R.id.text_message_title).text = "Certificate Details"
+            mCredentialsApiClient = Credentials.getClient(this)
+            binding.etMobile.setOnFocusChangeListener { v, hasFocus ->
+                if (hasFocus)
+                    requestHint()
             }
-            false
+            binding.etEmail.setOnFocusChangeListener { v, hasFocus ->
+                if (hasFocus)
+                    emailChooser()
+            }
+
+            binding.etPostal.overScrollMode = View.OVER_SCROLL_ALWAYS
+            binding.etPostal.scrollBarStyle = View.SCROLLBARS_INSIDE_INSET
+            binding.etPostal.movementMethod = ScrollingMovementMethod.getInstance()
+            binding.etPostal.setOnTouchListener { view, motionEvent ->
+                view.parent.requestDisallowInterceptTouchEvent(true)
+                if (motionEvent.action and MotionEvent.ACTION_UP !== 0 && motionEvent.actionMasked and MotionEvent.ACTION_UP !== 0) {
+                    view.parent.requestDisallowInterceptTouchEvent(false)
+                }
+                false
+            }
         }
     }
 
@@ -193,16 +223,15 @@ class CertificateDetailActivity : BaseActivity(), FileDownloadCallback {
 
     private fun addObserver() {
         viewModel.apiStatus.observe(
-            this,
-            {
-                if (it == ApiCallStatus.FAILED) {
-                    CertificateDownloadDialog.hideProgressBar(this)
-                }
+            this
+        ) {
+            if (it == ApiCallStatus.FAILED) {
+                hideProgressBar()
             }
-        )
+        }
         lifecycleScope.launchWhenCreated {
             viewModel.certificateUrl.collectLatest {
-                getCertificateDownloadProgress()?.updateDownloadUrl(it)
+                openCertificateShareFragment(it)
             }
         }
 
@@ -301,11 +330,7 @@ class CertificateDetailActivity : BaseActivity(), FileDownloadCallback {
                 showToast(getString(R.string.enter_valid_email_toast))
                 return@launch
             }
-            CertificateDownloadDialog.showDownloadCertificateDialog(
-                supportFragmentManager,
-                EMPTY,
-                cancelable = true
-            )
+            //showProgressDialog("Please Wait for the Certificate to be Generated")
             viewModel.postCertificateUserDetails(getUserDetail())
         }
     }
@@ -380,20 +405,33 @@ class CertificateDetailActivity : BaseActivity(), FileDownloadCallback {
         }
     }
 
-    private fun getCertificateDownloadProgress(): CertificateDownloadDialog? {
-        return supportFragmentManager.findFragmentByTag(CertificateDownloadDialog::class.java.name) as CertificateDownloadDialog?
-    }
-
     companion object {
         fun startUserDetailsActivity(
             context: Context,
             rId: Int = -1,
             conversationId: String? = null,
+            certificateUrl: String? = null,
         ): Intent {
             return Intent(context, CertificateDetailActivity::class.java).apply {
                 putExtra(CONVERSATION_ID, conversationId)
                 putExtra(REPORT_ID, rId)
+                putExtra(CERTIFICATE_URL,certificateUrl)
             }
         }
     }
+    private fun openCertificateShareFragment(url: String) {
+        supportFragmentManager.commit {
+            setReorderingAllowed(true)
+            val fragment = CertificateShareFragment.newInstance(url)
+            replace(R.id.container_frame, fragment, CERTIFICATE_SHARE_FRAGMENT)
+        }
+    }
+    /*fun showProgressDialog(msg: String) {
+        progressDialog = ProgressDialog(this, R.style.AlertDialogStyle)
+        progressDialog?.setCancelable(false)
+        progressDialog?.setMessage(msg)
+        progressDialog?.show()
+    }
+
+    fun dismissProgressDialog() = progressDialog?.dismiss()*/
 }
