@@ -102,11 +102,13 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                     }
                     ServiceEvents.CALL_CONNECTED_EVENT -> {
                         uiState.currentState = "Timer"
-                        val msg = Message.obtain().apply {
-                            what = CALL_CONNECTED_EVENT
-                        }
-                        withContext(Dispatchers.Main) {
-                            singleLiveEvent.value = msg
+                        if(source != FROM_INCOMING_CALL) {
+                            val msg = Message.obtain().apply {
+                                what = CALL_CONNECTED_EVENT
+                            }
+                            withContext(Dispatchers.Main) {
+                                singleLiveEvent.value = msg
+                            }
                         }
                     }
                     ServiceEvents.CLOSE_CALL_SCREEN -> {
