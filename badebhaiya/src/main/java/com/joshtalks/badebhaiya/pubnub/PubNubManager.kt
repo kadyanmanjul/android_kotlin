@@ -12,7 +12,6 @@ import com.google.gson.reflect.TypeToken
 import com.joshtalks.badebhaiya.BuildConfig
 import com.joshtalks.badebhaiya.core.AppObjectController
 import com.joshtalks.badebhaiya.core.EMPTY
-import com.joshtalks.badebhaiya.core.LogException
 import com.joshtalks.badebhaiya.feed.NotificationView
 import com.joshtalks.badebhaiya.feed.model.LiveRoomUser
 import com.joshtalks.badebhaiya.liveroom.*
@@ -24,33 +23,18 @@ import com.joshtalks.badebhaiya.liveroom.model.StartingLiveRoomProperties
 import com.joshtalks.badebhaiya.liveroom.service.ConvoWebRtcService
 import com.joshtalks.badebhaiya.liveroom.viewmodel.*
 import com.joshtalks.badebhaiya.pubnub.PubNubData._audienceList
-import com.joshtalks.badebhaiya.pubnub.PubNubData._liveEvent
 import com.joshtalks.badebhaiya.pubnub.PubNubData._speakersList
-import com.joshtalks.badebhaiya.pubnub.PubNubData.audienceList
-import com.joshtalks.badebhaiya.pubnub.PubNubData.pubNubEvents
 import com.joshtalks.badebhaiya.pubnub.fallback.FallbackManager
 import com.joshtalks.badebhaiya.repository.PubNubExceptionRepository
 import com.joshtalks.badebhaiya.repository.model.PubNubExceptionRequest
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.utils.DEFAULT_NAME
-import com.joshtalks.badebhaiya.utils.UniqueList
 import com.joshtalks.badebhaiya.utils.Utils
 import com.pubnub.api.PNConfiguration
 import com.pubnub.api.PubNub
 import com.pubnub.api.callbacks.SubscribeCallback
-import com.pubnub.api.enums.PNReconnectionPolicy
-import com.pubnub.api.models.consumer.PNStatus
-import com.pubnub.api.models.consumer.objects_api.channel.PNChannelMetadataResult
 import com.pubnub.api.models.consumer.objects_api.member.PNUUID
-import com.pubnub.api.models.consumer.objects_api.membership.PNMembershipResult
-import com.pubnub.api.models.consumer.objects_api.uuid.PNUUIDMetadataResult
-import com.pubnub.api.models.consumer.pubsub.PNMessageResult
-import com.pubnub.api.models.consumer.pubsub.PNPresenceEventResult
-import com.pubnub.api.models.consumer.pubsub.PNSignalResult
-import com.pubnub.api.models.consumer.pubsub.files.PNFileEventResult
-import com.pubnub.api.models.consumer.pubsub.message_actions.PNMessageActionResult
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
 import timber.log.Timber
 import java.util.*
 
@@ -101,27 +85,6 @@ object PubNubManager {
         }
     }
 
-    fun eventExists(){
-        // TODO: Remove this
-        CoroutineScope(Dispatchers.IO).launch {
-//            val eventsList = mutableListOf<Message>()
-//            _liveEvent.toCollection(eventsList)
-            Timber.d("Events flow => $_liveEvent.")
-        }
-        CoroutineScope(Dispatchers.IO).launch {
-             pubNubEvents.filter { it.eventId == 789734958734 }
-            pubNubEvents.collect {  msg ->
-//                msg.action.
-                Timber.d("Events flow This is a JSON Object")
-                Timber.d("Events flow ki id ye hai => ${msg.eventId}")
-
-                msg.data.keySet().forEach {
-                    Timber.d("Events flow in collect KEY => $it and VALUE => ${msg.data.get(it)}")
-                }
-            }
-        }
-    }
-
     fun initPubNub() {
         val pnConf = PNConfiguration()
         pnConf.subscribeKey = BuildConfig.PUBNUB_SUB_API_KEY
@@ -148,7 +111,7 @@ object PubNubManager {
 //        collectPubNubEvents()
         changePubNubState(PubNubState.STARTED)
 
-        FallbackManager.start()
+//        FallbackManager.start()
 
         }
 
@@ -179,7 +142,7 @@ object PubNubManager {
         } catch (e: Exception){
 
         }
-        FallbackManager.end()
+//        FallbackManager.end()
     }
 
 
@@ -409,18 +372,27 @@ object PubNubManager {
     }
 
     fun sendCustomMessage(state: JsonElement, channel: String = liveRoomProperties!!.channelName) {
+        val eventId = System.currentTimeMillis()
+        val eventData = state.asJsonObject
+        eventData.addProperty("event_id", eventId)
         jobs += CoroutineScope(Dispatchers.IO).launch() {
             try {
                 channel.let {
                     pubnub.publish()
-                        .message(state)
+                        .message(eventData)
                         ?.channel(it)
                         ?.sync()
                 }
             } catch (e: Exception){
                 e.printStackTrace()
             }
+//            sendEventToFallback(eventData, channel)
+        }
+    }
 
+    private fun sendEventToFallback(eventData: JsonObject?, channel: String) {
+        if (channel != liveRoomProperties!!.channelName){
+            FallbackManager.sendEvent(eventData, channel)
         }
     }
 
