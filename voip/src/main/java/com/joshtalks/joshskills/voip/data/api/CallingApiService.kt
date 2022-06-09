@@ -3,12 +3,11 @@ package com.joshtalks.joshskills.voip.data.api
 import com.joshtalks.joshskills.base.constants.DIR
 import com.joshtalks.joshskills.voip.data.AmazonPolicyResponse
 import kotlinx.coroutines.Deferred
-import okhttp3.MultipartBody
-import okhttp3.RequestBody
-import okhttp3.ResponseBody
-import retrofit2.Call
 import retrofit2.Response
-import retrofit2.http.*
+import retrofit2.http.Body
+import retrofit2.http.FieldMap
+import retrofit2.http.FormUrlEncoded
+import retrofit2.http.POST
 
 @JvmSuppressWildcards
 interface CallingApiService {
@@ -21,18 +20,9 @@ interface CallingApiService {
     @POST("$DIR/p2p/call_response")
     suspend fun disconnectCall(@Body request : CallDisconnectRequest) : Response<Unit>
 
-    @Multipart
-    @POST
-    fun uploadMediaAsync(
-        @Url url: String,
-        @PartMap messageObject: Map<String, RequestBody>,
-        @Part file: MultipartBody.Part
-    ): Call<ResponseBody>
-
     @FormUrlEncoded
     @POST("$DIR/core/signed_url/")
     fun requestUploadMediaAsync(@FieldMap params: Map<String, String>): Deferred<AmazonPolicyResponse>
-
 }
 
 
