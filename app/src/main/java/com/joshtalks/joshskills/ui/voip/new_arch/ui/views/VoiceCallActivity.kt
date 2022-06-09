@@ -25,6 +25,7 @@ private const val TAG = "VoiceCallActivity"
 
 class VoiceCallActivity : BaseActivity() {
     private val backPressMutex = Mutex(false)
+    lateinit var recordingPermissionAlert: AlertDialog
     private val voiceCallBinding by lazy<ActivityVoiceCallBinding> {
         DataBindingUtil.setContentView(this, R.layout.activity_voice_call)
     }
@@ -91,10 +92,12 @@ class VoiceCallActivity : BaseActivity() {
 
     override fun initViewState() {
         event.observe(this) {
+            Log.i(TAG, "initViewState: event -> ${it.what}")
             when (it.what) {
                 CALL_INITIATED_EVENT -> replaceCallUserFragment()
                 SHOW_RECORDING_PERMISSION_DIALOG -> showRecordingPermissionDialog()
                 SHOW_RECORDING_REJECTED_DIALOG -> showRecordingRejectedDialog()
+                HIDE_RECORDING_PERMISSION_DIALOG -> hideRecordingPermissionDialog()
                 CLOSE_CALL_SCREEN -> finish()
                 else -> {
                     if (it.what < 0) {
@@ -118,7 +121,7 @@ class VoiceCallActivity : BaseActivity() {
     }
 
     private fun showRecordingPermissionDialog() {
-        AlertDialog.Builder(this).apply {
+        recordingPermissionAlert = AlertDialog.Builder(this).apply {
             setView(
                 LayoutInflater.from(this@VoiceCallActivity)
                     .inflate(R.layout.dialog_record_call, null)
@@ -132,8 +135,14 @@ class VoiceCallActivity : BaseActivity() {
                 vm.rejectCallRecording()
                 dialog.dismiss()
             }
-            create().show()
-        }
+            setCancelable(false)
+        }.create()
+        recordingPermissionAlert.show()
+    }
+
+    private fun hideRecordingPermissionDialog() {
+        Log.i(TAG, "hideRecordingPermissionDialog: ")
+        recordingPermissionAlert.dismiss()
     }
 
     private fun addSearchingUserFragment() {

@@ -18,6 +18,9 @@ import com.joshtalks.joshskills.base.constants.GROUP
 import com.joshtalks.joshskills.base.constants.PEER_TO_PEER
 import com.joshtalks.joshskills.base.log.Feature
 import com.joshtalks.joshskills.base.log.JoshLog
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
 import com.joshtalks.joshskills.ui.call.repository.RepositoryConstants.CONNECTION_ESTABLISHED
 import com.joshtalks.joshskills.ui.call.repository.WebrtcRepository
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.models.CallUIState
@@ -29,12 +32,13 @@ import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.getTempFileForCallRecording
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
-import kotlinx.coroutines.CoroutineStart
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import kotlinx.coroutines.withContext
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
 
 const val CONNECTING = 1
@@ -174,6 +178,16 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                             singleLiveEvent.value = msg
                         }
                     }
+                    ServiceEvents.CANCEL_RECORDING_REQUEST -> {
+                        Log.d(TAG, "listenVoipEvents: cancelled!")
+
+                        val msg = Message.obtain().apply {
+                            what = HIDE_RECORDING_PERMISSION_DIALOG
+                        }
+                        withContext(Dispatchers.Main) {
+                            singleLiveEvent.value = msg
+                        }
+                    }
                 }
             }
         }
@@ -199,6 +213,50 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
         CallRecording.audioRecording.stopPlaying()
         //TODO shave the file path to db and send to server 'recordFile'
         Log.d(TAG, "stopRecording() called  $recordFile")
+        var videoUrl = EMPTY
+        viewModelScope.launch{
+            if (recordFile?.absolutePath?.isEmpty()?.not() == true) {
+                val obj = mapOf("media_path" to recordFile!!.name)
+                val responseObj =
+                    AppObjectController.chatNetworkService.requestUploadMediaAsync(obj).await()
+                val statusCode: Int = uploadOnS3Server(responseObj, recordFile!!)
+                if (statusCode in 200..210) {
+                    val url =
+                        responseObj.url.plus(File.separator).plus(responseObj.fields["key"])
+                    videoUrl = url
+                    Log.i(TAG, "stopRecording: $videoUrl")
+                } else {
+                    return@launch
+                }
+            } else{
+                Log.e(TAG, "stopRecording: path is empty!")
+            }
+        }
+    }
+
+    private suspend fun uploadOnS3Server(
+        responseObj: AmazonPolicyResponse,
+        recordedFile: File
+    ): Int {
+        return viewModelScope.async(Dispatchers.IO) {
+            val parameters = emptyMap<String, RequestBody>().toMutableMap()
+            for (entry in responseObj.fields) {
+                parameters[entry.key] = com.joshtalks.joshskills.core.Utils.createPartFromString(entry.value)
+            }
+
+            val requestFile = recordedFile.asRequestBody("*".toMediaTypeOrNull())
+            val body = MultipartBody.Part.createFormData(
+                "file",
+                responseObj.fields["key"],
+                requestFile
+            )
+            val responseUpload = AppObjectController.mediaDUNetworkService.uploadMediaAsync(
+                responseObj.url,
+                parameters,
+                body
+            ).execute()
+            return@async responseUpload.code()
+        }.await()
     }
 
     fun acceptCallRecording() {
@@ -347,6 +405,10 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
         val isRecordingInitiated = uiState.isRecording
         uiState.isRecording = isRecordingInitiated.not()
         if (isRecordingInitiated) {
+            if (!uiState.timerStarts) {
+                Log.i(TAG, "recordCall: cancelled")
+                repository.cancelRecordingRequest()
+            }
             CallAnalytics.addAnalytics(
                 event = EventName.RECORDING_STOPPED,
                 agoraCallId = PrefManager.getAgraCallId().toString(),
@@ -367,6 +429,7 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     private fun stoppedRecUIchanges() {
+        uiState.timerStarts = false
         uiState.recordBtnTxt = "Record"
         uiState.recordBtnImg = R.drawable.call_fragment_record
         uiState.visibleCrdView = false

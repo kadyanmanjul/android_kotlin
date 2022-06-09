@@ -228,6 +228,15 @@ class JoinedState(val context: CallContext) : VoipState {
                             )
                             context.sendMessageToServer(userAction)
                         }
+                        CANCEL_RECORDING_REQUEST -> {
+                            ensureActive()
+                            val userAction = UserAction(
+                                ServerConstants.CANCEL_RECORDING_REQUEST,
+                                context.channelData.getChannel(),
+                                address = Utils.uuid ?: ""
+                            )
+                            context.sendMessageToServer(userAction)
+                        }
                         SYNC_UI_STATE -> {
                             ensureActive()
                             context.sendMessageToServer(
