@@ -5,9 +5,9 @@ sealed interface Communication {
     fun getEventTime() : Long?
 }
 
-class Error(val errorType : Int = -1) : Communication {
+class Error(val reason : String) : Communication {
     override fun getType(): Int {
-        return errorType
+        return -1
     }
 
     override fun getEventTime(): Long? {

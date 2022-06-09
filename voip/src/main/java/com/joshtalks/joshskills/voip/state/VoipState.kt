@@ -4,6 +4,6 @@ interface VoipState {
     fun connect() {}
     fun disconnect() {}
     fun backPress() {}
-    fun onError()
+    fun onError(reason: String)
     fun onDestroy()
 }

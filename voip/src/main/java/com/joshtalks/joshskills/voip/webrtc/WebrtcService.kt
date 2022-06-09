@@ -31,7 +31,7 @@ internal sealed class CallState {
     object CallDisconnected : CallState()
     object ReconnectingFailed : CallState()
     object CallInitiated : CallState() // Local User Join The Channel
-    object Error : CallState()
+    class Error(val reason : String) : CallState()
     object UserAlreadyDisconnectedError: CallState()
     object UserLeftChannel: CallState()
 }

@@ -6,7 +6,6 @@ import com.joshtalks.joshskills.voip.communication.model.ChannelData
 import com.joshtalks.joshskills.voip.communication.model.OutgoingData
 import com.joshtalks.joshskills.voip.constant.Event
 import com.joshtalks.joshskills.voip.data.UIState
-import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.mediator.CallDirection
 import com.joshtalks.joshskills.voip.mediator.CallingMediator
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
@@ -76,9 +75,9 @@ data class CallContext(val callType: Int, val direction : CallDirection, val req
         state.onDestroy()
     }
 
-    fun onError() {
+    fun onError(reason : String) {
         Log.d(TAG, "OnError - ${state}")
-        state.onError()
+        state.onError(reason)
     }
 
     fun closePipe() {

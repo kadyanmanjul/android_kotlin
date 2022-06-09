@@ -58,12 +58,12 @@ class ReconnectingState(val context: CallContext) : VoipState {
         )
     }
 
-    override fun onError() {
+    override fun onError(reason: String) {
         CallAnalytics.addAnalytics(
             event = EventName.ON_ERROR,
             agoraCallId = context.channelData.getCallingId().toString(),
             agoraMentorId = context.channelData.getAgoraUid().toString(),
-            extra = TAG
+            extra = "In $TAG : $reason"
         )
         disconnect()
     }

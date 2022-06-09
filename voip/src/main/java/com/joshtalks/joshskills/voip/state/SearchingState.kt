@@ -9,7 +9,6 @@ import com.joshtalks.joshskills.voip.communication.model.ChannelData
 import com.joshtalks.joshskills.voip.communication.model.NetworkAction
 import com.joshtalks.joshskills.voip.communication.model.Timeout
 import com.joshtalks.joshskills.voip.communication.model.UserAction
-import com.joshtalks.joshskills.voip.constant.JOINING
 import com.joshtalks.joshskills.voip.constant.Event.*
 import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.UIState
@@ -21,10 +20,7 @@ import com.joshtalks.joshskills.voip.mediator.PeerToPeerCalling
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
 import kotlinx.coroutines.*
-import kotlinx.coroutines.sync.Mutex
-import okhttp3.internal.ignoreIoExceptions
 import retrofit2.HttpException
-import java.io.IOException
 import java.net.SocketTimeoutException
 
 // Fired an API So We have to make sure how to cancel
@@ -148,11 +144,11 @@ class SearchingState(val context: CallContext) : VoipState {
         sendDataToServer()
     }
 
-    override fun onError() {
+    override fun onError(reason: String) {
         CallAnalytics.addAnalytics(
             event = EventName.ON_ERROR,
             agoraMentorId = "-1",
-            extra = TAG
+            extra = "In $TAG : $reason"
         )
         scope.launch {
             try {

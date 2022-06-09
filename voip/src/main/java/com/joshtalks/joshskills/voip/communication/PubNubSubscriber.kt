@@ -68,7 +68,7 @@ internal class PubNubSubscriber(val scope: CoroutineScope) : SubscribeCallback()
                 messageFlow.emit(message)
             } catch (e : Exception) {
                 e.printStackTrace()
-                messageFlow.emit(Error())
+                messageFlow.emit(Error("In PubNubSubscriber Class, Exception : ${e.cause} Occurred in message method"))
                 if(e is CancellationException)
                     throw e
             }

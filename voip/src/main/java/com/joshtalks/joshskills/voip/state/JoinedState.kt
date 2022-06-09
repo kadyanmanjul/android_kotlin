@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.voip.state
 
-import android.os.Message
 import android.os.SystemClock
 import android.util.Log
 import com.joshtalks.joshskills.voip.Utils
@@ -11,10 +10,7 @@ import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
-import com.joshtalks.joshskills.voip.webrtc.CallState
 import com.joshtalks.joshskills.voip.webrtc.Envelope
-import com.joshtalks.joshskills.voip.webrtc.USER_DROP_OFFLINE
-import com.joshtalks.joshskills.voip.webrtc.USER_QUIT_CHANNEL
 import kotlinx.coroutines.*
 
 // User Joined the Agora Channel
@@ -146,12 +142,12 @@ class JoinedState(val context: CallContext) : VoipState {
             disconnect()
     }
 
-    override fun onError() {
+    override fun onError(reason: String) {
         CallAnalytics.addAnalytics(
             event = EventName.ON_ERROR,
             agoraCallId = context.channelData.getCallingId().toString(),
             agoraMentorId = context.channelData.getAgoraUid().toString(),
-            extra = TAG
+            extra = "In $TAG : $reason"
         )
         connectingTimer.cancel()
         disconnect()

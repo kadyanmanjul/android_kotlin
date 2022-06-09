@@ -275,7 +275,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                         when (it) {
                             is Error -> {
                                 Log.d(TAG, "handlePubnubEvent : $it")
-                                callContext?.onError()
+                                callContext?.onError(it.reason)
                             }
                             is ChannelData -> {
                                 Log.d(TAG, "handlePubnubEvent : $it")
@@ -395,9 +395,9 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                                 val envelope = Envelope(Event.RECONNECTING)
                                 stateChannel.send(envelope)
                             }
-                            CallState.Error -> {
+                            is CallState.Error -> {
                                 Log.d(TAG, "handleWebrtcEvent : $it")
-                                callContext?.onError()
+                                callContext?.onError(it.reason)
                             }
                             CallState.UserLeftChannel -> {
                                 val envelope = Envelope(Event.REMOTE_USER_DISCONNECTED_USER_LEFT)
@@ -428,7 +428,9 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                             Log.d(TAG, "handleFallbackEvents: Pubnub Listener Failed ...")
                             networkEventChannel.reconnect()
                             when (event) {
-                                is Error -> {callContext?.onError()}
+                                is Error -> {
+                                    callContext?.onError(event.reason)
+                                }
                                 is ChannelData -> {
                                     val envelope = Envelope(Event.RECEIVED_CHANNEL_DATA,event)
                                     stateChannel.send(envelope)

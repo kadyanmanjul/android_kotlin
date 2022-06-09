@@ -28,12 +28,12 @@ class LeavingState(val context: CallContext) : VoipState {
         observe()
     }
 
-    override fun onError() {
+    override fun onError(reason: String) {
         CallAnalytics.addAnalytics(
             event = EventName.ON_ERROR,
             agoraCallId = context.channelData.getCallingId().toString(),
             agoraMentorId = context.channelData.getAgoraUid().toString(),
-            extra = TAG
+            extra = "In $TAG : $reason"
         )
         scope.launch { context.closeCallScreen() }
         context.closePipe()
