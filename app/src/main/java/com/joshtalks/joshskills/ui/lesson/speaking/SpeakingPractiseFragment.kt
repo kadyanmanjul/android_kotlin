@@ -524,14 +524,18 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             else
                 showToast("Wait for last call to get disconnected")
         }
-        binding.btnInviteFriend.isVisible = PrefManager.getBoolValue(IS_COURSE_BOUGHT) &&
-            PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID
+        binding.btnInviteFriend.isVisible =
+            AppObjectController.getFirebaseRemoteConfig()
+                .getBoolean(FirebaseRemoteConfigKey.IS_INVITATION_FOR_CALL_ENABLED) &&
+                    PrefManager.getBoolValue(IS_COURSE_BOUGHT) &&
+                    PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID
         binding.btnInviteFriend.setOnClickListener {
             viewModel.saveVoiceCallImpression(IMPRESSION_CALL_MY_FRIEND_BTN_CLICKED)
             if (PermissionUtils.isReadContactPermissionEnabled(requireActivity())) {
                 InviteFriendActivity.start(requireActivity())
             } else {
-                PermissionUtils.requestReadContactPermission(requireActivity(),
+                PermissionUtils.requestReadContactPermission(
+                    requireActivity(),
                     object : PermissionListener {
                         override fun onPermissionGranted(p0: PermissionGrantedResponse?) {
                             viewModel.saveVoiceCallImpression(IMPRESSION_CONTACT_PERM_ACCEPTED)

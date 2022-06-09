@@ -449,7 +449,6 @@
                         android:textAppearance="@style/TextAppearance.JoshTypography.ButtonSemiBold"
                         android:textColor="@color/white"
                         android:textSize="@dimen/_12ssp"
-                        android:visibility="gone"
                         app:cornerRadius="@dimen/_36sdp"
                         app:layout_constraintBottom_toTopOf="@+id/btn_continue"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -462,7 +461,7 @@
 
                     <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/btnStartTrialText"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:background="@drawable/call_btn_background"
