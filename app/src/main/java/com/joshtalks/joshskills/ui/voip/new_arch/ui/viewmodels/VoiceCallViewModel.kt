@@ -18,8 +18,6 @@ import com.joshtalks.joshskills.base.constants.GROUP
 import com.joshtalks.joshskills.base.constants.PEER_TO_PEER
 import com.joshtalks.joshskills.base.log.Feature
 import com.joshtalks.joshskills.base.log.JoshLog
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.ui.call.repository.RepositoryConstants.CONNECTION_ESTABLISHED
 import com.joshtalks.joshskills.ui.call.repository.WebrtcRepository
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.models.CallUIState
@@ -28,6 +26,7 @@ import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.constant.*
 import com.joshtalks.joshskills.voip.data.AmazonPolicyResponse
 import com.joshtalks.joshskills.voip.data.ServiceEvents
+import com.joshtalks.joshskills.voip.data.api.MediaDUNetwork
 import com.joshtalks.joshskills.voip.data.api.VoipNetwork
 import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.getTempFileForCallRecording
@@ -50,6 +49,7 @@ val voipLog = JoshLog.getInstanceIfEnable(Feature.VOIP)
 class VoiceCallViewModel(application: Application) : AndroidViewModel(application) {
     private val TAG = "VoiceCallViewModel"
     val voipNetwork = VoipNetwork.getVoipApi()
+    val mediaDUNetworkService = MediaDUNetwork.getMediaDUNetworkService()
     private var isConnectionRequestSent = false
     lateinit var source: String
     private val repository = WebrtcRepository(viewModelScope)
@@ -215,7 +215,6 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
         CallRecording.audioRecording.stopPlaying()
         //TODO shave the file path to db and send to server 'recordFile'
         Log.d(TAG, "stopRecording() called  $recordFile")
-        var videoUrl = EMPTY
         viewModelScope.launch{
             if (recordFile?.absolutePath?.isEmpty()?.not() == true) {
                 val obj = mapOf("media_path" to recordFile!!.name)
@@ -226,8 +225,7 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                 if (statusCode in 200..210) {
                     val url =
                         responseObj.url.plus(File.separator).plus(responseObj.fields["key"])
-                    videoUrl = url
-                    Log.i(TAG, "stopRecording: $videoUrl")
+                    Log.i(TAG, "stopRecording: $url")
                 } else {
                     return@launch
                 }
@@ -244,7 +242,7 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
         return viewModelScope.async(Dispatchers.IO) {
             val parameters = emptyMap<String, RequestBody>().toMutableMap()
             for (entry in responseObj.fields) {
-                parameters[entry.key] = com.joshtalks.joshskills.core.Utils.createPartFromString(entry.value)
+                parameters[entry.key] = Utils.createPartFromString(entry.value)
             }
 
             val requestFile = recordedFile.asRequestBody("*".toMediaTypeOrNull())
@@ -253,7 +251,7 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                 responseObj.fields["key"],
                 requestFile
             )
-            val responseUpload = voipNetwork.uploadMediaAsync(
+            val responseUpload = mediaDUNetworkService.uploadMediaAsync(
                 responseObj.url,
                 parameters,
                 body
