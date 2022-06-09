@@ -227,8 +227,8 @@ class SearchingState(val context: CallContext) : VoipState {
                                 "Ignoring : In $TAG but received ${event.type} expected $RECEIVED_CHANNEL_DATA"
                             CallAnalytics.addAnalytics(
                                 event = EventName.ILLEGAL_EVENT_RECEIVED,
-                                agoraCallId = context.channelData.getCallingId().toString(),
-                                agoraMentorId = context.channelData.getAgoraUid().toString(),
+                                agoraCallId = if(context.hasChannelData()) context.channelData.getCallingId().toString() else "-1",
+                                agoraMentorId = if(context.hasChannelData()) context.channelData.getAgoraUid().toString() else PrefManager.getLocalUserAgoraId().toString(),
                                 extra = msg
                             )
                             Log.d(
@@ -241,8 +241,8 @@ class SearchingState(val context: CallContext) : VoipState {
                                 "In $TAG but received ${event.type} expected $RECEIVED_CHANNEL_DATA"
                             CallAnalytics.addAnalytics(
                                 event = EventName.ILLEGAL_EVENT_RECEIVED,
-                                agoraCallId = "-1",
-                                agoraMentorId = "-1",
+                                agoraCallId = if(context.hasChannelData()) context.channelData.getCallingId().toString() else "-1",
+                                agoraMentorId = if(context.hasChannelData()) context.channelData.getAgoraUid().toString() else PrefManager.getLocalUserAgoraId().toString(),
                                 extra = msg
                             )
                             throw IllegalEventException(msg)
