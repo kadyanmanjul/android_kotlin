@@ -461,7 +461,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                 } else if ((!isTwentyMinFtuCallActive || response.callDurationStatus == UPGRADED_USER) && response.alreadyTalked >= response.duration && response.isFromDb.not()) {
                     speakingSectionComplete()
                 } else {
-                    binding.btnStart.playAnimation()
+                    //binding.btnStart.playAnimation()
                 }
 
                 if (response.isNewStudentCallsActivated) {
@@ -644,8 +644,8 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
 
     private fun speakingSectionComplete() {
         binding.btnContinue.visibility = VISIBLE
-        binding.btnStart.pauseAnimation()
-        binding.btnContinue.playAnimation()
+//        binding.btnStart.pauseAnimation()
+//        binding.btnContinue.playAnimation()
         lessonActivityListener?.onQuestionStatusUpdate(
             QUESTION_STATUS.AT,
             questionId
