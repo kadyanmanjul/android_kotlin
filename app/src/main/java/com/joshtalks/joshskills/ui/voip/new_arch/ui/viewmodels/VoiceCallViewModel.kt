@@ -20,14 +20,15 @@ import com.joshtalks.joshskills.base.log.Feature
 import com.joshtalks.joshskills.base.log.JoshLog
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
 import com.joshtalks.joshskills.ui.call.repository.RepositoryConstants.CONNECTION_ESTABLISHED
 import com.joshtalks.joshskills.ui.call.repository.WebrtcRepository
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.models.CallUIState
 import com.joshtalks.joshskills.util.CallRecording
 import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.constant.*
+import com.joshtalks.joshskills.voip.data.AmazonPolicyResponse
 import com.joshtalks.joshskills.voip.data.ServiceEvents
+import com.joshtalks.joshskills.voip.data.api.VoipNetwork
 import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.getTempFileForCallRecording
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
@@ -48,7 +49,7 @@ val voipLog = JoshLog.getInstanceIfEnable(Feature.VOIP)
 
 class VoiceCallViewModel(application: Application) : AndroidViewModel(application) {
     private val TAG = "VoiceCallViewModel"
-
+    val voipNetwork = VoipNetwork.getVoipApi()
     private var isConnectionRequestSent = false
     lateinit var source: String
     private val repository = WebrtcRepository(viewModelScope)
@@ -217,9 +218,10 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
         viewModelScope.launch{
             if (recordFile?.absolutePath?.isEmpty()?.not() == true) {
                 val obj = mapOf("media_path" to recordFile!!.name)
-                val responseObj =
-                    AppObjectController.chatNetworkService.requestUploadMediaAsync(obj).await()
+                val responseObj = voipNetwork.requestUploadMediaAsync(obj).await()
+                Log.d(TAG, "responseObj: $responseObj")
                 val statusCode: Int = uploadOnS3Server(responseObj, recordFile!!)
+                Log.d(TAG, "stopRecording: $statusCode")
                 if (statusCode in 200..210) {
                     val url =
                         responseObj.url.plus(File.separator).plus(responseObj.fields["key"])
@@ -250,7 +252,7 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                 responseObj.fields["key"],
                 requestFile
             )
-            val responseUpload = AppObjectController.mediaDUNetworkService.uploadMediaAsync(
+            val responseUpload = voipNetwork.uploadMediaAsync(
                 responseObj.url,
                 parameters,
                 body
