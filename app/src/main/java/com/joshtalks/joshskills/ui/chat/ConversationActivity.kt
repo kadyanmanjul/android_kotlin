@@ -440,6 +440,9 @@ class ConversationActivity :
         if (!PrefManager.getBoolValue(HAS_SEEN_COHORT_BASE_COURSE_TOOLTIP)) {
             conversationBinding.cbcTooltip.visibility = VISIBLE
             conversationBinding.overlayLayout.visibility = VISIBLE
+            conversationBinding.imgGroupChatBtn.elevation = 8f
+            conversationBinding.imgFppBtn.elevation = 8f
+            conversationBinding.ringingIcon.elevation = 12f
 
             conversationBinding.overlayLayout.setOnClickListener {
                 conversationBinding.welcomeContainer.visibility = INVISIBLE

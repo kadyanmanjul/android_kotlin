@@ -524,10 +524,8 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             else
                 showToast("Wait for last call to get disconnected")
         }
-//        if (viewModel.isFreeTrail.not()) {
-//            binding.btnInviteFriend.isVisible =
-//                PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID
-//        }
+        binding.btnInviteFriend.isVisible = PrefManager.getBoolValue(IS_COURSE_BOUGHT) &&
+            PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID
         binding.btnInviteFriend.setOnClickListener {
             viewModel.saveVoiceCallImpression(IMPRESSION_CALL_MY_FRIEND_BTN_CLICKED)
             if (PermissionUtils.isReadContactPermissionEnabled(requireActivity())) {
