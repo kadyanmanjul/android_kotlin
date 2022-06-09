@@ -29,6 +29,7 @@ class JoinedState(val context: CallContext) : VoipState {
     })
 
     private var listenerJob: Job? = null
+    private var disconnectListenerJob: Job? = null
     private val connectingTimer by lazy {
         scope.launch(start = CoroutineStart.LAZY) {
             try{
@@ -36,17 +37,10 @@ class JoinedState(val context: CallContext) : VoipState {
                     Log.d(TAG, "Retry Timer Started")
                     delay(RETRY_TIMER)
                     ensureActive()
-                    context.channelData = (context.channelData as Channel).removeChannel()
-                    CallAnalytics.addAnalytics(
-                        event = EventName.NEXT_CHANNEL_REQUESTED,
-                        agoraCallId = context.channelData.getCallingId().toString(),
-                        agoraMentorId = context.channelData.getAgoraUid().toString(),
-                        extra = TAG
-                    )
                     listenerJob?.cancel()
-                    context.isRetrying = true
-                    PrefManager.setVoipState(State.SEARCHING)
-                    context.state = SearchingState(context)
+                    context.channelData = (context.channelData as Channel).removeChannel()
+                    startDisconnectListener()
+                    context.disconnectCall()
                 } else {
                     Log.d(TAG, "Connecting Timer Started")
                     delay(CONNECTING_TIMER)
@@ -78,6 +72,48 @@ class JoinedState(val context: CallContext) : VoipState {
         )
         observe()
         connectingTimer.start()
+    }
+
+    private fun startDisconnectListener() {
+        disconnectListenerJob = scope.launch {
+            loop@ while (true) {
+                try {
+                    ensureActive()
+                    val event = context.getStreamPipe().receive()
+                    Log.d(TAG, "Received after observing : ${event.type}")
+                    ensureActive()
+                    if (event.type == CALL_DISCONNECTED) {
+                        context.isRetrying = true
+                        PrefManager.setVoipState(State.SEARCHING)
+                        context.state = SearchingState(context)
+                        scope.cancel()
+                    } else {
+                        ensureActive()
+                        val msg = "In $TAG but received ${event.type} expected $CALL_DISCONNECTED"
+                        CallAnalytics.addAnalytics(
+                            event = EventName.ILLEGAL_EVENT_RECEIVED,
+                            agoraCallId = context.channelData.getCallingId().toString(),
+                            agoraMentorId = context.channelData.getAgoraUid().toString(),
+                            extra = msg
+                        )
+                        throw IllegalEventException(msg)
+                    }
+                } catch (e: Throwable) {
+                    if (e is CancellationException)
+                        throw e
+                    if (e is IllegalEventException) {
+                        e.printStackTrace()
+                    } else {
+                        e.printStackTrace()
+                        PrefManager.setVoipState(State.IDLE)
+                        Log.d(TAG, "EXCEPTION : $e switched to IDLE STATE")
+                        context.closeCallScreen()
+                        context.closePipe()
+                        onDestroy()
+                    }
+                }
+            }
+        }
     }
 
     // Red Button Pressed
@@ -278,7 +314,7 @@ class JoinedState(val context: CallContext) : VoipState {
                             )
                             context.updateUIState(uiState = uiState)
                         }
-                        REMOTE_USER_DISCONNECTED_MESSAGE-> {
+                        REMOTE_USER_DISCONNECTED_MESSAGE, REMOTE_USER_DISCONNECTED_AGORA, REMOTE_USER_DISCONNECTED_USER_LEFT -> {
                             // Ignore Error Event from Agora
                             val msg = "Ignoring : In $TAG but received ${event.type} expected $CALL_CONNECTED_EVENT"
                             CallAnalytics.addAnalytics(

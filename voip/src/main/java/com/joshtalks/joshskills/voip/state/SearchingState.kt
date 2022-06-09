@@ -71,9 +71,16 @@ class SearchingState(val context: CallContext) : VoipState {
                     agoraCallId = "",
                     agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
                 )
-                if (context.isRetrying)
+                if (context.isRetrying) {
                     context.request[INTENT_DATA_PREVIOUS_CALL_ID] =
                         context.channelData.getCallingId()
+                    CallAnalytics.addAnalytics(
+                        event = EventName.NEXT_CHANNEL_REQUESTED,
+                        agoraCallId = context.channelData.getCallingId().toString(),
+                        agoraMentorId = context.channelData.getAgoraUid().toString(),
+                        extra = TAG
+                    )
+                }
                 calling.onPreCallConnect(context.request, context.direction)
                 ensureActive()
             } catch (e: Exception) {
@@ -215,7 +222,7 @@ class SearchingState(val context: CallContext) : VoipState {
                             Log.d(TAG, "Received : ${event.type} switched to ${context.state}")
                             break@loop
                         }
-                        TOPIC_IMAGE_RECEIVED, SYNC_UI_STATE -> {
+                        TOPIC_IMAGE_RECEIVED, SYNC_UI_STATE, REMOTE_USER_DISCONNECTED_MESSAGE, REMOTE_USER_DISCONNECTED_AGORA, REMOTE_USER_DISCONNECTED_USER_LEFT -> {
                             val msg =
                                 "Ignoring : In $TAG but received ${event.type} expected $RECEIVED_CHANNEL_DATA"
                             CallAnalytics.addAnalytics(
@@ -263,7 +270,7 @@ class SearchingState(val context: CallContext) : VoipState {
 
     override fun onDestroy() {
         PrefManager.setVoipState(State.IDLE)
-        scope.launch { moveToLeavingState() }
+        scope.cancel()
     }
 
     private fun cleanUpState() {
@@ -279,22 +286,6 @@ class SearchingState(val context: CallContext) : VoipState {
                 e.printStackTrace()
             }
 
-        }
-    }
-
-    private suspend fun moveToLeavingState() {
-        try {
-            if (context.isRetrying) {
-                context.disconnectCall()
-                PrefManager.setVoipState(State.LEAVING)
-                context.state = LeavingState(context)
-                Log.d(TAG, "Received : switched to ${context.state}")
-                scope.cancel()
-            }
-        } catch (e: Exception) {
-            if (e is CancellationException)
-                throw e
-            e.printStackTrace()
         }
     }
 }
