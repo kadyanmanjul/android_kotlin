@@ -22,5 +22,6 @@ class ServerConstants {
         val STOP_RECORDING = 17
         val CALL_RECORDING_ACCEPT = 18
         val CALL_RECORDING_REJECT = 19
+        val CANCEL_RECORDING_REQUEST = 20
     }
 }

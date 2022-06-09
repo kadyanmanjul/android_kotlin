@@ -312,6 +312,14 @@ class ConnectedState(val context: CallContext) : VoipState {
                             )
                             context.sendMessageToServer(userAction)
                         }
+                        CANCEL_RECORDING_REQUEST->{
+                            val userAction = UserAction(
+                                ServerConstants.CANCEL_RECORDING_REQUEST,
+                                context.channelData.getChannel(),
+                                address = context.channelData.getPartnerMentorId()
+                            )
+                            context.sendMessageToServer(userAction)
+                        }
                         else -> {
                             val msg = "In $TAG but received ${event.type} event don't know how to process"
                             CallAnalytics.addAnalytics(

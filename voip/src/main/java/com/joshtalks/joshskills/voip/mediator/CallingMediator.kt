@@ -236,6 +236,10 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                         val envelope = Envelope(Event.CALL_RECORDING_REJECT)
                         stateChannel.send(envelope)
                     }
+                    UserAction.CANCEL_RECORDING_REQUEST -> {
+                        val envelope = Envelope(Event.CANCEL_RECORDING_REQUEST)
+                        stateChannel.send(envelope)
+                    }
                 }
             } catch (e: Exception) {
                 Log.d(TAG, "userAction : $e")
@@ -356,6 +360,10 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                                         }
                                         ServerConstants.CALL_RECORDING_REJECT -> {
                                             val envelope = Envelope(Event.CALL_RECORDING_REJECT)
+                                            flow.emit(envelope)
+                                        }
+                                        ServerConstants.CANCEL_RECORDING_REQUEST -> {
+                                            val envelope = Envelope(Event.CANCEL_RECORDING_REQUEST)
                                             flow.emit(envelope)
                                         }
                                     }

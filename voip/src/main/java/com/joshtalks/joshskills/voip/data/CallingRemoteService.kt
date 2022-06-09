@@ -16,15 +16,7 @@ import com.joshtalks.joshskills.voip.audiocontroller.AudioControllerInterface
 import com.joshtalks.joshskills.voip.audiocontroller.AudioRouteConstants
 import com.joshtalks.joshskills.voip.calldetails.IncomingCallData
 import com.joshtalks.joshskills.voip.communication.model.IncomingCall
-import com.joshtalks.joshskills.voip.constant.Event.CALL_CONNECTED_EVENT
-import com.joshtalks.joshskills.voip.constant.Event.CALL_INITIATED_EVENT
-import com.joshtalks.joshskills.voip.constant.Event.CALL_RECORDING_ACCEPT
-import com.joshtalks.joshskills.voip.constant.Event.CALL_RECORDING_REJECT
-import com.joshtalks.joshskills.voip.constant.Event.CLOSE_CALL_SCREEN
-import com.joshtalks.joshskills.voip.constant.Event.INCOMING_CALL
-import com.joshtalks.joshskills.voip.constant.Event.RECONNECTING_FAILED
-import com.joshtalks.joshskills.voip.constant.Event.START_RECORDING
-import com.joshtalks.joshskills.voip.constant.Event.STOP_RECORDING
+import com.joshtalks.joshskills.voip.constant.Event.*
 import com.joshtalks.joshskills.voip.constant.PSTN_STATE_IDLE
 import com.joshtalks.joshskills.voip.constant.PSTN_STATE_ONCALL
 import com.joshtalks.joshskills.voip.constant.State
@@ -192,6 +184,9 @@ class CallingRemoteService : Service() {
                                 CALL_RECORDING_REJECT -> {
                                     serviceEvents.emit(ServiceEvents.CALL_RECORDING_REJECT)
                                 }
+                                CANCEL_RECORDING_REQUEST -> {
+                                    serviceEvents.emit(ServiceEvents.CANCEL_RECORDING_REQUEST)
+                                }
                             }
                         }
                         catch (e : Exception){
@@ -316,6 +311,8 @@ class CallingRemoteService : Service() {
 
     fun rejectCallRecording() { mediator.userAction(Action.RECORDING_REQUEST_REJECTED) }
 
+    fun cancelRecordingRequest() {mediator.userAction(Action.CANCEL_RECORDING_REQUEST)}
+
     override fun onTaskRemoved(rootIntent: Intent?) {
         super.onTaskRemoved(rootIntent)
         stopForeground(true)
@@ -408,5 +405,6 @@ enum class ServiceEvents {
     START_RECORDING,
     STOP_RECORDING,
     CALL_RECORDING_ACCEPT,
-    CALL_RECORDING_REJECT
+    CALL_RECORDING_REJECT,
+    CANCEL_RECORDING_REQUEST
 }

@@ -148,6 +148,10 @@ class WebrtcRepository(scope : CoroutineScope) {
     fun getNewTopicImage() {
         mService?.changeTopicImage()
     }
+
+    fun cancelRecordingRequest() {
+        mService?.cancelRecordingRequest()
+    }
 }
 
 enum class RepositoryConstants {
