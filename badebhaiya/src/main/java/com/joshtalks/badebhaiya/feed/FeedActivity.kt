@@ -1,6 +1,5 @@
 package com.joshtalks.badebhaiya.feed
 
-import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
@@ -11,17 +10,14 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.Window
-import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.widget.addTextChangedListener
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
-import com.google.firebase.messaging.FirebaseMessaging
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.SearchFragment
 import com.joshtalks.badebhaiya.core.EMPTY
@@ -40,18 +36,14 @@ import com.joshtalks.badebhaiya.liveroom.viewmodel.LiveRoomViewModel
 import com.joshtalks.badebhaiya.notifications.NotificationScheduler
 import com.joshtalks.badebhaiya.profile.ProfileFragment
 import com.joshtalks.badebhaiya.profile.ProfileViewModel
-import com.joshtalks.badebhaiya.profile.request.DeleteReminderRequest
 import com.joshtalks.badebhaiya.profile.request.ReminderRequest
+import com.joshtalks.badebhaiya.pubnub.PubNubManager
 import com.joshtalks.badebhaiya.pubnub.PubNubState
 import com.joshtalks.badebhaiya.repository.CommonRepository
-import com.joshtalks.badebhaiya.repository.ConversationRoomRepository
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomResponse
 import com.joshtalks.badebhaiya.repository.model.User
-import com.joshtalks.badebhaiya.signup.PeopleToFollowActivity
-import com.joshtalks.badebhaiya.signup.fragments.PeopleToFollowFragment
 import com.joshtalks.badebhaiya.utils.SingleDataManager
 import com.joshtalks.badebhaiya.utils.setImage
-import com.joshtalks.badebhaiya.utils.urlToBitmap
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionDeniedResponse
@@ -244,7 +236,8 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
             Log.i("CHECKNOTIFICATION", "checkAndOpenLiveRoom: ${intent.getIntExtra(ROOM_ID,0)} && topic:-${intent.getStringExtra(TOPIC_NAME)}")
             takePermissions(
                 intent.getIntExtra(ROOM_ID, 0).toString(),
-                intent.getStringExtra(TOPIC_NAME) ?: ""
+                intent.getStringExtra(TOPIC_NAME) ?: "",
+                "moderatorId"
             )
 
 
@@ -344,6 +337,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                 OPEN_ROOM -> {
 
                     it.data?.let {
+                        Log.i("MODERATORSTATUS", "addObserver: OPEN $it")
                         it.getParcelable<ConversationRoomResponse>(ROOM_DETAILS)?.let { room ->
                             val liveRoomProperties = StartingLiveRoomProperties.createFromRoom(
                                 room,
@@ -353,9 +347,31 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                         }
                     }
                 }
+
+                OPEN_WAIT_ROOM->{
+                    it.data?.let{
+
+                        viewModel.pubChannelName?.let { it1 -> PubNubManager.warmUpChannel(it1) }
+                        //viewModel.pubChannelName?.let { it1 -> PubNubManager.warmUpChannel(channelName = it1) }
+                        viewModel.reader()
+                        it.getParcelable<ConversationRoomResponse>(ROOM_DETAILS)?.let { room ->
+                            val liveRoomProperties = StartingLiveRoomProperties.createFromRoom(
+                                room,
+                                it.getString(TOPIC)!!
+                            )
+
+                            //LiveRoomFragment.launch(this, liveRoomProperties, liveRoomViewModel, viewModel.source,false)
+                        }
+
+                        Log.i("MODERATORSTATUS", "addObserver: WAIT $it")
+
+                        WaitingRoomFragment.open(supportFragmentManager,R.id.root_view)
+                    }
+                }
                 ROOM_EXPAND->{
                     liveRoomViewModel.liveRoomState.value=LiveRoomState.EXPANDED
                 }
+
                 SCROLL_TO_TOP -> {
                     //binding.recyclerView.layoutManager?.scrollToPosition(0)
                     binding.recyclerView.layoutManager?.smoothScrollToPosition(
@@ -429,14 +445,19 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
     override fun joinRoom(room: RoomListResponseItem, view: View) {
         profileViewModel.sendEvent(Impression("FEED_SCREEN","CLICKED_JOIN"))
         viewModel.source="Feed"
-        takePermissions(room.roomId.toString(), room.topic)
+        var moderatorId=room.speakersData?.userId
+        takePermissions(room.roomId.toString(), room.topic,moderatorId)
     }
 
-    private fun takePermissions(roomId: String? = null, roomTopic: String? = null) {
+    private fun takePermissions(
+        roomId: String? = null,
+        roomTopic: String? = null,
+        moderatorId: String?
+    ) {
         if (PermissionUtils.isCallingPermissionWithoutLocationEnabled(this)) {
             if (roomId == null) {
                 openCreateRoomDialog()
-            } else viewModel.joinRoom(roomId, roomTopic!!,"FEED_SCREEN")
+            } else viewModel.joinRoom(roomId, roomTopic!!,"FEED_SCREEN",moderatorId)
             return
         }
 
@@ -448,7 +469,12 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                         if (flag) {
                             if (roomId == null) {
                                 openCreateRoomDialog()
-                            } else viewModel.joinRoom(roomId, roomTopic!!,"FEED_SCREEN")
+                            } else viewModel.joinRoom(
+                                roomId,
+                                roomTopic!!,
+                                "FEED_SCREEN",
+                                moderatorId
+                            )
                             return
                         }
                         if (report.isAnyPermissionPermanentlyDenied) {

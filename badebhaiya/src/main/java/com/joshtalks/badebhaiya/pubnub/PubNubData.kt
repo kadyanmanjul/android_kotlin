@@ -32,4 +32,7 @@ object PubNubData {
     internal val _pubNubState = MutableSharedFlow<PubNubState>()
     val pubNubState = _pubNubState.asSharedFlow()
 
+    internal val moderatorStatus=MutableSharedFlow<Message>()
+    val status= moderatorStatus.asSharedFlow()
+
 }

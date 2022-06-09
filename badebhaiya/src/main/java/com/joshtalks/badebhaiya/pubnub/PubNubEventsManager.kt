@@ -1,5 +1,6 @@
 package com.joshtalks.badebhaiya.pubnub
 
+import android.util.Log
 import com.google.gson.JsonObject
 import com.joshtalks.badebhaiya.utils.DEFAULT_NAME
 
@@ -47,7 +48,7 @@ object PubNubEventsManager {
 
     fun moveToAudience(userUid: String, userName: String){
         val customMessage = JsonObject()
-        customMessage.addProperty("id", userUid.toString())
+        customMessage.addProperty("id", userUid)
         customMessage.addProperty("is_speaker", false)
         customMessage.addProperty("short_name", userName)
         customMessage.addProperty("is_mic_on", false)
@@ -82,6 +83,14 @@ object PubNubEventsManager {
 
     fun removeHandRaise(){
         sendHandRaisedEvent(false)
+    }
+
+    fun sendModeratorStatus(status: Boolean, channelName: String?) {
+        Log.i("MODERATORSTATUS", "sendModeratorStatus: $channelName")
+        val customMessage = JsonObject()
+        customMessage.addProperty("is_speaker_joined", status)
+        PubNubManager.sendCustomMessage(customMessage, channelName+"waitingRoom")
+
     }
 
 }
