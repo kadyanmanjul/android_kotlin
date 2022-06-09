@@ -6,12 +6,9 @@ import android.content.Context
 import android.os.Bundle
 import android.view.*
 import android.widget.Toast
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
-import com.airbnb.lottie.LottieAnimationView
-import com.google.android.material.textview.MaterialTextView
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
@@ -210,7 +207,6 @@ class OnlineTestFragment :
         {
             when (it) {
                 ApiCallStatus.START -> {
-                    binding.progressContainer.visibility = View.GONE
                     toggleLoading(true)
                 }
                 ApiCallStatus.FAILED -> {
