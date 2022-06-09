@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.ui.inbox
 
 import android.app.Activity
+import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
 import android.location.Location
@@ -77,6 +78,8 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
     private var isExtendFreeTrialActive = false
     private var increaseCoursePrice = false
 
+    var progressDialog: ProgressDialog? = null
+
     private val refViewModel: ReferralViewModel by lazy {
         ViewModelProvider(this).get(ReferralViewModel::class.java)
     }
@@ -108,6 +111,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
     }
 
     private fun initView() {
+        showProgressDialog("Please Wait")
         text_message_title.text = getString(R.string.inbox_header)
         iv_reminder.visibility = GONE
         iv_setting.visibility = View.VISIBLE
@@ -210,6 +214,15 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         }
     }
 
+    fun showProgressDialog(msg: String) {
+        progressDialog = ProgressDialog(this, R.style.AlertDialogStyle)
+        progressDialog?.setCancelable(false)
+        progressDialog?.setMessage(msg)
+        progressDialog?.show()
+    }
+
+    fun dismissProgressDialog() = progressDialog?.dismiss()
+
     private fun addLiveDataObservable() {
         lifecycleScope.launchWhenStarted {
             viewModel.registerCourseNetworkData.collect {
@@ -218,12 +231,14 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                 } else {
                     MixPanelTracker.publishEvent(MixPanelEvent.INBOX_OPENED).push()
                     addCourseInRecyclerView(it)
+                    dismissProgressDialog()
                 }
             }
         }
         lifecycleScope.launchWhenStarted {
             viewModel.registerCourseLocalData.collect {
                 addCourseInRecyclerView(it)
+                dismissProgressDialog()
             }
         }
 

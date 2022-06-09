@@ -471,12 +471,16 @@ class GroupChatViewModel : BaseViewModel() {
     }
 
     fun sendMessage(view: View) {
-        GroupAnalytics.checkMsgTime(GroupAnalytics.Event.MESSAGE_SENT, groupId)
-        MixPanelTracker.publishEvent(MixPanelEvent.GROUP_MESSAGE_SENT)
-            .addParam(ParamKeys.GROUP_ID, groupId)
-            .push()
-        message.what = SEND_MSG
-        singleLiveEvent.value = message
+        if (Utils.isInternetAvailable()){
+            GroupAnalytics.checkMsgTime(GroupAnalytics.Event.MESSAGE_SENT, groupId)
+            MixPanelTracker.publishEvent(MixPanelEvent.GROUP_MESSAGE_SENT)
+                .addParam(ParamKeys.GROUP_ID, groupId)
+                .push()
+            message.what = SEND_MSG
+            singleLiveEvent.value = message
+        }else{
+            showToast("No Internet Connection")
+        }
     }
 
     fun pushMessage(msg: String) {
