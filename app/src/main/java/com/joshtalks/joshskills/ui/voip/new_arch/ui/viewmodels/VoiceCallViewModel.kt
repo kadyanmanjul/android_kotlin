@@ -209,6 +209,7 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun stopRecording() {
+        // bruh
         CallRecording.audioRecording.stopPlaying()
         //TODO shave the file path to db and send to server 'recordFile'
         Log.d(TAG, "stopRecording() called  $recordFile")
