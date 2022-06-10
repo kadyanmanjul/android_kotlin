@@ -23,9 +23,11 @@ import com.joshtalks.joshskills.ui.call.repository.WebrtcRepository
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.models.CallUIState
 import com.joshtalks.joshskills.util.CallRecording
 import com.joshtalks.joshskills.voip.Utils
+import com.joshtalks.joshskills.voip.constant.CALL_CONNECTED_EVENT
 import com.joshtalks.joshskills.voip.constant.CALL_INITIATED_EVENT
 import com.joshtalks.joshskills.voip.constant.CANCEL_INCOMING_TIMER
 import com.joshtalks.joshskills.voip.constant.CLOSE_CALL_SCREEN
+import com.joshtalks.joshskills.voip.constant.GET_FRAGMENT_BITMAP
 import com.joshtalks.joshskills.voip.constant.HIDE_RECORDING_PERMISSION_DIALOG
 import com.joshtalks.joshskills.voip.constant.RECONNECTING_FAILED
 import com.joshtalks.joshskills.voip.constant.SHOW_RECORDING_PERMISSION_DIALOG
@@ -217,9 +219,12 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun stopRecording() {
-        if (recordFile == null){
+        val len = recordFile?.length() ?: 0
+        if (recordFile == null || (len<1)){
+            Log.d(TAG, "stopRecording called return")
             return
         }
+        Log.d(TAG, "stopRecording called recordFile ${recordFile}")
         viewModelScope.launch(Dispatchers.IO) {
             CallRecording.audioRecording.stopPlaying()
             if (recordFile?.absolutePath?.isEmpty()?.not() == true) {
