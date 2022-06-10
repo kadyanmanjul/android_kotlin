@@ -10,11 +10,14 @@ import android.view.WindowManager
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ObservableField
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.ViewModelProvider
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.core.RxBus2
 import com.joshtalks.badebhaiya.databinding.UserPicChooserDialogBinding
+import com.joshtalks.badebhaiya.impressions.Impression
+import com.joshtalks.badebhaiya.signup.viewmodel.SignUpViewModel
 import com.joshtalks.badebhaiya.utils.events.DeleteProfilePicEventBus
 import java.io.File
 
@@ -23,6 +26,10 @@ class UserPicChooserFragment : BottomSheetDialogFragment() {
     private lateinit var binding: UserPicChooserDialogBinding
     private var isUserProfilePicEmpty: Boolean = false
     val header = ObservableField("")
+
+    private val viewModel by lazy {
+        ViewModelProvider(requireActivity()).get(SignUpViewModel::class.java)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -85,6 +92,7 @@ class UserPicChooserFragment : BottomSheetDialogFragment() {
             .galleryOnly()
             .saveDir(File(requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!, "ImagePicker"))
             .start(ImagePicker.REQUEST_CODE)
+        viewModel.sendEvent(Impression("CHOOSE_PIC","UPLOADED_PROFILE_PIC"))
         dismiss()
     }
 
@@ -94,6 +102,7 @@ class UserPicChooserFragment : BottomSheetDialogFragment() {
             .cameraOnly()
             .saveDir(File(requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!, "ImagePicker"))
             .start(ImagePicker.REQUEST_CODE)
+        viewModel.sendEvent(Impression("CHOOSE_PIC","UPLOADED_PROFILE_PIC"))
         dismiss()
     }
 

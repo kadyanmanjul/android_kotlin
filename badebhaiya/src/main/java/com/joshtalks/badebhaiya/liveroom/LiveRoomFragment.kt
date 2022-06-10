@@ -212,13 +212,15 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
             audienceAdapter?.updateFullList(list.toList())
             audienceAdapter?.updateFullList(list)
             Log.i("AUDIENCE", "addViewModelObserver: ${it}")
-            binding.audienceCount.text= "("+it?.size.toString()+")"
             PubNubManager.getLiveRoomProperties().let {
                 if (it.isModerator){
                     val int = vm.getRaisedHandAudienceSize()
                     setBadgeDrawable(int)
                 }
             }
+            Log.i("HELLOTESTER", "addViewModelObserver: $it")
+            binding.audienceCount.text= "("+it?.size?.minus(1)+")"
+
 
         })
 
