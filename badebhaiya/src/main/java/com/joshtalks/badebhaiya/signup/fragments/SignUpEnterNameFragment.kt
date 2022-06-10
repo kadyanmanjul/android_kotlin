@@ -57,7 +57,8 @@ class SignUpEnterNameFragment: Fragment() {
             }
         })
 
-        binding.etFirstName.setOnClickListener{
+        binding.etFirstName.addTextChangedListener{
+            Log.i("FLOWENTERNAME", "onCreateView: ")
             viewModel.sendEvent(Impression("ENTER_NAME_FRAGMENT","FILLED_NAME"))
         }
 
