@@ -141,6 +141,7 @@ data class FirestoreNewNotificationObject(
             NotificationAction.ACTION_OPEN_GROUP_CHAT_CLIENT.type -> NotificationAction.ACTION_OPEN_GROUP_CHAT_CLIENT
             NotificationAction.ACTION_OPEN_FPP_LIST.type -> NotificationAction.ACTION_OPEN_FPP_LIST
             NotificationAction.ACTION_OPEN_FPP_REQUESTS.type -> NotificationAction.ACTION_OPEN_FPP_REQUESTS
+            NotificationAction.EMERGENCY_NOTIFICATION.type -> NotificationAction.EMERGENCY_NOTIFICATION
             else -> null
         }
     }
