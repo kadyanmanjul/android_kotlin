@@ -90,13 +90,12 @@ class CertificateDetailActivity : BaseActivity(), FileDownloadCallback {
             DataBindingUtil.setContentView(this, R.layout.activity_certificate_detail)
         binding.lifecycleOwner = this
         binding.handler = this
-        if (intent.hasExtra(CERTIFICATE_URL)){
+        if (intent.hasExtra(CERTIFICATE_URL) && intent.getStringExtra(CERTIFICATE_URL) != null) {
             intent.getStringExtra(CERTIFICATE_URL)?.let { openCertificateShareFragment(it) }
             initView()
-        }
-        else{
-            initView()
+        } else {
             initDOBPicker()
+            initView()
             addObserver()
             viewModel.getCertificateUserDetails()
         }
@@ -112,7 +111,7 @@ class CertificateDetailActivity : BaseActivity(), FileDownloadCallback {
         }
         findViewById<AppCompatTextView>(R.id.text_message_title).text = "Certificate Details"
         findViewById<AppCompatImageView>(R.id.iv_icon_referral).visibility = View.GONE
-        if (intent.hasExtra(CERTIFICATE_URL)) {
+        if (intent.hasExtra(CERTIFICATE_URL) && intent.getStringExtra(CERTIFICATE_URL) != null) {
             findViewById<AppCompatTextView>(R.id.text_message_title).text = "Examination Certificate"
             hideProgressBar()
             binding.progressBar.visibility = View.GONE
@@ -332,6 +331,7 @@ class CertificateDetailActivity : BaseActivity(), FileDownloadCallback {
             }
             //showProgressDialog("Please Wait for the Certificate to be Generated")
             viewModel.postCertificateUserDetails(getUserDetail())
+            viewModel.saveImpression(GENERATE_CERTIFICATE_FORM)
         }
     }
 

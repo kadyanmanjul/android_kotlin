@@ -291,6 +291,9 @@ interface CommonNetworkService {
     @POST("$DIR/impression/user_profile_section_impression/")
     suspend fun userProfileSectionImpression(@Body params: Map<String, String>): UserProfileSectionResponse
 
+    @POST("$DIR/impression//")
+    suspend fun saveCertificateImpression(@Body params: Map<String, String>): Response<Unit>
+
     @PATCH("$DIR/impression/user_profile_section_impression/")
     suspend fun engageUserProfileSectionTime(@Body params: Map<String, String>): Any
 

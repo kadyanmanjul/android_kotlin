@@ -34,7 +34,7 @@
             android:layout_marginHorizontal="@dimen/_12sdp"
             android:layout_marginTop="@dimen/_16sdp"
             android:gravity="center"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Title_Group"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Title_Group_smaller"
             android:textColor="@color/black"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -105,8 +105,8 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/check_exam_details"
             android:layout_width="wrap_content"
+            style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_12sdp"
             android:backgroundTint="@color/colorAccent"
             android:clickable="true"
             android:focusable="true"

@@ -19,6 +19,7 @@ import com.joshtalks.joshskills.core.custom_ui.tvproperty.BulletSpanWithRadius
 import com.joshtalks.joshskills.databinding.CeInstructionFragmentBinding
 import com.joshtalks.joshskills.repository.server.certification_exam.CertificationQuestionModel
 import com.joshtalks.joshskills.ui.certification_exam.CertificationExamViewModel
+import com.joshtalks.joshskills.ui.certification_exam.constants.OPENED_EXAM_INSTRUCTION_FRAGMENT
 
 class InstructionFragment : Fragment() {
 
@@ -34,6 +35,7 @@ class InstructionFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProvider(requireActivity()).get(CertificationExamViewModel::class.java)
+        viewModel.saveImpression(OPENED_EXAM_INSTRUCTION_FRAGMENT)
     }
 
     override fun onCreateView(
@@ -49,15 +51,15 @@ class InstructionFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.certificationQuestionLiveData.observe(viewLifecycleOwner, {
+        viewModel.certificationQuestionLiveData.observe(viewLifecycleOwner) {
             updateView(it)
-        })
+        }
 
-        viewModel.resumeExamLiveData.observe(viewLifecycleOwner, {
+        viewModel.resumeExamLiveData.observe(viewLifecycleOwner) {
             it?.run {
                 isExamResume(this)
             }
-        })
+        }
         viewModel.resumeExamLiveData.value?.let {
             isExamResume(it)
         }

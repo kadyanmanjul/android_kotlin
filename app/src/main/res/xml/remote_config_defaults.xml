@@ -932,6 +932,26 @@
         <value>false</value>
     </entry>
     <entry>
+        <key>CERTIFICATE_SHARE_TEXT</key>
+        <value>Check This out</value>
+    </entry>
+    <entry>
+        <key>CERTIFICATE_SHARE_TEXT_WHATSAPP</key>
+        <value>Whatsapp</value>
+    </entry>
+    <entry>
+        <key>CERTIFICATE_SHARE_TEXT_FB</key>
+        <value>FB</value>
+    </entry>
+    <entry>
+        <key>CERTIFICATE_SHARE_TEXT_LINKEDIN</key>
+        <value>LinkedIn</value>
+    </entry>
+    <entry>
+        <key>CERTIFICATE_SHARE_TEXT_INSTA</key>
+        <value>Insta</value>
+    </entry>
+    <entry>
         <key>POSTAL_ADDRESS</key>
         <value>Postal Address</value>
     </entry>

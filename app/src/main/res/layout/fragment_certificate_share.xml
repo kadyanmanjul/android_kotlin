@@ -11,195 +11,242 @@
             type="com.joshtalks.joshskills.ui.certification_exam.view.CertificateShareFragment" />
     </data>
 
-    <ScrollView
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scrollbars="none">
+        android:layout_height="match_parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent"
+            android:scrollbars="none">
 
-            <TextView
-                android:id="@+id/txt_congratulations"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/txt_congratulations"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_20sdp"
+                    android:text="Congratulations, Aaditya!"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5_Bold"
+                    android:textSize="@dimen/_18ssp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/txt_you_have_earned"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:gravity="center"
+                    android:paddingHorizontal="@dimen/_12sdp"
+                    android:text="You have earned the Josh Skills Ultimate Spoken English Course Beginner Level Certificate"
+                    android:textAlignment="center"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5_Semi_Bold"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/txt_congratulations" />
+
+                <ImageView
+                    android:id="@+id/img_certificate"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    app:layout_constraintDimensionRatio="1.414"
+                    android:layout_marginHorizontal="@dimen/_16sdp"
+                    android:layout_marginTop="@dimen/_16sdp"
+                    android:background="@drawable/rect_with_black_stroke"
+                    android:elevation="@dimen/_6sdp"
+                    android:shadowColor="@color/black"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/txt_you_have_earned"
+                    tools:src="@tools:sample/avatars" />
+
+                <com.facebook.shimmer.ShimmerFrameLayout
+                    android:id="@+id/shimmer_certi"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:background="@color/white"
+                    android:visibility="visible"
+                    app:layout_constraintBottom_toBottomOf="@+id/img_certificate"
+                    app:layout_constraintEnd_toEndOf="@+id/img_certificate"
+                    app:layout_constraintStart_toStartOf="@+id/img_certificate"
+                    app:layout_constraintTop_toTopOf="@+id/img_certificate"
+                    tools:visibility="visible">
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/bg_profile_header"/>
+                </com.facebook.shimmer.ShimmerFrameLayout>
+
+                <TextView
+                    android:id="@+id/txt_share_achievement"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="20dp"
+                    android:gravity="center"
+                    android:paddingHorizontal="@dimen/_12sdp"
+                    android:text="Share your achievement with people who have supported you and helped you grow."
+                    android:textAlignment="center"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Title_Message"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/img_certificate" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_share_whatsapp"
+                    style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/_38sdp"
+                    android:layout_marginTop="@dimen/_16sdp"
+                    android:backgroundTint="#13990A"
+                    android:elevation="0dp"
+                    android:paddingVertical="@dimen/_4sdp"
+                    android:text="Share on Whatsapp"
+                    android:textAlignment="center"
+                    android:textAllCaps="false"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5_Semi_Bold"
+                    android:textSize="@dimen/_12ssp"
+                    app:cornerRadius="@dimen/_18sdp"
+                    app:icon="@drawable/ic_whatsapp_share"
+                    app:iconGravity="textStart"
+                    app:iconSize="@dimen/_16sdp"
+                    app:iconTint="@null"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/txt_share_achievement" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_share_facebook"
+                    style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/_38sdp"
+                    android:layout_marginTop="@dimen/_4sdp"
+                    android:backgroundTint="@color/white"
+                    android:elevation="0dp"
+                    android:paddingVertical="@dimen/_4sdp"
+                    android:text="Share on Facebook"
+                    android:textAlignment="center"
+                    android:textAllCaps="false"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5_Semi_Bold"
+                    android:textColor="#107BE5"
+                    android:textSize="@dimen/_12ssp"
+                    app:cornerRadius="@dimen/_18sdp"
+                    app:icon="@drawable/ic_facebook"
+                    app:iconGravity="textStart"
+                    app:iconSize="@dimen/_16sdp"
+                    app:iconTint="@null"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/btn_share_whatsapp"
+                    app:strokeColor="#107BE5"
+                    app:strokeWidth="@dimen/_1sdp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_share_insta"
+                    style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/_38sdp"
+                    android:layout_marginTop="@dimen/_4sdp"
+                    android:backgroundTint="@color/white"
+                    android:elevation="0dp"
+                    android:paddingVertical="@dimen/_4sdp"
+                    android:text="Share on Instagram"
+                    android:textAlignment="center"
+                    android:textAllCaps="false"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5_Semi_Bold"
+                    android:textColor="#F00073"
+                    android:textSize="@dimen/_12ssp"
+                    app:cornerRadius="@dimen/_18sdp"
+                    app:icon="@drawable/ic_instagram"
+                    app:iconGravity="textStart"
+                    app:iconSize="@dimen/_16sdp"
+                    app:iconTint="@null"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/btn_share_facebook"
+                    app:strokeColor="#F00073"
+                    app:strokeWidth="@dimen/_1sdp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_share_linkedIn"
+                    style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/_38sdp"
+                    android:layout_marginTop="@dimen/_4sdp"
+                    android:backgroundTint="@color/white"
+                    android:elevation="0dp"
+                    android:gravity="center"
+                    android:paddingVertical="@dimen/_4sdp"
+                    android:text="Share on LinkedIn    "
+                    android:textAllCaps="false"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5_Semi_Bold"
+                    android:textColor="#2867B2"
+                    android:textSize="@dimen/_12ssp"
+                    app:cornerRadius="@dimen/_18sdp"
+                    app:icon="@drawable/ic_linkedin"
+                    app:iconGravity="textStart"
+                    app:iconSize="@dimen/_16sdp"
+                    app:iconTint="@null"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/btn_share_insta"
+                    app:strokeColor="#2867B2"
+                    app:strokeWidth="@dimen/_1sdp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_share_download"
+                    style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/_38sdp"
+                    android:layout_marginTop="@dimen/_4sdp"
+                    android:layout_marginBottom="@dimen/_12ssp"
+                    android:backgroundTint="@color/white"
+                    android:elevation="0dp"
+                    android:paddingVertical="@dimen/_4sdp"
+                    android:text="Download Certificate"
+                    android:textAllCaps="false"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5_Semi_Bold"
+                    android:textColor="#636363"
+                    android:textSize="@dimen/_12ssp"
+                    app:cornerRadius="@dimen/_18sdp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.505"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/btn_share_linkedIn"
+                    app:layout_constraintVertical_bias="0.0"
+                    app:strokeColor="#636363"
+                    app:strokeWidth="@dimen/_1sdp" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </ScrollView>
+
+        <FrameLayout
+            android:id="@+id/progressBar2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/transparent_black_alpha_70"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:elevation="@dimen/_10sdp"
+            android:visibility="gone">
+
+            <ProgressBar
+                style="?android:attr/progressBarStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_20sdp"
-                android:text="Congratulations, Aaditya!"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5_Bold"
-                android:textSize="@dimen/_18ssp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/txt_you_have_earned"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:paddingHorizontal="@dimen/_12sdp"
-                android:text="You have earned the Josh Skills Ultimate Spoken English Course Beginner Level Certificate"
-                android:textAlignment="center"
-                android:gravity="center"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5_Semi_Bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/txt_congratulations" />
-
-            <ImageView
-                android:id="@+id/img_certificate"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_30sdp"
-                android:layout_marginHorizontal="@dimen/_16sdp"
-                android:background="@drawable/rect_with_black_stroke"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                android:elevation="@dimen/_18sdp"
-                android:shadowColor="@color/black"
-                app:layout_constraintTop_toBottomOf="@+id/txt_you_have_earned"
-                tools:src="@tools:sample/avatars" />
-
-            <TextView
-                android:id="@+id/txt_share_achievement"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginTop="20dp"
-                android:paddingHorizontal="@dimen/_12sdp"
-                android:text="Share your achievement with people who have supported you and helped you grow."
-                android:textAppearance="@style/TextAppearance.JoshTypography.Title_Message"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:textAlignment="center"
-                android:gravity="center"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/img_certificate" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_share_whatsapp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/_38sdp"
-                android:layout_marginTop="@dimen/_16sdp"
-                android:backgroundTint="#13990A"
-                android:elevation="0dp"
-                android:paddingVertical="@dimen/_4sdp"
-                android:text="Share on Whatsapp"
-                android:textAlignment="center"
-                android:textAllCaps="false"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5_Semi_Bold"
-                android:textSize="@dimen/_12ssp"
-                app:cornerRadius="@dimen/_18sdp"
-                app:icon="@drawable/ic_whatsapp_share"
-                app:iconGravity="textStart"
-                app:iconSize="@dimen/_16sdp"
-                app:iconTint="@null"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/txt_share_achievement" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_share_facebook"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/_38sdp"
-                android:layout_marginTop="@dimen/_5sdp"
-                android:backgroundTint="@color/white"
-                android:elevation="0dp"
-                android:paddingVertical="@dimen/_4sdp"
-                android:text="Share on Facebook"
-                android:textAlignment="center"
-                android:textAllCaps="false"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5_Semi_Bold"
-                android:textColor="#107BE5"
-                android:textSize="@dimen/_12ssp"
-                app:cornerRadius="@dimen/_18sdp"
-                app:icon="@drawable/ic_facebook"
-                app:iconGravity="textStart"
-                app:iconSize="@dimen/_16sdp"
-                app:iconTint="@null"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/btn_share_whatsapp"
-                app:strokeColor="#107BE5"
-                app:strokeWidth="@dimen/_1sdp" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_share_insta"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/_38sdp"
-                android:layout_marginTop="@dimen/_5sdp"
-                android:backgroundTint="@color/white"
-                android:elevation="0dp"
-                android:paddingVertical="@dimen/_4sdp"
-                android:text="Share on Instagram"
-                android:textAlignment="center"
-                android:textAllCaps="false"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5_Semi_Bold"
-                android:textColor="#F00073"
-                android:textSize="@dimen/_12ssp"
-                app:cornerRadius="@dimen/_18sdp"
-                app:icon="@drawable/ic_instagram"
-                app:iconGravity="textStart"
-                app:iconSize="@dimen/_16sdp"
-                app:iconTint="@null"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/btn_share_facebook"
-                app:strokeColor="#F00073"
-                app:strokeWidth="@dimen/_1sdp" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_share_linkedIn"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/_38sdp"
-                android:layout_marginTop="@dimen/_5sdp"
-                android:backgroundTint="@color/white"
-                android:elevation="0dp"
-                android:gravity="center"
-                android:paddingVertical="@dimen/_4sdp"
-                android:text="Share on LinkedIn    "
-                android:textAllCaps="false"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5_Semi_Bold"
-                android:textColor="#2867B2"
-                android:textSize="@dimen/_12ssp"
-                app:cornerRadius="@dimen/_18sdp"
-                app:icon="@drawable/ic_linkedin"
-                app:iconGravity="textStart"
-                app:iconSize="@dimen/_16sdp"
-                app:iconTint="@null"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/btn_share_insta"
-                app:strokeColor="#2867B2"
-                app:strokeWidth="@dimen/_1sdp" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_share_download"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/_38sdp"
-                android:layout_marginTop="@dimen/_5sdp"
-                android:layout_marginBottom="@dimen/_12ssp"
-                android:backgroundTint="@color/white"
-                android:elevation="0dp"
-                android:paddingVertical="@dimen/_4sdp"
-                android:text="Download Certificate"
-                android:textAllCaps="false"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5_Semi_Bold"
-                android:textColor="#636363"
-                android:textSize="@dimen/_12ssp"
-                app:cornerRadius="@dimen/_18sdp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.505"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/btn_share_linkedIn"
-                app:layout_constraintVertical_bias="0.0"
-                app:strokeColor="#636363"
-                app:strokeWidth="@dimen/_1sdp" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </ScrollView>
+                android:layout_gravity="center" />
+        </FrameLayout>
+    </FrameLayout>
 </layout>

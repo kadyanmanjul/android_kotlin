@@ -20,6 +20,8 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayoutMediator
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.BaseActivity
+import com.joshtalks.joshskills.core.IS_CERTIFICATE_GENERATED
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
@@ -38,7 +40,9 @@ import com.joshtalks.joshskills.ui.certification_exam.CERTIFICATION_EXAM_ID
 import com.joshtalks.joshskills.ui.certification_exam.CERTIFICATION_EXAM_QUESTION
 import com.joshtalks.joshskills.ui.certification_exam.CertificationExamViewModel
 import com.joshtalks.joshskills.ui.certification_exam.constants.CERTIFICATE_URL
+import com.joshtalks.joshskills.ui.certification_exam.constants.GENERATE_CERTIFICATE
 import com.joshtalks.joshskills.ui.certification_exam.constants.LOCAL_DOWNLOAD_URL
+import com.joshtalks.joshskills.ui.certification_exam.constants.SHOW_CERTIFICATE
 import com.joshtalks.joshskills.ui.certification_exam.examview.CExamMainActivity
 import com.joshtalks.joshskills.ui.certification_exam.report.udetail.CertificateDetailActivity
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -189,11 +193,17 @@ class CExamReportActivity : BaseActivity(), FileDownloadCallback {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                     {
+                        if (PrefManager.getBoolValue(IS_CERTIFICATE_GENERATED, defValue = true)) {
+                            viewModel.saveImpression(GENERATE_CERTIFICATE)
+                        }else{
+                            viewModel.saveImpression(SHOW_CERTIFICATE)
+                        }
                         val cPos = binding.examReportList.currentItem
                         val url =
                             viewModel.examReportLiveData.value?.getOrNull(cPos)?.certificateURL
                         if (url != null) {
                             binding.tabLayout.visibility = View.GONE
+                        }
                             Log.i("Mihir", "addRxbusObserver: $it")
                             userDetailsActivityResult.launch(
                                 CertificateDetailActivity.startUserDetailsActivity(
@@ -203,7 +213,6 @@ class CExamReportActivity : BaseActivity(), FileDownloadCallback {
                                 )
                             )
                             return@subscribe
-                        }
                         return@subscribe
                     },
                     {

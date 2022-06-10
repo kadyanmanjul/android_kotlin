@@ -20,6 +20,7 @@ import com.joshtalks.joshskills.repository.server.certification_exam.Certificati
 import com.joshtalks.joshskills.repository.server.certification_exam.QuestionReportType
 import com.joshtalks.joshskills.ui.certification_exam.CERTIFICATION_EXAM_QUESTION
 import com.joshtalks.joshskills.ui.certification_exam.CertificationExamViewModel
+import com.joshtalks.joshskills.ui.certification_exam.constants.CHECK_EXAM_DETAILS
 import com.joshtalks.joshskills.ui.certification_exam.report.vh.ReportOverviewView1
 import com.joshtalks.joshskills.ui.certification_exam.report.vh.ReportOverviewView2
 import com.joshtalks.joshskills.ui.certification_exam.report.vh.ReportOverviewView3
@@ -109,6 +110,7 @@ class CExamReportFragment : Fragment() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     updateRvScrolling(false)
+                    viewModel.saveImpression(CHECK_EXAM_DETAILS)
                     binding.chatRv.smoothScrollToPosition(1)
                 }, {
                     it.printStackTrace()

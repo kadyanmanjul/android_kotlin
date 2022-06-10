@@ -6,6 +6,7 @@ import android.content.res.ColorStateList
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.AbsoluteSizeSpan
+import android.util.TypedValue
 import android.view.View
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
@@ -85,6 +86,8 @@ class ReportOverviewView1(private val certificateExamReport: CertificateExamRepo
 
                 checkExamDetails.strokeWidth = 2
 
+                checkExamDetails.setTextSize(TypedValue.COMPLEX_UNIT_SP,12F)
+
                 if (certificateURL.isNullOrEmpty()) {
                     downloadCertificateBtn.visibility = View.GONE
                 }
@@ -117,7 +120,6 @@ class ReportOverviewView1(private val certificateExamReport: CertificateExamRepo
 
     @Click(R.id.btn_download_certificate)
     fun downloadCertificate() {
-        Timber.tag("MihirTag").e("Here 1")
         RxBus2.publish(
             DownloadFileEventBus(
                 id = certificateExamReport.reportId,

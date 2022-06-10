@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Context.DOWNLOAD_SERVICE
 import android.content.Intent
 import android.content.IntentFilter
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
@@ -15,13 +16,20 @@ import android.view.View
 import android.view.ViewGroup
 import android.webkit.URLUtil
 import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.databinding.FragmentCertificateShareBinding
 import com.joshtalks.joshskills.repository.local.model.User
-import com.joshtalks.joshskills.ui.certification_exam.constants.CERTIFICATE_URL
+import com.joshtalks.joshskills.ui.certification_exam.CertificationExamViewModel
+import com.joshtalks.joshskills.ui.certification_exam.constants.*
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -29,12 +37,16 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.moengage.core.internal.utils.getSystemService
 import kotlin.properties.Delegates
 
-class CertificateShareFragment : CoreJoshFragment() {
+class CertificateShareFragment : CoreJoshFragment(){
 
     private lateinit var binding: FragmentCertificateShareBinding
+    private val viewModel by lazy{
+        ViewModelProvider(this).get(CertificationExamViewModel::class.java)
+    }
     private lateinit var url: String
-    private var packageName = "whatsapp"
+    private var packageName = "null"
     private var DownloadId by Delegates.notNull<Long>()
+    private var Message = ""
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -46,36 +58,56 @@ class CertificateShareFragment : CoreJoshFragment() {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_certificate_share, container, false)
         binding.lifecycleOwner = this
         binding.handler = this
-        Glide.with(binding.imgCertificate.context).load("https://picsum.photos/200/300").into(binding.imgCertificate)
+        binding.txtYouHaveEarned.visibility = View.GONE
+
+        Glide.with(binding.imgCertificate.context).load(url)
+//            .listener(this)
+            .into(binding.imgCertificate)
         PrefManager.put(IS_CERTIFICATE_GENERATED, false)
         if (PrefManager.getBoolValue(IS_FIRST_TIME_CERTIFICATE, defValue = true)) {
             binding.btnShareLinkedIn.visibility = View.GONE
             binding.btnShareFacebook.visibility = View.GONE
             binding.btnShareDownload.visibility = View.GONE
             binding.btnShareInsta.visibility = View.GONE
+            binding.txtYouHaveEarned.visibility = View.VISIBLE
             PrefManager.put(IS_FIRST_TIME_CERTIFICATE, false)
         }
         binding.txtCongratulations.text = "Congratulations, ${User.getInstance().firstName}!"
 
+        binding.btnShareWhatsapp.isVisible = Utils.isPackageInstalled("com.whatsapp", requireContext())
         binding.btnShareWhatsapp.setOnClickListener {
             Log.i("TAG", "onCreateView: $url")
             packageName = "whatsapp"
-            downloadImage("https://picsum.photos/200/300")
-        }
-        binding.btnShareFacebook.setOnClickListener {
-            packageName="facebook"
+            binding.progressBar2.visibility = View.VISIBLE
             downloadImage(url)
+            viewModel.saveImpression(CERTIFICATE_SHARED_WHATSAPP)
         }
+        binding.btnShareFacebook.isVisible = Utils.isPackageInstalled("com.facebook.android", requireContext())
+        binding.btnShareFacebook.setOnClickListener {
+            packageName="facebook.android"
+            binding.progressBar2.visibility = View.VISIBLE
+            downloadImage(url)
+            viewModel.saveImpression(CERTIFICATE_SHARED_FB)
+        }
+        binding.btnShareInsta.isVisible = Utils.isPackageInstalled("com.instagram.android", requireContext())
         binding.btnShareInsta.setOnClickListener {
             packageName ="instagram.android"
+            binding.progressBar2.visibility = View.VISIBLE
             downloadImage(url)
+            viewModel.saveImpression(CERTIFICATE_SHARED_INSTA)
         }
+        binding.btnShareLinkedIn.isVisible = Utils.isPackageInstalled("com.linkedin.android", requireContext())
         binding.btnShareLinkedIn.setOnClickListener {
             packageName= "linkedin.android"
+            binding.progressBar2.visibility = View.VISIBLE
             downloadImage(url)
+            viewModel.saveImpression(CERTIFICATE_SHARED_LINKED)
         }
         binding.btnShareDownload.setOnClickListener {
+            packageName= "null"
+            binding.progressBar2.visibility = View.VISIBLE
             downloadImage(url)
+            viewModel.saveImpression(CERTIFICATE_DOWNLOAD)
         }
         return binding.root
     }
@@ -122,7 +154,8 @@ class CertificateShareFragment : CoreJoshFragment() {
         val downloadUri = Uri.parse(url)
 
         val request = DownloadManager.Request(downloadUri)
-        val fileName = URLUtil.guessFileName(url, null, "image/png")
+//        val fileName = URLUtil.guessFileName(url, null, "image/png")
+        val fileName = "test${System.currentTimeMillis()}.jpeg"
         request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
             .setMimeType("image/*")
             .setTitle(URLUtil.guessFileName(url, null, "image/png"))
@@ -138,13 +171,37 @@ class CertificateShareFragment : CoreJoshFragment() {
             if(intent.action == DownloadManager.ACTION_DOWNLOAD_COMPLETE){
                 intent.extras?.let {
                     val id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
-                    if (id == DownloadId){
+                    if (id == DownloadId){ // checking if the downloaded file is our certificate
                         //retrieving the file
+                        binding.progressBar2.visibility = View.GONE
                         val downloadedFileId = it.getLong(DownloadManager.EXTRA_DOWNLOAD_ID)
                         val downloadManager = getSystemService(requireContext(), DOWNLOAD_SERVICE) as DownloadManager
                         val uri: Uri = downloadManager.getUriForDownloadedFile(downloadedFileId)
-                        Toast.makeText(requireContext(), "Downloaded!", Toast.LENGTH_LONG).show()
-                        shareOn(packageName,"check this out",uri)
+                        when(packageName){
+                            "whatsapp"->{
+                                Message = AppObjectController.getFirebaseRemoteConfig()
+                                    .getString(FirebaseRemoteConfigKey.CERTIFICATE_SHARE_TEXT_WHATSAPP)
+                            }
+                            "facebook.android"->{
+                                Message = AppObjectController.getFirebaseRemoteConfig()
+                                    .getString(FirebaseRemoteConfigKey.CERTIFICATE_SHARE_TEXT_FB)
+                            }
+                            "instagram.android"->{
+                                Message = AppObjectController.getFirebaseRemoteConfig()
+                                    .getString(FirebaseRemoteConfigKey.CERTIFICATE_SHARE_TEXT_INSTA)
+                            }
+                            "linkedin.android"->{
+                                Message = AppObjectController.getFirebaseRemoteConfig()
+                                    .getString(FirebaseRemoteConfigKey.CERTIFICATE_SHARE_TEXT_LINKEDIN)
+                            }
+                            "null"->{
+                                Message = ""
+                                Toast.makeText(requireContext(), "Downloaded!", Toast.LENGTH_LONG).show()
+                            }
+                        }
+                        if(Message!="" && packageName!="null"){
+                            shareOn(packageName,Message,uri)
+                        }
                     }
                 }
             }
