@@ -18,6 +18,7 @@ import com.joshtalks.badebhaiya.core.workers.WorkManagerAdmin
 import com.joshtalks.badebhaiya.databinding.ActivitySignUpBinding
 import com.joshtalks.badebhaiya.feed.Call
 import com.joshtalks.badebhaiya.feed.FeedActivity
+import com.joshtalks.badebhaiya.impressions.Impression
 import com.joshtalks.badebhaiya.notifications.FCM_ACTIVE
 import com.joshtalks.badebhaiya.notifications.FirebaseNotificationService
 import com.joshtalks.badebhaiya.privacyPolicy.WebViewFragment
@@ -268,6 +269,7 @@ class SignUpActivity : AppCompatActivity(), Call {
 
         override fun onSuccessProfileShared(trueProfile: TrueProfile) {
             viewModel.trueCallerLogin(trueProfile)
+            viewModel.sendEvent(Impression("SIGNUP_ACTIVITY","TC_LOGIN"))
         }
     }
 
