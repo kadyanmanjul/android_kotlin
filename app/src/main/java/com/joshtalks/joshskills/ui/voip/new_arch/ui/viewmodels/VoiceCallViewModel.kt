@@ -144,6 +144,9 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                         withContext(Dispatchers.Main) {
                             singleLiveEvent.value = msg
                         }
+                        if (uiState.isRecording){
+                            stopRecording()
+                        }
                     }
                     ServiceEvents.RECONNECTING_FAILED -> {
                         val msg = Message.obtain().apply {
@@ -212,6 +215,9 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun stopRecording() {
+        if (recordFile == null){
+            return
+        }
         CallRecording.audioRecording.stopPlaying()
         Log.d(TAG, "stopRecording() called  $recordFile")
         viewModelScope.launch {
