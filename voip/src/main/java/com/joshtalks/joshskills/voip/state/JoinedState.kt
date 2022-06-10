@@ -8,6 +8,7 @@ import com.joshtalks.joshskills.voip.communication.model.*
 import com.joshtalks.joshskills.voip.constant.Event.*
 import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.local.PrefManager
+import com.joshtalks.joshskills.voip.mediator.CallDirection
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
 import com.joshtalks.joshskills.voip.webrtc.Envelope
@@ -29,7 +30,7 @@ class JoinedState(val context: CallContext) : VoipState {
     private val connectingTimer by lazy {
         scope.launch(start = CoroutineStart.LAZY) {
             try{
-                if(context.channelData.isNewSearchingEnabled()) {
+                if(context.direction != CallDirection.INCOMING && context.channelData.isNewSearchingEnabled()) {
                     Log.d(TAG, "Retry Timer Started")
                     delay(RETRY_TIMER)
                     ensureActive()
