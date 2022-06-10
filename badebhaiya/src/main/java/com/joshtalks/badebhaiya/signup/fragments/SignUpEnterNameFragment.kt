@@ -18,6 +18,7 @@ import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.core.isValidFullNumber
 import com.joshtalks.badebhaiya.core.showToast
 import com.joshtalks.badebhaiya.databinding.FragmentSignupEnterNameBinding
+import com.joshtalks.badebhaiya.impressions.Impression
 import com.joshtalks.badebhaiya.signup.SignUpActivity
 import com.joshtalks.badebhaiya.signup.viewmodel.SignUpViewModel
 import kotlinx.android.synthetic.main.activity_sign_up.*
@@ -55,6 +56,10 @@ class SignUpEnterNameFragment: Fragment() {
                 }
             }
         })
+
+        binding.etFirstName.setOnClickListener{
+            viewModel.sendEvent(Impression("ENTER_NAME_FRAGMENT","FILLED_NAME"))
+        }
 
         return binding.root
     }
