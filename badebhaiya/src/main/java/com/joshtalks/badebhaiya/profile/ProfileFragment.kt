@@ -113,7 +113,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
 //        {
 //            showPopup(room.roomId, User.getInstance().userId)
 //        }
-        viewModel.getProfileForUser(userId!!, isFromDeeplink)
+        viewModel.getProfileForUser(userId!!, source)
         feedViewModel.setIsBadeBhaiyaSpeaker()
         binding.handler = this
         binding.viewModel = viewModel
@@ -348,7 +348,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
                     HtmlCompat.FROM_HTML_MODE_LEGACY)
                 //binding.tvFollowers.setText("${it.followersCount+1} followers")
             }
-        viewModel.getProfileForUser(userId ?: (User.getInstance().userId), isFromDeeplink)
+        viewModel.getProfileForUser(userId ?: (User.getInstance().userId), source)
     }
 
     private fun redirectToSignUp(pendingPilotAction: PendingPilotEvent, pendingPilotEventData: PendingPilotEventData) {
@@ -529,7 +529,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
                     false
                 )
             )
-        viewModel.getProfileForUser(userId ?: (User.getInstance().userId),isFromDeeplink)
+        viewModel.getProfileForUser(userId ?: (User.getInstance().userId),source)
 
     }
 

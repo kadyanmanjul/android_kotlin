@@ -98,6 +98,7 @@ class FeedViewModel : ViewModel() {
                         roomtopic
                     )
                 }
+                PubNubManager.waitingUnsubscribe()
                 Log.i("YASHEN", "postvalue: ")
                 singleLiveEvent.value=message
             }

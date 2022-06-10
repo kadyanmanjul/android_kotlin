@@ -464,6 +464,17 @@ object PubNubManager {
         endPubNub()
     }
 
+    fun waitingUnsubscribe(){
+        try{
+            isJoinedPubnub.unsubscribeAll()
+            waitingCallback?.let {
+                isJoinedPubnub.removeListener(it)
+            }
+        }
+        catch(ex:Exception){
+        }
+    }
+
     fun reconnectPubNub() {
         pubnub?.reconnect()
     }

@@ -365,7 +365,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
 
                         Log.i("MODERATORSTATUS", "addObserver: WAIT $it")
 
-                        WaitingRoomFragment.open(supportFragmentManager,R.id.root_view)
+                        WaitingFragment.open(supportFragmentManager,R.id.root_view)
                     }
                 }
                 ROOM_EXPAND->{
@@ -617,7 +617,10 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         val bundle = Bundle()
         val fragmentTransaction: FragmentTransaction = supportFragmentManager.beginTransaction()
         bundle.putString("user", profile) // use as per your need
-        bundle.putBoolean("deeplink", deeplink)
+        if(deeplink)
+        bundle.putString("source", "deeplink")
+        else
+            bundle.putString("source","feed")
 
         fragment.arguments = bundle
         fragmentTransaction.addToBackStack(null)
