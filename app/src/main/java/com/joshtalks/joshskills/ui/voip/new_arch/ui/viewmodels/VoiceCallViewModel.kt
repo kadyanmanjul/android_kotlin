@@ -200,9 +200,11 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
 
     private fun startRecording() {
         recordingStartedUIChanges()
-        Utils.context?.getTempFileForCallRecording()?.let { file ->
-            recordFile = file
-            CallRecording.audioRecording.startPlayer(recordFile, Utils.context!!)
+        viewModelScope.launch(Dispatchers.IO) {
+            Utils.context?.getTempFileForCallRecording()?.let { file ->
+                recordFile = file
+                CallRecording.audioRecording.startPlayer(recordFile, Utils.context!!)
+            }
         }
     }
 
@@ -218,9 +220,8 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
         if (recordFile == null){
             return
         }
-        CallRecording.audioRecording.stopPlaying()
-        Log.d(TAG, "stopRecording() called  $recordFile")
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
+            CallRecording.audioRecording.stopPlaying()
             if (recordFile?.absolutePath?.isEmpty()?.not() == true) {
                 val msg = Message.obtain().apply {
                     what = GET_FRAGMENT_BITMAP
@@ -231,9 +232,7 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                 }
                 val obj = mapOf("media_path" to recordFile!!.name)
                 val responseObj = voipNetwork.requestUploadMediaAsync(obj).await()
-                Log.d(TAG, "responseObj: $responseObj")
                 val statusCode: Int = uploadOnS3Server(responseObj, recordFile!!)
-                Log.d(TAG, "stopRecording: $statusCode")
                 if (statusCode in 200..210) {
                     val url =
                         responseObj.url.plus(File.separator).plus(responseObj.fields["key"])
