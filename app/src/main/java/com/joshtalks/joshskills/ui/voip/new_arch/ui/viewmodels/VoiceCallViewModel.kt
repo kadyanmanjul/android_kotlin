@@ -26,8 +26,10 @@ import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.constant.CALL_INITIATED_EVENT
 import com.joshtalks.joshskills.voip.constant.CANCEL_INCOMING_TIMER
 import com.joshtalks.joshskills.voip.constant.CLOSE_CALL_SCREEN
+import com.joshtalks.joshskills.voip.constant.HIDE_RECORDING_PERMISSION_DIALOG
 import com.joshtalks.joshskills.voip.constant.RECONNECTING_FAILED
 import com.joshtalks.joshskills.voip.constant.SHOW_RECORDING_PERMISSION_DIALOG
+import com.joshtalks.joshskills.voip.constant.SHOW_RECORDING_REJECTED_DIALOG
 import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.AmazonPolicyResponse
 import com.joshtalks.joshskills.voip.data.ServiceEvents
@@ -41,14 +43,15 @@ import java.io.File
 import java.util.ArrayDeque
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
-import kotlinx.coroutines.withContext
 
 const val CONNECTING = 1
 const val ONGOING = 2
@@ -113,10 +116,10 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                     ServiceEvents.CALL_INITIATED_EVENT -> {
                         uiState.currentState = "Connecting..."
                         val msg = Message.obtain().apply {
-                            what = if(source == FROM_INCOMING_CALL)
-                                        CANCEL_INCOMING_TIMER
-                                    else
-                                        CALL_INITIATED_EVENT
+                            what = if (source == FROM_INCOMING_CALL)
+                                CANCEL_INCOMING_TIMER
+                            else
+                                CALL_INITIATED_EVENT
                         }
                         withContext(Dispatchers.Main) {
                             singleLiveEvent.value = msg
@@ -209,12 +212,17 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun stopRecording() {
-        // bruh
         CallRecording.audioRecording.stopPlaying()
-        //TODO shave the file path to db and send to server 'recordFile'
         Log.d(TAG, "stopRecording() called  $recordFile")
-        viewModelScope.launch{
+        viewModelScope.launch {
             if (recordFile?.absolutePath?.isEmpty()?.not() == true) {
+                val msg = Message.obtain().apply {
+                    what = GET_FRAGMENT_BITMAP
+                }
+                withContext(Dispatchers.Main) {
+                    singleLiveEvent.value = msg
+                    Utils.showToast("Call recording will be saved in your Downloads folder")
+                }
                 val obj = mapOf("media_path" to recordFile!!.name)
                 val responseObj = voipNetwork.requestUploadMediaAsync(obj).await()
                 Log.d(TAG, "responseObj: $responseObj")
@@ -414,6 +422,7 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                 agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
             )
             stoppedRecUIchanges()
+            stopRecording()
             repository.stopCallRecording()
         }
         else {
@@ -497,5 +506,9 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
         Log.d(TAG, "onCleared: ")
         super.onCleared()
         repository.clearRepository()
+    }
+
+    fun saveImageAudioToFolder(imageFile: File) {
+        // TODO save another file in downloads folder with merged audio and Screenshot
     }
 }
