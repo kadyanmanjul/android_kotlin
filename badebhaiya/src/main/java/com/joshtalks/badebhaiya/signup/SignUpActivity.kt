@@ -239,11 +239,10 @@ class SignUpActivity : AppCompatActivity(), Call {
     }
 
     fun openTrueCallerBottomSheet() {
+        Log.i("SIGNUPActivity", "openTrueCallerBottomSheet: ${viewModel.redirect}")
         if (TruecallerSDK.getInstance().isUsable) {
             TruecallerSDK.getInstance().getUserProfile(this)
-        } else
-        Log.i("SIGNUPActivity", "openTrueCallerBottomSheet: ${viewModel.redirect}")
-        if (viewModel.redirect == "ENTER_NAME") {
+        } else if (viewModel.redirect == "ENTER_NAME") {
             binding.btnWelcome.visibility = View.GONE
             openEnterNameFragment()
         }
