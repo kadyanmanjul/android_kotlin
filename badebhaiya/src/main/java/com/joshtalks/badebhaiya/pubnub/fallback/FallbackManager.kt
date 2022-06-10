@@ -46,6 +46,8 @@ object FallbackManager {
             .collection(getRoomId())
             .document(PubNubManager.getLiveRoomProperties().channelName)
             .addSnapshotListener { value, error ->
+                Timber.tag(TAG).d("EVENT RECIEVED FROM GLOBAL CHANNEL AND ERROR => $error and VALUE => $value")
+
                 if (error == null) {
                     value?.let {
                         processEvent(it)
@@ -59,6 +61,8 @@ object FallbackManager {
             .collection(getRoomId())
             .document(PubNubManager.getLiveRoomProperties().agoraUid.toString())
             .addSnapshotListener { value, error ->
+                Timber.tag(TAG).d("EVENT RECIEVED FROM PRIVATE CHANNEL")
+
                 if (error == null) {
                     value?.let {
                         processEvent(it)
@@ -85,7 +89,7 @@ object FallbackManager {
                 PubNubManager.postToPubNubEvent(
                     ConversationRoomPubNubEventBus(
                         eventId = timestamp,
-                        action = PubNubEvent.valueOf(documentSnapshot.getString("data")!!), // TODO: Change key for event.
+                        action = PubNubEvent.valueOf(documentSnapshot.getString("data")!!),
                         data = JsonObject().getAsJsonObject(data.toString())
                     )
                 )
@@ -111,12 +115,12 @@ object FallbackManager {
         Firebase.firestore
             .collection(getRoomId())
             .document(channel)
-            .set(eventData.toHashMap(), SetOptions.merge())
+            .set(hashMapOf(eventData?.get("event_id") to eventData.toHashMap()))
             .addOnSuccessListener {
                 Timber.tag(TAG).d("EVENT SENT TO FIRESTORE")
             }
             .addOnFailureListener {
-                Timber.tag(TAG).d("EVENT SENT TO FIRESTORE FAILED")
+                Timber.tag(TAG).d("EVENT SENT TO FIRESTORE FAILED AND EXCEPTION => $it")
             }
     }
 

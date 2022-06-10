@@ -111,7 +111,7 @@ object PubNubManager {
 //        collectPubNubEvents()
         changePubNubState(PubNubState.STARTED)
 
-//        FallbackManager.start()
+        FallbackManager.start()
 
         }
 
@@ -142,7 +142,7 @@ object PubNubManager {
         } catch (e: Exception){
 
         }
-//        FallbackManager.end()
+        FallbackManager.end()
     }
 
 
@@ -386,7 +386,7 @@ object PubNubManager {
             } catch (e: Exception){
                 e.printStackTrace()
             }
-//            sendEventToFallback(eventData, channel)
+            sendEventToFallback(eventData, channel)
         }
     }
 

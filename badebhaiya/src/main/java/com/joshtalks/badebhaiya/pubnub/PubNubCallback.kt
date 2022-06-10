@@ -29,7 +29,7 @@ class PubNubCallback: SubscribeCallback() {
     override fun message(pubnub: PubNub, pnMessageResult: PNMessageResult) {
         val msg = pnMessageResult.message.asJsonObject
         val act = msg["action"].asString
-        val eventId = msg["event_id"].asLong
+//        val eventId = msg["event_id"].asLong
         try {
             if (msg != null) {
                 Log.d(
@@ -43,7 +43,7 @@ class PubNubCallback: SubscribeCallback() {
                     ConversationRoomPubNubEventBus(
                         PubNubEvent.valueOf(act),
                         msg,
-                        eventId
+                        10
                     )
                 )
             }
