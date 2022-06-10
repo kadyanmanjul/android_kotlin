@@ -65,7 +65,9 @@ class CertificationExamViewModel(application: Application) : AndroidViewModel(ap
             } else {
                 try {
                     val responseObj =
-                        AppObjectController.commonNetworkService.getCertificateExamDetails(certificateExamId)
+                        AppObjectController.commonNetworkService.getCertificateExamDetails(
+                            certificateExamId
+                        )
                     responseObj.certificateExamId = certificateExamId
                     resumeExamLiveData.postValue(false)
                     _certificationQuestionLiveData.postValue(responseObj)

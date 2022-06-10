@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.Context.DOWNLOAD_SERVICE
 import android.content.Intent
 import android.content.IntentFilter
-import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
@@ -20,10 +19,6 @@ import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.target.Target
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.databinding.FragmentCertificateShareBinding
@@ -37,10 +32,10 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.moengage.core.internal.utils.getSystemService
 import kotlin.properties.Delegates
 
-class CertificateShareFragment : CoreJoshFragment(){
+class CertificateShareFragment : CoreJoshFragment() {
 
     private lateinit var binding: FragmentCertificateShareBinding
-    private val viewModel by lazy{
+    private val viewModel by lazy {
         ViewModelProvider(this).get(CertificationExamViewModel::class.java)
     }
     private lateinit var url: String
@@ -59,22 +54,29 @@ class CertificateShareFragment : CoreJoshFragment(){
         binding.lifecycleOwner = this
         binding.handler = this
         binding.txtYouHaveEarned.visibility = View.GONE
-
-        Glide.with(binding.imgCertificate.context).load(url)
-//            .listener(this)
-            .into(binding.imgCertificate)
         PrefManager.put(IS_CERTIFICATE_GENERATED, false)
-        if (PrefManager.getBoolValue(IS_FIRST_TIME_CERTIFICATE, defValue = true)) {
-            binding.btnShareLinkedIn.visibility = View.GONE
-            binding.btnShareFacebook.visibility = View.GONE
-            binding.btnShareDownload.visibility = View.GONE
-            binding.btnShareInsta.visibility = View.GONE
-            binding.txtYouHaveEarned.visibility = View.VISIBLE
+        Glide.with(binding.imgCertificate.context).load(url)
+            .into(binding.imgCertificate)
+
+        if (isPackageInstalled("com.whatsapp") && PrefManager.getBoolValue(IS_FIRST_TIME_CERTIFICATE, defValue = true)) {
+            with(binding) {
+                btnShareWhatsapp.visibility = View.VISIBLE
+                btnShareFacebook.visibility = View.GONE
+                btnShareInsta.visibility = View.GONE
+                btnShareLinkedIn.visibility = View.GONE
+                btnShareDownload.visibility = View.GONE
+            }
             PrefManager.put(IS_FIRST_TIME_CERTIFICATE, false)
+        } else {
+            with(binding) {
+                btnShareDownload.isVisible = true
+                btnShareFacebook.isVisible = isPackageInstalled("com.facebook.android")
+                btnShareInsta.isVisible = isPackageInstalled("com.instagram.android")
+                btnShareLinkedIn.isVisible = isPackageInstalled("com.linkedin.android")
+            }
         }
         binding.txtCongratulations.text = "Congratulations, ${User.getInstance().firstName}!"
 
-        binding.btnShareWhatsapp.isVisible = Utils.isPackageInstalled("com.whatsapp", requireContext())
         binding.btnShareWhatsapp.setOnClickListener {
             Log.i("TAG", "onCreateView: $url")
             packageName = "whatsapp"
@@ -82,29 +84,30 @@ class CertificateShareFragment : CoreJoshFragment(){
             downloadImage(url)
             viewModel.saveImpression(CERTIFICATE_SHARED_WHATSAPP)
         }
-        binding.btnShareFacebook.isVisible = Utils.isPackageInstalled("com.facebook.android", requireContext())
+
         binding.btnShareFacebook.setOnClickListener {
-            packageName="facebook.android"
+            packageName = "facebook.android"
             binding.progressBar2.visibility = View.VISIBLE
             downloadImage(url)
             viewModel.saveImpression(CERTIFICATE_SHARED_FB)
         }
-        binding.btnShareInsta.isVisible = Utils.isPackageInstalled("com.instagram.android", requireContext())
+
         binding.btnShareInsta.setOnClickListener {
-            packageName ="instagram.android"
+            packageName = "instagram.android"
             binding.progressBar2.visibility = View.VISIBLE
             downloadImage(url)
             viewModel.saveImpression(CERTIFICATE_SHARED_INSTA)
         }
-        binding.btnShareLinkedIn.isVisible = Utils.isPackageInstalled("com.linkedin.android", requireContext())
+
         binding.btnShareLinkedIn.setOnClickListener {
-            packageName= "linkedin.android"
+            packageName = "linkedin.android"
             binding.progressBar2.visibility = View.VISIBLE
             downloadImage(url)
             viewModel.saveImpression(CERTIFICATE_SHARED_LINKED)
         }
+
         binding.btnShareDownload.setOnClickListener {
-            packageName= "null"
+            packageName = "null"
             binding.progressBar2.visibility = View.VISIBLE
             downloadImage(url)
             viewModel.saveImpression(CERTIFICATE_DOWNLOAD)
@@ -122,12 +125,12 @@ class CertificateShareFragment : CoreJoshFragment(){
                         intent.putExtra(Intent.EXTRA_TEXT, message)
                         intent.type = "image/*"
                         intent.putExtra(Intent.EXTRA_STREAM, uri)
-                        try{
+                        try {
                             if (intent.resolveActivity(requireActivity().packageManager) == null) {
                                 Toast.makeText(requireContext(), "$packageName not found on device", Toast.LENGTH_LONG).show()
                             }
                             startActivity(intent)
-                        }catch (e:Exception){
+                        } catch (e: Exception) {
                             e.printStackTrace()
                         }
                         return
@@ -149,63 +152,89 @@ class CertificateShareFragment : CoreJoshFragment(){
     }
 
     fun downloadImage(url: String) {
-        val downloadManager: DownloadManager = getSystemService(requireContext(), DOWNLOAD_SERVICE) as DownloadManager
+        PermissionUtils.storageReadAndWritePermission(requireContext(), object : MultiplePermissionsListener {
+            override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                report?.areAllPermissionsGranted()?.let { flag ->
+                    if (flag) {
+                        val downloadManager: DownloadManager = getSystemService(requireContext(), DOWNLOAD_SERVICE) as DownloadManager
 
-        val downloadUri = Uri.parse(url)
+                        val downloadUri = Uri.parse(url)
 
-        val request = DownloadManager.Request(downloadUri)
-//        val fileName = URLUtil.guessFileName(url, null, "image/png")
-        val fileName = "test${System.currentTimeMillis()}.jpeg"
-        request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
-            .setMimeType("image/*")
-            .setTitle(URLUtil.guessFileName(url, null, "image/png"))
-            .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-            .setDestinationInExternalPublicDir(
-                Environment.DIRECTORY_DOWNLOADS, fileName
-            )
-        DownloadId = downloadManager.enqueue(request)
+                        val request = DownloadManager.Request(downloadUri)
+                        val fileName = "test${System.currentTimeMillis()}.jpeg"
+                        request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
+                            .setMimeType("image/*")
+                            .setTitle(URLUtil.guessFileName(url, null, "image/png"))
+                            .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+                            .setDestinationInExternalPublicDir(
+                                Environment.DIRECTORY_DOWNLOADS, fileName
+                            )
+                        DownloadId = downloadManager.enqueue(request)
+                        return
+                    }
+                    if (report.isAnyPermissionPermanentlyDenied) {
+                        Toast.makeText(context, "Permission denied", Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
+
+            override fun onPermissionRationaleShouldBeShown(
+                permissions: MutableList<PermissionRequest>?,
+                token: PermissionToken?
+            ) {
+                token?.continuePermissionRequest()
+            }
+        })
+
     }
 
     val onComplete = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            if(intent.action == DownloadManager.ACTION_DOWNLOAD_COMPLETE){
+            if (intent.action == DownloadManager.ACTION_DOWNLOAD_COMPLETE) {
                 intent.extras?.let {
                     val id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
-                    if (id == DownloadId){ // checking if the downloaded file is our certificate
+                    if (id == DownloadId) { // checking if the downloaded file is our certificate
                         //retrieving the file
                         binding.progressBar2.visibility = View.GONE
                         val downloadedFileId = it.getLong(DownloadManager.EXTRA_DOWNLOAD_ID)
                         val downloadManager = getSystemService(requireContext(), DOWNLOAD_SERVICE) as DownloadManager
                         val uri: Uri = downloadManager.getUriForDownloadedFile(downloadedFileId)
-                        when(packageName){
-                            "whatsapp"->{
+                        when (packageName) {
+                            "whatsapp" -> {
                                 Message = AppObjectController.getFirebaseRemoteConfig()
                                     .getString(FirebaseRemoteConfigKey.CERTIFICATE_SHARE_TEXT_WHATSAPP)
                             }
-                            "facebook.android"->{
+                            "facebook.android" -> {
                                 Message = AppObjectController.getFirebaseRemoteConfig()
                                     .getString(FirebaseRemoteConfigKey.CERTIFICATE_SHARE_TEXT_FB)
                             }
-                            "instagram.android"->{
+                            "instagram.android" -> {
                                 Message = AppObjectController.getFirebaseRemoteConfig()
                                     .getString(FirebaseRemoteConfigKey.CERTIFICATE_SHARE_TEXT_INSTA)
                             }
-                            "linkedin.android"->{
+                            "linkedin.android" -> {
                                 Message = AppObjectController.getFirebaseRemoteConfig()
                                     .getString(FirebaseRemoteConfigKey.CERTIFICATE_SHARE_TEXT_LINKEDIN)
                             }
-                            "null"->{
+                            "null" -> {
                                 Message = ""
-                                Toast.makeText(requireContext(), "Downloaded!", Toast.LENGTH_LONG).show()
+                                Toast.makeText(requireContext(), "Certificate Downloaded", Toast.LENGTH_LONG).show()
                             }
                         }
-                        if(Message!="" && packageName!="null"){
-                            shareOn(packageName,Message,uri)
+                        if (Message != "" && packageName != "null") {
+                            shareOn(packageName, Message, uri)
                         }
                     }
                 }
             }
         }
+    }
+
+    private fun isPackageInstalled(packageName: String): Boolean {
+        return Utils.isPackageInstalled(
+            packageName,
+            requireContext()
+        )
     }
 
     companion object {

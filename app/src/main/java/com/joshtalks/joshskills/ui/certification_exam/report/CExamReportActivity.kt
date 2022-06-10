@@ -201,18 +201,14 @@ class CExamReportActivity : BaseActivity(), FileDownloadCallback {
                         val cPos = binding.examReportList.currentItem
                         val url =
                             viewModel.examReportLiveData.value?.getOrNull(cPos)?.certificateURL
-                        if (url != null) {
-                            binding.tabLayout.visibility = View.GONE
-                        }
-                            Log.i("Mihir", "addRxbusObserver: $it")
-                            userDetailsActivityResult.launch(
-                                CertificateDetailActivity.startUserDetailsActivity(
-                                    this, rId = it.id,
-                                    conversationId = getConversationId(),
-                                    certificateUrl = url
-                                )
+                        Log.i("Mihir", "addRxbusObserver: $it")
+                        userDetailsActivityResult.launch(
+                            CertificateDetailActivity.startUserDetailsActivity(
+                                this, rId = it.id,
+                                conversationId = getConversationId(),
+                                certificateUrl = url
                             )
-                            return@subscribe
+                        )
                         return@subscribe
                     },
                     {
