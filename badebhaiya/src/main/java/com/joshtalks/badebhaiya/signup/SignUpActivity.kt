@@ -240,9 +240,7 @@ class SignUpActivity : AppCompatActivity(), Call {
 
     fun openTrueCallerBottomSheet() {
         Log.i("SIGNUPActivity", "openTrueCallerBottomSheet: ${viewModel.redirect}")
-        if (TruecallerSDK.getInstance().isUsable) {
-            TruecallerSDK.getInstance().getUserProfile(this)
-        } else if (viewModel.redirect == "ENTER_NAME") {
+        if (viewModel.redirect == "ENTER_NAME") {
             binding.btnWelcome.visibility = View.GONE
             openEnterNameFragment()
         }
@@ -250,8 +248,12 @@ class SignUpActivity : AppCompatActivity(), Call {
             binding.btnWelcome.visibility = View.GONE
             openUploadProfilePicFragment()
         }
-        else
-            openEnterPhoneNumberFragment()
+        else {
+            if (TruecallerSDK.getInstance().isUsable) {
+                TruecallerSDK.getInstance().getUserProfile(this)
+            } else
+                openEnterPhoneNumberFragment()
+        }
 
     }
 
