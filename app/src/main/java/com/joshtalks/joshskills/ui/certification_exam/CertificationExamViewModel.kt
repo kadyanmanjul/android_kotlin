@@ -194,7 +194,7 @@ class CertificationExamViewModel(application: Application) : AndroidViewModel(ap
                 val resp =
                     AppObjectController.commonNetworkService.submitUserDetailForCertificate(certificationUserDetail)
                 //certificateUrl.emit(resp.getOrDefault("pdf", ""))
-                certificateUrl.emit(resp.getOrDefault("img_url", ""))
+                certificateUrl.emit(resp.getOrDefault("img", ""))
             } catch (ex: Throwable) {
                 ex.showAppropriateMsg()
                 apiStatus.postValue(ApiCallStatus.FAILED)
