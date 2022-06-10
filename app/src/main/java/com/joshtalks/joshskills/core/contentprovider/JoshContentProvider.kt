@@ -84,14 +84,16 @@ class JoshContentProvider : ContentProvider() {
             }
             NOTIFICATION_DATA -> {
                 val cursor =
-                    MatrixCursor(arrayOf(NOTIFICATION_TITLE_COLUMN, NOTIFICATION_SUBTITLE_COLUMN))
+                    MatrixCursor(arrayOf(NOTIFICATION_TITLE_COLUMN, NOTIFICATION_SUBTITLE_COLUMN,
+                        NOTIFICATION_LESSON_COLUMN))
                 val word = AppObjectController.appDatabase.lessonQuestionDao().getRandomWord()
-                Log.d(TAG, "query: Word ---> ${word?.filterNotNull()?.last()}")
+                Log.d(TAG, "query: Word ---> ${word.filter { it.word != null }}")
                 cursor.addRow(
                     arrayOf(
-                        word?.filterNotNull()?.last() ?: "Undertake",
-                        "Practice word of the day"
-                    )
+                        word.last { it.word != null }.word?: "Undertake",
+                        "Practice word of the day",
+                        word.last { it.word != null }.lessonId?: 21,
+                        )
                 )
                 return cursor
             }

@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.voip.data
 
+import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
 import android.os.Binder
@@ -313,13 +314,28 @@ class CallingRemoteService : Service() {
 }
 
 // TODO: Need to Change
-class TestNotification(val data : Data) : NotificationData {
+class TestNotification(val notiData : Data) : NotificationData {
     override fun setTitle(): String {
-        return data.title
+        return notiData.title
     }
 
     override fun setContent(): String {
-        return data.subTitle
+        return notiData.subTitle
+    }
+
+    override fun setTapAction(): PendingIntent? {
+        val notificationActivity="com.joshtalks.joshskills.ui.lesson.LessonActivity"
+        val callingActivity = Intent()
+        callingActivity.apply {
+            if (Utils.context != null) {
+                setClassName(Utils.context!!,notificationActivity)
+                putExtra("lesson_section", 2)
+                putExtra("lesson_id",notiData.lessonId)
+                putExtra("reopen",true)
+            }
+        }
+        val pendingIntent=PendingIntent.getActivity(Utils.context,(System.currentTimeMillis() and 0xfffffff).toInt(),callingActivity, PendingIntent.FLAG_UPDATE_CURRENT)
+        return pendingIntent
     }
 }
 
