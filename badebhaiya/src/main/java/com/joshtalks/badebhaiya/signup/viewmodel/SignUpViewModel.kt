@@ -100,6 +100,14 @@ class SignUpViewModel(application: Application): AndroidViewModel(application) {
         .flow
         .cachedIn(viewModelScope)
 
+    fun sendEvent(source: Impression) {
+        viewModelScope.launch {
+            try {
+                repository.sendEvent(source)
+            } catch (e: Exception){
+            }
+        }
+    }
 
     fun verifyOTP(otp: String, phoneNumber: String) {
         viewModelScope.launch {
@@ -108,6 +116,14 @@ class SignUpViewModel(application: Application): AndroidViewModel(application) {
                 val response = repository.verifyOTP(reqObj)
                 Log.i(TAG, "verifyOTP: $response")
                 if (response.isSuccessful) {
+                    sendEvent(Impression("SIGNUP_VIEW_MODEL","OTP_LOGIN"))
+
+                    if (TruecallerSDK.getInstance().isUsable)
+                        sendEvent(Impression("SIGNUP_VIEW_MODEL","TC_INSTALLED"))
+                    else
+                       sendEvent(Impression("SIGNUP_VIEW_MODEL","TC_NOT_INSTALLED"))
+
+
                     response.body()?.let {
                         PrefManager.put(IS_NEW_USER, it.isUserExist.not())
                         updateUserFromLoginResponse(it)
