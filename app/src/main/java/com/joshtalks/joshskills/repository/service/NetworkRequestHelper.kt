@@ -8,6 +8,8 @@ import com.bumptech.glide.request.RequestOptions
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.ONLINE_TEST_LAST_LESSON_COMPLETED
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.io.LastSyncPrefManager
@@ -73,6 +75,9 @@ object NetworkRequestHelper {
                     chatModel.lesson?.apply {
                         chatId = chatModel.chatId
                     }?.let {
+                        if ((it.isNewGrammar && it.status == LESSON_STATUS.CO) || it.translationStatus == LESSON_STATUS.CO) {
+                            PrefManager.put(ONLINE_TEST_LAST_LESSON_COMPLETED, it.lessonNo)
+                        }
                         AppObjectController.appDatabase.lessonDao().insertSingleItem(it)
                         downloadImageGlide(it.thumbnailUrl)
                     }
