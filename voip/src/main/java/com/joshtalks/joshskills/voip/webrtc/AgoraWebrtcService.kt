@@ -11,11 +11,20 @@ import com.joshtalks.joshskills.voip.constant.JOINED
 import com.joshtalks.joshskills.voip.constant.JOINING
 import com.joshtalks.joshskills.voip.constant.LEAVING
 import com.joshtalks.joshskills.voip.constant.LEAVING_AND_JOINING
+import com.joshtalks.joshskills.voip.getTempFileForCallRecording
 import io.agora.rtc.Constants
 import io.agora.rtc.RtcEngine
-import kotlinx.coroutines.*
+import io.agora.rtc.audio.AudioRecordingConfiguration
+import java.io.File
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 
 
 private const val JOINING_CHANNEL_SUCCESS = 0
@@ -29,6 +38,7 @@ internal class AgoraWebrtcService(val scope: CoroutineScope) : WebrtcService {
 
     // TODO: Make State More reliable
     private var currentState = IDLE
+    private var recordFile : File? = null
 
     private lateinit var lazyJoin: Deferred<Unit>
     private val listener by lazy { AgoraEventHandler(scope) }
@@ -144,6 +154,20 @@ internal class AgoraWebrtcService(val scope: CoroutineScope) : WebrtcService {
         agoraEngine?.removeHandler(listener)
         RtcEngine.destroy()
         agoraEngine = null
+    }
+
+    override fun onStartRecording() {
+        Utils.context?.getTempFileForCallRecording()?.let { file->
+            recordFile = file
+            agoraEngine?.startAudioRecording(AudioRecordingConfiguration(file.absolutePath,1,0,32000))
+        }
+    }
+
+    override fun onStopRecording() {
+            recordFile?.let {
+                agoraEngine?.stopAudioRecording()
+                Log.d(TAG, "onStopRecording() called $recordFile")
+            }
     }
 
     private fun joinChannel(request: CallRequest): Int? {

@@ -626,6 +626,14 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
         webrtcService.enableSpeaker(isEnable)
     }
 
+    fun startRecording() {
+        webrtcService.onStartRecording()
+    }
+
+    fun stopRecording() {
+        webrtcService.onStopRecording()
+    }
+
     private fun HashMap<String, Any>.direction(): CallDirection {
         return if (get(INTENT_DATA_INCOMING_CALL_ID) != null)
             return CallDirection.INCOMING

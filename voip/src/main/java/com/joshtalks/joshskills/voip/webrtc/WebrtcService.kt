@@ -1,7 +1,5 @@
 package com.joshtalks.joshskills.voip.webrtc
 
-import android.telecom.Call
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
 
 internal interface WebrtcService {
@@ -11,6 +9,8 @@ internal interface WebrtcService {
     fun enableSpeaker(speaker :Boolean)
     fun observeCallingEvents() : SharedFlow<CallState> // Will return value
     fun onDestroy()
+    fun onStartRecording()
+    fun onStopRecording()
 }
 
 internal interface CallRequest {
