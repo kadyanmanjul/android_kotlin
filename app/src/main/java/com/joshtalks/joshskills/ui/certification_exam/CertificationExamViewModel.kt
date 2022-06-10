@@ -65,9 +65,7 @@ class CertificationExamViewModel(application: Application) : AndroidViewModel(ap
             } else {
                 try {
                     val responseObj =
-                        AppObjectController.commonNetworkService.getCertificateExamDetails(
-                            certificateExamId
-                        )
+                        AppObjectController.commonNetworkService.getCertificateExamDetails(certificateExamId)
                     responseObj.certificateExamId = certificateExamId
                     resumeExamLiveData.postValue(false)
                     _certificationQuestionLiveData.postValue(responseObj)
@@ -202,13 +200,14 @@ class CertificationExamViewModel(application: Application) : AndroidViewModel(ap
             }
         }
     }
-    fun saveImpression(eventName: String, examType:String) {
+
+    fun saveImpression(eventName: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val requestData = hashMapOf(
                     Pair("mentor_id", Mentor.getInstance().getId()),
                     Pair("event_name", eventName),
-                    Pair("exam_type",examType)
+                    Pair("exam_type", certificationQuestionLiveData.value?.type ?: EMPTY)
                 )
                 AppObjectController.commonNetworkService.saveCertificateImpression(requestData)
             } catch (ex: Exception) {
