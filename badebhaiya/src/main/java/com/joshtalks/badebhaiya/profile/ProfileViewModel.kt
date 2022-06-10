@@ -1,6 +1,7 @@
 package com.joshtalks.badebhaiya.profile
 
 import android.os.Message
+import android.util.Log
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
@@ -93,12 +94,13 @@ class ProfileViewModel : ViewModel() {
         }
     }
 
-    fun getProfileForUser(userId: String, isFromDeepLink:Boolean) {
+    fun getProfileForUser(userId: String, source: String) {
         viewModelScope.launch {
             try {
 //                if(isFromDeepLink)
 //                    updateFollowStatus(userId)
-                val response = repository.getProfileForUser(userId)
+                Log.i("IMPRESSION", "getProfileForUser: $source")
+                val response = repository.getProfileForUser(userId,source)
                 if (response.isSuccessful) {
                     response.body()?.let {
                         userProfileData.postValue(it)

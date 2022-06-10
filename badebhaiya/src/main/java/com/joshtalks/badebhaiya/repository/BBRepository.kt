@@ -14,9 +14,9 @@ class BBRepository {
     suspend fun verifyOTP(verifyOTPRequest: VerifyOTPRequest) = service.verityOTP(verifyOTPRequest)
     suspend fun getUserDetailsForSignUp(userId: String) = service.getUserProfile(userId)
     suspend fun updateUserProfile(userId: String, requestMap: MutableMap<String, String?>) = service.updateUserProfile(userId, requestMap)
-    suspend fun getProfileForUser(userId: String): Response<ProfileResponse> {
+    suspend fun getProfileForUser(userId: String,source:String): Response<ProfileResponse> {
         return if (User.getInstance().isLoggedIn()){
-            RetrofitInstance.profileNetworkService.getProfileForUser(userId)
+            RetrofitInstance.profileNetworkService.getProfileForUser(userId,source)
         } else {
             RetrofitInstance.profileNetworkService.getProfileWithoutToken(userId)
         }
