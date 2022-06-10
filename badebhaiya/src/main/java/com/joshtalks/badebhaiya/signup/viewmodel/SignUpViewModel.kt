@@ -108,6 +108,14 @@ class SignUpViewModel(application: Application): AndroidViewModel(application) {
                 val response = repository.verifyOTP(reqObj)
                 Log.i(TAG, "verifyOTP: $response")
                 if (response.isSuccessful) {
+                    ProfileViewModel().sendEvent(Impression("SIGNUP_VIEW_MODEL","OTP_LOGIN"))
+
+                    if (TruecallerSDK.getInstance().isUsable)
+                        ProfileViewModel().sendEvent(Impression("SIGNUP_VIEW_MODEL","TC_INSTALLED"))
+                    else
+                        ProfileViewModel().sendEvent(Impression("SIGNUP_VIEW_MODEL","TC_NOT_INSTALLED"))
+
+
                     response.body()?.let {
                         PrefManager.put(IS_NEW_USER, it.isUserExist.not())
                         updateUserFromLoginResponse(it)
