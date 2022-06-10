@@ -5,15 +5,15 @@
     "kind": "Directory"
   },
   "applicationId": "com.joshtalks.badebhaiya",
-  "variantName": "devDebug",
+  "variantName": "devRelease",
   "elements": [
     {
       "type": "SINGLE",
       "filters": [],
       "attributes": [],
-      "versionCode": 10008,
-      "versionName": "1.0.8.Dev_Debug",
-      "outputFile": "josh-bade-bhaiya-release1.0.8.apk"
+      "versionCode": 10007,
+      "versionName": "1.0.7.Dev",
+      "outputFile": "josh-bade-bhaiya-release1.0.7.apk"
     }
   ],
   "elementType": "File"
