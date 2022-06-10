@@ -221,7 +221,7 @@ dependencies {
     implementation 'io.agora.rtc:full-sdk:3.6.2'
     implementation 'com.patloew.colocation:colocation:1.0.0'
     //pubnub
-    implementation group: 'com.pubnub', name: 'pubnub-gson', version: '5.2.1'
+    implementation group: 'com.pubnub', name: 'pubnub-gson', version: '6.0.2'
     //Dexter
     implementation 'com.karumi:dexter:6.2.2'
 
