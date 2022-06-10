@@ -56,10 +56,14 @@ class SignUpEnterNameFragment: Fragment() {
                 }
             }
         })
+        var check=true
 
         binding.etFirstName.addTextChangedListener{
             Log.i("FLOWENTERNAME", "onCreateView: ")
-            viewModel.sendEvent(Impression("ENTER_NAME_FRAGMENT","FILLED_NAME"))
+            if(check) {
+                check=false
+                viewModel.sendEvent(Impression("ENTER_NAME_FRAGMENT", "FILLED_NAME"))
+            }
         }
 
         return binding.root
