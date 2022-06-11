@@ -287,7 +287,7 @@
                     android:backgroundTint="@color/dis_color_10f"
                     android:clickable="true"
                     android:focusable="true"
-                    android:visibility="@{vm.uiState.isRecordingEnabled ? View.VISIBLE : View.GONE }"
+                    android:visibility="@{(vm.uiState.isRecordingEnabled &amp;&amp; vm.uiState.recordBtnVisibility ) ? View.VISIBLE : View.GONE }"
                     android:onClick="@{vm::recordCall}"
                     android:padding="@dimen/_14sdp"
                     tools:visibility="gone"

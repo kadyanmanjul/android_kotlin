@@ -112,6 +112,13 @@ class CallUIState : BaseObservable() {
         }
 
     @get:Bindable
+    var recordBtnVisibility : Boolean = false
+        set(value) {
+            field = value
+            notifyPropertyChanged(BR.recordBtnVisibility)
+        }
+
+    @get:Bindable
     var isMute: Boolean = false
         set(value) {
             field = value

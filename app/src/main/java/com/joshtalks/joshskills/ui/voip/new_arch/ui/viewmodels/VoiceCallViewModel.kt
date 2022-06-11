@@ -137,6 +137,7 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                             withContext(Dispatchers.Main) {
                                 singleLiveEvent.value = msg
                             }
+                            uiState.recordBtnVisibility = true
                         }
                     }
                     ServiceEvents.CLOSE_CALL_SCREEN -> {
