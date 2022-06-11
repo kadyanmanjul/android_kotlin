@@ -19,10 +19,7 @@ import com.joshtalks.joshskills.base.model.ApiHeader
 import com.joshtalks.joshskills.base.model.NotificationData
 import com.joshtalks.joshskills.voip.data.CallingRemoteService
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -35,6 +32,7 @@ import java.util.concurrent.TimeUnit
 val voipLog = JoshLog.getInstanceIfEnable(Feature.VOIP)
 private const val TAG = "Utils"
 private const val UPLOAD_ANALYTICS_WORKER_NAME="Upload_Analytics_Api"
+private var currentToast : Toast? = null
 
 fun Long.inSeconds() : Long {
     return TimeUnit.MILLISECONDS.toSeconds(this)
@@ -77,6 +75,14 @@ fun Context.updateStartTime(startTime : Long) {
     Log.d(TAG, "updateStartCallTime: $startTime")
     val values = ContentValues(1).apply { put(CALL_START_TIME, startTime) }
     contentResolver.insert(Uri.parse(CONTENT_URI + START_CALL_TIME_URI), values)
+}
+
+suspend fun showToast(msg: String) {
+    withContext(Dispatchers.Main) {
+        currentToast?.cancel()
+        currentToast =  Toast.makeText(Utils.context, msg, Toast.LENGTH_SHORT)
+        currentToast?.show()
+    }
 }
 
 fun Context.getApiHeader(): ApiHeader {

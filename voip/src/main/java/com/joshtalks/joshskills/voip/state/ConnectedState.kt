@@ -32,6 +32,7 @@ import com.joshtalks.joshskills.voip.constant.Event.UNHOLD_REQUEST
 import com.joshtalks.joshskills.voip.constant.Event.UNMUTE
 import com.joshtalks.joshskills.voip.constant.Event.UNMUTE_REQUEST
 import com.joshtalks.joshskills.voip.constant.State
+import com.joshtalks.joshskills.voip.data.RecordingButtonState
 import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.inSeconds
 import com.joshtalks.joshskills.voip.updateLastCallDetails
@@ -271,7 +272,7 @@ class ConnectedState(val context: CallContext) : VoipState {
                         }
                         START_RECORDING -> {
                             ensureActive()
-                            val uiState = context.currentUiState.copy(isRecordingPermissionSent = true)
+                            val uiState = context.currentUiState.copy(recordingButtonState = RecordingButtonState.REQUESTED)
                             context.updateUIState(uiState = uiState)
                             val userAction = UserAction(
                                 ServerConstants.START_RECORDING,
@@ -282,7 +283,7 @@ class ConnectedState(val context: CallContext) : VoipState {
                         }
                         STOP_RECORDING -> {
                             ensureActive()
-                            val uiState = context.currentUiState.copy(isRecordingStopped = true)
+                            val uiState = context.currentUiState.copy(recordingButtonState = RecordingButtonState.IDLE)
                             context.updateUIState(uiState = uiState)
                             val userAction = UserAction(
                                 ServerConstants.STOP_RECORDING,
@@ -295,7 +296,7 @@ class ConnectedState(val context: CallContext) : VoipState {
                         CALL_RECORDING_ACCEPT -> {
                             ensureActive()
                             val uiState =
-                                context.currentUiState.copy(isRecordingStarted = true, isRecordingPermissionSent = true)
+                                context.currentUiState.copy(recordingButtonState = RecordingButtonState.RECORDING)
                             context.updateUIState(uiState = uiState)
                             val userAction = UserAction(
                                 ServerConstants.CALL_RECORDING_ACCEPT,
@@ -307,10 +308,7 @@ class ConnectedState(val context: CallContext) : VoipState {
                         }
                         CALL_RECORDING_REJECT -> {
                             ensureActive()
-                            val uiState = context.currentUiState.copy(
-                                isRecordingPermissionSent = false,
-                                isRecordingStarted = false
-                            )
+                            val uiState = context.currentUiState.copy(recordingButtonState = RecordingButtonState.IDLE)
                             context.updateUIState(uiState = uiState)
                             val userAction = UserAction(
                                 ServerConstants.CALL_RECORDING_REJECT,
@@ -325,6 +323,8 @@ class ConnectedState(val context: CallContext) : VoipState {
                                 context.channelData.getChannel(),
                                 address = context.channelData.getPartnerMentorId()
                             )
+                            val uiState = context.currentUiState.copy(recordingButtonState = RecordingButtonState.IDLE)
+                            context.updateUIState(uiState = uiState)
                             context.sendMessageToServer(userAction)
                         }
                         else -> {

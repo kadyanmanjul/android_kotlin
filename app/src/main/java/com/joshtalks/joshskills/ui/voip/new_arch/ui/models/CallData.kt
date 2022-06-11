@@ -4,6 +4,7 @@ import androidx.databinding.BaseObservable
 import androidx.databinding.Bindable
 import com.joshtalks.joshskills.BR
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.voip.data.RecordingButtonState
 
 interface CallData{
     fun getProfileImage(): String?
@@ -112,24 +113,10 @@ class CallUIState : BaseObservable() {
         }
 
     @get:Bindable
-    var recordBtnVisibility : Boolean = false
-        set(value) {
-            field = value
-            notifyPropertyChanged(BR.recordBtnVisibility)
-        }
-
-    @get:Bindable
     var isMute: Boolean = false
         set(value) {
             field = value
             notifyPropertyChanged(BR.mute)
-        }
-
-    @get:Bindable
-    var isRecording: Boolean = false
-        set(value) {
-            field = value
-            notifyPropertyChanged(BR.recording)
         }
 
     @get:Bindable
@@ -140,10 +127,10 @@ class CallUIState : BaseObservable() {
         }
 
     @get:Bindable
-    var isRecordingPermissionSent: Boolean = false
+    var recordingButtonState: RecordingButtonState = RecordingButtonState.IDLE
         set(value) {
             field = value
-            notifyPropertyChanged(BR.recordingPermissionSent)
+            notifyPropertyChanged(BR.recordingButtonState)
         }
 
     @get:Bindable

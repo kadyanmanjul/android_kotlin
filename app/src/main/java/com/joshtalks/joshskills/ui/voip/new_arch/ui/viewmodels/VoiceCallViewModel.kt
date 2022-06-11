@@ -34,6 +34,7 @@ import com.joshtalks.joshskills.voip.constant.SHOW_RECORDING_PERMISSION_DIALOG
 import com.joshtalks.joshskills.voip.constant.SHOW_RECORDING_REJECTED_DIALOG
 import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.AmazonPolicyResponse
+import com.joshtalks.joshskills.voip.data.RecordingButtonState
 import com.joshtalks.joshskills.voip.data.ServiceEvents
 import com.joshtalks.joshskills.voip.data.api.CallRecordingRequest
 import com.joshtalks.joshskills.voip.data.api.MediaDUNetwork
@@ -137,7 +138,6 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                             withContext(Dispatchers.Main) {
                                 singleLiveEvent.value = msg
                             }
-                            uiState.recordBtnVisibility = true
                         }
                     }
                     ServiceEvents.CLOSE_CALL_SCREEN -> {
@@ -148,7 +148,7 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                         withContext(Dispatchers.Main) {
                             singleLiveEvent.value = msg
                         }
-                        if (uiState.isRecording) {
+                        if (uiState.recordingButtonState == RecordingButtonState.RECORDING) {
                             //stopRecording()
                             repository.stopAgoraCAllRecording()
                         }
@@ -185,7 +185,6 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                             singleLiveEvent.value = msg
                         }
                         repository.startAgoraRecording()
-                        recordingStartedUIChanges()
                     }
                     ServiceEvents.CALL_RECORDING_REJECT -> {
                         stoppedRecUIchanges()
@@ -212,16 +211,6 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                             stopRecording(it)
                         }
                 }
-            }
-        }
-    }
-
-    private fun startRecording() {
-        recordingStartedUIChanges()
-        viewModelScope.launch(Dispatchers.IO) {
-            Utils.context?.getTempFileForCallRecording()?.let { file ->
-                recordFile = file
-                CallRecording.audioRecording.startPlayer(recordFile, Utils.context!!)
             }
         }
     }
@@ -301,7 +290,6 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun acceptCallRecording() {
-        uiState.isRecording = uiState.isRecording.not()
         repository.acceptCallRecording()
         repository.startAgoraRecording()
         //startRecording()
@@ -320,6 +308,7 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                 if (uiState.startTime != state.startTime)
                     uiState.startTime = state.startTime
                 uiState.isRecordingEnabled = state.isRecordingEnabled
+                uiState.recordingButtonState = state.recordingButtonState
                 uiState.name = state.remoteUserName
                 uiState.profileImage = state.remoteUserImage ?: ""
                 uiState.topic = state.topicName
@@ -331,6 +320,12 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                     FPP -> "Favorite Practice Partner"
                     GROUP -> "Group Call"
                     else -> ""
+                }
+
+                when(state.recordingButtonState) {
+                    RecordingButtonState.IDLE -> stoppedRecUIchanges()
+                    RecordingButtonState.REQUESTED -> recWaitingForUserUI()
+                    RecordingButtonState.RECORDING -> recordingStartedUIChanges()
                 }
 
                 if (state.isReconnecting) {
@@ -441,39 +436,41 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
     // User Action
     fun recordCall(v: View) {
         Log.d(TAG, "recordCall")
-        val isRecordingInitiated = uiState.isRecording
-        uiState.isRecording = isRecordingInitiated.not()
-        if (isRecordingInitiated) {
-            if (!uiState.timerStarts) {
-                Log.i(TAG, "recordCall: cancelled")
-                repository.cancelRecordingRequest()
+        when(uiState.recordingButtonState) {
+            RecordingButtonState.IDLE -> {
+                CallAnalytics.addAnalytics(
+                    event = EventName.RECORDING_INITIATED,
+                    agoraCallId = PrefManager.getAgraCallId().toString(),
+                    agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
+                )
+                recWaitingForUserUI()
+                repository.startCallRecording()
             }
-            CallAnalytics.addAnalytics(
-                event = EventName.RECORDING_STOPPED,
-                agoraCallId = PrefManager.getAgraCallId().toString(),
-                agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
-            )
-            stoppedRecUIchanges()
-            //stopRecording()
-            repository.stopAgoraCAllRecording()
-            repository.stopCallRecording()
-        } else if (!uiState.timerStarts) {
-            CallAnalytics.addAnalytics(
-                event = EventName.RECORDING_INITIATED,
-                agoraCallId = PrefManager.getAgraCallId().toString(),
-                agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
-            )
-            recWaitingForUserUI()
-            repository.startCallRecording()
-        } else {
-            CallAnalytics.addAnalytics(
-                event = EventName.RECORDING_STOPPED,
-                agoraCallId = PrefManager.getAgraCallId().toString(),
-                agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
-            )
-            stoppedRecUIchanges()
-            repository.stopAgoraCAllRecording()
-            repository.stopCallRecording()
+            RecordingButtonState.REQUESTED -> {
+                if (!uiState.timerStarts) {
+                    Log.i(TAG, "recordCall: cancelled")
+                    repository.cancelRecordingRequest()
+                }
+                CallAnalytics.addAnalytics(
+                    event = EventName.RECORDING_STOPPED,
+                    agoraCallId = PrefManager.getAgraCallId().toString(),
+                    agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
+                )
+                stoppedRecUIchanges()
+                repository.stopAgoraCAllRecording()
+                repository.stopCallRecording()
+            }
+            RecordingButtonState.RECORDING -> {
+                CallAnalytics.addAnalytics(
+                    event = EventName.RECORDING_STOPPED,
+                    agoraCallId = PrefManager.getAgraCallId().toString(),
+                    agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
+                )
+                stoppedRecUIchanges()
+                //stopRecording()
+                repository.stopAgoraCAllRecording()
+                repository.stopCallRecording()
+            }
         }
     }
 

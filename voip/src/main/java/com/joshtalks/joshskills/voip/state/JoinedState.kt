@@ -7,6 +7,7 @@ import com.joshtalks.joshskills.voip.communication.constants.ServerConstants
 import com.joshtalks.joshskills.voip.communication.model.*
 import com.joshtalks.joshskills.voip.constant.Event.*
 import com.joshtalks.joshskills.voip.constant.State
+import com.joshtalks.joshskills.voip.data.RecordingButtonState
 import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.mediator.CallDirection
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
@@ -174,7 +175,7 @@ class JoinedState(val context: CallContext) : VoipState {
                             // Emit Event to show Call Screen
                             ensureActive()
                             val startTime = SystemClock.elapsedRealtime()
-                            val uiState = context.currentUiState.copy(startTime = startTime)
+                            val uiState = context.currentUiState.copy(startTime = startTime, recordingButtonState = RecordingButtonState.IDLE)
                             context.updateUIState(uiState = uiState)
                             connectingTimer.cancel()
                             ensureActive()
