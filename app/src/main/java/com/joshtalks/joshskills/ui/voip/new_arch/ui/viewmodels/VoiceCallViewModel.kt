@@ -218,7 +218,6 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
     fun recordingStartedUIChanges() {
         uiState.visibleCrdView = true
         uiState.recordCrdViewTxt = "REC"
-        uiState.timerStarts = true
         uiState.recordBtnImg = R.drawable.ic_stop_record
         uiState.recordBtnTxt = "Stop"
     }
@@ -309,6 +308,8 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                     uiState.startTime = state.startTime
                 uiState.isRecordingEnabled = state.isRecordingEnabled
                 uiState.recordingButtonState = state.recordingButtonState
+                if (uiState.recordTime != state.recordingStartTime)
+                    uiState.recordTime = state.recordingStartTime
                 uiState.name = state.remoteUserName
                 uiState.profileImage = state.remoteUserImage ?: ""
                 uiState.topic = state.topicName
@@ -447,7 +448,7 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                 repository.startCallRecording()
             }
             RecordingButtonState.REQUESTED -> {
-                if (!uiState.timerStarts) {
+                if (uiState.recordTime == 0L) {
                     Log.i(TAG, "recordCall: cancelled")
                     repository.cancelRecordingRequest()
                 }
@@ -475,7 +476,6 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     private fun stoppedRecUIchanges() {
-        uiState.timerStarts = false
         uiState.recordBtnTxt = "Record"
         uiState.recordBtnImg = R.drawable.call_fragment_record
         uiState.visibleCrdView = false
@@ -483,7 +483,6 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
 
     private fun recWaitingForUserUI() {
         uiState.recordCrdViewTxt = "Waiting for your partner to accept"
-        uiState.timerStarts = false
         uiState.visibleCrdView = true
         uiState.recordBtnImg = R.drawable.ic_cancel_record
         uiState.recordBtnTxt = "Cancel"

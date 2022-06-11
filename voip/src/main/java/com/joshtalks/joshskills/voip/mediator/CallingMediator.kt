@@ -50,6 +50,10 @@ import kotlinx.coroutines.sync.withLock
 
 const val PER_USER_TIMEOUT_IN_MILLIS = 10 * 1000L
 private const val TAG = "CallingMediator"
+enum class ActionDirection {
+    SERVER,
+    LOCAL
+}
 
 class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
     private val webrtcService: WebrtcService by lazy {
@@ -221,23 +225,23 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                         stateChannel.send(envelope)
                     }
                     UserAction.START_RECORDING -> {
-                        val envelope = Envelope(Event.START_RECORDING)
+                        val envelope = Envelope(Event.START_RECORDING, data = ActionDirection.SERVER)
                         stateChannel.send(envelope)
                     }
                     UserAction.STOP_RECORDING -> {
-                        val envelope = Envelope(Event.STOP_RECORDING)
+                        val envelope = Envelope(Event.STOP_RECORDING, data = ActionDirection.SERVER)
                         stateChannel.send(envelope)
                     }
                     UserAction.RECORDING_REQUEST_ACCEPTED -> {
-                        val envelope = Envelope(Event.CALL_RECORDING_ACCEPT)
+                        val envelope = Envelope(Event.CALL_RECORDING_ACCEPT, data = ActionDirection.SERVER)
                         stateChannel.send(envelope)
                     }
                     UserAction.RECORDING_REQUEST_REJECTED -> {
-                        val envelope = Envelope(Event.CALL_RECORDING_REJECT)
+                        val envelope = Envelope(Event.CALL_RECORDING_REJECT, data = ActionDirection.SERVER)
                         stateChannel.send(envelope)
                     }
                     UserAction.CANCEL_RECORDING_REQUEST -> {
-                        val envelope = Envelope(Event.CANCEL_RECORDING_REQUEST)
+                        val envelope = Envelope(Event.CANCEL_RECORDING_REQUEST, data = ActionDirection.SERVER)
                         stateChannel.send(envelope)
                     }
                 }
@@ -355,24 +359,24 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                                             stateChannel.send(envelope)
                                         }
                                         ServerConstants.START_RECORDING -> {
-                                            val envelope = Envelope(Event.START_RECORDING)
-                                            flow.emit(envelope)
+                                            val envelope = Envelope(Event.START_RECORDING, data = ActionDirection.LOCAL)
+                                            stateChannel.send(envelope)
                                         }
                                         ServerConstants.STOP_RECORDING -> {
-                                            val envelope = Envelope(Event.STOP_RECORDING)
-                                            flow.emit(envelope)
+                                            val envelope = Envelope(Event.STOP_RECORDING, data = ActionDirection.LOCAL)
+                                            stateChannel.send(envelope)
                                         }
                                         ServerConstants.CALL_RECORDING_ACCEPT -> {
-                                            val envelope = Envelope(Event.CALL_RECORDING_ACCEPT)
-                                            flow.emit(envelope)
+                                            val envelope = Envelope(Event.CALL_RECORDING_ACCEPT, data = ActionDirection.LOCAL)
+                                            stateChannel.send(envelope)
                                         }
                                         ServerConstants.CALL_RECORDING_REJECT -> {
-                                            val envelope = Envelope(Event.CALL_RECORDING_REJECT)
-                                            flow.emit(envelope)
+                                            val envelope = Envelope(Event.CALL_RECORDING_REJECT, data = ActionDirection.LOCAL)
+                                            stateChannel.send(envelope)
                                         }
                                         ServerConstants.CANCEL_RECORDING_REQUEST -> {
-                                            val envelope = Envelope(Event.CANCEL_RECORDING_REQUEST)
-                                            flow.emit(envelope)
+                                            val envelope = Envelope(Event.CANCEL_RECORDING_REQUEST, data = ActionDirection.LOCAL)
+                                            stateChannel.send(envelope)
                                         }
                                     }
                                 }
@@ -530,6 +534,26 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                                             // Remote User Disconnected
                                             ServerConstants.DISCONNECTED -> {
                                                 val envelope = Envelope(Event.REMOTE_USER_DISCONNECTED_MESSAGE)
+                                                stateChannel.send(envelope)
+                                            }
+                                            ServerConstants.START_RECORDING -> {
+                                                val envelope = Envelope(Event.START_RECORDING, data = ActionDirection.LOCAL)
+                                                stateChannel.send(envelope)
+                                            }
+                                            ServerConstants.STOP_RECORDING -> {
+                                                val envelope = Envelope(Event.STOP_RECORDING, data = ActionDirection.LOCAL)
+                                                stateChannel.send(envelope)
+                                            }
+                                            ServerConstants.CALL_RECORDING_ACCEPT -> {
+                                                val envelope = Envelope(Event.CALL_RECORDING_ACCEPT, data = ActionDirection.LOCAL)
+                                                stateChannel.send(envelope)
+                                            }
+                                            ServerConstants.CALL_RECORDING_REJECT -> {
+                                                val envelope = Envelope(Event.CALL_RECORDING_REJECT, data = ActionDirection.LOCAL)
+                                                stateChannel.send(envelope)
+                                            }
+                                            ServerConstants.CANCEL_RECORDING_REQUEST -> {
+                                                val envelope = Envelope(Event.CANCEL_RECORDING_REQUEST, data = ActionDirection.LOCAL)
                                                 stateChannel.send(envelope)
                                             }
                                         }

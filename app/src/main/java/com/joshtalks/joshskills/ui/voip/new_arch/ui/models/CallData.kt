@@ -181,11 +181,4 @@ class CallUIState : BaseObservable() {
             field = value
             notifyPropertyChanged(BR.aspiration)
         }
-
-    @get:Bindable
-    var timerStarts: Boolean = false
-        set(value) {
-            field = value
-            notifyPropertyChanged(BR.timerStarts)
-        }
 }

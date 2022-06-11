@@ -6,6 +6,7 @@
 <data>
     <import type="android.view.View"/>
     <import type="com.joshtalks.joshskills.base.constants.ConstantsKt"/>
+    <import type="com.joshtalks.joshskills.voip.data.RecordingButtonState" />
     <variable
         name="vm"
         type="com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.VoiceCallViewModel" />
@@ -146,7 +147,7 @@
             app:cardCornerRadius="93dp"
             android:layout_marginTop="7.81dp"
             android:layout_marginBottom="7.81dp"
-            android:visibility="@{vm.uiState.visibleCrdView  ? View.VISIBLE : View.INVISIBLE}"
+            android:visibility="@{vm.uiState.recordingButtonState != RecordingButtonState.IDLE  ? View.VISIBLE : View.INVISIBLE}"
             app:layout_constraintEnd_toEndOf="@+id/call_time1"
             app:layout_constraintStart_toStartOf="@+id/call_time1"
             app:layout_constraintTop_toBottomOf="@id/call_time1"
@@ -177,7 +178,7 @@
 
                 <Chronometer
                     android:id="@+id/call_time2"
-                    recordTimeStarts="@{vm.uiState.timerStarts}"
+                    startTimer="@{vm.uiState.recordTime}"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="12sp"
@@ -185,7 +186,7 @@
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
                     android:textColor="@color/white"
                     tools:visibility="gone"
-                    android:visibility='@{vm.uiState.timerStarts ? View.VISIBLE : View.GONE}'
+                    android:visibility='@{vm.uiState.recordingButtonState == RecordingButtonState.RECORDING ? View.VISIBLE : View.GONE}'
                     tools:ignore="MissingPrefix" />
 
             </LinearLayout>
@@ -264,6 +265,7 @@
 
                 <androidx.appcompat.widget.AppCompatImageButton
                     android:id="@+id/btn_speaker"
+                    setSpeakerImage="@{vm.uiState.speakerOn}"
                     android:layout_width="@dimen/_45sdp"
                     android:layout_height="@dimen/_45sdp"
                     android:background="@drawable/circle2"
@@ -336,6 +338,7 @@
 
                 <androidx.appcompat.widget.AppCompatImageButton
                     android:id="@+id/btn_mute"
+                    setMicImage="@{vm.uiState.mute}"
                     android:layout_width="@dimen/_45sdp"
                     android:layout_height="@dimen/_45sdp"
                     android:background="@drawable/circle2"
