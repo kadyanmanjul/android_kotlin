@@ -258,6 +258,9 @@ class FirebaseRemoteConfigKey {
 
         //Enable/disable invitation for call
         const val IS_INVITATION_FOR_CALL_ENABLED = "IS_INVITATION_FOR_CALL_ENABLED"
+        // Enable/disable post address change
+        const val POSTAL_ADDRESS = "POSTAL_ADDRESS"
+        const val POSTAL_ADDRESS_SUBHEADING_CERT_FORM = "POSTAL_ADDRESS_SUBHEADING_CERT_FORM"
     }
 }
 

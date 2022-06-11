@@ -24,19 +24,13 @@ import com.google.android.gms.auth.api.credentials.CredentialsOptions
 import com.google.android.gms.auth.api.credentials.HintRequest
 import com.google.android.gms.auth.api.credentials.IdentityProviders
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.ApiCallStatus
-import com.joshtalks.joshskills.core.BaseActivity
-import com.joshtalks.joshskills.core.DATE_FORMATTER
-import com.joshtalks.joshskills.core.DATE_FORMATTER_2
-import com.joshtalks.joshskills.core.EMAIL_HINT
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.MAX_YEAR
-import com.joshtalks.joshskills.core.RC_HINT
+import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.POSTAL_ADDRESS
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.POSTAL_ADDRESS_SUBHEADING_CERT_FORM
 import com.joshtalks.joshskills.core.custom_ui.spinnerdatepicker.DatePickerDialog
 import com.joshtalks.joshskills.core.custom_ui.spinnerdatepicker.SpinnerDatePickerDialogBuilder
 import com.joshtalks.joshskills.core.interfaces.FileDownloadCallback
 import com.joshtalks.joshskills.core.service.CONVERSATION_ID
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityCertificateDetailBinding
 import com.joshtalks.joshskills.repository.server.certification_exam.CertificationUserDetail
 import com.joshtalks.joshskills.ui.certification_exam.CertificationExamViewModel
@@ -217,7 +211,9 @@ class CertificateDetailActivity : BaseActivity(), FileDownloadCallback {
                 it?.let {
                     binding.obj = it
                     if (it.isPostalRequire) {
+                        binding.tvPoAdd.text = AppObjectController.getFirebaseRemoteConfig().getString(POSTAL_ADDRESS)
                         binding.tvPoAdd.visibility = View.VISIBLE
+                        binding.tvPoSubAdd.text = AppObjectController.getFirebaseRemoteConfig().getString(POSTAL_ADDRESS_SUBHEADING_CERT_FORM)
                         binding.tvPoSubAdd.visibility = View.VISIBLE
                         binding.etPostal.visibility = View.VISIBLE
                         isPostalRequire = true

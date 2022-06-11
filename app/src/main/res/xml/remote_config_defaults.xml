@@ -931,4 +931,13 @@
         <key>IS_INVITATION_FOR_CALL_ENABLED</key>
         <value>false</value>
     </entry>
+    <entry>
+        <key>POSTAL_ADDRESS</key>
+        <value>Postal Address</value>
+    </entry>
+    <entry>
+        <key>POSTAL_ADDRESS_SUBHEADING_CERT_FORM</key>
+        <value>For sending the certificate</value>
+    </entry>
+
 </defaultsMap>
