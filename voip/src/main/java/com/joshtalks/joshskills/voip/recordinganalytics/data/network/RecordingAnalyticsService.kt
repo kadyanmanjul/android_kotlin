@@ -1,13 +1,8 @@
-package com.joshtalks.joshskills.voip.voipanalytics.data.network
+package com.joshtalks.joshskills.voip.recordinganalytics.data.network
 
 import com.joshtalks.joshskills.base.constants.DIR
-import com.joshtalks.joshskills.voip.data.AmazonPolicyResponse
-import com.joshtalks.joshskills.voip.data.api.CallRecordingRequest
-import kotlinx.coroutines.Deferred
 import retrofit2.Response
 import retrofit2.http.Body
-import retrofit2.http.FieldMap
-import retrofit2.http.FormUrlEncoded
 import retrofit2.http.PATCH
 import retrofit2.http.POST
 
@@ -18,7 +13,7 @@ const val VOIP_ANALYTICS_TYPE_API_KEY = "type"
 const val VOIP_ANALYTICS_DISCONNECT_API_KEY = "reason_for_failure"
 const val VOIP_ANALYTICS_TIMESTAMP_API_KEY = "timestamp"
 
-interface VoipAnalyticsService {
+interface RecordingAnalyticsService {
     @PATCH("$DIR/voicecall/agora_call_details/")
     @JvmSuppressWildcards
     suspend fun agoraCallDetails(
@@ -30,11 +25,4 @@ interface VoipAnalyticsService {
     suspend fun agoraMidCallDetails(
         @Body params: Map<String, Any?>
     ): Response<Unit>
-
-    @FormUrlEncoded
-    @POST("$DIR/core/signed_url/")
-    fun requestUploadMediaAsync(@FieldMap params: Map<String, String>): Deferred<AmazonPolicyResponse>
-
-    @POST("$DIR/voicecall/agora_call_share")
-    suspend fun postCallRecordingFile(@Body request : CallRecordingRequest) : Response<Unit>
 }

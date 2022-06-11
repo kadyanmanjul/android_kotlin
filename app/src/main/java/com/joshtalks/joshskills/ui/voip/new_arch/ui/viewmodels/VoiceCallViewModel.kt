@@ -21,13 +21,11 @@ import com.joshtalks.joshskills.base.log.JoshLog
 import com.joshtalks.joshskills.ui.call.repository.RepositoryConstants.CONNECTION_ESTABLISHED
 import com.joshtalks.joshskills.ui.call.repository.WebrtcRepository
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.models.CallUIState
-import com.joshtalks.joshskills.util.CallRecording
 import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.constant.CALL_CONNECTED_EVENT
 import com.joshtalks.joshskills.voip.constant.CALL_INITIATED_EVENT
 import com.joshtalks.joshskills.voip.constant.CANCEL_INCOMING_TIMER
 import com.joshtalks.joshskills.voip.constant.CLOSE_CALL_SCREEN
-import com.joshtalks.joshskills.voip.constant.GET_FRAGMENT_BITMAP
 import com.joshtalks.joshskills.voip.constant.HIDE_RECORDING_PERMISSION_DIALOG
 import com.joshtalks.joshskills.voip.constant.RECONNECTING_FAILED
 import com.joshtalks.joshskills.voip.constant.SHOW_RECORDING_PERMISSION_DIALOG
@@ -36,11 +34,10 @@ import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.AmazonPolicyResponse
 import com.joshtalks.joshskills.voip.data.RecordingButtonState
 import com.joshtalks.joshskills.voip.data.ServiceEvents
-import com.joshtalks.joshskills.voip.data.api.CallRecordingRequest
 import com.joshtalks.joshskills.voip.data.api.MediaDUNetwork
 import com.joshtalks.joshskills.voip.data.api.VoipNetwork
 import com.joshtalks.joshskills.voip.data.local.PrefManager
-import com.joshtalks.joshskills.voip.getTempFileForCallRecording
+import com.joshtalks.joshskills.voip.recordinganalytics.CallRecordingAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
 import java.io.File
@@ -225,40 +222,17 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
     fun stopRecording(recordFile: File) {
         val len = recordFile?.length() ?: 0
         if (recordFile == null || (len < 1)) {
-            Log.d(TAG, "stopRecording called return")
             return
         }
-        Log.d(TAG, "stopRecording called recordFile ${recordFile}")
         viewModelScope.launch(Dispatchers.IO) {
-            CallRecording.audioRecording.stopPlaying()
             if (recordFile?.absolutePath?.isEmpty()?.not() == true) {
-                val msg = Message.obtain().apply {
-                    what = GET_FRAGMENT_BITMAP
-                }
                 withContext(Dispatchers.Main) {
-                    singleLiveEvent.value = msg
                     Utils.showToast("Call recording will be saved in your Downloads folder")
                 }
-                val obj = mapOf("media_path" to recordFile!!.name)
-                val responseObj = voipNetwork.requestUploadMediaAsync(obj).await()
-                val statusCode: Int = uploadOnS3Server(responseObj, recordFile!!)
-                if (statusCode in 200..210) {
-                    val url =
-                        responseObj.url.plus(File.separator).plus(responseObj.fields["key"])
-                    if (url.isBlank().not()) {
-                        voipNetwork.postCallRecordingFile(
-                            CallRecordingRequest(
-                                recording_url = url,
-                                agoraCallId = PrefManager.getAgraCallId().toString(),
-                                agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
-                            )
-                        )
-                    }
-                } else {
-                    return@launch
-                }
-            } else {
-                Log.e(TAG, "stopRecording: path is empty!")
+                CallRecordingAnalytics.addAnalytics(
+                    agoraCallId = PrefManager.getAgraCallId().toString(),
+                    agoraMentorId =PrefManager.getLocalUserAgoraId().toString(),
+                    localPath = recordFile.absolutePath )
             }
         }
     }
