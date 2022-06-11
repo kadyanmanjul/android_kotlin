@@ -35,6 +35,7 @@ import com.joshtalks.joshskills.voip.constant.SHOW_RECORDING_REJECTED_DIALOG
 import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.AmazonPolicyResponse
 import com.joshtalks.joshskills.voip.data.ServiceEvents
+import com.joshtalks.joshskills.voip.data.api.CallRecordingRequest
 import com.joshtalks.joshskills.voip.data.api.MediaDUNetwork
 import com.joshtalks.joshskills.voip.data.api.VoipNetwork
 import com.joshtalks.joshskills.voip.data.local.PrefManager
@@ -241,7 +242,14 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                 if (statusCode in 200..210) {
                     val url =
                         responseObj.url.plus(File.separator).plus(responseObj.fields["key"])
-                    Log.i(TAG, "stopRecording: $url")
+                    if (url.isBlank().not()){
+                        voipNetwork.postCallRecordingFile(
+                            CallRecordingRequest(
+                                recording_url = url,
+                                agoraCallId = PrefManager.getAgraCallId().toString(),
+                                agoraMentorId = PrefManager.getLocalUserAgoraId().toString())
+                        )
+                    }
                 } else {
                     return@launch
                 }

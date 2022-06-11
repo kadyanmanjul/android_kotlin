@@ -1,7 +1,6 @@
 package com.joshtalks.joshskills.voip.data.api
 
 import com.google.gson.annotations.SerializedName
-import java.time.Duration
 
 data class ConnectionRequest(
 
@@ -42,4 +41,15 @@ data class CallDisconnectRequest(
 
 	@field:SerializedName("duration")
 	val duration: Long? = null
+)
+
+data class CallRecordingRequest(
+    @field:SerializedName("agora_call")
+    val agoraCallId: String? = null,
+
+    @field:SerializedName("agora_mentor")
+    val agoraMentorId: String? = null,
+
+    @field:SerializedName("recording_url")
+    val recording_url: String
 )
