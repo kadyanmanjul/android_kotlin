@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
@@ -40,7 +41,7 @@ private const val TAG = "VoiceCallActivity"
 
 class VoiceCallActivity : BaseActivity() {
     private val backPressMutex = Mutex(false)
-    lateinit var recordingPermissionAlert: AlertDialog
+    var recordingPermissionAlert: AlertDialog? = null
     private val voiceCallBinding by lazy<ActivityVoiceCallBinding> {
         DataBindingUtil.setContentView(this, R.layout.activity_voice_call)
     }
@@ -182,22 +183,36 @@ class VoiceCallActivity : BaseActivity() {
                     .inflate(R.layout.dialog_record_call, null)
             )
             setPositiveButton("ACCEPT") { dialog, _ ->
-                vm.recordingStartedUIChanges()
-                vm.acceptCallRecording()
+                if (!vm.uiState.timerStarts) {
+                    vm.recordingStartedUIChanges()
+                    vm.acceptCallRecording()
+                } else {
+                    recordingAlreadyStartedByOtherUserDialog()
+                }
                 dialog.dismiss()
             }
-            setNegativeButton("DECLINE") { dialog, _ ->
-                vm.rejectCallRecording()
+            setNegativeButton("DECLINE") { dialog, which ->
+                if (!vm.uiState.timerStarts) {
+                    vm.rejectCallRecording()
+                } else {
+                    recordingAlreadyStartedByOtherUserDialog()
+                }
                 dialog.dismiss()
             }
-            setCancelable(false)
+            setOnCancelListener {
+                    vm.rejectCallRecording()
+            }
         }.create()
-        recordingPermissionAlert.show()
+        recordingPermissionAlert?.show()
+    }
+
+    private fun recordingAlreadyStartedByOtherUserDialog() {
+        Toast.makeText(this, "Recording was already started by the other person", Toast.LENGTH_SHORT).show()
     }
 
     private fun hideRecordingPermissionDialog() {
         Log.i(TAG, "hideRecordingPermissionDialog: ")
-        recordingPermissionAlert.dismiss()
+        recordingPermissionAlert?.dismiss()
     }
 
     private fun addSearchingUserFragment() {

@@ -178,6 +178,12 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                     ServiceEvents.CALL_RECORDING_ACCEPT -> {
                         recordCnclStop = 2
                         //startRecording()
+                        val msg = Message.obtain().apply {
+                            what = HIDE_RECORDING_PERMISSION_DIALOG
+                        }
+                        withContext(Dispatchers.Main) {
+                            singleLiveEvent.value = msg
+                        }
                         repository.startAgoraRecording()
                         recordingStartedUIChanges()
                     }
@@ -313,9 +319,6 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                 Log.d(TAG, "listenUIState: State --> $voipState")
                 if (uiState.startTime != state.startTime)
                     uiState.startTime = state.startTime
-                if (uiState.timerStarts) {
-                    // uiState.recordTime =
-                }
                 uiState.isRecordingEnabled = state.isRecordingEnabled
                 uiState.name = state.remoteUserName
                 uiState.profileImage = state.remoteUserImage ?: ""
@@ -454,7 +457,7 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
             //stopRecording()
             repository.stopAgoraCAllRecording()
             repository.stopCallRecording()
-        } else {
+        } else if (!uiState.timerStarts) {
             CallAnalytics.addAnalytics(
                 event = EventName.RECORDING_INITIATED,
                 agoraCallId = PrefManager.getAgraCallId().toString(),
@@ -462,6 +465,15 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
             )
             recWaitingForUserUI()
             repository.startCallRecording()
+        } else {
+            CallAnalytics.addAnalytics(
+                event = EventName.RECORDING_STOPPED,
+                agoraCallId = PrefManager.getAgraCallId().toString(),
+                agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
+            )
+            stoppedRecUIchanges()
+            repository.stopAgoraCAllRecording()
+            repository.stopCallRecording()
         }
     }
 
