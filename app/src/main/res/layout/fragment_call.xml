@@ -309,7 +309,7 @@
                     tools:text="Start"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                     android:textColor="@color/white"
-                    android:visibility="@{vm.uiState.isRecordingEnabled ? View.VISIBLE : View.GONE }"
+                    android:visibility="@{(vm.uiState.isRecordingEnabled &amp;&amp; vm.uiState.recordBtnVisibility ) ? View.VISIBLE : View.GONE }"
                     tools:visibility="gone"
                     android:layout_marginBottom="10dp"
                     app:layout_constraintEnd_toEndOf="@+id/btn_record_call"
