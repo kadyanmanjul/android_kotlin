@@ -174,7 +174,10 @@ class ConnectedState(val context: CallContext) : VoipState {
                         }
                         HOLD_REQUEST -> {
                             ensureActive()
-                            val uiState = context.currentUiState.copy(isOnHold = true)
+                            if(context.currentUiState.recordingButtonState == RecordingButtonState.RECORDING) {
+                                context.startRecording()
+                            }
+                            val uiState = context.currentUiState.copy(isOnHold = true, recordingButtonState = RecordingButtonState.IDLE)
                             context.updateUIState(uiState = uiState)
                             val userAction = UserAction(
                                 ServerConstants.ONHOLD,

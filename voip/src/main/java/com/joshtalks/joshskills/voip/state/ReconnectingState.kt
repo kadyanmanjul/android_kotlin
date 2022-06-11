@@ -8,6 +8,7 @@ import com.joshtalks.joshskills.voip.communication.model.UI
 import com.joshtalks.joshskills.voip.communication.model.UserAction
 import com.joshtalks.joshskills.voip.constant.Event.*
 import com.joshtalks.joshskills.voip.constant.State
+import com.joshtalks.joshskills.voip.data.RecordingButtonState
 import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.inSeconds
 import com.joshtalks.joshskills.voip.showToast
@@ -192,7 +193,10 @@ class ReconnectingState(val context: CallContext) : VoipState {
                         }
                         HOLD_REQUEST -> {
                             ensureActive()
-                            val uiState = context.currentUiState.copy(isOnHold = true)
+                            if(context.currentUiState.recordingButtonState == RecordingButtonState.RECORDING) {
+                                context.startRecording()
+                            }
+                            val uiState = context.currentUiState.copy(isOnHold = true, recordingButtonState = RecordingButtonState.IDLE)
                             context.updateUIState(uiState = uiState)
                             val userAction = UserAction(
                                 ServerConstants.ONHOLD,
