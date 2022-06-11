@@ -126,6 +126,13 @@ class CallUIState : BaseObservable() {
         }
 
     @get:Bindable
+    var isRecordingEnabled: Boolean = false
+        set(value) {
+            field = value
+            notifyPropertyChanged(BR.recordingEnabled)
+        }
+
+    @get:Bindable
     var isRecordingPermissionSent: Boolean = false
         set(value) {
             field = value

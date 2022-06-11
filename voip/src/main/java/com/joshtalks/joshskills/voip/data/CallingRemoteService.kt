@@ -16,7 +16,16 @@ import com.joshtalks.joshskills.voip.audiocontroller.AudioControllerInterface
 import com.joshtalks.joshskills.voip.audiocontroller.AudioRouteConstants
 import com.joshtalks.joshskills.voip.calldetails.IncomingCallData
 import com.joshtalks.joshskills.voip.communication.model.IncomingCall
-import com.joshtalks.joshskills.voip.constant.Event.*
+import com.joshtalks.joshskills.voip.constant.Event.CALL_CONNECTED_EVENT
+import com.joshtalks.joshskills.voip.constant.Event.CALL_INITIATED_EVENT
+import com.joshtalks.joshskills.voip.constant.Event.CALL_RECORDING_ACCEPT
+import com.joshtalks.joshskills.voip.constant.Event.CALL_RECORDING_REJECT
+import com.joshtalks.joshskills.voip.constant.Event.CANCEL_RECORDING_REQUEST
+import com.joshtalks.joshskills.voip.constant.Event.CLOSE_CALL_SCREEN
+import com.joshtalks.joshskills.voip.constant.Event.INCOMING_CALL
+import com.joshtalks.joshskills.voip.constant.Event.RECONNECTING_FAILED
+import com.joshtalks.joshskills.voip.constant.Event.START_RECORDING
+import com.joshtalks.joshskills.voip.constant.Event.STOP_RECORDING
 import com.joshtalks.joshskills.voip.constant.PSTN_STATE_IDLE
 import com.joshtalks.joshskills.voip.constant.PSTN_STATE_ONCALL
 import com.joshtalks.joshskills.voip.constant.State
@@ -390,7 +399,8 @@ data class UIState(
     val isRecordingStarted :Boolean = false,
     val isRecordingStopped :Boolean = false,
     val isRecordingPermissionSent : Boolean = false,
-    val recordingStartTime : Long = 0L
+    val recordingStartTime : Long = 0L,
+    val isRecordingEnabled : Boolean = false
 ) {
     companion object {
         fun empty() = UIState("", null, "", 0,"","","")

@@ -305,6 +305,7 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                 if (uiState.timerStarts) {
                     // uiState.recordTime =
                 }
+                uiState.isRecordingEnabled = state.isRecordingEnabled
                 uiState.name = state.remoteUserName
                 uiState.profileImage = state.remoteUserImage ?: ""
                 uiState.topic = state.topicName
