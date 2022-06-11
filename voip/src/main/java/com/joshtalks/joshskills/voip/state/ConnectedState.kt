@@ -291,6 +291,7 @@ class ConnectedState(val context: CallContext) : VoipState {
                                 val uiState =
                                     context.currentUiState.copy(recordingButtonState = RecordingButtonState.REQUESTED)
                                 context.updateUIState(uiState = uiState)
+                                context.sendEventToUI(event)
                             }
                         }
                         STOP_RECORDING -> {
@@ -310,6 +311,7 @@ class ConnectedState(val context: CallContext) : VoipState {
                                 val uiState =
                                     context.currentUiState.copy(recordingButtonState = RecordingButtonState.IDLE)
                                 context.updateUIState(uiState = uiState)
+                                context.sendEventToUI(event)
                             }
                         }
                         CALL_RECORDING_ACCEPT -> {
@@ -335,6 +337,7 @@ class ConnectedState(val context: CallContext) : VoipState {
                                     recordingStartTime = startTime
                                 )
                                 context.updateUIState(uiState = uiState)
+                                context.sendEventToUI(event)
                             }
                         }
                         CALL_RECORDING_REJECT -> {
@@ -353,6 +356,7 @@ class ConnectedState(val context: CallContext) : VoipState {
                                 val uiState =
                                     context.currentUiState.copy(recordingButtonState = RecordingButtonState.IDLE)
                                 context.updateUIState(uiState = uiState)
+                                context.sendEventToUI(event)
                             }
                         }
                         CANCEL_RECORDING_REQUEST -> {
@@ -371,6 +375,7 @@ class ConnectedState(val context: CallContext) : VoipState {
                                 val uiState =
                                     context.currentUiState.copy(recordingButtonState = RecordingButtonState.IDLE)
                                 context.updateUIState(uiState = uiState)
+                                context.sendEventToUI(event)
                             }
                         }
                         else -> {
