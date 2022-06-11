@@ -11,6 +11,7 @@ import android.os.Bundle
 import android.text.method.ScrollingMovementMethod
 import android.view.MotionEvent
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
@@ -51,6 +52,7 @@ import com.joshtalks.joshskills.repository.server.certification_exam.Certificati
 import com.joshtalks.joshskills.ui.certification_exam.CertificationExamViewModel
 import com.joshtalks.joshskills.ui.certification_exam.constants.*
 import com.joshtalks.joshskills.ui.certification_exam.view.CertificateShareFragment
+import com.joshtalks.joshskills.voip.Utils.Companion.context
 import java.text.ParseException
 import java.util.Calendar
 import java.util.Date
@@ -332,6 +334,14 @@ class CertificateDetailActivity : BaseActivity(), FileDownloadCallback {
             //showProgressDialog("Please Wait for the Certificate to be Generated")
             viewModel.postCertificateUserDetails(getUserDetail())
             viewModel.saveImpression(GENERATE_CERTIFICATE_FORM)
+            try {
+                val view = window.currentFocus
+                val inputMethodManager = this@CertificateDetailActivity.applicationContext.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                inputMethodManager.hideSoftInputFromWindow(view?.windowToken,0)
+            }catch (e:Exception){
+                e.printStackTrace()
+            }
+
         }
     }
 

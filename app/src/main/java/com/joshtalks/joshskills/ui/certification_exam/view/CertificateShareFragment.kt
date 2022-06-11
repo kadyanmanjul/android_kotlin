@@ -125,6 +125,7 @@ class CertificateShareFragment : CoreJoshFragment() {
                         intent.putExtra(Intent.EXTRA_TEXT, message)
                         intent.type = "image/*"
                         intent.putExtra(Intent.EXTRA_STREAM, uri)
+                        intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION;
                         try {
                             if (intent.resolveActivity(requireActivity().packageManager) == null) {
                                 Toast.makeText(requireContext(), "$packageName not found on device", Toast.LENGTH_LONG).show()
