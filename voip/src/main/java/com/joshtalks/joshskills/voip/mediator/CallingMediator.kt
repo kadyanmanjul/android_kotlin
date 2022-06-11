@@ -295,6 +295,14 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
         webrtcService.onDestroy()
     }
 
+    override fun stopAgoraCallRecording() {
+        stopRecording()
+    }
+
+    override fun startAgoraCallRecording() {
+        startRecording()
+    }
+
     // Handle Events coming from Backend
     private fun handlePubnubEvent() {
         Log.d(TAG, "handlePubnubEvent: Observe")
@@ -455,6 +463,10 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                             CallState.UserLeftChannel -> {
                                 val envelope = Envelope(Event.REMOTE_USER_DISCONNECTED_USER_LEFT)
                                 stateChannel.send(envelope)
+                            }
+                            CallState.RecordingGenerated -> {
+                                val envelope = Envelope(Event.AGORA_CALL_RECORDED)
+                                flow.emit(envelope)
                             }
                         }
                     }
@@ -631,6 +643,14 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
 
     fun changeSpeaker(isEnable:Boolean) {
         webrtcService.enableSpeaker(isEnable)
+    }
+
+    fun startRecording() {
+        webrtcService.onStartRecording()
+    }
+
+    fun stopRecording() {
+        webrtcService.onStopRecording()
     }
 
     private fun HashMap<String, Any>.direction(): CallDirection {

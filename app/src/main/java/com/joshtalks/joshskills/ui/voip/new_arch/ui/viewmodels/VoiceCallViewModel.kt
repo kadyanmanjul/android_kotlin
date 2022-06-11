@@ -130,7 +130,7 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                     }
                     ServiceEvents.CALL_CONNECTED_EVENT -> {
                         uiState.currentState = "Timer"
-                        if(source != FROM_INCOMING_CALL) {
+                        if (source != FROM_INCOMING_CALL) {
                             val msg = Message.obtain().apply {
                                 what = CALL_CONNECTED_EVENT
                             }
@@ -148,8 +148,9 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                         withContext(Dispatchers.Main) {
                             singleLiveEvent.value = msg
                         }
-                        if (uiState.isRecording){
-                            stopRecording()
+                        if (uiState.isRecording) {
+                            //stopRecording()
+                            repository.stopAgoraCAllRecording()
                         }
                     }
                     ServiceEvents.RECONNECTING_FAILED -> {
@@ -170,12 +171,14 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                         }
                     }
                     ServiceEvents.STOP_RECORDING -> {
-                        stopRecording()
+                        //stopRecording()
+                        repository.stopAgoraCAllRecording()
                         stoppedRecUIchanges()
                     }
                     ServiceEvents.CALL_RECORDING_ACCEPT -> {
                         recordCnclStop = 2
-                        startRecording()
+                        //startRecording()
+                        repository.startAgoraRecording()
                         recordingStartedUIChanges()
                     }
                     ServiceEvents.CALL_RECORDING_REJECT -> {
@@ -197,6 +200,11 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                             singleLiveEvent.value = msg
                         }
                     }
+
+                    ServiceEvents.PROCESS_AGORA_CALL_RECORDING ->
+                        File(PrefManager.getLastRecordingPath())?.let {
+                            stopRecording(it)
+                        }
                 }
             }
         }
@@ -220,9 +228,9 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
         uiState.recordBtnTxt = "Stop"
     }
 
-    fun stopRecording() {
+    fun stopRecording(recordFile: File) {
         val len = recordFile?.length() ?: 0
-        if (recordFile == null || (len<1)){
+        if (recordFile == null || (len < 1)) {
             Log.d(TAG, "stopRecording called return")
             return
         }
@@ -243,18 +251,19 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                 if (statusCode in 200..210) {
                     val url =
                         responseObj.url.plus(File.separator).plus(responseObj.fields["key"])
-                    if (url.isBlank().not()){
+                    if (url.isBlank().not()) {
                         voipNetwork.postCallRecordingFile(
                             CallRecordingRequest(
                                 recording_url = url,
                                 agoraCallId = PrefManager.getAgraCallId().toString(),
-                                agoraMentorId = PrefManager.getLocalUserAgoraId().toString())
+                                agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
+                            )
                         )
                     }
                 } else {
                     return@launch
                 }
-            } else{
+            } else {
                 Log.e(TAG, "stopRecording: path is empty!")
             }
         }
@@ -288,7 +297,8 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
     fun acceptCallRecording() {
         uiState.isRecording = uiState.isRecording.not()
         repository.acceptCallRecording()
-        startRecording()
+        repository.startAgoraRecording()
+        //startRecording()
     }
 
     fun rejectCallRecording() {
@@ -312,7 +322,7 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                 uiState.topic = state.topicName
                 uiState.topicImage = state.currentTopicImage
                 uiState.type = state.callType
-                uiState.occupation = getOccupationText(state.aspiration,state.occupation)
+                uiState.occupation = getOccupationText(state.aspiration, state.occupation)
                 uiState.title = when (state.callType) {
                     PEER_TO_PEER -> "Practice with Partner"
                     FPP -> "Favorite Practice Partner"
@@ -359,7 +369,7 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
 
     private fun getOccupationText(aspiration: String, occupation: String): String {
         if (!checkIfNullOrEmpty(occupation) && !checkIfNullOrEmpty(aspiration)) {
-           return "$occupation, Dream - $aspiration"
+            return "$occupation, Dream - $aspiration"
         } else if (checkIfNullOrEmpty(occupation) && !checkIfNullOrEmpty(aspiration)) {
             return "Dream - $aspiration"
         } else if (!checkIfNullOrEmpty(occupation) && checkIfNullOrEmpty(aspiration)) {
@@ -368,8 +378,8 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
         return ""
     }
 
-    private fun checkIfNullOrEmpty(word : String) : Boolean{
-       return word == "" || word == "null"
+    private fun checkIfNullOrEmpty(word: String): Boolean {
+        return word == "" || word == "null"
     }
 
     private fun getCallStatus(): Int {
@@ -415,8 +425,7 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                 agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
             )
             repository.turnOffSpeaker()
-        }
-        else {
+        } else {
             CallAnalytics.addAnalytics(
                 event = EventName.SPEAKER_ON,
                 agoraCallId = PrefManager.getAgraCallId().toString(),
@@ -442,10 +451,10 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                 agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
             )
             stoppedRecUIchanges()
-            stopRecording()
+            //stopRecording()
+            repository.stopAgoraCAllRecording()
             repository.stopCallRecording()
-        }
-        else {
+        } else {
             CallAnalytics.addAnalytics(
                 event = EventName.RECORDING_INITIATED,
                 agoraCallId = PrefManager.getAgraCallId().toString(),
@@ -483,8 +492,7 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                 agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
             )
             repository.unmuteCall()
-        }
-        else {
+        } else {
             CallAnalytics.addAnalytics(
                 event = EventName.MIC_OFF,
                 agoraCallId = PrefManager.getAgraCallId().toString(),
@@ -500,8 +508,8 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
         repository.backPress()
     }
 
-    fun getNewTopicImage(v:View){
-        if(Utils.isInternetAvailable().not()){
+    fun getNewTopicImage(v: View) {
+        if (Utils.isInternetAvailable().not()) {
             Utils.showToast("Seems like you have no internet")
             return
         }
@@ -522,6 +530,7 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
         voipLog?.log("unbound Service")
         repository.stopService(activity)
     }
+
     override fun onCleared() {
         Log.d(TAG, "onCleared: ")
         super.onCleared()

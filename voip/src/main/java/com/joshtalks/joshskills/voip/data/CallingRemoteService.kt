@@ -16,6 +16,7 @@ import com.joshtalks.joshskills.voip.audiocontroller.AudioControllerInterface
 import com.joshtalks.joshskills.voip.audiocontroller.AudioRouteConstants
 import com.joshtalks.joshskills.voip.calldetails.IncomingCallData
 import com.joshtalks.joshskills.voip.communication.model.IncomingCall
+import com.joshtalks.joshskills.voip.constant.Event
 import com.joshtalks.joshskills.voip.constant.Event.CALL_CONNECTED_EVENT
 import com.joshtalks.joshskills.voip.constant.Event.CALL_INITIATED_EVENT
 import com.joshtalks.joshskills.voip.constant.Event.CALL_RECORDING_ACCEPT
@@ -196,6 +197,9 @@ class CallingRemoteService : Service() {
                                 CANCEL_RECORDING_REQUEST -> {
                                     serviceEvents.emit(ServiceEvents.CANCEL_RECORDING_REQUEST)
                                 }
+                                Event.AGORA_CALL_RECORDED -> {
+                                    serviceEvents.emit(ServiceEvents.PROCESS_AGORA_CALL_RECORDING)
+                                }
                             }
                         }
                         catch (e : Exception){
@@ -322,6 +326,10 @@ class CallingRemoteService : Service() {
 
     fun cancelRecordingRequest() {mediator.userAction(Action.CANCEL_RECORDING_REQUEST)}
 
+    fun startAgoraRecording() {mediator.startAgoraCallRecording()}
+
+    fun stopAgoraCallRecording() {mediator.stopAgoraCallRecording()}
+
     override fun onTaskRemoved(rootIntent: Intent?) {
         super.onTaskRemoved(rootIntent)
         stopForeground(true)
@@ -416,5 +424,6 @@ enum class ServiceEvents {
     STOP_RECORDING,
     CALL_RECORDING_ACCEPT,
     CALL_RECORDING_REJECT,
-    CANCEL_RECORDING_REQUEST
+    CANCEL_RECORDING_REQUEST,
+    PROCESS_AGORA_CALL_RECORDING
 }

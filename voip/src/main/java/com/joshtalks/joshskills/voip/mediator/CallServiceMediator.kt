@@ -26,6 +26,8 @@ internal interface CallServiceMediator {
     fun userAction(action: UserAction)
     // Used to destroy Mediator
     fun onDestroy()
+    fun stopAgoraCallRecording()
+    fun startAgoraCallRecording()
 }
 
 enum class UserAction {
