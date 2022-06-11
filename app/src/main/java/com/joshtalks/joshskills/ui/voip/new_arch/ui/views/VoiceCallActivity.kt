@@ -183,20 +183,12 @@ class VoiceCallActivity : BaseActivity() {
                     .inflate(R.layout.dialog_record_call, null)
             )
             setPositiveButton("ACCEPT") { dialog, _ ->
-                if (vm.uiState.recordTime == 0L) {
-                    vm.recordingStartedUIChanges()
-                    vm.acceptCallRecording()
-                } else {
-                    recordingAlreadyStartedByOtherUserDialog()
-                }
+                vm.recordingStartedUIChanges()
+                vm.acceptCallRecording()
                 dialog.dismiss()
             }
             setNegativeButton("DECLINE") { dialog, which ->
-                if (vm.uiState.recordTime == 0L) {
-                    vm.rejectCallRecording()
-                } else {
-                    recordingAlreadyStartedByOtherUserDialog()
-                }
+                vm.rejectCallRecording()
                 dialog.dismiss()
             }
             setOnCancelListener {
