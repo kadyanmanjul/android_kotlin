@@ -18,6 +18,7 @@ import com.joshtalks.joshskills.base.constants.GROUP
 import com.joshtalks.joshskills.base.constants.PEER_TO_PEER
 import com.joshtalks.joshskills.base.log.Feature
 import com.joshtalks.joshskills.base.log.JoshLog
+import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.ui.call.repository.RepositoryConstants.CONNECTION_ESTABLISHED
 import com.joshtalks.joshskills.ui.call.repository.WebrtcRepository
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.models.CallUIState
@@ -31,7 +32,6 @@ import com.joshtalks.joshskills.voip.constant.RECONNECTING_FAILED
 import com.joshtalks.joshskills.voip.constant.SHOW_RECORDING_PERMISSION_DIALOG
 import com.joshtalks.joshskills.voip.constant.SHOW_RECORDING_REJECTED_DIALOG
 import com.joshtalks.joshskills.voip.constant.State
-import com.joshtalks.joshskills.voip.data.AmazonPolicyResponse
 import com.joshtalks.joshskills.voip.data.RecordingButtonState
 import com.joshtalks.joshskills.voip.data.ServiceEvents
 import com.joshtalks.joshskills.voip.data.api.MediaDUNetwork
@@ -44,15 +44,10 @@ import java.io.File
 import java.util.ArrayDeque
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.MultipartBody
-import okhttp3.RequestBody
-import okhttp3.RequestBody.Companion.asRequestBody
 
 const val CONNECTING = 1
 const val ONGOING = 2
@@ -202,7 +197,6 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                             singleLiveEvent.value = msg
                         }
                     }
-
                     ServiceEvents.PROCESS_AGORA_CALL_RECORDING ->
                         File(PrefManager.getLastRecordingPath())?.let {
                             stopRecording(it)
@@ -220,14 +214,15 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun stopRecording(recordFile: File) {
-        val len = recordFile?.length() ?: 0
-        if (recordFile == null || (len < 1)) {
-            return
-        }
         viewModelScope.launch(Dispatchers.IO) {
-            if (recordFile?.absolutePath?.isEmpty()?.not() == true) {
+            if (recordFile.absolutePath.isEmpty().not()) {
+                val a  = AppObjectController.getFirebaseRemoteConfig().getString("RECORDING_SAVED_TEXT")
                 withContext(Dispatchers.Main) {
-                    Utils.showToast("Call recording will be saved in your Downloads folder")
+                    Utils.showToast("Firebase : $a")
+                }
+                val len = recordFile.length()
+                if (len < 1) {
+                    return@launch
                 }
                 CallRecordingAnalytics.addAnalytics(
                     agoraCallId = PrefManager.getAgraCallId().toString(),
@@ -235,31 +230,6 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                     localPath = recordFile.absolutePath )
             }
         }
-    }
-
-    private suspend fun uploadOnS3Server(
-        responseObj: AmazonPolicyResponse,
-        recordedFile: File
-    ): Int {
-        return viewModelScope.async(Dispatchers.IO) {
-            val parameters = emptyMap<String, RequestBody>().toMutableMap()
-            for (entry in responseObj.fields) {
-                parameters[entry.key] = Utils.createPartFromString(entry.value)
-            }
-
-            val requestFile = recordedFile.asRequestBody("*".toMediaTypeOrNull())
-            val body = MultipartBody.Part.createFormData(
-                "file",
-                responseObj.fields["key"],
-                requestFile
-            )
-            val responseUpload = mediaDUNetworkService.uploadMediaAsync(
-                responseObj.url,
-                parameters,
-                body
-            ).execute()
-            return@async responseUpload.code()
-        }.await()
     }
 
     fun acceptCallRecording() {

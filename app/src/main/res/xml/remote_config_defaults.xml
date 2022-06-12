@@ -940,4 +940,8 @@
         <value>For sending the certificate</value>
     </entry>
 
+    <entry>
+        <key>RECORDING_SAVED_TEXT</key>
+        <value>Call recording will be saved in your Downloads folder shortly</value>
+    </entry>
 </defaultsMap>
