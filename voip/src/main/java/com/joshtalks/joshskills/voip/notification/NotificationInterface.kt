@@ -27,4 +27,11 @@ interface NotificationData{
     fun setAction2():NotificationActionObj?{
         return null
     }
+
+    interface IncomingNotification{
+        fun inflateNotification()
+        fun removeNotification()
+        fun isNotificationVisible():Boolean
+    }
+
 }
