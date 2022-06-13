@@ -193,7 +193,7 @@ class CertificateShareFragment : CoreJoshFragment() {
         override fun onReceive(context: Context, intent: Intent) {
             if (intent.action == DownloadManager.ACTION_DOWNLOAD_COMPLETE) {
                 intent.extras?.let {
-                    val id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
+                    val id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0L)
                     if (id == DownloadId) { // checking if the downloaded file is our certificate
                         //retrieving the file
                         binding.progressBar2.visibility = View.GONE
@@ -245,6 +245,16 @@ class CertificateShareFragment : CoreJoshFragment() {
             val fragment = CertificateShareFragment()
             fragment.arguments = args
             return fragment
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        try {
+            requireActivity().unregisterReceiver(onComplete)
+        }
+        catch (e:Exception){
+            e.printStackTrace()
         }
     }
 }
