@@ -56,6 +56,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
     val uiTransitionFlow = MutableSharedFlow<ServiceEvents>(replay = 0)
     private val mutex = Mutex(false)
     private val incomingCallMutex = Mutex(false)
+    private val incomingNotificationMutex = Mutex(false)
     private val soundManager by lazy { SoundManager(SOUND_TYPE_RINGTONE, 20000) }
     private lateinit var voipNotification: VoipNotification
     private var isShowingIncomingCall = false
@@ -279,7 +280,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                         when (it) {
                             is Error -> {
                                 Log.d(TAG, "handlePubnubEvent : $it")
-                                callContext?.onError()
+                                callContext?.onError(it.reason)
                             }
                             is ChannelData -> {
                                 Log.d(TAG, "handlePubnubEvent : $it")
@@ -321,18 +322,20 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                                 }
                             }
                             is IncomingCall -> {
-                                Log.d(TAG, "handlePubnubEvent : $it")
-                                if (isShowingIncomingCall.not() && PrefManager.getVoipState() == State.IDLE) {
-                                    CallAnalytics.addAnalytics(
-                                        event = EventName.INCOMING_CALL_RECEIVED,
-                                        agoraCallId = IncomingCallData.callId.toString(),
-                                        agoraMentorId = "-1"
-                                    )
-                                    updateIncomingCallState(true)
-                                    Log.d(TAG, "handlePubnubEvent: Incoming Call -> $it")
-                                    IncomingCallData.set(it.getCallId(), Category.PEER_TO_PEER)
-                                    val envelope = Envelope(Event.INCOMING_CALL)
-                                    flow.emit(envelope)
+                                incomingNotificationMutex.withLock {
+                                    Log.d(TAG, "handlePubnubEvent : $it")
+                                    if (isShowingIncomingCall.not() && PrefManager.getVoipState() == State.IDLE) {
+                                        CallAnalytics.addAnalytics(
+                                            event = EventName.INCOMING_CALL_RECEIVED,
+                                            agoraCallId = IncomingCallData.callId.toString(),
+                                            agoraMentorId = "-1"
+                                        )
+                                        updateIncomingCallState(true)
+                                        Log.d(TAG, "handlePubnubEvent: Incoming Call -> $it")
+                                        IncomingCallData.set(it.getCallId(), Category.PEER_TO_PEER)
+                                        val envelope = Envelope(Event.INCOMING_CALL)
+                                        flow.emit(envelope)
+                                    }
                                 }
                             }
                             is GroupIncomingCall -> {
@@ -429,9 +432,9 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                                 val envelope = Envelope(Event.RECONNECTING)
                                 stateChannel.send(envelope)
                             }
-                            CallState.Error -> {
+                            is CallState.Error -> {
                                 Log.d(TAG, "handleWebrtcEvent : $it")
-                                callContext?.onError()
+                                callContext?.onError(it.reason)
                             }
                             CallState.UserLeftChannel -> {
                                 val envelope = Envelope(Event.REMOTE_USER_DISCONNECTED_USER_LEFT)
@@ -462,7 +465,9 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                             Log.d(TAG, "handleFallbackEvents: Pubnub Listener Failed ...")
                             networkEventChannel.reconnect()
                             when (event) {
-                                is Error -> {callContext?.onError()}
+                                is Error -> {
+                                    callContext?.onError(event.reason)
+                                }
                                 is ChannelData -> {
                                     val envelope = Envelope(Event.RECEIVED_CHANNEL_DATA,event)
                                     stateChannel.send(envelope)
@@ -503,31 +508,18 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                                     }
                                 }
                                 is IncomingCall -> {
-                                    if (isShowingIncomingCall.not() && PrefManager.getVoipState() == State.IDLE) {
-                                        CallAnalytics.addAnalytics(
-                                            event = EventName.INCOMING_CALL_RECEIVED,
-                                            agoraCallId = IncomingCallData.callId.toString(),
-                                            agoraMentorId = "-1"
-                                        )
-                                        updateIncomingCallState(true)
-                                        IncomingCallData.set(event.getCallId(), Category.PEER_TO_PEER)
-                                        val envelope = Envelope(Event.INCOMING_CALL,event)
-                                        flow.emit(envelope)
-                                    }
-                                }
-                                is GroupIncomingCall -> {
-                                    if (isShowingIncomingCall.not() && PrefManager.getVoipState() == State.IDLE) {
-                                        calling = GroupCall()
-                                        PrefManager.setCallCategory(Category.GROUP)
-                                        CallAnalytics.addAnalytics(
-                                            event = EventName.INCOMING_CALL_RECEIVED,
-                                            agoraCallId = IncomingCallData.callId.toString(),
-                                            agoraMentorId = "-1"
-                                        )
-                                        updateIncomingCallState(true)
-                                        IncomingCallData.set(event.getCallId(), Category.GROUP)
-                                        val envelope = Envelope(Event.GROUP_INCOMING_CALL,event)
-                                        flow.emit(envelope)
+                                    incomingNotificationMutex.withLock {
+                                        if (isShowingIncomingCall.not() && PrefManager.getVoipState() == State.IDLE) {
+                                            CallAnalytics.addAnalytics(
+                                                event = EventName.INCOMING_CALL_RECEIVED,
+                                                agoraCallId = IncomingCallData.callId.toString(),
+                                                agoraMentorId = "-1"
+                                            )
+                                            updateIncomingCallState(true)
+                                            IncomingCallData.set(event.getCallId(), Category.PEER_TO_PEER)
+                                            val envelope = Envelope(Event.INCOMING_CALL,event)
+                                            flow.emit(envelope)
+                                        }
                                     }
                                 }
                                 is UI -> {

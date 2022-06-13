@@ -32,7 +32,6 @@ class LocalNotificationAlarmReciever : BroadcastReceiver() {
         if ("android.intent.action.BOOT_COMPLETED" == intent.action) {
             CoroutineScope(Dispatchers.IO).launch {
                 context.showNotificationWithFullScreenIntent(context,notificationIndex=index)
-
             }
         } else
 

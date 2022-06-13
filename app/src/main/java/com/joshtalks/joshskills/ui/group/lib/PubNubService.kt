@@ -129,6 +129,32 @@ object PubNubService : ChatService {
         }
     }
 
+    override fun removeNotifications(groups: List<String>) {
+        try {
+            if (groups.isNotEmpty())
+                pubnub.removePushNotificationsFromChannels()
+                    .pushType(PNPushType.FCM)
+                    .channels(groups)
+                    .deviceId(PrefManager.getStringValue(FCM_TOKEN))
+                    .sync()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Log.e(TAG, "Error in removing notifications")
+        }
+    }
+
+    override fun cancelAllPubNubNotifications() {
+        try {
+            pubnub.removeAllPushNotificationsFromDeviceWithPushToken()
+                .pushType(PNPushType.FCM)
+                .deviceId(PrefManager.getStringValue(FCM_TOKEN))
+                .sync()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Log.e(TAG, "Error in canceling notifications")
+        }
+    }
+
     override fun getLastMessageDetail(groupId: String,groupType:String): Pair<String, Long> {
         val msg = pubnub.fetchMessages()
             .channels(listOf(groupId))
@@ -179,13 +205,16 @@ object PubNubService : ChatService {
         history?.messages?.map {
             try {
                 val messageItem = Gson().fromJson(it.entry.asJsonObject, MessageItem::class.java)
+                var messageTime = it.timetoken
+                if (it.meta.asString == FROM_BACKEND_MSG_TIME)
+                    messageTime = messageItem.msg.toLong().times(10000000)
                 val message = ChatItem(
                     sender = it.meta.asString,
                     msgType = messageItem.getMessageType(),
                     message = messageItem.msg,
-                    msgTime = it.timetoken,
+                    msgTime = messageTime,
                     groupId = groupId,
-                    messageId = "${it.timetoken}_${groupId}_${messageItem.mentorId}"
+                    messageId = "${messageTime}_${groupId}_${messageItem.mentorId}"
                 )
                 messages.add(message)
             } catch (e: Exception) {
@@ -214,13 +243,16 @@ object PubNubService : ChatService {
         history?.messages?.map {
             try {
                 val messageItem = Gson().fromJson(it.entry.asJsonObject, MessageItem::class.java)
+                var messageTime = it.timetoken
+                if (it.meta.asString == FROM_BACKEND_MSG_TIME)
+                    messageTime = messageItem.msg.toLong().times(10000000)
                 val message = ChatItem(
                     sender = it.meta.asString,
                     msgType = messageItem.getMessageType(),
                     message = messageItem.msg,
-                    msgTime = it.timetoken,
+                    msgTime = messageTime,
                     groupId = groupId,
-                    messageId = "${it.timetoken}_${groupId}_${messageItem.mentorId}"
+                    messageId = "${messageTime}_${groupId}_${messageItem.mentorId}"
                 )
                 messages.add(message)
             } catch (e: Exception) {

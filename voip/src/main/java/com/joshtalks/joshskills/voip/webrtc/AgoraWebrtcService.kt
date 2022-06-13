@@ -11,14 +11,12 @@ import com.joshtalks.joshskills.voip.constant.JOINED
 import com.joshtalks.joshskills.voip.constant.JOINING
 import com.joshtalks.joshskills.voip.constant.LEAVING
 import com.joshtalks.joshskills.voip.constant.LEAVING_AND_JOINING
-import com.joshtalks.joshskills.voip.data.local.PrefManager
-import com.joshtalks.joshskills.voip.voipLog
+import io.agora.rtc.Constants
 import io.agora.rtc.RtcEngine
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.collect
-import timber.log.Timber
+
 
 private const val JOINING_CHANNEL_SUCCESS = 0
 private const val USER_ALREADY_IN_A_CHANNEL = -17
@@ -72,7 +70,7 @@ internal class AgoraWebrtcService(val scope: CoroutineScope) : WebrtcService {
                     else -> {
                         state.emit(IDLE)
                         currentState = IDLE
-                        eventFlow.emit(CallState.Error)
+                        eventFlow.emit(CallState.Error("In AgoraWebrtcService Class, connectCall Method Received Error Joining Status : $status"))
                     }
                 }
                 // 1. API Call to notify backend Start Listening to Pubnub Channel
@@ -109,7 +107,7 @@ internal class AgoraWebrtcService(val scope: CoroutineScope) : WebrtcService {
                     if (isActive) {
                         val status = joinChannel(request)
                         if (status != JOINING_CHANNEL_SUCCESS && isActive)
-                            eventFlow.emit(CallState.Error)
+                            eventFlow.emit(CallState.Error("Tried Joining new channel after leaving old one still got Error Join Status : $status"))
                     }
                 }
             } catch (e: Exception) {
@@ -156,6 +154,7 @@ internal class AgoraWebrtcService(val scope: CoroutineScope) : WebrtcService {
             val currentVolume = audio.getStreamVolume(AudioManager.STREAM_VOICE_CALL)
             adjustPlaybackSignalVolume((95 / maxVolume) * currentVolume)
             adjustRecordingSignalVolume(400)
+            setAudioProfile(Constants.AUDIO_PROFILE_DEFAULT, Constants.AUDIO_SCENARIO_DEFAULT)
 //            TODO:SOUND PROBLEM
             enableDeepLearningDenoise(false)
         }
@@ -186,8 +185,8 @@ internal class AgoraWebrtcService(val scope: CoroutineScope) : WebrtcService {
                                 } else {
                                     state.emit(IDLE)
                                     currentState = IDLE
+                                    eventFlow.emit(callState)
                                 }
-                                eventFlow.emit(callState)
                             }
                             CallState.CallConnected -> {
                                 //TODO: Use Reconnecting
@@ -215,7 +214,7 @@ internal class AgoraWebrtcService(val scope: CoroutineScope) : WebrtcService {
                                 currentState = IDLE
                                 eventFlow.emit(callState)
                             }
-                            CallState.Error -> {
+                            is CallState.Error -> {
                                 if (currentState == JOINED || currentState == CONNECTED || currentState == JOINING) {
                                     Log.d("disconnectCall()", "observeCallbacks: ")
                                     disconnectCall()

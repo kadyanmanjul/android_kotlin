@@ -212,34 +212,35 @@
                     app:barrierDirection="bottom"
                     app:constraint_referenced_ids="see_course_list,cards_container" />
 
-                <FrameLayout
-                    android:id="@+id/progress_bar"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:background="@color/transparent_black_alpha_70"
-                    android:elevation="@dimen/_2sdp"
-                    android:visibility="gone"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
-
-                    <com.pnikosis.materialishprogress.ProgressWheel
-                        android:layout_width="@dimen/_82sdp"
-                        android:layout_height="@dimen/_82sdp"
-                        android:layout_gravity="center"
-                        wheel:matProg_barColor="@color/button_color"
-                        wheel:matProg_fillRadius="true"
-                        wheel:matProg_linearProgress="false"
-                        wheel:matProg_progressIndeterminate="true"
-                        wheel:matProg_rimColor="#33128C7E"
-                        wheel:matProg_rimWidth="@dimen/_2sdp" />
-
-                </FrameLayout>
-
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </ScrollView>
+
+        <FrameLayout
+            android:id="@+id/progress_bar"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@color/transparent_black_alpha_70"
+            android:elevation="@dimen/_2sdp"
+            android:visibility="gone"
+            android:onClick="@{null}"
+            app:layout_constraintBottom_toTopOf="@id/floating_container"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.pnikosis.materialishprogress.ProgressWheel
+                android:layout_width="@dimen/_82sdp"
+                android:layout_height="@dimen/_82sdp"
+                android:layout_gravity="center"
+                wheel:matProg_barColor="@color/button_color"
+                wheel:matProg_fillRadius="true"
+                wheel:matProg_linearProgress="false"
+                wheel:matProg_progressIndeterminate="true"
+                wheel:matProg_rimColor="#33128C7E"
+                wheel:matProg_rimWidth="@dimen/_2sdp" />
+
+        </FrameLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/floating_container"
@@ -258,7 +259,7 @@
                 android:layout_marginVertical="@dimen/_10sdp"
                 android:background="@drawable/bg_cta_button"
                 android:gravity="center"
-                android:onClick="@{()->handler.startPayment()}"
+                onSingleClick="@{()->handler.startPayment()}"
                 android:padding="@dimen/_10sdp"
                 android:text="Buy Now"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7"

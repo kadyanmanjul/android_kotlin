@@ -918,4 +918,17 @@
         <key>ADD_PROFILE_PHOTO_TEXT_151</key>
         <value>आपके टीचर और कोर्स के बाकी स्टूडेंट्स आपको इस फोटो से पेहचानेंगे</value>
     </entry>
+    <entry>
+        <key>REFERRAL_WHATAPP_MESSAGE</key>
+        <value>https://www.youtube.com/watch?v=CMZohcIMQfc
+            Mai Bharat :flag-in: ke best teachers se Spoken English aur Personality Development seekh raha hu. Mere
+            saath seekhna abhi shuru karo :muscle:. Ye lo meri taraf se tumhe ₹50 OFF: Use my code 58HEM. Download the
+            app by clicking on the link
+            https://joshskills.app.link/YlhB9VN0Eqb
+        </value>
+    </entry>
+    <entry>
+        <key>IS_INVITATION_FOR_CALL_ENABLED</key>
+        <value>false</value>
+    </entry>
 </defaultsMap>

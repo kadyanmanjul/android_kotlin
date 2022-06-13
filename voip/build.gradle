@@ -16,7 +16,6 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
-        buildConfigField "String", "AGORA_API_KEY", "\"56eb9bed99fd4dd889cd0375056039fe\""
     }
 
     buildTypes {
@@ -37,6 +36,14 @@ android {
             buildConfigField "String", "BASE_URL", "${rootProject.ext.voip_debug_base_url}"
             buildConfigField "String", "PUBNUB_PUB_P2P_KEY", "\"pub-c-d49381a1-56bf-4854-96bb-3400c5facddd\""
             buildConfigField "String", "PUBNUB_SUB_P2P_KEY", "\"sub-c-2069fa10-9b9b-11ec-879a-86a1e6519840\""
+            buildConfigField "String", "AGORA_API_KEY", "\"c009eb4d56614e4090b28c52830a6880\""
+        }
+
+        prod {
+            buildConfigField "String", "BASE_URL", "${rootProject.ext.prod_base_url}"
+            buildConfigField "String", "PUBNUB_PUB_P2P_KEY", "\"pub-c-ca4c4308-ae44-4431-9a31-c4dfdd6b0bf1\""
+            buildConfigField "String", "PUBNUB_SUB_P2P_KEY", "\"sub-c-d19da452-a164-11ec-a074-1a3740267833\""
+            buildConfigField "String", "AGORA_API_KEY", "\"56eb9bed99fd4dd889cd0375056039fe\""
         }
 
         prod {

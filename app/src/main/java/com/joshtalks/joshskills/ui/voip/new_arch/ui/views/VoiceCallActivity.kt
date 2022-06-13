@@ -5,8 +5,16 @@ import android.util.Log
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
+import com.afollestad.materialdialogs.MaterialDialog
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseActivity
+import com.joshtalks.joshskills.base.constants.FROM_ACTIVITY
+import com.joshtalks.joshskills.base.constants.FROM_CALL_BAR
+import com.joshtalks.joshskills.base.constants.FROM_INCOMING_CALL
+import com.joshtalks.joshskills.base.constants.INTENT_DATA_COURSE_ID
+import com.joshtalks.joshskills.base.constants.INTENT_DATA_INCOMING_CALL_ID
+import com.joshtalks.joshskills.base.constants.INTENT_DATA_TOPIC_ID
+import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.databinding.ActivityVoiceCallBinding
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.VoiceCallViewModel
@@ -17,6 +25,10 @@ import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
 import kotlinx.coroutines.sync.Mutex
+import com.karumi.dexter.MultiplePermissionsReport
+import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.PermissionRequest
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 
 private const val TAG = "VoiceCallActivity"
 
@@ -81,31 +93,57 @@ class VoiceCallActivity : BaseActivity() {
 
     override fun onCreated() {
         Log.d(TAG, "onCreated: ${vm.source}")
-        when(vm.callType){
-            Category.PEER_TO_PEER ->{
-                openFragment { addCallUserFragment() }
+        if (PermissionUtils.isCallingPermissionEnabled(this)) {
+            if (vm.source == FROM_INCOMING_CALL || vm.source == FROM_CALL_BAR) {
+                addCallUserFragment()
+            } else if (vm.source == FROM_ACTIVITY) {
+                addSearchingUserFragment()
             }
-            Category.FPP ->{
-               addFppCallFragment()
-            }
-            Category.GROUP ->{
-//                openFragment { addGroupCallFragment() }
-            }
+        }else{
+            getPermission()
         }
     }
 
-    private fun openFragment(fragment: ()->Unit) {
-        if (vm.source == FROM_INCOMING_CALL || vm.source == FROM_CALL_BAR) {
-            fragment.invoke()
-        } else if (vm.source == FROM_ACTIVITY) {
-            addSearchingUserFragment()
-        }
+    private fun getPermission() {
+        PermissionUtils.callingFeaturePermission(
+            this,
+            object : MultiplePermissionsListener {
+                override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                    report?.areAllPermissionsGranted()?.let { flag ->
+                        if (report.isAnyPermissionPermanentlyDenied) {
+                            PermissionUtils.callingPermissionPermanentlyDeniedDialog(
+                                this@VoiceCallActivity,
+                                message = R.string.call_start_permission_message
+                            )
+                            return
+                        }
+                        if (flag) {
+                            if (vm.source == FROM_INCOMING_CALL || vm.source == FROM_CALL_BAR) {
+                                addCallUserFragment()
+                            } else if (vm.source == FROM_ACTIVITY) {
+                                addSearchingUserFragment()
+                            }
+                            return
+                        } else {
+                            finish()
+                        }
+                    }
+                }
+                override fun onPermissionRationaleShouldBeShown(
+                    permissions: MutableList<PermissionRequest>?,
+                    token: PermissionToken?
+                ) {
+                    token?.continuePermissionRequest()
+                }
+            }
+        )
     }
+
 
     override fun initViewState() {
         event.observe(this) {
             when (it.what) {
-                CALL_INITIATED_EVENT -> replaceCallUserFragment()
+                CALL_CONNECTED_EVENT -> replaceCallUserFragment()
                 CLOSE_CALL_SCREEN -> finish()
                 else -> {
                     if (it.what < 0) {
@@ -153,7 +191,7 @@ class VoiceCallActivity : BaseActivity() {
     }
 
     override fun onBackPressed() {
-        if (PrefManager.getVoipState() == State.IDLE || PrefManager.getVoipState() == State.SEARCHING || PrefManager.getVoipState() == State.JOINING)
+        if (PrefManager.getVoipState() == State.IDLE || PrefManager.getVoipState() == State.SEARCHING || PrefManager.getVoipState() == State.JOINING || PrefManager.getVoipState() == State.JOINED)
             backPressMutex.onMultipleBackPress {
                 super.onBackPressed()
                 vm.backPress()

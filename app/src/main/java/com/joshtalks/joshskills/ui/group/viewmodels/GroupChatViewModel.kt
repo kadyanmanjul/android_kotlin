@@ -18,13 +18,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseViewModel
 import com.joshtalks.joshskills.constants.*
-import com.joshtalks.joshskills.core.ONE_GROUP_REQUEST_SENT
-import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.analytics.ParamKeys
-import com.joshtalks.joshskills.core.isCallOngoing
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.track.AGORA_UID
 import com.joshtalks.joshskills.ui.group.adapters.GroupChatAdapter
@@ -474,12 +471,16 @@ class GroupChatViewModel : BaseViewModel() {
     }
 
     fun sendMessage(view: View) {
-        GroupAnalytics.checkMsgTime(GroupAnalytics.Event.MESSAGE_SENT, groupId)
-        MixPanelTracker.publishEvent(MixPanelEvent.GROUP_MESSAGE_SENT)
-            .addParam(ParamKeys.GROUP_ID, groupId)
-            .push()
-        message.what = SEND_MSG
-        singleLiveEvent.value = message
+        if (Utils.isInternetAvailable()){
+            GroupAnalytics.checkMsgTime(GroupAnalytics.Event.MESSAGE_SENT, groupId)
+            MixPanelTracker.publishEvent(MixPanelEvent.GROUP_MESSAGE_SENT)
+                .addParam(ParamKeys.GROUP_ID, groupId)
+                .push()
+            message.what = SEND_MSG
+            singleLiveEvent.value = message
+        }else{
+            showToast("No Internet Connection")
+        }
     }
 
     fun pushMessage(msg: String) {
@@ -491,7 +492,8 @@ class GroupChatViewModel : BaseViewModel() {
             )
             scrollToEnd = true
             viewModelScope.launch(Dispatchers.IO) {
-                chatService.sendGroupNotification(groupId, getNotification(msg))
+                if (shouldSendNotification(groupId))
+                    chatService.sendGroupNotification(groupId, getNotification(msg))
                 if (repository.checkIfFirstMsg(groupId))
                     pushTimeMetaMessage(groupId)
                 chatService.sendMessage(groupId, message)
@@ -499,6 +501,17 @@ class GroupChatViewModel : BaseViewModel() {
             clearText()
             resetUnreadLabel()
         }
+    }
+
+    private fun shouldSendNotification(id: String): Boolean {
+        val timeMap = PrefManager.getPrefMap(GROUP_NOTIFICATION_TIMES) ?: mutableMapOf()
+
+        return if (((timeMap[id] as Double?)?.toLong() ?: 0L) < (System.currentTimeMillis() - (1000 * 60 * 30L))) {
+            timeMap[id] = System.currentTimeMillis()
+            PrefManager.putPrefObject(GROUP_NOTIFICATION_TIMES, timeMap)
+            true
+        } else
+            false
     }
 
     private fun clearText() {
@@ -514,7 +527,13 @@ class GroupChatViewModel : BaseViewModel() {
                 this.setTitle("${groupHeader.get()}")
                 this.setBody("${Mentor.getInstance().getUser()?.firstName} : $msg")
             })
-
+                .setData(
+                    mapOf(
+                        Pair("is_group", "true"),
+                        Pair("action", "open_group_chat_client"),
+                        Pair("action_data", Mentor.getInstance().getId())
+                    )
+                )
         }
         pushPayloadHelper.setFcmPayload(fcmPayload)
 

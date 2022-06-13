@@ -96,7 +96,7 @@ class JoshGroupActivity : BaseGroupActivity() {
                 REMOVE_GROUP_AND_CLOSE -> removeGroupFromDb(it.obj as String)
                 REMOVE_AND_BLOCK_FPP -> removeDmFppDb(it.obj as String)
                 OPEN_PROFILE_PAGE -> openProfileActivity(it.obj as String)
-                OPEN_PROFILE_DM_FPP -> openProfileActivity(mentorId = vm.mentorId)
+                OPEN_PROFILE_DM_FPP -> openProfileActivity(mentorId = vm.mentorId,true)
                 SHOW_PROGRESS_BAR -> showProgressDialog(it.obj as String)
                 DISMISS_PROGRESS_BAR -> dismissProgressDialog()
                 REFRESH_GRP_LIST_HIDE_INFO -> {
@@ -431,7 +431,7 @@ class JoshGroupActivity : BaseGroupActivity() {
         return vm.conversationId
     }
 
-    fun openProfileActivity(mentorId: String) {
+    fun openProfileActivity(mentorId: String, isDm: Boolean = false) {
         UserProfileActivity.startUserProfileActivity(
             activity = this,
             mentorId = mentorId,
@@ -440,6 +440,8 @@ class JoshGroupActivity : BaseGroupActivity() {
             previousPage = GROUP,
             conversationId = null
         )
+        if (supportFragmentManager.backStackEntryCount < 1 && isDm)
+            this.finish()
     }
 
     fun showRemovedAlert(groupName: String) {

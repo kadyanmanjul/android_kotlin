@@ -79,24 +79,27 @@ class FavoriteCallerViewModel : BaseViewModel() {
 
                     withContext(dispatcher) {
                         adapter.addItems(response)
-                        isProgressBarShow.set(false)
-                        isEmptyCardShow.set(false)
+                        progressAndEmptyCardVisibility(isProgress = false, isEmptyCard = false)
                     }
                     if (adapter.itemCount <= 0) {
                         withContext(dispatcher) {
-                            isProgressBarShow.set(false)
-                            isEmptyCardShow.set(true)
+                            progressAndEmptyCardVisibility(isProgress = false, isEmptyCard = true)
                         }
                     }
                 } else {
                     withContext(dispatcher) {
-                        isProgressBarShow.set(false)
-                        isEmptyCardShow.set(true)
+                        if (adapter.itemCount <= 0) {
+                            progressAndEmptyCardVisibility(isProgress = false, isEmptyCard = true)
+
+                        } else {
+                            adapter.clearItem(0)
+                            progressAndEmptyCardVisibility(isProgress = false, isEmptyCard = true)
+                        }
                     }
                 }
             } catch (ex: Throwable) {
-                isProgressBarShow.set(false)
-                isEmptyCardShow.set(false)
+                progressAndEmptyCardVisibility(isProgress = false, isEmptyCard = true)
+                showToast("An error occurred while fetching data")
                 ex.printStackTrace()
             }
         }
@@ -245,5 +248,10 @@ class FavoriteCallerViewModel : BaseViewModel() {
             return "${deleteRecords.size} practice partners removed"
         }
         return "${deleteRecords.size} practice partner removed"
+    }
+
+    private fun progressAndEmptyCardVisibility(isProgress: Boolean, isEmptyCard: Boolean) {
+        isProgressBarShow.set(isProgress)
+        isEmptyCardShow.set(isEmptyCard)
     }
 }

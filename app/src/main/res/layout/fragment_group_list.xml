@@ -101,28 +101,27 @@
             app:layout_constraintWidth_percent="0.8"
             app:rippleColor="@color/white" />
 
-        <androidx.cardview.widget.CardView
+        <RelativeLayout
             android:id="@+id/ringing_icon_1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_minus18sdp"
             android:layout_marginBottom="@dimen/_minus16sdp"
-            app:cardCornerRadius="@dimen/_50sdp"
-            app:cardElevation="@dimen/_7sdp"
+            android:background="@drawable/well_btn_background"
+            android:elevation="@dimen/_12sdp"
             app:layout_constraintBottom_toTopOf="@+id/find_groups_btn"
             app:layout_constraintStart_toEndOf="@+id/find_groups_btn">
 
             <com.airbnb.lottie.LottieAnimationView
                 android:layout_width="@dimen/_28sdp"
                 android:layout_height="@dimen/_28sdp"
-                android:background="#FF5722"
                 android:padding="@dimen/_3sdp"
                 android:paddingTop="@dimen/_2sdp"
                 app:lottie_autoPlay="true"
                 app:lottie_fileName="lottie/ringing_bell.json"
                 app:lottie_imageAssetsFolder="lottie"
                 app:lottie_loop="true" />
-        </androidx.cardview.widget.CardView>
+        </RelativeLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/group_rv"
@@ -168,29 +167,28 @@
             app:layout_constraintWidth_percent="0.8"
             app:rippleColor="@color/white" />
 
-        <androidx.cardview.widget.CardView
+        <RelativeLayout
             android:id="@+id/ringing_icon_2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_minus18sdp"
             android:layout_marginBottom="@dimen/_minus16sdp"
+            android:background="@drawable/well_btn_background"
+            android:elevation="@dimen/_12sdp"
             android:visibility="@{(vm.groupListCount > 3 || vm.groupListCount == 0 || vm.getOneGrpReqStatus()) ? View.INVISIBLE : View.VISIBLE, default=invisible}"
-            app:cardCornerRadius="@dimen/_50sdp"
-            app:cardElevation="@dimen/_7sdp"
             app:layout_constraintBottom_toTopOf="@+id/materialButton2"
             app:layout_constraintStart_toEndOf="@id/materialButton2">
 
             <com.airbnb.lottie.LottieAnimationView
                 android:layout_width="@dimen/_28sdp"
                 android:layout_height="@dimen/_28sdp"
-                android:background="#FF5722"
                 android:padding="@dimen/_2sdp"
                 android:paddingTop="@dimen/_2sdp"
                 app:lottie_autoPlay="true"
                 app:lottie_fileName="lottie/ringing_bell.json"
                 app:lottie_imageAssetsFolder="lottie"
                 app:lottie_loop="true" />
-        </androidx.cardview.widget.CardView>
+        </RelativeLayout>
 
         <androidx.constraintlayout.widget.Group
             android:id="@+id/bells_group"
@@ -312,16 +310,17 @@
             android:id="@+id/overlay_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:clickable="true"
-            android:focusable="true"
             android:background="@color/transparent_blue_alpha_75"
+            android:clickable="true"
             android:elevation="@dimen/_10sdp"
+            android:focusable="true"
             android:visibility="gone">
 
             <ImageView
                 android:id="@+id/group_tooltip_item"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:onClick="@{vm::onTooltipClick}" />
 
             <com.airbnb.lottie.LottieAnimationView
                 android:id="@+id/cbc_arrow_lottie"

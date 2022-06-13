@@ -82,9 +82,7 @@ class ViewAndShareVideoFragment : BaseKFactorFragment(), Player.EventListener {
         if (isAdded)
             videoShareViewModel.addOverLayOnVideo(
                 requireContext(),
-                convertImageFilePathIntoBitmap(
-                    spViewModel.imagePathForSetOnVideo.get() ?: EMPTY
-                ),
+                convertImageFilePathIntoBitmap(spViewModel.imagePathForSetOnVideo.get() ?: EMPTY),
                 spViewModel,
                 binding.videoView
             )

@@ -314,7 +314,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                 .addParam(ParamKeys.LESSON_NUMBER, lessonNo)
                 .push()
         }
-        binding.imgRecentCallsHistory.setOnClickListener {
+        binding.imgRecentCallsHistory.setOnSingleClickListener {
             MixPanelTracker.publishEvent(MixPanelEvent.VIEW_RECENT_CALLS).push()
             RecentCallActivity.openRecentCallActivity(
                 requireActivity(),
@@ -459,7 +459,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                 } else if ((!isTwentyMinFtuCallActive || response.callDurationStatus == UPGRADED_USER) && response.alreadyTalked >= response.duration && response.isFromDb.not()) {
                     speakingSectionComplete()
                 } else {
-                    binding.btnStart.playAnimation()
+                    //binding.btnStart.playAnimation()
                 }
 
                 if (response.isNewStudentCallsActivated) {
@@ -522,16 +522,18 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             else
                 showToast("Wait for last call to get disconnected")
         }
-//        if (viewModel.isFreeTrail.not()) {
-//            binding.btnInviteFriend.isVisible =
-//                PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID
-//        }
+        binding.btnInviteFriend.isVisible =
+            AppObjectController.getFirebaseRemoteConfig()
+                .getBoolean(FirebaseRemoteConfigKey.IS_INVITATION_FOR_CALL_ENABLED) &&
+                    PrefManager.getBoolValue(IS_COURSE_BOUGHT) &&
+                    PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID
         binding.btnInviteFriend.setOnClickListener {
             viewModel.saveVoiceCallImpression(IMPRESSION_CALL_MY_FRIEND_BTN_CLICKED)
             if (PermissionUtils.isReadContactPermissionEnabled(requireActivity())) {
                 InviteFriendActivity.start(requireActivity())
             } else {
-                PermissionUtils.requestReadContactPermission(requireActivity(),
+                PermissionUtils.requestReadContactPermission(
+                    requireActivity(),
                     object : PermissionListener {
                         override fun onPermissionGranted(p0: PermissionGrantedResponse?) {
                             viewModel.saveVoiceCallImpression(IMPRESSION_CONTACT_PERM_ACCEPTED)
@@ -644,8 +646,8 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
 
     private fun speakingSectionComplete() {
         binding.btnContinue.visibility = VISIBLE
-        binding.btnStart.pauseAnimation()
-        binding.btnContinue.playAnimation()
+//        binding.btnStart.pauseAnimation()
+//        binding.btnContinue.playAnimation()
         lessonActivityListener?.onQuestionStatusUpdate(
             QUESTION_STATUS.AT,
             questionId

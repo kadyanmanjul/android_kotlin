@@ -1,8 +1,6 @@
 package com.joshtalks.joshskills.voip.state
 
 import android.util.Log
-import com.joshtalks.joshskills.voip.Utils
-import com.joshtalks.joshskills.voip.constant.IDLE
 import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
@@ -28,11 +26,11 @@ class IdleState(val context: CallContext) : VoipState {
         Log.d(TAG, "on Connect Call :  switched to ${context.state}")
     }
 
-    override fun onError() {
+    override fun onError(reason: String) {
         CallAnalytics.addAnalytics(
             event = EventName.ON_ERROR,
             agoraMentorId = "-1",
-            extra = PrefManager.getVoipState().name
+            extra = "In $TAG : $reason"
         )
         scope.launch {
             try{

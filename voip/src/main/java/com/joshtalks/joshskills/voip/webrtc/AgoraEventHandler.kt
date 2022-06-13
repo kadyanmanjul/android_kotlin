@@ -85,7 +85,7 @@ internal class AgoraEventHandler(val scope: CoroutineScope) : IRtcEngineEventHan
             emitEvent(CallState.UserAlreadyDisconnectedError)
             return
         }
-        emitEvent(CallState.Error)
+        emitEvent(CallState.Error("In IRtcEngineEventHandler Class, onError Method Receive Error Code : $errorCode"))
     }
 
     // Occurs when the local user joins a specified channel (#joinChannel)

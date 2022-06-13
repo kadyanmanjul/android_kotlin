@@ -155,6 +155,10 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), TestCompletedListener {
                 ) {
                     binding.description.text = getString(R.string.grammar_continue_test_text)
                     binding.startBtn.text = getContinueButtonText()
+                } else {
+                    binding.startBtn.text = getStartButtonText()
+                    if (!PrefManager.getBoolValue(HAS_SEEN_GRAMMAR_ANIMATION))
+                        showGrammarAnimation()
                 }
             }
             (PrefManager.getIntValue(
@@ -197,6 +201,7 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), TestCompletedListener {
                 binding.testScoreContainer.visibility = View.GONE
                 binding.lockTestCard.visibility = View.VISIBLE
                 if (BuildConfig.DEBUG && BuildConfig.VERSION_CODE >= 50006) {
+                    binding.startBtn.text = getStartButtonText()
                     binding.startBtn.isEnabled = true
                     binding.startBtn.isClickable = true
                     binding.lockTestMessage.text =
@@ -206,6 +211,7 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), TestCompletedListener {
                             ).plus(1)
                         } in the prod version before you can attempt this lesson"
                 } else {
+                    binding.startBtn.text = getStartButtonText()
                     binding.startBtn.isEnabled = false
                     binding.startBtn.isClickable = false
                     binding.startBtn.backgroundTintList = ColorStateList.valueOf(
@@ -243,12 +249,6 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), TestCompletedListener {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        if (!PrefManager.getBoolValue(HAS_SEEN_GRAMMAR_ANIMATION))
-            showGrammarAnimation()
-    }
-
     private fun showTooltip() {
         lifecycleScope.launch(Dispatchers.IO) {
             if (PrefManager.getBoolValue(HAS_SEEN_GRAMMAR_TOOLTIP, defValue = false)) {
@@ -272,7 +272,6 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), TestCompletedListener {
         }
     }
 
-    @SuppressLint("LongLogTag")
     fun showGrammarAnimation() {
         try {
             animationJob?.cancel()

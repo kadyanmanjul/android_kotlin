@@ -44,12 +44,12 @@ class ConnectedState(val context: CallContext) : VoipState {
         )
     }
 
-    override fun onError() {
+    override fun onError(reason: String) {
         CallAnalytics.addAnalytics(
             event = EventName.ON_ERROR,
             agoraCallId = context.channelData.getCallingId().toString(),
             agoraMentorId = context.channelData.getAgoraUid().toString(),
-            extra = TAG
+            extra = "In $TAG : $reason"
         )
         disconnect()
     }
@@ -228,9 +228,18 @@ class ConnectedState(val context: CallContext) : VoipState {
                             Log.d(TAG, "Received : ${event.type} switched to Leaving State")
                             moveToLeavingState()
                         }
-                        RECONNECTED -> {
-                            // Ignore this event as we are already in Connected State
+                        RECONNECTED,RECEIVED_CHANNEL_DATA-> {
+                            // Ignore Error Event from Agora
+                            val msg = "Ignoring : In $TAG but received ${event.type} event don't know how to process"
+                            CallAnalytics.addAnalytics(
+                                event = EventName.ILLEGAL_EVENT_RECEIVED,
+                                agoraCallId = context.channelData.getCallingId().toString(),
+                                agoraMentorId = context.channelData.getAgoraUid().toString(),
+                                extra = msg
+                            )
+                            Log.d(TAG, "Ignoring : In $TAG but received ${event.type} event don't know how to process")
                         }
+
                         else -> {
                             val msg = "In $TAG but received ${event.type} event don't know how to process"
                             CallAnalytics.addAnalytics(
@@ -272,7 +281,7 @@ class ConnectedState(val context: CallContext) : VoipState {
                 context.sendMessageToServer(networkAction)
                 // Show Dialog
                 Utils.context?.updateLastCallDetails(
-                    duration = context.durationInMillis.inSeconds(),
+                    duration = context.durationInMillis,
                     remoteUserName = context.channelData.getCallingPartnerName(),
                     remoteUserImage = context.channelData.getCallingPartnerImage(),
                     callId = context.channelData.getCallingId(),

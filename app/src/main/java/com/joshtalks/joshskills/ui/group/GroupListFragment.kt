@@ -94,11 +94,6 @@ class GroupListFragment : BaseFragment() {
         return binding.root
     }
 
-//    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-//        super.onViewCreated(view, savedInstanceState)
-//        Timber.tag("SukeshTest").e("${vm.groupListCount.get()} : Count")
-//    }
-
     private fun initTooltip() {
         if (!PrefManager.getBoolValue(HAS_SEEN_GROUP_TOOLTIP) && !vm.isFromVoip.get()
             && PrefManager.getBoolValue(HAS_SEEN_GROUP_LIST_CBC_TOOLTIP)
@@ -125,7 +120,9 @@ class GroupListFragment : BaseFragment() {
         }
 
         lifecycleScope.launch(Dispatchers.Main) {
-            if (vm.getClosedGroupCount() == 0 && !PrefManager.getBoolValue(ONE_GROUP_REQUEST_SENT))
+            if (vm.getClosedGroupCount() == 0 &&
+                !PrefManager.getBoolValue(ONE_GROUP_REQUEST_SENT) &&
+                (vm.groupListCount.get() ?: 0) < 3)
                 binding.bellsGroup.visibility = VISIBLE
         }
     }

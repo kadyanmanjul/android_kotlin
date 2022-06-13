@@ -20,6 +20,17 @@
             android:layout_height="match_parent"
             tools:context=".ui.userprofile.ShareFromProfile">
 
+            <LinearLayout
+                android:id="@+id/toolbar_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+            <include layout="@layout/call_ongoing_layout" />
+
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
@@ -81,6 +92,7 @@
 
                 </RelativeLayout>
             </com.google.android.material.appbar.MaterialToolbar>
+            </LinearLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/share_details_layout"
@@ -95,7 +107,7 @@
                 android:visibility="visible"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/toolbar"
+                app:layout_constraintTop_toBottomOf="@+id/toolbar_container"
                 tools:visibility="visible">
 
                 <androidx.appcompat.widget.AppCompatImageView

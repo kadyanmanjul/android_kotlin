@@ -8,9 +8,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/black_quiz"
-    android:clickable="true"
-    android:fitsSystemWindows="true"
-    android:focusable="true">
+    android:fitsSystemWindows="true">
 
 
     <com.google.android.material.appbar.MaterialToolbar
@@ -64,7 +62,6 @@
                 android:layout_marginHorizontal="@dimen/_6sdp"
                 android:layout_marginVertical="@dimen/_4sdp"
                 android:layout_toEndOf="@id/iv_back"
-                android:foreground="?android:attr/selectableItemBackground"
                 android:gravity="start|center"
                 android:singleLine="true"
                 android:text="@string/photo"

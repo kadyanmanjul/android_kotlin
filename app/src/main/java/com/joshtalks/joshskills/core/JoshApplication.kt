@@ -299,12 +299,11 @@ class JoshApplication :
     }
 
     private fun getConditionForShowLocalNotifications(): Boolean {
-        return AppObjectController.getFirebaseRemoteConfig()
-            .getBoolean(FirebaseRemoteConfigKey.SHOW_LOCAL_NOTIFICATIONS) &&
+        return AppObjectController.getFirebaseRemoteConfig().getBoolean(FirebaseRemoteConfigKey.SHOW_LOCAL_NOTIFICATIONS) &&
                 PrefManager.getIntValue(LOCAL_NOTIFICATION_INDEX, defValue = 0) < 3 &&
-                PrefManager.getBoolValue(CHAT_OPENED_FOR_NOTIFICATION, defValue = false)
-                && PrefManager.getBoolValue(LESSON_COMPLETED_FOR_NOTIFICATION, defValue = false)
-            .not()
+                PrefManager.getBoolValue(CHAT_OPENED_FOR_NOTIFICATION, defValue = false) &&
+                PrefManager.getBoolValue(IS_COURSE_BOUGHT).not() &&
+                PrefManager.getBoolValue(LESSON_COMPLETED_FOR_NOTIFICATION, defValue = false).not()
     }
 
     fun onAppDestroy() {

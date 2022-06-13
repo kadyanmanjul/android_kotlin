@@ -440,6 +440,7 @@ class ConversationActivity :
         if (!PrefManager.getBoolValue(HAS_SEEN_COHORT_BASE_COURSE_TOOLTIP)) {
             conversationBinding.cbcTooltip.visibility = VISIBLE
             conversationBinding.overlayLayout.visibility = VISIBLE
+            groupAndFppButtonElevation()
 
             conversationBinding.overlayLayout.setOnClickListener {
                 conversationBinding.welcomeContainer.visibility = INVISIBLE
@@ -486,9 +487,6 @@ class ConversationActivity :
             conversationBinding.overlayLayout.setOnClickListener {
                 PrefManager.put(HAS_SEEN_LEADERBOARD_ANIMATION, true)
                 hideLeaderBoardSpotlight()
-                conversationBinding.imgGroupChatBtn.elevation = 8f
-                conversationBinding.imgFppBtn.elevation = 8f
-                conversationBinding.ringingIcon.elevation = 12f
             }
             conversationBinding.labelTapToDismiss.visibility = VISIBLE
             conversationBinding.labelTapToDismiss.startAnimation(
@@ -506,6 +504,7 @@ class ConversationActivity :
         conversationBinding.overlayLeaderboardContainer.visibility = GONE
         conversationBinding.labelTapToDismiss.visibility = GONE
         conversationBinding.overlayLeaderboardTooltip.visibility = GONE
+        conversationBinding.cbcTooltip.visibility = GONE
 
     }
 
@@ -1352,22 +1351,19 @@ class ConversationActivity :
     }
 
     private fun initScoreCardView(userData: UserProfileResponse) {
+        if (PrefManager.getBoolValue(HAS_SEEN_TEXT_VIEW_CLASS_ANIMATION) && !PrefManager.getBoolValue(HAS_SEEN_COHORT_BASE_COURSE_TOOLTIP) && inboxEntity.isCourseBought && inboxEntity.isCapsuleCourse) {
+            showCohortBaseCourse()
+        }
         userData.isContainerVisible?.let { isLeaderBoardActive ->
             if (isLeaderBoardActive) {
                 conversationBinding.points.text = userData.points.toString().plus(" Points")
                 //conversationBinding.imgGroupChat.shiftGroupChatIconDown(conversationBinding.txtUnreadCount)
                 // conversationBinding.userPointContainer.slideInAnimation()
                 conversationBinding.userPointContainer.visibility = VISIBLE
-                conversationBinding.imgGroupChatBtn.elevation = 8f
-                conversationBinding.imgFppBtn.elevation = 8f
-                conversationBinding.ringingIcon.elevation = 12f
                 // showLeaderBoardTooltip()
                 if (!PrefManager.getBoolValue(HAS_SEEN_LEADERBOARD_ANIMATION)) {
                     if (PrefManager.getBoolValue(HAS_SEEN_COHORT_BASE_COURSE_TOOLTIP)){
                         showLeaderBoardSpotlight()
-                        conversationBinding.imgGroupChatBtn.elevation = 3f
-                        conversationBinding.imgFppBtn.elevation = 3f
-                        conversationBinding.ringingIcon.elevation = 3f
                     }
                     else {
 
@@ -2171,9 +2167,17 @@ class ConversationActivity :
         when {
             conversationBinding.overlayLayout.visibility == VISIBLE -> {
                 hideLeaderBoardSpotlight()
+                return
             }
-            conversationBinding.overlayView.visibility == VISIBLE -> conversationBinding.overlayView.visibility =
-                INVISIBLE
+            conversationBinding.overlayView.visibility == VISIBLE -> {
+                conversationBinding.overlayView.visibility = INVISIBLE
+                return
+            }
+            conversationBinding.welcomeContainer.visibility == VISIBLE -> {
+                conversationBinding.welcomeContainer.visibility = INVISIBLE
+                conversationBinding.overlayView.visibility = INVISIBLE
+                return
+            }
             else -> {
                 val resultIntent = Intent()
                 setResult(RESULT_OK, resultIntent)
@@ -2501,6 +2505,12 @@ class ConversationActivity :
                 conversationBinding.welcomeContainer.visibility = VISIBLE
             }
         }
+    }
+
+    fun groupAndFppButtonElevation(){
+        conversationBinding.imgGroupChatBtn.elevation = 24f
+        conversationBinding.imgFppBtn.elevation = 24f
+        conversationBinding.ringingIcon.elevation = 28f
     }
 
     fun setOverlayView(

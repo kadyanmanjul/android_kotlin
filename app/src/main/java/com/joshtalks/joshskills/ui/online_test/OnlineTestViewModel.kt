@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.analytics.ParamKeys
@@ -20,8 +21,6 @@ import com.joshtalks.joshskills.repository.server.assessment.AssessmentStatus
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentType
 import com.joshtalks.joshskills.repository.server.assessment.OnlineTestRequest
 import com.joshtalks.joshskills.repository.server.assessment.OnlineTestResponse
-import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
-import com.joshtalks.joshskills.util.showAppropriateMsg
 import com.tonyodev.fetch2.NetworkType
 import com.tonyodev.fetch2.Priority
 import com.tonyodev.fetch2.Request
@@ -51,10 +50,10 @@ class OnlineTestViewModel(application: Application) : AndroidViewModel(applicati
                             it.totalAnswered = 0
                         grammarAssessmentLiveData.postValue(it)
                     }
-                }
+                } else
+                    apiStatus.postValue(ApiCallStatus.FAILED)
             } catch (ex: Throwable) {
                 apiStatus.postValue(ApiCallStatus.FAILED)
-                ex.showAppropriateMsg()
             }
         }
     }
@@ -70,16 +69,15 @@ class OnlineTestViewModel(application: Application) : AndroidViewModel(applicati
                         apiStatus.postValue(ApiCallStatus.SUCCESS)
                         response.body()?.let { onlineTestResponse ->
                             grammarAssessmentLiveData.postValue(onlineTestResponse)
+                            AppObjectController.appDatabase.chatDao().deleteOnlineTestRequest(it)
                         }
-                    }
-                    AppObjectController.appDatabase.chatDao().deleteOnlineTestRequest(it)
+                    } else
+                        apiStatus.postValue(ApiCallStatus.FAILED)
                 } ?: run {
                     apiStatus.postValue(ApiCallStatus.FAILED)
                 }
             } catch (ex: Throwable) {
                 apiStatus.postValue(ApiCallStatus.FAILED)
-                Timber.e(ex)
-                ex.showAppropriateMsg()
             }
         }
     }

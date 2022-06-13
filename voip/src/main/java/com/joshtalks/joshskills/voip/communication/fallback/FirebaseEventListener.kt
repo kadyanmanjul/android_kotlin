@@ -43,7 +43,7 @@ class FirebaseEventListener(val scope : CoroutineScope) : EventListener<Document
                 e.printStackTrace()
                 if(e is CancellationException)
                     throw e
-                dataFlow.emit(Error())
+                dataFlow.emit(Error("In FirebaseEventListener Class, Exception : $e Occurred in onEvent method"))
             }
         }
     }

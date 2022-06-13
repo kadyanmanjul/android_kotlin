@@ -10,6 +10,7 @@ import com.joshtalks.joshskills.core.ActivityLifecycleCallback
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.call_rating.CallRatingsFragment
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.feedback.FeedbackDialogFragment
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.report.VoipReportDialogFragment
+import com.joshtalks.joshskills.voip.inSeconds
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 
@@ -86,7 +87,6 @@ object VoipPref {
                         delay(500)
                         val currentActivity = ActivityLifecycleCallback.currentActivity
                         if(currentActivity.isDestroyed || currentActivity.isFinishing){
-                            Log.d(TAG, "showDialogBox: 1")
                             delay(500)
                             val newCurrentActivity = ActivityLifecycleCallback.currentActivity
                             val newFragmentActivity = newCurrentActivity as? FragmentActivity
@@ -95,7 +95,6 @@ object VoipPref {
                             }
                         }
                         else if (currentActivity != null) {
-                            Log.d(TAG, "showDialogBox: 2")
                             val newFragmentActivity = currentActivity as? FragmentActivity
                            withContext(Dispatchers.Main) {
                             newFragmentActivity?.showVoipDialog(totalSecond)
@@ -120,7 +119,6 @@ object VoipPref {
             getLocalUserAgoraId().toString()
         ).show(fragmentActivity.supportFragmentManager, "CallRatingsFragment")
     }
-
     private fun showReportDialog(fragmentActivity: FragmentActivity) {
 
             val function = fun() {
@@ -184,7 +182,11 @@ object VoipPref {
         fun getLastCallDurationInSec(): Long {
             val duration = preferenceManager.getLong(PREF_KEY_LAST_CALL_DURATION, 0)
             Log.d(TAG, "getLastCallDurationInSec: $duration")
-            return duration
+            return if(duration.inSeconds()>0){
+                duration.inSeconds()
+            }else{
+                1
+            }
         }
 
     fun getLastRemoteUserMentorId(): String {

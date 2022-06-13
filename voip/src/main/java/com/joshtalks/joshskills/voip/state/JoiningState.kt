@@ -63,12 +63,12 @@ class JoiningState(val context: CallContext) : VoipState {
         moveToLeavingState()
     }
 
-    override fun onError() {
+    override fun onError(reason: String) {
         CallAnalytics.addAnalytics(
             event = EventName.ON_ERROR,
             agoraCallId = context.channelData.getCallingId().toString(),
             agoraMentorId = context.channelData.getAgoraUid().toString(),
-            extra = TAG
+            extra = "In $TAG : $reason"
         )
         moveToLeavingState()
     }
@@ -108,6 +108,17 @@ class JoiningState(val context: CallContext) : VoipState {
                                 agoraMentorId = context.channelData.getAgoraUid().toString(),
                                 extra = msg
                             )
+                        }
+                        REMOTE_USER_DISCONNECTED_MESSAGE, REMOTE_USER_DISCONNECTED_AGORA, REMOTE_USER_DISCONNECTED_USER_LEFT -> {
+                            // Ignore Error Event from Agora
+                            val msg = "Ignoring : In $TAG but received ${event.type} expected $CALL_INITIATED_EVENT"
+                            CallAnalytics.addAnalytics(
+                                event = EventName.ILLEGAL_EVENT_RECEIVED,
+                                agoraCallId = context.channelData.getCallingId().toString(),
+                                agoraMentorId = context.channelData.getAgoraUid().toString(),
+                                extra = msg
+                            )
+                            Log.d(TAG, "Ignoring : In $TAG but received ${event.type} expected $CALL_INITIATED_EVENT")
                         }
                         MUTE -> {
                             ensureActive()

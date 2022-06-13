@@ -6,15 +6,20 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
-import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.abTest.VariantKeys
+import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
 import com.joshtalks.joshskills.core.analytics.LogException
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.ui.userprofile.models.UserProfileResponse
-import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
 import com.joshtalks.joshskills.ui.group.repository.GroupRepository
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
+import com.joshtalks.joshskills.ui.userprofile.models.UserProfileResponse
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.launch
 import org.json.JSONObject
 
 class InboxViewModel(application: Application) : AndroidViewModel(application) {
@@ -50,16 +55,37 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    fun getA2C1CampaignData(campaign: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.getCampaignData(campaign)?.let { campaign ->
+                PrefManager.put(
+                    IS_A2_C1_RETENTION_ENABLED,
+                    (campaign.variantKey == VariantKeys.A2_C1_RETENTION.name) && campaign.variableMap?.isEnabled == true
+                )
+            } ?: run {
+                AppObjectController.abTestNetworkService.getCampaignData(campaign).let { response ->
+                    response.body()?.let { campaign ->
+                        PrefManager.put(
+                            IS_A2_C1_RETENTION_ENABLED,
+                            (campaign.variantKey == VariantKeys.A2_C1_RETENTION.name) && campaign.variableMap?.isEnabled == true
+                        )
+                    }
+                }
+            }
+        }
+    }
+
     fun getICPABTest(campaign: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 repository.getCampaignData(campaign)?.let { campaign ->
                     increaseCoursePriceABtestLiveData.postValue(campaign)
                 } ?: run {
-                    AppObjectController.abTestNetworkService.getCampaignData(campaign).let { response ->
-                        increaseCoursePriceABtestLiveData.postValue(response.body())
+                    AppObjectController.abTestNetworkService.getCampaignData(campaign)
+                        .let { response ->
+                            increaseCoursePriceABtestLiveData.postValue(response.body())
 
-                    }
+                        }
                 }
             } catch (ex: Exception) {
                 ex.printStackTrace()
@@ -124,10 +150,14 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
                         }
                     }
                     MixPanelTracker.mixPanel.identify(PrefManager.getStringValue(USER_UNIQUE_ID))
-                    MixPanelTracker.mixPanel.people.identify(PrefManager.getStringValue(USER_UNIQUE_ID))
+                    MixPanelTracker.mixPanel.people.identify(
+                        PrefManager.getStringValue(
+                            USER_UNIQUE_ID
+                        )
+                    )
                     val prop = JSONObject()
-                    prop.put("total points",response.body()?.points)
-                    prop.put("total min spoken",response.body()?.minutesSpoken)
+                    prop.put("total points", response.body()?.points)
+                    prop.put("total min spoken", response.body()?.minutesSpoken)
                     MixPanelTracker.mixPanel.people.set(prop)
                     userData.postValue(response.body()!!)
                     PrefManager.put(

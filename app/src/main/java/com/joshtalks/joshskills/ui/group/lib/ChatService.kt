@@ -9,7 +9,9 @@ interface ChatService {
     fun <T> unsubscribeToChatEvents(observer: ChatEventObserver<T>)
     fun sendMessage(groupName: String, messageItem: MessageItem, isBackend: Boolean = false)
     fun sendGroupNotification(groupId: String, messageItem: Map<String, Any?>)
-    fun dispatchNotifications(groups : List<String>)
+    fun dispatchNotifications(groups: List<String>)
+    fun removeNotifications(groups: List<String>)
+    fun cancelAllPubNubNotifications()
     fun fetchGroupList(pageInfo: PageInfo? = null) : NetworkData?
     fun getUnreadMessageCount(groupId: String, lastSeenTimestamp : Long) : Long
     fun getLastMessageDetail(groupId: String,groupType:String) : Pair<String, Long>

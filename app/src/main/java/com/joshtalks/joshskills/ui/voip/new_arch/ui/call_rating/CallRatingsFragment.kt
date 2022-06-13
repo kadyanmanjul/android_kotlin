@@ -1,8 +1,11 @@
 package com.joshtalks.joshskills.ui.voip.new_arch.ui.call_rating
 
 import android.app.Dialog
+import android.content.DialogInterface
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
@@ -13,7 +16,11 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.RadioButton
 import android.widget.RadioGroup
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.integration.webp.decoder.WebpDrawable
@@ -23,11 +30,19 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.databinding.CallRatingDialogBinding
 import com.joshtalks.joshskills.quizgame.util.MyBounceInterpolator
+import com.joshtalks.joshskills.repository.local.entity.LessonModel
 import com.joshtalks.joshskills.ui.call.data.local.VoipPref
+import com.joshtalks.joshskills.ui.chat.CHAT_ROOM_ID
+import com.joshtalks.joshskills.ui.lesson.LessonActivity
+import com.joshtalks.joshskills.ui.lesson.lesson_completed.LessonCompletedActivity
+import com.joshtalks.joshskills.ui.practise.PracticeViewModel
+import com.joshtalks.joshskills.ui.video_player.IS_BATCH_CHANGED
+import com.joshtalks.joshskills.ui.video_player.LAST_LESSON_INTERVAL
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.feedback.FeedbackDialogFragment
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.coroutines.CoroutineScope
@@ -42,6 +57,7 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
     val PROFILE_URL = "profile_url"
     val CALLER_MENTOR_ID = "caller_mentor_id"
     val AGORA_MENTOR_ID = "agora_mentor_id"
+    var lesson :LessonModel? = null
     lateinit var binding : CallRatingDialogBinding
     var isBlockSelected = false
     var selectedRating = 0
@@ -59,6 +75,9 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
     val vm : CallRatingsViewModel by lazy {
         ViewModelProvider(requireActivity())[CallRatingsViewModel::class.java]
     }
+    private val practiceViewModel: PracticeViewModel by lazy {
+        ViewModelProvider(this).get(PracticeViewModel::class.java)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -74,6 +93,12 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
         initView()
         addListner()
         addObserver()
+        saveFlagToSharedPref()
+    }
+
+    private fun saveFlagToSharedPref() {
+        Log.d(TAG, "onDismiss: 10")
+        PrefManager.put("DelayLessonCompletedActivity",true)
     }
 
     private fun initView() {
@@ -189,7 +214,7 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
     }
 
     private fun selectChange(s: String) {
-        if(s == "fpp" && vm.ifDialogShow==1){
+        if(s == "fpp" && vm.ifDialogShow==1  && PrefManager.getBoolValue(IS_COURSE_BOUGHT)){
             binding.block.chipStrokeColor = AppCompatResources.getColorStateList(requireContext(), R.color.colorPrimary)
             binding.block.chipBackgroundColor = AppCompatResources.getColorStateList(requireContext(), R.color.white)
             binding.block.setTextColor(resources.getColor(R.color.colorPrimary))
@@ -226,13 +251,70 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
         }
     }
 
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        if(PrefManager.getBoolValue("OpenLessonCompletedActivity")){
+            PrefManager.put("OpenLessonCompletedActivity",false)
+            PrefManager.put("DelayLessonCompletedActivity",false)
+            openLessonCompleteScreen(PrefManager.getLessonObject("lessonObject"))
+        }else{
+            PrefManager.put("DelayLessonCompletedActivity",false)
+        }
+    }
+
+    private fun openLessonCompleteScreen(lesson: LessonModel?) {
+        openLessonCompletedActivity.launch(
+            lesson?.let {
+                LessonCompletedActivity.getActivityIntent(
+                    requireActivity(),
+                    it
+                )
+            }
+        )
+    }
+
+    var openLessonCompletedActivity: ActivityResultLauncher<Intent> =
+    registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == AppCompatActivity.RESULT_OK && result.data!!.hasExtra(
+                IS_BATCH_CHANGED
+            )) {
+            requireActivity().setResult(
+                AppCompatActivity.RESULT_OK,
+                Intent().apply {
+                    putExtra(IS_BATCH_CHANGED, false)
+                    putExtra(LAST_LESSON_INTERVAL, lesson?.interval)
+                    putExtra(LessonActivity.LAST_LESSON_STATUS, true)
+                    putExtra(LESSON__CHAT_ID, lesson?.chatId)
+                    putExtra(CHAT_ROOM_ID, lesson?.chatId)
+                }
+            )
+            requireActivity().finish()
+        }
+    }
+
     private fun showFeedBackDialog() {
         val function = fun() {}
         FeedbackDialogFragment.newInstance(function)
             .show(requireActivity().supportFragmentManager, "FeedBackDialogFragment")
     }
 
-    private fun addObserver() {}
+    private fun addObserver() {
+        practiceViewModel.getPointsForVocabAndReading(null, channelName = VoipPref.getLastCallChannelName())
+
+        practiceViewModel.pointsSnackBarText.observe(
+            this
+        ) {
+            if (it.pointsList.isNullOrEmpty().not()) {
+                PrefManager.put(
+                    LESSON_COMPLETE_SNACKBAR_TEXT_STRING,
+                    it.pointsList!!.last(),
+                    false
+                )
+
+            }
+        }
+
+    }
 
     companion object {
         @JvmStatic
@@ -273,6 +355,11 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
         }
     }
 
+    override fun show(manager: FragmentManager, tag: String?) {
+        val ft = manager.beginTransaction()
+        ft.add(this, tag)
+        ft.commitAllowingStateLoss()
+    }
     private fun CircleImageView.setImage(url: String) {
         val requestOptions = RequestOptions().placeholder(R.drawable.ic_call_placeholder)
             .error(R.drawable.ic_call_placeholder)

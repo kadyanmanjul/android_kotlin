@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.ui.payment.order_summary
 
 import android.app.Application
+import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
@@ -20,6 +21,7 @@ import com.joshtalks.joshskills.core.REMAINING_TRIAL_DAYS
 import com.joshtalks.joshskills.core.SHOW_COURSE_DETAIL_TOOLTIP
 import com.joshtalks.joshskills.core.SUBSCRIPTION_TEST_ID
 import com.joshtalks.joshskills.core.USER_UNIQUE_ID
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
@@ -246,6 +248,8 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
                     val response: OrderDetailResponse = paymentDetailsResponse.body()!!
                     mPaymentDetailsResponse.postValue(response)
                     MarketingAnalytics.initPurchaseEvent(data, response)
+                } else if (paymentDetailsResponse.code() == 501) {
+                    showToast("Course already exists with this mobile number. Please login with the entered phone number!", Toast.LENGTH_LONG)
                 }
                 viewState?.postValue(ViewState.PROCESSED)
             } catch (ex: Exception) {

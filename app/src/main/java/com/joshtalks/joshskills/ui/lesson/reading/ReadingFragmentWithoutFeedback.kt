@@ -69,8 +69,10 @@ import com.joshtalks.joshskills.ui.lesson.READING_POSITION
 import com.joshtalks.joshskills.ui.pdfviewer.CURRENT_VIDEO_PROGRESS_POSITION
 import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
 import com.joshtalks.joshskills.util.ExoAudioPlayer
 import com.joshtalks.joshskills.util.ExoAudioPlayer.ProgressUpdateListener
+import com.joshtalks.joshskills.voip.constant.State
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -779,7 +781,7 @@ class ReadingFragmentWithoutFeedback :
                         binding.videoLayout.visibility = VISIBLE
                         binding.mergedVideo.visibility = VISIBLE
                         binding.ivClose.visibility = GONE
-                        binding.ivShare.visibility = VISIBLE
+                        binding.btnShareVideo.visibility = VISIBLE
                         if (this.practiceEngagement?.get(0)?.localPath.isNullOrEmpty()) {
                             scope.launch {
                                 if (AppObjectController.appDatabase.chatDao()
@@ -801,7 +803,8 @@ class ReadingFragmentWithoutFeedback :
                         } else {
                             binding.mergedVideo.setVideoPath(this.practiceEngagement?.get(0)?.localPath)
                         }
-                        binding.ivShare.setOnClickListener {
+                        binding.btnShareVideo.setOnClickListener {
+                            viewModel.saveImpression(SHARED_READING_PRACTICE)
                             scope.launch {
                                 if (currentLessonQuestion?.practiceEngagement?.get(0)?.localPath.isNullOrEmpty()
                                         .not()
@@ -1046,8 +1049,9 @@ class ReadingFragmentWithoutFeedback :
         binding.continueBtn.visibility = VISIBLE
         if (currentLessonQuestion?.videoList?.getOrNull(0)?.video_url.isNullOrEmpty().not()) {
             binding.ivClose.visibility = GONE
-            binding.ivShare.visibility = VISIBLE
-            binding.ivShare.setOnClickListener {
+            binding.btnShareVideo.visibility = VISIBLE
+            binding.btnShareVideo.setOnClickListener {
+                viewModel.saveImpression(SHARED_READING_PRACTICE)
                 viewModel.shareVideoForAudio(outputFile)
             }
         }
@@ -1153,7 +1157,7 @@ class ReadingFragmentWithoutFeedback :
         binding.subPractiseSubmitLayout.visibility = VISIBLE
         if (video.isNullOrEmpty().not()) {
             binding.mergedVideo.visibility = VISIBLE
-            binding.ivShare.visibility = VISIBLE
+            binding.btnShareVideo.visibility = VISIBLE
         } else {
             binding.audioListRv.visibility = VISIBLE
         }
@@ -1258,7 +1262,7 @@ class ReadingFragmentWithoutFeedback :
     @SuppressLint("ClickableViewAccessibility")
     private fun audioRecordTouchListener() {
         binding.recordTransparentContainer.setOnTouchListener { _, event ->
-            if (isCallOngoing()) {
+            if (isCallOngoing() || requireActivity().getVoipState()!= State.IDLE) {
                 return@setOnTouchListener false
             }
             if (isAdded) {
@@ -1665,7 +1669,11 @@ class ReadingFragmentWithoutFeedback :
                         AnalyticsEvent.PRACTICE_SUBMITTED.NAME,
                         "Submit Practice $"
                     )
-
+                    AppObjectController.uiHandler.post {
+                        if (video.isNullOrBlank().not()) {
+                            binding.btnShareVideo.visibility = VISIBLE
+                        }
+                    }
                     MixPanelTracker.publishEvent(MixPanelEvent.READING_COMPLETED)
                         .addParam(ParamKeys.LESSON_ID, lessonID)
                         .push()

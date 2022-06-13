@@ -1,26 +1,22 @@
 package com.joshtalks.joshskills.voip.state
 
-import android.os.Message
 import android.os.SystemClock
 import android.util.Log
 import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.communication.constants.ServerConstants
-import com.joshtalks.joshskills.voip.communication.model.NetworkAction
-import com.joshtalks.joshskills.voip.communication.model.UI
-import com.joshtalks.joshskills.voip.communication.model.UserAction
+import com.joshtalks.joshskills.voip.communication.model.*
 import com.joshtalks.joshskills.voip.constant.Event.*
 import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.local.PrefManager
+import com.joshtalks.joshskills.voip.mediator.CallDirection
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
-import com.joshtalks.joshskills.voip.webrtc.CallState
 import com.joshtalks.joshskills.voip.webrtc.Envelope
-import com.joshtalks.joshskills.voip.webrtc.USER_DROP_OFFLINE
-import com.joshtalks.joshskills.voip.webrtc.USER_QUIT_CHANNEL
 import kotlinx.coroutines.*
 
 // User Joined the Agora Channel
 const val CONNECTING_TIMER = 10 * 1000L
+const val RETRY_TIMER = 5 * 1000L
 
 class JoinedState(val context: CallContext) : VoipState {
     private val TAG = "JoinedState"
@@ -30,20 +26,31 @@ class JoinedState(val context: CallContext) : VoipState {
     })
 
     private var listenerJob: Job? = null
+    private var disconnectListenerJob: Job? = null
     private val connectingTimer by lazy {
         scope.launch(start = CoroutineStart.LAZY) {
             try{
-                Log.d(TAG, "Connecting Timer Started")
-                delay(CONNECTING_TIMER)
-                ensureActive()
-                CallAnalytics.addAnalytics(
-                    event = EventName.DISCONNECTED_BY_CONNECTING_TIMEOUT,
-                    agoraCallId = context.channelData.getCallingId().toString(),
-                    agoraMentorId = context.channelData.getAgoraUid().toString(),
-                    extra = TAG
-                )
-                context.closeCallScreen()
-                moveToLeavingState()
+                if(context.direction != CallDirection.INCOMING && context.channelData.isNewSearchingEnabled()) {
+                    Log.d(TAG, "Retry Timer Started")
+                    delay(RETRY_TIMER)
+                    ensureActive()
+                    listenerJob?.cancel()
+                    context.channelData = (context.channelData as Channel).removeChannel()
+                    startDisconnectListener()
+                    context.disconnectCall()
+                } else {
+                    Log.d(TAG, "Connecting Timer Started")
+                    delay(CONNECTING_TIMER)
+                    ensureActive()
+                    CallAnalytics.addAnalytics(
+                        event = EventName.DISCONNECTED_BY_CONNECTING_TIMEOUT,
+                        agoraCallId = context.channelData.getCallingId().toString(),
+                        agoraMentorId = context.channelData.getAgoraUid().toString(),
+                        extra = TAG
+                    )
+                    context.closeCallScreen()
+                    moveToLeavingState()
+                }
             }
             catch (e : Exception){
                 if(e is CancellationException)
@@ -62,6 +69,48 @@ class JoinedState(val context: CallContext) : VoipState {
         )
         observe()
         connectingTimer.start()
+    }
+
+    private fun startDisconnectListener() {
+        disconnectListenerJob = scope.launch {
+            loop@ while (true) {
+                try {
+                    ensureActive()
+                    val event = context.getStreamPipe().receive()
+                    Log.d(TAG, "Received after observing : ${event.type}")
+                    ensureActive()
+                    if (event.type == CALL_DISCONNECTED) {
+                        context.isRetrying = true
+                        PrefManager.setVoipState(State.SEARCHING)
+                        context.state = SearchingState(context)
+                        scope.cancel()
+                    } else {
+                        ensureActive()
+                        val msg = "In $TAG but received ${event.type} expected $CALL_DISCONNECTED"
+                        CallAnalytics.addAnalytics(
+                            event = EventName.ILLEGAL_EVENT_RECEIVED,
+                            agoraCallId = context.channelData.getCallingId().toString(),
+                            agoraMentorId = context.channelData.getAgoraUid().toString(),
+                            extra = msg
+                        )
+                        throw IllegalEventException(msg)
+                    }
+                } catch (e: Throwable) {
+                    if (e is CancellationException)
+                        throw e
+                    if (e is IllegalEventException) {
+                        e.printStackTrace()
+                    } else {
+                        e.printStackTrace()
+                        PrefManager.setVoipState(State.IDLE)
+                        Log.d(TAG, "EXCEPTION : $e switched to IDLE STATE")
+                        context.closeCallScreen()
+                        context.closePipe()
+                        onDestroy()
+                    }
+                }
+            }
+        }
     }
 
     // Red Button Pressed
@@ -89,14 +138,17 @@ class JoinedState(val context: CallContext) : VoipState {
             agoraMentorId = context.channelData.getAgoraUid().toString(),
             extra = TAG
         )
+        // TODO: Will Remove
+        if(context.channelData.isNewSearchingEnabled())
+            disconnect()
     }
 
-    override fun onError() {
+    override fun onError(reason: String) {
         CallAnalytics.addAnalytics(
             event = EventName.ON_ERROR,
             agoraCallId = context.channelData.getCallingId().toString(),
             agoraMentorId = context.channelData.getAgoraUid().toString(),
-            extra = TAG
+            extra = "In $TAG : $reason"
         )
         connectingTimer.cancel()
         disconnect()
@@ -259,7 +311,18 @@ class JoinedState(val context: CallContext) : VoipState {
                             )
                             context.updateUIState(uiState = uiState)
                         }
-                        RECONNECTED -> {
+                        REMOTE_USER_DISCONNECTED_MESSAGE, REMOTE_USER_DISCONNECTED_AGORA, REMOTE_USER_DISCONNECTED_USER_LEFT -> {
+                            // Ignore Error Event from Agora
+                            val msg = "Ignoring : In $TAG but received ${event.type} expected $CALL_CONNECTED_EVENT"
+                            CallAnalytics.addAnalytics(
+                                event = EventName.ILLEGAL_EVENT_RECEIVED,
+                                agoraCallId = context.channelData.getCallingId().toString(),
+                                agoraMentorId = context.channelData.getAgoraUid().toString(),
+                                extra = msg
+                            )
+                            Log.d(TAG, "Ignoring : In $TAG but received ${event.type} expected $CALL_CONNECTED_EVENT")
+                        }
+                        RECONNECTED,RECEIVED_CHANNEL_DATA,RECONNECTING-> {
                             // Ignore Error Event from Agora
                             val msg = "Ignoring : In $TAG but received ${event.type} expected $CALL_CONNECTED_EVENT"
                             CallAnalytics.addAnalytics(

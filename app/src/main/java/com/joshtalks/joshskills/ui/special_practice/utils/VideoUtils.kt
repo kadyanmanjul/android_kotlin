@@ -115,7 +115,9 @@ fun deleteFile(videoName: String) {
     }
 }
 
-fun convertImageFilePathIntoBitmap(imageFile: String): Bitmap {
+fun convertImageFilePathIntoBitmap(imageFile: String): Bitmap? {
+    if (imageFile.isBlank())
+        return null
     return BitmapFactory.decodeFile(imageFile)
 }
 

@@ -1161,7 +1161,7 @@
     <string name="change_profile_photo">Change Profile Photo</string>
     <string name="your_full_name">Your Full Name</string>
     <string name="time_format">DD/MM/YYYY</string>
-    <string name="ex_aspiring_ias_officer">Ex- Aspiring IAS Officer</string>
+    <string name="ex_aspiring_ias_officer">E.g.- Aspiring IAS Officer</string>
     <string name="paste_link_to_your_favourite_josh_talk_here">Paste link to your favourite josh talk here</string>
     <string name="add_education_details">Add Education Details</string>
     <string name="subject_degree">Subject / Degree</string>
@@ -1282,5 +1282,5 @@
     <string name="tooltip_user_profile_screen">हम जितनी मेहनत करेंगे हमे उतने Points मिलेंगेै</string>
     <string name="referral_share_text">"Mai Bharat 🇮🇳 ke best teachers se Spoken English aur Personality Development seekh raha hu. Mere saath seekhna abhi shuru karo 💪. Ye lo meri taraf se tumhe ₹** OFF: Use my code ****. Download the app by clicking on the link"</string>
     <string name="free_trial_popup_for_icp">यह एक 90 दिनों का कोर्स है\nऔर try करने के बाद अगर आप चाहें तो इसे ₹799 में खरीद सकते हैं\n  \nक्या आप इस कोर्स को एक दिन के लिए बिल्कुल मुफ्त में try करना चाहते हैं?</string>
-    <string name="send_fpp_text">Send Favorite Partner request</string>
+    <string name="send_fpp_text">Send Favorite Practice Partner request</string>
 </resources>

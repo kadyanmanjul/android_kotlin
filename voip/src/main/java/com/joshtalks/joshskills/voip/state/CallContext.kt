@@ -7,7 +7,6 @@ import com.joshtalks.joshskills.voip.communication.model.OutgoingData
 import com.joshtalks.joshskills.voip.constant.Category
 import com.joshtalks.joshskills.voip.constant.Event
 import com.joshtalks.joshskills.voip.data.UIState
-import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.mediator.CallDirection
 import com.joshtalks.joshskills.voip.mediator.CallingMediator
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
@@ -26,6 +25,7 @@ data class CallContext(val callType: Category, val direction : CallDirection, va
     private set
     val scope = CoroutineScope(Dispatchers.IO)
     private lateinit var reconnectingJob : Job
+    var isRetrying = false
     val durationInMillis by lazy {
         callDurationInMillis()
     }
@@ -76,9 +76,9 @@ data class CallContext(val callType: Category, val direction : CallDirection, va
         state.onDestroy()
     }
 
-    fun onError() {
+    fun onError(reason : String) {
         Log.d(TAG, "OnError - ${state}")
-        state.onError()
+        state.onError(reason)
     }
 
     fun closePipe() {
