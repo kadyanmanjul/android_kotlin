@@ -40,6 +40,8 @@
     <string name="track_number">Track</string>
     <string name="play_button_description">Play button</string>
     <string name="continue_label">Continue</string>
+    <string name="instagram_label">Share as reel on Instagram</string>
+    <string name="info_text">You will get a video based on your recording that you can share with your friends and family</string>
     <string name="continue_label_with_arrow">Continue          -></string>
     <string name="message_size_limit">Message size limit exceeded</string>
 

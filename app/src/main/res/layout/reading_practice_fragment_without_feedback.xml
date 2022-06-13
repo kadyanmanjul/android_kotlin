@@ -193,6 +193,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/audio_view_container"
+                    app:layout_constraintBottom_toTopOf="@+id/info"
                     card_view:cardCornerRadius="@dimen/_8sdp"
                     card_view:cardElevation="2dp"
                     card_view:cardUseCompatPadding="false">
@@ -430,6 +431,47 @@
                     </androidx.constraintlayout.widget.ConstraintLayout>
                 </com.google.android.material.card.MaterialCardView>
 
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/info"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/_7sdp"
+                    android:background="@drawable/rect_with_bound"
+                    android:backgroundTint="#ECF4FD"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/practise_info_layout"
+                    app:layout_constraintBottom_toTopOf="@+id/practise_submit_layout">
+
+                    <ImageView
+                        android:id="@+id/image"
+                        android:layout_width="@dimen/_20sdp"
+                        android:layout_height="@dimen/_20sdp"
+                        android:layout_marginHorizontal="@dimen/_12sdp"
+                        android:src="@drawable/ic_info"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.5" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/info_text"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginVertical="@dimen/_8sdp"
+                        android:layout_marginStart="@dimen/_8sdp"
+                        android:layout_marginEnd="@dimen/_1sdp"
+                        android:minLines="1"
+                        android:text="@string/info_text"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                        android:textColor="@color/black"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/image"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/practise_text_info_layout"
                     style="@style/Widget.MaterialComponents.CardView"
@@ -442,11 +484,11 @@
                     app:contentPadding="@dimen/_10sdp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/practise_info_layout"
+                    app:layout_constraintTop_toBottomOf="@id/info"
                     card_view:cardCornerRadius="@dimen/_8sdp"
                     card_view:cardElevation="0dp"
                     card_view:cardUseCompatPadding="false"
-                    tools:visibility="visible">
+                    tools:visibility="gone">
 
                     <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                         android:id="@+id/info_tv_2"
@@ -465,8 +507,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/_6sdp"
-                    android:layout_marginTop="@dimen/_6sdp"
                     android:layout_marginEnd="@dimen/_6sdp"
+                    android:layout_marginTop="@dimen/_10sdp"
                     android:layout_marginBottom="@dimen/_8sdp"
                     android:minHeight="@dimen/_56sdp"
                     android:orientation="vertical"
@@ -475,7 +517,7 @@
                     app:layout_constraintBottom_toTopOf="@+id/feedback_layout"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/practise_text_info_layout"
+                    app:layout_constraintTop_toBottomOf="@id/info"
                     card_view:cardCornerRadius="@dimen/_8sdp"
                     card_view:cardElevation="0dp"
                     card_view:cardUseCompatPadding="false"
@@ -524,18 +566,31 @@
                         android:visibility="gone"
                         tools:visibility="visible">
 
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/videoCard"
+                            style="@style/Widget.MaterialComponents.CardView"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/_250sdp"
+                            android:layout_marginHorizontal="@dimen/_24sdp"
+                            android:orientation="vertical"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            card_view:cardCornerRadius="@dimen/_8sdp"
+                            card_view:cardElevation="0dp">
                         <VideoView
                             android:id="@+id/merged_video"
-                            android:layout_width="@dimen/_141sdp"
-                            android:layout_height="@dimen/_250sdp"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
                             android:layout_gravity="center"
-                            android:layout_marginHorizontal="@dimen/_24sdp"
                             android:focusable="true"
                             android:visibility="gone"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
                             tools:visibility="visible" />
+                        </com.google.android.material.card.MaterialCardView>
 
                         <androidx.appcompat.widget.AppCompatImageView
                             android:id="@+id/play_btn"
@@ -558,15 +613,15 @@
                             android:layout_height="@dimen/_28sdp"
                             android:layout_gravity="center"
                             android:visibility="gone"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
                             app:matProg_barWidth="@dimen/_2sdp"
                             tools:visibility="invisible"
                             wheel:matProg_barColor="@color/white"
                             wheel:matProg_fillRadius="true"
-                            wheel:matProg_progressIndeterminate="true"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"/>
+                            wheel:matProg_progressIndeterminate="true" />
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -746,7 +801,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginHorizontal="@dimen/_16sdp"
-                    android:layout_marginVertical="@dimen/_8sdp"
+                    android:layout_marginVertical="@dimen/_10sdp"
                     android:layout_marginBottom="@dimen/_16sdp"
                     android:background="@drawable/rounded_state_button_bg"
                     android:backgroundTint="@color/seek_bar_background"
@@ -794,6 +849,29 @@
                     app:rippleColor="@color/white" />
 
                 <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/share_instagram"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginHorizontal="@dimen/_16sdp"
+                    android:layout_marginVertical="@dimen/_8sdp"
+                    android:layout_marginBottom="@dimen/_16sdp"
+                    android:background="@drawable/instagram_background"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:gravity="center"
+                    android:padding="@dimen/_8sdp"
+                    android:text="@string/instagram_label"
+                    android:textAllCaps="false"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Button"
+                    android:textColor="@color/white"
+                    tools:visibility="visible"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/improve_answer_btn"
+                    app:layout_goneMarginBottom="@dimen/_8sdp"
+                    app:rippleColor="@color/white" />
+
+                <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/continue_btn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -810,10 +888,10 @@
                     android:textAllCaps="false"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Button"
                     android:textColor="@color/white"
-                    android:visibility="gone"
+                    tools:visibility="visible"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/improve_answer_btn"
+                    app:layout_constraintTop_toBottomOf="@id/share_instagram"
                     app:layout_goneMarginBottom="@dimen/_8sdp"
                     app:rippleColor="@color/white" />
 
