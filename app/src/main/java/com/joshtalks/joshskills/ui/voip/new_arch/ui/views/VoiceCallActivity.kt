@@ -191,9 +191,10 @@ class VoiceCallActivity : BaseActivity() {
                 vm.rejectCallRecording()
                 dialog.dismiss()
             }
-            setOnCancelListener {
-                    vm.rejectCallRecording()
-            }
+//            setOnCancelListener {
+//                    vm.rejectCallRecording()
+//            }
+            setCancelable(false)
         }.create()
         recordingPermissionAlert?.show()
     }
