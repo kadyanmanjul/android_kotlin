@@ -29,6 +29,7 @@ import com.joshtalks.joshskills.base.constants.CURRENT_USER_AGORA_ID
 import com.joshtalks.joshskills.base.constants.MENTOR_ID
 import com.joshtalks.joshskills.base.constants.MENTOR_ID_COLUMN
 import com.joshtalks.joshskills.base.constants.NOTIFICATION_DATA
+import com.joshtalks.joshskills.base.constants.NOTIFICATION_LESSON_COLUMN
 import com.joshtalks.joshskills.base.constants.NOTIFICATION_SUBTITLE_COLUMN
 import com.joshtalks.joshskills.base.constants.NOTIFICATION_TITLE_COLUMN
 import com.joshtalks.joshskills.base.constants.REMOTE_USER_AGORA_ID
