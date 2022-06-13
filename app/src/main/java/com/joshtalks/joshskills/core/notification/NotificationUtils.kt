@@ -20,6 +20,9 @@ import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.base.constants.INTENT_DATA_API_HEADER
+import com.joshtalks.joshskills.base.constants.INTENT_DATA_MENTOR_ID
+import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_INCOMING_CALL
 import com.joshtalks.joshskills.conversationRoom.liveRooms.ConversationLiveRoomActivity
 import com.joshtalks.joshskills.core.API_TOKEN
 import com.joshtalks.joshskills.core.ARG_PLACEHOLDER_URL
@@ -83,6 +86,9 @@ import com.joshtalks.joshskills.ui.voip.analytics.VoipAnalytics
 import com.joshtalks.joshskills.ui.voip.favorite.FavoriteListActivity
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
 import com.joshtalks.joshskills.voip.constant.State
+import com.joshtalks.joshskills.voip.data.CallingRemoteService
+import com.joshtalks.joshskills.voip.getApiHeader
+import com.joshtalks.joshskills.voip.getMentorId
 import java.lang.reflect.Type
 import java.util.concurrent.ExecutorService
 import kotlinx.coroutines.CoroutineScope
@@ -445,12 +451,13 @@ class NotificationUtils(val context: Context) {
                 }
             }
             NotificationAction.INCOMING_CALL_NOTIFICATION -> {
-                if (!PrefManager.getBoolValue(
-                        PREF_IS_CONVERSATION_ROOM_ACTIVE
-                    ) && !PrefManager.getBoolValue(USER_ACTIVE_IN_GAME)
-                ) {
-                    incomingCallNotificationAction(notificationObject.actionData)
-                }
+                val remoteServiceIntent =
+                    Intent(com.joshtalks.joshskills.voip.Utils.context, CallingRemoteService::class.java)
+                val apiHeader = com.joshtalks.joshskills.voip.Utils.context?.getApiHeader()
+                remoteServiceIntent.putExtra(INTENT_DATA_MENTOR_ID, com.joshtalks.joshskills.voip.Utils.context?.getMentorId())
+                remoteServiceIntent.putExtra(INTENT_DATA_API_HEADER, apiHeader)
+                remoteServiceIntent.action = SERVICE_ACTION_INCOMING_CALL
+                com.joshtalks.joshskills.voip.Utils.context?.startService(remoteServiceIntent)
                 return null
             }
             NotificationAction.JOIN_CONVERSATION_ROOM -> {

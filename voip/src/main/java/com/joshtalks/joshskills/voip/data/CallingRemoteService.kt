@@ -5,12 +5,7 @@ import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
 import android.util.Log
-import com.joshtalks.joshskills.base.constants.INTENT_DATA_API_HEADER
-import com.joshtalks.joshskills.base.constants.INTENT_DATA_MENTOR_ID
-import com.joshtalks.joshskills.base.constants.PEER_TO_PEER
-import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_STOP_SERVICE
-import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_DISCONNECT_CALL
-import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_INCOMING_CALL_DECLINE
+import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.voip.*
 import com.joshtalks.joshskills.voip.audiocontroller.AudioController
 import com.joshtalks.joshskills.voip.audiocontroller.AudioControllerInterface
@@ -24,6 +19,7 @@ import com.joshtalks.joshskills.voip.constant.Event.CALL_INITIATED_EVENT
 import com.joshtalks.joshskills.voip.constant.Event.CLOSE_CALL_SCREEN
 import com.joshtalks.joshskills.voip.constant.Event.RECONNECTING_FAILED
 import com.joshtalks.joshskills.voip.data.local.PrefManager
+import com.joshtalks.joshskills.voip.mediator.CallCategory
 import com.joshtalks.joshskills.voip.mediator.CallServiceMediator
 import com.joshtalks.joshskills.voip.mediator.CallingMediator
 import com.joshtalks.joshskills.voip.notification.NotificationData
@@ -81,6 +77,9 @@ class CallingRemoteService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.d(TAG, "StartService --- OnStartCommand")
         when(intent?.action) {
+            SERVICE_ACTION_INCOMING_CALL -> {
+                ioScope.launch { mediator.handleIncomingCall(Category.GROUP, 42224) }
+            }
             SERVICE_ACTION_STOP_SERVICE -> {
                 // TODO: Might Need to refactor
                 if (PrefManager.getVoipState() == State.CONNECTED) {
@@ -122,8 +121,6 @@ class CallingRemoteService : Service() {
 
     private fun Intent?.initService(): Int {
         isServiceInitialize = true
-        //Utils.apiHeader = this?.getParcelableExtra(INTENT_DATA_API_HEADER)
-        //Utils.uuid = this?.getStringExtra(INTENT_DATA_MENTOR_ID)
         observeNetworkEvents()
         return START_REDELIVER_INTENT
     }
@@ -154,22 +151,6 @@ class CallingRemoteService : Service() {
                                 RECONNECTING_FAILED -> {
                                     serviceEvents.emit(ServiceEvents.RECONNECTING_FAILED)
                                     notification.idle(getNotificationData())
-                                }
-                                // TODO: Might have to refactor
-                                INCOMING_CALL -> {
-                                    PrefManager.setIncomingCallId(IncomingCallData.callId)
-                                    val data = IncomingCall(callId = IncomingCallData.callId)
-                                    mediator.showIncomingCall(data)
-                                }
-                                GROUP_INCOMING_CALL -> {
-                                    PrefManager.setIncomingCallId(IncomingCallData.callId)
-                                    val data = IncomingCall(callId = IncomingCallData.callId)
-                                    mediator.showIncomingCall(data)
-                                }
-                                FPP_INCOMING_CALL -> {
-                                    PrefManager.setIncomingCallId(IncomingCallData.callId)
-                                    val data = IncomingCall(callId = IncomingCallData.callId)
-                                    mediator.showIncomingCall(data)
                                 }
                                 CALL_INITIATED_EVENT -> {
                                     serviceEvents.emit(ServiceEvents.CALL_INITIATED_EVENT)
