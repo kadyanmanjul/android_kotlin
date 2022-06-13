@@ -19,6 +19,7 @@ import com.joshtalks.joshskills.core.custom_ui.decorator.StickHeaderItemDecorati
 import com.joshtalks.joshskills.core.extension.deepEquals
 import com.joshtalks.joshskills.databinding.CourseProgressActivityNewBinding
 import com.joshtalks.joshskills.repository.local.entity.CExamStatus
+import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.course_overview.CourseOverviewItem
 import com.joshtalks.joshskills.repository.server.course_overview.CourseOverviewResponse
@@ -251,7 +252,8 @@ class CourseProgressActivityNew :
                             this@CourseProgressActivityNew,
                             item.lessonId,
                             conversationId = intent.getStringExtra(CONVERSATION_ID),
-                            isNewGrammar = item.isNewGrammar ?: false
+                            isNewGrammar = item.isNewGrammar ?: false,
+                            isLessonCompleted = lessonModel.status == LESSON_STATUS.CO
                         )
                     )
                 } else {
