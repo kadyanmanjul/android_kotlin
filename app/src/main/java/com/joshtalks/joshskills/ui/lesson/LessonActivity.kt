@@ -1125,7 +1125,8 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         Handler().postDelayed(
             {
                 if (defaultSection != -1) {
-                    binding.lessonViewpager.currentItem = defaultSection
+                    binding.lessonViewpager.currentItem =
+                        if (defaultSection == GRAMMAR_POSITION) GRAMMAR_POSITION else defaultSection - isTranslationDisabled
                 } else {
                     openIncompleteTab(arrayFragment.size - 1)
                 }

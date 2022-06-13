@@ -7,9 +7,9 @@ import com.joshtalks.joshskills.base.constants.FROM_ACTIVITY
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_COURSE_ID
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_TOPIC_ID
 import com.joshtalks.joshskills.base.constants.STARTING_POINT
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.PermissionUtils
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
+import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
@@ -18,52 +18,78 @@ import com.joshtalks.joshskills.ui.help.HelpActivity
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.ui.lesson.LessonActivity
 import com.joshtalks.joshskills.ui.lesson.SPEAKING_POSITION
+import com.joshtalks.joshskills.ui.signup.FreeTrialOnBoardActivity
+import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.ui.voip.favorite.FavoriteListActivity
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity
 import org.json.JSONObject
 
 object DeepLinkRedirectUtil {
 
-    fun getIntent(
+    suspend fun getIntent(
         activity: Activity,
-        jsonParams: JSONObject
-    ): Intent? {
-        return try {
+        jsonParams: JSONObject,
+        isFreeTrial: Boolean = false
+    ): Boolean {
+        try {
             when (DeepLinkRedirect.getDeepLinkAction(jsonParams.getString(DeepLinkData.REDIRECT_TO.key))) {
-                DeepLinkRedirect.GROUP_ACTIVITY -> getGroupActivityIntent(activity, jsonParams)
-                DeepLinkRedirect.GROUP_CHAT_ACTIVITY -> getGroupActivityIntent(
-                    activity,
-                    jsonParams
-                ) // TODO: Implement Group Chat Activity
-                DeepLinkRedirect.CONVERSATION_ACTIVITY -> getConversationActivityIntent(
-                    activity,
-                    jsonParams
-                )
-                DeepLinkRedirect.P2P_ACTIVITY -> getP2PActivityIntent(activity, jsonParams)
-                DeepLinkRedirect.FPP_ACTIVITY -> getFPPActivityIntent(activity, jsonParams)
-                DeepLinkRedirect.CUSTOMER_SUPPORT_ACTIVITY -> getCustomerSupportActivityIntent(
-                    activity
-                )
-                DeepLinkRedirect.LESSON_ACTIVITY -> getLessonActivityIntent(activity, jsonParams)
-                DeepLinkRedirect.COURSE_DETAILS -> getCourseDetailsActivityIntent(
-                    activity,
-                    jsonParams
-                )
-                else -> null
+                DeepLinkRedirect.GROUP_ACTIVITY ->
+                    if (isFreeTrial) getConversationActivityIntent(activity, jsonParams)
+                    else getGroupActivityIntent(activity, jsonParams)
+                DeepLinkRedirect.GROUP_CHAT_ACTIVITY ->
+                    if (isFreeTrial) getConversationActivityIntent(activity, jsonParams)
+                    else { // TODO: Implement Open Group Chat Activity
+                        getGroupActivityIntent(
+                            activity,
+                            jsonParams
+                        )
+                    }
+                DeepLinkRedirect.CONVERSATION_ACTIVITY ->
+                    getConversationActivityIntent(
+                        activity,
+                        jsonParams
+                    )
+                DeepLinkRedirect.P2P_ACTIVITY ->
+                    getP2PActivityIntent(activity, jsonParams)
+                DeepLinkRedirect.FPP_ACTIVITY ->
+                    if (isFreeTrial) getP2PActivityIntent(activity, jsonParams)
+                    else getFPPActivityIntent(activity, jsonParams)
+                DeepLinkRedirect.CUSTOMER_SUPPORT_ACTIVITY ->
+                    getCustomerSupportActivityIntent(
+                        activity
+                    )
+                DeepLinkRedirect.LESSON_ACTIVITY ->
+                    if (isFreeTrial && PrefManager.getBoolValue(IS_FREE_TRIAL_ENDED)) getConversationActivityIntent(
+                        activity,
+                        jsonParams
+                    )
+                    else getLessonActivityIntent(activity, jsonParams)
+                DeepLinkRedirect.COURSE_DETAILS ->
+                    getCourseDetailsActivityIntent(
+                        activity,
+                        jsonParams
+                    )
             }
+            return true
         } catch (e: Exception) {
             e.printStackTrace()
-            null
+            return false
         }
     }
 
-    private fun getConversationIdFromCourseId(courseId: String): String =
-        AppObjectController.appDatabase.courseDao()
-            .getConversationIdFromCourseId(courseId)
 
+    private fun getCourseId(jsonParams: JSONObject): Int =
+        if (jsonParams.has(DeepLinkData.COURSE_ID.key))
+            jsonParams.getString(DeepLinkData.COURSE_ID.key).toInt()
+        else
+            PrefManager.getStringValue(CURRENT_COURSE_ID).toInt()
+
+    private suspend fun getConversationIdFromCourseId(jsonParams: JSONObject): String =
+        AppObjectController.appDatabase.courseDao()
+            .getConversationIdFromCourseId(getCourseId(jsonParams).toString())
 
     @Throws(Exception::class)
-    private fun getCourseDetailsActivityIntent(
+    fun getCourseDetailsActivityIntent(
         activity: Activity,
         jsonParams: JSONObject
     ) = CourseDetailsActivity.getIntent(
@@ -71,9 +97,29 @@ object DeepLinkRedirectUtil {
         testId = jsonParams.getString(DeepLinkData.TEST_ID.key).toInt(),
         startedFrom = "Deep Link"
     ).apply {
+        val activityList = mutableListOf<Intent>()
+        if (User.getInstance().isVerified.not()) {
+            if (PrefManager.getBoolValue(IS_GUEST_ENROLLED, false) &&
+                PrefManager.getBoolValue(IS_PAYMENT_DONE, false).not()
+            )
+                activityList.add(Intent(getInboxActivityIntent(activity)))
+            else if (PrefManager.getBoolValue(IS_PAYMENT_DONE, false))
+                activityList.add(Intent(activity, SignUpActivity::class.java))
+            else if (PrefManager.getBoolValue(IS_FREE_TRIAL, false, false))
+                activityList.add(
+                    Intent(
+                        activity,
+                        FreeTrialOnBoardActivity::class.java
+                    )
+                )
+            else
+                activityList.add(Intent(activity, SignUpActivity::class.java))
+        } else
+            activityList.add(getInboxActivityIntent(activity))
+        activityList.add(this)
         sendPendingIntentForActivityList(
             activity,
-            arrayOf(getInboxActivityIntent(activity), this)
+            activityList.toTypedArray()
         )
     }
 
@@ -89,20 +135,17 @@ object DeepLinkRedirectUtil {
     }
 
     @Throws(Exception::class)
-    private fun getP2PActivityIntent(activity: Activity, jsonParams: JSONObject) =
-        if (PermissionUtils.isCallingPermissionEnabled(activity)) {
+    private suspend fun getP2PActivityIntent(activity: Activity, jsonParams: JSONObject) =
+        if (PrefManager.getBoolValue(IS_FREE_TRIAL_ENDED))
+            getConversationActivityIntent(activity, jsonParams)
+        else if (PermissionUtils.isCallingPermissionEnabled(activity)) {
             Intent(activity, VoiceCallActivity::class.java).apply {
                 putExtra(
                     INTENT_DATA_COURSE_ID,
-                    jsonParams.getString(DeepLinkData.COURSE_ID.key)
+                    getCourseId(jsonParams)
                 )
                 putExtra(INTENT_DATA_TOPIC_ID, jsonParams.getString(DeepLinkData.TOPIC_ID.key))
                 putExtra(STARTING_POINT, FROM_ACTIVITY)
-                val lastLessonId = AppObjectController.appDatabase.lessonDao()
-                    .getLastLessonIdForCourse(
-                        jsonParams.getString(DeepLinkData.COURSE_ID.key).toInt()
-                    )
-                jsonParams.put(DeepLinkData.LESSON_ID.key, lastLessonId)
                 sendPendingIntentForActivityList(
                     activity,
                     arrayOf(
@@ -111,14 +154,16 @@ object DeepLinkRedirectUtil {
                     )
                 )
             }
-        } else getLessonActivityIntent(activity, jsonParams, speakingSection = true)
+        } else
+            getLessonActivityIntent(activity, jsonParams, speakingSection = true)
+
 
     @Throws(Exception::class)
-    private fun getFPPActivityIntent(activity: Activity, jsonParams: JSONObject) =
+    private suspend fun getFPPActivityIntent(activity: Activity, jsonParams: JSONObject) =
         Intent(activity, FavoriteListActivity::class.java).apply {
             putExtra(
                 CONVERSATION_ID,
-                getConversationIdFromCourseId(jsonParams.getString(DeepLinkData.COURSE_ID.key))
+                getConversationIdFromCourseId(jsonParams)
             )
             sendPendingIntentForActivityList(
                 activity,
@@ -127,15 +172,23 @@ object DeepLinkRedirectUtil {
         }
 
     @Throws(Exception::class)
-    private fun getLessonActivityIntent(
+    private suspend fun getLessonActivityIntent(
         activity: Activity,
         jsonParams: JSONObject,
         speakingSection: Boolean = false
     ): Intent {
+        val lessonId =
+            if (jsonParams.has(DeepLinkData.LESSON_ID.key) &&
+                jsonParams.getString(DeepLinkData.LESSON_ID.key).isNullOrEmpty().not()
+            )
+                jsonParams.getString(DeepLinkData.LESSON_ID.key).toInt()
+            else
+                AppObjectController.appDatabase.lessonDao()
+                    .getLastLessonIdForCourse(getCourseId(jsonParams))
         val lesson = AppObjectController.appDatabase.lessonDao()
-            .getLesson(jsonParams.getString(DeepLinkData.LESSON_ID.key).toInt())
+            .getLesson(lessonId)
         val conversationId =
-            getConversationIdFromCourseId(jsonParams.getString(DeepLinkData.COURSE_ID.key))
+            getConversationIdFromCourseId(jsonParams)
         return if (lesson != null) {
             LessonActivity.getActivityIntent(
                 activity,
@@ -156,11 +209,11 @@ object DeepLinkRedirectUtil {
     }
 
     @Throws(Exception::class)
-    private fun getGroupActivityIntent(activity: Activity, jsonParams: JSONObject) =
+    private suspend fun getGroupActivityIntent(activity: Activity, jsonParams: JSONObject) =
         Intent(activity, JoshGroupActivity::class.java).apply {
             putExtra(
                 CONVERSATION_ID,
-                getConversationIdFromCourseId(jsonParams.getString(DeepLinkData.COURSE_ID.key))
+                getConversationIdFromCourseId(jsonParams)
             )
             sendPendingIntentForActivityList(
                 activity,
@@ -169,7 +222,7 @@ object DeepLinkRedirectUtil {
         }
 
     @Throws(Exception::class)
-    private fun getConversationActivityIntent(activity: Activity, jsonParams: JSONObject) =
+    private suspend fun getConversationActivityIntent(activity: Activity, jsonParams: JSONObject) =
         AppObjectController.appDatabase.courseDao()
             .getCourseAccordingId(jsonParams.getString(DeepLinkData.COURSE_ID.key))?.let {
                 ConversationActivity.getConversationActivityIntent(activity, it).apply {

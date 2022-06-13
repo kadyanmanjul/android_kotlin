@@ -14,7 +14,7 @@ interface LessonDao {
     // fun getLessons(): DataSource.Factory<Int, LessonModel>
 
     @Query("SELECT * FROM lessonmodel WHERE lesson_id=:lessonId ORDER BY lesson_no DESC")
-    fun getLesson(lessonId: Int): LessonModel?
+    suspend fun getLesson(lessonId: Int): LessonModel?
 
     @Query("SELECT status FROM lessonmodel WHERE lesson_no=:lessonNo")
     fun getLessonStatus(lessonNo: Int): LESSON_STATUS?
@@ -56,7 +56,7 @@ interface LessonDao {
     fun getLastLessonNoForCourse(courseId: Int): Int
 
     @Query("SELECT lesson_id FROM lessonmodel WHERE lesson_no = (SELECT MAX(lesson_no) FROM lessonmodel WHERE course =:courseId)")
-    fun getLastLessonIdForCourse(courseId: Int): Int
+    suspend fun getLastLessonIdForCourse(courseId: Int): Int
 
     @Query(value = "SELECT COUNT(lesson_id) FROM lessonmodel where course= :courseId  AND interval>:interval")
     suspend fun nextLessonIntervalExist(courseId: String, interval: Int): Long

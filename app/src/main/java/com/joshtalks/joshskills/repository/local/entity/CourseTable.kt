@@ -1,20 +1,12 @@
 package com.joshtalks.joshskills.repository.local.entity
 
-import androidx.room.ColumnInfo
-import androidx.room.Dao
-import androidx.room.Entity
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.PrimaryKey
-import androidx.room.Query
-import androidx.room.RewriteQueriesToDropUnusedColumns
-import androidx.room.RoomWarnings
+import androidx.room.*
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.track.CourseIdFilerModel
 import io.reactivex.Maybe
 import java.io.Serializable
-import java.util.Date
+import java.util.*
 
 @Entity(tableName = "course")
 data class Course(
@@ -108,13 +100,13 @@ interface CourseDao {
 
     @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
     @Query(value = "select * from course where courseId= :courseId AND is_deleted=0  LIMIT 1")
-    fun getCourseAccordingId(courseId: String): InboxEntity?
+    suspend fun getCourseAccordingId(courseId: String): InboxEntity?
 
     @Query(value = "select courseId from course where conversation_id= :conversationId AND is_deleted=0  LIMIT 1")
     fun getCourseIdFromConversationId(conversationId: String): String
 
     @Query(value = "select conversation_id from course where courseId= :courseId AND is_deleted=0  LIMIT 1")
-    fun getConversationIdFromCourseId(courseId: String): String
+    suspend fun getConversationIdFromCourseId(courseId: String): String
 
     @Query("select courseId,conversation_id  from course  WHERE conversation_id IN (:ids)")
     suspend fun getCourseIdsFromConversationId(ids: List<String>): List<CourseIdFilerModel>

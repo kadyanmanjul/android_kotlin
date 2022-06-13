@@ -41,7 +41,6 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.constants.CALLING_SERVICE_ACTION
 import com.joshtalks.joshskills.base.constants.SERVICE_BROADCAST_KEY
-import com.joshtalks.joshskills.base.constants.START_SERVICE
 import com.joshtalks.joshskills.base.constants.STOP_SERVICE
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.CTA_PAYMENT_SUMMARY
@@ -75,16 +74,16 @@ import io.branch.referral.util.CurrencyType
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import java.math.BigDecimal
-import java.text.DecimalFormat
-import java.text.DecimalFormatSymbols
-import java.util.*
-import kotlin.math.roundToInt
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import retrofit2.HttpException
+import java.math.BigDecimal
+import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
+import java.util.*
+import kotlin.math.roundToInt
 
 const val TRANSACTION_ID = "TRANSACTION_ID"
 const val ENGLISH_COURSE_TEST_ID = "102"
@@ -957,6 +956,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             .getString(FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID)
         if (testId == freeTrialTestId) {
             PrefManager.put(IS_COURSE_BOUGHT, true)
+            PrefManager.removeKey(IS_FREE_TRIAL_ENDED)
             if(is100PointsObtained){
                 viewModel.saveImpression(POINTS_100_OBTAINED_ENGLISH_COURSE_BOUGHT)
                 viewModel.postGoal(GoalKeys.HUNDRED_POINTS_COURSE_BOUGHT.NAME, CampaignKeys.HUNDRED_POINTS.NAME)
