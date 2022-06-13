@@ -26,6 +26,7 @@ import com.joshtalks.joshskills.repository.local.AppDatabase
 import com.joshtalks.joshskills.repository.local.model.NotificationObject
 import com.joshtalks.joshskills.repository.service.UtilsAPIService
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
+import com.joshtalks.joshskills.util.ReminderUtil
 import java.lang.reflect.Type
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CoroutineScope
@@ -82,6 +83,7 @@ class BackgroundService : Service() {
         initRetrofit()
         pushAnalyticsToServer()
         fetchMissedNotifications()
+        ReminderUtil(this).setAlarmNotificationWorker()
         return START_STICKY
     }
 
