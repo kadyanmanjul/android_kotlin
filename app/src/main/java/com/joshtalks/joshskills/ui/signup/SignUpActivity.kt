@@ -16,11 +16,7 @@ import androidx.fragment.app.commit
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import com.facebook.AccessToken
-import com.facebook.CallbackManager
-import com.facebook.FacebookCallback
-import com.facebook.FacebookException
-import com.facebook.GraphRequest
+import com.facebook.*
 import com.facebook.login.LoginBehavior
 import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
@@ -29,38 +25,21 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.ApiCallStatus
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.BaseActivity
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.ONLINE_TEST_LAST_LESSON_ATTEMPTED
-import com.joshtalks.joshskills.core.ONLINE_TEST_LAST_LESSON_COMPLETED
-import com.joshtalks.joshskills.core.PermissionUtils
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.SignUpStepStatus
-import com.joshtalks.joshskills.core.USER_LOCALE
-import com.joshtalks.joshskills.core.VerificationService
-import com.joshtalks.joshskills.core.VerificationStatus
-import com.joshtalks.joshskills.core.VerificationVia
-import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
-import com.joshtalks.joshskills.core.analytics.AppAnalytics
-import com.joshtalks.joshskills.core.analytics.LogException
-import com.joshtalks.joshskills.core.analytics.MixPanelEvent
-import com.joshtalks.joshskills.core.analytics.MixPanelTracker
-import com.joshtalks.joshskills.core.analytics.ParamKeys
-import com.joshtalks.joshskills.core.getFBProfilePicture
+import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.analytics.*
 import com.joshtalks.joshskills.core.io.AppDirectory
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivitySignUpV2Binding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.LoginViaEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.LoginViaStatus
 import com.joshtalks.joshskills.repository.local.model.User
+import com.joshtalks.joshskills.ui.signup.FreeTrialOnBoardActivity.Companion.IS_DIGITAL_FINANCIAL_INCLUSION_COURSE
 import com.joshtalks.joshskills.ui.userprofile.viewmodel.UserProfileViewModel
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import com.karumi.dexter.Dexter
@@ -68,23 +47,15 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import com.truecaller.android.sdk.ITrueCallback
-import com.truecaller.android.sdk.TrueError
-import com.truecaller.android.sdk.TrueException
-import com.truecaller.android.sdk.TrueProfile
-import com.truecaller.android.sdk.TruecallerSDK
-import com.truecaller.android.sdk.TruecallerSdkScope
+import com.truecaller.android.sdk.*
 import com.truecaller.android.sdk.clients.VerificationCallback
 import com.truecaller.android.sdk.clients.VerificationDataBundle
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.*
-import com.joshtalks.joshskills.core.IMPRESSION_ALREADY_NEWUSER_ENROLL
-import com.joshtalks.joshskills.core.IMPRESSION_ALREADY_ALREADYUSER
 
 private const val GOOGLE_SIGN_UP_REQUEST_CODE = 9001
 const val FLOW_FROM = "Flow"
@@ -177,9 +148,13 @@ class SignUpActivity : BaseActivity() {
                 SignUpStepStatus.StartAfterPicUploaded, SignUpStepStatus.ProfilePicSkipped, SignUpStepStatus.SignUpCompleted -> {
                     logLoginSuccessAnalyticsEvent(viewModel.loginViaStatus?.toString())
                     if(!isFirstTime)
-                    viewModel.saveTrueCallerImpression(IMPRESSION_ALREADY_ALREADYUSER)
-                    startActivity(getInboxActivityIntent())
-                    this@SignUpActivity.finishAffinity()
+                        viewModel.saveTrueCallerImpression(IMPRESSION_ALREADY_ALREADYUSER)
+                    if (intent.getBooleanExtra(IS_DIGITAL_FINANCIAL_INCLUSION_COURSE, false)) {
+                        viewModel.registerCourse("1212")
+                    } else {
+                        startActivity(getInboxActivityIntent())
+                        this@SignUpActivity.finishAffinity()
+                    }
                 }
                 else -> return@Observer
             }
@@ -192,6 +167,25 @@ class SignUpActivity : BaseActivity() {
             if (it)
                 addRetryCountAnalytics()
         })
+        viewModel.apiStatus.observe(this){
+            when (it) {
+                ApiCallStatus.START -> showProgressBar()
+                ApiCallStatus.SUCCESS -> {
+                    startActivity(getInboxActivityIntent())
+                    this@SignUpActivity.finishAffinity()
+                }
+                ApiCallStatus.FAILED -> {
+                    hideProgressBar()
+                    Snackbar.make(binding.root, getString(R.string.internet_not_available_msz), Snackbar.LENGTH_SHORT)
+                        .setAction(getString(R.string.retry)) {
+                            viewModel.registerCourse("1212")
+                        }
+                        .show()
+                }
+                else -> {}
+
+            }
+        }
 
         viewModelForDpUpload.apiCallStatus.observe(this, Observer {
             when (it) {

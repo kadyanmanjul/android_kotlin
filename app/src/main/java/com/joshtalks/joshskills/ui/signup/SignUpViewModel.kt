@@ -464,10 +464,33 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
             try {
                 val requestData = hashMapOf(
                     Pair("mentor_id", Mentor.getInstance().getId()),
-                    Pair("event_name", eventName)
+                    Pair("event_name", eventName),
+                    Pair("input_delete_user","Mobile"),
+
                 )
                 AppObjectController.commonNetworkService.saveTrueCallerImpression(requestData)
             } catch (ex: Exception) {
+                Timber.e(ex)
+            }
+        }
+    }
+
+    fun registerCourse(courseId: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                apiStatus.postValue(ApiCallStatus.START)
+                val requestData = hashMapOf(
+                    Pair("course_id", courseId),
+                    Pair("mentor_id", Mentor.getInstance().getId()),
+                    Pair("plan_id","1233_1212")
+                )
+                val response = AppObjectController.signUpNetworkService.registerCourse(requestData)
+                if (response.isSuccessful)
+                    apiStatus.postValue(ApiCallStatus.SUCCESS)
+                else
+                    apiStatus.postValue(ApiCallStatus.FAILED)
+            } catch (ex: Exception) {
+                apiStatus.postValue(ApiCallStatus.FAILED)
                 Timber.e(ex)
             }
         }

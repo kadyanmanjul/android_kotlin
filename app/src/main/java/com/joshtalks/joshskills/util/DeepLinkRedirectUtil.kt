@@ -69,6 +69,7 @@ object DeepLinkRedirectUtil {
                         activity,
                         jsonParams
                     )
+                else -> return false
             }
             return true
         } catch (e: Exception) {
@@ -77,6 +78,11 @@ object DeepLinkRedirectUtil {
         }
     }
 
+    fun getDigitalFinancialInclusionActivityIntent(activity: Activity) =
+        FreeTrialOnBoardActivity.getIntent(
+            activity,
+            isDigitalFinancialCourse = true
+        )
 
     private fun getCourseId(jsonParams: JSONObject): Int =
         if (jsonParams.has(DeepLinkData.COURSE_ID.key))
@@ -258,7 +264,8 @@ enum class DeepLinkRedirect(val key: String) {
     FPP_ACTIVITY("fpp_activity"),
     COURSE_DETAILS("course_details"),
     CUSTOMER_SUPPORT_ACTIVITY("customer_support_activity"),
-    LESSON_ACTIVITY("lesson_activity");
+    LESSON_ACTIVITY("lesson_activity"),
+    DIGITAL_FINANCIAL_INCLUSION("digital_financial_inclusion");
 
     companion object {
         fun getDeepLinkAction(key: String): DeepLinkRedirect? {

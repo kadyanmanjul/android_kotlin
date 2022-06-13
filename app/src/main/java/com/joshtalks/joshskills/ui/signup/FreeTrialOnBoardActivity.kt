@@ -1,11 +1,11 @@
 package com.joshtalks.joshskills.ui.signup
 
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
@@ -19,17 +19,12 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIAL_POPUP_BODY_TEXT
-import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIAL_POPUP_HUNDRED_POINTS_TEXT
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIAL_POPUP_TITLE_TEXT
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIAL_POPUP_YES_BUTTON_TEXT
-import com.joshtalks.joshskills.core.Utils
-import com.joshtalks.joshskills.core.abTest.CampaignKeys
-import com.joshtalks.joshskills.core.analytics.*
 import com.joshtalks.joshskills.core.Utils.getLangCodeFromlangTestId
-import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
-import com.joshtalks.joshskills.core.analytics.AppAnalytics
-import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
+import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
+import com.joshtalks.joshskills.core.analytics.*
 import com.joshtalks.joshskills.databinding.ActivityFreeTrialOnBoardBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
@@ -56,6 +51,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
     private var eftActive = false
     private var is100PointsActive = false
     private var increaseCoursePrice = false
+    private var isDigitalFinancialCourse = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,12 +71,23 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         addViewModelObservers()
         PrefManager.put(ONBOARDING_STAGE, OnBoardingStage.APP_INSTALLED.value)
         addListeners()
+        isDigitalFinancialCourse = intent.getBooleanExtra(IS_DIGITAL_FINANCIAL_INCLUSION_COURSE, false)
+        if (isDigitalFinancialCourse) {
+            layout.initDigitalFinancialInclusionCourse()
+        }
+    }
+
+    private fun ActivityFreeTrialOnBoardBinding.initDigitalFinancialInclusionCourse() {
+        txtHeading.text = getString(R.string.digital_financial_inclusion_course)
+        courseInfo1.text = getString(R.string.thirty_day_course)
+        courseInfo2.text = getString(R.string.digital_inclusion_course_2)
+        courseInfo3.text = getString(R.string.digital_inclusion_course_3)
     }
 
     override fun onStart() {
         super.onStart()
         liveEvent.observe(this) {
-            when(it.what) {
+            when (it.what) {
                 IS_USER_EXIST -> moveToInboxScreen()
             }
         }
@@ -94,18 +101,16 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
     }
 
     private fun addListeners() {
-        val language = ChooseLanguages("784","Hindi (हिन्दी)")
+        val language = ChooseLanguages("784", "Hindi (हिन्दी)")
         btnStartTrial.setOnClickListener {
-            if(languageActive){
+            if (isDigitalFinancialCourse)
+                signUp()
+            else if (languageActive)
                 openChooseLanguageFragment()
-            }
-            else if(is100PointsActive){
-                showStartTrialPopup(language!!,true)
-            }
+            else if (is100PointsActive)
+                showStartTrialPopup(language, true)
             else
-            {
-                showStartTrialPopup(language!!,false)
-            }
+                showStartTrialPopup(language, false)
         }
     }
 
@@ -164,12 +169,13 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
             viewModel.saveTrueCallerImpression(IMPRESSION_ALREADY_NEWUSER)
             val intent = Intent(this@FreeTrialOnBoardActivity, SignUpActivity::class.java).apply {
                 putExtra(FLOW_FROM, "free trial onboarding journey")
+                putExtra(IS_DIGITAL_FINANCIAL_INCLUSION_COURSE, true)
             }
             startActivity(intent)
         }
     }
 
-    fun showStartTrialPopup(language: ChooseLanguages, is100PointsActive : Boolean) {
+    fun showStartTrialPopup(language: ChooseLanguages, is100PointsActive: Boolean) {
         MixPanelTracker.publishEvent(MixPanelEvent.START_NOW).push()
         viewModel.saveImpression(IMPRESSION_START_FREE_TRIAL)
         PrefManager.put(ONBOARDING_STAGE, OnBoardingStage.START_NOW_CLICKED.value)
@@ -187,17 +193,15 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         alertDialog.window?.setLayout(width.toInt(), height)
         alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-        if(is100PointsActive && language.testId == HINDI_TO_ENGLISH_TEST_ID){
+        if (is100PointsActive && language.testId == HINDI_TO_ENGLISH_TEST_ID) {
             dialogView.findViewById<TextView>(R.id.e_g_motivat).text =
-                    getString(R.string.free_trial_popup_100_points_header)
+                getString(R.string.free_trial_popup_100_points_header)
                     .replace("\\n", "\n")
-        }
-        else {
+        } else {
             dialogView.findViewById<TextView>(R.id.e_g_motivat).text =
-                if(PrefManager.getBoolValue(INCREASE_COURSE_PRICE_ABTEST) && language.testId == "784"){
+                if (PrefManager.getBoolValue(INCREASE_COURSE_PRICE_ABTEST) && language.testId == "784") {
                     getString(R.string.free_trial_popup_for_icp)
-                }
-                else {
+                } else {
                     AppObjectController.getFirebaseRemoteConfig()
                         .getString(FREE_TRIAL_POPUP_BODY_TEXT + language.testId)
                         .replace("\\n", "\n")
@@ -260,7 +264,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
     private val sdkCallback: ITrueCallback = object : ITrueCallback {
 
         override fun onFailureProfileShared(trueError: TrueError) {
-            if(TrueError.ERROR_TYPE_CONTINUE_WITH_DIFFERENT_NUMBER == trueError.errorType) {
+            if (TrueError.ERROR_TYPE_CONTINUE_WITH_DIFFERENT_NUMBER == trueError.errorType) {
                 MixPanelTracker.publishEvent(MixPanelEvent.USE_ANOTHER_METHOD).push()
                 hideProgressBar()
                 viewModel.saveTrueCallerImpression(IMPRESSION_TC_USER_ANOTHER)
@@ -360,5 +364,13 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         viewModel.getNewLanguageABTest(CampaignKeys.NEW_LANGUAGE.name)
         viewModel.get100PCampaignData(CampaignKeys.HUNDRED_POINTS.NAME, CampaignKeys.EXTEND_FREE_TRIAL.name)
         viewModel.getICPABTest(CampaignKeys.INCREASE_COURSE_PRICE.name)
+    }
+
+    companion object {
+        const val IS_DIGITAL_FINANCIAL_INCLUSION_COURSE = "is_digital_financial_inclusion_course"
+        fun getIntent(context: Context, isDigitalFinancialCourse: Boolean = false) =
+            Intent(context, FreeTrialOnBoardActivity::class.java).apply {
+                putExtra(IS_DIGITAL_FINANCIAL_INCLUSION_COURSE, isDigitalFinancialCourse)
+            }
     }
 }

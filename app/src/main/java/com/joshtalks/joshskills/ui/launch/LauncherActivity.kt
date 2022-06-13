@@ -207,6 +207,9 @@ class LauncherActivity : CoreJoshActivity(), Branch.BranchReferralInitListener {
             User.getInstance().isVerified.not() -> {
                 when {
                     (jsonParams != null && jsonParams!!.has(DeepLinkData.REDIRECT_TO.key)
+                            && jsonParams!!.getString(DeepLinkData.REDIRECT_TO.key) == DeepLinkRedirect.DIGITAL_FINANCIAL_INCLUSION.key)
+                    -> DeepLinkRedirectUtil.getDigitalFinancialInclusionActivityIntent(this)
+                    (jsonParams != null && jsonParams!!.has(DeepLinkData.REDIRECT_TO.key)
                             && jsonParams!!.getString(DeepLinkData.REDIRECT_TO.key) == DeepLinkRedirect.COURSE_DETAILS.key)
                     -> {
                         DeepLinkRedirectUtil.getCourseDetailsActivityIntent(this, jsonParams!!)

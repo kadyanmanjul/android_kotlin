@@ -180,4 +180,7 @@ interface SignUpNetworkService {
 
     @GET("$DIR/course/language/")
     suspend fun getAvailableLanguageCourses() : Response<List<ChooseLanguages>>
+
+    @POST("$DIR/mentor/register/")
+    suspend fun registerCourse(@Body requestData: HashMap<String, String>): Response<Unit>
 }
