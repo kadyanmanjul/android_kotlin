@@ -11,26 +11,17 @@ import android.view.View
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
-import androidx.preference.PreferenceManager
 import com.google.android.material.button.MaterialButton
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.IS_CERTIFICATE_GENERATED
-import com.joshtalks.joshskills.core.IS_FIRST_TIME_CERTIFICATE
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.analytics.MixPanelEvent
-import com.joshtalks.joshskills.core.analytics.MixPanelTracker
-import com.joshtalks.joshskills.core.analytics.ParamKeys
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.DownloadFileEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.EmptyEventBus
 import com.joshtalks.joshskills.repository.server.certification_exam.CertificateExamReportModel
-import com.joshtalks.joshskills.repository.server.certification_exam.CertificationQuestionModel
 import com.mindorks.placeholderview.annotations.Click
 import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
-import timber.log.Timber
 import java.text.DecimalFormat
 
 @SuppressLint("NonConstantResourceId")
@@ -56,6 +47,8 @@ class ReportOverviewView1(private val certificateExamReport: CertificateExamRepo
     lateinit var downloadCertificateBtn: MaterialButton
 
     private val context: Context = AppObjectController.joshApplication
+
+    private var examType = String()
 
     @Resolve
     fun onViewInflated() {
@@ -91,7 +84,19 @@ class ReportOverviewView1(private val certificateExamReport: CertificateExamRepo
                 if (certificateURL.isNullOrEmpty()) {
                     downloadCertificateBtn.visibility = View.GONE
                 }
-                if (PrefManager.getBoolValue(IS_CERTIFICATE_GENERATED, defValue = true)) {
+                var showBtn = false
+                when (examType){
+                    "beginner"->{
+                        showBtn = PrefManager.getBoolValue(IS_CERTIFICATE_GENERATED_BEGINNER, defValue = true)
+                    }
+                    "intermediate"->{
+                        showBtn = PrefManager.getBoolValue(IS_CERTIFICATE_GENERATED_INTERMEDIATE, defValue = true)
+                    }
+                    "advanced"->{
+                        showBtn = PrefManager.getBoolValue(IS_CERTIFICATE_GENERATED_ADVANCED, defValue = true)
+                    }
+                }
+                if (showBtn) {
                     checkExamDetails.visibility = View.GONE
                 }else{
                     downloadCertificateBtn.text = "Show Certificate"
@@ -131,5 +136,9 @@ class ReportOverviewView1(private val certificateExamReport: CertificateExamRepo
     @Click(R.id.check_exam_details)
     fun checkExamDetails() {
         RxBus2.publish(EmptyEventBus())
+    }
+
+    fun checkExamType(certificateExamType: String) {
+        examType = certificateExamType
     }
 }

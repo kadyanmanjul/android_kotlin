@@ -294,6 +294,9 @@ interface CommonNetworkService {
     @POST("$DIR/impression/certificateexam_impression/")
     suspend fun saveCertificateImpression(@Body params: Map<String, String>): Response<Unit>
 
+    @GET("$DIR/certificateexam/get_exam_type_from_id/")
+    suspend fun getCertificateExamType(@Query("exam_id") params: String): Map<String, String>
+
     @PATCH("$DIR/impression/user_profile_section_impression/")
     suspend fun engageUserProfileSectionTime(@Body params: Map<String, String>): Any
 

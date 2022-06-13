@@ -92,6 +92,9 @@ class CertificateDetailActivity : BaseActivity(), FileDownloadCallback {
             DataBindingUtil.setContentView(this, R.layout.activity_certificate_detail)
         binding.lifecycleOwner = this
         binding.handler = this
+        if(intent.hasExtra(CERTIFICATE_EXAM_ID)){
+            intent.getIntExtra(CERTIFICATE_EXAM_ID,0).let { viewModel.certificateExamId =it }
+        }
         if (intent.hasExtra(CERTIFICATE_URL) && intent.getStringExtra(CERTIFICATE_URL) != null) {
             intent.getStringExtra(CERTIFICATE_URL)?.let { openCertificateShareFragment(it) }
             initView()
@@ -101,7 +104,6 @@ class CertificateDetailActivity : BaseActivity(), FileDownloadCallback {
             addObserver()
             viewModel.getCertificateUserDetails()
         }
-
     }
 
     private fun initView() {
@@ -336,6 +338,7 @@ class CertificateDetailActivity : BaseActivity(), FileDownloadCallback {
             viewModel.saveImpression(GENERATE_CERTIFICATE_FORM)
             try {
                 val view = window.currentFocus
+                view?.clearFocus()
                 val inputMethodManager = this@CertificateDetailActivity.applicationContext.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 inputMethodManager.hideSoftInputFromWindow(view?.windowToken,0)
             }catch (e:Exception){
@@ -421,19 +424,23 @@ class CertificateDetailActivity : BaseActivity(), FileDownloadCallback {
             rId: Int = -1,
             conversationId: String? = null,
             certificateUrl: String? = null,
+            certificateExamId:Int?= null
         ): Intent {
             return Intent(context, CertificateDetailActivity::class.java).apply {
                 putExtra(CONVERSATION_ID, conversationId)
                 putExtra(REPORT_ID, rId)
                 putExtra(CERTIFICATE_URL,certificateUrl)
+                putExtra(CERTIFICATE_EXAM_ID,certificateExamId)
             }
         }
     }
     private fun openCertificateShareFragment(url: String) {
         supportFragmentManager.commit {
             setReorderingAllowed(true)
-            val fragment = CertificateShareFragment.newInstance(url)
-            replace(R.id.container_frame, fragment, CERTIFICATE_SHARE_FRAGMENT)
+            val fragment = viewModel.certificateExamId?.let { CertificateShareFragment.newInstance(url, certificateExamId = it) }
+            if (fragment != null) {
+                replace(R.id.container_frame, fragment, CERTIFICATE_SHARE_FRAGMENT)
+            }
         }
     }
     /*fun showProgressDialog(msg: String) {

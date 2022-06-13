@@ -87,6 +87,7 @@ class CertificationBaseActivity : BaseActivity() {
         addObserver()
         intent.getIntExtra(CERTIFICATION_EXAM_ID, -1).let {
             certificateExamId = it
+            viewModel.certificateExamId = it
         }
         cExamStatus = intent.getSerializableExtra(EXAM_STATUS) as CExamStatus
         intent.getStringExtra(CONVERSATION_ID)?.let {

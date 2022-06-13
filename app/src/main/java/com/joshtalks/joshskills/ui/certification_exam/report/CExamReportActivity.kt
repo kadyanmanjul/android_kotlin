@@ -6,7 +6,6 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.LinearLayout
 import androidx.activity.result.ActivityResultLauncher
@@ -19,10 +18,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayoutMediator
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.BaseActivity
-import com.joshtalks.joshskills.core.IS_CERTIFICATE_GENERATED
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.interfaces.FileDownloadCallback
@@ -67,7 +63,6 @@ class CExamReportActivity : BaseActivity(), FileDownloadCallback {
                     val localPath = result.data?.getStringExtra(LOCAL_DOWNLOAD_URL)
                     if (localPath.isNullOrEmpty()) {
                         //TODO: Have to understand what ill happed
-                        Log.e("MihirTag", "Tell me wat tot do")
                     } else {
                         downloadedFile(localPath)
                     }
@@ -93,6 +88,8 @@ class CExamReportActivity : BaseActivity(), FileDownloadCallback {
         if (certificateExamId == -1) {
             this.finish()
             return
+        }else{
+            viewModel.certificateExamId = certificateExamId
         }
         certificationQuestionModel =
             intent.getParcelableExtra(CERTIFICATION_EXAM_QUESTION) as CertificationQuestionModel?
@@ -113,12 +110,10 @@ class CExamReportActivity : BaseActivity(), FileDownloadCallback {
             certificateList?.run {
                 setUpExamViewPager(this)
                 certificateList.lastOrNull()?.let {
-                    val prefManager = PreferenceManager.getDefaultSharedPreferences(this@CExamReportActivity)
-                    if (!prefManager.getBoolean("ExamPointsPrompt", false)) {
+                    if (!PrefManager.getBoolValue(IS_EXAM_POINTS_PROMPT, defValue = false)) {
                         if (it.points.isNullOrBlank().not()) {
                             showSnackBar(binding.rootView, Snackbar.LENGTH_LONG, it.points)
-                            val prefEdit = prefManager.edit()
-                            prefEdit.putBoolean("ExamPointsPrompt", true).apply()
+                            PrefManager.put(IS_EXAM_POINTS_PROMPT, true)
                         }
                     }
                 }
@@ -193,7 +188,20 @@ class CExamReportActivity : BaseActivity(), FileDownloadCallback {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                     {
-                        if (PrefManager.getBoolValue(IS_CERTIFICATE_GENERATED, defValue = true)) {
+                        val examType = viewModel.certificationQuestionLiveData.value?.type
+                        var impressionCheck = false
+                        when (examType){
+                            "beginner"->{
+                                impressionCheck = PrefManager.getBoolValue(IS_CERTIFICATE_GENERATED_BEGINNER, defValue = true)
+                            }
+                            "intermediate"->{
+                                impressionCheck = PrefManager.getBoolValue(IS_CERTIFICATE_GENERATED_INTERMEDIATE, defValue = true)
+                            }
+                            "advanced"->{
+                                impressionCheck = PrefManager.getBoolValue(IS_CERTIFICATE_GENERATED_ADVANCED, defValue = true)
+                            }
+                        }
+                        if (impressionCheck) {
                             viewModel.saveImpression(GENERATE_CERTIFICATE)
                         }else{
                             viewModel.saveImpression(SHOW_CERTIFICATE)
@@ -201,12 +209,12 @@ class CExamReportActivity : BaseActivity(), FileDownloadCallback {
                         val cPos = binding.examReportList.currentItem
                         val url =
                             viewModel.examReportLiveData.value?.getOrNull(cPos)?.certificateURL
-                        Log.i("Mihir", "addRxbusObserver: $it")
                         userDetailsActivityResult.launch(
                             CertificateDetailActivity.startUserDetailsActivity(
                                 this, rId = it.id,
                                 conversationId = getConversationId(),
-                                certificateUrl = url
+                                certificateUrl = url,
+                                certificateExamId = certificateExamId
                             )
                         )
                         return@subscribe

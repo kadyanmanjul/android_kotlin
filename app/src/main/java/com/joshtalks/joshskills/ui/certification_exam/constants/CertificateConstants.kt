@@ -8,6 +8,12 @@ const val REPORT_ID = "report_id"
 const val COUNTRY_CODE = "+91"
 const val CERTIFICATE_URL = "certificate_url"
 const val LOCAL_DOWNLOAD_URL = "local_download_url"
+const val CERTIFICATE_EXAM_ID = "certificateExamId"
+
+const val PACKAGE_NAME_WHATSAPP = "com.whatsapp"
+const val PACKAGE_NAME_FACEBOOK = "com.facebook.android"
+const val PACKAGE_NAME_LINKEDIN = "com.linkedin.android"
+const val PACKAGE_NAME_INSTA = "com.instagram.android"
 
 const val CERTIFICATE_SHARED_WHATSAPP = "CERTIFICATE_SHARED_WHATSAPP"
 const val CERTIFICATE_SHARED_FB = "CERTIFICATE_SHARED_FB"

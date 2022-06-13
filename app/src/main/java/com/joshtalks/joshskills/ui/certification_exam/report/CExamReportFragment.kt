@@ -90,6 +90,7 @@ class CExamReportFragment : Fragment() {
             binding.chatRv.addView(ReportOverviewView1(this))
             binding.chatRv.addView(ReportOverviewView2(this, questionList))
             updateRvScrolling(true)
+            viewModel.certificationQuestionLiveData.value?.type?.let { ReportOverviewView1(this).checkExamType(it) }
         }
     }
 

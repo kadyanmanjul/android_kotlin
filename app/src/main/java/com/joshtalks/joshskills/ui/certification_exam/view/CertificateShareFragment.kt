@@ -9,7 +9,6 @@ import android.content.IntentFilter
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -40,8 +39,8 @@ class CertificateShareFragment : CoreJoshFragment() {
     }
     private lateinit var url: String
     private var packageName = "null"
-    private var DownloadId by Delegates.notNull<Long>()
-    private var Message = ""
+    private var downloadId by Delegates.notNull<Long>()
+    private var message = ""
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -49,16 +48,31 @@ class CertificateShareFragment : CoreJoshFragment() {
         arguments?.let {
             url = it.getString(CERTIFICATE_URL, EMPTY)
         }
+
+        viewModel.certificationQuestionLiveData.observe(requireActivity()){
+
+        }
         requireActivity().registerReceiver(onComplete, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_certificate_share, container, false)
         binding.lifecycleOwner = this
         binding.handler = this
         binding.txtYouHaveEarned.visibility = View.GONE
-        PrefManager.put(IS_CERTIFICATE_GENERATED, false)
+        viewModel.certificateExamId = arguments?.getInt(CERTIFICATE_EXAM_ID)
+        when (viewModel.certificationQuestionLiveData.value?.type){
+            "beginner"->{
+                PrefManager.put(IS_CERTIFICATE_GENERATED_BEGINNER, false)
+            }
+            "intermediate"->{
+                PrefManager.put(IS_CERTIFICATE_GENERATED_INTERMEDIATE, false)
+            }
+            "advanced"->{
+                PrefManager.put(IS_CERTIFICATE_GENERATED_ADVANCED, false)
+            }
+        }
         Glide.with(binding.imgCertificate.context).load(url)
             .into(binding.imgCertificate)
 
-        if (isPackageInstalled("com.whatsapp") && PrefManager.getBoolValue(IS_FIRST_TIME_CERTIFICATE, defValue = true)) {
+        if (isPackageInstalled(PACKAGE_NAME_WHATSAPP) && PrefManager.getBoolValue(IS_FIRST_TIME_CERTIFICATE, defValue = true)) {
             with(binding) {
                 btnShareWhatsapp.visibility = View.VISIBLE
                 btnShareFacebook.visibility = View.GONE
@@ -70,15 +84,14 @@ class CertificateShareFragment : CoreJoshFragment() {
         } else {
             with(binding) {
                 btnShareDownload.isVisible = true
-                btnShareFacebook.isVisible = isPackageInstalled("com.facebook.android")
-                btnShareInsta.isVisible = isPackageInstalled("com.instagram.android")
-                btnShareLinkedIn.isVisible = isPackageInstalled("com.linkedin.android")
+                btnShareFacebook.isVisible = isPackageInstalled(PACKAGE_NAME_FACEBOOK)
+                btnShareInsta.isVisible = isPackageInstalled(PACKAGE_NAME_INSTA)
+                btnShareLinkedIn.isVisible = isPackageInstalled(PACKAGE_NAME_LINKEDIN)
             }
         }
         binding.txtCongratulations.text = "Congratulations, ${User.getInstance().firstName}!"
 
         binding.btnShareWhatsapp.setOnClickListener {
-            Log.i("TAG", "onCreateView: $url")
             packageName = "whatsapp"
             binding.progressBar2.visibility = View.VISIBLE
             downloadImage(url)
@@ -128,7 +141,7 @@ class CertificateShareFragment : CoreJoshFragment() {
                         intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION;
                         try {
                             if (intent.resolveActivity(requireActivity().packageManager) == null) {
-                                Toast.makeText(requireContext(), "$packageName not found on device", Toast.LENGTH_LONG).show()
+                                showToast("$packageName not found on device", Toast.LENGTH_LONG)
                             }
                             startActivity(intent)
                         } catch (e: Exception) {
@@ -137,7 +150,7 @@ class CertificateShareFragment : CoreJoshFragment() {
                         return
                     }
                     if (report.isAnyPermissionPermanentlyDenied) {
-                        Toast.makeText(context, "Permission denied", Toast.LENGTH_LONG).show()
+                        showToast("Permission denied", Toast.LENGTH_LONG)
                     }
                 }
             }
@@ -162,19 +175,19 @@ class CertificateShareFragment : CoreJoshFragment() {
                         val downloadUri = Uri.parse(url)
 
                         val request = DownloadManager.Request(downloadUri)
-                        val fileName = "test${System.currentTimeMillis()}.jpeg"
+                        val fileName = "${User.getInstance().firstName}.jpeg"
                         request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
-                            .setMimeType("image/*")
-                            .setTitle(URLUtil.guessFileName(url, null, "image/png"))
+                            .setMimeType("image/jpeg")
+                            .setTitle("${User.getInstance().firstName}.jpeg")
                             .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
                             .setDestinationInExternalPublicDir(
                                 Environment.DIRECTORY_DOWNLOADS, fileName
                             )
-                        DownloadId = downloadManager.enqueue(request)
+                        downloadId = downloadManager.enqueue(request)
                         return
                     }
                     if (report.isAnyPermissionPermanentlyDenied) {
-                        Toast.makeText(context, "Permission denied", Toast.LENGTH_LONG).show()
+                        showToast("Permission denied", Toast.LENGTH_LONG)
                     }
                 }
             }
@@ -194,7 +207,7 @@ class CertificateShareFragment : CoreJoshFragment() {
             if (intent.action == DownloadManager.ACTION_DOWNLOAD_COMPLETE) {
                 intent.extras?.let {
                     val id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0L)
-                    if (id == DownloadId) { // checking if the downloaded file is our certificate
+                    if (id == downloadId) { // checking if the downloaded file is our certificate
                         //retrieving the file
                         binding.progressBar2.visibility = View.GONE
                         val downloadedFileId = it.getLong(DownloadManager.EXTRA_DOWNLOAD_ID)
@@ -202,28 +215,28 @@ class CertificateShareFragment : CoreJoshFragment() {
                         val uri: Uri = downloadManager.getUriForDownloadedFile(downloadedFileId)
                         when (packageName) {
                             "whatsapp" -> {
-                                Message = AppObjectController.getFirebaseRemoteConfig()
+                                message = AppObjectController.getFirebaseRemoteConfig()
                                     .getString(FirebaseRemoteConfigKey.CERTIFICATE_SHARE_TEXT_WHATSAPP)
                             }
                             "facebook.android" -> {
-                                Message = AppObjectController.getFirebaseRemoteConfig()
+                                message = AppObjectController.getFirebaseRemoteConfig()
                                     .getString(FirebaseRemoteConfigKey.CERTIFICATE_SHARE_TEXT_FB)
                             }
                             "instagram.android" -> {
-                                Message = AppObjectController.getFirebaseRemoteConfig()
+                                message = AppObjectController.getFirebaseRemoteConfig()
                                     .getString(FirebaseRemoteConfigKey.CERTIFICATE_SHARE_TEXT_INSTA)
                             }
                             "linkedin.android" -> {
-                                Message = AppObjectController.getFirebaseRemoteConfig()
+                                message = AppObjectController.getFirebaseRemoteConfig()
                                     .getString(FirebaseRemoteConfigKey.CERTIFICATE_SHARE_TEXT_LINKEDIN)
                             }
                             "null" -> {
-                                Message = ""
-                                Toast.makeText(requireContext(), "Certificate Downloaded", Toast.LENGTH_LONG).show()
+                                message = ""
+                                showToast("Certificate Downloaded", Toast.LENGTH_LONG)
                             }
                         }
-                        if (Message != "" && packageName != "null") {
-                            shareOn(packageName, Message, uri)
+                        if (message != "" && packageName != "null") {
+                            shareOn(packageName, message, uri)
                         }
                     }
                 }
@@ -239,9 +252,10 @@ class CertificateShareFragment : CoreJoshFragment() {
     }
 
     companion object {
-        fun newInstance(certificateUrl: String): CertificateShareFragment {
+        fun newInstance(certificateUrl: String,certificateExamId:Int): CertificateShareFragment {
             val args = Bundle()
             args.putString(CERTIFICATE_URL, certificateUrl)
+            args.putInt(CERTIFICATE_EXAM_ID, certificateExamId)
             val fragment = CertificateShareFragment()
             fragment.arguments = args
             return fragment
