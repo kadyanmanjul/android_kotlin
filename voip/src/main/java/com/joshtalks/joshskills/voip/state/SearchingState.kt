@@ -9,6 +9,7 @@ import com.joshtalks.joshskills.voip.communication.model.ChannelData
 import com.joshtalks.joshskills.voip.communication.model.NetworkAction
 import com.joshtalks.joshskills.voip.communication.model.Timeout
 import com.joshtalks.joshskills.voip.communication.model.UserAction
+import com.joshtalks.joshskills.voip.constant.Event
 import com.joshtalks.joshskills.voip.constant.Event.RECEIVED_CHANNEL_DATA
 import com.joshtalks.joshskills.voip.constant.Event.REMOTE_USER_DISCONNECTED_AGORA
 import com.joshtalks.joshskills.voip.constant.Event.REMOTE_USER_DISCONNECTED_MESSAGE
@@ -233,7 +234,11 @@ class SearchingState(val context: CallContext) : VoipState {
                             Log.d(TAG, "Received : ${event.type} switched to ${context.state}")
                             break@loop
                         }
-                        TOPIC_IMAGE_RECEIVED, SYNC_UI_STATE, REMOTE_USER_DISCONNECTED_MESSAGE, REMOTE_USER_DISCONNECTED_AGORA, REMOTE_USER_DISCONNECTED_USER_LEFT -> {
+                        TOPIC_IMAGE_RECEIVED, SYNC_UI_STATE, REMOTE_USER_DISCONNECTED_MESSAGE,
+                        REMOTE_USER_DISCONNECTED_AGORA, REMOTE_USER_DISCONNECTED_USER_LEFT,
+                        Event.START_RECORDING, Event.STOP_RECORDING, Event.CALL_RECORDING_ACCEPT,
+                        Event.CALL_RECORDING_REJECT, Event.CANCEL_RECORDING_REQUEST  -> {
+
                             val msg =
                                 "Ignoring : In $TAG but received ${event.type} expected $RECEIVED_CHANNEL_DATA"
                             CallAnalytics.addAnalytics(

@@ -72,6 +72,7 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
     private var singleLiveEvent = EventLiveData
     var recordFile: File? = null
     var visibleCrdView = false
+    var isListening = false
 
     private val connectCallJob by lazy {
         viewModelScope.launch(start = CoroutineStart.LAZY) {
@@ -94,9 +95,12 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
             repository.observeRepositoryEvents().collect {
                 when (it) {
                     CONNECTION_ESTABLISHED -> {
-                        listenUIState()
-                        listenVoipEvents()
-                        connectCall()
+                        if (isListening.not()) {
+                            isListening  = true
+                            listenUIState()
+                            listenVoipEvents()
+                            connectCall()
+                        }
                     }
                 }
             }
@@ -142,7 +146,7 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                         }
                         if (uiState.recordingButtonState == RecordingButtonState.RECORDING) {
                             //stopRecording()
-                            repository.stopAgoraCAllRecording()
+                            repository.stopAgoraClientCallRecording()
                         }
                     }
                     ServiceEvents.RECONNECTING_FAILED -> {
@@ -155,16 +159,16 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                     }
                     // remote user event
                     ServiceEvents.START_RECORDING -> {
-                        val msg = Message.obtain().apply {
+                        /*val msg = Message.obtain().apply {
                             what = SHOW_RECORDING_PERMISSION_DIALOG
                         }
                         withContext(Dispatchers.Main) {
                             singleLiveEvent.value = msg
-                        }
+                        }*/
                     }
                     ServiceEvents.STOP_RECORDING -> {
                         //stopRecording()
-                        repository.stopAgoraCAllRecording()
+                        repository.stopAgoraClientCallRecording()
                         stoppedRecUIchanges()
                     }
                     ServiceEvents.CALL_RECORDING_ACCEPT -> {
@@ -251,6 +255,15 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                 if (uiState.startTime != state.startTime)
                     uiState.startTime = state.startTime
                 uiState.isRecordingEnabled = state.isRecordingEnabled
+                // TODO remove this logic from here ( issues: fix when state is REQUESTED we have to show dialog even when other user come back from background )
+                if (state.recordingButtonState == RecordingButtonState.REQUESTED && uiState.recordingButtonState != RecordingButtonState.REQUESTED){
+                    val msg = Message.obtain().apply {
+                        what = SHOW_RECORDING_PERMISSION_DIALOG
+                    }
+                    withContext(Dispatchers.Main) {
+                        singleLiveEvent.value = msg
+                    }
+                }
                 uiState.recordingButtonState = state.recordingButtonState
                 if (uiState.recordTime != state.recordingStartTime)
                     uiState.recordTime = state.recordingStartTime
@@ -402,7 +415,7 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                     agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
                 )
                 stoppedRecUIchanges()
-                repository.stopAgoraCAllRecording()
+                repository.stopAgoraClientCallRecording()
                 repository.stopCallRecording()
             }
             RecordingButtonState.RECORDING -> {
@@ -413,7 +426,7 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                 )
                 stoppedRecUIchanges()
                 //stopRecording()
-                repository.stopAgoraCAllRecording()
+                repository.stopAgoraClientCallRecording()
                 repository.stopCallRecording()
             }
         }

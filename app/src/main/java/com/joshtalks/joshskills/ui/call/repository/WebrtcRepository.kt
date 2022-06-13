@@ -121,7 +121,7 @@ class WebrtcRepository(scope : CoroutineScope) {
         mService?.startAgoraRecording()
     }
 
-    fun stopAgoraCAllRecording(){
+    fun stopAgoraClientCallRecording(){
         Log.d(TAG, "acceptCallRecording: ")
         mService?.stopAgoraCallRecording()
     }
