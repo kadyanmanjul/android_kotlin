@@ -73,6 +73,7 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
     var recordFile: File? = null
     var visibleCrdView = false
     var isListening = false
+    var isRequestDialogShowed = false
 
     private val connectCallJob by lazy {
         viewModelScope.launch(start = CoroutineStart.LAZY) {
