@@ -10,7 +10,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.util.DisplayMetrics
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewOutlineProvider
@@ -839,11 +838,14 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
             CoroutineScope(Dispatchers.IO).launch {
                 viewModel.lessonLiveData.value?.let { lesson ->
                     var lessonCompleted = lesson.grammarStatus == LESSON_STATUS.CO &&
-                            lesson.translationStatus == LESSON_STATUS.CO &&
                             lesson.vocabStatus == LESSON_STATUS.CO &&
                             lesson.readingStatus == LESSON_STATUS.CO &&
                             lesson.speakingStatus == LESSON_STATUS.CO
 
+                    if (lesson.isNewGrammar && PrefManager.getBoolValue(IS_A2_C1_RETENTION_ENABLED)) {
+                        lessonCompleted = lessonCompleted &&
+                                lesson.translationStatus == LESSON_STATUS.CO
+                    }
                     if (viewModel.lessonIsConvoRoomActive) {
                         lessonCompleted = lessonCompleted &&
                                 lesson.conversationStatus == LESSON_STATUS.CO
