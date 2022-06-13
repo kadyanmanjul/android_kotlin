@@ -1143,7 +1143,6 @@ class ReadingFragmentWithoutFeedback :
             )
         )
         binding.audioListRv.setHasFixedSize(false)
-        binding.audioListRv.layoutManager = layoutManager
         binding.audioListRv.addItemDecoration(divider)
         binding.audioListRv.enforceSingleScrollDirection()
         binding.audioListRv.adapter = praticAudioAdapter
