@@ -201,10 +201,13 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                             singleLiveEvent.value = msg
                         }
                     }
-                    ServiceEvents.PROCESS_AGORA_CALL_RECORDING ->
+                    ServiceEvents.PROCESS_AGORA_CALL_RECORDING -> {
+                        Log.d(TAG, "listenVoipEvents() called")
                         File(PrefManager.getLastRecordingPath())?.let {
+                            Log.d(TAG, "listenVoipEvents() called getLastRecordingPath $it")
                             stopRecording(it)
-                        }
+                    }
+                }
                 }
             }
         }
@@ -256,7 +259,9 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                     uiState.startTime = state.startTime
                 uiState.isRecordingEnabled = state.isRecordingEnabled
                 // TODO remove this logic from here ( issues: fix when state is REQUESTED we have to show dialog even when other user come back from background )
-                if (state.recordingButtonState == RecordingButtonState.REQUESTED && uiState.recordingButtonState != RecordingButtonState.REQUESTED){
+                if (state.recordingButtonState == RecordingButtonState.REQUESTED
+                    && uiState.recordingButtonState != RecordingButtonState.REQUESTED
+                    && uiState.recordBtnTxt.equals("Record")) {
                     val msg = Message.obtain().apply {
                         what = SHOW_RECORDING_PERMISSION_DIALOG
                     }
