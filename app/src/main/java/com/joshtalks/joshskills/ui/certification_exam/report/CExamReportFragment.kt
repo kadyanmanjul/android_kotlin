@@ -84,8 +84,8 @@ class CExamReportFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        id = certificateExamReport!!.reportId
-        url = certificateExamReport!!.certificateURL?:EMPTY
+        id = certificateExamReport?.reportId
+        url = certificateExamReport?.certificateURL?:EMPTY
         certificateExamReport?.run {
             binding.chatRv.addView(ReportOverviewView1(this))
             binding.chatRv.addView(ReportOverviewView2(this, questionList))

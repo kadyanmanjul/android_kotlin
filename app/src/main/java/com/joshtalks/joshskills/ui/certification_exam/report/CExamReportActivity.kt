@@ -35,10 +35,7 @@ import com.joshtalks.joshskills.repository.server.certification_exam.QuestionRep
 import com.joshtalks.joshskills.ui.certification_exam.CERTIFICATION_EXAM_ID
 import com.joshtalks.joshskills.ui.certification_exam.CERTIFICATION_EXAM_QUESTION
 import com.joshtalks.joshskills.ui.certification_exam.CertificationExamViewModel
-import com.joshtalks.joshskills.ui.certification_exam.constants.CERTIFICATE_URL
-import com.joshtalks.joshskills.ui.certification_exam.constants.GENERATE_CERTIFICATE
-import com.joshtalks.joshskills.ui.certification_exam.constants.LOCAL_DOWNLOAD_URL
-import com.joshtalks.joshskills.ui.certification_exam.constants.SHOW_CERTIFICATE
+import com.joshtalks.joshskills.ui.certification_exam.constants.*
 import com.joshtalks.joshskills.ui.certification_exam.examview.CExamMainActivity
 import com.joshtalks.joshskills.ui.certification_exam.report.udetail.CertificateDetailActivity
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -191,13 +188,13 @@ class CExamReportActivity : BaseActivity(), FileDownloadCallback {
                         val examType = viewModel.certificationQuestionLiveData.value?.type
                         var impressionCheck = false
                         when (examType){
-                            "beginner"->{
+                            EXAM_TYPE_BEGINNER->{
                                 impressionCheck = PrefManager.getBoolValue(IS_CERTIFICATE_GENERATED_BEGINNER, defValue = true)
                             }
-                            "intermediate"->{
+                            EXAM_TYPE_INTERMEDIATE->{
                                 impressionCheck = PrefManager.getBoolValue(IS_CERTIFICATE_GENERATED_INTERMEDIATE, defValue = true)
                             }
-                            "advanced"->{
+                            EXAM_TYPE_ADVANCED->{
                                 impressionCheck = PrefManager.getBoolValue(IS_CERTIFICATE_GENERATED_ADVANCED, defValue = true)
                             }
                         }

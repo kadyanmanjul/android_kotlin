@@ -67,7 +67,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:layout_marginTop="@dimen/_14sdp"
-                        android:text="Full Name"
+                        android:text="@string/full_name"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
                         android:textColor="@color/black" />
 
@@ -76,7 +76,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:layout_marginTop="@dimen/_3sdp"
-                        android:text="As per Aadhar Card, for certificate"
+                        android:text="@string/as_per_aadhar_card_for_certificate"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
                         android:textColor="@color/a3a3a3" />
 
@@ -108,7 +108,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:layout_marginTop="@dimen/_14sdp"
-                        android:text="Date of Birth"
+                        android:text="@string/certi_date_of_birth"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
                         android:textColor="@color/black" />
 
@@ -117,7 +117,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:layout_marginTop="@dimen/_3sdp"
-                        android:text="As per Aadhar Card, for certificate"
+                        android:text="@string/as_per_aadhar_card_for_certificate"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
                         android:textColor="@color/a3a3a3" />
 
@@ -147,7 +147,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:layout_marginTop="@dimen/_14sdp"
-                        android:text="Mother’s Name"
+                        android:text="@string/mother_s_name"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
                         android:textColor="@color/black" />
 
@@ -178,7 +178,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:layout_marginTop="@dimen/_14sdp"
-                        android:text="Father’s Name"
+                        android:text="@string/father_s_name"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
                         android:textColor="@color/black" />
 
@@ -209,7 +209,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:layout_marginTop="@dimen/_14sdp"
-                        android:text="Mobile Number"
+                        android:text="@string/mobile_number"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
                         android:textColor="@color/black" />
 
@@ -238,7 +238,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:layout_marginTop="@dimen/_14sdp"
-                        android:text="Email Address"
+                        android:text="@string/certi_email_address"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
                         android:textColor="@color/black" />
 
@@ -265,7 +265,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:layout_marginTop="@dimen/_14sdp"
-                        android:text="Postal Address"
+                        android:text="@string/postal_address"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
                         android:textColor="@color/black"
                         android:visibility="gone"
@@ -277,7 +277,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:layout_marginTop="@dimen/_3sdp"
-                        android:text="For sending the certificate"
+                        android:text="@string/for_sending_the_certificate"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
                         android:textColor="@color/a3a3a3"
                         android:visibility="gone"

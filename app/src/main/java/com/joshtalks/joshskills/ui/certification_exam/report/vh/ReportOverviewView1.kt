@@ -19,11 +19,15 @@ import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.DownloadFileEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.EmptyEventBus
 import com.joshtalks.joshskills.repository.server.certification_exam.CertificateExamReportModel
+import com.joshtalks.joshskills.ui.certification_exam.constants.EXAM_TYPE_ADVANCED
+import com.joshtalks.joshskills.ui.certification_exam.constants.EXAM_TYPE_BEGINNER
+import com.joshtalks.joshskills.ui.certification_exam.constants.EXAM_TYPE_INTERMEDIATE
 import com.mindorks.placeholderview.annotations.Click
 import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
 import java.text.DecimalFormat
 
+const val BTN_CHANGED_TEXT = "Show Certificate"
 @SuppressLint("NonConstantResourceId")
 @Layout(R.layout.layout_report_overview_view1)
 class ReportOverviewView1(private val certificateExamReport: CertificateExamReportModel) {
@@ -86,20 +90,20 @@ class ReportOverviewView1(private val certificateExamReport: CertificateExamRepo
                 }
                 var showBtn = false
                 when (examType){
-                    "beginner"->{
+                    EXAM_TYPE_BEGINNER->{
                         showBtn = PrefManager.getBoolValue(IS_CERTIFICATE_GENERATED_BEGINNER, defValue = true)
                     }
-                    "intermediate"->{
+                    EXAM_TYPE_INTERMEDIATE->{
                         showBtn = PrefManager.getBoolValue(IS_CERTIFICATE_GENERATED_INTERMEDIATE, defValue = true)
                     }
-                    "advanced"->{
+                    EXAM_TYPE_ADVANCED->{
                         showBtn = PrefManager.getBoolValue(IS_CERTIFICATE_GENERATED_ADVANCED, defValue = true)
                     }
                 }
                 if (showBtn) {
                     checkExamDetails.visibility = View.GONE
                 }else{
-                    downloadCertificateBtn.text = "Show Certificate"
+                    downloadCertificateBtn.text = BTN_CHANGED_TEXT
                     checkExamDetails.visibility = View.VISIBLE
                 }
             }

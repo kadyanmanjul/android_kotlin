@@ -66,6 +66,8 @@ const val REPORT_ID = "report_id"
 const val COUNTRY_CODE = "+91"
 const val CERTIFICATE_URL = "certificate_url"
 const val LOCAL_DOWNLOAD_URL = "local_download_url"
+const val CERTI_DETAILS = "Certificate Details"
+const val EXAMINATION_CERTI = "Examination Certificate"
 
 class CertificateDetailActivity : BaseActivity(), FileDownloadCallback {
 
@@ -113,14 +115,14 @@ class CertificateDetailActivity : BaseActivity(), FileDownloadCallback {
                 this@CertificateDetailActivity.finish()
             }
         }
-        findViewById<AppCompatTextView>(R.id.text_message_title).text = "Certificate Details"
+        findViewById<AppCompatTextView>(R.id.text_message_title).text = CERTI_DETAILS
         findViewById<AppCompatImageView>(R.id.iv_icon_referral).visibility = View.GONE
         if (intent.hasExtra(CERTIFICATE_URL) && intent.getStringExtra(CERTIFICATE_URL) != null) {
-            findViewById<AppCompatTextView>(R.id.text_message_title).text = "Examination Certificate"
+            findViewById<AppCompatTextView>(R.id.text_message_title).text = EXAMINATION_CERTI
             hideProgressBar()
             binding.progressBar.visibility = View.GONE
         }else {
-            findViewById<AppCompatTextView>(R.id.text_message_title).text = "Certificate Details"
+            findViewById<AppCompatTextView>(R.id.text_message_title).text = CERTI_DETAILS
             mCredentialsApiClient = Credentials.getClient(this)
             binding.etMobile.setOnFocusChangeListener { v, hasFocus ->
                 if (hasFocus)

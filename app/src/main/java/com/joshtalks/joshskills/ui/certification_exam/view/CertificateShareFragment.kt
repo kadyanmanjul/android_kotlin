@@ -31,6 +31,11 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.moengage.core.internal.utils.getSystemService
 import kotlin.properties.Delegates
 
+private const val PKG_AFTER_COM_WHATSAPP ="whatsapp"
+private const val PKG_AFTER_COM_FACEBOOK ="facebook.android"
+private const val PKG_AFTER_COM_LINKEDIN ="linkedin.android"
+private const val PKG_AFTER_COM_INSTA ="instagram.android"
+private const val NULL ="null"
 class CertificateShareFragment : CoreJoshFragment() {
 
     private lateinit var binding: FragmentCertificateShareBinding
@@ -38,7 +43,7 @@ class CertificateShareFragment : CoreJoshFragment() {
         ViewModelProvider(this).get(CertificationExamViewModel::class.java)
     }
     private lateinit var url: String
-    private var packageName = "null"
+    private var packageName =  NULL
     private var downloadId by Delegates.notNull<Long>()
     private var message = ""
     override fun onCreateView(
@@ -59,31 +64,38 @@ class CertificateShareFragment : CoreJoshFragment() {
         binding.txtYouHaveEarned.visibility = View.GONE
         viewModel.certificateExamId = arguments?.getInt(CERTIFICATE_EXAM_ID)
         when (viewModel.certificationQuestionLiveData.value?.type){
-            "beginner"->{
+            EXAM_TYPE_BEGINNER->{
                 PrefManager.put(IS_CERTIFICATE_GENERATED_BEGINNER, false)
             }
-            "intermediate"->{
+            EXAM_TYPE_INTERMEDIATE->{
                 PrefManager.put(IS_CERTIFICATE_GENERATED_INTERMEDIATE, false)
             }
-            "advanced"->{
+            EXAM_TYPE_ADVANCED->{
                 PrefManager.put(IS_CERTIFICATE_GENERATED_ADVANCED, false)
             }
         }
         Glide.with(binding.imgCertificate.context).load(url)
             .into(binding.imgCertificate)
 
-        if (isPackageInstalled(PACKAGE_NAME_WHATSAPP) && PrefManager.getBoolValue(IS_FIRST_TIME_CERTIFICATE, defValue = true)) {
+        if (PrefManager.getBoolValue(IS_FIRST_TIME_CERTIFICATE, defValue = true)) {
             with(binding) {
-                btnShareWhatsapp.visibility = View.VISIBLE
+                if (isPackageInstalled(PACKAGE_NAME_WHATSAPP)){
+                    btnShareDownload.visibility = View.GONE
+                    btnShareWhatsapp.visibility = View.VISIBLE
+                }
+                else{
+                    btnShareWhatsapp.visibility = View.GONE
+                    btnShareDownload.visibility = View.VISIBLE
+                }
                 btnShareFacebook.visibility = View.GONE
                 btnShareInsta.visibility = View.GONE
                 btnShareLinkedIn.visibility = View.GONE
-                btnShareDownload.visibility = View.GONE
             }
             PrefManager.put(IS_FIRST_TIME_CERTIFICATE, false)
         } else {
             with(binding) {
                 btnShareDownload.isVisible = true
+                btnShareWhatsapp.isVisible = isPackageInstalled(PACKAGE_NAME_WHATSAPP)
                 btnShareFacebook.isVisible = isPackageInstalled(PACKAGE_NAME_FACEBOOK)
                 btnShareInsta.isVisible = isPackageInstalled(PACKAGE_NAME_INSTA)
                 btnShareLinkedIn.isVisible = isPackageInstalled(PACKAGE_NAME_LINKEDIN)
@@ -92,35 +104,35 @@ class CertificateShareFragment : CoreJoshFragment() {
         binding.txtCongratulations.text = "Congratulations, ${User.getInstance().firstName}!"
 
         binding.btnShareWhatsapp.setOnClickListener {
-            packageName = "whatsapp"
+            packageName = PKG_AFTER_COM_WHATSAPP
             binding.progressBar2.visibility = View.VISIBLE
             downloadImage(url)
             viewModel.saveImpression(CERTIFICATE_SHARED_WHATSAPP)
         }
 
         binding.btnShareFacebook.setOnClickListener {
-            packageName = "facebook.android"
+            packageName = PKG_AFTER_COM_FACEBOOK
             binding.progressBar2.visibility = View.VISIBLE
             downloadImage(url)
             viewModel.saveImpression(CERTIFICATE_SHARED_FB)
         }
 
         binding.btnShareInsta.setOnClickListener {
-            packageName = "instagram.android"
+            packageName = PKG_AFTER_COM_INSTA
             binding.progressBar2.visibility = View.VISIBLE
             downloadImage(url)
             viewModel.saveImpression(CERTIFICATE_SHARED_INSTA)
         }
 
         binding.btnShareLinkedIn.setOnClickListener {
-            packageName = "linkedin.android"
+            packageName = PKG_AFTER_COM_LINKEDIN
             binding.progressBar2.visibility = View.VISIBLE
             downloadImage(url)
             viewModel.saveImpression(CERTIFICATE_SHARED_LINKED)
         }
 
         binding.btnShareDownload.setOnClickListener {
-            packageName = "null"
+            packageName = NULL
             binding.progressBar2.visibility = View.VISIBLE
             downloadImage(url)
             viewModel.saveImpression(CERTIFICATE_DOWNLOAD)
@@ -214,28 +226,28 @@ class CertificateShareFragment : CoreJoshFragment() {
                         val downloadManager = getSystemService(requireContext(), DOWNLOAD_SERVICE) as DownloadManager
                         val uri: Uri = downloadManager.getUriForDownloadedFile(downloadedFileId)
                         when (packageName) {
-                            "whatsapp" -> {
+                            PKG_AFTER_COM_WHATSAPP -> {
                                 message = AppObjectController.getFirebaseRemoteConfig()
                                     .getString(FirebaseRemoteConfigKey.CERTIFICATE_SHARE_TEXT_WHATSAPP)
                             }
-                            "facebook.android" -> {
+                            PKG_AFTER_COM_FACEBOOK -> {
                                 message = AppObjectController.getFirebaseRemoteConfig()
                                     .getString(FirebaseRemoteConfigKey.CERTIFICATE_SHARE_TEXT_FB)
                             }
-                            "instagram.android" -> {
+                            PKG_AFTER_COM_INSTA -> {
                                 message = AppObjectController.getFirebaseRemoteConfig()
                                     .getString(FirebaseRemoteConfigKey.CERTIFICATE_SHARE_TEXT_INSTA)
                             }
-                            "linkedin.android" -> {
+                            PKG_AFTER_COM_LINKEDIN -> {
                                 message = AppObjectController.getFirebaseRemoteConfig()
                                     .getString(FirebaseRemoteConfigKey.CERTIFICATE_SHARE_TEXT_LINKEDIN)
                             }
-                            "null" -> {
+                            NULL-> {
                                 message = ""
                                 showToast("Certificate Downloaded", Toast.LENGTH_LONG)
                             }
                         }
-                        if (message != "" && packageName != "null") {
+                        if (message != "" && packageName != NULL) {
                             shareOn(packageName, message, uri)
                         }
                     }
