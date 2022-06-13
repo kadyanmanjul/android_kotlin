@@ -11,7 +11,7 @@ import retrofit2.http.*
 interface ProfileNetworkService {
 
     @GET("$DIR/user/personal_profile/{id}/")
-    suspend fun getProfileForUser(@Path("id") userId: String): Response<ProfileResponse>
+    suspend fun getProfileForUser(@Path("id") userId: String,@Query("from_page")source:String): Response<ProfileResponse>
 
     @GET("$DIR/user/deeplink/profile/{id}/")
     suspend fun getProfileWithoutToken(@Path("id") userId: String): Response<ProfileResponse>

@@ -86,7 +86,7 @@ object PubNubManager {
     }
 
     fun initPubNub() {
-        val pnConf = PNConfiguration()
+        val pnConf = PNConfiguration(User.getInstance().userId)
         pnConf.subscribeKey = BuildConfig.PUBNUB_SUB_API_KEY
         pnConf.publishKey = BuildConfig.PUBNUB_PUB_API_KEY
         pnConf.uuid = User.getInstance().userId

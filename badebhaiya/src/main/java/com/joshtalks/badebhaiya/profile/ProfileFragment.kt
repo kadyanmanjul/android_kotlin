@@ -43,7 +43,6 @@ import com.joshtalks.badebhaiya.liveroom.viewmodel.LiveRoomViewModel
 import com.joshtalks.badebhaiya.notifications.NotificationScheduler
 import com.joshtalks.badebhaiya.profile.request.ReminderRequest
 import com.joshtalks.badebhaiya.profile.response.ProfileResponse
-import com.joshtalks.badebhaiya.pubnub.PubNubState
 import com.joshtalks.badebhaiya.repository.CommonRepository
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomResponse
 import com.joshtalks.badebhaiya.repository.model.User
@@ -63,6 +62,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import kotlinx.coroutines.CoroutineScope
+import java.lang.Exception
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -111,6 +111,8 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         mBundle = this.arguments
         userId=mBundle!!.getString("user")
         isFromDeeplink=mBundle!!.getBoolean("deeplink")
+        source= mBundle.getString("source").toString()
+        Log.i("IMPRESSION", "onCreateView: $source")
         isFromBBPage= mBundle.getBoolean("BBPage")
         source= mBundle.getString("source").toString()
 
@@ -119,7 +121,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
 //        {
 //            showPopup(room.roomId, User.getInstance().userId)
 //        }
-        viewModel.getProfileForUser(userId!!, isFromDeeplink)
+        viewModel.getProfileForUser(userId!!, source)
         feedViewModel.setIsBadeBhaiyaSpeaker()
         binding.handler = this
         binding.viewModel = viewModel
@@ -223,7 +225,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         super.onViewCreated(view, savedInstanceState)
         Timber.d("THIS IS FCM TOKEN => ${PrefManager.getStringValue(com.joshtalks.badebhaiya.notifications.FCM_TOKEN)}")
         addObserver()
-//        viewModel.getProfileForUser(userId!!, isFromDeeplink)
+//        viewModel.getProfileForUser(userId!!, source)
         executePendingActions()
     }
 
@@ -256,8 +258,6 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
             }
         }
         viewModel.speakerFollowed.observe(requireActivity()) {
-            Log.i("LIVEROOMSouRCE", "addObserver: followed ${viewModel.speakerFollowed.value}")
-
             if (it == true) {
                 speakerFollowedUIChanges()
             }
@@ -354,7 +354,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
                     HtmlCompat.FROM_HTML_MODE_LEGACY)
                 //binding.tvFollowers.setText("${it.followersCount+1} followers")
             }
-        viewModel.getProfileForUser(userId ?: (User.getInstance().userId), isFromDeeplink)
+        viewModel.getProfileForUser(userId ?: (User.getInstance().userId), source)
     }
 
     private fun redirectToSignUp(pendingPilotAction: PendingPilotEvent, pendingPilotEventData: PendingPilotEventData) {
@@ -399,6 +399,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
 
             val bundle = Bundle()
             bundle.putString(USER, userId)
+            bundle.putString("source","Unknown")
 
             fragment.arguments = bundle
 
@@ -530,7 +531,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
                     false
                 )
             )
-        viewModel.getProfileForUser(userId ?: (User.getInstance().userId),isFromDeeplink)
+        viewModel.getProfileForUser(userId ?: (User.getInstance().userId),source)
 
     }
 
@@ -539,7 +540,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
 
 
 
-    override fun viewRoom(room: RoomListResponseItem, view: View) {
+    override fun viewRoom(room: RoomListResponseItem, view: View,deeplink: Boolean) {
 
     }
 

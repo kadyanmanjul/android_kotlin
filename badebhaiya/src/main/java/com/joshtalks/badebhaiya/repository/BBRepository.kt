@@ -1,5 +1,6 @@
 package com.joshtalks.badebhaiya.repository
 
+import com.joshtalks.badebhaiya.impressions.Impression
 import com.joshtalks.badebhaiya.profile.response.ProfileResponse
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.repository.peopleToFollow.PeoplePagingSource
@@ -14,9 +15,9 @@ class BBRepository {
     suspend fun verifyOTP(verifyOTPRequest: VerifyOTPRequest) = service.verityOTP(verifyOTPRequest)
     suspend fun getUserDetailsForSignUp(userId: String) = service.getUserProfile(userId)
     suspend fun updateUserProfile(userId: String, requestMap: MutableMap<String, String?>) = service.updateUserProfile(userId, requestMap)
-    suspend fun getProfileForUser(userId: String): Response<ProfileResponse> {
+    suspend fun getProfileForUser(userId: String,source:String): Response<ProfileResponse> {
         return if (User.getInstance().isLoggedIn()){
-            RetrofitInstance.profileNetworkService.getProfileForUser(userId)
+            RetrofitInstance.profileNetworkService.getProfileForUser(userId,source)
         } else {
             RetrofitInstance.profileNetworkService.getProfileWithoutToken(userId)
         }
@@ -27,4 +28,5 @@ class BBRepository {
     suspend fun getBBtoFollowList(page: Int) = service.speakersList(page)
 
      fun bbToFollowPaginatedList() = PeoplePagingSource()
+    suspend fun sendEvent(param: Impression)=service.sendEvent(param)
 }

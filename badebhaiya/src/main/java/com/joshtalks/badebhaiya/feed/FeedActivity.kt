@@ -121,7 +121,6 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
             flags: Array<Int> = arrayOf()
         ) = Intent(context, FeedActivity::class.java).apply {
 
-            Log.i("CHECKNOTIFICATION", "getIntentForNotification: $roomId &&& TOPIC:-$topicName")
             Timber.d("INTENT FOR NOTIFICATION DATA => $roomId $topicName")
             putExtra(OPEN_FROM_NOTIFICATION, true)
             putExtra(ROOM_ID, roomId.toInt())
@@ -231,7 +230,6 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
 
     private fun checkAndOpenLiveRoom() {
         Timber.d("FEED ACIVITY ON RESTART  => ${intent.extras}")
-        Log.i("CHECKNOTIFICATION", "checkAndOpenLiveRoom: ${intent.getIntExtra(ROOM_ID,0)} && topic:-${intent.getStringExtra(TOPIC_NAME)} ----- boolean:- ${intent.getBooleanExtra(OPEN_FROM_NOTIFICATION, false)}")
         if (intent.getBooleanExtra(OPEN_FROM_NOTIFICATION, false)) {
 
             // TODO: Open Live Room.
@@ -244,7 +242,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                     )
                 } and topic name => ${intent.getStringExtra(TOPIC_NAME)}"
             )
-            Log.i("CHECKNOTIFICATION", "checkAndOpenLiveRoom: ${intent.getIntExtra(ROOM_ID,0)} && topic:-${intent.getStringExtra(TOPIC_NAME)}")
+
             takePermissions(
                 intent.getIntExtra(ROOM_ID, 0).toString(),
                 intent.getStringExtra(TOPIC_NAME) ?: ""
@@ -555,16 +553,9 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                 msg = dialogBinding.message.text.toString()
                 val obj= FormResponse(userId,msg,roomId)
                 CoroutineScope(Dispatchers.IO).launch {
-                    try {
-                        val resp= CommonRepository().sendMsg(obj)
-                        if(resp.isSuccessful)
-                            showToast("response Send")
-
-                    }catch (e: Exception){
-
-                    }
-                    alertDialog.dismiss()
-
+                    val resp= CommonRepository().sendMsg(obj)
+                    if(resp.isSuccessful)
+                        alertDialog.dismiss()
 //                    else
 //                        showToast("An Error Occured")
                 }
@@ -594,7 +585,11 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         val bundle = Bundle()
         val fragmentTransaction: FragmentTransaction = supportFragmentManager.beginTransaction()
         bundle.putString("user", profile) // use as per your need
-        bundle.putBoolean("deeplink", deeplink)
+        Log.i("IMPRESSION", "viewProfile: $deeplink")
+        if(deeplink)
+            bundle.putString("source", "DEEPLINK")
+        else
+            bundle.putString("source", "FEED_SCREEN")
 
         fragment.arguments = bundle
         fragmentTransaction.addToBackStack(null)
@@ -602,7 +597,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         fragmentTransaction.commit()
     }
 
-    override fun viewRoom(room: RoomListResponseItem, view: View) {
+    override fun viewRoom(room: RoomListResponseItem, view: View,deeplink: Boolean) {
 //        room.speakersData?.userId?.let {
 //            ProfileActivity.openProfileActivity(this, it)
 ////        }
@@ -618,8 +613,10 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         val bundle = Bundle()
         val fragmentTransaction: FragmentTransaction = supportFragmentManager.beginTransaction()
         bundle.putString("user", room.speakersData?.userId) // use as per your need
-        bundle.putString("source","FEED_SCREEN")
-
+        if(deeplink)
+            bundle.putString("source", "DEEPLINK")
+        else
+            bundle.putString("source", "FEED_SCREEN")
         fragment.arguments = bundle
         fragmentTransaction.addToBackStack(null)
         fragmentTransaction.replace(R.id.root_view, fragment)

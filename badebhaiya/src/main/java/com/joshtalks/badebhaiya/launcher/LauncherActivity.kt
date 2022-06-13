@@ -13,6 +13,7 @@ import com.joshtalks.badebhaiya.feed.FeedActivity
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.signup.SignUpActivity
 import com.joshtalks.badebhaiya.signup.SignUpActivity.Companion.REDIRECT_TO_ENTER_NAME
+import com.joshtalks.badebhaiya.utils.SingleDataManager
 import com.userexperior.UserExperior
 import io.branch.referral.Branch
 import kotlinx.coroutines.Dispatchers
@@ -31,6 +32,8 @@ class LauncherActivity : AppCompatActivity() {
         //     {
                  // Enabled
                  //showToast("Auto Time Enabled")
+        SingleDataManager.pendingPilotAction = null
+        SingleDataManager.pendingPilotEventData = null
                  initApp()
 //             }
 //             else

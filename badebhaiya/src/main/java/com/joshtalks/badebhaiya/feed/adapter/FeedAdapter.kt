@@ -85,7 +85,7 @@ class FeedAdapter(private val fromProfile: Boolean = false, private val coroutin
             val time = Utils.getMessageTimeInHours(Date(room.startTime ?: 0))
             item.tvCardHeader.text = item.root.context.getString(R.string.room_card_top_title_header, name, date, time)
             item.root.setOnClickListener {
-                    callback?.viewRoom(room, it)
+                    callback?.viewRoom(room, it,false)
 
             }
 
@@ -171,6 +171,6 @@ class FeedAdapter(private val fromProfile: Boolean = false, private val coroutin
         fun setReminder(room: RoomListResponseItem, view: View)
         //fun deleteReminder(room: RoomListResponseItem,view: View)
         fun viewProfile(profile: String?, deeplink:Boolean)
-        fun viewRoom(room: RoomListResponseItem, view: View)
+        fun viewRoom(room: RoomListResponseItem, view: View,deeplink: Boolean)
     }
 }

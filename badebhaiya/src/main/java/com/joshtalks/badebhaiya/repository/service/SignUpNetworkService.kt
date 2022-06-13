@@ -1,6 +1,7 @@
 package com.joshtalks.badebhaiya.repository.service
 
 import com.joshtalks.badebhaiya.feed.model.Users
+import com.joshtalks.badebhaiya.impressions.Impression
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.repository.server.AmazonPolicyResponse
 import com.joshtalks.badebhaiya.signup.request.VerifyOTPRequest
@@ -28,6 +29,9 @@ interface SignUpNetworkService {
 
     @PATCH("$DIR/user/{id}/")
     suspend fun updateUserProfile(@Path("id")userId: String, @Body params: Map<String, String?>): Response<User>
+
+    @POST("$DIR/impressions/track_impressions/")
+    suspend fun sendEvent(@Body event: Impression):Response<Void>
 
     @POST("$DIR/user/truecaller_login/")
     suspend fun trueCallerLogin(@Body params: Map<String, String>) : Response<LoginResponse>
