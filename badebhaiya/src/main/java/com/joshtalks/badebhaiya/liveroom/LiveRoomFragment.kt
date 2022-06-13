@@ -15,10 +15,7 @@ import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.WindowManager
-import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.addCallback
 import androidx.appcompat.app.AlertDialog
@@ -157,7 +154,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
         trackLiveRoomState()
         isActivityOpenFromNotification =
             PubNubManager.getLiveRoomProperties()?.isActivityOpenFromNotification!!
-        addViewModelObserver()
+          addViewModelObserver()
         addObserver()
         if (isActivityOpenFromNotification) {
 //            addJoinAPIObservers()
