@@ -150,7 +150,7 @@ class CertificateShareFragment : CoreJoshFragment() {
                         intent.putExtra(Intent.EXTRA_TEXT, message)
                         intent.type = "image/*"
                         intent.putExtra(Intent.EXTRA_STREAM, uri)
-                        intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION;
+                        intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
                         try {
                             if (intent.resolveActivity(requireActivity().packageManager) == null) {
                                 showToast("$packageName not found on device", Toast.LENGTH_LONG)
@@ -187,10 +187,10 @@ class CertificateShareFragment : CoreJoshFragment() {
                         val downloadUri = Uri.parse(url)
 
                         val request = DownloadManager.Request(downloadUri)
-                        val fileName = "${User.getInstance().firstName}.png"
+                        val fileName = "${User.getInstance().firstName}.jpeg"
                         request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
-                            .setMimeType("image/png")
-                            .setTitle("${User.getInstance().firstName}.png")
+                            .setMimeType("image/jpeg")
+                            .setTitle("${User.getInstance().firstName}.jpeg")
                             .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
                             .setDestinationInExternalPublicDir(
                                 Environment.DIRECTORY_DOWNLOADS, fileName

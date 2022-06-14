@@ -181,6 +181,7 @@
     <string name="name_error_toast">नाम खाली नहीं रख सकते!</string>
     <string name="please_enter_valid_number">"कृपया सही मोबाइल नंबर डालें "</string>
     <string name="enter_valid_email_toast">"कृपया सही ईमेल आईडी डालें "</string>
+    <string name="enter_postal_address">Please enter correct Postal Address</string>
     <string name="missed_call_verify_message">हम वेरीफिकेशन करने के लिए मिस्ड कॉल का उपयोग करते हैं। कृपया वेरीफिकेशन करने की अनुमति दें।</string>
     <string name="otp_verify_message">आपके मोबाइल नंबर को वेरीफाई करने के लिए एक 4 अंकों का ओटीपी SMS के माध्यम से भेजा जाएगा</string>
     <string name="missed_call_label">"मिस्ड कॉल वेरीफिकेशन "</string>

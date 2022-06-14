@@ -260,6 +260,7 @@
     <string name="name_error_toast">Name cannot be empty!</string>
     <string name="please_enter_valid_number">Please enter valid mobile number </string>
     <string name="enter_valid_email_toast">Please enter valid Email Id</string>
+    <string name="enter_postal_address">Please enter correct Postal Address</string>
 
     <string name="missed_call_verify_message"> We make use of missed call verification.\nPlease grant permission to verify</string>
     <string name="otp_verify_message">A 4 digit OTP will be sent via SMS to verify \n your mobile number</string>

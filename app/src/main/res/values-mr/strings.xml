@@ -186,6 +186,7 @@
     <string name="name_error_toast">नाव रिकामे ठेवता येत नाही!</string>
     <string name="please_enter_valid_number">"कृपया बरोबर मोबाईल नंबर एंटर करा"</string>
     <string name="enter_valid_email_toast">"कृपया योग्य ईमेल आयडी प्रविष्ट करा"</string>
+    <string name="enter_postal_address">"कृपया योग्य पोस्टल पत्ता द्या"</string>
     <string name="missed_call_verify_message">आम्ही पडताळणीसाठी मिस्ड कॉल वापरतो. कृपया पडताळणीला अनुमती द्या.</string>
     <string name="otp_verify_message">तुमच्या मोबाईल नंबरची पडताळणी करण्यासाठी SMS द्वारे 4 अंकी OTP पाठवला जाईल</string>
     <string name="missed_call_label">"मिस्ड कॉल व्हेरिफिकेशन"</string>

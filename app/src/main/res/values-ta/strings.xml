@@ -186,6 +186,7 @@
     <string name="name_error_toast">பெயரை காலியாக வைக்க முடியாது!</string>
     <string name="please_enter_valid_number">தயவுசெய்து சரியான மொபைல் எண்ணை உள்ளிடவும்</string>
     <string name="enter_valid_email_toast">சரியான மின்னஞ்சல் ஐடியை உள்ளிடவும்</string>
+    <string name="enter_postal_address">சரியான அஞ்சல் முகவரியை பதிவிடவும்</string>
     <string name="missed_call_verify_message">சரிபார்ப்புக்கு தவறவிட்ட அழைப்பைப் பயன்படுத்துகிறோம். சரிபார்ப்பை அனுமதிக்கவும்.</string>
     <string name="otp_verify_message">உங்கள் மொபைல் எண்ணைச் சரிபார்க்க 4 Digit OTP SMS மூலம் அனுப்பப்படும்</string>
     <string name="missed_call_label">தவறவிட்ட அழைப்பு சரிபார்ப்பு</string>

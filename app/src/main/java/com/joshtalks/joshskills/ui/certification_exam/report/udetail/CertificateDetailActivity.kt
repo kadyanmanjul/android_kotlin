@@ -335,6 +335,10 @@ class CertificateDetailActivity : BaseActivity(), FileDownloadCallback {
                 showToast(getString(R.string.enter_valid_email_toast))
                 return@launch
             }
+            if(binding.etPostal.text.isNullOrEmpty()){
+                showToast(getString(R.string.enter_postal_address))
+                return@launch
+            }
             //showProgressDialog("Please Wait for the Certificate to be Generated")
             viewModel.postCertificateUserDetails(getUserDetail())
             viewModel.saveImpression(GENERATE_CERTIFICATE_FORM)
