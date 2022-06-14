@@ -85,6 +85,8 @@ import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.joshtalks.joshskills.ui.voip.analytics.VoipAnalytics
 import com.joshtalks.joshskills.ui.voip.favorite.FavoriteListActivity
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
+import com.joshtalks.joshskills.voip.constant.INCOMING_CALL_CATEGORY
+import com.joshtalks.joshskills.voip.constant.INCOMING_CALL_ID
 import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.CallingRemoteService
 import com.joshtalks.joshskills.voip.getApiHeader
@@ -451,13 +453,12 @@ class NotificationUtils(val context: Context) {
                 }
             }
             NotificationAction.INCOMING_CALL_NOTIFICATION -> {
-                val remoteServiceIntent =
-                    Intent(com.joshtalks.joshskills.voip.Utils.context, CallingRemoteService::class.java)
-                val apiHeader = com.joshtalks.joshskills.voip.Utils.context?.getApiHeader()
-                remoteServiceIntent.putExtra(INTENT_DATA_MENTOR_ID, com.joshtalks.joshskills.voip.Utils.context?.getMentorId())
-                remoteServiceIntent.putExtra(INTENT_DATA_API_HEADER, apiHeader)
-                remoteServiceIntent.action = SERVICE_ACTION_INCOMING_CALL
-                com.joshtalks.joshskills.voip.Utils.context?.startService(remoteServiceIntent)
+                if (!PrefManager.getBoolValue(
+                        PREF_IS_CONVERSATION_ROOM_ACTIVE
+                    ) && !PrefManager.getBoolValue(USER_ACTIVE_IN_GAME)
+                ) {
+                    incomingCallNotificationAction(notificationObject.actionData)
+                }
                 return null
             }
             NotificationAction.JOIN_CONVERSATION_ROOM -> {
@@ -565,6 +566,16 @@ class NotificationUtils(val context: Context) {
                 return Intent(context, JoshGroupActivity::class.java).apply {
                     putExtra(CONVERSATION_ID, actionData)
                 }
+            }
+            NotificationAction.ACTION_NEW_ARCH_INCOMING_CALL -> {
+                val remoteServiceIntent = Intent(com.joshtalks.joshskills.voip.Utils.context, CallingRemoteService::class.java)
+                remoteServiceIntent.putExtra(INCOMING_CALL_ID, JSONObject(actionData).getString(
+                    INCOMING_CALL_ID))
+                remoteServiceIntent.putExtra(INCOMING_CALL_CATEGORY,JSONObject(actionData).getString(
+                    INCOMING_CALL_CATEGORY))
+                remoteServiceIntent.action = SERVICE_ACTION_INCOMING_CALL
+                com.joshtalks.joshskills.voip.Utils.context?.startService(remoteServiceIntent)
+                return null
             }
             else -> {
                 return null

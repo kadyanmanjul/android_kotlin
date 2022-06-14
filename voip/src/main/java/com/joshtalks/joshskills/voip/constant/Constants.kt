@@ -42,8 +42,8 @@ const val PSTN_STATE_ONCALL = "pstn_state_oncall"
 const val PREF_KEY_PSTN_STATE = "pstn_state_pstn_state"
 
 // Incoming Notification Constants
-const val INCOMING_CALL_ID = "incoming_call_id"
-const val INCOMING_CALL_CATEGORY = "incoming_call_category"
+const val INCOMING_CALL_ID = "call_id"
+const val INCOMING_CALL_CATEGORY = "call_category"
 
 enum class Event {
     ERROR,
