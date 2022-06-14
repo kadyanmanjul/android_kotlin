@@ -252,7 +252,7 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
     fun startAudioVideoRecording(view:View){
         Utils.context?.getTempFileForVideoCallRecording()?.let { file ->
             videoRecordFile = file
-            CallRecording.videoRecorder.startPlayer(audioRecordFile, Utils.context!!,view)
+            CallRecording.videoRecorder.startPlayer(videoRecordFile!!.absolutePath, Utils.context!!,view)
         }
         repository.startAgoraRecording()
     }
