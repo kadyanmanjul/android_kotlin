@@ -276,6 +276,7 @@ class ReadingFragmentWithoutFeedback :
         }
         binding.btnWhatsapp.visibility = VISIBLE
         binding.continueBtn.visibility = VISIBLE
+        binding.videoLayout.clipToOutline = true
         return binding.rootView
     }
 
@@ -1310,9 +1311,7 @@ class ReadingFragmentWithoutFeedback :
                     binding.counterTv.stop()
                     viewModel.stopRecording()
                     binding.recordingView.clearAnimation()
-                    //AppObjectController.uiHandler.postAtFrontOfQueue {
                     binding.counterTv.visibility = GONE
-                    //}
                     binding.audioPractiseHint.visibility = VISIBLE
                     if (isAdded && activity != null)
                         requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -1327,11 +1326,9 @@ class ReadingFragmentWithoutFeedback :
                             if (File(outputFile).exists()) {
                                 File(outputFile).delete()
                             }
-                            if (android.os.Build.VERSION.SDK_INT >= 29) {
+                            if (Build.VERSION.SDK_INT >= 29) {
                                 if (isAdded) {
-                                    outputFile =
-                                        saveVideoQ(requireContext(), videoDownPath ?: EMPTY)
-                                            ?: EMPTY
+                                    outputFile = saveVideoQ(requireContext(), videoDownPath ?: EMPTY) ?: EMPTY
                                 }
                             } else {
                                 outputFile = getVideoFilePath()
@@ -1350,8 +1347,7 @@ class ReadingFragmentWithoutFeedback :
                                         binding.submitAnswerBtn,
                                         binding.submitAnswerBtn
                                     )
-                                },
-                                200
+                                }, 200
                             )
 
                             val duration = event.eventTime - event.downTime
@@ -1367,9 +1363,10 @@ class ReadingFragmentWithoutFeedback :
                                 if (isActive) {
                                     mutex.withLock {
                                         audioVideoMuxer()
-                                        requireActivity().runOnUiThread(Runnable {
+                                        requireActivity().runOnUiThread {
                                             binding.progressDialog.visibility = GONE
-                                        })
+                                            viewModel.showVideoOnFullScreen(outputFile)
+                                        }
                                     }
                                 }
                             }

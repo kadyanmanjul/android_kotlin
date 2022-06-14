@@ -127,7 +127,6 @@
 
         </com.google.android.material.card.MaterialCardView>
 
-
         <com.pnikosis.materialishprogress.ProgressWheel
             android:id="@+id/progress_view"
             android:layout_width="@dimen/_96sdp"
@@ -153,7 +152,6 @@
             android:visibility="gone"
             tools:visibility="gone" />
 
-
         <FrameLayout
             android:id="@+id/overlay_layout_speaking"
             android:layout_width="match_parent"
@@ -163,6 +161,14 @@
             android:focusable="true"
             android:visibility="gone"
             tools:visibility="gone" />
+
+        <FrameLayout
+            android:id="@+id/container_reading"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:elevation="@dimen/_10sdp"
+            android:background="@color/transparent_black_alpha_70"
+            android:visibility="gone" />
 
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/arrow_animation"

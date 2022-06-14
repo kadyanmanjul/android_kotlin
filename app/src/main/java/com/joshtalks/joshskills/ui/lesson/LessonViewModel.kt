@@ -13,8 +13,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
-import com.joshtalks.joshskills.core.ConnectionDetails
-import com.joshtalks.joshskills.core.Speed
+import com.joshtalks.joshskills.constants.OPEN_READING_SHARING_FULLSCREEN
 import com.joshtalks.joshskills.constants.PERMISSION_FROM_READING
 import com.joshtalks.joshskills.constants.PERMISSION_FROM_READING_GRANTED
 import com.joshtalks.joshskills.constants.SHARE_VIDEO
@@ -1000,5 +999,10 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
         } catch (e: Exception) {
             e.printStackTrace()
         }
+    }
+
+    fun showVideoOnFullScreen(outputFile: String) {
+        message.what = OPEN_READING_SHARING_FULLSCREEN
+        singleLiveEvent.value = message
     }
 }

@@ -507,8 +507,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/_16sdp"
-                    android:layout_marginEnd="@dimen/_16sdp"
                     android:layout_marginTop="@dimen/_10sdp"
+                    android:layout_marginEnd="@dimen/_16sdp"
                     android:layout_marginBottom="@dimen/_8sdp"
                     android:minHeight="@dimen/_56sdp"
                     android:orientation="vertical"
@@ -516,6 +516,7 @@
                     app:contentPadding="@dimen/_8sdp"
                     app:layout_constraintBottom_toTopOf="@+id/feedback_layout"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/info"
                     card_view:cardCornerRadius="@dimen/_8sdp"
@@ -561,36 +562,24 @@
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/video_layout"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="@dimen/_275sdp"
                         android:layout_marginTop="@dimen/_28sdp"
+                        android:background="@drawable/rounded_video_view"
                         android:visibility="gone"
                         tools:visibility="visible">
 
-                        <com.google.android.material.card.MaterialCardView
-                            android:id="@+id/videoCard"
-                            style="@style/Widget.MaterialComponents.CardView"
+
+                        <VideoView
+                            android:id="@+id/merged_video"
                             android:layout_width="match_parent"
-                            android:layout_height="@dimen/_250sdp"
-                            android:layout_marginHorizontal="@dimen/_24sdp"
-                            android:orientation="vertical"
+                            android:layout_height="@dimen/_275sdp"
+                            android:focusable="true"
+                            android:visibility="gone"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
-                            card_view:cardCornerRadius="@dimen/_8sdp"
-                            card_view:cardElevation="0dp">
-                        <VideoView
-                            android:id="@+id/merged_video"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_gravity="center_vertical"
-                            android:focusable="true"
-                            android:visibility="gone"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
                             tools:visibility="visible" />
-                        </com.google.android.material.card.MaterialCardView>
 
                         <androidx.appcompat.widget.AppCompatImageView
                             android:id="@+id/play_btn"
@@ -630,17 +619,17 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/_16sdp"
+                        android:orientation="vertical"
                         android:visibility="gone"
-                        tools:visibility="visible"
-                        android:orientation="vertical">
+                        tools:visibility="visible">
 
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/audio_list_rv"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:visibility="gone"
-                            tools:itemCount="2"
                             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                            tools:itemCount="2"
                             tools:listitem="@layout/practice_audio_item"
                             tools:visibility="invisible" />
 
@@ -872,6 +861,7 @@
                     android:textAppearance="@style/TextAppearance.JoshTypography.ButtonRegular"
                     android:textColor="@color/white"
                     app:iconGravity="textStart"
+                    app:iconPadding="@dimen/_10sdp"
                     app:cornerRadius="@dimen/_50sdp"
                     app:icon="@drawable/ic_whatsapp_img_share"
                     android:layout_marginTop="@dimen/_16sdp"

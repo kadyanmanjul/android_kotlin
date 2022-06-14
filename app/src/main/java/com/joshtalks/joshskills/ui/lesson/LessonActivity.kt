@@ -32,6 +32,7 @@ import androidx.core.view.isVisible
 import androidx.databinding.BindingAdapter
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.commit
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -42,6 +43,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
+import com.joshtalks.joshskills.constants.OPEN_READING_SHARING_FULLSCREEN
 import com.joshtalks.joshskills.constants.PERMISSION_FROM_READING
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.ApiCallStatus.*
@@ -69,6 +71,7 @@ import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_GRAMMAR_ANIMAT
 import com.joshtalks.joshskills.ui.lesson.grammar.GrammarFragment
 import com.joshtalks.joshskills.ui.lesson.lesson_completed.LessonCompletedActivity
 import com.joshtalks.joshskills.ui.lesson.reading.ReadingFragmentWithoutFeedback
+import com.joshtalks.joshskills.ui.lesson.reading.ReadingFullScreenFragment
 import com.joshtalks.joshskills.ui.lesson.room.ConversationRoomListingPubNubFragment
 import com.joshtalks.joshskills.ui.lesson.speaking.SpeakingPractiseFragment
 import com.joshtalks.joshskills.ui.lesson.speaking.spf_models.UserRating
@@ -105,6 +108,7 @@ const val ROOM_POSITION = 5
 const val DEFAULT_SPOTLIGHT_DELAY_IN_MS = 1300L
 const val INTRO_VIDEO_ID = "-1"
 private const val TAG = "LessonActivity"
+private const val LESSON_BACKSTACK = "LESSON_BACKSTACK"
 val STORAGE_GRAMMER_REQUEST_CODE = 3456
 private val STORAGE_READING_REQUEST_CODE = 3457
 
@@ -193,6 +197,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         event.observe(this) {
             when (it.what) {
                 PERMISSION_FROM_READING -> requestStoragePermission(STORAGE_READING_REQUEST_CODE)
+                OPEN_READING_SHARING_FULLSCREEN -> openReadingFullScreen()
             }
         }
 
@@ -782,6 +787,15 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         viewModel.lessonSpotlightStateLiveData.postValue(null)
         viewModel.speakingSpotlightClickLiveData.postValue(Unit)
         if (introVideoControl) closeVideoPopUpUi()
+    }
+
+    private fun openReadingFullScreen() {
+        binding.containerReading.visibility = View.VISIBLE
+        supportFragmentManager.commit {
+            val fragment = ReadingFullScreenFragment()
+            addToBackStack(LESSON_BACKSTACK)
+            replace(R.id.container_reading, fragment, ReadingFullScreenFragment::class.java.simpleName)
+        }
     }
 
     private fun setUpNewGrammarLayouts(
