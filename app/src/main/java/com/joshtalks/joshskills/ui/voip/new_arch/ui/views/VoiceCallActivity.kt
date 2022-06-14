@@ -23,12 +23,7 @@ import com.joshtalks.joshskills.databinding.ActivityVoiceCallBinding
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.VoiceCallViewModel
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.voipLog
 import com.joshtalks.joshskills.voip.Utils.Companion.onMultipleBackPress
-import com.joshtalks.joshskills.voip.constant.CALL_CONNECTED_EVENT
-import com.joshtalks.joshskills.voip.constant.CLOSE_CALL_SCREEN
-import com.joshtalks.joshskills.voip.constant.HIDE_RECORDING_PERMISSION_DIALOG
-import com.joshtalks.joshskills.voip.constant.SHOW_RECORDING_PERMISSION_DIALOG
-import com.joshtalks.joshskills.voip.constant.SHOW_RECORDING_REJECTED_DIALOG
-import com.joshtalks.joshskills.voip.constant.State
+import com.joshtalks.joshskills.voip.constant.*
 import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName

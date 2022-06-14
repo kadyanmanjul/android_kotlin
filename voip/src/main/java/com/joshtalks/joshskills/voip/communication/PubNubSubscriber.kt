@@ -9,12 +9,7 @@ import com.joshtalks.joshskills.voip.communication.constants.ServerConstants.Com
 import com.joshtalks.joshskills.voip.communication.constants.ServerConstants.Companion.GROUP_INCOMING_CALL
 import com.joshtalks.joshskills.voip.communication.constants.ServerConstants.Companion.INCOMING_CALL
 import com.joshtalks.joshskills.voip.communication.constants.ServerConstants.Companion.UI_STATE_UPDATED
-import com.joshtalks.joshskills.voip.communication.model.Channel
-import com.joshtalks.joshskills.voip.communication.model.Communication
-import com.joshtalks.joshskills.voip.communication.model.Error
-import com.joshtalks.joshskills.voip.communication.model.IncomingCall
-import com.joshtalks.joshskills.voip.communication.model.Message
-import com.joshtalks.joshskills.voip.communication.model.UI
+import com.joshtalks.joshskills.voip.communication.model.*
 import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.pubnub.api.PubNub
 import com.pubnub.api.callbacks.SubscribeCallback
