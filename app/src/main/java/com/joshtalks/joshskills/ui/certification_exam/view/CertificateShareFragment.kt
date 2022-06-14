@@ -187,10 +187,10 @@ class CertificateShareFragment : CoreJoshFragment() {
                         val downloadUri = Uri.parse(url)
 
                         val request = DownloadManager.Request(downloadUri)
-                        val fileName = "${User.getInstance().firstName}.jpeg"
+                        val fileName = "${User.getInstance().firstName}.png"
                         request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
-                            .setMimeType("image/jpeg")
-                            .setTitle("${User.getInstance().firstName}.jpeg")
+                            .setMimeType("image/png")
+                            .setTitle("${User.getInstance().firstName}.png")
                             .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
                             .setDestinationInExternalPublicDir(
                                 Environment.DIRECTORY_DOWNLOADS, fileName
