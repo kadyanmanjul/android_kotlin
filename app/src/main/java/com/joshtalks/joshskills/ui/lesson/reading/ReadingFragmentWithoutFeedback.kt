@@ -274,6 +274,8 @@ class ReadingFragmentWithoutFeedback :
         binding.mergedVideo.setOnCompletionListener {
             binding.playBtn.visibility = VISIBLE
         }
+        binding.btnWhatsapp.visibility = VISIBLE
+        binding.continueBtn.visibility = VISIBLE
         return binding.rootView
     }
 
