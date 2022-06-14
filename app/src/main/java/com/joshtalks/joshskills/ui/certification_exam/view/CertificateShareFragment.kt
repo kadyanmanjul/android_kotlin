@@ -52,17 +52,15 @@ class CertificateShareFragment : CoreJoshFragment() {
     ): View {
         arguments?.let {
             url = it.getString(CERTIFICATE_URL, EMPTY)
+            viewModel.certificateExamId = it.getInt(CERTIFICATE_EXAM_ID)
         }
-
-        viewModel.certificationQuestionLiveData.observe(requireActivity()){
-
-        }
+        viewModel.typeOfExam()
         requireActivity().registerReceiver(onComplete, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_certificate_share, container, false)
         binding.lifecycleOwner = this
         binding.handler = this
         binding.txtYouHaveEarned.visibility = View.GONE
-        viewModel.certificateExamId = arguments?.getInt(CERTIFICATE_EXAM_ID)
+
         when (viewModel.certificationQuestionLiveData.value?.type){
             EXAM_TYPE_BEGINNER->{
                 PrefManager.put(IS_CERTIFICATE_GENERATED_BEGINNER, false)
