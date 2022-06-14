@@ -231,6 +231,9 @@ fun Context.getHangUpIntent(): PendingIntent {
 fun Context.getTempFileForCallRecording(): File? {
     return File.createTempFile("record", ".aac", this.cacheDir)
 }
+fun Context.getTempFileForVideoCallRecording(): File? {
+    return File.createTempFile("ScreenRecord", ".mp4", this.cacheDir)
+}
 
 fun getDeclineCallIntent(): PendingIntent {
     val intent = Intent(Utils.context, CallingRemoteService::class.java).apply {
