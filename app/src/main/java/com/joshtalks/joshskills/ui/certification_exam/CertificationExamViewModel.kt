@@ -45,7 +45,8 @@ class CertificationExamViewModel(application: Application) : AndroidViewModel(ap
         MutableLiveData()
     val isUserSubmitExam: MutableLiveData<Boolean> = MutableLiveData()
     var isSAnswerUiShow: Boolean = false
-    var certificateExamId:Int ?=null
+    var certificateExamId: Int? = null
+    var examType: String? = null
 
     fun startExam() {
         saveImpression(START_EXAM)
@@ -160,8 +161,7 @@ class CertificationExamViewModel(application: Application) : AndroidViewModel(ap
     fun getUserAllExamReports(certificateExamId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val resp =
-                    AppObjectController.commonNetworkService.getExamReports(certificateExamId)
+                val resp = AppObjectController.commonNetworkService.getExamReports(certificateExamId)
                 apiStatus.postValue(ApiCallStatus.SUCCESS)
                 examReportLiveData.postValue(resp)
             } catch (ex: Throwable) {
@@ -206,33 +206,26 @@ class CertificationExamViewModel(application: Application) : AndroidViewModel(ap
     fun saveImpression(eventName: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val response = async {
-                    AppObjectController.commonNetworkService.getCertificateExamType(certificateExamId.toString())
-                }.await()
-                val examType = response.getOrDefault("exam_type", "")
-
                 val requestData = hashMapOf(
                     Pair("mentor_id", Mentor.getInstance().getId()),
                     Pair("event_name", eventName),
-                    Pair("exam_type", examType)
+                    Pair("exam_type", examType ?: EMPTY)
                 )
-                val response2 = async { AppObjectController.commonNetworkService.saveCertificateImpression(requestData)}.await()
+                AppObjectController.commonNetworkService.saveCertificateImpression(requestData)
             } catch (ex: Exception) {
                 Timber.e(ex)
             }
         }
     }
 
-    fun typeOfExam(exam_id:String):String{
-        var examType=""
+    fun typeOfExam(exam_id: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val response = async {AppObjectController.commonNetworkService.getCertificateExamType(exam_id)}.await()
+                val response = AppObjectController.commonNetworkService.getCertificateExamType(exam_id)
                 examType = response.getOrDefault("exam_type", "")
-            }catch (e:Exception){
+            } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
-        return examType
     }
 }
