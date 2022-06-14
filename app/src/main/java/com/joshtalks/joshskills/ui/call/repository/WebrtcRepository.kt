@@ -7,19 +7,19 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
 import android.util.Log
-import com.joshtalks.joshskills.base.constants.*
-import com.joshtalks.joshskills.core.*
-import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.ui.call.repository.RepositoryConstants.*
+import com.joshtalks.joshskills.base.constants.INTENT_DATA_API_HEADER
+import com.joshtalks.joshskills.base.constants.INTENT_DATA_MENTOR_ID
+import com.joshtalks.joshskills.ui.call.repository.RepositoryConstants.CONNECTION_ESTABLISHED
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.voipLog
-import com.joshtalks.joshskills.voip.constant.*
+import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.CallingRemoteService
 import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.getApiHeader
 import com.joshtalks.joshskills.voip.getMentorId
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.launch
 
 private const val TAG = "WebrtcRepository"
 
@@ -101,6 +101,36 @@ class WebrtcRepository(scope : CoroutineScope) {
         mService?.changeMicState(false)
     }
 
+    fun startCallRecording() {
+        Log.d(TAG, "startCallRecording: ")
+        mService?.startRecording()
+    }
+
+    fun stopCallRecording() {
+        Log.d(TAG, "stopCallRecording: ")
+        mService?.stopRecording()
+    }
+
+    fun acceptCallRecording(){
+        Log.d(TAG, "acceptCallRecording: ")
+        mService?.acceptCallRecording()
+    }
+
+    fun startAgoraRecording(){
+        Log.d(TAG, "acceptCallRecording: ")
+        mService?.startAgoraRecording()
+    }
+
+    fun stopAgoraClientCallRecording(){
+        Log.d(TAG, "acceptCallRecording: ")
+        mService?.stopAgoraCallRecording()
+    }
+
+    fun rejectCallRecording(){
+        Log.d(TAG, "acceptCallRecording: ")
+        mService?.rejectCallRecording()
+    }
+
     fun turnOnSpeaker() {
         Log.d(TAG, "turnOnSpeaker: ")
         mService?.changeSpeakerState(true)
@@ -127,6 +157,10 @@ class WebrtcRepository(scope : CoroutineScope) {
 
     fun getNewTopicImage() {
         mService?.changeTopicImage()
+    }
+
+    fun cancelRecordingRequest() {
+        mService?.cancelRecordingRequest()
     }
 }
 

@@ -1,9 +1,18 @@
 package com.joshtalks.joshskills.voip.data.local
 
 import android.content.Context
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Database
+import androidx.room.Entity
+import androidx.room.Insert
+import androidx.room.PrimaryKey
+import androidx.room.Query
+import androidx.room.Room
+import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
+import com.joshtalks.joshskills.voip.recordinganalytics.data.local.RecordingAnalyticsDao
+import com.joshtalks.joshskills.voip.recordinganalytics.data.local.RecordingAnalyticsEntity
 import com.joshtalks.joshskills.voip.voipanalytics.data.local.VoipAnalyticsDao
 import com.joshtalks.joshskills.voip.voipanalytics.data.local.VoipAnalyticsEntity
 
@@ -11,10 +20,11 @@ import com.joshtalks.joshskills.voip.voipanalytics.data.local.VoipAnalyticsEntit
 const val PENDING = 0
 const val SYNCED = 1
 
-@Database(entities = [DisconnectCallEntity::class,VoipAnalyticsEntity::class], version = 4, exportSchema = true)
+@Database(entities = [DisconnectCallEntity::class,VoipAnalyticsEntity::class, RecordingAnalyticsEntity::class], version = 5, exportSchema = true)
 abstract class VoipDatabase : RoomDatabase() {
     abstract fun getDisconnectCallDao() : DisconnectCallDao
     abstract fun voipAnalyticsDao() : VoipAnalyticsDao
+    abstract fun recordingAnalyticsDao() : RecordingAnalyticsDao
 
     companion object {
 

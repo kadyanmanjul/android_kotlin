@@ -204,9 +204,11 @@ enum class NotificationAction(val type: String) {
     @SerializedName("open_fpp_list")
     ACTION_OPEN_FPP_LIST("open_fpp_list"),
 
+    @SerializedName("emergency_notification")
+    EMERGENCY_NOTIFICATION("emergency_notification"),
+
     @SerializedName("open_new_incoming_call")
     ACTION_NEW_ARCH_INCOMING_CALL("open_new_incoming_call"),
-
 }
 
 enum class NotificationChannelNames(val type: String) {

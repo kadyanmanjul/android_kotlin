@@ -1,11 +1,14 @@
 package com.joshtalks.joshskills.ui.voip.new_arch.ui.views
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.util.Log
+import android.view.LayoutInflater
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
-import com.afollestad.materialdialogs.MaterialDialog
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseActivity
 import com.joshtalks.joshskills.base.constants.FROM_ACTIVITY
@@ -20,20 +23,26 @@ import com.joshtalks.joshskills.databinding.ActivityVoiceCallBinding
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.VoiceCallViewModel
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.voipLog
 import com.joshtalks.joshskills.voip.Utils.Companion.onMultipleBackPress
-import com.joshtalks.joshskills.voip.constant.*
+import com.joshtalks.joshskills.voip.constant.CALL_CONNECTED_EVENT
+import com.joshtalks.joshskills.voip.constant.CLOSE_CALL_SCREEN
+import com.joshtalks.joshskills.voip.constant.HIDE_RECORDING_PERMISSION_DIALOG
+import com.joshtalks.joshskills.voip.constant.SHOW_RECORDING_PERMISSION_DIALOG
+import com.joshtalks.joshskills.voip.constant.SHOW_RECORDING_REJECTED_DIALOG
+import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
-import kotlinx.coroutines.sync.Mutex
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import kotlinx.coroutines.sync.Mutex
 
 private const val TAG = "VoiceCallActivity"
 
 class VoiceCallActivity : BaseActivity() {
     private val backPressMutex = Mutex(false)
+    var recordingPermissionAlert: AlertDialog? = null
     private val voiceCallBinding by lazy<ActivityVoiceCallBinding> {
         DataBindingUtil.setContentView(this, R.layout.activity_voice_call)
     }
@@ -142,8 +151,12 @@ class VoiceCallActivity : BaseActivity() {
 
     override fun initViewState() {
         event.observe(this) {
+            Log.i(TAG, "initViewState: event -> ${it.what}")
             when (it.what) {
                 CALL_CONNECTED_EVENT -> replaceCallUserFragment()
+                SHOW_RECORDING_PERMISSION_DIALOG -> showRecordingPermissionDialog()
+                SHOW_RECORDING_REJECTED_DIALOG -> showRecordingRejectedDialog()
+                HIDE_RECORDING_PERMISSION_DIALOG -> hideRecordingPermissionDialog()
                 CLOSE_CALL_SCREEN -> finish()
                 else -> {
                     if (it.what < 0) {
@@ -153,6 +166,49 @@ class VoiceCallActivity : BaseActivity() {
                 }
             }
         }
+    }
+
+    private fun showRecordingRejectedDialog() {
+        MaterialAlertDialogBuilder(this)
+            .setTitle("Recording request rejected")
+            .setMessage("User declined your request to start recording")
+            .setPositiveButton("Dismiss") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
+
+    }
+
+    private fun showRecordingPermissionDialog() {
+        recordingPermissionAlert = AlertDialog.Builder(this).apply {
+            setView(
+                LayoutInflater.from(this@VoiceCallActivity)
+                    .inflate(R.layout.dialog_record_call, null)
+            )
+            setPositiveButton("ACCEPT") { dialog, _ ->
+                vm.recordingStartedUIChanges()
+                vm.acceptCallRecording()
+                dialog.dismiss()
+            }
+            setNegativeButton("DECLINE") { dialog, which ->
+                vm.rejectCallRecording()
+                dialog.dismiss()
+            }
+            setOnCancelListener {
+                    vm.rejectCallRecording()
+            }
+        }.create()
+        recordingPermissionAlert?.setCanceledOnTouchOutside(false)
+        recordingPermissionAlert?.show()
+    }
+
+    private fun recordingAlreadyStartedByOtherUserDialog() {
+        Toast.makeText(this, "Recording was already started by the other person", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun hideRecordingPermissionDialog() {
+        Log.i(TAG, "hideRecordingPermissionDialog: ")
+        recordingPermissionAlert?.dismiss()
     }
 
     private fun addSearchingUserFragment() {

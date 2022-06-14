@@ -169,22 +169,19 @@ object WorkManagerAdmin {
             )
     }
 
-    fun setBackgroundServiceWorker() {
-        val workRequest = PeriodicWorkRequest.Builder(
-            BackgroundNotificationWorker::class.java,
-            30,
-            TimeUnit.MINUTES,
-            PeriodicWorkRequest.MIN_PERIODIC_FLEX_MILLIS,
-            TimeUnit.MILLISECONDS
-        )
-            .setInitialDelay(5000, TimeUnit.MILLISECONDS)
+    fun setBackgroundNotificationWorker() {
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()
 
-        WorkManager.getInstance(AppObjectController.joshApplication).enqueueUniquePeriodicWork(
-            BackgroundNotificationWorker::class.java.simpleName,
-            ExistingPeriodicWorkPolicy.REPLACE,
-            workRequest
-        )
+        val workRequest = OneTimeWorkRequestBuilder<BackgroundNotificationWorker>()
+            .setConstraints(constraints)
+            .setInitialDelay(1, TimeUnit.MINUTES)
+            .addTag(BackgroundNotificationWorker::class.java.name)
+            .setBackoffCriteria(BackoffPolicy.LINEAR, 1, TimeUnit.MINUTES)
+            .build()
+
+        WorkManager.getInstance(AppObjectController.joshApplication).enqueue(workRequest)
     }
 
     fun getQuestionNPA(eventName: String): UUID {

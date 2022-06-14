@@ -1,10 +1,15 @@
 package com.joshtalks.joshskills.voip.data.api
 
 import com.joshtalks.joshskills.base.constants.DIR
+import com.joshtalks.joshskills.voip.data.AmazonPolicyResponse
+import kotlinx.coroutines.Deferred
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.FieldMap
+import retrofit2.http.FormUrlEncoded
 import retrofit2.http.POST
 
+@JvmSuppressWildcards
 interface CallingApiService {
     @POST("$DIR/p2p/call")
     suspend fun setUpConnection(@Body request : ConnectionRequest) : HashMap<String, Any?>
@@ -14,6 +19,11 @@ interface CallingApiService {
 
     @POST("$DIR/p2p/call_response")
     suspend fun disconnectCall(@Body request : CallDisconnectRequest) : Response<Unit>
+
+    @FormUrlEncoded
+    @POST("$DIR/core/signed_url/")
+    fun requestUploadMediaAsync(@FieldMap params: Map<String, String>): Deferred<AmazonPolicyResponse>
+
 }
 
 

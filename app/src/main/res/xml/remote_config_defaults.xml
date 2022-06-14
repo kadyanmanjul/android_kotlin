@@ -931,4 +931,37 @@
         <key>IS_INVITATION_FOR_CALL_ENABLED</key>
         <value>false</value>
     </entry>
+    <entry>
+        <key>CERTIFICATE_SHARE_TEXT</key>
+        <value>Check This out</value>
+    </entry>
+    <entry>
+        <key>CERTIFICATE_SHARE_TEXT_WHATSAPP</key>
+        <value>Whatsapp</value>
+    </entry>
+    <entry>
+        <key>CERTIFICATE_SHARE_TEXT_FB</key>
+        <value>FB</value>
+    </entry>
+    <entry>
+        <key>CERTIFICATE_SHARE_TEXT_LINKEDIN</key>
+        <value>LinkedIn</value>
+    </entry>
+    <entry>
+        <key>CERTIFICATE_SHARE_TEXT_INSTA</key>
+        <value>Insta</value>
+    </entry>
+    <entry>
+        <key>POSTAL_ADDRESS</key>
+        <value>Postal Address</value>
+    </entry>
+    <entry>
+        <key>POSTAL_ADDRESS_SUBHEADING_CERT_FORM</key>
+        <value>For sending the certificate</value>
+    </entry>
+
+    <entry>
+        <key>RECORDING_SAVED_TEXT</key>
+        <value>Call recording will be saved in your Downloads folder shortly</value>
+    </entry>
 </defaultsMap>

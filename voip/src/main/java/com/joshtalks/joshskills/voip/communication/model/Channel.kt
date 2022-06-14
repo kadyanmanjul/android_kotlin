@@ -47,7 +47,10 @@ data class Channel(
     private val aspiration: String? = null,
 
     @field:SerializedName("is_new_search_enabled")
-    private val isNewSearchingEnabled: Int? = null
+    private val isNewSearchingEnabled: Int? = null,
+
+    @field:SerializedName("enable_call_recording")
+    private val isCallRecordingEnabled: Boolean = false
 
 ) : ChannelData {
 
@@ -69,6 +72,7 @@ data class Channel(
                 occupation = map?.get("occupation").toString(),
                 aspiration = map?.get("future_goals").toString(),
 				isNewSearchingEnabled = map?.get("is_new_search_enabled")?.toString()?.toInt() ?: 1,
+				isCallRecordingEnabled = map?.get("enable_call_recording")?.toString()?.toBoolean() ?: false,
             )
         }
     }
@@ -136,6 +140,8 @@ data class Channel(
 	override fun isNewSearchingEnabled(): Boolean {
 		return (isNewSearchingEnabled == null || isNewSearchingEnabled == 1)
 	}
+
+	override fun isCallRecordingEnabled() = isCallRecordingEnabled
 }
 
 // TODO: Need to Change

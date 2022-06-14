@@ -31,6 +31,7 @@ import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.di.ApplicationComponent
 import com.joshtalks.joshskills.di.DaggerApplicationComponent
 import com.joshtalks.joshskills.ui.call.data.local.VoipPref
+import com.joshtalks.joshskills.util.ReminderUtil
 import com.joshtalks.joshskills.voip.Utils
 import com.moengage.core.DataCenter
 import com.moengage.core.MoEngage
@@ -221,6 +222,7 @@ class JoshApplication :
         WorkManagerAdmin.userAppUsage(isAppVisible)
 //        WorkManagerAdmin.userActiveStatusWorker(isAppVisible)
 //        WorkManagerAdmin.removeRepeatingNotificationWorker()
+        ReminderUtil(this).deleteNotificationAlarms()
         val startIndex = PrefManager.getIntValue(LOCAL_NOTIFICATION_INDEX)
         for (i in startIndex..2) {
 //            WorkManagerAdmin.setRepeatingNotificationWorker(i)
@@ -266,6 +268,7 @@ class JoshApplication :
         }
 //        UsageStatsService.inactiveUserService(this)
         WorkManagerAdmin.setLocalNotificationWorker()
+        ReminderUtil(this).setAlarmNotificationWorker()
     }
 
     private fun setAlarmReminder(delay: Int) {

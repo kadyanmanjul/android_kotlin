@@ -20,15 +20,17 @@ import android.view.ViewGroup
 import android.view.animation.BounceInterpolator
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
-import androidx.viewpager2.widget.ViewPager2
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
 import com.joshtalks.joshskills.base.constants.FROM_INCOMING_CALL
 import com.joshtalks.joshskills.databinding.FragmentCallBinding
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.VoiceCallViewModel
+import com.joshtalks.joshskills.util.getBitMapFromView
+import com.joshtalks.joshskills.util.toFile
 import com.joshtalks.joshskills.voip.audiocontroller.AudioController
 import com.joshtalks.joshskills.voip.audiocontroller.AudioRouteConstants
 import com.joshtalks.joshskills.voip.constant.CANCEL_INCOMING_TIMER
+import com.joshtalks.joshskills.voip.constant.GET_FRAGMENT_BITMAP
 import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
@@ -37,7 +39,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class CallFragment : BaseFragment() , SensorEventListener {
+
+class   CallFragment : BaseFragment() , SensorEventListener {
     private val TAG = "CallFragment"
 
     lateinit var callBinding: FragmentCallBinding
@@ -113,6 +116,10 @@ class CallFragment : BaseFragment() , SensorEventListener {
                 CANCEL_INCOMING_TIMER -> {
                     stopAnimation()
                     callBinding.incomingTimerContainer.visibility = View.INVISIBLE
+                }
+                GET_FRAGMENT_BITMAP -> {
+                    val imageFile = getBitMapFromView(callBinding.container).toFile(requireContext())
+                    vm.saveImageAudioToFolder(imageFile)
                 }
             }
         }

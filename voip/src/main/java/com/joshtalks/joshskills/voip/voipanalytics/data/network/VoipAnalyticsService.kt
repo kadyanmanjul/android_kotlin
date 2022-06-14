@@ -1,8 +1,13 @@
 package com.joshtalks.joshskills.voip.voipanalytics.data.network
 
 import com.joshtalks.joshskills.base.constants.DIR
+import com.joshtalks.joshskills.voip.data.AmazonPolicyResponse
+import com.joshtalks.joshskills.voip.data.api.CallRecordingRequest
+import kotlinx.coroutines.Deferred
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.FieldMap
+import retrofit2.http.FormUrlEncoded
 import retrofit2.http.PATCH
 import retrofit2.http.POST
 
@@ -25,4 +30,11 @@ interface VoipAnalyticsService {
     suspend fun agoraMidCallDetails(
         @Body params: Map<String, Any?>
     ): Response<Unit>
+
+    @FormUrlEncoded
+    @POST("$DIR/core/signed_url/")
+    fun requestUploadMediaAsync(@FieldMap params: Map<String, String>): Deferred<AmazonPolicyResponse>
+
+    @POST("$DIR/voicecall/agora_call_share")
+    suspend fun postCallRecordingFile(@Body request : CallRecordingRequest) : Response<Unit>
 }

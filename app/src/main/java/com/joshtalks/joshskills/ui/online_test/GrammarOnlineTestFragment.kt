@@ -338,11 +338,11 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), TestCompletedListener {
             binding.startTestContainer.visibility = View.GONE
             binding.testCompletedContainer.visibility = View.GONE
             binding.testScoreContainer.visibility = View.GONE
-            A2C1Impressions.saveImpression(A2C1Impressions.Impressions.START_LESSON_QUESTIONS)
             if (PrefManager.hasKey(IS_A2_C1_RETENTION_ENABLED) && PrefManager.getStringValue(
                     CURRENT_COURSE_ID
                 ) == DEFAULT_COURSE_ID
             ) {
+                A2C1Impressions.saveImpression(A2C1Impressions.Impressions.START_LESSON_QUESTIONS)
                 viewModel.postGoal("RULE_${lessonNumber}_STARTED", CampaignKeys.A2_C1.name)
             }
             fragmentManager

@@ -26,18 +26,19 @@ import com.joshtalks.joshskills.repository.local.AppDatabase
 import com.joshtalks.joshskills.repository.local.model.NotificationObject
 import com.joshtalks.joshskills.repository.service.UtilsAPIService
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
+import com.joshtalks.joshskills.util.ReminderUtil
 import java.lang.reflect.Type
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
+import retrofit2.HttpException
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.lang.reflect.Modifier
 import java.text.DateFormat
 import java.util.*
-import kotlin.collections.ArrayList
 
 private const val CONNECTION_TIMEOUT = 30L
 private const val CALL_TIMEOUT = 60L
@@ -82,6 +83,7 @@ class BackgroundService : Service() {
         initRetrofit()
         pushAnalyticsToServer()
         fetchMissedNotifications()
+        ReminderUtil(this).setAlarmNotificationWorker()
         return START_STICKY
     }
 
@@ -186,24 +188,23 @@ class BackgroundService : Service() {
                     return@launch
 
                 val serverOffsetTime = PrefManager.getLongValue(SERVER_TIME_OFFSET, true)
-                val request = ArrayList<NotificationAnalyticsRequest>()
                 listOfReceived?.forEach {
-                    request.add(
-                        NotificationAnalyticsRequest(
-                            it.id,
-                            it.time_stamp.plus(serverOffsetTime),
-                            it.action,
-                            it.platform
+                    try {
+                        apiService.engageNewNotificationAsync(
+                            NotificationAnalyticsRequest(
+                                it.id,
+                                it.time_stamp.plus(serverOffsetTime),
+                                it.action,
+                                it.platform
+                            )
                         )
-                    )
-                }
-                if (request.isEmpty())
-                    return@launch
-
-                val resp = apiService.engageNewNotificationAsync(request)
-                if (resp.isSuccessful) {
-                    listOfReceived?.forEach {
                         notificationDao.updateSyncStatus(it.notificationId)
+                    } catch (e: Exception) {
+                        if (e is HttpException) {
+                            if (e.code() == 501)
+                                notificationDao.updateSyncStatus(it.notificationId)
+                        }
+                        e.printStackTrace()
                     }
                 }
             } catch (e: Exception) {

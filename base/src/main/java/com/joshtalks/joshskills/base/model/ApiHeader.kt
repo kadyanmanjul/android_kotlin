@@ -15,12 +15,13 @@ data class ApiHeader(val token : String,
                      }
 
 
-data class NotificationData(val title : String, val subTitle : String) {
+data class NotificationData(val title : String, val subTitle : String,val lessonId:Int) {
     companion object {
         fun default() : NotificationData {
             return NotificationData(
                 title = "Undertake",
-                subTitle = "Practice word of the day"
+                subTitle = "Practice word of the day",
+                lessonId = 21
             )
         }
     }

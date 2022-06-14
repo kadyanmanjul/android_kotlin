@@ -61,6 +61,7 @@ interface ChannelData : IncomingData {
     fun getOccupation() : String
     fun getAspiration() : String
     fun isNewSearchingEnabled() : Boolean
+    fun isCallRecordingEnabled() : Boolean
 }
 
 class IncorrectCommunicationDataException(message: String) : Exception(message)

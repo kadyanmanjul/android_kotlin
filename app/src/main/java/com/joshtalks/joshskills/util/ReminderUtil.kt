@@ -5,10 +5,12 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import com.joshtalks.joshskills.core.service.BackgroundService
 import com.joshtalks.joshskills.ui.reminder.set_reminder.AlarmReceiver
 import java.util.*
 
 class ReminderUtil(val context: Context) {
+
     companion object {
         enum class ReminderFrequency {
             EVERYDAY,
@@ -23,11 +25,8 @@ class ReminderUtil(val context: Context) {
         }
     }
 
-    fun deleteAlarm(
-        pendingIntent: PendingIntent
-    ) {
-        val alarmManager =
-            context.applicationContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+    fun deleteAlarm(pendingIntent: PendingIntent) {
+        val alarmManager = context.applicationContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         alarmManager.cancel(pendingIntent)
     }
 
@@ -55,41 +54,24 @@ class ReminderUtil(val context: Context) {
     }
 
     private fun createAlarm(pendingIntent: PendingIntent, triggerTime: Long, intervalMillis: Long) {
-        val alarmManager: AlarmManager =
-            context.applicationContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        if (Build.VERSION.SDK_INT < 23) {
-            alarmManager.setRepeating(
-                AlarmManager.RTC_WAKEUP,
-                triggerTime,
-                intervalMillis,
-                pendingIntent
-            )
-        } else {
-            alarmManager.setRepeating(
-                AlarmManager.RTC_WAKEUP,
-                triggerTime,
-                intervalMillis,
-                pendingIntent
-            )
-        }
+        val alarmManager: AlarmManager = context.applicationContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+        alarmManager.setRepeating(
+            AlarmManager.RTC_WAKEUP,
+            triggerTime,
+            intervalMillis,
+            pendingIntent
+        )
     }
 
     private fun createAlarm(pendingIntent: PendingIntent, triggerTime: Long) {
-        val alarmManager: AlarmManager =
-            context.applicationContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        if (Build.VERSION.SDK_INT < 23) {
-            alarmManager.setExact(
-                AlarmManager.RTC_WAKEUP,
-                triggerTime,
-                pendingIntent
-            )
-        } else {
-            alarmManager.setExact(
-                AlarmManager.RTC_WAKEUP,
-                triggerTime,
-                pendingIntent
-            )
-        }
+        val alarmManager: AlarmManager = context.applicationContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+        alarmManager.setExact(
+            AlarmManager.RTC_WAKEUP,
+            triggerTime,
+            pendingIntent
+        )
     }
 
     fun getAlarmPendingIntent(
@@ -105,5 +87,25 @@ class ReminderUtil(val context: Context) {
             intent,
             flag
         )
+    }
+
+    fun setAlarmNotificationWorker() {
+        val intent = Intent(context, BackgroundService::class.java)
+        val pendingIntent = PendingIntent.getService(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        val triggerTime = System.currentTimeMillis() + (30 * 60 * 1000) // 30 minutes
+
+        val alarmManager: AlarmManager = context.applicationContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+        } else {
+            alarmManager.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+        }
+    }
+
+    fun deleteNotificationAlarms() {
+        val alarmManager = context.applicationContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val intent = Intent(context, BackgroundService::class.java)
+        val pendingIntent = PendingIntent.getService(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        alarmManager.cancel(pendingIntent)
     }
 }

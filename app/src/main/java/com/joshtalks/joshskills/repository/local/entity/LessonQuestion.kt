@@ -187,8 +187,8 @@ interface LessonQuestionDao {
     @Query("UPDATE lesson_question set status = :questionStatus WHERE id=:questionId")
     suspend fun updateQuestionStatus(questionId: String, questionStatus: QUESTION_STATUS)
 
-    @Query("SELECT practice_word FROM lesson_question")
-    fun getRandomWord() : List<String?>?
+    @Query("SELECT practice_word,lessonId FROM lesson_question")
+    fun getRandomWord() : List<RandomWord>
 
     @Query("SELECT lessonId FROM lesson_question WHERE id = :questionId")
     fun getLessonIdOfQuestion(questionId: String): Int
@@ -259,3 +259,10 @@ interface LessonQuestionDao {
     @Query("SELECT COUNT(id) FROM lesson_question WHERE interval= :interval")
     suspend fun getLessonCount(interval: Int): Long
 }
+
+data class RandomWord(
+    @ColumnInfo(name="lessonId")
+    val lessonId:Int? ,
+    @ColumnInfo(name="practice_word")
+    val word:String?
+)

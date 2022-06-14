@@ -237,4 +237,11 @@
     <color name="blue_cbc_text_timeslot">#0D63B9</color>
     <color name="gray_cbc_text_timeslot">#5B6272</color>
 
+    <color name="blue_btn_text_check_exam_details">#117CDE</color>
+    <color name="btn_download_certificate">#636363</color>
+    <color name="btn_share_linkedin">#2867B2</color>
+    <color name="btn_share_insta">#F00073</color>
+    <color name="btn_share_facebook">#107BE5</color>
+    <color name="btn_share_whatsapp">#13990A</color>
+
 </resources>

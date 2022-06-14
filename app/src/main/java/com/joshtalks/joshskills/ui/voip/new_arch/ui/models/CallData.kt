@@ -3,6 +3,8 @@ package com.joshtalks.joshskills.ui.voip.new_arch.ui.models
 import androidx.databinding.BaseObservable
 import androidx.databinding.Bindable
 import com.joshtalks.joshskills.BR
+import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.voip.data.RecordingButtonState
 
 interface CallData{
     fun getProfileImage(): String?
@@ -32,6 +34,12 @@ class CallUIState : BaseObservable() {
         set(value) {
             field = value
             notifyPropertyChanged(BR.currentState)
+        }
+    @get:Bindable
+    var recordingCurrentState : String = "Waiting for your partner to accept"
+        set(value) {
+            field = value
+            notifyPropertyChanged(BR.recordingCurrentState)
         }
 
     @get:Bindable
@@ -63,6 +71,13 @@ class CallUIState : BaseObservable() {
         }
 
     @get:Bindable
+    var visibleCrdView: Boolean = false
+        set(value) {
+            field = value
+            notifyPropertyChanged(BR.visibleCrdView)
+        }
+
+    @get:Bindable
     var startTime : Long = 0L
         set(value) {
             field = value
@@ -70,10 +85,59 @@ class CallUIState : BaseObservable() {
         }
 
     @get:Bindable
+    var recordTime : Long = 0L
+        set(value) {
+            field = value
+            notifyPropertyChanged(BR.recordTime)
+        }
+
+    @get:Bindable
+    var recordBtnImg: Int = R.drawable.call_fragment_record
+        set(value) {
+            field = value
+            notifyPropertyChanged(BR.recordBtnImg)
+        }
+
+    @get:Bindable
+    var recordCrdViewTxt: String = "Waiting for your partner to accept"
+        set(value) {
+            field = value
+            notifyPropertyChanged(BR.recordCrdViewTxt)
+        }
+
+    @get:Bindable
+    var recordBtnTxt: String = "Record"
+        set(value) {
+            field = value
+            notifyPropertyChanged(BR.recordBtnTxt)
+        }
+
+    @get:Bindable
     var isMute: Boolean = false
         set(value) {
             field = value
             notifyPropertyChanged(BR.mute)
+        }
+
+    @get:Bindable
+    var isRecordingEnabled: Boolean = false
+        set(value) {
+            field = value
+            notifyPropertyChanged(BR.recordingEnabled)
+        }
+
+    @get:Bindable
+    var recordingButtonState: RecordingButtonState = RecordingButtonState.IDLE
+        set(value) {
+            field = value
+            notifyPropertyChanged(BR.recordingButtonState)
+        }
+
+    @get:Bindable
+    var recordingStartTime : Long = 0L
+        set(value) {
+            field = value
+            notifyPropertyChanged(BR.startTime)
         }
 
     @get:Bindable

@@ -352,6 +352,13 @@
         <item name="android:letterSpacing">-0.015</item>
     </style>
 
+    <style name="TextAppearance.JoshTypography.Heading_H5_Bold" parent="TextAppearance.MaterialComponents.Headline5">
+        <item name="fontPath">fonts/OpenSans-Bold.ttf</item>
+        <item name="android:textSize">@dimen/_15ssp</item>
+        <item name="android:lineSpacingMultiplier">1.5</item>
+        <item name="android:letterSpacing">-0.015</item>
+    </style>
+
     <style name="TextAppearance.JoshTypography.Heading_H5_Semi_Bold" parent="TextAppearance.MaterialComponents.Headline5">
         <item name="fontPath">fonts/OpenSans-SemiBold.ttf</item>
         <item name="android:textSize">@dimen/_15ssp</item>
@@ -644,6 +651,13 @@
     <style name="TextAppearance.JoshTypography.Title_Group" parent="TextAppearance.MaterialComponents.Headline5">
         <item name="fontPath">fonts/OpenSans-SemiBold.ttf</item>
         <item name="android:textSize">@dimen/_13ssp</item>
+        <item name="android:lineSpacingMultiplier">1.5</item>
+        <item name="android:letterSpacing">-0.015</item>
+    </style>
+
+    <style name="TextAppearance.JoshTypography.Title_Group_smaller" parent="TextAppearance.MaterialComponents.Headline5">
+        <item name="fontPath">fonts/OpenSans-SemiBold.ttf</item>
+        <item name="android:textSize">@dimen/_12ssp</item>
         <item name="android:lineSpacingMultiplier">1.5</item>
         <item name="android:letterSpacing">-0.015</item>
     </style>

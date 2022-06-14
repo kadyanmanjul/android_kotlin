@@ -9,7 +9,6 @@ import android.content.Intent
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
@@ -61,6 +60,7 @@ import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.fpp.SeeAllRequestsActivity
 import com.joshtalks.joshskills.ui.group.JoshGroupActivity
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
+import com.joshtalks.joshskills.ui.launch.LauncherActivity
 import com.joshtalks.joshskills.ui.leaderboard.LeaderBoardViewPagerActivity
 import com.joshtalks.joshskills.ui.lesson.LessonActivity
 import com.joshtalks.joshskills.ui.lesson.SPEAKING_POSITION
@@ -566,6 +566,18 @@ class NotificationUtils(val context: Context) {
                 return Intent(context, JoshGroupActivity::class.java).apply {
                     putExtra(CONVERSATION_ID, actionData)
                 }
+            }
+            NotificationAction.EMERGENCY_NOTIFICATION -> {
+                lateinit var intent: Intent
+                if (isValidFullNumber("+91", actionData)) {
+                     intent = Intent(Intent.ACTION_DIAL).apply {
+                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    }
+                    intent.data = Uri.parse("tel:$actionData")
+                } else {
+                    intent = Intent(context, LauncherActivity::class.java)
+                }
+                return intent
             }
             NotificationAction.ACTION_NEW_ARCH_INCOMING_CALL -> {
                 val remoteServiceIntent = Intent(com.joshtalks.joshskills.voip.Utils.context, CallingRemoteService::class.java)

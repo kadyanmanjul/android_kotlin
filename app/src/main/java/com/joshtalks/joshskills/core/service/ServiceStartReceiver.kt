@@ -16,8 +16,7 @@ import timber.log.Timber
 class ServiceStartReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         try {
-            if (System.currentTimeMillis() - PrefManager.getLongValue(LAST_TIME_WORK_MANAGER_START) >= 30*60*1000L) {
-                WorkManagerAdmin.setBackgroundServiceWorker()
+            if (System.currentTimeMillis() - PrefManager.getLongValue(LAST_TIME_WORK_MANAGER_START) >= 30 * 60 * 1000L) {
                 PrefManager.put(LAST_TIME_WORK_MANAGER_START, System.currentTimeMillis())
                 CoroutineScope(Dispatchers.IO).launch {
                     Timber.tag("ReceiverCheck").e("${intent.action} : ${intent.dataString}")

@@ -1,6 +1,8 @@
 package com.joshtalks.joshskills.voip.data.api
 
 import com.facebook.stetho.okhttp3.StethoInterceptor
+import com.google.gson.*
+import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.joshtalks.joshskills.base.constants.KEY_APP_ACCEPT_LANGUAGE
 import com.joshtalks.joshskills.base.constants.KEY_APP_USER_AGENT
 import com.joshtalks.joshskills.base.constants.KEY_APP_VERSION_CODE
@@ -17,9 +19,14 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import timber.log.Timber
+import java.io.File
 import java.io.IOException
+import java.lang.reflect.Modifier
+import java.lang.reflect.Type
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
+import java.text.DateFormat
+import java.util.*
 
 private const val READ_TIMEOUT = 30L
 private const val WRITE_TIMEOUT = 30L
@@ -31,6 +38,7 @@ object VoipNetwork {
     lateinit var okHttpBuilder: OkHttpClient.Builder
 
     private fun setup() {
+
         okHttpBuilder = OkHttpClient().newBuilder()
             .connectTimeout(CONNECTION_TIMEOUT, TimeUnit.SECONDS)
             .writeTimeout(WRITE_TIMEOUT, TimeUnit.SECONDS)
@@ -51,10 +59,32 @@ object VoipNetwork {
             okHttpBuilder.addNetworkInterceptor(StethoInterceptor())
         }
 
+        val gsonMapper = GsonBuilder()
+            .enableComplexMapKeySerialization()
+            .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+            .registerTypeAdapter(Date::class.java, object : JsonDeserializer<Date> {
+                @Throws(JsonParseException::class)
+                override fun deserialize(
+                    json: JsonElement,
+                    typeOfT: Type,
+                    context: JsonDeserializationContext
+                ): Date {
+                    return Date(json.asJsonPrimitive.asLong * 1000)
+                }
+            })
+            .excludeFieldsWithModifiers(
+                Modifier.TRANSIENT
+            )
+            .setDateFormat(DateFormat.LONG)
+            .setPrettyPrinting()
+            .serializeNulls()
+            .create()
+
         retrofit = Retrofit.Builder()
             .baseUrl(BuildConfig.BASE_URL)
             .client(okHttpBuilder.build())
-            .addConverterFactory(GsonConverterFactory.create())
+            .addCallAdapterFactory(CoroutineCallAdapterFactory())
+            .addConverterFactory(GsonConverterFactory.create(gsonMapper))
             .build()
     }
 

@@ -106,12 +106,12 @@ class CertificationExamViewHolder(view: View, userId: String) :
             getmarks = marks.toString()
             tvTitle.text = HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_LEGACY)
             when (examStatus) {
-                CExamStatus.PASSED -> {
+                CExamStatus.PASSED -> { //change for testing
                     tvTitle.setTextColor(ContextCompat.getColor(getAppContext(), R.color.white))
 
                     tvMarks.text = getAppContext().getString(R.string.cexam_marks, marks.toInt())
                     tvMarks.setTextColor(ContextCompat.getColor(getAppContext(), R.color.white))
-                    tvMarks.visibility = android.view.View.VISIBLE
+                    tvMarks.visibility = View.VISIBLE
 
                     tvAttemptedDate.setTextColor(
                         ContextCompat.getColor(
@@ -119,27 +119,27 @@ class CertificationExamViewHolder(view: View, userId: String) :
                             R.color.white
                         )
                     )
-                    tvAttemptedDate.visibility = android.view.View.VISIBLE
+                    tvAttemptedDate.visibility = View.VISIBLE
                     tvAttemptedDate.text =
                         getAppContext().getString(R.string.cexam_passed_on, passedOn)
 
-                    ivAward.visibility = android.view.View.VISIBLE
+                    ivAward.visibility = View.VISIBLE
                     btnStartExam.text = getAppContext().getString(R.string.cexam_check_results)
 
                     messageView.background = getAttemptedGradientDrawable()
                     subRootView.setCardBackgroundColor(Color.parseColor("#17C95A"))
                 }
-                CExamStatus.ATTEMPTED -> {
+                CExamStatus.ATTEMPTED -> { //change
                     tvMarks.text = getAppContext().getString(R.string.cexam_marks, marks.toInt())
-                    tvMarks.visibility = android.view.View.VISIBLE
+                    tvMarks.visibility = View.VISIBLE
 
                     tvAttemptedDate.text =
                         getAppContext().getString(R.string.cexam_attempted_on, attemptOn)
-                    tvAttemptedDate.visibility = android.view.View.VISIBLE
+                    tvAttemptedDate.visibility = View.VISIBLE
 
                     tvAttemptLeft.text =
                         getAppContext().getString(R.string.cexam_attempt_left, attemptLeft)
-                    tvAttemptLeft.visibility = android.view.View.VISIBLE
+                    tvAttemptLeft.visibility = View.VISIBLE
                     btnStartExam.text = getAppContext().getString(R.string.cexam_reattempt)
                     setDefaultBg()
                 }
@@ -147,8 +147,8 @@ class CertificationExamViewHolder(view: View, userId: String) :
                     btnStartExam.text = getAppContext().getString(R.string.start_examination)
                     //        tvCEamCode.text = getAppContext().getString(R.string.cexam_code, code)
                     //      tvCEamCode.visibility = android.view.View.VISIBLE
-                    eligibilityDateTV.visibility = android.view.View.VISIBLE
-                    ivAward.visibility = android.view.View.VISIBLE
+                    eligibilityDateTV.visibility = View.VISIBLE
+                    ivAward.visibility = View.VISIBLE
                     setDefaultBg()
                 }
             }

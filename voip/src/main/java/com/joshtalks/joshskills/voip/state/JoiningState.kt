@@ -6,12 +6,39 @@ import com.joshtalks.joshskills.voip.communication.constants.ServerConstants
 import com.joshtalks.joshskills.voip.communication.model.NetworkAction
 import com.joshtalks.joshskills.voip.communication.model.UI
 import com.joshtalks.joshskills.voip.communication.model.UserAction
-import com.joshtalks.joshskills.voip.constant.Event.*
+import com.joshtalks.joshskills.voip.constant.Event
+import com.joshtalks.joshskills.voip.constant.Event.CALL_INITIATED_EVENT
+import com.joshtalks.joshskills.voip.constant.Event.HOLD
+import com.joshtalks.joshskills.voip.constant.Event.HOLD_REQUEST
+import com.joshtalks.joshskills.voip.constant.Event.MUTE
+import com.joshtalks.joshskills.voip.constant.Event.MUTE_REQUEST
+import com.joshtalks.joshskills.voip.constant.Event.RECEIVED_CHANNEL_DATA
+import com.joshtalks.joshskills.voip.constant.Event.REMOTE_USER_DISCONNECTED_AGORA
+import com.joshtalks.joshskills.voip.constant.Event.REMOTE_USER_DISCONNECTED_MESSAGE
+import com.joshtalks.joshskills.voip.constant.Event.REMOTE_USER_DISCONNECTED_USER_LEFT
+import com.joshtalks.joshskills.voip.constant.Event.SPEAKER_OFF_REQUEST
+import com.joshtalks.joshskills.voip.constant.Event.SPEAKER_ON_REQUEST
+import com.joshtalks.joshskills.voip.constant.Event.SYNC_UI_STATE
+import com.joshtalks.joshskills.voip.constant.Event.TOPIC_IMAGE_CHANGE_REQUEST
+import com.joshtalks.joshskills.voip.constant.Event.TOPIC_IMAGE_RECEIVED
+import com.joshtalks.joshskills.voip.constant.Event.UI_STATE_UPDATED
+import com.joshtalks.joshskills.voip.constant.Event.UNHOLD
+import com.joshtalks.joshskills.voip.constant.Event.UNHOLD_REQUEST
+import com.joshtalks.joshskills.voip.constant.Event.UNMUTE
+import com.joshtalks.joshskills.voip.constant.Event.UNMUTE_REQUEST
 import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.newSingleThreadContext
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
@@ -109,7 +136,9 @@ class JoiningState(val context: CallContext) : VoipState {
                                 extra = msg
                             )
                         }
-                        REMOTE_USER_DISCONNECTED_MESSAGE, REMOTE_USER_DISCONNECTED_AGORA, REMOTE_USER_DISCONNECTED_USER_LEFT -> {
+                        REMOTE_USER_DISCONNECTED_MESSAGE, REMOTE_USER_DISCONNECTED_AGORA, REMOTE_USER_DISCONNECTED_USER_LEFT,
+                                Event.START_RECORDING, Event.STOP_RECORDING, Event.CALL_RECORDING_ACCEPT, Event.CALL_RECORDING_REJECT,
+                                Event.CANCEL_RECORDING_REQUEST -> {
                             // Ignore Error Event from Agora
                             val msg = "Ignoring : In $TAG but received ${event.type} expected $CALL_INITIATED_EVENT"
                             CallAnalytics.addAnalytics(

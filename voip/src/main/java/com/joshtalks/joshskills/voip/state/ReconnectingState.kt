@@ -8,8 +8,10 @@ import com.joshtalks.joshskills.voip.communication.model.UI
 import com.joshtalks.joshskills.voip.communication.model.UserAction
 import com.joshtalks.joshskills.voip.constant.Event.*
 import com.joshtalks.joshskills.voip.constant.State
+import com.joshtalks.joshskills.voip.data.RecordingButtonState
 import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.inSeconds
+import com.joshtalks.joshskills.voip.showToast
 import com.joshtalks.joshskills.voip.updateLastCallDetails
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
@@ -191,7 +193,10 @@ class ReconnectingState(val context: CallContext) : VoipState {
                         }
                         HOLD_REQUEST -> {
                             ensureActive()
-                            val uiState = context.currentUiState.copy(isOnHold = true)
+                            if(context.currentUiState.recordingButtonState == RecordingButtonState.RECORDING) {
+                                context.startRecording()
+                            }
+                            val uiState = context.currentUiState.copy(isOnHold = true, recordingButtonState = RecordingButtonState.IDLE)
                             context.updateUIState(uiState = uiState)
                             val userAction = UserAction(
                                 ServerConstants.ONHOLD,
@@ -262,6 +267,10 @@ class ReconnectingState(val context: CallContext) : VoipState {
                             )
                             Log.d(TAG, "Ignoring : In $TAG but received ${event.type} expected $RECONNECTED")
                         }
+                        START_RECORDING, STOP_RECORDING, CALL_RECORDING_ACCEPT, CALL_RECORDING_REJECT, CANCEL_RECORDING_REQUEST -> {
+                            showToast("Can't process call recording request right now")
+                        }
+
                         else -> {
                             val msg = "In $TAG but received ${event.type} expected $RECONNECTED"
                             CallAnalytics.addAnalytics(

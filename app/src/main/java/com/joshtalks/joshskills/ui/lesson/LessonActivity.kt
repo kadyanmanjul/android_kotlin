@@ -202,9 +202,6 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
             IS_NEW_GRAMMAR,
             false
         ) else false
-        if (lessonIsNewGrammar) {
-            A2C1Impressions.saveImpression(A2C1Impressions.Impressions.START_LESSON_CLICKED)
-        }
 
         if (intent.hasExtra(IS_LESSON_COMPLETED)) {
             isLesssonCompleted = intent.getBooleanExtra(IS_LESSON_COMPLETED, false)
@@ -841,11 +838,14 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
             CoroutineScope(Dispatchers.IO).launch {
                 viewModel.lessonLiveData.value?.let { lesson ->
                     var lessonCompleted = lesson.grammarStatus == LESSON_STATUS.CO &&
-                            lesson.translationStatus == LESSON_STATUS.CO &&
                             lesson.vocabStatus == LESSON_STATUS.CO &&
                             lesson.readingStatus == LESSON_STATUS.CO &&
                             lesson.speakingStatus == LESSON_STATUS.CO
 
+                    if (lesson.isNewGrammar && PrefManager.getBoolValue(IS_A2_C1_RETENTION_ENABLED)) {
+                        lessonCompleted = lessonCompleted &&
+                                lesson.translationStatus == LESSON_STATUS.CO
+                    }
                     if (viewModel.lessonIsConvoRoomActive) {
                         lessonCompleted = lessonCompleted &&
                                 lesson.conversationStatus == LESSON_STATUS.CO
@@ -988,6 +988,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         ) {
             arrayFragment.add(GRAMMAR_POSITION, GrammarFragment.getInstance())
             arrayFragment.add(TRANSLATION_POSITION, GrammarOnlineTestFragment.getInstance(lessonNo))
+            A2C1Impressions.saveImpression(A2C1Impressions.Impressions.START_LESSON_CLICKED)
             isTranslationDisabled = 0
         } else if (lessonIsNewGrammar) {
             arrayFragment.add(GRAMMAR_POSITION, GrammarOnlineTestFragment.getInstance(lessonNo))
@@ -1337,6 +1338,9 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
+        if (intent?.getBooleanExtra("reopen",false)==true) {
+            return
+        }
         intent?.let {
             val lessonId = if (intent.hasExtra(LESSON_ID)) intent.getIntExtra(LESSON_ID, 0) else 0
 

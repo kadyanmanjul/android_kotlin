@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/white">
+
+    <data>
+
+        <variable
+            name="handler"
+            type="com.joshtalks.joshskills.ui.certification_exam.view.CertificateShareFragment" />
+    </data>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="none">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/txt_congratulations"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_20sdp"
+                    tools:text="Congratulations, Aaditya!"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5_Bold"
+                    android:textSize="@dimen/_18ssp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/txt_you_have_earned"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:gravity="center"
+                    android:paddingHorizontal="@dimen/_12sdp"
+                    android:text="@string/you_have_earned_certificate"
+                    android:textAlignment="center"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5_Semi_Bold"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/txt_congratulations" />
+
+                <ImageView
+                    android:id="@+id/img_certificate"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    app:layout_constraintDimensionRatio="1.414"
+                    android:layout_marginHorizontal="@dimen/_16sdp"
+                    android:layout_marginTop="@dimen/_16sdp"
+                    android:background="@drawable/rect_with_black_stroke"
+                    android:elevation="@dimen/_6sdp"
+                    android:shadowColor="@color/black"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/txt_you_have_earned"
+                    tools:src="@tools:sample/avatars" />
+
+                <com.facebook.shimmer.ShimmerFrameLayout
+                    android:id="@+id/shimmer_certi"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:background="@color/white"
+                    android:visibility="visible"
+                    app:layout_constraintBottom_toBottomOf="@+id/img_certificate"
+                    app:layout_constraintEnd_toEndOf="@+id/img_certificate"
+                    app:layout_constraintStart_toStartOf="@+id/img_certificate"
+                    app:layout_constraintTop_toTopOf="@+id/img_certificate"
+                    tools:visibility="visible">
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/bg_profile_header"/>
+                </com.facebook.shimmer.ShimmerFrameLayout>
+
+                <TextView
+                    android:id="@+id/txt_share_achievement"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="@dimen/_20sdp"
+                    android:gravity="center"
+                    android:paddingHorizontal="@dimen/_12sdp"
+                    android:text="@string/share_your_achievement"
+                    android:textAlignment="center"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Title_Message"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/img_certificate" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_share_whatsapp"
+                    style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/_38sdp"
+                    android:layout_marginTop="@dimen/_16sdp"
+                    android:backgroundTint="@color/btn_share_whatsapp"
+                    android:elevation="0dp"
+                    android:paddingVertical="@dimen/_4sdp"
+                    android:text="@string/btn_share_on_whatsapp"
+                    android:textAlignment="center"
+                    android:textAllCaps="false"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5_Semi_Bold"
+                    android:textSize="@dimen/_12ssp"
+                    app:cornerRadius="@dimen/_18sdp"
+                    app:icon="@drawable/ic_whatsapp_share"
+                    app:iconGravity="textStart"
+                    app:iconSize="@dimen/_16sdp"
+                    app:iconTint="@null"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/txt_share_achievement" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_share_facebook"
+                    style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/_38sdp"
+                    android:layout_marginTop="@dimen/_4sdp"
+                    android:backgroundTint="@color/white"
+                    android:elevation="0dp"
+                    android:paddingVertical="@dimen/_4sdp"
+                    android:text="@string/btn_share_on_facebook"
+                    android:textAlignment="center"
+                    android:textAllCaps="false"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5_Semi_Bold"
+                    android:textColor="@color/btn_share_facebook"
+                    android:textSize="@dimen/_12ssp"
+                    app:cornerRadius="@dimen/_18sdp"
+                    app:icon="@drawable/ic_facebook_certi"
+                    app:iconGravity="textStart"
+                    app:iconSize="@dimen/_16sdp"
+                    app:iconTint="@null"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/btn_share_whatsapp"
+                    app:strokeColor="@color/btn_share_facebook"
+                    app:strokeWidth="@dimen/_1sdp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_share_insta"
+                    style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/_38sdp"
+                    android:layout_marginTop="@dimen/_4sdp"
+                    android:backgroundTint="@color/white"
+                    android:elevation="0dp"
+                    android:paddingVertical="@dimen/_4sdp"
+                    android:text="@string/btn_share_on_instagram"
+                    android:textAlignment="center"
+                    android:textAllCaps="false"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5_Semi_Bold"
+                    android:textColor="@color/btn_share_insta"
+                    android:textSize="@dimen/_12ssp"
+                    app:cornerRadius="@dimen/_18sdp"
+                    app:icon="@drawable/ic_instagram"
+                    app:iconGravity="textStart"
+                    app:iconSize="@dimen/_16sdp"
+                    app:iconTint="@null"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/btn_share_facebook"
+                    app:strokeColor="@color/btn_share_insta"
+                    app:strokeWidth="@dimen/_1sdp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_share_linkedIn"
+                    style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/_38sdp"
+                    android:layout_marginTop="@dimen/_4sdp"
+                    android:backgroundTint="@color/white"
+                    android:elevation="0dp"
+                    android:gravity="center"
+                    android:paddingVertical="@dimen/_4sdp"
+                    android:text="@string/btn_share_on_linkedin"
+                    android:textAllCaps="false"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5_Semi_Bold"
+                    android:textColor="@color/btn_share_linkedin"
+                    android:textSize="@dimen/_12ssp"
+                    app:cornerRadius="@dimen/_18sdp"
+                    app:icon="@drawable/ic_linkedin"
+                    app:iconGravity="textStart"
+                    app:iconSize="@dimen/_16sdp"
+                    app:iconTint="@null"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/btn_share_insta"
+                    app:strokeColor="@color/btn_share_linkedin"
+                    app:strokeWidth="@dimen/_1sdp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_share_download"
+                    style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/_38sdp"
+                    android:layout_marginTop="@dimen/_4sdp"
+                    android:layout_marginBottom="@dimen/_12ssp"
+                    android:backgroundTint="@color/white"
+                    android:elevation="0dp"
+                    android:paddingVertical="@dimen/_4sdp"
+                    android:text="@string/btn_download_certificate"
+                    android:textAllCaps="false"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5_Semi_Bold"
+                    android:textColor="@color/btn_download_certificate"
+                    android:textSize="@dimen/_12ssp"
+                    app:cornerRadius="@dimen/_18sdp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/btn_share_linkedIn"
+                    app:strokeColor="@color/btn_download_certificate"
+                    app:strokeWidth="@dimen/_1sdp" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </ScrollView>
+
+        <FrameLayout
+            android:id="@+id/progressBar2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/transparent_black_alpha_70"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:elevation="@dimen/_10sdp"
+            android:visibility="gone">
+
+            <ProgressBar
+                style="?android:attr/progressBarStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center" />
+        </FrameLayout>
+    </FrameLayout>
+</layout>

@@ -9,7 +9,13 @@ import com.joshtalks.joshskills.voip.communication.model.ChannelData
 import com.joshtalks.joshskills.voip.communication.model.NetworkAction
 import com.joshtalks.joshskills.voip.communication.model.Timeout
 import com.joshtalks.joshskills.voip.communication.model.UserAction
-import com.joshtalks.joshskills.voip.constant.Event.*
+import com.joshtalks.joshskills.voip.constant.Event
+import com.joshtalks.joshskills.voip.constant.Event.RECEIVED_CHANNEL_DATA
+import com.joshtalks.joshskills.voip.constant.Event.REMOTE_USER_DISCONNECTED_AGORA
+import com.joshtalks.joshskills.voip.constant.Event.REMOTE_USER_DISCONNECTED_MESSAGE
+import com.joshtalks.joshskills.voip.constant.Event.REMOTE_USER_DISCONNECTED_USER_LEFT
+import com.joshtalks.joshskills.voip.constant.Event.SYNC_UI_STATE
+import com.joshtalks.joshskills.voip.constant.Event.TOPIC_IMAGE_RECEIVED
 import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.UIState
 import com.joshtalks.joshskills.voip.data.local.PrefManager
@@ -19,9 +25,18 @@ import com.joshtalks.joshskills.voip.mediator.PER_USER_TIMEOUT_IN_MILLIS
 import com.joshtalks.joshskills.voip.mediator.PeerToPeerCall
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
-import kotlinx.coroutines.*
-import retrofit2.HttpException
 import java.net.SocketTimeoutException
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.launch
+import retrofit2.HttpException
 
 // Fired an API So We have to make sure how to cancel
 /**
@@ -207,7 +222,8 @@ class SearchingState(val context: CallContext) : VoipState {
                                 topicName = context.channelData.getCallingTopic(),
                                 currentTopicImage = context.channelData.getTopicImage(),
                                 occupation = context.channelData.getOccupation(),
-                                aspiration = context.channelData.getAspiration()
+                                aspiration = context.channelData.getAspiration(),
+                                isRecordingEnabled = context.channelData.isCallRecordingEnabled()
                             )
                             context.updateUIState(uiState)
                             if (context.direction == CallDirection.OUTGOING)
@@ -218,7 +234,11 @@ class SearchingState(val context: CallContext) : VoipState {
                             Log.d(TAG, "Received : ${event.type} switched to ${context.state}")
                             break@loop
                         }
-                        TOPIC_IMAGE_RECEIVED, SYNC_UI_STATE, REMOTE_USER_DISCONNECTED_MESSAGE, REMOTE_USER_DISCONNECTED_AGORA, REMOTE_USER_DISCONNECTED_USER_LEFT -> {
+                        TOPIC_IMAGE_RECEIVED, SYNC_UI_STATE, REMOTE_USER_DISCONNECTED_MESSAGE,
+                        REMOTE_USER_DISCONNECTED_AGORA, REMOTE_USER_DISCONNECTED_USER_LEFT,
+                        Event.START_RECORDING, Event.STOP_RECORDING, Event.CALL_RECORDING_ACCEPT,
+                        Event.CALL_RECORDING_REJECT, Event.CANCEL_RECORDING_REQUEST  -> {
+
                             val msg =
                                 "Ignoring : In $TAG but received ${event.type} expected $RECEIVED_CHANNEL_DATA"
                             CallAnalytics.addAnalytics(

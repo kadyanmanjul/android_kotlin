@@ -9,6 +9,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.databinding.FragmentCexamReportBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.EmptyEventBus
@@ -19,6 +20,7 @@ import com.joshtalks.joshskills.repository.server.certification_exam.Certificati
 import com.joshtalks.joshskills.repository.server.certification_exam.QuestionReportType
 import com.joshtalks.joshskills.ui.certification_exam.CERTIFICATION_EXAM_QUESTION
 import com.joshtalks.joshskills.ui.certification_exam.CertificationExamViewModel
+import com.joshtalks.joshskills.ui.certification_exam.constants.CHECK_EXAM_DETAILS
 import com.joshtalks.joshskills.ui.certification_exam.report.vh.ReportOverviewView1
 import com.joshtalks.joshskills.ui.certification_exam.report.vh.ReportOverviewView2
 import com.joshtalks.joshskills.ui.certification_exam.report.vh.ReportOverviewView3
@@ -52,6 +54,8 @@ class CExamReportFragment : Fragment() {
     private var certificateExamReport: CertificateExamReportModel? = null
     private var questionList: List<CertificationQuestion> = emptyList()
     private var compositeDisposable = CompositeDisposable()
+    private var id:Int? =null
+    private lateinit var url:String
     private val viewModel: CertificationExamViewModel by lazy {
         ViewModelProvider(requireActivity()).get(CertificationExamViewModel::class.java)
     }
@@ -80,10 +84,13 @@ class CExamReportFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        id = certificateExamReport?.reportId
+        url = certificateExamReport?.certificateURL?:EMPTY
         certificateExamReport?.run {
             binding.chatRv.addView(ReportOverviewView1(this))
             binding.chatRv.addView(ReportOverviewView2(this, questionList))
             updateRvScrolling(true)
+            viewModel.certificationQuestionLiveData.value?.type?.let { ReportOverviewView1(this).checkExamType(it) }
         }
     }
 
@@ -104,6 +111,7 @@ class CExamReportFragment : Fragment() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     updateRvScrolling(false)
+                    viewModel.saveImpression(CHECK_EXAM_DETAILS)
                     binding.chatRv.smoothScrollToPosition(1)
                 }, {
                     it.printStackTrace()

@@ -13,8 +13,13 @@ import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
 import com.joshtalks.joshskills.voip.webrtc.Envelope
 import com.joshtalks.joshskills.voip.webrtc.RECONNECTING_TIMEOUT_IN_MILLIS
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 data class CallContext(val callType: Category, val direction : CallDirection, val request: HashMap<String, Any>, private val mediator: CallingMediator)  {
     private val TAG = "CallContext"
@@ -151,6 +156,15 @@ data class CallContext(val callType: Category, val direction : CallDirection, va
     fun enableSpeaker(isEnable : Boolean) {
         Log.d(TAG, "enableSpeaker $isEnable} ")
         mediator.changeSpeaker(isEnable)
+    }
+
+    fun startRecording() {
+        Log.d(TAG, "startRecording")
+        mediator.startRecording()
+    }
+    fun stopRecording() {
+        Log.d(TAG, "stopRecording")
+        mediator.stopRecording()
     }
 }
 

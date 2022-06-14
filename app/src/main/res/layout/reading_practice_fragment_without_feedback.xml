@@ -585,6 +585,7 @@
                             android:layout_height="wrap_content"
                             android:visibility="gone"
                             tools:itemCount="2"
+                            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                             tools:listitem="@layout/practice_audio_item"
                             tools:visibility="invisible" />
 

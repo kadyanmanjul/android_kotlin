@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.ui.certification_exam
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -9,21 +10,24 @@ import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.JoshApplication
-import com.joshtalks.joshskills.core.analytics.MixPanelEvent
-import com.joshtalks.joshskills.core.analytics.MixPanelTracker
-import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.repository.local.DatabaseUtils
+import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.certification_exam.Answer
 import com.joshtalks.joshskills.repository.server.certification_exam.CertificateExamReportModel
 import com.joshtalks.joshskills.repository.server.certification_exam.CertificationQuestionModel
 import com.joshtalks.joshskills.repository.server.certification_exam.CertificationUserDetail
 import com.joshtalks.joshskills.repository.server.certification_exam.RequestSubmitAnswer
 import com.joshtalks.joshskills.repository.server.certification_exam.RequestSubmitCertificateExam
+import com.joshtalks.joshskills.ui.certification_exam.constants.FINISH_EXAM
+import com.joshtalks.joshskills.ui.certification_exam.constants.PREV_RESULT
+import com.joshtalks.joshskills.ui.certification_exam.constants.START_EXAM
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 class CertificationExamViewModel(application: Application) : AndroidViewModel(application) {
     private var context: JoshApplication = getApplication()
@@ -41,12 +45,15 @@ class CertificationExamViewModel(application: Application) : AndroidViewModel(ap
         MutableLiveData()
     val isUserSubmitExam: MutableLiveData<Boolean> = MutableLiveData()
     var isSAnswerUiShow: Boolean = false
+    var certificateExamId:Int ?=null
 
     fun startExam() {
+        saveImpression(START_EXAM)
         startExamLiveData.postValue(Unit)
     }
 
     fun showPreviousResult() {
+        saveImpression(PREV_RESULT)
         previousExamsResultLiveData.postValue(Unit)
     }
 
@@ -99,6 +106,7 @@ class CertificationExamViewModel(application: Application) : AndroidViewModel(ap
 
     fun submitExam(certificateExamId: Int, obj: CertificationQuestionModel) {
         viewModelScope.launch(Dispatchers.IO) {
+            saveImpression(FINISH_EXAM)
             val request = getExamSubmitRequestObject(certificateExamId, obj)
             try {
                 val responseObj =
@@ -184,15 +192,47 @@ class CertificationExamViewModel(application: Application) : AndroidViewModel(ap
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val resp =
-                    AppObjectController.commonNetworkService.submitUserDetailForCertificate(
-                        certificationUserDetail
-                    )
-                certificateUrl.emit(resp.getOrDefault("pdf", ""))
+                    AppObjectController.commonNetworkService.submitUserDetailForCertificate(certificationUserDetail)
+                //certificateUrl.emit(resp.getOrDefault("pdf", "")) img
+                certificateUrl.emit(resp.getOrDefault("certificate_url", ""))
             } catch (ex: Throwable) {
                 ex.showAppropriateMsg()
                 apiStatus.postValue(ApiCallStatus.FAILED)
                 ex.printStackTrace()
             }
         }
+    }
+
+    fun saveImpression(eventName: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response = async {
+                    AppObjectController.commonNetworkService.getCertificateExamType(certificateExamId.toString())
+                }.await()
+                val examType = response.getOrDefault("exam_type", "")
+
+                val requestData = hashMapOf(
+                    Pair("mentor_id", Mentor.getInstance().getId()),
+                    Pair("event_name", eventName),
+                    Pair("exam_type", examType)
+                )
+                val response2 = async { AppObjectController.commonNetworkService.saveCertificateImpression(requestData)}.await()
+            } catch (ex: Exception) {
+                Timber.e(ex)
+            }
+        }
+    }
+
+    fun typeOfExam(exam_id:String):String{
+        var examType=""
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response = async {AppObjectController.commonNetworkService.getCertificateExamType(exam_id)}.await()
+                examType = response.getOrDefault("exam_type", "")
+            }catch (e:Exception){
+                e.printStackTrace()
+            }
+        }
+        return examType
     }
 }

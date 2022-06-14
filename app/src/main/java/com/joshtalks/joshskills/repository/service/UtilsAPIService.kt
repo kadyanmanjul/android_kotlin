@@ -17,5 +17,5 @@ interface UtilsAPIService {
     suspend fun getMissedNotifications(): Response<List<MissedNotification>>
 
     @POST("$DIR/notification/analytics/")
-    suspend fun engageNewNotificationAsync(@Body params: List<NotificationAnalyticsRequest>): Response<Void>
+    suspend fun engageNewNotificationAsync(@Body params: NotificationAnalyticsRequest): Map<String, String>
 }

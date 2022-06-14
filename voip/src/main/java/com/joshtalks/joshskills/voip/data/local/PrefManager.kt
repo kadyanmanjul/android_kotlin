@@ -4,8 +4,12 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
 import com.joshtalks.joshskills.voip.R
-import com.joshtalks.joshskills.voip.constant.*
-import kotlinx.coroutines.*
+import com.joshtalks.joshskills.voip.constant.PREF_KEY_PSTN_STATE
+import com.joshtalks.joshskills.voip.constant.PSTN_STATE_IDLE
+import com.joshtalks.joshskills.voip.constant.State
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 
 const val LATEST_PUBNUB_MESSAGE_TIME = "josh_pref_key_latest_pubnub_message_time"
 const val VOIP_STATE = "josh_pref_key_voip_state"
@@ -13,6 +17,7 @@ const val INCOMING_CALL = "josh_pref_key_incoming_call"
 const val LOCAL_USER_AGORA_ID = "josh_pref_key_local_user_agora_id"
 const val AGORA_CALL_ID = "josh_pref_key_agora_call_id"
 const val CURRENT_CALL_CATEGORY = "josh_pref_key_call_category"
+const val LAST_RECORDING = "josh_pref_key_agora_call_recording"
 
 
 private const val TAG = "PrefManager"
@@ -108,6 +113,18 @@ class PrefManager {
         fun getPstnState(): String {
             Log.d(TAG, "Getting pstn State")
             return preferenceManager.getString(PREF_KEY_PSTN_STATE, PSTN_STATE_IDLE).toString()
+        }
+
+        fun saveLastRecordingPath(path: String) {
+            Log.d(TAG, "saveLastRecordingPath State : $path")
+            val editor = preferenceManager.edit()
+            editor.putString(LAST_RECORDING, path)
+            editor.commit()
+        }
+
+        fun getLastRecordingPath(): String {
+            Log.d(TAG, "Getting getLastRecordingPath")
+            return preferenceManager.getString(LAST_RECORDING,"").toString()
         }
     }
 }

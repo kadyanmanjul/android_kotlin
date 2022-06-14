@@ -87,6 +87,7 @@ class CertificationBaseActivity : BaseActivity() {
         addObserver()
         intent.getIntExtra(CERTIFICATION_EXAM_ID, -1).let {
             certificateExamId = it
+            viewModel.certificateExamId = it
         }
         cExamStatus = intent.getSerializableExtra(EXAM_STATUS) as CExamStatus
         intent.getStringExtra(CONVERSATION_ID)?.let {
@@ -113,57 +114,54 @@ class CertificationBaseActivity : BaseActivity() {
 
     private fun addObserver() {
         viewModel.certificationQuestionLiveData.observe(
-            this,
-            {
-                progress_bar.visibility = View.GONE
-                openExamInstructionScreen()
-                if (isSubmittedExamTest) {
-                    isSubmittedExamTest = false
-                    viewModel.showPreviousResult()
-                }
-                if (CExamStatus.REATTEMPTED == cExamStatus) {
-                    viewModel.startExam()
-                    cExamStatus = CExamStatus.NIL
-                } else if (CExamStatus.CHECK_RESULT == cExamStatus) {
-                    viewModel.showPreviousResult()
-                }
+            this
+        ) {
+            progress_bar.visibility = View.GONE
+            openExamInstructionScreen()
+            if (isSubmittedExamTest) {
+                isSubmittedExamTest = false
+                viewModel.showPreviousResult()
             }
-        )
+            if (CExamStatus.REATTEMPTED == cExamStatus) {
+                viewModel.startExam()
+                cExamStatus = CExamStatus.NIL
+            } else if (CExamStatus.CHECK_RESULT == cExamStatus) {
+                viewModel.showPreviousResult()
+            }
+        }
         viewModel.startExamLiveData.observe(
-            this,
-            {
-                viewModel.certificationQuestionLiveData.value?.let {
-                    if (it.attemptCount == it.max_attempt) {
-                        return@observe
-                    }
-                    openExamActivityResult.launch(
-                        CExamMainActivity.startExamActivity(
-                            this, it,
-                            conversationId = getConversationId(),
-                        )
-                    )
+            this
+        ) {
+            viewModel.certificationQuestionLiveData.value?.let {
+                if (it.attemptCount == it.max_attempt) {
+                    return@observe
                 }
+                openExamActivityResult.launch(
+                    CExamMainActivity.startExamActivity(
+                        this, it,
+                        conversationId = getConversationId(),
+                    )
+                )
             }
-        )
+        }
         viewModel.previousExamsResultLiveData.observe(
-            this,
-            {
-                viewModel.certificationQuestionLiveData.value?.let {
-                    examReportActivityResult.launch(
-                        CExamReportActivity.getExamResultActivityIntent(
-                            this,
-                            certificateExamId,
-                            it,
-                            conversationId = getConversationId()
-                        )
+            this
+        ) {
+            viewModel.certificationQuestionLiveData.value?.let {
+                examReportActivityResult.launch(
+                    CExamReportActivity.getExamResultActivityIntent(
+                        this,
+                        certificateExamId,
+                        it,
+                        conversationId = getConversationId()
                     )
-                    if (CExamStatus.CHECK_RESULT == cExamStatus) {
-                        cExamStatus = CExamStatus.NIL
-                        //   this.finish()
-                    }
+                )
+                if (CExamStatus.CHECK_RESULT == cExamStatus) {
+                    cExamStatus = CExamStatus.NIL
+                    //   this.finish()
                 }
             }
-        )
+        }
     }
 
     private fun openExamInstructionScreen() {

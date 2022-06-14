@@ -518,7 +518,7 @@
     <string name="finish_exam">Finish Exam</string>
     <string name="resume_examination">Resume Examination</string>
     <string name="your_score">Your Score</string>
-    <string name="download_certificate_2">Download Certificate</string>
+    <string name="download_certificate_2">Generate Certificate</string>
     <string name="check_exam_details">Check exam details</string>
     <string name="examination_result">Examination Result</string>
     <string name="check_answer">Check Answer</string>
@@ -1283,4 +1283,21 @@
     <string name="referral_share_text">"Mai Bharat 🇮🇳 ke best teachers se Spoken English aur Personality Development seekh raha hu. Mere saath seekhna abhi shuru karo 💪. Ye lo meri taraf se tumhe ₹** OFF: Use my code ****. Download the app by clicking on the link"</string>
     <string name="free_trial_popup_for_icp">यह एक 90 दिनों का कोर्स है\nऔर try करने के बाद अगर आप चाहें तो इसे ₹799 में खरीद सकते हैं\n  \nक्या आप इस कोर्स को एक दिन के लिए बिल्कुल मुफ्त में try करना चाहते हैं?</string>
     <string name="send_fpp_text">Send Favorite Practice Partner request</string>
+    <string name="dialog_record_call_text"><u>A copy of recording will also get saved in your phone</u></string>
+    <string name="btn_share_on_whatsapp">Share on Whatsapp</string>
+    <string name="btn_share_on_facebook">Share on Facebook</string>
+    <string name="btn_share_on_instagram">Share on Instagram</string>
+    <string name="btn_share_on_linkedin">Share on LinkedIn</string>
+    <string name="btn_download_certificate">Download Certificate</string>
+    <string name="share_your_achievement">Share your achievement with people who have supported you and helped you grow.</string>
+    <string name="you_have_earned_certificate">You have earned the Josh Skills Ultimate Spoken English Course Beginner Level Certificate</string>
+    <string name="as_per_aadhar_card_for_certificate">As per Aadhar Card, for certificate</string>
+    <string name="full_name">Full Name</string>
+    <string name="certi_date_of_birth">Date of Birth</string>
+    <string name="mother_s_name">Mother’s Name</string>
+    <string name="father_s_name">Father’s Name</string>
+    <string name="mobile_number">Mobile Number</string>
+    <string name="certi_email_address">Email Address</string>
+    <string name="postal_address">Postal Address</string>
+    <string name="for_sending_the_certificate">For sending the certificate</string>
 </resources>
