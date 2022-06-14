@@ -5,7 +5,6 @@ import android.media.MediaRecorder
 import android.view.View
 import com.joshtalks.joshskills.core.analytics.ErrorTag
 import com.joshtalks.joshskills.core.analytics.LogException
-import java.io.File
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
@@ -16,7 +15,7 @@ class CallRecording {
     private var recorder: ViewRecorder? = null
     private var recordingJob: CoroutineScope? = null
 
-    fun startPlayer(recordFile: File?,context:Context,view: View) {
+    fun startPlayer(recordFile: String, context:Context, view: View) {
         destroyCurrentScope()
         recordingJob = CoroutineScope(Dispatchers.IO)
         recordingJob?.launch {
@@ -29,7 +28,7 @@ class CallRecording {
                 recorder?.setVideoSize(720, 1280);
                 recorder?.setVideoEncodingBitRate(2000 * 1000);
                 recorder?.setRecordedView(view);
-                recorder?.setOutputFile(recordFile?.absolutePath)
+                recorder?.setOutputFile(recordFile)
                 val errorListener =
                     MediaRecorder.OnErrorListener { arg0, arg1, arg2 ->
                         LogException.catchError(
