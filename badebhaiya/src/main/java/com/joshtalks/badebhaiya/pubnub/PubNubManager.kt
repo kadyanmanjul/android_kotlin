@@ -641,6 +641,7 @@ object PubNubManager {
     fun collectPubNubEvents() {
         pubNubEventJob = CoroutineScope(Dispatchers.IO).launch {
             PubNubData.pubNubEvents.collect {
+                Timber.tag("Fallback").d("PUBNUB EVENT IS => $it")
                 when (it.action) {
                     PubNubEvent.CREATE_ROOM, PubNubEvent.JOIN_ROOM -> PubNubManager.addNewUserToAudience(
                         it.data

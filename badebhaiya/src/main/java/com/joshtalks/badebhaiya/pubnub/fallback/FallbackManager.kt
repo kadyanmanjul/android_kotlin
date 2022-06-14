@@ -30,6 +30,8 @@ object FallbackManager {
     private const val COLLECTION_NAME = "live_room"
     private const val EVENT_ID = "event_id"
     private const val TAG = "FallbackManager"
+    private const val LIVE_ROOM = "LIVE_ROOM"
+    private const val CHANNELS = "CHANNELS"
 
     private var globalChannelListener: ListenerRegistration? = null
     private var privateChannelListener: ListenerRegistration? = null
@@ -43,7 +45,9 @@ object FallbackManager {
 
     private fun startGlobalChannel() {
         globalChannelListener = Firebase.firestore
-            .collection(getRoomId())
+            .collection(LIVE_ROOM)
+            .document(getRoomId())
+            .collection(CHANNELS)
             .document(PubNubManager.getLiveRoomProperties().channelName)
             .addSnapshotListener { value, error ->
                 Timber.tag(TAG).d("EVENT RECIEVED FROM GLOBAL CHANNEL AND ERROR => $error and VALUE => $value")
@@ -75,8 +79,11 @@ object FallbackManager {
         if (documentSnapshot.exists()) {
             documentSnapshot.getLong(EVENT_ID)?.let {
                 jobs += CoroutineScope(Dispatchers.IO).launch {
-                    if (checkIfEventExists(it)) {
+                    if (!checkIfEventExists(it)) {
+                        Timber.tag(TAG).d("NO EVENT DOESN'T EXISTS")
                         sendEventToFlow(documentSnapshot)
+                    } else{
+                        Timber.tag(TAG).d("YES EVENT EXISTS")
                     }
                 }
             }
@@ -84,12 +91,13 @@ object FallbackManager {
     }
 
     private fun sendEventToFlow(documentSnapshot: DocumentSnapshot) {
+        Timber.tag(TAG).d("FIRESTORE DATA IS => $documentSnapshot and DATA IS => ${documentSnapshot.data}")
         documentSnapshot.data?.let { data ->
             documentSnapshot.getLong(EVENT_ID)?.let { timestamp ->
                 PubNubManager.postToPubNubEvent(
                     ConversationRoomPubNubEventBus(
                         eventId = timestamp,
-                        action = PubNubEvent.valueOf(documentSnapshot.getString("data")!!),
+                        action = PubNubEvent.valueOf(documentSnapshot.getString("action")!!),
                         data = JsonObject().getAsJsonObject(data.toString())
                     )
                 )
