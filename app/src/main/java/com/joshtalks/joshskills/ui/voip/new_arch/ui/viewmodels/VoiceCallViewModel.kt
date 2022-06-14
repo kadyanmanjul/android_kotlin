@@ -22,6 +22,7 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.ui.call.repository.RepositoryConstants.CONNECTION_ESTABLISHED
 import com.joshtalks.joshskills.ui.call.repository.WebrtcRepository
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.models.CallUIState
+import com.joshtalks.joshskills.ui.voip.util.CallRecording
 import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.constant.CALL_CONNECTED_EVENT
 import com.joshtalks.joshskills.voip.constant.CALL_INITIATED_EVENT
@@ -37,6 +38,7 @@ import com.joshtalks.joshskills.voip.data.ServiceEvents
 import com.joshtalks.joshskills.voip.data.api.MediaDUNetwork
 import com.joshtalks.joshskills.voip.data.api.VoipNetwork
 import com.joshtalks.joshskills.voip.data.local.PrefManager
+import com.joshtalks.joshskills.voip.getTempFileForVideoCallRecording
 import com.joshtalks.joshskills.voip.recordinganalytics.CallRecordingAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
@@ -70,7 +72,8 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
     val pendingEvents = ArrayDeque<Int>()
     var recordCnclStop = 0 // 0 = record, 1 = cancel, 2 = stop
     private var singleLiveEvent = EventLiveData
-    var recordFile: File? = null
+    var audioRecordFile: File? = null
+    var videoRecordFile: File? = null
     var visibleCrdView = false
     var isListening = false
     var isRequestDialogShowed = false
@@ -147,7 +150,7 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                         }
                         if (uiState.recordingButtonState == RecordingButtonState.RECORDING) {
                             //stopRecording()
-                            repository.stopAgoraClientCallRecording()
+                            stopAudioVideoRecording()
                         }
                     }
                     ServiceEvents.RECONNECTING_FAILED -> {
@@ -169,7 +172,7 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                     }
                     ServiceEvents.STOP_RECORDING -> {
                         //stopRecording()
-                        repository.stopAgoraClientCallRecording()
+                        stopAudioVideoRecording()
                         stoppedRecUIchanges()
                     }
                     ServiceEvents.CALL_RECORDING_ACCEPT -> {
@@ -177,11 +180,11 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                         //startRecording()
                         val msg = Message.obtain().apply {
                             what = HIDE_RECORDING_PERMISSION_DIALOG
+                            obj = true
                         }
                         withContext(Dispatchers.Main) {
                             singleLiveEvent.value = msg
                         }
-                        repository.startAgoraRecording()
                     }
                     ServiceEvents.CALL_RECORDING_REJECT -> {
                         stoppedRecUIchanges()
@@ -240,10 +243,23 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
-    fun acceptCallRecording() {
+    fun acceptCallRecording(view:View) {
         repository.acceptCallRecording()
-        repository.startAgoraRecording()
         //startRecording()
+        startAudioVideoRecording(view)
+    }
+
+    fun startAudioVideoRecording(view:View){
+        Utils.context?.getTempFileForVideoCallRecording()?.let { file ->
+            videoRecordFile = file
+            CallRecording.videoRecorder.startPlayer(audioRecordFile, Utils.context!!,view)
+        }
+        repository.startAgoraRecording()
+    }
+
+    fun stopAudioVideoRecording(){
+        CallRecording.videoRecorder.stopPlaying()
+        repository.stopAgoraClientCallRecording()
     }
 
     fun rejectCallRecording() {
@@ -421,7 +437,7 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                     agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
                 )
                 stoppedRecUIchanges()
-                repository.stopAgoraClientCallRecording()
+                stopAudioVideoRecording()
                 repository.stopCallRecording()
             }
             RecordingButtonState.RECORDING -> {
@@ -432,7 +448,7 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                 )
                 stoppedRecUIchanges()
                 //stopRecording()
-                repository.stopAgoraClientCallRecording()
+                stopAudioVideoRecording()
                 repository.stopCallRecording()
             }
         }
