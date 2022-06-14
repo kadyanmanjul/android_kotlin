@@ -88,7 +88,6 @@ class ReportOverviewView1(private val certificateExamReport: CertificateExamRepo
                 if (certificateURL.isNullOrEmpty()) {
                     downloadCertificateBtn.visibility = View.GONE
                 }
-                Log.i(TAG, "onViewInflated: value of exam type is : $examType")
                 var showBtn = false
                 when (examType) {
                     EXAM_TYPE_BEGINNER -> {

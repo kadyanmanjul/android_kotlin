@@ -9,11 +9,9 @@ import android.content.IntentFilter
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.webkit.URLUtil
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
@@ -63,7 +61,7 @@ class CertificateShareFragment : CoreJoshFragment() {
         binding.handler = this
         binding.txtYouHaveEarned.visibility = View.GONE
 
-        viewModel.typeOfExam("ShareFragment")
+        viewModel.typeOfExam()
 
         Glide.with(binding.imgCertificate.context).load(url)
             .into(binding.imgCertificate)
@@ -137,7 +135,6 @@ class CertificateShareFragment : CoreJoshFragment() {
 
     fun observer(){
         viewModel.examType.observe(viewLifecycleOwner){
-            Log.i(TAG, "observer: $it")
             when (it){
                 EXAM_TYPE_BEGINNER->{
                     PrefManager.put(IS_CERTIFICATE_GENERATED_BEGINNER, true)

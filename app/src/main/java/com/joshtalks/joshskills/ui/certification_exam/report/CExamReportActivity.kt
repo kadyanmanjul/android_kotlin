@@ -87,7 +87,7 @@ class CExamReportActivity : BaseActivity(), FileDownloadCallback {
             return
         }else{
             viewModel.certificateExamId = certificateExamId
-            viewModel.typeOfExam("CExamReportAct")
+            viewModel.typeOfExam()
         }
         certificationQuestionModel =
             intent.getParcelableExtra(CERTIFICATION_EXAM_QUESTION) as CertificationQuestionModel?

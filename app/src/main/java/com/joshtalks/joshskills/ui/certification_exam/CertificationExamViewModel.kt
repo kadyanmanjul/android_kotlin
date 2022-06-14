@@ -1,7 +1,6 @@
 package com.joshtalks.joshskills.ui.certification_exam
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -19,7 +18,6 @@ import com.joshtalks.joshskills.ui.certification_exam.constants.FINISH_EXAM
 import com.joshtalks.joshskills.ui.certification_exam.constants.PREV_RESULT
 import com.joshtalks.joshskills.ui.certification_exam.constants.START_EXAM
 import com.joshtalks.joshskills.util.showAppropriateMsg
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -213,18 +211,15 @@ class CertificationExamViewModel(application: Application) : AndroidViewModel(ap
         }
     }
 
-    fun typeOfExam(str: String) {
-        Log.e("Ayaaz","ansfdafdfasari")
+    fun typeOfExam() {
         var value:String = EMPTY
         viewModelScope.launch{
             try {
                 certificateExamId?.let {
                     val response = AppObjectController.commonNetworkService.getCertificateExamType(it.toString())
                     examType.postValue(response.body()?.get("exam_type"))
-                    Log.e("sagar", "typeOfExam: ${response.body()?.get("exam_type")}" )
                 }
             } catch (e: Exception) {
-                Log.d("sagar", "typeOfExam: $e")
                 e.printStackTrace()
             }
         }
