@@ -1,14 +1,12 @@
 package com.joshtalks.joshskills.ui.certification_exam
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.joshtalks.joshskills.core.ApiCallStatus
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.JoshApplication
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.repository.local.DatabaseUtils
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.certification_exam.Answer
@@ -21,6 +19,7 @@ import com.joshtalks.joshskills.ui.certification_exam.constants.FINISH_EXAM
 import com.joshtalks.joshskills.ui.certification_exam.constants.PREV_RESULT
 import com.joshtalks.joshskills.ui.certification_exam.constants.START_EXAM
 import com.joshtalks.joshskills.util.showAppropriateMsg
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -44,7 +43,7 @@ class CertificationExamViewModel(application: Application) : AndroidViewModel(ap
     val isUserSubmitExam: MutableLiveData<Boolean> = MutableLiveData()
     var isSAnswerUiShow: Boolean = false
     var certificateExamId: Int? = null
-    var examType: String? = null
+    var examType: MutableLiveData<String> = MutableLiveData()
 
     fun startExam() {
         saveImpression(START_EXAM)
@@ -205,7 +204,7 @@ class CertificationExamViewModel(application: Application) : AndroidViewModel(ap
                 val requestData = hashMapOf(
                     Pair("mentor_id", Mentor.getInstance().getId()),
                     Pair("event_name", eventName),
-                    Pair("exam_type", examType ?: certificationQuestionLiveData.value?.type ?: EMPTY)
+                    Pair("exam_type", examType.value ?: certificationQuestionLiveData.value?.type ?: EMPTY)
                 )
                 AppObjectController.commonNetworkService.saveCertificateImpression(requestData)
             } catch (ex: Exception) {
@@ -214,14 +213,18 @@ class CertificationExamViewModel(application: Application) : AndroidViewModel(ap
         }
     }
 
-    fun typeOfExam() {
-        viewModelScope.launch(Dispatchers.IO) {
+    fun typeOfExam(str: String) {
+        Log.e("Ayaaz","ansfdafdfasari")
+        var value:String = EMPTY
+        viewModelScope.launch{
             try {
                 certificateExamId?.let {
                     val response = AppObjectController.commonNetworkService.getCertificateExamType(it.toString())
-                    examType = response.getOrDefault("exam_type", "")
+                    examType.postValue(response.body()?.get("exam_type"))
+                    Log.e("sagar", "typeOfExam: ${response.body()?.get("exam_type")}" )
                 }
             } catch (e: Exception) {
+                Log.d("sagar", "typeOfExam: $e")
                 e.printStackTrace()
             }
         }

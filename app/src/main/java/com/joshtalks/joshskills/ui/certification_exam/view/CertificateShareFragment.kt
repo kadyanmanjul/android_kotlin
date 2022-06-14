@@ -9,6 +9,7 @@ import android.content.IntentFilter
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -46,6 +47,7 @@ class CertificateShareFragment : CoreJoshFragment() {
     private var packageName =  NULL
     private var downloadId by Delegates.notNull<Long>()
     private var message = ""
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -54,24 +56,15 @@ class CertificateShareFragment : CoreJoshFragment() {
             url = it.getString(CERTIFICATE_URL, EMPTY)
             viewModel.certificateExamId = it.getInt(CERTIFICATE_EXAM_ID)
         }
-        viewModel.typeOfExam()
+        observer()
         requireActivity().registerReceiver(onComplete, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_certificate_share, container, false)
         binding.lifecycleOwner = this
         binding.handler = this
         binding.txtYouHaveEarned.visibility = View.GONE
 
-        when (viewModel.certificationQuestionLiveData.value?.type){
-            EXAM_TYPE_BEGINNER->{
-                PrefManager.put(IS_CERTIFICATE_GENERATED_BEGINNER, false)
-            }
-            EXAM_TYPE_INTERMEDIATE->{
-                PrefManager.put(IS_CERTIFICATE_GENERATED_INTERMEDIATE, false)
-            }
-            EXAM_TYPE_ADVANCED->{
-                PrefManager.put(IS_CERTIFICATE_GENERATED_ADVANCED, false)
-            }
-        }
+        viewModel.typeOfExam("ShareFragment")
+
         Glide.with(binding.imgCertificate.context).load(url)
             .into(binding.imgCertificate)
 
@@ -129,13 +122,34 @@ class CertificateShareFragment : CoreJoshFragment() {
             viewModel.saveImpression(CERTIFICATE_SHARED_LINKED)
         }
 
-        binding.btnShareDownload.setOnClickListener {
-            packageName = NULL
-            binding.progressBar2.visibility = View.VISIBLE
-            downloadImage(url)
-            viewModel.saveImpression(CERTIFICATE_DOWNLOAD)
+        if (Utils.isInternetAvailable()){
+            binding.btnShareDownload.setOnClickListener {
+                packageName = NULL
+                binding.progressBar2.visibility = View.VISIBLE
+                downloadImage(url)
+                viewModel.saveImpression(CERTIFICATE_DOWNLOAD)
+            }
+        }else{
+            showToast("No Internet Available")
         }
         return binding.root
+    }
+
+    fun observer(){
+        viewModel.examType.observe(viewLifecycleOwner){
+            Log.i(TAG, "observer: $it")
+            when (it){
+                EXAM_TYPE_BEGINNER->{
+                    PrefManager.put(IS_CERTIFICATE_GENERATED_BEGINNER, true)
+                }
+                EXAM_TYPE_INTERMEDIATE->{
+                    PrefManager.put(IS_CERTIFICATE_GENERATED_INTERMEDIATE, true)
+                }
+                EXAM_TYPE_ADVANCED->{
+                    PrefManager.put(IS_CERTIFICATE_GENERATED_ADVANCED, true)
+                }
+            }
+        }
     }
 
     fun shareOn(packageName: String, message: String, uri: Uri) {

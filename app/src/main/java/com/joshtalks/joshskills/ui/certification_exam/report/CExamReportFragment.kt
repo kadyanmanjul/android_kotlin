@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.ui.certification_exam.report
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -57,6 +58,7 @@ class CExamReportFragment : Fragment() {
     private var id:Int? =null
     private lateinit var url:String
     private val viewModel: CertificationExamViewModel by lazy {
+        Log.i("TAG_MIHIR", "CERF: ${activity?.localClassName}")
         ViewModelProvider(requireActivity()).get(CertificationExamViewModel::class.java)
     }
 
@@ -87,10 +89,9 @@ class CExamReportFragment : Fragment() {
         id = certificateExamReport?.reportId
         url = certificateExamReport?.certificateURL?:EMPTY
         certificateExamReport?.run {
-            binding.chatRv.addView(ReportOverviewView1(this))
+            binding.chatRv.addView(ReportOverviewView1(this, viewModel.examType.value))
             binding.chatRv.addView(ReportOverviewView2(this, questionList))
             updateRvScrolling(true)
-            viewModel.certificationQuestionLiveData.value?.type?.let { ReportOverviewView1(this).checkExamType(it) }
         }
     }
 

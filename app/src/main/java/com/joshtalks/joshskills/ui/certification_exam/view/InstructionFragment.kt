@@ -86,7 +86,6 @@ class InstructionFragment : Fragment() {
 
     private fun updateAttempt(obj: CertificationQuestionModel) {
         if (obj.max_attempt == obj.attemptCount) {
-            binding.btnPreviousResult.visibility = View.GONE
             binding.btnStartExam.visibility = View.GONE
         }
     }
