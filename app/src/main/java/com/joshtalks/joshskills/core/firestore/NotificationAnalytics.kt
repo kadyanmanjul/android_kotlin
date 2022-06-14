@@ -5,6 +5,7 @@ import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.SERVER_TIME_OFFSET
 import com.joshtalks.joshskills.core.notification.model.NotificationEvent
+import retrofit2.HttpException
 import timber.log.Timber
 
 private const val TAG = "NotificationAnalytics"
@@ -62,27 +63,29 @@ class NotificationAnalytics {
 
     suspend fun pushToServer(): Boolean {
         try {
-            val listOfReceived = notificationDao.getUnsyncEvent()
-
-            if (listOfReceived?.isEmpty() == true) {
-                return true
-            }
             val serverOffsetTime = PrefManager.getLongValue(SERVER_TIME_OFFSET, true)
-            val request = ArrayList<NotificationAnalyticsRequest>()
-            listOfReceived?.forEach {
-                request.add(NotificationAnalyticsRequest(it.id, it.time_stamp.plus(serverOffsetTime), it.action, it.platform))
-            }
-            if (request.isEmpty()) {
+            val listOfReceived = notificationDao.getUnsyncEvent()
+            if (listOfReceived?.isEmpty() == true)
                 return true
-            }
 
-            val resp = AppObjectController.utilsAPIService.engageNewNotificationAsync(request)
-            if (resp.isSuccessful) {
-                listOfReceived?.forEach {
+            listOfReceived?.forEach {
+                try {
+                    AppObjectController.utilsAPIService.engageNewNotificationAsync(
+                        NotificationAnalyticsRequest(
+                            it.id,
+                            it.time_stamp.plus(serverOffsetTime),
+                            it.action,
+                            it.platform
+                        )
+                    )
                     notificationDao.updateSyncStatus(it.notificationId)
+                } catch (e: Exception) {
+                    if (e is HttpException) {
+                        if (e.code() == 501)
+                            notificationDao.updateSyncStatus(it.notificationId)
+                    }
+                    e.printStackTrace()
                 }
-            } else {
-                return false
             }
             return true
         } catch (ex: Exception) {
