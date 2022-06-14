@@ -179,10 +179,13 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
            })
 
            submit.setOnClickListener {
+               var userAction : String? = null
                if(isBlockSelected){
-                   if(binding.block.text.equals(getString(R.string.block_caller,callerName))){
+                   if(binding.block.text.contains(getString(R.string.block_caller,callerName))){
+                       userAction = "BLOCK_USER_SELECTED"
                        vm.blockUser(VoipPref.getLastRemoteUserAgoraId().toString())
                    }else{
+                       userAction = "FPP_REQUEST_SELECTED"
                        vm.sendFppRequest(VoipPref.getLastRemoteUserMentorId())
                    }
                }
@@ -190,12 +193,12 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
                    CoroutineScope(Dispatchers.Main).launch{
                        showToast("Your feedback has been successfully submitted")
                    }
-                   vm.submitCallRatings(VoipPref.getLastCallId().toString(), selectedRating, VoipPref.getLastRemoteUserAgoraId().toString())
+                   vm.submitCallRatings(VoipPref.getLastCallId().toString().toString(), selectedRating, VoipPref.getLastRemoteUserAgoraId().toString(),userAction)
                }
-
                closeSheet()
            }
            cross.setOnClickListener{
+               vm.submitCallRatings(VoipPref.getLastCallId().toString(), null, VoipPref.getLastRemoteUserAgoraId().toString(),null)
                closeSheet()
            }
        }
@@ -208,7 +211,7 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
         }
         group.findViewById<RadioButton>(checkedId).startAnimation(myAnim)
         binding. submit.visibility= GONE
-        vm.submitCallRatings(VoipPref.getLastCallId().toString(), selectedRating, VoipPref.getLastRemoteUserAgoraId().toString())
+        vm.submitCallRatings(VoipPref.getLastCallId().toString(), selectedRating, VoipPref.getLastRemoteUserAgoraId().toString(),null)
         closeSheet()
     }
 
@@ -345,6 +348,7 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
             setOnKeyListener { dialogInterface, keyCode, keyEvent ->
                 if(keyCode == KeyEvent.KEYCODE_BACK) {
                     if(count>=3) {
+                        vm.submitCallRatings(VoipPref.getLastCallId().toString(), null, VoipPref.getLastRemoteUserAgoraId().toString(),null)
                         closeSheet()
                     }
                     count+=1

@@ -9,7 +9,7 @@ class CallRatingsRepository {
         p2pNetworkService.blockFppUser(map)
     }
 
-    suspend fun submitCallRating(map: HashMap<String, String>) {
+    suspend fun submitCallRating(map: HashMap<String, Any>) {
        p2pNetworkService.submitCallRatings(map)
     }
 

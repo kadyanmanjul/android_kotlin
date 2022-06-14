@@ -17,7 +17,7 @@ class CallRatingsViewModel: BaseViewModel() {
 
 
     fun blockUser(toMentorId: String) {
-        viewModelScope.launch(Dispatchers.IO) {
+        CoroutineScope(Dispatchers.IO).launch {
             try {
                 val map: HashMap<String, String> = HashMap()
                 map["agora_uid"] = toMentorId
@@ -60,7 +60,7 @@ class CallRatingsViewModel: BaseViewModel() {
     }
 
     private fun getFppDialogFlag() {
-        viewModelScope.launch(Dispatchers.IO) {
+        CoroutineScope(Dispatchers.IO).launch {
             try {
                 val map: java.util.HashMap<String, Int?> = java.util.HashMap()
                 map["agora_call_id"] = VoipPref.getLastCallId()
@@ -79,14 +79,15 @@ class CallRatingsViewModel: BaseViewModel() {
         return " second "
     }
 
-    fun submitCallRatings(agoraCallId : String, rating : Int, callerMentorId : String) {
-        viewModelScope.launch(Dispatchers.IO) {
+    fun submitCallRatings(agoraCallId : String, rating : Int?, callerMentorId : String,userAction:String?) {
+        CoroutineScope(Dispatchers.IO).launch {
             try {
-                val map: HashMap<String, String> = HashMap()
-                map["agora_mentor"] = callerMentorId
-                map["agora_call"] = agoraCallId
-                map["rating"] = rating.toString()
-                callRatingsRepository.submitCallRating(map)
+                val map: HashMap<String, Any> = HashMap()
+                map["agora_mentor"] = callerMentorId.toInt()
+                map["agora_call"] = agoraCallId.toInt()
+                map["rating"] = rating ?: rating.toString()
+                map["user_action"] = userAction.toString()
+                AppObjectController.p2pNetworkService.submitCallRatings(map)
             } catch (ex: Throwable) {
                 ex.printStackTrace()
             }
@@ -94,7 +95,7 @@ class CallRatingsViewModel: BaseViewModel() {
     }
 
     fun sendFppRequest(mentorId: String) {
-        viewModelScope.launch(Dispatchers.IO) {
+        CoroutineScope(Dispatchers.IO).launch {
                 try {
                    val map =  HashMap<String,String>()
                     map["page_type"] = "CALL_RATING"
