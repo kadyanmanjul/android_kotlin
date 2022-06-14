@@ -115,7 +115,7 @@ object FallbackManager {
         Firebase.firestore
             .collection(getRoomId())
             .document(channel)
-            .set(hashMapOf(eventData?.get("event_id") to eventData.toHashMap()))
+            .set(eventData.toHashMap())
             .addOnSuccessListener {
                 Timber.tag(TAG).d("EVENT SENT TO FIRESTORE")
             }

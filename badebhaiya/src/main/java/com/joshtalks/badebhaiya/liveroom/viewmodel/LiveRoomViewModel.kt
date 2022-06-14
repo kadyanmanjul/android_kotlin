@@ -140,8 +140,8 @@ class LiveRoomViewModel(application: Application) : AndroidViewModel(application
         Log.d("sahil", "collectData called: ")
         viewModelScope.launch {
             PubNubData.audienceList
-                .map { it.reversed().distinctBy { it.userId }.reversed()}
-                .collect() {
+//                .map { it.reversed().distinctBy { it.userId }.reversed()}
+                .collect {
                 Log.d("sahil", "audience list => $it")
 
                 audienceList.postValue(ArraySet(it))
@@ -150,7 +150,7 @@ class LiveRoomViewModel(application: Application) : AndroidViewModel(application
 
         viewModelScope.launch {
             PubNubData.speakerList
-                .map { it.reversed().distinctBy { it.userId }.reversed() }
+//                .map { it.reversed().distinctBy {  it.userId }.reversed() }
                 .collect {
                 Log.d("sahil", "speakers list =>$it")
                 speakersList.postValue(ArraySet(it))
