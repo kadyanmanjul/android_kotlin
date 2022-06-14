@@ -153,7 +153,12 @@ class VoiceCallActivity : BaseActivity() {
                 CALL_CONNECTED_EVENT -> replaceCallUserFragment()
                 SHOW_RECORDING_PERMISSION_DIALOG -> showRecordingPermissionDialog()
                 SHOW_RECORDING_REJECTED_DIALOG -> showRecordingRejectedDialog()
-                HIDE_RECORDING_PERMISSION_DIALOG -> hideRecordingPermissionDialog()
+                HIDE_RECORDING_PERMISSION_DIALOG -> {
+                    hideRecordingPermissionDialog()
+                    if (it.obj == true){
+                        vm.startAudioVideoRecording(this@VoiceCallActivity.window.decorView)
+                    }
+                }
                 CLOSE_CALL_SCREEN -> finish()
                 else -> {
                     if (it.what < 0) {
@@ -184,7 +189,7 @@ class VoiceCallActivity : BaseActivity() {
             )
             setPositiveButton("ACCEPT") { dialog, _ ->
                 vm.recordingStartedUIChanges()
-                vm.acceptCallRecording()
+                vm.acceptCallRecording(this@VoiceCallActivity.window.decorView)
                 dialog.dismiss()
             }
             setNegativeButton("DECLINE") { dialog, which ->
