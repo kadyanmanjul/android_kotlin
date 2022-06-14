@@ -1,12 +1,13 @@
 package com.joshtalks.joshskills.voip.notification
 
-import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.audiomanager.SOUND_TYPE_RINGTONE
 import com.joshtalks.joshskills.voip.audiomanager.SoundManager
-import com.joshtalks.joshskills.voip.calldetails.IncomingCallData
-import com.joshtalks.joshskills.voip.communication.model.IncomingCall
 import com.joshtalks.joshskills.voip.constant.Category
+import com.joshtalks.joshskills.voip.constant.INCOMING_CALL_CATEGORY
+import com.joshtalks.joshskills.voip.constant.INCOMING_CALL_ID
 import com.joshtalks.joshskills.voip.mediator.CallCategory
+import com.joshtalks.joshskills.voip.mediator.FavoriteCall
+import com.joshtalks.joshskills.voip.mediator.GroupCall
 import com.joshtalks.joshskills.voip.mediator.PeerToPeerCall
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
@@ -16,22 +17,40 @@ import kotlinx.coroutines.sync.withLock
 
 class IncomingCallNotificationHandler : NotificationData.IncomingNotification{
 
-    private val incomingCallMutex = Mutex(false)
-    private val soundManager by lazy { SoundManager(SOUND_TYPE_RINGTONE, 20000) }
-    private lateinit var voipNotification: VoipNotification
-    private var isShowingIncomingCall = true
-    val calling: CallCategory = PeerToPeerCall()
+    companion object{
+        private val incomingCallMutex = Mutex(false)
+        private val soundManager by lazy { SoundManager(SOUND_TYPE_RINGTONE, 20000) }
+        private lateinit var voipNotification: VoipNotification
+        private var isShowingIncomingCall = false
+        private var calling : CallCategory = PeerToPeerCall()
+        private var callCategory : Category = Category.PEER_TO_PEER
+    }
 
-    override fun inflateNotification() {
-        if(isShowingIncomingCall) {
-            val incomingCall = IncomingCall(2827, Category.PEER_TO_PEER.ordinal, 221)
-            val remoteView = calling.notificationLayout(incomingCall) ?: return
+
+    override fun inflateNotification(map: HashMap<String, String>) {
+        when (map[INCOMING_CALL_CATEGORY]) {
+            Category.PEER_TO_PEER.category -> {
+                callCategory = Category.PEER_TO_PEER
+                calling = PeerToPeerCall()
+            }
+            Category.FPP.category -> {
+                callCategory = Category.FPP
+                calling = FavoriteCall()
+            }
+            Category.GROUP.category -> {
+                callCategory = Category.GROUP
+                calling = GroupCall()
+            }
+        }
+
+        if(!isShowingIncomingCall) {
+            val remoteView = calling.notificationLayout(map) ?: return
             voipNotification = VoipNotification(remoteView, NotificationPriority.High)
             voipNotification.show()
             updateIncomingCallState(true)
             CallAnalytics.addAnalytics(
                 event = EventName.INCOMING_CALL_SHOWN,
-                agoraCallId = IncomingCallData.callId.toString(),
+                agoraCallId = map[INCOMING_CALL_ID],
                 agoraMentorId = "-1"
             )
             soundManager.startRingtoneAndVibration()
@@ -42,7 +61,7 @@ class IncomingCallNotificationHandler : NotificationData.IncomingNotification{
                     stopAudio()
                     CallAnalytics.addAnalytics(
                         event = EventName.INCOMING_CALL_IGNORE,
-                        agoraCallId = IncomingCallData.callId.toString(),
+                        agoraCallId = map[INCOMING_CALL_ID],
                         agoraMentorId = "-1"
                     )
                 } catch (e: Exception) {
@@ -56,8 +75,8 @@ class IncomingCallNotificationHandler : NotificationData.IncomingNotification{
 
     override fun removeNotification() {
         voipNotification.removeNotification()
+        stopAudio()
         updateIncomingCallState(false)
-
     }
 
     override fun isNotificationVisible() :Boolean {
@@ -75,7 +94,7 @@ class IncomingCallNotificationHandler : NotificationData.IncomingNotification{
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 incomingCallMutex.withLock {
-                    this@IncomingCallNotificationHandler.isShowingIncomingCall = isShowingIncomingCall
+                    Companion.isShowingIncomingCall = isShowingIncomingCall
                 }
             } catch (e: Exception) {
                 if (e is CancellationException)
@@ -84,5 +103,4 @@ class IncomingCallNotificationHandler : NotificationData.IncomingNotification{
             }
         }
     }
-
 }

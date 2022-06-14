@@ -18,7 +18,7 @@ private const val TAG = "PeerToPeerCalling"
 class PeerToPeerCall : CallCategory {
     val voipNetwork = VoipNetwork.getVoipApi()
 
-    override fun notificationLayout(data: IncomingCall): RemoteViews {
+    override fun notificationLayout(map: HashMap<String, String>): RemoteViews {
         val remoteView = RemoteViews(Utils.context?.packageName, R.layout.call_notification_new)
         val avatar: Bitmap? = getRandomName().textDrawableBitmap()
         remoteView.setImageViewBitmap(R.id.photo, avatar)

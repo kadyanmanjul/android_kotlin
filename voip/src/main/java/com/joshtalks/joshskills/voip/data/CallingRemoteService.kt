@@ -22,6 +22,7 @@ import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.mediator.CallCategory
 import com.joshtalks.joshskills.voip.mediator.CallServiceMediator
 import com.joshtalks.joshskills.voip.mediator.CallingMediator
+import com.joshtalks.joshskills.voip.notification.IncomingCallNotificationHandler
 import com.joshtalks.joshskills.voip.notification.NotificationData
 import com.joshtalks.joshskills.voip.notification.NotificationPriority
 import com.joshtalks.joshskills.voip.notification.VoipNotification
@@ -78,7 +79,10 @@ class CallingRemoteService : Service() {
         Log.d(TAG, "StartService --- OnStartCommand")
         when(intent?.action) {
             SERVICE_ACTION_INCOMING_CALL -> {
-                ioScope.launch { mediator.handleIncomingCall(Category.GROUP, 42224) }
+                val map = HashMap<String,String>()
+                map[INCOMING_CALL_CATEGORY] = Category.PEER_TO_PEER.category
+                map[com.joshtalks.joshskills.voip.constant.INCOMING_CALL_ID] = "222"
+                ioScope.launch { mediator.handleIncomingCall(map) }
             }
             SERVICE_ACTION_STOP_SERVICE -> {
                 // TODO: Might Need to refactor
@@ -105,7 +109,7 @@ class CallingRemoteService : Service() {
                     agoraCallId ="-1",
                     agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
                 )
-                mediator.hideIncomingCall()
+                IncomingCallNotificationHandler().removeNotification()
                 return START_NOT_STICKY
             }
         }

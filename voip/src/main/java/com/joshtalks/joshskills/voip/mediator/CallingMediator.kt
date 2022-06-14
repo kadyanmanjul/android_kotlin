@@ -3,8 +3,6 @@ package com.joshtalks.joshskills.voip.mediator
 import android.util.Log
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_INCOMING_CALL_ID
 import com.joshtalks.joshskills.voip.communication.fallback.FirebaseChannelService
-import com.joshtalks.joshskills.voip.audiomanager.SOUND_TYPE_RINGTONE
-import com.joshtalks.joshskills.voip.audiomanager.SoundManager
 import com.joshtalks.joshskills.voip.calldetails.IncomingCallData
 import com.joshtalks.joshskills.voip.communication.EventChannel
 import com.joshtalks.joshskills.voip.communication.PubNubChannelService
@@ -17,8 +15,7 @@ import com.joshtalks.joshskills.voip.constant.*
 import com.joshtalks.joshskills.voip.data.ServiceEvents
 import com.joshtalks.joshskills.voip.data.UIState
 import com.joshtalks.joshskills.voip.data.local.PrefManager
-import com.joshtalks.joshskills.voip.notification.NotificationPriority
-import com.joshtalks.joshskills.voip.notification.VoipNotification
+import com.joshtalks.joshskills.voip.notification.IncomingCallNotificationHandler
 import com.joshtalks.joshskills.voip.state.CallContext
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
@@ -49,17 +46,16 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
     }
 
     private var calling : CallCategory = PeerToPeerCall()
+    private var callCategory : Category = Category.PEER_TO_PEER
+
     val flow by lazy {
         MutableSharedFlow<Envelope<Event>>(replay = 0)
     }
     val uiStateFlow = MutableStateFlow(UIState.empty())
     val uiTransitionFlow = MutableSharedFlow<ServiceEvents>(replay = 0)
     private val mutex = Mutex(false)
-    private val incomingCallMutex = Mutex(false)
     private val incomingNotificationMutex = Mutex(false)
-    private val soundManager by lazy { SoundManager(SOUND_TYPE_RINGTONE, 20000) }
-    private lateinit var voipNotification: VoipNotification
-    private var isShowingIncomingCall = false
+    private lateinit var incomingCallNotificationHandler: IncomingCallNotificationHandler
     private val Communication?.hasMainEventChannelFailed: Boolean
         get() {
             return PrefManager.getLatestPubnubMessageTime() < (this?.getEventTime() ?: 0)
@@ -116,9 +112,8 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                      * Using State Pattern
                      */
                     Log.d(TAG, "connectCall : Inside Lock")
-                    if (this@CallingMediator::voipNotification.isInitialized) {
-                        voipNotification.removeNotification()
-                        stopAudio()
+                    if (this@CallingMediator::incomingCallNotificationHandler.isInitialized) {
+                        incomingCallNotificationHandler.removeNotification()
                     }
                     callContext?.destroyContext()
                     stateChannel = Channel(Channel.UNLIMITED)
@@ -144,9 +139,6 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
         networkEventChannel.emitEvent(data)
     }
 
-    private fun showIncomingCall(incomingCall: IncomingCall) {
-        showIncomingNotification(incomingCall)
-    }
 
     override fun hideIncomingCall() {
         scope.launch {
@@ -155,9 +147,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                     put(INTENT_DATA_INCOMING_CALL_ID, IncomingCallData.callId)
                 }
                 calling.onCallDecline(map)
-                stopAudio()
-                voipNotification.removeNotification()
-                updateIncomingCallState(false)
+                incomingCallNotificationHandler.removeNotification()
             } catch (e: Exception) {
                 e.printStackTrace()
                 if(e is CancellationException)
@@ -226,15 +216,15 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
         scope.launch {
             try {
                 networkEventChannel.observeChannelState().collect {
+                    Log.d(TAG, "observeChannelState : $it")
                     try{
                         when (it) {
-                            CONNECTED -> {  Log.d(TAG, "observeChannelState : $it") }
+                            CONNECTED ->  {}
                             RECONNECTED -> {
-                                Log.d(TAG, "observeChannelState : $it")
                                 val envelope = Envelope(Event.SYNC_UI_STATE)
                                 stateChannel.send(envelope)
                             }
-                            DISCONNECTED -> { Log.d(TAG, "observeChannelState : $it") }
+                            DISCONNECTED -> {}
                         }
                     }
                     catch (e : Exception){
@@ -254,9 +244,8 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
 
     override fun onDestroy() {
         Log.d(TAG, "onDestroy : Destroying channel and services")
-        if (this@CallingMediator::voipNotification.isInitialized) {
-            voipNotification.removeNotification()
-            stopAudio()
+        if (this@CallingMediator::incomingCallNotificationHandler.isInitialized) {
+            incomingCallNotificationHandler.removeNotification()
         }
         networkEventChannel.onDestroy()
         try {
@@ -272,31 +261,27 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
             try {
                 webrtcService.observeCallingEvents().collect {
                     try{
+                        Log.d(TAG, "handleWebrtcEvent : $it")
                         when (it) {
                             CallState.CallConnected -> {
                                 // Call Connected
-                                Log.d(TAG, "handleWebrtcEvent : $it")
                                 val envelope = Envelope(Event.CALL_CONNECTED_EVENT)
                                 stateChannel.send(envelope)
                             }
                             CallState.CallDisconnected -> {
-                                Log.d(TAG, "handleWebrtcEvent : $it")
                                 val envelope = Envelope(Event.CALL_DISCONNECTED)
                                 stateChannel.send(envelope)
                             }
                             CallState.CallInitiated -> {
                                 // CallInitiated
-                                Log.d(TAG, "handleWebrtcEvent : $it")
                                 val envelope = Envelope(Event.CALL_INITIATED_EVENT)
                                 stateChannel.send(envelope)
                             }
                             CallState.OnReconnected -> {
-                                Log.d(TAG, "handleWebrtcEvent : $it")
                                 val envelope = Envelope(Event.RECONNECTED)
                                 stateChannel.send(envelope)
                             }
                             CallState.OnReconnecting -> {
-                                Log.d(TAG, "handleWebrtcEvent : $it")
                                 CallAnalytics.addAnalytics(
                                     event = EventName.CALL_RECONNECTING,
                                     agoraCallId = PrefManager.getAgraCallId().toString(),
@@ -306,7 +291,6 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                                 stateChannel.send(envelope)
                             }
                             is CallState.Error -> {
-                                Log.d(TAG, "handleWebrtcEvent : $it")
                                 callContext?.onError(it.reason)
                             }
                             CallState.UserLeftChannel -> {
@@ -429,10 +413,16 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                 }
             }
             is IncomingCall -> {
-                handleIncomingCall(Category.PEER_TO_PEER, event.getCallId())
+                val map = HashMap<String,String>()
+                map[INCOMING_CALL_CATEGORY] = Category.PEER_TO_PEER.category
+                map[INCOMING_CALL_ID] = event.getCallId().toString()
+                handleIncomingCall(map)
             }
             is GroupIncomingCall -> {
-                handleIncomingCall(Category.GROUP, event.getCallId())
+                val map = HashMap<String,String>()
+                map[INCOMING_CALL_CATEGORY] = Category.GROUP.category
+                map[INCOMING_CALL_ID] = event.getCallId().toString()
+                handleIncomingCall(map)
             }
             is UI -> {
                 if (isMessageForSameChannel(event.getChannelName())) {
@@ -443,89 +433,38 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
         }
     }
 
-    override suspend fun handleIncomingCall(callCategory: Category, callId : Int) {
+    override suspend fun handleIncomingCall(map: HashMap<String, String>) {
+        incomingCallNotificationHandler = IncomingCallNotificationHandler()
+        val callType = map[INCOMING_CALL_ID]
         incomingNotificationMutex.withLock {
-            if (isShowingIncomingCall.not() && PrefManager.getVoipState() == State.IDLE) {
-                calling = when(callCategory) {
-                    Category.PEER_TO_PEER -> PeerToPeerCall()
-                    Category.FPP -> PeerToPeerCall()
-                    Category.GROUP -> GroupCall()
+            if (incomingCallNotificationHandler.isNotificationVisible().not() && PrefManager.getVoipState() == State.IDLE) {
+                 when (callType) {
+                    Category.PEER_TO_PEER.category -> {
+                        callCategory = Category.PEER_TO_PEER
+                        calling =PeerToPeerCall()
+                    }
+                    Category.FPP.category -> {
+                        callCategory = Category.FPP
+                        calling =PeerToPeerCall()
+                    }
+                    Category.GROUP.category-> {
+                        callCategory = Category.GROUP
+                        calling = GroupCall()
+                    }
                 }
                 PrefManager.setCallCategory(callCategory)
+                PrefManager.setIncomingCallId(map[INCOMING_CALL_ID]!!.toInt())
                 CallAnalytics.addAnalytics(
                     event = EventName.INCOMING_CALL_RECEIVED,
-                    agoraCallId = IncomingCallData.callId.toString(),
+                    agoraCallId = map[INCOMING_CALL_ID],
                     agoraMentorId = "-1"
                 )
-                updateIncomingCallState(true)
-                IncomingCallData.set(callId, callCategory)
-                PrefManager.setIncomingCallId(IncomingCallData.callId)
-                val data = IncomingCall(callId = IncomingCallData.callId)
-                showIncomingCall(data)
-            }
-        }
-    }
-
-
-    private fun showIncomingNotification(incomingCall: IncomingCall) {
-        val remoteView =
-            calling.notificationLayout(incomingCall) ?: return // TODO: might throw error
-        voipNotification = VoipNotification(remoteView, NotificationPriority.High)
-        voipNotification.show()
-        CallAnalytics.addAnalytics(
-            event = EventName.INCOMING_CALL_SHOWN,
-            agoraCallId = IncomingCallData.callId.toString(),
-            agoraMentorId = "-1"
-        )
-        soundManager.startRingtoneAndVibration()
-        scope.launch {
-            try{
-                delay(20000)
-                voipNotification.removeNotification()
-                updateIncomingCallState(false)
-                stopAudio()
-                CallAnalytics.addAnalytics(
-                    event = EventName.INCOMING_CALL_IGNORE,
-                    agoraCallId = IncomingCallData.callId.toString(),
-                    agoraMentorId = "-1"
-                )
-            }
-            catch (e : Exception){
-                if(e is CancellationException)
-                    throw e
-                e.printStackTrace()
-            }
-
-        }
-    }
-
-    private fun updateIncomingCallState(isShowingIncomingCall: Boolean) {
-        scope.launch {
-            try{
-                incomingCallMutex.withLock {
-                    this@CallingMediator.isShowingIncomingCall = isShowingIncomingCall
-                }
-            }
-            catch (e : Exception){
-                if(e is CancellationException)
-                    throw e
-                e.printStackTrace()
+                incomingCallNotificationHandler.inflateNotification(map)
             }
         }
     }
 
     private fun isMessageForSameChannel(channel: String) = callContext?.hasChannelData() == true && channel == callContext?.channelData?.getChannel()
-
-
-    private fun stopAudio() {
-        try {
-            soundManager.stopPlaying()
-        } catch (e: Exception) {
-            e.printStackTrace()
-            if(e is CancellationException)
-                throw e
-        }
-    }
 
     // TODO: Change Name
     suspend fun disconnectCallFromWebrtc() {

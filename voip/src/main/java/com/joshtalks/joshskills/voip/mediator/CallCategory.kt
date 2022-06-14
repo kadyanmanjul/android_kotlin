@@ -16,7 +16,7 @@ enum class CallDirection {
 }
 
 interface CallCategory {
-    fun notificationLayout(data: IncomingCall) : RemoteViews? {
+    fun notificationLayout(map: HashMap<String, String>) : RemoteViews? {
         return null
     }
 

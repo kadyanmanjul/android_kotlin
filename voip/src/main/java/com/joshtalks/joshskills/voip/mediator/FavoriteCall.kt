@@ -4,9 +4,9 @@ import android.widget.RemoteViews
 import com.joshtalks.joshskills.voip.communication.model.IncomingCall
 
 class FavoriteCall : CallCategory {
-    override fun notificationLayout(data: IncomingCall): RemoteViews? {
+    override fun notificationLayout(map: HashMap<String, String>): RemoteViews? {
         // TODO: Incoming Notification
-        return super.notificationLayout(data)
+        return super.notificationLayout(map)
     }
 
     override suspend fun onPreCallConnect(

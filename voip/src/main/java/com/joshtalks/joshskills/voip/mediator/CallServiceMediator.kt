@@ -21,7 +21,7 @@ internal interface CallServiceMediator {
     // Needed for Connect Call
     fun connectCall(callCategory: Category, callData : HashMap<String, Any>)
     // Needed to show Incoming Call TODO: Need to check
-    suspend fun handleIncomingCall(callCategory: Category, callId : Int)
+    suspend fun handleIncomingCall(map: HashMap<String, String>)
     // Needed to hide Notification
     fun hideIncomingCall()
     // Needed to receive User Action
