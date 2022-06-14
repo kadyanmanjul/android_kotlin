@@ -6,7 +6,6 @@ import android.content.res.ColorStateList
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.AbsoluteSizeSpan
-import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import androidx.appcompat.widget.AppCompatTextView
