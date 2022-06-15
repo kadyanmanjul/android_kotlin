@@ -22,7 +22,7 @@ class DeepLinkUtil(private val context: Context) {
     private var medium = "referral"
     private lateinit var listener: OnDeepLinkListener
     private var title: String = "Invite Friend"
-    private var sharedItem: String = "INVITE"
+    private var sharedItem: String = SharedItem.INVITE.name
 
     fun setReferralCode(referralCode: String): DeepLinkUtil {
         this.referralCode = referralCode
@@ -59,8 +59,8 @@ class DeepLinkUtil(private val context: Context) {
         return this
     }
 
-    fun setSharedItem(sharedItem:String):DeepLinkUtil{
-        this.sharedItem = sharedItem
+    fun setSharedItem(sharedItem: SharedItem): DeepLinkUtil {
+        this.sharedItem = sharedItem.name
         return this
     }
 
@@ -115,5 +115,10 @@ class DeepLinkUtil(private val context: Context) {
 
     interface OnDeepLinkListener {
         fun onDeepLinkCreated(deepLink: String)
+    }
+
+    enum class SharedItem {
+        INVITE,
+        CERTIFICATE
     }
 }

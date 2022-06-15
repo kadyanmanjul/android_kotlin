@@ -298,7 +298,7 @@ class CertificateShareFragment : CoreJoshFragment() {
         DeepLinkUtil(requireActivity())
             .setReferralCode(Mentor.getInstance().referralCode)
             .setReferralCampaign()
-            .setCampaign("certificate")
+            .setSharedItem(DeepLinkUtil.SharedItem.CERTIFICATE)
             .setListener(object : DeepLinkUtil.OnDeepLinkListener {
                 override fun onDeepLinkCreated(deepLink: String) {
                     shareOn(packageName, message + "\n" + deepLink, uri)
