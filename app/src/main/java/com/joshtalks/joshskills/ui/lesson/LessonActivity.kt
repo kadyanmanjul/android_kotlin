@@ -4,6 +4,7 @@ import android.animation.ValueAnimator
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.graphics.Outline
 import android.graphics.Rect
 import android.net.Uri
@@ -21,9 +22,11 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.databinding.BindingAdapter
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
@@ -1580,4 +1583,22 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                 )
         )
     }
+}
+
+@BindingAdapter("setRatingText")
+fun TextView.ratingText(rating:Int){
+    if(rating<=3){
+        this.backgroundTintList = AppCompatResources.getColorStateList(context, R.color.low_rating)
+        this.setTextColor(Color.parseColor("#E51010"))
+        this.text = "Your Rating: $rating"
+    }else if(rating in 4..7){
+        this.backgroundTintList = AppCompatResources.getColorStateList(context, R.color.meduim_rating)
+        this.setTextColor(Color.parseColor("#107BE5"))
+        this.text = "Your Rating: $rating"
+    }else{
+        this.backgroundTintList = AppCompatResources.getColorStateList(context, R.color.high_rating)
+        this.setTextColor(Color.parseColor("#d4d446"))
+        this.text = "Your Rating: $rating"
+    }
+
 }

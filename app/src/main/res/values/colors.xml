@@ -243,5 +243,8 @@
     <color name="btn_share_insta">#F00073</color>
     <color name="btn_share_facebook">#107BE5</color>
     <color name="btn_share_whatsapp">#13990A</color>
+    <color name="low_rating">#FDECEC</color>
+    <color name="meduim_rating">#ECF4FD</color>
+    <color name="high_rating">#F1FDEC</color>
 
 </resources>

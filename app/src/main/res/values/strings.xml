@@ -1301,4 +1301,11 @@
     <string name="certi_email_address">Email Address</string>
     <string name="postal_address">Postal Address</string>
     <string name="for_sending_the_certificate">For sending the certificate</string>
+    <string name="network_tv">Your Internet speed is currently not fast enough for a call</string>
+    <string name="network_sub_text"><u>How to solve?</u></string>
+    <string name="recheck_text">Recheck</string>
+    <string name="network_message">Aapka Internet theek se nahi chal rha Practice Partner feature use karne ke liye aapko theek interent ki zarurat hogi  \n1. Aap mobile data/wifi ko on off karke dekh sakte hai \n2. Agar aap koi heavy file download kar rahe to uske khatam hone ka wait kar sakte hai \n3. Ya thodi der mei fir try kar sakte hai.  \n\nConnection check karne ke liye Recheck button dabae</string>
+    <string name="rating_title">Your Rating: %s</string>
+    <string name="rating_message">Jab aap apne Practice Partners se baat karte hai to woh aapko ek rating dete hai.    Aapki rating agar achhi hogi to woh darshata hai ki aap ek serious student hai and aapki call bhi serious students ke saath hi connect hogi.</string>
+    <string name="your_rating">Your Rating:</string>
 </resources>

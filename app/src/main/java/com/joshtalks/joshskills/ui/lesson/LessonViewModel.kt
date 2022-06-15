@@ -936,6 +936,14 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
             .build()
     }
 
+    fun getButtonVisibility() : Boolean{
+        return false
+    }
+
+    fun getRating(): Int {
+        return 6
+    }
+
     fun inviteFriends(dynamicLink: String, path: String) {
         try {
             val destination = path
