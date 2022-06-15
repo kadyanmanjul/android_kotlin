@@ -82,11 +82,11 @@ class CallRatingsViewModel: BaseViewModel() {
     fun submitCallRatings(agoraCallId : String, rating : Int?, callerMentorId : String,userAction:String?) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val map: HashMap<String, Any> = HashMap()
+                val map: HashMap<String, Any?> = HashMap()
                 map["agora_mentor"] = callerMentorId.toInt()
                 map["agora_call"] = agoraCallId.toInt()
-                map["rating"] = rating ?: rating.toString()
-                map["user_action"] = userAction.toString()
+                map["rating"] = rating
+                map["user_action"] = userAction
                 AppObjectController.p2pNetworkService.submitCallRatings(map)
             } catch (ex: Throwable) {
                 ex.printStackTrace()
