@@ -45,6 +45,7 @@
                     android:focusable="true"
                     android:padding="@dimen/_4sdp"
                     android:scaleType="centerCrop"
+                    android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:srcCompat="@drawable/ic_vector__1_" />
@@ -459,17 +460,12 @@
                         app:layout_constraintWidth_default="percent"
                         app:layout_constraintWidth_percent="0.7"
                         app:rippleColor="@color/white"
-                        tools:visibility="visible"
-                        />
+                        tools:visibility="visible" />
 
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_continue"
                         style="@style/Widget.MaterialComponents.Button"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.ButtonSemiBold"
-                        android:textColor="@color/white"
-                        android:textSize="@dimen/_12ssp"
-                        app:cornerRadius="@dimen/_36sdp"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
@@ -480,6 +476,10 @@
                         android:insetTop="0dp"
                         android:insetBottom="0dp"
                         android:paddingVertical="@dimen/_14sdp"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.ButtonSemiBold"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/_12ssp"
+                        app:cornerRadius="@dimen/_36sdp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintHorizontal_bias="0.5"
