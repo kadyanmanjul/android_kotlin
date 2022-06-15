@@ -74,8 +74,6 @@ import com.joshtalks.joshskills.core.datetimeutils.DateTimeUtils
 import com.joshtalks.joshskills.core.pstn_states.PSTNState
 import com.joshtalks.joshskills.core.pstn_states.PstnObserver
 import com.joshtalks.joshskills.repository.local.model.User
-import com.joshtalks.joshskills.ui.lesson.reading.getVideoFilePath
-import com.joshtalks.joshskills.ui.lesson.reading.saveVideoQ
 import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.muddzdev.styleabletoast.StyleableToast
 import de.hdodenhof.circleimageview.CircleImageView
@@ -1651,90 +1649,3 @@ fun getDefaultCountryIso(context: Context): String {
   }
 
 fun getFeatureLockedText(courseId: String, name: String = EMPTY) = "$name ${AppObjectController.getFirebaseRemoteConfig().getString(FREE_TRIAL_ENDED_FEATURE_LOCKED.plus(courseId))}"
-
-fun audioVideoMuxer(recordAudioFile: File, recordVideoFile: File?) {
-    try {
-        val outputFile = if (Build.VERSION.SDK_INT >= 29) {
-            saveVideoQ(AppObjectController.joshApplication, recordVideoFile?.absolutePath ?: "")
-                ?: ""
-        } else {
-            getVideoFilePath()
-        }
-        val videoExtractor = MediaExtractor()
-        val audioExtractor = MediaExtractor()
-
-        audioExtractor.setDataSource(recordAudioFile.absolutePath?:"")
-        audioExtractor.selectTrack(0)
-        val audioFormat: MediaFormat = audioExtractor.getTrackFormat(0)
-
-        videoExtractor.setDataSource(recordVideoFile?.absolutePath?:"")
-        videoExtractor.selectTrack(0)
-        val videoFormat: MediaFormat = videoExtractor.getTrackFormat(0)
-
-        val muxer = MediaMuxer(
-            outputFile,
-            MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4
-        )
-
-        val videoTrack = muxer.addTrack(videoFormat)
-        val audioTrack = muxer.addTrack(audioFormat)
-
-        var sawEOS = false
-        var frameCount = 0
-        val offset = 100
-        val sampleSize = 256 * 1024
-        val videoBuf: ByteBuffer = ByteBuffer.allocate(sampleSize)
-        val audioBuf: ByteBuffer = ByteBuffer.allocate(sampleSize)
-        val videoBufferInfo: MediaCodec.BufferInfo = MediaCodec.BufferInfo()
-        val audioBufferInfo: MediaCodec.BufferInfo = MediaCodec.BufferInfo()
-
-        videoExtractor.seekTo(0, MediaExtractor.SEEK_TO_CLOSEST_SYNC)
-        audioExtractor.seekTo(0, MediaExtractor.SEEK_TO_CLOSEST_SYNC)
-
-        muxer.start()
-        while (!sawEOS) {
-            videoBufferInfo.offset = offset
-            videoBufferInfo.size = videoExtractor.readSampleData(videoBuf, offset)
-
-            if (videoBufferInfo.size < 0 || audioBufferInfo.size < 0) {
-                sawEOS = true
-                videoBufferInfo.size = 0
-
-            } else {
-                videoBufferInfo.presentationTimeUs = videoExtractor.sampleTime
-                videoBufferInfo.flags = MediaCodec.BUFFER_FLAG_SYNC_FRAME
-                muxer.writeSampleData(videoTrack, videoBuf, videoBufferInfo)
-                videoExtractor.advance()
-
-                frameCount++
-            }
-        }
-
-        var sawEOS2 = false
-        var frameCount2 = 0
-        while (!sawEOS2) {
-            frameCount2++
-
-            audioBufferInfo.offset = offset
-            audioBufferInfo.size = audioExtractor.readSampleData(audioBuf, offset)
-
-            if (videoBufferInfo.size < 0 || audioBufferInfo.size < 0) {
-                sawEOS2 = true
-                audioBufferInfo.size = 0
-            } else {
-                audioBufferInfo.presentationTimeUs = audioExtractor.sampleTime
-                audioBufferInfo.flags = MediaCodec.BUFFER_FLAG_SYNC_FRAME;
-                muxer.writeSampleData(audioTrack, audioBuf, audioBufferInfo)
-                audioExtractor.advance()
-            }
-        }
-
-        muxer.stop()
-        muxer.release()
-
-    } catch (e: IOException) {
-        Log.e("sagar", "audioVideoMuxerError:${e.message}")
-    }catch (ex:java.lang.Exception){
-        Log.e("sagar", "audioVideoMuxerErro11r:${ex.message}")
-    }
-}

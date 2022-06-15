@@ -11,7 +11,7 @@ import androidx.databinding.ObservableInt
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.base.EventLiveData
+import com.joshtalks.joshskills.base.*
 import com.joshtalks.joshskills.base.constants.FPP
 import com.joshtalks.joshskills.base.constants.FROM_INCOMING_CALL
 import com.joshtalks.joshskills.base.constants.GROUP
@@ -19,7 +19,6 @@ import com.joshtalks.joshskills.base.constants.PEER_TO_PEER
 import com.joshtalks.joshskills.base.log.Feature
 import com.joshtalks.joshskills.base.log.JoshLog
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.audioVideoMuxer
 import com.joshtalks.joshskills.ui.call.repository.RepositoryConstants.CONNECTION_ESTABLISHED
 import com.joshtalks.joshskills.ui.call.repository.WebrtcRepository
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.models.CallUIState
@@ -39,7 +38,6 @@ import com.joshtalks.joshskills.voip.data.ServiceEvents
 import com.joshtalks.joshskills.voip.data.api.MediaDUNetwork
 import com.joshtalks.joshskills.voip.data.api.VoipNetwork
 import com.joshtalks.joshskills.voip.data.local.PrefManager
-import com.joshtalks.joshskills.voip.getTempFileForVideoCallRecording
 import com.joshtalks.joshskills.voip.recordinganalytics.CallRecordingAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
@@ -57,7 +55,7 @@ const val ONGOING = 2
 
 val voipLog = JoshLog.getInstanceIfEnable(Feature.VOIP)
 
-class VoiceCallViewModel(application: Application) : AndroidViewModel(application) {
+class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel(applicationContext) {
     private val TAG = "VoiceCallViewModel"
     val voipNetwork = VoipNetwork.getVoipApi()
     val mediaDUNetworkService = MediaDUNetwork.getMediaDUNetworkService()
@@ -209,8 +207,10 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                     ServiceEvents.PROCESS_AGORA_CALL_RECORDING -> {
                         Log.d(TAG, "listenVoipEvents() called")
                         File(PrefManager.getLastRecordingPath())?.let {
+                            val file = getAudioSentFile(context = applicationContext, null)
+                            copy(it.absolutePath,file.absolutePath)
                             Log.d(TAG, "listenVoipEvents() called getLastRecordingPath $it")
-                            stopRecording(it)
+                            stopRecording(file)
                     }
                 }
                 }
@@ -228,6 +228,7 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
     fun stopRecording(recordFile: File) {
         viewModelScope.launch(Dispatchers.IO) {
             if (recordFile.absolutePath.isEmpty().not()) {
+
                 val a  = AppObjectController.getFirebaseRemoteConfig().getString("RECORDING_SAVED_TEXT")
                 withContext(Dispatchers.Main) {
                     Utils.showToast("Firebase : $a")
@@ -242,7 +243,7 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                     localPath = recordFile.absolutePath )
 
                 if (len > 1) {
-                    audioVideoMuxer(recordFile, videoRecordFile)
+                    audioVideoMuxer(recordFile, videoRecordFile,applicationContext)
                 }
             }
         }
@@ -254,11 +255,15 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
         startAudioVideoRecording(view)
     }
 
-    fun startAudioVideoRecording(view:View){
-        Utils.context?.getTempFileForVideoCallRecording()?.let { file ->
+    fun startAudioVideoRecording(view: View){
+        videoSentFile(applicationContext).let {file->
             videoRecordFile = file
             CallRecording.videoRecorder.startPlayer(videoRecordFile!!.absolutePath, Utils.context!!,view)
         }
+//        Utils.context?.getTempFileForVideoCallRecording()?.let { file ->
+//            videoRecordFile = file
+//            CallRecording.videoRecorder.startPlayer(videoRecordFile!!.absolutePath, Utils.context!!,view)
+//        }
         repository.startAgoraRecording()
     }
 

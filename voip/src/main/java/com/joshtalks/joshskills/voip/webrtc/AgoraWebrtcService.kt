@@ -160,7 +160,7 @@ internal class AgoraWebrtcService(val scope: CoroutineScope) : WebrtcService {
     override fun onStartRecording() {
         Utils.context?.getTempFileForCallRecording()?.let { file->
             recordFile = file
-            agoraEngine?.startAudioRecording(AudioRecordingConfiguration(file.absolutePath,1,0,32000))
+            agoraEngine?.startAudioRecording(AudioRecordingConfiguration(file.absolutePath,3,0,48000))
         }
     }
 
