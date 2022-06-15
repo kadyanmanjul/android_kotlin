@@ -1303,6 +1303,7 @@
     <string name="certi_email_address">Email Address</string>
     <string name="postal_address">Postal Address</string>
     <string name="for_sending_the_certificate">For sending the certificate</string>
+    <string name="certificate_image">Certificate Image</string>
     <string name="network_tv">Your Internet speed is currently not fast enough for a call</string>
     <string name="network_sub_text"><u>How to solve?</u></string>
     <string name="recheck_text">Recheck</string>
