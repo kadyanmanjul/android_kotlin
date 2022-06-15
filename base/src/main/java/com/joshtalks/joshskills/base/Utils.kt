@@ -13,7 +13,11 @@ import android.os.ParcelFileDescriptor
 import android.provider.MediaStore
 import android.util.Log
 import androidx.annotation.RequiresApi
-import java.io.*
+import java.io.Closeable
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
+import java.io.IOException
 import java.nio.ByteBuffer
 
 const val APP_DIRECTORY = "JoshSkill"
@@ -94,7 +98,7 @@ private fun closeSilently(closeable: Closeable?) {
     }
 }
 
-fun audioVideoMuxer(recordAudioFile: File, recordVideoFile: File?,context: Context) {
+suspend fun audioVideoMuxer(recordAudioFile: File, recordVideoFile: File?,context: Context) {
     try {
         Log.e("sagar", "audioVideoMuxer() called with: recordAudioFile = $recordAudioFile, recordVideoFile = $recordVideoFile")
         val outputFile = if (Build.VERSION.SDK_INT >= 29) {
@@ -105,15 +109,14 @@ fun audioVideoMuxer(recordAudioFile: File, recordVideoFile: File?,context: Conte
 
         Log.e("sagar", "outputFile: $outputFile")
         val videoExtractor = MediaExtractor()
-        val audioExtractor = MediaExtractor()
-
-        audioExtractor.setDataSource(recordAudioFile.absolutePath?:"")
-        audioExtractor.selectTrack(0)
-        val audioFormat: MediaFormat = audioExtractor.getTrackFormat(0)
-
         videoExtractor.setDataSource(recordVideoFile?.absolutePath?:"")
         videoExtractor.selectTrack(0)
         val videoFormat: MediaFormat = videoExtractor.getTrackFormat(0)
+        val audioExtractor = MediaExtractor()
+        audioExtractor.setDataSource(recordAudioFile.absolutePath?:"")
+        audioExtractor.selectTrack(0)
+
+        val audioFormat: MediaFormat = audioExtractor.getTrackFormat(0)
 
         val muxer = MediaMuxer(
             outputFile?:"",
@@ -201,8 +204,8 @@ fun saveVideoQ(ctx: Context, videoPath: String): String? {
             pfd = uriSavedVideo?.let { ctx.contentResolver.openFileDescriptor(it, "w") }
             assert(pfd != null)
             val out = FileOutputStream(pfd!!.fileDescriptor)
-
-            val inputStream = ctx.contentResolver.openInputStream(Uri.parse(videoPath))
+            val uri = Uri.fromFile(File(videoPath))
+            val inputStream = ctx.contentResolver.openInputStream(uri)
             val buf = ByteArray(8192)
             var len: Int
             var progress = 0
