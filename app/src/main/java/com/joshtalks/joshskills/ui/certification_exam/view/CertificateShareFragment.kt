@@ -20,9 +20,11 @@ import com.bumptech.glide.Glide
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.databinding.FragmentCertificateShareBinding
+import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.certification_exam.CertificationExamViewModel
 import com.joshtalks.joshskills.ui.certification_exam.constants.*
+import com.joshtalks.joshskills.util.DeepLinkUtil
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -264,19 +266,19 @@ class CertificateShareFragment : CoreJoshFragment() {
                         when (packageName) {
                             PKG_AFTER_COM_WHATSAPP -> {
                                 message = AppObjectController.getFirebaseRemoteConfig()
-                                    .getString(FirebaseRemoteConfigKey.CERTIFICATE_SHARE_TEXT_WHATSAPP)
+                                    .getString(FirebaseRemoteConfigKey.CERTIFICATE_SHARE_TEXT_WHATSAPP).replace("\\n", "\n")
                             }
                             PKG_AFTER_COM_FACEBOOK -> {
                                 message = AppObjectController.getFirebaseRemoteConfig()
-                                    .getString(FirebaseRemoteConfigKey.CERTIFICATE_SHARE_TEXT_FB)
+                                    .getString(FirebaseRemoteConfigKey.CERTIFICATE_SHARE_TEXT_FB).replace("\\n", "\n")
                             }
                             PKG_AFTER_COM_INSTA -> {
                                 message = AppObjectController.getFirebaseRemoteConfig()
-                                    .getString(FirebaseRemoteConfigKey.CERTIFICATE_SHARE_TEXT_INSTA)
+                                    .getString(FirebaseRemoteConfigKey.CERTIFICATE_SHARE_TEXT_INSTA).replace("\\n", "\n")
                             }
                             PKG_AFTER_COM_LINKEDIN -> {
                                 message = AppObjectController.getFirebaseRemoteConfig()
-                                    .getString(FirebaseRemoteConfigKey.CERTIFICATE_SHARE_TEXT_LINKEDIN)
+                                    .getString(FirebaseRemoteConfigKey.CERTIFICATE_SHARE_TEXT_LINKEDIN).replace("\\n", "\n")
                             }
                             NULL-> {
                                 message = ""
@@ -284,12 +286,25 @@ class CertificateShareFragment : CoreJoshFragment() {
                             }
                         }
                         if (message != "" && packageName != NULL) {
-                            shareOn(packageName, message, uri)
+                            getDeepLinkAndShare(uri)
                         }
                     }
                 }
             }
         }
+    }
+
+    private fun getDeepLinkAndShare(uri: Uri) {
+        DeepLinkUtil(requireActivity())
+            .setReferralCode(Mentor.getInstance().referralCode)
+            .setReferralCampaign()
+            .setCampaign("certificate")
+            .setListener(object : DeepLinkUtil.OnDeepLinkListener {
+                override fun onDeepLinkCreated(deepLink: String) {
+                    shareOn(packageName, message + "\n" + deepLink, uri)
+                }
+            })
+            .build()
     }
 
     private fun isPackageInstalled(packageName: String): Boolean {

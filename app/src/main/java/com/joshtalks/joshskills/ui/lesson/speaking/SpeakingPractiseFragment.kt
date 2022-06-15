@@ -158,7 +158,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         addObservers()
-        binding.imgRecentCallsHistory.isVisible = PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID
+//        binding.imgRecentCallsHistory.isVisible = PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID
         binding.markAsCorrect.setOnClickListener { speakingSectionComplete() }
     }
 

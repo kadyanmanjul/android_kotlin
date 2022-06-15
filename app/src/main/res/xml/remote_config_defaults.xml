@@ -932,24 +932,32 @@
         <value>false</value>
     </entry>
     <entry>
-        <key>CERTIFICATE_SHARE_TEXT</key>
-        <value>Check This out</value>
-    </entry>
-    <entry>
         <key>CERTIFICATE_SHARE_TEXT_WHATSAPP</key>
-        <value>Whatsapp</value>
+        <value>I am proud to share that I have passed the Ultimate Spoken English Certification Exam 🥳🥳 \n
+            This achievement is another step towards becoming a better version of myself 🚀🚀 \n
+            Speaking to other learners and listening to classes on the JoshSkills app have really helped me improve my English Fluency.\n
+            Download the app from : </value>
     </entry>
     <entry>
         <key>CERTIFICATE_SHARE_TEXT_FB</key>
-        <value>FB</value>
+        <value>I am proud to share that I have passed the Ultimate Spoken English Certification Exam 🥳🥳 \n
+            This achievement is another step towards becoming a better version of myself 🚀🚀 \n
+            Speaking to other learners and listening to classes on the JoshSkills app have really helped me improve my English Fluency.\n
+            Download the app from : </value>
     </entry>
     <entry>
         <key>CERTIFICATE_SHARE_TEXT_LINKEDIN</key>
-        <value>LinkedIn</value>
+        <value>I am proud to share that I have passed the Ultimate Spoken English Certification Exam 🥳🥳 \n
+            This achievement is another step towards becoming a better version of myself 🚀🚀 \n
+            Speaking to other learners and listening to classes on the JoshSkills app have really helped me improve my English Fluency.\n
+            Download the app from : </value>
     </entry>
     <entry>
         <key>CERTIFICATE_SHARE_TEXT_INSTA</key>
-        <value>Insta</value>
+        <value>I am proud to share that I have passed the Ultimate Spoken English Certification Exam 🥳🥳 \n
+            This achievement is another step towards becoming a better version of myself 🚀🚀 \n
+            Speaking to other learners and listening to classes on the JoshSkills app have really helped me improve my English Fluency.\n
+            Download the app from : </value>
     </entry>
     <entry>
         <key>POSTAL_ADDRESS</key>
@@ -957,7 +965,7 @@
     </entry>
     <entry>
         <key>POSTAL_ADDRESS_SUBHEADING_CERT_FORM</key>
-        <value>For sending the certificate</value>
+        <value>Certificate will be sent to this address</value>
     </entry>
 
     <entry>

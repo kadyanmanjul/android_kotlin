@@ -45,7 +45,6 @@
                     android:focusable="true"
                     android:padding="@dimen/_4sdp"
                     android:scaleType="centerCrop"
-                    android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:srcCompat="@drawable/ic_vector__1_" />
