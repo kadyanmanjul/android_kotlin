@@ -291,11 +291,6 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                     repository.startAgoraRecording()
                 } else if (uiState.requestCancelled) {
                     Log.d(TAG, "listenUIState: error prevented")
-                    stoppedRecUIchanges()
-                    //stopRecording()
-                    repository.stopAgoraClientCallRecording()
-                    repository.stopCallRecording()
-                    uiState.requestCancelled = false
                 }
                 uiState.recordingButtonState = state.recordingButtonState
                 if (uiState.recordTime != state.recordingStartTime)
@@ -440,10 +435,10 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                 repository.startCallRecording()
             }
             RecordingButtonState.SENTREQUEST -> {
-                if (uiState.recordTime == 0L) {
+                // if (uiState.recordTime == 0L) {
                     Log.i(TAG, "recordCall: cancelled")
                     repository.cancelRecordingRequest()
-                }
+                // }
                 CallAnalytics.addAnalytics(
                     event = EventName.RECORDING_STOPPED,
                     agoraCallId = PrefManager.getAgraCallId().toString(),
@@ -469,6 +464,7 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     private fun stoppedRecUIchanges() {
+        uiState.recordTime = 0L
         uiState.recordBtnTxt = "Record"
         uiState.recordBtnImg = R.drawable.call_fragment_record
         uiState.visibleCrdView = false
