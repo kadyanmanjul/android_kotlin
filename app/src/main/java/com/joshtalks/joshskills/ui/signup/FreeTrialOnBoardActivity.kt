@@ -29,6 +29,7 @@ import com.joshtalks.joshskills.databinding.ActivityFreeTrialOnBoardBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.ChooseLanguages
+import com.joshtalks.joshskills.repository.server.onboarding.OnboardingCourseData
 import com.joshtalks.joshskills.ui.activity_feed.utils.IS_USER_EXIST
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.truecaller.android.sdk.*
@@ -51,7 +52,6 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
     private var eftActive = false
     private var is100PointsActive = false
     private var increaseCoursePrice = false
-    private var isDigitalFinancialCourse = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,20 +68,21 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
             openProfileDetailFragment()
         }
         initABTest()
+        initOnboardingCourse()
         addViewModelObservers()
         PrefManager.put(ONBOARDING_STAGE, OnBoardingStage.APP_INSTALLED.value)
         addListeners()
-        isDigitalFinancialCourse = intent.getBooleanExtra(IS_DIGITAL_FINANCIAL_INCLUSION_COURSE, false)
-        if (isDigitalFinancialCourse) {
-            layout.initDigitalFinancialInclusionCourse()
-        }
     }
 
-    private fun ActivityFreeTrialOnBoardBinding.initDigitalFinancialInclusionCourse() {
-        txtHeading.text = getString(R.string.digital_financial_inclusion_course)
-        courseInfo1.text = getString(R.string.thirty_day_course)
-        courseInfo2.text = getString(R.string.digital_inclusion_course_2)
-        courseInfo3.text = getString(R.string.digital_inclusion_course_3)
+    private fun initOnboardingCourse() {
+        layout.onboardingData =
+            if (intent.getStringExtra(PLAN_ID).isNullOrEmpty().not()) {
+                AppObjectController.gsonMapper.fromJson(
+                    AppObjectController.getFirebaseRemoteConfig()
+                        .getString("ONBOARDING_COURSE${intent.getStringExtra(COURSE_ID)}"),
+                    OnboardingCourseData::class.java
+                )
+            } else OnboardingCourseData()
     }
 
     override fun onStart() {
@@ -103,7 +104,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
     private fun addListeners() {
         val language = ChooseLanguages("784", "Hindi (हिन्दी)")
         btnStartTrial.setOnClickListener {
-            if (isDigitalFinancialCourse)
+            if (intent.getStringExtra(PLAN_ID).isNullOrEmpty().not())
                 signUp()
             else if (languageActive)
                 openChooseLanguageFragment()
@@ -169,7 +170,8 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
             viewModel.saveTrueCallerImpression(IMPRESSION_ALREADY_NEWUSER)
             val intent = Intent(this@FreeTrialOnBoardActivity, SignUpActivity::class.java).apply {
                 putExtra(FLOW_FROM, "free trial onboarding journey")
-                putExtra(IS_DIGITAL_FINANCIAL_INCLUSION_COURSE, true)
+                putExtra(PLAN_ID, intent.getStringExtra(PLAN_ID))
+                putExtra(COURSE_ID, intent.getStringExtra(COURSE_ID))
             }
             startActivity(intent)
         }
@@ -367,10 +369,12 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
     }
 
     companion object {
-        const val IS_DIGITAL_FINANCIAL_INCLUSION_COURSE = "is_digital_financial_inclusion_course"
-        fun getIntent(context: Context, isDigitalFinancialCourse: Boolean = false) =
+        const val COURSE_ID = "course_id"
+        const val PLAN_ID = "plan_id"
+        fun getIntent(context: Context, courseId: String? = null, planId: String? = null) =
             Intent(context, FreeTrialOnBoardActivity::class.java).apply {
-                putExtra(IS_DIGITAL_FINANCIAL_INCLUSION_COURSE, isDigitalFinancialCourse)
+                putExtra(COURSE_ID, courseId)
+                putExtra(PLAN_ID, planId)
             }
     }
 }

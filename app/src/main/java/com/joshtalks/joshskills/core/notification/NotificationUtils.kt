@@ -566,21 +566,23 @@ class NotificationUtils(val context: Context) {
     }
 
     private fun deleteConversationData(courseId: String) {
-        try {
-            AppObjectController.appDatabase.run {
-                val conversationId = this.courseDao().getConversationIdFromCourseId(courseId)
-                conversationId?.let {
-                    PrefManager.removeKey(it)
-                    LastSyncPrefManager.removeKey(it)
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                AppObjectController.appDatabase.run {
+                    val conversationId = this.courseDao().getConversationIdFromCourseId(courseId)
+                    conversationId?.let {
+                        PrefManager.removeKey(it)
+                        LastSyncPrefManager.removeKey(it)
+                    }
+                    val lessons = lessonDao().getLessonIdsForCourse(courseId.toInt())
+                    lessons.forEach {
+                        LastSyncPrefManager.removeKey(it.toString())
+                    }
+                    commonDao().deleteConversationData(courseId.toInt())
                 }
-                val lessons = lessonDao().getLessonIdsForCourse(courseId.toInt())
-                lessons.forEach {
-                    LastSyncPrefManager.removeKey(it.toString())
-                }
-                commonDao().deleteConversationData(courseId.toInt())
+            } catch (ex: Exception) {
+                Timber.e(ex)
             }
-        } catch (ex: Exception) {
-            Timber.e(ex)
         }
     }
 

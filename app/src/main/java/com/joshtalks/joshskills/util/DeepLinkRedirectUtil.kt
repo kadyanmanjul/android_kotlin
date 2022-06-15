@@ -78,10 +78,11 @@ object DeepLinkRedirectUtil {
         }
     }
 
-    fun getDigitalFinancialInclusionActivityIntent(activity: Activity) =
+    fun getIntentForCourseOnboarding(activity: Activity, jsonParams: JSONObject) =
         FreeTrialOnBoardActivity.getIntent(
             activity,
-            isDigitalFinancialCourse = true
+            courseId = jsonParams.getString(DeepLinkData.COURSE_ID.key),
+            planId = jsonParams.getString(DeepLinkData.PLAN_ID.key)
         )
 
     private fun getCourseId(jsonParams: JSONObject): Int =
@@ -265,7 +266,7 @@ enum class DeepLinkRedirect(val key: String) {
     COURSE_DETAILS("course_details"),
     CUSTOMER_SUPPORT_ACTIVITY("customer_support_activity"),
     LESSON_ACTIVITY("lesson_activity"),
-    DIGITAL_FINANCIAL_INCLUSION("digital_financial_inclusion");
+    ONBOARDING("onboarding");
 
     companion object {
         fun getDeepLinkAction(key: String): DeepLinkRedirect? {
@@ -284,4 +285,5 @@ enum class DeepLinkData(val key: String) {
     TEST_ID("test_id"),
     COURSE_ID("course_id"),
     TOPIC_ID("topic_id"),
+    PLAN_ID("plan_id"),
 }

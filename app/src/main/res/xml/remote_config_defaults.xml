@@ -972,4 +972,26 @@
         <key>RECORDING_SAVED_TEXT</key>
         <value>Call recording will be saved in your Downloads folder shortly</value>
     </entry>
+    <entry>
+        <key>ONBOARDING_COURSE_1212</key>
+        <value>
+            {
+            "title": "Digital Financial Inclusion Course",
+            "course_info_1": "30 day course",
+            "course_info_2": "Complete foundations of financial literacy",
+            "course_info_3": "Complex topics, aasan tareeke mein!"
+            }
+        </value>
+    </entry>
+    <entry>
+        <key>ONBOARDING_COURSE_60</key>
+        <value>
+            {
+            "title": "Digital Financial Inclusion Course",
+            "course_info_1": "30 day course",
+            "course_info_2": "Complete foundations of financial literacy",
+            "course_info_3": "Complex topics, aasan tareeke mein!"
+            }
+        </value>
+    </entry>
 </defaultsMap>

@@ -464,9 +464,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
             try {
                 val requestData = hashMapOf(
                     Pair("mentor_id", Mentor.getInstance().getId()),
-                    Pair("event_name", eventName),
-                    Pair("input_delete_user","Mobile"),
-
+                    Pair("event_name", eventName)
                 )
                 AppObjectController.commonNetworkService.saveTrueCallerImpression(requestData)
             } catch (ex: Exception) {
@@ -475,20 +473,20 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    fun registerCourse(courseId: String) {
+    fun registerCourse(courseId: String, planId: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 apiStatus.postValue(ApiCallStatus.START)
                 val requestData = hashMapOf(
-                    Pair("course_id", courseId),
-                    Pair("mentor_id", Mentor.getInstance().getId()),
-                    Pair("plan_id","1233_1212")
+                    "mentor_id" to Mentor.getInstance().getId(),
+                    "course_id" to courseId,
+                    "plan_id" to planId
                 )
                 val response = AppObjectController.signUpNetworkService.registerCourse(requestData)
-                if (response.isSuccessful)
-                    apiStatus.postValue(ApiCallStatus.SUCCESS)
-                else
-                    apiStatus.postValue(ApiCallStatus.FAILED)
+                apiStatus.postValue(
+                    if (response.isSuccessful) ApiCallStatus.SUCCESS
+                    else ApiCallStatus.FAILED
+                )
             } catch (ex: Exception) {
                 apiStatus.postValue(ApiCallStatus.FAILED)
                 Timber.e(ex)

@@ -39,7 +39,8 @@ import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.LoginViaEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.LoginViaStatus
 import com.joshtalks.joshskills.repository.local.model.User
-import com.joshtalks.joshskills.ui.signup.FreeTrialOnBoardActivity.Companion.IS_DIGITAL_FINANCIAL_INCLUSION_COURSE
+import com.joshtalks.joshskills.ui.signup.FreeTrialOnBoardActivity.Companion.COURSE_ID
+import com.joshtalks.joshskills.ui.signup.FreeTrialOnBoardActivity.Companion.PLAN_ID
 import com.joshtalks.joshskills.ui.userprofile.viewmodel.UserProfileViewModel
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import com.karumi.dexter.Dexter
@@ -73,6 +74,8 @@ class SignUpActivity : BaseActivity() {
     private var fbCallbackManager = CallbackManager.Factory.create()
     private var mGoogleSignInClient: GoogleSignInClient? = null
     private var compositeDisposable = CompositeDisposable()
+    private var courseId: String? = null
+    private var planId: String? = null
 
     // var verification: Verification? = null
     // private var sinchConfig: Config? = null
@@ -100,6 +103,10 @@ class SignUpActivity : BaseActivity() {
                 AnalyticsEvent.FLOW_FROM_PARAM.NAME,
                 intent.getStringExtra(FLOW_FROM)
             )
+        if (intent.hasExtra(PLAN_ID))
+            planId = intent.getStringExtra(PLAN_ID)
+        if (intent.hasExtra(COURSE_ID))
+            courseId = intent.getStringExtra(COURSE_ID)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_sign_up_v2)
         binding.handler = this
         addViewModelObserver()
@@ -149,8 +156,8 @@ class SignUpActivity : BaseActivity() {
                     logLoginSuccessAnalyticsEvent(viewModel.loginViaStatus?.toString())
                     if(!isFirstTime)
                         viewModel.saveTrueCallerImpression(IMPRESSION_ALREADY_ALREADYUSER)
-                    if (intent.getBooleanExtra(IS_DIGITAL_FINANCIAL_INCLUSION_COURSE, false)) {
-                        viewModel.registerCourse("1212")
+                    if (planId != null && courseId != null) {
+                        viewModel.registerCourse(courseId = courseId!!, planId = planId!!)
                     } else {
                         startActivity(getInboxActivityIntent())
                         this@SignUpActivity.finishAffinity()
@@ -167,7 +174,7 @@ class SignUpActivity : BaseActivity() {
             if (it)
                 addRetryCountAnalytics()
         })
-        viewModel.apiStatus.observe(this){
+        viewModel.apiStatus.observe(this) {
             when (it) {
                 ApiCallStatus.START -> showProgressBar()
                 ApiCallStatus.SUCCESS -> {
@@ -176,11 +183,14 @@ class SignUpActivity : BaseActivity() {
                 }
                 ApiCallStatus.FAILED -> {
                     hideProgressBar()
-                    Snackbar.make(binding.root, getString(R.string.internet_not_available_msz), Snackbar.LENGTH_SHORT)
-                        .setAction(getString(R.string.retry)) {
-                            viewModel.registerCourse("1212")
-                        }
-                        .show()
+                    Snackbar.make(
+                        binding.root,
+                        getString(R.string.internet_not_available_msz),
+                        Snackbar.LENGTH_SHORT
+                    ).setAction(getString(R.string.retry)) {
+                        if (courseId != null && planId != null)
+                            viewModel.registerCourse(courseId = courseId!!, planId = planId!!)
+                    }.show()
                 }
                 else -> {}
 

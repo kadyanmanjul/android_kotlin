@@ -207,8 +207,8 @@ class LauncherActivity : CoreJoshActivity(), Branch.BranchReferralInitListener {
             User.getInstance().isVerified.not() -> {
                 when {
                     (jsonParams != null && jsonParams!!.has(DeepLinkData.REDIRECT_TO.key)
-                            && jsonParams!!.getString(DeepLinkData.REDIRECT_TO.key) == DeepLinkRedirect.DIGITAL_FINANCIAL_INCLUSION.key)
-                    -> DeepLinkRedirectUtil.getDigitalFinancialInclusionActivityIntent(this)
+                            && jsonParams!!.getString(DeepLinkData.REDIRECT_TO.key) == DeepLinkRedirect.ONBOARDING.key)
+                    -> DeepLinkRedirectUtil.getIntentForCourseOnboarding(this, jsonParams!!)
                     (jsonParams != null && jsonParams!!.has(DeepLinkData.REDIRECT_TO.key)
                             && jsonParams!!.getString(DeepLinkData.REDIRECT_TO.key) == DeepLinkRedirect.COURSE_DETAILS.key)
                     -> {
@@ -223,8 +223,9 @@ class LauncherActivity : CoreJoshActivity(), Branch.BranchReferralInitListener {
                                 jsonParams!!,
                                 true
                             ))
-                        ) null
-                        else getInboxActivityIntent()
+                        ) {
+                            null
+                        } else getInboxActivityIntent()
                     }
                     PrefManager.getBoolValue(IS_PAYMENT_DONE, false) ->
                         Intent(this@LauncherActivity, SignUpActivity::class.java)
