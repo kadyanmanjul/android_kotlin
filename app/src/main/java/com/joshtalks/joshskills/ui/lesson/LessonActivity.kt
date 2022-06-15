@@ -1403,7 +1403,10 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
             binding.overlayTooltipLayout.isVisible -> showVideoToolTip(false)
             binding.videoPopup.isVisible -> closeVideoPopUpUi()
             binding.overlayLayout.isVisible -> hideSpotlight()
-            binding.containerReading.isVisible -> closeReadingFullScreen()
+            binding.containerReading.isVisible -> {
+                closeReadingFullScreen()
+                viewModel.showVideoView()
+            }
             else -> {
                 val resultIntent = Intent()
                 viewModel.lessonLiveData.value?.let {

@@ -10,7 +10,9 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.res.ColorStateList
+import android.graphics.Bitmap
 import android.graphics.Color
+import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.media.*
@@ -20,6 +22,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.os.SystemClock
+import android.provider.MediaStore
 import android.util.Log
 import android.view.*
 import android.view.View.*
@@ -46,10 +49,7 @@ import com.google.android.exoplayer2.Player
 import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
-import com.joshtalks.joshskills.constants.CANCEL_BUTTON_CLICK
-import com.joshtalks.joshskills.constants.PERMISSION_FROM_READING_GRANTED
-import com.joshtalks.joshskills.constants.SHARE_VIDEO
-import com.joshtalks.joshskills.constants.SUBMIT_BUTTON_CLICK
+import com.joshtalks.joshskills.constants.*
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.*
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
@@ -66,7 +66,6 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.RequestEngage
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
-import com.joshtalks.joshskills.ui.lesson.LessonActivity
 import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
 import com.joshtalks.joshskills.ui.lesson.LessonViewModel
 import com.joshtalks.joshskills.ui.lesson.READING_POSITION
@@ -268,6 +267,16 @@ class ReadingFragmentWithoutFeedback :
         scaleAnimation = AnimationUtils.loadAnimation(requireContext(), R.anim.scale)
         addObserver()
         // showTooltip()
+        binding.mergedVideo.setOnPreparedListener { mediaPlayer ->
+            val videoRatio = mediaPlayer.videoWidth / mediaPlayer.videoHeight.toFloat()
+            val screenRatio = binding.mergedVideo.width / binding.mergedVideo.height.toFloat()
+            val scaleX = videoRatio / screenRatio
+            if (scaleX >= 1f) {
+                binding.mergedVideo.scaleX = scaleX
+            } else {
+                binding.mergedVideo.scaleY = 1f / scaleX
+            }
+        }
 
         binding.mergedVideo.setOnClickListener {
             if (binding.mergedVideo.isPlaying) {
@@ -296,6 +305,7 @@ class ReadingFragmentWithoutFeedback :
                 SHARE_VIDEO -> inviteFriends(it.obj as Intent)
                 SUBMIT_BUTTON_CLICK -> submitPractise()
                 CANCEL_BUTTON_CLICK -> closeRecordedView()
+                SHOW_VIDEO_VIEW -> binding.practiseSubmitLayout.visibility = VISIBLE
             }
         }
     }
@@ -303,6 +313,7 @@ class ReadingFragmentWithoutFeedback :
     override fun onResume() {
         super.onResume()
         showRecordHintAnimation()
+        binding.mergedVideo.seekTo(5)
         subscribeRXBus()
         /*requireActivity().requestedOrientation = if (Build.VERSION.SDK_INT == 26) {
             ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
@@ -320,6 +331,11 @@ class ReadingFragmentWithoutFeedback :
             }
         } catch (ex: Exception) {
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        binding.mergedVideo.seekTo(5)
     }
 
     override fun onPause() {
@@ -1212,6 +1228,9 @@ class ReadingFragmentWithoutFeedback :
         if (video.isNullOrEmpty().not()) {
             observeNetwork()
             addVideoView()
+            viewModel.showVideoOnFullScreen()
+            binding.practiseSubmitLayout.visibility = GONE
+            binding.info.visibility = VISIBLE
         } else {
             binding.subPractiseSubmitLayout.visibility = VISIBLE
             binding.audioListRv.visibility = VISIBLE
@@ -1219,6 +1238,7 @@ class ReadingFragmentWithoutFeedback :
             removePreviousAddedViewHolder()
             praticAudioAdapter?.addNewItem(PracticeEngagementWrapper(null, filePath))
             initializePractiseSeekBar()
+            binding.info.visibility = GONE
         }
         enableSubmitButton()
     }
@@ -1280,29 +1300,22 @@ class ReadingFragmentWithoutFeedback :
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
                     binding.rootView.requestDisallowInterceptTouchEvent(true)
-                    //AppObjectController.uiHandler.postAtFrontOfQueue {
                     binding.counterTv.visibility = VISIBLE
-                    //}
                     isAudioRecording = true
-                    //binding.recordingViewFrame.layoutTransition?.setAnimateParentHierarchy(false)
                     binding.recordingView.startAnimation(scaleAnimation)
-                    //binding.recordingViewFrame.layoutTransition?.setAnimateParentHierarchy(false)
+
                     pauseAllAudioAndUpdateViews()
                     binding.progressBarImageView.progress = 0
                     binding.practiseSeekbar.progress = 0
                     audioManager?.seekTo(0)
                     binding.mergedVideo.seekTo(0)
                     binding.videoPlayer.seekToStart()
-                    //PrefManager.put(HAS_SEEN_VOCAB_HAND_TOOLTIP,true)
                     requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                     appAnalytics?.addParam(AnalyticsEvent.AUDIO_RECORD.NAME, "Audio Recording")
-                    // appAnalytics?.create(AnalyticsEvent.AUDIO_RECORD.NAME).push()
                     binding.counterTv.base = SystemClock.elapsedRealtime()
                     startTime = System.currentTimeMillis()
                     binding.counterTv.start()
-                    val params =
-                        binding.counterTv.layoutParams as ViewGroup.MarginLayoutParams
-//                    params.topMargin = binding.rootView.scrollY
+                    val params = binding.counterTv.layoutParams as ViewGroup.MarginLayoutParams
                     viewModel.startRecord()
                     binding.audioPractiseHint.visibility = GONE
                     AppObjectController.uiHandler.postDelayed(longPressAnimationCallback, 600)
@@ -1326,7 +1339,9 @@ class ReadingFragmentWithoutFeedback :
                     if (timeDifference > 1) {
                         viewModel.recordFile?.let {
                             isAudioRecordDone = true
-                            viewModel.showVideoOnFullScreen()
+//                            Log.e("Ayaaz","${currentLessonQuestion?.videoList?.get(0)?.video_url}")
+//                            if(!currentLessonQuestion?.videoList?.get(0)?.video_url.isNullOrEmpty())
+//                            viewModel.showVideoOnFullScreen()
                             if (File(outputFile).exists()) {
                                 File(outputFile).delete()
                             }

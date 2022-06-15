@@ -440,6 +440,7 @@
                     android:backgroundTint="#ECF4FD"
                     android:layout_marginTop="@dimen/_10sdp"
                     app:layout_constraintStart_toStartOf="parent"
+                    android:visibility="gone"
                     app:layout_constraintTop_toBottomOf="@+id/practise_info_layout"
                     app:layout_constraintBottom_toTopOf="@+id/practise_submit_layout">
 
@@ -572,7 +573,7 @@
                         <VideoView
                             android:id="@+id/merged_video"
                             android:layout_width="match_parent"
-                            android:layout_height="@dimen/_320sdp"
+                            android:layout_height="0dp"
                             android:focusable="true"
                             android:visibility="gone"
                             app:layout_constraintBottom_toBottomOf="parent"

@@ -43,10 +43,12 @@ class ReadingFullScreenFragment : BaseFragment() {
         binding.mergedVideo.start()
         binding.ivBack.setOnClickListener {
             viewModel.closeCurrentFragment()
+            viewModel.showVideoView()
         }
         binding.submitAnswerBtn.setOnClickListener {
             viewModel.submitButton()
             viewModel.closeCurrentFragment()
+            viewModel.showVideoView()
         }
         binding.ivClose.setOnClickListener {
             viewModel.closeCurrentFragment()

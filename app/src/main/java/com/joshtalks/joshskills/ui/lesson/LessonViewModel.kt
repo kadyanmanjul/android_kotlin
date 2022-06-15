@@ -42,8 +42,8 @@ import com.joshtalks.joshskills.repository.server.engage.Graph
 import com.joshtalks.joshskills.repository.server.introduction.DemoOnboardingData
 import com.joshtalks.joshskills.repository.server.voip.SpeakingTopic
 import com.joshtalks.joshskills.repository.service.NetworkRequestHelper
-import com.joshtalks.joshskills.ui.lesson.speaking.spf_models.UserRating
-import com.joshtalks.joshskills.ui.lesson.speaking.spf_models.VideoPopupItem
+import com.joshtalks.joshskills.ui.lesson.speaking.VideoPopupItem
+import com.joshtalks.joshskills.ui.referral.WHATSAPP_PACKAGE_STRING
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.callbar.CallBar
 import com.joshtalks.joshskills.util.AudioRecording
 import com.joshtalks.joshskills.util.DeepLinkUtil
@@ -986,6 +986,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
         try {
             val destination = path
             val waIntent = Intent(Intent.ACTION_SEND)
+            waIntent.setPackage(WHATSAPP_PACKAGE_STRING)
             waIntent.type = "*/*"
             waIntent.putExtra(Intent.EXTRA_TEXT, dynamicLink)
             waIntent.putExtra(
@@ -1024,6 +1025,11 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
 
     fun cancelButton(){
         message.what = CANCEL_BUTTON_CLICK
+        singleLiveEvent.value = message
+    }
+
+    fun showVideoView(){
+        message.what = SHOW_VIDEO_VIEW
         singleLiveEvent.value = message
     }
 
