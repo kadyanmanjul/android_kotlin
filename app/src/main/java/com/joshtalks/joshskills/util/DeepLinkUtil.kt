@@ -22,6 +22,7 @@ class DeepLinkUtil(private val context: Context) {
     private var medium = "referral"
     private lateinit var listener: OnDeepLinkListener
     private var title: String = "Invite Friend"
+    private var sharedItem: String = "INVITE"
 
     fun setReferralCode(referralCode: String): DeepLinkUtil {
         this.referralCode = referralCode
@@ -58,6 +59,11 @@ class DeepLinkUtil(private val context: Context) {
         return this
     }
 
+    fun setSharedItem(sharedItem:String):DeepLinkUtil{
+        this.sharedItem = sharedItem
+        return this
+    }
+
     fun build() {
         val branchUniversalObject = BranchUniversalObject()
             .setCanonicalIdentifier(Mentor.getInstance().referralCode.plus(timestamp))
@@ -91,7 +97,7 @@ class DeepLinkUtil(private val context: Context) {
                             LinkAttribution(
                                 mentorId = Mentor.getInstance().getId(),
                                 contentId = campaign,
-                                sharedItem = "INVITE",
+                                sharedItem = sharedItem,
                                 sharedItemType = "TX",
                                 deepLink = deepLink
                             )
