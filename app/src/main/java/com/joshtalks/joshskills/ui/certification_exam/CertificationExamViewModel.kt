@@ -44,6 +44,12 @@ class CertificationExamViewModel(application: Application) : AndroidViewModel(ap
     var certificateExamId: Int? = null
     var examType: MutableLiveData<String> = MutableLiveData()
     var certiShareHeadingText = ObservableField(EMPTY)
+    var btnWhatsappVisibility = ObservableField(true)
+    var btnFacebookVisibility = ObservableField(true)
+    var btnInstaVisibility = ObservableField(true)
+    var btnLinkedInVisibility = ObservableField(true)
+    var btnDownloadVisibility = ObservableField(true)
+    var progressBarVisibility = ObservableField(false)
 
     fun startExam() {
         saveImpression(START_EXAM)
