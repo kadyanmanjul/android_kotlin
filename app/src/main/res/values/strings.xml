@@ -1301,4 +1301,5 @@
     <string name="certi_email_address">Email Address</string>
     <string name="postal_address">Postal Address</string>
     <string name="for_sending_the_certificate">For sending the certificate</string>
+    <string name="certificate_image">Certificate Image</string>
 </resources>

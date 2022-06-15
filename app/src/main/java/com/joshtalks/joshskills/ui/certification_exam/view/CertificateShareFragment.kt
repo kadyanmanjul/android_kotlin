@@ -13,7 +13,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
@@ -30,11 +29,6 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.moengage.core.internal.utils.getSystemService
 import kotlin.properties.Delegates
 
-private const val PKG_AFTER_COM_WHATSAPP ="whatsapp"
-private const val PKG_AFTER_COM_FACEBOOK ="facebook.android"
-private const val PKG_AFTER_COM_LINKEDIN ="linkedin.android"
-private const val PKG_AFTER_COM_INSTA ="instagram.android"
-private const val NULL ="null"
 class CertificateShareFragment : CoreJoshFragment() {
 
     private lateinit var binding: FragmentCertificateShareBinding
@@ -59,7 +53,6 @@ class CertificateShareFragment : CoreJoshFragment() {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_certificate_share, container, false)
         binding.lifecycleOwner = this
         binding.vm = viewModel
-        binding.txtYouHaveEarned.visibility = View.GONE
 
         viewModel.typeOfExam()
 
@@ -71,38 +64,34 @@ class CertificateShareFragment : CoreJoshFragment() {
             .into(binding.imgCertificate)
 
         if (PrefManager.getBoolValue(IS_FIRST_TIME_CERTIFICATE, defValue = true)) {
-            with(binding) {
-                if (isPackageInstalled(PACKAGE_NAME_WHATSAPP)){
-                    btnShareDownload.visibility = View.GONE
-                    btnShareWhatsapp.visibility = View.VISIBLE
-                }
-                else{
-                    btnShareWhatsapp.visibility = View.GONE
-                    btnShareDownload.visibility = View.VISIBLE
-                }
-                btnShareFacebook.visibility = View.GONE
-                btnShareInsta.visibility = View.GONE
-                btnShareLinkedIn.visibility = View.GONE
+            if (isPackageInstalled(PACKAGE_NAME_WHATSAPP)){
+                viewModel.btnDownloadVisibility.set(false)
+                viewModel.btnWhatsappVisibility.set(true)
             }
+            else{
+                viewModel.btnDownloadVisibility.set(true)
+                viewModel.btnWhatsappVisibility.set(false)
+            }
+            viewModel.btnLinkedInVisibility.set(false)
+            viewModel.btnFacebookVisibility.set(false)
+            viewModel.btnInstaVisibility.set(false)
             PrefManager.put(IS_FIRST_TIME_CERTIFICATE, false)
         } else {
-            with(binding) {
-                btnShareDownload.isVisible = true
-                btnShareWhatsapp.isVisible = isPackageInstalled(PACKAGE_NAME_WHATSAPP)
-                btnShareFacebook.isVisible = isPackageInstalled(PACKAGE_NAME_FACEBOOK)
-                btnShareInsta.isVisible = isPackageInstalled(PACKAGE_NAME_INSTA)
-                btnShareLinkedIn.isVisible = isPackageInstalled(PACKAGE_NAME_LINKEDIN)
-            }
+            viewModel.btnDownloadVisibility.set(true)
+            viewModel.btnWhatsappVisibility.set(isPackageInstalled(PACKAGE_NAME_WHATSAPP))
+            viewModel.btnFacebookVisibility.set(isPackageInstalled(PACKAGE_NAME_FACEBOOK))
+            viewModel.btnInstaVisibility.set(isPackageInstalled(PACKAGE_NAME_INSTA))
+            viewModel.btnLinkedInVisibility.set(isPackageInstalled(PACKAGE_NAME_LINKEDIN))
         }
         viewModel.certiShareHeadingText.set("Congratulations, ${User.getInstance().firstName}!")
 
 
         binding.btnShareWhatsapp.setOnClickListener {
             if (Utils.isInternetAvailable()){
-            packageName = PKG_AFTER_COM_WHATSAPP
-            binding.progressBar2.visibility = View.VISIBLE
-            downloadImage(url)
-            viewModel.saveImpression(CERTIFICATE_SHARED_WHATSAPP)
+                packageName = PKG_AFTER_COM_WHATSAPP
+                viewModel.progressBarVisibility.set(true)
+                downloadImage(url)
+                viewModel.saveImpression(CERTIFICATE_SHARED_WHATSAPP)
             }
             else {
                 showToast("No Internet Available")
@@ -111,10 +100,10 @@ class CertificateShareFragment : CoreJoshFragment() {
 
         binding.btnShareFacebook.setOnClickListener {
             if (Utils.isInternetAvailable()){
-            packageName = PKG_AFTER_COM_FACEBOOK
-            binding.progressBar2.visibility = View.VISIBLE
-            downloadImage(url)
-            viewModel.saveImpression(CERTIFICATE_SHARED_FB)
+                packageName = PKG_AFTER_COM_FACEBOOK
+                viewModel.progressBarVisibility.set(true)
+                downloadImage(url)
+                viewModel.saveImpression(CERTIFICATE_SHARED_FB)
             }
             else {
                 showToast("No Internet Available")
@@ -123,10 +112,10 @@ class CertificateShareFragment : CoreJoshFragment() {
 
         binding.btnShareInsta.setOnClickListener {
             if (Utils.isInternetAvailable()){
-            packageName = PKG_AFTER_COM_INSTA
-            binding.progressBar2.visibility = View.VISIBLE
-            downloadImage(url)
-            viewModel.saveImpression(CERTIFICATE_SHARED_INSTA)
+                packageName = PKG_AFTER_COM_INSTA
+                viewModel.progressBarVisibility.set(true)
+                downloadImage(url)
+                viewModel.saveImpression(CERTIFICATE_SHARED_INSTA)
             }else {
                 showToast("No Internet Available")
             }
@@ -134,10 +123,10 @@ class CertificateShareFragment : CoreJoshFragment() {
 
         binding.btnShareLinkedIn.setOnClickListener {
             if (Utils.isInternetAvailable()){
-            packageName = PKG_AFTER_COM_LINKEDIN
-            binding.progressBar2.visibility = View.VISIBLE
-            downloadImage(url)
-            viewModel.saveImpression(CERTIFICATE_SHARED_LINKED)
+                packageName = PKG_AFTER_COM_LINKEDIN
+                viewModel.progressBarVisibility.set(true)
+                downloadImage(url)
+                viewModel.saveImpression(CERTIFICATE_SHARED_LINKED)
             }
             else{
                 showToast("No Internet Available")
@@ -146,17 +135,15 @@ class CertificateShareFragment : CoreJoshFragment() {
 
         binding.btnShareDownload.setOnClickListener {
             if (Utils.isInternetAvailable()){
-            packageName = NULL
-            binding.progressBar2.visibility = View.VISIBLE
-            downloadImage(url)
-            viewModel.saveImpression(CERTIFICATE_DOWNLOAD)
+                packageName = NULL
+                viewModel.progressBarVisibility.set(true)
+                downloadImage(url)
+                viewModel.saveImpression(CERTIFICATE_DOWNLOAD)
             }
             else {
                 showToast("No Internet Available")
             }
         }
-
-
         return binding.root
     }
 
@@ -257,7 +244,7 @@ class CertificateShareFragment : CoreJoshFragment() {
                     val id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0L)
                     if (id == downloadId) { // checking if the downloaded file is our certificate
                         //retrieving the file
-                        binding.progressBar2.visibility = View.GONE
+                        viewModel.progressBarVisibility.set(false)
                         val downloadedFileId = it.getLong(DownloadManager.EXTRA_DOWNLOAD_ID)
                         val downloadManager = getSystemService(requireContext(), DOWNLOAD_SERVICE) as DownloadManager
                         val uri: Uri = downloadManager.getUriForDownloadedFile(downloadedFileId)
