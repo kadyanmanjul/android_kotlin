@@ -98,7 +98,7 @@ private fun closeSilently(closeable: Closeable?) {
     }
 }
 
-suspend fun audioVideoMuxer(recordAudioFile: File, recordVideoFile: File?,context: Context) {
+fun audioVideoMuxer(recordAudioFile: File, recordVideoFile: File?,context: Context): String? {
     try {
         Log.e("sagar", "audioVideoMuxer() called with: recordAudioFile = $recordAudioFile, recordVideoFile = $recordVideoFile")
         val outputFile = if (Build.VERSION.SDK_INT >= 29) {
@@ -178,12 +178,14 @@ suspend fun audioVideoMuxer(recordAudioFile: File, recordVideoFile: File?,contex
 
         muxer.stop()
         muxer.release()
+        return outputFile
 
     } catch (e: IOException) {
         Log.e("sagar", "audioVideoMuxerError:${e.message}")
     }catch (ex:java.lang.Exception){
         Log.e("sagar", "audioVideoMuxerErro11r:${ex.message}")
     }
+    return null
 }
 
 @RequiresApi(api = Build.VERSION_CODES.Q)

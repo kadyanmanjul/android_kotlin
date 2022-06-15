@@ -11,18 +11,22 @@ import androidx.databinding.ObservableInt
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.base.*
+import com.joshtalks.joshskills.base.EventLiveData
+import com.joshtalks.joshskills.base.audioVideoMuxer
 import com.joshtalks.joshskills.base.constants.FPP
 import com.joshtalks.joshskills.base.constants.FROM_INCOMING_CALL
 import com.joshtalks.joshskills.base.constants.GROUP
 import com.joshtalks.joshskills.base.constants.PEER_TO_PEER
+import com.joshtalks.joshskills.base.getAudioSentFile
 import com.joshtalks.joshskills.base.log.Feature
 import com.joshtalks.joshskills.base.log.JoshLog
+import com.joshtalks.joshskills.base.videoSentFile
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.ui.call.repository.RepositoryConstants.CONNECTION_ESTABLISHED
 import com.joshtalks.joshskills.ui.call.repository.WebrtcRepository
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.call_recording.ProcessCallRecordingService
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.models.CallUIState
-import com.joshtalks.joshskills.ui.voip.util.CallRecording
+import com.joshtalks.joshskills.ui.voip.util.ScreenViewRecorder
 import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.constant.CALL_CONNECTED_EVENT
 import com.joshtalks.joshskills.voip.constant.CALL_INITIATED_EVENT
@@ -35,8 +39,6 @@ import com.joshtalks.joshskills.voip.constant.SHOW_RECORDING_REJECTED_DIALOG
 import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.RecordingButtonState
 import com.joshtalks.joshskills.voip.data.ServiceEvents
-import com.joshtalks.joshskills.voip.data.api.MediaDUNetwork
-import com.joshtalks.joshskills.voip.data.api.VoipNetwork
 import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.recordinganalytics.CallRecordingAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
@@ -57,8 +59,6 @@ val voipLog = JoshLog.getInstanceIfEnable(Feature.VOIP)
 
 class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel(applicationContext) {
     private val TAG = "VoiceCallViewModel"
-    val voipNetwork = VoipNetwork.getVoipApi()
-    val mediaDUNetworkService = MediaDUNetwork.getMediaDUNetworkService()
     private var isConnectionRequestSent = false
     lateinit var source: String
     private val repository = WebrtcRepository(viewModelScope)
@@ -148,7 +148,6 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                             singleLiveEvent.value = msg
                         }
                         if (uiState.recordingButtonState == RecordingButtonState.RECORDING) {
-                            //stopRecording()
                             stopAudioVideoRecording()
                         }
                     }
@@ -170,7 +169,6 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                         }*/
                     }
                     ServiceEvents.STOP_RECORDING -> {
-                        //stopRecording()
                         stopAudioVideoRecording()
                         stoppedRecUIchanges()
                     }
@@ -208,10 +206,12 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                         Log.d(TAG, "listenVoipEvents() called")
                         File(PrefManager.getLastRecordingPath())?.let {
                             val file = getAudioSentFile(context = applicationContext, null)
-                            copy(it.absolutePath,file.absolutePath)
-                            Log.d(TAG, "listenVoipEvents() called getLastRecordingPath $it")
-                            stopRecording(file)
-                    }
+                            //AppDirectory.copy(it.absolutePath,file.absolutePath)
+                            //Log.d(TAG, "listenVoipEvents() called getLastRecordingPath $it")
+                            //stopRecording(file)
+                            ProcessCallRecordingService.processSingleCallRecording(videoPath = videoRecordFile!!.absolutePath, audioPath = it.absolutePath, callId = PrefManager.getAgraCallId().toString(),agoraMentorId =PrefManager.getLocalUserAgoraId().toString(),
+                            )
+                        }
                 }
                 }
             }
@@ -258,7 +258,7 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
     fun startAudioVideoRecording(view: View){
         videoSentFile(applicationContext).let {file->
             videoRecordFile = file
-            CallRecording.videoRecorder.startPlayer(videoRecordFile!!.absolutePath, Utils.context!!,view)
+            ScreenViewRecorder.videoRecorder.startPlayer(videoRecordFile!!.absolutePath, Utils.context!!,view)
         }
 //        Utils.context?.getTempFileForVideoCallRecording()?.let { file ->
 //            videoRecordFile = file
@@ -268,7 +268,7 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
     }
 
     fun stopAudioVideoRecording(){
-        CallRecording.videoRecorder.stopPlaying()
+        ScreenViewRecorder.videoRecorder.stopPlaying()
         repository.stopAgoraClientCallRecording()
     }
 
@@ -457,7 +457,6 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                     agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
                 )
                 stoppedRecUIchanges()
-                //stopRecording()
                 stopAudioVideoRecording()
                 repository.stopCallRecording()
             }
