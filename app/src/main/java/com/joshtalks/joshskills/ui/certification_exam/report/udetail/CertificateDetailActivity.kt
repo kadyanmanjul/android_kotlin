@@ -53,6 +53,7 @@ import com.joshtalks.joshskills.ui.certification_exam.CertificationExamViewModel
 import com.joshtalks.joshskills.ui.certification_exam.constants.*
 import com.joshtalks.joshskills.ui.certification_exam.view.CertificateShareFragment
 import com.joshtalks.joshskills.voip.Utils.Companion.context
+import com.joshtalks.joshskills.voip.Utils.Companion.isInternetAvailable
 import java.text.ParseException
 import java.util.Calendar
 import java.util.Date
@@ -339,9 +340,10 @@ class CertificateDetailActivity : BaseActivity(), FileDownloadCallback {
                 showToast(getString(R.string.enter_postal_address))
                 return@launch
             }
-            //showProgressDialog("Please Wait for the Certificate to be Generated")
-            viewModel.postCertificateUserDetails(getUserDetail())
-            viewModel.saveImpression(GENERATE_CERTIFICATE_FORM)
+            if (isInternetAvailable()) {
+                viewModel.postCertificateUserDetails(getUserDetail())
+                viewModel.saveImpression(GENERATE_CERTIFICATE_FORM)
+            }
             try {
                 val view = window.currentFocus
                 view?.clearFocus()
