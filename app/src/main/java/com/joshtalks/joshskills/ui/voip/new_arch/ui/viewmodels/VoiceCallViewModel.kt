@@ -175,13 +175,7 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                     ServiceEvents.CALL_RECORDING_ACCEPT -> {
                         recordCnclStop = 2
                         //startRecording()
-                        val msg = Message.obtain().apply {
-                            what = HIDE_RECORDING_PERMISSION_DIALOG
-                        }
-                        withContext(Dispatchers.Main) {
-                            singleLiveEvent.value = msg
-                        }
-                        repository.startAgoraRecording()
+
                     }
                     ServiceEvents.CALL_RECORDING_REJECT -> {
                         stoppedRecUIchanges()
@@ -254,21 +248,54 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
         viewModelScope.launch(Dispatchers.IO) {
             repository.observeUserDetails()?.collect { state ->
                 Log.d(TAG, "listenUIState: $state")
+                Log.d(TAG, "listenUIState: ${state.recordingButtonState}")
+                Log.d(TAG, "listenUIState: ${uiState.requestedOtherUser}")
                 val voipState = PrefManager.getVoipState()
                 Log.d(TAG, "listenUIState: State --> $voipState")
                 if (uiState.startTime != state.startTime)
                     uiState.startTime = state.startTime
                 uiState.isRecordingEnabled = state.isRecordingEnabled
                 // TODO remove this logic from here ( issues: fix when state is REQUESTED we have to show dialog even when other user come back from background )
-                if (state.recordingButtonState == RecordingButtonState.REQUESTED
-                    && uiState.recordingButtonState != RecordingButtonState.REQUESTED
+                if (state.recordingButtonState == RecordingButtonState.GOTREQUEST
+                    && uiState.recordingButtonState != RecordingButtonState.GOTREQUEST
+                    && uiState.requestedOtherUser) {
+                    Log.d(TAG, "listenUIState: both pressed record")
+                    Log.d(TAG, "listenUIState: ${state.recordingButtonState} ${uiState.requestedOtherUser}")
+                    uiState.requestedOtherUser = false
+                    recordingStartedUIChanges()
+                    acceptCallRecording()
+                }
+                if (state.recordingButtonState==RecordingButtonState.RECORDING || state.recordingButtonState==
+                        RecordingButtonState.IDLE) {
+                    uiState.requestedOtherUser = false
+                }
+                if (state.recordingButtonState == RecordingButtonState.GOTREQUEST
+                    && uiState.recordingButtonState != RecordingButtonState.GOTREQUEST
                     && uiState.recordBtnTxt.equals("Record")) {
+                            val msg = Message.obtain().apply {
+                                what = SHOW_RECORDING_PERMISSION_DIALOG
+                            }
+                            withContext(Dispatchers.Main) {
+                                singleLiveEvent.value = msg
+                            }
+                }
+                if (state.recordingButtonState == RecordingButtonState.RECORDING
+                    && uiState.recordingButtonState != RecordingButtonState.RECORDING
+                    && uiState.requestCancelled.not()) {
                     val msg = Message.obtain().apply {
-                        what = SHOW_RECORDING_PERMISSION_DIALOG
+                        what = HIDE_RECORDING_PERMISSION_DIALOG
                     }
                     withContext(Dispatchers.Main) {
                         singleLiveEvent.value = msg
                     }
+                    repository.startAgoraRecording()
+                } else if (uiState.requestCancelled) {
+                    Log.d(TAG, "listenUIState: error prevented")
+                    stoppedRecUIchanges()
+                    //stopRecording()
+                    repository.stopAgoraClientCallRecording()
+                    repository.stopCallRecording()
+                    uiState.requestCancelled = false
                 }
                 uiState.recordingButtonState = state.recordingButtonState
                 if (uiState.recordTime != state.recordingStartTime)
@@ -288,7 +315,7 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
 
                 when(state.recordingButtonState) {
                     RecordingButtonState.IDLE -> stoppedRecUIchanges()
-                    RecordingButtonState.REQUESTED -> recWaitingForUserUI()
+                    RecordingButtonState.SENTREQUEST -> recWaitingForUserUI()
                     RecordingButtonState.RECORDING -> recordingStartedUIChanges()
                 }
 
@@ -407,10 +434,12 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                     agoraCallId = PrefManager.getAgraCallId().toString(),
                     agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
                 )
+                uiState.requestedOtherUser = true
+                Log.d(TAG, "recordCall: ${uiState.requestedOtherUser}")
                 recWaitingForUserUI()
                 repository.startCallRecording()
             }
-            RecordingButtonState.REQUESTED -> {
+            RecordingButtonState.SENTREQUEST -> {
                 if (uiState.recordTime == 0L) {
                     Log.i(TAG, "recordCall: cancelled")
                     repository.cancelRecordingRequest()
@@ -420,6 +449,7 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                     agoraCallId = PrefManager.getAgraCallId().toString(),
                     agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
                 )
+                uiState.requestCancelled = true
                 stoppedRecUIchanges()
                 repository.stopAgoraClientCallRecording()
                 repository.stopCallRecording()
