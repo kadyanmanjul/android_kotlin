@@ -58,7 +58,7 @@ class CertificateShareFragment : CoreJoshFragment() {
         requireActivity().registerReceiver(onComplete, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_certificate_share, container, false)
         binding.lifecycleOwner = this
-        binding.handler = this
+        binding.vm = viewModel
         binding.txtYouHaveEarned.visibility = View.GONE
 
         viewModel.typeOfExam()
@@ -94,67 +94,68 @@ class CertificateShareFragment : CoreJoshFragment() {
                 btnShareLinkedIn.isVisible = isPackageInstalled(PACKAGE_NAME_LINKEDIN)
             }
         }
-        binding.txtCongratulations.text = "Congratulations, ${User.getInstance().firstName}!"
+        viewModel.certiShareHeadingText.set("Congratulations, ${User.getInstance().firstName}!")
 
-        if (Utils.isInternetAvailable()){
-            binding.btnShareWhatsapp.setOnClickListener {
-                packageName = PKG_AFTER_COM_WHATSAPP
-                binding.progressBar2.visibility = View.VISIBLE
-                downloadImage(url)
-                viewModel.saveImpression(CERTIFICATE_SHARED_WHATSAPP)
+
+        binding.btnShareWhatsapp.setOnClickListener {
+            if (Utils.isInternetAvailable()){
+            packageName = PKG_AFTER_COM_WHATSAPP
+            binding.progressBar2.visibility = View.VISIBLE
+            downloadImage(url)
+            viewModel.saveImpression(CERTIFICATE_SHARED_WHATSAPP)
+            }
+            else {
+                showToast("No Internet Available")
             }
         }
-        else {
-            showToast("No Internet Available")
-        }
 
-        if (Utils.isInternetAvailable()){
-            binding.btnShareFacebook.setOnClickListener {
-                packageName = PKG_AFTER_COM_FACEBOOK
-                binding.progressBar2.visibility = View.VISIBLE
-                downloadImage(url)
-                viewModel.saveImpression(CERTIFICATE_SHARED_FB)
+        binding.btnShareFacebook.setOnClickListener {
+            if (Utils.isInternetAvailable()){
+            packageName = PKG_AFTER_COM_FACEBOOK
+            binding.progressBar2.visibility = View.VISIBLE
+            downloadImage(url)
+            viewModel.saveImpression(CERTIFICATE_SHARED_FB)
+            }
+            else {
+                showToast("No Internet Available")
             }
         }
-        else {
-            showToast("No Internet Available")
-        }
 
-        if (Utils.isInternetAvailable()){
-            binding.btnShareInsta.setOnClickListener {
-                packageName = PKG_AFTER_COM_INSTA
-                binding.progressBar2.visibility = View.VISIBLE
-                downloadImage(url)
-                viewModel.saveImpression(CERTIFICATE_SHARED_INSTA)
+        binding.btnShareInsta.setOnClickListener {
+            if (Utils.isInternetAvailable()){
+            packageName = PKG_AFTER_COM_INSTA
+            binding.progressBar2.visibility = View.VISIBLE
+            downloadImage(url)
+            viewModel.saveImpression(CERTIFICATE_SHARED_INSTA)
+            }else {
+                showToast("No Internet Available")
             }
         }
-        else {
-            showToast("No Internet Available")
-        }
 
-        if (Utils.isInternetAvailable()){
-            binding.btnShareLinkedIn.setOnClickListener {
-                packageName = PKG_AFTER_COM_LINKEDIN
-                binding.progressBar2.visibility = View.VISIBLE
-                downloadImage(url)
-                viewModel.saveImpression(CERTIFICATE_SHARED_LINKED)
+        binding.btnShareLinkedIn.setOnClickListener {
+            if (Utils.isInternetAvailable()){
+            packageName = PKG_AFTER_COM_LINKEDIN
+            binding.progressBar2.visibility = View.VISIBLE
+            downloadImage(url)
+            viewModel.saveImpression(CERTIFICATE_SHARED_LINKED)
+            }
+            else{
+                showToast("No Internet Available")
             }
         }
-        else{
-            showToast("No Internet Available")
-        }
 
-        if (Utils.isInternetAvailable()){
-            binding.btnShareDownload.setOnClickListener {
-                packageName = NULL
-                binding.progressBar2.visibility = View.VISIBLE
-                downloadImage(url)
-                viewModel.saveImpression(CERTIFICATE_DOWNLOAD)
+        binding.btnShareDownload.setOnClickListener {
+            if (Utils.isInternetAvailable()){
+            packageName = NULL
+            binding.progressBar2.visibility = View.VISIBLE
+            downloadImage(url)
+            viewModel.saveImpression(CERTIFICATE_DOWNLOAD)
+            }
+            else {
+                showToast("No Internet Available")
             }
         }
-        else {
-            showToast("No Internet Available")
-        }
+
 
         return binding.root
     }

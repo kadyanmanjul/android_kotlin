@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.ui.certification_exam
 
 import android.app.Application
+import androidx.databinding.ObservableField
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -42,6 +43,7 @@ class CertificationExamViewModel(application: Application) : AndroidViewModel(ap
     var isSAnswerUiShow: Boolean = false
     var certificateExamId: Int? = null
     var examType: MutableLiveData<String> = MutableLiveData()
+    var certiShareHeadingText = ObservableField(EMPTY)
 
     fun startExam() {
         saveImpression(START_EXAM)
