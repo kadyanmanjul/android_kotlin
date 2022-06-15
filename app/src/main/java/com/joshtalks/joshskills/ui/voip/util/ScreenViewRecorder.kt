@@ -11,7 +11,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class CallRecording {
+class ScreenViewRecorder {
     private var recorder: ViewRecorder? = null
     private var recordingJob: CoroutineScope? = null
 
@@ -21,13 +21,13 @@ class CallRecording {
         recordingJob?.launch {
             try {
                 recorder = ViewRecorder()
-                recorder?.setVideoSource(MediaRecorder.VideoSource.SURFACE);
-                recorder?.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-                recorder?.setVideoFrameRate(5); // 5fps
-                recorder?.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
-                recorder?.setVideoSize(720, 1280);
-                recorder?.setVideoEncodingBitRate(2000 * 1000);
-                recorder?.setRecordedView(view);
+                recorder?.setVideoSource(MediaRecorder.VideoSource.SURFACE)
+                recorder?.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
+                recorder?.setVideoFrameRate(5)
+                recorder?.setVideoEncoder(MediaRecorder.VideoEncoder.H264)
+                recorder?.setVideoSize(720, 1280)
+                recorder?.setVideoEncodingBitRate(2000 * 1000)
+                recorder?.setRecordedView(view)
                 recorder?.setOutputFile(recordFile)
                 val errorListener =
                     MediaRecorder.OnErrorListener { arg0, arg1, arg2 ->
@@ -69,6 +69,6 @@ class CallRecording {
     }
 
     companion object {
-        val videoRecorder = CallRecording()
+        val videoRecorder = ScreenViewRecorder()
     }
 }
