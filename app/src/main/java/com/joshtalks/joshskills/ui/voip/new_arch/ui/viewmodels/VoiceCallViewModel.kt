@@ -19,6 +19,7 @@ import com.joshtalks.joshskills.base.constants.PEER_TO_PEER
 import com.joshtalks.joshskills.base.log.Feature
 import com.joshtalks.joshskills.base.log.JoshLog
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.audioVideoMuxer
 import com.joshtalks.joshskills.ui.call.repository.RepositoryConstants.CONNECTION_ESTABLISHED
 import com.joshtalks.joshskills.ui.call.repository.WebrtcRepository
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.models.CallUIState
@@ -239,6 +240,10 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                     agoraCallId = PrefManager.getAgraCallId().toString(),
                     agoraMentorId =PrefManager.getLocalUserAgoraId().toString(),
                     localPath = recordFile.absolutePath )
+
+                if (len > 1) {
+                    audioVideoMuxer(recordFile, videoRecordFile)
+                }
             }
         }
     }
