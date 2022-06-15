@@ -3,7 +3,12 @@ package com.joshtalks.joshskills.repository.service
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.joshtalks.joshskills.base.constants.DIR
-import com.joshtalks.joshskills.repository.local.entity.*
+import com.joshtalks.joshskills.repository.local.entity.CertificationExamDetailModel
+import com.joshtalks.joshskills.repository.local.entity.Course
+import com.joshtalks.joshskills.repository.local.entity.GetLessonQuestionsResponse
+import com.joshtalks.joshskills.repository.local.entity.LessonModel
+import com.joshtalks.joshskills.repository.local.entity.PracticeEngagement
+import com.joshtalks.joshskills.repository.local.entity.PracticeFeedback2
 import com.joshtalks.joshskills.repository.local.entity.practise.PointsListResponse
 import com.joshtalks.joshskills.repository.local.entity.practise.PracticeEngagementV2
 import com.joshtalks.joshskills.repository.server.*
@@ -14,6 +19,7 @@ import com.joshtalks.joshskills.repository.server.groupchat.GroupDetails
 import com.joshtalks.joshskills.repository.server.introduction.DemoOnboardingData
 import com.joshtalks.joshskills.ui.lesson.speaking.spf_models.UserRating
 import com.joshtalks.joshskills.ui.lesson.speaking.spf_models.VideoPopupItem
+import com.joshtalks.joshskills.voip.data.api.CallRecordingRequest
 import kotlinx.coroutines.Deferred
 import retrofit2.Response
 import retrofit2.http.*
@@ -190,4 +196,6 @@ interface ChatNetworkService {
     @GET("$DIR/p2p/rating/")
     suspend fun getUserRating(): Response<UserRating>
 
+    @POST("$DIR/voicecall/agora_call_share")
+    suspend fun postCallRecordingFile(@Body request : CallRecordingRequest) : Response<Unit>
 }
