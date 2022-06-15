@@ -43,6 +43,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
+import com.joshtalks.joshskills.constants.CLOSE_FULL_READING_FRAGMENT
 import com.joshtalks.joshskills.constants.OPEN_READING_SHARING_FULLSCREEN
 import com.joshtalks.joshskills.constants.PERMISSION_FROM_READING
 import com.joshtalks.joshskills.core.*
@@ -94,6 +95,8 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.fragment_chat_n_pay.*
+import kotlinx.android.synthetic.main.lesson_activity.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -146,6 +149,10 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
     private var getLessonId = -1
     private var isIntroVideoCmpleted = false
     private var isTranslationDisabled: Int = 1
+    private lateinit var filePath: String
+    private lateinit var videoDownPath: String
+    private lateinit var outputFile: String
+
     private val adapter: LessonPagerAdapter by lazy {
         LessonPagerAdapter(
             supportFragmentManager,
@@ -198,6 +205,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
             when (it.what) {
                 PERMISSION_FROM_READING -> requestStoragePermission(STORAGE_READING_REQUEST_CODE)
                 OPEN_READING_SHARING_FULLSCREEN -> openReadingFullScreen()
+                CLOSE_FULL_READING_FRAGMENT -> closeReadingFullScreen()
             }
         }
 
@@ -766,6 +774,15 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                     }
                 }
             }
+        }
+        viewModel.filePath.observe(this) {
+            filePath = it
+        }
+        viewModel.videoDownPath.observe(this) {
+            videoDownPath = it
+        }
+        viewModel.outputFile.observe(this) {
+            outputFile = it
         }
     }
 
@@ -1386,6 +1403,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
             binding.overlayTooltipLayout.isVisible -> showVideoToolTip(false)
             binding.videoPopup.isVisible -> closeVideoPopUpUi()
             binding.overlayLayout.isVisible -> hideSpotlight()
+            binding.containerReading.isVisible -> closeReadingFullScreen()
             else -> {
                 val resultIntent = Intent()
                 viewModel.lessonLiveData.value?.let {
@@ -1600,6 +1618,10 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                     }
                 )
         )
+    }
+    private fun closeReadingFullScreen(){
+        supportFragmentManager.popBackStackImmediate()
+        container_reading.visibility = View.GONE
     }
 }
 

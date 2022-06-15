@@ -20,6 +20,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.os.SystemClock
+import android.util.Log
 import android.view.*
 import android.view.View.*
 import android.view.animation.Animation
@@ -45,8 +46,10 @@ import com.google.android.exoplayer2.Player
 import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
+import com.joshtalks.joshskills.constants.CANCEL_BUTTON_CLICK
 import com.joshtalks.joshskills.constants.PERMISSION_FROM_READING_GRANTED
 import com.joshtalks.joshskills.constants.SHARE_VIDEO
+import com.joshtalks.joshskills.constants.SUBMIT_BUTTON_CLICK
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.*
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
@@ -63,6 +66,7 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.RequestEngage
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
+import com.joshtalks.joshskills.ui.lesson.LessonActivity
 import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
 import com.joshtalks.joshskills.ui.lesson.LessonViewModel
 import com.joshtalks.joshskills.ui.lesson.READING_POSITION
@@ -274,8 +278,6 @@ class ReadingFragmentWithoutFeedback :
         binding.mergedVideo.setOnCompletionListener {
             binding.playBtn.visibility = VISIBLE
         }
-        binding.btnWhatsapp.visibility = VISIBLE
-        binding.continueBtn.visibility = VISIBLE
         binding.videoLayout.clipToOutline = true
         return binding.rootView
     }
@@ -292,6 +294,8 @@ class ReadingFragmentWithoutFeedback :
             when (it.what) {
                 PERMISSION_FROM_READING_GRANTED -> download()
                 SHARE_VIDEO -> inviteFriends(it.obj as Intent)
+                SUBMIT_BUTTON_CLICK -> submitPractise()
+                CANCEL_BUTTON_CLICK -> closeRecordedView()
             }
         }
     }
@@ -784,7 +788,7 @@ class ReadingFragmentWithoutFeedback :
                         binding.videoLayout.visibility = VISIBLE
                         binding.mergedVideo.visibility = VISIBLE
                         binding.ivClose.visibility = GONE
-                        binding.btnShareVideo.visibility = VISIBLE
+                        binding.btnWhatsapp.visibility = VISIBLE
                         if (this.practiceEngagement?.get(0)?.localPath.isNullOrEmpty()) {
                             scope.launch {
                                 if (AppObjectController.appDatabase.chatDao()
@@ -806,7 +810,7 @@ class ReadingFragmentWithoutFeedback :
                         } else {
                             binding.mergedVideo.setVideoPath(this.practiceEngagement?.get(0)?.localPath)
                         }
-                        binding.btnShareVideo.setOnClickListener {
+                        binding.btnWhatsapp.setOnClickListener {
                             viewModel.saveImpression(SHARED_READING_PRACTICE)
                             scope.launch {
                                 if (currentLessonQuestion?.practiceEngagement?.get(0)?.localPath.isNullOrEmpty()
@@ -1052,8 +1056,8 @@ class ReadingFragmentWithoutFeedback :
         binding.continueBtn.visibility = VISIBLE
         if (currentLessonQuestion?.videoList?.getOrNull(0)?.video_url.isNullOrEmpty().not()) {
             binding.ivClose.visibility = GONE
-            binding.btnShareVideo.visibility = VISIBLE
-            binding.btnShareVideo.setOnClickListener {
+            binding.btnWhatsapp.visibility = VISIBLE
+            binding.btnWhatsapp.setOnClickListener {
                 viewModel.saveImpression(SHARED_READING_PRACTICE)
                 viewModel.shareVideoForAudio(outputFile)
             }
@@ -1159,7 +1163,7 @@ class ReadingFragmentWithoutFeedback :
         binding.subPractiseSubmitLayout.visibility = VISIBLE
         if (video.isNullOrEmpty().not()) {
             binding.mergedVideo.visibility = VISIBLE
-            binding.btnShareVideo.visibility = VISIBLE
+            binding.btnWhatsapp.visibility = VISIBLE
         } else {
             binding.audioListRv.visibility = VISIBLE
         }
@@ -1322,7 +1326,7 @@ class ReadingFragmentWithoutFeedback :
                     if (timeDifference > 1) {
                         viewModel.recordFile?.let {
                             isAudioRecordDone = true
-
+                            viewModel.showVideoOnFullScreen()
                             if (File(outputFile).exists()) {
                                 File(outputFile).delete()
                             }
@@ -1365,7 +1369,7 @@ class ReadingFragmentWithoutFeedback :
                                         audioVideoMuxer()
                                         requireActivity().runOnUiThread {
                                             binding.progressDialog.visibility = GONE
-                                            viewModel.showVideoOnFullScreen(outputFile)
+                                            viewModel.sendOutputToFullScreen(outputFile)
                                         }
                                     }
                                 }
@@ -1457,6 +1461,7 @@ class ReadingFragmentWithoutFeedback :
         } catch (e: Exception) {
             Timber.e(e)
         }
+
     }
 
     fun inviteFriends(waIntent: Intent) {
@@ -1669,7 +1674,7 @@ class ReadingFragmentWithoutFeedback :
                     )
                     AppObjectController.uiHandler.post {
                         if (video.isNullOrBlank().not()) {
-                            binding.btnShareVideo.visibility = VISIBLE
+                            binding.btnWhatsapp.visibility = VISIBLE
                         }
                     }
                     MixPanelTracker.publishEvent(MixPanelEvent.READING_COMPLETED)

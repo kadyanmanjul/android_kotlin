@@ -166,7 +166,7 @@
             android:id="@+id/container_reading"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:elevation="@dimen/_10sdp"
+            android:elevation="@dimen/_20sdp"
             android:background="@color/transparent_black_alpha_70"
             android:visibility="gone" />
 

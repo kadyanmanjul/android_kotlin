@@ -13,10 +13,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
-import com.joshtalks.joshskills.constants.OPEN_READING_SHARING_FULLSCREEN
-import com.joshtalks.joshskills.constants.PERMISSION_FROM_READING
-import com.joshtalks.joshskills.constants.PERMISSION_FROM_READING_GRANTED
-import com.joshtalks.joshskills.constants.SHARE_VIDEO
+import com.joshtalks.joshskills.constants.*
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.AppObjectController.Companion.appDatabase
 import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
@@ -103,6 +100,9 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     val voipState by lazy {
         CallBar()
     }
+    val filePath: MutableLiveData<String> = MutableLiveData()
+    val videoDownPath: MutableLiveData<String> = MutableLiveData()
+    val outputFile: MutableLiveData<String> = MutableLiveData()
 
     fun practicePartnerCallDurationFromNewScreen(time: Long) =
         practicePartnerCallDurationLiveData.postValue(time)
@@ -1001,8 +1001,30 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    fun showVideoOnFullScreen(outputFile: String) {
+    fun showVideoOnFullScreen() {
         message.what = OPEN_READING_SHARING_FULLSCREEN
         singleLiveEvent.value = message
     }
+
+    fun closeCurrentFragment(){
+        message.what = CLOSE_FULL_READING_FRAGMENT
+        singleLiveEvent.value = message
+    }
+
+    fun sendOutputToFullScreen(output: String) {
+        message.what = SEND_OUTPUT_FILE
+        message.obj = output
+        singleLiveEvent.value = message
+    }
+
+    fun submitButton(){
+        message.what = SUBMIT_BUTTON_CLICK
+        singleLiveEvent.value = message
+    }
+
+    fun cancelButton(){
+        message.what = CANCEL_BUTTON_CLICK
+        singleLiveEvent.value = message
+    }
+
 }
