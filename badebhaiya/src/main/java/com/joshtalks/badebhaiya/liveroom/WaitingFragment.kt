@@ -1,13 +1,45 @@
 package com.joshtalks.badebhaiya.liveroom
 
+
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.annotation.IdRes
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.badebhaiya.R
+import com.joshtalks.badebhaiya.feed.Call
+import com.joshtalks.badebhaiya.feed.FeedActivity
+import com.joshtalks.badebhaiya.feed.FeedViewModel
+import kotlinx.android.synthetic.main.activity_feed.*
+import timber.log.Timber
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material.Surface
+import androidx.compose.material.Text
+import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.lifecycle.lifecycleScope
+import coil.compose.AsyncImage
+import com.joshtalks.badebhaiya.feed.model.Waiting
+import kotlinx.coroutines.*
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -19,25 +51,173 @@ private const val ARG_PARAM2 = "param2"
  * Use the [WaitingFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class WaitingFragment : Fragment() {
+class WaitingFragment : Fragment(), Call {
     // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
+    val viewModel by lazy {
+        ViewModelProvider(requireActivity()).get(FeedViewModel::class.java)
     }
 
+    lateinit var users:MutableList<Waiting>
+
+    @OptIn(InternalCoroutinesApi::class)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_waiting, container, false)
+
+        viewModel.getWaitingList()
+        try {
+            (activity as FeedActivity).swipeRefreshLayout.isEnabled=false
+        } catch (e: Exception){
+        }
+        activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                activity?.run {
+                    if (this is FeedActivity){
+                        Timber.d("back from profile and is feed activity")
+
+                        try {
+                            (activity as FeedActivity).swipeRefreshLayout.isEnabled=true
+                        } catch (e: Exception){
+
+                        }
+                        supportFragmentManager.beginTransaction().remove(this@WaitingFragment)
+                            .commitAllowingStateLoss()
+                    } else  {
+                        supportFragmentManager.popBackStack()
+                    }
+                }
+            }
+        })
+
+        return ComposeView(requireContext()).apply {
+            setContent {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+//                    color = colorResource(id = R.color.base_app_color
+                ) {
+                    val list by viewModel.waitingRoomUsers.observeAsState()
+
+                    list?.let {
+                        ElementList(it)
+                    }
+
+                }
+
+            }
+        }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        addObserver()
+
+    }
+
+
+    @Composable
+    fun ElementList(
+        list: List<Waiting>,
+    ) {
+        Timber.d("ELEMENT COMPOSABLE CREATED")
+            Column {
+                Image(painter = painterResource(R.drawable.ic_hallway_down_arrow), contentDescription = "downKey",
+                Modifier.size(45.dp)
+                    .padding(8.dp))
+                Text(text = "WAITING ROOM",
+                    Modifier
+                        .padding(8.dp,10.dp),
+                    fontWeight=FontWeight.Bold,
+                )
+                Box(modifier = Modifier
+                    .fillMaxSize(),
+                    Alignment.TopCenter
+                ) {
+                    LazyVerticalGrid(
+                        modifier = Modifier.align(Alignment.TopCenter),
+                        columns = GridCells.Fixed(4)
+                    ){
+                        Timber.d("INFLATE HONE KA TRY")
+
+                        items(list)
+                        { item ->
+                            Timber.d("INFLATE HUA")
+                            Element(item)
+//                        Element()
+
+                        }
+                    }
+                }
+            }
+
+    }
+
+ @Composable
+    fun Element(
+        item: Waiting
+    ){
+            Column(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(dimensionResource(id = R.dimen._16sdp)))
+                    .padding(5.dp)){
+                Timber.d("IMAGE LINK => ${item.profilePic}")
+                if (item.profilePic != null){
+                    AsyncImage(
+                        model = item.profilePic,
+                        modifier = Modifier
+                            .size(62.dp)
+                            .clip(RoundedCornerShape(dimensionResource(id = R.dimen._16sdp))),
+                        contentDescription = "BadeBhaiya Profile Picture",
+                        contentScale = ContentScale.Crop
+                    )
+                }
+
+                else{
+                    Image(
+                        painter = painterResource(id = R.drawable.profile_dummy_dp),
+                        modifier = Modifier
+                            .size(62.dp)
+                            .clip(RoundedCornerShape(dimensionResource(id = R.dimen._16sdp))),
+                        contentDescription = "BadeBhaiya Profile Picture",
+                        contentScale = ContentScale.Crop
+                    )
+                }
+
+                NameText(text = item.short_name ?:"")
+
+            }
+
+    }
+
+    @Composable
+    fun NameText( text: String) {
+        Text(
+            text = text,
+            fontWeight = FontWeight.Bold,
+        )
+    }
+
+    fun addObserver(){
+        viewModel.waitResponse.observe(viewLifecycleOwner){
+//            binding.audienceList.layoutManager= GridLayoutManager(requireContext(),3)
+            Log.i("WAITINGROOM", "adObserver: $it")
+            users= viewModel.waitResponse.value as MutableList<Waiting>
+            Timber.d("LIST SIZE HAI => ${it.size}")
+              lifecycleScope.launch {
+                  it.forEach{ element ->
+                      delay(500)
+                      Timber.d("ITEM ADDED")
+                      val lis = viewModel.waitingRoomUsers.value!!.toMutableList()
+                      lis.add(element)
+                      viewModel.waitingRoomUsers.postValue(lis)
+                  }
+              }
+        }
+
+        viewModel.waitingRoomUsers.observe(viewLifecycleOwner){
+            Timber.d("WAITING LIST => $it")
+        }
     }
 
     companion object {
@@ -69,5 +249,9 @@ class WaitingFragment : Fragment() {
                     .addToBackStack(TAG)
                     .commit()
             }
+    }
+
+    override fun itemClick(userId: String) {
+        TODO("Not yet implemented")
     }
 }

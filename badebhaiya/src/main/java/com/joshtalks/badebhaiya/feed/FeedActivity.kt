@@ -365,7 +365,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
 
                         Log.i("MODERATORSTATUS", "addObserver: WAIT $it")
 
-                        WaitingRoomFragment.open(supportFragmentManager,R.id.root_view)
+                        WaitingFragment.open(supportFragmentManager,R.id.root_view)
                     }
                 }
                 ROOM_EXPAND->{

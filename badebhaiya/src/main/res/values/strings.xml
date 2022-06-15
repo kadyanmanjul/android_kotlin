@@ -113,5 +113,6 @@
     <string name="badebhaiyas_to_follow">BADE BHAIYAS TO FOLLOW</string>
     <string name="reminder_notification_body_for_listener">Call par judkar unse apne sawaal puchen</string>
     <string name="speakers_call_starts_in">%1$s’s call starts in %2$s mins</string>
+    <string name="title_activity_waiting_room">WaitingRoom</string>
 
 </resources>

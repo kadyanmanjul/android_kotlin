@@ -49,6 +49,6 @@ interface ConversationRoomNetworkService {
     suspend fun sendPubNubException(@Body params: PubNubExceptionRequest): Response<*>
 
     @GET("$DIR/user/waiting_room_users/")
-    suspend fun waitingMember():Response<List<Users>>
+    suspend fun waitingMember():Response<WaitingList>
 
 }

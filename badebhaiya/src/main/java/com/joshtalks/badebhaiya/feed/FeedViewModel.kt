@@ -1,8 +1,13 @@
 package com.joshtalks.badebhaiya.feed
 
+import android.graphics.Insets.add
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.os.Message
 import android.util.Log
+import androidx.collection.ArraySet
+import androidx.compose.runtime.mutableStateListOf
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.lifecycle.*
@@ -27,9 +32,7 @@ import com.joshtalks.badebhaiya.repository.model.User
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.Response
-import retrofit2.http.Body
 import timber.log.Timber
-
 const val ROOM_ITEM = "room_item"
 const val USER_ID = "user_id"
 const val ROOM_DETAILS = "room_details"
@@ -43,6 +46,7 @@ class FeedViewModel : ViewModel() {
     val isBadeBhaiyaSpeaker = ObservableBoolean(false)
     var userID:String=""
     lateinit var respBody: ConversationRoomResponse
+    val waitResponse= MutableLiveData<List<Waiting>>()
     var pubChannelName:String?=null
     lateinit var response: Response<ConversationRoomResponse>
     lateinit var roomtopic:String
@@ -57,7 +61,8 @@ class FeedViewModel : ViewModel() {
     val signUpRepository = BBRepository()
     var pubNubState = PubNubState.ENDED
     var modStat=Message()
-
+    var isModerator=false
+    val waitingRoomUsers = MutableLiveData<List<Waiting>>(emptyList())
     init {
         collectPubNubState()
 
@@ -110,27 +115,6 @@ class FeedViewModel : ViewModel() {
         isBadeBhaiyaSpeaker.notifyChange()
     }
 
-    /*val onFeedItemClicked: (RoomListResponseItem?, View?) -> Unit = { item, view ->
-        message.what = OPEN_ROOM
-        message.data = Bundle().apply {
-            putParcelable(
-                ROOM_ITEM,
-                item
-            )
-        }
-        singleLiveEvent.postValue(message)
-    }*/
-
-    fun onProfileClicked() {
-        message.what = OPEN_PROFILE
-        message.data = Bundle().apply {
-            putString(
-                USER_ID,
-                User.getInstance().userId
-            )
-        }
-        singleLiveEvent.postValue(message)
-    }
     fun reader(){
         Log.i("MODERATORSTATUS", "reader: ")
         collectModeratorStatus()
@@ -207,8 +191,10 @@ class FeedViewModel : ViewModel() {
 
                     }
                     else {
-                        if (moderatorId == User.getInstance().userId)
+                        if (moderatorId == User.getInstance().userId) {
+                            isModerator=true
                             PubNubEventsManager.sendModeratorStatus(true, moderatorId.toString())
+                        }
                         showToast("Room joined successfully")
                         message.what = OPEN_ROOM
                         message.data = Bundle().apply {
@@ -241,6 +227,20 @@ class FeedViewModel : ViewModel() {
                 isLoading.set(false)
             }
         }
+    }
+
+    fun getWaitingList() : List<Waiting>? {
+        viewModelScope.launch {
+            try {
+                val resp=repository.waitingList()
+                if(resp.isSuccessful)
+                {
+                    waitResponse.value = resp.body()!!.users
+                }
+            }catch (Ex:Exception){
+            }
+        }
+        return waitResponse.value
     }
 
     fun getRooms() {
