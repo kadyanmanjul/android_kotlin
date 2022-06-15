@@ -429,6 +429,7 @@ enum class ServiceEvents {
 
 enum class RecordingButtonState {
     IDLE,
-    REQUESTED,
-    RECORDING
+    SENTREQUEST,
+    RECORDING,
+    GOTREQUEST
 }

@@ -134,6 +134,20 @@ class CallUIState : BaseObservable() {
         }
 
     @get:Bindable
+    var requestedOtherUser: Boolean = false
+        set(value) {
+            field = value
+            notifyPropertyChanged(BR.requestedOtherUser)
+        }
+
+    @get:Bindable
+    var requestCancelled: Boolean = false
+        set(value) {
+            field = value
+            notifyPropertyChanged(BR.requestCancelled)
+        }
+
+    @get:Bindable
     var recordingStartTime : Long = 0L
         set(value) {
             field = value
