@@ -42,6 +42,7 @@ import com.joshtalks.joshskills.core.EMAIL_HINT
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.MAX_YEAR
 import com.joshtalks.joshskills.core.RC_HINT
+import com.joshtalks.joshskills.core.Utils.isInternetAvailable
 import com.joshtalks.joshskills.core.custom_ui.spinnerdatepicker.DatePickerDialog
 import com.joshtalks.joshskills.core.custom_ui.spinnerdatepicker.SpinnerDatePickerDialogBuilder
 import com.joshtalks.joshskills.core.interfaces.FileDownloadCallback
@@ -52,8 +53,6 @@ import com.joshtalks.joshskills.repository.server.certification_exam.Certificati
 import com.joshtalks.joshskills.ui.certification_exam.CertificationExamViewModel
 import com.joshtalks.joshskills.ui.certification_exam.constants.*
 import com.joshtalks.joshskills.ui.certification_exam.view.CertificateShareFragment
-import com.joshtalks.joshskills.voip.Utils.Companion.context
-import com.joshtalks.joshskills.voip.Utils.Companion.isInternetAvailable
 import java.text.ParseException
 import java.util.Calendar
 import java.util.Date
@@ -93,6 +92,7 @@ class CertificateDetailActivity : BaseActivity(), FileDownloadCallback {
         super.onCreate(savedInstanceState)
         binding =
             DataBindingUtil.setContentView(this, R.layout.activity_certificate_detail)
+        window.setBackgroundDrawable(null)
         binding.lifecycleOwner = this
         binding.handler = this
         if(intent.hasExtra(CERTIFICATE_EXAM_ID)){

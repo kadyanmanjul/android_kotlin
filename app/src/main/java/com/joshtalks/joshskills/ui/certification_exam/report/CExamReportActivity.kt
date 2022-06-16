@@ -78,6 +78,7 @@ class CExamReportActivity : BaseActivity(), FileDownloadCallback {
         }
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_cexam_report)
+        window.setBackgroundDrawable(null)
         binding.lifecycleOwner = this
         binding.handler = this
 

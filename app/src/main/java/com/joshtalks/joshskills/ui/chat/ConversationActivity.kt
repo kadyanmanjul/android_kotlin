@@ -242,6 +242,7 @@ class ConversationActivity :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         conversationBinding = DataBindingUtil.setContentView(this, R.layout.activity_conversation)
+        window.setBackgroundDrawable(null)
         conversationBinding.handler = this
         activityRef = WeakReference(this)
         initIntentObject()
