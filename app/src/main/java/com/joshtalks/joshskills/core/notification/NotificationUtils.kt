@@ -151,6 +151,8 @@ class NotificationUtils(val context: Context) {
 
     fun sendNotification(notificationObject: NotificationObject) {
         executor.execute {
+            Log.d("sagar", "sendNotification() called")
+            notificationObject.action = NotificationAction.ACTION_OPEN_CONVERSATION_LIST
             val intent = getIntentAccordingAction(
                 notificationObject,
                 notificationObject.action,
@@ -248,6 +250,7 @@ class NotificationUtils(val context: Context) {
                     notificationBuilder.setChannelId(notificationChannelId)
                     notificationManager.createNotificationChannel(notificationChannel)
                 }
+                Log.d("sagar", "sendNotification() called")
                 when (notificationObject.action) {
                     NotificationAction.GROUP_CHAT_REPLY -> {
                         notificationManager.notify(10112, notificationBuilder.build())
