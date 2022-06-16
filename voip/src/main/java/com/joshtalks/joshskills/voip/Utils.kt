@@ -10,6 +10,8 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.Uri
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.widget.Toast
 import com.joshtalks.joshskills.base.constants.API_HEADER
@@ -250,6 +252,9 @@ fun getDeclineCallIntent(): PendingIntent {
 
 class Utils {
     companion object {
+        @JvmStatic
+        var uiHandler: Handler = Handler(Looper.getMainLooper())
+            private set
         var context : Application? = null
         val apiHeader : ApiHeader?
             get() = context?.getApiHeader()
