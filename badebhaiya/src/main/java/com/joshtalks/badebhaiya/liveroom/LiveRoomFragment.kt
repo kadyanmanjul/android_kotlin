@@ -1312,10 +1312,10 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
                 var frag=activity.supportFragmentManager.findFragmentById(R.id.liveRoomRootView)
                 if(frag==null) {
 
-//                    val waitingFragment = activity.supportFragmentManager.findFragmentByTag(WaitingFragment.TAG)
-//                    waitingFragment?.let {
-//                        activity.supportFragmentManager.beginTransaction().remove(it)
-//                    }
+                    val waitingFragment = activity.supportFragmentManager.findFragmentByTag(WaitingFragment.TAG)
+                    waitingFragment?.let {
+                        activity.supportFragmentManager.beginTransaction().remove(it).commit()
+                    }
 
 
                     val fragment = LiveRoomFragment() // replace your custom fragment class

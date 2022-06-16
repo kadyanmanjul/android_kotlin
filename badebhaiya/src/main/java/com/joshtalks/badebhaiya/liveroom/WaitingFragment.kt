@@ -3,7 +3,6 @@ package com.joshtalks.badebhaiya.liveroom
 
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -52,6 +51,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import coil.compose.AsyncImage
 import com.afollestad.materialdialogs.internal.button.DialogActionButton
@@ -69,13 +69,11 @@ class WaitingFragment : Fragment() {
 
     lateinit var users: MutableList<Waiting>
 
-    @OptIn(InternalCoroutinesApi::class)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         viewModel.waitingRoomUsers.value= emptyList()
-
         viewModel.getWaitingList()
         try {
             (activity as FeedActivity).swipeRefreshLayout.isEnabled = false
@@ -103,25 +101,24 @@ class WaitingFragment : Fragment() {
                     }
                 }
             })
-        return inflater.inflate(R.layout.fragment_waiting, container,false)
-//        return ComposeView(requireContext()).apply {
-//            setContent {
-//                JoshBadeBhaiyaTheme {
-//                    Surface(
-//                        modifier = Modifier.fillMaxSize(),
-//                        color = colorResource(id = R.color.base_app_color)
-//                    ) {
-//                        val list by viewModel.waitingRoomUsers.observeAsState()
-//
-//                        list?.let {
-//                            ElementList(it)
-//                        }
-//
-//                    }
-//                }
-//
-//            }
-//        }
+        return ComposeView(requireContext()).apply {
+            setContent {
+                JoshBadeBhaiyaTheme {
+                    Surface(
+                        modifier = Modifier.fillMaxSize(),
+                        color = colorResource(id = R.color.base_app_color)
+                    ) {
+                        val list by viewModel.waitingRoomUsers.observeAsState()
+
+                        list?.let {
+                            ElementList(it)
+                        }
+
+                    }
+                }
+
+            }
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -368,19 +365,8 @@ class WaitingFragment : Fragment() {
         viewModel.waitingRoomUsers.observe(viewLifecycleOwner) {
             Timber.d("WAITING LIST => $it")
         }
-        viewModel.isRoomActive.observe(viewLifecycleOwner){
-            Log.i("WAITINGWORLD", " wait addObserver: $it")
-            if(it) {
-                finishFragment()
-            }
-        }
     }
 
-    private fun finishFragment(){
-        if (isAdded){
-            requireActivity().supportFragmentManager.popBackStack()
-        }
-    }
 
     companion object {
         const val TAG = "WaitingFragment"

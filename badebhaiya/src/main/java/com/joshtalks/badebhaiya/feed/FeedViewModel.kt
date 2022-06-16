@@ -106,7 +106,7 @@ class FeedViewModel : ViewModel() {
 //                        roomtopic
 //                    )
 //                }
-                isRoomActive.value=true
+//                isRoomActive.value=true
                 roomData.speakersData?.userId?.let { it1 ->
                     joinRoom(roomData.roomId.toString(),roomData.topic.toString(),"FEED_SCREEN",
                         it1
@@ -180,7 +180,7 @@ class FeedViewModel : ViewModel() {
                 )
                 roomtopic=topic
                 if (response.isSuccessful) {
-
+                    isRoomActive.postValue(true)
                         if (moderatorId == User.getInstance().userId) {
                             isModerator=true
                             PubNubEventsManager.sendModeratorStatus(true, moderatorId.toString())
