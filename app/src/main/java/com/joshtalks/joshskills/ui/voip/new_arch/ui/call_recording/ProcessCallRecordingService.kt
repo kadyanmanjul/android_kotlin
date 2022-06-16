@@ -16,12 +16,14 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.audioVideoMuxer
-import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.base.copy
+import com.joshtalks.joshskills.base.getAudioSentFile
 import com.joshtalks.joshskills.core.Utils
-import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.repository.local.model.NotificationChannelNames
-import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
+import com.joshtalks.joshskills.voip.Utils.Companion.uiHandler
 import com.joshtalks.joshskills.voip.data.api.CallRecordingRequest
+import com.joshtalks.joshskills.voip.data.api.MediaDUNetwork
+import com.joshtalks.joshskills.voip.data.api.VoipNetwork
 import java.io.File
 import java.util.concurrent.ArrayBlockingQueue
 import java.util.concurrent.BlockingQueue
@@ -44,6 +46,9 @@ class ProcessCallRecordingService : Service() {
     private var mFileUploadTask: VideoMuxingTask? = null
     private var isMuxingRunning = false
     private var mNotificationManager: NotificationManager? = null
+    private val callApiService by lazy {
+        VoipNetwork.getVoipApi()
+    }
 
     @Nullable
     override fun onBind(intent: Intent): IBinder? {
@@ -88,7 +93,7 @@ class ProcessCallRecordingService : Service() {
                 mFileUploadHandler.removeCallbacks(mFileUploadTask!!)
                 isMuxingRunning = false
                 mFileUploadTask = null
-                AppObjectController.uiHandler.post {
+                uiHandler.post {
                     hideNotification()
                 }
             }
@@ -122,17 +127,17 @@ class ProcessCallRecordingService : Service() {
             CoroutineScope(Dispatchers.IO).launch {
                 if (fileQueue.isEmpty()) {
                     isMuxingRunning = false
-                    Log.e(TAG, "All Muxing Completed.")
-                    AppObjectController.uiHandler.post {
+                    Log.e("sagar", "24.")
+                    uiHandler.post {
                         hideNotification()
                     }
                 } else {
                     try {
                         val inputFiles = fileQueue.take()
-                        Log.e(TAG, "Files To mux : audio- ${inputFiles.audioPath} video- ${inputFiles.videoPath}")
-                        val audioFile = AppDirectory.getAudioSentFile(null)
-                        AppDirectory.copy(inputFiles.audioPath!!,audioFile.absolutePath)
-                        AppObjectController.uiHandler.post {
+                        Log.e("sagar", "Files To mux : audio- ${inputFiles.audioPath} video- ${inputFiles.videoPath}")
+                        val audioFile = getAudioSentFile(context = applicationContext, null)
+                        copy(inputFiles.audioPath!!,audioFile.absolutePath)
+                        uiHandler.post {
                             showUploadNotification()
                         }
                         val outputFile = audioVideoMuxer(audioFile, File(inputFiles.videoPath!!),applicationContext)
@@ -159,7 +164,7 @@ class ProcessCallRecordingService : Service() {
                         "media_path" to inputFiles.outputFile!!.name,
                     )
                     val responseObj =
-                        AppObjectController.chatNetworkService.requestUploadMediaAsync(obj)
+                        callApiService.requestUploadMediaAsync(obj)
                             .await()
                     val statusCode: Int =
                         uploadOnS3Server(responseObj, inputFiles.outputFile!!.absolutePath)
@@ -177,7 +182,7 @@ class ProcessCallRecordingService : Service() {
                 }
 
                 val resp =
-                    AppObjectController.chatNetworkService.postCallRecordingFile(
+                    callApiService.postCallRecordingFile(
                         CallRecordingRequest(agoraCallId = inputFiles.callId,agoraMentorId = inputFiles.agoraMentorId, recording_url = inputFiles.serverUrl!!)
                     )
                 Log.e(TAG, "uploadOutputVideoToS3Server: $resp")
@@ -197,7 +202,7 @@ class ProcessCallRecordingService : Service() {
     }
 
     private suspend fun uploadOnS3Server(
-        responseObj: AmazonPolicyResponse,
+        responseObj: com.joshtalks.joshskills.voip.data.AmazonPolicyResponse,
         mediaPath: String
     ): Int {
         return CoroutineScope(Dispatchers.IO).async {
@@ -212,7 +217,7 @@ class ProcessCallRecordingService : Service() {
                 responseObj.fields["key"],
                 requestFile
             )
-            val responseUpload = AppObjectController.mediaDUNetworkService.uploadMediaAsync(
+            val responseUpload = MediaDUNetwork.getMediaDUNetworkService().uploadMediaAsync(
                 responseObj.url,
                 parameters,
                 body
@@ -239,26 +244,30 @@ class ProcessCallRecordingService : Service() {
             mNotificationManager?.createNotificationChannel(mChannel)
         }
 
-        val lNotificationBuilder = NotificationCompat.Builder(
-            this,
-            CHANNEL_ID
-        )
-            .setChannelId(CHANNEL_ID)
-            .setContentTitle(getString(R.string.app_name))
-            .setContentText("Call Recording is generating...")
-            .setSmallIcon(R.drawable.ic_status_bar_notification)
-            .setOngoing(false)
-            .setColor(
-                ContextCompat.getColor(
-                    AppObjectController.joshApplication,
-                    R.color.colorPrimary
-                )
+        val lNotificationBuilder = com.joshtalks.joshskills.voip.Utils?.context?.let {
+            ContextCompat.getColor(
+                it,
+                R.color.colorPrimary
             )
-            .setAutoCancel(true)
-            .setPriority(NotificationCompat.PRIORITY_MIN)
+        }?.let {
+            NotificationCompat.Builder(
+                this,
+                CHANNEL_ID
+            )
+                .setChannelId(CHANNEL_ID)
+                .setContentTitle(getString(R.string.app_name))
+                .setContentText("Call Recording is generating...")
+                .setSmallIcon(R.drawable.ic_status_bar_notification)
+                .setOngoing(false)
+                .setColor(
+                    it
+                )
+                .setAutoCancel(true)
+                .setPriority(NotificationCompat.PRIORITY_MIN)
+        }
 
 
-        startForeground(NOTIFICATION_ID, lNotificationBuilder.build())
+        startForeground(NOTIFICATION_ID, lNotificationBuilder?.build())
     }
 
     companion object {
@@ -282,7 +291,7 @@ class ProcessCallRecordingService : Service() {
         }
 
         fun processSingleCallRecording(
-            context: Context = AppObjectController.joshApplication,
+            context: Context? = com.joshtalks.joshskills.voip.Utils.context,
             callId: String?,
             agoraMentorId :String?,
             videoPath: String,
@@ -294,7 +303,7 @@ class ProcessCallRecordingService : Service() {
             intent.putExtra(AGORA_MENTOR_ID, agoraMentorId)
             intent.putExtra(VIDEO_PATH, videoPath)
             intent.putExtra(AUDIO_PATH, audioPath)
-            context.startService(intent)
+            context?.startService(intent)
         }
     }
 }
