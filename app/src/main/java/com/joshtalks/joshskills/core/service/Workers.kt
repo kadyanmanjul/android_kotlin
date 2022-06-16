@@ -1051,6 +1051,7 @@ class LocalNotificationWorker(
     }
 
     private fun checkOnBoardingStage(context: Context) {
+        showOnBoardingCompletionNotification(context)
         val onBoardingStage = PrefManager.getStringValue(ONBOARDING_STAGE)
         val isOnBoardingUnfinished = onBoardingStage == OnBoardingStage.APP_INSTALLED.value ||
                 onBoardingStage == OnBoardingStage.START_NOW_CLICKED.value ||
