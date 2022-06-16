@@ -446,6 +446,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         profileViewModel.sendEvent(Impression("FEED_SCREEN","CLICKED_JOIN"))
         viewModel.source="Feed"
         var moderatorId=room.speakersData?.userId
+        viewModel.moderatorName= room.speakersData?.fullName.toString()
         takePermissions(room.roomId.toString(), room.topic,moderatorId)
     }
 

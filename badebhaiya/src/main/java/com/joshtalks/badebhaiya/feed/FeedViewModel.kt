@@ -62,6 +62,7 @@ class FeedViewModel : ViewModel() {
     var pubNubState = PubNubState.ENDED
     var modStat=Message()
     var isModerator=false
+    var moderatorName:String= EMPTY
     val waitingRoomUsers = MutableLiveData<List<Waiting>>(emptyList())
     init {
         collectPubNubState()
@@ -196,7 +197,7 @@ class FeedViewModel : ViewModel() {
                             PubNubEventsManager.sendModeratorStatus(true, moderatorId.toString())
                         }
                         showToast("Room joined successfully")
-                        message.what = OPEN_WAIT_ROOM
+                        message.what = OPEN_ROOM
                         message.data = Bundle().apply {
                             putParcelable(
                                 ROOM_DETAILS,

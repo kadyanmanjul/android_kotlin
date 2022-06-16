@@ -137,9 +137,10 @@ class WaitingFragment : Fragment(), Call {
                     painter = painterResource(R.drawable.ic_hallway_down_arrow),
                     contentDescription = "downKey",
                     Modifier
-                        .size(55.dp)
-                        .padding(15.dp)
+                        .size(65.dp)
+                        .padding(20.dp),
                 )
+                Spacer(modifier = Modifier.padding(10.dp))
                 Box (
                     Modifier
                         .fillMaxSize()
@@ -154,7 +155,7 @@ class WaitingFragment : Fragment(), Call {
                                     .padding(20.dp),
                                 fontWeight = FontWeight.Bold,
                                 fontFamily =  NunitoSansFont,
-                                fontSize = 22.sp
+                                fontSize = 20.sp
                             )
 
                         Box(
@@ -283,7 +284,6 @@ class WaitingFragment : Fragment(), Call {
                 supportFragmentManager
                     .beginTransaction()
                     .add(containerId, WaitingFragment())
-                    .addToBackStack(TAG)
                     .commit()
             }
     }
