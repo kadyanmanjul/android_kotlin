@@ -10,9 +10,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.res.ColorStateList
-import android.graphics.Bitmap
 import android.graphics.Color
-import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.media.*
@@ -22,7 +20,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.os.SystemClock
-import android.provider.MediaStore
 import android.util.Log
 import android.view.*
 import android.view.View.*
@@ -933,6 +930,9 @@ class ReadingFragmentWithoutFeedback :
                 download()
             }
         }
+        if(video.isNullOrEmpty()) {
+            binding.info.visibility = GONE
+        }
     }
 
     private fun download() {
@@ -1230,7 +1230,6 @@ class ReadingFragmentWithoutFeedback :
             addVideoView()
             viewModel.showVideoOnFullScreen()
             binding.practiseSubmitLayout.visibility = GONE
-            binding.info.visibility = VISIBLE
         } else {
             binding.subPractiseSubmitLayout.visibility = VISIBLE
             binding.audioListRv.visibility = VISIBLE
@@ -1238,7 +1237,6 @@ class ReadingFragmentWithoutFeedback :
             removePreviousAddedViewHolder()
             praticAudioAdapter?.addNewItem(PracticeEngagementWrapper(null, filePath))
             initializePractiseSeekBar()
-            binding.info.visibility = GONE
         }
         enableSubmitButton()
     }
@@ -1690,6 +1688,8 @@ class ReadingFragmentWithoutFeedback :
                     AppObjectController.uiHandler.post {
                         if (video.isNullOrBlank().not()) {
                             binding.btnWhatsapp.visibility = VISIBLE
+                            binding.practiseSubmitLayout.visibility = VISIBLE
+                            binding.continueBtn.visibility = VISIBLE
                         }
                     }
                     MixPanelTracker.publishEvent(MixPanelEvent.READING_COMPLETED)
