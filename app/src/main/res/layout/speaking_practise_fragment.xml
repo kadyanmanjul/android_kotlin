@@ -336,15 +336,36 @@
                     android:id="@+id/network_progress_bar"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:paddingHorizontal="@dimen/_20sdp"
                     android:visibility="@{vm.isInternetSpeedGood == 0  ? View.VISIBLE : View.GONE}"
                     app:layout_constraintBottom_toTopOf="@id/btn_continue"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/txt_label_become_senior_student"
+                    app:layout_constraintVertical_bias="0.356"
                     app:lottie_autoPlay="true"
                     app:lottie_fileName="lottie/internet_progress_bar.json"
                     app:lottie_imageAssetsFolder="lottie"
                     app:lottie_loop="true" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/progress_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_1sdp"
+                    android:gravity="center"
+                    android:paddingHorizontal="@dimen/_16sdp"
+                    android:visibility="@{vm.isInternetSpeedGood == 0  ? View.VISIBLE : View.GONE}"
+                    android:text="@string/progress_network_text"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Title_Message"
+                    app:layout_constraintBottom_toTopOf="@id/btn_continue"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/network_progress_bar"
+                    android:textColor="@color/black"
+                    android:layout_marginBottom="@dimen/_25sdp"
+                    tools:text="Checking your Internet Connection" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/network_container"
@@ -363,7 +384,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/txt_label_become_senior_student"
-                    tools:visibility="visible">
+                    tools:visibility="gone">
 
                     <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/network_tv"
@@ -607,7 +628,7 @@
                     app:layout_constraintWidth_default="percent"
                     app:layout_constraintWidth_percent="0.7"
                     app:rippleColor="@color/white"
-                    tools:visibility="gone" />
+                    tools:visibility="visible" />
 
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/btn_continue_text"

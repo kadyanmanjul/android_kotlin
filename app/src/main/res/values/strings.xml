@@ -1308,4 +1308,5 @@
     <string name="rating_title">Your Rating: %s</string>
     <string name="rating_message">Jab aap apne Practice Partners se baat karte hai to woh aapko ek rating dete hai.    Aapki rating agar achhi hogi to woh darshata hai ki aap ek serious student hai and aapki call bhi serious students ke saath hi connect hogi.</string>
     <string name="your_rating">Your Rating:</string>
+    <string name="progress_network_text">Checking your Internet Connection</string>
 </resources>
