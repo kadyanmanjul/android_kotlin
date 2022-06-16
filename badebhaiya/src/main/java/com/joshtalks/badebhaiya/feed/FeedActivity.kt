@@ -272,7 +272,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         bundle.putString("source","FEED_SCREEN")
 
         fragment.arguments = bundle
-        fragmentTransaction.addToBackStack(null)
+//        fragmentTransaction.addToBackStack(null)
         fragmentTransaction.replace(R.id.root_view, fragment)
         fragmentTransaction.commit()
     }
@@ -617,7 +617,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
             bundle.putString("source","feed")
 
         fragment.arguments = bundle
-        fragmentTransaction.addToBackStack(null)
+//        fragmentTransaction.addToBackStack(null)
         fragmentTransaction.replace(R.id.root_view, fragment)
         fragmentTransaction.commit()
     }
@@ -641,7 +641,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         bundle.putString("source","FEED_SCREEN")
 
         fragment.arguments = bundle
-        fragmentTransaction.addToBackStack(null)
+//        fragmentTransaction.addToBackStack(null)
         fragmentTransaction.replace(R.id.root_view, fragment)
         fragmentTransaction.commit()
 
