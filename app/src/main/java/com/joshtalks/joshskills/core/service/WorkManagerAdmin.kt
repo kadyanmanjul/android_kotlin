@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.core.service
 
+import android.util.Log
 import androidx.work.BackoffPolicy
 import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
@@ -330,9 +331,10 @@ object WorkManagerAdmin {
     }
 
     fun setLocalNotificationWorker() {
+        Log.e("sagar", "setLocalNotificationWorker: Came" )
         WorkManager.getInstance(AppObjectController.joshApplication)
             .cancelAllWorkByTag(LocalNotificationWorker::class.java.name)
-        val delay = 600L
+        val delay = 0L
         val workRequest = OneTimeWorkRequestBuilder<LocalNotificationWorker>()
             .setInputData(workDataOf())
             .setInitialDelay(delay, TimeUnit.SECONDS)

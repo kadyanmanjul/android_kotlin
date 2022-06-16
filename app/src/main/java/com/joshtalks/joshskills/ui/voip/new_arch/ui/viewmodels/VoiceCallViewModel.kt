@@ -18,7 +18,6 @@ import com.joshtalks.joshskills.base.constants.GROUP
 import com.joshtalks.joshskills.base.constants.PEER_TO_PEER
 import com.joshtalks.joshskills.base.log.Feature
 import com.joshtalks.joshskills.base.log.JoshLog
-import com.joshtalks.joshskills.base.videoSentFile
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.ui.call.repository.RepositoryConstants.CONNECTION_ESTABLISHED
 import com.joshtalks.joshskills.ui.call.repository.WebrtcRepository
@@ -38,6 +37,7 @@ import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.RecordingButtonState
 import com.joshtalks.joshskills.voip.data.ServiceEvents
 import com.joshtalks.joshskills.voip.data.local.PrefManager
+import com.joshtalks.joshskills.voip.getVideoUrl
 import com.joshtalks.joshskills.voip.recordinganalytics.CallRecordingAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
@@ -230,10 +230,7 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                 if (len < 1) {
                     return@launch
                 }
-                Utils.context?.let { context ->
-                    ProcessCallRecordingService.processSingleCallRecording(context = context, videoPath = videoRecordFile!!.absolutePath, audioPath = recordFile.absolutePath, callId = PrefManager.getAgraCallId().toString(),agoraMentorId =PrefManager.getLocalUserAgoraId().toString(),
-                    )
-                }
+                ProcessCallRecordingService.processSingleCallRecording(context = Utils.context, videoPath = videoRecordFile?.absolutePath?:"", audioPath = recordFile.absolutePath, callId = PrefManager.getAgraCallId().toString(),agoraMentorId =PrefManager.getLocalUserAgoraId().toString())
                 CallRecordingAnalytics.addAnalytics(
                     agoraCallId = PrefManager.getAgraCallId().toString(),
                     agoraMentorId =PrefManager.getLocalUserAgoraId().toString(),
@@ -249,14 +246,9 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
     }
 
     fun startAudioVideoRecording(view: View){
-        videoSentFile(applicationContext).let {file->
-            videoRecordFile = file
-            ScreenViewRecorder.videoRecorder.startPlayer(videoRecordFile!!.absolutePath, Utils.context!!,view)
-        }
-//        Utils.context?.getTempFileForVideoCallRecording()?.let { file ->
-//            videoRecordFile = file
-//            CallRecording.videoRecorder.startPlayer(videoRecordFile!!.absolutePath, Utils.context!!,view)
-//        }
+        videoRecordFile = File(Utils.context?.getVideoUrl()?:"")
+        Log.e("sagar", "startAudioVideoRecording: $videoRecordFile" )
+        ScreenViewRecorder.videoRecorder.startPlayer(videoRecordFile?.absolutePath?:"", Utils.context!!,view)
         repository.startAgoraRecording()
     }
 
