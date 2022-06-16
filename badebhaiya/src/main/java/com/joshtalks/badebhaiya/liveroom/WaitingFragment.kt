@@ -227,7 +227,7 @@ class WaitingFragment : Fragment(), Call {
                     WaitingRoomDialog()
                 }
             }
-        }
+
 
     }
 
