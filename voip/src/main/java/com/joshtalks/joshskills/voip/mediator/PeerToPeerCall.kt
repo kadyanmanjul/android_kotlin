@@ -8,7 +8,6 @@ import com.joshtalks.joshskills.base.constants.INTENT_DATA_INCOMING_CALL_ID
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_PREVIOUS_CALL_ID
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_TOPIC_ID
 import com.joshtalks.joshskills.voip.*
-import com.joshtalks.joshskills.voip.communication.model.IncomingCall
 import com.joshtalks.joshskills.voip.data.api.CallActionRequest
 import com.joshtalks.joshskills.voip.data.api.ConnectionRequest
 import com.joshtalks.joshskills.voip.data.api.VoipNetwork
@@ -49,7 +48,7 @@ class PeerToPeerCall : CallCategory {
                 courseId = (callData[INTENT_DATA_COURSE_ID] as String).toInt(),
                 oldCallId = (callData[INTENT_DATA_PREVIOUS_CALL_ID] as? Int)?.toInt(),
             )
-            val response = voipNetwork.setUpConnection(request)
+            val response = voipNetwork.startPeerToPeerCall(request)
             Log.d(TAG, "onPreCallConnect: $response")
 //            if (response.isSuccessful)
 //                voipLog?.log("Sucessfull")
