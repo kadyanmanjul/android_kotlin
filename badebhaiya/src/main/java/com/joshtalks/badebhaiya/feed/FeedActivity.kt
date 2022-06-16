@@ -354,18 +354,8 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                         viewModel.pubChannelName?.let { it1 -> PubNubManager.warmUpChannel(it1) }
                         //viewModel.pubChannelName?.let { it1 -> PubNubManager.warmUpChannel(channelName = it1) }
                         viewModel.reader()
-                        it.getParcelable<ConversationRoomResponse>(ROOM_DETAILS)?.let { room ->
-                            val liveRoomProperties = StartingLiveRoomProperties.createFromRoom(
-                                room,
-                                it.getString(TOPIC)!!
-                            )
-
-                            //LiveRoomFragment.launch(this, liveRoomProperties, liveRoomViewModel, viewModel.source,false)
-                        }
-
                         Log.i("MODERATORSTATUS", "addObserver: WAIT $it")
-
-                        WaitingFragment.open(supportFragmentManager,R.id.root_view)
+                        WaitingFragment.open(this)
                     }
                 }
                 ROOM_EXPAND->{
@@ -443,6 +433,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
     }
 
     override fun joinRoom(room: RoomListResponseItem, view: View) {
+        viewModel.roomData=room
         profileViewModel.sendEvent(Impression("FEED_SCREEN","CLICKED_JOIN"))
         viewModel.source="Feed"
         var moderatorId=room.speakersData?.userId

@@ -1312,6 +1312,12 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
                 var frag=activity.supportFragmentManager.findFragmentById(R.id.liveRoomRootView)
                 if(frag==null) {
 
+//                    val waitingFragment = activity.supportFragmentManager.findFragmentByTag(WaitingFragment.TAG)
+//                    waitingFragment?.let {
+//                        activity.supportFragmentManager.beginTransaction().remove(it)
+//                    }
+
+
                     val fragment = LiveRoomFragment() // replace your custom fragment class
                     val bundle = Bundle()
                     bundle.putString("source", from) // use as per your need
