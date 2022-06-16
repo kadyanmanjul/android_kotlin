@@ -151,15 +151,14 @@ class WaitingFragment : Fragment(), Call {
                     painter = painterResource(R.drawable.ic_hallway_down_arrow),
                     contentDescription = "downKey",
                     Modifier
-                        .size(55.dp)
-                        .padding(15.dp)
+                        .size(65.dp)
+                        .padding(20.dp),
                 )
+                Spacer(modifier = Modifier.padding(10.dp))
+
                 Box(
                     Modifier
                         .fillMaxSize()
-                        .background(Color.White),
-                ) {
-                    Column(Modifier.padding(15.dp)
                         ) {
                         Column(
                             Modifier.clip(
@@ -177,20 +176,10 @@ class WaitingFragment : Fragment(), Call {
                                 Modifier
                                     .background(Color.White)
                                     .fillMaxWidth()
-                                    .padding(10.dp)
-                                    .clip(RoundedCornerShape(20.dp)),
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 22.sp
-                            )
-                            Text(
-                                text = "WAITING ROOM",
-                                Modifier
-                                    .background(Color.White)
-                                    .fillMaxWidth()
                                     .padding(20.dp),
                                 fontWeight = FontWeight.Bold,
-                                fontFamily = NunitoSansFont,
-                                fontSize = 22.sp
+                                fontFamily =  NunitoSansFont,
+                                fontSize = 20.sp
                             )
 
                             Box(
@@ -412,12 +401,11 @@ class WaitingFragment : Fragment(), Call {
 
         fun open(supportFragmentManager: FragmentManager, @IdRes containerId: Int) {
 
-            supportFragmentManager
-                .beginTransaction()
-                .add(containerId, WaitingFragment())
-                .addToBackStack(TAG)
-                .commit()
-        }
+                supportFragmentManager
+                    .beginTransaction()
+                    .add(containerId, WaitingFragment())
+                    .commit()
+            }
     }
 
     override fun itemClick(userId: String) {
