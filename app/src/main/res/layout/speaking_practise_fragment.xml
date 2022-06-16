@@ -332,6 +332,19 @@
                     app:layout_constraintTop_toBottomOf="@+id/txt_calls_left"
                     tools:visibility="visible" />
 
+                <com.airbnb.lottie.LottieAnimationView
+                    android:id="@+id/network_progress_bar"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:visibility="@{vm.isInternetSpeedGood == 0  ? View.VISIBLE : View.GONE}"
+                    app:layout_constraintBottom_toTopOf="@id/btn_continue"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/txt_label_become_senior_student"
+                    app:lottie_autoPlay="true"
+                    app:lottie_fileName="lottie/internet_progress_bar.json"
+                    app:lottie_imageAssetsFolder="lottie"
+                    app:lottie_loop="true" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/network_container"
@@ -345,7 +358,7 @@
                     android:paddingHorizontal="@dimen/_8sdp"
                     android:paddingVertical="@dimen/_12sdp"
                     android:paddingRight="@dimen/_20sdp"
-                    android:visibility="@{vm.isInternetSpeedGood ? View.GONE : View.VISIBLE}"
+                    android:visibility="@{vm.isInternetSpeedGood == 1  ? View.VISIBLE : View.GONE}"
                     app:layout_constraintBottom_toTopOf="@id/btn_continue"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -424,7 +437,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/_7sdp"
-                    android:visibility="@{vm.isInternetSpeedGood ? View.VISIBLE : View.GONE}"
+                    android:visibility="@{vm.isInternetSpeedGood == 2  ? View.VISIBLE : View.GONE}"
                     app:layout_constraintBottom_toTopOf="@id/btn_continue"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"

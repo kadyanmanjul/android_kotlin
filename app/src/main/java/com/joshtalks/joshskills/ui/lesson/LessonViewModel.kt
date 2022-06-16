@@ -7,6 +7,8 @@ import android.os.Message
 import android.util.Log
 import android.view.View
 import androidx.databinding.ObservableBoolean
+import androidx.databinding.ObservableField
+import androidx.databinding.ObservableInt
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -97,7 +99,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     val howToSpeakLiveData: MutableLiveData<Boolean> = MutableLiveData()
     val introVideoCompleteLiveData: MutableLiveData<Boolean> = MutableLiveData()
     val practicePartnerCallDurationLiveData: MutableLiveData<Long> = MutableLiveData()
-    var isInternetSpeedGood = ObservableBoolean(false)
+    var isInternetSpeedGood = ObservableInt(0)
     val voipState by lazy {
         CallBar()
     }
@@ -114,9 +116,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
 
     val repository: ABTestRepository by lazy { ABTestRepository() }
 
-    init {
-        getButtonVisibility()
-    }
+
     fun getWhatsappRemarketingCampaign(campaign: String) {
         viewModelScope.launch(Dispatchers.IO) {
             repository.getCampaignData(campaign)?.let { campaign ->
@@ -942,10 +942,16 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
             .build()
     }
 
-    private fun getButtonVisibility(){
+     fun getButtonVisibility(){
+        if(isInternetSpeedGood.get()!=0)
+         isInternetSpeedGood.set(0)
+
         viewModelScope.launch(Dispatchers.IO) {
             if(ConnectionDetails.getInternetSpeed()!= Speed.LOW){
-                isInternetSpeedGood.set(true)
+                isInternetSpeedGood.set(2)
+            }else{
+                isInternetSpeedGood.set(1)
+
             }
         }
     }

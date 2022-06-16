@@ -13,8 +13,11 @@ object RetrofitNetwork {
     lateinit var retrofit: Retrofit
     lateinit var okHttpBuilder: OkHttpClient.Builder
 
-    private fun setup() {
+    init {
+        setup()
+    }
 
+    private fun setup() {
         okHttpBuilder = OkHttpClient().newBuilder()
             .connectTimeout(CONNECTION_TIMEOUT, TimeUnit.SECONDS)
             .writeTimeout(WRITE_TIMEOUT, TimeUnit.SECONDS)
@@ -30,7 +33,6 @@ object RetrofitNetwork {
     }
 
     fun getNetworkSpeedApi(): NetworkSpeedService {
-        setup()
         return retrofit.create(NetworkSpeedService::class.java)
     }
 }

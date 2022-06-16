@@ -170,6 +170,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             viewModel.getTopicDetail(topicId!!)
         }
         viewModel.isFavoriteCallerExist()
+        viewModel.getButtonVisibility()
         subscribeRXBus()
         //checkForVoipState()
     }

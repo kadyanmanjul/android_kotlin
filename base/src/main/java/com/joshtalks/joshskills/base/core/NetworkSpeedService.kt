@@ -7,5 +7,6 @@ import retrofit2.http.*
 @JvmSuppressWildcards
 interface NetworkSpeedService {
     @GET("www.static.skills.com/speed_test.jpg")
+    @Headers("Connection: close")
     suspend fun downloadSpeedTestFile() : Response<ResponseBody>
 }
