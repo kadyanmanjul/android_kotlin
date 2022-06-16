@@ -16,16 +16,10 @@ import com.joshtalks.joshskills.voip.getTempFileForCallRecording
 import io.agora.rtc.Constants
 import io.agora.rtc.RtcEngine
 import io.agora.rtc.audio.AudioRecordingConfiguration
+import kotlinx.coroutines.*
 import java.io.File
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.CoroutineStart
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
 
 
 private const val JOINING_CHANNEL_SUCCESS = 0
@@ -158,16 +152,20 @@ internal class AgoraWebrtcService(val scope: CoroutineScope) : WebrtcService {
     }
 
     override fun onStartRecording() {
+        Log.e("sagar", "onStartRecording: started recording")
         Utils.context?.getTempFileForCallRecording()?.let { file->
             recordFile = file
+            Log.e("sagar", "onStartRecording: started recording$file")
             agoraEngine?.startAudioRecording(AudioRecordingConfiguration(file.absolutePath,3,0,48000))
         }
     }
 
     override fun onStopRecording() {
+        Log.e("sagar", "onStopRecording: stopped recording${recordFile?.length()}")
             recordFile?.absolutePath?.let {
                 agoraEngine?.stopAudioRecording()
                 PrefManager.saveLastRecordingPath(recordFile!!.absolutePath)
+                Log.e("sagar", "onStartRecording: started recording$recordFile")
                 scope.launch {
                     try {
                         eventFlow.emit(CallState.RecordingGenerated)
