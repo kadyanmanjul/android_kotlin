@@ -7,6 +7,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
 import com.google.gson.JsonObject
+import com.google.gson.JsonParser
 import com.joshtalks.badebhaiya.liveroom.adapter.PubNubEvent
 import com.joshtalks.badebhaiya.liveroom.model.ConversationRoomPubNubEventBus
 import com.joshtalks.badebhaiya.pubnub.PubNubData
@@ -50,7 +51,8 @@ object FallbackManager {
             .collection(CHANNELS)
             .document(PubNubManager.getLiveRoomProperties().channelName)
             .addSnapshotListener { value, error ->
-                Timber.tag(TAG).d("EVENT RECIEVED FROM GLOBAL CHANNEL AND ERROR => $error and VALUE => $value")
+                Timber.tag(TAG)
+                    .d("EVENT RECIEVED FROM GLOBAL CHANNEL AND ERROR => $error and VALUE => $value")
 
                 if (error == null) {
                     value?.let {
@@ -62,51 +64,60 @@ object FallbackManager {
 
     private fun startPrivateChannel() {
         privateChannelListener = Firebase.firestore
-            .collection(getRoomId())
+            .collection(LIVE_ROOM)
+            .document(getRoomId())
+            .collection(CHANNELS)
             .document(PubNubManager.getLiveRoomProperties().agoraUid.toString())
             .addSnapshotListener { value, error ->
                 Timber.tag(TAG).d("EVENT RECIEVED FROM PRIVATE CHANNEL")
 
-                if (error == null) {
-                    value?.let {
-                        processEvent(it)
-                    }
-                }
+//                if (error == null) {
+//                    value?.let {
+//                        processEvent(it)
+//                    }
+//                }
             }
     }
 
     private fun processEvent(documentSnapshot: DocumentSnapshot) {
         if (documentSnapshot.exists()) {
-            documentSnapshot.getLong(EVENT_ID)?.let {
-                jobs += CoroutineScope(Dispatchers.IO).launch {
-                    if (!checkIfEventExists(it)) {
+            val doc = documentSnapshot["message"] as HashMap<*, *>
+            doc["event_id"].toString().toLong().let {
+                if (it > PubNubManager.roomJoiningTime) {
+
+                    if (!checkEventExist(it)) {
                         Timber.tag(TAG).d("NO EVENT DOESN'T EXISTS")
                         sendEventToFlow(documentSnapshot)
-                    } else{
+                    } else {
                         Timber.tag(TAG).d("YES EVENT EXISTS")
                     }
+
                 }
             }
+
         }
     }
 
     private fun sendEventToFlow(documentSnapshot: DocumentSnapshot) {
-        Timber.tag(TAG).d("FIRESTORE DATA IS => $documentSnapshot and DATA IS => ${documentSnapshot.data}")
+        Timber.tag(TAG)
+            .d("FIRESTORE DATA IS => $documentSnapshot and DATA IS => ${documentSnapshot.data}")
         documentSnapshot.data?.let { data ->
-            documentSnapshot.getLong(EVENT_ID)?.let { timestamp ->
-                PubNubManager.postToPubNubEvent(
-                    ConversationRoomPubNubEventBus(
-                        eventId = timestamp,
-                        action = PubNubEvent.valueOf(documentSnapshot.getString("action")!!),
-                        data = JsonObject().getAsJsonObject(data.toString())
-                    )
+            val doc = documentSnapshot["message"] as HashMap<*, *>
+            PubNubManager.postToPubNubEvent(
+                ConversationRoomPubNubEventBus(
+                    eventId = doc[EVENT_ID].toString().toLong(),
+                    action = PubNubEvent.valueOf(doc["action"].toString()),
+                    data = JsonParser.parseString(Gson().toJson(documentSnapshot.data)).asJsonObject
                 )
-            }
+            )
+
         }
 
     }
 
     private suspend fun checkIfEventExists(timestamp: Long): Boolean {
+        Timber.tag(TAG).d("EVENT EXISTS CALLED")
+
         var eventExists = false
         PubNubData.pubNubEvents
             .filter { it.eventId == timestamp }
@@ -114,14 +125,22 @@ object FallbackManager {
                 eventExists = false
             }.collect {
                 eventExists = it.eventId == timestamp
+                return@collect
             }
+        Timber.tag(TAG).d("EVENT EXISTS => $eventExists")
         return eventExists
+    }
+
+    private fun checkEventExist(timestamp: Long): Boolean {
+        return PubNubData.eventsMap.containsKey(timestamp)
     }
 
     fun sendEvent(eventData: JsonObject?, channel: String) {
 
         Firebase.firestore
-            .collection(getRoomId())
+            .collection(LIVE_ROOM)
+            .document(getRoomId())
+            .collection(CHANNELS)
             .document(channel)
             .set(eventData.toHashMap())
             .addOnSuccessListener {
@@ -132,7 +151,7 @@ object FallbackManager {
             }
     }
 
-    private fun getRoomId(): String{
+    private fun getRoomId(): String {
         return PubNubManager.getLiveRoomProperties().roomId.toString()
     }
 

@@ -24,6 +24,7 @@ import com.joshtalks.badebhaiya.liveroom.service.ConvoWebRtcService
 import com.joshtalks.badebhaiya.liveroom.viewmodel.*
 import com.joshtalks.badebhaiya.pubnub.PubNubData._audienceList
 import com.joshtalks.badebhaiya.pubnub.PubNubData._speakersList
+import com.joshtalks.badebhaiya.pubnub.PubNubData.eventsMap
 import com.joshtalks.badebhaiya.pubnub.fallback.FallbackManager
 import com.joshtalks.badebhaiya.repository.PubNubExceptionRepository
 import com.joshtalks.badebhaiya.repository.model.PubNubExceptionRequest
@@ -48,6 +49,8 @@ object PubNubManager {
     private var liveRoomProperties: StartingLiveRoomProperties? = null
 
     var moderatorName: String? = null
+
+    var roomJoiningTime: Long = 0L
 
     var currentUser: LiveRoomUser? = null
 
@@ -86,6 +89,7 @@ object PubNubManager {
     }
 
     fun initPubNub() {
+        roomJoiningTime = System.currentTimeMillis()
         val pnConf = PNConfiguration(User.getInstance().userId)
         pnConf.subscribeKey = BuildConfig.PUBNUB_SUB_API_KEY
         pnConf.publishKey = BuildConfig.PUBNUB_PUB_API_KEY
@@ -242,7 +246,8 @@ object PubNubManager {
 
         Timber.d("added new user to audience and json is => $msg")
 
-        val data = msg["data"].asJsonObject
+//        val data = msg["data"].asJsonObject
+        val data = if (msg.has("data")) msg["data"].asJsonObject else msg["message"].asJsonObject
 
         Timber.d("added new user extracted data => $data")
         val matType = object : TypeToken<LiveRoomUser>() {}.type
@@ -509,7 +514,10 @@ object PubNubManager {
     }
 
     fun moveToSpeaker(msg: JsonObject) {
-        msg.get("id").asInt?.let { agoraId ->
+        var data = msg
+        if (msg.has("message"))
+            data = msg["message"].asJsonObject
+        data.get("id").asInt?.let { agoraId ->
             val user = audienceList.filter { it.id == agoraId }
             if (user.isNotEmpty()) {
                 val userToMove = user.get(0)
@@ -529,7 +537,7 @@ object PubNubManager {
                     putParcelable(NOTIFICATION_USER, userToMove)
                 }
                 if (isModerator()) {
-                    bundle.putString(NOTIFICATION_NAME, msg.get("short_name")?.asString)
+                    bundle.putString(NOTIFICATION_NAME, data.get("short_name")?.asString)
                 }
                 message.data = bundle
                 postToLiveEvent(message)
@@ -539,6 +547,7 @@ object PubNubManager {
 
      fun postToPubNubEvent(data: ConversationRoomPubNubEventBus) {
         jobs += CoroutineScope(Dispatchers.IO).launch {
+            eventsMap[data.eventId] = data.data
             PubNubData.pubNubEvents.emit(data)
         }
 

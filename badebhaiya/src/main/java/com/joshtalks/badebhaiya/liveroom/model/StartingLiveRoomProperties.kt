@@ -13,7 +13,7 @@ data class StartingLiveRoomProperties(
     var token: String = "",
     var roomQuestionId: Int = 0,
     var isRoomCreatedByUser: Boolean = false,
-    val isModerator: Boolean = false
+    val isModerator: Boolean = false,
 ) {
     companion object {
         fun createFromRoom(room: ConversationRoomResponse, topicName: String, createdByUser: Boolean = false): StartingLiveRoomProperties{

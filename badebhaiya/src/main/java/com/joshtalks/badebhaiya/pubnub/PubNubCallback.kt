@@ -43,7 +43,7 @@ class PubNubCallback: SubscribeCallback() {
                     ConversationRoomPubNubEventBus(
                         PubNubEvent.valueOf(act),
                         msg,
-                        10
+                        pnMessageResult.timetoken
                     )
                 )
             }
