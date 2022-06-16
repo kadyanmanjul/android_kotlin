@@ -926,8 +926,7 @@
         <service
             android:name=".ui.voip.new_arch.ui.call_recording.ProcessCallRecordingService"
             android:enabled="true"
-            android:exported="false"
-            android:process=":joshSkillsCallingService"/>
+            android:exported="false" />
 
     </application>
     <queries>
