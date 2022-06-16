@@ -1069,6 +1069,7 @@ class LocalNotificationWorker(
             contentText = "Fulfilling your dream of speaking in English"
             action = NotificationAction.ACTION_COMPLETE_ONBOARDING
         }
+        Log.d("sagar", "showOnBoardingCompletionNotification() called with: context = $context")
         NotificationUtils(context).sendNotification(nc)
     }
 }
