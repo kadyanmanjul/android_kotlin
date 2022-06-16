@@ -203,6 +203,7 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                     ServiceEvents.PROCESS_AGORA_CALL_RECORDING -> {
                         Log.d(TAG, "listenVoipEvents() called")
                         File(PrefManager.getLastRecordingPath())?.let { file ->
+                            Log.e("sagar", "listenVoipEvents: $file" )
                             stopRecording(file)
                         }
                 }
@@ -227,9 +228,13 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                     Utils.showToast(toastText)
                 }
                 val len = recordFile.length()
+                withContext(Dispatchers.Main) {
+                    Utils.showToast(len.toString())
+                }
                 if (len < 1) {
                     return@launch
                 }
+
                 ProcessCallRecordingService.processSingleCallRecording(context = Utils.context, videoPath = videoRecordFile?.absolutePath?:"", audioPath = recordFile.absolutePath, callId = PrefManager.getAgraCallId().toString(),agoraMentorId =PrefManager.getLocalUserAgoraId().toString())
                 CallRecordingAnalytics.addAnalytics(
                     agoraCallId = PrefManager.getAgraCallId().toString(),
