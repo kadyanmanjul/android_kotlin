@@ -29,6 +29,7 @@ const val START_CALL_TIME_URI = "/start_call_time"
 const val CALL_DISCONNECTED_URI = "/call_disconnect"
 const val API_HEADER = "/api_header"
 const val MENTOR_ID = "/mentor_id"
+const val RECORD_VIDEO_URI = "/video_url"
 const val NOTIFICATION_DATA = "/notification_data"
 
 // Content Values
@@ -90,6 +91,7 @@ const val MENTOR_ID_COLUMN = "MENTOR_ID"
 const val NOTIFICATION_TITLE_COLUMN = "NOTIFICATION_TITLE_COLUMN"
 const val NOTIFICATION_SUBTITLE_COLUMN = "NOTIFICATION_SUBTITLE_COLUMN"
 const val NOTIFICATION_LESSON_COLUMN = "NOTIFICATION_LESSON_COLUMN"
+const val VIDEO_COLUMN = "VIDEO_COLUMN"
 
 
 // Broadcast Receiver

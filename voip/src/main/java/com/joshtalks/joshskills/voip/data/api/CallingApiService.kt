@@ -23,9 +23,6 @@ interface CallingApiService {
     @FormUrlEncoded
     @POST("$DIR/core/signed_url/")
     fun requestUploadMediaAsync(@FieldMap params: Map<String, String>): Deferred<AmazonPolicyResponse>
-
-    @POST("$DIR/voicecall/agora_call_share")
-    suspend fun postCallRecordingFile(@Body request : CallRecordingRequest) : Response<Unit>
 }
 
 
