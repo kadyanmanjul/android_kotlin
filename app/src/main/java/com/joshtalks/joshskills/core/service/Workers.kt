@@ -93,6 +93,7 @@ import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 import com.joshtalks.joshskills.ui.voip.NotificationId
 import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.LOCAL_NOTIFICATION_CHANNEL
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.call_recording.ProcessCallRecordingService
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.CallRecordingShare
 import com.yariksoffice.lingver.Lingver
 import io.branch.referral.Branch
 import java.util.Date
@@ -529,15 +530,11 @@ class CallRecordingEvent(context: Context, private var workerParams: WorkerParam
             val textDescription = "Well done!, Here is your call recording"
             val title = "Processed Call Recording"
             val index = ProcessCallRecordingService.LOCAL_NOTIFICATION_ID
-            val intent = VideoPlayerActivity.getActivityIntent(
+
+            val intent = CallRecordingShare.getActivityIntentForSharableCallRecording(
                 context = context,
-                videoTitle = "Call Recorded",
-                videoId = null,
-                videoUrl = filePath
-            ).apply {
-                addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
-                addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
-            }
+                videoUrl = filePath,
+            )
 
             intent.run {
                 val activityList = arrayOf(Intent(applicationContext, InboxActivity::class.java), this)
