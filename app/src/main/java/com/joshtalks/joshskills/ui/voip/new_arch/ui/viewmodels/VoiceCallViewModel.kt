@@ -12,12 +12,10 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
-import com.joshtalks.joshskills.base.audioVideoMuxer
 import com.joshtalks.joshskills.base.constants.FPP
 import com.joshtalks.joshskills.base.constants.FROM_INCOMING_CALL
 import com.joshtalks.joshskills.base.constants.GROUP
 import com.joshtalks.joshskills.base.constants.PEER_TO_PEER
-import com.joshtalks.joshskills.base.getAudioSentFile
 import com.joshtalks.joshskills.base.log.Feature
 import com.joshtalks.joshskills.base.log.JoshLog
 import com.joshtalks.joshskills.base.videoSentFile
@@ -204,13 +202,8 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                     }
                     ServiceEvents.PROCESS_AGORA_CALL_RECORDING -> {
                         Log.d(TAG, "listenVoipEvents() called")
-                        File(PrefManager.getLastRecordingPath())?.let {
-                            val file = getAudioSentFile(context = applicationContext, null)
-                            //AppDirectory.copy(it.absolutePath,file.absolutePath)
-                            //Log.d(TAG, "listenVoipEvents() called getLastRecordingPath $it")
-                            //stopRecording(file)
-                            ProcessCallRecordingService.processSingleCallRecording(videoPath = videoRecordFile!!.absolutePath, audioPath = it.absolutePath, callId = PrefManager.getAgraCallId().toString(),agoraMentorId =PrefManager.getLocalUserAgoraId().toString(),
-                            )
+                        File(PrefManager.getLastRecordingPath())?.let { file ->
+                            stopRecording(file)
                         }
                 }
                 }
@@ -229,22 +222,22 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
         viewModelScope.launch(Dispatchers.IO) {
             if (recordFile.absolutePath.isEmpty().not()) {
 
-                val a  = AppObjectController.getFirebaseRemoteConfig().getString("RECORDING_SAVED_TEXT")
+                val toastText  = AppObjectController.getFirebaseRemoteConfig().getString("RECORDING_SAVED_TEXT")
                 withContext(Dispatchers.Main) {
-                    Utils.showToast("Firebase : $a")
+                    Utils.showToast(toastText)
                 }
                 val len = recordFile.length()
                 if (len < 1) {
                     return@launch
                 }
+                Utils.context?.let { context ->
+                    ProcessCallRecordingService.processSingleCallRecording(context = context, videoPath = videoRecordFile!!.absolutePath, audioPath = recordFile.absolutePath, callId = PrefManager.getAgraCallId().toString(),agoraMentorId =PrefManager.getLocalUserAgoraId().toString(),
+                    )
+                }
                 CallRecordingAnalytics.addAnalytics(
                     agoraCallId = PrefManager.getAgraCallId().toString(),
                     agoraMentorId =PrefManager.getLocalUserAgoraId().toString(),
                     localPath = recordFile.absolutePath )
-
-                if (len > 1) {
-                    audioVideoMuxer(recordFile, videoRecordFile,applicationContext)
-                }
             }
         }
     }
