@@ -208,8 +208,4 @@ interface ChatNetworkService {
 
     @POST("$DIR/impression/track_a2c1_retention_impression/")
     suspend fun saveA2C1Impression(@Body requestData: HashMap<String, String>)
-
-    @POST("$DIR/voicecall/agora_call_share")
-    suspend fun postCallRecordingFile(@Body request : CallRecordingRequest) : Response<Unit>
-
 }

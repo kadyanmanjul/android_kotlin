@@ -905,6 +905,12 @@
             android:enabled="true"
             android:exported="false" />
 
+        <service
+            android:name=".ui.voip.new_arch.ui.call_recording.ProcessCallRecordingService"
+            android:enabled="true"
+            android:exported="false"
+            android:process=":joshSkillsCallingService"/>
+
     </application>
     <queries>
         <provider android:authorities="com.joshtalks.joshskills.contentprovider" />
