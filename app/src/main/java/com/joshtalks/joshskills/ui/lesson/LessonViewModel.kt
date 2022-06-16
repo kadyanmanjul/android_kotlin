@@ -5,11 +5,15 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Message
 import android.util.Log
+import android.view.View
+import androidx.databinding.ObservableBoolean
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
+import com.joshtalks.joshskills.base.core.ConnectionDetails
+import com.joshtalks.joshskills.base.core.Speed
 import com.joshtalks.joshskills.constants.PERMISSION_FROM_READING
 import com.joshtalks.joshskills.constants.PERMISSION_FROM_READING_GRANTED
 import com.joshtalks.joshskills.constants.SHARE_VIDEO
@@ -47,11 +51,8 @@ import com.joshtalks.joshskills.util.AudioRecording
 import com.joshtalks.joshskills.util.DeepLinkUtil
 import com.joshtalks.joshskills.util.FileUploadService
 import com.joshtalks.joshskills.util.showAppropriateMsg
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.io.File
 
@@ -96,6 +97,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     val howToSpeakLiveData: MutableLiveData<Boolean> = MutableLiveData()
     val introVideoCompleteLiveData: MutableLiveData<Boolean> = MutableLiveData()
     val practicePartnerCallDurationLiveData: MutableLiveData<Long> = MutableLiveData()
+    var isInternetSpeedGood = ObservableBoolean(false)
     val voipState by lazy {
         CallBar()
     }
@@ -111,6 +113,10 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     val speakingABtestLiveData = MutableLiveData<ABTestCampaignData?>()
 
     val repository: ABTestRepository by lazy { ABTestRepository() }
+
+    init {
+        getButtonVisibility()
+    }
     fun getWhatsappRemarketingCampaign(campaign: String) {
         viewModelScope.launch(Dispatchers.IO) {
             repository.getCampaignData(campaign)?.let { campaign ->
@@ -936,8 +942,16 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
             .build()
     }
 
-    fun getButtonVisibility() : Boolean{
-        return false
+    private fun getButtonVisibility(){
+        viewModelScope.launch(Dispatchers.IO) {
+            if(ConnectionDetails.getInternetSpeed()!= Speed.LOW){
+                isInternetSpeedGood.set(true)
+            }
+        }
+    }
+
+    fun recheckSpeed(v: View){
+        getButtonVisibility()
     }
 
     fun getRating(): Int {

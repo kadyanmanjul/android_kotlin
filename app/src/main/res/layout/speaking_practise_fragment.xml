@@ -79,16 +79,16 @@
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/rating_view"
+                    setRatingText="@{vm.getRating()}"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_14sdp"
-                    android:gravity="start|center"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Semi_Bold"
-                    setRatingText="@{vm.getRating()}"
-                    android:textSize="@dimen/_12ssp"
-                    android:padding="@dimen/_3ssp"
                     android:background="@drawable/rounded_rectangle_attach"
                     android:backgroundTint="#ECF4FD"
+                    android:gravity="start|center"
+                    android:padding="@dimen/_3ssp"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Semi_Bold"
+                    android:textSize="@dimen/_12ssp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/text_view_2" />
@@ -336,16 +336,16 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/network_container"
                     android:layout_width="0dp"
-                    android:visibility="@{vm.getButtonVisibility() ? View.GONE : View.VISIBLE}"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/_24sdp"
-                    android:paddingRight="@dimen/_20sdp"
                     android:layout_marginTop="16dp"
+                    android:layout_marginBottom="@dimen/_40sdp"
                     android:background="@drawable/rounded_rectangle_attach"
                     android:backgroundTint="#ECF4FD"
                     android:paddingHorizontal="@dimen/_8sdp"
                     android:paddingVertical="@dimen/_12sdp"
-                    android:layout_marginBottom="@dimen/_40sdp"
+                    android:paddingRight="@dimen/_20sdp"
+                    android:visibility="@{vm.isInternetSpeedGood ? View.GONE : View.VISIBLE}"
                     app:layout_constraintBottom_toTopOf="@id/btn_continue"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -402,6 +402,7 @@
                         android:drawablePadding="@dimen/_12ssp"
                         android:gravity="center"
                         android:insetTop="0dp"
+                        android:onClick="@{vm::recheckSpeed}"
                         android:insetBottom="0dp"
                         android:paddingVertical="@dimen/_14sdp"
                         android:text="@string/recheck_text"
@@ -419,17 +420,17 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/btn_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/btn_container"
                     android:layout_marginBottom="@dimen/_7sdp"
+                    android:visibility="@{vm.isInternetSpeedGood ? View.VISIBLE : View.GONE}"
                     app:layout_constraintBottom_toTopOf="@id/btn_continue"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    android:visibility="@{vm.getButtonVisibility() ? View.VISIBLE : View.GONE}"
                     app:layout_constraintTop_toBottomOf="@+id/txt_label_become_senior_student"
-                    tools:visibility="gone"
-                    app:layout_constraintVertical_bias="1">
+                    app:layout_constraintVertical_bias="1"
+                    tools:visibility="gone">
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_new_student"
@@ -565,17 +566,12 @@
                         app:layout_constraintWidth_default="percent"
                         app:layout_constraintWidth_percent="0.7"
                         app:rippleColor="@color/white"
-                        tools:visibility="visible"
-                        />
+                        tools:visibility="visible" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_continue"
                     style="@style/Widget.MaterialComponents.Button"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.ButtonSemiBold"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/_12ssp"
-                    app:cornerRadius="@dimen/_36sdp"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -586,6 +582,10 @@
                     android:insetTop="0dp"
                     android:insetBottom="0dp"
                     android:paddingVertical="@dimen/_14sdp"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.ButtonSemiBold"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_12ssp"
+                    app:cornerRadius="@dimen/_36sdp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
@@ -595,6 +595,7 @@
                     app:layout_constraintWidth_percent="0.7"
                     app:rippleColor="@color/white"
                     tools:visibility="gone" />
+
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/btn_continue_text"
                     android:layout_width="match_parent"
