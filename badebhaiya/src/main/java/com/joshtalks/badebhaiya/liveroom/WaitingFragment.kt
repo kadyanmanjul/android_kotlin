@@ -9,6 +9,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.IdRes
+import androidx.compose.animation.*
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -44,6 +46,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.lifecycleScope
 import coil.compose.AsyncImage
+import com.joshtalks.badebhaiya.composeTheme.NunitoSansFont
 import com.joshtalks.badebhaiya.feed.model.Waiting
 import kotlinx.coroutines.*
 
@@ -71,6 +74,7 @@ class WaitingFragment : Fragment(), Call {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        viewModel.waitingRoomUsers.value= emptyList()
 
         viewModel.getWaitingList()
         try {
@@ -139,28 +143,31 @@ class WaitingFragment : Fragment(), Call {
                 Box (
                     Modifier
                         .fillMaxSize()
-                        .background(Color.White),
                         ) {
-                    Column(Modifier.padding(15.dp)) {
+                    Column(Modifier.clip(RoundedCornerShape(dimensionResource(id = R.dimen._30sdp),dimensionResource(id = R.dimen._30sdp),0.dp,0.dp))) {
 
                             Text(
                                 text = "WAITING ROOM",
                                 Modifier
                                     .background(Color.White)
                                     .fillMaxWidth()
-                                    .padding(10.dp)
-                                    .clip(RoundedCornerShape(20.dp)),
+                                    .padding(20.dp),
                                 fontWeight = FontWeight.Bold,
+                                fontFamily =  NunitoSansFont,
                                 fontSize = 22.sp
                             )
 
                         Box(
                             modifier = Modifier
-                                .fillMaxSize(),
+                                .fillMaxSize()
+                                .background(Color.White)
+                                .padding(15.dp),
                             Alignment.TopCenter
                         ) {
                             LazyVerticalGrid(
-                                modifier = Modifier.align(Alignment.TopCenter),
+                                modifier = Modifier
+                                    .align(Alignment.TopCenter)
+                                    .fillMaxSize(),
                                 columns = GridCells.Fixed(4)
                             ) {
                                 Timber.d("INFLATE HONE KA TRY")
@@ -169,7 +176,6 @@ class WaitingFragment : Fragment(), Call {
                                 { item ->
                                     Timber.d("INFLATE HUA")
                                     Element(item)
-//                        Element()
 
                                 }
                             }
@@ -187,60 +193,57 @@ class WaitingFragment : Fragment(), Call {
         item: Waiting
     ){
 
-                Column(
-                    verticalArrangement = Arrangement.Center,
-                    modifier = Modifier
-                        .background(Color.White)
-                        .fillMaxSize()
-                        .clip(RoundedCornerShape(dimensionResource(id = R.dimen._16sdp)))
-                        .padding(5.dp)){
-                    Timber.d("IMAGE LINK => ${item.profilePic}")
-                    if (item.profilePic != null){
-                        AsyncImage(
-                            model = item.profilePic,
-                            modifier = Modifier
-                                .size(62.dp)
-                                .clip(RoundedCornerShape(dimensionResource(id = R.dimen._16sdp))),
-                            contentDescription = "BadeBhaiya Profile Picture",
-                            contentScale = ContentScale.Crop
-                        )
-                    }
-
-                    else{
-                        Image(
-                            painter = painterResource(id = R.drawable.profile_dummy_dp),
-                            modifier = Modifier
-                                .size(62.dp)
-                                .clip(RoundedCornerShape(dimensionResource(id = R.dimen._16sdp))),
-                            contentDescription = "BadeBhaiya Profile Picture",
-                            contentScale = ContentScale.Crop
-                        )
-                    }
-
-                    NameText(text = item.short_name ?:"")
-
-                }
-
+             Column(
+                 verticalArrangement = Arrangement.Center,
+                 modifier = Modifier
+                     .background(Color.White)
+                     .fillMaxSize()
+                     .padding(5.dp),
+                 horizontalAlignment = Alignment.CenterHorizontally
+             ){
+                 Timber.d("IMAGE LINK => ${item.profilePic}")
+                 if (item.profilePic != null){
+                     AsyncImage(
+                         model = item.profilePic,
+                         modifier = Modifier
+                             .size(62.dp)
+                             .clip(RoundedCornerShape(dimensionResource(id = R.dimen._16sdp))),
+                         contentDescription = "BadeBhaiya Profile Picture",
+                         contentScale = ContentScale.Crop
+                     )
+                 }
+                 else{
+                     Image(
+                         painter = painterResource(id = R.drawable.profile_dummy_dp),
+                         modifier = Modifier
+                             .size(62.dp)
+                             .clip(RoundedCornerShape(dimensionResource(id = R.dimen._16sdp))),
+                         contentDescription = "BadeBhaiya Profile Picture",
+                         contentScale = ContentScale.Crop
+                     )
+                 }
+                 NameText(text = item.short_name ?:"")
+             }
     }
 
     @Composable
     fun NameText(text: String) {
         Text(
             text = text,
-            fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center
+           fontFamily =  NunitoSansFont,
+            fontWeight = FontWeight.SemiBold,
+            textAlign = TextAlign.Center,
         )
     }
 
     fun addObserver(){
         viewModel.waitResponse.observe(viewLifecycleOwner){
-//            binding.audienceList.layoutManager= GridLayoutManager(requireContext(),3)
             Log.i("WAITINGROOM", "adObserver: $it")
             users= viewModel.waitResponse.value as MutableList<Waiting>
             Timber.d("LIST SIZE HAI => ${it.size}")
               lifecycleScope.launch {
                   it.forEach{ element ->
-                      delay(500)
+                      delay(1000)
                       Timber.d("ITEM ADDED")
                       val lis = viewModel.waitingRoomUsers.value!!.toMutableList()
                       lis.add(element)
