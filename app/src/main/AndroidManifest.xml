@@ -153,6 +153,9 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppNoBarTheme"
             android:windowSoftInputMode="stateAlwaysHidden" />
+        <activity
+            android:name=".ui.voip.new_arch.ui.views.CallRecordingShare"
+            android:exported="false" />
         <activity android:name=".ui.points_history.PointsInfoActivity" />
         <activity android:name=".ui.introduction.DemoSpeakingPractiseActivity" />
         <activity android:name=".ui.points_history.PointsHistoryActivity" />
