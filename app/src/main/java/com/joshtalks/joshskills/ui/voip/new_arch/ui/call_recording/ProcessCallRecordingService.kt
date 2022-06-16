@@ -1,10 +1,13 @@
 package com.joshtalks.joshskills.ui.voip.new_arch.ui.call_recording
 
+import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.media.RingtoneManager
 import android.os.Build
 import android.os.Handler
 import android.os.IBinder
@@ -19,7 +22,10 @@ import com.joshtalks.joshskills.base.audioVideoMuxer
 import com.joshtalks.joshskills.base.copy
 import com.joshtalks.joshskills.base.getAudioSentFile
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.analytics.LocalNotificationDismissEventReceiver
 import com.joshtalks.joshskills.repository.local.model.NotificationChannelNames
+import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
+import com.joshtalks.joshskills.ui.voip.NotificationId
 import com.joshtalks.joshskills.voip.Utils.Companion.uiHandler
 import com.joshtalks.joshskills.voip.data.api.CallRecordingRequest
 import com.joshtalks.joshskills.voip.data.api.MediaDUNetwork
@@ -187,13 +193,108 @@ class ProcessCallRecordingService : Service() {
                     )
                 Log.e(TAG, "uploadOutputVideoToS3Server: $resp")
                 if (resp.isSuccessful && resp.body() != null) {
-                    //
+                    addNotificationForUserCTA(requestEngage.outputFile?.absolutePath,applicationContext)
                 } else {
                     handleRetry(inputFiles)
                 }
             } catch (ex: Throwable) {
                 ex.printStackTrace()
             }
+        }
+    }
+
+    private fun addNotificationForUserCTA(filePath: String?,context:Context) {
+        if(filePath.isNullOrBlank()){
+            return
+        }
+        Log.d(
+            "sagar",
+            "addNotificationForUserCTA() called with: filePath = $filePath, context = $context"
+        )
+
+        val textDescription = "WellDone !, Here is your call recording"
+        val title = "Processed Call Recording"
+        val index = LOCAL_NOTIFICATION_ID
+        val intent = VideoPlayerActivity.getActivityIntent(
+            context = context,
+            videoTitle = "Call Recorded",
+            videoId = null,
+            videoUrl =filePath
+        ).apply {
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        }
+
+        intent.run {
+            val activityList = arrayOf(this)
+            val uniqueInt = (System.currentTimeMillis() and 0xfffffff).plus(index).toInt()
+            val defaultSound =
+                RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+            val pendingIntent = PendingIntent.getActivities(
+                context,
+                uniqueInt, activityList,
+                PendingIntent.FLAG_UPDATE_CURRENT
+            )
+
+            val style = NotificationCompat.BigTextStyle()
+            style.setBigContentTitle(title)
+            style.bigText(textDescription)
+            style.setSummaryText("")
+
+            val notificationBuilder =
+                NotificationCompat.Builder(
+                    context,
+                    NotificationId.LOCAL_NOTIFICATION_CHANNEL + index
+                )
+                    .setSmallIcon(R.drawable.ic_status_bar_notification)
+                    .setContentTitle(title)
+                    .setAutoCancel(true)
+                    .setSound(defaultSound)
+                    .setContentText(textDescription)
+                    .setContentIntent(pendingIntent)
+                    .setStyle(style)
+                    .setWhen(System.currentTimeMillis())
+                    .setDefaults(Notification.DEFAULT_ALL)
+                    .setColor(
+                        ContextCompat.getColor(
+                            context,
+                            R.color.colorAccent
+                        )
+                    )
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                notificationBuilder.priority = NotificationManager.IMPORTANCE_DEFAULT
+            }
+
+            val dismissIntent =
+                Intent(
+                    context.applicationContext,
+                    LocalNotificationDismissEventReceiver::class.java
+                )
+            val dismissPendingIntent: PendingIntent =
+                PendingIntent.getBroadcast(
+                    context.applicationContext,
+                    uniqueInt,
+                    dismissIntent,
+                    0
+                )
+
+            notificationBuilder.setDeleteIntent(dismissPendingIntent)
+
+            val notificationManager =
+                context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val notificationChannel = NotificationChannel(
+                    NotificationId.LOCAL_NOTIFICATION_CHANNEL + index,
+                    NotificationId.LOCAL_NOTIFICATION_CHANNEL + index,
+                    NotificationManager.IMPORTANCE_HIGH
+                )
+                notificationChannel.enableLights(true)
+                notificationChannel.enableVibration(true)
+                notificationBuilder.setChannelId(NotificationId.LOCAL_NOTIFICATION_CHANNEL + index)
+                notificationManager.createNotificationChannel(notificationChannel)
+            }
+            notificationManager.notify(uniqueInt, notificationBuilder.build())
         }
     }
 
@@ -280,6 +381,7 @@ class ProcessCallRecordingService : Service() {
         private val TAG = "RecordingService"
         private const val CHANNEL_ID = "VIDEO_PROCESSING"
         private const val NOTIFICATION_ID = 1201
+        private const val LOCAL_NOTIFICATION_ID = 1202
         fun uploadAllPendingTasks(context: Context) {
             try {
                 val intent = Intent(context, ProcessCallRecordingService::class.java)
