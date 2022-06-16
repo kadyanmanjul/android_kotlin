@@ -331,10 +331,8 @@ object WorkManagerAdmin {
         Log.e("sagar", "setLocalNotificationWorker: Came" )
         WorkManager.getInstance(AppObjectController.joshApplication)
             .cancelAllWorkByTag(LocalNotificationWorker::class.java.name)
-        val delay = 0L
         val workRequest = OneTimeWorkRequestBuilder<LocalNotificationWorker>()
             .setInputData(workDataOf())
-            .setInitialDelay(delay, TimeUnit.SECONDS)
             .addTag(LocalNotificationWorker::class.java.name)
             .build()
         WorkManager.getInstance(AppObjectController.joshApplication).enqueue(workRequest)
