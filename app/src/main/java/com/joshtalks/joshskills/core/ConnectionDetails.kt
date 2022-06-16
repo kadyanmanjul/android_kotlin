@@ -1,11 +1,10 @@
-package com.joshtalks.joshskills.base.core
+package com.joshtalks.joshskills.core
 
 import android.util.Log
-
-private const val TAG = "ConnectionDetails"
-private const val THRESHOLD_SPEED_IN_KBPS = 16
+import com.joshtalks.joshskills.base.core.RetrofitNetwork
 
 object ConnectionDetails {
+    private val TAG = "ConnectionDetails"
     // Download file
     val apiService by lazy {
         RetrofitNetwork.getNetworkSpeedApi()
@@ -14,7 +13,7 @@ object ConnectionDetails {
     private suspend fun downloadTime() : Long {
         try {
             val startTime = System.currentTimeMillis()
-            val response = apiService.downloadSpeedTestFile()
+            val response = apiService.downloadSpeedTestFile(PrefManager.getStringValue(SPEED_TEST_FILE_URL))
             return if(response.isSuccessful)
                 System.currentTimeMillis() - startTime
             else
@@ -28,9 +27,9 @@ object ConnectionDetails {
     suspend fun getInternetSpeed() : Speed {
         val timeInSec = downloadTime() / 1000F
         val fileSizeInBits = 157 * 1024 * 8F
-        val avgSpeedInKbps = (fileSizeInBits / timeInSec) / (1024 * 8F)
+        val avgSpeedInKbps = (fileSizeInBits / timeInSec) / 1024
         Log.d(TAG, "getInternetSpeed: $avgSpeedInKbps")
-        return if(avgSpeedInKbps < THRESHOLD_SPEED_IN_KBPS) Speed.LOW else Speed.HIGH
+        return if(avgSpeedInKbps < PrefManager.getIntValue(THRESHOLD_SPEED_IN_KBPS)) Speed.LOW else Speed.HIGH
     }
 }
 

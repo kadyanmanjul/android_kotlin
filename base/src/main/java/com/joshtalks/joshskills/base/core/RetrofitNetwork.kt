@@ -27,7 +27,7 @@ object RetrofitNetwork {
             .retryOnConnectionFailure(false)
 
         retrofit = Retrofit.Builder()
-            .baseUrl("https://s3.ap-south-1.amazonaws.com/")
+            .baseUrl("https://localhost/")
             .client(okHttpBuilder.build())
             .build()
     }

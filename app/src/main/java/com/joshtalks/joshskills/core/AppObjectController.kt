@@ -417,8 +417,10 @@ class AppObjectController {
             try {
                 CoroutineScope(Dispatchers.IO).launch {
                     try {
-                        val resp = p2pNetworkService.getVoipNewArchFlag()["status"] ?: 1
-                        PrefManager.put(IS_VOIP_NEW_ARCH_ENABLED, resp)
+                        val resp = p2pNetworkService.getVoipNewArchFlag()
+                        PrefManager.put(IS_VOIP_NEW_ARCH_ENABLED, resp.status ?: 1)
+                        PrefManager.put(SPEED_TEST_FILE_URL, resp.speedTestFile ?: "https://s3.ap-south-1.amazonaws.com/www.static.skills.com/speed_test.jpg")
+                        PrefManager.put(THRESHOLD_SPEED_IN_KBPS, resp.thresholdSpeed ?: 128)
                     } catch (ex: Exception) {
                         when (ex) {
                             is HttpException -> {

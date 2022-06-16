@@ -10,6 +10,7 @@ import com.joshtalks.joshskills.ui.voip.voip_rating.model.ReportModel
 import java.util.HashMap
 import com.joshtalks.joshskills.ui.fpp.model.PendingRequestResponse
 import com.joshtalks.joshskills.ui.fpp.model.RecentCallResponse
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.models.VoipStatusResponse
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.report.model.VoipReportModel
 
 import retrofit2.Response
@@ -106,7 +107,7 @@ interface P2PNetworkService {
     suspend fun saveTopicUrlImpression(@Body params : HashMap<String,Any?>) :Response<Any>
 
     @GET("$DIR/p2p/status/")
-    suspend fun getVoipNewArchFlag(): HashMap<String,Int>
+    suspend fun getVoipNewArchFlag(): VoipStatusResponse
 
     @POST("$DIR/fpp/fpp_option/")
     suspend fun showFppDialogNew(@Body params: HashMap<String, Int?>) : Response<HashMap<String,Int>>
