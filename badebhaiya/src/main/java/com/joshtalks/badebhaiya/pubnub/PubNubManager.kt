@@ -153,6 +153,7 @@ object PubNubManager {
     private fun getLatestUserList() {
         jobs += CoroutineScope(Dispatchers.IO).launch {
             try {
+                throw Exception()
 
             pubnub.channelMembers.channel(liveRoomProperties?.channelName)
                 ?.includeCustom(true)
@@ -377,11 +378,12 @@ object PubNubManager {
     }
 
     fun sendCustomMessage(state: JsonElement, channel: String = liveRoomProperties!!.channelName) {
-        val eventId = System.currentTimeMillis()
+        val eventId = System.currentTimeMillis().toString()
         val eventData = state.asJsonObject
         eventData.addProperty("event_id", eventId)
         jobs += CoroutineScope(Dispatchers.IO).launch() {
             try {
+                throw Exception()
                 channel.let {
                     pubnub.publish()
                         .message(eventData)
@@ -396,9 +398,14 @@ object PubNubManager {
     }
 
     private fun sendEventToFallback(eventData: JsonObject?, channel: String) {
-        if (channel != liveRoomProperties!!.channelName){
-            FallbackManager.sendEvent(eventData, channel)
+//        if (channel != liveRoomProperties!!.channelName){
+        eventData?.let {
+            val d = JsonObject()
+            d.add("message", eventData)
+//            eventData.add("message", it)
+            FallbackManager.sendEvent(d, channel)
         }
+//        }
     }
 
     fun unSubscribePubNub() {
@@ -452,7 +459,8 @@ object PubNubManager {
     }
 
     fun removeUser(msg: JsonObject) {
-        val data: JsonObject? = msg["data"].asJsonObject
+//        val data: JsonObject? = msg["data"].asJsonObject
+        val data = if (msg.has("data")) msg["data"].asJsonObject else msg["message"].asJsonObject
         data?.let {
             Log.d("ABC2", "removeUser() called ${data.get("id")}")
             val matType = object : TypeToken<LiveRoomUser>() {}.type

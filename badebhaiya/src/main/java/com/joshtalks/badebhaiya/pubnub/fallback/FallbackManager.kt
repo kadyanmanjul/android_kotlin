@@ -71,11 +71,11 @@ object FallbackManager {
             .addSnapshotListener { value, error ->
                 Timber.tag(TAG).d("EVENT RECIEVED FROM PRIVATE CHANNEL")
 
-//                if (error == null) {
-//                    value?.let {
-//                        processEvent(it)
-//                    }
-//                }
+                if (error == null) {
+                    value?.let {
+                        processEvent(it)
+                    }
+                }
             }
     }
 
@@ -107,12 +107,20 @@ object FallbackManager {
                 ConversationRoomPubNubEventBus(
                     eventId = doc[EVENT_ID].toString().toLong(),
                     action = PubNubEvent.valueOf(doc["action"].toString()),
-                    data = JsonParser.parseString(Gson().toJson(documentSnapshot.data)).asJsonObject
+//                    data = JsonParser.parseString(Gson().toJson(documentSnapshot.data)).asJsonObject
+                    data = getData(documentSnapshot, doc)
                 )
             )
 
         }
 
+    }
+
+    private fun getData(documentSnapshot: DocumentSnapshot, dataMap: HashMap<*, *>): JsonObject{
+        return when (dataMap["action"]){
+            "JOIN_ROOM", "END_ROOM", "LEAVE_ROOM" -> JsonParser.parseString(Gson().toJson(documentSnapshot.data)).asJsonObject
+            else -> JsonParser.parseString(Gson().toJson(dataMap)).asJsonObject
+        }
     }
 
     private suspend fun checkIfEventExists(timestamp: Long): Boolean {
@@ -135,7 +143,7 @@ object FallbackManager {
         return PubNubData.eventsMap.containsKey(timestamp)
     }
 
-    fun sendEvent(eventData: JsonObject?, channel: String) {
+    fun sendEvent(eventData: JsonObject, channel: String) {
 
         Firebase.firestore
             .collection(LIVE_ROOM)
