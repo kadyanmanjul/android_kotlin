@@ -22,20 +22,26 @@ import com.joshtalks.badebhaiya.feed.FeedViewModel
 import kotlinx.android.synthetic.main.activity_feed.*
 import timber.log.Timber
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material.Card
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.lifecycleScope
 import coil.compose.AsyncImage
 import com.joshtalks.badebhaiya.feed.model.Waiting
@@ -95,7 +101,7 @@ class WaitingFragment : Fragment(), Call {
             setContent {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-//                    color = colorResource(id = R.color.base_app_color
+                    color = colorResource(id = R.color.base_app_color)
                 ) {
                     val list by viewModel.waitingRoomUsers.observeAsState()
 
@@ -121,35 +127,58 @@ class WaitingFragment : Fragment(), Call {
         list: List<Waiting>,
     ) {
         Timber.d("ELEMENT COMPOSABLE CREATED")
-            Column {
-                Image(painter = painterResource(R.drawable.ic_hallway_down_arrow), contentDescription = "downKey",
-                Modifier.size(45.dp)
-                    .padding(8.dp))
-                Text(text = "WAITING ROOM",
-                    Modifier
-                        .padding(8.dp,10.dp),
-                    fontWeight=FontWeight.Bold,
-                )
-                Box(modifier = Modifier
-                    .fillMaxSize(),
-                    Alignment.TopCenter
-                ) {
-                    LazyVerticalGrid(
-                        modifier = Modifier.align(Alignment.TopCenter),
-                        columns = GridCells.Fixed(4)
-                    ){
-                        Timber.d("INFLATE HONE KA TRY")
 
-                        items(list)
-                        { item ->
-                            Timber.d("INFLATE HUA")
-                            Element(item)
+            Column() {
+                Image(
+                    painter = painterResource(R.drawable.ic_hallway_down_arrow),
+                    contentDescription = "downKey",
+                    Modifier
+                        .size(55.dp)
+                        .padding(15.dp)
+                )
+                Box (
+                    Modifier
+                        .fillMaxSize()
+                        .background(Color.White),
+                        ) {
+                    Column(Modifier.padding(15.dp)) {
+
+                            Text(
+                                text = "WAITING ROOM",
+                                Modifier
+                                    .background(Color.White)
+                                    .fillMaxWidth()
+                                    .padding(10.dp)
+                                    .clip(RoundedCornerShape(20.dp)),
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 22.sp
+                            )
+
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize(),
+                            Alignment.TopCenter
+                        ) {
+                            LazyVerticalGrid(
+                                modifier = Modifier.align(Alignment.TopCenter),
+                                columns = GridCells.Fixed(4)
+                            ) {
+                                Timber.d("INFLATE HONE KA TRY")
+
+                                items(list)
+                                { item ->
+                                    Timber.d("INFLATE HUA")
+                                    Element(item)
 //                        Element()
 
+                                }
+                            }
                         }
+
                     }
                 }
             }
+
 
     }
 
@@ -157,44 +186,49 @@ class WaitingFragment : Fragment(), Call {
     fun Element(
         item: Waiting
     ){
-            Column(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(dimensionResource(id = R.dimen._16sdp)))
-                    .padding(5.dp)){
-                Timber.d("IMAGE LINK => ${item.profilePic}")
-                if (item.profilePic != null){
-                    AsyncImage(
-                        model = item.profilePic,
-                        modifier = Modifier
-                            .size(62.dp)
-                            .clip(RoundedCornerShape(dimensionResource(id = R.dimen._16sdp))),
-                        contentDescription = "BadeBhaiya Profile Picture",
-                        contentScale = ContentScale.Crop
-                    )
+
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier
+                        .background(Color.White)
+                        .fillMaxSize()
+                        .clip(RoundedCornerShape(dimensionResource(id = R.dimen._16sdp)))
+                        .padding(5.dp)){
+                    Timber.d("IMAGE LINK => ${item.profilePic}")
+                    if (item.profilePic != null){
+                        AsyncImage(
+                            model = item.profilePic,
+                            modifier = Modifier
+                                .size(62.dp)
+                                .clip(RoundedCornerShape(dimensionResource(id = R.dimen._16sdp))),
+                            contentDescription = "BadeBhaiya Profile Picture",
+                            contentScale = ContentScale.Crop
+                        )
+                    }
+
+                    else{
+                        Image(
+                            painter = painterResource(id = R.drawable.profile_dummy_dp),
+                            modifier = Modifier
+                                .size(62.dp)
+                                .clip(RoundedCornerShape(dimensionResource(id = R.dimen._16sdp))),
+                            contentDescription = "BadeBhaiya Profile Picture",
+                            contentScale = ContentScale.Crop
+                        )
+                    }
+
+                    NameText(text = item.short_name ?:"")
+
                 }
-
-                else{
-                    Image(
-                        painter = painterResource(id = R.drawable.profile_dummy_dp),
-                        modifier = Modifier
-                            .size(62.dp)
-                            .clip(RoundedCornerShape(dimensionResource(id = R.dimen._16sdp))),
-                        contentDescription = "BadeBhaiya Profile Picture",
-                        contentScale = ContentScale.Crop
-                    )
-                }
-
-                NameText(text = item.short_name ?:"")
-
-            }
 
     }
 
     @Composable
-    fun NameText( text: String) {
+    fun NameText(text: String) {
         Text(
             text = text,
             fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center
         )
     }
 

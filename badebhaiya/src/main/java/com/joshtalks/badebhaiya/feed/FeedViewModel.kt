@@ -196,7 +196,7 @@ class FeedViewModel : ViewModel() {
                             PubNubEventsManager.sendModeratorStatus(true, moderatorId.toString())
                         }
                         showToast("Room joined successfully")
-                        message.what = OPEN_ROOM
+                        message.what = OPEN_WAIT_ROOM
                         message.data = Bundle().apply {
                             putParcelable(
                                 ROOM_DETAILS,
