@@ -12,7 +12,8 @@ import com.joshtalks.joshskills.repository.server.chat_message.UpdateQuestionSta
 import com.joshtalks.joshskills.repository.server.course_overview.CourseOverviewBaseResponse
 import com.joshtalks.joshskills.repository.server.groupchat.GroupDetails
 import com.joshtalks.joshskills.repository.server.introduction.DemoOnboardingData
-import com.joshtalks.joshskills.ui.lesson.speaking.VideoPopupItem
+import com.joshtalks.joshskills.ui.lesson.speaking.spf_models.UserRating
+import com.joshtalks.joshskills.ui.lesson.speaking.spf_models.VideoPopupItem
 import kotlinx.coroutines.Deferred
 import retrofit2.Response
 import retrofit2.http.*
@@ -184,5 +185,13 @@ interface ChatNetworkService {
 
     @POST("$DIR/impression/track_a2c1_retention_impression/")
     suspend fun saveA2C1Impression(@Body requestData: HashMap<String, String>)
+
+    @Headers(
+        "Accept: application/json",
+        "Content-type:application/json",
+        "Cache-Control: public, only-if-cached,  max-stale=86400,  max-age=86400"
+    )
+    @GET("$DIR/p2p/rating/")
+    suspend fun getUserRating(): Response<UserRating>
 
 }

@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.lesson.speaking
+package com.joshtalks.joshskills.ui.lesson.speaking.spf_models
 
 import com.google.gson.annotations.SerializedName
 

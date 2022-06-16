@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.Message
 import android.util.Log
 import android.view.View
+import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
@@ -45,7 +46,8 @@ import com.joshtalks.joshskills.repository.server.engage.Graph
 import com.joshtalks.joshskills.repository.server.introduction.DemoOnboardingData
 import com.joshtalks.joshskills.repository.server.voip.SpeakingTopic
 import com.joshtalks.joshskills.repository.service.NetworkRequestHelper
-import com.joshtalks.joshskills.ui.lesson.speaking.VideoPopupItem
+import com.joshtalks.joshskills.ui.lesson.speaking.spf_models.UserRating
+import com.joshtalks.joshskills.ui.lesson.speaking.spf_models.VideoPopupItem
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.callbar.CallBar
 import com.joshtalks.joshskills.util.AudioRecording
 import com.joshtalks.joshskills.util.DeepLinkUtil
@@ -98,6 +100,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     val introVideoCompleteLiveData: MutableLiveData<Boolean> = MutableLiveData()
     val practicePartnerCallDurationLiveData: MutableLiveData<Long> = MutableLiveData()
     var isInternetSpeedGood = ObservableInt(0)
+    var userRating = ObservableField<UserRating>()
     val voipState by lazy {
         CallBar()
     }
@@ -114,6 +117,9 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
 
     val repository: ABTestRepository by lazy { ABTestRepository() }
 
+    init{
+        getRating()
+    }
 
     fun getWhatsappRemarketingCampaign(campaign: String) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -958,8 +964,19 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
         getButtonVisibility()
     }
 
-    fun getRating(): Int {
-        return 6
+    fun getRating()  {
+        viewModelScope.launch(Dispatchers.IO)
+        {
+            try {
+                val response = AppObjectController.chatNetworkService.getUserRating()
+                if (response.isSuccessful && response.body() != null) {
+                    userRating.set(response.body())
+                }
+            } catch (ex: Throwable) {
+                apiStatus.postValue(ApiCallStatus.FAILED)
+                Timber.e(ex)
+            }
+        }
     }
 
     fun inviteFriends(dynamicLink: String, path: String) {

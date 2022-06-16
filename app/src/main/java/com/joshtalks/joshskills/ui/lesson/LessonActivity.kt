@@ -6,11 +6,14 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.Outline
+import android.graphics.PorterDuff
 import android.graphics.Rect
 import android.net.Uri
+import android.opengl.Visibility
 import android.os.Bundle
 import android.os.Handler
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewOutlineProvider
@@ -68,6 +71,7 @@ import com.joshtalks.joshskills.ui.lesson.lesson_completed.LessonCompletedActivi
 import com.joshtalks.joshskills.ui.lesson.reading.ReadingFragmentWithoutFeedback
 import com.joshtalks.joshskills.ui.lesson.room.ConversationRoomListingPubNubFragment
 import com.joshtalks.joshskills.ui.lesson.speaking.SpeakingPractiseFragment
+import com.joshtalks.joshskills.ui.lesson.speaking.spf_models.UserRating
 import com.joshtalks.joshskills.ui.lesson.vocabulary.VocabularyFragment
 import com.joshtalks.joshskills.ui.online_test.GrammarAnimation
 import com.joshtalks.joshskills.ui.online_test.GrammarOnlineTestFragment
@@ -1586,19 +1590,15 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
 }
 
 @BindingAdapter("setRatingText")
-fun TextView.ratingText(rating:Int){
-    if(rating<=3){
-        this.backgroundTintList = AppCompatResources.getColorStateList(context, R.color.low_rating)
-        this.setTextColor(Color.parseColor("#E51010"))
-        this.text = "Your Rating: $rating"
-    }else if(rating in 4..7){
-        this.backgroundTintList = AppCompatResources.getColorStateList(context, R.color.meduim_rating)
-        this.setTextColor(Color.parseColor("#107BE5"))
-        this.text = "Your Rating: $rating"
-    }else{
-        this.backgroundTintList = AppCompatResources.getColorStateList(context, R.color.high_rating)
-        this.setTextColor(Color.parseColor("#d4d446"))
-        this.text = "Your Rating: $rating"
+fun TextView.ratingText(rating:UserRating?){
+    Log.d(TAG, "ratingText: $rating")
+    if(rating!=null) {
+        if (rating.rating.toInt() == -1) {
+            this.visibility = View.GONE
+        } else {
+            this.background.setColorFilter(Color.parseColor(rating.bgColor), PorterDuff.Mode.SRC_ATOP)
+            this.setTextColor(Color.parseColor(rating.color))
+            this.text = "Your Rating: ${rating.rating.toString()}"
+        }
     }
-
 }
