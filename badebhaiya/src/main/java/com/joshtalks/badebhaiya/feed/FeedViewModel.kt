@@ -63,6 +63,7 @@ class FeedViewModel : ViewModel() {
     var modStat=Message()
     var isModerator=false
     val waitingRoomUsers = MutableLiveData<List<Waiting>>(emptyList())
+    var speakerName = ""
     init {
         collectPubNubState()
 

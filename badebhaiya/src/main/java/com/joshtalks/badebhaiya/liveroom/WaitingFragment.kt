@@ -9,6 +9,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.IdRes
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -24,14 +28,14 @@ import com.joshtalks.badebhaiya.feed.FeedViewModel
 import kotlinx.android.synthetic.main.activity_feed.*
 import timber.log.Timber
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.Indication
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.material.Card
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -41,11 +45,16 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.lifecycleScope
 import coil.compose.AsyncImage
+import com.afollestad.materialdialogs.internal.button.DialogActionButton
+import com.joshtalks.badebhaiya.composeTheme.JoshBadeBhaiyaTheme
 import com.joshtalks.badebhaiya.composeTheme.NunitoSansFont
 import com.joshtalks.badebhaiya.feed.model.Waiting
 import kotlinx.coroutines.*
@@ -67,7 +76,7 @@ class WaitingFragment : Fragment(), Call {
         ViewModelProvider(requireActivity()).get(FeedViewModel::class.java)
     }
 
-    lateinit var users:MutableList<Waiting>
+    lateinit var users: MutableList<Waiting>
 
     @OptIn(InternalCoroutinesApi::class)
     override fun onCreateView(
@@ -78,41 +87,45 @@ class WaitingFragment : Fragment(), Call {
 
         viewModel.getWaitingList()
         try {
-            (activity as FeedActivity).swipeRefreshLayout.isEnabled=false
-        } catch (e: Exception){
+            (activity as FeedActivity).swipeRefreshLayout.isEnabled = false
+        } catch (e: Exception) {
         }
-        activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                activity?.run {
-                    if (this is FeedActivity){
-                        Timber.d("back from profile and is feed activity")
+        activity?.onBackPressedDispatcher?.addCallback(
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    activity?.run {
+                        if (this is FeedActivity) {
+                            Timber.d("back from profile and is feed activity")
 
-                        try {
-                            (activity as FeedActivity).swipeRefreshLayout.isEnabled=true
-                        } catch (e: Exception){
+                            try {
+                                (activity as FeedActivity).swipeRefreshLayout.isEnabled = true
+                            } catch (e: Exception) {
 
+                            }
+                            supportFragmentManager.beginTransaction().remove(this@WaitingFragment)
+                                .commitAllowingStateLoss()
+                        } else {
+                            supportFragmentManager.popBackStack()
                         }
-                        supportFragmentManager.beginTransaction().remove(this@WaitingFragment)
-                            .commitAllowingStateLoss()
-                    } else  {
-                        supportFragmentManager.popBackStack()
                     }
                 }
-            }
-        })
+            })
 
         return ComposeView(requireContext()).apply {
             setContent {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = colorResource(id = R.color.base_app_color)
-                ) {
-                    val list by viewModel.waitingRoomUsers.observeAsState()
+                JoshBadeBhaiyaTheme {
+                    Surface(
+                        modifier = Modifier.fillMaxSize(),
+                        color = colorResource(id = R.color.base_app_color)
+                    ) {
+                        val list by viewModel.waitingRoomUsers.observeAsState()
 
-                    list?.let {
-                        ElementList(it)
+                        list?.let {
+                            ElementList(it)
+                        }
+
                     }
-
                 }
 
             }
@@ -132,6 +145,7 @@ class WaitingFragment : Fragment(), Call {
     ) {
         Timber.d("ELEMENT COMPOSABLE CREATED")
 
+        Box {
             Column() {
                 Image(
                     painter = painterResource(R.drawable.ic_hallway_down_arrow),
@@ -140,12 +154,34 @@ class WaitingFragment : Fragment(), Call {
                         .size(55.dp)
                         .padding(15.dp)
                 )
-                Box (
+                Box(
                     Modifier
                         .fillMaxSize()
+                        .background(Color.White),
+                ) {
+                    Column(Modifier.padding(15.dp)
                         ) {
-                    Column(Modifier.clip(RoundedCornerShape(dimensionResource(id = R.dimen._30sdp),dimensionResource(id = R.dimen._30sdp),0.dp,0.dp))) {
+                        Column(
+                            Modifier.clip(
+                                RoundedCornerShape(
+                                    dimensionResource(id = R.dimen._30sdp),
+                                    dimensionResource(id = R.dimen._30sdp),
+                                    0.dp,
+                                    0.dp
+                                )
+                            )
+                        ) {
 
+                            Text(
+                                text = "WAITING ROOM",
+                                Modifier
+                                    .background(Color.White)
+                                    .fillMaxWidth()
+                                    .padding(10.dp)
+                                    .clip(RoundedCornerShape(20.dp)),
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 22.sp
+                            )
                             Text(
                                 text = "WAITING ROOM",
                                 Modifier
@@ -153,45 +189,142 @@ class WaitingFragment : Fragment(), Call {
                                     .fillMaxWidth()
                                     .padding(20.dp),
                                 fontWeight = FontWeight.Bold,
-                                fontFamily =  NunitoSansFont,
+                                fontFamily = NunitoSansFont,
                                 fontSize = 22.sp
                             )
 
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(Color.White)
-                                .padding(15.dp),
-                            Alignment.TopCenter
-                        ) {
-                            LazyVerticalGrid(
+                            Box(
                                 modifier = Modifier
-                                    .align(Alignment.TopCenter)
-                                    .fillMaxSize(),
-                                columns = GridCells.Fixed(4)
+                                    .fillMaxSize()
+                                    .background(Color.White)
+                                    .padding(15.dp),
+                                Alignment.TopCenter
                             ) {
-                                Timber.d("INFLATE HONE KA TRY")
+                                LazyVerticalGrid(
+                                    modifier = Modifier
+                                        .align(Alignment.TopCenter)
+                                        .fillMaxSize(),
+                                    columns = GridCells.Fixed(4)
+                                ) {
+                                    Timber.d("INFLATE HONE KA TRY")
 
-                                items(list)
-                                { item ->
-                                    Timber.d("INFLATE HUA")
-                                    Element(item)
+                                    items(list)
+                                    { item ->
+                                        Timber.d("INFLATE HUA")
+                                        Element(item)
 
+                                    }
                                 }
                             }
                         }
-
                     }
                 }
             }
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(colorResource(id = R.color.transparent_white))
+                    .padding(horizontal = 20.dp)
+                    .clickable(enabled = false) {
 
+                    }
+            ) {
+                Box(
+                    modifier = Modifier
+                        .align(
+                            alignment = Alignment.Center
+                        )
+                ) {
+                    WaitingRoomDialog()
+                }
+            }
+        }
 
     }
 
- @Composable
+    private fun exit(){
+        requireActivity().onBackPressed()
+    }
+
+    @Preview
+    @Composable
+    fun WaitingRoomDialog(
+        modifier: Modifier = Modifier
+    ) {
+        var buttonVisibility by remember { mutableStateOf(true) }
+        Column(
+            modifier = modifier
+                .clip(RoundedCornerShape(dimensionResource(id = R.dimen._16sdp)))
+                .background(color = colorResource(id = R.color.white))
+                .padding(dimensionResource(id = R.dimen._20sdp))
+        ) {
+            Text(
+                text = stringResource(id = R.string.waiting_room_dialog_title, viewModel.speakerName),
+                fontSize = 16.sp
+            )
+
+            AnimatedVisibility(
+                visible = buttonVisibility,
+                exit = fadeOut(
+                    animationSpec = tween(700)
+                ) + shrinkVertically(
+                    animationSpec = tween(700)
+                )
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    DialogActionButton(
+                        modifier = Modifier
+                            .padding(
+                                top = dimensionResource(id = R.dimen._20sdp),
+                            ),
+                        text = stringResource(id = R.string.sure_ill_wait)
+                    ) {
+                        buttonVisibility = false
+                    }
+                    DialogActionButton(
+                        modifier = Modifier
+                            .padding(
+                                top = dimensionResource(
+                                    id = R.dimen._20sdp
+                                ),
+                                start = dimensionResource(
+                                    id = R.dimen._20sdp
+                                )
+                            ),
+                        text = stringResource(id = R.string.exit_room)
+                    ) {
+                        exit()
+                    }
+
+                }
+            }
+        }
+    }
+
+    @Composable
+    fun DialogActionButton(
+        modifier: Modifier = Modifier,
+        text: String,
+        onClick: () -> Unit
+    ) {
+        Text(
+            text = text,
+            modifier = modifier.clickable {
+                onClick()
+            },
+            color = colorResource(id = R.color.blue_text_color),
+            fontSize = 14.sp
+        )
+    }
+
+    @Composable
     fun Element(
         item: Waiting
-    ){
+    ) {
 
              Column(
                  verticalArrangement = Arrangement.Center,
@@ -230,7 +363,6 @@ class WaitingFragment : Fragment(), Call {
     fun NameText(text: String) {
         Text(
             text = text,
-           fontFamily =  NunitoSansFont,
             fontWeight = FontWeight.SemiBold,
             textAlign = TextAlign.Center,
         )
@@ -252,7 +384,7 @@ class WaitingFragment : Fragment(), Call {
               }
         }
 
-        viewModel.waitingRoomUsers.observe(viewLifecycleOwner){
+        viewModel.waitingRoomUsers.observe(viewLifecycleOwner) {
             Timber.d("WAITING LIST => $it")
         }
     }
@@ -276,16 +408,16 @@ class WaitingFragment : Fragment(), Call {
                 }
             }
 
-            const val TAG = "WaitingFragment"
+        const val TAG = "WaitingFragment"
 
-            fun open(supportFragmentManager: FragmentManager, @IdRes containerId: Int){
+        fun open(supportFragmentManager: FragmentManager, @IdRes containerId: Int) {
 
-                supportFragmentManager
-                    .beginTransaction()
-                    .add(containerId, WaitingFragment())
-                    .addToBackStack(TAG)
-                    .commit()
-            }
+            supportFragmentManager
+                .beginTransaction()
+                .add(containerId, WaitingFragment())
+                .addToBackStack(TAG)
+                .commit()
+        }
     }
 
     override fun itemClick(userId: String) {

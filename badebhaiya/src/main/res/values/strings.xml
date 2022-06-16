@@ -114,5 +114,8 @@
     <string name="reminder_notification_body_for_listener">Call par judkar unse apne sawaal puchen</string>
     <string name="speakers_call_starts_in">%1$s’s call starts in %2$s mins</string>
     <string name="title_activity_waiting_room">WaitingRoom</string>
+    <string name="waiting_room_dialog_title">कॉल पर जुड़ने के लिए आपका धन्यवाद, कृपया थोड़ी प्रतीक्षा करें. जोश Speaker %1$s बहुत जल्द हमारे साथ जुड़ेंगे</string>
+    <string name="sure_ill_wait">SURE, I LL WAIT</string>
+    <string name="exit_room">EXIT ROOM</string>
 
 </resources>
