@@ -16,12 +16,9 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import com.facebook.appevents.codeless.internal.ViewHierarchy.setOnClickListener
 import com.google.android.gms.auth.api.credentials.Credential
 import com.google.android.gms.auth.api.credentials.CredentialPickerConfig
 import com.google.android.gms.auth.api.credentials.Credentials
@@ -33,7 +30,6 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.POSTAL_ADDRESS
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.POSTAL_ADDRESS_SUBHEADING_CERT_FORM
-import com.joshtalks.joshskills.base.BaseFragment
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.DATE_FORMATTER
