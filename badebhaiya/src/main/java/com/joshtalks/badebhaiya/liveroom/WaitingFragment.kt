@@ -8,28 +8,22 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
-import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.animation.*
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.badebhaiya.R
-import com.joshtalks.badebhaiya.feed.Call
 import com.joshtalks.badebhaiya.feed.FeedActivity
 import com.joshtalks.badebhaiya.feed.FeedViewModel
 import kotlinx.android.synthetic.main.activity_feed.*
 import timber.log.Timber
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.Indication
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -47,14 +41,12 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.lifecycleScope
 import coil.compose.AsyncImage
-import com.afollestad.materialdialogs.internal.button.DialogActionButton
 import com.joshtalks.badebhaiya.composeTheme.JoshBadeBhaiyaTheme
 import com.joshtalks.badebhaiya.composeTheme.NunitoSansFont
 import com.joshtalks.badebhaiya.feed.model.Waiting
@@ -68,6 +60,7 @@ class WaitingFragment : Fragment() {
     }
 
     lateinit var users: MutableList<Waiting>
+    var isBackPossible=true
 
     @OptIn(InternalCoroutinesApi::class)
     override fun onCreateView(
@@ -82,54 +75,48 @@ class WaitingFragment : Fragment() {
         } catch (e: Exception) {
         }
         addObserver()
-        activity?.onBackPressedDispatcher?.addCallback(
-            viewLifecycleOwner,
-            object : OnBackPressedCallback(true) {
-                override fun handleOnBackPressed() {
-                    activity?.run {
-                        if (this is FeedActivity) {
-                            Timber.d("back from profile and is feed activity")
+            activity?.onBackPressedDispatcher?.addCallback(
+                viewLifecycleOwner,
+                object : OnBackPressedCallback(true) {
+                    override fun handleOnBackPressed() {
+                        if(isBackPossible){
+                            activity?.run {
+                                if (this is FeedActivity) {
+                                    Timber.d("back from profile and is feed activity")
 
-                            try {
-                                (activity as FeedActivity).swipeRefreshLayout.isEnabled = true
-                            } catch (e: Exception) {
+                                    try {
+                                        (activity as FeedActivity).swipeRefreshLayout.isEnabled = true
+                                    } catch (e: Exception) {
 
+                                    }
+                                    supportFragmentManager.beginTransaction()
+                                        .remove(this@WaitingFragment)
+                                        .commitAllowingStateLoss()
+                                } else {
+                                    supportFragmentManager.popBackStack()
+                                }
                             }
-                            supportFragmentManager.beginTransaction().remove(this@WaitingFragment)
-                                .commitAllowingStateLoss()
-                        } else {
-                            supportFragmentManager.popBackStack()
+                        }
+                    }
+                })
+
+        //        return inflater.inflate(R.layout.fragment_waiting, container,false)
+        return ComposeView(requireContext()).apply {
+            setContent {
+                JoshBadeBhaiyaTheme {
+                    Surface(
+                        modifier = Modifier.fillMaxSize(),
+                        color = colorResource(id = R.color.base_app_color)
+                    ) {
+                        val list by viewModel.waitingRoomUsers.observeAsState()
+                        list?.let {
+                            ElementList(it)
                         }
                     }
                 }
-            })
-        return inflater.inflate(R.layout.fragment_waiting, container,false)
-//        return ComposeView(requireContext()).apply {
-//            setContent {
-//                JoshBadeBhaiyaTheme {
-//                    Surface(
-//                        modifier = Modifier.fillMaxSize(),
-//                        color = colorResource(id = R.color.base_app_color)
-//                    ) {
-//                        val list by viewModel.waitingRoomUsers.observeAsState()
-//
-//                        list?.let {
-//                            ElementList(it)
-//                        }
-//
-//                    }
-//                }
-//
-//            }
-//        }
+            }
+        }
     }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-//        addObserver()
-
-    }
-
 
     @Composable
     fun ElementList(
@@ -264,6 +251,7 @@ class WaitingFragment : Fragment() {
                             ),
                         text = stringResource(id = R.string.sure_ill_wait)
                     ) {
+                        isBackPossible=false
                         buttonVisibility = false
                     }
                     DialogActionButton(
@@ -356,7 +344,7 @@ class WaitingFragment : Fragment() {
             Timber.d("LIST SIZE HAI => ${it.size}")
               lifecycleScope.launch {
                   it.forEach{ element ->
-                      delay(1000)
+                      delay(1300)
                       Timber.d("ITEM ADDED")
                       val lis = viewModel.waitingRoomUsers.value!!.toMutableList()
                       lis.add(element)

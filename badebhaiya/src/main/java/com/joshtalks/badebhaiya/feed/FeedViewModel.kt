@@ -163,7 +163,14 @@ class FeedViewModel : ViewModel() {
 
     fun joinRoom(roomId: String, topic: String = "sahil", source: String, moderatorId: String?) {
         Timber.d("JOIN ROOM PARAMS => room: $roomId and Topic => $topic")
+        pubChannelName = moderatorId
         if (pubNubState == PubNubState.STARTED){
+            if(roomId==PubNubManager.getLiveRoomProperties().roomId.toString()) {
+//                showToast("Room Already Active")
+                message.what = ROOM_EXPAND
+                singleLiveEvent.value = message
+            }
+            else
             showToast("Please Leave Current Room")
             return
         }
@@ -180,7 +187,6 @@ class FeedViewModel : ViewModel() {
                 )
                 roomtopic=topic
                 if (response.isSuccessful) {
-
                         if (moderatorId == User.getInstance().userId) {
                             isModerator=true
                             PubNubEventsManager.sendModeratorStatus(true, moderatorId.toString())
@@ -204,21 +210,8 @@ class FeedViewModel : ViewModel() {
                 else
                 {
                     if(response.code()==406){
-//                        respBody = response.body()!!
-                        pubChannelName = moderatorId
-//                        Log.i("MODERATORSTATUS", "joinRoom:error ${response.body()}")
+
                         message.what = OPEN_WAIT_ROOM
-//                        message.data = Bundle().apply {
-//                            putParcelable(
-//                                ROOM_DETAILS,
-//                                response.body()
-//                            )
-//                            putString(
-//                                TOPIC,
-//                                topic
-//                            )
-//                        }
-//                        Log.i("MODERATORSTATUS", "postvalue: ${response.body()} ")
                         singleLiveEvent.value = message
                     }
 
