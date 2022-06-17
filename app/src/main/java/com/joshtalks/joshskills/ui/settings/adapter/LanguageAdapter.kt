@@ -8,10 +8,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.constants.SHOW_PROGRESS_BAR
-import com.joshtalks.joshskills.core.IS_HINDI_SELECTED
-import com.joshtalks.joshskills.core.IS_HINGLISH_SELECTED
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.USER_LOCALE
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
@@ -60,32 +57,34 @@ class LanguageAdapter(
                 binding.tickIv.visibility = View.GONE
 
             binding.root.setOnClickListener {
-                selectedItem = item.code
-                onItemClick(item)
+                if(selectedItem != item.code) {
+                    selectedItem = item.code
+                    onItemClick(item)
 
-                val message = Message()
-                message.what = SHOW_PROGRESS_BAR
-                EventLiveData.value = message
+                    val message = Message()
+                    message.what = SHOW_PROGRESS_BAR
+                    EventLiveData.value = message
 
-                when (item.name) {
-                    "Hinglish" -> {
-                        PrefManager.put(IS_HINGLISH_SELECTED,true)
-                        MixPanelTracker.publishEvent(MixPanelEvent.HINGLISH).push()
+                    when (item.name) {
+                        "Hinglish" -> {
+                            PrefManager.put(IS_HINGLISH_SELECTED, true)
+                            MixPanelTracker.publishEvent(MixPanelEvent.HINGLISH).push()
+                        }
+                        "Hindi" -> {
+                            PrefManager.put(IS_HINDI_SELECTED, true)
+                            MixPanelTracker.publishEvent(MixPanelEvent.HINDI).push()
+                        }
+                        else -> {
+                            PrefManager.put(IS_HINDI_SELECTED, false)
+                            PrefManager.put(IS_HINGLISH_SELECTED, false)
+                        }
                     }
-                    "Hindi" -> {
-                        PrefManager.put(IS_HINDI_SELECTED,true)
-                        MixPanelTracker.publishEvent(MixPanelEvent.HINDI).push()
-                    }
-                    else -> {
-                        PrefManager.put(IS_HINDI_SELECTED,false)
-                        PrefManager.put(IS_HINGLISH_SELECTED,false)
-                    }
+                    AppAnalytics.create(AnalyticsEvent.SELECT_LANGUAGE_CHANGED.name)
+                        .addBasicParam()
+                        .addUserDetails()
+                        .addParam("selected_value", selectedItem)
+                        .push()
                 }
-                AppAnalytics.create(AnalyticsEvent.SELECT_LANGUAGE_CHANGED.name)
-                    .addBasicParam()
-                    .addUserDetails()
-                    .addParam("selected_value", selectedItem)
-                    .push()
             }
         }
     }
