@@ -228,6 +228,7 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                     Utils.showToast(toastText)
                 }
                 val len = recordFile.length()
+                Log.d(TAG, "stopRecording called $recordFile len $len")
                 if (len < 1) {
                     return@launch
                 }

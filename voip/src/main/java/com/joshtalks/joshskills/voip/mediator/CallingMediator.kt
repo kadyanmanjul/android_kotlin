@@ -304,6 +304,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
     }
 
     override fun startAgoraCallRecording() {
+        Log.d(TAG, "startAgoraCallRecording() called")
         startRecording()
     }
 
@@ -670,6 +671,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
     }
 
     fun startRecording() {
+        Log.d(TAG, "startRecording called")
         webrtcService.onStartRecording()
     }
 

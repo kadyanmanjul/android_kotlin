@@ -158,8 +158,12 @@ internal class AgoraWebrtcService(val scope: CoroutineScope) : WebrtcService {
     }
 
     override fun onStartRecording() {
+        if (recordFile!=null){
+            return
+        }
         Utils.context?.getTempFileForCallRecording()?.let { file->
             recordFile = file
+            Log.d(TAG, "onStartRecording called with: file = $file")
             agoraEngine?.startAudioRecording(AudioRecordingConfiguration(file.absolutePath,3,0,48000))
         }
     }
