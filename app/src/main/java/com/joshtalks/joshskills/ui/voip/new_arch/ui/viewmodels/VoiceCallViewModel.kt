@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels
 
 import android.app.Activity
 import android.app.Application
+import android.os.CountDownTimer
 import android.os.Message
 import android.util.Log
 import android.view.View
@@ -41,14 +42,11 @@ import com.joshtalks.joshskills.voip.getVideoUrl
 import com.joshtalks.joshskills.voip.recordinganalytics.CallRecordingAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
+import kotlinx.coroutines.*
 import java.io.File
 import java.util.ArrayDeque
-import kotlinx.coroutines.CoroutineStart
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import kotlinx.coroutines.withContext
 
 const val CONNECTING = 1
 const val ONGOING = 2
@@ -74,6 +72,8 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
     var visibleCrdView = false
     var isListening = false
     var isRequestDialogShowed = false
+    var isRecordingTimerStar = false
+    var timer: CountDownTimer? = null
 
     private val connectCallJob by lazy {
         viewModelScope.launch(start = CoroutineStart.LAZY) {
@@ -201,12 +201,12 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                         }
                     }
                     ServiceEvents.PROCESS_AGORA_CALL_RECORDING -> {
-                        Log.d(TAG, "listenVoipEvents() called")
-                        File(PrefManager.getLastRecordingPath())?.let { file ->
-                            Log.e("sagar", "listenVoipEvents: $file" )
-                            stopRecording(file)
-                        }
-                }
+//                        Log.d(TAG, "listenVoipEvents() called")
+//                        File(PrefManager.getLastRecordingPath())?.let { file ->
+//                            Log.e("sagar", "listenVoipEvents: $file" )
+//                            stopRecording(file)
+//                        }
+                    }
                 }
             }
         }
@@ -228,9 +228,6 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                     Utils.showToast(toastText)
                 }
                 val len = recordFile.length()
-                withContext(Dispatchers.Main) {
-                    Utils.showToast(len.toString())
-                }
                 if (len < 1) {
                     return@launch
                 }
@@ -289,6 +286,10 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                 uiState.recordingButtonState = state.recordingButtonState
                 if (uiState.recordTime != state.recordingStartTime)
                     uiState.recordTime = state.recordingStartTime
+                withContext(Dispatchers.Main) {
+                    timer = getTime(state.recordingButtonState)
+                    timer?.start()
+                }
                 uiState.name = state.remoteUserName
                 uiState.profileImage = state.remoteUserImage ?: ""
                 uiState.topic = state.topicName
@@ -343,6 +344,30 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                 }
             }
         }
+    }
+
+    fun getTime(recordingButtonState: RecordingButtonState): CountDownTimer? {
+        try {
+            timer = object : CountDownTimer(60000, 1000) {
+                override fun onTick(millisUntilFinished: Long) {}
+
+                override fun onFinish() {
+                    if (recordingButtonState == RecordingButtonState.RECORDING) {
+                        if (!isRecordingTimerStar) {
+                            isRecordingTimerStar = true
+                            File(PrefManager.getLastRecordingPath()).let { file ->
+                                stopAudioVideoRecording()
+                                stoppedRecUIchanges()
+                                stopRecording(file)
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (ex: Exception) {
+            Log.e("sagar", "onFinish: Call2${ex.message}")
+        }
+        return timer
     }
 
     private fun getOccupationText(aspiration: String, occupation: String): String {

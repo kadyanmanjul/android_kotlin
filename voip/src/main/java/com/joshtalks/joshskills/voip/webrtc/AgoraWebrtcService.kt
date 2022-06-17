@@ -152,20 +152,19 @@ internal class AgoraWebrtcService(val scope: CoroutineScope) : WebrtcService {
     }
 
     override fun onStartRecording() {
-        Log.e("sagar", "onStartRecording: started recording")
+        if (recordFile!=null){
+            return
+        }
         Utils.context?.getTempFileForCallRecording()?.let { file->
             recordFile = file
-            Log.e("sagar", "onStartRecording: started recording$file")
             agoraEngine?.startAudioRecording(AudioRecordingConfiguration(file.absolutePath,3,0,48000))
         }
     }
 
     override fun onStopRecording() {
-        Log.e("sagar", "onStopRecording: stopped recording${recordFile?.length()}")
             recordFile?.absolutePath?.let {
                 agoraEngine?.stopAudioRecording()
                 PrefManager.saveLastRecordingPath(recordFile!!.absolutePath)
-                Log.e("sagar", "onStartRecording: started recording$recordFile")
                 scope.launch {
                     try {
                         eventFlow.emit(CallState.RecordingGenerated)
@@ -178,7 +177,6 @@ internal class AgoraWebrtcService(val scope: CoroutineScope) : WebrtcService {
     }
 
     private fun joinChannel(request: CallRequest): Int? {
-        Log.d(TAG, "joinChannel: $request")
         agoraEngine?.apply {
             val audio = Utils.context?.getSystemService(AUDIO_SERVICE) as AudioManager
             val maxVolume = audio.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL)
