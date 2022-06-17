@@ -100,9 +100,10 @@ object DeepLinkRedirectUtil {
         else
             PrefManager.getStringValue(CURRENT_COURSE_ID).toInt()
 
-    private suspend fun getConversationIdFromCourseId(jsonParams: JSONObject): String =
+    private suspend fun getConversationIdFromCourseId(jsonParams: JSONObject): String? =
         AppObjectController.appDatabase.courseDao()
             .getConversationIdFromCourseId(getCourseId(jsonParams).toString())
+
 
     @Throws(Exception::class)
     fun getCourseDetailsActivityIntent(
@@ -176,16 +177,15 @@ object DeepLinkRedirectUtil {
 
     @Throws(Exception::class)
     private suspend fun getFPPActivityIntent(activity: Activity, jsonParams: JSONObject) =
-        Intent(activity, FavoriteListActivity::class.java).apply {
-            putExtra(
-                CONVERSATION_ID,
-                getConversationIdFromCourseId(jsonParams)
-            )
-            sendPendingIntentForActivityList(
-                activity,
-                arrayOf(getConversationActivityIntent(activity, jsonParams), this)
-            )
-        }
+        getConversationIdFromCourseId(jsonParams)?.let {
+            Intent(activity, FavoriteListActivity::class.java).apply {
+                putExtra(CONVERSATION_ID, it)
+                sendPendingIntentForActivityList(
+                    activity,
+                    arrayOf(getConversationActivityIntent(activity, jsonParams), this)
+                )
+            }
+        } ?: getConversationActivityIntent(activity, jsonParams)
 
     @Throws(Exception::class)
     private suspend fun getLessonActivityIntent(
@@ -205,7 +205,7 @@ object DeepLinkRedirectUtil {
             .getLesson(lessonId)
         val conversationId =
             getConversationIdFromCourseId(jsonParams)
-        return if (lesson != null) {
+        return if (lesson != null && conversationId != null) {
             LessonActivity.getActivityIntent(
                 activity,
                 lessonId = lesson.id,
@@ -226,21 +226,20 @@ object DeepLinkRedirectUtil {
 
     @Throws(Exception::class)
     private suspend fun getGroupActivityIntent(activity: Activity, jsonParams: JSONObject) =
-        Intent(activity, JoshGroupActivity::class.java).apply {
-            putExtra(
-                CONVERSATION_ID,
-                getConversationIdFromCourseId(jsonParams)
-            )
-            sendPendingIntentForActivityList(
-                activity,
-                arrayOf(getConversationActivityIntent(activity, jsonParams), this)
-            )
-        }
+        getConversationIdFromCourseId(jsonParams)?.let {
+            Intent(activity, JoshGroupActivity::class.java).apply {
+                putExtra(CONVERSATION_ID, it)
+                sendPendingIntentForActivityList(
+                    activity,
+                    arrayOf(getConversationActivityIntent(activity, jsonParams), this)
+                )
+            }
+        } ?: getConversationActivityIntent(activity, jsonParams)
 
     @Throws(Exception::class)
-    private suspend fun getConversationActivityIntent(activity: Activity, jsonParams: JSONObject) =
+    private suspend fun getConversationActivityIntent(activity: Activity, jsonParams: JSONObject): Intent =
         AppObjectController.appDatabase.courseDao()
-            .getCourseAccordingId(jsonParams.getString(DeepLinkData.COURSE_ID.key))?.let {
+            .getCourseFromId(jsonParams.getString(DeepLinkData.COURSE_ID.key))?.let {
                 ConversationActivity.getConversationActivityIntent(activity, it).apply {
                     sendPendingIntentForActivityList(
                         activity,

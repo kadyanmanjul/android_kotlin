@@ -100,13 +100,13 @@ interface CourseDao {
 
     @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
     @Query(value = "select * from course where courseId= :courseId AND is_deleted=0  LIMIT 1")
-    suspend fun getCourseAccordingId(courseId: String): InboxEntity?
+    suspend fun getCourseFromId(courseId: String): InboxEntity?
 
     @Query(value = "select courseId from course where conversation_id= :conversationId AND is_deleted=0  LIMIT 1")
     fun getCourseIdFromConversationId(conversationId: String): String
 
     @Query(value = "select conversation_id from course where courseId= :courseId AND is_deleted=0  LIMIT 1")
-    suspend fun getConversationIdFromCourseId(courseId: String): String
+    suspend fun getConversationIdFromCourseId(courseId: String): String?
 
     @Query("select courseId,conversation_id  from course  WHERE conversation_id IN (:ids)")
     suspend fun getCourseIdsFromConversationId(ids: List<String>): List<CourseIdFilerModel>

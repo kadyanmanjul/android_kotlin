@@ -617,7 +617,7 @@ abstract class BaseActivity :
                 when {
                     this == getString(R.string.conversation_open_dlink) -> {
                         val courseId = inAppMessage.data?.getOrElse("data", { EMPTY }) ?: EMPTY
-                        AppObjectController.appDatabase.courseDao().getCourseAccordingId(courseId)
+                        AppObjectController.appDatabase.courseDao().getCourseFromId(courseId)
                             ?.let {
                                 ConversationActivity.startConversionActivity(this@BaseActivity, it)
                             }
