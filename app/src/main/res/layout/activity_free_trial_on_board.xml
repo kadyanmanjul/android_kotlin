@@ -58,7 +58,8 @@
             android:textColor="@color/black"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/logo" />
+            app:layout_constraintTop_toBottomOf="@+id/logo"
+            tools:text="Spoken English Course"/>
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cardViewHighlights"
@@ -89,7 +90,8 @@
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
                     android:textColor="@color/black"
                     app:drawableStartCompat="@drawable/ic_check_box"
-                    app:drawableTint="@color/right_answer_color" />
+                    app:drawableTint="@color/right_answer_color"
+                    tools:text="90 Day Course"/>
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/course_info_2"
@@ -103,7 +105,8 @@
                     android:text="@{onboardingData.courseInfo2}"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
                     android:textColor="@color/black"
-                    app:drawableTint="@color/right_answer_color" />
+                    app:drawableTint="@color/right_answer_color"
+                    tools:text="Beginner to Advanced"/>
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/course_info_3"
@@ -117,7 +120,8 @@
                     android:text="@{onboardingData.courseInfo3}"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
                     android:textColor="@color/black"
-                    app:drawableTint="@color/right_answer_color" />
+                    app:drawableTint="@color/right_answer_color"
+                    tools:text="English Speaking का माहौल"/>
 
             </androidx.appcompat.widget.LinearLayoutCompat>
 

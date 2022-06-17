@@ -10,6 +10,7 @@ import com.joshtalks.joshskills.base.constants.STARTING_POINT
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
 import com.joshtalks.joshskills.repository.local.model.User
+import com.joshtalks.joshskills.repository.server.onboarding.SpecificOnboardingCourseData
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
@@ -78,12 +79,20 @@ object DeepLinkRedirectUtil {
         }
     }
 
-    fun getIntentForCourseOnboarding(activity: Activity, jsonParams: JSONObject) =
-        FreeTrialOnBoardActivity.getIntent(
-            activity,
-            courseId = jsonParams.getString(DeepLinkData.COURSE_ID.key),
-            planId = jsonParams.getString(DeepLinkData.PLAN_ID.key)
-        )
+    fun getIntentForCourseOnboarding(activity: Activity, jsonParams: JSONObject? = null): Intent {
+        if (jsonParams != null) {
+            PrefManager.put(
+                SPECIFIC_ONBOARDING,
+                AppObjectController.gsonMapper.toJson(
+                    SpecificOnboardingCourseData(
+                        jsonParams.getString(DeepLinkData.COURSE_ID.key),
+                        jsonParams.getString(DeepLinkData.PLAN_ID.key)
+                    )
+                )
+            )
+        }
+        return FreeTrialOnBoardActivity.getIntent(activity)
+    }
 
     private fun getCourseId(jsonParams: JSONObject): Int =
         if (jsonParams.has(DeepLinkData.COURSE_ID.key))

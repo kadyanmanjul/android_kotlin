@@ -39,8 +39,7 @@ import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.LoginViaEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.LoginViaStatus
 import com.joshtalks.joshskills.repository.local.model.User
-import com.joshtalks.joshskills.ui.signup.FreeTrialOnBoardActivity.Companion.COURSE_ID
-import com.joshtalks.joshskills.ui.signup.FreeTrialOnBoardActivity.Companion.PLAN_ID
+import com.joshtalks.joshskills.repository.server.onboarding.SpecificOnboardingCourseData
 import com.joshtalks.joshskills.ui.userprofile.viewmodel.UserProfileViewModel
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import com.karumi.dexter.Dexter
@@ -74,8 +73,6 @@ class SignUpActivity : BaseActivity() {
     private var fbCallbackManager = CallbackManager.Factory.create()
     private var mGoogleSignInClient: GoogleSignInClient? = null
     private var compositeDisposable = CompositeDisposable()
-    private var courseId: String? = null
-    private var planId: String? = null
 
     // var verification: Verification? = null
     // private var sinchConfig: Config? = null
@@ -103,10 +100,6 @@ class SignUpActivity : BaseActivity() {
                 AnalyticsEvent.FLOW_FROM_PARAM.NAME,
                 intent.getStringExtra(FLOW_FROM)
             )
-        if (intent.hasExtra(PLAN_ID))
-            planId = intent.getStringExtra(PLAN_ID)
-        if (intent.hasExtra(COURSE_ID))
-            courseId = intent.getStringExtra(COURSE_ID)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_sign_up_v2)
         binding.handler = this
         addViewModelObserver()
@@ -114,11 +107,9 @@ class SignUpActivity : BaseActivity() {
         setupTrueCaller()
         if (User.getInstance().isVerified && isUserProfileComplete()) {
             openProfileDetailFragment(false)
-        }
-        else if(User.getInstance().isVerified && !isRegProfileComplete()) {
+        } else if (User.getInstance().isVerified && !isRegProfileComplete()) {
             openProfileDetailFragment(true)
-        }
-        else {
+        } else {
             openSignUpOptionsFragment()
         }
         window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -154,11 +145,11 @@ class SignUpActivity : BaseActivity() {
                 }
                 SignUpStepStatus.StartAfterPicUploaded, SignUpStepStatus.ProfilePicSkipped, SignUpStepStatus.SignUpCompleted -> {
                     logLoginSuccessAnalyticsEvent(viewModel.loginViaStatus?.toString())
-                    if(!isFirstTime)
+                    if (!isFirstTime)
                         viewModel.saveTrueCallerImpression(IMPRESSION_ALREADY_ALREADYUSER)
-                    if (planId != null && courseId != null) {
-                        viewModel.registerCourse(courseId = courseId!!, planId = planId!!)
-                    } else {
+                    if (PrefManager.hasKey(SPECIFIC_ONBOARDING))
+                        viewModel.registerSpecificCourse()
+                    else {
                         startActivity(getInboxActivityIntent())
                         this@SignUpActivity.finishAffinity()
                     }
@@ -188,8 +179,7 @@ class SignUpActivity : BaseActivity() {
                         getString(R.string.internet_not_available_msz),
                         Snackbar.LENGTH_SHORT
                     ).setAction(getString(R.string.retry)) {
-                        if (courseId != null && planId != null)
-                            viewModel.registerCourse(courseId = courseId!!, planId = planId!!)
+                        viewModel.registerSpecificCourse()
                     }.show()
                 }
                 else -> {}
@@ -197,7 +187,8 @@ class SignUpActivity : BaseActivity() {
             }
         }
 
-        viewModelForDpUpload.apiCallStatus.observe(this, Observer {
+        viewModelForDpUpload.apiCallStatus.observe(this, Observer
+        {
             when (it) {
                 ApiCallStatus.SUCCESS -> {
                     hideProgressBar()
@@ -264,7 +255,7 @@ class SignUpActivity : BaseActivity() {
                 override fun onSuccess(loginResult: LoginResult) {
                     if (loginResult.accessToken != null) {
                         MixPanelTracker.publishEvent(MixPanelEvent.FACEBOOK_VERIFICATION)
-                            .addParam(ParamKeys.IS_SUCCESS,true)
+                            .addParam(ParamKeys.IS_SUCCESS, true)
                             .push()
                         getUserDetailsFromFB(loginResult.accessToken)
                     } else {
@@ -275,7 +266,7 @@ class SignUpActivity : BaseActivity() {
 
                 override fun onCancel() {
                     MixPanelTracker.publishEvent(MixPanelEvent.FACEBOOK_VERIFICATION)
-                        .addParam(ParamKeys.IS_SUCCESS,false)
+                        .addParam(ParamKeys.IS_SUCCESS, false)
                         .push()
                     hideProgressBar()
                 }
@@ -285,7 +276,7 @@ class SignUpActivity : BaseActivity() {
                     LogException.catchException(exception)
                     hideProgressBar()
                     MixPanelTracker.publishEvent(MixPanelEvent.FACEBOOK_VERIFICATION)
-                        .addParam(ParamKeys.IS_SUCCESS,false)
+                        .addParam(ParamKeys.IS_SUCCESS, false)
                         .push()
                 }
             })
@@ -302,10 +293,9 @@ class SignUpActivity : BaseActivity() {
                 }
                 if (TrueError.ERROR_TYPE_CONTINUE_WITH_DIFFERENT_NUMBER == trueError.errorType) {
                     MixPanelTracker.publishEvent(MixPanelEvent.TRUECALLER_VERIFICATION_SKIP).push()
-                }
-                else {
+                } else {
                     MixPanelTracker.publishEvent(MixPanelEvent.TRUECALLER_VERIFICATION_CONTD)
-                        .addParam(ParamKeys.IS_SUCCESS,false)
+                        .addParam(ParamKeys.IS_SUCCESS, false)
                         .push()
                 }
             }
@@ -317,7 +307,7 @@ class SignUpActivity : BaseActivity() {
             override fun onSuccessProfileShared(trueProfile: TrueProfile) {
                 viewModel.verifyUserViaTrueCaller(trueProfile)
                 MixPanelTracker.publishEvent(MixPanelEvent.TRUECALLER_VERIFICATION_CONTD)
-                    .addParam(ParamKeys.IS_SUCCESS,true)
+                    .addParam(ParamKeys.IS_SUCCESS, true)
                     .push()
             }
 
@@ -418,14 +408,14 @@ class SignUpActivity : BaseActivity() {
             } catch (e: ApiException) {
                 hideProgressBar()
                 MixPanelTracker.publishEvent(MixPanelEvent.GOOGLE_VERIFICATION)
-                    .addParam(ParamKeys.IS_SUCCESS,false)
+                    .addParam(ParamKeys.IS_SUCCESS, false)
                     .push()
                 if (BuildConfig.DEBUG) {
                     showToast(getString(R.string.gmail_login_error_message))
                 }
             } catch (e: Exception) {
                 MixPanelTracker.publishEvent(MixPanelEvent.GOOGLE_VERIFICATION)
-                    .addParam(ParamKeys.IS_SUCCESS,false)
+                    .addParam(ParamKeys.IS_SUCCESS, false)
                     .push()
                 hideProgressBar()
                 LogException.catchException(e)
@@ -510,20 +500,20 @@ class SignUpActivity : BaseActivity() {
                         val accountUser = auth.currentUser
                         handleFirebaseAuth(accountUser)
                         MixPanelTracker.publishEvent(MixPanelEvent.GOOGLE_VERIFICATION)
-                            .addParam(ParamKeys.IS_SUCCESS,true)
+                            .addParam(ParamKeys.IS_SUCCESS, true)
                             .push()
                     } else {
                         task.exception?.showAppropriateMsg()
 
                         showToast(getString(R.string.generic_message_for_error))
                         MixPanelTracker.publishEvent(MixPanelEvent.GOOGLE_VERIFICATION)
-                            .addParam(ParamKeys.IS_SUCCESS,false)
+                            .addParam(ParamKeys.IS_SUCCESS, false)
                             .push()
                     }
                 }
         } else {
             MixPanelTracker.publishEvent(MixPanelEvent.GOOGLE_VERIFICATION)
-                .addParam(ParamKeys.IS_SUCCESS,false)
+                .addParam(ParamKeys.IS_SUCCESS, false)
                 .push()
             showToast(getString(R.string.generic_message_for_error))
         }

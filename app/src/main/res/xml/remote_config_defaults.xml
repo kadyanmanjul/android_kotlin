@@ -900,11 +900,19 @@
     </entry>
     <entry>
         <key>FREE_TRIAL_POPUP_HUNDRED_POINTS_TEXT_784</key>
-        <value>Josh skills उन students का परिवार है जो serious हैं अपनी life मे। जो मेहनत करना चाहते है और आगे बढ़ना चाहते हैं। इस course में enroll होने से पहले आपको एक दिन ये course use करना है। ये बिलकुल मुफ्त है।\n  \nमैं देखना चाहता हु की आप serious हैं english सीखने के लिए। आपको आज 100 points कमाने हैं। अगर आप अगले 24 घंटो में 100 points कमा लेते हैं तो आप कल course में admission ले सकते हैं।</value>
+        <value>Josh skills उन students का परिवार है जो serious हैं अपनी life मे। जो मेहनत करना चाहते है और आगे बढ़ना
+            चाहते हैं। इस course में enroll होने से पहले आपको एक दिन ये course use करना है। ये बिलकुल मुफ्त है।\n \nमैं
+            देखना चाहता हु की आप serious हैं english सीखने के लिए। आपको आज 100 points कमाने हैं। अगर आप अगले 24 घंटो में
+            100 points कमा लेते हैं तो आप कल course में admission ले सकते हैं।
+        </value>
     </entry>
     <entry>
         <key>FREE_TRIAL_POPUP_HUNDRED_POINTS_TEXT_1880</key>
-        <value>Josh Skills সেই students দের  পরিবার যারা serious নিজের life এ, যারা পরিশ্রম করতে চায় আর জীবনে এগিয়ে যেতে চায়।  এই কোর্স এ enroll হওয়ার পর আপনাকে এক দিন এই কোর্স টি use করতে হবে একদম  বিনামূল্যে ।\n  \n আমি দেখতে চাই যে, আপনি ইংলিশ শেখার জন্য serious কিনা । আপনাকে আজ 100  points earn করতে হবে। যদি আপনি 24 ঘন্টায়ে 100 points earn করেন তাহলে আপনি এই কোর্স এ অ্যাডমিশন নিতে পারবেন।</value>
+        <value>Josh Skills সেই students দের পরিবার যারা serious নিজের life এ, যারা পরিশ্রম করতে চায় আর জীবনে এগিয়ে
+            যেতে চায়। এই কোর্স এ enroll হওয়ার পর আপনাকে এক দিন এই কোর্স টি use করতে হবে একদম বিনামূল্যে ।\n \n আমি
+            দেখতে চাই যে, আপনি ইংলিশ শেখার জন্য serious কিনা । আপনাকে আজ 100 points earn করতে হবে। যদি আপনি 24 ঘন্টায়ে
+            100 points earn করেন তাহলে আপনি এই কোর্স এ অ্যাডমিশন নিতে পারবেন।
+        </value>
     </entry>
     <entry>
         <key>SHOW_NEW_GROUP_BTN</key>
@@ -935,29 +943,37 @@
         <key>CERTIFICATE_SHARE_TEXT_WHATSAPP</key>
         <value>I am proud to share that I have passed the Ultimate Spoken English Certification Exam 🥳🥳 \n
             This achievement is another step towards becoming a better version of myself 🚀🚀 \n
-            Speaking to other learners and listening to classes on the JoshSkills app have really helped me improve my English Fluency.\n
-            Download the app from : </value>
+            Speaking to other learners and listening to classes on the JoshSkills app have really helped me improve my
+            English Fluency.\n
+            Download the app from :
+        </value>
     </entry>
     <entry>
         <key>CERTIFICATE_SHARE_TEXT_FB</key>
         <value>I am proud to share that I have passed the Ultimate Spoken English Certification Exam 🥳🥳 \n
             This achievement is another step towards becoming a better version of myself 🚀🚀 \n
-            Speaking to other learners and listening to classes on the JoshSkills app have really helped me improve my English Fluency.\n
-            Download the app from : </value>
+            Speaking to other learners and listening to classes on the JoshSkills app have really helped me improve my
+            English Fluency.\n
+            Download the app from :
+        </value>
     </entry>
     <entry>
         <key>CERTIFICATE_SHARE_TEXT_LINKEDIN</key>
         <value>I am proud to share that I have passed the Ultimate Spoken English Certification Exam 🥳🥳 \n
             This achievement is another step towards becoming a better version of myself 🚀🚀 \n
-            Speaking to other learners and listening to classes on the JoshSkills app have really helped me improve my English Fluency.\n
-            Download the app from : </value>
+            Speaking to other learners and listening to classes on the JoshSkills app have really helped me improve my
+            English Fluency.\n
+            Download the app from :
+        </value>
     </entry>
     <entry>
         <key>CERTIFICATE_SHARE_TEXT_INSTA</key>
         <value>I am proud to share that I have passed the Ultimate Spoken English Certification Exam 🥳🥳 \n
             This achievement is another step towards becoming a better version of myself 🚀🚀 \n
-            Speaking to other learners and listening to classes on the JoshSkills app have really helped me improve my English Fluency.\n
-            Download the app from : </value>
+            Speaking to other learners and listening to classes on the JoshSkills app have really helped me improve my
+            English Fluency.\n
+            Download the app from :
+        </value>
     </entry>
     <entry>
         <key>POSTAL_ADDRESS</key>
@@ -987,10 +1003,10 @@
         <key>ONBOARDING_COURSE_60</key>
         <value>
             {
-            "title": "Digital Financial Inclusion Course",
-            "course_info_1": "30 day course",
-            "course_info_2": "Complete foundations of financial literacy",
-            "course_info_3": "Complex topics, aasan tareeke mein!"
+            "title": "Keshav Suri Foundation",
+            "course_info_1": "365 days access",
+            "course_info_2": "All courses unlockable",
+            "course_info_3": "Unlimited usage"
             }
         </value>
     </entry>

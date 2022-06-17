@@ -6,6 +6,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
@@ -30,6 +31,7 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.ChooseLanguages
 import com.joshtalks.joshskills.repository.server.onboarding.OnboardingCourseData
+import com.joshtalks.joshskills.repository.server.onboarding.SpecificOnboardingCourseData
 import com.joshtalks.joshskills.ui.activity_feed.utils.IS_USER_EXIST
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.truecaller.android.sdk.*
@@ -76,13 +78,24 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
 
     private fun initOnboardingCourse() {
         layout.onboardingData =
-            if (intent.getStringExtra(PLAN_ID).isNullOrEmpty().not()) {
+            if (PrefManager.hasKey(SPECIFIC_ONBOARDING)) {
+                val courseId = AppObjectController.gsonMapper.fromJson(
+                    PrefManager.getStringValue(SPECIFIC_ONBOARDING),
+                    SpecificOnboardingCourseData::class.java
+                )?.courseId
                 AppObjectController.gsonMapper.fromJson(
                     AppObjectController.getFirebaseRemoteConfig()
-                        .getString("ONBOARDING_COURSE${intent.getStringExtra(COURSE_ID)}"),
+                        .getString("ONBOARDING_COURSE_$courseId"),
                     OnboardingCourseData::class.java
                 )
-            } else OnboardingCourseData()
+            } else {
+                OnboardingCourseData(
+                    getString(R.string.onboarding_course_heading),
+                    getString(R.string.onboarding_course_info1),
+                    getString(R.string.onboarding_course_info2),
+                    getString(R.string.onboarding_course_info3),
+                )
+            }
     }
 
     override fun onStart() {
@@ -104,7 +117,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
     private fun addListeners() {
         val language = ChooseLanguages("784", "Hindi (हिन्दी)")
         btnStartTrial.setOnClickListener {
-            if (intent.getStringExtra(PLAN_ID).isNullOrEmpty().not())
+            if (PrefManager.hasKey(SPECIFIC_ONBOARDING))
                 signUp()
             else if (languageActive)
                 openChooseLanguageFragment()
@@ -136,25 +149,28 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         viewModel.progressBarStatus.observe(this, {
             showProgressBar()
         })
-        viewModel.newLanguageABtestLiveData.observe(this){ abTestCampaignData ->
+        viewModel.newLanguageABtestLiveData.observe(this) { abTestCampaignData ->
             abTestCampaignData?.let { map ->
-                languageActive =(map.variantKey == VariantKeys.NEW_LANGUAGE_ENABLED.NAME) && map.variableMap?.isEnabled == true
+                languageActive =
+                    (map.variantKey == VariantKeys.NEW_LANGUAGE_ENABLED.NAME) && map.variableMap?.isEnabled == true
             }
         }
-        viewModel.eftABtestLiveData.observe(this){ abTestCampaignData ->
+        viewModel.eftABtestLiveData.observe(this) { abTestCampaignData ->
             abTestCampaignData?.let { map ->
-                eftActive =(map.variantKey == VariantKeys.EFT_ENABLED.NAME) && map.variableMap?.isEnabled == true
+                eftActive = (map.variantKey == VariantKeys.EFT_ENABLED.NAME) && map.variableMap?.isEnabled == true
                 PrefManager.put(IS_EFT_VARIENT_ENABLED, eftActive)
             }
         }
         viewModel.points100ABtestLiveData.observe(this) { map ->
-                is100PointsActive = (map?.variantKey == VariantKeys.POINTS_HUNDRED_ENABLED.NAME) && map.variableMap?.isEnabled == true
+            is100PointsActive =
+                (map?.variantKey == VariantKeys.POINTS_HUNDRED_ENABLED.NAME) && map.variableMap?.isEnabled == true
         }
 
         viewModel.increaseCoursePriceABtestLiveData.observe(this) { abTestCampaignData ->
             abTestCampaignData?.let { map ->
-                increaseCoursePrice = (map.variantKey == VariantKeys.ICP_ENABLED.NAME) && map.variableMap?.isEnabled == true
-                PrefManager.put(INCREASE_COURSE_PRICE_ABTEST,increaseCoursePrice)
+                increaseCoursePrice =
+                    (map.variantKey == VariantKeys.ICP_ENABLED.NAME) && map.variableMap?.isEnabled == true
+                PrefManager.put(INCREASE_COURSE_PRICE_ABTEST, increaseCoursePrice)
             }
         }
     }
@@ -170,8 +186,6 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
             viewModel.saveTrueCallerImpression(IMPRESSION_ALREADY_NEWUSER)
             val intent = Intent(this@FreeTrialOnBoardActivity, SignUpActivity::class.java).apply {
                 putExtra(FLOW_FROM, "free trial onboarding journey")
-                putExtra(PLAN_ID, intent.getStringExtra(PLAN_ID))
-                putExtra(COURSE_ID, intent.getStringExtra(COURSE_ID))
             }
             startActivity(intent)
         }
@@ -218,9 +232,9 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
                 .getString(FREE_TRIAL_POPUP_YES_BUTTON_TEXT + language.testId)
 
         dialogView.findViewById<MaterialTextView>(R.id.yes).setOnClickListener {
-            PrefManager.put(USER_LOCALE,language.testId)
-            if(language.testId!="784")
-            requestWorkerForChangeLanguage(getLangCodeFromlangTestId(language.testId),canCreateActivity=false)
+            PrefManager.put(USER_LOCALE, language.testId)
+            if (language.testId != "784")
+                requestWorkerForChangeLanguage(getLangCodeFromlangTestId(language.testId), canCreateActivity = false)
             MixPanelTracker.publishEvent(MixPanelEvent.JI_HAAN).push()
             if (Mentor.getInstance().getId().isNotEmpty()) {
                 viewModel.saveImpression(IMPRESSION_START_TRIAL_YES)
@@ -283,19 +297,19 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         }
 
         override fun onSuccessProfileShared(trueProfile: TrueProfile) {
-                PrefManager.put(IS_LOGIN_VIA_TRUECALLER,true)
-                MixPanelTracker.publishEvent(MixPanelEvent.CONTINUE_WITH_NUMBER).push()
-                viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_FREETRIAL_LOGIN)
-                val user = User.getInstance()
-                user.firstName = trueProfile.firstName
-                user.phoneNumber = trueProfile.phoneNumber
-                user.email = trueProfile.email
-                user.gender = trueProfile.gender
-                User.update(user)
-                viewModel.userName = trueProfile.firstName
-                viewModel.verifyUserViaTrueCaller(trueProfile)
-                viewModel.isVerified = true
-                openProfileDetailFragment()
+            PrefManager.put(IS_LOGIN_VIA_TRUECALLER, true)
+            MixPanelTracker.publishEvent(MixPanelEvent.CONTINUE_WITH_NUMBER).push()
+            viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_FREETRIAL_LOGIN)
+            val user = User.getInstance()
+            user.firstName = trueProfile.firstName
+            user.phoneNumber = trueProfile.phoneNumber
+            user.email = trueProfile.email
+            user.gender = trueProfile.gender
+            User.update(user)
+            viewModel.userName = trueProfile.firstName
+            viewModel.verifyUserViaTrueCaller(trueProfile)
+            viewModel.isVerified = true
+            openProfileDetailFragment()
         }
     }
 
@@ -318,8 +332,10 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
             addToBackStack(null)
             replace(
                 R.id.container,
-                SignUpProfileForFreeTrialFragment.newInstance(viewModel.userName ?: EMPTY,
-                    viewModel.isVerified),
+                SignUpProfileForFreeTrialFragment.newInstance(
+                    viewModel.userName ?: EMPTY,
+                    viewModel.isVerified
+                ),
                 SignUpProfileForFreeTrialFragment::class.java.name
             )
         }
@@ -369,12 +385,6 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
     }
 
     companion object {
-        const val COURSE_ID = "course_id"
-        const val PLAN_ID = "plan_id"
-        fun getIntent(context: Context, courseId: String? = null, planId: String? = null) =
-            Intent(context, FreeTrialOnBoardActivity::class.java).apply {
-                putExtra(COURSE_ID, courseId)
-                putExtra(PLAN_ID, planId)
-            }
+        fun getIntent(context: Context) = Intent(context, FreeTrialOnBoardActivity::class.java)
     }
 }

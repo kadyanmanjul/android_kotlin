@@ -1312,4 +1312,8 @@
     <string name="your_rating">Your Rating:</string>
     <string name="progress_network_text">Checking your Internet Connection</string>
     <string name="certificate_image">Certificate Image</string>
+    <string name="onboarding_course_heading">Spoken English Course</string>
+    <string name="onboarding_course_info1">90 Day Course</string>
+    <string name="onboarding_course_info2">Beginner to Advanced</string>
+    <string name="onboarding_course_info3">English Speaking का माहौल</string>
 </resources>

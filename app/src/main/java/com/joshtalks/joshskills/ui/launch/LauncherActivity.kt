@@ -40,8 +40,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 
-private const val TAG = "LauncherActivity"
-
 class LauncherActivity : CoreJoshActivity(), Branch.BranchReferralInitListener {
     private var testId: String? = null
     private val viewModel: LauncherViewModel by lazy {
@@ -96,7 +94,7 @@ class LauncherActivity : CoreJoshActivity(), Branch.BranchReferralInitListener {
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
                                     Settings.Panel.ACTION_INTERNET_CONNECTIVITY
                                 else
-                                    Settings.ACTION_SETTINGS
+                                    Settings.ACTION_WIRELESS_SETTINGS
                             )
                         )
                     }.show()
@@ -202,13 +200,13 @@ class LauncherActivity : CoreJoshActivity(), Branch.BranchReferralInitListener {
         }
     }
 
-    suspend fun getIntentForNextActivity(): Intent? {
-        return when {
+    suspend fun getIntentForNextActivity() =
+        when {
             User.getInstance().isVerified.not() -> {
                 when {
-                    (jsonParams != null && jsonParams!!.has(DeepLinkData.REDIRECT_TO.key)
+                    PrefManager.hasKey(SPECIFIC_ONBOARDING) || (jsonParams != null && jsonParams!!.has(DeepLinkData.REDIRECT_TO.key)
                             && jsonParams!!.getString(DeepLinkData.REDIRECT_TO.key) == DeepLinkRedirect.ONBOARDING.key)
-                    -> DeepLinkRedirectUtil.getIntentForCourseOnboarding(this, jsonParams!!)
+                    -> DeepLinkRedirectUtil.getIntentForCourseOnboarding(this, jsonParams)
                     (jsonParams != null && jsonParams!!.has(DeepLinkData.REDIRECT_TO.key)
                             && jsonParams!!.getString(DeepLinkData.REDIRECT_TO.key) == DeepLinkRedirect.COURSE_DETAILS.key)
                     -> {
@@ -247,7 +245,6 @@ class LauncherActivity : CoreJoshActivity(), Branch.BranchReferralInitListener {
             ) null else getInboxActivityIntent()
             else -> getInboxActivityIntent()
         }
-    }
 
     private fun initAfterBranch(
         exploreType: String? = null
