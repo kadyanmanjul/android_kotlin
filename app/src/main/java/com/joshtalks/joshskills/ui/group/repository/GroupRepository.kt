@@ -5,11 +5,8 @@ import android.util.Log
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.Utils
-import com.joshtalks.joshskills.core.dateStartOfDay
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.io.AppDirectory
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
 import com.joshtalks.joshskills.ui.group.analytics.data.local.GroupChatAnalyticsEntity
@@ -102,6 +99,7 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
                         return ChatSubscriber
                     }
                 })
+            PrefManager.put(GROUP_SUBSCRIBE_TIME, System.currentTimeMillis())
         }
     }
 
@@ -219,8 +217,8 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
         if(messages.isEmpty())
             return
         else {
-            val recentMessageTime = database.groupChatDao().getRecentMessageTime(groupId = groupId)
-            recentMessageTime?.let { fetchUnreadMessage(recentMessageTime, groupId) }
+            val recentMessageTime = messages.last().msgTime
+            fetchUnreadMessage(recentMessageTime, groupId)
         }
     }
 
@@ -394,14 +392,8 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
     suspend fun fireTimeTokenAPI() {
         val timeTokenList = database.timeTokenDao().getAllTimeTokens()
         for (token in timeTokenList) {
-            val response = apiService.updateTimeToken(
-                TimeTokenRequest(token.mentorId, token.groupId, token.timeToken * 10000L)
-            )
             try {
-                if (response.isSuccessful)
-                    database.timeTokenDao().deleteTimeEntry(token.groupId, token.timeToken)
-                else if (response.code() == 501)
-                    database.timeTokenDao().deleteTimeToken(token.groupId)
+                apiService.updateTimeToken(TimeTokenRequest(token.mentorId, token.groupId, token.timeToken * 10000L))
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -476,4 +468,6 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
     suspend fun getClosedGrpCount(): Int {
         return database.groupListDao().getClosedGroupCount()
     }
+
+    suspend fun getChatCount(groupId: String, time: Long) = database.groupChatDao().getChatCountByTime(groupId, time)
 }

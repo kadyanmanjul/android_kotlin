@@ -12,6 +12,7 @@ import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.lifecycle.viewModelScope
 import androidx.paging.ExperimentalPagingApi
+import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.recyclerview.widget.RecyclerView
 
@@ -30,6 +31,7 @@ import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics
 import com.joshtalks.joshskills.ui.group.constants.*
 import com.joshtalks.joshskills.ui.group.lib.ChatService
 import com.joshtalks.joshskills.ui.group.lib.PubNubService
+import com.joshtalks.joshskills.ui.group.model.ChatItem
 import com.joshtalks.joshskills.ui.group.model.GroupJoinRequest
 import com.joshtalks.joshskills.ui.group.model.GroupMember
 import com.joshtalks.joshskills.ui.group.model.LeaveGroupRequest
@@ -43,6 +45,7 @@ import com.pubnub.api.models.consumer.push.payload.PushPayloadHelper
 import de.hdodenhof.circleimageview.CircleImageView
 
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.internal.concat
@@ -425,7 +428,33 @@ class GroupChatViewModel : BaseViewModel() {
     }
 
     @ExperimentalPagingApi
-    fun getChatData() = repository.getGroupChatListResult(groupId).flow.cachedIn(viewModelScope)
+    fun getChatData(): Flow<PagingData<ChatItem>> {
+        viewModelScope.launch(Dispatchers.IO) {
+            val startTime = getFetchStartTime(groupId).times(10000)
+
+            if (startTime > 0 && chatService.getUnreadMessageCount(groupId, startTime) > repository.getChatCount(groupId, startTime))
+                repository.getRecentTimeToken(groupId)?.let {
+                    repository.fetchUnreadMessage(startTime, groupId)
+                }
+        }
+        return repository.getGroupChatListResult(groupId).flow.cachedIn(viewModelScope)
+    }
+
+    private fun getFetchStartTime(groupId: String): Long {
+        val timeMap = PrefManager.getPrefMap(GROUP_CHAT_CHECK_TIMES) ?: mutableMapOf()
+        val lastTimeChecked = (timeMap[groupId] as Double?)?.toLong() ?: 0L
+
+        timeMap[groupId] = System.currentTimeMillis()
+        PrefManager.putPrefObject(GROUP_CHAT_CHECK_TIMES, timeMap)
+
+        if (dateStartOfDay().time > lastTimeChecked) {
+            return dateStartOfDay().time
+        } else if (PrefManager.getLongValue(GROUP_SUBSCRIBE_TIME) > lastTimeChecked) {
+            return lastTimeChecked
+        }
+
+        return -1
+    }
 
     //TODO: Refactor loading code (if conditions)
     fun getGroupInfo(showLoading: Boolean = true) {
