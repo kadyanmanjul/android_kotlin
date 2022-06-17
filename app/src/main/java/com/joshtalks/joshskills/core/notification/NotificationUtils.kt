@@ -19,8 +19,6 @@ import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.base.constants.INTENT_DATA_API_HEADER
-import com.joshtalks.joshskills.base.constants.INTENT_DATA_MENTOR_ID
 import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_INCOMING_CALL
 import com.joshtalks.joshskills.conversationRoom.liveRooms.ConversationLiveRoomActivity
 import com.joshtalks.joshskills.core.*
@@ -75,10 +73,9 @@ import com.joshtalks.joshskills.ui.voip.favorite.FavoriteListActivity
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
 import com.joshtalks.joshskills.voip.constant.INCOMING_CALL_CATEGORY
 import com.joshtalks.joshskills.voip.constant.INCOMING_CALL_ID
+import com.joshtalks.joshskills.voip.constant.REMOTE_USER_NAME
 import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.CallingRemoteService
-import com.joshtalks.joshskills.voip.getApiHeader
-import com.joshtalks.joshskills.voip.getMentorId
 import java.lang.reflect.Type
 import java.util.concurrent.ExecutorService
 import kotlinx.coroutines.CoroutineScope
@@ -567,14 +564,30 @@ class NotificationUtils(val context: Context) {
                 }
                 return intent
             }
-            NotificationAction.ACTION_NEW_ARCH_INCOMING_CALL -> {
+            NotificationAction.ACTION_P2P_INCOMING_CALL -> {
                 val remoteServiceIntent = Intent(com.joshtalks.joshskills.voip.Utils.context, CallingRemoteService::class.java)
-                remoteServiceIntent.putExtra(INCOMING_CALL_ID, JSONObject(actionData).getString(
-                    INCOMING_CALL_ID))
-                remoteServiceIntent.putExtra(INCOMING_CALL_CATEGORY,JSONObject(actionData).getString(
-                    INCOMING_CALL_CATEGORY))
+                remoteServiceIntent.putExtra(INCOMING_CALL_ID, JSONObject(actionData).getString(INCOMING_CALL_ID))
+                remoteServiceIntent.putExtra(INCOMING_CALL_CATEGORY,JSONObject(actionData).getString(INCOMING_CALL_CATEGORY))
                 remoteServiceIntent.action = SERVICE_ACTION_INCOMING_CALL
                 com.joshtalks.joshskills.voip.Utils.context?.startService(remoteServiceIntent)
+                return null
+            }
+            NotificationAction.ACTION_FPP_INCOMING_CALL -> {
+                try {
+                    val jsonObj = JSONObject(actionData ?: EMPTY)
+                    val callContext = context
+                    val remoteServiceIntent = Intent(callContext, CallingRemoteService::class.java)
+                    remoteServiceIntent.putExtra(INCOMING_CALL_ID, jsonObj.getString(INCOMING_CALL_ID))
+                    remoteServiceIntent.putExtra(INCOMING_CALL_CATEGORY, jsonObj.getString(INCOMING_CALL_CATEGORY))
+                    remoteServiceIntent.putExtra(REMOTE_USER_NAME, jsonObj.getString(REMOTE_USER_NAME))
+                    remoteServiceIntent.action = SERVICE_ACTION_INCOMING_CALL
+                    callContext.startService(remoteServiceIntent)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+                return null
+            }
+            NotificationAction.ACTION_GROUP_INCOMING_CALL -> {
                 return null
             }
             else -> {

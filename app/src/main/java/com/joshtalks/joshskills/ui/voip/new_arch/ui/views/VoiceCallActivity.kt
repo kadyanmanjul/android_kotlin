@@ -57,9 +57,17 @@ class VoiceCallActivity : BaseActivity() {
         vm.callType = Category.values()[intent.getIntExtra(INTENT_DATA_CALL_CATEGORY,PrefManager.getCallCategory().ordinal)]
 
         Log.d(TAG, "getArguments: ${vm.source}")
-        when (vm.source) {
-            FROM_CALL_BAR -> {
+
+        when(vm.callType){
+            Category.PEER_TO_PEER -> {}
+            Category.FPP -> {
+                val mentorId = intent?.getStringExtra(INTENT_DATA_FPP_MENTOR_ID)
+                vm.callData[INTENT_DATA_FPP_MENTOR_ID] = mentorId ?: "0"
             }
+            Category.GROUP -> {}
+        }
+        when (vm.source) {
+            FROM_CALL_BAR -> {}
             FROM_INCOMING_CALL -> {
                 val incomingCallId = PrefManager.getIncomingCallId()
                 // TODO: Might be wrong
@@ -97,61 +105,32 @@ class VoiceCallActivity : BaseActivity() {
 
     override fun onCreated() {
         Log.d(TAG, "onCreated: ${vm.source}")
-        if (PermissionUtils.isCallingPermissionEnabled(this)) {
-            if (vm.source == FROM_INCOMING_CALL || vm.source == FROM_CALL_BAR) {
-                addCallUserFragment()
-            } else if (vm.source == FROM_ACTIVITY) {
-                addSearchingUserFragment()
+        when(vm.callType){
+            Category.PEER_TO_PEER ->{
+                openFragment { addCallUserFragment() }
             }
-        }else{
-            getPermission()
+            Category.FPP ->{
+               addFppCallFragment()
+            }
+            Category.GROUP ->{
+//                openFragment { addGroupCallFragment() }
+            }
         }
     }
 
-    private fun getPermission() {
-        PermissionUtils.callingFeaturePermission(
-            this,
-            object : MultiplePermissionsListener {
-                override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
-                    report?.areAllPermissionsGranted()?.let { flag ->
-                        if (report.isAnyPermissionPermanentlyDenied) {
-                            PermissionUtils.callingPermissionPermanentlyDeniedDialog(
-                                this@VoiceCallActivity,
-                                message = R.string.call_start_permission_message
-                            )
-                            return
-                        }
-                        if (flag) {
-                            if (vm.source == FROM_INCOMING_CALL || vm.source == FROM_CALL_BAR) {
-                                addCallUserFragment()
-                            } else if (vm.source == FROM_ACTIVITY) {
-                                addSearchingUserFragment()
-                            }
-                            return
-                        } else {
-                            finish()
-                        }
-                    }
-                }
-                override fun onPermissionRationaleShouldBeShown(
-                    permissions: MutableList<PermissionRequest>?,
-                    token: PermissionToken?
-                ) {
-                    token?.continuePermissionRequest()
-                }
-            }
-        )
+    private fun openFragment(fragment: ()->Unit) {
+        if (vm.source == FROM_INCOMING_CALL || vm.source == FROM_CALL_BAR) {
+            fragment.invoke()
+        } else if (vm.source == FROM_ACTIVITY) {
+            addSearchingUserFragment()
+        }
     }
 
 
     override fun initViewState() {
         event.observe(this) {
-            Log.i(TAG, "initViewState: event -> ${it.what}")
             when (it.what) {
-                CALL_CONNECTED_EVENT -> replaceCallUserFragment()
-                SHOW_RECORDING_PERMISSION_DIALOG -> showRecordingPermissionDialog()
-                SHOW_RECORDING_REJECTED_DIALOG -> showRecordingRejectedDialog()
-                HIDE_RECORDING_PERMISSION_DIALOG -> hideRecordingPermissionDialog()
+                CALL_INITIATED_EVENT -> replaceCallUserFragment()
                 CLOSE_CALL_SCREEN -> finish()
                 else -> {
                     if (it.what < 0) {
@@ -161,49 +140,6 @@ class VoiceCallActivity : BaseActivity() {
                 }
             }
         }
-    }
-
-    private fun showRecordingRejectedDialog() {
-        MaterialAlertDialogBuilder(this)
-            .setTitle("Recording request rejected")
-            .setMessage("User declined your request to start recording")
-            .setPositiveButton("Dismiss") { dialog, _ ->
-                dialog.dismiss()
-            }
-            .show()
-
-    }
-
-    private fun showRecordingPermissionDialog() {
-        recordingPermissionAlert = AlertDialog.Builder(this).apply {
-            setView(
-                LayoutInflater.from(this@VoiceCallActivity)
-                    .inflate(R.layout.dialog_record_call, null)
-            )
-            setPositiveButton("ACCEPT") { dialog, _ ->
-                vm.recordingStartedUIChanges()
-                vm.acceptCallRecording()
-                dialog.dismiss()
-            }
-            setNegativeButton("DECLINE") { dialog, which ->
-                vm.rejectCallRecording()
-                dialog.dismiss()
-            }
-            setOnCancelListener {
-                    vm.rejectCallRecording()
-            }
-        }.create()
-        recordingPermissionAlert?.setCanceledOnTouchOutside(false)
-        recordingPermissionAlert?.show()
-    }
-
-    private fun recordingAlreadyStartedByOtherUserDialog() {
-        Toast.makeText(this, "Recording was already started by the other person", Toast.LENGTH_SHORT).show()
-    }
-
-    private fun hideRecordingPermissionDialog() {
-        Log.i(TAG, "hideRecordingPermissionDialog: ")
-        recordingPermissionAlert?.dismiss()
     }
 
     private fun addSearchingUserFragment() {

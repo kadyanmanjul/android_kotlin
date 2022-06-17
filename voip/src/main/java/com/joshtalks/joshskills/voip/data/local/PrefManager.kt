@@ -65,7 +65,8 @@ class PrefManager {
         }
 
         fun getCallCategory(): Category {
-            val ordinal = preferenceManager.getInt(CURRENT_CALL_CATEGORY, Category.PEER_TO_PEER.ordinal)
+            val ordinal =
+                preferenceManager.getInt(CURRENT_CALL_CATEGORY, Category.PEER_TO_PEER.ordinal)
             Log.d(TAG, "getCallCategory : $ordinal")
             Log.d(TAG, "getCallCategory : ${State.values()}")
             return Category.values()[ordinal]
@@ -125,7 +126,7 @@ class PrefManager {
 
         fun getLastRecordingPath(): String {
             Log.d(TAG, "Getting getLastRecordingPath")
-            return preferenceManager.getString(LAST_RECORDING,"").toString()
+            return preferenceManager.getString(LAST_RECORDING, "").toString()
         }
     }
 }

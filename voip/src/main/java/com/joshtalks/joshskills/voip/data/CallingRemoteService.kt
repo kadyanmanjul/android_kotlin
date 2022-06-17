@@ -110,6 +110,7 @@ class CallingRemoteService : Service() {
                 val map = HashMap<String,String>()
                 map[INCOMING_CALL_CATEGORY] = intent.extras?.getString(com.joshtalks.joshskills.voip.constant.INCOMING_CALL_CATEGORY,"")?:""
                 map[com.joshtalks.joshskills.voip.constant.INCOMING_CALL_ID] = intent.extras?.getString(com.joshtalks.joshskills.voip.constant.INCOMING_CALL_ID,"")?:""
+                map[com.joshtalks.joshskills.voip.constant.REMOTE_USER_NAME] = intent.extras?.getString(com.joshtalks.joshskills.voip.constant.REMOTE_USER_NAME,"")?:""
                 ioScope.launch { mediator.handleIncomingCall(map) }
             }
             SERVICE_ACTION_STOP_SERVICE -> {

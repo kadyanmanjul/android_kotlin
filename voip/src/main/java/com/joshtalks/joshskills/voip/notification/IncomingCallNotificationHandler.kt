@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.voip.notification
 
+import android.util.Log
 import com.joshtalks.joshskills.voip.audiomanager.SOUND_TYPE_RINGTONE
 import com.joshtalks.joshskills.voip.audiomanager.SoundManager
 import com.joshtalks.joshskills.voip.constant.Category
@@ -57,8 +58,7 @@ class IncomingCallNotificationHandler : NotificationData.IncomingNotification{
             CoroutineScope(Dispatchers.IO).launch {
                 try {
                     delay(20000)
-                    voipNotification.removeNotification()
-                    stopAudio()
+                    removeNotification()
                     CallAnalytics.addAnalytics(
                         event = EventName.INCOMING_CALL_IGNORE,
                         agoraCallId = map[INCOMING_CALL_ID],

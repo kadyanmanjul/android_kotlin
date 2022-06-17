@@ -53,3 +53,31 @@ data class CallRecordingRequest(
     @field:SerializedName("recording_url")
     val recording_url: String
 )
+
+data class FavoriteConnectionRequest(
+    @field:SerializedName("mentor_id")
+    val mentorId: String? = null,
+)
+
+data class FavoriteCallActionRequest(
+    @field:SerializedName("response")
+    val response: Int? = null,
+
+    @field:SerializedName("call_id")
+    val callId: Int? = null
+)
+
+data class GroupConnectionRequest(
+
+    @field:SerializedName("course_id")
+    val courseId: Int? = null,
+
+    @field:SerializedName("mentor_id")
+    val mentorId: String? = null,
+
+    @field:SerializedName("topic_id")
+    val topicId: Int? = null,
+
+    @field:SerializedName("old_call_id")
+    val oldCallId: Int? = null
+)

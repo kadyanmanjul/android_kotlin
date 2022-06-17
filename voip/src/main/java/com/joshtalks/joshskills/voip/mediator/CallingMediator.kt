@@ -496,8 +496,12 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
     override suspend fun handleIncomingCall(map: HashMap<String, String>) {
         val callType = map[INCOMING_CALL_ID]
         incomingNotificationMutex.withLock {
-            if (incomingCallNotificationHandler.isNotificationVisible().not() && PrefManager.getVoipState() == State.IDLE) {
-                incomingCallNotificationHandler = IncomingCallNotificationHandler()
+            val ifNotificationVisible = if(this@CallingMediator::incomingCallNotificationHandler.isInitialized){
+                incomingCallNotificationHandler.isNotificationVisible()
+            }else{
+                false
+            }
+            if (ifNotificationVisible.not() && PrefManager.getVoipState() == State.IDLE) {
                 when (callType) {
                     Category.PEER_TO_PEER.category -> {
                         callCategory = Category.PEER_TO_PEER
@@ -519,6 +523,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                     agoraCallId = map[INCOMING_CALL_ID],
                     agoraMentorId = "-1"
                 )
+                incomingCallNotificationHandler = IncomingCallNotificationHandler()
                 incomingCallNotificationHandler.inflateNotification(map)
             }
         }

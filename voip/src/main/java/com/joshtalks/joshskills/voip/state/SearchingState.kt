@@ -9,6 +9,7 @@ import com.joshtalks.joshskills.voip.communication.model.ChannelData
 import com.joshtalks.joshskills.voip.communication.model.NetworkAction
 import com.joshtalks.joshskills.voip.communication.model.Timeout
 import com.joshtalks.joshskills.voip.communication.model.UserAction
+import com.joshtalks.joshskills.voip.constant.Category
 import com.joshtalks.joshskills.voip.constant.Event
 import com.joshtalks.joshskills.voip.constant.Event.RECEIVED_CHANNEL_DATA
 import com.joshtalks.joshskills.voip.constant.Event.REMOTE_USER_DISCONNECTED_AGORA
@@ -19,10 +20,7 @@ import com.joshtalks.joshskills.voip.constant.Event.TOPIC_IMAGE_RECEIVED
 import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.UIState
 import com.joshtalks.joshskills.voip.data.local.PrefManager
-import com.joshtalks.joshskills.voip.mediator.CallDirection
-import com.joshtalks.joshskills.voip.mediator.CallCategory
-import com.joshtalks.joshskills.voip.mediator.PER_USER_TIMEOUT_IN_MILLIS
-import com.joshtalks.joshskills.voip.mediator.PeerToPeerCall
+import com.joshtalks.joshskills.voip.mediator.*
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
 import java.net.SocketTimeoutException
@@ -72,7 +70,11 @@ class SearchingState(val context: CallContext) : VoipState {
             }
         }
     }
-    private val calling by lazy<CallCategory> { PeerToPeerCall() }
+    private val calling by lazy { when(context.callType){
+        Category.PEER_TO_PEER->{PeerToPeerCall()}
+        Category.FPP -> {FavoriteCall()}
+        Category.GROUP -> {GroupCall()}
+    } }
     private val apiCallJob by lazy {
         scope.launch(start = CoroutineStart.LAZY) {
             try {
@@ -83,8 +85,8 @@ class SearchingState(val context: CallContext) : VoipState {
                     agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
                 )
                 if (context.isRetrying) {
-                    context.request[INTENT_DATA_PREVIOUS_CALL_ID] =
-                        context.channelData.getCallingId()
+
+                    context.request[INTENT_DATA_PREVIOUS_CALL_ID]=getRequest()
                     CallAnalytics.addAnalytics(
                         event = EventName.NEXT_CHANNEL_REQUESTED,
                         agoraCallId = context.channelData.getCallingId().toString(),
@@ -115,6 +117,19 @@ class SearchingState(val context: CallContext) : VoipState {
                 }
             }
         }
+    }
+
+    private fun getRequest(): Any {
+        when(context.callType){
+            Category.PEER_TO_PEER -> {
+               return context.channelData.getCallingId()
+            }
+            Category.FPP ->{
+            }
+            Category.GROUP -> {}
+        }
+        return context.channelData.getCallingId()
+
     }
 
     init {
