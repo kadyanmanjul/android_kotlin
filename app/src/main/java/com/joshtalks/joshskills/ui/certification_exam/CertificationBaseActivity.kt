@@ -84,7 +84,6 @@ class CertificationBaseActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_certification_base)
         initView()
-        addObserver()
         intent.getIntExtra(CERTIFICATION_EXAM_ID, -1).let {
             certificateExamId = it
             viewModel.certificateExamId = it
@@ -93,8 +92,9 @@ class CertificationBaseActivity : BaseActivity() {
         intent.getStringExtra(CONVERSATION_ID)?.let {
             viewModel.conversationId = it
         }
-
+        viewModel.typeOfExam()
         viewModel.getQuestions(certificateExamId)
+        addObserver()
     }
 
     override fun getConversationId(): String? {
@@ -140,6 +140,7 @@ class CertificationBaseActivity : BaseActivity() {
                     CExamMainActivity.startExamActivity(
                         this, it,
                         conversationId = getConversationId(),
+                        examType = viewModel.examType.value
                     )
                 )
             }

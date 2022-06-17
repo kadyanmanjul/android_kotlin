@@ -170,7 +170,8 @@ class CExamReportActivity : BaseActivity(), FileDownloadCallback {
                                     examView = CertificationExamView.RESULT_VIEW,
                                     openQuestionId = it.questionId,
                                     attemptSequence = (binding.examReportList.currentItem + 1),
-                                    conversationId = getConversationId()
+                                    conversationId = getConversationId(),
+                                    examType = viewModel.examType.value
                                 )
                             )
                         }

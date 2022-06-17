@@ -11,10 +11,7 @@ import androidx.viewpager2.widget.MarginPageTransformer
 import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.ApiCallStatus
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.BaseActivity
-import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.countdowntimer.CountdownTimerBack
@@ -37,6 +34,7 @@ import java.util.concurrent.TimeUnit
 const val ARG_EXAM_VIEW = "exam_view"
 const val ARG_OPEN_QUESTION_ID = "open_question_id"
 const val ARG_ATTEMPT_SEQUENCE = "attempt_sequence"
+const val EXAM_TYPE = "exam_type"
 
 class CExamMainActivity : BaseActivity(), CertificationExamListener {
 
@@ -47,7 +45,8 @@ class CExamMainActivity : BaseActivity(), CertificationExamListener {
             examView: CertificationExamView = CertificationExamView.EXAM_VIEW,
             conversationId: String? = null,
             openQuestionId: Int = -1,
-            attemptSequence: Int = -1
+            attemptSequence: Int = -1,
+            examType: String? = EMPTY
         ): Intent {
             return Intent(context, CExamMainActivity::class.java).apply {
                 putExtra(CERTIFICATION_EXAM_QUESTION, certificationQuestionModel)
@@ -55,6 +54,7 @@ class CExamMainActivity : BaseActivity(), CertificationExamListener {
                 putExtra(ARG_OPEN_QUESTION_ID, openQuestionId)
                 putExtra(ARG_ATTEMPT_SEQUENCE, attemptSequence)
                 putExtra(CONVERSATION_ID, conversationId)
+                putExtra(EXAM_TYPE, examType)
             }
         }
     }
@@ -80,7 +80,7 @@ class CExamMainActivity : BaseActivity(), CertificationExamListener {
                 ?: CertificationExamView.EXAM_VIEW
         openQuestionId = intent.getIntExtra(ARG_OPEN_QUESTION_ID, 0)
         attemptSequence = intent.getIntExtra(ARG_ATTEMPT_SEQUENCE, -1)
-
+        viewModel.examType.value = intent.getStringExtra(EXAM_TYPE)
         certificationQuestionModel?.run {
             if (CertificationExamView.EXAM_VIEW == examView) {
                 if (lastQuestionOfExit < 0) {
@@ -102,19 +102,18 @@ class CExamMainActivity : BaseActivity(), CertificationExamListener {
 
     private fun addObserver() {
         viewModel.apiStatus.observe(
-            this,
-            {
-                hideProgressBar()
-                if (ApiCallStatus.SUCCESS == it) {
-                    certificationQuestionModel?.certificateExamId?.let {
-                        CertificationQuestionModel.removeResumeExam(it)
-                        val intent = Intent()
-                        setResult(Activity.RESULT_OK, intent)
-                    }
-                    this.finish()
+            this
+        ) {
+            hideProgressBar()
+            if (ApiCallStatus.SUCCESS == it) {
+                certificationQuestionModel?.certificateExamId?.let {
+                    CertificationQuestionModel.removeResumeExam(it)
+                    val intent = Intent()
+                    setResult(Activity.RESULT_OK, intent)
                 }
+                this.finish()
             }
-        )
+        }
     }
 
     private fun setupUI() {

@@ -220,7 +220,6 @@ class CertificationExamViewModel(application: Application) : AndroidViewModel(ap
     }
 
     fun typeOfExam() {
-        var value:String = EMPTY
         viewModelScope.launch{
             try {
                 certificateExamId?.let {
