@@ -201,11 +201,11 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                         }
                     }
                     ServiceEvents.PROCESS_AGORA_CALL_RECORDING -> {
-//                        Log.d(TAG, "listenVoipEvents() called")
-//                        File(PrefManager.getLastRecordingPath())?.let { file ->
-//                            Log.e("sagar", "listenVoipEvents: $file" )
-//                            stopRecording(file)
-//                        }
+                        Log.d(TAG, "listenVoipEvents() called")
+                        File(PrefManager.getLastRecordingPath())?.let { file ->
+                            Log.e("sagar", "listenVoipEvents: $file" )
+                            stopRecording(file)
+                        }
                     }
                 }
             }
