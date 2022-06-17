@@ -8,8 +8,8 @@
         <import type="androidx.databinding.DataBindingUtil" />
         <import type="androidx.databinding.ViewDataBinding" />
         <variable
-            name="vm"
-            type="com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.VoiceCallViewModel" />
+            name="handler"
+            type="com.joshtalks.joshskills.ui.voip.new_arch.ui.views.IncomingNotificationActivity" />
     </data>
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/incoming_container"
@@ -65,7 +65,7 @@
                 android:background="@drawable/circle2"
                 android:backgroundTint="@color/checkbox_color"
                 android:padding="@dimen/_14sdp"
-                android:onClick="@{(v)->((Activity)(((ViewDataBinding)DataBindingUtil.findBinding(v)).lifecycleOwner)).finish()}"
+                android:onClick="@{handler::declineCall}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.13"
@@ -82,7 +82,7 @@
                 android:backgroundTint="@color/green"
                 android:padding="@dimen/_14sdp"
                 android:rotation="225"
-                acceptCall="@{true}"
+                android:onClick="@{handler.acceptCall}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.87"

@@ -226,6 +226,7 @@
             android:showForAllUsers="true"
             android:showWhenLocked="true"
             android:turnScreenOn="true"
+            android:process=":joshSkillsCallingService"
             android:screenOrientation="portrait"
             android:theme="@style/AppNoBarTheme" />
         <activity
