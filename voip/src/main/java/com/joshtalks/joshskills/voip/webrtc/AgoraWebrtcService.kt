@@ -168,6 +168,7 @@ internal class AgoraWebrtcService(val scope: CoroutineScope) : WebrtcService {
             recordFile?.absolutePath?.let {
                 agoraEngine?.stopAudioRecording()
                 PrefManager.saveLastRecordingPath(recordFile!!.absolutePath)
+                Log.e(TAG, "onStartRecording: started recording$recordFile")
                 scope.launch {
                     try {
                         eventFlow.emit(CallState.RecordingGenerated)

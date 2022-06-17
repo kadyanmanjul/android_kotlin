@@ -53,6 +53,7 @@ import com.joshtalks.joshskills.core.USER_LOCALE_UPDATED
 import com.joshtalks.joshskills.core.USER_UNIQUE_ID
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
+import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.LocalNotificationDismissEventReceiver
 import com.joshtalks.joshskills.core.analytics.LogException
@@ -84,11 +85,15 @@ import com.joshtalks.joshskills.repository.server.MessageStatusRequest
 import com.joshtalks.joshskills.repository.server.UpdateDeviceRequest
 import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.track.CourseUsageSync
-import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
+import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.ui.launch.LauncherActivity
 import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
+import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
+import com.joshtalks.joshskills.ui.voip.NotificationId
 import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.LOCAL_NOTIFICATION_CHANNEL
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.call_recording.ProcessCallRecordingService
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.CallRecordingShare
 import com.yariksoffice.lingver.Lingver
 import io.branch.referral.Branch
 import java.util.Date
@@ -515,6 +520,102 @@ class DeterminedNPSEvent(context: Context, private var workerParams: WorkerParam
         return Result.success()
     }
 }
+
+class CallRecordingEvent(context: Context, private var workerParams: WorkerParameters) :
+    CoroutineWorker(context, workerParams) {
+    override suspend fun doWork(): Result {
+        try {
+            val filePath = workerParams.inputData.getString("filepath") ?: EMPTY
+            val context = AppObjectController.joshApplication
+            val textDescription = "Well done!, Here is your call recording"
+            val title = "Processed Call Recording"
+            val index = ProcessCallRecordingService.LOCAL_NOTIFICATION_ID
+
+            val intent = CallRecordingShare.getActivityIntentForSharableCallRecording(
+                context = context,
+                videoUrl = filePath,
+            )
+
+            intent.run {
+                val activityList = arrayOf(Intent(applicationContext, InboxActivity::class.java), this)
+                val uniqueInt = (System.currentTimeMillis() and 0xfffffff).plus(index).toInt()
+                val defaultSound =
+                    RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+                val pendingIntent = PendingIntent.getActivities(
+                    context,
+                    uniqueInt,
+                    activityList,
+                    PendingIntent.FLAG_UPDATE_CURRENT
+                )
+
+                val style = NotificationCompat.BigTextStyle()
+                style.setBigContentTitle(title)
+                style.bigText(textDescription)
+                style.setSummaryText("")
+
+                val notificationBuilder =
+                    NotificationCompat.Builder(
+                        context,
+                        NotificationId.LOCAL_NOTIFICATION_CHANNEL + index
+                    )
+                        .setSmallIcon(R.drawable.ic_status_bar_notification)
+                        .setContentTitle(title)
+                        .setAutoCancel(true)
+                        .setSound(defaultSound)
+                        .setContentText(textDescription)
+                        .setContentIntent(pendingIntent)
+                        .setStyle(style)
+                        .setWhen(System.currentTimeMillis())
+                        .setDefaults(Notification.DEFAULT_ALL)
+                        .setColor(
+                            ContextCompat.getColor(
+                                context,
+                                R.color.colorAccent
+                            )
+                        )
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    notificationBuilder.priority = NotificationManager.IMPORTANCE_DEFAULT
+                }
+
+                val dismissIntent =
+                    Intent(
+                        context.applicationContext,
+                        LocalNotificationDismissEventReceiver::class.java
+                    )
+                val dismissPendingIntent: PendingIntent =
+                    PendingIntent.getBroadcast(
+                        context.applicationContext,
+                        uniqueInt,
+                        dismissIntent,
+                        0
+                    )
+
+                notificationBuilder.setDeleteIntent(dismissPendingIntent)
+
+                val notificationManager =
+                    context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    val notificationChannel = NotificationChannel(
+                        NotificationId.LOCAL_NOTIFICATION_CHANNEL + index,
+                        NotificationId.LOCAL_NOTIFICATION_CHANNEL + index,
+                        NotificationManager.IMPORTANCE_HIGH
+                    )
+                    notificationChannel.enableLights(true)
+                    notificationChannel.enableVibration(true)
+                    notificationBuilder.setChannelId(NotificationId.LOCAL_NOTIFICATION_CHANNEL + index)
+                    notificationManager.createNotificationChannel(notificationChannel)
+                }
+                notificationManager.notify(uniqueInt, notificationBuilder.build())
+            }
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
+        return Result.success()
+    }
+}
+
 
 class UpdateDeviceDetailsWorker(context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {

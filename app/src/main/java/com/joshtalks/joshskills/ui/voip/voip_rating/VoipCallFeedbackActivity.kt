@@ -5,7 +5,6 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
@@ -15,23 +14,20 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.base.EventLiveData
-import com.joshtalks.joshskills.constants.CLOSE_REPORT
+import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.LESSON_COMPLETE_SNACKBAR_TEXT_STRING
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
-import com.joshtalks.joshskills.core.setRoundImage
 import com.joshtalks.joshskills.core.IS_COURSE_BOUGHT
-import com.joshtalks.joshskills.core.textDrawableBitmap
+import com.joshtalks.joshskills.core.LESSON_COMPLETE_SNACKBAR_TEXT_STRING
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
-import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
+import com.joshtalks.joshskills.core.setRoundImage
+import com.joshtalks.joshskills.core.textDrawableBitmap
 import com.joshtalks.joshskills.databinding.VoipCallFeedbackViewBinding
 import com.joshtalks.joshskills.repository.local.model.KFactor
 import com.joshtalks.joshskills.ui.practise.PracticeViewModel
@@ -323,8 +319,6 @@ class VoipCallFeedbackActivity : BaseActivity(){
             currentUserId: Int,
             fppDialogFlag: String
         ) {
-            Log.e("Sagar", "callStatusNetworkApi: sagar $fppDialogFlag")
-
             Intent(activity, VoipCallFeedbackActivity::class.java).apply {
                 putExtra(ARG_CHANNEL_NAME, channelName)
                 putExtra(ARG_CALL_TIME, callTime)

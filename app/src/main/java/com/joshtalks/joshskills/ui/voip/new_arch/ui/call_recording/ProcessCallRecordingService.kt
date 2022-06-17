@@ -1,18 +1,14 @@
 package com.joshtalks.joshskills.ui.voip.new_arch.ui.call_recording
 
-import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
-import android.media.RingtoneManager
 import android.os.Build
 import android.os.Handler
 import android.os.IBinder
 import android.text.TextUtils
-import android.util.Log
 import androidx.annotation.Nullable
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -20,15 +16,13 @@ import androidx.core.content.ContextCompat
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.audioVideoMuxer
 import com.joshtalks.joshskills.base.copy
-import com.joshtalks.joshskills.base.getAudioSentFile
+import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
-import com.joshtalks.joshskills.core.analytics.LocalNotificationDismissEventReceiver
+import com.joshtalks.joshskills.core.io.AppDirectory
+import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.model.NotificationChannelNames
-import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
-import com.joshtalks.joshskills.ui.voip.NotificationId
-import com.joshtalks.joshskills.voip.Utils.Companion.uiHandler
+import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
 import com.joshtalks.joshskills.voip.data.api.CallRecordingRequest
-import com.joshtalks.joshskills.voip.data.api.MediaDUNetwork
 import com.joshtalks.joshskills.voip.data.api.VoipNetwork
 import java.io.File
 import java.util.concurrent.ArrayBlockingQueue
@@ -78,7 +72,7 @@ class ProcessCallRecordingService : Service() {
                                 val audioPath = intent.getStringExtra(AUDIO_PATH)
                                 val callId = intent.getStringExtra(CALL_ID)
                                 val agoraMentorId = intent.getStringExtra(AGORA_MENTOR_ID)
-                                startProcessingAudioVideoMixing(InputFiles(callId,agoraMentorId,videoPath,audioPath))
+                                startProcessingAudioVideoMixing(InputFiles(callId, agoraMentorId, videoPath, audioPath))
                             }
                     }
                     UPLOAD_ALL_CALL_RECORDING -> {
@@ -99,7 +93,7 @@ class ProcessCallRecordingService : Service() {
                 mFileUploadHandler.removeCallbacks(mFileUploadTask!!)
                 isMuxingRunning = false
                 mFileUploadTask = null
-                uiHandler.post {
+                AppObjectController.uiHandler.post {
                     hideNotification()
                 }
             }
@@ -107,12 +101,12 @@ class ProcessCallRecordingService : Service() {
     }
 
     private fun startProcessingAudioVideoMixing(inputFiles: InputFiles) {
-        if (inputFiles.callId.isNullOrBlank() || inputFiles.audioPath.isNullOrBlank() || inputFiles.videoPath.isNullOrBlank()){
+        if (inputFiles.callId.isNullOrBlank() || inputFiles.audioPath.isNullOrBlank() || inputFiles.videoPath.isNullOrBlank()) {
             return
         }
         CoroutineScope(Dispatchers.IO).launch {
-                fileQueue.add(inputFiles)
-                startMuxingVideo()
+            fileQueue.add(inputFiles)
+            startMuxingVideo()
         }
     }
 
@@ -133,21 +127,20 @@ class ProcessCallRecordingService : Service() {
             CoroutineScope(Dispatchers.IO).launch {
                 if (fileQueue.isEmpty()) {
                     isMuxingRunning = false
-                    Log.e("sagar", "24.")
-                    uiHandler.post {
+                    AppObjectController.uiHandler.post {
                         hideNotification()
                     }
                 } else {
                     try {
                         val inputFiles = fileQueue.take()
-                        Log.e("sagar", "Files To mux : audio- ${inputFiles.audioPath} video- ${inputFiles.videoPath}")
-                        val audioFile = getAudioSentFile(context = applicationContext, null)
-                        copy(inputFiles.audioPath!!,audioFile.absolutePath)
-                        uiHandler.post {
+                        // val audioFile = getAudioSentFile(context = applicationContext, null)
+                        val audioFile = AppDirectory.getAudioSentFile(null)
+                        copy(inputFiles.audioPath!!, audioFile.absolutePath)
+                        AppObjectController.uiHandler.post {
                             showUploadNotification()
                         }
-                        val outputFile = audioVideoMuxer(audioFile, File(inputFiles.videoPath!!),applicationContext)
-                        if (outputFile.isNullOrBlank().not()){
+                        val outputFile = audioVideoMuxer(audioFile, File(inputFiles.videoPath!!), applicationContext)
+                        if (outputFile.isNullOrBlank().not()) {
                             inputFiles.outputFile = File(outputFile!!)
                         }
                         uploadOutputVideoToS3Server(inputFiles)
@@ -170,7 +163,7 @@ class ProcessCallRecordingService : Service() {
                         "media_path" to inputFiles.outputFile!!.name,
                     )
                     val responseObj =
-                        callApiService.requestUploadMediaAsync(obj)
+                        AppObjectController.chatNetworkService.requestUploadMediaAsync(obj)
                             .await()
                     val statusCode: Int =
                         uploadOnS3Server(responseObj, inputFiles.outputFile!!.absolutePath)
@@ -183,17 +176,20 @@ class ProcessCallRecordingService : Service() {
                         return@launch
                     }
                 }
-                if (requestEngage.serverUrl.isNullOrBlank()){
+                if (requestEngage.serverUrl.isNullOrBlank()) {
                     return@launch
                 }
 
                 val resp =
-                    callApiService.postCallRecordingFile(
-                        CallRecordingRequest(agoraCallId = inputFiles.callId,agoraMentorId = inputFiles.agoraMentorId, recording_url = inputFiles.serverUrl!!)
+                    AppObjectController.chatNetworkService.postCallRecordingFile(
+                        CallRecordingRequest(
+                            agoraCallId = inputFiles.callId,
+                            agoraMentorId = inputFiles.agoraMentorId,
+                            recording_url = inputFiles.serverUrl!!
+                        )
                     )
-                Log.e(TAG, "uploadOutputVideoToS3Server: $resp")
                 if (resp.isSuccessful && resp.body() != null) {
-                    addNotificationForUserCTA(requestEngage.outputFile?.absolutePath,applicationContext)
+                    WorkManagerAdmin.notificationCallRecordingEvent(requestEngage.outputFile?.absolutePath?:"")
                 } else {
                     handleRetry(inputFiles)
                 }
@@ -203,107 +199,12 @@ class ProcessCallRecordingService : Service() {
         }
     }
 
-    private fun addNotificationForUserCTA(filePath: String?,context:Context) {
-        if(filePath.isNullOrBlank()){
-            return
-        }
-        Log.d(
-            "sagar",
-            "addNotificationForUserCTA() called with: filePath = $filePath, context = $context"
-        )
-
-        val textDescription = "WellDone !, Here is your call recording"
-        val title = "Processed Call Recording"
-        val index = LOCAL_NOTIFICATION_ID
-        val intent = VideoPlayerActivity.getActivityIntent(
-            context = context,
-            videoTitle = "Call Recorded",
-            videoId = null,
-            videoUrl =filePath
-        ).apply {
-            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-        }
-
-        intent.run {
-            val activityList = arrayOf(this)
-            val uniqueInt = (System.currentTimeMillis() and 0xfffffff).plus(index).toInt()
-            val defaultSound =
-                RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-            val pendingIntent = PendingIntent.getActivities(
-                context,
-                uniqueInt, activityList,
-                PendingIntent.FLAG_UPDATE_CURRENT
-            )
-
-            val style = NotificationCompat.BigTextStyle()
-            style.setBigContentTitle(title)
-            style.bigText(textDescription)
-            style.setSummaryText("")
-
-            val notificationBuilder =
-                NotificationCompat.Builder(
-                    context,
-                    NotificationId.LOCAL_NOTIFICATION_CHANNEL + index
-                )
-                    .setSmallIcon(R.drawable.ic_status_bar_notification)
-                    .setContentTitle(title)
-                    .setAutoCancel(true)
-                    .setSound(defaultSound)
-                    .setContentText(textDescription)
-                    .setContentIntent(pendingIntent)
-                    .setStyle(style)
-                    .setWhen(System.currentTimeMillis())
-                    .setDefaults(Notification.DEFAULT_ALL)
-                    .setColor(
-                        ContextCompat.getColor(
-                            context,
-                            R.color.colorAccent
-                        )
-                    )
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                notificationBuilder.priority = NotificationManager.IMPORTANCE_DEFAULT
-            }
-
-            val dismissIntent =
-                Intent(
-                    context.applicationContext,
-                    LocalNotificationDismissEventReceiver::class.java
-                )
-            val dismissPendingIntent: PendingIntent =
-                PendingIntent.getBroadcast(
-                    context.applicationContext,
-                    uniqueInt,
-                    dismissIntent,
-                    0
-                )
-
-            notificationBuilder.setDeleteIntent(dismissPendingIntent)
-
-            val notificationManager =
-                context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                val notificationChannel = NotificationChannel(
-                    NotificationId.LOCAL_NOTIFICATION_CHANNEL + index,
-                    NotificationId.LOCAL_NOTIFICATION_CHANNEL + index,
-                    NotificationManager.IMPORTANCE_HIGH
-                )
-                notificationChannel.enableLights(true)
-                notificationChannel.enableVibration(true)
-                notificationBuilder.setChannelId(NotificationId.LOCAL_NOTIFICATION_CHANNEL + index)
-                notificationManager.createNotificationChannel(notificationChannel)
-            }
-            notificationManager.notify(uniqueInt, notificationBuilder.build())
-        }
-    }
-
     private suspend fun handleRetry(pendingTaskModel: InputFiles) {
 
     }
 
     private suspend fun uploadOnS3Server(
-        responseObj: com.joshtalks.joshskills.voip.data.AmazonPolicyResponse,
+        responseObj: AmazonPolicyResponse,
         mediaPath: String
     ): Int {
         return CoroutineScope(Dispatchers.IO).async {
@@ -318,7 +219,7 @@ class ProcessCallRecordingService : Service() {
                 responseObj.fields["key"],
                 requestFile
             )
-            val responseUpload = MediaDUNetwork.getMediaDUNetworkService().uploadMediaAsync(
+            val responseUpload = AppObjectController.mediaDUNetworkService.uploadMediaAsync(
                 responseObj.url,
                 parameters,
                 body
@@ -345,12 +246,7 @@ class ProcessCallRecordingService : Service() {
             mNotificationManager?.createNotificationChannel(mChannel)
         }
 
-        val lNotificationBuilder = com.joshtalks.joshskills.voip.Utils?.context?.let {
-            ContextCompat.getColor(
-                it,
-                R.color.colorPrimary
-            )
-        }?.let {
+        val lNotificationBuilder = ContextCompat.getColor(AppObjectController.joshApplication, R.color.colorPrimary).let {
             NotificationCompat.Builder(
                 this,
                 CHANNEL_ID
@@ -368,7 +264,7 @@ class ProcessCallRecordingService : Service() {
         }
 
 
-        startForeground(NOTIFICATION_ID, lNotificationBuilder?.build())
+        startForeground(NOTIFICATION_ID, lNotificationBuilder.build())
     }
 
     companion object {
@@ -378,10 +274,10 @@ class ProcessCallRecordingService : Service() {
         const val AUDIO_PATH = "AUDIO_PATH"
         const val CALL_ID = "CALL_ID"
         const val AGORA_MENTOR_ID = "AGORA_MENTOR_ID"
-        private val TAG = "RecordingService"
-        private const val CHANNEL_ID = "VIDEO_PROCESSING"
-        private const val NOTIFICATION_ID = 1201
-        private const val LOCAL_NOTIFICATION_ID = 1202
+        val TAG = "RecordingService"
+        const val CHANNEL_ID = "VIDEO_PROCESSING"
+        const val NOTIFICATION_ID = 1201
+        const val LOCAL_NOTIFICATION_ID = 1202
         fun uploadAllPendingTasks(context: Context) {
             try {
                 val intent = Intent(context, ProcessCallRecordingService::class.java)
@@ -395,7 +291,7 @@ class ProcessCallRecordingService : Service() {
         fun processSingleCallRecording(
             context: Context? = com.joshtalks.joshskills.voip.Utils.context,
             callId: String?,
-            agoraMentorId :String?,
+            agoraMentorId: String?,
             videoPath: String,
             audioPath: String,
         ) {
@@ -411,10 +307,10 @@ class ProcessCallRecordingService : Service() {
 }
 
 data class InputFiles(
-    val callId:String?,
+    val callId: String?,
     val agoraMentorId: String?,
-    val videoPath:String?,
-    val audioPath:String?,
-    var outputFile:File? = null,
-    var serverUrl:String? = null
+    val videoPath: String?,
+    val audioPath: String?,
+    var outputFile: File? = null,
+    var serverUrl: String? = null
 )
