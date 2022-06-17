@@ -42,7 +42,8 @@ import com.joshtalks.joshskills.repository.server.engage.Graph
 import com.joshtalks.joshskills.repository.server.introduction.DemoOnboardingData
 import com.joshtalks.joshskills.repository.server.voip.SpeakingTopic
 import com.joshtalks.joshskills.repository.service.NetworkRequestHelper
-import com.joshtalks.joshskills.ui.lesson.speaking.VideoPopupItem
+import com.joshtalks.joshskills.ui.lesson.speaking.spf_models.UserRating
+import com.joshtalks.joshskills.ui.lesson.speaking.spf_models.VideoPopupItem
 import com.joshtalks.joshskills.ui.referral.WHATSAPP_PACKAGE_STRING
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.callbar.CallBar
 import com.joshtalks.joshskills.util.AudioRecording
