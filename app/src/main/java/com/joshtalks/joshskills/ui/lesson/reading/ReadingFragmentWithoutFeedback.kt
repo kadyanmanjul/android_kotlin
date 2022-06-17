@@ -1728,6 +1728,8 @@ class ReadingFragmentWithoutFeedback :
                     // practiceViewModel.submitPractise(chatModel, requestEngage, engageType)
                     viewModel.getPointsForVocabAndReading(currentLessonQuestion!!.id)
                     viewModel.addTaskToService(requestEngage, PendingTask.READING_PRACTICE_OLD)
+                    //TODO : Jugaad ko hataana hai
+                    viewModel.updatePracticeEngagement(requestEngage)
                     currentLessonQuestion!!.status = QUESTION_STATUS.IP
                     delay(300)
                     AppObjectController.uiHandler.post {

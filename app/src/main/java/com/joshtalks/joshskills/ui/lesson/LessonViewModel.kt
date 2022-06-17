@@ -1052,4 +1052,21 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
         singleLiveEvent.value = message
     }
 
+    fun updatePracticeEngagement(requestEngage:RequestEngage) {
+        viewModelScope.launch {
+            val lessonQuestion = AppObjectController.appDatabase.lessonQuestionDao()
+                .getLessonQuestionById(requestEngage.questionId)
+            lessonQuestion?.let {
+                val emptyList = listOf<PracticeEngagement>(PracticeEngagement())
+                it.practiceEngagement = emptyList
+                it.status = QUESTION_STATUS.AT
+                it.practiceEngagement!!.get(0).duration = requestEngage.duration
+                it.practiceEngagement!!.get(0).localPath = requestEngage.localPath
+                AppObjectController.appDatabase.lessonQuestionDao()
+                    .updateQuestionObject(it)
+                Log.e("Ayaaz", "callupdatepracticeeng")
+            }
+        }
+    }
+
 }
