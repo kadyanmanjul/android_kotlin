@@ -16,12 +16,9 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import com.facebook.appevents.codeless.internal.ViewHierarchy.setOnClickListener
 import com.google.android.gms.auth.api.credentials.Credential
 import com.google.android.gms.auth.api.credentials.CredentialPickerConfig
 import com.google.android.gms.auth.api.credentials.Credentials
@@ -33,7 +30,6 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.POSTAL_ADDRESS
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.POSTAL_ADDRESS_SUBHEADING_CERT_FORM
-import com.joshtalks.joshskills.base.BaseFragment
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.DATE_FORMATTER
@@ -42,6 +38,7 @@ import com.joshtalks.joshskills.core.EMAIL_HINT
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.MAX_YEAR
 import com.joshtalks.joshskills.core.RC_HINT
+import com.joshtalks.joshskills.core.Utils.isInternetAvailable
 import com.joshtalks.joshskills.core.custom_ui.spinnerdatepicker.DatePickerDialog
 import com.joshtalks.joshskills.core.custom_ui.spinnerdatepicker.SpinnerDatePickerDialogBuilder
 import com.joshtalks.joshskills.core.interfaces.FileDownloadCallback
@@ -52,8 +49,6 @@ import com.joshtalks.joshskills.repository.server.certification_exam.Certificati
 import com.joshtalks.joshskills.ui.certification_exam.CertificationExamViewModel
 import com.joshtalks.joshskills.ui.certification_exam.constants.*
 import com.joshtalks.joshskills.ui.certification_exam.view.CertificateShareFragment
-import com.joshtalks.joshskills.voip.Utils.Companion.context
-import com.joshtalks.joshskills.voip.Utils.Companion.isInternetAvailable
 import java.text.ParseException
 import java.util.Calendar
 import java.util.Date
