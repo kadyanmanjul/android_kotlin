@@ -112,6 +112,8 @@ object FallbackManager {
                 )
             )
 
+            PubNubManager.reconnectPubNub()
+
         }
 
     }

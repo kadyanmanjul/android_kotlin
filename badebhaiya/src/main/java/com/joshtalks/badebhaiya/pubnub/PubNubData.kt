@@ -34,6 +34,6 @@ object PubNubData {
     internal val _pubNubState = MutableSharedFlow<PubNubState>()
     val pubNubState = _pubNubState.asSharedFlow()
 
-    val eventsMap = mutableMapOf<Long, JsonObject>()
+    val eventsMap = mutableMapOf<Long, Long>()
 
 }

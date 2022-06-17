@@ -153,7 +153,7 @@ object PubNubManager {
     private fun getLatestUserList() {
         jobs += CoroutineScope(Dispatchers.IO).launch {
             try {
-                throw Exception()
+//                throw Exception()
 
             pubnub.channelMembers.channel(liveRoomProperties?.channelName)
                 ?.includeCustom(true)
@@ -383,7 +383,7 @@ object PubNubManager {
         eventData.addProperty("event_id", eventId)
         jobs += CoroutineScope(Dispatchers.IO).launch() {
             try {
-                throw Exception()
+//                throw Exception()
                 channel.let {
                     pubnub.publish()
                         .message(eventData)
@@ -555,7 +555,10 @@ object PubNubManager {
 
      fun postToPubNubEvent(data: ConversationRoomPubNubEventBus) {
         jobs += CoroutineScope(Dispatchers.IO).launch {
-            eventsMap[data.eventId] = data.data
+            Timber.d("ABC Event AUR EVENT ID HAI => ${data.eventId}")
+            eventsMap[data.eventId] = data.eventId
+            Timber.d("ABC Event AUR MAP HAI => ${eventsMap}")
+
             PubNubData.pubNubEvents.emit(data)
         }
 

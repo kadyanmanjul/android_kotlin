@@ -1,6 +1,7 @@
 package com.joshtalks.badebhaiya.pubnub
 
 import android.util.Log
+import com.google.gson.JsonObject
 import com.joshtalks.badebhaiya.core.LogException
 import com.joshtalks.badebhaiya.liveroom.adapter.PubNubEvent
 import com.joshtalks.badebhaiya.liveroom.model.ConversationRoomPubNubEventBus
@@ -37,13 +38,16 @@ class PubNubCallback: SubscribeCallback() {
                     "message() called with: pubnub = $pubnub, pnMessageResult = $pnMessageResult"
                 )
 //                PubNubManager.eventExists()
+
                 Timber.d("ABC Event ka msg hai => $msg and PN message result is => $pnMessageResult")
 //                PubNubData.eventsMap[pnMessageResult.timetoken] = msg
+                Timber.d("ABC Event AUR EXTRACTED EVENT ID HAI => ${extractEventId(msg)}")
                 PubNubManager.postToPubNubEvent(
                     ConversationRoomPubNubEventBus(
                         PubNubEvent.valueOf(act),
                         msg,
-                        pnMessageResult.timetoken
+//                        pnMessageResult.timetoken
+                        extractEventId(msg)
                     )
                 )
             }
@@ -71,5 +75,17 @@ class PubNubCallback: SubscribeCallback() {
     }
 
     override fun file(pubnub: PubNub, pnFileEventResult: PNFileEventResult) {
+    }
+
+    private fun extractEventId(msg: JsonObject): Long{
+        return try {
+            when {
+                msg.has("event_id") -> msg["event_id"].asLong
+                msg.has("data") -> msg["data"].asJsonObject["event_id"].asLong
+                else -> msg["message"].asJsonObject["event_id"].asLong
+            }
+        } catch (e: Exception){
+            0L
+        }
     }
 }
