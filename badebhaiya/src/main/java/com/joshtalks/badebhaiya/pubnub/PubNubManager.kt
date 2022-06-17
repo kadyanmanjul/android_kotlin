@@ -36,6 +36,7 @@ import com.pubnub.api.PubNub
 import com.pubnub.api.callbacks.SubscribeCallback
 import com.pubnub.api.models.consumer.objects_api.member.PNUUID
 import kotlinx.coroutines.*
+import kotlinx.coroutines.sync.withLock
 import timber.log.Timber
 import java.util.*
 
@@ -71,6 +72,8 @@ object PubNubManager {
 
     private var pubNubEventJob: Job? = null
 
+    private var reconnecting = false
+
     @Volatile
     var isRoomActive = false
 
@@ -89,6 +92,7 @@ object PubNubManager {
     }
 
     fun initPubNub() {
+        reconnecting = false
         roomJoiningTime = System.currentTimeMillis()
         val pnConf = PNConfiguration(User.getInstance().userId)
         pnConf.subscribeKey = BuildConfig.PUBNUB_SUB_API_KEY
@@ -414,8 +418,40 @@ object PubNubManager {
     }
 
     fun reconnectPubNub() {
-        pubnub.reconnect()
+        if (!reconnecting){
+            reconnecting = true
+            pubnub.reconnect()
+            reconnecting = false
+        }
     }
+
+//    fun fullReconnect(){
+//        if (!reconnecting) {
+//            Log.d("Fallback", "reconnect: Pubnub Reconnecting - $reconnecting")
+//                try{
+//                        reconnecting = true
+////                        pubnub?.removeListener(ca)
+////                        pubnub?.unsubscribeAll()
+//                        pubnub?.reconnect()
+////                        pubnub?.addListener(listener)
+////                        pubnub?.subscribe()
+////                            ?.channels(listOf(Utils.uuid))
+////                            ?.execute()
+//                        CallAnalytics.addAnalytics(
+//                            event = EventName.PUBNUB_LISTENER_RESTART,
+//                            agoraCallId = PrefManager.getAgraCallId().toString(),
+//                            agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
+//                        )
+//                        isReconnecting = false
+//                }
+//                catch (e : Exception){
+//                    if(e is CancellationException)
+//                        throw e
+//                    e.printStackTrace()
+//                }
+//        }
+//
+//    }
 
     fun setChannelMemberStateForUuid(
         user: LiveRoomUser?,
