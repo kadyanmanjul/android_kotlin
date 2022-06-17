@@ -478,12 +478,12 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                     }
                 }
                 LessonSpotlightState.SPEAKING_SPOTLIGHT -> {
-                    binding.overlayLayout.visibility = View.VISIBLE
+//                    binding.overlayLayout.visibility = View.VISIBLE
                     binding.spotlightTabGrammar.visibility = View.INVISIBLE
-                    binding.spotlightTabSpeaking.visibility = View.VISIBLE
+//                    binding.spotlightTabSpeaking.visibility = View.VISIBLE
                     binding.spotlightTabVocab.visibility = View.INVISIBLE
                     binding.spotlightTabReading.visibility = View.INVISIBLE
-                    binding.lessonSpotlightTooltip.visibility = View.VISIBLE
+//                    binding.lessonSpotlightTooltip.visibility = View.VISIBLE
                     binding.lessonSpotlightTooltip.setTooltipText(
                         resources.getText(R.string.label_speaking_spotlight).toString()
                     )

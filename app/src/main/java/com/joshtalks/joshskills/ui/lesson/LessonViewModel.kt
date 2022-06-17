@@ -947,6 +947,10 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     }
 
      fun getButtonVisibility(){
+         if(PrefManager.getIntValue(THRESHOLD_SPEED_IN_KBPS)==-1){
+             isInternetSpeedGood.set(2)
+             return
+         }
         if(isInternetSpeedGood.get()!=0)
          isInternetSpeedGood.set(0)
 
