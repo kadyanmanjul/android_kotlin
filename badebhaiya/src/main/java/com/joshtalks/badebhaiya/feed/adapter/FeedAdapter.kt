@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.core.models.PendingPilotEvent
+import com.joshtalks.badebhaiya.core.setOnSingleClickListener
 import com.joshtalks.badebhaiya.core.showToast
 import com.joshtalks.badebhaiya.databinding.LiRoomEventBinding
 import com.joshtalks.badebhaiya.feed.FeedActivity
@@ -84,7 +85,7 @@ class FeedAdapter(private val fromProfile: Boolean = false, private val coroutin
             val date = Utils.getMessageTime((room.startTime ?: 0L), false, DateTimeStyle.LONG)
             val time = Utils.getMessageTimeInHours(Date(room.startTime ?: 0))
             item.tvCardHeader.text = item.root.context.getString(R.string.room_card_top_title_header, name, date, time)
-            item.root.setOnClickListener {
+            item.root.setOnSingleClickListener() {
                     callback?.viewRoom(room, it,false)
 
             }

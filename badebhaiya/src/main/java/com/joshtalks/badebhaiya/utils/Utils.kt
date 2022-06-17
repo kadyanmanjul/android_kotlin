@@ -963,16 +963,16 @@ fun String.toBitmap(context: Context, onResourceReady: (bitmap: Bitmap) -> Unit)
 
 fun ImageView.setUserImageOrInitials(
     url: String?,
-    userName: String,
+    userName: Char,
     dpToPx: Int = 16,
     isRound: Boolean = false,
     radius: Int = 16
 ) {
     if (url.isNullOrEmpty()) {
         if (isRound)
-            setUserInitial(userName)
+            setUserInitial(userName.toString())
         else
-            setUserInitialInRect(userName, dpToPx, radius)
+            setUserInitialInRect(userName.toString(), dpToPx, radius)
     } else {
         if (isRound) {
             val requestOptions = RequestOptions().placeholder(R.drawable.ic_pic_placeholder)

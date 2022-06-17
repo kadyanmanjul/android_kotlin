@@ -92,7 +92,7 @@
                 android:layout_marginTop="@dimen/_15sdp"
                 android:layout_marginEnd="@dimen/_9sdp"
                 android:layout_marginBottom="@dimen/_9sdp"
-                android:onClick="@{()->handler.takePermissionsXml()}"
+                onSingleClick="@{()->handler.takePermissionsXml()}"
                 android:backgroundTint="@color/reminder_button_color"
                 android:shadowColor="@color/black"
                 android:elevation="9dp"

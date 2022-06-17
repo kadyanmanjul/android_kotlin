@@ -47,7 +47,7 @@
                 android:id="@+id/search"
                 android:focusable="true"
                 android:gravity="center_vertical|start"
-                android:onClick="@{() -> handler.onSearchPressed()}"
+                onSingleClick="@{() -> handler.onSearchPressed()}"
                 android:visibility="visible"
                 app:layout_constraintBottom_toBottomOf="@+id/profile_iv"
                 app:layout_constraintEnd_toStartOf="@+id/profile_iv"
@@ -63,7 +63,7 @@
                 initialsFontSize="@{16}"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:onClick="@{() -> handler.onProfileClicked()}"
+                onSingleClick="@{() -> handler.onProfileClicked()}"
                 android:scaleType="centerCrop"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -142,7 +142,7 @@
                     android:drawableLeft="@drawable/ic_plus"
                     android:drawablePadding="@dimen/_3sdp"
                     android:focusable="true"
-                    android:onClick="@{()->handler.takePermissionsXml()}"
+                    onSingleClick="@{()->handler.takePermissionsXml()}"
                     android:text="@string/start_a_room"
                     android:textSize="@dimen/_12ssp" />
 

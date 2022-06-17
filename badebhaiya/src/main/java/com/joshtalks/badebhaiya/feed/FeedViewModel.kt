@@ -128,6 +128,7 @@ class FeedViewModel : ViewModel() {
                 showToast(AppObjectController.joshApplication.getString(R.string.enter_topic_name))
             } else {
                 try {
+                    sendEvent(Impression("FEED_SCREEN","CLICKED_CREATE"))
                     isLoading.set(true)
                     val response = repository.createRoom(
                         ConversationRoomRequest(
@@ -175,7 +176,6 @@ class FeedViewModel : ViewModel() {
                 )
                 roomtopic=topic
                 if (response.isSuccessful) {
-                    isRoomActive.postValue(true)
                         if (moderatorId == User.getInstance().userId) {
                             isModerator=true
                             PubNubEventsManager.sendModeratorStatus(true, moderatorId.toString())
@@ -322,6 +322,16 @@ class FeedViewModel : ViewModel() {
         }
     }
 
+    fun sendEvent(source: Impression) {
+        viewModelScope.launch {
+            try {
+                repository.sendEvent(source)
+            } catch (e: Exception){
+
+            }
+        }
+    }
+
     fun scheduleRoom(topic: String, startTime: String, callback: CreateRoom.CreateRoomCallback) {
         viewModelScope.launch {
             if (topic.isNullOrBlank()) {
@@ -333,6 +343,7 @@ class FeedViewModel : ViewModel() {
 //                        showToast("Schedule a room for 30 minutes or later!")
 //                        return@launch
 //                    }
+                    sendEvent(Impression("FEED_SCREEN","CLICKED_SCHEDULE"))
                     isLoading.set(true)
                     val response = repository.scheduleRoom(
                         ConversationRoomRequest(
