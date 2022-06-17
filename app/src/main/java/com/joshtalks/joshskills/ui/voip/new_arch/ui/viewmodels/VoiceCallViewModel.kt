@@ -205,6 +205,7 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                         File(PrefManager.getLastRecordingPath())?.let { file ->
                             Log.e("sagar", "listenVoipEvents: $file" )
                             stopRecording(file)
+                            timer?.cancel()
                         }
                     }
                 }
