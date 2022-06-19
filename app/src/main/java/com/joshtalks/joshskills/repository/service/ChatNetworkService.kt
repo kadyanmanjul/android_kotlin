@@ -186,11 +186,7 @@ interface ChatNetworkService {
     @POST("$DIR/impression/track_a2c1_retention_impression/")
     suspend fun saveA2C1Impression(@Body requestData: HashMap<String, String>)
 
-    @Headers(
-        "Accept: application/json",
-        "Content-type:application/json",
-        "Cache-Control: public, only-if-cached,  max-stale=86400,  max-age=86400"
-    )
+    @Headers("Cache-Control: public, only-if-cached,  max-stale=86400,  max-age=86400")
     @GET("$DIR/p2p/rating/")
     suspend fun getUserRating(): Response<UserRating>
 

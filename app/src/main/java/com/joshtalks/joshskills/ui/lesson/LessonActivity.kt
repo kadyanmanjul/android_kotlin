@@ -26,6 +26,7 @@ import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -1630,10 +1631,10 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
 }
 
 @BindingAdapter("setRatingText")
-fun TextView.ratingText(rating:UserRating?){
+fun AppCompatTextView.ratingText(rating:UserRating?){
     Log.d(TAG, "ratingText: $rating")
     if(rating!=null) {
-        if (rating.rating.toInt() == -1) {
+        if (rating.rating.toInt() == -1 || rating.rating.isNaN()) {
             this.visibility = View.GONE
         } else {
             this.background.setColorFilter(Color.parseColor(rating.bgColor), PorterDuff.Mode.SRC_ATOP)
