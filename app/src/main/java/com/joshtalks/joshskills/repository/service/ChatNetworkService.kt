@@ -27,7 +27,6 @@ import com.joshtalks.joshskills.repository.server.chat_message.UpdateQuestionSta
 import com.joshtalks.joshskills.repository.server.course_overview.CourseOverviewBaseResponse
 import com.joshtalks.joshskills.repository.server.groupchat.GroupDetails
 import com.joshtalks.joshskills.repository.server.introduction.DemoOnboardingData
-import com.joshtalks.joshskills.ui.lesson.speaking.VideoPopupItem
 import com.joshtalks.joshskills.voip.data.api.CallRecordingRequest
 import com.joshtalks.joshskills.ui.lesson.speaking.spf_models.UserRating
 import com.joshtalks.joshskills.ui.lesson.speaking.spf_models.VideoPopupItem
