@@ -356,6 +356,7 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                     if (recordingButtonState == RecordingButtonState.RECORDING) {
                         if (!isRecordingTimerStar) {
                             isRecordingTimerStar = true
+                            uiState.recordingButtonState = RecordingButtonState.IDLE
                             File(PrefManager.getLastRecordingPath()).let { file ->
                                 stopAudioVideoRecording()
                                 stoppedRecUIchanges()
