@@ -230,6 +230,7 @@ class VoiceCallActivity : BaseActivity() {
             }
         else {
             super.onBackPressed()
+            vm.recordingStopButtonClickListener()
             vm.backPress()
         }
     }

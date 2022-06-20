@@ -72,7 +72,6 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
     var visibleCrdView = false
     var isListening = false
     var isRequestDialogShowed = false
-    var isRecordingTimerStar = false
     var timer: CountDownTimer? = null
 
     private val connectCallJob by lazy {
@@ -354,14 +353,8 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
 
                 override fun onFinish() {
                     if (recordingButtonState == RecordingButtonState.RECORDING) {
-                        if (!isRecordingTimerStar) {
-                            isRecordingTimerStar = true
-                            uiState.recordingButtonState = RecordingButtonState.IDLE
-                            File(PrefManager.getLastRecordingPath()).let { file ->
-                                stopAudioVideoRecording()
-                                stoppedRecUIchanges()
-                                stopRecording(file)
-                            }
+                        if (uiState.recordTime > 0) {
+                            recordingStopButtonClickListener()
                         }
                     }
                 }
@@ -468,16 +461,20 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                 repository.stopCallRecording()
             }
             RecordingButtonState.RECORDING -> {
-                CallAnalytics.addAnalytics(
-                    event = EventName.RECORDING_STOPPED,
-                    agoraCallId = PrefManager.getAgraCallId().toString(),
-                    agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
-                )
-                stoppedRecUIchanges()
-                stopAudioVideoRecording()
-                repository.stopCallRecording()
+                recordingStopButtonClickListener()
             }
         }
+    }
+
+    fun recordingStopButtonClickListener(){
+        CallAnalytics.addAnalytics(
+            event = EventName.RECORDING_STOPPED,
+            agoraCallId = PrefManager.getAgraCallId().toString(),
+            agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
+        )
+        stoppedRecUIchanges()
+        stopAudioVideoRecording()
+        repository.stopCallRecording()
     }
 
     private fun stoppedRecUIchanges() {
