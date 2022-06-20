@@ -106,6 +106,7 @@ class CallingRemoteService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.d(TAG, "StartService --- OnStartCommand")
         when(intent?.action) {
+            // TODO: have to change
             SERVICE_ACTION_INCOMING_CALL -> {
                 val map = HashMap<String,String>()
                 map[INCOMING_CALL_CATEGORY] = intent.extras?.getString(com.joshtalks.joshskills.voip.constant.INCOMING_CALL_CATEGORY,"")?:""
@@ -138,6 +139,7 @@ class CallingRemoteService : Service() {
                     agoraCallId ="-1",
                     agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
                 )
+                // TODO : Must be removed
                 IncomingCallNotificationHandler().removeNotification()
                 return START_NOT_STICKY
             }

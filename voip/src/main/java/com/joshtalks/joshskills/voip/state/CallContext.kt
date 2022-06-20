@@ -58,6 +58,8 @@ data class CallContext(val callType: Category, val direction : CallDirection, va
         mediator.disconnectCallFromWebrtc()
     }
 
+    fun getCallCategory() = mediator.calling
+
     fun updateUIState(uiState: UIState) {
         Log.d(TAG, "Updating UI (Current - ${state}) state $uiState ")
         currentUiState = uiState

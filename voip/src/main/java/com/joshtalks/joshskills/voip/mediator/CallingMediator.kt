@@ -36,6 +36,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
 const val PER_USER_TIMEOUT_IN_MILLIS = 10 * 1000L
+const val FAV_USER_TIMEOUT_IN_MILLIS = 50 * 1000L
 private const val TAG = "CallingMediator"
 enum class ActionDirection {
     SERVER,
@@ -53,7 +54,8 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
         FirebaseChannelService(scope)
     }
 
-    private var calling : CallCategory = PeerToPeerCall()
+    var calling : CallCategory = PeerToPeerCall()
+    private set
     private var callCategory : Category = Category.PEER_TO_PEER
 
     val flow by lazy {

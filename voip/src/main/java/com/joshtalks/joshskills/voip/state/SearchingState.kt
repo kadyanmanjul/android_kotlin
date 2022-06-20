@@ -70,11 +70,21 @@ class SearchingState(val context: CallContext) : VoipState {
             }
         }
     }
-    private val calling by lazy { when(context.callType){
-        Category.PEER_TO_PEER->{PeerToPeerCall()}
-        Category.FPP -> {FavoriteCall()}
-        Category.GROUP -> {GroupCall()}
-    } }
+    private val favTimeoutTimer by lazy {
+        scope.launch(start = CoroutineStart.LAZY) {
+            try {
+                ensureActive()
+                delay(FAV_USER_TIMEOUT_IN_MILLIS)
+                disconnectNoUserFound()
+                cleanUpState()
+            } catch (e: Exception) {
+                if (e is CancellationException)
+                    throw e
+                e.printStackTrace()
+            }
+        }
+    }
+
     private val apiCallJob by lazy {
         scope.launch(start = CoroutineStart.LAZY) {
             try {
@@ -86,7 +96,7 @@ class SearchingState(val context: CallContext) : VoipState {
                 )
                 if (context.isRetrying) {
 
-                    context.request[INTENT_DATA_PREVIOUS_CALL_ID]=getRequest()
+                    context.request[INTENT_DATA_PREVIOUS_CALL_ID]= context.channelData.getCallingId()
                     CallAnalytics.addAnalytics(
                         event = EventName.NEXT_CHANNEL_REQUESTED,
                         agoraCallId = context.channelData.getCallingId().toString(),
@@ -94,7 +104,7 @@ class SearchingState(val context: CallContext) : VoipState {
                         extra = TAG
                     )
                 }
-                calling.onPreCallConnect(context.request, context.direction)
+                context.getCallCategory().onPreCallConnect(context.request, context.direction)
                 ensureActive()
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -144,8 +154,10 @@ class SearchingState(val context: CallContext) : VoipState {
          5. Cancel timeout timer  (Just to make sure if last timer didn't canceled)
          6. Checking is Incoming Call
          7. If its outgoing Call then start timeout timer*/
-        if (context.direction == CallDirection.OUTGOING)
+        if (context.direction == CallDirection.OUTGOING && context.callType != Category.FPP)
             timeoutTimer.start()
+        else if(context.callType == Category.FPP)
+            favTimeoutTimer.start()
         apiCallJob.start()
     }
 

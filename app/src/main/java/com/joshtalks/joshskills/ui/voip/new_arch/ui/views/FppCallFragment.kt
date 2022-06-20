@@ -56,6 +56,8 @@ class FppCallFragment : BaseFragment() , SensorEventListener {
     val vm by lazy {
         ViewModelProvider(requireActivity())[VoiceCallViewModel::class.java]
     }
+
+    // TODO: Remove Timer Animation
     private val progressAnimator by lazy<ValueAnimator> {
         ValueAnimator.ofFloat(0f, 1f).apply {
             duration = 1000
@@ -94,7 +96,6 @@ class FppCallFragment : BaseFragment() , SensorEventListener {
     }
     override fun initViewBinding() {
         callBinding.vm = vm
-        callBinding.callFragment = this
         if(vm.source == FROM_INCOMING_CALL && PrefManager.getVoipState() != State.CONNECTED) {
             startIncomingTimer()
         }

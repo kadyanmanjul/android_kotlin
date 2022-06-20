@@ -100,7 +100,6 @@ class   CallFragment : BaseFragment() , SensorEventListener {
     }
     override fun initViewBinding() {
         callBinding.vm = vm
-        callBinding.callFragment = this
         if(vm.source == FROM_INCOMING_CALL && PrefManager.getVoipState() != State.CONNECTED) {
             startIncomingTimer()
         }

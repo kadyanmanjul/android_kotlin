@@ -10,9 +10,6 @@
     <variable
         name="vm"
         type="com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.VoiceCallViewModel" />
-    <variable
-        name="callFragment"
-        type="com.joshtalks.joshskills.ui.voip.new_arch.ui.views.CallFragment" />
 </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
