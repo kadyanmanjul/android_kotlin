@@ -208,7 +208,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
             R.layout.lesson_activity
         )
         binding.viewbinding = this
-
+        window.setBackgroundDrawable(null)
         event.observe(this) {
             when (it.what) {
                 PERMISSION_FROM_READING -> requestStoragePermission(STORAGE_READING_REQUEST_CODE)

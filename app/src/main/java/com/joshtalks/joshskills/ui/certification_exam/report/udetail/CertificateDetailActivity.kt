@@ -88,7 +88,6 @@ class CertificateDetailActivity : BaseActivity(), FileDownloadCallback {
         super.onCreate(savedInstanceState)
         binding =
             DataBindingUtil.setContentView(this, R.layout.activity_certificate_detail)
-        window.setBackgroundDrawable(null)
         binding.lifecycleOwner = this
         binding.handler = this
         if(intent.hasExtra(CERTIFICATE_EXAM_ID)){

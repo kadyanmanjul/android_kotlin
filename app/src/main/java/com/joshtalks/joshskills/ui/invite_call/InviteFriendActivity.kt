@@ -44,6 +44,7 @@ class InviteFriendActivity : BaseActivity(), ContactsAdapter.OnContactClickListe
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        window.setBackgroundDrawable(null)
         findViewById<TextView>(R.id.text_message_title).text = getString(R.string.call_a_friend)
         findViewById<ImageView>(R.id.iv_help).apply {
             visibility = View.VISIBLE

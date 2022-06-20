@@ -91,6 +91,7 @@ class CourseProgressActivityNew :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.course_progress_activity_new)
+        window.setBackgroundDrawable(null)
         binding.handler = this
         if (intent.hasExtra(COURSE_ID).not())
             finish()

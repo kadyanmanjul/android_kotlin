@@ -44,6 +44,7 @@ class PdfViewerActivity : BaseActivity() {
         )
         super.onCreate(savedInstanceState)
         conversationBinding = DataBindingUtil.setContentView(this, R.layout.activity_pdf_viewer)
+        window.setBackgroundDrawable(null)
         conversationBinding.handler = this
         setToolbar()
         showPdf()

@@ -118,6 +118,7 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
         }
         super.onCreate(savedInstanceState)
         window.statusBarColor = ContextCompat.getColor(applicationContext, R.color.black)
+        window.setBackgroundDrawable(null)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_course_details)
         binding.lifecycleOwner = this
         binding.handler = this

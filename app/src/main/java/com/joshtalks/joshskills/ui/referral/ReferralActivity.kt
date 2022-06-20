@@ -86,6 +86,7 @@ class ReferralActivity : BaseActivity() {
 
 
         activityReferralBinding = DataBindingUtil.setContentView(this, R.layout.activity_referral)
+        window.setBackgroundDrawable(null)
         activityReferralBinding.lifecycleOwner = this
         activityReferralBinding.handler = this
         userReferralCode = Mentor.getInstance().referralCode

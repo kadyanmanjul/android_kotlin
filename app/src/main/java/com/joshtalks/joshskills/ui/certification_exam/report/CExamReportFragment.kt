@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.ui.certification_exam.report
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -86,16 +87,20 @@ class CExamReportFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         id = certificateExamReport?.reportId
         url = certificateExamReport?.certificateURL?:EMPTY
-        certificateExamReport?.run {
-            binding.chatRv.addView(ReportOverviewView1(this, viewModel.examType.value))
-            binding.chatRv.addView(ReportOverviewView2(this, questionList))
-            updateRvScrolling(true)
-        }
+
     }
 
     override fun onResume() {
         super.onResume()
         addObserver()
+        Log.i("TAG", "onResume: Triggred")
+        certificateExamReport?.run {
+            binding.chatRv.removeAllViews()
+            binding.chatRv.addView(ReportOverviewView1(this, viewModel.examType.value))
+            binding.chatRv.addView(ReportOverviewView2(this, questionList))
+            updateRvScrolling(true)
+        }
+
     }
 
     override fun onPause() {
@@ -109,6 +114,7 @@ class CExamReportFragment : Fragment() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
+                    Log.i("TAG", "addObserver: Triggred")
                     updateRvScrolling(false)
                     viewModel.saveImpression(CHECK_EXAM_DETAILS)
                     binding.chatRv.smoothScrollToPosition(1)
@@ -148,7 +154,7 @@ class CExamReportFragment : Fragment() {
 
     @SuppressLint("ClickableViewAccessibility")
     private fun updateRvScrolling(flag: Boolean) {
-        binding.chatRv.setOnTouchListener { _, _ -> flag }
+        binding.chatRv.suppressLayout(flag)
     }
 
     private fun showViewOnHint(type: QuestionReportType) {

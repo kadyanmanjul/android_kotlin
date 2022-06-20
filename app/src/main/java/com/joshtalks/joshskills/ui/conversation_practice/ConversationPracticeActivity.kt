@@ -50,6 +50,7 @@ class ConversationPracticeActivity : CoreJoshActivity() {
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_conversation_practice_2)
+        window.setBackgroundDrawable(null)
         binding.lifecycleOwner = this
         binding.handler = this
         addObserver()

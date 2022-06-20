@@ -6,6 +6,7 @@ import android.content.res.ColorStateList
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.AbsoluteSizeSpan
+import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import androidx.appcompat.widget.AppCompatTextView
@@ -55,6 +56,7 @@ class ReportOverviewView1(private val certificateExamReport: CertificateExamRepo
 
     @Resolve
     fun onViewInflated() {
+        Log.i(TAG, "onViewInflated: Triggred")
         certificateExamReport.run {
             headerTv.text = heading
             resultInfo.text = HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_LEGACY)
