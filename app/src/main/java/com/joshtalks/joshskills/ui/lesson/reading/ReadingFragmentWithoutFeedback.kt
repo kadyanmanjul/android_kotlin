@@ -824,7 +824,7 @@ class ReadingFragmentWithoutFeedback :
                             binding.mergedVideo.setVideoPath(this.practiceEngagement?.get(0)?.localPath)
                         }
                         binding.btnWhatsapp.setOnClickListener {
-                            viewModel.saveImpression(SHARED_READING_PRACTICE)
+                            viewModel.saveReadingPracticeImpression(READING_SHARED_WHATSAPP,lessonID.toString())
                             scope.launch {
                                 if (currentLessonQuestion?.practiceEngagement?.get(0)?.localPath.isNullOrEmpty()
                                         .not()
@@ -1074,8 +1074,8 @@ class ReadingFragmentWithoutFeedback :
             binding.ivClose.visibility = GONE
             binding.btnWhatsapp.visibility = VISIBLE
             binding.btnWhatsapp.setOnClickListener {
-                viewModel.saveImpression(SHARED_READING_PRACTICE)
                 viewModel.shareVideoForAudio(outputFile)
+                viewModel.saveReadingPracticeImpression(READING_SHARED_WHATSAPP,lessonID.toString())
             }
         }
 

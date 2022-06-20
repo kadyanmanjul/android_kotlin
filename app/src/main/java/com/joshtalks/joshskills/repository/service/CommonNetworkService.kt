@@ -400,4 +400,7 @@ interface CommonNetworkService {
 
     @POST("$DIR/impression/track_broadcast_event/")
     suspend fun saveBroadcastEvent(@Body params: BroadCastEvent): Response<Unit>
+
+    @POST("$DIR/impression/track_reading_practice_impression/")
+    suspend fun saveReadingPracticeImpression(@Body params: Map<String, String>): Response<Void>
 }

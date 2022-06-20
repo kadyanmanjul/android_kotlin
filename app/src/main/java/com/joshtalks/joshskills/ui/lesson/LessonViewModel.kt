@@ -1064,9 +1064,21 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                 it.practiceEngagement!!.get(0).localPath = requestEngage.localPath
                 AppObjectController.appDatabase.lessonQuestionDao()
                     .updateQuestionObject(it)
-                Log.e("Ayaaz", "callupdatepracticeeng")
             }
         }
     }
 
+    fun saveReadingPracticeImpression(eventName: String,lessonId: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val requestData = hashMapOf(
+                    Pair("lesson_id",lessonId),
+                    Pair("event_name", eventName)
+                )
+                AppObjectController.commonNetworkService.saveReadingPracticeImpression(requestData)
+            } catch (ex: Exception) {
+                Timber.e(ex)
+            }
+        }
+    }
 }

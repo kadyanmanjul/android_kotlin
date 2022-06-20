@@ -60,7 +60,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     card_view:cardCornerRadius="@dimen/_8sdp"
-                    card_view:cardElevation="0dp"
+                    card_view:cardElevation="2dp"
                     card_view:cardUseCompatPadding="false"
                     tools:visibility="visible">
 
@@ -105,7 +105,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/practise_input_layout"
                     card_view:cardCornerRadius="@dimen/_8sdp"
-                    card_view:cardElevation="0dp"
+                    card_view:cardElevation="2dp"
                     card_view:cardUseCompatPadding="false"
                     tools:visibility="visible">
 
@@ -256,6 +256,7 @@
                                 android:background="@drawable/image_placeholder_no_bottom_corners"
                                 android:clickable="true"
                                 android:focusable="true"
+                                android:elevation="2dp"
                                 android:visibility="gone"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintStart_toStartOf="parent"
@@ -439,6 +440,7 @@
                     android:background="@drawable/rect_with_bound"
                     android:backgroundTint="#ECF4FD"
                     android:layout_marginTop="@dimen/_10sdp"
+                    android:elevation="2dp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/practise_info_layout"
                     app:layout_constraintBottom_toTopOf="@+id/practise_submit_layout">
@@ -520,7 +522,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/info"
                     card_view:cardCornerRadius="@dimen/_8sdp"
-                    card_view:cardElevation="0dp"
+                    android:elevation="2dp"
                     card_view:cardUseCompatPadding="false"
                     tools:visibility="visible">
 
@@ -802,6 +804,7 @@
                     android:paddingEnd="@dimen/_24sdp"
                     android:text="@string/submit"
                     android:textAllCaps="false"
+                    android:elevation="2dp"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Button"
                     android:textColor="@color/white"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -858,6 +861,7 @@
                     app:iconTint="@null"
                     app:iconSize="@dimen/_16sdp"
                     android:backgroundTint="#13990A"
+                    android:elevation="2dp"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Button"
                     android:textColor="@color/white"
                     app:iconGravity="textStart"
@@ -886,6 +890,7 @@
                     android:padding="@dimen/_8sdp"
                     android:text="@string/continue_label"
                     android:textAllCaps="false"
+                    android:elevation="2dp"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Button"
                     android:textColor="@color/white"
                     android:visibility="gone"
