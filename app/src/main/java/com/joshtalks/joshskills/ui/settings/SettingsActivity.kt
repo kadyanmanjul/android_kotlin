@@ -23,7 +23,6 @@ class SettingsActivity : WebRtcMiddlewareActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
         titleView = findViewById(R.id.text_message_title)
-        window.setBackgroundDrawable(null)
         iv_help.visibility = View.GONE
         iv_back.visibility = View.VISIBLE
         iv_back.setOnClickListener {

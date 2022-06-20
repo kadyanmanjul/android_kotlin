@@ -80,7 +80,6 @@ class CourseExploreActivity : CoreJoshActivity() {
         super.onCreate(savedInstanceState)
         courseExploreBinding =
             DataBindingUtil.setContentView(this, R.layout.activity_course_explore)
-        window.setBackgroundDrawable(null)
         courseExploreBinding.lifecycleOwner = this
         courseExploreBinding.handler = this
         appAnalytics = AppAnalytics.create(AnalyticsEvent.COURSE_EXPLORE.NAME)

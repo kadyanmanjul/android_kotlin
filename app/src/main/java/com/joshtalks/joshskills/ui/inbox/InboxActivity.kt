@@ -91,7 +91,6 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         super.onCreate(savedInstanceState)
         lifecycle.addObserver(this)
         setContentView(R.layout.activity_inbox)
-        window.setBackgroundDrawable(null)
         initView()
         addLiveDataObservable()
         addAfterTime()

@@ -34,7 +34,6 @@ class CommitmentFormActivity : BaseActivity() {
 
     override fun initViewBinding() {
         binding.executePendingBindings()
-        window.setBackgroundDrawable(null)
     }
 
     override fun onCreated() {
