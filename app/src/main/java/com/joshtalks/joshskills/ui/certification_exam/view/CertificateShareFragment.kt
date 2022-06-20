@@ -282,7 +282,7 @@ class CertificateShareFragment : CoreJoshFragment() {
     }
 
     private fun getDeepLinkAndShare(uri: Uri) {
-        DeepLinkUtil
+        DeepLinkUtil(requireContext())
             .setReferralCode(Mentor.getInstance().referralCode)
             .setReferralCampaign()
             .setSharedItem(DeepLinkUtil.SharedItem.CERTIFICATE)

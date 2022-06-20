@@ -932,7 +932,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     fun shareVideoForAudio(path: String) {
-        DeepLinkUtil
+        DeepLinkUtil(AppObjectController.joshApplication)
             .setReferralCode(Mentor.getInstance().referralCode)
             .setReferralCampaign()
             .setListener(object : DeepLinkUtil.OnDeepLinkListener {

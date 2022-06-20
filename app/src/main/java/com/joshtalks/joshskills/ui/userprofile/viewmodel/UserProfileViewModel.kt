@@ -636,7 +636,7 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
     }
 
     fun getDeepLinkAndInviteFriends(packageString: String? = null) {
-        DeepLinkUtil
+        DeepLinkUtil(AppObjectController.joshApplication)
             .setReferralCode(Mentor.getInstance().referralCode)
             .setReferralCampaign()
             .setListener(object : DeepLinkUtil.OnDeepLinkListener {
