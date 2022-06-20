@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.Application
 import android.os.CountDownTimer
 import android.os.Message
+import android.os.SystemClock
 import android.util.Log
 import android.view.View
 import androidx.databinding.ObservableArrayList
@@ -234,7 +235,8 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                     return@launch
                 }
 
-                ProcessCallRecordingService.processSingleCallRecording(context = Utils.context, videoPath = videoRecordFile?.absolutePath?:"", audioPath = recordFile.absolutePath, callId = PrefManager.getAgraCallId().toString(),agoraMentorId =PrefManager.getLocalUserAgoraId().toString())
+                val currentTime = SystemClock.elapsedRealtime()
+                ProcessCallRecordingService.processSingleCallRecording(context = Utils.context, videoPath = videoRecordFile?.absolutePath?:"", audioPath = recordFile.absolutePath, callId = PrefManager.getAgraCallId().toString(),agoraMentorId = PrefManager.getLocalUserAgoraId().toString(),recordDuration = ((currentTime - uiState.recordTime)/1000).toInt())
                 CallRecordingAnalytics.addAnalytics(
                     agoraCallId = PrefManager.getAgraCallId().toString(),
                     agoraMentorId =PrefManager.getLocalUserAgoraId().toString(),

@@ -73,7 +73,8 @@ class ProcessCallRecordingService : Service() {
                                 val audioPath = intent.getStringExtra(AUDIO_PATH)
                                 val callId = intent.getStringExtra(CALL_ID)
                                 val agoraMentorId = intent.getStringExtra(AGORA_MENTOR_ID)
-                                startProcessingAudioVideoMixing(InputFiles(callId, agoraMentorId, videoPath, audioPath))
+                                val duration = intent.getIntExtra(RECORD_DURATION,0)
+                                startProcessingAudioVideoMixing(InputFiles(callId, agoraMentorId, videoPath, audioPath,duration = duration))
                             }
                     }
                     UPLOAD_ALL_CALL_RECORDING -> {
@@ -189,7 +190,8 @@ class ProcessCallRecordingService : Service() {
                         CallRecordingRequest(
                             agoraCallId = inputFiles.callId,
                             agoraMentorId = inputFiles.agoraMentorId,
-                            recording_url = inputFiles.serverUrl!!
+                            recording_url = inputFiles.serverUrl!!,
+                            duration = inputFiles.duration?:0
                         )
                     )
                 Log.e("sagar", "uploadOutputVideoToS3Server: $resp")
@@ -277,6 +279,7 @@ class ProcessCallRecordingService : Service() {
         const val UPLOAD_ALL_CALL_RECORDING = "UPLOAD_ALL_CALL_RECORDING"
         const val VIDEO_PATH = "VIDEO_PATH"
         const val AUDIO_PATH = "AUDIO_PATH"
+        const val RECORD_DURATION = "RECORD_DURATION"
         const val CALL_ID = "CALL_ID"
         const val AGORA_MENTOR_ID = "AGORA_MENTOR_ID"
         val TAG = "RecordingService"
@@ -299,6 +302,7 @@ class ProcessCallRecordingService : Service() {
             agoraMentorId: String?,
             videoPath: String,
             audioPath: String,
+            recordDuration: Int
         ) {
             Log.e("sagar", "processSingleCallRecording: Call")
             val intent = Intent(context, ProcessCallRecordingService::class.java)
@@ -307,6 +311,7 @@ class ProcessCallRecordingService : Service() {
             intent.putExtra(AGORA_MENTOR_ID, agoraMentorId)
             intent.putExtra(VIDEO_PATH, videoPath)
             intent.putExtra(AUDIO_PATH, audioPath)
+            intent.putExtra(RECORD_DURATION,recordDuration)
             context?.startService(intent)
         }
     }
@@ -318,5 +323,6 @@ data class InputFiles(
     val videoPath: String?,
     val audioPath: String?,
     var outputFile: File? = null,
-    var serverUrl: String? = null
+    var serverUrl: String? = null,
+    var duration: Int? = null
 )

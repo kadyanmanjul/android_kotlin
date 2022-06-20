@@ -51,5 +51,8 @@ data class CallRecordingRequest(
     val agoraMentorId: String? = null,
 
     @field:SerializedName("recording_url")
-    val recording_url: String
+    val recording_url: String,
+
+    @field:SerializedName("duration")
+    val duration: Int? = null
 )
