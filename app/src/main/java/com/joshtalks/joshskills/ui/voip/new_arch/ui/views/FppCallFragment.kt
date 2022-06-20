@@ -1,7 +1,6 @@
 package com.joshtalks.joshskills.ui.voip.new_arch.ui.views
 
-import android.animation.Animator
-import android.animation.ValueAnimator
+
 import android.content.Context
 import android.hardware.Sensor
 import android.hardware.SensorEvent
@@ -10,24 +9,18 @@ import android.hardware.SensorManager
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.PowerManager
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.BounceInterpolator
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
-import androidx.viewpager2.widget.ViewPager2
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
 import com.joshtalks.joshskills.base.constants.FROM_INCOMING_CALL
-import com.joshtalks.joshskills.databinding.FragmentCallBinding
 import com.joshtalks.joshskills.databinding.FragmentFppCallBinding
-import com.joshtalks.joshskills.ui.voip.new_arch.ui.callbar.CallBar
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.VoiceCallViewModel
 import com.joshtalks.joshskills.voip.audiocontroller.AudioController
 import com.joshtalks.joshskills.voip.audiocontroller.AudioRouteConstants
-import com.joshtalks.joshskills.voip.constant.CALL_CONNECTED_EVENT
 import com.joshtalks.joshskills.voip.constant.CALL_INITIATED_EVENT
 import com.joshtalks.joshskills.voip.constant.CANCEL_INCOMING_TIMER
 import com.joshtalks.joshskills.voip.constant.State
@@ -40,7 +33,6 @@ class FppCallFragment : BaseFragment() , SensorEventListener {
     private val TAG = "FppCallFragment"
 
     lateinit var callBinding: FragmentFppCallBinding
-    private var isAnimationCanceled = false
     private var sensorManager: SensorManager? = null
     private var proximity: Sensor? = null
     private var powerManager: PowerManager? = null
@@ -55,26 +47,6 @@ class FppCallFragment : BaseFragment() , SensorEventListener {
 
     val vm by lazy {
         ViewModelProvider(requireActivity())[VoiceCallViewModel::class.java]
-    }
-
-    // TODO: Remove Timer Animation
-    private val progressAnimator by lazy<ValueAnimator> {
-        ValueAnimator.ofFloat(0f, 1f).apply {
-            duration = 1000
-            addUpdateListener {
-                callBinding.incomingProgress.progress = ((animatedValue as Float) * 100).toInt()
-            }
-        }
-    }
-    private val textAnimator by lazy<ValueAnimator> {
-        ValueAnimator.ofFloat(0.8f, 1.2f, 1f).apply {
-            duration = 300
-            interpolator = BounceInterpolator()
-            addUpdateListener {
-                callBinding.incomingTimerTv.scaleX = it.animatedValue as Float
-                callBinding.incomingTimerTv.scaleY = it.animatedValue as Float
-            }
-        }
     }
 
     override fun onCreateView(
@@ -96,19 +68,14 @@ class FppCallFragment : BaseFragment() , SensorEventListener {
     }
     override fun initViewBinding() {
         callBinding.vm = vm
-        if(vm.source == FROM_INCOMING_CALL && PrefManager.getVoipState() != State.CONNECTED) {
-            startIncomingTimer()
-        }
         callBinding.executePendingBindings()
     }
 
     override fun initViewState() {
         setUpProximitySensor()
-        addViewPagerCallbacks()
         liveData.observe(viewLifecycleOwner) {
             when (it.what) {
                 CANCEL_INCOMING_TIMER -> {
-                    stopAnimation()
                     callBinding.incomingTimerContainer.visibility = View.INVISIBLE
                 }
                 CALL_INITIATED_EVENT ->{
@@ -119,23 +86,8 @@ class FppCallFragment : BaseFragment() , SensorEventListener {
         }
     }
 
-    private fun addViewPagerCallbacks() {
-        callBinding.topicViewpager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                super.onPageSelected(position)
-            }
+    override fun setArguments() {}
 
-            override fun onPageScrollStateChanged(state: Int) {
-                super.onPageScrollStateChanged(state)
-            }
-
-            override fun onPageScrolled(position: Int,
-                                        positionOffset: Float,
-                                        positionOffsetPixels: Int) {
-                super.onPageScrolled(position, positionOffset, positionOffsetPixels)
-            }
-        })
-    }
 
     private fun setUpProximitySensor() {
         try {
@@ -151,58 +103,6 @@ class FppCallFragment : BaseFragment() , SensorEventListener {
         }
     }
 
-    private fun startIncomingTimer() {
-        stopAnimation()
-        isAnimationCanceled = false
-        var counter = 35
-        progressAnimator.addListener(object : Animator.AnimatorListener {
-            override fun onAnimationStart(animation: Animator?) {}
-
-            override fun onAnimationEnd(animation: Animator?) {
-                Log.d(TAG, "onAnimationEnd: $counter $isAnimationCanceled")
-                if (counter != 0 && !isAnimationCanceled) {
-                    counter -= 1
-                    Log.d(TAG, "onAnimationEnd Inside: $counter $isAnimationCanceled")
-                    callBinding.incomingTimerTv.text = "$counter"
-                    textAnimator.start()
-                    progressAnimator.start()
-                }
-
-                if (counter <= 0) {
-                    Log.d(TAG, "onAnimationEnd: Disconnecting")
-                    vm.disconnect()
-                }
-            }
-
-            override fun onAnimationCancel(animation: Animator?) {
-                if (textAnimator.isStarted && textAnimator.isRunning)
-                    textAnimator.cancel()
-            }
-            override fun onAnimationRepeat(animation: Animator?) {}
-        })
-        progressAnimator.start()
-    }
-
-    @Synchronized
-    private fun stopAnimation() {
-        isAnimationCanceled = true
-        progressAnimator.cancel()
-    }
-
-    override fun setArguments() {}
-
-    override fun onResume() {
-        super.onResume()
-        proximity?.also { proximity ->
-            sensorManager?.registerListener(this, proximity, SensorManager.SENSOR_DELAY_NORMAL)
-        }
-        if (callBinding.incomingTimerContainer.visibility == View.VISIBLE) {
-            CoroutineScope(Dispatchers.Main).launch{
-                progressAnimator.resume()
-            }
-        }
-    }
-
     private fun startPlaying() {
         scope.launch {
             try {
@@ -212,7 +112,6 @@ class FppCallFragment : BaseFragment() , SensorEventListener {
                 mPlayer?.start()
                 delay(20000)
                 stopPlaying()
-                vm.disconnect()
             } catch (ex: Exception) {
                 ex.printStackTrace()
             }
@@ -274,5 +173,10 @@ class FppCallFragment : BaseFragment() , SensorEventListener {
         super.onPause()
         sensorManager?.unregisterListener(this)
         if(lock?.isHeld == true) lock?.release()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        stopPlaying()
     }
 }

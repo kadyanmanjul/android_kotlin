@@ -3,12 +3,9 @@ package com.joshtalks.joshskills.ui.voip.new_arch.ui.views
 import android.app.AlertDialog
 import android.content.Intent
 import android.util.Log
-import android.view.LayoutInflater
-import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseActivity
 import com.joshtalks.joshskills.base.constants.FROM_ACTIVITY
@@ -54,23 +51,14 @@ class VoiceCallActivity : BaseActivity() {
     // TODO: Need to refactor
     override fun getArguments() {
         vm.source = getSource()
-        vm.callType = Category.values()[intent.getIntExtra(INTENT_DATA_CALL_CATEGORY,PrefManager.getCallCategory().ordinal)]
+        vm.callType = Category.values()[intent.getIntExtra(INTENT_DATA_CALL_CATEGORY, PrefManager.getCallCategory().ordinal)]
 
         Log.d(TAG, "getArguments: ${vm.source}  ${vm.callType}")
 
-        when(vm.callType){
-            Category.PEER_TO_PEER -> {}
-            Category.FPP -> {
-                val mentorId = intent?.getStringExtra(INTENT_DATA_FPP_MENTOR_ID)
-                vm.callData[INTENT_DATA_FPP_MENTOR_ID] = mentorId ?: "0"
-            }
-            Category.GROUP -> {}
-        }
         when (vm.source) {
             FROM_CALL_BAR -> {}
             FROM_INCOMING_CALL -> {
                 val incomingCallId = PrefManager.getIncomingCallId()
-                // TODO: Might be wrong
                 CallAnalytics.addAnalytics(
                     event = EventName.INCOMING_CALL_ACCEPT,
                     agoraCallId = PrefManager.getAgraCallId().toString(),
@@ -79,20 +67,31 @@ class VoiceCallActivity : BaseActivity() {
                 vm.callData[INTENT_DATA_INCOMING_CALL_ID] = incomingCallId
             }
             else -> {
-                // TODO: Fix this- This should be nested
+                setCallData()
+            }
+        }
+    }
+
+    private fun setCallData() {
+        when (vm.callType) {
+            Category.PEER_TO_PEER -> {
                 val topicId = intent?.getStringExtra(INTENT_DATA_TOPIC_ID)
                 val courseId = intent?.getStringExtra(INTENT_DATA_COURSE_ID)
-                voipLog?.log("Call Data --> $intent")
                 vm.callData[INTENT_DATA_COURSE_ID] = courseId ?: "0"
                 vm.callData[INTENT_DATA_TOPIC_ID] = topicId ?: "0"
             }
+            Category.FPP ->{
+                val mentorId = intent?.getStringExtra(INTENT_DATA_FPP_MENTOR_ID)
+                vm.callData[INTENT_DATA_FPP_MENTOR_ID] = mentorId ?: "0"
+            }
+            Category.GROUP -> {}
         }
     }
 
     private fun getSource(): String {
         val topicId = intent?.getStringExtra(INTENT_DATA_TOPIC_ID)
         val mentorId = intent?.getStringExtra(INTENT_DATA_FPP_MENTOR_ID)
-        val shouldOpenCallFragment = (topicId == null && mentorId==null)
+        val shouldOpenCallFragment = (topicId == null && mentorId == null)
         return if (shouldOpenCallFragment && PrefManager.getVoipState() == State.IDLE)
             FROM_INCOMING_CALL
         else if (shouldOpenCallFragment)
@@ -107,20 +106,61 @@ class VoiceCallActivity : BaseActivity() {
 
     override fun onCreated() {
         Log.d(TAG, "onCreated: ${vm.source}")
-        when(vm.callType){
-            Category.PEER_TO_PEER ->{
+        if (PermissionUtils.isCallingPermissionEnabled(this)) {
+            startCallingScreen()
+        } else {
+            getPermission()
+        }
+    }
+
+    private fun getPermission() {
+        PermissionUtils.callingFeaturePermission(
+            this,
+            object : MultiplePermissionsListener {
+                override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                    report?.areAllPermissionsGranted()?.let { flag ->
+                        if (report.isAnyPermissionPermanentlyDenied) {
+                            PermissionUtils.callingPermissionPermanentlyDeniedDialog(
+                                this@VoiceCallActivity,
+                                message = R.string.call_start_permission_message
+                            )
+                            return
+                        }
+                        if (flag) {
+                            startCallingScreen()
+                            return
+                        } else {
+                            finish()
+                        }
+                    }
+                }
+
+                override fun onPermissionRationaleShouldBeShown(
+                    permissions: MutableList<PermissionRequest>?,
+                    token: PermissionToken?,
+                ) {
+                    token?.continuePermissionRequest()
+                }
+            }
+        )
+    }
+
+    private fun startCallingScreen() {
+        when (vm.callType) {
+            Category.PEER_TO_PEER -> {
                 openFragment { addCallUserFragment() }
             }
-            Category.FPP ->{
-               addFppCallFragment()
+            Category.FPP -> {
+                addFppCallFragment()
             }
-            Category.GROUP ->{
+            Category.GROUP -> {
 //                openFragment { addGroupCallFragment() }
             }
         }
     }
 
-    private fun openFragment(fragment: ()->Unit) {
+
+    private fun openFragment(fragment: () -> Unit) {
         if (vm.source == FROM_INCOMING_CALL || vm.source == FROM_CALL_BAR) {
             fragment.invoke()
         } else if (vm.source == FROM_ACTIVITY) {
