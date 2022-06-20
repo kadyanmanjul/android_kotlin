@@ -89,6 +89,9 @@ import com.joshtalks.joshskills.ui.tooltip.JoshTooltip
 import com.joshtalks.joshskills.ui.video_player.IS_BATCH_CHANGED
 import com.joshtalks.joshskills.ui.video_player.LAST_LESSON_INTERVAL
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
+import com.joshtalks.joshskills.ui.voip.WebRtcService
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
+import com.joshtalks.joshskills.voip.constant.State
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -196,6 +199,10 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        if (getVoipState() == State.IDLE && WebRtcService.isCallOnGoing.value == false)
+            viewModel.getButtonVisibility()
+
         binding = DataBindingUtil.setContentView(
             this,
             R.layout.lesson_activity
@@ -1637,6 +1644,7 @@ fun AppCompatTextView.ratingText(rating:UserRating?){
         if (rating.rating.toInt() == -1 || rating.rating.isNaN()) {
             this.visibility = View.GONE
         } else {
+            this.visibility = View.VISIBLE
             this.background.setColorFilter(Color.parseColor(rating.bgColor), PorterDuff.Mode.SRC_ATOP)
             this.setTextColor(Color.parseColor(rating.color))
             this.text = "Your Rating: ${rating.rating.toString()}"

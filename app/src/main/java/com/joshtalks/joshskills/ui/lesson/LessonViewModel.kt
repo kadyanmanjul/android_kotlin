@@ -14,6 +14,9 @@ import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.constants.*
+import com.joshtalks.joshskills.constants.PERMISSION_FROM_READING
+import com.joshtalks.joshskills.constants.PERMISSION_FROM_READING_GRANTED
+import com.joshtalks.joshskills.constants.SHARE_VIDEO
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.AppObjectController.Companion.appDatabase
 import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
@@ -54,6 +57,8 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableSharedFlow
 import timber.log.Timber
 import java.io.File
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 class LessonViewModel(application: Application) : AndroidViewModel(application) {
@@ -262,7 +267,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
 
     private suspend fun getQuestionsFromAPI(
         lessonId: Int,
-        isDemo: Boolean = false
+        isDemo: Boolean = false,
     ): List<LessonQuestion> {
         return withContext(viewModelScope.coroutineContext + Dispatchers.IO) {
             try {
@@ -480,7 +485,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
         status: QUESTION_STATUS,
         questionId: String?,
         isVideoPercentComplete: Boolean = false,
-        quizCorrectQuestionIds: ArrayList<Int> = ArrayList()
+        quizCorrectQuestionIds: ArrayList<Int> = ArrayList(),
     ) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -969,18 +974,31 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     fun getRating()  {
-        viewModelScope.launch(Dispatchers.IO)
-        {
-            try {
-                val response = AppObjectController.chatNetworkService.getUserRating()
-                if (response.isSuccessful && response.body() != null) {
-                    userRating.set(response.body())
+        val currentTime = Date().time
+        if(ifRatingFromApi(currentTime)) {
+            viewModelScope.launch(Dispatchers.IO)
+            {
+                try {
+                    val response = AppObjectController.chatNetworkService.getUserRating()
+                    if (response.isSuccessful && response.body() != null) {
+                        userRating.set(response.body())
+                        PrefManager.putPrefObject(RATING_OBJECT, response.body() as UserRating)
+                        PrefManager.put(RATING_TIMESTAMP, currentTime)
+                    }
+                } catch (ex: Throwable) {
+                    apiStatus.postValue(ApiCallStatus.FAILED)
+                    Timber.e(ex)
                 }
-            } catch (ex: Throwable) {
-                apiStatus.postValue(ApiCallStatus.FAILED)
-                Timber.e(ex)
             }
+        }else{
+            userRating.set(PrefManager.getRatingObject(RATING_OBJECT))
         }
+    }
+
+    private fun ifRatingFromApi(currentTime :Long) : Boolean{
+        val previousTime: Long = PrefManager.getLongValue(RATING_TIMESTAMP,false)
+        val differ = currentTime - previousTime
+        return !(differ < 86400000 && differ > -86400000)
     }
 
     fun inviteFriends(dynamicLink: String, path: String) {

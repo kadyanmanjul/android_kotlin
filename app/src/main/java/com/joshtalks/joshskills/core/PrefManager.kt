@@ -16,6 +16,7 @@ import com.joshtalks.joshskills.core.io.LastSyncPrefManager
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.AppDatabase
 import com.joshtalks.joshskills.repository.local.entity.LessonModel
+import com.joshtalks.joshskills.ui.lesson.speaking.spf_models.UserRating
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.report.model.VoipReportModel
 import com.joshtalks.joshskills.ui.voip.voip_rating.model.ReportModel
 
@@ -168,6 +169,8 @@ const val IS_CERTIFICATE_GENERATED_BEGINNER = "IS_CERTIFICATE_GENERATED_BEGINNER
 const val IS_CERTIFICATE_GENERATED_INTERMEDIATE = "IS_CERTIFICATE_GENERATED_INTERMEDIATE"
 const val IS_CERTIFICATE_GENERATED_ADVANCED = "IS_CERTIFICATE_GENERATED_ADVANCED"
 const val IS_EXAM_POINTS_PROMPT = "IS_EXAM_POINTS_PROMPT"
+const val RATING_TIMESTAMP = "RATING_TIMESTAMP"
+const val RATING_OBJECT = "RATING_OBJECT"
 const val SPECIFIC_ONBOARDING = "SPECIFIC_ONBOARDING"
 
 object PrefManager {
@@ -335,6 +338,12 @@ object PrefManager {
         val json: String = getStringValue(key = key, defaultValue = "") as String
         return gson.fromJson(json, VoipReportModel::class.java)
     }
+    fun getRatingObject(key: String): UserRating? {
+        val gson = Gson()
+        val json: String = getStringValue(key = key, defaultValue = "") as String
+        return gson.fromJson(json, UserRating::class.java)
+    }
+
 
     fun getClientToken(): String {
         return BuildConfig.CLIENT_TOKEN
