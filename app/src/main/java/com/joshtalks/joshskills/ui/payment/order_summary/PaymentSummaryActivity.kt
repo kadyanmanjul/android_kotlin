@@ -860,7 +860,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                 .getString(FirebaseRemoteConfigKey.FREE_TRIAL_POPUP_HUNDRED_POINTS_TEXT + testId)
                 .replace("\\n", "\n")
         }else{
-            popUpText =   if(PrefManager.getBoolValue(INCREASE_COURSE_PRICE_ABTEST) && testId == "784"){
+            popUpText =   if(PrefManager.getBoolValue(INCREASE_COURSE_PRICE_ABTEST) && testId == ENGLISH_FREE_TRIAL_1D_TEST_ID){
                 getString(R.string.free_trial_popup_for_icp)
             }
             else {

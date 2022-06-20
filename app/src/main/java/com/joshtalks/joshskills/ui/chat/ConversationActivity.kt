@@ -382,7 +382,7 @@ class ConversationActivity :
             conversationBinding.freeTrialText.text = getString(R.string.free_trial_ended)
             conversationBinding.freeTrialExpiryLayout.visibility = VISIBLE
         }
-        if (inboxEntity.isCourseBought)
+        if (inboxEntity.isCourseBought && inboxEntity.isCapsuleCourse)
             PrefManager.removeKey(IS_FREE_TRIAL_ENDED)
     }
 

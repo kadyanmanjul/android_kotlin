@@ -115,7 +115,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
     }
 
     private fun addListeners() {
-        val language = ChooseLanguages("784", "Hindi (हिन्दी)")
+        val language = ChooseLanguages(HINDI_TO_ENGLISH_TEST_ID, "Hindi (हिन्दी)")
         btnStartTrial.setOnClickListener {
             if (PrefManager.hasKey(SPECIFIC_ONBOARDING))
                 signUp()
@@ -215,7 +215,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
                     .replace("\\n", "\n")
         } else {
             dialogView.findViewById<TextView>(R.id.e_g_motivat).text =
-                if (PrefManager.getBoolValue(INCREASE_COURSE_PRICE_ABTEST) && language.testId == "784") {
+                if (PrefManager.getBoolValue(INCREASE_COURSE_PRICE_ABTEST) && language.testId == HINDI_TO_ENGLISH_TEST_ID) {
                     getString(R.string.free_trial_popup_for_icp)
                 } else {
                     AppObjectController.getFirebaseRemoteConfig()
@@ -233,7 +233,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
 
         dialogView.findViewById<MaterialTextView>(R.id.yes).setOnClickListener {
             PrefManager.put(USER_LOCALE, language.testId)
-            if (language.testId != "784")
+            if (language.testId != HINDI_TO_ENGLISH_TEST_ID)
                 requestWorkerForChangeLanguage(getLangCodeFromlangTestId(language.testId), canCreateActivity = false)
             MixPanelTracker.publishEvent(MixPanelEvent.JI_HAAN).push()
             if (Mentor.getInstance().getId().isNotEmpty()) {
