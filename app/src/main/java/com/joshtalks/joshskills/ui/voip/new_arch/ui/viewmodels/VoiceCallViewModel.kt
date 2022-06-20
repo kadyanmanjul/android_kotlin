@@ -198,6 +198,8 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                         withContext(Dispatchers.Main) {
                             singleLiveEvent.value = msg
                         }
+                        stopAudioVideoRecording()
+                        stoppedRecUIchanges()
                     }
                     ServiceEvents.PROCESS_AGORA_CALL_RECORDING -> {
                         Log.d(TAG, "listenVoipEvents() called")
@@ -282,8 +284,8 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                     uiState.startTime = state.startTime
                 uiState.isRecordingEnabled = state.isRecordingEnabled
                 // TODO remove this logic from here ( issues: fix when state is REQUESTED we have to show dialog even when other user come back from background )
-                if (state.recordingButtonState == RecordingButtonState.REQUESTED
-                    && uiState.recordingButtonState != RecordingButtonState.REQUESTED
+                if (state.recordingButtonState == RecordingButtonState.GOTREQUEST
+                    && uiState.recordingButtonState != RecordingButtonState.GOTREQUEST
                     && uiState.recordBtnTxt.equals("Record")) {
                     val msg = Message.obtain().apply {
                         what = SHOW_RECORDING_PERMISSION_DIALOG
@@ -314,7 +316,7 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
 
                 when(state.recordingButtonState) {
                     RecordingButtonState.IDLE -> stoppedRecUIchanges()
-                    RecordingButtonState.REQUESTED -> recWaitingForUserUI()
+                    RecordingButtonState.SENTREQUEST -> recWaitingForUserUI()
                     RecordingButtonState.RECORDING -> recordingStartedUIChanges()
                 }
 
@@ -455,11 +457,9 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                 recWaitingForUserUI()
                 repository.startCallRecording()
             }
-            RecordingButtonState.REQUESTED -> {
-                if (uiState.recordTime == 0L) {
-                    Log.i(TAG, "recordCall: cancelled")
-                    repository.cancelRecordingRequest()
-                }
+            RecordingButtonState.SENTREQUEST -> {
+                Log.i(TAG, "recordCall: cancelled")
+                repository.cancelRecordingRequest()
                 CallAnalytics.addAnalytics(
                     event = EventName.RECORDING_STOPPED,
                     agoraCallId = PrefManager.getAgraCallId().toString(),
