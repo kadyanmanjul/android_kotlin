@@ -109,10 +109,10 @@ class CExamReportFragment : Fragment() {
         }
     }*/
 
-   /* override fun onResume() {
+    override fun onResume() {
         super.onResume()
         addObserver()
-        if(PrefManager.getBoolValue(IS_FIRST_TIME_FLOW_CERTI, defValue = false)){
+        /*if(PrefManager.getBoolValue(IS_FIRST_TIME_FLOW_CERTI, defValue = false)){
             PrefManager.put(IS_FIRST_TIME_FLOW_CERTI, true)
             certificateExamReport?.run {
                 binding.chatRv.invalidate()
@@ -121,8 +121,8 @@ class CExamReportFragment : Fragment() {
                 binding.chatRv.refresh()
                 updateRvScrolling(true)
             }
-        }
-    }*/
+        }*/
+    }
 
 
     override fun onPause() {
