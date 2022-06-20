@@ -26,7 +26,7 @@ object ConnectionDetails {
 
     suspend fun getInternetSpeed() : Speed {
         val timeInSec = downloadTime() / 1000F
-        val fileSizeInBits = 157 * 1024 * 8F
+        val fileSizeInBits = PrefManager.getIntValue(SPEED_TEST_FILE_SIZE) * 1024 * 8F
         val avgSpeedInKbps = (fileSizeInBits / timeInSec) / 1024
         Log.d(TAG, "getInternetSpeed: $avgSpeedInKbps")
         return if(avgSpeedInKbps < PrefManager.getIntValue(THRESHOLD_SPEED_IN_KBPS)) Speed.LOW else Speed.HIGH
