@@ -113,5 +113,8 @@
     <string name="badebhaiyas_to_follow">BADE BHAIYAS TO FOLLOW</string>
     <string name="reminder_notification_body_for_listener">Call par judkar unse apne sawaal puchen</string>
     <string name="speakers_call_starts_in">%1$s’s call starts in %2$s mins</string>
+    <string name="force_update_notice">अपने Experience को बेहतर करने के लिए Josh BB App का Latest Version Download करें</string>
+    <string name="download_now">DOWNLOAD NOW</string>
+    <string name="exit">EXIT</string>
 
 </resources>
