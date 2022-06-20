@@ -265,13 +265,15 @@ class SignUpProfileFragment : BaseSignUpFragment() {
             return
         }
         if (binding.occupationEditText.text?.trim().isNullOrEmpty()) {
-            showToast(getString(R.string.occupation_error_toast))
-            return
+            binding.occupationEditText.setText("")
+            // showToast(getString(R.string.occupation_error_toast))
+            //return
         }
 
         if (binding.aspirationEditText.text?.trim().isNullOrEmpty()) {
-            showToast(getString(R.string.aspiration_error_toast))
-            return
+            binding.aspirationEditText.setText("")
+            // showToast(getString(R.string.aspiration_error_toast))
+            //return
         }
         if (binding.phoneNumberEt.text?.trim().isNullOrEmpty() && binding.emailEditText.text?.trim().isNullOrEmpty()) {
             showToast(getString(R.string.enter_valid_email_toast))

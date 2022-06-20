@@ -362,6 +362,14 @@
                     android:textColorHint="@color/light_grey"
                     android:textCursorDrawable="@drawable/cursor_drawable" />
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="यह Information आपके Practice partners को दिखाई देगी।"
+                    android:paddingStart="14dp"
+                    android:paddingEnd="14dp"
+                    android:textColor="@color/dark_grey"/>
+
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/text_view_aspiration"
                     android:layout_width="wrap_content"
@@ -396,6 +404,15 @@
                     android:textColor="@color/black"
                     android:textColorHint="@color/light_grey"
                     android:textCursorDrawable="@drawable/cursor_drawable" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="यह Information आपके Practice partners को दिखाई देगी।"
+                    android:paddingStart="14dp"
+                    android:paddingEnd="14dp"
+                    android:textColor="@color/dark_grey"/>
+
             </LinearLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
