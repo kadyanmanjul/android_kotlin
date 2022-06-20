@@ -1,11 +1,17 @@
 package com.joshtalks.joshskills.ui.voip.favorite
 
+import android.content.Intent
+import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.core.content.ContextCompat.startActivity
 import androidx.databinding.ObservableBoolean
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.base.BaseViewModel
+import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.checkPstnState
@@ -28,6 +34,9 @@ import com.joshtalks.joshskills.ui.fpp.constants.ENABLE_ACTION_MODE
 import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.joshtalks.joshskills.ui.voip.favorite.adapter.FppFavoriteAdapter
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.voipLog
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity
+import com.joshtalks.joshskills.voip.constant.Category
 import com.joshtalks.joshskills.voip.constant.State
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -192,7 +201,10 @@ class FavoriteCallerViewModel : BaseViewModel() {
             return
         }
         if (WebRtcService.isCallOnGoing.value == false && AppObjectController.joshApplication.getVoipState() == State.IDLE) {
-            getCallOnGoing(favoriteCaller.mentorId, favoriteCaller.id)
+            Log.d("naa", "clickOnPhoneCall: ${favoriteCaller.mentorId}")
+//            getCallOnGoing(favoriteCaller.mentorId, favoriteCaller.id)
+            message.what =1234
+            singleLiveEvent.value = message
         } else {
             showToast(
                 "You can't place a new call while you're already in a call.",

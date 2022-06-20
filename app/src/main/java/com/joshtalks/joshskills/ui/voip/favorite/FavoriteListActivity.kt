@@ -8,6 +8,10 @@ import androidx.appcompat.view.ActionMode
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.base.constants.FROM_ACTIVITY
+import com.joshtalks.joshskills.base.constants.INTENT_DATA_CALL_CATEGORY
+import com.joshtalks.joshskills.base.constants.INTENT_DATA_FPP_MENTOR_ID
+import com.joshtalks.joshskills.base.constants.STARTING_POINT
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.IS_COURSE_BOUGHT
 import com.joshtalks.joshskills.databinding.FavoriteListActivityBinding
@@ -17,6 +21,8 @@ import com.joshtalks.joshskills.ui.fpp.RecentCallActivity
 import com.joshtalks.joshskills.ui.fpp.constants.*
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
 import com.joshtalks.joshskills.ui.voip.WebRtcActivity
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity
+import com.joshtalks.joshskills.voip.constant.Category
 
 class FavoriteListActivity : BaseFppActivity() {
 
@@ -85,6 +91,15 @@ class FavoriteListActivity : BaseFppActivity() {
                 }
                 OPEN_RECENT_SCREEN -> openRecentScreen()
                 ENABLE_ACTION_MODE -> enableMode()
+                1234->{
+                    val callIntent = Intent(applicationContext, VoiceCallActivity::class.java)
+                    callIntent.apply {
+                        putExtra(STARTING_POINT, FROM_ACTIVITY)
+                        putExtra(INTENT_DATA_CALL_CATEGORY, Category.FPP.ordinal)
+                        putExtra(INTENT_DATA_FPP_MENTOR_ID, "c2555b43-3bb3-40d3-8621-b2abee4a67d9")
+                    }
+                startActivity(callIntent)
+                }
                 SET_TEXT_ON_ENABLE_ACTION_MODE -> {
                     if (it.obj != null) {
                         setTextOnActionMode(it.obj.toString())

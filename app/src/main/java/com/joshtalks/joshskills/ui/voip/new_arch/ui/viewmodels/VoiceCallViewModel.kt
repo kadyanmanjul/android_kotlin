@@ -82,7 +82,7 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
         viewModelScope.launch(start = CoroutineStart.LAZY) {
             mutex.withLock {
                 if (PrefManager.getVoipState() == State.IDLE && isConnectionRequestSent.not()) {
-                    Log.d(TAG, " connectCallJob : Inside - $callData")
+                    Log.d(TAG, " connectCallJob : Inside - $callData  $callType")
                     repository.connectCall(callData,callType)
                     isConnectionRequestSent = true
                 }

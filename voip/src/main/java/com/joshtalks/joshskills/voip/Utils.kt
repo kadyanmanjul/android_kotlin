@@ -16,34 +16,7 @@ import android.net.Uri
 import android.os.Build
 import android.util.Log
 import android.widget.Toast
-import com.joshtalks.joshskills.base.constants.API_HEADER
-import com.joshtalks.joshskills.base.constants.APP_ACCEPT_LANGUAGE
-import com.joshtalks.joshskills.base.constants.APP_USER_AGENT
-import com.joshtalks.joshskills.base.constants.APP_VERSION_CODE
-import com.joshtalks.joshskills.base.constants.APP_VERSION_NAME
-import com.joshtalks.joshskills.base.constants.AUTHORIZATION
-import com.joshtalks.joshskills.base.constants.CALL_DISCONNECTED_URI
-import com.joshtalks.joshskills.base.constants.CALL_DURATION
-import com.joshtalks.joshskills.base.constants.CALL_ID
-import com.joshtalks.joshskills.base.constants.CALL_START_TIME
-import com.joshtalks.joshskills.base.constants.CALL_TYPE
-import com.joshtalks.joshskills.base.constants.CHANNEL_NAME
-import com.joshtalks.joshskills.base.constants.CONTENT_URI
-import com.joshtalks.joshskills.base.constants.CURRENT_USER_AGORA_ID
-import com.joshtalks.joshskills.base.constants.MENTOR_ID
-import com.joshtalks.joshskills.base.constants.MENTOR_ID_COLUMN
-import com.joshtalks.joshskills.base.constants.NOTIFICATION_DATA
-import com.joshtalks.joshskills.base.constants.NOTIFICATION_LESSON_COLUMN
-import com.joshtalks.joshskills.base.constants.NOTIFICATION_SUBTITLE_COLUMN
-import com.joshtalks.joshskills.base.constants.NOTIFICATION_TITLE_COLUMN
-import com.joshtalks.joshskills.base.constants.REMOTE_USER_AGORA_ID
-import com.joshtalks.joshskills.base.constants.REMOTE_USER_IMAGE
-import com.joshtalks.joshskills.base.constants.REMOTE_USER_MENTOR_ID
-import com.joshtalks.joshskills.base.constants.REMOTE_USER_NAME
-import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_DISCONNECT_CALL
-import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_INCOMING_CALL_DECLINE
-import com.joshtalks.joshskills.base.constants.START_CALL_TIME_URI
-import com.joshtalks.joshskills.base.constants.TOPIC_NAME
+import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.base.log.Feature
 import com.joshtalks.joshskills.base.log.JoshLog
 import com.joshtalks.joshskills.base.model.ApiHeader
@@ -213,6 +186,22 @@ fun openCallScreen(): PendingIntent {
     intent.apply {
         setClassName(Utils.context!!.applicationContext, destination)
         flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
+        putExtra(INTENT_DATA_CALL_CATEGORY,Category.PEER_TO_PEER.ordinal)
+    }
+    return PendingIntent.getActivity(
+        Utils.context,
+        1102,
+        intent,
+        PendingIntent.FLAG_CANCEL_CURRENT
+    )
+}
+fun openFavoriteCallScreen(): PendingIntent {
+    val destination = "com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity"
+    val intent = Intent()
+    intent.apply {
+        setClassName(Utils.context!!.applicationContext, destination)
+        flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
+        putExtra(INTENT_DATA_CALL_CATEGORY,Category.FPP.ordinal)
     }
     return PendingIntent.getActivity(
         Utils.context,

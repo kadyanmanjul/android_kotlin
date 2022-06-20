@@ -22,15 +22,15 @@ interface CallingApiService {
     suspend fun disconnectCall(@Body request : CallDisconnectRequest) : Response<Unit>
 
     // TODO: Change Request
-    @POST("${BuildConfig.MS_BASE_URL}$DIR/fpp/call")
+    @POST("${BuildConfig.MS_BASE_URL}/$DIR/fpp/call")
     suspend fun startFavouriteCall(@Body request : FavoriteConnectionRequest) : Response<Unit>
 
     // TODO: Change Request
-    @POST("${BuildConfig.MS_BASE_URL}$DIR/fpp/call_response")
+    @POST("${BuildConfig.MS_BASE_URL}/$DIR/fpp/call_response")
     suspend fun favouriteCallAccept(@Body request : FavoriteCallActionRequest) : Response<Unit>
 
     // TODO: Change Request
-    @POST("${BuildConfig.MS_BASE_URL}$DIR/fpp/call_response")
+    @POST("${BuildConfig.MS_BASE_URL}/$DIR/fpp/call_response")
     suspend fun favouriteCallReject(@Body request : FavoriteCallActionRequest) : Response<Unit>
 
     @FormUrlEncoded

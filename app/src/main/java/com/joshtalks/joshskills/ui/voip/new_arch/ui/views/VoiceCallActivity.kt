@@ -56,7 +56,7 @@ class VoiceCallActivity : BaseActivity() {
         vm.source = getSource()
         vm.callType = Category.values()[intent.getIntExtra(INTENT_DATA_CALL_CATEGORY,PrefManager.getCallCategory().ordinal)]
 
-        Log.d(TAG, "getArguments: ${vm.source}")
+        Log.d(TAG, "getArguments: ${vm.source}  ${vm.callType}")
 
         when(vm.callType){
             Category.PEER_TO_PEER -> {}
@@ -90,7 +90,8 @@ class VoiceCallActivity : BaseActivity() {
 
     private fun getSource(): String {
         val topicId = intent?.getStringExtra(INTENT_DATA_TOPIC_ID)
-        val shouldOpenCallFragment = (topicId == null)
+        val mentorId = intent?.getStringExtra(INTENT_DATA_FPP_MENTOR_ID)
+        val shouldOpenCallFragment = (topicId == null && mentorId==null)
         return if (shouldOpenCallFragment && PrefManager.getVoipState() == State.IDLE)
             FROM_INCOMING_CALL
         else if (shouldOpenCallFragment)

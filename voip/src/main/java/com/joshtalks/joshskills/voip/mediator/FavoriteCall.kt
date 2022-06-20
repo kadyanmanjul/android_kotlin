@@ -23,7 +23,7 @@ class FavoriteCall : CallCategory {
         remoteView.setTextViewText(R.id.title, map[REMOTE_USER_NAME])
         val avatar: Bitmap? = getRandomName().textDrawableBitmap()
         remoteView.setImageViewBitmap(R.id.photo, avatar)
-        val acceptPendingIntent = openCallScreen()
+        val acceptPendingIntent = openFavoriteCallScreen()
         val declinePendingIntent = getDeclineCallIntent()
         remoteView.setOnClickPendingIntent(R.id.answer_text, acceptPendingIntent)
         remoteView.setOnClickPendingIntent(R.id.decline_text, declinePendingIntent)
@@ -54,7 +54,6 @@ class FavoriteCall : CallCategory {
 
         }
     }
-
 
     override suspend fun onCallDecline(callData: HashMap<String, Any>) {
         val request = FavoriteCallActionRequest(

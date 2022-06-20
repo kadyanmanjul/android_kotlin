@@ -34,9 +34,7 @@ import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 class FppCallFragment : BaseFragment() , SensorEventListener {
     private val TAG = "FppCallFragment"
@@ -48,6 +46,7 @@ class FppCallFragment : BaseFragment() , SensorEventListener {
     private var powerManager: PowerManager? = null
     private  var lock: PowerManager.WakeLock? = null
     private var mPlayer: MediaPlayer? = null
+    private var scope = CoroutineScope(Dispatchers.Main)
     private val audioController by lazy {
         AudioController(CoroutineScope((Dispatchers.IO)))
     }
@@ -80,7 +79,7 @@ class FppCallFragment : BaseFragment() , SensorEventListener {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        callBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_call, container, false)
+        callBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_fpp_call, container, false)
         return callBinding.root
     }
 
@@ -113,6 +112,7 @@ class FppCallFragment : BaseFragment() , SensorEventListener {
                 }
                 CALL_INITIATED_EVENT ->{
                     stopPlaying()
+                    scope.cancel()
                 }
             }
         }
@@ -203,13 +203,18 @@ class FppCallFragment : BaseFragment() , SensorEventListener {
     }
 
     private fun startPlaying() {
-        try {
-            mPlayer = MediaPlayer.create(requireContext(), R.raw.fpp_ringtone)
-            mPlayer?.setVolume(0.5f, 0.5f)
-            mPlayer?.isLooping = true
-            mPlayer?.start()
-        } catch (ex: Exception) {
-            ex.printStackTrace()
+        scope.launch {
+            try {
+                mPlayer = MediaPlayer.create(requireContext(), R.raw.fpp_ringtone)
+                mPlayer?.setVolume(0.5f, 0.5f)
+                mPlayer?.isLooping = true
+                mPlayer?.start()
+                delay(20000)
+                stopPlaying()
+                vm.disconnect()
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
         }
     }
 
