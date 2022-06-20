@@ -243,7 +243,11 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
 
     fun acceptCallRecording(view:View) {
         repository.acceptCallRecording()
-        //startRecording()
+        CallAnalytics.addAnalytics(
+            event = EventName.RECORDING_ACCEPTED,
+            agoraCallId = PrefManager.getAgraCallId().toString(),
+            agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
+        )
         startAudioVideoRecording(view)
     }
 
@@ -260,6 +264,11 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
     }
 
     fun rejectCallRecording() {
+        CallAnalytics.addAnalytics(
+            event = EventName.RECORDING_REJECTED,
+            agoraCallId = PrefManager.getAgraCallId().toString(),
+            agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
+        )
         repository.rejectCallRecording()
     }
 
