@@ -1,7 +1,10 @@
 package com.joshtalks.badebhaiya.core.workers
 
 import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkInfo
 import android.util.Log
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.google.android.gms.tasks.OnCompleteListener
@@ -15,17 +18,14 @@ import com.joshtalks.badebhaiya.notifications.FCM_ACTIVE
 import com.joshtalks.badebhaiya.repository.CommonRepository
 import com.joshtalks.badebhaiya.repository.model.FCMData
 import com.joshtalks.badebhaiya.repository.model.User
-import com.joshtalks.badebhaiya.repository.service.RetrofitInstance.Companion.signUpNetworkService
 import com.joshtalks.badebhaiya.utils.ApiRespStatus
+import com.joshtalks.badebhaiya.utils.NetworkUtil
 import com.joshtalks.badebhaiya.utils.TAG
 import com.joshtalks.badebhaiya.utils.Utils
-import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import retrofit2.HttpException
 import timber.log.Timber
+
 
 class AppRunRequiredTaskWorker(var context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
@@ -111,76 +111,83 @@ class RefreshFCMTokenWorker(context: Context, workerParams: WorkerParameters) :
 
     private fun regenerateFCM() {
         PrefManager.removeKey(FCM_TOKEN)
-        FirebaseInstallations.getInstance().getToken(true).addOnCompleteListener {
-            FirebaseMessaging.getInstance().token.addOnCompleteListener(
-                OnCompleteListener { task ->
-                    Timber.d(TAG+" : Refreshed")
-                    if (!task.isSuccessful) {
-                        task.exception?.run {
-                            LogException.catchException(this)
-                        }
-                        task.exception?.printStackTrace()
-                        return@OnCompleteListener
-                    }
-                    task.result.let {
-                        val fcmResponse = FCMData.getInstance()
-                        fcmResponse?.apiStatus = ApiRespStatus.POST
-                        fcmResponse?.update()
-                        Timber.d(TAG+" : Updated")
-                        CoroutineScope(
-                            SupervisorJob() +
-                                    Dispatchers.IO +
-                                    CoroutineExceptionHandler { _, _ -> /* Do Nothing */ }
-                        ).launch {
-                            try {
-                                val userId = User.getInstance().userId
-                                if (userId.isNotBlank()) {
+        if (NetworkUtil.isNetworkAvailable()){
+            try {
+                FirebaseInstallations.getInstance().getToken(true).addOnCompleteListener {
+                    FirebaseMessaging.getInstance().token.addOnCompleteListener(
+                        OnCompleteListener { task ->
+                            Timber.d(TAG+" : Refreshed")
+                            if (!task.isSuccessful) {
+                                task.exception?.run {
+                                    LogException.catchException(this)
+                                }
+                                task.exception?.printStackTrace()
+                                return@OnCompleteListener
+                            }
+                            task.result.let {
+                                val fcmResponse = FCMData.getInstance()
+                                fcmResponse?.apiStatus = ApiRespStatus.POST
+                                fcmResponse?.update()
+                                Timber.d(TAG+" : Updated")
+                                CoroutineScope(
+                                    SupervisorJob() +
+                                            Dispatchers.IO +
+                                            CoroutineExceptionHandler { _, _ -> /* Do Nothing */ }
+                                ).launch {
                                     try {
-                                        if (PrefManager.hasKey(FCM_TOKEN) && FCMData.getInstance() != null) {
-                                            FCMData.getInstance()?.let { fcmData ->
-                                                val data = mutableMapOf(
-                                                    "registration_id" to it
-                                                )
-                                                val resp =
-                                                    CommonRepository().patchFCMToken(
-                                                        fcmData.id,
-                                                        data
+                                        val userId = User.getInstance().userId
+                                        if (userId.isNotBlank()) {
+                                            try {
+                                                if (PrefManager.hasKey(FCM_TOKEN) && FCMData.getInstance() != null) {
+                                                    FCMData.getInstance()?.let { fcmData ->
+                                                        val data = mutableMapOf(
+                                                            "registration_id" to it
+                                                        )
+                                                        val resp =
+                                                            CommonRepository().patchFCMToken(
+                                                                fcmData.id,
+                                                                data
+                                                            )
+                                                        if (resp.isSuccessful) {
+                                                            resp.body()?.update()
+                                                            PrefManager.put(FCM_TOKEN, it)
+                                                            Timber.tag(FCMData::class.java.name)
+                                                                .e("patch data : ${resp.body()}")
+                                                        }
+                                                    }
+                                                } else {
+                                                    val data = mutableMapOf(
+                                                        "name" to Utils.getDeviceName(),
+                                                        "registration_id" to it,
+                                                        "device_id" to Utils.getDeviceId(),
+                                                        "active" to "true",
+                                                        "user_id" to userId,
+                                                        "type" to "android"
                                                     )
-                                                if (resp.isSuccessful) {
-                                                    resp.body()?.update()
-                                                    PrefManager.put(FCM_TOKEN, it)
-                                                    Timber.tag(FCMData::class.java.name)
-                                                        .e("patch data : ${resp.body()}")
+                                                    val resp = CommonRepository().postFCMToken(data)
+                                                    if (resp.isSuccessful) {
+                                                        resp.body()?.update()
+                                                        PrefManager.put(FCM_TOKEN, it)
+                                                        Timber.tag(FCMData::class.java.name)
+                                                            .e("post data : ${resp.body()}")
+                                                    }
                                                 }
-                                            }
-                                        } else {
-                                            val data = mutableMapOf(
-                                                "name" to Utils.getDeviceName(),
-                                                "registration_id" to it,
-                                                "device_id" to Utils.getDeviceId(),
-                                                "active" to "true",
-                                                "user_id" to userId,
-                                                "type" to "android"
-                                            )
-                                            val resp = CommonRepository().postFCMToken(data)
-                                            if (resp.isSuccessful) {
-                                                resp.body()?.update()
-                                                PrefManager.put(FCM_TOKEN, it)
-                                                Timber.tag(FCMData::class.java.name)
-                                                    .e("post data : ${resp.body()}")
+                                            } catch (ex: Exception) {
+                                                ex.printStackTrace()
                                             }
                                         }
                                     } catch (ex: Exception) {
                                         ex.printStackTrace()
                                     }
                                 }
-                            } catch (ex: Exception) {
-                                ex.printStackTrace()
                             }
                         }
-                    }
+                    )
                 }
-            )
+
+            } catch (e: Exception){
+
+            }
         }
     }
 }
