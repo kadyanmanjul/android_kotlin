@@ -78,9 +78,9 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
 
     private fun initOnboardingCourse() {
         layout.onboardingData =
-            if (PrefManager.hasKey(SPECIFIC_ONBOARDING)) {
+            if (PrefManager.hasKey(SPECIFIC_ONBOARDING, isConsistent = true)) {
                 val courseId = AppObjectController.gsonMapper.fromJson(
-                    PrefManager.getStringValue(SPECIFIC_ONBOARDING),
+                    PrefManager.getStringValue(SPECIFIC_ONBOARDING, isConsistent = true),
                     SpecificOnboardingCourseData::class.java
                 )?.courseId
                 AppObjectController.gsonMapper.fromJson(
@@ -117,7 +117,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
     private fun addListeners() {
         val language = ChooseLanguages(HINDI_TO_ENGLISH_TEST_ID, "Hindi (हिन्दी)")
         btnStartTrial.setOnClickListener {
-            if (PrefManager.hasKey(SPECIFIC_ONBOARDING))
+            if (PrefManager.hasKey(SPECIFIC_ONBOARDING, isConsistent = true))
                 signUp()
             else if (languageActive)
                 openChooseLanguageFragment()

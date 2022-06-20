@@ -147,7 +147,7 @@ class SignUpActivity : BaseActivity() {
                     logLoginSuccessAnalyticsEvent(viewModel.loginViaStatus?.toString())
                     if (!isFirstTime)
                         viewModel.saveTrueCallerImpression(IMPRESSION_ALREADY_ALREADYUSER)
-                    if (PrefManager.hasKey(SPECIFIC_ONBOARDING))
+                    if (PrefManager.hasKey(SPECIFIC_ONBOARDING, isConsistent = true))
                         viewModel.registerSpecificCourse()
                     else {
                         startActivity(getInboxActivityIntent())

@@ -477,7 +477,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
     fun registerSpecificCourse() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val courseData = AppObjectController.gsonMapper.fromJson(PrefManager.getStringValue(SPECIFIC_ONBOARDING), SpecificOnboardingCourseData::class.java)
+                val courseData = AppObjectController.gsonMapper.fromJson(PrefManager.getStringValue(SPECIFIC_ONBOARDING, isConsistent = true), SpecificOnboardingCourseData::class.java)
                 apiStatus.postValue(ApiCallStatus.START)
                 val requestData = hashMapOf(
                     "mentor_id" to Mentor.getInstance().getId(),
@@ -486,10 +486,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                 )
                 val response = AppObjectController.signUpNetworkService.registerCourse(requestData)
                 apiStatus.postValue(
-                    if (response.isSuccessful) {
-                        PrefManager.removeKey(SPECIFIC_ONBOARDING)
-                        ApiCallStatus.SUCCESS
-                    }
+                    if (response.isSuccessful) ApiCallStatus.SUCCESS
                     else ApiCallStatus.FAILED
                 )
             } catch (ex: Exception) {

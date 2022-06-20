@@ -50,8 +50,7 @@ object DeepLinkRedirectUtil {
                         activity,
                         jsonParams
                     )
-                DeepLinkRedirect.P2P_ACTIVITY ->
-                    getP2PActivityIntent(activity, jsonParams)
+                DeepLinkRedirect.P2P_ACTIVITY -> getP2PActivityIntent(activity, jsonParams)
                 DeepLinkRedirect.FPP_ACTIVITY ->
                     if (isFreeTrial) getP2PActivityIntent(activity, jsonParams)
                     else getFPPActivityIntent(activity, jsonParams)
@@ -59,12 +58,7 @@ object DeepLinkRedirectUtil {
                     getCustomerSupportActivityIntent(
                         activity
                     )
-                DeepLinkRedirect.LESSON_ACTIVITY ->
-                    if (isFreeTrial && PrefManager.getBoolValue(IS_FREE_TRIAL_ENDED)) getConversationActivityIntent(
-                        activity,
-                        jsonParams
-                    )
-                    else getLessonActivityIntent(activity, jsonParams)
+                DeepLinkRedirect.LESSON_ACTIVITY -> getLessonActivityIntent(activity, jsonParams)
                 DeepLinkRedirect.COURSE_DETAILS ->
                     getCourseDetailsActivityIntent(
                         activity,
@@ -82,13 +76,14 @@ object DeepLinkRedirectUtil {
     fun getIntentForCourseOnboarding(activity: Activity, jsonParams: JSONObject? = null): Intent {
         if (jsonParams != null) {
             PrefManager.put(
-                SPECIFIC_ONBOARDING,
-                AppObjectController.gsonMapper.toJson(
+                key = SPECIFIC_ONBOARDING,
+                value = AppObjectController.gsonMapper.toJson(
                     SpecificOnboardingCourseData(
                         jsonParams.getString(DeepLinkData.COURSE_ID.key),
                         jsonParams.getString(DeepLinkData.PLAN_ID.key)
                     )
-                )
+                ),
+                isConsistent = true
             )
         }
         return FreeTrialOnBoardActivity.getIntent(activity)
@@ -193,6 +188,8 @@ object DeepLinkRedirectUtil {
         jsonParams: JSONObject,
         speakingSection: Boolean = false
     ): Intent {
+        if (PrefManager.getBoolValue(IS_FREE_TRIAL_ENDED))
+            return getConversationActivityIntent(activity, jsonParams)
         val lessonId =
             if (jsonParams.has(DeepLinkData.LESSON_ID.key) &&
                 jsonParams.getString(DeepLinkData.LESSON_ID.key).isNullOrEmpty().not()

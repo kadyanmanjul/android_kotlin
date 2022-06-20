@@ -204,15 +204,6 @@ class LauncherActivity : CoreJoshActivity(), Branch.BranchReferralInitListener {
         when {
             User.getInstance().isVerified.not() -> {
                 when {
-                    PrefManager.hasKey(SPECIFIC_ONBOARDING) || (jsonParams != null && jsonParams!!.has(DeepLinkData.REDIRECT_TO.key)
-                            && jsonParams!!.getString(DeepLinkData.REDIRECT_TO.key) == DeepLinkRedirect.ONBOARDING.key)
-                    -> DeepLinkRedirectUtil.getIntentForCourseOnboarding(this, jsonParams)
-                    (jsonParams != null && jsonParams!!.has(DeepLinkData.REDIRECT_TO.key)
-                            && jsonParams!!.getString(DeepLinkData.REDIRECT_TO.key) == DeepLinkRedirect.COURSE_DETAILS.key)
-                    -> {
-                        DeepLinkRedirectUtil.getCourseDetailsActivityIntent(this, jsonParams!!)
-                        null
-                    }
                     (PrefManager.getBoolValue(IS_GUEST_ENROLLED, false) &&
                             PrefManager.getBoolValue(IS_PAYMENT_DONE, false).not()) -> {
                         if (jsonParams != null &&
@@ -224,6 +215,15 @@ class LauncherActivity : CoreJoshActivity(), Branch.BranchReferralInitListener {
                         ) {
                             null
                         } else getInboxActivityIntent()
+                    }
+                    PrefManager.hasKey(SPECIFIC_ONBOARDING, isConsistent = true) || (jsonParams != null && jsonParams!!.has(DeepLinkData.REDIRECT_TO.key)
+                            && jsonParams!!.getString(DeepLinkData.REDIRECT_TO.key) == DeepLinkRedirect.ONBOARDING.key)
+                    -> DeepLinkRedirectUtil.getIntentForCourseOnboarding(this, jsonParams)
+                    (jsonParams != null && jsonParams!!.has(DeepLinkData.REDIRECT_TO.key)
+                            && jsonParams!!.getString(DeepLinkData.REDIRECT_TO.key) == DeepLinkRedirect.COURSE_DETAILS.key)
+                    -> {
+                        DeepLinkRedirectUtil.getCourseDetailsActivityIntent(this, jsonParams!!)
+                        null
                     }
                     PrefManager.getBoolValue(IS_PAYMENT_DONE, false) ->
                         Intent(this@LauncherActivity, SignUpActivity::class.java)
@@ -240,7 +240,8 @@ class LauncherActivity : CoreJoshActivity(), Branch.BranchReferralInitListener {
             containsFavUserCallBackUrl() -> getWebRtcActivityIntent()
             jsonParams != null -> if (DeepLinkRedirectUtil.getIntent(
                     this@LauncherActivity,
-                    jsonParams!!
+                    jsonParams!!,
+                     PrefManager.getBoolValue(IS_FREE_TRIAL)
                 )
             ) null else getInboxActivityIntent()
             else -> getInboxActivityIntent()
