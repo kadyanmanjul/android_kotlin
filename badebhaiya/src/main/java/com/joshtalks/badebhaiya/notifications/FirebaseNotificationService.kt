@@ -189,7 +189,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                         notificationChannelId
                     )
                         .setTicker(notificationObject.ticker)
-                        .setSmallIcon(R.drawable.ic_notification_icon)
+                        .setSmallIcon(R.drawable.ic_status_bar_notification)
                         .setContentTitle(notificationObject.contentTitle)
                         .setAutoCancel(true)
                         .setLargeIcon(imageBitmap)
@@ -202,7 +202,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                         .setColor(
                             ContextCompat.getColor(
                                 this@FirebaseNotificationService,
-                                R.color.notification_icon
+                                R.color.notification_orange
                             )
                         )
 

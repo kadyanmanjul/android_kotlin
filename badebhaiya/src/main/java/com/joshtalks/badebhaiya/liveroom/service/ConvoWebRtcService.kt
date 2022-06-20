@@ -678,7 +678,7 @@ class ConvoWebRtcService : Service() {
                 .setColor(
                     ContextCompat.getColor(
                         AppObjectController.joshApplication,
-                        R.color.colorPrimary
+                        R.color.notification_orange
                     )
                 )
                 .setOngoing(true)

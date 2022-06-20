@@ -63,9 +63,9 @@ class NotificationLauncher @Inject constructor(
         contentIntent: PendingIntent? = null
     ): NotificationCompat.Builder =
         NotificationCompat.Builder(context, channelId).apply {
-            setSmallIcon(R.drawable.ic_notification_icon)
+            setSmallIcon(R.drawable.ic_status_bar_notification)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                color = applicationContext.getColor(R.color.notification_icon)
+                color = applicationContext.getColor(R.color.notification_orange)
             }
             setContentTitle(title)
             setContentText(message)
