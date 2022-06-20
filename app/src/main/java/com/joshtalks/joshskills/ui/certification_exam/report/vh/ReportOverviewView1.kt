@@ -56,7 +56,7 @@ class ReportOverviewView1(private val certificateExamReport: CertificateExamRepo
 
     @Resolve
     fun onViewInflated() {
-        Log.i(TAG, "onViewInflated: Triggred")
+        Log.i(TAG, "onViewInflated: triggred")
         certificateExamReport.run {
             headerTv.text = heading
             resultInfo.text = HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_LEGACY)

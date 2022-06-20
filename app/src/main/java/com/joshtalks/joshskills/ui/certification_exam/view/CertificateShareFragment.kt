@@ -55,7 +55,7 @@ class CertificateShareFragment : CoreJoshFragment() {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_certificate_share, container, false)
         binding.lifecycleOwner = this
         binding.vm = viewModel
-
+        PrefManager.put(IS_FIRST_TIME_FLOW_CERTI, true)
         viewModel.typeOfExam()
 
         if(url.isEmpty()){
