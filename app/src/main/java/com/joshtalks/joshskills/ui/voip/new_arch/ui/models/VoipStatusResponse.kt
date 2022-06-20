@@ -9,4 +9,6 @@ data class VoipStatusResponse(
     val thresholdSpeed: Int?,
     @SerializedName("file_url")
     val speedTestFile: String?,
+    @SerializedName("file_size")
+    val testFileSize: Int?,
 )
