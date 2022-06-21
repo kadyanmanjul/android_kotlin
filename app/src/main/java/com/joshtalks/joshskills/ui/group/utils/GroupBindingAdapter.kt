@@ -61,6 +61,15 @@ fun GroupsAppBar.setSecondIcon(drawableRes: Int) = this.secondIcon(drawableRes)
 fun GroupsAppBar.setGroupImage(imageUrl: String, groupName: String?, groupType: String?) =
     this.setImage(imageUrl, groupName, groupType)
 
+@BindingAdapter("imagePath")
+fun AppCompatImageView.setImageInView(imageUrl: String) {
+    if (imageUrl.isNotBlank())
+        Glide.with(this)
+            .load(imageUrl)
+            .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+            .into(this)
+}
+
 @BindingAdapter("groupImage", "defaultImage")
 fun CircleImageView.setGroupImage(imageUrl: String, defaultImage: String) {
     if (defaultImage.isNotBlank())

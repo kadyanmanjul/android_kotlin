@@ -12,11 +12,7 @@ import androidx.recyclerview.widget.DiffUtil
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.Utils.getMessageTime
 import com.joshtalks.joshskills.core.datetimeutils.DateTimeStyle
-import com.joshtalks.joshskills.core.showToast
-import com.joshtalks.joshskills.databinding.GroupChatLeftMsgBinding
-import com.joshtalks.joshskills.databinding.GroupChatMetadataBinding
-import com.joshtalks.joshskills.databinding.GroupChatRightMsgBinding
-import com.joshtalks.joshskills.databinding.GroupChatUnreadMsgBinding
+import com.joshtalks.joshskills.databinding.*
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.group.constants.*
 import com.joshtalks.joshskills.ui.group.model.ChatItem
@@ -55,6 +51,14 @@ class GroupChatAdapter(diffCallback: DiffUtil.ItemCallback<ChatItem>) :
                 val view =
                     setViewHolder<GroupChatMetadataBinding>(parent, R.layout.group_chat_metadata)
                 MetaChatViewHolder(view)
+            }
+            SEND_IMAGE_MESSAGE_LOCAL -> {
+                val view = setViewHolder<GroupChatRightImgBinding>(parent, R.layout.group_chat_right_img)
+                RightImageViewHolder(view)
+            }
+            RECEIVE_IMAGE_MESSAGE_LOCAL -> {
+                val view = setViewHolder<GroupChatLeftImgBinding>(parent, R.layout.group_chat_left_img)
+                LeftImageViewHolder(view)
             }
             UNREAD_MESSAGE -> {
                 val view =
@@ -140,6 +144,31 @@ class GroupChatAdapter(diffCallback: DiffUtil.ItemCallback<ChatItem>) :
 
     inner class UnreadViewHolder(val item: GroupChatUnreadMsgBinding) :
         ChatViewHolder(item) {
+        override fun bindData(groupChatData: ChatItem) {
+            item.itemData = groupChatData
+        }
+    }
+
+    inner class LeftImageViewHolder(val item: GroupChatLeftImgBinding) : ChatViewHolder(item) {
+        override fun bindData(groupChatData: ChatItem) {
+            item.itemData = groupChatData
+            if (groupType == DM_CHAT)
+                item.textTitle.visibility = View.GONE
+            item.textTitle.setOnClickListener {
+                val groupMember = GroupMember(
+                    groupChatData.getMentorId() ?: Mentor.getInstance().getId(),
+                    groupChatData.sender!!,
+                    memberIcon = "",
+                    isAdmin = true,
+                    isOnline = false,
+                    groupChatData.groupId
+                )
+                itemClick?.invoke(groupMember, item.textTitle)
+            }
+        }
+    }
+
+    inner class RightImageViewHolder(val item: GroupChatRightImgBinding) : ChatViewHolder(item) {
         override fun bindData(groupChatData: ChatItem) {
             item.itemData = groupChatData
         }

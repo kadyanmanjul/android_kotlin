@@ -28,6 +28,9 @@ fun MessageItem.getMessageType() = when (msgType) {
     META_MESSAGE ->
         if (mentorId == Mentor.getInstance().getId()) SENT_META_MESSAGE_LOCAL
         else RECEIVE_META_MESSAGE_LOCAL
+    IMAGE_MESSAGE ->
+        if (mentorId == Mentor.getInstance().getId()) SEND_IMAGE_MESSAGE_LOCAL
+        else RECEIVE_IMAGE_MESSAGE_LOCAL
     UNREAD_MESSAGE -> UNREAD_MESSAGE
     else -> MESSAGE_ERROR
 }
