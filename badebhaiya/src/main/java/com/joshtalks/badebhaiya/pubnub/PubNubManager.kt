@@ -34,9 +34,10 @@ import com.joshtalks.badebhaiya.utils.Utils
 import com.pubnub.api.PNConfiguration
 import com.pubnub.api.PubNub
 import com.pubnub.api.callbacks.SubscribeCallback
+import com.pubnub.api.models.consumer.PNStatus
+import com.pubnub.api.models.consumer.objects_api.member.PNGetChannelMembersResult
 import com.pubnub.api.models.consumer.objects_api.member.PNUUID
 import kotlinx.coroutines.*
-import kotlinx.coroutines.sync.withLock
 import timber.log.Timber
 import java.util.*
 
@@ -163,36 +164,7 @@ object PubNubManager {
                 ?.includeCustom(true)
                 ?.async { result, status ->
 
-                    Timber.d("Status hai => $status")
-
-                    Timber.d("Memebers List Itne aye hai aur size => ${result?.data?.size}")
-                    Timber.d("Memebers List Itne aye hai  => ${result?.data}")
-
-                    val tempSpeakerList = ArraySet<LiveRoomUser>()
-                    val tempAudienceList = ArraySet<LiveRoomUser>()
-                    result?.data?.forEach {
-                        Timber.d("Memebers List ind aur uid=> ${it.uuid}")
-                        Timber.d("Memebers List ind aur banda=> $it")
-
-                        Log.d("lvroom", "getLatestUserList() called with: memberList = $it ")
-                        refreshUsersList(it.uuid.id, it.custom)?.let { user ->
-                            Timber.d("Memebers List let k andr=> ${it.uuid}")
-
-                            if (user.isSpeaker == true) {
-                                Timber.d("Memebers List and speaker h=> ${it.uuid}")
-
-                                tempSpeakerList.add(user)
-                            } else {
-                                Timber.d("Memebers List and audience h=> ${it.uuid}")
-
-                                tempAudienceList.add(user)
-                            }
-                        }
-                    }
-                    // post to a shared flow instead of live data
-                    Timber.d("THIS IS WITH MEMBERS LIST SPEAKER => $tempSpeakerList AND AUDIENCE => $tempAudienceList")
-                    postToSpeakersList(tempSpeakerList)
-                    postToAudienceList(tempAudienceList)
+                    extractUsersList(result, status)
                 }
             } catch (e: Exception){
                 FallbackManager.getUsersList()
@@ -203,7 +175,45 @@ object PubNubManager {
 
     }
 
-    private fun refreshUsersList(uid: String, state: Any): LiveRoomUser? {
+    private fun extractUsersList(result: PNGetChannelMembersResult?, status: PNStatus) {
+
+        try {
+            Timber.d("Status hai => $status")
+
+            Timber.d("Memebers List Itne aye hai aur size => ${result?.data?.size}")
+            Timber.d("Memebers List Itne aye hai  => ${result?.data}")
+
+            val tempSpeakerList = ArraySet<LiveRoomUser>()
+            val tempAudienceList = ArraySet<LiveRoomUser>()
+            result?.data?.forEach {
+                Timber.d("Memebers List ind aur uid=> ${it.uuid}")
+                Timber.d("Memebers List ind aur banda=> $it")
+
+                Log.d("lvroom", "getLatestUserList() called with: memberList = $it ")
+                refreshUsersList(it.uuid.id, it.custom)?.let { user ->
+                    Timber.d("Memebers List let k andr=> ${it.uuid}")
+
+                    if (user.isSpeaker == true) {
+                        Timber.d("Memebers List and speaker h=> ${it.uuid}")
+
+                        tempSpeakerList.add(user)
+                    } else {
+                        Timber.d("Memebers List and audience h=> ${it.uuid}")
+
+                        tempAudienceList.add(user)
+                    }
+                }
+            }
+            // post to a shared flow instead of live data
+            Timber.d("THIS IS WITH MEMBERS LIST SPEAKER => $tempSpeakerList AND AUDIENCE => $tempAudienceList")
+            postToSpeakersList(tempSpeakerList)
+            postToAudienceList(tempAudienceList)
+        } catch (e: Exception){
+
+        }
+    }
+
+     fun refreshUsersList(uid: String, state: Any): LiveRoomUser? {
         if (uid.isBlank()) {
             return null
         }
@@ -291,7 +301,7 @@ object PubNubManager {
         }
     }
 
-    private fun postToSpeakersList(list: ArraySet<LiveRoomUser>) {
+     fun postToSpeakersList(list: ArraySet<LiveRoomUser>) {
         Timber.d("post to speaker list => $list")
         val distinctedList = list.reversed().distinctBy { it.userId }.reversed().toSet()
         jobs += CoroutineScope(Dispatchers.IO).launch {
@@ -299,7 +309,7 @@ object PubNubManager {
         }
     }
 
-    private fun postToAudienceList(list: ArraySet<LiveRoomUser>) {
+     fun postToAudienceList(list: ArraySet<LiveRoomUser>) {
         jobs += CoroutineScope(Dispatchers.IO).launch {
             val distinctedList = list.reversed().distinctBy { it.userId }.reversed().toSet()
             _audienceList.emit(ArraySet(distinctedList))
