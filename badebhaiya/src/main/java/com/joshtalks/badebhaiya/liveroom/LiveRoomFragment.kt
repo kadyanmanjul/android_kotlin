@@ -1329,7 +1329,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
                     activity
                         .supportFragmentManager
                         .beginTransaction()
-                        .replace(R.id.feedRoot, fragment)
+                        .replace(R.id.fragmentContainer, fragment)
                         .addToBackStack(null)
                         .commit()
                 }
