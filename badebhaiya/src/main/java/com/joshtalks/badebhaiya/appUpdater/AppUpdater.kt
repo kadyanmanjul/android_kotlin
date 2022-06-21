@@ -16,6 +16,7 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
 import com.google.gson.Gson
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,7 +30,7 @@ This class is responsible to manage force updates.
  */
 
 @Singleton
-class AppUpdater @Inject constructor() {
+class JoshAppUpdater @Inject constructor() {
 
     companion object {
         const val APP_UPDATE = "app_update"
@@ -38,20 +39,22 @@ class AppUpdater @Inject constructor() {
 
     private lateinit var appUpdateManager: AppUpdateManager
     private lateinit var appUpdateInfo: Task<AppUpdateInfo>
-    private lateinit var appUpdateProperties: AppUpdate
     private var activity: AppCompatActivity? = null
+
+    private var updateRequestCode = 111
 
     val isUpdateAvailable = MutableStateFlow(true)
 
     fun checkAndUpdate(context: AppCompatActivity) {
 
         try {
+            updateRequestCode = 111
             activity = context
             appUpdateManager = AppUpdateManagerFactory.create(context)
 
-            val appUpdateInfoTask = appUpdateManager.appUpdateInfo
+             appUpdateInfo = appUpdateManager.appUpdateInfo
 
-            appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
+            appUpdateInfo.addOnSuccessListener { appUpdateInfo ->
                 if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
                 ) {
                     // Request the update.
@@ -66,12 +69,12 @@ class AppUpdater @Inject constructor() {
     }
 
     private fun checkIfStrictUpdate() {
-        val remoteConfig: FirebaseRemoteConfig = Firebase.remoteConfig
-        val configSettings = remoteConfigSettings {
-            minimumFetchIntervalInSeconds = 0
-        }
-        remoteConfig.setConfigSettingsAsync(configSettings)
-
+//        val remoteConfig: FirebaseRemoteConfig = Firebase.remoteConfig
+//        val configSettings = remoteConfigSettings {
+//            minimumFetchIntervalInSeconds = 0
+//        }
+//        remoteConfig.setConfigSettingsAsync(configSettings)
+        val remoteConfig = Firebase.remoteConfig
         activity?.let {
             remoteConfig.fetchAndActivate().addOnCompleteListener(it) {
                 if (it.isSuccessful) {
@@ -81,6 +84,8 @@ class AppUpdater @Inject constructor() {
                         appUpdateProperties?.let { appUpdate ->
                             if (appUpdate.isStrictUpdate()) {
                                 startUpdating()
+                            } else {
+                                isUpdateAvailable.value = false
                             }
                         }
                     } catch (e: Exception) {
@@ -98,11 +103,12 @@ class AppUpdater @Inject constructor() {
     private fun startUpdating() {
         isUpdateAvailable.value = true
         activity?.let {
+            updateRequestCode++
             appUpdateManager.startUpdateFlowForResult(
                 appUpdateInfo.result,
                 AppUpdateType.IMMEDIATE,
                 it,
-                APP_UPDATE_REQUEST_CODE
+                updateRequestCode
             )
         }
     }
@@ -115,11 +121,12 @@ class AppUpdater @Inject constructor() {
                     it.updateAvailability()
                             == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS -> {
                         // If an in-app update is already running, resume the update.
+                        updateRequestCode++
                         appUpdateManager.startUpdateFlowForResult(
                             it,
                             IMMEDIATE,
                             activity,
-                            APP_UPDATE_REQUEST_CODE
+                            updateRequestCode
                         )
                     }
                     it.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE -> {
@@ -135,15 +142,15 @@ class AppUpdater @Inject constructor() {
     }
 
     fun onResult(requestCode: Int, resultCode: Int) {
-        if (requestCode == APP_UPDATE_REQUEST_CODE && resultCode != RESULT_OK) {
-                // If the update is cancelled or fails,
-                // you can request to start the update again.
-                // TODO: Show please update activity.
-                if (activity != null){
-                    ForceUpdateNoticeActivity.launch(activity!!)
-                } else {
-                    isUpdateAvailable.value = false
-                }
+        if (requestCode == updateRequestCode && resultCode != RESULT_OK) {
+                // Show please update activity.
+            checkAndUpdate(activity!!)
+//            startUpdating()
+//                if (activity != null){
+//                    ForceUpdateNoticeActivity.launch(activity!!)
+//                } else {
+//                    isUpdateAvailable.value = false
+//                }
         }
     }
 

@@ -5,7 +5,10 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import androidx.core.app.NotificationManagerCompat
+import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import com.google.firebase.remoteconfig.ktx.remoteConfig
+import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
 import com.google.gson.*
 import com.joshtalks.badebhaiya.BuildConfig
 import com.joshtalks.badebhaiya.repository.service.initStethoLibrary
@@ -48,11 +51,20 @@ class AppObjectController {
             joshApplication = context as JoshApplication
             initStethoLibrary(joshApplication)
             initGsonMapper()
+            initFirebaseRemoteConfig()
             initNotificationChannels(context)
             initBranch(context)
             initRtcEngine(joshApplication)
             initUtils()
             initTimber()
+        }
+
+        private fun initFirebaseRemoteConfig() {
+            val remoteConfig = Firebase.remoteConfig
+            val configSettings = remoteConfigSettings {
+                minimumFetchIntervalInSeconds = 0
+            }
+            remoteConfig.setConfigSettingsAsync(configSettings)
         }
 
         private fun initTimber(){

@@ -53,9 +53,9 @@ fun ForceUpdateNoticeScreen(
                             .padding(
                                 top = dimensionResource(id = R.dimen._20sdp),
                             ),
-                        text = stringResource(R.string.download_now)
-                    ) {
-                    }
+                        text = stringResource(R.string.download_now),
+                        onDownloadClick
+                    )
                     DialogActionText(
                         modifier = Modifier
                             .padding(
@@ -66,10 +66,9 @@ fun ForceUpdateNoticeScreen(
                                     id = R.dimen._20sdp
                                 )
                             ),
-                        text = stringResource(R.string.exit)
-                    ) {
-
-                    }
+                        text = stringResource(R.string.exit),
+                        onExitClick
+                    )
 
                 }
 

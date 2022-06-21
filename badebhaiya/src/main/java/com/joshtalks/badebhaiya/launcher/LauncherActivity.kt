@@ -8,7 +8,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.work.WorkManager
 import com.joshtalks.badebhaiya.BuildConfig
 import com.joshtalks.badebhaiya.R
-import com.joshtalks.badebhaiya.appUpdater.AppUpdater
+import com.joshtalks.badebhaiya.appUpdater.JoshAppUpdater
 import com.joshtalks.badebhaiya.core.workers.WorkManagerAdmin
 import com.joshtalks.badebhaiya.feed.FeedActivity
 import com.joshtalks.badebhaiya.repository.model.User
@@ -28,7 +28,7 @@ import javax.inject.Inject
 class LauncherActivity : AppCompatActivity() {
 
     @Inject
-    lateinit var appUpdater: AppUpdater
+    lateinit var appUpdater: JoshAppUpdater
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,16 +56,16 @@ class LauncherActivity : AppCompatActivity() {
 //                 finish()
 //             }
             //setAutoTimeEnabled(boolean enabled)
-
-    }
-
-    override fun onStart() {
-        super.onStart()
         collectStateFlow(appUpdater.isUpdateAvailable){ updateAvailable ->
             if (!updateAvailable){
                 initBranch()
             }
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+
     }
 
     override fun onResume() {
