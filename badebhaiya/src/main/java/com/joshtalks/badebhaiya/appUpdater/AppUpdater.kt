@@ -159,6 +159,8 @@ class JoshAppUpdater @Inject constructor() {
 //            startUpdating()
     Timber.tag("APPUPDATEMANAGER").d("APP UPDATE IS CANCELLED AND RESULT => $resultCode")
                launchForceUpdateNotice()
+        } else if (requestCode == APP_UPDATE_REQUEST_CODE && resultCode == RESULT_OK){
+            isUpdateAvailable.value = false
         }
     }
 
