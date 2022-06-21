@@ -69,27 +69,6 @@ fun ForceUpdateNoticeScreen(
                     textColor = colorResource(id = R.color.red),
                     onClick = onExitClick
                 )
-//                    DialogActionText(
-//                        modifier = Modifier
-//                            .padding(
-//                                top = dimensionResource(id = R.dimen._20sdp),
-//                            ),
-//                        text = stringResource(R.string.download_now),
-//                        onDownloadClick
-//                    )
-//                    DialogActionText(
-//                        modifier = Modifier
-//                            .padding(
-//                                top = dimensionResource(
-//                                    id = R.dimen._20sdp
-//                                ),
-//                                start = dimensionResource(
-//                                    id = R.dimen._20sdp
-//                                )
-//                            ),
-//                        text = stringResource(R.string.exit),
-//                        onExitClick
-//                    )
 
             }
 
