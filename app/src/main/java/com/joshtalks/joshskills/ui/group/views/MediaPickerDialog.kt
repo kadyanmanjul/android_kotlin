@@ -1,13 +1,16 @@
 package com.joshtalks.joshskills.ui.group.views
 
 import android.os.Bundle
+import android.os.Environment
 import android.view.*
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
+import com.github.dhaval2404.imagepicker.ImagePicker
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.MediaPickerDialogBinding
+import java.io.File
 
 class MediaPickerDialog: DialogFragment() {
 
@@ -48,13 +51,12 @@ class MediaPickerDialog: DialogFragment() {
     }
 
     fun cameraCapture(view: View) {
-        showToast("Camera Clicked")
-//        ImagePicker.with(this)
-//            .crop()
-//            .cameraOnly()
-//            .saveDir(File(requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!, "ImagePicker"))
-//            .start(ImagePicker.REQUEST_CODE)
-//        dismiss()
+        ImagePicker.with(this)
+            .crop()
+            .cameraOnly()
+            .saveDir(File(getCacheDirPath(), "Images"))
+            .start(ImagePicker.REQUEST_CODE)
+        dismiss()
     }
 
     fun openGallery(view: View) {
@@ -75,5 +77,13 @@ class MediaPickerDialog: DialogFragment() {
             fragmentTransaction.addToBackStack(null)
             newInstance().show(supportFragmentManager, TAG)
         }
+    }
+
+    private fun getCacheDirPath(): String {
+        return getAndroidDownloadFolder()?.absolutePath + "/JoshSkills/cache/"
+    }
+
+    private fun getAndroidDownloadFolder(): File? {
+        return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
     }
 }

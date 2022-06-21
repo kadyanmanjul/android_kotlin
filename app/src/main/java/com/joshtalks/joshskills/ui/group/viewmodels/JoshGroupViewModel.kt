@@ -295,4 +295,15 @@ class JoshGroupViewModel : BaseViewModel() {
     suspend fun getClosedGroupCount() = repository.getClosedGrpCount()
 
     fun getOneGrpReqStatus() = PrefManager.getBoolValue(ONE_GROUP_REQUEST_SENT)
+
+    fun storeFileInBucket(path: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val res = repository.uploadChatMedia(path)
+            withContext(Dispatchers.Main) {
+                message.what = SEND_MEDIA_MSG
+                message.obj = res
+                singleLiveEvent.value = message
+            }
+        }
+    }
 }

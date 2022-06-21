@@ -102,6 +102,7 @@ class GroupChatFragment : BaseFragment() {
                 OPEN_EMOJI_KEYBOARD -> openEmojiKeyboard(it.data)
                 CLEAR_CHAT_TEXT -> binding.groupChatSendMsg.setText("")
                 SEND_MSG -> vm.pushMessage(binding.groupChatSendMsg.text.toString().trim())
+                SEND_MEDIA_MSG -> vm.pushMediaMessage(it.obj as String)
                 OPEN_GROUP_INFO -> hideKeyboard(requireContext())
                 NEW_CHAT_ADDED -> {
                     if (it.data.getInt(GROUP_CHAT_UNREAD) != 0) {

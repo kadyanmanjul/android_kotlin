@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.ui.group.constants
 
 const val MESSAGE = 0
 const val META_MESSAGE = 1
+const val IMAGE_MESSAGE = 2
 
 const val SENT_MESSAGE_LOCAL = 0
 const val SENT_META_MESSAGE_LOCAL = 1

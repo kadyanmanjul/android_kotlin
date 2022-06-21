@@ -485,7 +485,10 @@ class JoshGroupActivity : BaseGroupActivity() {
         if (resultCode == Activity.RESULT_OK) {
             val url = data?.data?.path ?: EMPTY
             if (url.isNotBlank()) {
-                vm.showImageThumb(url)
+                when {
+                    url.contains("/cache/Images/") -> vm.storeFileInBucket(url)
+                    url.contains("/Pictures/ImagePicker") -> vm.showImageThumb(url)
+                }
             }
         } else if (resultCode == ImagePicker.RESULT_ERROR) {
             Timber.e(ImagePicker.getError(data))

@@ -626,4 +626,18 @@ class GroupChatViewModel : BaseViewModel() {
         message.what = OPEN_MEDIA_CHOOSER
         singleLiveEvent.value = message
     }
+
+    fun pushMediaMessage(path: String) {
+        val message = MessageItem(
+            msg = path,
+            msgType = IMAGE_MESSAGE,
+            mentorId = Mentor.getInstance().getId()
+        )
+        scrollToEnd = true
+        viewModelScope.launch(Dispatchers.IO) {
+            if (repository.checkIfFirstMsg(groupId))
+                pushTimeMetaMessage(groupId)
+            chatService.sendMessage(groupId, message)
+        }
+    }
 }
