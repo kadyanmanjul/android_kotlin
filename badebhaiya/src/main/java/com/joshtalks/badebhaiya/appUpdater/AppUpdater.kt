@@ -38,9 +38,8 @@ class JoshAppUpdater @Inject constructor() {
     private lateinit var appUpdateManager: AppUpdateManager
     private lateinit var appUpdateInfo: AppUpdateInfo
     private var activity: AppCompatActivity? = null
-    private lateinit var jobs: MutableList<Job>
+    private var jobs: MutableList<Job> = mutableListOf()
 
-//    private var updateRequestCode = 111
 
     val isUpdateAvailable = MutableStateFlow(true)
     val onDownloadClick = MutableSharedFlow<Boolean>()
@@ -48,35 +47,28 @@ class JoshAppUpdater @Inject constructor() {
     fun checkAndUpdate(context: AppCompatActivity) {
 
         try {
-//            updateRequestCode = 111
-            jobs = mutableListOf()
+            jobs.clear()
             collectDownloadClick()
             activity = context
             appUpdateManager = AppUpdateManagerFactory.create(context)
 
-              val updateInfo = appUpdateManager.appUpdateInfo
+            val updateInfo = appUpdateManager.appUpdateInfo
 
             updateInfo.addOnSuccessListener {
                 this.appUpdateInfo = it
                 if (it.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
                 ) {
-                    // Request the update.
                     checkIfStrictUpdate()
                 } else {
                     isUpdateAvailable.value = false
                 }
             }
-        } catch (e:Exception){
+        } catch (e: Exception) {
             isUpdateAvailable.value = true
         }
     }
 
     private fun checkIfStrictUpdate() {
-//        val remoteConfig: FirebaseRemoteConfig = Firebase.remoteConfig
-//        val configSettings = remoteConfigSettings {
-//            minimumFetchIntervalInSeconds = 0
-//        }
-//        remoteConfig.setConfigSettingsAsync(configSettings)
         val remoteConfig = Firebase.remoteConfig
         activity?.let {
             remoteConfig.fetchAndActivate().addOnCompleteListener(it) {
@@ -133,17 +125,7 @@ class JoshAppUpdater @Inject constructor() {
                             APP_UPDATE_REQUEST_CODE
                         )
                     }
-                    it.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE -> {
-                        // Request the update.
-//                        updateRequestCode++
-//                        appUpdateManager.startUpdateFlowForResult(
-//                            it,
-//                            IMMEDIATE,
-//                            activity,
-//                            APP_UPDATE_REQUEST_CODE
-//                        )
-//                        checkIfStrictUpdate()
-                    }
+                    it.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE -> {}
                     else -> {
                         isUpdateAvailable.value = false
                     }
@@ -154,45 +136,43 @@ class JoshAppUpdater @Inject constructor() {
 
     fun onResult(requestCode: Int, resultCode: Int) {
         if (requestCode == APP_UPDATE_REQUEST_CODE && resultCode != RESULT_OK) {
-                // Show please update activity.
-//            checkAndUpdate(activity!!)
-//            startUpdating()
-    Timber.tag("APPUPDATEMANAGER").d("APP UPDATE IS CANCELLED AND RESULT => $resultCode")
-               launchForceUpdateNotice()
-        } else if (requestCode == APP_UPDATE_REQUEST_CODE && resultCode == RESULT_OK){
+            Timber.tag("APPUPDATEMANAGER").d("APP UPDATE IS CANCELLED AND RESULT => $resultCode")
+            launchForceUpdateNotice()
+        } else if (requestCode == APP_UPDATE_REQUEST_CODE && resultCode == RESULT_OK) {
             isUpdateAvailable.value = false
         }
     }
 
     private fun launchForceUpdateNotice() {
-        if (activity != null){
+        if (activity != null) {
             ForceUpdateNoticeActivity.launch(activity!!)
         } else {
             isUpdateAvailable.value = false
         }
     }
 
-    private fun collectDownloadClick(){
+    private fun collectDownloadClick() {
         jobs += CoroutineScope(Dispatchers.IO).launch {
-           onDownloadClick.collectLatest { downloadClicked ->
-               if (downloadClicked){
+            onDownloadClick.collectLatest { downloadClicked ->
+                if (downloadClicked) {
 //                   launchForceUpdateNotice()
-                   checkIfStrictUpdate()
-               }
-           }
+                    checkIfStrictUpdate()
+                }
+            }
         }
     }
 
-    fun onDownloadClick(){
+    fun onDownloadClick() {
         jobs += CoroutineScope(Dispatchers.IO).launch {
             onDownloadClick.emit(true)
         }
     }
 
-    fun flushResources(){
+    fun flushResources() {
         jobs.forEach {
             it.cancel()
         }
+        jobs.clear()
     }
 
 }
