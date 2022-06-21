@@ -153,7 +153,7 @@ class LiveRoomViewModel(application: Application) : AndroidViewModel(application
 //                .map { it.reversed().distinctBy {  it.userId }.reversed() }
                 .collect {
                 Log.d("sahil", "speakers list =>$it")
-                speakersList.postValue(it)
+                speakersList.postValue(it.toList())
             }
         }
         viewModelScope.launch {
