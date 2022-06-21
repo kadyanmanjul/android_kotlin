@@ -72,7 +72,7 @@ class LiveRoomViewModel(application: Application) : AndroidViewModel(application
 
     //val roomListLiveData = MutableLiveData<RoomListResponse>()
     var audienceList = MutableLiveData<ArraySet<LiveRoomUser>>(ArraySet())
-    var speakersList = MutableLiveData<ArraySet<LiveRoomUser>>(ArraySet())
+    var speakersList = MutableLiveData<List<LiveRoomUser>>(listOf())
     val pubNubState = MutableLiveData<PubNubState>()
     val liveRoomState = MutableLiveData<LiveRoomState>()
     var lvRoomState: LiveRoomState? = null
@@ -153,7 +153,7 @@ class LiveRoomViewModel(application: Application) : AndroidViewModel(application
                 .map { it.reversed().distinctBy { it.userId }.reversed() }
                 .collect {
                 Log.d("sahil", "speakers list =>$it")
-                speakersList.postValue(ArraySet(it))
+                speakersList.postValue(it)
             }
         }
         viewModelScope.launch {
@@ -183,7 +183,7 @@ class LiveRoomViewModel(application: Application) : AndroidViewModel(application
     }
 
     fun flushLiveData(){
-        speakersList = MutableLiveData<ArraySet<LiveRoomUser>>(ArraySet())
+        speakersList = MutableLiveData<List<LiveRoomUser>>(listOf())
         audienceList = MutableLiveData<ArraySet<LiveRoomUser>>(ArraySet())
         singleLiveEvent = MutableLiveData()
     }
