@@ -101,7 +101,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     val howToSpeakLiveData: MutableLiveData<Boolean> = MutableLiveData()
     val introVideoCompleteLiveData: MutableLiveData<Boolean> = MutableLiveData()
     val practicePartnerCallDurationLiveData: MutableLiveData<Long> = MutableLiveData()
-    var isInternetSpeedGood = ObservableInt(0)
+    var isInternetSpeedGood = ObservableInt(2)
     var userRating = ObservableField<UserRating>()
     val voipState by lazy {
         CallBar()
