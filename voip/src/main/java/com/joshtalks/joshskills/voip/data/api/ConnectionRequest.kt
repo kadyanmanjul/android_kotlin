@@ -61,7 +61,7 @@ data class FavoriteConnectionRequest(
 
 data class FavoriteCallActionRequest(
     @field:SerializedName("response")
-    val response: Int? = null,
+    val response: String? = null,
 
     @field:SerializedName("call_id")
     val callId: Int? = null

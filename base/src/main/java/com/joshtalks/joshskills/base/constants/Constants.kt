@@ -18,6 +18,9 @@ const val INTENT_DATA_PREVIOUS_CALL_ID = "josh_intent_data_previous_call_id"
 const val INTENT_DATA_CONNECT_CALL = "josh_intent_data_connect_call"
 const val INTENT_DATA_INCOMING_CALL_ID = "josh_intent_data_incoming_call_id"
 const val INTENT_DATA_FPP_MENTOR_ID = "josh_intent_fpp_mentor_id"
+const val INTENT_DATA_FPP_NAME = "josh_intent_fpp_name"
+const val INTENT_DATA_FPP_IMAGE = "josh_intent_fpp_image"
+
 
 
 // Service Action

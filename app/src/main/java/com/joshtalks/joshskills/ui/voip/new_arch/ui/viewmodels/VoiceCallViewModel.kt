@@ -12,10 +12,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
-import com.joshtalks.joshskills.base.constants.FPP
-import com.joshtalks.joshskills.base.constants.FROM_INCOMING_CALL
-import com.joshtalks.joshskills.base.constants.GROUP
-import com.joshtalks.joshskills.base.constants.PEER_TO_PEER
+import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.base.log.Feature
 import com.joshtalks.joshskills.base.log.JoshLog
 import com.joshtalks.joshskills.core.AppObjectController
@@ -276,8 +273,10 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                 uiState.recordingButtonState = state.recordingButtonState
                 if (uiState.recordTime != state.recordingStartTime)
                     uiState.recordTime = state.recordingStartTime
-                uiState.name = state.remoteUserName
-                uiState.profileImage = state.remoteUserImage ?: ""
+                if(callType!=Category.FPP && source!= FROM_ACTIVITY) {
+                    uiState.name = state.remoteUserName
+                    uiState.profileImage = state.remoteUserImage ?: ""
+                }
                 uiState.topic = state.topicName
                 uiState.topicImage = state.currentTopicImage
                 uiState.type = state.callType

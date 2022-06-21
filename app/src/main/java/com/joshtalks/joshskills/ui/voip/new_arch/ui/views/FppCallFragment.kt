@@ -9,15 +9,22 @@ import android.hardware.SensorManager
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.PowerManager
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
 import com.joshtalks.joshskills.base.constants.FROM_INCOMING_CALL
+import com.joshtalks.joshskills.base.constants.INTENT_DATA_FPP_IMAGE
+import com.joshtalks.joshskills.base.constants.INTENT_DATA_FPP_NAME
 import com.joshtalks.joshskills.databinding.FragmentFppCallBinding
+import com.joshtalks.joshskills.ui.userprofile.adapters.setImage
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.setProfileImage
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.VoiceCallViewModel
 import com.joshtalks.joshskills.voip.audiocontroller.AudioController
 import com.joshtalks.joshskills.voip.audiocontroller.AudioRouteConstants
@@ -69,16 +76,29 @@ class FppCallFragment : BaseFragment() , SensorEventListener {
     override fun initViewBinding() {
         callBinding.vm = vm
         callBinding.executePendingBindings()
+        val name = requireActivity().intent?.getStringExtra(INTENT_DATA_FPP_NAME)
+        val image =requireActivity().intent?.getStringExtra(INTENT_DATA_FPP_IMAGE)
+        Log.d(TAG, "setCallData: $name  $image")
+        callBinding.callerName.text = name?:"User Name"
+        if (!image.isNullOrEmpty())
+            Glide.with(this)
+                .load(image)
+                .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                .into(callBinding.cImage)
+        else
+            Glide.with(this)
+                .load(R.drawable.ic_call_placeholder)
+                .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                .into(callBinding.cImage)
     }
 
     override fun initViewState() {
         setUpProximitySensor()
         liveData.observe(viewLifecycleOwner) {
             when (it.what) {
-                CANCEL_INCOMING_TIMER -> {
-                    callBinding.incomingTimerContainer.visibility = View.INVISIBLE
-                }
+                CANCEL_INCOMING_TIMER -> {}
                 CALL_INITIATED_EVENT ->{
+                    callBinding.groupUserdata.visibility = View.VISIBLE
                     stopPlaying()
                     scope.cancel()
                 }

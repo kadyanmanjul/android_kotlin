@@ -39,7 +39,7 @@ class FavoriteCall : CallCategory {
             Log.d(TAG, "onPreCallConnect: FPP INCOMING")
             val request = FavoriteCallActionRequest(
                 callId = callData[INTENT_DATA_INCOMING_CALL_ID] as Int,
-                response = 1
+                response = "ACCEPT"
             )
             val response = voipNetwork.favouriteCallAccept(request)
             if (response.isSuccessful)
@@ -58,7 +58,7 @@ class FavoriteCall : CallCategory {
     override suspend fun onCallDecline(callData: HashMap<String, Any>) {
         val request = FavoriteCallActionRequest(
             callId = callData[INTENT_DATA_INCOMING_CALL_ID] as Int,
-            response = 0
+            response = "DECLINE"
         )
         Log.d(TAG, "onCallDecline: $request")
         val response = voipNetwork.favouriteCallReject(request)

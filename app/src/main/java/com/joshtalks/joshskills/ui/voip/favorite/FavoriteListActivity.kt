@@ -8,10 +8,7 @@ import androidx.appcompat.view.ActionMode
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.base.constants.FROM_ACTIVITY
-import com.joshtalks.joshskills.base.constants.INTENT_DATA_CALL_CATEGORY
-import com.joshtalks.joshskills.base.constants.INTENT_DATA_FPP_MENTOR_ID
-import com.joshtalks.joshskills.base.constants.STARTING_POINT
+import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.IS_COURSE_BOUGHT
 import com.joshtalks.joshskills.databinding.FavoriteListActivityBinding
@@ -91,12 +88,16 @@ class FavoriteListActivity : BaseFppActivity() {
                 }
                 OPEN_RECENT_SCREEN -> openRecentScreen()
                 ENABLE_ACTION_MODE -> enableMode()
-                1234->{
+                START_P2P_CALL->
+                {
                     val callIntent = Intent(applicationContext, VoiceCallActivity::class.java)
                     callIntent.apply {
                         putExtra(STARTING_POINT, FROM_ACTIVITY)
                         putExtra(INTENT_DATA_CALL_CATEGORY, Category.FPP.ordinal)
-                        putExtra(INTENT_DATA_FPP_MENTOR_ID, "c2555b43-3bb3-40d3-8621-b2abee4a67d9")
+                        putExtra(INTENT_DATA_FPP_MENTOR_ID, viewModel.selectedUser?.mentorId)
+                        putExtra(INTENT_DATA_FPP_NAME, viewModel.selectedUser?.name)
+                        putExtra(INTENT_DATA_FPP_IMAGE, viewModel.selectedUser?.image)
+
                     }
                 startActivity(callIntent)
                 }

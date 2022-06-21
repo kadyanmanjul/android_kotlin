@@ -114,7 +114,7 @@
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
             android:textColor="@color/white"
             android:visibility='@{!vm.uiState.currentState.equals("Timer") ? View.VISIBLE : View.INVISIBLE}'
-            app:layout_constraintBottom_toTopOf="@id/incoming_timer_container"
+            app:layout_constraintBottom_toTopOf="@id/record_call_cardview"
             app:layout_constraintEnd_toStartOf="@+id/guideline5"
             app:layout_constraintStart_toStartOf="@+id/guideline4"
             app:layout_constraintTop_toBottomOf="@id/occupation_future_goals"
@@ -377,52 +377,12 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
         </com.google.android.material.card.MaterialCardView>
 
-
-        <RelativeLayout
-            android:id="@+id/incoming_timer_container"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="@{vm.source == ConstantsKt.FROM_INCOMING_CALL  ? View.VISIBLE : View.INVISIBLE }"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:visibility="gone"
-            app:layout_constraintVertical_bias="0.43">
-
-            <com.google.android.material.progressindicator.CircularProgressIndicator
-                android:id="@+id/incoming_progress"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:progress="75"
-                app:indicatorColor="#0D5CB8"
-                app:indicatorSize="@dimen/_108sdp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.43"
-                app:trackColor="#ffffff"
-                app:trackThickness="10dp" />
-
-            <TextView
-                android:id="@+id/incoming_timer_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:gravity="center"
-                android:text="35"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Bold"
-                android:textColor="#ffffff"
-                android:textSize="42dp" />
-        </RelativeLayout>
-
         <androidx.constraintlayout.widget.Group
             android:id="@+id/group_userdata"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="@{vm.uiState.startTime &lt;= 0 &amp;&amp; vm.source == ConstantsKt.FROM_INCOMING_CALL ? View.INVISIBLE : View.VISIBLE }"
-            app:constraint_referenced_ids="topic_header, c_image, topic_viewpager, occupation_future_goals, next_topic_btn"
+            android:visibility="invisible"
+            app:constraint_referenced_ids="topic_header, topic_viewpager, occupation_future_goals, next_topic_btn"
             tools:visibility="visible" />
 
         <androidx.constraintlayout.widget.Guideline
