@@ -17,3 +17,4 @@ const val LIST_UPDATE=15
 const val ROOM_EXPAND=16
 const val OPEN_WAIT_ROOM=17
 const val JOINED=18
+const val ROOM_COLLAPSE=19

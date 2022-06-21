@@ -8,6 +8,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
+import android.os.Message
 import android.util.Log
 import android.view.View
 import android.view.Window
@@ -371,11 +372,13 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                     }
                 }
                 ROOM_EXPAND->{
-                    liveRoomViewModel.liveRoomState.value=LiveRoomState.EXPANDED
+                    liveRoomViewModel.liveRoomState.value = LiveRoomState.EXPANDED
+                    var msg=Message()
+                    msg.what=ROOM_COLLAPSE
+                    viewModel.singleLiveEvent.value= msg
                 }
 
                 SCROLL_TO_TOP -> {
-                    //binding.recyclerView.layoutManager?.scrollToPosition(0)
                     binding.recyclerView.layoutManager?.smoothScrollToPosition(
                         binding.recyclerView,
                         null,
