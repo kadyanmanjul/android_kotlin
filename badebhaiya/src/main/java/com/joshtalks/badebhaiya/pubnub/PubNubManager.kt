@@ -195,6 +195,7 @@ object PubNubManager {
                     postToAudienceList(tempAudienceList)
                 }
             } catch (e: Exception){
+                FallbackManager.getUsersList()
                 sendPubNubException(e)
             }
 
