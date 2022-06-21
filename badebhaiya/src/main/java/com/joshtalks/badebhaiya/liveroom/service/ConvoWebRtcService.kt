@@ -277,6 +277,7 @@ class ConvoWebRtcService : Service() {
                             isRoomEnded = false
                             conversationRoomChannelName = null
                             rtcEngine?.leaveChannel()
+                            RtcEngine.destroy()
                             //joshAudioManager?.endCommunication()
                         }
                     } catch (ex: Exception) {
@@ -620,6 +621,7 @@ class ConvoWebRtcService : Service() {
             leaveRoom(roomId, roomQuestionId)
         }
         Log.d(TAG, "onDestroy: isRoomCreatedByUser : $isRoomCreatedByUser ")
+        rtcEngine?.leaveChannel()
         RtcEngine.destroy()
         retryInitLibrary = 0
         isEngineInitialized = false
