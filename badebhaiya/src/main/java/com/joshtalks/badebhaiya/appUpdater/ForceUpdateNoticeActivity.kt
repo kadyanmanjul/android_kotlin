@@ -5,14 +5,22 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class ForceUpdateNoticeActivity: ComponentActivity() {
+
+    @Inject
+    lateinit var appUpdater: JoshAppUpdater
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             ForceUpdateNoticeScreen(
                 onDownloadClick = {
                     finish()
+                    appUpdater.onDownloadClick()
                 },
                 onExitClick = {
                     finishAffinity()
@@ -27,5 +35,10 @@ class ForceUpdateNoticeActivity: ComponentActivity() {
                 context.startActivity(it)
             }
         }
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        finishAffinity()
     }
 }

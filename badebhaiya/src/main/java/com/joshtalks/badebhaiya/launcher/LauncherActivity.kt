@@ -58,6 +58,7 @@ class LauncherActivity : AppCompatActivity() {
             //setAutoTimeEnabled(boolean enabled)
         collectStateFlow(appUpdater.isUpdateAvailable){ updateAvailable ->
             if (!updateAvailable){
+                appUpdater.flushResources()
                 initBranch()
             }
         }
