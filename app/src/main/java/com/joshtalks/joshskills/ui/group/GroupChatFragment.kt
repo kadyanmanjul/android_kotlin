@@ -25,6 +25,7 @@ import com.joshtalks.joshskills.track.AGORA_UID
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.group.constants.*
 import com.joshtalks.joshskills.ui.group.viewmodels.GroupChatViewModel
+import com.joshtalks.joshskills.ui.group.views.MediaPickerDialog
 
 import com.vanniktech.emoji.EmojiPopup
 import kotlinx.coroutines.*
@@ -118,6 +119,7 @@ class GroupChatFragment : BaseFragment() {
                     }
                 }
                 REMOVE_DM_FPP -> openRemoveMenu()
+                OPEN_MEDIA_CHOOSER -> openMediaChooser()
             }
         }
     }
@@ -181,6 +183,10 @@ class GroupChatFragment : BaseFragment() {
             emojiPopup.toggle()
             emojiButton.setImageResource(R.drawable.ic_keyboard)
         }
+    }
+
+    private fun openMediaChooser() {
+        MediaPickerDialog.showDialog(parentFragmentManager)
     }
 
     private fun openRemoveMenu() {

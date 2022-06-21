@@ -101,7 +101,7 @@
                 android:adjustViewBounds="true"
                 android:padding="@dimen/_5sdp"
                 android:scaleType="centerCrop"
-                app:srcCompat="@drawable/ic_gallary" />
+                app:srcCompat="@drawable/ic_gallery" />
 
 
             <androidx.appcompat.widget.AppCompatTextView

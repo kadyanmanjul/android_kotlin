@@ -797,6 +797,16 @@
         <item name="android:colorBackground">@color/report_black</item>
     </style>
 
+    <style name="media_dialog_theme" parent="AlertDialogStyle">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:windowBackground">@color/transparent</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:backgroundDimAmount">0</item>
+    </style>
+
     <style name="ConversationRoomStyle" parent="Theme.Design.Light.BottomSheetDialog">
         <item name="bottomSheetStyle">@style/MYBottomSheetStyle</item>
         <item name="android:windowSoftInputMode">adjustResize</item>

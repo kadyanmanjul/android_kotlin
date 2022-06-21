@@ -621,4 +621,9 @@ class GroupChatViewModel : BaseViewModel() {
             }
         } catch (ex: Exception) { }
     }
+
+    fun openMediaChooser(view: View) {
+        message.what = OPEN_MEDIA_CHOOSER
+        singleLiveEvent.value = message
+    }
 }

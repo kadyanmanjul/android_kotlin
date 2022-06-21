@@ -35,19 +35,19 @@
 
             <com.joshtalks.joshskills.ui.group.views.GroupsAppBar
                 android:id="@+id/group_app_bar"
+                firstIcon="@{vm.groupType.equals(`fpp`)? R.drawable.ic_dm_call: 0}"
                 groupHeader="@{vm.groupHeader}"
                 groupImage="@{vm.imageUrl}"
+                groupName="@{vm.groupHeader}"
                 groupSubHeader="@{vm.groupSubHeader}"
                 groupType="@{vm.groupType}"
                 groupTypeDm="@{vm.groupType}"
                 onBackPressed="@{vm::onBackPress}"
-                onSecondIconPressed="@{vm.groupType.equals(`fpp`) ? vm.onRemoveFpp : vm::callGroup}"
-                onToolbarPressed="@{vm::openGroupInfo}"
                 onFirstIconPressed="@{vm::callGroup}"
+                onSecondIconPressed="@{vm.groupType.equals(`fpp`) ? vm.onRemoveFpp : vm::callGroup}"
                 onTitlePressed="@{vm::openGroupInfo}"
-                firstIcon="@{vm.groupType.equals(`fpp`)? R.drawable.ic_dm_call: 0}"
+                onToolbarPressed="@{vm::openGroupInfo}"
                 secondIcon="@{vm.groupType.equals(`fpp`)? R.drawable.ic_more_option : vm.hasJoinedGroup ? R.drawable.group_call : 0, default=0}"
-                groupName="@{vm.groupHeader}"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
         </com.google.android.material.appbar.AppBarLayout>
@@ -140,7 +140,7 @@
             android:layout_marginEnd="@dimen/_6sdp"
             android:layout_marginBottom="@dimen/_5sdp"
             android:background="@drawable/rect_round_16"
-            android:paddingEnd="@dimen/_10sdp"
+            android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/floatingActionButton"
             app:layout_constraintStart_toStartOf="parent">
@@ -158,8 +158,9 @@
 
             <com.vanniktech.emoji.EmojiEditText
                 android:id="@+id/group_chat_send_msg"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:background="@null"
                 android:cursorVisible="true"
                 android:hint="@string/type_message_hint"
@@ -172,6 +173,17 @@
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                 android:textColor="@color/pitch_black"
                 android:textColorHint="@color/gray_9E" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/media_chat_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="end"
+                android:onClick="@{vm::openMediaChooser}"
+                android:foreground="?attr/actionBarItemBackground"
+                android:paddingStart="@dimen/_6sdp"
+                android:paddingEnd="@dimen/_6sdp"
+                app:srcCompat="@drawable/ic_attachment" />
         </LinearLayout>
 
         <androidx.appcompat.widget.AppCompatImageView
@@ -220,7 +232,8 @@
             app:layout_constraintBottom_toTopOf="@+id/appCompatTextView"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="gone" />
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
