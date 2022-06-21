@@ -8,23 +8,35 @@ import androidx.lifecycle.lifecycleScope
 import androidx.work.WorkManager
 import com.joshtalks.badebhaiya.BuildConfig
 import com.joshtalks.badebhaiya.R
+import com.joshtalks.badebhaiya.appUpdater.JoshAppUpdater
 import com.joshtalks.badebhaiya.core.workers.WorkManagerAdmin
 import com.joshtalks.badebhaiya.feed.FeedActivity
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.signup.SignUpActivity
 import com.joshtalks.badebhaiya.signup.SignUpActivity.Companion.REDIRECT_TO_ENTER_NAME
 import com.joshtalks.badebhaiya.utils.SingleDataManager
+import com.joshtalks.badebhaiya.utils.collectStateFlow
 import com.userexperior.UserExperior
+import dagger.hilt.android.AndroidEntryPoint
 import io.branch.referral.Branch
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class LauncherActivity : AppCompatActivity() {
+
+    @Inject
+    lateinit var appUpdater: JoshAppUpdater
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_launcher)
+
+        appUpdater.checkAndUpdate(this)
+
+
 
         UserExperior.startRecording(getApplicationContext(), BuildConfig.USER_EXPERIOR_API_KEY)
 
@@ -35,6 +47,7 @@ class LauncherActivity : AppCompatActivity() {
         SingleDataManager.pendingPilotAction = null
         SingleDataManager.pendingPilotEventData = null
                  initApp()
+
 //             }
 //             else
 //             {
@@ -43,12 +56,27 @@ class LauncherActivity : AppCompatActivity() {
 //                 finish()
 //             }
             //setAutoTimeEnabled(boolean enabled)
-
+        collectStateFlow(appUpdater.isUpdateAvailable){ updateAvailable ->
+            if (!updateAvailable){
+                appUpdater.flushResources()
+                initBranch()
+            }
+        }
     }
 
     override fun onStart() {
         super.onStart()
-        initBranch()
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+        appUpdater.checkIfUpdating()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        appUpdater.onResult(requestCode, resultCode)
     }
 
 

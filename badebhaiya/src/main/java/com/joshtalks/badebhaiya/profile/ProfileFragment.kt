@@ -273,7 +273,9 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
                 } catch (e: Exception){
 
                 }
-                requireActivity().supportFragmentManager.beginTransaction().remove(this).commit()
+                if (isAdded){
+                    requireActivity().supportFragmentManager.beginTransaction().remove(this).commit()
+                }
 //                feedViewModel.isBackPressed.value=false
             }
 

@@ -91,6 +91,10 @@
             android:name=".feed.FeedActivity"
             android:exported="true"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".appUpdater.ForceUpdateNoticeActivity"
+            android:exported="true"
+            android:screenOrientation="portrait" />
 
         <meta-data
             android:name="io.branch.sdk.BranchKey"

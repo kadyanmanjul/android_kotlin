@@ -31,6 +31,7 @@
     <color name="notification_red_color">#EC5858</color>
     <color name="notification_green_color">#27AE61</color>
     <color name="notification_orange_color">#F3792B</color>
+    <color name="notification_orange">#F4792A</color>
     <color name="conversation_room_gray">#ACA9A9</color>
 
     <color name="checkbox_color">#ff0000</color>
@@ -46,5 +47,6 @@
     <color name="enter_room_hint_color">#BCCDD4</color>
     <color name="da_grey">#F2F2F2</color>
 <color name="notification_icon">#665BEB</color>
+    <color name="blue_text_color">#248CC5</color>
 
 </resources>
