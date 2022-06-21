@@ -34,20 +34,15 @@ import com.joshtalks.badebhaiya.feed.*
 import com.joshtalks.badebhaiya.feed.adapter.FeedAdapter
 import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
 import com.joshtalks.badebhaiya.impressions.Impression
-import com.joshtalks.badebhaiya.liveroom.LiveRoomFragment
 import com.joshtalks.badebhaiya.liveroom.LiveRoomState
-import com.joshtalks.badebhaiya.liveroom.OPEN_ROOM
 import com.joshtalks.badebhaiya.liveroom.ROOM_EXPAND
-import com.joshtalks.badebhaiya.liveroom.model.StartingLiveRoomProperties
 import com.joshtalks.badebhaiya.liveroom.viewmodel.LiveRoomViewModel
 import com.joshtalks.badebhaiya.notifications.NotificationScheduler
 import com.joshtalks.badebhaiya.profile.request.ReminderRequest
 import com.joshtalks.badebhaiya.profile.response.ProfileResponse
 import com.joshtalks.badebhaiya.repository.CommonRepository
-import com.joshtalks.badebhaiya.repository.model.ConversationRoomResponse
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.signup.SignUpActivity
-import com.joshtalks.badebhaiya.signup.UserPicChooserFragment
 import com.joshtalks.badebhaiya.signup.viewmodel.SignUpViewModel
 import com.joshtalks.badebhaiya.utils.SingleDataManager
 import com.joshtalks.badebhaiya.utils.Utils
@@ -442,13 +437,13 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
 
     override fun joinRoom(room: RoomListResponseItem, view: View) {
         feedViewModel.source="Profile"
-        takePermissions(room.roomId.toString(), room.topic.toString())
+        takePermissions(room.roomId.toString(), room.topic.toString(), room.speakersData?.userId)
     }
 
-    private fun takePermissions(room: String? = null, roomTopic: String) {
+    private fun takePermissions(room: String? = null, roomTopic: String, moderatorId: String?) {
         if (PermissionUtils.isCallingPermissionWithoutLocationEnabled(requireContext())) {
             if (room != null) {
-                feedViewModel.joinRoom(room, roomTopic,"PROFILE_SCREEN")
+                feedViewModel.joinRoom(room, roomTopic, "PROFILE_SCREEN", moderatorId)
             }
             return
         }
@@ -460,7 +455,12 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
                     report?.areAllPermissionsGranted()?.let { flag ->
                         if (flag) {
                             if (room != null) {
-                                feedViewModel.joinRoom(room, roomTopic,"PROFILE_SCREEN")
+                                feedViewModel.joinRoom(
+                                    room,
+                                    roomTopic,
+                                    "PROFILE_SCREEN",
+                                    moderatorId
+                                )
                             }
                             return
                         }

@@ -15,10 +15,7 @@ import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.WindowManager
-import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.addCallback
 import androidx.appcompat.app.AlertDialog
@@ -157,7 +154,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
         trackLiveRoomState()
         isActivityOpenFromNotification =
             PubNubManager.getLiveRoomProperties()?.isActivityOpenFromNotification!!
-        addViewModelObserver()
+          addViewModelObserver()
         addObserver()
         if (isActivityOpenFromNotification) {
 //            addJoinAPIObservers()
@@ -1317,6 +1314,12 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
                 var frag=activity.supportFragmentManager.findFragmentById(R.id.liveRoomRootView)
                 if(frag==null) {
 
+                    val waitingFragment = activity.supportFragmentManager.findFragmentByTag(WaitingFragment.TAG)
+                    waitingFragment?.let {
+                        activity.supportFragmentManager.beginTransaction().remove(it).commit()
+                    }
+
+
                     val fragment = LiveRoomFragment() // replace your custom fragment class
                     val bundle = Bundle()
                     bundle.putString("source", from) // use as per your need
@@ -1326,7 +1329,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
                     activity
                         .supportFragmentManager
                         .beginTransaction()
-                        .replace(R.id.fragmentContainer, fragment)
+                        .replace(R.id.feedRoot, fragment)
                         .addToBackStack(null)
                         .commit()
                 }

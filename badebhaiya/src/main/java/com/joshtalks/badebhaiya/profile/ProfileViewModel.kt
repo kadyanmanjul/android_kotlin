@@ -99,7 +99,6 @@ class ProfileViewModel : ViewModel() {
             try {
 //                if(isFromDeepLink)
 //                    updateFollowStatus(userId)
-                Log.i("IMPRESSION", "getProfileForUser: $source")
                 val response = repository.getProfileForUser(userId,source)
                 if (response.isSuccessful) {
                     response.body()?.let {

@@ -12,6 +12,7 @@ import com.google.gson.reflect.TypeToken
 import com.joshtalks.badebhaiya.BuildConfig
 import com.joshtalks.badebhaiya.core.AppObjectController
 import com.joshtalks.badebhaiya.core.EMPTY
+import com.joshtalks.badebhaiya.core.LogException
 import com.joshtalks.badebhaiya.feed.NotificationView
 import com.joshtalks.badebhaiya.feed.model.LiveRoomUser
 import com.joshtalks.badebhaiya.liveroom.*
@@ -24,12 +25,14 @@ import com.joshtalks.badebhaiya.liveroom.service.ConvoWebRtcService
 import com.joshtalks.badebhaiya.liveroom.viewmodel.*
 import com.joshtalks.badebhaiya.pubnub.PubNubData._audienceList
 import com.joshtalks.badebhaiya.pubnub.PubNubData._speakersList
+import com.joshtalks.badebhaiya.pubnub.PubNubData.moderatorStatus
 import com.joshtalks.badebhaiya.pubnub.PubNubData.eventsMap
 import com.joshtalks.badebhaiya.pubnub.fallback.FallbackManager
 import com.joshtalks.badebhaiya.repository.PubNubExceptionRepository
 import com.joshtalks.badebhaiya.repository.model.PubNubExceptionRequest
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.utils.DEFAULT_NAME
+import com.joshtalks.badebhaiya.utils.UniqueList
 import com.joshtalks.badebhaiya.utils.Utils
 import com.pubnub.api.PNConfiguration
 import com.pubnub.api.PubNub
@@ -37,7 +40,15 @@ import com.pubnub.api.callbacks.SubscribeCallback
 import com.pubnub.api.models.consumer.PNStatus
 import com.pubnub.api.models.consumer.objects_api.member.PNGetChannelMembersResult
 import com.pubnub.api.models.consumer.objects_api.member.PNUUID
+import com.pubnub.api.models.consumer.objects_api.membership.PNMembershipResult
+import com.pubnub.api.models.consumer.objects_api.uuid.PNUUIDMetadataResult
+import com.pubnub.api.models.consumer.pubsub.PNMessageResult
+import com.pubnub.api.models.consumer.pubsub.PNPresenceEventResult
+import com.pubnub.api.models.consumer.pubsub.PNSignalResult
+import com.pubnub.api.models.consumer.pubsub.files.PNFileEventResult
+import com.pubnub.api.models.consumer.pubsub.message_actions.PNMessageActionResult
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
 import timber.log.Timber
 import java.util.*
 
@@ -49,6 +60,7 @@ object PubNubManager {
 
     @Volatile
     private var liveRoomProperties: StartingLiveRoomProperties? = null
+    private var channelName:String?=null
 
     var moderatorName: String? = null
 
@@ -57,11 +69,14 @@ object PubNubManager {
     var currentUser: LiveRoomUser? = null
 
     private lateinit var pubnub: PubNub
+    private lateinit var isJoinedPubnub:PubNub
     private val message = Message()
 
     var moderatorUid: Int? = null
 
     private var pubNubCallback: SubscribeCallback? = null
+
+    private var waitingCallback: SubscribeCallback?=null
 
     @Volatile
     private var speakersList = arraySetOf<LiveRoomUser>()
@@ -79,8 +94,14 @@ object PubNubManager {
     var isRoomActive = false
 
     fun warmUp(liveRoomProperties: StartingLiveRoomProperties) {
+        Log.i("MODERATORSTATUS", "warmUp: $liveRoomProperties")
         this.liveRoomProperties = liveRoomProperties
         pubNubCallback = PubNubCallback()
+    }
+
+    fun warmUpChannel(channelName: String){
+        Log.i("MODERATORSTATUS", "warmUpChannel: $channelName")
+        this.channelName= channelName
     }
 
     fun getLiveRoomProperties(): StartingLiveRoomProperties {
@@ -103,6 +124,7 @@ object PubNubManager {
         pnConf.maximumConnections = Int.MAX_VALUE
         pnConf.isSecure = false
         pubnub = PubNub(pnConf)
+        Log.i("MODERATORSTATUS", "initPubNub: ")
 
         pubNubCallback?.let {
             pubnub.addListener(it)
@@ -124,6 +146,45 @@ object PubNubManager {
 
         }
 
+    }
+
+    fun initSpeakerJoined(){
+        Log.i("MODERATORSTATUS", "initSpeakerJoined: ${channelName}waitingRoom")
+        val pnConf = PNConfiguration()
+        pnConf.subscribeKey = BuildConfig.PUBNUB_SUB_API_KEY
+        pnConf.publishKey = BuildConfig.PUBNUB_PUB_API_KEY
+        pnConf.uuid = User.getInstance().userId
+        pnConf.connectTimeout = 10
+        pnConf.maximumConnections = Int.MAX_VALUE
+        pnConf.isSecure = false
+        waitingCallback=WaitingCallback()
+        isJoinedPubnub = PubNub(pnConf)
+        waitingCallback?.let {
+            isJoinedPubnub.addListener(it)
+        }
+
+        jobs += CoroutineScope(Dispatchers.IO).launch {
+
+            isJoinedPubnub.subscribe().channels(
+                listOf("${channelName}waitingRoom")
+            ).withPresence().execute()
+
+        }
+    }
+
+    private fun getSpeakerStatus() {
+        jobs += CoroutineScope(Dispatchers.IO).launch {
+            try {
+                pubnub.channelMembers.channel(liveRoomProperties?.channelName+"waitingRoom")
+                    ?.includeCustom(true)
+                    ?.async { result, status ->
+                        Log.i("WAITING", "getSpeakerStatus: $result")
+                    }
+            } catch (e: Exception){
+                sendPubNubException(e)
+            }
+
+        }
     }
 
     private fun changePubNubState(state: PubNubState){
@@ -211,6 +272,7 @@ object PubNubManager {
         } catch (e: Exception){
 
         }
+
     }
 
      fun refreshUsersList(uid: String, state: Any): LiveRoomUser? {
@@ -316,6 +378,14 @@ object PubNubManager {
         }
     }
 
+    fun postToSpeakerStatus(message: Message) {
+        jobs+= CoroutineScope(Dispatchers.IO).launch {
+            Log.i("MODERATORSTATUS", "postToSpeakerStatus: $message")
+            moderatorStatus.emit(message)
+        }
+
+    }
+
     private fun postToLiveEvent(message: Message) {
         jobs += CoroutineScope(Dispatchers.IO).launch {
             PubNubData._liveEvent.emit(message)
@@ -399,11 +469,14 @@ object PubNubManager {
         jobs += CoroutineScope(Dispatchers.IO).launch() {
             try {
 //                throw Exception()
+                Log.i("MODERATORSTATUS", "sendCustomMessage: $channel")
                 channel.let {
                     pubnub.publish()
                         .message(eventData)
                         ?.channel(it)
-                        ?.sync()
+                        ?.async { result, status ->
+                            Log.i("MODERATORSTATUS", "sendCustomMessage: $result && $status")
+                        }
                 }
             } catch (e: Exception){
                 e.printStackTrace()
@@ -426,6 +499,17 @@ object PubNubManager {
     fun unSubscribePubNub() {
         pubnub.unsubscribeAll()
         endPubNub()
+    }
+
+    fun waitingUnsubscribe(){
+        try{
+            isJoinedPubnub.unsubscribeAll()
+            waitingCallback?.let {
+                isJoinedPubnub.removeListener(it)
+            }
+        }
+        catch(ex:Exception){
+        }
     }
 
     fun reconnectPubNub() {

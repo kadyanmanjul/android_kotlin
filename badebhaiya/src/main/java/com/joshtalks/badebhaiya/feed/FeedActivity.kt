@@ -44,6 +44,7 @@ import com.joshtalks.badebhaiya.profile.ProfileFragment
 import com.joshtalks.badebhaiya.profile.ProfileViewModel
 import com.joshtalks.badebhaiya.profile.request.DeleteReminderRequest
 import com.joshtalks.badebhaiya.profile.request.ReminderRequest
+import com.joshtalks.badebhaiya.pubnub.PubNubManager
 import com.joshtalks.badebhaiya.pubnub.PubNubState
 import com.joshtalks.badebhaiya.repository.CommonRepository
 import com.joshtalks.badebhaiya.repository.ConversationRoomRepository
@@ -121,6 +122,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
             flags: Array<Int> = arrayOf()
         ) = Intent(context, FeedActivity::class.java).apply {
 
+            Log.i("CHECKNOTIFICATION", "getIntentForNotification: $roomId &&& TOPIC:-$topicName")
             Timber.d("INTENT FOR NOTIFICATION DATA => $roomId $topicName")
             putExtra(OPEN_FROM_NOTIFICATION, true)
             putExtra(ROOM_ID, roomId.toInt())
@@ -230,6 +232,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
 
     private fun checkAndOpenLiveRoom() {
         Timber.d("FEED ACIVITY ON RESTART  => ${intent.extras}")
+        Log.i("CHECKNOTIFICATION", "checkAndOpenLiveRoom: ${intent.getIntExtra(ROOM_ID,0)} && topic:-${intent.getStringExtra(TOPIC_NAME)} ----- boolean:- ${intent.getBooleanExtra(OPEN_FROM_NOTIFICATION, false)}")
         if (intent.getBooleanExtra(OPEN_FROM_NOTIFICATION, false)) {
 
             // TODO: Open Live Room.
@@ -242,10 +245,11 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                     )
                 } and topic name => ${intent.getStringExtra(TOPIC_NAME)}"
             )
-
+            Log.i("CHECKNOTIFICATION", "checkAndOpenLiveRoom: ${intent.getIntExtra(ROOM_ID,0)} && topic:-${intent.getStringExtra(TOPIC_NAME)}")
             takePermissions(
                 intent.getIntExtra(ROOM_ID, 0).toString(),
-                intent.getStringExtra(TOPIC_NAME) ?: ""
+                intent.getStringExtra(TOPIC_NAME) ?: "",
+                "moderatorId"
             )
 
 
@@ -280,7 +284,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         bundle.putString("source","FEED_SCREEN")
 
         fragment.arguments = bundle
-        fragmentTransaction.addToBackStack(null)
+//        fragmentTransaction.addToBackStack(null)
         fragmentTransaction.replace(R.id.root_view, fragment)
         fragmentTransaction.commit()
     }
@@ -345,6 +349,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                 OPEN_ROOM -> {
 
                     it.data?.let {
+                        Log.i("MODERATORSTATUS", "addObserver: OPEN $it")
                         it.getParcelable<ConversationRoomResponse>(ROOM_DETAILS)?.let { room ->
                             val liveRoomProperties = StartingLiveRoomProperties.createFromRoom(
                                 room,
@@ -354,9 +359,21 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                         }
                     }
                 }
+
+                OPEN_WAIT_ROOM->{
+                    it.data?.let{
+
+                        viewModel.pubChannelName?.let { it1 -> PubNubManager.warmUpChannel(it1) }
+                        //viewModel.pubChannelName?.let { it1 -> PubNubManager.warmUpChannel(channelName = it1) }
+                        viewModel.reader()
+                        Log.i("MODERATORSTATUS", "addObserver: WAIT $it")
+                        WaitingFragment.open(this)
+                    }
+                }
                 ROOM_EXPAND->{
                     liveRoomViewModel.liveRoomState.value=LiveRoomState.EXPANDED
                 }
+
                 SCROLL_TO_TOP -> {
                     //binding.recyclerView.layoutManager?.scrollToPosition(0)
                     binding.recyclerView.layoutManager?.smoothScrollToPosition(
@@ -428,16 +445,25 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
     }
 
     override fun joinRoom(room: RoomListResponseItem, view: View) {
+        viewModel.roomData=room
         profileViewModel.sendEvent(Impression("FEED_SCREEN","CLICKED_JOIN"))
         viewModel.source="Feed"
-        takePermissions(room.roomId.toString(), room.topic)
+        var moderatorId=room.speakersData?.userId
+        room.speakersData?.fullName?.let {
+            viewModel.speakerName = it
+        }
+        takePermissions(room.roomId.toString(), room.topic,moderatorId)
     }
 
-    private fun takePermissions(roomId: String? = null, roomTopic: String? = null) {
+    private fun takePermissions(
+        roomId: String? = null,
+        roomTopic: String? = null,
+        moderatorId: String?
+    ) {
         if (PermissionUtils.isCallingPermissionWithoutLocationEnabled(this)) {
             if (roomId == null) {
                 openCreateRoomDialog()
-            } else viewModel.joinRoom(roomId, roomTopic!!,"FEED_SCREEN")
+            } else viewModel.joinRoom(roomId, roomTopic!!,"FEED_SCREEN",moderatorId)
             return
         }
 
@@ -449,7 +475,12 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                         if (flag) {
                             if (roomId == null) {
                                 openCreateRoomDialog()
-                            } else viewModel.joinRoom(roomId, roomTopic!!,"FEED_SCREEN")
+                            } else viewModel.joinRoom(
+                                roomId,
+                                roomTopic!!,
+                                "FEED_SCREEN",
+                                moderatorId
+                            )
                             return
                         }
                         if (report.isAnyPermissionPermanentlyDenied) {
@@ -553,9 +584,16 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                 msg = dialogBinding.message.text.toString()
                 val obj= FormResponse(userId,msg,roomId)
                 CoroutineScope(Dispatchers.IO).launch {
-                    val resp= CommonRepository().sendMsg(obj)
-                    if(resp.isSuccessful)
-                        alertDialog.dismiss()
+                    try {
+                        val resp= CommonRepository().sendMsg(obj)
+                        if(resp.isSuccessful)
+                            showToast("response Send")
+
+                    }catch (e: Exception){
+
+                    }
+                    alertDialog.dismiss()
+
 //                    else
 //                        showToast("An Error Occured")
                 }
@@ -585,14 +623,13 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         val bundle = Bundle()
         val fragmentTransaction: FragmentTransaction = supportFragmentManager.beginTransaction()
         bundle.putString("user", profile) // use as per your need
-        Log.i("IMPRESSION", "viewProfile: $deeplink")
         if(deeplink)
-            bundle.putString("source", "DEEPLINK")
+        bundle.putString("source", "deeplink")
         else
-            bundle.putString("source", "FEED_SCREEN")
+            bundle.putString("source","feed")
 
         fragment.arguments = bundle
-        fragmentTransaction.addToBackStack(null)
+//        fragmentTransaction.addToBackStack(null)
         fragmentTransaction.replace(R.id.root_view, fragment)
         fragmentTransaction.commit()
     }
@@ -618,7 +655,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         else
             bundle.putString("source", "FEED_SCREEN")
         fragment.arguments = bundle
-        fragmentTransaction.addToBackStack(null)
+//        fragmentTransaction.addToBackStack(null)
         fragmentTransaction.replace(R.id.root_view, fragment)
         fragmentTransaction.commit()
 

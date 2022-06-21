@@ -116,5 +116,9 @@
     <string name="force_update_notice">अपने Experience को बेहतर करने के लिए Josh BB App का Latest Version Download करें</string>
     <string name="download_now">DOWNLOAD NOW</string>
     <string name="exit">EXIT</string>
+    <string name="title_activity_waiting_room">WaitingRoom</string>
+    <string name="waiting_room_dialog_title">कॉल पर जुड़ने के लिए आपका धन्यवाद, कृपया थोड़ी प्रतीक्षा करें. जोश Speaker %1$s बहुत जल्द हमारे साथ जुड़ेंगे</string>
+    <string name="sure_ill_wait">SURE, I LL WAIT</string>
+    <string name="exit_room">EXIT ROOM</string>
 
 </resources>

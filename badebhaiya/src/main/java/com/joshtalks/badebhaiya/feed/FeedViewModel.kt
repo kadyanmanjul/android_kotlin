@@ -1,40 +1,38 @@
 package com.joshtalks.badebhaiya.feed
 
+import android.graphics.Insets.add
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.os.Message
 import android.util.Log
+import androidx.collection.ArraySet
+import androidx.compose.runtime.mutableStateListOf
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.lifecycle.*
-import com.google.gson.Gson
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.core.*
-import com.joshtalks.badebhaiya.core.models.ErrorBody
 import com.joshtalks.badebhaiya.feed.adapter.FeedAdapter
 import com.joshtalks.badebhaiya.feed.model.*
 import com.joshtalks.badebhaiya.impressions.Impression
-import com.joshtalks.badebhaiya.liveroom.OPEN_PROFILE
-import com.joshtalks.badebhaiya.liveroom.OPEN_ROOM
-import com.joshtalks.badebhaiya.liveroom.ROOM_EXPAND
-import com.joshtalks.badebhaiya.liveroom.SCROLL_TO_TOP
+import com.joshtalks.badebhaiya.liveroom.*
 import com.joshtalks.badebhaiya.liveroom.bottomsheet.CreateRoom
 import com.joshtalks.badebhaiya.profile.ProfileViewModel
-import com.joshtalks.badebhaiya.profile.request.DeleteReminderRequest
 import com.joshtalks.badebhaiya.profile.request.ReminderRequest
 import com.joshtalks.badebhaiya.pubnub.PubNubData
+import com.joshtalks.badebhaiya.pubnub.PubNubEventsManager
+import com.joshtalks.badebhaiya.pubnub.PubNubManager
 import com.joshtalks.badebhaiya.pubnub.PubNubState
 import com.joshtalks.badebhaiya.repository.BBRepository
 import com.joshtalks.badebhaiya.repository.ConversationRoomRepository
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomRequest
+import com.joshtalks.badebhaiya.repository.model.ConversationRoomResponse
 import com.joshtalks.badebhaiya.repository.model.User
-import com.joshtalks.badebhaiya.utils.Utils
-import com.joshtalks.badebhaiya.utils.ALLOWED_SCHEDULED_TIME
-import com.joshtalks.badebhaiya.utils.IST_TIME_DIFFERENCE
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import retrofit2.Response
 import timber.log.Timber
-
 const val ROOM_ITEM = "room_item"
 const val USER_ID = "user_id"
 const val ROOM_DETAILS = "room_details"
@@ -47,17 +45,27 @@ class FeedViewModel : ViewModel() {
     val isLoading = ObservableBoolean(false)
     val isBadeBhaiyaSpeaker = ObservableBoolean(false)
     var userID:String=""
+    var isRoomActive=MutableLiveData(false)
+    lateinit var respBody: ConversationRoomResponse
+    val waitResponse= MutableLiveData<List<Waiting>>()
+    var pubChannelName:String?=null
+    lateinit var response: Response<ConversationRoomResponse>
+    lateinit var roomtopic:String
     var isBackPressed=MutableLiveData(false)
     val searchResponse=MutableLiveData<SearchRoomsResponseList>()
     val feedAdapter = FeedAdapter()
     var message = Message()
+    lateinit var roomData:RoomListResponseItem
     var singleLiveEvent: MutableLiveData<Message> = MutableLiveData()
     val repository = ConversationRoomRepository()
     val scheduleRoomStartDate = ObservableField<String>()
     val scheduleRoomStartTime = ObservableField<String>()
     val signUpRepository = BBRepository()
     var pubNubState = PubNubState.ENDED
-
+    var modStat=Message()
+    var isModerator=false
+    val waitingRoomUsers = MutableLiveData<List<Waiting>>(emptyList())
+    var speakerName = ""
     init {
         collectPubNubState()
 
@@ -81,31 +89,45 @@ class FeedViewModel : ViewModel() {
         }
     }
 
+    private fun collectModeratorStatus(){
+        viewModelScope.launch {
+            PubNubData.status.collect{
+                modStat=it
+                Log.i("MODERATORSTATUS", "collectModeratorStatus launch: ${PubNubData.status}")
+                Log.i("MODERATORSTATUS", "collectModeratorStatus: $it")
+//                message.what = OPEN_ROOM
+//                message.data = Bundle().apply {
+//                    putParcelable(
+//                        ROOM_DETAILS,
+//                        respBody
+//                    )
+//                    putString(
+//                        TOPIC,
+//                        roomtopic
+//                    )
+//                }
+//                isRoomActive.value=true
+                roomData.speakersData?.userId?.let { it1 ->
+                    joinRoom(roomData.roomId.toString(),roomData.topic.toString(),"FEED_SCREEN",
+                        it1
+                    )
+                }
+                PubNubManager.waitingUnsubscribe()
+                Log.i("YASHEN", "postvalue: ")
+//                singleLiveEvent.value=message
+            }
+        }
+    }
+
     fun setIsBadeBhaiyaSpeaker() {
         isBadeBhaiyaSpeaker.set(User.getInstance().isSpeaker)
         isBadeBhaiyaSpeaker.notifyChange()
     }
 
-    /*val onFeedItemClicked: (RoomListResponseItem?, View?) -> Unit = { item, view ->
-        message.what = OPEN_ROOM
-        message.data = Bundle().apply {
-            putParcelable(
-                ROOM_ITEM,
-                item
-            )
-        }
-        singleLiveEvent.postValue(message)
-    }*/
-
-    fun onProfileClicked() {
-        message.what = OPEN_PROFILE
-        message.data = Bundle().apply {
-            putString(
-                USER_ID,
-                User.getInstance().userId
-            )
-        }
-        singleLiveEvent.postValue(message)
+    fun reader(){
+        Log.i("MODERATORSTATUS", "reader: ")
+        collectModeratorStatus()
+        PubNubManager.initSpeakerJoined()
     }
 
     fun createRoom(topic: String, callback: CreateRoom.CreateRoomCallback) {
@@ -139,7 +161,7 @@ class FeedViewModel : ViewModel() {
         }
     }
 
-    fun joinRoom(roomId: String, topic: String = "sahil", source:String) {
+    fun joinRoom(roomId: String, topic: String = "sahil", source: String, moderatorId: String?) {
         Timber.d("JOIN ROOM PARAMS => room: $roomId and Topic => $topic")
         if (pubNubState == PubNubState.STARTED){
             showToast("Please Leave Current Room")
@@ -149,34 +171,56 @@ class FeedViewModel : ViewModel() {
             try {
                 isLoading.set(true)
                 Log.d("YASH", "joinRoom:")
-                val response = repository.joinRoom(
+                 response = repository.joinRoom(
                     ConversationRoomRequest(
                         userId = User.getInstance().userId,
                         roomId = roomId.toInt(),
                         fromPage = source
                     )
                 )
+                roomtopic=topic
                 if (response.isSuccessful) {
-                    showToast("Room joined successfully")
-                    message.what = OPEN_ROOM
-                    message.data = Bundle().apply {
-                        putParcelable(
-                            ROOM_DETAILS,
-                            response.body()
-                        )
-                        putString(
-                            TOPIC,
-                            topic
-                        )
-                    }
-                    Log.i("YASHEN", "postvalue: ")
-                    singleLiveEvent.value=message
+                    isRoomActive.postValue(true)
+                        if (moderatorId == User.getInstance().userId) {
+                            isModerator=true
+                            PubNubEventsManager.sendModeratorStatus(true, moderatorId.toString())
+                        }
+                        showToast("Room joined successfully")
+                        message.what = OPEN_ROOM
+                        message.data = Bundle().apply {
+                            putParcelable(
+                                ROOM_DETAILS,
+                                response.body()
+                            )
+                            putString(
+                                TOPIC,
+                                topic
+                            )
+                        }
+                        Log.i("YASHEN", "postvalue: ")
+                        singleLiveEvent.value = message
+
                 }
                 else
                 {
-                   // showToast(response.body().toString())
-                    if(response.code()==500)
-                        showToast("Room is not started yet")
+                    if(response.code()==406){
+//                        respBody = response.body()!!
+                        pubChannelName = moderatorId
+//                        Log.i("MODERATORSTATUS", "joinRoom:error ${response.body()}")
+                        message.what = OPEN_WAIT_ROOM
+//                        message.data = Bundle().apply {
+//                            putParcelable(
+//                                ROOM_DETAILS,
+//                                response.body()
+//                            )
+//                            putString(
+//                                TOPIC,
+//                                topic
+//                            )
+//                        }
+//                        Log.i("MODERATORSTATUS", "postvalue: ${response.body()} ")
+                        singleLiveEvent.value = message
+                    }
 
                     Log.i("YASHEN", "joinRoom: failed")
                 }
@@ -184,12 +228,27 @@ class FeedViewModel : ViewModel() {
 
             } catch (e: Exception) {
                 Timber.d("JOIN ROOM ERROR => ${e.stackTrace}")
+                Timber.d("JOIN ROOM ERROR => ${e.message}")
                 e.printStackTrace()
                 e.showAppropriateMsg()
             } finally {
                 isLoading.set(false)
             }
         }
+    }
+
+    fun getWaitingList() : List<Waiting>? {
+        viewModelScope.launch {
+            try {
+                val resp=repository.waitingList()
+                if(resp.isSuccessful)
+                {
+                    waitResponse.value = resp.body()!!.users
+                }
+            }catch (Ex:Exception){
+            }
+        }
+        return waitResponse.value
     }
 
     fun getRooms() {

@@ -38,4 +38,6 @@ class ConversationRoomRepository {
 
     suspend fun speakersList(page:Int)=
         service.speakersList(page)
+
+    suspend fun waitingList()=service.waitingMember()
 }

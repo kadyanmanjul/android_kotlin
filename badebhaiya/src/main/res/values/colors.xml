@@ -7,6 +7,8 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+<!--    <color name="transparent_white">#B4FFFFFF</color>-->
+    <color name="transparent_white">#E5E5E5E5</color>
     <color name="follow_button_stroke">#48609D</color>
     <color name="base_app_color">#F1EFE5</color>
     <color name="reminder_button_color">#27AE61</color>

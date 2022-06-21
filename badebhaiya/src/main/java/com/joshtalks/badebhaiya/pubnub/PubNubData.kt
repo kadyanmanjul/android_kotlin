@@ -36,4 +36,7 @@ object PubNubData {
 
     val eventsMap = mutableMapOf<Long, Long>()
 
+    internal val moderatorStatus=MutableSharedFlow<Message>()
+    val status= moderatorStatus.asSharedFlow()
+
 }

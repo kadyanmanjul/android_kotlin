@@ -15,3 +15,5 @@ const val SCROLL_TO_TOP=14
 const val OPEN_PROFILE = 12
 const val LIST_UPDATE=15
 const val ROOM_EXPAND=16
+const val OPEN_WAIT_ROOM=17
+const val JOINED=18

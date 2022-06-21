@@ -14,15 +14,19 @@ class BBRepository {
     suspend fun sendPhoneNumberForOTP(requestParams: Map<String, String>) = service.sendNumberForOTP(requestParams)
     suspend fun verifyOTP(verifyOTPRequest: VerifyOTPRequest) = service.verityOTP(verifyOTPRequest)
     suspend fun getUserDetailsForSignUp(userId: String) = service.getUserProfile(userId)
-    suspend fun updateUserProfile(userId: String, requestMap: MutableMap<String, String?>) = service.updateUserProfile(userId, requestMap)
-    suspend fun getProfileForUser(userId: String,source:String): Response<ProfileResponse> {
-        return if (User.getInstance().isLoggedIn()){
-            RetrofitInstance.profileNetworkService.getProfileForUser(userId,source)
+    suspend fun updateUserProfile(userId: String, requestMap: MutableMap<String, String?>) =
+        service.updateUserProfile(userId, requestMap)
+
+    suspend fun getProfileForUser(userId: String, source: String): Response<ProfileResponse> {
+        return if (User.getInstance().isLoggedIn()) {
+            RetrofitInstance.profileNetworkService.getProfileForUser(userId, source)
         } else {
-            RetrofitInstance.profileNetworkService.getProfileWithoutToken(userId)
+            RetrofitInstance.profileNetworkService.getProfileWithoutToken(userId, source)
         }
     }
-    suspend fun signOut()=service.signOutUser()
+
+    suspend fun signOut() = service.signOutUser()
+
     suspend fun trueCallerLogin(params: Map<String, String>) = service.trueCallerLogin(params)
 
     suspend fun getBBtoFollowList(page: Int) = service.speakersList(page)
