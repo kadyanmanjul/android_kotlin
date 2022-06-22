@@ -22,6 +22,7 @@ import com.joshtalks.joshskills.voip.communication.model.OutgoingData
 import com.joshtalks.joshskills.voip.communication.model.PeerToPeerCallRequest
 import com.joshtalks.joshskills.voip.communication.model.UI
 import com.joshtalks.joshskills.voip.constant.Event
+import com.joshtalks.joshskills.voip.constant.PSTN_STATE_IDLE
 import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.ServiceEvents
 import com.joshtalks.joshskills.voip.data.UIState
@@ -384,7 +385,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                             is IncomingCall -> {
                                 incomingNotificationMutex.withLock {
                                     Log.d(TAG, "handlePubnubEvent : $it")
-                                    if (isShowingIncomingCall.not() && PrefManager.getVoipState() == State.IDLE) {
+                                    if (isShowingIncomingCall.not() && PrefManager.getVoipState() == State.IDLE && PrefManager.getPstnState()== PSTN_STATE_IDLE) {
                                         CallAnalytics.addAnalytics(
                                             event = EventName.INCOMING_CALL_RECEIVED,
                                             agoraCallId = IncomingCallData.callId.toString(),
