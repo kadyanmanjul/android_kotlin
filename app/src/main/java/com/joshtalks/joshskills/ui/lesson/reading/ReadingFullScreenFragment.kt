@@ -1,11 +1,6 @@
 package com.joshtalks.joshskills.ui.lesson.reading
 
-import android.media.MediaCodec
-import android.media.MediaExtractor
-import android.media.MediaFormat
-import android.media.MediaMuxer
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,15 +9,8 @@ import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
 import com.joshtalks.joshskills.constants.SEND_OUTPUT_FILE
-import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.databinding.FragmentReadingFullScreenBinding
-import com.joshtalks.joshskills.ui.lesson.LessonActivity
 import com.joshtalks.joshskills.ui.lesson.LessonViewModel
-import kotlinx.android.synthetic.main.activity_reminder_notifier.*
-import kotlinx.android.synthetic.main.fragment_reading_full_screen.*
-import timber.log.Timber
-import java.io.IOException
-import java.nio.ByteBuffer
 
 class ReadingFullScreenFragment : BaseFragment() {
 
@@ -54,6 +42,9 @@ class ReadingFullScreenFragment : BaseFragment() {
             viewModel.closeCurrentFragment()
             viewModel.cancelButton()
         }
+        binding.mergedVideo.setOnTouchListener(View.OnTouchListener { v, event -> // do nothing here......
+            true
+        })
     }
 
     override fun initViewState() {

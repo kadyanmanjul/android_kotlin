@@ -855,7 +855,7 @@
                     android:insetTop="0dp"
                     android:insetBottom="0dp"
                     android:visibility="gone"
-                    android:text="Share video on whatsapp"
+                    android:text="Share on Whatsapp status"
                     android:textAllCaps="false"
                     android:textAlignment="center"
                     app:iconTint="@null"
