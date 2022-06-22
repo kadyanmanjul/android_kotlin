@@ -9,6 +9,7 @@ import android.content.Intent
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
+import android.os.Bundle
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
@@ -884,4 +885,14 @@ class NotificationUtils(val context: Context) {
         }
     }
 
+    fun getDataFromMoengage(intentData: Bundle): Map<String, String?> {
+        val dataJson = intentData.getString("gcm_alert")?.let { JSONObject(it) }
+        return mapOf(
+            Pair("action", dataJson?.getString("client_action")),
+            Pair("action_data", dataJson?.getString("action_data")),
+            Pair("id", dataJson?.getString("notification_id")),
+            Pair("content_title", dataJson?.getString("title")),
+            Pair("content_text", dataJson?.getString("body"))
+        )
+    }
 }

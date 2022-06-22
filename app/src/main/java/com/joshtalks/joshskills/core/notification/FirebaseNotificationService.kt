@@ -116,7 +116,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 remoteMessage.data["body"] = dataJson["body"].toString()
                 remoteMessage.data["action"] = dataJson["client_action"].toString()
                 remoteMessage.data["action_data"] = dataJson["action_data"].toString()
-                remoteMessage.data["notification_id"] = dataJson["notification_id"].toString()
+                remoteMessage.data["id"] = dataJson["notification_id"].toString()
                 NotificationUtils(this)
                     .processRemoteMessage(remoteMessage, NotificationAnalytics.Channel.MOENGAGE)
                 MoEPushHelper.getInstance().logNotificationReceived(this, remoteMessage.data)
@@ -139,13 +139,19 @@ class FirebaseNotificationService : FirebaseMessagingService() {
 
     override fun handleIntent(intent: Intent) {
         if (!isAppVisible) {
-            val data = mapOf(
-                Pair("action", intent.extras?.getString("action")),
-                Pair("action_data", intent.extras?.getString("action_data")),
-                Pair("id", intent.extras?.getString("id")),
-                Pair("content_title", intent.extras?.getString("gcm.notification.title")),
-                Pair("content_text", intent.extras?.getString("gcm.notification.body"))
-            )
+            Timber.tag(FirebaseNotificationService::class.java.name).e("intent : ${intent.extras}")
+
+            val intentData = intent.extras
+            val data = if (intentData?.getString("push_from").equals(NotificationAnalytics.Channel.MOENGAGE.action))
+                intentData?.let { NotificationUtils(this).getDataFromMoengage(it) }
+            else
+                mapOf(
+                    Pair("action", intent.extras?.getString("action")),
+                    Pair("action_data", intent.extras?.getString("action_data")),
+                    Pair("id", intent.extras?.getString("id")),
+                    Pair("content_title", intent.extras?.getString("gcm.notification.title")),
+                    Pair("content_text", intent.extras?.getString("gcm.notification.body"))
+                )
 
             val notificationTypeToken: Type = object : TypeToken<NotificationObject>() {}.type
             val gsonMapper = GsonBuilder()
@@ -186,7 +192,6 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 if (isFirstTimeNotification)
                     NotificationUtils(this@FirebaseNotificationService).sendNotification(nc)
             }
-            Timber.tag(FirebaseNotificationService::class.java.name).e("intent : ${intent.extras}")
         } else
             super.handleIntent(intent)
     }
