@@ -5,9 +5,11 @@ import com.google.gson.Gson
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.notification.FCM_TOKEN
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.group.constants.DM_CHAT
 import com.joshtalks.joshskills.ui.group.constants.FROM_BACKEND_MSG_TIME
+import com.joshtalks.joshskills.ui.group.constants.IMAGE_MESSAGE
 import com.joshtalks.joshskills.ui.group.model.ChatItem
 import com.joshtalks.joshskills.ui.group.model.MessageItem
 import com.joshtalks.joshskills.ui.group.utils.getMessageType
@@ -17,6 +19,7 @@ import com.pubnub.api.callbacks.SubscribeCallback
 import com.pubnub.api.endpoints.objects_api.utils.Include
 import com.pubnub.api.enums.PNLogVerbosity
 import com.pubnub.api.enums.PNPushType
+import com.pubnub.api.models.consumer.files.PNBaseFile
 import com.pubnub.api.models.consumer.history.PNHistoryResult
 import com.pubnub.api.models.consumer.objects_api.member.PNGetChannelMembersResult
 import com.pubnub.api.models.consumer.objects_api.membership.PNGetMembershipsResult
@@ -27,6 +30,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.jetbrains.annotations.NotNull
+import java.io.InputStream
 
 private const val TAG = "PubNubService"
 
@@ -279,6 +283,52 @@ object PubNubService : ChatService {
             } catch (ex: Exception) {
                 ex.printStackTrace()
             }
+        }
+    }
+
+    override fun sendFileMessage(groupId: String, fileItem: PNBaseFile) {
+        try {
+            pubnub.publishFileMessage()
+                .channel(groupId)
+                .fileName(fileItem.name)
+                .fileId(fileItem.id)
+                .meta("${Mentor.getInstance().getUser()?.firstName}")
+                .shouldStore(true)
+                .ttl(0)
+                .sync()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    override fun sendFile(groupId: String, inputStream: InputStream, fileName: String) {
+        try {
+            val fileResponse = pubnub.sendFile()
+                .channel(groupId)
+                .fileName(fileName)
+                .inputStream(inputStream)
+                .meta("${Mentor.getInstance().getUser()?.firstName}")
+                .shouldStore(true)
+                .ttl(0)
+                .sync()
+                .file
+
+            val fileUrl = pubnub.fileUrl
+                .channel(groupId)
+                .fileName(fileResponse.name)
+                .fileId(fileResponse.id)
+                .sync()
+                ?.url
+
+            if (!fileUrl.isNullOrEmpty()) {
+                sendMessage(
+                    groupId,
+                    MessageItem(fileUrl, IMAGE_MESSAGE, Mentor.getInstance().getId())
+                )
+            } else
+                showToast("An error has occurred, please try again")
+        } catch (e: Exception) {
+            showToast("An error has occurred, please try again")
         }
     }
 

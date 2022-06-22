@@ -486,7 +486,7 @@ class JoshGroupActivity : BaseGroupActivity() {
             val url = data?.data?.path ?: EMPTY
             if (url.isNotBlank()) {
                 when {
-                    url.contains("/cache/Images/") -> vm.storeFileInBucket(url)
+                    url.contains("/cache/Images/") -> vm.sendMediaMessage(url)
                     url.contains("/Pictures/ImagePicker") -> vm.showImageThumb(url)
                 }
             }

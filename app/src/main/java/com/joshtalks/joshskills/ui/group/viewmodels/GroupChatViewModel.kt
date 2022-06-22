@@ -49,6 +49,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.internal.concat
+import java.io.File
 
 private const val TAG = "GroupChatViewModel"
 
@@ -628,16 +629,12 @@ class GroupChatViewModel : BaseViewModel() {
     }
 
     fun pushMediaMessage(path: String) {
-        val message = MessageItem(
-            msg = path,
-            msgType = IMAGE_MESSAGE,
-            mentorId = Mentor.getInstance().getId()
-        )
         scrollToEnd = true
         viewModelScope.launch(Dispatchers.IO) {
             if (repository.checkIfFirstMsg(groupId))
                 pushTimeMetaMessage(groupId)
-            chatService.sendMessage(groupId, message)
+            chatService.sendFile(groupId, File(path).inputStream(), path.substringAfterLast("/"))
+            repository.deleteMediaFromLocal(path)
         }
     }
 }

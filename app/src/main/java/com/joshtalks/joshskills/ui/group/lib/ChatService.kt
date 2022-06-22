@@ -1,13 +1,17 @@
 package com.joshtalks.joshskills.ui.group.lib
 
 import com.joshtalks.joshskills.ui.group.model.*
+import com.pubnub.api.models.consumer.files.PNBaseFile
 import com.pubnub.api.models.consumer.objects_api.uuid.PNGetUUIDMetadataResult
+import java.io.InputStream
 
 interface ChatService {
     fun initializeChatService()
     fun <T> subscribeToChatEvents(groups : List<String>, observer: ChatEventObserver<T>)
     fun <T> unsubscribeToChatEvents(observer: ChatEventObserver<T>)
     fun sendMessage(groupName: String, messageItem: MessageItem, isBackend: Boolean = false)
+    fun sendFile(groupId: String, inputStream: InputStream, fileName: String)
+    fun sendFileMessage(groupId: String, fileItem: PNBaseFile)
     fun sendGroupNotification(groupId: String, messageItem: Map<String, Any?>)
     fun dispatchNotifications(groups: List<String>)
     fun removeNotifications(groups: List<String>)

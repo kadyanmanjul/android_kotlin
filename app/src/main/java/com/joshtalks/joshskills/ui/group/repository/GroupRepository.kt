@@ -331,22 +331,7 @@ class GroupRepository(val onDataLoaded: ((Boolean) -> Unit)? = null) {
         }
     }
 
-    suspend fun uploadChatMedia(mediaPath: String): String? {
-        try {
-            val obj = mapOf("media_path" to File(mediaPath).name)
-            val responseObj = AppObjectController.chatNetworkService.requestUploadMediaAsync(obj).await()
-            val statusCode: Int = uploadOnS3Server(responseObj, mediaPath)
-            deleteMediaFromLocal(mediaPath)
-            if (statusCode in 200..210) {
-                return responseObj.url.plus(File.separator).plus(responseObj.fields["key"])
-            }
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-        }
-        return null
-    }
-
-    private fun deleteMediaFromLocal(path: String) = File(path).delete()
+    fun deleteMediaFromLocal(path: String) = File(path).delete()
 
     private suspend fun uploadCompressedMedia(mediaPath: String): String? {
         try {

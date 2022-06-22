@@ -55,7 +55,7 @@ class JoshGroupViewModel : BaseViewModel() {
     val repository = GroupRepository(onDataLoaded)
     val groupTitle = ObservableField("Groups")
     val groupImageUrl = ObservableField("")
-    val adapter = GroupAdapter(GroupItemComparator,"search")
+    val adapter = GroupAdapter(GroupItemComparator, "search")
     val stateAdapter = GroupStateAdapter()
     val hasGroupData = ObservableBoolean(true)
     val addingNewGroup = ObservableBoolean(false)
@@ -288,7 +288,7 @@ class JoshGroupViewModel : BaseViewModel() {
 
     fun subscribeToChat(groupId: String) = repository.startChatEventListener(groupId)
 
-    fun unSubscribeToChat()  = repository.unSubscribeToChat()
+    fun unSubscribeToChat() = repository.unSubscribeToChat()
 
     suspend fun deleteExtraMessages() = repository.removeExtraMessages()
 
@@ -296,14 +296,9 @@ class JoshGroupViewModel : BaseViewModel() {
 
     fun getOneGrpReqStatus() = PrefManager.getBoolValue(ONE_GROUP_REQUEST_SENT)
 
-    fun storeFileInBucket(path: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val res = repository.uploadChatMedia(path)
-            withContext(Dispatchers.Main) {
-                message.what = SEND_MEDIA_MSG
-                message.obj = res
-                singleLiveEvent.value = message
-            }
-        }
+    fun sendMediaMessage(path: String) {
+        message.what = SEND_MEDIA_MSG
+        message.obj = path
+        singleLiveEvent.value = message
     }
 }
