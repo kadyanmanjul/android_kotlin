@@ -181,4 +181,18 @@ class CallUIState : BaseObservable() {
             field = value
             notifyPropertyChanged(BR.aspiration)
         }
+
+    @get:Bindable
+    var localUserName:String = ""
+        set(value) {
+            field = value
+            notifyPropertyChanged(BR.localUserName)
+        }
+
+    @get:Bindable
+    var localUserProfile:String = ""
+        set(value) {
+            field = value
+            notifyPropertyChanged(BR.localUserProfile)
+        }
 }

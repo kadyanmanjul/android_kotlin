@@ -12,6 +12,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
+import com.joshtalks.joshskills.base.constants.USER_NAME
+import com.joshtalks.joshskills.base.constants.USER_PROFILE
 import com.joshtalks.joshskills.constants.COURSE_LIST_DATA
 import com.joshtalks.joshskills.constants.INVITE_FRIENDS_METHOD
 import com.joshtalks.joshskills.constants.MY_GROUP_LIST_DATA
@@ -231,6 +233,8 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
                                 RxBus2.publish(SaveProfileClickedEvent(true))
                             }
                             getProfileData(mentorId, intervalType, previousPage)
+                            PrefManager.put(USER_NAME,updateProfilePayload.basicDetails?.firstName?: EMPTY)
+                            PrefManager.put(USER_PROFILE,updateProfilePayload.basicDetails?.photoUrl?: EMPTY)
                         }
                         apiCallStatus.postValue(ApiCallStatus.SUCCESS)
                         return@launch

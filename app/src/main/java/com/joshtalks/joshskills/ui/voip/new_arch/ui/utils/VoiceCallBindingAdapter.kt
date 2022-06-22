@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.ui.voip.new_arch.ui.utils
 import android.content.Intent
 import android.os.SystemClock
 import android.widget.Chronometer
+import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatImageButton
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
@@ -10,15 +11,15 @@ import androidx.databinding.BindingAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions.bitmapTransform
+import com.google.android.material.card.MaterialCardView
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.base.constants.FPP
-import com.joshtalks.joshskills.base.constants.FROM_INCOMING_CALL
-import com.joshtalks.joshskills.base.constants.GROUP
-import com.joshtalks.joshskills.base.constants.PEER_TO_PEER
-import com.joshtalks.joshskills.base.constants.STARTING_POINT
+import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.adapter.TopicImageAdapter
 import de.hdodenhof.circleimageview.CircleImageView
+import jp.wasabeef.glide.transformations.BlurTransformation
+
 
 @BindingAdapter("setProfileImage")
 fun CircleImageView.setProfileImage(imageUrl: String?) {
@@ -131,4 +132,30 @@ fun ViewPager2.setViewPagerAdapter(image: String?) {
         val adapter = TopicImageAdapter(imageList, context)
         this.adapter = adapter
     }
+}
+
+@BindingAdapter("setBottomCardBackground")
+fun MaterialCardView.setBottomCardBackground(callType: Boolean) {
+    backgroundTintList = when (callType) {
+        true -> {
+            ContextCompat.getColorStateList(context, R.color.black_quiz)
+        }
+        false -> {
+            ContextCompat.getColorStateList(context, R.color.bottom_sheet_color)
+        }
+    }
+}
+
+@BindingAdapter("setBackgroundImage")
+fun ImageView.setBackgroundImage(imageUrl: String?) {
+    if (!imageUrl.isNullOrEmpty())
+        Glide.with(this).load(imageUrl)
+            .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+            .apply(bitmapTransform(BlurTransformation(24)))
+            .into(this)
+    else
+        Glide.with(this)
+            .load(R.drawable.ic_call_placeholder)
+            .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+            .into(this)
 }

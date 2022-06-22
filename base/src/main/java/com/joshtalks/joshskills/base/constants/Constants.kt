@@ -31,6 +31,9 @@ const val API_HEADER = "/api_header"
 const val MENTOR_ID = "/mentor_id"
 const val RECORD_VIDEO_URI = "/video_url"
 const val NOTIFICATION_DATA = "/notification_data"
+const val MENTOR_NAME = "/mentor_name"
+const val MENTOR_PROFILE = "/mentor_profile"
+
 
 // Content Values
 const val CALL_START_TIME = "josh_call_start_time"
@@ -92,6 +95,9 @@ const val NOTIFICATION_TITLE_COLUMN = "NOTIFICATION_TITLE_COLUMN"
 const val NOTIFICATION_SUBTITLE_COLUMN = "NOTIFICATION_SUBTITLE_COLUMN"
 const val NOTIFICATION_LESSON_COLUMN = "NOTIFICATION_LESSON_COLUMN"
 const val VIDEO_COLUMN = "VIDEO_COLUMN"
+const val MENTOR_NAME_COLUMN = "MENTOR_NAME"
+const val MENTOR_PROFILE_COLUMN = "MENTOR_PROFILE"
+
 
 
 // Broadcast Receiver
@@ -106,4 +112,7 @@ const val FROM_ACTIVITY = "josh_from_activity"
 const val INCOMING_CALL_ID = "josh_incoming_call_id"
 const val FROM_CALL_BAR = "josh_from_call_bar"
 const val STARTING_POINT = "josh_starting_point"
+
+const val USER_NAME= "USER_NAME"
+const val USER_PROFILE = "USER_PROFILE"
 

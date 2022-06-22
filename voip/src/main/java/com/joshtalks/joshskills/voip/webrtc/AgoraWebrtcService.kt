@@ -20,6 +20,7 @@ import kotlinx.coroutines.*
 import java.io.File
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.collect
 
 
 private const val JOINING_CHANNEL_SUCCESS = 0
@@ -30,6 +31,7 @@ internal class AgoraWebrtcService(val scope: CoroutineScope) : WebrtcService {
     private var agoraEngine: RtcEngine? = null
     private val eventFlow: MutableSharedFlow<CallState> = MutableSharedFlow(replay = 0)
     private var state = MutableSharedFlow<Int>(replay = 0)
+    private var eventUid = MutableSharedFlow<Int>(replay = 0)
 
     // TODO: Make State More reliable
     private var currentState = IDLE
@@ -55,6 +57,7 @@ internal class AgoraWebrtcService(val scope: CoroutineScope) : WebrtcService {
         }
         Log.d(TAG, "initWebrtcService: ${agoraEngine}")
         observeCallbacks()
+        observeSpeakersCalBack()
     }
 
     override suspend fun connectCall(request: CallRequest) {
@@ -267,6 +270,25 @@ internal class AgoraWebrtcService(val scope: CoroutineScope) : WebrtcService {
                 if (e is CancellationException)
                     throw e
                 e.printStackTrace()
+            }
+        }
+    }
+
+    private fun observeSpeakersCalBack(){
+        scope.launch {
+            try {
+                listener.observeCallEventSpeaker().collect{ speakers ->
+                    speakers?.forEach { user ->
+                        if (user.volume > 15) {
+                            when (user.uid) {
+                                0 -> eventUid.emit(0)
+                                else -> eventUid.emit(1)
+                            }
+                        }
+                    }
+                }
+            }catch (ex:Exception){
+
             }
         }
     }

@@ -176,6 +176,36 @@ fun Context.getVideoUrl():String{
     return audioUrlId
 }
 
+fun Context.getMentorName(): String {
+    val mentorNameCursor = contentResolver.query(
+        Uri.parse(CONTENT_URI + MENTOR_NAME),
+        null,
+        null,
+        null,
+        null
+    )
+
+    mentorNameCursor?.moveToFirst()
+    val mentorName = mentorNameCursor.getStringData(MENTOR_NAME_COLUMN)
+    mentorNameCursor?.close()
+    return mentorName
+}
+
+fun Context.getMentorProfile(): String {
+    val mentorProfileCursor = contentResolver.query(
+        Uri.parse(CONTENT_URI + MENTOR_PROFILE),
+        null,
+        null,
+        null,
+        null
+    )
+
+    mentorProfileCursor?.moveToFirst()
+    val mentorProfile = mentorProfileCursor.getStringData(MENTOR_PROFILE_COLUMN)
+    mentorProfileCursor?.close()
+    return mentorProfile
+}
+
 
 //fun Context.updateIncomingCallDetails() {
 //    voipLog?.log("QUERY")

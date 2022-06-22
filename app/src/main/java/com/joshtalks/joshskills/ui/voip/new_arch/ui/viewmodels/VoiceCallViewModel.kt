@@ -23,6 +23,7 @@ import com.joshtalks.joshskills.base.log.JoshLog
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.ui.call.repository.RepositoryConstants.CONNECTION_ESTABLISHED
 import com.joshtalks.joshskills.ui.call.repository.WebrtcRepository
+import com.joshtalks.joshskills.ui.fpp.utils.Blurry
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.call_recording.ProcessCallRecordingService
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.models.CallUIState
 import com.joshtalks.joshskills.ui.voip.util.ScreenViewRecorder
@@ -39,6 +40,8 @@ import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.RecordingButtonState
 import com.joshtalks.joshskills.voip.data.ServiceEvents
 import com.joshtalks.joshskills.voip.data.local.PrefManager
+import com.joshtalks.joshskills.voip.getMentorName
+import com.joshtalks.joshskills.voip.getMentorProfile
 import com.joshtalks.joshskills.voip.getVideoUrl
 import com.joshtalks.joshskills.voip.recordinganalytics.CallRecordingAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
@@ -300,10 +303,17 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                 if (uiState.recordTime != state.recordingStartTime)
                     uiState.recordTime = state.recordingStartTime
                 withContext(Dispatchers.Main) {
+                    uiState
                     timer = getTime(state.recordingButtonState)
                     timer?.start()
                 }
                 uiState.name = state.remoteUserName
+                try {
+                    uiState.localUserName = Utils.context?.getMentorName()?:""
+                    uiState.localUserProfile = Utils.context?.getMentorProfile()?:""
+                }catch (ex:Exception){
+                    Log.e("sagar", "listenUIState: ${ex.message}" )
+                }
                 uiState.profileImage = state.remoteUserImage ?: ""
                 uiState.topic = state.topicName
                 uiState.topicImage = state.currentTopicImage

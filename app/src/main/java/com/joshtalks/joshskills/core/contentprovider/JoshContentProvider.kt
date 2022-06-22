@@ -9,12 +9,10 @@ import android.util.Log
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.base.model.ApiHeader
-import com.joshtalks.joshskills.core.API_TOKEN
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.USER_LOCALE
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.call.data.local.VoipPref
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.voipLog
 import kotlinx.coroutines.sync.Mutex
@@ -72,6 +70,22 @@ class JoshContentProvider : ContentProvider() {
             MENTOR_ID -> {
                 val cursor = MatrixCursor(arrayOf(MENTOR_ID_COLUMN))
                 cursor.addRow(arrayOf(Mentor.getInstance().getId()))
+                return cursor
+            }
+            MENTOR_NAME -> {
+                val cursor = MatrixCursor(arrayOf(MENTOR_NAME_COLUMN))
+                if (PrefManager.getStringValue(USER_NAME)!= EMPTY)
+                    cursor.addRow(arrayOf(PrefManager.getStringValue("USER_NAME")))
+                else
+                    cursor.addRow(arrayOf(User.getInstance().firstName))
+                return cursor
+            }
+            MENTOR_PROFILE -> {
+                val cursor = MatrixCursor(arrayOf(MENTOR_PROFILE_COLUMN))
+                if (PrefManager.getStringValue(USER_PROFILE)!= EMPTY)
+                    cursor.addRow(arrayOf(PrefManager.getStringValue("USER_PROFILE")))
+                else
+                    cursor.addRow(arrayOf(User.getInstance().photo))
                 return cursor
             }
             RECORD_VIDEO_URI -> {

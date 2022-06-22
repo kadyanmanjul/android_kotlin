@@ -7,6 +7,8 @@ import androidx.fragment.app.FragmentActivity
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.core.ActivityLifecycleCallback
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.call_rating.CallRatingsFragment
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.feedback.FeedbackDialogFragment
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.report.VoipReportDialogFragment
@@ -203,5 +205,13 @@ object VoipPref {
 
    private fun getFppFlag(): String {
         return preferenceManager.getString(PREF_KEY_FPP_FLAG, "true").toString()
+    }
+
+    fun getCurrentUserName(): String{
+        return Mentor.getInstance().getUser()?.firstName?: ""
+    }
+
+    fun getCurrentUserImage(): String{
+        return Mentor.getInstance().getUser()?.photo?: ""
     }
 }
