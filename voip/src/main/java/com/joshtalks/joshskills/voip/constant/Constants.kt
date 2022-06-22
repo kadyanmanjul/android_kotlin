@@ -81,6 +81,7 @@ enum class Event {
     CALL_RECORDING_REJECT,
     CANCEL_RECORDING_REQUEST,
     AGORA_CALL_RECORDED,
+    AGORA_CALL_SPEAKER_VOLUME
 }
 
 enum class State {

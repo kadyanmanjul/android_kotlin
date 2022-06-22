@@ -28,6 +28,7 @@ internal interface CallServiceMediator {
     fun onDestroy()
     fun stopAgoraCallRecording()
     fun startAgoraCallRecording()
+    fun observeSpeakersVolumes()
 }
 
 enum class UserAction {

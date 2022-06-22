@@ -195,4 +195,18 @@ class CallUIState : BaseObservable() {
             field = value
             notifyPropertyChanged(BR.localUserProfile)
         }
+
+    @get:Bindable
+    var isCalleSpeaking:Boolean = false
+        set(value) {
+            field = value
+            notifyPropertyChanged(BR.calleSpeaking)
+        }
+
+    @get:Bindable
+    var isCallerSpeaking:Boolean = false
+        set(value) {
+            field = value
+            notifyPropertyChanged(BR.callerSpeaking)
+        }
 }

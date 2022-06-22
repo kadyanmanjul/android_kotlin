@@ -85,6 +85,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
         }
     var callContext : CallContext? = null
     lateinit var stateChannel : Channel<Envelope<Event>>
+    lateinit var speakerVolumeChannel : Channel<Envelope<Event>>
 
     init {
         Log.d(TAG, "Inside Init : ${scope.isActive}")
@@ -92,6 +93,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
             try{
                 mutex.withLock {
                     handleWebrtcEvent()
+                    handleWebrtcSpeakerVolume()
                     handlePubnubEvent()
                     handleFallbackEvents()
                     observeChannelState()
@@ -135,6 +137,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                     }
                     callContext?.destroyContext()
                     stateChannel = Channel(Channel.UNLIMITED)
+                    speakerVolumeChannel = Channel(Channel.UNLIMITED)
                     callContext = CallContext(
                         callType = callType,
                         request = callData,
@@ -308,6 +311,10 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
         startRecording()
     }
 
+    override fun observeSpeakersVolumes() {
+
+    }
+
     // Handle Events coming from Backend
     private fun handlePubnubEvent() {
         Log.d(TAG, "handlePubnubEvent: Observe")
@@ -474,6 +481,28 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                                 flow.emit(envelope)
                             }
                         }
+                    }
+                    catch (e : Exception){
+                        if(e is CancellationException)
+                            throw e
+                        e.printStackTrace()
+                    }                }
+            } catch (e: Exception) {
+                Log.d(TAG, "handleWebrtcEvent : $e")
+                e.printStackTrace()
+                if(e is CancellationException)
+                    throw e
+            }
+        }
+    }
+
+    private fun handleWebrtcSpeakerVolume() {
+        scope.launch {
+            try {
+                webrtcService.observeSpeakersVolume().collect {
+                    try {
+                        val envelope = Envelope(Event.AGORA_CALL_SPEAKER_VOLUME,it)
+                        speakerVolumeChannel.send(envelope)
                     }
                     catch (e : Exception){
                         if(e is CancellationException)

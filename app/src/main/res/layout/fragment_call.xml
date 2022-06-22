@@ -499,6 +499,7 @@
                         android:layout_marginTop="@dimen/_13sdp"
                         android:gravity="center"
                         android:text='@{vm.uiState.startTime &lt;= 0 ? "" :  vm.uiState.localUserName}'
+                        setColor='@{vm.uiState.callerSpeaking}'
                         android:textAlignment="center"
                         android:textColor="@color/green"
                         android:visibility="visible"

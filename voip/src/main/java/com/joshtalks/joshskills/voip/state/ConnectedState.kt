@@ -7,6 +7,7 @@ import com.joshtalks.joshskills.voip.communication.constants.ServerConstants
 import com.joshtalks.joshskills.voip.communication.model.NetworkAction
 import com.joshtalks.joshskills.voip.communication.model.UI
 import com.joshtalks.joshskills.voip.communication.model.UserAction
+import com.joshtalks.joshskills.voip.constant.Event
 import com.joshtalks.joshskills.voip.constant.Event.CALL_RECORDING_ACCEPT
 import com.joshtalks.joshskills.voip.constant.Event.CALL_RECORDING_REJECT
 import com.joshtalks.joshskills.voip.constant.Event.CANCEL_RECORDING_REQUEST
@@ -57,6 +58,7 @@ class ConnectedState(val context: CallContext) : VoipState {
     init {
         Log.d("Call State", TAG)
         observe()
+        observeSpeakerVolumes()
     }
 
     // Red Button Pressed
@@ -400,6 +402,56 @@ class ConnectedState(val context: CallContext) : VoipState {
                             } else {
                                 val uiState =
                                     context.currentUiState.copy(recordingButtonState = RecordingButtonState.IDLE)
+                                context.updateUIState(uiState = uiState)
+                                context.sendEventToUI(event)
+                            }
+                        }
+                        else -> {
+                            val msg = "In $TAG but received ${event.type} event don't know how to process"
+                            CallAnalytics.addAnalytics(
+                                event = EventName.ILLEGAL_EVENT_RECEIVED,
+                                agoraCallId = context.channelData.getCallingId().toString(),
+                                agoraMentorId = context.channelData.getAgoraUid().toString(),
+                                extra = msg
+                            )
+                            throw IllegalEventException(msg)
+                        }
+                    }
+                }
+                scope.cancel()
+            } catch (e: Throwable) {
+                if (e is CancellationException)
+                    throw e
+                else {
+                    e.printStackTrace()
+                    Log.d(TAG, "disconnect : Exception $e switching to Leaving State")
+                    moveToLeavingState()
+                }
+            }
+        }
+    }
+
+    private fun observeSpeakerVolumes() {
+        Log.d(TAG, "Started observeSpeakerVolumes")
+        listenerJob = scope.launch {
+            try {
+                loop@ while (true) {
+                    ensureActive()
+                    val event = context.getSpeakerVolumePipe().receive()
+                    Log.d(TAG, "Received after observing : ${event.type}")
+                    ensureActive()
+                    when (event.type) {
+                        Event.AGORA_CALL_SPEAKER_VOLUME -> {
+                            val data = event.data as Int?
+                            if (data == 1){
+                                ensureActive()
+                                val uiState = context.currentUiState.copy(isCalleeSpeaking = true , isCallerSpeaking = false)
+                                context.updateUIState(uiState = uiState)
+                                context.sendEventToUI(event)
+                            } else {
+
+                                ensureActive()
+                                val uiState = context.currentUiState.copy(isCalleeSpeaking = false , isCallerSpeaking = true)
                                 context.updateUIState(uiState = uiState)
                                 context.sendEventToUI(event)
                             }

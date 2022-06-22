@@ -408,7 +408,9 @@ data class UIState(
     val startTime: Long = 0L,
     val recordingButtonState: RecordingButtonState = RecordingButtonState.IDLE,
     val recordingStartTime : Long = 0L,
-    val isRecordingEnabled : Boolean = false
+    val isRecordingEnabled : Boolean = false,
+    val isCallerSpeaking : Boolean = false,
+    val isCalleeSpeaking : Boolean = false
 ) {
     companion object {
         fun empty() = UIState("", null, "", 0,"","","")

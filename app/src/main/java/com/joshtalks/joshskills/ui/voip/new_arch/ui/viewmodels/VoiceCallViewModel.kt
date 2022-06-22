@@ -23,7 +23,6 @@ import com.joshtalks.joshskills.base.log.JoshLog
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.ui.call.repository.RepositoryConstants.CONNECTION_ESTABLISHED
 import com.joshtalks.joshskills.ui.call.repository.WebrtcRepository
-import com.joshtalks.joshskills.ui.fpp.utils.Blurry
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.call_recording.ProcessCallRecordingService
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.models.CallUIState
 import com.joshtalks.joshskills.ui.voip.util.ScreenViewRecorder
@@ -46,11 +45,14 @@ import com.joshtalks.joshskills.voip.getVideoUrl
 import com.joshtalks.joshskills.voip.recordinganalytics.CallRecordingAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
-import kotlinx.coroutines.*
 import java.io.File
 import java.util.ArrayDeque
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
 
 const val CONNECTING = 1
 const val ONGOING = 2
@@ -288,6 +290,8 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                 if (uiState.startTime != state.startTime)
                     uiState.startTime = state.startTime
                 uiState.isRecordingEnabled = state.isRecordingEnabled
+                uiState.isCallerSpeaking = state.isCallerSpeaking
+                uiState.isCalleSpeaking = state.isCalleeSpeaking
                 // TODO remove this logic from here ( issues: fix when state is REQUESTED we have to show dialog even when other user come back from background )
                 if (state.recordingButtonState == RecordingButtonState.GOTREQUEST
                     && uiState.recordingButtonState != RecordingButtonState.GOTREQUEST

@@ -5,6 +5,7 @@ import android.os.SystemClock
 import android.widget.Chronometer
 import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatImageButton
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
@@ -14,7 +15,11 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions.bitmapTransform
 import com.google.android.material.card.MaterialCardView
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.base.constants.*
+import com.joshtalks.joshskills.base.constants.FPP
+import com.joshtalks.joshskills.base.constants.FROM_INCOMING_CALL
+import com.joshtalks.joshskills.base.constants.GROUP
+import com.joshtalks.joshskills.base.constants.PEER_TO_PEER
+import com.joshtalks.joshskills.base.constants.STARTING_POINT
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.adapter.TopicImageAdapter
 import de.hdodenhof.circleimageview.CircleImageView
@@ -33,6 +38,15 @@ fun CircleImageView.setProfileImage(imageUrl: String?) {
             .load(R.drawable.ic_call_placeholder)
             .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
             .into(this)
+}
+
+@BindingAdapter("setColor")
+fun AppCompatTextView.setColor(isSpeaking : Boolean = false) {
+    if (isSpeaking){
+        this.setTextColor(resources.getColor(R.color.green))
+    }
+    else
+        this.setTextColor(resources.getColor(R.color.white))
 }
 
 @BindingAdapter("setCallBackground")

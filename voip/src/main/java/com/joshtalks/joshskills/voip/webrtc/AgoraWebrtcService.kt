@@ -16,11 +16,16 @@ import com.joshtalks.joshskills.voip.getTempFileForCallRecording
 import io.agora.rtc.Constants
 import io.agora.rtc.RtcEngine
 import io.agora.rtc.audio.AudioRecordingConfiguration
-import kotlinx.coroutines.*
 import java.io.File
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 
 
 private const val JOINING_CHANNEL_SUCCESS = 0
@@ -177,6 +182,10 @@ internal class AgoraWebrtcService(val scope: CoroutineScope) : WebrtcService {
                 }
                 recordFile = null
             }
+    }
+
+    override fun observeSpeakersVolume(): MutableSharedFlow<Int> {
+        return eventUid
     }
 
     private fun joinChannel(request: CallRequest): Int? {
