@@ -154,6 +154,11 @@ class CExamReportActivity : BaseActivity(), FileDownloadCallback {
         compositeDisposable.clear()
     }
 
+    override fun onRestart() {
+        super.onRestart()
+        viewModel.getUserAllExamReports(certificateExamId)
+    }
+
     private fun addRxbusObserver() {
         compositeDisposable.add(
             RxBus2.listenWithoutDelay(GotoCEQuestionEventBus::class.java)
