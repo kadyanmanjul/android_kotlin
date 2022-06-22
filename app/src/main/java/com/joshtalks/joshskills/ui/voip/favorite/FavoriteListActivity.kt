@@ -10,7 +10,6 @@ import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.IS_COURSE_BOUGHT
 import com.joshtalks.joshskills.databinding.FavoriteListActivityBinding
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.fpp.BaseFppActivity
@@ -88,7 +87,8 @@ class FavoriteListActivity : BaseFppActivity() {
                 }
                 OPEN_RECENT_SCREEN -> openRecentScreen()
                 ENABLE_ACTION_MODE -> enableMode()
-                START_P2P_CALL->
+//                TODO : To refactor to FPP
+                START_FPP_CALL->
                 {
                     val callIntent = Intent(applicationContext, VoiceCallActivity::class.java)
                     callIntent.apply {

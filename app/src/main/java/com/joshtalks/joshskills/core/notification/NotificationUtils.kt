@@ -9,6 +9,7 @@ import android.content.Intent
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
@@ -578,6 +579,7 @@ class NotificationUtils(val context: Context) {
                     val callContext = context
                     val remoteServiceIntent = Intent(callContext, CallingRemoteService::class.java)
                     remoteServiceIntent.putExtra(INCOMING_CALL_ID, jsonObj.getString(INCOMING_CALL_ID))
+                    Log.d("smsms", "naman: 2   ${JSONObject(actionData).getString(INCOMING_CALL_ID)}")
                     remoteServiceIntent.putExtra(INCOMING_CALL_CATEGORY, jsonObj.getString(INCOMING_CALL_CATEGORY))
                     remoteServiceIntent.putExtra(REMOTE_USER_NAME, jsonObj.getString(REMOTE_USER_NAME))
                     remoteServiceIntent.action = SERVICE_ACTION_INCOMING_CALL

@@ -3,6 +3,8 @@ package com.joshtalks.joshskills.ui.voip.new_arch.ui.views
 import android.app.AlertDialog
 import android.content.Intent
 import android.util.Log
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
@@ -43,6 +45,21 @@ class VoiceCallActivity : BaseActivity() {
         ViewModelProvider(this)[VoiceCallViewModel::class.java]
     }
 
+    private val requestPermissionsLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+            if (permissions.all { it.value }) {
+                Toast.makeText(
+                    this,
+                    "You have obtained the required permissions",
+                    Toast.LENGTH_LONG
+                ).show()
+            } else Toast.makeText(
+                this,
+                "You have not accepted all the permissions",
+                Toast.LENGTH_LONG
+            ).show()
+        }
+
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         Log.d(TAG, "onNewIntent: $intent")
@@ -59,6 +76,7 @@ class VoiceCallActivity : BaseActivity() {
             FROM_CALL_BAR -> {}
             FROM_INCOMING_CALL -> {
                 val incomingCallId = PrefManager.getIncomingCallId()
+                Log.d(TAG, "getArguments: $incomingCallId")
                 CallAnalytics.addAnalytics(
                     event = EventName.INCOMING_CALL_ACCEPT,
                     agoraCallId = PrefManager.getAgraCallId().toString(),
@@ -84,14 +102,22 @@ class VoiceCallActivity : BaseActivity() {
                 val mentorId = intent?.getStringExtra(INTENT_DATA_FPP_MENTOR_ID)
                 vm.callData[INTENT_DATA_FPP_MENTOR_ID] = mentorId ?: "0"
             }
-            Category.GROUP -> {}
+            Category.GROUP -> {
+                val topicId = intent?.getStringExtra(INTENT_DATA_TOPIC_ID)
+                val groupId = intent?.getStringExtra(INTENT_DATA_GROUP_ID)
+                vm.callData[INTENT_DATA_TOPIC_ID] = topicId ?: "0"
+                vm.callData[INTENT_DATA_GROUP_ID] = groupId ?: "0"}
         }
     }
 
     private fun getSource(): String {
+//        TODO: refactor
         val topicId = intent?.getStringExtra(INTENT_DATA_TOPIC_ID)
         val mentorId = intent?.getStringExtra(INTENT_DATA_FPP_MENTOR_ID)
-        val shouldOpenCallFragment = (topicId == null && mentorId == null)
+        val groupId = intent?.getStringExtra(INTENT_DATA_GROUP_ID)
+        Log.d(TAG, "getSource: $topicId  $mentorId  $groupId")
+
+        val shouldOpenCallFragment = (topicId == null && mentorId == null && groupId == null )
         return if (shouldOpenCallFragment && PrefManager.getVoipState() == State.IDLE)
             FROM_INCOMING_CALL
         else if (shouldOpenCallFragment)
@@ -106,12 +132,14 @@ class VoiceCallActivity : BaseActivity() {
 
     override fun onCreated() {
         Log.d(TAG, "onCreated: ${vm.source}")
+
         if (PermissionUtils.isCallingPermissionEnabled(this)) {
             startCallingScreen()
         } else {
             getPermission()
         }
     }
+
 
     private fun getPermission() {
         PermissionUtils.callingFeaturePermission(
@@ -154,7 +182,7 @@ class VoiceCallActivity : BaseActivity() {
                 addFppCallFragment()
             }
             Category.GROUP -> {
-//                openFragment { addGroupCallFragment() }
+                openFragment { addGroupCallFragment() }
             }
         }
     }
@@ -172,7 +200,17 @@ class VoiceCallActivity : BaseActivity() {
     override fun initViewState() {
         event.observe(this) {
             when (it.what) {
-                CALL_INITIATED_EVENT -> replaceCallUserFragment()
+                CALL_INITIATED_EVENT -> {
+                    when (vm.callType) {
+                        Category.PEER_TO_PEER ->{
+                            replaceCallUserFragment()
+                        }
+                        Category.GROUP -> {
+                            replaceGroupUserFragment()
+                        }
+                        else -> {}
+                    }
+                }
                 CLOSE_CALL_SCREEN -> finish()
                 else -> {
                     if (it.what < 0) {
@@ -199,6 +237,19 @@ class VoiceCallActivity : BaseActivity() {
     private fun addFppCallFragment() {
         supportFragmentManager.commit {
             add(R.id.voice_call_container, FppCallFragment(), "FppCallFragment")
+        }
+    }
+
+
+    private fun replaceGroupUserFragment() {
+        supportFragmentManager.commit {
+            replace(R.id.voice_call_container, GroupCallFragment(), "GroupFragment")
+        }
+    }
+
+    private fun addGroupCallFragment() {
+        supportFragmentManager.commit {
+            add(R.id.voice_call_container, GroupCallFragment(), "GroupFragment")
         }
     }
 

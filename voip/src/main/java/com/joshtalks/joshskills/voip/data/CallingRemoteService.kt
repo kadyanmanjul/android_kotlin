@@ -110,7 +110,8 @@ class CallingRemoteService : Service() {
             SERVICE_ACTION_INCOMING_CALL -> {
                 val map = HashMap<String,String>()
                 map[INCOMING_CALL_CATEGORY] = intent.extras?.getString(com.joshtalks.joshskills.voip.constant.INCOMING_CALL_CATEGORY,"")?:""
-                map[com.joshtalks.joshskills.voip.constant.INCOMING_CALL_ID] = intent.extras?.getString(com.joshtalks.joshskills.voip.constant.INCOMING_CALL_ID,"")?:""
+                Log.d(TAG, "naman: 1 ${intent.extras?.getString(com.joshtalks.joshskills.voip.constant.INCOMING_CALL_ID,"")?:""}")
+                map[INTENT_DATA_INCOMING_CALL_ID] = intent.extras?.getString(com.joshtalks.joshskills.voip.constant.INCOMING_CALL_ID,"")?:""
                 map[com.joshtalks.joshskills.voip.constant.REMOTE_USER_NAME] = intent.extras?.getString(com.joshtalks.joshskills.voip.constant.REMOTE_USER_NAME,"")?:""
                 ioScope.launch { mediator.handleIncomingCall(map) }
             }
@@ -136,11 +137,10 @@ class CallingRemoteService : Service() {
             SERVICE_ACTION_INCOMING_CALL_DECLINE -> {
                 CallAnalytics.addAnalytics(
                     event = EventName.INCOMING_CALL_DECLINE,
-                    agoraCallId ="-1",
+                    agoraCallId = PrefManager.getIncomingCallId().toString(),
                     agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
                 )
-                // TODO : Must be removed
-                IncomingCallNotificationHandler().removeNotification()
+                mediator.hideIncomingCall()
                 return START_NOT_STICKY
             }
         }

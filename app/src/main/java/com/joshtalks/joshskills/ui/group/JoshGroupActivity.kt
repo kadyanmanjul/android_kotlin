@@ -13,9 +13,12 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.github.dhaval2404.imagepicker.ImagePicker
 
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.constants.*
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.IS_VOIP_NEW_ARCH_ENABLED
 import com.joshtalks.joshskills.core.PermissionUtils
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.analytics.ParamKeys
@@ -37,6 +40,8 @@ import com.joshtalks.joshskills.ui.voip.SearchingUserActivity
 import com.joshtalks.joshskills.ui.voip.WebRtcActivity
 import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity
+import com.joshtalks.joshskills.voip.constant.Category
 import com.joshtalks.joshskills.voip.constant.State
 
 import com.karumi.dexter.MultiplePermissionsReport
@@ -159,17 +164,31 @@ class JoshGroupActivity : BaseGroupActivity() {
                 GroupAnalytics.Event.CALL_PRACTICE_PARTNER_FROM_GROUP,
                 bundle.getString(GROUPS_ID) ?: ""
             )
-            val intent = SearchingUserActivity.startUserForPractiseOnPhoneActivity(
-                this,
-                courseId = "151",
-                topicId = 5,
-                groupId = bundle.getString(GROUPS_ID),
-                isGroupCallCall = true,
-                topicName = "Group Call",
-                groupName = bundle.getString(GROUPS_TITLE),
-                favoriteUserCall = false
-            )
-            startActivity(intent)
+
+            if (PrefManager.getIntValue(IS_VOIP_NEW_ARCH_ENABLED, defValue = 1) == 1) {
+                val callIntent = Intent(applicationContext, VoiceCallActivity::class.java)
+                callIntent.apply {
+                    putExtra(STARTING_POINT, FROM_ACTIVITY)
+                    putExtra(INTENT_DATA_CALL_CATEGORY, Category.GROUP.ordinal)
+                    putExtra(INTENT_DATA_GROUP_ID,bundle.getString(GROUPS_ID))
+                    putExtra(INTENT_DATA_TOPIC_ID,5)
+                    putExtra(INTENT_DATA_GROUP_NAME,bundle.getString(GROUPS_TITLE))
+                }
+                startActivity(callIntent)
+            }else{
+                val intent = SearchingUserActivity.startUserForPractiseOnPhoneActivity(
+                    this,
+                    courseId = "151",
+                    topicId = 5,
+                    groupId = bundle.getString(GROUPS_ID),
+                    isGroupCallCall = true,
+                    topicName = "Group Call",
+                    groupName = bundle.getString(GROUPS_TITLE),
+                    favoriteUserCall = false
+                )
+                startActivity(intent)
+            }
+
         }else{
             showToast("Wait for last call to get disconnected")
         }

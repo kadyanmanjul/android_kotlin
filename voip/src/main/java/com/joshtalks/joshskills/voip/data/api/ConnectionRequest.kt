@@ -68,16 +68,17 @@ data class FavoriteCallActionRequest(
 )
 
 data class GroupConnectionRequest(
-
-    @field:SerializedName("course_id")
-    val courseId: Int? = null,
-
-    @field:SerializedName("mentor_id")
-    val mentorId: String? = null,
+    @field:SerializedName("group_id")
+    val groupId: Int? = null,
 
     @field:SerializedName("topic_id")
     val topicId: Int? = null,
+)
 
-    @field:SerializedName("old_call_id")
-    val oldCallId: Int? = null
+data class GroupCallActionRequest(
+    @field:SerializedName("response")
+    val response: String? = null,
+
+    @field:SerializedName("call_id")
+    val callId: Int? = null
 )

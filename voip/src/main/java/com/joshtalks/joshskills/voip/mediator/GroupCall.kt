@@ -7,9 +7,7 @@ import com.joshtalks.joshskills.base.constants.INTENT_DATA_COURSE_ID
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_INCOMING_CALL_ID
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_TOPIC_ID
 import com.joshtalks.joshskills.voip.*
-import com.joshtalks.joshskills.voip.data.api.CallActionRequest
-import com.joshtalks.joshskills.voip.data.api.ConnectionRequest
-import com.joshtalks.joshskills.voip.data.api.VoipNetwork
+import com.joshtalks.joshskills.voip.data.api.*
 
 private const val TAG = "GroupP2PCalling"
 
@@ -31,35 +29,32 @@ class GroupCall : CallCategory {
     override suspend fun onPreCallConnect(callData: HashMap<String, Any>, direction: CallDirection) {
         Log.d(TAG, "Calling API ---- $callData")
         if (direction == CallDirection.INCOMING) {
-            Log.d(TAG, "onPreCallConnect: INCOMING")
-            val request = CallActionRequest(
+            Log.d(TAG, "onPreCallConnect: INCOMING GROUP")
+            val request = GroupCallActionRequest(
                 callId = callData[INTENT_DATA_INCOMING_CALL_ID] as Int,
-                mentorId = Utils.uuid,
                 response = "ACCEPT"
             )
-            val response = voipNetwork.callAccept(request)
+            val response = voipNetwork.groupCallAccept(request)
             if (response.isSuccessful)
                 voipLog?.log("Successful")
         } else {
             Log.d(TAG, "onPreCallConnect: OUTGOING")
-            val request = ConnectionRequest(
+            val request = GroupConnectionRequest(
                 topicId = (callData[INTENT_DATA_TOPIC_ID] as String).toInt(),
-                mentorId = Utils.uuid,
-                courseId = (callData[INTENT_DATA_COURSE_ID] as String).toInt()
+                groupId = (callData[INTENT_DATA_COURSE_ID] as String).toInt()
             )
-            val response = voipNetwork.startPeerToPeerCall(request)
+            val response = voipNetwork.startGroupCall(request)
             Log.d(TAG, "onPreCallConnect: $response")
         }
     }
 
     override suspend fun onCallDecline(callData: HashMap<String, Any>) {
-        val request = CallActionRequest(
+        val request = GroupCallActionRequest(
             callId = callData[INTENT_DATA_INCOMING_CALL_ID] as Int,
-            mentorId = Utils.uuid,
             response = "DECLINE"
         )
         Log.d(TAG, "onCallDecline: $request")
-        val response = voipNetwork.callAccept(request)
+        val response = voipNetwork.groupCallReject(request)
         if (response.isSuccessful)
             Log.d(TAG, "onCallDecline: Successful")
     }

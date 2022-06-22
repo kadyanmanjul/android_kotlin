@@ -273,10 +273,14 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                 uiState.recordingButtonState = state.recordingButtonState
                 if (uiState.recordTime != state.recordingStartTime)
                     uiState.recordTime = state.recordingStartTime
-                if(callType!=Category.FPP && source!= FROM_ACTIVITY) {
+
+                    Log.d(TAG, "NAMAN 1: $voipState")
+                if(voipState!=State.IDLE && voipState != State.SEARCHING) {
+                    Log.d(TAG, "NAMAN: 2 $voipState")
                     uiState.name = state.remoteUserName
                     uiState.profileImage = state.remoteUserImage ?: ""
                 }
+
                 uiState.topic = state.topicName
                 uiState.topicImage = state.currentTopicImage
                 uiState.type = state.callType

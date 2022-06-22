@@ -154,7 +154,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
         scope.launch {
             try {
                 val map = HashMap<String, Any>(1).apply {
-                    put(INTENT_DATA_INCOMING_CALL_ID, IncomingCallData.callId)
+                    put(INTENT_DATA_INCOMING_CALL_ID, PrefManager.getIncomingCallId())
                 }
                 calling.onCallDecline(map)
                 incomingCallNotificationHandler.removeNotification()
@@ -477,13 +477,13 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
             is IncomingCall -> {
                 val map = HashMap<String,String>()
                 map[INCOMING_CALL_CATEGORY] = Category.PEER_TO_PEER.category
-                map[INCOMING_CALL_ID] = event.getCallId().toString()
+                map[INTENT_DATA_INCOMING_CALL_ID] = event.getCallId().toString()
                 handleIncomingCall(map)
             }
             is GroupIncomingCall -> {
                 val map = HashMap<String,String>()
                 map[INCOMING_CALL_CATEGORY] = Category.GROUP.category
-                map[INCOMING_CALL_ID] = event.getCallId().toString()
+                map[INTENT_DATA_INCOMING_CALL_ID] = event.getCallId().toString()
                 handleIncomingCall(map)
             }
             is UI -> {
@@ -496,7 +496,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
     }
 
     override suspend fun handleIncomingCall(map: HashMap<String, String>) {
-        val callType = map[INCOMING_CALL_ID]
+        val callType = map[INCOMING_CALL_CATEGORY]
         incomingNotificationMutex.withLock {
             val ifNotificationVisible = if(this@CallingMediator::incomingCallNotificationHandler.isInitialized){
                 incomingCallNotificationHandler.isNotificationVisible()
@@ -511,7 +511,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                     }
                     Category.FPP.category -> {
                         callCategory = Category.FPP
-                        calling =PeerToPeerCall()
+                        calling =FavoriteCall()
                     }
                     Category.GROUP.category-> {
                         callCategory = Category.GROUP
@@ -519,10 +519,10 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                     }
                 }
                 PrefManager.setCallCategory(callCategory)
-                PrefManager.setIncomingCallId(map[INCOMING_CALL_ID]!!.toInt())
+                PrefManager.setIncomingCallId(map[INTENT_DATA_INCOMING_CALL_ID]!!.toInt())
                 CallAnalytics.addAnalytics(
                     event = EventName.INCOMING_CALL_RECEIVED,
-                    agoraCallId = map[INCOMING_CALL_ID],
+                    agoraCallId = map[INTENT_DATA_INCOMING_CALL_ID],
                     agoraMentorId = "-1"
                 )
                 incomingCallNotificationHandler = IncomingCallNotificationHandler()
@@ -551,6 +551,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
     }
 
     private fun HashMap<String, Any>.direction(): CallDirection {
+        Log.d(TAG, "naman 4:  ${INTENT_DATA_INCOMING_CALL_ID}")
         return if (get(INTENT_DATA_INCOMING_CALL_ID) != null)
             return CallDirection.INCOMING
         else

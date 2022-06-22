@@ -1,11 +1,10 @@
 package com.joshtalks.joshskills.voip.notification
 
-import android.util.Log
+import com.joshtalks.joshskills.base.constants.INTENT_DATA_INCOMING_CALL_ID
 import com.joshtalks.joshskills.voip.audiomanager.SOUND_TYPE_RINGTONE
 import com.joshtalks.joshskills.voip.audiomanager.SoundManager
 import com.joshtalks.joshskills.voip.constant.Category
 import com.joshtalks.joshskills.voip.constant.INCOMING_CALL_CATEGORY
-import com.joshtalks.joshskills.voip.constant.INCOMING_CALL_ID
 import com.joshtalks.joshskills.voip.mediator.CallCategory
 import com.joshtalks.joshskills.voip.mediator.FavoriteCall
 import com.joshtalks.joshskills.voip.mediator.GroupCall
@@ -51,7 +50,7 @@ class IncomingCallNotificationHandler : NotificationData.IncomingNotification{
             updateIncomingCallState(true)
             CallAnalytics.addAnalytics(
                 event = EventName.INCOMING_CALL_SHOWN,
-                agoraCallId = map[INCOMING_CALL_ID],
+                agoraCallId = map[INTENT_DATA_INCOMING_CALL_ID],
                 agoraMentorId = "-1"
             )
             soundManager.startRingtoneAndVibration()
@@ -61,7 +60,7 @@ class IncomingCallNotificationHandler : NotificationData.IncomingNotification{
                     removeNotification()
                     CallAnalytics.addAnalytics(
                         event = EventName.INCOMING_CALL_IGNORE,
-                        agoraCallId = map[INCOMING_CALL_ID],
+                        agoraCallId = map[INTENT_DATA_INCOMING_CALL_ID],
                         agoraMentorId = "-1"
                     )
                 } catch (e: Exception) {

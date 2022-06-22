@@ -19,6 +19,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
+import com.joshtalks.joshskills.base.constants.FROM_ACTIVITY
 import com.joshtalks.joshskills.base.constants.FROM_INCOMING_CALL
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_FPP_IMAGE
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_FPP_NAME
@@ -66,6 +67,7 @@ class FppCallFragment : BaseFragment() , SensorEventListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        if(vm.source== FROM_ACTIVITY)
         startPlaying()
         CallAnalytics.addAnalytics(
             event = EventName.CALL_SCREEN_SHOWN,
@@ -78,25 +80,29 @@ class FppCallFragment : BaseFragment() , SensorEventListener {
         callBinding.executePendingBindings()
         val name = requireActivity().intent?.getStringExtra(INTENT_DATA_FPP_NAME)
         val image =requireActivity().intent?.getStringExtra(INTENT_DATA_FPP_IMAGE)
-        Log.d(TAG, "setCallData: $name  $image")
-        callBinding.callerName.text = name?:"User Name"
-        if (!image.isNullOrEmpty())
-            Glide.with(this)
-                .load(image)
-                .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
-                .into(callBinding.cImage)
-        else
-            Glide.with(this)
-                .load(R.drawable.ic_call_placeholder)
-                .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
-                .into(callBinding.cImage)
+        if(vm.source== FROM_ACTIVITY) {
+            Log.d(TAG, "setCallData: $name  $image")
+            callBinding.callerName.text = name ?: "User Name"
+            if (!image.isNullOrEmpty())
+                Glide.with(this)
+                    .load(image)
+                    .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                    .into(callBinding.cImage)
+            else
+                Glide.with(this)
+                    .load(R.drawable.ic_call_placeholder)
+                    .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                    .into(callBinding.cImage)
+        }
     }
 
     override fun initViewState() {
         setUpProximitySensor()
         liveData.observe(viewLifecycleOwner) {
             when (it.what) {
-                CANCEL_INCOMING_TIMER -> {}
+                CANCEL_INCOMING_TIMER -> {
+                    callBinding.groupUserdata.visibility = View.VISIBLE
+                }
                 CALL_INITIATED_EVENT ->{
                     callBinding.groupUserdata.visibility = View.VISIBLE
                     stopPlaying()
@@ -130,7 +136,7 @@ class FppCallFragment : BaseFragment() , SensorEventListener {
                 mPlayer?.setVolume(0.5f, 0.5f)
                 mPlayer?.isLooping = true
                 mPlayer?.start()
-                delay(20000)
+                delay(50000)
                 stopPlaying()
             } catch (ex: Exception) {
                 ex.printStackTrace()

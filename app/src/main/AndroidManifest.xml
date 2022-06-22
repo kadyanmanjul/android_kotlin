@@ -221,6 +221,15 @@
             android:launchMode="singleTop"
             android:theme="@style/AppNoBarTheme" />
         <activity
+            android:name=".ui.voip.new_arch.ui.views.IncomingNotificationActivity"
+            android:launchMode="singleTop"
+            android:showForAllUsers="true"
+            android:showWhenLocked="true"
+            android:turnScreenOn="true"
+            android:process=":joshSkillsCallingService"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppNoBarTheme" />
+        <activity
             android:name=".ui.payment.order_summary.PaymentSummaryActivity"
             android:alwaysRetainTaskState="true"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
