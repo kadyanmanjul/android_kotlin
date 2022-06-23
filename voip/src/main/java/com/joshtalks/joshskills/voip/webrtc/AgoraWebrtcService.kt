@@ -59,6 +59,7 @@ internal class AgoraWebrtcService(val scope: CoroutineScope) : WebrtcService {
             setParameters("{\"che.audio.enable.aec\":false}")  //for automatic echo cancelling
             setParameters("{\"che.audio.enable.agc\":true}")  //automatic gain control
             setParameters("{\"che.audio.enable.ns\":false}")   //noise suppression
+            enableAudioVolumeIndication(500,3,true)
         }
         Log.d(TAG, "initWebrtcService: ${agoraEngine}")
         observeCallbacks()

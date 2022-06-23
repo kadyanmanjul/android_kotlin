@@ -237,7 +237,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/bottom_card_view"
-            setBottomCardBackground="@{vm.uiState.recordingButtonState != RecordingButtonState.IDLE  ? true : false}"
+            setBottomCardBackground="@{vm.uiState.recordingButtonState != RecordingButtonState.RECORDING  ? true : false}"
             style="@style/CustomCardViewStyleNoBottomCorner"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -449,7 +449,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/black_quiz"
-            android:visibility="@{vm.uiState.recordingButtonState != RecordingButtonState.IDLE  ? View.VISIBLE : View.GONE}"
+            android:visibility="@{vm.uiState.recordingButtonState == RecordingButtonState.RECORDING  ? View.VISIBLE : View.GONE}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             tools:visibility="visible">
@@ -479,15 +479,25 @@
                         android:scaleType="fitXY"
                         android:src="@drawable/img1" />
 
+                    <FrameLayout
+                        android:layout_width="@dimen/_88sdp"
+                        android:layout_height="@dimen/_88sdp"
+                        android:layout_alignEnd="@id/local_user_image"
+                        android:layout_alignBottom="@+id/local_user_image"
+                        android:layout_alignStart="@id/local_user_image"
+                        android:layout_alignTop="@id/local_user_image"
+                        android:background="@drawable/circle2"
+                        android:backgroundTint="@color/green"
+                        android:visibility="@{vm.uiState.callerSpeaking ? View.VISIBLE : View.GONE}" />
+
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/local_user_image"
                         setProfileImage="@{vm.uiState.startTime &lt;= 0 ? null : vm.uiState.localUserProfile}"
                         android:layout_width="@dimen/_75sdp"
                         android:layout_height="@dimen/_75sdp"
                         android:layout_centerInParent="true"
+                        android:padding="@dimen/_2sdp"
                         android:src="@drawable/ic_call_placeholder"
-                        app:civ_border_color="@color/green"
-                        app:civ_border_width="@dimen/_3sdp"
                         tools:src="@drawable/img1" />
 
                     <androidx.appcompat.widget.AppCompatTextView
@@ -518,17 +528,25 @@
                         android:scaleType="fitXY"
                         android:src="@drawable/img2" />
 
+                    <FrameLayout
+                        android:layout_width="@dimen/_88sdp"
+                        android:layout_height="@dimen/_88sdp"
+                        android:layout_alignEnd="@id/remote_user_image"
+                        android:layout_alignBottom="@+id/remote_user_image"
+                        android:layout_alignStart="@id/remote_user_image"
+                        android:layout_alignTop="@id/remote_user_image"
+                        android:background="@drawable/circle2"
+                        android:backgroundTint="@color/green"
+                        android:visibility="@{vm.uiState.calleSpeaking ? View.VISIBLE : View.GONE}" />
+
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/remote_user_image"
                         setProfileImage="@{vm.uiState.startTime &lt;= 0 ? null : vm.uiState.profileImage}"
                         android:layout_width="@dimen/_75sdp"
                         android:layout_height="@dimen/_75sdp"
                         android:layout_centerInParent="true"
-                        android:background="@drawable/circle"
-                        android:backgroundTint="@color/colorPrimaryDark"
+                        android:padding="@dimen/_2sdp"
                         android:src="@drawable/ic_call_placeholder"
-                        app:civ_border_color="@color/yellow"
-                        app:civ_border_width="@dimen/_3sdp"
                         tools:src="@drawable/img2" />
 
                     <androidx.appcompat.widget.AppCompatTextView
@@ -539,6 +557,7 @@
                         android:layout_centerHorizontal="true"
                         android:layout_marginTop="@dimen/_13sdp"
                         android:gravity="center"
+                        setColor='@{vm.uiState.calleSpeaking}'
                         android:text='@{vm.uiState.startTime &lt;= 0 ? "" :  vm.uiState.name}'
                         android:textAlignment="center"
                         android:textColor="@color/yellow"
