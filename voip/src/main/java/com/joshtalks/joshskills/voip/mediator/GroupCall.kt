@@ -3,7 +3,7 @@ package com.joshtalks.joshskills.voip.mediator
 import android.graphics.Bitmap
 import android.util.Log
 import android.widget.RemoteViews
-import com.joshtalks.joshskills.base.constants.INTENT_DATA_COURSE_ID
+import com.joshtalks.joshskills.base.constants.INTENT_DATA_GROUP_ID
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_INCOMING_CALL_ID
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_TOPIC_ID
 import com.joshtalks.joshskills.voip.*
@@ -41,7 +41,7 @@ class GroupCall : CallCategory {
             Log.d(TAG, "onPreCallConnect: OUTGOING")
             val request = GroupConnectionRequest(
                 topicId = (callData[INTENT_DATA_TOPIC_ID] as String).toInt(),
-                groupId = (callData[INTENT_DATA_COURSE_ID] as String).toInt()
+                groupId = (callData[INTENT_DATA_GROUP_ID] as String)
             )
             val response = voipNetwork.startGroupCall(request)
             Log.d(TAG, "onPreCallConnect: $response")

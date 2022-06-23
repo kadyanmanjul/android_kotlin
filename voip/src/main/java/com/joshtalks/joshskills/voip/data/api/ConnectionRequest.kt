@@ -69,7 +69,7 @@ data class FavoriteCallActionRequest(
 
 data class GroupConnectionRequest(
     @field:SerializedName("group_id")
-    val groupId: Int? = null,
+    val groupId: String? = null,
 
     @field:SerializedName("topic_id")
     val topicId: Int? = null,

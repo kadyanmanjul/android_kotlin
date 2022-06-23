@@ -129,19 +129,6 @@ class SearchingState(val context: CallContext) : VoipState {
         }
     }
 
-    private fun getRequest(): Any {
-        when(context.callType){
-            Category.PEER_TO_PEER -> {
-               return context.channelData.getCallingId()
-            }
-            Category.FPP ->{
-            }
-            Category.GROUP -> {}
-        }
-        return context.channelData.getCallingId()
-
-    }
-
     init {
         Log.d("Call State", TAG)
         observe()

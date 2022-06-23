@@ -1,7 +1,6 @@
 package com.joshtalks.joshskills.ui.voip.new_arch.ui.views
 
-import android.app.AlertDialog
-import android.content.Intent
+import android.Manifest
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -16,27 +15,23 @@ import com.joshtalks.joshskills.base.constants.FROM_INCOMING_CALL
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_COURSE_ID
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_INCOMING_CALL_ID
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_TOPIC_ID
-import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.base.constants.*
+import com.joshtalks.joshskills.core.PermissionUtils.isCallingPermissionEnabled
 import com.joshtalks.joshskills.databinding.ActivityVoiceCallBinding
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.VoiceCallViewModel
-import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.voipLog
 import com.joshtalks.joshskills.voip.Utils.Companion.onMultipleBackPress
 import com.joshtalks.joshskills.voip.constant.*
 import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
-import com.karumi.dexter.MultiplePermissionsReport
-import com.karumi.dexter.PermissionToken
-import com.karumi.dexter.listener.PermissionRequest
-import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import kotlinx.coroutines.sync.Mutex
 
 private const val TAG = "VoiceCallActivity"
 
 class VoiceCallActivity : BaseActivity() {
     private val backPressMutex = Mutex(false)
-    var recordingPermissionAlert: AlertDialog? = null
+    private var isServiceBounded = false
+
     private val voiceCallBinding by lazy<ActivityVoiceCallBinding> {
         DataBindingUtil.setContentView(this, R.layout.activity_voice_call)
     }
@@ -48,24 +43,28 @@ class VoiceCallActivity : BaseActivity() {
     private val requestPermissionsLauncher =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
             if (permissions.all { it.value }) {
-                Toast.makeText(
-                    this,
-                    "You have obtained the required permissions",
-                    Toast.LENGTH_LONG
-                ).show()
-            } else Toast.makeText(
-                this,
-                "You have not accepted all the permissions",
-                Toast.LENGTH_LONG
-            ).show()
+                Log.d(TAG, "requestPermissionsLauncher: given")
+                vm.boundService(this)
+                isServiceBounded = true
+            } else {
+                Log.d(TAG, "requestPermissionsLauncher: not given")
+                Toast.makeText(applicationContext,"Please Allow Permissions to make call",Toast.LENGTH_LONG).show()
+                finishAndRemoveTask()
+            }
         }
 
-    override fun onNewIntent(intent: Intent?) {
-        super.onNewIntent(intent)
-        Log.d(TAG, "onNewIntent: $intent")
+
+    private fun getPermissions() {
+        requestPermissionsLauncher.launch(
+            arrayOf(
+                Manifest.permission.RECORD_AUDIO,
+                Manifest.permission.READ_PHONE_STATE,
+                Manifest.permission.ACCESS_NETWORK_STATE,
+                Manifest.permission.MODIFY_AUDIO_SETTINGS,
+            )
+        )
     }
 
-    // TODO: Need to refactor
     override fun getArguments() {
         vm.source = getSource()
         vm.callType = Category.values()[intent.getIntExtra(INTENT_DATA_CALL_CATEGORY, PrefManager.getCallCategory().ordinal)]
@@ -111,13 +110,12 @@ class VoiceCallActivity : BaseActivity() {
     }
 
     private fun getSource(): String {
-//        TODO: refactor
-        val topicId = intent?.getStringExtra(INTENT_DATA_TOPIC_ID)
+        val topicId = intent?.getIntExtra(INTENT_DATA_TOPIC_ID,-1)
         val mentorId = intent?.getStringExtra(INTENT_DATA_FPP_MENTOR_ID)
         val groupId = intent?.getStringExtra(INTENT_DATA_GROUP_ID)
         Log.d(TAG, "getSource: $topicId  $mentorId  $groupId")
 
-        val shouldOpenCallFragment = (topicId == null && mentorId == null && groupId == null )
+        val shouldOpenCallFragment = (topicId == -1 && mentorId == null && groupId == null )
         return if (shouldOpenCallFragment && PrefManager.getVoipState() == State.IDLE)
             FROM_INCOMING_CALL
         else if (shouldOpenCallFragment)
@@ -131,46 +129,7 @@ class VoiceCallActivity : BaseActivity() {
     }
 
     override fun onCreated() {
-        Log.d(TAG, "onCreated: ${vm.source}")
-
-        if (PermissionUtils.isCallingPermissionEnabled(this)) {
-            startCallingScreen()
-        } else {
-            getPermission()
-        }
-    }
-
-
-    private fun getPermission() {
-        PermissionUtils.callingFeaturePermission(
-            this,
-            object : MultiplePermissionsListener {
-                override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
-                    report?.areAllPermissionsGranted()?.let { flag ->
-                        if (report.isAnyPermissionPermanentlyDenied) {
-                            PermissionUtils.callingPermissionPermanentlyDeniedDialog(
-                                this@VoiceCallActivity,
-                                message = R.string.call_start_permission_message
-                            )
-                            return
-                        }
-                        if (flag) {
-                            startCallingScreen()
-                            return
-                        } else {
-                            finish()
-                        }
-                    }
-                }
-
-                override fun onPermissionRationaleShouldBeShown(
-                    permissions: MutableList<PermissionRequest>?,
-                    token: PermissionToken?,
-                ) {
-                    token?.continuePermissionRequest()
-                }
-            }
-        )
+        startCallingScreen()
     }
 
     private fun startCallingScreen() {
@@ -211,7 +170,7 @@ class VoiceCallActivity : BaseActivity() {
                         else -> {}
                     }
                 }
-                CLOSE_CALL_SCREEN -> finish()
+                CLOSE_CALL_SCREEN -> finishAndRemoveTask()
                 else -> {
                     if (it.what < 0) {
                         showToast("Error Occurred")
@@ -262,11 +221,19 @@ class VoiceCallActivity : BaseActivity() {
 
     override fun onStart() {
         super.onStart()
-        vm.boundService(this)
+        if(isCallingPermissionEnabled(this)) {
+            if(!isServiceBounded) {
+                vm.boundService(this)
+                isServiceBounded = true
+            }
+        }else{
+            getPermissions()
+        }
     }
 
     override fun onStop() {
         super.onStop()
+        if(isServiceBounded)
         vm.unboundService(this)
     }
 

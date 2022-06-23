@@ -1,9 +1,9 @@
 package com.joshtalks.joshskills.voip.mediator
 
+import com.joshtalks.joshskills.voip.mediator.GroupCall
 import android.util.Log
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_INCOMING_CALL_ID
 import com.joshtalks.joshskills.voip.communication.fallback.FirebaseChannelService
-import com.joshtalks.joshskills.voip.calldetails.IncomingCallData
 import com.joshtalks.joshskills.voip.communication.EventChannel
 import com.joshtalks.joshskills.voip.communication.PubNubChannelService
 import com.joshtalks.joshskills.voip.communication.PubnubState.CONNECTED
@@ -36,7 +36,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
 const val PER_USER_TIMEOUT_IN_MILLIS = 10 * 1000L
-const val FAV_USER_TIMEOUT_IN_MILLIS = 50 * 1000L
+const val FAV_USER_TIMEOUT_IN_MILLIS = 20 * 1000L
 private const val TAG = "CallingMediator"
 enum class ActionDirection {
     SERVER,

@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
+import android.util.Log
 import android.view.View
 import android.view.Window
 import android.view.WindowManager.LayoutParams
@@ -53,12 +54,6 @@ class IncomingNotificationActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         startTimer()
-//        val remoteServiceIntent = Intent(com.joshtalks.joshskills.voip.Utils.context, CallingRemoteService::class.java)
-//        remoteServiceIntent.putExtra(INCOMING_CALL_ID, JSONObject(actionData).getString(INCOMING_CALL_ID))
-//        remoteServiceIntent.putExtra(INCOMING_CALL_CATEGORY,JSONObject(actionData).getString(INCOMING_CALL_CATEGORY))
-//        remoteServiceIntent.action = SERVICE_ACTION_INCOMING_CALL
-//        com.joshtalks.joshskills.voip.Utils.context?.startService(remoteServiceIntent)
-//        return null
 
     }
 
@@ -81,7 +76,7 @@ class IncomingNotificationActivity : AppCompatActivity() {
     }
 
      fun acceptCall(v: View) {
-        val destination = "com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity"
+         val destination = "com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity"
         val intent = Intent()
         intent.apply {
             setClassName(Utils.context!!.applicationContext, destination)
@@ -99,6 +94,4 @@ class IncomingNotificationActivity : AppCompatActivity() {
         if(wl?.isHeld == true) wl.release()
         if(wlCpu?.isHeld == true) wlCpu.release()
     }
-
-
 }
