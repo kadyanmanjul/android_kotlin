@@ -39,6 +39,9 @@ buildscript {
         maven {
             url "https://sdk.smartlook.com/android/release"
         }
+        maven {
+            url 'https://maven.singular.net/'
+        }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:7.0.3'

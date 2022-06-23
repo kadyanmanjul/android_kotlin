@@ -472,4 +472,7 @@ dependencies {
     implementation(moengage.pushAmp)
     implementation(moengage.pushAmpPlus)
     implementation group: 'org.slf4j', name: 'slf4j-android', version: '1.7.36'
+
+    //singular
+    implementation 'com.singular.sdk:singular_sdk:12.0.2'
 }

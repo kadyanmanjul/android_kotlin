@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.ui.launch
 
+import com.singular.sdk.*
 import android.animation.ArgbEvaluator
 import android.animation.ObjectAnimator
 import android.content.Intent
@@ -59,7 +60,27 @@ class LauncherActivity : CoreJoshActivity(), Branch.BranchReferralInitListener {
         animatedProgressBar()
         handleIntent()
         setObservers()
+        initSingularSDK()
         PrefManager.put(PREF_IS_CONVERSATION_ROOM_ACTIVE, false)
+    }
+
+    private fun initSingularSDK() {
+        val config = SingularConfig("joshtalks_ff0ca464", "5a43e20827ab76bba2669f90c575f28f")
+        config.withSingularLink(intent, object : SingularLinkHandler() {
+            fun onResolved(params: SingularLinkParams) {
+                // The deep link destination, as configured in the Manage Links page
+                val deeplink: String = params.getDeeplink()
+
+                // The passthrough parameters added to the link, if any.
+                val passthrough: String = params.getPassthrough()
+
+                // Whether the link configured as a deferred deep link.
+                val isDeferred: Boolean = params.isDeferred()
+
+                // Add deep link handling code here
+            }
+        })
+        Singular.init(context, config)
     }
 
     private fun setObservers() {
