@@ -8,17 +8,22 @@ import android.media.MediaFormat
 import android.media.MediaMuxer
 import android.net.Uri
 import android.os.Build
-import android.os.Environment
 import android.os.ParcelFileDescriptor
 import android.provider.MediaStore
 import android.util.Log
 import androidx.annotation.RequiresApi
-import java.io.Closeable
-import java.io.File
-import java.io.FileInputStream
-import java.io.FileOutputStream
-import java.io.IOException
+import java.io.*
 import java.nio.ByteBuffer
+import java.util.*
+import java.io.IOException
+import java.io.RandomAccessFile
+import android.os.Environment
+import com.googlecode.mp4parser.BasicContainer
+import com.googlecode.mp4parser.authoring.Movie
+import com.googlecode.mp4parser.authoring.Track
+import com.googlecode.mp4parser.authoring.builder.DefaultMp4Builder
+import com.googlecode.mp4parser.authoring.container.mp4.MovieCreator
+import com.googlecode.mp4parser.authoring.tracks.AppendTrack
 
 const val APP_DIRECTORY = "JoshSkill"
 const val MEDIA_DIRECTORY = "Media"
@@ -242,4 +247,48 @@ fun getVideoFilePath(): String {
 
 fun getAndroidDownloadFolder(): File? {
     return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+}
+
+fun appendTwoVideos(firstVideoPath: String, secondVideoPath: String,outputFile:String): String {
+    try {
+        val inMovies = arrayOfNulls<Movie>(2)
+        inMovies[0] = MovieCreator.build(firstVideoPath)
+        inMovies[1] = MovieCreator.build(secondVideoPath)
+        val videoTracks: MutableList<Track> = LinkedList()
+        val audioTracks: MutableList<Track> = LinkedList()
+        for (m in inMovies) {
+            for (t in m?.tracks!!) {
+                if (t.handler == "soun") {
+                    audioTracks.add(t)
+                }
+                if (t.handler == "vide") {
+                    videoTracks.add(t)
+                }
+            }
+        }
+        val result = Movie()
+        if (audioTracks.size > 0) {
+            result.addTrack(
+                AppendTrack(
+                    *audioTracks
+                        .toTypedArray()
+                )
+            )
+        }
+        if (videoTracks.size > 0) {
+            result.addTrack(
+                AppendTrack(
+                    *videoTracks
+                        .toTypedArray()
+                )
+            )
+        }
+        val out = DefaultMp4Builder().build(result) as BasicContainer
+        val fc = RandomAccessFile(outputFile, "rw").channel
+        out.writeContainer(fc)
+        fc.close()
+    } catch (e: IOException) {
+        e.printStackTrace()
+    }
+    return outputFile
 }
