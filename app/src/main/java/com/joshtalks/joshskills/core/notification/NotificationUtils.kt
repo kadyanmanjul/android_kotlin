@@ -45,6 +45,7 @@ import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.fpp.SeeAllRequestsActivity
 import com.joshtalks.joshskills.ui.group.JoshGroupActivity
+import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.ui.launch.LauncherActivity
 import com.joshtalks.joshskills.ui.leaderboard.LeaderBoardViewPagerActivity
@@ -894,5 +895,11 @@ class NotificationUtils(val context: Context) {
             Pair("content_title", dataJson?.getString("title")),
             Pair("content_text", dataJson?.getString("body"))
         )
+    }
+
+    fun pushAnalytics(groupId: String?) {
+        if (groupId != null) {
+            GroupAnalytics.push(GroupAnalytics.Event.NOTIFICATION_RECEIVED, groupId)
+        }
     }
 }

@@ -128,6 +128,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             } else if (remoteMessage.data.containsKey("is_group")) {
                 NotificationUtils(this)
                     .processRemoteMessage(remoteMessage, NotificationAnalytics.Channel.GROUPS)
+                NotificationUtils(this).pushAnalytics(remoteMessage.data["group_id"])
                 return
             } else {
                 NotificationUtils(this)
@@ -181,6 +182,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
 
             if (intent.extras?.containsKey("is_group") == true) {
                 NotificationUtils(this@FirebaseNotificationService).sendNotification(nc)
+                NotificationUtils(this).pushAnalytics(intent.extras?.getString("group_id"))
                 return
             }
 

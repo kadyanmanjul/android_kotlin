@@ -492,8 +492,10 @@ class GroupChatViewModel : BaseViewModel() {
             )
             scrollToEnd = true
             viewModelScope.launch(Dispatchers.IO) {
-                if (shouldSendNotification(groupId))
+                if (shouldSendNotification(groupId)) {
                     chatService.sendGroupNotification(groupId, getNotification(msg))
+                    GroupAnalytics.push(GroupAnalytics.Event.NOTIFICATION_SENT, groupId)
+                }
                 if (repository.checkIfFirstMsg(groupId))
                     pushTimeMetaMessage(groupId)
                 chatService.sendMessage(groupId, message)
@@ -531,7 +533,8 @@ class GroupChatViewModel : BaseViewModel() {
                     mapOf(
                         Pair("is_group", "true"),
                         Pair("action", "open_group_chat_client"),
-                        Pair("action_data", Mentor.getInstance().getId())
+                        Pair("action_data", Mentor.getInstance().getId()),
+                        Pair("group_id", groupId)
                     )
                 )
         }
