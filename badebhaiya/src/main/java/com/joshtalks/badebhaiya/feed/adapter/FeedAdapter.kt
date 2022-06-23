@@ -70,9 +70,6 @@ class FeedAdapter(private val fromProfile: Boolean = false, private val coroutin
 
     var callback: ConversationRoomItemCallback? = null
 
-    val sdf = SimpleDateFormat("dd/M/yyyy hh:mm:ss")
-    val currentDate = sdf.format(Date())
-
     inner class FeedViewHolder(private val item: LiRoomEventBinding) :
         RecyclerView.ViewHolder(item.root) {
         @OptIn(InternalCoroutinesApi::class)

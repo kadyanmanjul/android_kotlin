@@ -71,7 +71,7 @@ class LiveRoomViewModel(application: Application) : AndroidViewModel(application
     val navigation = MutableLiveData<ConversationRoomListingNavigation>()
 
     //val roomListLiveData = MutableLiveData<RoomListResponse>()
-    var audienceList = MutableLiveData<ArraySet<LiveRoomUser>>(ArraySet())
+    var audienceList = MutableLiveData<List<LiveRoomUser>>(listOf())
     var speakersList = MutableLiveData<List<LiveRoomUser>>(listOf())
     val pubNubState = MutableLiveData<PubNubState>()
     val liveRoomState = MutableLiveData<LiveRoomState>()
@@ -83,9 +83,9 @@ class LiveRoomViewModel(application: Application) : AndroidViewModel(application
         ConversationRoomRepository()
     }
 
-    fun getSpeakerList() = this.speakersList.value ?: ArraySet<LiveRoomUser>()
+    fun getSpeakerList() = this.speakersList.value ?: emptyList<LiveRoomUser>()
 
-    fun getAudienceList() = this.audienceList.value ?: ArraySet<LiveRoomUser>()
+    fun getAudienceList() = this.audienceList.value ?: emptyList<LiveRoomUser>()
 
     fun getRaisedHandAudienceSize() :Int = this.audienceList.value?.filter { it.isSpeaker==false && it.isHandRaised && it.isSpeakerAccepted.not() }?.size ?: 0
 
@@ -144,7 +144,7 @@ class LiveRoomViewModel(application: Application) : AndroidViewModel(application
                 .collect {
                 Log.d("sahil", "audience list => $it")
 
-                audienceList.postValue(ArraySet(it))
+                audienceList.postValue(it)
             }
         }
 
@@ -184,16 +184,12 @@ class LiveRoomViewModel(application: Application) : AndroidViewModel(application
 
     fun flushLiveData(){
         speakersList = MutableLiveData<List<LiveRoomUser>>(listOf())
-        audienceList = MutableLiveData<ArraySet<LiveRoomUser>>(ArraySet())
+        audienceList = MutableLiveData<List<LiveRoomUser>>(listOf())
         singleLiveEvent = MutableLiveData()
     }
 
     fun reconnectPubNub() {
         PubNubManager.reconnectPubNub()
-    }
-
-    fun moveUserToAcceptedState() {
-        TODO("Not yet implemented")
     }
 
 }

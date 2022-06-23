@@ -79,10 +79,10 @@ object PubNubManager {
     private var waitingCallback: SubscribeCallback?=null
 
     @Volatile
-    private var speakersList = arraySetOf<LiveRoomUser>()
+    private var speakersList = mutableListOf<LiveRoomUser>()
 
     @Volatile
-    private var audienceList = arraySetOf<LiveRoomUser>()
+    private var audienceList = mutableListOf<LiveRoomUser>()
 
     private val jobs = mutableListOf<Job>()
 
@@ -244,8 +244,8 @@ object PubNubManager {
             Timber.d("Memebers List Itne aye hai aur size => ${result?.data?.size}")
             Timber.d("Memebers List Itne aye hai  => ${result?.data}")
 
-            val tempSpeakerList = ArraySet<LiveRoomUser>()
-            val tempAudienceList = ArraySet<LiveRoomUser>()
+            val tempSpeakerList = mutableListOf<LiveRoomUser>()
+            val tempAudienceList = mutableListOf<LiveRoomUser>()
             result?.data?.forEach {
                 Timber.d("Memebers List ind aur uid=> ${it.uuid}")
                 Timber.d("Memebers List ind aur banda=> $it")
@@ -267,8 +267,8 @@ object PubNubManager {
             }
             // post to a shared flow instead of live data
             Timber.d("THIS IS WITH MEMBERS LIST SPEAKER => $tempSpeakerList AND AUDIENCE => $tempAudienceList")
-            postToSpeakersList(tempSpeakerList)
-            postToAudienceList(tempAudienceList)
+            postToSpeakersList(tempSpeakerList.toList())
+            postToAudienceList(tempAudienceList.toList())
         } catch (e: Exception){
 
         }
@@ -307,7 +307,7 @@ object PubNubManager {
         jobs += CoroutineScope(Dispatchers.IO).launch {
             PubNubData.speakerList
                 .collect {
-                speakersList = it
+                speakersList = it.toMutableList()
             }
         }
     }
@@ -315,7 +315,7 @@ object PubNubManager {
     fun getAudienceList() {
         jobs += CoroutineScope(Dispatchers.IO).launch {
             PubNubData.audienceList.collect {
-                audienceList = it
+                audienceList = it.toMutableList()
             }
         }
     }
@@ -348,7 +348,7 @@ object PubNubManager {
 
             Timber.d("added new user it is a speaker => $data")
 
-            postToSpeakersList(list)
+            postToSpeakersList(list.toList())
             //speakerAdapter?.updateFullList(ArrayList(getSpeakerList()))
         } else {
 
@@ -363,18 +363,18 @@ object PubNubManager {
         }
     }
 
-     fun postToSpeakersList(list: ArraySet<LiveRoomUser>) {
+     fun postToSpeakersList(list: List<LiveRoomUser>) {
         Timber.d("post to speaker list => $list")
-        val distinctedList = list.reversed().distinctBy { it.userId }.reversed().toSet()
+        val distinctedList = list.reversed().distinctBy { it.userId }.reversed()
         jobs += CoroutineScope(Dispatchers.IO).launch {
-            _speakersList.emit(ArraySet(distinctedList))
+            _speakersList.emit(distinctedList)
         }
     }
 
-     fun postToAudienceList(list: ArraySet<LiveRoomUser>) {
+     fun postToAudienceList(list: List<LiveRoomUser>) {
         jobs += CoroutineScope(Dispatchers.IO).launch {
-            val distinctedList = list.reversed().distinctBy { it.userId }.reversed().toSet()
-            _audienceList.emit(ArraySet(distinctedList))
+            val distinctedList = list.reversed().distinctBy { it.userId }.reversed()
+            _audienceList.emit(distinctedList)
         }
     }
 
@@ -396,7 +396,7 @@ object PubNubManager {
         if (audienceList.isNullOrEmpty()) {
             return
         }
-        val oldAudienceList = arraySetOf<LiveRoomUser>()
+        val oldAudienceList = mutableListOf<LiveRoomUser>()
         oldAudienceList.addAll(audienceList)
         val user = oldAudienceList?.filter { it.id == userId }
         if (!user.isNullOrEmpty()){
@@ -405,7 +405,7 @@ object PubNubManager {
                 it.isSpeakerAccepted = true
                 oldAudienceList.add(it)
 
-                postToAudienceList(oldAudienceList)
+                postToAudienceList(oldAudienceList.toList())
             }
         }
     }
@@ -414,14 +414,14 @@ object PubNubManager {
         if (audienceList.isNullOrEmpty()) {
             return
         }
-        val oldAudienceList = arraySetOf<LiveRoomUser>()
+        val oldAudienceList = mutableListOf<LiveRoomUser>()
         oldAudienceList.addAll(audienceList)
         val user = oldAudienceList?.filter { it.id == userId }
         user[0]?.let { it ->
             oldAudienceList.remove(it)
             it.isInviteSent = true
             oldAudienceList.add(it)
-            postToAudienceList(oldAudienceList)
+            postToAudienceList(oldAudienceList.toList())
         }
     }
 
@@ -447,7 +447,7 @@ object PubNubManager {
         if (audienceList.isNullOrEmpty()) {
             return
         }
-        val oldAudienceList = arraySetOf<LiveRoomUser>()
+        val oldAudienceList = mutableListOf<LiveRoomUser>()
         oldAudienceList.addAll(audienceList)
         val isUserPresent = oldAudienceList.any { it.id == userId }
         if (isUserPresent) {
@@ -458,7 +458,7 @@ object PubNubManager {
                 roomUser.isInviteSent = false
             }
             oldAudienceList.add(roomUser)
-            postToAudienceList(oldAudienceList)
+            postToAudienceList(oldAudienceList.toList())
         }
     }
 
@@ -604,7 +604,7 @@ object PubNubManager {
             if (isFromSpeakerList) {
                 val list = speakersList.filter { it.id == user.id }
                 speakersList.removeAll(list)
-                postToSpeakersList(speakersList)
+                postToSpeakersList(speakersList.toList())
             } else if (audienceList.any { it.id == user.id }) {
                 val list = audienceList.filter { it.id == user.id }
                 audienceList.removeAll(list)
@@ -615,7 +615,7 @@ object PubNubManager {
 
     fun setHandRaisedForUser(userId: Int, isHandRaised: Boolean) {
         updateHandRaisedToUser(userId, isHandRaised)
-        var newList = arraySetOf<LiveRoomUser>()
+        var newList = mutableListOf<LiveRoomUser>()
         newList.addAll(audienceList)
         val isOldUserPresent = newList.any { it.id == userId }
         if (isOldUserPresent) {
@@ -631,7 +631,7 @@ object PubNubManager {
             }
             newList.add(oldUser)
         }
-        postToAudienceList(newList)
+        postToAudienceList(newList.toList())
     }
 
     fun handRaisedByUser(msg: JsonObject) {
@@ -670,7 +670,7 @@ object PubNubManager {
                 userToMove.isInviteSent = true
                 updateInviteSentToUserForAudience(userToMove)
                 speakersList.add(userToMove)
-                postToSpeakersList(speakersList)
+                postToSpeakersList(speakersList.toList())
                 message.what = MOVE_TO_SPEAKER
                 var bundle = Bundle().apply {
                     putParcelable(NOTIFICATION_USER, userToMove)
@@ -701,7 +701,7 @@ object PubNubManager {
             if (user.isNotEmpty()) {
                 val userToMove = user[0]
                 speakersList.remove(userToMove)
-                postToSpeakersList(speakersList)
+                postToSpeakersList(speakersList.toList())
                 userToMove.isSpeaker = false
                 userToMove.isHandRaised = false
                 userToMove.isInviteSent = false
@@ -744,7 +744,7 @@ object PubNubManager {
             oldUser[0].isMicOn = isMicOn
             newList.add(oldUser[0])
         }
-        postToSpeakersList(newList)
+        postToSpeakersList(newList.toList())
 
     }
 

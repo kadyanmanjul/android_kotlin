@@ -16,10 +16,10 @@ import org.json.JSONObject
 
 object PubNubData {
 
-    internal val _speakersList = MutableSharedFlow<ArraySet<LiveRoomUser>>()
+    internal val _speakersList = MutableSharedFlow<List<LiveRoomUser>>()
     val speakerList = _speakersList.asSharedFlow()
 
-    internal val _audienceList = MutableSharedFlow<ArraySet<LiveRoomUser>>()
+    internal val _audienceList = MutableSharedFlow<List<LiveRoomUser>>()
     val audienceList = _audienceList.asSharedFlow()
 
     internal val _liveEvent = MutableSharedFlow<Message>(

@@ -25,7 +25,7 @@ class RaisedHandsBottomSheetAdapter() :
             notifyDataSetChanged()
             return
         }
-        newList.sortedBy { it.sortOrder }
+//        newList.sortedBy { it.sortOrder }
         Log.d("ABC", "updateFullList() called with: newList = $newList")
         val diffCallback = ConversationUserDiffCallback(handRaisedList, newList)
         val diffResult = DiffUtil.calculateDiff(diffCallback,true)

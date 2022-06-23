@@ -34,7 +34,7 @@ class AudienceAdapter(
             false,
             User.getInstance().userId,
         )
-        newList.sortedByDescending { it.sortOrder }
+//        newList.sortedByDescending { it.sortOrder }
         val diffCallback = ConversationUserDiffCallback(audienceList, newList)
         val diffResult = DiffUtil.calculateDiff(diffCallback)
         audienceList.clear()

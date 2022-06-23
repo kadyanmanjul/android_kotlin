@@ -19,7 +19,7 @@ class SpeakerAdapter : RecyclerView.Adapter<SpeakerAdapter.SpeakerViewHolder>() 
     val speakersList: ArrayList<LiveRoomUser> = arrayListOf()
 
     fun updateFullList(newList: List<LiveRoomUser>) {
-        newList.sortedByDescending { it.sortOrder }
+//        newList.sortedByDescending { it.sortOrder }
         newList.forEach {
             Log.d("ABC3", "order called ${it.name}  ${it.sortOrder} ")
         }

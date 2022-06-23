@@ -100,9 +100,9 @@ class RaisedHandsBottomSheet(
         }
     }
 
-    private fun refreshAdapterWithNewList(handRaisedList: ArraySet<LiveRoomUser>?) {
+    private fun refreshAdapterWithNewList(handRaisedList: List<LiveRoomUser>?) {
         val list = handRaisedList?.filter { it.isSpeaker==false && it.isHandRaised }
-        this.raisedHandList = list?.sortedBy { it.sortOrder }
+//        this.raisedHandList = list?.sortedBy { it.sortOrder }
         setVisibilities()
         bottomSheetAdapter?.updateFullList(raisedHandList!!.distinct())
 

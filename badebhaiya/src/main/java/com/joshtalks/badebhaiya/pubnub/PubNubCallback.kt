@@ -52,7 +52,7 @@ class PubNubCallback: SubscribeCallback() {
                 )
             }
         } catch (ex: Exception) {
-            LogException.catchException(ex)
+//            LogException.catchException(ex)
         }
     }
 
