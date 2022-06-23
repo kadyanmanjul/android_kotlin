@@ -38,6 +38,7 @@ class PubNubCallback: SubscribeCallback() {
                     "message() called with: pubnub = $pubnub, pnMessageResult = $pnMessageResult"
                 )
 //                PubNubManager.eventExists()
+//                System.nanoTime()
 
                 Timber.d("ABC Event ka msg hai => $msg and PN message result is => $pnMessageResult")
 //                PubNubData.eventsMap[pnMessageResult.timetoken] = msg
