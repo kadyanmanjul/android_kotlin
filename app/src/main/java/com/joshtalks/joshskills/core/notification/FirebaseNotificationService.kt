@@ -21,6 +21,7 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.NotificationObject
 import com.moengage.firebase.MoEFireBaseHelper
 import com.moengage.pushbase.MoEPushHelper
+import com.singular.sdk.Singular
 import java.lang.reflect.Type
 import kotlin.collections.set
 import kotlinx.coroutines.CoroutineExceptionHandler

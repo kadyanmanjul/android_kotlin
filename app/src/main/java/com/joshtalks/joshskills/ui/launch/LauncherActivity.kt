@@ -22,6 +22,7 @@ import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.notification.FCM_TOKEN
 import com.joshtalks.joshskills.core.notification.HAS_LOCAL_NOTIFICATION
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.databinding.ActivityLauncherBinding
@@ -66,21 +67,22 @@ class LauncherActivity : CoreJoshActivity(), Branch.BranchReferralInitListener {
 
     private fun initSingularSDK() {
         val config = SingularConfig("joshtalks_ff0ca464", "5a43e20827ab76bba2669f90c575f28f")
-        config.withSingularLink(intent, object : SingularLinkHandler() {
-            fun onResolved(params: SingularLinkParams) {
-                // The deep link destination, as configured in the Manage Links page
-                val deeplink: String = params.getDeeplink()
+            .withCustomUserId(Mentor.getInstance().getId())
+            .withSessionTimeoutInSec(120) //optional
 
-                // The passthrough parameters added to the link, if any.
-                val passthrough: String = params.getPassthrough()
+        config.withSingularLink(intent) { params ->
+            // The deep link destination, as configured in the Manage Links page
+            val deeplink: String = params.getDeeplink()
 
-                // Whether the link configured as a deferred deep link.
-                val isDeferred: Boolean = params.isDeferred()
+            // The passthrough parameters added to the link, if any.
+            val passthrough: String = params.getPassthrough()
 
-                // Add deep link handling code here
-            }
-        })
-        Singular.init(context, config)
+            // Whether the link configured as a deferred deep link.
+            val isDeferred: Boolean = params.isDeferred()
+
+            // Add deep link handling code here
+        }
+        Singular.init(this, config)
     }
 
     private fun setObservers() {

@@ -16,6 +16,7 @@ import com.joshtalks.joshskills.core.analytics.*
 import com.joshtalks.joshskills.core.firestore.NotificationAnalytics
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.model.*
+import com.singular.sdk.Singular
 import io.branch.referral.Branch
 import io.branch.referral.Defines
 import kotlinx.coroutines.Dispatchers
@@ -190,6 +191,7 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
         if (isAppOpenedForFirstTime) {
             PrefManager.put(IS_APP_OPENED_FOR_FIRST_TIME, value = false, isConsistent = true)
             MixPanelTracker.publishEvent(MixPanelEvent.APP_OPENED_FOR_FIRST_TIME).push()
+            Singular.event(SingularEvent.APP_OPENED_FIRST_TIME.value)
         }
     }
 

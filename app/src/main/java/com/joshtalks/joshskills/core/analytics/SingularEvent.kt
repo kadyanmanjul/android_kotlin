@@ -1,0 +1,12 @@
+package com.joshtalks.joshskills.core.analytics
+
+enum class SingularEvent(override val value: String) : Event {
+
+    APP_OPENED_FIRST_TIME("APP_OPENED_FIRST_TIME"),
+    OPENED_PRE_CHECKOUT_PAGE("OPENED_PRE_CHECKOUT_PAGE"),
+    OPENED_CHECKOUT_PAGE("OPENED_CHECKOUT_PAGE"),
+    INITIATED_CHECKOUT("INITIATED_CHECKOUT"),
+    PAYMENT_SUCCESSFUL("PAYMENT_SUCCESSFUL"),
+    PAYMENT_FAILED("PAYMENT_FAILED")
+
+}
