@@ -39,11 +39,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
-import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
-import com.joshtalks.joshskills.core.analytics.AppAnalytics
-import com.joshtalks.joshskills.core.analytics.MixPanelEvent
-import com.joshtalks.joshskills.core.analytics.MixPanelTracker
-import com.joshtalks.joshskills.core.analytics.ParamKeys
+import com.joshtalks.joshskills.core.analytics.*
 import com.joshtalks.joshskills.databinding.ActivityCourseDetailsBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.*
@@ -64,12 +60,14 @@ import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.mindorks.placeholderview.SmoothLinearLayoutManager
+import com.singular.sdk.Singular
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.json.JSONObject
 
 const val ENGLISH_COURSE_TEST_ID = 102
 const val ENGLISH_FREE_TRIAL_1D_TEST_ID = 784
@@ -164,6 +162,11 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
             binding.continueTip.visibility = View.GONE
         }
         subscribeLiveData()
+
+        val jsonData = JSONObject()
+        jsonData.put(ParamKeys.TEST_ID.name, testId)
+        jsonData.put(ParamKeys.VIA.name, flowFrom)
+        Singular.event(SingularEvent.OPENED_PRE_CHECKOUT_PAGE.name, jsonData)
     }
     private fun initABTest() {
         viewModel.get100PCampaignData(CampaignKeys.HUNDRED_POINTS.NAME, testId.toString())

@@ -69,6 +69,7 @@ import com.joshtalks.joshskills.ui.startcourse.StartCourseActivity
 import com.joshtalks.joshskills.ui.voip.IS_DEMO_P2P
 import com.razorpay.Checkout
 import com.razorpay.PaymentResultListener
+import com.singular.sdk.Singular
 import io.branch.referral.util.BRANCH_STANDARD_EVENT
 import io.branch.referral.util.CurrencyType
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -177,6 +178,8 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         subscribeObservers()
         initCountryCode()
         logPaymentAnalyticsEvents()
+
+        Singular.event(SingularEvent.OPENED_CHECKOUT_PAGE.name, testId)
     }
 
     private fun initViewModel() {
@@ -830,6 +833,11 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             else -> viewModel.getOrderDetails(viewModel.getPaymentTestId(), getPhoneNumber())
         }
 
+        val jsonData = JSONObject()
+        jsonData.put(ParamKeys.TEST_ID.name, viewModel.getPaymentTestId())
+        jsonData.put(ParamKeys.COURSE_PRICE.name, viewModel.getCourseActualAmount())
+        Singular.event(SingularEvent.INITIATED_PAYMENT.name, jsonData)
+
         if(!loginStartFreeTrial) {
             MixPanelTracker.publishEvent(MixPanelEvent.PAYMENT_STARTED)
                 .addParam(ParamKeys.TEST_ID, viewModel.getPaymentTestId())
@@ -912,6 +920,13 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             .addParam(ParamKeys.AMOUNT_PAID, viewModel.getCourseDiscountedAmount())
             .push()
 
+        val jsonData = JSONObject()
+        jsonData.put(ParamKeys.TEST_ID.name, viewModel.getPaymentTestId())
+        jsonData.put(ParamKeys.COURSE_PRICE.name, viewModel.getCourseActualAmount())
+        jsonData.put(ParamKeys.IS_COUPON_APPLIED.name, viewModel.responsePaymentSummary.value?.couponDetails?.isPromoCode)
+        jsonData.put(ParamKeys.AMOUNT_PAID.name, viewModel.getCourseDiscountedAmount())
+        Singular.customRevenue(SingularEvent.PAYMENT_FAILED.name, jsonData)
+
         appAnalytics.addParam(AnalyticsEvent.PAYMENT_FAILED.NAME, p1)
         logPaymentStatusAnalyticsEvents(AnalyticsEvent.FAILED_PARAM.NAME, p1)
         isBackPressDisabled = true
@@ -931,6 +946,13 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             .addParam(ParamKeys.AMOUNT_PAID, viewModel.getCourseDiscountedAmount())
             .addParam(ParamKeys.IS_100_POINTS_OBTAINED_IN_FREE_TRIAL,is100PointsObtained)
             .push()
+
+        val jsonData = JSONObject()
+        jsonData.put(ParamKeys.TEST_ID.name, viewModel.getPaymentTestId())
+        jsonData.put(ParamKeys.COURSE_PRICE.name, viewModel.getCourseActualAmount())
+        jsonData.put(ParamKeys.IS_COUPON_APPLIED.name, viewModel.responsePaymentSummary.value?.couponDetails?.isPromoCode)
+        jsonData.put(ParamKeys.AMOUNT_PAID.name, viewModel.getCourseDiscountedAmount())
+        Singular.customRevenue(SingularEvent.PAYMENT_SUCCESSFUL.name, jsonData)
 
         if(viewModel.getPaymentTestId() == ENGLISH_COURSE_TEST_ID) {
             PrefManager.getBoolValue(INCREASE_COURSE_PRICE_CAMPAIGN_ACTIVE)

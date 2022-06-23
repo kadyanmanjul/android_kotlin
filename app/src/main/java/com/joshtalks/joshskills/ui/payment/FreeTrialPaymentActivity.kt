@@ -28,11 +28,8 @@ import com.joshtalks.joshskills.core.AppObjectController.Companion.uiHandler
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.GoalKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
-import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
+import com.joshtalks.joshskills.core.analytics.*
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics.logNewPaymentPageOpened
-import com.joshtalks.joshskills.core.analytics.MixPanelEvent
-import com.joshtalks.joshskills.core.analytics.MixPanelTracker
-import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.core.countdowntimer.CountdownTimerBack
 import com.joshtalks.joshskills.databinding.ActivityFreeTrialPaymentBinding
 import com.joshtalks.joshskills.messaging.RxBus2
@@ -55,6 +52,7 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.razorpay.Checkout
 import com.razorpay.PaymentResultListener
+import com.singular.sdk.Singular
 import com.tonyodev.fetch2core.isNetworkAvailable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -820,6 +818,10 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             .addParam(ParamKeys.COURSE_ID,PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID))
             .push()
 
+        val jsonData = JSONObject()
+        jsonData.put(ParamKeys.TEST_ID.name, viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.testId)
+        jsonData.put(ParamKeys.COURSE_PRICE.name, viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.discount)
+        Singular.event(SingularEvent.INITIATED_PAYMENT.name, jsonData)
     }
 
     private fun String.verifyPayment() {
@@ -879,6 +881,11 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             .addParam(ParamKeys.COURSE_ID,PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID))
             .push()
 
+        val jsonData = JSONObject()
+        jsonData.put(ParamKeys.TEST_ID.name, viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.testId)
+        jsonData.put(ParamKeys.AMOUNT_PAID.name, viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.discount)
+        jsonData.put(ParamKeys.IS_COUPON_APPLIED.name, viewModel.paymentDetailsLiveData.value?.couponDetails?.isPromoCode)
+        Singular.customRevenue(SingularEvent.PAYMENT_FAILED.name, jsonData)
     }
 
     @Synchronized
@@ -891,6 +898,12 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             .addParam(ParamKeys.IS_COUPON_APPLIED,viewModel.paymentDetailsLiveData.value?.couponDetails?.isPromoCode)
             .addParam(ParamKeys.IS_100_POINTS_OBTAINED_IN_FREE_TRIAL,isPointsScoredMoreThanEqualTo100)
             .push()
+
+        val jsonData = JSONObject()
+        jsonData.put(ParamKeys.TEST_ID.name, viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.testId)
+        jsonData.put(ParamKeys.IS_COUPON_APPLIED.name, viewModel.paymentDetailsLiveData.value?.couponDetails?.isPromoCode)
+        jsonData.put(ParamKeys.AMOUNT_PAID.name, viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.discount)
+        Singular.customRevenue(SingularEvent.PAYMENT_SUCCESSFUL.name, jsonData)
 
         if(viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.testId == FREE_TRIAL_PAYMENT_TEST_ID) {
             if(PrefManager.getBoolValue(INCREASE_COURSE_PRICE_CAMPAIGN_ACTIVE))
