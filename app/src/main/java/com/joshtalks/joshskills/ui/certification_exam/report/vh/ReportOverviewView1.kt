@@ -6,6 +6,7 @@ import android.content.res.ColorStateList
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.AbsoluteSizeSpan
+import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import androidx.appcompat.widget.AppCompatTextView
@@ -28,9 +29,10 @@ import com.mindorks.placeholderview.annotations.Resolve
 import java.text.DecimalFormat
 
 const val BTN_CHANGED_TEXT = "Show Certificate"
+
 @SuppressLint("NonConstantResourceId")
 @Layout(R.layout.layout_report_overview_view1)
-class ReportOverviewView1(private val certificateExamReport: CertificateExamReportModel) {
+class ReportOverviewView1(private val certificateExamReport: CertificateExamReportModel, private val examType: String?) {
 
     @com.mindorks.placeholderview.annotations.View(R.id.header_tv)
     lateinit var headerTv: AppCompatTextView
@@ -52,10 +54,9 @@ class ReportOverviewView1(private val certificateExamReport: CertificateExamRepo
 
     private val context: Context = AppObjectController.joshApplication
 
-    private var examType = String()
-
     @Resolve
     fun onViewInflated() {
+        Log.i(TAG, "onViewInflated: triggred")
         certificateExamReport.run {
             headerTv.text = heading
             resultInfo.text = HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_LEGACY)
@@ -83,28 +84,28 @@ class ReportOverviewView1(private val certificateExamReport: CertificateExamRepo
 
                 checkExamDetails.strokeWidth = 2
 
-                checkExamDetails.setTextSize(TypedValue.COMPLEX_UNIT_SP,12F)
+                checkExamDetails.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12F)
 
                 if (certificateURL.isNullOrEmpty()) {
                     downloadCertificateBtn.visibility = View.GONE
                 }
                 var showBtn = false
-                when (examType){
-                    EXAM_TYPE_BEGINNER->{
-                        showBtn = PrefManager.getBoolValue(IS_CERTIFICATE_GENERATED_BEGINNER, defValue = true)
+                when (examType) {
+                    EXAM_TYPE_BEGINNER -> {
+                        showBtn = PrefManager.getBoolValue(IS_CERTIFICATE_GENERATED_BEGINNER, defValue = false)
                     }
-                    EXAM_TYPE_INTERMEDIATE->{
-                        showBtn = PrefManager.getBoolValue(IS_CERTIFICATE_GENERATED_INTERMEDIATE, defValue = true)
+                    EXAM_TYPE_INTERMEDIATE -> {
+                        showBtn = PrefManager.getBoolValue(IS_CERTIFICATE_GENERATED_INTERMEDIATE, defValue = false)
                     }
-                    EXAM_TYPE_ADVANCED->{
-                        showBtn = PrefManager.getBoolValue(IS_CERTIFICATE_GENERATED_ADVANCED, defValue = true)
+                    EXAM_TYPE_ADVANCED -> {
+                        showBtn = PrefManager.getBoolValue(IS_CERTIFICATE_GENERATED_ADVANCED, defValue = false)
                     }
                 }
                 if (showBtn) {
-                    checkExamDetails.visibility = View.GONE
-                }else{
                     downloadCertificateBtn.text = BTN_CHANGED_TEXT
                     checkExamDetails.visibility = View.VISIBLE
+                }else{
+                    checkExamDetails.visibility = View.GONE
                 }
             }
 
@@ -129,20 +130,20 @@ class ReportOverviewView1(private val certificateExamReport: CertificateExamRepo
 
     @Click(R.id.btn_download_certificate)
     fun downloadCertificate() {
-        RxBus2.publish(
-            DownloadFileEventBus(
-                id = certificateExamReport.reportId,
-                url = certificateExamReport.certificateURL
+        if (Utils.isInternetAvailable()){
+            RxBus2.publish(
+                DownloadFileEventBus(
+                    id = certificateExamReport.reportId,
+                    url = certificateExamReport.certificateURL
+                )
             )
-        )
+        }else{
+            showToast("No Internet Available")
+        }
     }
 
     @Click(R.id.check_exam_details)
     fun checkExamDetails() {
         RxBus2.publish(EmptyEventBus())
-    }
-
-    fun checkExamType(certificateExamType: String) {
-        examType = certificateExamType
     }
 }

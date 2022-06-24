@@ -11,7 +11,6 @@ import com.joshtalks.joshskills.repository.server.signup.LoginResponse
 import com.joshtalks.joshskills.repository.server.signup.RequestSocialSignUp
 import com.joshtalks.joshskills.repository.server.signup.RequestUserVerification
 import com.joshtalks.joshskills.repository.server.signup.request.SocialSignUpRequest
-import com.joshtalks.joshskills.ui.lesson.speaking.VideoPopupItem
 import com.joshtalks.joshskills.ui.userprofile.models.PreviousProfilePictures
 import com.joshtalks.joshskills.ui.userprofile.models.UpdateProfilePayload
 import kotlinx.coroutines.Deferred
@@ -181,4 +180,7 @@ interface SignUpNetworkService {
 
     @GET("$DIR/course/language/")
     suspend fun getAvailableLanguageCourses() : Response<List<ChooseLanguages>>
+
+    @POST("$DIR/mentor/register/")
+    suspend fun registerCourse(@Body requestData: HashMap<String, String>): Response<Unit>
 }

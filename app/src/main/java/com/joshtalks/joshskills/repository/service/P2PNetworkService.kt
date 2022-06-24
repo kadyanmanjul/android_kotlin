@@ -10,6 +10,7 @@ import com.joshtalks.joshskills.ui.voip.voip_rating.model.ReportModel
 import java.util.HashMap
 import com.joshtalks.joshskills.ui.fpp.model.PendingRequestResponse
 import com.joshtalks.joshskills.ui.fpp.model.RecentCallResponse
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.models.VoipStatusResponse
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.report.model.VoipReportModel
 
 import retrofit2.Response
@@ -98,14 +99,15 @@ interface P2PNetworkService {
     @POST("$DIR/fpp/fpp_dialog/")
     suspend fun showFppDialog(@Body params: HashMap<String, String?>) : Response<HashMap<String,String>>
 
+    @JvmSuppressWildcards
     @POST("$DIR/voicecall/call_rating/")
-    suspend fun submitCallRatings(@Body params: HashMap<String, String>) : Response<Any>
+    suspend fun submitCallRatings(@Body params: HashMap<String, Any?>) : Response<Any>
 
     @POST("$DIR/voicecall/agora_new_topic/")
     suspend fun saveTopicUrlImpression(@Body params : HashMap<String,Any?>) :Response<Any>
 
     @GET("$DIR/p2p/status/")
-    suspend fun getVoipNewArchFlag(): HashMap<String,Int>
+    suspend fun getVoipNewArchFlag(): VoipStatusResponse
 
     @POST("$DIR/fpp/fpp_option/")
     suspend fun showFppDialogNew(@Body params: HashMap<String, Int?>) : Response<HashMap<String,Int>>

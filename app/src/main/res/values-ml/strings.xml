@@ -186,6 +186,7 @@
     <string name="name_error_toast">പേര് ശൂന്യമായി വെക്കുവാൻ   കഴിയില്ല!</string>
     <string name="please_enter_valid_number">"ശരിയായ മൊബൈൽ നമ്പർ നൽകുക"</string>
     <string name="enter_valid_email_toast">"ദയവായി ശരിയായ Email ID നൽകുക"</string>
+    <string name="enter_postal_address">"ദയവായി ശരിയായ തപാൽ വിലാസം നൽകുക"</string>
     <string name="missed_call_verify_message">സ്ഥിരീകരണത്തിനായി ഞങ്ങൾ മിസ്ഡ് കോൾ ഉപയോഗിക്കുന്നു. സ്ഥിരീകരണം അനുവദിക്കുക.</string>
     <string name="otp_verify_message">നിങ്ങളുടെ മൊബൈൽ നമ്പർ പരിശോധിച്ചുറപ്പിക്കാൻ 4 അക്ക OTP SMS വഴി അയയ്ക്കും</string>
     <string name="missed_call_label">"മിസ്ഡ് കോൾ പരിശോധന"</string>

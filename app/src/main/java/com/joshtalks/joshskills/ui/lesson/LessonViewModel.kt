@@ -5,11 +5,15 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Message
 import android.util.Log
+import android.view.View
+import androidx.databinding.ObservableField
+import androidx.databinding.ObservableInt
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
+import com.joshtalks.joshskills.constants.*
 import com.joshtalks.joshskills.constants.PERMISSION_FROM_READING
 import com.joshtalks.joshskills.constants.PERMISSION_FROM_READING_GRANTED
 import com.joshtalks.joshskills.constants.SHARE_VIDEO
@@ -41,19 +45,20 @@ import com.joshtalks.joshskills.repository.server.engage.Graph
 import com.joshtalks.joshskills.repository.server.introduction.DemoOnboardingData
 import com.joshtalks.joshskills.repository.server.voip.SpeakingTopic
 import com.joshtalks.joshskills.repository.service.NetworkRequestHelper
-import com.joshtalks.joshskills.ui.lesson.speaking.VideoPopupItem
+import com.joshtalks.joshskills.ui.lesson.speaking.spf_models.UserRating
+import com.joshtalks.joshskills.ui.lesson.speaking.spf_models.VideoPopupItem
+import com.joshtalks.joshskills.ui.referral.WHATSAPP_PACKAGE_STRING
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.callbar.CallBar
 import com.joshtalks.joshskills.util.AudioRecording
 import com.joshtalks.joshskills.util.DeepLinkUtil
 import com.joshtalks.joshskills.util.FileUploadService
 import com.joshtalks.joshskills.util.showAppropriateMsg
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.io.File
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 class LessonViewModel(application: Application) : AndroidViewModel(application) {
@@ -96,9 +101,14 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     val howToSpeakLiveData: MutableLiveData<Boolean> = MutableLiveData()
     val introVideoCompleteLiveData: MutableLiveData<Boolean> = MutableLiveData()
     val practicePartnerCallDurationLiveData: MutableLiveData<Long> = MutableLiveData()
+    var isInternetSpeedGood = ObservableInt(2)
+    var userRating = ObservableField<UserRating>()
     val voipState by lazy {
         CallBar()
     }
+    val filePath: MutableLiveData<String> = MutableLiveData()
+    val videoDownPath: MutableLiveData<String> = MutableLiveData()
+    val outputFile: MutableLiveData<String> = MutableLiveData()
 
     fun practicePartnerCallDurationFromNewScreen(time: Long) =
         practicePartnerCallDurationLiveData.postValue(time)
@@ -111,6 +121,11 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     val speakingABtestLiveData = MutableLiveData<ABTestCampaignData?>()
 
     val repository: ABTestRepository by lazy { ABTestRepository() }
+
+    init{
+        getRating()
+    }
+
     fun getWhatsappRemarketingCampaign(campaign: String) {
         viewModelScope.launch(Dispatchers.IO) {
             repository.getCampaignData(campaign)?.let { campaign ->
@@ -252,7 +267,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
 
     private suspend fun getQuestionsFromAPI(
         lessonId: Int,
-        isDemo: Boolean = false
+        isDemo: Boolean = false,
     ): List<LessonQuestion> {
         return withContext(viewModelScope.coroutineContext + Dispatchers.IO) {
             try {
@@ -470,7 +485,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
         status: QUESTION_STATUS,
         questionId: String?,
         isVideoPercentComplete: Boolean = false,
-        quizCorrectQuestionIds: ArrayList<Int> = ArrayList()
+        quizCorrectQuestionIds: ArrayList<Int> = ArrayList(),
     ) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -922,7 +937,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     fun shareVideoForAudio(path: String) {
-        DeepLinkUtil(context = AppObjectController.joshApplication)
+        DeepLinkUtil(AppObjectController.joshApplication)
             .setReferralCode(Mentor.getInstance().referralCode)
             .setReferralCampaign()
             .setListener(object : DeepLinkUtil.OnDeepLinkListener {
@@ -936,10 +951,61 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
             .build()
     }
 
+     fun getButtonVisibility(){
+         if(PrefManager.getIntValue(THRESHOLD_SPEED_IN_KBPS)==-1){
+             isInternetSpeedGood.set(2)
+             return
+         }
+        if(isInternetSpeedGood.get()!=0)
+         isInternetSpeedGood.set(0)
+
+        viewModelScope.launch(Dispatchers.IO) {
+            if(ConnectionDetails.getInternetSpeed()!= Speed.LOW){
+                isInternetSpeedGood.set(2)
+            }else{
+                isInternetSpeedGood.set(1)
+
+            }
+        }
+    }
+
+    fun recheckSpeed(v: View){
+        getButtonVisibility()
+    }
+
+    fun getRating()  {
+        val currentTime = Date().time
+        if(ifRatingFromApi(currentTime)) {
+            viewModelScope.launch(Dispatchers.IO)
+            {
+                try {
+                    val response = AppObjectController.chatNetworkService.getUserRating()
+                    if (response.isSuccessful && response.body() != null) {
+                        userRating.set(response.body())
+                        PrefManager.putPrefObject(RATING_OBJECT, response.body() as UserRating)
+                        PrefManager.put(RATING_TIMESTAMP, currentTime)
+                    }
+                } catch (ex: Throwable) {
+                    apiStatus.postValue(ApiCallStatus.FAILED)
+                    Timber.e(ex)
+                }
+            }
+        }else{
+            userRating.set(PrefManager.getRatingObject(RATING_OBJECT))
+        }
+    }
+
+    private fun ifRatingFromApi(currentTime :Long) : Boolean{
+        val previousTime: Long = PrefManager.getLongValue(RATING_TIMESTAMP,false)
+        val differ = currentTime - previousTime
+        return !(differ < 86400000 && differ > -86400000)
+    }
+
     fun inviteFriends(dynamicLink: String, path: String) {
         try {
             val destination = path
             val waIntent = Intent(Intent.ACTION_SEND)
+            waIntent.setPackage(WHATSAPP_PACKAGE_STRING)
             waIntent.type = "*/*"
             waIntent.putExtra(Intent.EXTRA_TEXT, dynamicLink)
             waIntent.putExtra(
@@ -952,6 +1018,67 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
             singleLiveEvent.value = message
         } catch (e: Exception) {
             e.printStackTrace()
+        }
+    }
+
+    fun showVideoOnFullScreen() {
+        message.what = OPEN_READING_SHARING_FULLSCREEN
+        singleLiveEvent.value = message
+    }
+
+    fun closeCurrentFragment(){
+        message.what = CLOSE_FULL_READING_FRAGMENT
+        singleLiveEvent.value = message
+    }
+
+    fun sendOutputToFullScreen(output: String) {
+        message.what = SEND_OUTPUT_FILE
+        message.obj = output
+        singleLiveEvent.value = message
+    }
+
+    fun submitButton(){
+        message.what = SUBMIT_BUTTON_CLICK
+        singleLiveEvent.value = message
+    }
+
+    fun cancelButton(){
+        message.what = CANCEL_BUTTON_CLICK
+        singleLiveEvent.value = message
+    }
+
+    fun showVideoView(){
+        message.what = SHOW_VIDEO_VIEW
+        singleLiveEvent.value = message
+    }
+
+    fun updatePracticeEngagement(requestEngage:RequestEngage) {
+        viewModelScope.launch {
+            val lessonQuestion = AppObjectController.appDatabase.lessonQuestionDao()
+                .getLessonQuestionById(requestEngage.questionId)
+            lessonQuestion?.let {
+                val emptyList = listOf<PracticeEngagement>(PracticeEngagement())
+                it.practiceEngagement = emptyList
+                it.status = QUESTION_STATUS.AT
+                it.practiceEngagement!!.get(0).duration = requestEngage.duration
+                it.practiceEngagement!!.get(0).localPath = requestEngage.localPath
+                AppObjectController.appDatabase.lessonQuestionDao()
+                    .updateQuestionObject(it)
+            }
+        }
+    }
+
+    fun saveReadingPracticeImpression(eventName: String,lessonId: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val requestData = hashMapOf(
+                    Pair("lesson_id",lessonId),
+                    Pair("event_name", eventName)
+                )
+                AppObjectController.commonNetworkService.saveReadingPracticeImpression(requestData)
+            } catch (ex: Exception) {
+                Timber.e(ex)
+            }
         }
     }
 }

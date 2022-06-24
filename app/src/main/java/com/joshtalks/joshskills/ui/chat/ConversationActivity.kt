@@ -168,6 +168,13 @@ class ConversationActivity :
             }
             activity.startActivity(intent)
         }
+
+        fun getConversationActivityIntent(activity: Activity, inboxEntity: InboxEntity) =
+            Intent(activity, ConversationActivity::class.java).apply {
+                putExtra(CHAT_ROOM_OBJECT, inboxEntity)
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            }
     }
 
     private var buttonClicked = true
@@ -374,6 +381,8 @@ class ConversationActivity :
             conversationBinding.freeTrialText.text = getString(R.string.free_trial_ended)
             conversationBinding.freeTrialExpiryLayout.visibility = VISIBLE
         }
+        if (inboxEntity.isCourseBought && inboxEntity.isCapsuleCourse)
+            PrefManager.removeKey(IS_FREE_TRIAL_ENDED)
     }
 
     private fun startTimer(startTimeInMilliSeconds: Long) {
@@ -1143,7 +1152,10 @@ class ConversationActivity :
                     conversationBinding.imgGroupChatBtn.visibility = VISIBLE
                     conversationBinding.imgFppBtn.visibility = VISIBLE
                     if (!PrefManager.getBoolValue(ONE_GROUP_REQUEST_SENT)) {
-                        PrefManager.put(ONE_GROUP_REQUEST_SENT, conversationViewModel.getClosedGroupCount() != 0)
+                        PrefManager.put(
+                            ONE_GROUP_REQUEST_SENT,
+                            conversationViewModel.getClosedGroupCount() != 0
+                        )
                         conversationBinding.ringingIcon.visibility = VISIBLE
                     }
                     if (PrefManager.getBoolValue(SHOULD_SHOW_AUTOSTART_POPUP, defValue = true)
@@ -1351,7 +1363,10 @@ class ConversationActivity :
     }
 
     private fun initScoreCardView(userData: UserProfileResponse) {
-        if (PrefManager.getBoolValue(HAS_SEEN_TEXT_VIEW_CLASS_ANIMATION) && !PrefManager.getBoolValue(HAS_SEEN_COHORT_BASE_COURSE_TOOLTIP) && inboxEntity.isCourseBought && inboxEntity.isCapsuleCourse) {
+        if (PrefManager.getBoolValue(HAS_SEEN_TEXT_VIEW_CLASS_ANIMATION) && !PrefManager.getBoolValue(
+                HAS_SEEN_COHORT_BASE_COURSE_TOOLTIP
+            ) && inboxEntity.isCourseBought && inboxEntity.isCapsuleCourse
+        ) {
             showCohortBaseCourse()
         }
         userData.isContainerVisible?.let { isLeaderBoardActive ->
@@ -1362,7 +1377,7 @@ class ConversationActivity :
                 conversationBinding.userPointContainer.visibility = VISIBLE
                 // showLeaderBoardTooltip()
                 if (!PrefManager.getBoolValue(HAS_SEEN_LEADERBOARD_ANIMATION)) {
-                    if (PrefManager.getBoolValue(HAS_SEEN_COHORT_BASE_COURSE_TOOLTIP)){
+                    if (PrefManager.getBoolValue(HAS_SEEN_COHORT_BASE_COURSE_TOOLTIP)) {
                         showLeaderBoardSpotlight()
                     }
                     else {
@@ -2487,10 +2502,13 @@ class ConversationActivity :
         conversationBinding.overlayView.visibility = INVISIBLE
         withContext(Dispatchers.Main) {
             conversationBinding.chatRv.scrollToPosition(conversationAdapter.getLastItemPosition())
-            val welcomeTextView = conversationBinding.chatRv.findViewHolderForAdapterPosition(conversationAdapter.getLastItemPosition()) ?: return@withContext
+            val welcomeTextView =
+                conversationBinding.chatRv.findViewHolderForAdapterPosition(conversationAdapter.getLastItemPosition())
+                    ?: return@withContext
             val STATUS_BAR_HEIGHT = getStatusBarHeight()
             conversationBinding.welcomeContainer.visibility = VISIBLE
-            val overlayImageView = conversationBinding.welcomeContainer.findViewById<ImageView>(R.id.welcome_item)
+            val overlayImageView =
+                conversationBinding.welcomeContainer.findViewById<ImageView>(R.id.welcome_item)
             val overlayItem = TooltipUtils.getOverlayItemFromView(welcomeTextView.itemView)
             conversationBinding.welcomeContainer.setOnClickListener {
                 conversationBinding.welcomeContainer.visibility = INVISIBLE

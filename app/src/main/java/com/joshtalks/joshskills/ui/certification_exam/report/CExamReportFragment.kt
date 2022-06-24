@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.ui.certification_exam.report
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +11,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.IS_FIRST_TIME_FLOW_CERTI
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.databinding.FragmentCexamReportBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.EmptyEventBus
@@ -87,17 +90,40 @@ class CExamReportFragment : Fragment() {
         id = certificateExamReport?.reportId
         url = certificateExamReport?.certificateURL?:EMPTY
         certificateExamReport?.run {
-            binding.chatRv.addView(ReportOverviewView1(this))
+            binding.chatRv.addView(ReportOverviewView1(this, viewModel.examType.value))
             binding.chatRv.addView(ReportOverviewView2(this, questionList))
             updateRvScrolling(true)
-            viewModel.certificationQuestionLiveData.value?.type?.let { ReportOverviewView1(this).checkExamType(it) }
         }
     }
+
+    /*override fun onStart() {
+        super.onStart()
+        if(PrefManager.getBoolValue(IS_FIRST_TIME_FLOW_CERTI, defValue = false)){
+            certificateExamReport?.run {
+                binding.chatRv.invalidate()
+                binding.chatRv.addView(ReportOverviewView1(this, viewModel.examType.value))
+                binding.chatRv.addView(ReportOverviewView2(this, questionList))
+                binding.chatRv.refresh()
+                updateRvScrolling(true)
+            }
+        }
+    }*/
 
     override fun onResume() {
         super.onResume()
         addObserver()
+        /*if(PrefManager.getBoolValue(IS_FIRST_TIME_FLOW_CERTI, defValue = false)){
+            PrefManager.put(IS_FIRST_TIME_FLOW_CERTI, true)
+            certificateExamReport?.run {
+                binding.chatRv.invalidate()
+                binding.chatRv.addView(ReportOverviewView1(this, viewModel.examType.value))
+                binding.chatRv.addView(ReportOverviewView2(this, questionList))
+                binding.chatRv.refresh()
+                updateRvScrolling(true)
+            }
+        }*/
     }
+
 
     override fun onPause() {
         super.onPause()
@@ -149,7 +175,7 @@ class CExamReportFragment : Fragment() {
 
     @SuppressLint("ClickableViewAccessibility")
     private fun updateRvScrolling(flag: Boolean) {
-        binding.chatRv.setOnTouchListener { _, _ -> flag }
+        binding.chatRv.suppressLayout(flag)
     }
 
     private fun showViewOnHint(type: QuestionReportType) {

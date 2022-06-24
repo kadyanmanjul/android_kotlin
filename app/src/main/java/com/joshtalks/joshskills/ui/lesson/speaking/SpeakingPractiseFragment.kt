@@ -1,7 +1,9 @@
 package com.joshtalks.joshskills.ui.lesson.speaking
 
 import android.animation.TimeAnimator
+import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Paint
 import android.graphics.drawable.ClipDrawable
@@ -139,7 +141,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         binding =
             DataBindingUtil.inflate(inflater, R.layout.speaking_practise_fragment, container, false)
@@ -156,6 +158,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         addObservers()
+//        binding.imgRecentCallsHistory.isVisible = PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID
         binding.markAsCorrect.setOnClickListener { speakingSectionComplete() }
     }
 
@@ -550,7 +553,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
 
                         override fun onPermissionRationaleShouldBeShown(
                             p0: PermissionRequest?,
-                            p1: PermissionToken?
+                            p1: PermissionToken?,
                         ) {
                             p1?.continuePermissionRequest()
                         }
@@ -695,7 +698,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
     private fun startPractise(
         favoriteUserCall: Boolean = false,
         isNewUserCall: Boolean = false,
-        isNewArch: Boolean = false
+        isNewArch: Boolean = false,
     ) {
         PrefManager.put(CALL_BTN_CLICKED, true)
         if (PermissionUtils.isCallingPermissionEnabled(requireContext())) {
@@ -745,7 +748,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
 
                 override fun onPermissionRationaleShouldBeShown(
                     permissions: MutableList<PermissionRequest>?,
-                    token: PermissionToken?
+                    token: PermissionToken?,
                 ) {
                     token?.continuePermissionRequest()
                 }
@@ -772,6 +775,24 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                 )
             }
         }
+    }
+
+    fun openNetworkDialog(v:View){
+        val dialog = AlertDialog.Builder(context)
+        dialog
+            .setMessage(getString(R.string.network_message))
+            .setPositiveButton("GOT IT")
+            { dialog, _ -> dialog.dismiss() }.show()
+    }
+
+    fun openRatingDialog(v:View){
+        val rating=7
+        val dialog = AlertDialog.Builder(context)
+        dialog
+            .setTitle(getString(R.string.rating_title,rating.toString()))
+            .setMessage(getString(R.string.rating_message))
+            .setPositiveButton("GOT IT")
+            { dialog, _ -> dialog.dismiss() }.show()
     }
 
     fun animateButton() {

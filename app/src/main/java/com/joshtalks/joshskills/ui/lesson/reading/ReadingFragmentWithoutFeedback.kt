@@ -20,6 +20,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.os.SystemClock
+import android.util.Log
 import android.view.*
 import android.view.View.*
 import android.view.animation.Animation
@@ -45,8 +46,7 @@ import com.google.android.exoplayer2.Player
 import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
-import com.joshtalks.joshskills.constants.PERMISSION_FROM_READING_GRANTED
-import com.joshtalks.joshskills.constants.SHARE_VIDEO
+import com.joshtalks.joshskills.constants.*
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.*
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
@@ -264,6 +264,16 @@ class ReadingFragmentWithoutFeedback :
         scaleAnimation = AnimationUtils.loadAnimation(requireContext(), R.anim.scale)
         addObserver()
         // showTooltip()
+        binding.mergedVideo.setOnPreparedListener { mediaPlayer ->
+            val videoRatio = mediaPlayer.videoWidth / mediaPlayer.videoHeight.toFloat()
+            val screenRatio = binding.mergedVideo.width / binding.mergedVideo.height.toFloat()
+            val scaleX = videoRatio / screenRatio
+            if (scaleX >= 1f) {
+                binding.mergedVideo.scaleX = scaleX
+            } else {
+                binding.mergedVideo.scaleY = 1f / scaleX
+            }
+        }
 
         binding.mergedVideo.setOnClickListener {
             if (binding.mergedVideo.isPlaying) {
@@ -274,6 +284,7 @@ class ReadingFragmentWithoutFeedback :
         binding.mergedVideo.setOnCompletionListener {
             binding.playBtn.visibility = VISIBLE
         }
+        binding.videoLayout.clipToOutline = true
         return binding.rootView
     }
 
@@ -289,6 +300,9 @@ class ReadingFragmentWithoutFeedback :
             when (it.what) {
                 PERMISSION_FROM_READING_GRANTED -> download()
                 SHARE_VIDEO -> inviteFriends(it.obj as Intent)
+                SUBMIT_BUTTON_CLICK -> submitPractise()
+                CANCEL_BUTTON_CLICK -> closeRecordedView()
+                SHOW_VIDEO_VIEW -> binding.practiseSubmitLayout.visibility = VISIBLE
             }
         }
     }
@@ -296,6 +310,7 @@ class ReadingFragmentWithoutFeedback :
     override fun onResume() {
         super.onResume()
         showRecordHintAnimation()
+        binding.mergedVideo.seekTo(5)
         subscribeRXBus()
         /*requireActivity().requestedOrientation = if (Build.VERSION.SDK_INT == 26) {
             ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
@@ -313,6 +328,11 @@ class ReadingFragmentWithoutFeedback :
             }
         } catch (ex: Exception) {
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        binding.mergedVideo.seekTo(5)
     }
 
     override fun onPause() {
@@ -781,7 +801,7 @@ class ReadingFragmentWithoutFeedback :
                         binding.videoLayout.visibility = VISIBLE
                         binding.mergedVideo.visibility = VISIBLE
                         binding.ivClose.visibility = GONE
-                        binding.btnShareVideo.visibility = VISIBLE
+                        binding.btnWhatsapp.visibility = VISIBLE
                         if (this.practiceEngagement?.get(0)?.localPath.isNullOrEmpty()) {
                             scope.launch {
                                 if (AppObjectController.appDatabase.chatDao()
@@ -803,8 +823,8 @@ class ReadingFragmentWithoutFeedback :
                         } else {
                             binding.mergedVideo.setVideoPath(this.practiceEngagement?.get(0)?.localPath)
                         }
-                        binding.btnShareVideo.setOnClickListener {
-                            viewModel.saveImpression(SHARED_READING_PRACTICE)
+                        binding.btnWhatsapp.setOnClickListener {
+                            viewModel.saveReadingPracticeImpression(READING_SHARED_WHATSAPP,lessonID.toString())
                             scope.launch {
                                 if (currentLessonQuestion?.practiceEngagement?.get(0)?.localPath.isNullOrEmpty()
                                         .not()
@@ -909,6 +929,9 @@ class ReadingFragmentWithoutFeedback :
             } else {
                 download()
             }
+        }
+        if(video.isNullOrEmpty()) {
+            binding.info.visibility = GONE
         }
     }
 
@@ -1049,10 +1072,10 @@ class ReadingFragmentWithoutFeedback :
         binding.continueBtn.visibility = VISIBLE
         if (currentLessonQuestion?.videoList?.getOrNull(0)?.video_url.isNullOrEmpty().not()) {
             binding.ivClose.visibility = GONE
-            binding.btnShareVideo.visibility = VISIBLE
-            binding.btnShareVideo.setOnClickListener {
-                viewModel.saveImpression(SHARED_READING_PRACTICE)
+            binding.btnWhatsapp.visibility = VISIBLE
+            binding.btnWhatsapp.setOnClickListener {
                 viewModel.shareVideoForAudio(outputFile)
+                viewModel.saveReadingPracticeImpression(READING_SHARED_WHATSAPP,lessonID.toString())
             }
         }
 
@@ -1156,7 +1179,7 @@ class ReadingFragmentWithoutFeedback :
         binding.subPractiseSubmitLayout.visibility = VISIBLE
         if (video.isNullOrEmpty().not()) {
             binding.mergedVideo.visibility = VISIBLE
-            binding.btnShareVideo.visibility = VISIBLE
+            binding.btnWhatsapp.visibility = VISIBLE
         } else {
             binding.audioListRv.visibility = VISIBLE
         }
@@ -1205,6 +1228,8 @@ class ReadingFragmentWithoutFeedback :
         if (video.isNullOrEmpty().not()) {
             observeNetwork()
             addVideoView()
+            viewModel.showVideoOnFullScreen()
+            binding.practiseSubmitLayout.visibility = GONE
         } else {
             binding.subPractiseSubmitLayout.visibility = VISIBLE
             binding.audioListRv.visibility = VISIBLE
@@ -1273,29 +1298,22 @@ class ReadingFragmentWithoutFeedback :
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
                     binding.rootView.requestDisallowInterceptTouchEvent(true)
-                    //AppObjectController.uiHandler.postAtFrontOfQueue {
                     binding.counterTv.visibility = VISIBLE
-                    //}
                     isAudioRecording = true
-                    //binding.recordingViewFrame.layoutTransition?.setAnimateParentHierarchy(false)
                     binding.recordingView.startAnimation(scaleAnimation)
-                    //binding.recordingViewFrame.layoutTransition?.setAnimateParentHierarchy(false)
+
                     pauseAllAudioAndUpdateViews()
                     binding.progressBarImageView.progress = 0
                     binding.practiseSeekbar.progress = 0
                     audioManager?.seekTo(0)
                     binding.mergedVideo.seekTo(0)
                     binding.videoPlayer.seekToStart()
-                    //PrefManager.put(HAS_SEEN_VOCAB_HAND_TOOLTIP,true)
                     requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                     appAnalytics?.addParam(AnalyticsEvent.AUDIO_RECORD.NAME, "Audio Recording")
-                    // appAnalytics?.create(AnalyticsEvent.AUDIO_RECORD.NAME).push()
                     binding.counterTv.base = SystemClock.elapsedRealtime()
                     startTime = System.currentTimeMillis()
                     binding.counterTv.start()
-                    val params =
-                        binding.counterTv.layoutParams as ViewGroup.MarginLayoutParams
-//                    params.topMargin = binding.rootView.scrollY
+                    val params = binding.counterTv.layoutParams as ViewGroup.MarginLayoutParams
                     viewModel.startRecord()
                     binding.audioPractiseHint.visibility = GONE
                     AppObjectController.uiHandler.postDelayed(longPressAnimationCallback, 600)
@@ -1308,9 +1326,7 @@ class ReadingFragmentWithoutFeedback :
                     binding.counterTv.stop()
                     viewModel.stopRecording()
                     binding.recordingView.clearAnimation()
-                    //AppObjectController.uiHandler.postAtFrontOfQueue {
                     binding.counterTv.visibility = GONE
-                    //}
                     binding.audioPractiseHint.visibility = VISIBLE
                     if (isAdded && activity != null)
                         requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -1321,15 +1337,15 @@ class ReadingFragmentWithoutFeedback :
                     if (timeDifference > 1) {
                         viewModel.recordFile?.let {
                             isAudioRecordDone = true
-
+//                            Log.e("Ayaaz","${currentLessonQuestion?.videoList?.get(0)?.video_url}")
+//                            if(!currentLessonQuestion?.videoList?.get(0)?.video_url.isNullOrEmpty())
+//                            viewModel.showVideoOnFullScreen()
                             if (File(outputFile).exists()) {
                                 File(outputFile).delete()
                             }
-                            if (android.os.Build.VERSION.SDK_INT >= 29) {
+                            if (Build.VERSION.SDK_INT >= 29) {
                                 if (isAdded) {
-                                    outputFile =
-                                        saveVideoQ(requireContext(), videoDownPath ?: EMPTY)
-                                            ?: EMPTY
+                                    outputFile = saveVideoQ(requireContext(), videoDownPath ?: EMPTY) ?: EMPTY
                                 }
                             } else {
                                 outputFile = getVideoFilePath()
@@ -1348,8 +1364,7 @@ class ReadingFragmentWithoutFeedback :
                                         binding.submitAnswerBtn,
                                         binding.submitAnswerBtn
                                     )
-                                },
-                                200
+                                }, 200
                             )
 
                             val duration = event.eventTime - event.downTime
@@ -1365,9 +1380,10 @@ class ReadingFragmentWithoutFeedback :
                                 if (isActive) {
                                     mutex.withLock {
                                         audioVideoMuxer()
-                                        requireActivity().runOnUiThread(Runnable {
+                                        requireActivity().runOnUiThread {
                                             binding.progressDialog.visibility = GONE
-                                        })
+                                            viewModel.sendOutputToFullScreen(outputFile)
+                                        }
                                     }
                                 }
                             }
@@ -1458,6 +1474,7 @@ class ReadingFragmentWithoutFeedback :
         } catch (e: Exception) {
             Timber.e(e)
         }
+
     }
 
     fun inviteFriends(waIntent: Intent) {
@@ -1670,7 +1687,9 @@ class ReadingFragmentWithoutFeedback :
                     )
                     AppObjectController.uiHandler.post {
                         if (video.isNullOrBlank().not()) {
-                            binding.btnShareVideo.visibility = VISIBLE
+                            binding.btnWhatsapp.visibility = VISIBLE
+                            binding.practiseSubmitLayout.visibility = VISIBLE
+                            binding.continueBtn.visibility = VISIBLE
                         }
                     }
                     MixPanelTracker.publishEvent(MixPanelEvent.READING_COMPLETED)
@@ -1709,6 +1728,8 @@ class ReadingFragmentWithoutFeedback :
                     // practiceViewModel.submitPractise(chatModel, requestEngage, engageType)
                     viewModel.getPointsForVocabAndReading(currentLessonQuestion!!.id)
                     viewModel.addTaskToService(requestEngage, PendingTask.READING_PRACTICE_OLD)
+                    //TODO : Jugaad ko hataana hai
+                    viewModel.updatePracticeEngagement(requestEngage)
                     currentLessonQuestion!!.status = QUESTION_STATUS.IP
                     delay(300)
                     AppObjectController.uiHandler.post {

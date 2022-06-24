@@ -186,6 +186,7 @@
     <string name="name_error_toast">పేరును ఖాళీగా ఉంచడం సాధ్యం కాదు!</string>
     <string name="please_enter_valid_number">దయచేసి సరైన మొబైల్ నంబర్‌ని నమోదు చేయండి</string>
     <string name="enter_valid_email_toast">దయచేసి సరైన ఇమెయిల్ ఐడిని నమోదు చేయండి</string>
+    <string name="enter_postal_address">దయచేసి సరైన పోస్టల్ చిరునామాను నమోదు చేయండి</string>
     <string name="missed_call_verify_message">మేము ధృవీకరణ కోసం మిస్డ్ కాల్‌ని ఉపయోగిస్తాము. దయచేసి ధృవీకరణను అనుమతించండి.</string>
     <string name="otp_verify_message">మీ మొబైల్ నంబర్‌ను ధృవీకరించడానికి 4 అంకెల OTP SMS ద్వారా పంపబడుతుంది</string>
     <string name="missed_call_label">మిస్డ్ కాల్ వెరిఫికేషన్</string>

@@ -4,12 +4,16 @@ import android.animation.ValueAnimator
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.graphics.Outline
+import android.graphics.PorterDuff
 import android.graphics.Rect
 import android.net.Uri
+import android.opengl.Visibility
 import android.os.Bundle
 import android.os.Handler
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewOutlineProvider
@@ -21,11 +25,15 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.content.res.AppCompatResources
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.databinding.BindingAdapter
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.commit
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -36,6 +44,8 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
+import com.joshtalks.joshskills.constants.CLOSE_FULL_READING_FRAGMENT
+import com.joshtalks.joshskills.constants.OPEN_READING_SHARING_FULLSCREEN
 import com.joshtalks.joshskills.constants.PERMISSION_FROM_READING
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.ApiCallStatus.*
@@ -63,8 +73,10 @@ import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_GRAMMAR_ANIMAT
 import com.joshtalks.joshskills.ui.lesson.grammar.GrammarFragment
 import com.joshtalks.joshskills.ui.lesson.lesson_completed.LessonCompletedActivity
 import com.joshtalks.joshskills.ui.lesson.reading.ReadingFragmentWithoutFeedback
+import com.joshtalks.joshskills.ui.lesson.reading.ReadingFullScreenFragment
 import com.joshtalks.joshskills.ui.lesson.room.ConversationRoomListingPubNubFragment
 import com.joshtalks.joshskills.ui.lesson.speaking.SpeakingPractiseFragment
+import com.joshtalks.joshskills.ui.lesson.speaking.spf_models.UserRating
 import com.joshtalks.joshskills.ui.lesson.vocabulary.VocabularyFragment
 import com.joshtalks.joshskills.ui.online_test.GrammarAnimation
 import com.joshtalks.joshskills.ui.online_test.GrammarOnlineTestFragment
@@ -77,6 +89,9 @@ import com.joshtalks.joshskills.ui.tooltip.JoshTooltip
 import com.joshtalks.joshskills.ui.video_player.IS_BATCH_CHANGED
 import com.joshtalks.joshskills.ui.video_player.LAST_LESSON_INTERVAL
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
+import com.joshtalks.joshskills.ui.voip.WebRtcService
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
+import com.joshtalks.joshskills.voip.constant.State
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -84,6 +99,8 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.fragment_chat_n_pay.*
+import kotlinx.android.synthetic.main.lesson_activity.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -98,6 +115,7 @@ const val ROOM_POSITION = 5
 const val DEFAULT_SPOTLIGHT_DELAY_IN_MS = 1300L
 const val INTRO_VIDEO_ID = "-1"
 private const val TAG = "LessonActivity"
+private const val LESSON_BACKSTACK = "LESSON_BACKSTACK"
 val STORAGE_GRAMMER_REQUEST_CODE = 3456
 private val STORAGE_READING_REQUEST_CODE = 3457
 
@@ -135,6 +153,10 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
     private var getLessonId = -1
     private var isIntroVideoCmpleted = false
     private var isTranslationDisabled: Int = 1
+    private lateinit var filePath: String
+    private lateinit var videoDownPath: String
+    private lateinit var outputFile: String
+
     private val adapter: LessonPagerAdapter by lazy {
         LessonPagerAdapter(
             supportFragmentManager,
@@ -177,15 +199,20 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        if (getVoipState() == State.IDLE && WebRtcService.isCallOnGoing.value == false)
+            viewModel.getButtonVisibility()
+
         binding = DataBindingUtil.setContentView(
             this,
             R.layout.lesson_activity
         )
         binding.viewbinding = this
-
         event.observe(this) {
             when (it.what) {
                 PERMISSION_FROM_READING -> requestStoragePermission(STORAGE_READING_REQUEST_CODE)
+                OPEN_READING_SHARING_FULLSCREEN -> openReadingFullScreen()
+                CLOSE_FULL_READING_FRAGMENT -> closeReadingFullScreen()
             }
         }
 
@@ -471,12 +498,12 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                     }
                 }
                 LessonSpotlightState.SPEAKING_SPOTLIGHT -> {
-                    binding.overlayLayout.visibility = View.VISIBLE
+//                    binding.overlayLayout.visibility = View.VISIBLE
                     binding.spotlightTabGrammar.visibility = View.INVISIBLE
-                    binding.spotlightTabSpeaking.visibility = View.VISIBLE
+//                    binding.spotlightTabSpeaking.visibility = View.VISIBLE
                     binding.spotlightTabVocab.visibility = View.INVISIBLE
                     binding.spotlightTabReading.visibility = View.INVISIBLE
-                    binding.lessonSpotlightTooltip.visibility = View.VISIBLE
+//                    binding.lessonSpotlightTooltip.visibility = View.VISIBLE
                     binding.lessonSpotlightTooltip.setTooltipText(
                         resources.getText(R.string.label_speaking_spotlight).toString()
                     )
@@ -755,6 +782,15 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                 }
             }
         }
+        viewModel.filePath.observe(this) {
+            filePath = it
+        }
+        viewModel.videoDownPath.observe(this) {
+            videoDownPath = it
+        }
+        viewModel.outputFile.observe(this) {
+            outputFile = it
+        }
     }
 
     private fun hideSpotlight() {
@@ -775,6 +811,15 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         viewModel.lessonSpotlightStateLiveData.postValue(null)
         viewModel.speakingSpotlightClickLiveData.postValue(Unit)
         if (introVideoControl) closeVideoPopUpUi()
+    }
+
+    private fun openReadingFullScreen() {
+        binding.containerReading.visibility = View.VISIBLE
+        supportFragmentManager.commit {
+            val fragment = ReadingFullScreenFragment()
+            addToBackStack(LESSON_BACKSTACK)
+            replace(R.id.container_reading, fragment, ReadingFullScreenFragment::class.java.simpleName)
+        }
     }
 
     private fun setUpNewGrammarLayouts(
@@ -1087,7 +1132,8 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         Handler().postDelayed(
             {
                 if (defaultSection != -1) {
-                    binding.lessonViewpager.currentItem = defaultSection
+                    binding.lessonViewpager.currentItem =
+                        if (defaultSection == GRAMMAR_POSITION) GRAMMAR_POSITION else defaultSection - isTranslationDisabled
                 } else {
                     openIncompleteTab(arrayFragment.size - 1)
                 }
@@ -1365,6 +1411,10 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
             binding.overlayTooltipLayout.isVisible -> showVideoToolTip(false)
             binding.videoPopup.isVisible -> closeVideoPopUpUi()
             binding.overlayLayout.isVisible -> hideSpotlight()
+            binding.containerReading.isVisible -> {
+                closeReadingFullScreen()
+                viewModel.showVideoView()
+            }
             else -> {
                 val resultIntent = Intent()
                 viewModel.lessonLiveData.value?.let {
@@ -1579,5 +1629,24 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                     }
                 )
         )
+    }
+    private fun closeReadingFullScreen(){
+        supportFragmentManager.popBackStackImmediate()
+        container_reading.visibility = View.GONE
+    }
+}
+
+@BindingAdapter("setRatingText")
+fun AppCompatTextView.ratingText(rating:UserRating?){
+    Log.d(TAG, "ratingText: $rating")
+    if(rating!=null) {
+        if (rating.rating.toInt() == -1 || rating.rating.isNaN()) {
+            this.visibility = View.GONE
+        } else {
+            this.visibility = View.VISIBLE
+            this.background.setColorFilter(Color.parseColor(rating.bgColor), PorterDuff.Mode.SRC_ATOP)
+            this.setTextColor(Color.parseColor(rating.color))
+            this.text = "Your Rating: ${rating.rating.toString()}"
+        }
     }
 }

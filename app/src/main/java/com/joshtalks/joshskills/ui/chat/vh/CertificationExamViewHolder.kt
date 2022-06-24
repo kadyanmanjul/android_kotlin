@@ -106,7 +106,7 @@ class CertificationExamViewHolder(view: View, userId: String) :
             getmarks = marks.toString()
             tvTitle.text = HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_LEGACY)
             when (examStatus) {
-                CExamStatus.PASSED -> { //change for testing
+                CExamStatus.PASSED -> {
                     tvTitle.setTextColor(ContextCompat.getColor(getAppContext(), R.color.white))
 
                     tvMarks.text = getAppContext().getString(R.string.cexam_marks, marks.toInt())
@@ -129,7 +129,7 @@ class CertificationExamViewHolder(view: View, userId: String) :
                     messageView.background = getAttemptedGradientDrawable()
                     subRootView.setCardBackgroundColor(Color.parseColor("#17C95A"))
                 }
-                CExamStatus.ATTEMPTED -> { //change
+                CExamStatus.ATTEMPTED -> {
                     tvMarks.text = getAppContext().getString(R.string.cexam_marks, marks.toInt())
                     tvMarks.visibility = View.VISIBLE
 

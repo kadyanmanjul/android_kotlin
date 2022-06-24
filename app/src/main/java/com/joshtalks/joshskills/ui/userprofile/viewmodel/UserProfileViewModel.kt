@@ -1,9 +1,9 @@
 package com.joshtalks.joshskills.ui.userprofile.viewmodel
 
 import android.app.Application
-import android.os.Message
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Message
 import android.view.View
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
@@ -16,20 +16,11 @@ import com.joshtalks.joshskills.constants.COURSE_LIST_DATA
 import com.joshtalks.joshskills.constants.INVITE_FRIENDS_METHOD
 import com.joshtalks.joshskills.constants.MY_GROUP_LIST_DATA
 import com.joshtalks.joshskills.constants.ON_BACK_PRESS_PROFILE
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.ApiCallStatus
-import com.joshtalks.joshskills.core.JoshApplication
-import com.joshtalks.joshskills.core.DD_MM_YYYY
-import com.joshtalks.joshskills.core.DATE_FORMATTER
-import com.joshtalks.joshskills.core.showToast
-import com.joshtalks.joshskills.core.Utils
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.IS_PROFILE_FEATURE_ACTIVE
-import com.joshtalks.joshskills.core.USER_SCORE
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.GoalKeys
+import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.analytics.ParamKeys
@@ -40,37 +31,20 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
 import com.joshtalks.joshskills.repository.server.AnimatedLeaderBoardResponse
-import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
 import com.joshtalks.joshskills.ui.userprofile.adapters.EnrolledCoursesListAdapter
 import com.joshtalks.joshskills.ui.userprofile.adapters.MyGroupsListAdapter
-import com.joshtalks.joshskills.ui.userprofile.models.UserProfileResponse
-import com.joshtalks.joshskills.ui.userprofile.models.PreviousProfilePictures
-import com.joshtalks.joshskills.ui.userprofile.models.FppDetails
-import com.joshtalks.joshskills.ui.userprofile.models.AwardCategory
-import com.joshtalks.joshskills.ui.userprofile.models.UserProfileSectionResponse
-import com.joshtalks.joshskills.ui.userprofile.models.FppRequest
-import com.joshtalks.joshskills.ui.userprofile.models.GroupsList
-import com.joshtalks.joshskills.ui.userprofile.models.EnrolledCoursesList
-import com.joshtalks.joshskills.ui.userprofile.models.UpdateProfilePayload
-import com.joshtalks.joshskills.ui.userprofile.models.CourseEnrolled
-import com.joshtalks.joshskills.ui.userprofile.models.GroupInfo
+import com.joshtalks.joshskills.ui.userprofile.models.*
 import com.joshtalks.joshskills.ui.userprofile.repository.UserProfileRepo
-import com.joshtalks.joshskills.util.DeepLinkUtil
 import com.joshtalks.joshskills.ui.voip.favorite.FavoriteCallerRepository
+import com.joshtalks.joshskills.util.DeepLinkUtil
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import id.zelory.compressor.Compressor
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.async
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 
 const val WHATSAPP_PACKAGE_STRING = "com.whatsapp"
 

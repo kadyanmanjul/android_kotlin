@@ -1,6 +1,8 @@
 package com.joshtalks.joshskills.ui.voip.new_arch.ui.views
 
 import android.Manifest
+import android.app.AlertDialog
+import android.content.Intent
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -17,6 +19,9 @@ import com.joshtalks.joshskills.base.constants.INTENT_DATA_INCOMING_CALL_ID
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_TOPIC_ID
 import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.core.PermissionUtils.isCallingPermissionEnabled
+import com.joshtalks.joshskills.base.constants.*
+
+import com.joshtalks.joshskills.core.PermissionUtils.isCallingPermissionEnabled
 import com.joshtalks.joshskills.databinding.ActivityVoiceCallBinding
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.VoiceCallViewModel
 import com.joshtalks.joshskills.voip.Utils.Companion.onMultipleBackPress
@@ -30,8 +35,8 @@ private const val TAG = "VoiceCallActivity"
 
 class VoiceCallActivity : BaseActivity() {
     private val backPressMutex = Mutex(false)
+    var recordingPermissionAlert: AlertDialog? = null
     private var isServiceBounded = false
-
     private val voiceCallBinding by lazy<ActivityVoiceCallBinding> {
         DataBindingUtil.setContentView(this, R.layout.activity_voice_call)
     }
@@ -154,7 +159,6 @@ class VoiceCallActivity : BaseActivity() {
             addSearchingUserFragment()
         }
     }
-
 
     override fun initViewState() {
         event.observe(this) {

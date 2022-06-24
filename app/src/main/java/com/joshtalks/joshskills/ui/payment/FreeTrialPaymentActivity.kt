@@ -12,7 +12,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -38,7 +37,6 @@ import com.joshtalks.joshskills.core.countdowntimer.CountdownTimerBack
 import com.joshtalks.joshskills.databinding.ActivityFreeTrialPaymentBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.PromoCodeSubmitEventBus
-import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.OrderDetailResponse
 import com.joshtalks.joshskills.track.CONVERSATION_ID
@@ -850,6 +848,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                                 + PrefManager.getStringValue(FREE_TRIAL_TEST_ID))
                     if (testId == freeTrialTestId) {
                         PrefManager.put(IS_COURSE_BOUGHT, true)
+                        PrefManager.removeKey(IS_FREE_TRIAL_ENDED)
                     }
                     // isBackPressDisabled = true
                     razorpayOrderId.verifyPayment()
@@ -927,6 +926,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
 
         if (testId == freeTrialTestId) {
             PrefManager.put(IS_COURSE_BOUGHT, true)
+            PrefManager.removeKey(IS_FREE_TRIAL_ENDED)
 
             if(isEnglishCardTapped && PrefManager.getBoolValue(IS_ENGLISH_SYLLABUS_PDF_OPENED)){
                 viewModel.saveImpression(SYLLABUS_OPENED_AND_ENGLISH_COURSE_BOUGHT)

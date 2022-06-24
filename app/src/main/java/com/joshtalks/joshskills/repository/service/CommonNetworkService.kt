@@ -295,7 +295,7 @@ interface CommonNetworkService {
     suspend fun saveCertificateImpression(@Body params: Map<String, String>): Response<Unit>
 
     @GET("$DIR/certificateexam/get_exam_type_from_id/")
-    suspend fun getCertificateExamType(@Query("exam_id") params: String): Map<String, String>
+    suspend fun getCertificateExamType(@Query("exam_id") params: String): Response<Map<String, String>>
 
     @PATCH("$DIR/impression/user_profile_section_impression/")
     suspend fun engageUserProfileSectionTime(@Body params: Map<String, String>): Any
@@ -400,4 +400,7 @@ interface CommonNetworkService {
 
     @POST("$DIR/impression/track_broadcast_event/")
     suspend fun saveBroadcastEvent(@Body params: BroadCastEvent): Response<Unit>
+
+    @POST("$DIR/impression/track_reading_practice_impression/")
+    suspend fun saveReadingPracticeImpression(@Body params: Map<String, String>): Response<Void>
 }

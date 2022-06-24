@@ -78,6 +78,27 @@
                     app:layout_constraintTop_toBottomOf="@+id/text_view_1" />
 
                 <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/rating_view"
+                    setRatingText="@{vm.userRating}"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_14sdp"
+                    android:background="@drawable/rounded_rectangle_attach"
+                    android:backgroundTint="#ECF4FD"
+                    android:paddingHorizontal="@dimen/_6sdp"
+                    android:paddingVertical="@dimen/_2sdp"
+                    android:gravity="start|center"
+                    android:padding="@dimen/_3ssp"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Semi_Bold"
+                    android:textSize="@dimen/_12ssp"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/text_view_2"
+                    tools:visibility="visible"
+                    tools:text="Your rating:9"/>
+
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tv_today_topic"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -90,7 +111,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/text_view_2"
+                    app:layout_constraintTop_toBottomOf="@+id/rating_view"
                     tools:text="Geeting with New Members" />
 
                 <com.mikhaellopez.circularprogressbar.CircularProgressBar
@@ -316,14 +337,139 @@
                     app:layout_constraintTop_toBottomOf="@+id/txt_calls_left"
                     tools:visibility="visible" />
 
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
+                <com.airbnb.lottie.LottieAnimationView
+                    android:id="@+id/network_progress_bar"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:paddingHorizontal="@dimen/_20sdp"
+                    android:visibility="@{vm.isInternetSpeedGood == 0  ? View.VISIBLE : View.GONE}"
+                    app:layout_constraintBottom_toTopOf="@id/btn_continue"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/txt_label_become_senior_student"
+                    app:layout_constraintVertical_bias="0.356"
+                    app:lottie_autoPlay="true"
+                    app:lottie_fileName="lottie/internet_progress_bar.json"
+                    app:lottie_imageAssetsFolder="lottie"
+                    app:lottie_loop="true" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/progress_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_1sdp"
+                    android:gravity="center"
+                    android:paddingHorizontal="@dimen/_16sdp"
+                    android:visibility="@{vm.isInternetSpeedGood == 0  ? View.VISIBLE : View.GONE}"
+                    android:text="@string/progress_network_text"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Title_Message"
+                    app:layout_constraintBottom_toTopOf="@id/btn_continue"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/network_progress_bar"
+                    android:textColor="@color/black"
+                    android:layout_marginBottom="@dimen/_25sdp"
+                    tools:text="Checking your Internet Connection" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/network_container"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/_24sdp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="@dimen/_40sdp"
+                    android:background="@drawable/rounded_rectangle_attach"
+                    android:backgroundTint="#ECF4FD"
+                    android:paddingHorizontal="@dimen/_8sdp"
+                    android:paddingVertical="@dimen/_12sdp"
+                    android:paddingRight="@dimen/_20sdp"
+                    android:visibility="@{vm.isInternetSpeedGood == 1  ? View.VISIBLE : View.GONE}"
+                    app:layout_constraintBottom_toTopOf="@id/btn_continue"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/txt_label_become_senior_student"
-                    app:layout_constraintVertical_bias="1">
+                    tools:visibility="gone">
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/network_tv"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start|center"
+                        android:layout_marginHorizontal="@dimen/_10sdp"
+                        android:gravity="center"
+                        android:text="@string/network_tv"
+                        android:textAllCaps="false"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/_14ssp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/network_sub_tv"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start|center"
+                        android:layout_marginHorizontal="@dimen/_20sdp"
+                        android:layout_marginStart="4dp"
+                        android:layout_marginTop="8dp"
+                        android:gravity="center"
+                        android:onClick="@{handler::openNetworkDialog}"
+                        android:text="@string/network_sub_text"
+                        android:textAllCaps="false"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="@dimen/_12ssp"
+                        android:visibility="visible"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/network_tv" />
+
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/recheck_btn"
+                        style="@style/Widget.MaterialComponents.Button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginHorizontal="@dimen/_40sdp"
+                        android:layout_marginTop="12dp"
+                        android:backgroundTint="@color/white"
+                        android:drawableLeft="@drawable/ic_reload"
+                        android:drawablePadding="@dimen/_12ssp"
+                        android:gravity="center"
+                        android:insetTop="0dp"
+                        android:onClick="@{vm::recheckSpeed}"
+                        android:insetBottom="0dp"
+                        android:paddingVertical="@dimen/_14sdp"
+                        android:text="@string/recheck_text"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.ButtonSemiBold"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="@dimen/_12ssp"
+                        app:cornerRadius="@dimen/_36sdp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.476"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/network_sub_tv"
+                        app:rippleColor="@color/white"
+                        tools:visibility="visible" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/btn_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/_7sdp"
+                    android:visibility="@{vm.isInternetSpeedGood == 2  ? View.VISIBLE : View.GONE}"
+                    app:layout_constraintBottom_toTopOf="@id/btn_continue"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/txt_label_become_senior_student"
+                    app:layout_constraintVertical_bias="1"
+                    tools:visibility="gone">
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_new_student"
@@ -440,7 +586,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:layout_marginTop="@dimen/_7sdp"
+                        android:layout_marginTop="@dimen/_14sdp"
                         android:layout_marginBottom="@dimen/_7sdp"
                         android:backgroundTint="@color/colorAccent"
                         android:gravity="center"
@@ -452,62 +598,58 @@
                         android:textColor="@color/white"
                         android:textSize="@dimen/_12ssp"
                         app:cornerRadius="@dimen/_36sdp"
-                        app:layout_constraintBottom_toTopOf="@+id/btn_continue"
+                        app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/btn_invite_friend"
                         app:layout_constraintWidth_default="percent"
                         app:layout_constraintWidth_percent="0.7"
                         app:rippleColor="@color/white"
-                        tools:visibility="visible"
-                        />
-
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btn_continue"
-                        style="@style/Widget.MaterialComponents.Button"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.ButtonSemiBold"
-                        android:textColor="@color/white"
-                        android:textSize="@dimen/_12ssp"
-                        app:cornerRadius="@dimen/_36sdp"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginTop="@dimen/_7sdp"
-                        android:layout_marginBottom="@dimen/_7sdp"
-                        android:backgroundTint="@color/colorAccent"
-                        android:gravity="center"
-                        android:insetTop="0dp"
-                        android:insetBottom="0dp"
-                        android:paddingVertical="@dimen/_14sdp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_bias="0.5"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/btnStartTrialText"
-                        app:layout_constraintWidth_default="percent"
-                        app:layout_constraintWidth_percent="0.7"
-                        app:rippleColor="@color/white"
                         tools:visibility="visible" />
-
-                    <com.google.android.material.textview.MaterialTextView
-                        android:id="@+id/btn_continue_text"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:elevation="@dimen/_2sdp"
-                        android:gravity="center"
-                        android:text="@string/continue_label"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.ButtonSemiBold"
-                        android:textColor="@color/white"
-                        android:textSize="@dimen/_12ssp"
-                        app:layout_constraintBottom_toBottomOf="@id/btn_continue"
-                        app:layout_constraintEnd_toEndOf="@id/btn_continue"
-                        app:layout_constraintStart_toStartOf="@id/btn_continue"
-                        app:layout_constraintTop_toTopOf="@id/btn_continue" />
-
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_continue"
+                    style="@style/Widget.MaterialComponents.Button"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="@dimen/_7sdp"
+                    android:layout_marginBottom="@dimen/_7sdp"
+                    android:backgroundTint="@color/colorAccent"
+                    android:gravity="center"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:paddingVertical="@dimen/_14sdp"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.ButtonSemiBold"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_12ssp"
+                    app:cornerRadius="@dimen/_36sdp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/btn_container"
+                    app:layout_constraintWidth_default="percent"
+                    app:layout_constraintWidth_percent="0.7"
+                    app:rippleColor="@color/white"
+                    tools:visibility="visible" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/btn_continue_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:elevation="@dimen/_2sdp"
+                    android:gravity="center"
+                    android:text="@string/continue_label"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.ButtonSemiBold"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_12ssp"
+                    app:layout_constraintBottom_toBottomOf="@id/btn_continue"
+                    app:layout_constraintEnd_toEndOf="@id/btn_continue"
+                    app:layout_constraintStart_toStartOf="@id/btn_continue"
+                    app:layout_constraintTop_toTopOf="@id/btn_continue" />
 
                 <androidx.constraintlayout.widget.Group
                     android:id="@+id/group_two"

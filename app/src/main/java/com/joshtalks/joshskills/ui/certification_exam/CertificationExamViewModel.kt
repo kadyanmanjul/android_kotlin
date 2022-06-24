@@ -1,15 +1,12 @@
 package com.joshtalks.joshskills.ui.certification_exam
 
 import android.app.Application
-import android.util.Log
+import androidx.databinding.ObservableField
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.joshtalks.joshskills.core.ApiCallStatus
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.JoshApplication
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.repository.local.DatabaseUtils
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.certification_exam.Answer
@@ -23,7 +20,6 @@ import com.joshtalks.joshskills.ui.certification_exam.constants.PREV_RESULT
 import com.joshtalks.joshskills.ui.certification_exam.constants.START_EXAM
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
@@ -45,7 +41,15 @@ class CertificationExamViewModel(application: Application) : AndroidViewModel(ap
         MutableLiveData()
     val isUserSubmitExam: MutableLiveData<Boolean> = MutableLiveData()
     var isSAnswerUiShow: Boolean = false
-    var certificateExamId:Int ?=null
+    var certificateExamId: Int? = null
+    var examType: MutableLiveData<String> = MutableLiveData()
+    var certiShareHeadingText = ObservableField(EMPTY)
+    var btnWhatsappVisibility = ObservableField(true)
+    var btnFacebookVisibility = ObservableField(true)
+    var btnInstaVisibility = ObservableField(true)
+    var btnLinkedInVisibility = ObservableField(true)
+    var btnDownloadVisibility = ObservableField(true)
+    var progressBarVisibility = ObservableField(false)
 
     fun startExam() {
         saveImpression(START_EXAM)
@@ -107,10 +111,9 @@ class CertificationExamViewModel(application: Application) : AndroidViewModel(ap
     fun submitExam(certificateExamId: Int, obj: CertificationQuestionModel) {
         viewModelScope.launch(Dispatchers.IO) {
             saveImpression(FINISH_EXAM)
-            val request = getExamSubmitRequestObject(certificateExamId, obj)
             try {
-                val responseObj =
-                    AppObjectController.commonNetworkService.submitExam(request)
+                val request = getExamSubmitRequestObject(certificateExamId, obj)
+                val responseObj = AppObjectController.commonNetworkService.submitExam(request)
                 if (responseObj.isSuccessful) {
                     DatabaseUtils.getCExamDetails(
                         conversationId = conversationId,
@@ -131,8 +134,7 @@ class CertificationExamViewModel(application: Application) : AndroidViewModel(ap
         certificateExamId: Int,
         obj: CertificationQuestionModel
     ): RequestSubmitCertificateExam {
-        val userSelectedAnswerList: ArrayList<RequestSubmitAnswer> =
-            ArrayList(obj.questions.size)
+        val userSelectedAnswerList: ArrayList<RequestSubmitAnswer> = ArrayList(obj.questions.size)
         var userSelectedAnswer: RequestSubmitAnswer
 
         obj.questions.forEach {
@@ -146,11 +148,11 @@ class CertificationExamViewModel(application: Application) : AndroidViewModel(ap
             }
         }
 
-        val request = RequestSubmitCertificateExam()
-        request.attemptNo = obj.attemptCount + 1
-        request.certificateExamId = certificateExamId
-        request.answers = userSelectedAnswerList
-        return request
+        return RequestSubmitCertificateExam(
+            certificateExamId,
+            obj.attemptCount + 1,
+            answers = userSelectedAnswerList
+        )
     }
 
     private fun isUserGiveCorrectAnswer(userSelectedOption: Int, answers: List<Answer>): Boolean {
@@ -160,8 +162,7 @@ class CertificationExamViewModel(application: Application) : AndroidViewModel(ap
     fun getUserAllExamReports(certificateExamId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val resp =
-                    AppObjectController.commonNetworkService.getExamReports(certificateExamId)
+                val resp = AppObjectController.commonNetworkService.getExamReports(certificateExamId)
                 apiStatus.postValue(ApiCallStatus.SUCCESS)
                 examReportLiveData.postValue(resp)
             } catch (ex: Throwable) {
@@ -193,8 +194,8 @@ class CertificationExamViewModel(application: Application) : AndroidViewModel(ap
             try {
                 val resp =
                     AppObjectController.commonNetworkService.submitUserDetailForCertificate(certificationUserDetail)
-                //certificateUrl.emit(resp.getOrDefault("pdf", "")) img
-                certificateUrl.emit(resp.getOrDefault("certificate_url", ""))
+                //certificateUrl.emit(resp.getOrDefault("pdf", ""))
+                certificateUrl.emit(resp.getOrDefault("img", ""))
             } catch (ex: Throwable) {
                 ex.showAppropriateMsg()
                 apiStatus.postValue(ApiCallStatus.FAILED)
@@ -206,33 +207,28 @@ class CertificationExamViewModel(application: Application) : AndroidViewModel(ap
     fun saveImpression(eventName: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val response = async {
-                    AppObjectController.commonNetworkService.getCertificateExamType(certificateExamId.toString())
-                }.await()
-                val examType = response.getOrDefault("exam_type", "")
-
                 val requestData = hashMapOf(
                     Pair("mentor_id", Mentor.getInstance().getId()),
                     Pair("event_name", eventName),
-                    Pair("exam_type", examType)
+                    Pair("exam_type", examType.value ?: certificationQuestionLiveData.value?.type ?: EMPTY)
                 )
-                val response2 = async { AppObjectController.commonNetworkService.saveCertificateImpression(requestData)}.await()
+                AppObjectController.commonNetworkService.saveCertificateImpression(requestData)
             } catch (ex: Exception) {
                 Timber.e(ex)
             }
         }
     }
 
-    fun typeOfExam(exam_id:String):String{
-        var examType=""
-        viewModelScope.launch(Dispatchers.IO) {
+    fun typeOfExam() {
+        viewModelScope.launch{
             try {
-                val response = async {AppObjectController.commonNetworkService.getCertificateExamType(exam_id)}.await()
-                examType = response.getOrDefault("exam_type", "")
-            }catch (e:Exception){
+                certificateExamId?.let {
+                    val response = AppObjectController.commonNetworkService.getCertificateExamType(it.toString())
+                    examType.postValue(response.body()?.get("exam_type"))
+                }
+            } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
-        return examType
     }
 }

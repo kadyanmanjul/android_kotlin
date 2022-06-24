@@ -12,18 +12,18 @@ import android.os.Environment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.webkit.URLUtil
 import android.widget.Toast
-import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.databinding.FragmentCertificateShareBinding
+import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.certification_exam.CertificationExamViewModel
 import com.joshtalks.joshskills.ui.certification_exam.constants.*
+import com.joshtalks.joshskills.util.DeepLinkUtil
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -31,11 +31,6 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.moengage.core.internal.utils.getSystemService
 import kotlin.properties.Delegates
 
-private const val PKG_AFTER_COM_WHATSAPP ="whatsapp"
-private const val PKG_AFTER_COM_FACEBOOK ="facebook.android"
-private const val PKG_AFTER_COM_LINKEDIN ="linkedin.android"
-private const val PKG_AFTER_COM_INSTA ="instagram.android"
-private const val NULL ="null"
 class CertificateShareFragment : CoreJoshFragment() {
 
     private lateinit var binding: FragmentCertificateShareBinding
@@ -46,98 +41,128 @@ class CertificateShareFragment : CoreJoshFragment() {
     private var packageName =  NULL
     private var downloadId by Delegates.notNull<Long>()
     private var message = ""
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         arguments?.let {
             url = it.getString(CERTIFICATE_URL, EMPTY)
+            viewModel.certificateExamId = it.getInt(CERTIFICATE_EXAM_ID)
         }
-
-        viewModel.certificationQuestionLiveData.observe(requireActivity()){
-
-        }
+        observer()
         requireActivity().registerReceiver(onComplete, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_certificate_share, container, false)
         binding.lifecycleOwner = this
-        binding.handler = this
-        binding.txtYouHaveEarned.visibility = View.GONE
-        viewModel.certificateExamId = arguments?.getInt(CERTIFICATE_EXAM_ID)
-        when (viewModel.certificationQuestionLiveData.value?.type){
-            EXAM_TYPE_BEGINNER->{
-                PrefManager.put(IS_CERTIFICATE_GENERATED_BEGINNER, false)
-            }
-            EXAM_TYPE_INTERMEDIATE->{
-                PrefManager.put(IS_CERTIFICATE_GENERATED_INTERMEDIATE, false)
-            }
-            EXAM_TYPE_ADVANCED->{
-                PrefManager.put(IS_CERTIFICATE_GENERATED_ADVANCED, false)
-            }
+        binding.vm = viewModel
+        PrefManager.put(IS_FIRST_TIME_FLOW_CERTI, true)
+        viewModel.typeOfExam()
+
+        if(url.isEmpty()){
+            showToast("Oops! something went wrong")
         }
+
         Glide.with(binding.imgCertificate.context).load(url)
             .into(binding.imgCertificate)
 
         if (PrefManager.getBoolValue(IS_FIRST_TIME_CERTIFICATE, defValue = true)) {
-            with(binding) {
-                if (isPackageInstalled(PACKAGE_NAME_WHATSAPP)){
-                    btnShareDownload.visibility = View.GONE
-                    btnShareWhatsapp.visibility = View.VISIBLE
-                }
-                else{
-                    btnShareWhatsapp.visibility = View.GONE
-                    btnShareDownload.visibility = View.VISIBLE
-                }
-                btnShareFacebook.visibility = View.GONE
-                btnShareInsta.visibility = View.GONE
-                btnShareLinkedIn.visibility = View.GONE
+            if (isPackageInstalled(PACKAGE_NAME_WHATSAPP)){
+                viewModel.btnDownloadVisibility.set(false)
+                viewModel.btnWhatsappVisibility.set(true)
             }
+            else{
+                viewModel.btnDownloadVisibility.set(true)
+                viewModel.btnWhatsappVisibility.set(false)
+            }
+            viewModel.btnLinkedInVisibility.set(false)
+            viewModel.btnFacebookVisibility.set(false)
+            viewModel.btnInstaVisibility.set(false)
             PrefManager.put(IS_FIRST_TIME_CERTIFICATE, false)
         } else {
-            with(binding) {
-                btnShareDownload.isVisible = true
-                btnShareWhatsapp.isVisible = isPackageInstalled(PACKAGE_NAME_WHATSAPP)
-                btnShareFacebook.isVisible = isPackageInstalled(PACKAGE_NAME_FACEBOOK)
-                btnShareInsta.isVisible = isPackageInstalled(PACKAGE_NAME_INSTA)
-                btnShareLinkedIn.isVisible = isPackageInstalled(PACKAGE_NAME_LINKEDIN)
-            }
+            viewModel.btnDownloadVisibility.set(true)
+            viewModel.btnWhatsappVisibility.set(isPackageInstalled(PACKAGE_NAME_WHATSAPP))
+            viewModel.btnFacebookVisibility.set(isPackageInstalled(PACKAGE_NAME_FACEBOOK))
+            viewModel.btnInstaVisibility.set(isPackageInstalled(PACKAGE_NAME_INSTA))
+            viewModel.btnLinkedInVisibility.set(isPackageInstalled(PACKAGE_NAME_LINKEDIN))
         }
-        binding.txtCongratulations.text = "Congratulations, ${User.getInstance().firstName}!"
+        viewModel.certiShareHeadingText.set("Congratulations, ${User.getInstance().firstName}!")
+
 
         binding.btnShareWhatsapp.setOnClickListener {
-            packageName = PKG_AFTER_COM_WHATSAPP
-            binding.progressBar2.visibility = View.VISIBLE
-            downloadImage(url)
-            viewModel.saveImpression(CERTIFICATE_SHARED_WHATSAPP)
+            if (Utils.isInternetAvailable()){
+                packageName = PKG_AFTER_COM_WHATSAPP
+                viewModel.progressBarVisibility.set(true)
+                downloadImage(url)
+                viewModel.saveImpression(CERTIFICATE_SHARED_WHATSAPP)
+            }
+            else {
+                showToast("No Internet Available")
+            }
         }
 
         binding.btnShareFacebook.setOnClickListener {
-            packageName = PKG_AFTER_COM_FACEBOOK
-            binding.progressBar2.visibility = View.VISIBLE
-            downloadImage(url)
-            viewModel.saveImpression(CERTIFICATE_SHARED_FB)
+            if (Utils.isInternetAvailable()){
+                packageName = PKG_AFTER_COM_FACEBOOK
+                viewModel.progressBarVisibility.set(true)
+                downloadImage(url)
+                viewModel.saveImpression(CERTIFICATE_SHARED_FB)
+            }
+            else {
+                showToast("No Internet Available")
+            }
         }
 
         binding.btnShareInsta.setOnClickListener {
-            packageName = PKG_AFTER_COM_INSTA
-            binding.progressBar2.visibility = View.VISIBLE
-            downloadImage(url)
-            viewModel.saveImpression(CERTIFICATE_SHARED_INSTA)
+            if (Utils.isInternetAvailable()){
+                packageName = PKG_AFTER_COM_INSTA
+                viewModel.progressBarVisibility.set(true)
+                downloadImage(url)
+                viewModel.saveImpression(CERTIFICATE_SHARED_INSTA)
+            }else {
+                showToast("No Internet Available")
+            }
         }
 
         binding.btnShareLinkedIn.setOnClickListener {
-            packageName = PKG_AFTER_COM_LINKEDIN
-            binding.progressBar2.visibility = View.VISIBLE
-            downloadImage(url)
-            viewModel.saveImpression(CERTIFICATE_SHARED_LINKED)
+            if (Utils.isInternetAvailable()){
+                packageName = PKG_AFTER_COM_LINKEDIN
+                viewModel.progressBarVisibility.set(true)
+                downloadImage(url)
+                viewModel.saveImpression(CERTIFICATE_SHARED_LINKED)
+            }
+            else{
+                showToast("No Internet Available")
+            }
         }
 
         binding.btnShareDownload.setOnClickListener {
-            packageName = NULL
-            binding.progressBar2.visibility = View.VISIBLE
-            downloadImage(url)
-            viewModel.saveImpression(CERTIFICATE_DOWNLOAD)
+            if (Utils.isInternetAvailable()){
+                packageName = NULL
+                viewModel.progressBarVisibility.set(true)
+                downloadImage(url)
+                viewModel.saveImpression(CERTIFICATE_DOWNLOAD)
+            }
+            else {
+                showToast("No Internet Available")
+            }
         }
         return binding.root
+    }
+
+    fun observer(){
+        viewModel.examType.observe(viewLifecycleOwner){
+            when (it){
+                EXAM_TYPE_BEGINNER->{
+                    PrefManager.put(IS_CERTIFICATE_GENERATED_BEGINNER, true)
+                }
+                EXAM_TYPE_INTERMEDIATE->{
+                    PrefManager.put(IS_CERTIFICATE_GENERATED_INTERMEDIATE, true)
+                }
+                EXAM_TYPE_ADVANCED->{
+                    PrefManager.put(IS_CERTIFICATE_GENERATED_ADVANCED, true)
+                }
+            }
+        }
     }
 
     fun shareOn(packageName: String, message: String, uri: Uri) {
@@ -150,7 +175,7 @@ class CertificateShareFragment : CoreJoshFragment() {
                         intent.putExtra(Intent.EXTRA_TEXT, message)
                         intent.type = "image/*"
                         intent.putExtra(Intent.EXTRA_STREAM, uri)
-                        intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION;
+                        intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
                         try {
                             if (intent.resolveActivity(requireActivity().packageManager) == null) {
                                 showToast("$packageName not found on device", Toast.LENGTH_LONG)
@@ -187,10 +212,10 @@ class CertificateShareFragment : CoreJoshFragment() {
                         val downloadUri = Uri.parse(url)
 
                         val request = DownloadManager.Request(downloadUri)
-                        val fileName = "${User.getInstance().firstName}.png"
+                        val fileName = "${User.getInstance().firstName}.jpeg"
                         request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
-                            .setMimeType("image/png")
-                            .setTitle("${User.getInstance().firstName}.png")
+                            .setMimeType("image/jpeg")
+                            .setTitle("${User.getInstance().firstName}.jpeg")
                             .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
                             .setDestinationInExternalPublicDir(
                                 Environment.DIRECTORY_DOWNLOADS, fileName
@@ -221,26 +246,26 @@ class CertificateShareFragment : CoreJoshFragment() {
                     val id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0L)
                     if (id == downloadId) { // checking if the downloaded file is our certificate
                         //retrieving the file
-                        binding.progressBar2.visibility = View.GONE
+                        viewModel.progressBarVisibility.set(false)
                         val downloadedFileId = it.getLong(DownloadManager.EXTRA_DOWNLOAD_ID)
                         val downloadManager = getSystemService(requireContext(), DOWNLOAD_SERVICE) as DownloadManager
                         val uri: Uri = downloadManager.getUriForDownloadedFile(downloadedFileId)
                         when (packageName) {
                             PKG_AFTER_COM_WHATSAPP -> {
                                 message = AppObjectController.getFirebaseRemoteConfig()
-                                    .getString(FirebaseRemoteConfigKey.CERTIFICATE_SHARE_TEXT_WHATSAPP)
+                                    .getString(FirebaseRemoteConfigKey.CERTIFICATE_SHARE_TEXT_WHATSAPP).replace("\\n", "\n")
                             }
                             PKG_AFTER_COM_FACEBOOK -> {
                                 message = AppObjectController.getFirebaseRemoteConfig()
-                                    .getString(FirebaseRemoteConfigKey.CERTIFICATE_SHARE_TEXT_FB)
+                                    .getString(FirebaseRemoteConfigKey.CERTIFICATE_SHARE_TEXT_FB).replace("\\n", "\n")
                             }
                             PKG_AFTER_COM_INSTA -> {
                                 message = AppObjectController.getFirebaseRemoteConfig()
-                                    .getString(FirebaseRemoteConfigKey.CERTIFICATE_SHARE_TEXT_INSTA)
+                                    .getString(FirebaseRemoteConfigKey.CERTIFICATE_SHARE_TEXT_INSTA).replace("\\n", "\n")
                             }
                             PKG_AFTER_COM_LINKEDIN -> {
                                 message = AppObjectController.getFirebaseRemoteConfig()
-                                    .getString(FirebaseRemoteConfigKey.CERTIFICATE_SHARE_TEXT_LINKEDIN)
+                                    .getString(FirebaseRemoteConfigKey.CERTIFICATE_SHARE_TEXT_LINKEDIN).replace("\\n", "\n")
                             }
                             NULL-> {
                                 message = ""
@@ -248,12 +273,25 @@ class CertificateShareFragment : CoreJoshFragment() {
                             }
                         }
                         if (message != "" && packageName != NULL) {
-                            shareOn(packageName, message, uri)
+                            getDeepLinkAndShare(uri)
                         }
                     }
                 }
             }
         }
+    }
+
+    private fun getDeepLinkAndShare(uri: Uri) {
+        DeepLinkUtil(requireContext())
+            .setReferralCode(Mentor.getInstance().referralCode)
+            .setReferralCampaign()
+            .setSharedItem(DeepLinkUtil.SharedItem.CERTIFICATE)
+            .setListener(object : DeepLinkUtil.OnDeepLinkListener {
+                override fun onDeepLinkCreated(deepLink: String) {
+                    shareOn(packageName, message + "\n" + deepLink, uri)
+                }
+            })
+            .build()
     }
 
     private fun isPackageInstalled(packageName: String): Boolean {

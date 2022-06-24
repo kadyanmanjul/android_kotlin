@@ -26,6 +26,7 @@ import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.RequestVerifyOTP
 import com.joshtalks.joshskills.repository.server.TrueCallerLoginRequest
 import com.joshtalks.joshskills.repository.server.onboarding.FreeTrialData
+import com.joshtalks.joshskills.repository.server.onboarding.SpecificOnboardingCourseData
 import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.repository.server.signup.LoginResponse
 import com.joshtalks.joshskills.repository.server.signup.RequestSocialSignUp
@@ -468,6 +469,28 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                 )
                 AppObjectController.commonNetworkService.saveTrueCallerImpression(requestData)
             } catch (ex: Exception) {
+                Timber.e(ex)
+            }
+        }
+    }
+
+    fun registerSpecificCourse() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val courseData = AppObjectController.gsonMapper.fromJson(PrefManager.getStringValue(SPECIFIC_ONBOARDING, isConsistent = true), SpecificOnboardingCourseData::class.java)
+                apiStatus.postValue(ApiCallStatus.START)
+                val requestData = hashMapOf(
+                    "mentor_id" to Mentor.getInstance().getId(),
+                    "course_id" to courseData.courseId,
+                    "plan_id" to courseData.planId
+                )
+                val response = AppObjectController.signUpNetworkService.registerCourse(requestData)
+                apiStatus.postValue(
+                    if (response.isSuccessful) ApiCallStatus.SUCCESS
+                    else ApiCallStatus.FAILED
+                )
+            } catch (ex: Exception) {
+                apiStatus.postValue(ApiCallStatus.FAILED)
                 Timber.e(ex)
             }
         }

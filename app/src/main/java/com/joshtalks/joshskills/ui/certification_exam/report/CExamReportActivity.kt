@@ -87,6 +87,7 @@ class CExamReportActivity : BaseActivity(), FileDownloadCallback {
             return
         }else{
             viewModel.certificateExamId = certificateExamId
+            viewModel.typeOfExam()
         }
         certificationQuestionModel =
             intent.getParcelableExtra(CERTIFICATION_EXAM_QUESTION) as CertificationQuestionModel?
@@ -153,6 +154,11 @@ class CExamReportActivity : BaseActivity(), FileDownloadCallback {
         compositeDisposable.clear()
     }
 
+    override fun onRestart() {
+        super.onRestart()
+        viewModel.getUserAllExamReports(certificateExamId)
+    }
+
     private fun addRxbusObserver() {
         compositeDisposable.add(
             RxBus2.listenWithoutDelay(GotoCEQuestionEventBus::class.java)
@@ -168,7 +174,8 @@ class CExamReportActivity : BaseActivity(), FileDownloadCallback {
                                     examView = CertificationExamView.RESULT_VIEW,
                                     openQuestionId = it.questionId,
                                     attemptSequence = (binding.examReportList.currentItem + 1),
-                                    conversationId = getConversationId()
+                                    conversationId = getConversationId(),
+                                    examType = viewModel.examType.value
                                 )
                             )
                         }

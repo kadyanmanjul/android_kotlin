@@ -189,6 +189,7 @@
     <string name="name_error_toast">ਨਾਮ ਖਾਲੀ ਨਹੀਂ ਰੱਖਿਆ ਜਾ ਸਕਦਾ!</string>
     <string name="please_enter_valid_number">"ਕਿਰਪਾ ਕਰਕੇ ਸਹੀ ਮੋਬਾਈਲ ਨੰਬਰ ਦਰਜ ਕਰੋ"</string>
     <string name="enter_valid_email_toast">"ਕਿਰਪਾ ਕਰਕੇ ਸਹੀ ਈਮੇਲ ਆਈਡੀ ਦਾਖਲ ਕਰੋ"</string>
+    <string name="enter_postal_address">"ਕਿਰਪਾ ਕਰਕੇ ਸਹੀ ਡਾਕ ਪਤਾ ਦਾਖਲ ਕਰੋ"</string>
     <string name="missed_call_verify_message">ਅਸੀਂ ਤਸਦੀਕ ਲਈ ਮਿਸਡ ਕਾਲ ਦੀ ਵਰਤੋਂ ਕਰਦੇ ਹਾਂ। ਕਿਰਪਾ ਕਰਕੇ ਪੁਸ਼ਟੀਕਰਨ ਦੀ ਇਜਾਜ਼ਤ ਦਿਓ।</string>
     <string name="otp_verify_message">ਤੁਹਾਡੇ ਮੋਬਾਈਲ ਨੰਬਰ ਦੀ ਪੁਸ਼ਟੀ ਕਰਨ ਲਈ ਇੱਕ 4 ਅੰਕਾਂ ਦਾ OTP SMS ਰਾਹੀਂ ਭੇਜਿਆ ਜਾਵੇਗਾ</string>
     <string name="missed_call_label">"ਮਿਸਡ ਕਾਲ ਵੈਰੀਫਿਕੇਸ਼ਨ"</string>
