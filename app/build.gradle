@@ -327,7 +327,7 @@ dependencies {
     implementation 'com.android.installreferrer:installreferrer:2.2'
 
     implementation 'com.facebook.shimmer:shimmer:0.5.0'
-    implementation 'com.facebook.android:facebook-android-sdk:9.0.0'
+    implementation 'com.facebook.android:facebook-android-sdk:13.0.0'
     implementation 'com.facebook.stetho:stetho:1.6.0'
     implementation 'com.facebook.stetho:stetho-okhttp3:1.6.0'
     implementation 'com.facebook.android:facebook-login:9.0.0'
