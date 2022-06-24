@@ -26,7 +26,7 @@ import java.util.concurrent.TimeUnit
 import timber.log.Timber
 
 const val KEY_AUTHORIZATION = "Authorization"
-private const val READ_TIMEOUT = 30L
+private const val READ_TIMEOUT = 50L
 private const val WRITE_TIMEOUT = 30L
 private const val CONNECTION_TIMEOUT = 30L
 private const val CALL_TIMEOUT = 60L
