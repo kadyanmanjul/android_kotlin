@@ -72,10 +72,7 @@ import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.joshtalks.joshskills.ui.voip.analytics.VoipAnalytics
 import com.joshtalks.joshskills.ui.voip.favorite.FavoriteListActivity
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
-import com.joshtalks.joshskills.voip.constant.INCOMING_CALL_CATEGORY
-import com.joshtalks.joshskills.voip.constant.INCOMING_CALL_ID
-import com.joshtalks.joshskills.voip.constant.REMOTE_USER_NAME
-import com.joshtalks.joshskills.voip.constant.State
+import com.joshtalks.joshskills.voip.constant.*
 import com.joshtalks.joshskills.voip.data.CallingRemoteService
 import java.lang.reflect.Type
 import java.util.concurrent.ExecutorService
@@ -579,7 +576,6 @@ class NotificationUtils(val context: Context) {
                     val callContext = context
                     val remoteServiceIntent = Intent(callContext, CallingRemoteService::class.java)
                     remoteServiceIntent.putExtra(INCOMING_CALL_ID, jsonObj.getString(INCOMING_CALL_ID))
-                    Log.d("smsms", "naman: 2   ${JSONObject(actionData).getString(INCOMING_CALL_ID)}")
                     remoteServiceIntent.putExtra(INCOMING_CALL_CATEGORY, jsonObj.getString(INCOMING_CALL_CATEGORY))
                     remoteServiceIntent.putExtra(REMOTE_USER_NAME, jsonObj.getString(REMOTE_USER_NAME))
                     remoteServiceIntent.action = SERVICE_ACTION_INCOMING_CALL
@@ -590,8 +586,20 @@ class NotificationUtils(val context: Context) {
                 return null
             }
             NotificationAction.ACTION_GROUP_INCOMING_CALL -> {
-                return null
-            }
+                try {
+                    val jsonObj = JSONObject(actionData ?: EMPTY)
+                    val callContext = context
+                    val remoteServiceIntent = Intent(callContext, CallingRemoteService::class.java)
+                    remoteServiceIntent.putExtra(INCOMING_CALL_ID, jsonObj.getString(INCOMING_CALL_ID))
+                    remoteServiceIntent.putExtra(INCOMING_CALL_CATEGORY, jsonObj.getString(INCOMING_CALL_CATEGORY))
+                    remoteServiceIntent.putExtra(INCOMING_GROUP_NAME, jsonObj.getString(INCOMING_GROUP_NAME))
+                    remoteServiceIntent.putExtra(INCOMING_GROUP_IMAGE, jsonObj.getString(INCOMING_GROUP_IMAGE))
+                    remoteServiceIntent.action = SERVICE_ACTION_INCOMING_CALL
+                    callContext.startService(remoteServiceIntent)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+                return null            }
             else -> {
                 return null
             }

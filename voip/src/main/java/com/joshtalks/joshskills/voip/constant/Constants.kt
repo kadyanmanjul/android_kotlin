@@ -49,6 +49,10 @@ const val PREF_KEY_PSTN_STATE = "pstn_state_pstn_state"
 const val INCOMING_CALL_ID = "call_id"
 const val INCOMING_CALL_CATEGORY = "call_category"
 const val REMOTE_USER_NAME = "remote_user_name"
+const val INCOMING_GROUP_NAME = "incoming_group_name"
+const val INCOMING_GROUP_IMAGE = "incoming_group_image"
+
+
 
 
 enum class Event {

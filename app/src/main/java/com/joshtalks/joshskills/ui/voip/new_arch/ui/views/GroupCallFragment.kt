@@ -16,7 +16,6 @@ import android.view.ViewGroup
 import android.view.animation.BounceInterpolator
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
-import androidx.viewpager2.widget.ViewPager2
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
 import com.joshtalks.joshskills.base.constants.FROM_INCOMING_CALL
@@ -101,7 +100,6 @@ class GroupCallFragment : BaseFragment(), SensorEventListener {
 
     override fun initViewState() {
         setUpProximitySensor()
-        addViewPagerCallbacks()
         liveData.observe(viewLifecycleOwner) {
             when (it.what) {
                 CANCEL_INCOMING_TIMER -> {
@@ -110,26 +108,6 @@ class GroupCallFragment : BaseFragment(), SensorEventListener {
                 }
             }
         }
-    }
-
-    private fun addViewPagerCallbacks() {
-        callBinding.topicViewpager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                super.onPageSelected(position)
-            }
-
-            override fun onPageScrollStateChanged(state: Int) {
-                super.onPageScrollStateChanged(state)
-            }
-
-            override fun onPageScrolled(
-                position: Int,
-                positionOffset: Float,
-                positionOffsetPixels: Int
-            ) {
-                super.onPageScrolled(position, positionOffset, positionOffsetPixels)
-            }
-        })
     }
 
     private fun setUpProximitySensor() {

@@ -7,6 +7,7 @@ import com.joshtalks.joshskills.base.constants.INTENT_DATA_GROUP_ID
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_INCOMING_CALL_ID
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_TOPIC_ID
 import com.joshtalks.joshskills.voip.*
+import com.joshtalks.joshskills.voip.constant.INCOMING_GROUP_NAME
 import com.joshtalks.joshskills.voip.data.api.*
 
 private const val TAG = "GroupP2PCalling"
@@ -15,12 +16,13 @@ class GroupCall : CallCategory {
 
     val voipNetwork = VoipNetwork.getVoipApi()
 
-    override fun notificationLayout(map: HashMap<String, String>): RemoteViews? {
+    override fun notificationLayout(map: HashMap<String, String>): RemoteViews {
         val remoteView = RemoteViews(Utils.context?.packageName, R.layout.call_group_notification)
         val avatar: Bitmap? = getRandomName().textDrawableBitmap()
         remoteView.setImageViewBitmap(R.id.photo, avatar)
         val acceptPendingIntent = openCallScreen()
         val declinePendingIntent = getDeclineCallIntent()
+        remoteView.setTextViewText(R.id.name,map[INCOMING_GROUP_NAME])
         remoteView.setOnClickPendingIntent(R.id.answer_text, acceptPendingIntent)
         remoteView.setOnClickPendingIntent(R.id.decline_text, declinePendingIntent)
         return remoteView
