@@ -22,6 +22,8 @@ internal interface CallServiceMediator {
     fun showIncomingCall(incomingCall : IncomingCall)
     // Needed to hide Notification
     fun hideIncomingCall()
+    fun declineIncomingCall()
+
     // Needed to receive User Action
     fun userAction(action: UserAction)
     // Used to destroy Mediator

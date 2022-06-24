@@ -22,6 +22,8 @@ const val SERVICE_ACTION_STOP_SERVICE = "josh_service_action_stop_service"
 const val SERVICE_ACTION_MAIN_PROCESS_IN_BACKGROUND = "josh_service_action_main_process_in_background"
 const val SERVICE_ACTION_DISCONNECT_CALL = "josh_service_action_disconnect_call"
 const val SERVICE_ACTION_INCOMING_CALL_DECLINE = "josh_service_action_incoming_call_decline"
+const val SERVICE_ACTION_INCOMING_CALL_HIDE = "josh_service_action_incoming_call_hide"
+
 
 // Content Provider UI
 const val CONTENT_URI = "content://com.joshtalks.joshskills.contentprovider"

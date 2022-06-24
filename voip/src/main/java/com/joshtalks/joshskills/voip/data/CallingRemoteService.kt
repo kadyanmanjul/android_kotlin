@@ -6,10 +6,7 @@ import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
 import android.util.Log
-import com.joshtalks.joshskills.base.constants.PEER_TO_PEER
-import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_DISCONNECT_CALL
-import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_INCOMING_CALL_DECLINE
-import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_STOP_SERVICE
+import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.audiocontroller.AudioController
 import com.joshtalks.joshskills.voip.audiocontroller.AudioControllerInterface
@@ -119,6 +116,9 @@ class CallingRemoteService : Service() {
                 disconnectCall()
                 return START_NOT_STICKY
             }
+            SERVICE_ACTION_INCOMING_CALL_HIDE->{
+                mediator.hideIncomingCall()
+            }
             SERVICE_ACTION_INCOMING_CALL_DECLINE -> {
                 CallAnalytics.addAnalytics(
                     event = EventName.INCOMING_CALL_DECLINE,
@@ -126,6 +126,8 @@ class CallingRemoteService : Service() {
                     agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
                 )
                 mediator.hideIncomingCall()
+                mediator.declineIncomingCall()
+
                 return START_NOT_STICKY
             }
         }

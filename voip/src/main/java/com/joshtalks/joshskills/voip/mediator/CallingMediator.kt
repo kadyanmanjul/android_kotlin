@@ -167,10 +167,6 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
     override fun hideIncomingCall() {
         scope.launch {
             try {
-                val map = HashMap<String, Any>(1).apply {
-                    put(INTENT_DATA_INCOMING_CALL_ID, IncomingCallData.callId)
-                }
-                calling.onCallDecline(map)
                 stopAudio()
                 voipNotification.removeNotification()
                 updateIncomingCallState(false)
@@ -181,6 +177,20 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
             }
         }
     }
+
+    override fun declineIncomingCall() {
+        scope.launch {
+            try {
+                val map = HashMap<String, Any>(1).apply {
+                    put(INTENT_DATA_INCOMING_CALL_ID, IncomingCallData.callId)
+                }
+                calling.onCallDecline(map)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                if(e is CancellationException)
+                    throw e
+            }
+        }    }
 
     override fun userAction(action: UserAction) {
         Log.d(TAG, "userAction : $action")

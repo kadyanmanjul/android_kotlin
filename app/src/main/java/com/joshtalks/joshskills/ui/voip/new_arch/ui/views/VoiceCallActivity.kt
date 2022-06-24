@@ -20,9 +20,11 @@ import com.joshtalks.joshskills.databinding.ActivityVoiceCallBinding
 import com.joshtalks.joshskills.quizgame.base.GameEventLiveData
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.VoiceCallViewModel
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.voipLog
+import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.Utils.Companion.onMultipleBackPress
 import com.joshtalks.joshskills.voip.constant.*
 import com.joshtalks.joshskills.voip.data.RecordingButtonState
+import com.joshtalks.joshskills.voip.data.CallingRemoteService
 import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
@@ -62,6 +64,7 @@ class VoiceCallActivity : BaseActivity() {
         when (vm.source) {
             FROM_CALL_BAR -> {}
             FROM_INCOMING_CALL -> {
+
                 val incomingCallId = PrefManager.getIncomingCallId()
                 // TODO: Might be wrong
                 CallAnalytics.addAnalytics(
@@ -70,6 +73,9 @@ class VoiceCallActivity : BaseActivity() {
                     agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
                 )
                 vm.callData[INTENT_DATA_INCOMING_CALL_ID] = incomingCallId
+                val remoteServiceIntent = Intent(Utils.context, CallingRemoteService::class.java)
+                remoteServiceIntent.action = SERVICE_ACTION_INCOMING_CALL_HIDE
+                Utils.context?.startService(remoteServiceIntent)
             }
             else -> {
                 val topicId = intent?.getStringExtra(INTENT_DATA_TOPIC_ID)
@@ -212,6 +218,7 @@ class VoiceCallActivity : BaseActivity() {
 
     override fun onStart() {
         super.onStart()
+
         if(isCallingPermissionEnabled(this)) {
             vm.boundService(this)
             isServiceBounded = true
