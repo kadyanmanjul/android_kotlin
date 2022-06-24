@@ -218,8 +218,8 @@ object FallbackManager {
     private fun extractUsersList(result: JsonObject) {
 
         try {
-            val tempSpeakerList = ArraySet<LiveRoomUser>()
-            val tempAudienceList = ArraySet<LiveRoomUser>()
+            val tempSpeakerList = mutableListOf<LiveRoomUser>()
+            val tempAudienceList = mutableListOf<LiveRoomUser>()
             result["user_list"].asJsonArray.forEach {
                 val uid = it.asJsonObject["uuid"].asJsonObject["id"].asString
                 val custom = it.asJsonObject["custom"]
@@ -240,8 +240,8 @@ object FallbackManager {
             }
             // post to a shared flow instead of live data
             Timber.d("THIS IS WITH MEMBERS LIST SPEAKER => $tempSpeakerList AND AUDIENCE => $tempAudienceList")
-            PubNubManager.postToSpeakersList(tempSpeakerList)
-            PubNubManager.postToAudienceList(tempAudienceList)
+            PubNubManager.postToSpeakersList(tempSpeakerList.toList())
+            PubNubManager.postToAudienceList(tempAudienceList.toList())
         } catch (e: Exception){
 
         }

@@ -204,10 +204,11 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
 
     private fun addViewModelObserver() {
         vm.audienceList.observe(this, androidx.lifecycle.Observer {
-            it.add(me)
-            val list = it.sortedBy { it.sortOrder }
-            audienceAdapter?.updateFullList(list.toList())
+            it.toMutableList().add(me)
+            val list = it.toList()
+//            val list = it.sortedBy { it.sortOrder }
             audienceAdapter?.updateFullList(list)
+//            audienceAdapter?.updateFullList(list)
             Log.i("AUDIENCE", "addViewModelObserver: ${it}")
             PubNubManager.getLiveRoomProperties().let {
                 if (it.isModerator){
@@ -221,9 +222,8 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
 
         })
 
-        vm.speakersList.observe(this, androidx.lifecycle.Observer {
-            val list = it.sortedBy { it.sortOrder }
-            speakerAdapter?.updateFullList(list.toList())
+        vm.speakersList.observe(this, androidx.lifecycle.Observer { list ->
+            speakerAdapter?.updateFullList(list)
         })
 
         vm.liveRoomState.observe(this){
