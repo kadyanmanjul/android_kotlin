@@ -240,6 +240,7 @@ class CallingRemoteService : Service() {
                             PSTNState.OnCall, PSTNState.Ringing -> {
                                 PrefManager.savePstnState(PSTN_STATE_ONCALL)
                                 mediator.userAction(Action.HOLD)
+                                mediator.hideIncomingCall()
                             }
                         }
                     }

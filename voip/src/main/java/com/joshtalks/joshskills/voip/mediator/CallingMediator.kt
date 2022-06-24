@@ -587,7 +587,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                                 }
                                 is IncomingCall -> {
                                     incomingNotificationMutex.withLock {
-                                        if (isShowingIncomingCall.not() && PrefManager.getVoipState() == State.IDLE) {
+                                        if (isShowingIncomingCall.not() && PrefManager.getVoipState() == State.IDLE && PrefManager.getPstnState() == PSTN_STATE_IDLE) {
                                             CallAnalytics.addAnalytics(
                                                 event = EventName.INCOMING_CALL_RECEIVED,
                                                 agoraCallId = IncomingCallData.callId.toString(),

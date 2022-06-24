@@ -187,10 +187,6 @@ class VoiceCallActivity : BaseActivity() {
         recordingPermissionAlert?.show()
     }
 
-    private fun recordingAlreadyStartedByOtherUserDialog() {
-        Toast.makeText(this, "Recording was already started by the other person", Toast.LENGTH_SHORT).show()
-    }
-
     private fun hideRecordingPermissionDialog() {
         Log.i(TAG, "hideRecordingPermissionDialog: ")
         recordingPermissionAlert?.dismiss()
