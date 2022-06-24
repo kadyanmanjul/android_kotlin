@@ -144,8 +144,7 @@ class PubNubChannelService(val scope: CoroutineScope) : EventChannel {
                         data.insertIntoDb()
                         callApiService.disconnectCall(data.toRequest())
                         callApiService.favouriteCallDisconnect(data.toRequest())
-//                        callApiService.groupCallDisconnect(data.toRequest())
-
+                        callApiService.groupCallDisconnect(data.toRequest())
                         data.insertIntoDb(status = SYNCED)
                         database.getDisconnectCallDao().delete()
                     }

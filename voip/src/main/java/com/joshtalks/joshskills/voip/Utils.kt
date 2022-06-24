@@ -210,7 +210,21 @@ fun openFavoriteCallScreen(): PendingIntent {
         PendingIntent.FLAG_CANCEL_CURRENT
     )
 }
-
+fun openGroupCallScreen(): PendingIntent {
+    val destination = "com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity"
+    val intent = Intent()
+    intent.apply {
+        setClassName(Utils.context!!.applicationContext, destination)
+        flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
+        putExtra(INTENT_DATA_CALL_CATEGORY,Category.GROUP.ordinal)
+    }
+    return PendingIntent.getActivity(
+        Utils.context,
+        1102,
+        intent,
+        PendingIntent.FLAG_CANCEL_CURRENT
+    )
+}
 fun Context.getHangUpIntent(): PendingIntent {
     val intent = Intent(this, CallingRemoteService::class.java).apply {
         action = SERVICE_ACTION_DISCONNECT_CALL

@@ -42,7 +42,7 @@ interface CallingApiService {
     @POST("${BuildConfig.MS_BASE_URL}/$DIR/group/call_response")
     suspend fun groupCallAccept(@Body request : GroupCallActionRequest) : Response<Unit>
 
-    @POST("${BuildConfig.MS_BASE_URL}/$DIR//group/call_response")
+    @POST("${BuildConfig.MS_BASE_URL}/$DIR/group/call_response")
     suspend fun groupCallReject(@Body request : GroupCallActionRequest) : Response<Unit>
 
     @POST("${BuildConfig.MS_BASE_URL}/$DIR/group/call_response")

@@ -24,13 +24,13 @@ class GroupCall : CallCategory {
         val remoteView = RemoteViews(Utils.context?.packageName, R.layout.call_group_notification)
         try {
             val url = URL(map[INCOMING_GROUP_IMAGE])
-            val image: Bitmap = BitmapFactory.decodeStream(url.openConnection().getInputStream())
+            val image: Bitmap = BitmapFactory.decodeStream(url.openStream())
             remoteView.setImageViewBitmap(R.id.photo, image)
         } catch (e: IOException) {
             val avatar: Bitmap? = getRandomName().textDrawableBitmap()
             remoteView.setImageViewBitmap(R.id.photo, avatar)
         }
-        val acceptPendingIntent = openCallScreen()
+        val acceptPendingIntent = openGroupCallScreen()
         val declinePendingIntent = getDeclineCallIntent()
         remoteView.setTextViewText(R.id.name,map[INCOMING_GROUP_NAME])
         remoteView.setOnClickPendingIntent(R.id.answer_text, acceptPendingIntent)
