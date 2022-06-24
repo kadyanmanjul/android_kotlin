@@ -136,7 +136,7 @@ class FppCallFragment : BaseFragment() , SensorEventListener {
                 mPlayer?.setVolume(0.5f, 0.5f)
                 mPlayer?.isLooping = true
                 mPlayer?.start()
-                delay(50000)
+                delay(20000)
                 stopPlaying()
             } catch (ex: Exception) {
                 ex.printStackTrace()

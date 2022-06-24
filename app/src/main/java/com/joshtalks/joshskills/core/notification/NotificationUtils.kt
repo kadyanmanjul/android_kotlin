@@ -564,11 +564,17 @@ class NotificationUtils(val context: Context) {
                 return intent
             }
             NotificationAction.ACTION_P2P_INCOMING_CALL -> {
-                val remoteServiceIntent = Intent(com.joshtalks.joshskills.voip.Utils.context, CallingRemoteService::class.java)
-                remoteServiceIntent.putExtra(INCOMING_CALL_ID, JSONObject(actionData).getString(INCOMING_CALL_ID))
-                remoteServiceIntent.putExtra(INCOMING_CALL_CATEGORY,JSONObject(actionData).getString(INCOMING_CALL_CATEGORY))
+                try {
+                    val jsonObj = JSONObject(actionData ?: EMPTY)
+                    val callContext = context
+                    val remoteServiceIntent = Intent(callContext, CallingRemoteService::class.java)
+                remoteServiceIntent.putExtra(INCOMING_CALL_ID, jsonObj.getString(INCOMING_CALL_ID))
+                remoteServiceIntent.putExtra(INCOMING_CALL_CATEGORY,jsonObj.getString(INCOMING_CALL_CATEGORY))
                 remoteServiceIntent.action = SERVICE_ACTION_INCOMING_CALL
                 com.joshtalks.joshskills.voip.Utils.context?.startService(remoteServiceIntent)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
                 return null
             }
             NotificationAction.ACTION_FPP_INCOMING_CALL -> {

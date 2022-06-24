@@ -1,7 +1,6 @@
 package com.joshtalks.joshskills.ui.voip.new_arch.ui.views
 
 import android.Manifest
-import android.app.AlertDialog
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -17,8 +16,8 @@ import com.joshtalks.joshskills.base.constants.INTENT_DATA_COURSE_ID
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_INCOMING_CALL_ID
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_TOPIC_ID
 import com.joshtalks.joshskills.base.constants.*
+import com.joshtalks.joshskills.core.PermissionUtils.callingPermissionPermanentlyDeniedDialog
 import com.joshtalks.joshskills.core.PermissionUtils.isCallingPermissionEnabled
-import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.databinding.ActivityVoiceCallBinding
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.VoiceCallViewModel
 import com.joshtalks.joshskills.voip.Utils.Companion.onMultipleBackPress
@@ -57,14 +56,39 @@ class VoiceCallActivity : BaseActivity() {
 
 
     private fun getPermissions() {
-        requestPermissionsLauncher.launch(
-            arrayOf(
-                Manifest.permission.RECORD_AUDIO,
-                Manifest.permission.READ_PHONE_STATE,
-                Manifest.permission.ACCESS_NETWORK_STATE,
-                Manifest.permission.MODIFY_AUDIO_SETTINGS,
+        var shouldLaunchPermission = true
+//        val permissions = arrayOf(
+//            Manifest.permission.RECORD_AUDIO,
+//            Manifest.permission.READ_PHONE_STATE,
+//            Manifest.permission.ACCESS_NETWORK_STATE,
+//            Manifest.permission.MODIFY_AUDIO_SETTINGS,
+//        )
+
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//            for (permission in permissions) {
+//                if (shouldShowRequestPermissionRationale(permission)) {
+//                    Log.d(TAG, "getPermissions: $permission")
+//                    shouldLaunchPermission = false
+//                    break
+//                }
+//            }
+//        }
+
+        if (shouldLaunchPermission) {
+            requestPermissionsLauncher.launch(
+                arrayOf(
+                    Manifest.permission.RECORD_AUDIO,
+                    Manifest.permission.READ_PHONE_STATE,
+                    Manifest.permission.ACCESS_NETWORK_STATE,
+                    Manifest.permission.MODIFY_AUDIO_SETTINGS,
+                )
             )
-        )
+        }else{
+            callingPermissionPermanentlyDeniedDialog(
+                this,
+                message = R.string.call_start_permission_message
+            )
+        }
     }
 
     override fun getArguments() {
