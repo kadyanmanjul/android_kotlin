@@ -38,6 +38,7 @@ import com.joshtalks.badebhaiya.repository.CommonRepository
 import com.joshtalks.badebhaiya.repository.model.FCMData
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.utils.ApiRespStatus
+import com.joshtalks.badebhaiya.utils.NetworkUtil
 import com.joshtalks.badebhaiya.utils.Utils
 import com.joshtalks.badebhaiya.utils.urlToBitmap
 import kotlinx.coroutines.*
@@ -70,43 +71,50 @@ class FirebaseNotificationService : FirebaseMessagingService() {
     }
 
     private fun postFCMToken(token: String) {
-        CoroutineScope(SupervisorJob() + Dispatchers.IO +
-                CoroutineExceptionHandler { _, _ -> }).launch {
-            val userId = User.getInstance().userId
-            if (userId.isNotBlank()) {
-                try {
-                    if (PrefManager.hasKey(FCM_TOKEN)) {
-                        FCMData.getInstance()?.let { fcmData ->
-                            val data = mutableMapOf(
-                                "registration_id" to token
-                            )
-                            val resp = CommonRepository().patchFCMToken(fcmData.id, data)
-                            if (resp.isSuccessful) {
-                                resp.body()?.update()
-                                Timber.tag(FCMData::class.java.name)
-                                    .e("patch data : ${resp.body()}")
+        if (NetworkUtil.isNetworkAvailable()){
+            try {
+                CoroutineScope(SupervisorJob() + Dispatchers.IO +
+                        CoroutineExceptionHandler { _, _ -> }).launch {
+                    val userId = User.getInstance().userId
+                    if (userId.isNotBlank()) {
+                        try {
+                            if (PrefManager.hasKey(FCM_TOKEN)) {
+                                FCMData.getInstance()?.let { fcmData ->
+                                    val data = mutableMapOf(
+                                        "registration_id" to token
+                                    )
+                                    val resp = CommonRepository().patchFCMToken(fcmData.id, data)
+                                    if (resp.isSuccessful) {
+                                        resp.body()?.update()
+                                        Timber.tag(FCMData::class.java.name)
+                                            .e("patch data : ${resp.body()}")
+                                    }
+                                }
+                            } else {
+                                val data = mutableMapOf(
+                                    "name" to Utils.getDeviceName(),
+                                    "registration_id" to token,
+                                    "device_id" to Utils.getDeviceId(),
+                                    "active" to "true",
+                                    "user_id" to userId,
+                                    "type" to "android"
+                                )
+                                val resp = CommonRepository().postFCMToken(data)
+                                if (resp.isSuccessful) {
+                                    resp.body()?.update()
+                                    Timber.tag(FCMData::class.java.name).e("post data : ${resp.body()}")
+                                }
                             }
-                        }
-                    } else {
-                        val data = mutableMapOf(
-                            "name" to Utils.getDeviceName(),
-                            "registration_id" to token,
-                            "device_id" to Utils.getDeviceId(),
-                            "active" to "true",
-                            "user_id" to userId,
-                            "type" to "android"
-                        )
-                        val resp = CommonRepository().postFCMToken(data)
-                        if (resp.isSuccessful) {
-                            resp.body()?.update()
-                            Timber.tag(FCMData::class.java.name).e("post data : ${resp.body()}")
+                        } catch (ex: Exception) {
+                            ex.printStackTrace()
                         }
                     }
-                } catch (ex: Exception) {
-                    ex.printStackTrace()
                 }
+            } catch (e: Exception){
+
             }
         }
+
     }
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
