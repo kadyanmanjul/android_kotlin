@@ -1,14 +1,18 @@
 package com.joshtalks.joshskills.voip.mediator
 
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.util.Log
 import android.widget.RemoteViews
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_GROUP_ID
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_INCOMING_CALL_ID
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_TOPIC_ID
 import com.joshtalks.joshskills.voip.*
+import com.joshtalks.joshskills.voip.constant.INCOMING_GROUP_IMAGE
 import com.joshtalks.joshskills.voip.constant.INCOMING_GROUP_NAME
 import com.joshtalks.joshskills.voip.data.api.*
+import java.io.IOException
+import java.net.URL
 
 private const val TAG = "GroupP2PCalling"
 
@@ -18,8 +22,14 @@ class GroupCall : CallCategory {
 
     override fun notificationLayout(map: HashMap<String, String>): RemoteViews {
         val remoteView = RemoteViews(Utils.context?.packageName, R.layout.call_group_notification)
-        val avatar: Bitmap? = getRandomName().textDrawableBitmap()
-        remoteView.setImageViewBitmap(R.id.photo, avatar)
+        try {
+            val url = URL(map[INCOMING_GROUP_IMAGE])
+            val image: Bitmap = BitmapFactory.decodeStream(url.openConnection().getInputStream())
+            remoteView.setImageViewBitmap(R.id.photo, image)
+        } catch (e: IOException) {
+            val avatar: Bitmap? = getRandomName().textDrawableBitmap()
+            remoteView.setImageViewBitmap(R.id.photo, avatar)
+        }
         val acceptPendingIntent = openCallScreen()
         val declinePendingIntent = getDeclineCallIntent()
         remoteView.setTextViewText(R.id.name,map[INCOMING_GROUP_NAME])
