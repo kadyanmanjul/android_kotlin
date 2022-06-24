@@ -363,6 +363,15 @@ object PubNubManager {
         }
     }
 
+    private fun removeUserFromSpeaker(liveRoomUser: LiveRoomUser){
+        speakersList.filter { it.userId == liveRoomUser.userId }
+        if (!speakersList.isNullOrEmpty()){
+            val list = mutableListOf<LiveRoomUser>()
+            list.addAll(speakersList)
+            list.remove(liveRoomUser)
+        }
+    }
+
      fun postToSpeakersList(list: ArraySet<LiveRoomUser>) {
         Timber.d("post to speaker list => $list")
         val distinctedList = list.reversed().distinctBy { it.userId }.reversed().toSet()
