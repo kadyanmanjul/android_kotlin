@@ -241,6 +241,7 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
+                android:minHeight="@dimen/_80sdp"
                 android:layout_height="wrap_content">
 
                 <androidx.appcompat.widget.AppCompatImageButton
@@ -253,6 +254,7 @@
                     android:padding="@dimen/_14sdp"
                     android:textAllCaps="false"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Button"
+                    app:layout_constraintBottom_toBottomOf="@+id/btn_mute"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toEndOf="@+id/btn_mute"
@@ -370,7 +372,7 @@
                     android:id="@+id/group_for_outgoing"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:visibility="@{vm.uiState.startTime > 0 ? View.VISIBLE : View.INVISIBLE }"
+                    android:visibility="@{vm.uiState.startTime > 0 ? View.VISIBLE : View.GONE }"
                     app:constraint_referenced_ids="btn_mute,btn_speaker,txt_speaker,txt_mute"
                     tools:visibility="visible" />
 
