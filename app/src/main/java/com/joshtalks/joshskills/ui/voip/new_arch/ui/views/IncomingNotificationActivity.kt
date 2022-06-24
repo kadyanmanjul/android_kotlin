@@ -53,12 +53,6 @@ class IncomingNotificationActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         startTimer()
-//        val remoteServiceIntent = Intent(com.joshtalks.joshskills.voip.Utils.context, CallingRemoteService::class.java)
-//        remoteServiceIntent.putExtra(INCOMING_CALL_ID, JSONObject(actionData).getString(INCOMING_CALL_ID))
-//        remoteServiceIntent.putExtra(INCOMING_CALL_CATEGORY,JSONObject(actionData).getString(INCOMING_CALL_CATEGORY))
-//        remoteServiceIntent.action = SERVICE_ACTION_INCOMING_CALL
-//        com.joshtalks.joshskills.voip.Utils.context?.startService(remoteServiceIntent)
-//        return null
 
     }
 
@@ -98,6 +92,4 @@ class IncomingNotificationActivity : AppCompatActivity() {
         if(wl?.isHeld == true) wl.release()
         if(wlCpu?.isHeld == true) wlCpu.release()
     }
-
-
 }

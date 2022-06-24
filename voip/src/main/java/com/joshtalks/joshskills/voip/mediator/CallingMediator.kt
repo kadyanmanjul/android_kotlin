@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.voip.mediator
 
-import com.joshtalks.joshskills.voip.mediator.GroupCall
 import android.util.Log
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_INCOMING_CALL_ID
 import com.joshtalks.joshskills.voip.communication.fallback.FirebaseChannelService
@@ -10,7 +9,6 @@ import com.joshtalks.joshskills.voip.communication.PubnubState.CONNECTED
 import com.joshtalks.joshskills.voip.communication.PubnubState.DISCONNECTED
 import com.joshtalks.joshskills.voip.communication.PubnubState.RECONNECTED
 import com.joshtalks.joshskills.voip.communication.constants.ServerConstants
-import com.joshtalks.joshskills.voip.communication.fallback.FirebaseChannelService
 import com.joshtalks.joshskills.voip.communication.model.ChannelData
 import com.joshtalks.joshskills.voip.communication.model.Communication
 import com.joshtalks.joshskills.voip.communication.model.Error
@@ -20,7 +18,6 @@ import com.joshtalks.joshskills.voip.communication.model.OutgoingData
 import com.joshtalks.joshskills.voip.communication.model.PeerToPeerCallRequest
 import com.joshtalks.joshskills.voip.communication.model.UI
 import com.joshtalks.joshskills.voip.constant.Event
-import com.joshtalks.joshskills.voip.constant.PSTN_STATE_IDLE
 import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.communication.model.*
 import com.joshtalks.joshskills.voip.constant.*
@@ -292,7 +289,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
         networkEventChannel.onDestroy()
         try {
             fallbackEventChannel.onDestroy()
-        } catch (e : Exception) {
+        } catch (e: Exception) {
             e.printStackTrace()
         }
         webrtcService.onDestroy()
@@ -563,7 +560,6 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
     }
 
     private fun HashMap<String, Any>.direction(): CallDirection {
-        Log.d(TAG, "naman 4:  ${INTENT_DATA_INCOMING_CALL_ID}")
         return if (get(INTENT_DATA_INCOMING_CALL_ID) != null)
             return CallDirection.INCOMING
         else
