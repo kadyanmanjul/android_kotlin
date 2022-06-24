@@ -68,7 +68,7 @@ class FppCallFragment : BaseFragment() , SensorEventListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         if(vm.source== FROM_ACTIVITY)
-        startPlaying()
+            startPlaying()
         CallAnalytics.addAnalytics(
             event = EventName.CALL_SCREEN_SHOWN,
             agoraCallId = PrefManager.getAgraCallId().toString(),
@@ -103,7 +103,7 @@ class FppCallFragment : BaseFragment() , SensorEventListener {
                 CANCEL_INCOMING_TIMER -> {
                     callBinding.groupUserdata.visibility = View.VISIBLE
                 }
-                CALL_INITIATED_EVENT ->{
+                CALL_INITIATED_EVENT -> {
                     callBinding.groupUserdata.visibility = View.VISIBLE
                     stopPlaying()
                     scope.cancel()
