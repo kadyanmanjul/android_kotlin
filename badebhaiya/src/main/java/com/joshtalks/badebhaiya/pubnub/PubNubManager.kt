@@ -219,7 +219,7 @@ object PubNubManager {
     private fun getLatestUserList() {
         jobs += CoroutineScope(Dispatchers.IO).launch {
             try {
-//                throw Exception()
+                throw Exception()
 
             pubnub.channelMembers.channel(liveRoomProperties?.channelName)
                 ?.includeCustom(true)

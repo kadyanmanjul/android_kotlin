@@ -46,6 +46,7 @@ interface ConversationRoomNetworkService {
     suspend fun speakersList(page: Int):Response<List<Users>>
 
     @POST("$DIR/conversation_room/pubnub_exception/")
+//    @POST("http://bbapp-prod.joshtalks.org/api/bbapp/v1/conversation_room/pubnub_exception/")
     suspend fun sendPubNubException(@Body params: PubNubExceptionRequest): Response<*>
 
     @GET("$DIR/user/waiting_room_users/")
