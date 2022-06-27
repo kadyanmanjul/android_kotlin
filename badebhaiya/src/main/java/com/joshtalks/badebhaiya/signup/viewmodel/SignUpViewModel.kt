@@ -297,6 +297,7 @@ class SignUpViewModel(application: Application): AndroidViewModel(application) {
                         lastName = user.lastName
                         updateUserFromLoginResponse(it)
                     }
+                   sendEvent(Impression("SIGNUP_ACTIVITY","TC_LOGIN"))
                 }
                 else
                     showToast("API Failed")

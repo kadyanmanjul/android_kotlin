@@ -95,17 +95,7 @@ class FeedViewModel : ViewModel() {
                 modStat=it
                 Log.i("MODERATORSTATUS", "collectModeratorStatus launch: ${PubNubData.status}")
                 Log.i("MODERATORSTATUS", "collectModeratorStatus: $it")
-//                message.what = OPEN_ROOM
-//                message.data = Bundle().apply {
-//                    putParcelable(
-//                        ROOM_DETAILS,
-//                        respBody
-//                    )
-//                    putString(
-//                        TOPIC,
-//                        roomtopic
-//                    )
-//                }
+
                 isRoomActive.value=true
                 roomData.speakersData?.userId?.let { it1 ->
                     joinRoom(roomData.roomId.toString(),roomData.topic.toString(),"FEED_SCREEN",
@@ -113,8 +103,6 @@ class FeedViewModel : ViewModel() {
                     )
                 }
                 PubNubManager.waitingUnsubscribe()
-                Log.i("YASHEN", "postvalue: ")
-//                singleLiveEvent.value=message
             }
         }
     }

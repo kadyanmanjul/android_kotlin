@@ -269,7 +269,7 @@ class SignUpActivity : AppCompatActivity(), Call {
 
         override fun onSuccessProfileShared(trueProfile: TrueProfile) {
             viewModel.trueCallerLogin(trueProfile)
-            viewModel.sendEvent(Impression("SIGNUP_ACTIVITY","TC_LOGIN"))
+
         }
     }
 
