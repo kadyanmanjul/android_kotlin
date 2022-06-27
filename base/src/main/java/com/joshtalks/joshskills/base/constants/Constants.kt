@@ -33,6 +33,7 @@ const val RECORD_VIDEO_URI = "/video_url"
 const val NOTIFICATION_DATA = "/notification_data"
 const val MENTOR_NAME = "/mentor_name"
 const val MENTOR_PROFILE = "/mentor_profile"
+const val RECORDING_TEXT = "/recording_text"
 
 
 // Content Values
@@ -97,6 +98,7 @@ const val NOTIFICATION_LESSON_COLUMN = "NOTIFICATION_LESSON_COLUMN"
 const val VIDEO_COLUMN = "VIDEO_COLUMN"
 const val MENTOR_NAME_COLUMN = "MENTOR_NAME"
 const val MENTOR_PROFILE_COLUMN = "MENTOR_PROFILE"
+const val RECORDING_TEXT_COLUMN = "RECORDING_TEXT_COLUMN"
 
 
 

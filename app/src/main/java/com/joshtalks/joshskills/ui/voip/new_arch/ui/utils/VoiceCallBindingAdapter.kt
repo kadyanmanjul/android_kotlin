@@ -40,10 +40,19 @@ fun CircleImageView.setProfileImage(imageUrl: String?) {
             .into(this)
 }
 
-@BindingAdapter("setColor")
-fun AppCompatTextView.setColor(isSpeaking : Boolean = false) {
+@BindingAdapter("setColorLocalUser")
+fun AppCompatTextView.setColorLocalUser(isSpeaking : Boolean = false) {
     if (isSpeaking){
         this.setTextColor(resources.getColor(R.color.green))
+    }
+    else
+        this.setTextColor(resources.getColor(R.color.white))
+}
+
+@BindingAdapter("setColorRemoteUser")
+fun AppCompatTextView.setColorRemoteUser(isSpeaking : Boolean = false) {
+    if (isSpeaking){
+        this.setTextColor(resources.getColor(R.color.p2p_circle_yellow))
     }
     else
         this.setTextColor(resources.getColor(R.color.white))
@@ -160,8 +169,8 @@ fun MaterialCardView.setBottomCardBackground(callType: Boolean) {
     }
 }
 
-@BindingAdapter("setBackgroundImage")
-fun ImageView.setBackgroundImage(imageUrl: String?) {
+@BindingAdapter("setBackgroundForLocalUser")
+fun ImageView.setBackgroundForLocalUser(imageUrl: String?) {
     if (!imageUrl.isNullOrEmpty())
         Glide.with(this).load(imageUrl)
             .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
@@ -169,7 +178,21 @@ fun ImageView.setBackgroundImage(imageUrl: String?) {
             .into(this)
     else
         Glide.with(this)
-            .load(R.drawable.ic_call_placeholder)
+            .load(R.drawable.local_user_default_image)
+            .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+            .into(this)
+}
+
+@BindingAdapter("setBackgroundForRemoteUser")
+fun ImageView.setBackgroundForRemoteUser(imageUrl: String?) {
+    if (!imageUrl.isNullOrEmpty())
+        Glide.with(this).load(imageUrl)
+            .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+            .apply(bitmapTransform(BlurTransformation(24)))
+            .into(this)
+    else
+        Glide.with(this)
+            .load(R.drawable.remote_user_image)
             .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
             .into(this)
 }

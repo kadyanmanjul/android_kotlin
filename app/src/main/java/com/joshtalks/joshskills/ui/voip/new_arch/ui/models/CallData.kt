@@ -197,10 +197,10 @@ class CallUIState : BaseObservable() {
         }
 
     @get:Bindable
-    var isCalleSpeaking:Boolean = false
+    var isCalleeSpeaking:Boolean = false
         set(value) {
             field = value
-            notifyPropertyChanged(BR.calleSpeaking)
+            notifyPropertyChanged(BR.calleeSpeaking)
         }
 
     @get:Bindable

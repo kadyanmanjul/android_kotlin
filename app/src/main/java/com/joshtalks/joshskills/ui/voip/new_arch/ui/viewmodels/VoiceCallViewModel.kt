@@ -20,13 +20,12 @@ import com.joshtalks.joshskills.base.constants.GROUP
 import com.joshtalks.joshskills.base.constants.PEER_TO_PEER
 import com.joshtalks.joshskills.base.log.Feature
 import com.joshtalks.joshskills.base.log.JoshLog
-import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.ui.call.repository.RepositoryConstants.CONNECTION_ESTABLISHED
 import com.joshtalks.joshskills.ui.call.repository.WebrtcRepository
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.call_recording.ProcessCallRecordingService
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.models.CallUIState
 import com.joshtalks.joshskills.ui.voip.util.ScreenViewRecorder
-import com.joshtalks.joshskills.voip.Utils
+import com.joshtalks.joshskills.voip.*
 import com.joshtalks.joshskills.voip.constant.CALL_CONNECTED_EVENT
 import com.joshtalks.joshskills.voip.constant.CALL_INITIATED_EVENT
 import com.joshtalks.joshskills.voip.constant.CANCEL_INCOMING_TIMER
@@ -39,9 +38,6 @@ import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.RecordingButtonState
 import com.joshtalks.joshskills.voip.data.ServiceEvents
 import com.joshtalks.joshskills.voip.data.local.PrefManager
-import com.joshtalks.joshskills.voip.getMentorName
-import com.joshtalks.joshskills.voip.getMentorProfile
-import com.joshtalks.joshskills.voip.getVideoUrl
 import com.joshtalks.joshskills.voip.recordinganalytics.CallRecordingAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
@@ -229,7 +225,7 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
         viewModelScope.launch(Dispatchers.IO) {
             if (recordFile.absolutePath.isEmpty().not()) {
 
-                val toastText  = AppObjectController.getFirebaseRemoteConfig().getString("RECORDING_SAVED_TEXT")
+                val toastText  = Utils.context?.getRecordingText()?:""
                 withContext(Dispatchers.Main) {
                     Utils.showToast(toastText)
                 }
@@ -288,7 +284,7 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                     uiState.startTime = state.startTime
                 uiState.isRecordingEnabled = state.isRecordingEnabled
                 uiState.isCallerSpeaking = state.isCallerSpeaking
-                uiState.isCalleSpeaking = state.isCalleeSpeaking
+                uiState.isCalleeSpeaking = state.isCalleeSpeaking
                 // TODO remove this logic from here ( issues: fix when state is REQUESTED we have to show dialog even when other user come back from background )
                 if (state.recordingButtonState == RecordingButtonState.GOTREQUEST
                     && uiState.recordingButtonState != RecordingButtonState.GOTREQUEST
@@ -327,7 +323,7 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
 
                 when(state.recordingButtonState) {
                     RecordingButtonState.IDLE -> stoppedRecUIchanges()
-                    RecordingButtonState.SENTREQUEST -> recWaitingForUserUI()
+                    RecordingButtonState.SENTREQUEST -> recordingWaitingForUserUI()
                     RecordingButtonState.RECORDING -> recordingStartedUIChanges()
                 }
 
@@ -464,7 +460,7 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                     agoraCallId = PrefManager.getAgraCallId().toString(),
                     agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
                 )
-                recWaitingForUserUI()
+                recordingWaitingForUserUI()
                 repository.startCallRecording()
             }
             RecordingButtonState.SENTREQUEST -> {
@@ -502,7 +498,7 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
         uiState.visibleCrdView = false
     }
 
-    private fun recWaitingForUserUI() {
+    private fun recordingWaitingForUserUI() {
         uiState.recordCrdViewTxt = "Waiting for your partner to accept"
         uiState.visibleCrdView = true
         uiState.recordBtnImg = R.drawable.ic_cancel_record

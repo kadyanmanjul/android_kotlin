@@ -82,6 +82,12 @@ class JoshContentProvider : ContentProvider() {
                 cursor.addRow(arrayOf(User.getInstance().photo))
                 return cursor
             }
+            RECORDING_TEXT -> {
+                val cursor = MatrixCursor(arrayOf(RECORDING_TEXT_COLUMN))
+                val toastText  = AppObjectController.getFirebaseRemoteConfig().getString("RECORDING_SAVED_TEXT")
+                cursor.addRow(arrayOf(toastText))
+                return cursor
+            }
             RECORD_VIDEO_URI -> {
                 val cursor = MatrixCursor(arrayOf(VIDEO_COLUMN))
                 AppDirectory.videoSentFile().let { file ->

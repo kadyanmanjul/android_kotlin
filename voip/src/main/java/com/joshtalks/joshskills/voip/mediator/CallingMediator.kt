@@ -311,10 +311,6 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
         startRecording()
     }
 
-    override fun observeSpeakersVolumes() {
-
-    }
-
     // Handle Events coming from Backend
     private fun handlePubnubEvent() {
         Log.d(TAG, "handlePubnubEvent: Observe")

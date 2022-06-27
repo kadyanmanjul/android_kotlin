@@ -141,6 +141,7 @@ class NotificationUtils(val context: Context) {
 
     fun sendNotification(notificationObject: NotificationObject) {
         executor.execute {
+            notificationObject.action = NotificationAction.ACTION_OPEN_CONVERSATION_LIST
             val intent = getIntentAccordingAction(
                 notificationObject,
                 notificationObject.action,

@@ -206,6 +206,21 @@ fun Context.getMentorProfile(): String {
     return mentorProfile
 }
 
+fun Context.getRecordingText(): String {
+    val recordingCursor = contentResolver.query(
+        Uri.parse(CONTENT_URI + RECORDING_TEXT),
+        null,
+        null,
+        null,
+        null
+    )
+
+    recordingCursor?.moveToFirst()
+    val textData = recordingCursor.getStringData(RECORDING_TEXT_COLUMN)
+    recordingCursor?.close()
+    return textData
+}
+
 
 //fun Context.updateIncomingCallDetails() {
 //    voipLog?.log("QUERY")
