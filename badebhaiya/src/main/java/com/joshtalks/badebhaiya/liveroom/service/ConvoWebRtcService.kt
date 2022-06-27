@@ -90,7 +90,7 @@ class ConvoWebRtcService : Service() {
 
         @Volatile
         @JvmStatic
-        private var rtcEngine: RtcEngine? = null
+         var rtcEngine: RtcEngine? = null
 
         @Volatile
         var retryInitLibrary: Int = 0
@@ -140,6 +140,12 @@ class ConvoWebRtcService : Service() {
     @Volatile
     private var conversationRoomEventListener: IRtcEngineEventHandler? =
         object : IRtcEngineEventHandler() {
+
+            override fun onAudioRouteChanged(routing: Int) {
+                super.onAudioRouteChanged(routing)
+                rtcEngine?.setDefaultAudioRoutetoSpeakerphone(true)
+                Log.d(TAG, "IRtcEngineEventHandler onAudioRouteChanged() and routing => $routing")
+            }
 
             override fun onUserJoined(uid: Int, elapsed: Int) {
                 super.onUserJoined(uid, elapsed)

@@ -39,6 +39,7 @@ import com.joshtalks.badebhaiya.impressions.Impression
 import com.joshtalks.badebhaiya.liveroom.*
 import com.joshtalks.badebhaiya.liveroom.bottomsheet.CreateRoom
 import com.joshtalks.badebhaiya.liveroom.model.StartingLiveRoomProperties
+import com.joshtalks.badebhaiya.liveroom.service.ConvoWebRtcService
 import com.joshtalks.badebhaiya.liveroom.viewmodel.LiveRoomViewModel
 import com.joshtalks.badebhaiya.notifications.NotificationScheduler
 import com.joshtalks.badebhaiya.profile.ProfileFragment
@@ -239,6 +240,19 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         super.onResume()
         if (User.getInstance().isLoggedIn()) {
             viewModel.getRooms()
+        }
+        if (PubNubManager.isRoomActive){
+            try {
+                ConvoWebRtcService.rtcEngine?.let {
+                    Log.d("ABCService", "AUDIO IS INCREASED")
+                    it.setDefaultAudioRoutetoSpeakerphone(true)
+                    it.enableAudioVolumeIndication(1800, 3, true)
+                    it.adjustRecordingSignalVolume(400)
+
+                }
+            } catch (e: Exception){
+
+            }
         }
     }
 
