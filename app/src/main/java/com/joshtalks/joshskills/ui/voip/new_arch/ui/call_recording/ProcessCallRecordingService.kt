@@ -1,13 +1,10 @@
 package com.joshtalks.joshskills.ui.voip.new_arch.ui.call_recording
 
-import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
-import android.media.RingtoneManager
 import android.os.Build
 import android.os.Handler
 import android.os.IBinder
@@ -29,15 +26,14 @@ import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
 import com.joshtalks.joshskills.voip.data.api.CallRecordingRequest
 import com.joshtalks.joshskills.voip.data.api.VoipNetwork
 import kotlinx.coroutines.*
-import java.io.File
-import java.util.concurrent.ArrayBlockingQueue
-import java.util.concurrent.BlockingQueue
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import timber.log.Timber
-import java.lang.Runnable
+import java.io.File
+import java.util.concurrent.ArrayBlockingQueue
+import java.util.concurrent.BlockingQueue
 
 
 class ProcessCallRecordingService : Service() {
@@ -129,17 +125,14 @@ class ProcessCallRecordingService : Service() {
             CoroutineScope(Dispatchers.IO).launch {
                 if (fileQueue.isEmpty()) {
                     isMuxingRunning = false
-                    Log.e("sagar", "run")
                     AppObjectController.uiHandler.post {
                         hideNotification()
                     }
                 } else {
                     try {
                         val inputFiles = fileQueue.take()
-                        Log.e("sagar", "Files To mux : audio- ${inputFiles.audioPath} video- ${inputFiles.videoPath}")
                         // val audioFile = getAudioSentFile(context = applicationContext, null)
                         val audioFile = AppDirectory.getAudioSentFile(null)
-                        Log.e("sagar", "run: $audioFile")
                         copy(inputFiles.audioPath!!, audioFile.absolutePath)
                         AppObjectController.uiHandler.post {
                             showUploadNotification()
@@ -194,7 +187,6 @@ class ProcessCallRecordingService : Service() {
                             duration = inputFiles.duration?:0
                         )
                     )
-                Log.e("sagar", "uploadOutputVideoToS3Server: $resp")
                 if (resp.isSuccessful && resp.body() != null) {
                     WorkManagerAdmin.notificationCallRecordingEvent(requestEngage.outputFile?.absolutePath?:"")
                 } else {

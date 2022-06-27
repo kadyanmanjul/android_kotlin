@@ -143,7 +143,6 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                         }
                     }
                     ServiceEvents.CLOSE_CALL_SCREEN -> {
-                        Log.i("call_cut", "listenVoipEvents: $it")
                         val msg = Message.obtain().apply {
                             what = CLOSE_CALL_SCREEN
                         }
@@ -210,7 +209,6 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                     ServiceEvents.PROCESS_AGORA_CALL_RECORDING -> {
                         Log.d(TAG, "listenVoipEvents() called")
                         File(PrefManager.getLastRecordingPath())?.let { file ->
-                            Log.e("sagar", "listenVoipEvents: $file" )
                             stopRecording(file)
                             timer?.cancel()
                         }
@@ -262,7 +260,6 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
 
     fun startAudioVideoRecording(view: View){
         videoRecordFile = File(Utils.context?.getVideoUrl()?:"")
-        Log.e("sagar", "startAudioVideoRecording: $videoRecordFile" )
         ScreenViewRecorder.videoRecorder.startPlayer(videoRecordFile?.absolutePath?:"", Utils.context!!,view)
         repository.startAgoraRecording()
     }
@@ -315,9 +312,7 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                 try {
                     uiState.localUserName = Utils.context?.getMentorName()?:""
                     uiState.localUserProfile = Utils.context?.getMentorProfile()?:""
-                }catch (ex:Exception){
-                    Log.e("sagar", "listenUIState: ${ex.message}" )
-                }
+                }catch (ex:Exception){ }
                 uiState.profileImage = state.remoteUserImage ?: ""
                 uiState.topic = state.topicName
                 uiState.topicImage = state.currentTopicImage
@@ -387,7 +382,6 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                 }
             }
         } catch (ex: Exception) {
-            Log.e("sagar", "onFinish: Call2${ex.message}")
         }
         return timer
     }
