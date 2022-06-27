@@ -303,15 +303,16 @@ class ConvoWebRtcService : Service() {
                 TAG,
                 "onCallStateChanged() called with: RTC= = $state, phoneNumber = $phoneNumber"
             )
-            when (state) {
-                TelephonyManager.CALL_STATE_IDLE -> {
-                    //TODO recheck this code
+            try {
+                when (state) {
+                    TelephonyManager.CALL_STATE_IDLE -> {
+                        //TODO recheck this code
 
-                }
-                TelephonyManager.CALL_STATE_OFFHOOK -> {
-                    if(PubNubManager.isRoomActive){
-                        PubNubEventsManager.sendMuteEvent(false)
                     }
+                    TelephonyManager.CALL_STATE_OFFHOOK -> {
+                        if(PubNubManager.isRoomActive){
+                            PubNubEventsManager.sendMuteEvent(false)
+                        }
 //                    if (isRoomCreatedByUser) {
 //                        Log.d(
 //                            TAG,
@@ -322,14 +323,17 @@ class ConvoWebRtcService : Service() {
 //                        leaveRoom(roomId, roomQuestionId)
 //                    }
 
-                }
-                TelephonyManager.CALL_STATE_RINGING -> {
+                    }
+                    TelephonyManager.CALL_STATE_RINGING -> {
 
+                    }
+                    else -> {
+                        isOnPstnCall = true
+                        pstnCallState = CallState.CALL_STATE_BUSY
+                    }
                 }
-                else -> {
-                    isOnPstnCall = true
-                    pstnCallState = CallState.CALL_STATE_BUSY
-                }
+            } catch (e: Exception){
+
             }
         }
     }
