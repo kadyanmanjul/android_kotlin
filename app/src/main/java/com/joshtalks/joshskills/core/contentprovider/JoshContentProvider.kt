@@ -74,18 +74,12 @@ class JoshContentProvider : ContentProvider() {
             }
             MENTOR_NAME -> {
                 val cursor = MatrixCursor(arrayOf(MENTOR_NAME_COLUMN))
-                if (PrefManager.getStringValue(USER_NAME)!= EMPTY)
-                    cursor.addRow(arrayOf(PrefManager.getStringValue("USER_NAME")))
-                else
-                    cursor.addRow(arrayOf(User.getInstance().firstName))
+                cursor.addRow(arrayOf(User.getInstance().firstName))
                 return cursor
             }
             MENTOR_PROFILE -> {
                 val cursor = MatrixCursor(arrayOf(MENTOR_PROFILE_COLUMN))
-                if (PrefManager.getStringValue(USER_PROFILE)!= EMPTY)
-                    cursor.addRow(arrayOf(PrefManager.getStringValue("USER_PROFILE")))
-                else
-                    cursor.addRow(arrayOf(User.getInstance().photo))
+                cursor.addRow(arrayOf(User.getInstance().photo))
                 return cursor
             }
             RECORD_VIDEO_URI -> {

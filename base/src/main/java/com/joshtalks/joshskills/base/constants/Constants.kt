@@ -113,6 +113,4 @@ const val INCOMING_CALL_ID = "josh_incoming_call_id"
 const val FROM_CALL_BAR = "josh_from_call_bar"
 const val STARTING_POINT = "josh_starting_point"
 
-const val USER_NAME= "USER_NAME"
-const val USER_PROFILE = "USER_PROFILE"
 
