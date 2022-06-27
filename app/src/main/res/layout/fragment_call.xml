@@ -237,7 +237,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/bottom_card_view"
-            setBottomCardBackground="@{vm.uiState.recordingButtonState != RecordingButtonState.RECORDING  ? true : false}"
+            setBottomCardBackground="@{vm.uiState.recordingButtonState != RecordingButtonState.RECORDING  ? false : true}"
             style="@style/CustomCardViewStyleNoBottomCorner"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
