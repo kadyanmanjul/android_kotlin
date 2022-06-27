@@ -144,8 +144,12 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             Timber.tag(FirebaseNotificationService::class.java.name).e("intent : ${intent.extras}")
 
             val intentData = intent.extras
+            var channel = NotificationAnalytics.Channel.FCM
             val data = if (intentData?.getString("push_from").equals(NotificationAnalytics.Channel.MOENGAGE.action))
-                intentData?.let { NotificationUtils(this).getDataFromMoengage(it) }
+                intentData?.let {
+                    channel = NotificationAnalytics.Channel.MOENGAGE
+                    NotificationUtils(this).getDataFromMoengage(it)
+                }
             else
                 mapOf(
                     Pair("action", intent.extras?.getString("action")),
@@ -190,7 +194,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 val isFirstTimeNotification = NotificationAnalytics().addAnalytics(
                     notificationId = nc.id.toString(),
                     mEvent = NotificationAnalytics.Action.RECEIVED,
-                    channel = NotificationAnalytics.Channel.FCM
+                    channel = channel
                 )
                 if (isFirstTimeNotification)
                     NotificationUtils(this@FirebaseNotificationService).sendNotification(nc)
