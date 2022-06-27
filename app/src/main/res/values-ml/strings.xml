@@ -10,7 +10,6 @@
     <string name="downloading_complete">ഡൗൺലോഡ് പൂർത്തിയായി</string>
     <string name="not_now">Not Now</string>
     <string name="not_now_underline"><u>Not Now</u></string>
-    <string name="settings">Settings</string>
     <string name="header_congratulation">അഭിനന്ദനങ്ങൾ</string>
     <string name="name">പേര്</string>
     <string name="email">ഇ-മെയിൽ</string>
@@ -205,7 +204,6 @@
     <string name="referral_success_info">നിങ്ങളുടെ സുഹൃത്ത് %s നിങ്ങളെ റഫർ ചെയ്തു</string>
     <string name="referral_success_info2">നിങ്ങളുടെ ആദ്യ കോഴ്‌സിന് ₹ 50 കിഴിവ് ലഭിക്കും.</string>
     <string name="page_number">"പേജ് %s / %s"</string>
-    <string name="help">"സഹായം "</string>
     <string name="close">"നിർത്തൂ"</string>
     <string name="show_details">Show Details</string>
     <string name="coupon_applied_free_course">കൂപ്പൺ പ്രയോഗിച്ചു! നിങ്ങൾക്ക് ഈ കോഴ്‌സ് സൗജന്യമായി ലഭിച്ചിരിക്കുന്നു. ഇപ്പോൾ   രജിസ്റ്റര് ചെയ്യുക</string>
@@ -276,7 +274,6 @@
     <string name="add_this">Add This</string>
     <string name="delete_media_title">"കോഴ്‌സ് മീഡിയ ക്ലിയർ ചെയ്യുക "</string>
     <string name="delete_media_message">ഈ കോഴ്‌സിൽ നിന്ന് എല്ലാ മീഡിയയും നീക്കം ചെയ്യണമെന്ന് തീർച്ചയാണോ?</string>
-    <string name="referral">"റഫറൽ"</string>
     <string name="reminders">"റിമൈൻഡേർസ്"</string>
     <string name="set_reminder">"റിമൈൻഡർ സെറ്റ് ചെയ്യൂ "</string>
     <string name="add_reminder">"റിമൈൻഡർ ചേർക്കുക"</string>
@@ -308,7 +305,6 @@
     <string name="call_permission_message">%s ഉപയോഗിച്ച് ഈ കോളിന് ഉത്തരം നൽകാൻ, നിങ്ങളുടെ മൈക്രോഫോണിലേക്ക് Josh Skills-ന് ആക്‌സസ് നൽകുക.</string>
     <string name="call_permission_permanent_message">%s ഉപയോഗിച്ച് ഈ കോളിന് ഉത്തരം നൽകാൻ, നിങ്ങളുടെ മൈക്രോഫോണിലേക്ക് Josh Skills-ന് ആക്‌സസ് നൽകുക.സെറ്റിംഗ്സ് &gt;
   അനുമതികൾ ടാപ്പുചെയ്‌ത് മൈക്രോഫോൺ ഓണാക്കുക.</string>
-    <string name="clear_all_media">ക്ലിയർ ഓൾ മീഡിയ </string>
     <string name="time_ago_full_seconds">"%1$d സെക്കൻഡ് മുമ്പ്"</string>
     <string name="inbox_header">Josh Skills</string>
     <string name="time_ago_seconds">"%1$d സെക്കൻഡ് മുമ്പ്"</string>
@@ -441,7 +437,6 @@
     <string name="word_tag">Word %1$d/%2$d - %3$s</string>
     <string name="ques_short_form">ചോദ്യം- %1$d/%2$d %3$s</string>
     <string name="completed">completed</string>
-    <string name="profile">പ്രൊഫൈൽ</string>
     <string name="profile_photo">പ്രൊഫൈൽ ചിത്രം</string>
     <string name="age">Age:</string>
     <string name="joined_on">Joined on:</string>

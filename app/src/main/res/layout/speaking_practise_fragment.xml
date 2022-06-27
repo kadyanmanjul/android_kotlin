@@ -38,6 +38,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_8sdp"
                     android:layout_marginEnd="@dimen/_14sdp"
+                    android:visibility="gone"
                     android:adjustViewBounds="true"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:clickable="true"

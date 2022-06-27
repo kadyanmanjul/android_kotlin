@@ -11,7 +11,6 @@
     <string name="downloading_complete">డౌన్‌లోడ్ పూర్తయింది</string>
     <string name="not_now">Not Now</string>
     <string name="not_now_underline"><u>Not Now</u></string>
-    <string name="settings">సెట్టింగ్‌లు</string>
     <string name="header_congratulation">అభినందనలు</string>
     <string name="name">పేరు</string>
     <string name="email">ఇ-మెయిల్</string>
@@ -205,7 +204,6 @@
     <string name="referral_success_info">మీరు మీ స్నేహితుడు %s ద్వారా సిఫార్సు చేయబడ్డారు</string>
     <string name="referral_success_info2">మరియు మీరు మీ మొదటి కోర్సులో ₹ 50 తగ్గింపు పొందుతారు.</string>
     <string name="page_number">పేజీ %s / %s</string>
-    <string name="help">సహాయం </string>
     <string name="close">ఆపండి </string>
     <string name="show_details">Show Details</string>
     <string name="coupon_applied_free_course">కూపన్ వర్తింపజేయబడింది! మీరు ఈ కోర్సును ఉచితంగా పొందారు. ఇప్పుడు నమోదు చేసుకోండి</string>
@@ -276,7 +274,6 @@
     <string name="add_this">Add This</string>
     <string name="delete_media_title">కోర్సు మీడియాను క్లియర్ చేయండి</string>
     <string name="delete_media_message">మీరు ఖచ్చితంగా ఈ కోర్సు నుండి అన్ని మీడియాలను తీసివేయాలనుకుంటున్నారా?</string>
-    <string name="referral">రిఫరల్</string>
     <string name="reminders">రిమైండర్లు</string>
     <string name="set_reminder">రిమైండర్ సెట్ చేయి</string>
     <string name="add_reminder">రిమైండర్‌ని జోడించు</string>
@@ -307,7 +304,6 @@
     <string name="topic_for_pp">మీరు ఈ అంశంపై మీ పార్టనర్ తో మాట్లాడవచ్చు</string>
     <string name="call_permission_message">%sతో ఈ కాల్‌కి సమాధానం ఇవ్వడానికి, మీ మైక్రోఫోన్‌కు Josh Skills యాక్సెస్ ఇవ్వండి.</string>
     <string name="call_permission_permanent_message">%sతో ఈ కాల్‌కి సమాధానం ఇవ్వడానికి, మీ మైక్రోఫోన్‌కు Josh Skills యాక్సెస్ ఇవ్వండి. సెట్టింగ్‌లు &gt; అనుమతులు నొక్కండి మరియు మైక్రోఫోన్‌ను ఆన్ చేయండి.</string>
-    <string name="clear_all_media">అన్ని మీడియాను క్లియర్ చేయండి</string>
     <string name="time_ago_full_seconds">%1$d సెకన్ల క్రితం</string>
     <string name="inbox_header">Josh Skills</string>
     <string name="time_ago_seconds">%1$d సెకన్ల క్రితం</string>
@@ -440,7 +436,6 @@
     <string name="word_tag">Word %1$d/%2$d - %3$s</string>
     <string name="ques_short_form">ప్రశ్న- %1$d/%2$d %3$s</string>
     <string name="completed">పూర్తి</string>
-    <string name="profile">ప్రొఫైల్</string>
     <string name="profile_photo">ప్రొఫైల్ ఫోటో</string>
     <string name="age">Age:</string>
     <string name="joined_on">Joined on:</string>
