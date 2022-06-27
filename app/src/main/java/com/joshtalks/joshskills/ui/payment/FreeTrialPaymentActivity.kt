@@ -164,6 +164,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         logNewPaymentPageOpened()
         dynamicCardCreation()
         setListeners()
+        Singular.event(SingularEvent.OPENED_FREE_TRIAL_PAYMENT.name, testId)
     }
 
     private fun dynamicCardCreation(){
@@ -821,7 +822,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         val jsonData = JSONObject()
         jsonData.put(ParamKeys.TEST_ID.name, viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.testId)
         jsonData.put(ParamKeys.COURSE_PRICE.name, viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.discount)
-        Singular.event(SingularEvent.INITIATED_PAYMENT.name, jsonData)
+        Singular.eventJSON(SingularEvent.INITIATED_PAYMENT.name, jsonData)
     }
 
     private fun String.verifyPayment() {
@@ -885,7 +886,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         jsonData.put(ParamKeys.TEST_ID.name, viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.testId)
         jsonData.put(ParamKeys.AMOUNT_PAID.name, viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.discount)
         jsonData.put(ParamKeys.IS_COUPON_APPLIED.name, viewModel.paymentDetailsLiveData.value?.couponDetails?.isPromoCode)
-        Singular.customRevenue(SingularEvent.PAYMENT_FAILED.name, jsonData)
+        Singular.eventJSON(SingularEvent.PAYMENT_FAILED.name, jsonData)
     }
 
     @Synchronized
@@ -899,11 +900,15 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             .addParam(ParamKeys.IS_100_POINTS_OBTAINED_IN_FREE_TRIAL,isPointsScoredMoreThanEqualTo100)
             .push()
 
-        val jsonData = JSONObject()
-        jsonData.put(ParamKeys.TEST_ID.name, viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.testId)
-        jsonData.put(ParamKeys.IS_COUPON_APPLIED.name, viewModel.paymentDetailsLiveData.value?.couponDetails?.isPromoCode)
-        jsonData.put(ParamKeys.AMOUNT_PAID.name, viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.discount)
-        Singular.customRevenue(SingularEvent.PAYMENT_SUCCESSFUL.name, jsonData)
+        Singular.customRevenue(
+            SingularEvent.PAYMENT_SUCCESSFUL.name,
+            "INR",
+            viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.discount?.toDouble() ?: 0.0,
+            mapOf(
+                Pair(ParamKeys.TEST_ID.name, viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.testId),
+                Pair(ParamKeys.IS_COUPON_APPLIED.name, viewModel.paymentDetailsLiveData.value?.couponDetails?.isPromoCode)
+            )
+        )
 
         if(viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.testId == FREE_TRIAL_PAYMENT_TEST_ID) {
             if(PrefManager.getBoolValue(INCREASE_COURSE_PRICE_CAMPAIGN_ACTIVE))

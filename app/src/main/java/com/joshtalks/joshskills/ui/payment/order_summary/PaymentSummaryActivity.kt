@@ -836,7 +836,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         val jsonData = JSONObject()
         jsonData.put(ParamKeys.TEST_ID.name, viewModel.getPaymentTestId())
         jsonData.put(ParamKeys.COURSE_PRICE.name, viewModel.getCourseActualAmount())
-        Singular.event(SingularEvent.INITIATED_PAYMENT.name, jsonData)
+        Singular.eventJSON(SingularEvent.INITIATED_PAYMENT.name, jsonData)
 
         if(!loginStartFreeTrial) {
             MixPanelTracker.publishEvent(MixPanelEvent.PAYMENT_STARTED)
@@ -925,7 +925,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         jsonData.put(ParamKeys.COURSE_PRICE.name, viewModel.getCourseActualAmount())
         jsonData.put(ParamKeys.IS_COUPON_APPLIED.name, viewModel.responsePaymentSummary.value?.couponDetails?.isPromoCode)
         jsonData.put(ParamKeys.AMOUNT_PAID.name, viewModel.getCourseDiscountedAmount())
-        Singular.customRevenue(SingularEvent.PAYMENT_FAILED.name, jsonData)
+        Singular.eventJSON(SingularEvent.PAYMENT_FAILED.name, jsonData)
 
         appAnalytics.addParam(AnalyticsEvent.PAYMENT_FAILED.NAME, p1)
         logPaymentStatusAnalyticsEvents(AnalyticsEvent.FAILED_PARAM.NAME, p1)
@@ -947,12 +947,16 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             .addParam(ParamKeys.IS_100_POINTS_OBTAINED_IN_FREE_TRIAL,is100PointsObtained)
             .push()
 
-        val jsonData = JSONObject()
-        jsonData.put(ParamKeys.TEST_ID.name, viewModel.getPaymentTestId())
-        jsonData.put(ParamKeys.COURSE_PRICE.name, viewModel.getCourseActualAmount())
-        jsonData.put(ParamKeys.IS_COUPON_APPLIED.name, viewModel.responsePaymentSummary.value?.couponDetails?.isPromoCode)
-        jsonData.put(ParamKeys.AMOUNT_PAID.name, viewModel.getCourseDiscountedAmount())
-        Singular.customRevenue(SingularEvent.PAYMENT_SUCCESSFUL.name, jsonData)
+        Singular.customRevenue(
+            SingularEvent.PAYMENT_SUCCESSFUL.name,
+            "INR",
+            viewModel.getCourseDiscountedAmount(),
+            mapOf(
+                Pair(ParamKeys.TEST_ID.name, viewModel.getPaymentTestId()),
+                Pair(ParamKeys.COURSE_PRICE.name, viewModel.getCourseActualAmount()),
+                Pair(ParamKeys.IS_COUPON_APPLIED.name, viewModel.responsePaymentSummary.value?.couponDetails?.isPromoCode)
+            )
+        )
 
         if(viewModel.getPaymentTestId() == ENGLISH_COURSE_TEST_ID) {
             PrefManager.getBoolValue(INCREASE_COURSE_PRICE_CAMPAIGN_ACTIVE)

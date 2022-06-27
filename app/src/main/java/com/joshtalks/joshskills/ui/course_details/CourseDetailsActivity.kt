@@ -166,7 +166,7 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
         val jsonData = JSONObject()
         jsonData.put(ParamKeys.TEST_ID.name, testId)
         jsonData.put(ParamKeys.VIA.name, flowFrom)
-        Singular.event(SingularEvent.OPENED_PRE_CHECKOUT_PAGE.name, jsonData)
+        Singular.eventJSON(SingularEvent.OPENED_PRE_CHECKOUT_PAGE.name, jsonData)
     }
     private fun initABTest() {
         viewModel.get100PCampaignData(CampaignKeys.HUNDRED_POINTS.NAME, testId.toString())

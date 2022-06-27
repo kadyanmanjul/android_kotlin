@@ -185,14 +185,6 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
                 PrefManager.put(IS_FREE_TRIAL, value = true, isConsistent = false)
             }
         }
-
-        val isAppOpenedForFirstTime = PrefManager.getBoolValue(IS_APP_OPENED_FOR_FIRST_TIME, true)
-        MixPanelTracker.mixPanel.track("app session")
-        if (isAppOpenedForFirstTime) {
-            PrefManager.put(IS_APP_OPENED_FOR_FIRST_TIME, value = false, isConsistent = true)
-            MixPanelTracker.publishEvent(MixPanelEvent.APP_OPENED_FOR_FIRST_TIME).push()
-            Singular.event(SingularEvent.APP_OPENED_FIRST_TIME.value)
-        }
     }
 
     private fun getNetworkOperatorName() =
@@ -235,6 +227,16 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
                 it.utmTerm =
                     jsonParams.getString(Defines.Jsonkey.UTMCampaign.key)
             InstallReferrerModel.update(it)
+        }
+    }
+
+    fun addAnalytics() {
+        val isAppOpenedForFirstTime = PrefManager.getBoolValue(IS_APP_OPENED_FOR_FIRST_TIME, true, true)
+        MixPanelTracker.mixPanel.track("app session")
+        if (isAppOpenedForFirstTime) {
+            PrefManager.put(IS_APP_OPENED_FOR_FIRST_TIME, value = false, isConsistent = true)
+            MixPanelTracker.publishEvent(MixPanelEvent.APP_OPENED_FOR_FIRST_TIME).push()
+            Singular.event(SingularEvent.APP_OPENED_FIRST_TIME.value)
         }
     }
 }
