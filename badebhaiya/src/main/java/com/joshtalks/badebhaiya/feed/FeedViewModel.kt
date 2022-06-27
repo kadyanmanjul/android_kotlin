@@ -215,6 +215,7 @@ class FeedViewModel : ViewModel() {
                         message.what = OPEN_WAIT_ROOM
                         singleLiveEvent.value = message
                     }
+                    showToast(response.errorMessage())
 
                     Log.i("YASHEN", "joinRoom: failed")
                 }
