@@ -835,7 +835,7 @@ object PubNubManager {
     private fun isModerator(): Boolean =
         liveRoomProperties?.moderatorId == liveRoomProperties?.agoraUid
 
-    private fun sendPubNubException(e: Exception){
+     fun sendPubNubException(e: Exception){
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 PubNubExceptionRepository().sendPubNubException(

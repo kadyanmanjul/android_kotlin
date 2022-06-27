@@ -49,6 +49,7 @@ import com.joshtalks.badebhaiya.pubnub.PubNubManager
 import com.joshtalks.badebhaiya.pubnub.PubNubState
 import com.joshtalks.badebhaiya.repository.CommonRepository
 import com.joshtalks.badebhaiya.repository.ConversationRoomRepository
+import com.joshtalks.badebhaiya.repository.PubNubExceptionRepository
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomResponse
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.signup.PeopleToFollowActivity
@@ -170,6 +171,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         }
 //        var intent=Intent()
 //        var bundle=intent.extras
+
         var user = intent.getStringExtra("userId")
         val mUserId = intent.getStringExtra(USER_ID)
 
@@ -211,6 +213,15 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
             checkAndOpenLiveRoom()
         }
         //setOnClickListener()
+
+        // Testing pubnub exception api.
+
+//        try {
+//            throw Exception()
+//            showToast("sdf", Toast.LENGTH_LONG)
+//        } catch (e: Exception){
+//            PubNubManager.sendPubNubException(e)
+//        }
     }
 
     override fun onRestart() {
