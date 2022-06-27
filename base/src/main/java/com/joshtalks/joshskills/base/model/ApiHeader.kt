@@ -19,9 +19,9 @@ data class NotificationData(val title : String, val subTitle : String,val lesson
     companion object {
         fun default() : NotificationData {
             return NotificationData(
-                title = "Undertake",
+                title = "Appreciate",
                 subTitle = "Practice word of the day",
-                lessonId = 21
+                lessonId = 20
             )
         }
     }

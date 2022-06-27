@@ -202,7 +202,6 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
 
         if (getVoipState() == State.IDLE && WebRtcService.isCallOnGoing.value == false)
             viewModel.getButtonVisibility()
-
         binding = DataBindingUtil.setContentView(
             this,
             R.layout.lesson_activity
@@ -1389,7 +1388,6 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         }
         intent?.let {
             val lessonId = if (intent.hasExtra(LESSON_ID)) intent.getIntExtra(LESSON_ID, 0) else 0
-
             viewModel.getLesson(lessonId)
             viewModel.getTwentyMinFtuCallCampaignData(
                 CampaignKeys.TWENTY_MIN_TARGET.NAME,

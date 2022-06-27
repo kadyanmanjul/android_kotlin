@@ -380,8 +380,9 @@ class TestNotification(val notiData : Data) : NotificationData {
         callingActivity.apply {
             if (Utils.context != null) {
                 setClassName(Utils.context!!,notificationActivity)
-                putExtra("lesson_section", 2)
+                putExtra("lesson_section", 3)
                 putExtra("lesson_id",notiData.lessonId)
+                putExtra("practice_word",notiData.title)
                 putExtra("reopen",true)
             }
         }
