@@ -74,7 +74,7 @@ object DeepLinkRedirectUtil {
     }
 
     fun getIntentForCourseOnboarding(activity: Activity, jsonParams: JSONObject? = null): Intent {
-        if (jsonParams != null) {
+        if (jsonParams != null && jsonParams.has(DeepLinkData.COURSE_ID.key) && jsonParams.has(DeepLinkData.PLAN_ID.key)) {
             PrefManager.put(
                 key = SPECIFIC_ONBOARDING,
                 value = AppObjectController.gsonMapper.toJson(
@@ -282,6 +282,7 @@ enum class DeepLinkRedirect(val key: String) {
 
 enum class DeepLinkData(val key: String) {
     REDIRECT_TO("redirect_to"),
+    REFERRING_LINK("~referring_link"),
     NOTIFICATION_ID("notification_id"),
     NOTIFICATION_CHANNEL("notification_channel"),
     CONVERSATION_ID("conversation_id"),

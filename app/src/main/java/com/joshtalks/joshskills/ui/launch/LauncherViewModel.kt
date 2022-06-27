@@ -16,6 +16,9 @@ import com.joshtalks.joshskills.core.analytics.*
 import com.joshtalks.joshskills.core.firestore.NotificationAnalytics
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.model.*
+import com.joshtalks.joshskills.ui.inbox.mentor_id
+import com.joshtalks.joshskills.util.DeepLinkImpression
+import com.joshtalks.joshskills.util.DeepLinkUtil
 import com.singular.sdk.Singular
 import io.branch.referral.Branch
 import io.branch.referral.Defines
@@ -227,6 +230,22 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
                 it.utmTerm =
                     jsonParams.getString(Defines.Jsonkey.UTMCampaign.key)
             InstallReferrerModel.update(it)
+        }
+    }
+
+    fun saveDeepLinkImpression(deepLink: String, action: String) {
+        viewModelScope.launch {
+            try {
+                val response = AppObjectController.commonNetworkService.saveDeepLinkImpression(
+                    mapOf(
+                        "mentor" to Mentor.getInstance().getId(),
+                        "deep_link" to deepLink,
+                        "link_action" to action
+                    )
+                )
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 
