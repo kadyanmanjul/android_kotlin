@@ -5,6 +5,7 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import androidx.core.app.NotificationManagerCompat
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfig
@@ -57,6 +58,11 @@ class AppObjectController {
             initRtcEngine(joshApplication)
             initUtils()
             initTimber()
+            initCrashlytics()
+        }
+
+        private fun initCrashlytics() {
+            val mFirebaseAnalytics = FirebaseAnalytics.getInstance(joshApplication);
         }
 
         private fun initFirebaseRemoteConfig() {

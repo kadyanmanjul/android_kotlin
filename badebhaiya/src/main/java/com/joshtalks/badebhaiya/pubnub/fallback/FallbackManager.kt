@@ -204,12 +204,16 @@ object FallbackManager {
             .get()
             .addOnCompleteListener {
                 if (it.isSuccessful) {
-                    val usersList = it.result.toObject(PubNubFallbackUser::class.java)
-                    val usersJson = JsonParser.parseString(Gson().toJson(it.result.data))
-                    Log.d(TAG, "getUsersList: ${it.result.data}")
-                    Log.d(TAG, "getUsersList after conversion: ${usersList}")
-                    Log.d(TAG, "getUsersList after conversion in json: ${usersJson}")
-                    extractUsersList(usersJson.asJsonObject)
+                    try {
+                        val usersList = it.result.toObject(PubNubFallbackUser::class.java)
+                        val usersJson = JsonParser.parseString(Gson().toJson(it.result.data))
+                        Log.d(TAG, "getUsersList: ${it.result.data}")
+                        Log.d(TAG, "getUsersList after conversion: ${usersList}")
+                        Log.d(TAG, "getUsersList after conversion in json: ${usersJson}")
+                        extractUsersList(usersJson.asJsonObject)
+                    } catch (e: Exception){
+                        Log.d(TAG, "getUsersList exception")
+                    }
 
                 }
             }
