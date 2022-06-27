@@ -4,6 +4,7 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import com.joshtalks.badebhaiya.core.Notification
 import com.joshtalks.badebhaiya.core.NotificationHelper
@@ -37,20 +38,19 @@ class NotificationScheduler @Inject constructor(
             pendingIntent = getPendingIntent(activity, room, NotificationType.LIVE)
 
             // Schedule notification for exact time
-            alarmManager?.setExact(AlarmManager.RTC_WAKEUP, room.startTime!!, pendingIntent)
-
+            alarmManager?.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, room.startTime!!, pendingIntent)
             // Schedule notification for 5 Minutes Prior
 
             // Schedule notification for 15 Minutes Prior
             val tenMinutesPrior = room.startTime!! - 10.minutesToMilliseconds()
 
             if (System.currentTimeMillis() < tenMinutesPrior)
-                alarmManager?.setExact(AlarmManager.RTC_WAKEUP, tenMinutesPrior, getPendingIntent(activity, room, NotificationType.REMINDER, priorTo = "10 Mins"))
+                alarmManager?.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, tenMinutesPrior, getPendingIntent(activity, room, NotificationType.REMINDER, priorTo = "10 Mins"))
 
             val fiveMinutesPrior = room.startTime!! - 5.minutesToMilliseconds()
 
             if (System.currentTimeMillis() < fiveMinutesPrior)
-                alarmManager?.setExact(AlarmManager.RTC_WAKEUP, fiveMinutesPrior, getPendingIntent(activity, room, NotificationType.REMINDER, priorTo = "5 Mins"))
+                alarmManager?.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, fiveMinutesPrior, getPendingIntent(activity, room, NotificationType.REMINDER, priorTo = "5 Mins"))
 
         }
     }
@@ -63,7 +63,7 @@ class NotificationScheduler @Inject constructor(
             pendingIntent = getPendingIntent(activity, room, NotificationType.LIVE)
 
             // Schedule notification for exact time
-            alarmManager?.setExact(AlarmManager.RTC_WAKEUP, room.startTime!!, pendingIntent)
+            alarmManager?.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, room.startTime!!, pendingIntent)
 
             // Schedule notification for 5 Minutes Prior
 
@@ -76,19 +76,16 @@ class NotificationScheduler @Inject constructor(
             val fifteenMinutesPrior = room.startTime!! - 15.minutesToMilliseconds()
 
             if (System.currentTimeMillis() < fifteenMinutesPrior)
-                alarmManager2?.setExact(AlarmManager.RTC_WAKEUP, fifteenMinutesPrior, getPendingIntent(activity, room, NotificationType.REMINDER, priorTo = "15 Mins"))
+                alarmManager2?.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, fifteenMinutesPrior, getPendingIntent(activity, room, NotificationType.REMINDER, priorTo = "15 Mins"))
 
 
 
             val fiveMinutesPrior = room.startTime!! - 5.minutesToMilliseconds()
 
             if (System.currentTimeMillis() < fiveMinutesPrior)
-                alarmManager3?.setExact(AlarmManager.RTC_WAKEUP, fiveMinutesPrior, getPendingIntent(activity, room, NotificationType.REMINDER, priorTo = "5 Mins"))
+                alarmManager3?.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, fiveMinutesPrior, getPendingIntent(activity, room, NotificationType.REMINDER, priorTo = "5 Mins"))
 
         }
-    }
-
-    fun cancelScheduledNotification(){
     }
 
     private suspend fun getPendingIntent(activity: AppCompatActivity, room: RoomListResponseItem, notificationType: NotificationType, priorTo: String? = null): PendingIntent {

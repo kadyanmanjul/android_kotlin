@@ -217,7 +217,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
                 }
             }
             Log.i("HELLOTESTER", "addViewModelObserver: $it")
-            binding.audienceCount.text= "("+it?.size?.minus(1)+")"
+            binding.audienceCount.text= "("+it?.size+")"
 
 
         })

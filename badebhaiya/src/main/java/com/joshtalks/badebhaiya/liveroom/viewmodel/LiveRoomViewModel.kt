@@ -141,6 +141,7 @@ class LiveRoomViewModel(application: Application) : AndroidViewModel(application
         viewModelScope.launch {
             PubNubData.audienceList
 //                .map { it.reversed().distinctBy { it.userId }.reversed()}
+                .map { it.sortedBy { it.sortOrder } }
                 .collect {
                 Log.d("sahil", "audience list => $it")
 
@@ -151,6 +152,7 @@ class LiveRoomViewModel(application: Application) : AndroidViewModel(application
         viewModelScope.launch {
             PubNubData.speakerList
 //                .map { it.reversed().distinctBy {  it.userId }.reversed() }
+                .map { it.sortedBy { it.sortOrder } }
                 .collect {
                 Log.d("sahil", "speakers list =>$it")
                 speakersList.postValue(it.toList())

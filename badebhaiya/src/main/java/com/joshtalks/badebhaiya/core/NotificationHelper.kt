@@ -61,6 +61,7 @@ class NotificationHelper : BroadcastReceiver() {
                     NOTIFICATION_BUNDLE,
                     bundleOf(NOTIFICATION to notification)
                 )
+                addFlags(Intent.FLAG_RECEIVER_FOREGROUND)
             }.also {
                 Log.d("NotificationHelper.kt", "YASH => getNotificationIntent: ${it.extras}")
             }

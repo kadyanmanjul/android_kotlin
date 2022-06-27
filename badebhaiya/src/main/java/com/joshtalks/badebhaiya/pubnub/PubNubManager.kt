@@ -351,7 +351,7 @@ object PubNubManager {
             postToSpeakersList(list.toList())
             //speakerAdapter?.updateFullList(ArrayList(getSpeakerList()))
         } else {
-
+            removeUserFromSpeaker(user)
             message.what = HIDE_SEARCHING_STATE
             postToLiveEvent(message)
 
@@ -372,11 +372,12 @@ object PubNubManager {
     }
 
     private fun removeUserFromSpeaker(liveRoomUser: LiveRoomUser){
-        speakersList.filter { it.userId == liveRoomUser.userId }
-        if (!speakersList.isNullOrEmpty()){
+        val foundPerson = speakersList.filter { it.userId == liveRoomUser.userId }
+        if (!foundPerson.isNullOrEmpty()){
             val list = mutableListOf<LiveRoomUser>()
             list.addAll(speakersList)
-            list.remove(liveRoomUser)
+            list.removeIf { it.userId == foundPerson[0].userId}
+            postToSpeakersList(list.toList())
         }
     }
 
