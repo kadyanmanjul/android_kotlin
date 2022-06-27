@@ -5,7 +5,6 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
@@ -323,8 +322,6 @@ class VoipCallFeedbackActivity : BaseActivity(){
             currentUserId: Int,
             fppDialogFlag: String
         ) {
-            Log.e("Sagar", "callStatusNetworkApi: sagar $fppDialogFlag")
-
             Intent(activity, VoipCallFeedbackActivity::class.java).apply {
                 putExtra(ARG_CHANNEL_NAME, channelName)
                 putExtra(ARG_CALL_TIME, callTime)

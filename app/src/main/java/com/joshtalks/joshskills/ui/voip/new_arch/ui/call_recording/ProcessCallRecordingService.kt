@@ -9,7 +9,6 @@ import android.os.Build
 import android.os.Handler
 import android.os.IBinder
 import android.text.TextUtils
-import android.util.Log
 import androidx.annotation.Nullable
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -34,7 +33,6 @@ import timber.log.Timber
 import java.io.File
 import java.util.concurrent.ArrayBlockingQueue
 import java.util.concurrent.BlockingQueue
-
 
 class ProcessCallRecordingService : Service() {
     private val MAX_NUMBER_OF_RETRIES = 5
@@ -296,7 +294,6 @@ class ProcessCallRecordingService : Service() {
             audioPath: String,
             recordDuration: Int
         ) {
-            Log.e("sagar", "processSingleCallRecording: Call")
             val intent = Intent(context, ProcessCallRecordingService::class.java)
             intent.action = START_VIDEO_AUDIO_PROCESSING
             intent.putExtra(CALL_ID, callId)

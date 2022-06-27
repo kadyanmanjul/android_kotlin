@@ -10,7 +10,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.ParcelFileDescriptor
 import android.provider.MediaStore
-import android.util.Log
 import androidx.annotation.RequiresApi
 import java.io.*
 import java.nio.ByteBuffer
@@ -105,14 +104,12 @@ private fun closeSilently(closeable: Closeable?) {
 
 fun audioVideoMuxer(recordAudioFile: File, recordVideoFile: File?,context: Context): String? {
     try {
-        Log.e("sagar", "audioVideoMuxer() called with: recordAudioFile = $recordAudioFile, recordVideoFile = $recordVideoFile")
         val outputFile = if (Build.VERSION.SDK_INT >= 29) {
             saveVideoQ(context, recordVideoFile?.absolutePath?:"")
         } else {
             getVideoFilePath()
         }
 
-        Log.e("sagar", "outputFile: $outputFile")
         val videoExtractor = MediaExtractor()
         videoExtractor.setDataSource(recordVideoFile?.absolutePath?:"")
         videoExtractor.selectTrack(0)
@@ -186,9 +183,9 @@ fun audioVideoMuxer(recordAudioFile: File, recordVideoFile: File?,context: Conte
         return outputFile
 
     } catch (e: IOException) {
-        Log.e("sagar", "audioVideoMuxerError:${e.message}")
+        e.printStackTrace()
     }catch (ex:java.lang.Exception){
-        Log.e("sagar", "audioVideoMuxerErro11r:${ex.message}")
+        ex.printStackTrace()
     }
     return null
 }

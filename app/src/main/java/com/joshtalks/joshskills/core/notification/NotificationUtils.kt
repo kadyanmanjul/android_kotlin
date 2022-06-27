@@ -10,7 +10,6 @@ import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
@@ -142,8 +141,6 @@ class NotificationUtils(val context: Context) {
 
     fun sendNotification(notificationObject: NotificationObject) {
         executor.execute {
-            Log.d("sagar", "sendNotification() called")
-            notificationObject.action = NotificationAction.ACTION_OPEN_CONVERSATION_LIST
             val intent = getIntentAccordingAction(
                 notificationObject,
                 notificationObject.action,
@@ -241,7 +238,6 @@ class NotificationUtils(val context: Context) {
                     notificationBuilder.setChannelId(notificationChannelId)
                     notificationManager.createNotificationChannel(notificationChannel)
                 }
-                Log.d("sagar", "sendNotification() called")
                 when (notificationObject.action) {
                     NotificationAction.GROUP_CHAT_REPLY -> {
                         notificationManager.notify(10112, notificationBuilder.build())
