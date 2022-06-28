@@ -89,15 +89,15 @@ class CertificateDetailActivity : BaseActivity(), FileDownloadCallback {
         if(intent.hasExtra(CERTIFICATE_EXAM_ID)){
             intent.getIntExtra(CERTIFICATE_EXAM_ID,0).let { viewModel.certificateExamId =it }
         }
-        if (intent.hasExtra(CERTIFICATE_URL) && intent.getStringExtra(CERTIFICATE_URL) != null) {
-            openCertificateShareFragment(intent.getStringExtra(CERTIFICATE_URL)?: EMPTY)
+        /*if (intent.hasExtra(CERTIFICATE_URL) && intent.getStringExtra(CERTIFICATE_URL) != null) {
+            intent.getStringExtra(CERTIFICATE_URL)?.let { openCertificateShareFragment(it) }
             initView()
-        } else {
+        } else {*/
             initDOBPicker()
             initView()
             addObserver()
             viewModel.getCertificateUserDetails()
-        }
+        //}
         binding.etPinCode.addTextChangedListener(DelayedTypingListener(delayMillis = 500L){
             if(binding.etPinCode.text?.length == 6){
                 viewModel.getInfoFromPinNumber(binding.etPinCode.text.toString().toInt())
@@ -379,16 +379,7 @@ class CertificateDetailActivity : BaseActivity(), FileDownloadCallback {
                 viewModel.postCertificateUserDetails(getUserDetail())
                 viewModel.saveImpression(GENERATE_CERTIFICATE_FORM)
             }
-
-            try {
-                val view = window.currentFocus
-                view?.clearFocus()
-                val inputMethodManager = this@CertificateDetailActivity.applicationContext.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                inputMethodManager.hideSoftInputFromWindow(view?.windowToken,0)
-            }catch (e:Exception){
-                e.printStackTrace()
-            }
-
+            hideKeyboard(this@CertificateDetailActivity)
         }
     }
 
