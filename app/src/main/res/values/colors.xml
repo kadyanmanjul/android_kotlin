@@ -249,4 +249,6 @@
     <color name="p2p_circle_yellow">#FEF51C</color>
     <color name="chat_bg_color">#EAE5DF</color>
 
+    <color name="certificate_details_txt_view">#535459</color>
+
 </resources>

@@ -13,12 +13,20 @@ data class CertificationUserDetail(
     val fatherName: String?,
     @SerializedName("mother_name")
     val motherName: String?,
-    @SerializedName("is_postal_require")
-    val isPostalRequire: Boolean,
     @SerializedName("mobile")
     val mobile: String?,
-    @SerializedName("postal_address")
-    val postalAddress: String?,
+    @SerializedName("pin_code")
+    val pinCode:Int?,
+    @SerializedName("house_number")
+    val houseNumber:String?,
+    @SerializedName("road_name")
+    val roadName:String?,
+    @SerializedName("landmark")
+    val landmark:String?,
+    @SerializedName("town")
+    val town:String?,
+    @SerializedName("state")
+    val state:String?,
     @SerializedName("report_id")
     val reportId: Int? = 0
 )
