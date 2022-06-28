@@ -371,6 +371,10 @@ class CertificateDetailActivity : BaseActivity(), FileDownloadCallback {
                 showToast(getString(R.string.enter_postal_town))
                 return@launch
             }
+            runOnUiThread {
+                showProgressDialog(getString(R.string.generating_certificate))
+            }
+
             if (isInternetAvailable()) {
                 viewModel.postCertificateUserDetails(getUserDetail())
                 viewModel.saveImpression(GENERATE_CERTIFICATE_FORM)
