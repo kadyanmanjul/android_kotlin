@@ -237,6 +237,7 @@ class CertificateDetailActivity : BaseActivity(), FileDownloadCallback {
         }
         lifecycleScope.launchWhenCreated {
             viewModel.certificateUrl.collectLatest {
+                dismissProgressDialog()
                 openCertificateShareFragment(it)
             }
         }
@@ -370,10 +371,15 @@ class CertificateDetailActivity : BaseActivity(), FileDownloadCallback {
                 showToast(getString(R.string.enter_postal_town))
                 return@launch
             }
+            runOnUiThread {
+                showProgressDialog(getString(R.string.generating_certificate))
+            }
+
             if (isInternetAvailable()) {
                 viewModel.postCertificateUserDetails(getUserDetail())
                 viewModel.saveImpression(GENERATE_CERTIFICATE_FORM)
             }
+
             try {
                 val view = window.currentFocus
                 view?.clearFocus()
@@ -485,12 +491,12 @@ class CertificateDetailActivity : BaseActivity(), FileDownloadCallback {
             }
         }
     }
-    /*fun showProgressDialog(msg: String) {
+    fun showProgressDialog(msg: String) {
         progressDialog = ProgressDialog(this, R.style.AlertDialogStyle)
         progressDialog?.setCancelable(false)
         progressDialog?.setMessage(msg)
         progressDialog?.show()
     }
 
-    fun dismissProgressDialog() = progressDialog?.dismiss()*/
+    fun dismissProgressDialog() = progressDialog?.dismiss()
 }

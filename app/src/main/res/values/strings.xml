@@ -266,6 +266,7 @@
     <string name="enter_postal_house">Please enter a valid House Number, Buiding Name</string>
     <string name="enter_postal_road">Please enter a valid Road Name, Area, Colony</string>
     <string name="enter_postal_town">Please enter a valid Town/City</string>
+    <string name="generating_certificate">Generating Your Certificate</string>
 
     <string name="missed_call_verify_message"> We make use of missed call verification.\nPlease grant permission to verify</string>
     <string name="otp_verify_message">A 4 digit OTP will be sent via SMS to verify \n your mobile number</string>
@@ -924,7 +925,7 @@
     <string name="ucrop_label_edit_photo">Add photo</string>
     <string name="please_record_answer">Read the following sentences</string>
 
-    <string name="certificate_d_header">Please fill the below details to download your certificate</string>
+    <string name="certificate_d_header">Please fill the below details to get your certificate made and delivered home</string>
     <string name="mname_error_toast">Mother name cannot be empty!</string>
     <string name="fname_error_toast">Father name cannot be empty!</string>
     <string name="certificate_download_success">Congratulations, your certificate has been downloaded</string>
