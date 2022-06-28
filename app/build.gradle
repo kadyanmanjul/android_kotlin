@@ -17,7 +17,7 @@ android {
     compileSdkVersion 31
     defaultConfig {
         applicationId "com.joshtalks.joshskills"
-        minSdkVersion 21
+        minSdkVersion 24
         targetSdkVersion 30
         versionCode majorVersion * 10000 + minorVersion * 100 + patchVersion
         versionName "${majorVersion}.${minorVersion}.${patchVersion}"
@@ -472,6 +472,9 @@ dependencies {
     implementation(moengage.pushAmp)
     implementation(moengage.pushAmpPlus)
     implementation group: 'org.slf4j', name: 'slf4j-android', version: '1.7.36'
+
+    //ffmpeg
+    implementation 'com.arthenica:mobile-ffmpeg-full:4.4'
 
     //singular
 //    implementation 'com.singular.sdk:singular_sdk:12.0.5'
