@@ -135,6 +135,7 @@ class ReadingFragmentWithoutFeedback :
     private val mutex = Mutex(false)
     private var muxerJob: Job? = null
     private var internetAvailableFlag: Boolean = true
+    var increasedAudio = getAudioFilePathMP3()
     private val praticAudioAdapter: PracticeAudioAdapter by lazy { PracticeAudioAdapter(context) }
     private val layoutManager: LinearLayoutManager by lazy {
         LinearLayoutManager(activity).apply {
@@ -303,6 +304,15 @@ class ReadingFragmentWithoutFeedback :
                 SUBMIT_BUTTON_CLICK -> submitPractise()
                 CANCEL_BUTTON_CLICK -> closeRecordedView()
                 SHOW_VIDEO_VIEW -> binding.practiseSubmitLayout.visibility = VISIBLE
+                VIDEO_AUDIO_MERGED_PATH -> {
+                    binding.progressDialog.visibility = GONE
+                    viewModel.sendOutputToFullScreen(outputFile)
+                    binding.mergedVideo.setVideoPath(outputFile)
+                }
+                INCREASE_AUDIO_VOLUME -> {
+                    increasedAudio = it.obj as String
+                    Log.e("Ayaaz","increasedaudio - $increasedAudio")
+                }
             }
         }
     }
@@ -1379,10 +1389,11 @@ class ReadingFragmentWithoutFeedback :
                             muxerJob = scope.launch {
                                 if (isActive) {
                                     mutex.withLock {
-                                        audioVideoMuxer()
-                                        requireActivity().runOnUiThread {
-                                            binding.progressDialog.visibility = GONE
-                                            viewModel.sendOutputToFullScreen(outputFile)
+                                        Log.e("Ayaaz","normalaudio - $filePath")
+                                        increaseAudioVolume(filePath!!)
+                                        if(videoDownPath!=null){
+                                            val extractedPath = extractAudioFromVideo(videoDownPath!!)
+                                            mergeAudioWithAudio(filePath!!, extractedPath, videoDownPath!!, outputFile)
                                         }
                                     }
                                 }
@@ -1394,87 +1405,6 @@ class ReadingFragmentWithoutFeedback :
             }
             true
         }
-    }
-
-    fun audioVideoMuxer() {
-        try {
-            val videoExtractor: MediaExtractor = MediaExtractor()
-            val audioExtractor: MediaExtractor = MediaExtractor()
-            audioExtractor.setDataSource(filePath!!)
-            audioExtractor.selectTrack(0)
-            val audioFormat: MediaFormat = audioExtractor.getTrackFormat(0)
-            videoDownPath?.let { videoExtractor.setDataSource(it) }
-            videoExtractor.selectTrack(0)
-            val videoFormat: MediaFormat = videoExtractor.getTrackFormat(0)
-
-            val muxer: MediaMuxer = MediaMuxer(
-                outputFile,
-                MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4
-            )
-
-            val videoTrack = muxer.addTrack(videoFormat)
-            val audioTrack = muxer.addTrack(audioFormat)
-
-            var sawEOS = false
-            var frameCount = 0
-            val offset = 100
-            val sampleSize = 256 * 1024
-            val videoBuf: ByteBuffer = ByteBuffer.allocate(sampleSize)
-            val audioBuf: ByteBuffer = ByteBuffer.allocate(sampleSize)
-            val videoBufferInfo: MediaCodec.BufferInfo = MediaCodec.BufferInfo()
-            val audioBufferInfo: MediaCodec.BufferInfo = MediaCodec.BufferInfo()
-
-            videoExtractor.seekTo(0, MediaExtractor.SEEK_TO_CLOSEST_SYNC)
-            audioExtractor.seekTo(0, MediaExtractor.SEEK_TO_CLOSEST_SYNC)
-
-            muxer.start()
-            while (!sawEOS) {
-                videoBufferInfo.offset = offset
-                videoBufferInfo.size = videoExtractor.readSampleData(videoBuf, offset)
-
-                if (videoBufferInfo.size < 0 || audioBufferInfo.size < 0) {
-                    sawEOS = true
-                    videoBufferInfo.size = 0
-
-                } else {
-                    videoBufferInfo.presentationTimeUs = videoExtractor.getSampleTime()
-                    videoBufferInfo.flags = MediaCodec.BUFFER_FLAG_SYNC_FRAME
-                    muxer.writeSampleData(videoTrack, videoBuf, videoBufferInfo)
-                    videoExtractor.advance()
-
-                    frameCount++
-                }
-            }
-
-            var sawEOS2 = false
-            var frameCount2 = 0
-            while (!sawEOS2) {
-                frameCount2++
-
-                audioBufferInfo.offset = offset
-                audioBufferInfo.size = audioExtractor.readSampleData(audioBuf, offset)
-
-                if (videoBufferInfo.size < 0 || audioBufferInfo.size < 0) {
-                    sawEOS2 = true
-                    audioBufferInfo.size = 0
-                } else {
-                    audioBufferInfo.presentationTimeUs = audioExtractor.getSampleTime()
-                    audioBufferInfo.flags = MediaCodec.BUFFER_FLAG_SYNC_FRAME;
-                    muxer.writeSampleData(audioTrack, audioBuf, audioBufferInfo)
-                    audioExtractor.advance()
-                }
-            }
-
-            muxer.stop()
-            muxer.release()
-            binding.mergedVideo.setVideoPath(outputFile)
-
-        } catch (e: IOException) {
-            Timber.e(e)
-        } catch (e: Exception) {
-            Timber.e(e)
-        }
-
     }
 
     fun inviteFriends(waIntent: Intent) {

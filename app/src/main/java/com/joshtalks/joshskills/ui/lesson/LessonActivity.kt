@@ -23,6 +23,7 @@ import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.VideoView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.content.res.AppCompatResources
@@ -100,6 +101,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_chat_n_pay.*
+import kotlinx.android.synthetic.main.fragment_reading_full_screen.*
 import kotlinx.android.synthetic.main.lesson_activity.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -115,7 +117,6 @@ const val ROOM_POSITION = 5
 const val DEFAULT_SPOTLIGHT_DELAY_IN_MS = 1300L
 const val INTRO_VIDEO_ID = "-1"
 private const val TAG = "LessonActivity"
-private const val LESSON_BACKSTACK = "LESSON_BACKSTACK"
 val STORAGE_GRAMMER_REQUEST_CODE = 3456
 private val STORAGE_READING_REQUEST_CODE = 3457
 
@@ -816,7 +817,6 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         binding.containerReading.visibility = View.VISIBLE
         supportFragmentManager.commit {
             val fragment = ReadingFullScreenFragment()
-            addToBackStack(LESSON_BACKSTACK)
             replace(R.id.container_reading, fragment, ReadingFullScreenFragment::class.java.simpleName)
         }
     }
@@ -1410,6 +1410,14 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
             binding.videoPopup.isVisible -> closeVideoPopUpUi()
             binding.overlayLayout.isVisible -> hideSpotlight()
             binding.containerReading.isVisible -> {
+                val videoView = findViewById<VideoView>(R.id.merged_video)
+                Log.e("Ayaaz", "OnBackPressedddddd")
+//                videoView.stopPlayback()
+//                supportFragmentManager.remove(yourfragment).commit()
+
+                supportFragmentManager.beginTransaction().remove(ReadingFullScreenFragment()).commit()
+//                merged_video.stopPlayback()
+                viewModel.closeVideoView()
                 closeReadingFullScreen()
                 viewModel.showVideoView()
             }
@@ -1629,6 +1637,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         )
     }
     private fun closeReadingFullScreen(){
+        Log.e("Ayaaz","close reading fun")
         supportFragmentManager.popBackStackImmediate()
         container_reading.visibility = View.GONE
     }
