@@ -12,7 +12,7 @@ internal interface WebrtcService {
     fun onDestroy()
     fun onStartRecording()
     fun onStopRecording()
-    fun observeSpeakersVolume() : MutableSharedFlow<Int>
+    fun observeSpeakersVolume() : SharedFlow<Int>
 }
 
 internal interface CallRequest {

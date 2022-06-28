@@ -185,7 +185,7 @@ internal class AgoraWebrtcService(val scope: CoroutineScope) : WebrtcService {
             }
     }
 
-    override fun observeSpeakersVolume(): MutableSharedFlow<Int> {
+    override fun observeSpeakersVolume(): SharedFlow<Int> {
         return eventUid
     }
 

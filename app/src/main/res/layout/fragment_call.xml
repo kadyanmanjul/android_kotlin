@@ -580,22 +580,18 @@
 
             </LinearLayout>
 
-            <com.airbnb.lottie.LottieAnimationView
+            <ImageView
                 android:id="@+id/progress_bar_anim"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:elevation="@dimen/_10sdp"
                 android:rotation="90"
                 android:visibility="visible"
+                loadGif="@{vm.uiState.startTime &lt;= 0 ? null : `https://s3.ap-south-1.amazonaws.com/www.static.skills.com/animation.gif`}"
                 app:layout_constraintBottom_toBottomOf="@+id/photo_frames_layout"
                 app:layout_constraintEnd_toEndOf="@+id/photo_frames_layout"
                 app:layout_constraintStart_toStartOf="@+id/photo_frames_layout"
-                app:layout_constraintTop_toTopOf="@+id/photo_frames_layout"
-                app:lottie_autoPlay="true"
-                app:lottie_fileName="lottie/voice_line_wave.json"
-                app:lottie_imageAssetsFolder="lottie"
-                app:lottie_loop="true"
-                app:lottie_speed="0.5" />
+                app:layout_constraintTop_toTopOf="@+id/photo_frames_layout" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>

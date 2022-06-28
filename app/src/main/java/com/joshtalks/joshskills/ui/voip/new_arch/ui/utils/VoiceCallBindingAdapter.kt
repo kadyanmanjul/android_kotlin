@@ -13,6 +13,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions.bitmapTransform
+import com.bumptech.glide.request.target.DrawableImageViewTarget
 import com.google.android.material.card.MaterialCardView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.constants.FPP
@@ -190,6 +191,18 @@ fun ImageView.setBackgroundForRemoteUser(imageUrl: String?) {
             .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
             .apply(bitmapTransform(BlurTransformation(24)))
             .into(this)
+    else
+        Glide.with(this)
+            .load(R.drawable.remote_user_image)
+            .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+            .into(this)
+}
+
+
+@BindingAdapter("loadGif")
+fun ImageView.loadGif(imageUrl: String?) {
+    if (!imageUrl.isNullOrEmpty())
+        Glide.with(this).load(imageUrl).into(DrawableImageViewTarget(this))
     else
         Glide.with(this)
             .load(R.drawable.remote_user_image)

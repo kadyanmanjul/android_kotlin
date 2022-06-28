@@ -23,7 +23,7 @@ class ScreenViewRecorder {
                 recorder = ViewRecorder()
                 recorder?.setVideoSource(MediaRecorder.VideoSource.SURFACE)
                 recorder?.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
-                recorder?.setVideoFrameRate(5)
+                recorder?.setVideoFrameRate(24)
                 recorder?.setVideoEncoder(MediaRecorder.VideoEncoder.H264)
                 recorder?.setVideoSize(720, 1280)
                 recorder?.setVideoEncodingBitRate(2000 * 1000)
