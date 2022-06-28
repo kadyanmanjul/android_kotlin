@@ -9,10 +9,7 @@ import com.joshtalks.joshskills.repository.local.model.GaIDMentorModel
 import com.joshtalks.joshskills.repository.local.model.RequestRegisterGAId
 import com.joshtalks.joshskills.repository.local.model.nps.NPSQuestionModel
 import com.joshtalks.joshskills.repository.server.*
-import com.joshtalks.joshskills.repository.server.certification_exam.CertificateExamReportModel
-import com.joshtalks.joshskills.repository.server.certification_exam.CertificationQuestionModel
-import com.joshtalks.joshskills.repository.server.certification_exam.CertificationUserDetail
-import com.joshtalks.joshskills.repository.server.certification_exam.RequestSubmitCertificateExam
+import com.joshtalks.joshskills.repository.server.certification_exam.*
 import com.joshtalks.joshskills.repository.server.conversation_practice.ConversationPractiseModel
 import com.joshtalks.joshskills.repository.server.conversation_practice.SubmitConversationPractiseRequest
 import com.joshtalks.joshskills.repository.server.conversation_practice.SubmittedConversationPractiseModel
@@ -200,6 +197,9 @@ interface CommonNetworkService {
 
     @GET("$DIR/certificateexam/user_details")
     suspend fun getCertificateUserDetails(): CertificationUserDetail?
+
+    @GET("http://www.postalpincode.in/api/pincode/{pin}")
+    suspend fun getInfoFromPinCode(@Path("pin")pin:Int): PostalDetails
 
     @POST("$DIR/certificateexam/user_details")
     suspend fun submitUserDetailForCertificate(@Body certificationUserDetail: CertificationUserDetail): Map<String, String>

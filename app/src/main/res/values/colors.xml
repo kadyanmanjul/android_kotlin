@@ -248,4 +248,6 @@
     <color name="high_rating">#F1FDEC</color>
     <color name="p2p_circle_yellow">#FEF51C</color>
 
+    <color name="certificate_details_txt_view">#535459</color>
+
 </resources>

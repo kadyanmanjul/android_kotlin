@@ -8,8 +8,6 @@ import android.content.IntentSender
 import android.content.pm.ActivityInfo
 import android.os.Build
 import android.os.Bundle
-import android.text.method.ScrollingMovementMethod
-import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.widget.AppCompatImageView
@@ -28,8 +26,6 @@ import com.google.android.gms.auth.api.credentials.HintRequest
 import com.google.android.gms.auth.api.credentials.IdentityProviders
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
-import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.POSTAL_ADDRESS
-import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.POSTAL_ADDRESS_SUBHEADING_CERT_FORM
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.DATE_FORMATTER
@@ -48,6 +44,7 @@ import com.joshtalks.joshskills.databinding.ActivityCertificateDetailBinding
 import com.joshtalks.joshskills.repository.server.certification_exam.CertificationUserDetail
 import com.joshtalks.joshskills.ui.certification_exam.CertificationExamViewModel
 import com.joshtalks.joshskills.ui.certification_exam.constants.*
+import com.joshtalks.joshskills.ui.certification_exam.utils.DelayedTypingListener
 import com.joshtalks.joshskills.ui.certification_exam.view.CertificateShareFragment
 import java.text.ParseException
 import java.util.Calendar
@@ -76,7 +73,6 @@ class CertificateDetailActivity : BaseActivity(), FileDownloadCallback {
     private var mobileHintShowing = false
     private var mCredentialsApiClient: CredentialsClient? = null
     private var emailHintShowing = false
-    private var isPostalRequire = false
     var progressDialog: ProgressDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -102,6 +98,14 @@ class CertificateDetailActivity : BaseActivity(), FileDownloadCallback {
             addObserver()
             viewModel.getCertificateUserDetails()
         }
+        binding.etPinCode.addTextChangedListener(DelayedTypingListener(delayMillis = 500L){
+            if(binding.etPinCode.text?.length == 6){
+                viewModel.getInfoFromPinNumber(binding.etPinCode.text.toString().toInt())
+                binding.linearLayoutAddress.visibility = View.VISIBLE
+                hideKeyboard(this)
+                binding.scrollView.smoothScrollTo(0, binding.btnSubmitDetails.y.toInt())
+            }
+        })
     }
 
     private fun initView() {
@@ -129,7 +133,7 @@ class CertificateDetailActivity : BaseActivity(), FileDownloadCallback {
                     emailChooser()
             }
 
-            binding.etPostal.overScrollMode = View.OVER_SCROLL_ALWAYS
+            /*binding.etPostal.overScrollMode = View.OVER_SCROLL_ALWAYS
             binding.etPostal.scrollBarStyle = View.SCROLLBARS_INSIDE_INSET
             binding.etPostal.movementMethod = ScrollingMovementMethod.getInstance()
             binding.etPostal.setOnTouchListener { view, motionEvent ->
@@ -138,7 +142,8 @@ class CertificateDetailActivity : BaseActivity(), FileDownloadCallback {
                     view.parent.requestDisallowInterceptTouchEvent(false)
                 }
                 false
-            }
+            }*/
+
         }
     }
 
@@ -240,15 +245,6 @@ class CertificateDetailActivity : BaseActivity(), FileDownloadCallback {
             viewModel.cUserDetails.collectLatest {
                 it?.let {
                     binding.obj = it
-                    if (it.isPostalRequire) {
-                        binding.tvPoAdd.text = AppObjectController.getFirebaseRemoteConfig().getString(POSTAL_ADDRESS)
-                        binding.tvPoAdd.visibility = View.VISIBLE
-                        binding.tvPoSubAdd.text = AppObjectController.getFirebaseRemoteConfig().getString(POSTAL_ADDRESS_SUBHEADING_CERT_FORM)
-                        binding.tvPoSubAdd.visibility = View.VISIBLE
-                        binding.etPostal.visibility = View.VISIBLE
-                        isPostalRequire = true
-                    }
-                    binding.etPostal.setText(it.postalAddress)
                     binding.etMotherName.setText(it.motherName)
                     binding.etFatherName.setText(it.fatherName)
                     binding.etMobile.setText(getMobileNumber(it.mobile))
@@ -256,6 +252,12 @@ class CertificateDetailActivity : BaseActivity(), FileDownloadCallback {
                     binding.etName.setText(it.fullName)
                     binding.etName.requestFocus()
                     binding.etName.setSelection(it.fullName?.length ?: 0)
+                    it.pinCode?.let { it1 -> binding.etPinCode.setText(it1.toString()) }
+                    binding.etHouseNum.setText(it.houseNumber)
+                    binding.etRoadNameColony.setText(it.roadName)
+                    binding.etLandmark.setText(it.landmark)
+                    binding.etTownOrCity.setText(it.town)
+                    binding.autoCompleteTextViewFirst.setText(it.state)
 
                     if (it.dateOfBirth.isNullOrEmpty().not()) {
                         userDateOfBirth = it.dateOfBirth ?: EMPTY
@@ -264,6 +266,27 @@ class CertificateDetailActivity : BaseActivity(), FileDownloadCallback {
                 }
                 binding.progressBar.visibility = View.GONE
                 binding.scrollView.visibility = View.VISIBLE
+            }
+        }
+
+        lifecycleScope.launchWhenCreated {
+            viewModel.cityUser.collectLatest {
+                if(it == ERROR){
+                    showToast("Please enter a valid Pin Code")
+                }else{
+                    binding.etTownOrCity.setText(it)
+                }
+            }
+        }
+
+        lifecycleScope.launchWhenCreated {
+            viewModel.stateUser.collectLatest {
+                for(i in 0 until binding.autoCompleteTextViewFirst.adapter.count){ //36 are number of states and UT with us
+                    if(binding.autoCompleteTextViewFirst.adapter.getItem(i) == it){
+                        binding.autoCompleteTextViewFirst.setText(binding.autoCompleteTextViewFirst.adapter.getItem(i).toString(),false)
+                        break
+                    }
+                }
             }
         }
     }
@@ -331,8 +354,20 @@ class CertificateDetailActivity : BaseActivity(), FileDownloadCallback {
                 showToast(getString(R.string.enter_valid_email_toast))
                 return@launch
             }
-            if(binding.etPostal.text.isNullOrEmpty()){
+            if(binding.etPinCode.text?.length !=6){
                 showToast(getString(R.string.enter_postal_address))
+                return@launch
+            }
+            if (binding.etHouseNum.text.isNullOrEmpty()){
+                showToast(getString(R.string.enter_postal_house))
+                return@launch
+            }
+            if (binding.etRoadNameColony.text.isNullOrEmpty()){
+                showToast(getString(R.string.enter_postal_road))
+                return@launch
+            }
+            if (binding.etTownOrCity.text.isNullOrEmpty()){
+                showToast(getString(R.string.enter_postal_town))
                 return@launch
             }
             if (isInternetAvailable()) {
@@ -360,8 +395,12 @@ class CertificateDetailActivity : BaseActivity(), FileDownloadCallback {
             mobile = COUNTRY_CODE + this.binding.etMobile.text.toString(),
             motherName = this.binding.etMotherName.text.toString(),
             fatherName = this.binding.etFatherName.text.toString(),
-            isPostalRequire = this.isPostalRequire,
-            postalAddress = this.binding.etPostal.text.toString(),
+            pinCode = this.binding.etPinCode.text.toString().toInt(),
+            houseNumber = this.binding.etHouseNum.text.toString(),
+            roadName = this.binding.etRoadNameColony.text.toString(),
+            landmark = this.binding.etLandmark.text.toString(),
+            town = this.binding.etTownOrCity.text.toString(),
+            state = this.binding.autoCompleteTextViewFirst.text.toString()
         )
     }
 

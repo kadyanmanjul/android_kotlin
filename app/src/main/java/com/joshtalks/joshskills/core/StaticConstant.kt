@@ -37,6 +37,8 @@ const val MAX_YEAR = 6
 const val ALPHA_MAX = 1F
 const val ALPHA_MIN = 0.45F
 
+const val ERROR ="ERROR"
+
 val IMAGE_REGEX = Regex(pattern = IMAGE_PATTERN)
 const val MINIMUM_VIDEO_DOWNLOAD_PROGRESS = 20
 const val ARG_PLACEHOLDER_URL = "placeholder_image_url"
