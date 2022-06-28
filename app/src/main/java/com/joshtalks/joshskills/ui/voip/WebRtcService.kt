@@ -1872,7 +1872,8 @@ class WebRtcService : BaseWebRtcService() {
 
     private fun removeNotifications() {
         try {
-            mNotificationManager?.cancelAll()
+            mNotificationManager?.cancel(ACTION_NOTIFICATION_ID)
+            mNotificationManager?.cancel(INCOMING_CALL_NOTIFICATION_ID)
             stopForeground(true)
             addMissCallNotification()
         } catch (ex: Exception) {
@@ -2313,7 +2314,8 @@ class WebRtcService : BaseWebRtcService() {
 
     private fun conversationRoomNotification(): Notification {
         Timber.tag(TAG).e("actionNotification  ")
-        mNotificationManager?.cancelAll()
+        mNotificationManager?.cancel(ACTION_NOTIFICATION_ID)
+        mNotificationManager?.cancel(INCOMING_CALL_NOTIFICATION_ID)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val notificationChannelName: CharSequence = "Voip Call Status"
             val mChannel = NotificationChannel(

@@ -224,12 +224,6 @@ object WorkManagerAdmin {
         WorkManager.getInstance(AppObjectController.joshApplication).enqueue(workRequest)
     }
 
-    fun notificationCallRecordingEvent(filePath: String) {
-        val data = workDataOf("filepath" to filePath)
-        val workRequest = OneTimeWorkRequestBuilder<CallRecordingEvent>().setInputData(data).build()
-        WorkManager.getInstance(AppObjectController.joshApplication).enqueue(workRequest)
-    }
-
     fun clearMediaOfConversation(conversationId: String, isTimeDelete: Boolean = false): UUID {
         val data = workDataOf("conversation_id" to conversationId, "time_delete" to isTimeDelete)
         val workRequest = OneTimeWorkRequestBuilder<RemoveMediaWorker>()

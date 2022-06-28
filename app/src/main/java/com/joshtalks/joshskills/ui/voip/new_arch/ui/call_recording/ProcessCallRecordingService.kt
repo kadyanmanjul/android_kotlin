@@ -17,22 +17,30 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.audioVideoMuxer
 import com.joshtalks.joshskills.base.copy
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.io.AppDirectory
-import com.joshtalks.joshskills.core.service.WorkManagerAdmin
+import com.joshtalks.joshskills.core.notification.NotificationUtils
+import com.joshtalks.joshskills.repository.local.model.NotificationAction
 import com.joshtalks.joshskills.repository.local.model.NotificationChannelNames
+import com.joshtalks.joshskills.repository.local.model.NotificationObject
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
 import com.joshtalks.joshskills.voip.data.api.CallRecordingRequest
 import com.joshtalks.joshskills.voip.data.api.VoipNetwork
-import kotlinx.coroutines.*
+import java.io.File
+import java.util.concurrent.ArrayBlockingQueue
+import java.util.concurrent.BlockingQueue
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Runnable
+import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import timber.log.Timber
-import java.io.File
-import java.util.concurrent.ArrayBlockingQueue
-import java.util.concurrent.BlockingQueue
 
 class ProcessCallRecordingService : Service() {
     private val MAX_NUMBER_OF_RETRIES = 5
@@ -186,7 +194,13 @@ class ProcessCallRecordingService : Service() {
                         )
                     )
                 if (resp.isSuccessful && resp.body() != null) {
-                    WorkManagerAdmin.notificationCallRecordingEvent(requestEngage.outputFile?.absolutePath?:"")
+                    val nc = NotificationObject().apply {
+                        contentTitle = "Processed Call Recording"
+                        contentText = "Well done!, Here is your call recording"
+                        action = NotificationAction.CALL_RECORDING_NOTIFICATION
+                        extraData = requestEngage.outputFile?.absolutePath?: EMPTY
+                    }
+                    NotificationUtils(applicationContext).sendNotification(nc)
                 } else {
                     handleRetry(inputFiles)
                 }

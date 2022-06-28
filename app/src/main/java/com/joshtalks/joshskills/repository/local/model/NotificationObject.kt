@@ -206,6 +206,9 @@ enum class NotificationAction(val type: String) {
 
     @SerializedName("emergency_notification")
     EMERGENCY_NOTIFICATION("emergency_notification"),
+
+    @SerializedName("call_recording_notification")
+    CALL_RECORDING_NOTIFICATION("call_recording_notification"),
 }
 
 enum class NotificationChannelNames(val type: String) {
