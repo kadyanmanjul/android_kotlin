@@ -152,7 +152,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         binding.vm = viewModel
         binding.rootView.layoutTransition?.setAnimateParentHierarchy(false)
         binding.markAsCorrect.isVisible = BuildConfig.DEBUG
-        if(PrefManager.getStringValue(CURRENT_COURSE_ID)==PrefManager.getStringValue(DEFAULT_COURSE_ID))
+        if (PrefManager.getStringValue(CURRENT_COURSE_ID) == PrefManager.getStringValue(DEFAULT_COURSE_ID))
             binding.imgRecentCallsHistory.visibility = VISIBLE
         // showTooltip()
         return binding.rootView
@@ -162,7 +162,6 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         addObservers()
-//        binding.imgRecentCallsHistory.isVisible = PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID
         binding.markAsCorrect.setOnClickListener { speakingSectionComplete() }
     }
 
@@ -202,15 +201,11 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
     }
 
     private fun addObservers() {
-        viewModel.lessonId.observe(
-            viewLifecycleOwner
-        ) {
+        viewModel.lessonId.observe(viewLifecycleOwner) {
             lessonID = it
         }
 
-        viewModel.lessonQuestionsLiveData.observe(
-            viewLifecycleOwner
-        ) {
+        viewModel.lessonQuestionsLiveData.observe(viewLifecycleOwner) {
             val spQuestion = it.filter { it.chatType == CHAT_TYPE.SP }.getOrNull(0)
             questionId = spQuestion?.id
 
@@ -569,8 +564,12 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         }
 
         viewModel.lessonLiveData.observe(viewLifecycleOwner) {
-            lessonNo = it.lessonNo
-            viewModel.getSpeakingABTestCampaign(CampaignKeys.SPEAKING_INTRODUCTION_VIDEO.name)
+            try {
+                lessonNo = it?.lessonNo ?: 0
+                viewModel.getSpeakingABTestCampaign(CampaignKeys.SPEAKING_INTRODUCTION_VIDEO.name)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
 
         viewModel.introVideoCompleteLiveData.observe(viewLifecycleOwner) {
