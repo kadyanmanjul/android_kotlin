@@ -162,7 +162,7 @@ object WorkManagerAdmin {
             )
     }
 
-    fun syncNotifiationEngagement() {
+    fun syncNotificationEngagement() {
         WorkManager.getInstance(AppObjectController.joshApplication)
             .enqueue(
                 OneTimeWorkRequestBuilder<NotificationEngagementSyncWorker>().build()

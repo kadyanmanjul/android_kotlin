@@ -1,12 +1,18 @@
 package com.joshtalks.joshskills.core.firestore
 
+import android.content.Context
+import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.SERVER_TIME_OFFSET
+import com.joshtalks.joshskills.core.notification.NotificationUtils
 import com.joshtalks.joshskills.core.notification.model.NotificationEvent
+import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.repository.local.model.NotificationObject
 import retrofit2.HttpException
 import timber.log.Timber
+import java.lang.reflect.Type
 
 private const val TAG = "NotificationAnalytics"
 
@@ -91,6 +97,32 @@ class NotificationAnalytics {
         } catch (ex: Exception) {
             ex.printStackTrace()
             return false
+        }
+    }
+
+    suspend fun fetchMissedNotification(context: Context) {
+        try {
+            val notifications = AppObjectController.utilsAPIService.getMissedNotifications(Mentor.getInstance().getId()).body()
+            if (notifications?.isNotEmpty() == true) {
+                for (item in notifications) {
+                    val notificationTypeToken: Type = object : TypeToken<NotificationObject>() {}.type
+                    val nc: NotificationObject = AppObjectController.gsonMapper.fromJson(
+                        AppObjectController.gsonMapper.toJson(item),
+                        notificationTypeToken
+                    )
+                    nc.contentTitle = item.title
+                    nc.contentText = item.body
+                    val isFirstTimeNotification = NotificationAnalytics().addAnalytics(
+                        notificationId = nc.id.toString(),
+                        mEvent = Action.RECEIVED,
+                        channel = Channel.API
+                    )
+                    if (isFirstTimeNotification)
+                        NotificationUtils(context).sendNotification(nc)
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 
