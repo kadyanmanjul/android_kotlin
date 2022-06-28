@@ -16,6 +16,7 @@ import com.joshtalks.badebhaiya.feed.model.LiveRoomUser
 import com.joshtalks.badebhaiya.liveroom.viewmodel.LiveRoomViewModel
 import com.joshtalks.badebhaiya.pubnub.PubNubEventsManager
 import com.joshtalks.badebhaiya.pubnub.PubNubManager
+import timber.log.Timber
 
 class RaisedHandsBottomSheet(
     private val onRaisedHand: HandRaiseSheetListener
@@ -96,16 +97,19 @@ class RaisedHandsBottomSheet(
 
     private fun addObserver() {
         viewModel.audienceList.observe(requireActivity()) {
+            Timber.d("WE GOT RAISED HAND USERS => $it")
             refreshAdapterWithNewList(it)
         }
     }
 
     private fun refreshAdapterWithNewList(handRaisedList: List<LiveRoomUser>?) {
         val list = handRaisedList?.filter { it.isSpeaker==false && it.isHandRaised }
-//        this.raisedHandList = list?.sortedBy { it.sortOrder }
-        setVisibilities()
-        bottomSheetAdapter?.updateFullList(raisedHandList!!.distinct())
+        this.raisedHandList = list?.sortedBy { it.sortOrder }
 
+        setVisibilities()
+        list?.let {
+            bottomSheetAdapter?.updateFullList(it.distinctBy { it.userId })
+        }
     }
 
     private fun configureRecyclerView() {

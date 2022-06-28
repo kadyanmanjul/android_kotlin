@@ -205,8 +205,9 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
 
     private fun addViewModelObserver() {
         vm.audienceList.observe(this, androidx.lifecycle.Observer {
-            it.toMutableList().add(me)
-            val list = it.toList()
+            val meList = it.toMutableList()
+                meList.add(me)
+            val list = meList.toList()
 //            val list = it.sortedBy { it.sortOrder }
             Timber.tag("LiveRoomAudience").d("AUDIENCE LIST IS => $list")
 //            val duplicateList = mutableListOf<LiveRoomUser>()
@@ -228,7 +229,6 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
             }
             Log.i("HELLOTESTER", "addViewModelObserver: $it")
             binding.audienceCount.text= "("+it?.size+")"
-
 
         })
 
@@ -276,6 +276,11 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
                         )
                     }
 
+                }
+                CANCEL_NOTIFICATION_FOR_INVITE_SPEAKER -> {
+                    // TODO: Hide notification view
+                    Timber.tag("Cancel HandRaise").d("HAND RAISE CANCELED")
+                    binding.notificationBar.loadAnimationSlideUp()
                 }
                 SHOW_NOTIFICATION_FOR_USER_TO_JOIN -> {
                     setNotificationBarFieldsWithActions(
@@ -736,6 +741,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
                                 listener__recycler_view[pos].raised_hands.visibility= View.VISIBLE
                             }
 
+
                     }
                     setNotificationWithoutAction(
                         String.format(
@@ -746,6 +752,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
                     )
                 }
                 false -> {
+
                     binding.apply {
                         handRaiseBtn.visibility = View.GONE
                         handUnraiseBtn.visibility = View.VISIBLE

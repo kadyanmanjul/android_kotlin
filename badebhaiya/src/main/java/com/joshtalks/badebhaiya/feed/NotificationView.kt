@@ -116,6 +116,7 @@ class NotificationView @JvmOverloads constructor(
     enum class ConversationRoomNotificationState(val type: Int):Parcelable {
         DEFAULT(0),
         HAND_RAISED(1),
+        HAND_UNRAISED(8),
         YOUR_HAND_RAISED(2),
         JOIN_AS_SPEAKER(3),
         MOVED_TO_SPEAKER(4),

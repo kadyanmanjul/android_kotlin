@@ -658,6 +658,16 @@ object PubNubManager {
             postToLiveEvent(message)
             setHandRaisedForUser(msg.get("id").asInt, true)
         } else {
+            message.what = CANCEL_NOTIFICATION_FOR_INVITE_SPEAKER
+            message.data = Bundle().apply {
+                putString(NOTIFICATION_NAME, msg.get("short_name").asString)
+                putInt(NOTIFICATION_ID, msg.get("id").asInt)
+                putParcelable(
+                    NOTIFICATION_TYPE,
+                    NotificationView.ConversationRoomNotificationState.HAND_UNRAISED
+                )
+            }
+            postToLiveEvent(message)
             setHandRaisedForUser(msg.get("id").asInt, false)
         }
     }

@@ -15,7 +15,7 @@ object PubNubEventsManager {
         customMessage.addProperty("id", PubNubManager.getLiveRoomProperties().agoraUid)
         customMessage.addProperty("is_hand_raised", isRaised)
         customMessage.addProperty("short_name", PubNubManager.currentUser?.name ?: DEFAULT_NAME)
-        customMessage.addProperty("action", "IS_HAND_RAISED")
+        customMessage.addProperty("action", "IS_HAND_UNRAISED")
         PubNubManager.sendCustomMessage(customMessage, PubNubManager.getLiveRoomProperties().moderatorId.toString())
     }
 

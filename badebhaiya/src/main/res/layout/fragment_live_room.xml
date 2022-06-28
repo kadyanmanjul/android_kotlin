@@ -317,7 +317,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/mute_btn"
                 app:srcCompat="@drawable/ic_unraise_hand_icon"
-                tools:visibility="visible" />
+                tools:visibility="gone" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
