@@ -267,7 +267,6 @@
     <string name="enter_postal_road">Please enter a valid Road Name, Area, Colony</string>
     <string name="enter_postal_town">Please enter a valid Town/City</string>
     <string name="generating_certificate">Generating Your Certificate</string>
-
     <string name="missed_call_verify_message"> We make use of missed call verification.\nPlease grant permission to verify</string>
     <string name="otp_verify_message">A 4 digit OTP will be sent via SMS to verify \n your mobile number</string>
     <string name="missed_call_label">Missed Call Verification </string>
