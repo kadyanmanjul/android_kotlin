@@ -1047,6 +1047,11 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
         singleLiveEvent.value = message
     }
 
+    fun closeVideoView(){
+        message.what = CLOSE_VIDEO_VIEW
+        singleLiveEvent.value = message
+    }
+
     fun showVideoView(){
         message.what = SHOW_VIDEO_VIEW
         singleLiveEvent.value = message
