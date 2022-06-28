@@ -151,6 +151,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
         binding = viewBinding
         vm.lvRoomState = LiveRoomState.EXPANDED
         channelName = PubNubManager.getLiveRoomProperties()?.channelName
+        binding.scrollView.isNestedScrollingEnabled = false
         trackLiveRoomState()
         isActivityOpenFromNotification =
             PubNubManager.getLiveRoomProperties()?.isActivityOpenFromNotification!!
@@ -207,6 +208,15 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
             it.toMutableList().add(me)
             val list = it.toList()
 //            val list = it.sortedBy { it.sortOrder }
+            Timber.tag("LiveRoomAudience").d("AUDIENCE LIST IS => $list")
+//            val duplicateList = mutableListOf<LiveRoomUser>()
+//            for (i in 1..100){
+//                val duplicateUser = list[0]
+//                duplicateUser.userId = System.currentTimeMillis().toString()
+//                duplicateList.add(
+//                    duplicateUser
+//                )
+//            }
             audienceAdapter?.updateFullList(list)
 //            audienceAdapter?.updateFullList(list)
             Log.i("AUDIENCE", "addViewModelObserver: ${it}")

@@ -12,6 +12,7 @@ import com.joshtalks.badebhaiya.feed.model.LiveRoomUser
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.utils.DEFAULT_NAME
 import com.joshtalks.badebhaiya.utils.setUserImageRectOrInitials
+import timber.log.Timber
 
 class AudienceAdapter(
     val isModerator: Boolean
@@ -21,8 +22,9 @@ class AudienceAdapter(
     private var listenerUserAction: OnUserItemClickListener? = null
 
     fun updateFullList(newList: List<LiveRoomUser>) {
+        Timber.d("AUDIENCE LIST IN ADAPTER => $newList")
         var fullName= User.getInstance().firstName+" "+ User.getInstance().lastName
-        var me= LiveRoomUser(123,
+        var me= LiveRoomUser(123, // TODO: Add real id
             false,
             User.getInstance().firstName,
             fullName,
@@ -35,11 +37,14 @@ class AudienceAdapter(
             User.getInstance().userId,
         )
 //        newList.sortedByDescending { it.sortOrder }
+        Timber.tag("LiveRoomAudience").d("AUDIENCE LIST IN AFTER ADDING LOCAL USER => $newList")
         val diffCallback = ConversationUserDiffCallback(audienceList, newList)
         val diffResult = DiffUtil.calculateDiff(diffCallback)
         audienceList.clear()
         audienceList.addAll(newList)
         audienceList.remove(me)
+        Timber.d("AUDEN")
+        Timber.tag("LiveRoomAudience").d("AUDIENCE LIST IN AFTER AFTER DOING DIFFUTIL CALCULATION => $newList")
         diffResult.dispatchUpdatesTo(this)
     }
 
@@ -107,6 +112,7 @@ class AudienceAdapter(
     }
 
     override fun getItemCount(): Int {
+        Timber.tag("LiveRoomAudience").d("AUDIENCE LIST IN AFTER COMING INTO ADAPTER => $audienceList and Size => ${audienceList.size}")
         return  audienceList.size
     }
 }
