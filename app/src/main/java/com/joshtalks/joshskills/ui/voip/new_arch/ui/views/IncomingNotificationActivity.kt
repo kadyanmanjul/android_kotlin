@@ -1,10 +1,12 @@
 package com.joshtalks.joshskills.ui.voip.new_arch.ui.views
 
+
 import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
+import android.util.Log
 import android.view.View
 import android.view.Window
 import android.view.WindowManager.LayoutParams
@@ -52,14 +54,11 @@ class IncomingNotificationActivity : AppCompatActivity() {
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         super.onCreate(savedInstanceState)
 
+        val shouldDestroy = intent?.getBooleanExtra("destroy_activity",false)
+        if(shouldDestroy == true) {
+            closeActivity()
+        }
         startTimer()
-//        val remoteServiceIntent = Intent(com.joshtalks.joshskills.voip.Utils.context, CallingRemoteService::class.java)
-//        remoteServiceIntent.putExtra(INCOMING_CALL_ID, JSONObject(actionData).getString(INCOMING_CALL_ID))
-//        remoteServiceIntent.putExtra(INCOMING_CALL_CATEGORY,JSONObject(actionData).getString(INCOMING_CALL_CATEGORY))
-//        remoteServiceIntent.action = SERVICE_ACTION_INCOMING_CALL
-//        com.joshtalks.joshskills.voip.Utils.context?.startService(remoteServiceIntent)
-//        return null
-
     }
 
     private fun startTimer() {
@@ -77,7 +76,7 @@ class IncomingNotificationActivity : AppCompatActivity() {
             action = SERVICE_ACTION_INCOMING_CALL_DECLINE
         }
         Utils.context?.startService(intent)
-        finishAndRemoveTask()
+         closeActivity()
     }
 
      fun acceptCall(v: View) {
@@ -88,7 +87,6 @@ class IncomingNotificationActivity : AppCompatActivity() {
             flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
         }
         Utils.context?.startActivity(intent)
-        finishAndRemoveTask()
     }
     override fun onStart() {
         super.onStart()
@@ -100,5 +98,11 @@ class IncomingNotificationActivity : AppCompatActivity() {
         if(wlCpu?.isHeld == true) wlCpu.release()
     }
 
-
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        val shouldDestroy = intent?.getBooleanExtra("destroy_activity",false)
+        if(shouldDestroy == true){
+           closeActivity()
+        }
+    }
 }

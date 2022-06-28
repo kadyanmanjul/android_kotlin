@@ -159,6 +159,15 @@ internal class NotificationGenerator {
         val notificationManager =
             context?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.cancel(notificationId)
+
+        val notificationActivity="com.joshtalks.joshskills.ui.voip.new_arch.ui.views.IncomingNotificationActivity"
+        val callingActivity = Intent()
+        callingActivity.apply {
+            setClassName(context,notificationActivity)
+            putExtra("destroy_activity",true)
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        context.startActivity(callingActivity)
     }
 
     fun updateTitle(title:String,notificationBuiltObj: NotificationBuiltObj) {
