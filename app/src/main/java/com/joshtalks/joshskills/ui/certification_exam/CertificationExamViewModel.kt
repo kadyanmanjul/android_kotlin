@@ -176,6 +176,8 @@ class CertificationExamViewModel(application: Application) : AndroidViewModel(ap
 
     val cUserDetails = MutableSharedFlow<CertificationUserDetail?>(replay = 0)
     val certificateUrl = MutableSharedFlow<String?>(replay = 0)
+    val stateUser = MutableSharedFlow<String>(replay = 0)
+    val cityUser = MutableSharedFlow<String>(replay = 0)
 
     fun getCertificateUserDetails() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -185,6 +187,23 @@ class CertificationExamViewModel(application: Application) : AndroidViewModel(ap
             } catch (ex: Throwable) {
                 ex.showAppropriateMsg()
                 apiStatus.postValue(ApiCallStatus.FAILED)
+                ex.printStackTrace()
+            }
+        }
+    }
+
+    fun getInfoFromPinNumber(pin:Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val resp = AppObjectController.commonNetworkService.getInfoFromPinCode(pin)
+                if (resp.Status != ERROR){
+                    stateUser.emit(resp.PostOffice[0].State)
+                    cityUser.emit(resp.PostOffice[0].Taluk)
+                }else{
+                    cityUser.emit(ERROR)
+                }
+            } catch (ex: Throwable) {
+                ex.showAppropriateMsg()
                 ex.printStackTrace()
             }
         }
