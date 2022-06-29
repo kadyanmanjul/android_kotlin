@@ -912,20 +912,24 @@ class PaymentSummaryActivity : CoreJoshActivity(),
     }
 
     override fun onPaymentError(p0: Int, p1: String?) {
-        MixPanelTracker.publishEvent(MixPanelEvent.PAYMENT_FAILED)
-            .addParam(ParamKeys.TEST_ID, viewModel.getPaymentTestId())
-            .addParam(ParamKeys.COURSE_NAME, viewModel.getCourseName())
-            .addParam(ParamKeys.COURSE_PRICE, viewModel.getCourseActualAmount())
-            .addParam(ParamKeys.IS_COUPON_APPLIED, viewModel.responsePaymentSummary.value?.couponDetails?.isPromoCode)
-            .addParam(ParamKeys.AMOUNT_PAID, viewModel.getCourseDiscountedAmount())
-            .push()
+        try {
+            MixPanelTracker.publishEvent(MixPanelEvent.PAYMENT_FAILED)
+                .addParam(ParamKeys.TEST_ID, viewModel.getPaymentTestId())
+                .addParam(ParamKeys.COURSE_NAME, viewModel.getCourseName())
+                .addParam(ParamKeys.COURSE_PRICE, viewModel.getCourseActualAmount())
+                .addParam(ParamKeys.IS_COUPON_APPLIED, viewModel.responsePaymentSummary.value?.couponDetails?.isPromoCode)
+                .addParam(ParamKeys.AMOUNT_PAID, viewModel.getCourseDiscountedAmount())
+                .push()
 
-        val jsonData = JSONObject()
-        jsonData.put(ParamKeys.TEST_ID.name, viewModel.getPaymentTestId())
-        jsonData.put(ParamKeys.COURSE_PRICE.name, viewModel.getCourseActualAmount())
-        jsonData.put(ParamKeys.IS_COUPON_APPLIED.name, viewModel.responsePaymentSummary.value?.couponDetails?.isPromoCode)
-        jsonData.put(ParamKeys.AMOUNT_PAID.name, viewModel.getCourseDiscountedAmount())
-        Singular.eventJSON(SingularEvent.PAYMENT_FAILED.name, jsonData)
+            val jsonData = JSONObject()
+            jsonData.put(ParamKeys.TEST_ID.name, viewModel.getPaymentTestId())
+            jsonData.put(ParamKeys.COURSE_PRICE.name, viewModel.getCourseActualAmount())
+            jsonData.put(ParamKeys.IS_COUPON_APPLIED.name, viewModel.responsePaymentSummary.value?.couponDetails?.isPromoCode)
+            jsonData.put(ParamKeys.AMOUNT_PAID.name, viewModel.getCourseDiscountedAmount())
+            Singular.eventJSON(SingularEvent.PAYMENT_FAILED.name, jsonData)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
 
         appAnalytics.addParam(AnalyticsEvent.PAYMENT_FAILED.NAME, p1)
         logPaymentStatusAnalyticsEvents(AnalyticsEvent.FAILED_PARAM.NAME, p1)
@@ -938,26 +942,6 @@ class PaymentSummaryActivity : CoreJoshActivity(),
 
     @Synchronized
     override fun onPaymentSuccess(razorpayPaymentId: String) {
-        MixPanelTracker.publishEvent(MixPanelEvent.PAYMENT_SUCCESS)
-            .addParam(ParamKeys.TEST_ID, viewModel.getPaymentTestId())
-            .addParam(ParamKeys.COURSE_NAME, viewModel.getCourseName())
-            .addParam(ParamKeys.COURSE_PRICE, viewModel.getCourseActualAmount())
-            .addParam(ParamKeys.IS_COUPON_APPLIED, viewModel.responsePaymentSummary.value?.couponDetails?.isPromoCode)
-            .addParam(ParamKeys.AMOUNT_PAID, viewModel.getCourseDiscountedAmount())
-            .addParam(ParamKeys.IS_100_POINTS_OBTAINED_IN_FREE_TRIAL,is100PointsObtained)
-            .push()
-
-        Singular.customRevenue(
-            SingularEvent.PAYMENT_SUCCESSFUL.name,
-            "INR",
-            viewModel.getCourseDiscountedAmount(),
-            mapOf(
-                Pair(ParamKeys.TEST_ID.name, viewModel.getPaymentTestId()),
-                Pair(ParamKeys.COURSE_PRICE.name, viewModel.getCourseActualAmount()),
-                Pair(ParamKeys.IS_COUPON_APPLIED.name, viewModel.responsePaymentSummary.value?.couponDetails?.isPromoCode)
-            )
-        )
-
         if(viewModel.getPaymentTestId() == ENGLISH_COURSE_TEST_ID) {
             PrefManager.getBoolValue(INCREASE_COURSE_PRICE_CAMPAIGN_ACTIVE)
             viewModel.postGoal("ICP_COURSE_BOUGHT",CampaignKeys.INCREASE_COURSE_PRICE.name)
@@ -1007,6 +991,25 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         ) {
             isEcommereceEventFire = false
             addECommerceEvent(razorpayPaymentId)
+        }
+
+        try {
+            MixPanelTracker.publishEvent(MixPanelEvent.PAYMENT_SUCCESS)
+                .addParam(ParamKeys.TEST_ID, viewModel.getPaymentTestId())
+                .addParam(ParamKeys.COURSE_NAME, viewModel.getCourseName())
+                .addParam(ParamKeys.COURSE_PRICE, viewModel.getCourseActualAmount())
+                .addParam(ParamKeys.IS_COUPON_APPLIED, viewModel.responsePaymentSummary.value?.couponDetails?.isPromoCode)
+                .addParam(ParamKeys.AMOUNT_PAID, viewModel.getCourseDiscountedAmount())
+                .addParam(ParamKeys.IS_100_POINTS_OBTAINED_IN_FREE_TRIAL, is100PointsObtained)
+                .push()
+
+            val json = JSONObject()
+            json.put(ParamKeys.TEST_ID.name, viewModel.getPaymentTestId())
+            json.put(ParamKeys.AMOUNT_PAID.name, viewModel.getCourseDiscountedAmount())
+            json.put(ParamKeys.IS_COUPON_APPLIED.name, viewModel.responsePaymentSummary.value?.couponDetails?.isPromoCode)
+            Singular.customRevenue(SingularEvent.PAYMENT_SUCCESSFUL.name, json)
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
 
         uiHandler.post {
