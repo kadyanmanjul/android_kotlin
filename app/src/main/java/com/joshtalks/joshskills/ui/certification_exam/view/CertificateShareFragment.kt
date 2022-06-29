@@ -257,10 +257,6 @@ class CertificateShareFragment : CoreJoshFragment() {
                 permissions: MutableList<PermissionRequest>?,
                 token: PermissionToken?
             ) {
-
-
-
-                
                 token?.continuePermissionRequest()
             }
         })
