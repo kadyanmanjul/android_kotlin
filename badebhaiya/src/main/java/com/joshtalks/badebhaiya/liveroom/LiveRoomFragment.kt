@@ -1281,6 +1281,8 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
                 mBoundService?.leaveRoom(roomId, roomQuestionId)
             }
         }
+        vm.pubNubState.value=PubNubState.ENDED
+        feedViewModel.pubNubState=PubNubState.ENDED
         binding.notificationBar.destroyMediaPlayer()
         requireActivity().stopService(Intent(requireActivity(), ConvoWebRtcService::class.java))
         super.onDestroy()
