@@ -431,7 +431,7 @@ class SignUpActivity : BaseActivity() {
     }
 
     private fun facebookLogin() {
-        LoginManager.getInstance().logIn(this, listOf("public_profile", "email"))
+        LoginManager.getInstance().logInWithReadPermissions(this, listOf("public_profile", "email"))
     }
 
     private fun trueCallerLogin() {
