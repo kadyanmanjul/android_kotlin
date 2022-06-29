@@ -89,15 +89,15 @@ class CertificateDetailActivity : BaseActivity(), FileDownloadCallback {
         if(intent.hasExtra(CERTIFICATE_EXAM_ID)){
             intent.getIntExtra(CERTIFICATE_EXAM_ID,0).let { viewModel.certificateExamId =it }
         }
-        /*if (intent.hasExtra(CERTIFICATE_URL) && intent.getStringExtra(CERTIFICATE_URL) != null) {
+        if (intent.hasExtra(CERTIFICATE_URL) && intent.getStringExtra(CERTIFICATE_URL) != null) {
             intent.getStringExtra(CERTIFICATE_URL)?.let { openCertificateShareFragment(it) }
             initView()
-        } else {*/
+        } else {
             initDOBPicker()
             initView()
             addObserver()
             viewModel.getCertificateUserDetails()
-        //}
+        }
         binding.etPinCode.addTextChangedListener(DelayedTypingListener(delayMillis = 500L){
             if(binding.etPinCode.text?.length == 6){
                 viewModel.getInfoFromPinNumber(binding.etPinCode.text.toString().toInt())
