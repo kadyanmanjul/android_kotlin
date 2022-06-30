@@ -288,7 +288,7 @@ abstract class BaseActivity :
     }
 
     fun getInboxActivityIntent(isFromOnBoardingFlow: Boolean = false): Intent {
-        return Intent(this, InboxActivity::class.java).apply {
+        return Intent(applicationContext, InboxActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             //putExtra(SHOW_OVERLAY, true)

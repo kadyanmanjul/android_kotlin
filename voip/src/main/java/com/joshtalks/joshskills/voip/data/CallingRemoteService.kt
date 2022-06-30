@@ -375,19 +375,39 @@ class TestNotification(val notiData : Data) : NotificationData {
     }
 
     override fun setTapAction(): PendingIntent? {
-        val notificationActivity="com.joshtalks.joshskills.ui.lesson.LessonActivity"
-        val callingActivity = Intent()
-        callingActivity.apply {
-            if (Utils.context != null) {
-                setClassName(Utils.context!!,notificationActivity)
-                putExtra("lesson_section", 3)
-                putExtra("lesson_id",notiData.lessonId)
-                putExtra("practice_word",notiData.title)
-                putExtra("reopen",true)
+        Log.d(TAG, "setTapAction: ${Utils.courseId }")
+        if (Utils.courseId == "151") {
+            val notificationActivity = "com.joshtalks.joshskills.ui.lesson.LessonActivity"
+            val callingActivity = Intent()
+            callingActivity.apply {
+                if (Utils.context != null) {
+                    setClassName(Utils.context!!, notificationActivity)
+                    putExtra("lesson_section", 3)
+                    putExtra("lesson_id", notiData.lessonId)
+                    putExtra("practice_word", notiData.title)
+                    putExtra("reopen", true)
+                }
             }
+            val pendingIntent = PendingIntent.getActivity(Utils.context,
+                (System.currentTimeMillis() and 0xfffffff).toInt(),
+                callingActivity,
+                PendingIntent.FLAG_UPDATE_CURRENT)
+            return pendingIntent
+        }else{
+            val notificationActivity = "com.joshtalks.joshskills.ui.inbox.InboxActivity"
+            val callingActivity = Intent()
+            callingActivity.apply {
+                if (Utils.context != null) {
+                    setClassName(Utils.context!!, notificationActivity)
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                }
+            }
+            val pendingIntent = PendingIntent.getActivity(Utils.context,
+                (System.currentTimeMillis() and 0xfffffff).toInt(),
+                callingActivity,
+                PendingIntent.FLAG_UPDATE_CURRENT)
+            return pendingIntent
         }
-        val pendingIntent=PendingIntent.getActivity(Utils.context,(System.currentTimeMillis() and 0xfffffff).toInt(),callingActivity, PendingIntent.FLAG_UPDATE_CURRENT)
-        return pendingIntent
     }
 }
 

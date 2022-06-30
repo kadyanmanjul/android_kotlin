@@ -68,6 +68,7 @@ import com.joshtalks.joshskills.repository.local.eventbus.MediaProgressEventBus
 import com.joshtalks.joshskills.repository.server.course_detail.VideoModel
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.chat.CHAT_ROOM_ID
+import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.ui.leaderboard.ItemOverlay
 import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_GRAMMAR_ANIMATION
 import com.joshtalks.joshskills.ui.lesson.grammar.GrammarFragment
@@ -200,6 +201,9 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        if(!PrefManager.getBoolValue(IS_COURSE_BOUGHT) &&  !PrefManager.getBoolValue(IS_FREE_TRIAL)){
+            startActivity(InboxActivity.getInboxIntent(this))
+        }
         if (getVoipState() == State.IDLE && WebRtcService.isCallOnGoing.value == false)
             viewModel.getButtonVisibility()
         binding = DataBindingUtil.setContentView(

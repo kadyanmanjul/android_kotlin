@@ -222,6 +222,20 @@ fun Context.getRecordingText(): String {
 }
 
 
+fun Context.getCourseId(): String {
+    val courserIdCursor = contentResolver.query(
+        Uri.parse(CONTENT_URI + COURSE_ID),
+        null,
+        null,
+        null,
+        null
+    )
+
+    courserIdCursor?.moveToFirst()
+    val courseId = courserIdCursor.getStringData(COURSE_ID_COLUMN)
+    courserIdCursor?.close()
+    return courseId
+}
 //fun Context.updateIncomingCallDetails() {
 //    voipLog?.log("QUERY")
 //    val values = ContentValues(2).apply {
@@ -293,7 +307,8 @@ class Utils {
             get() = context?.getApiHeader()
         val uuid : String?
             get() = context?.getMentorId()
-
+        val courseId :String?
+            get() = context?.getCourseId()
         fun initUtils(application: Application ) {
             this.context = application
         }

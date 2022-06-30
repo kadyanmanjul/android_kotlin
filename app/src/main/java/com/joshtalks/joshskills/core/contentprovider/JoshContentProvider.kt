@@ -5,17 +5,28 @@ import android.content.ContentValues
 import android.database.Cursor
 import android.database.MatrixCursor
 import android.net.Uri
+import android.os.Build
+import android.os.Bundle
 import android.util.Log
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.base.constants.*
+import com.joshtalks.joshskills.base.constants.COURSE_ID
 import com.joshtalks.joshskills.base.model.ApiHeader
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.io.AppDirectory
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.call.data.local.VoipPref
+import com.joshtalks.joshskills.ui.video_player.DURATION
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.voipLog
+import com.joshtalks.joshskills.voip.constant.IDLE
+import com.joshtalks.joshskills.voip.constant.LEAVING
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 private const val TAG = "JoshContentProvider"
 
@@ -70,6 +81,11 @@ class JoshContentProvider : ContentProvider() {
             MENTOR_ID -> {
                 val cursor = MatrixCursor(arrayOf(MENTOR_ID_COLUMN))
                 cursor.addRow(arrayOf(Mentor.getInstance().getId()))
+                return cursor
+            }
+            COURSE_ID -> {
+                val cursor = MatrixCursor(arrayOf(COURSE_ID_COLUMN))
+                cursor.addRow(arrayOf(PrefManager.getStringValue(CURRENT_COURSE_ID,false, DEFAULT_COURSE_ID)))
                 return cursor
             }
             MENTOR_NAME -> {
