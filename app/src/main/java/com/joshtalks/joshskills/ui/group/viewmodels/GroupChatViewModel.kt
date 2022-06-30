@@ -430,12 +430,16 @@ class GroupChatViewModel : BaseViewModel() {
     @ExperimentalPagingApi
     fun getChatData(): Flow<PagingData<ChatItem>> {
         viewModelScope.launch(Dispatchers.IO) {
-            val startTime = getFetchStartTime(groupId).times(10000)
+            try {
+                val startTime = getFetchStartTime(groupId).times(10000)
 
-            if (startTime > 0 && chatService.getUnreadMessageCount(groupId, startTime) > repository.getChatCount(groupId, startTime))
-                repository.getRecentTimeToken(groupId)?.let {
-                    repository.fetchUnreadMessage(startTime, groupId)
-                }
+                if (startTime > 0 && chatService.getUnreadMessageCount(groupId, startTime) > repository.getChatCount(groupId, startTime))
+                    repository.getRecentTimeToken(groupId)?.let {
+                        repository.fetchUnreadMessage(startTime, groupId)
+                    }
+            } catch (e: Exception) {
+                setFetchTimeInPref(groupId, dateStartOfDay().time)
+            }
         }
         return repository.getGroupChatListResult(groupId).flow.cachedIn(viewModelScope)
     }
@@ -444,8 +448,7 @@ class GroupChatViewModel : BaseViewModel() {
         val timeMap = PrefManager.getPrefMap(GROUP_CHAT_CHECK_TIMES) ?: mutableMapOf()
         val lastTimeChecked = (timeMap[groupId] as Double?)?.toLong() ?: 0L
 
-        timeMap[groupId] = System.currentTimeMillis()
-        PrefManager.putPrefObject(GROUP_CHAT_CHECK_TIMES, timeMap)
+        setFetchTimeInPref(groupId)
 
         if (dateStartOfDay().time > lastTimeChecked) {
             return dateStartOfDay().time
@@ -454,6 +457,12 @@ class GroupChatViewModel : BaseViewModel() {
         }
 
         return -1
+    }
+
+    private fun setFetchTimeInPref(groupId: String, time: Long = System.currentTimeMillis()) {
+        val timeMap = PrefManager.getPrefMap(GROUP_CHAT_CHECK_TIMES) ?: mutableMapOf()
+        timeMap[groupId] = time
+        PrefManager.putPrefObject(GROUP_CHAT_CHECK_TIMES, timeMap)
     }
 
     //TODO: Refactor loading code (if conditions)
