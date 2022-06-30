@@ -6,13 +6,10 @@ import android.os.Parcelable
 import android.util.AttributeSet
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.isVisible
 import com.joshtalks.badebhaiya.R
 import kotlinx.android.parcel.Parcelize
-import kotlinx.android.synthetic.main.li_conversion_rooms_notification_bar.view.acceptButton
-import kotlinx.android.synthetic.main.li_conversion_rooms_notification_bar.view.action_layout
-import kotlinx.android.synthetic.main.li_conversion_rooms_notification_bar.view.heading
-import kotlinx.android.synthetic.main.li_conversion_rooms_notification_bar.view.notification_bar
-import kotlinx.android.synthetic.main.li_conversion_rooms_notification_bar.view.rejectButton
+import kotlinx.android.synthetic.main.li_conversion_rooms_notification_bar.view.*
 
 
 class NotificationView @JvmOverloads constructor(
@@ -39,6 +36,11 @@ class NotificationView @JvmOverloads constructor(
         this.rejectButton.setOnClickListener {
             this.enquiryAction?.onRejectNotification()
         }
+    }
+
+    fun setNotificationIcon(icon:Int){
+        notificationIcon.setImageResource(icon)
+        notificationIcon.visibility = View.VISIBLE
     }
 
     fun setNotificationState(state: ConversationRoomNotificationState) {

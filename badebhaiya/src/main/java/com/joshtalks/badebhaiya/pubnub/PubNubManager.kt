@@ -65,6 +65,8 @@ object PubNubManager {
     private var liveRoomProperties: StartingLiveRoomProperties? = null
     private var channelName:String?=null
 
+    val networkFlow= MutableSharedFlow<Boolean>()
+
     var moderatorName: String? = null
 
     var roomJoiningTime: Long = 0L
@@ -232,8 +234,9 @@ object PubNubManager {
                 }
             }
             catch (e:SocketTimeoutException){
-                showToast(AppObjectController.joshApplication.getString(R.string.internet_not_available_msz))
+//                showToast(AppObjectController.joshApplication.getString(R.string.internet_not_available_msz))
                 sendPubNubException(e)
+                postDataToNetworkFlow(true)
                 FallbackManager.getUsersList()
             }
             catch (e: Exception){
@@ -241,6 +244,14 @@ object PubNubManager {
                 sendPubNubException(e)
             }
 
+        }
+
+    }
+
+    fun postDataToNetworkFlow(isSlow:Boolean){
+        jobs+= CoroutineScope(Dispatchers.IO).launch {
+            delay(200)
+            networkFlow.emit(isSlow)
         }
 
     }
@@ -494,7 +505,8 @@ object PubNubManager {
             }
             catch (e:SocketTimeoutException){
                 sendPubNubException(e)
-                showToast(AppObjectController.joshApplication.getString(R.string.internet_not_available_msz))
+                postDataToNetworkFlow(true)
+//                showToast(AppObjectController.joshApplication.getString(R.string.internet_not_available_msz))
             }
             catch (e: Exception){
                 e.printStackTrace()

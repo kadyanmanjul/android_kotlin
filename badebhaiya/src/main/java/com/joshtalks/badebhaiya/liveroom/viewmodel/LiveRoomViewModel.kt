@@ -76,6 +76,7 @@ class LiveRoomViewModel(application: Application) : AndroidViewModel(application
     val pubNubState = MutableLiveData<PubNubState>()
     val liveRoomState = MutableLiveData<LiveRoomState>()
     var lvRoomState: LiveRoomState? = null
+    val isNetworkSlow=MutableLiveData<Boolean>()
     private val jobs = arrayListOf<Job>()
     var message = Message()
     var singleLiveEvent: MutableLiveData<Message> = MutableLiveData()
@@ -145,6 +146,14 @@ class LiveRoomViewModel(application: Application) : AndroidViewModel(application
                 Log.d("sahil", "audience list => $it")
 
                 audienceList.postValue(ArraySet(it))
+            }
+        }
+
+        viewModelScope.launch {
+            PubNubManager.networkFlow.collect{
+                if (it){
+                    isNetworkSlow.postValue(it)
+                }
             }
         }
 
