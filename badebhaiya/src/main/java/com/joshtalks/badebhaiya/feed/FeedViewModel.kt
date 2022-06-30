@@ -33,6 +33,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.Response
 import timber.log.Timber
+import java.net.SocketTimeoutException
+import java.util.concurrent.TimeoutException
+
 const val ROOM_ITEM = "room_item"
 const val USER_ID = "user_id"
 const val ROOM_DETAILS = "room_details"
@@ -95,17 +98,7 @@ class FeedViewModel : ViewModel() {
                 modStat=it
                 Log.i("MODERATORSTATUS", "collectModeratorStatus launch: ${PubNubData.status}")
                 Log.i("MODERATORSTATUS", "collectModeratorStatus: $it")
-//                message.what = OPEN_ROOM
-//                message.data = Bundle().apply {
-//                    putParcelable(
-//                        ROOM_DETAILS,
-//                        respBody
-//                    )
-//                    putString(
-//                        TOPIC,
-//                        roomtopic
-//                    )
-//                }
+
                 isRoomActive.value=true
                 roomData.speakersData?.userId?.let { it1 ->
                     joinRoom(roomData.roomId.toString(),roomData.topic.toString(),"FEED_SCREEN",
@@ -113,8 +106,6 @@ class FeedViewModel : ViewModel() {
                     )
                 }
                 PubNubManager.waitingUnsubscribe()
-                Log.i("YASHEN", "postvalue: ")
-//                singleLiveEvent.value=message
             }
         }
     }
@@ -140,6 +131,7 @@ class FeedViewModel : ViewModel() {
                 showToast(AppObjectController.joshApplication.getString(R.string.enter_topic_name))
             } else {
                 try {
+                    sendEvent(Impression("FEED_SCREEN","CLICKED_CREATE"))
                     isLoading.set(true)
                     val response = repository.createRoom(
                         ConversationRoomRequest(
@@ -187,7 +179,6 @@ class FeedViewModel : ViewModel() {
                 )
                 roomtopic=topic
                 if (response.isSuccessful) {
-                    isRoomActive.postValue(true)
                         if (moderatorId == User.getInstance().userId) {
                             isModerator=true
                             PubNubEventsManager.sendModeratorStatus(true, moderatorId.toString())
@@ -215,12 +206,17 @@ class FeedViewModel : ViewModel() {
                         message.what = OPEN_WAIT_ROOM
                         singleLiveEvent.value = message
                     }
+                    showToast(response.errorMessage())
 
                     Log.i("YASHEN", "joinRoom: failed")
                 }
                 Log.d("sahil", "joinRoom:$response")
 
-            } catch (e: Exception) {
+            }
+            catch (e:SocketTimeoutException){
+                showToast(AppObjectController.joshApplication.getString(R.string.internet_not_available_msz))
+            }
+            catch (e: Exception) {
                 Timber.d("JOIN ROOM ERROR => ${e.stackTrace}")
                 Timber.d("JOIN ROOM ERROR => ${e.message}")
                 e.printStackTrace()
@@ -333,6 +329,16 @@ class FeedViewModel : ViewModel() {
         }
     }
 
+    fun sendEvent(source: Impression) {
+        viewModelScope.launch {
+            try {
+                repository.sendEvent(source)
+            } catch (e: Exception){
+
+            }
+        }
+    }
+
     fun scheduleRoom(topic: String, startTime: String, callback: CreateRoom.CreateRoomCallback) {
         viewModelScope.launch {
             if (topic.isNullOrBlank()) {
@@ -344,6 +350,7 @@ class FeedViewModel : ViewModel() {
 //                        showToast("Schedule a room for 30 minutes or later!")
 //                        return@launch
 //                    }
+                    sendEvent(Impression("FEED_SCREEN","CLICKED_SCHEDULE"))
                     isLoading.set(true)
                     val response = repository.scheduleRoom(
                         ConversationRoomRequest(

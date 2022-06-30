@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.button.MaterialButton
 import com.joshtalks.badebhaiya.R
+import com.joshtalks.badebhaiya.core.setOnSingleClickListener
 import com.joshtalks.badebhaiya.core.showToast
 import com.joshtalks.badebhaiya.feed.adapter.FeedAdapter
 import com.joshtalks.badebhaiya.feed.model.ConversationRoomType
@@ -70,14 +71,14 @@ fun setConversationRoomCardActionButton(
             view.backgroundTintList =
                 ColorStateList.valueOf(view.context.resources.getColor(R.color.reminder_on_button_color))
             Log.i("YASHENDRA", "setConversationRoomCardActionButton: ")
-            view.setOnClickListener { callback?.joinRoom(roomListResponseItem, view) }
+            view.setOnSingleClickListener() { callback?.joinRoom(roomListResponseItem, view) }
         }
         NOT_SCHEDULED -> {
             view.text = view.context.getString(R.string.set_reminder)
             view.setTextColor(ColorStateList.valueOf(view.context.resources.getColor(R.color.white)))
             view.backgroundTintList =
                 ColorStateList.valueOf(view.context.resources.getColor(R.color.reminder_on_button_color))
-            view.setOnClickListener {
+            view.setOnSingleClickListener() {
                 roomListResponseItem.conversationRoomType = SCHEDULED
                 view.text = view.context.getString(R.string.reminder_on)
                 view.setTextColor(ColorStateList.valueOf(view.context.resources.getColor(R.color.reminder_on_button_color)))
@@ -131,7 +132,7 @@ fun setTimer(time:Long,view: MaterialButton,roomListResponseItem: RoomListRespon
         view.text="Join this room"
         if (viewHolder.absoluteAdapterPosition != -1)
             (adapter as FeedAdapter).updateScheduleRoomStatusForSpeaker(viewHolder.absoluteAdapterPosition)
-        view.setOnClickListener {
+        view.setOnSingleClickListener() {
             callback?.joinRoom(roomListResponseItem, view) }
     }, count)
 }
@@ -139,7 +140,7 @@ fun setTimer(time:Long,view: MaterialButton,roomListResponseItem: RoomListRespon
 @BindingAdapter("isImageRequired", "imageUrl", "userName", "isRoundImage", "initialsFontSize", "imageCornerRadius", requireAll = false)
 fun ImageView.setDPUrl(isImageRequired: Boolean, url: String?, userName: String?, isRound: Boolean = false, dpToPx: Int, radius: Float) {
     if (isImageRequired)
-        this.setUserImageOrInitials(url, userName ?: DEFAULT_NAME, dpToPx, isRound, radius.toInt())
+        this.setUserImageOrInitials(url, userName?.get(0) ?: DEFAULT_NAME.get(0), dpToPx, isRound, radius.toInt())
 }
 
 fun setAlarmForLiveRoom(viewHolder: RecyclerView.ViewHolder, room: RoomListResponseItem, adapter: RecyclerView.Adapter<FeedAdapter.FeedViewHolder>) {

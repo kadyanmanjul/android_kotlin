@@ -90,7 +90,8 @@
         <activity
             android:name=".feed.FeedActivity"
             android:exported="true"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop"/>
         <activity
             android:name=".appUpdater.ForceUpdateNoticeActivity"
             android:exported="true"

@@ -9,16 +9,28 @@
     tools:background="@color/notification_green_color"
     tools:visibility="visible">
 
+    <ImageView
+        android:id="@+id/notificationIcon"
+        android:layout_width="@dimen/_24sdp"
+        android:layout_height="@dimen/_24sdp"
+        app:layout_constraintBottom_toBottomOf="@+id/heading"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="@dimen/_16sdp"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="@+id/heading"
+        tools:src="@drawable/ic_vector_wifi" />
+
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/heading"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/_16sdp"
+        android:layout_marginHorizontal="@dimen/_16sdp"
         android:layout_marginTop="@dimen/_12sdp"
         android:textAppearance="@style/BB_Typography_Nunito_Semi_Bold"
         android:textColor="@color/white"
         android:textSize="@dimen/_12ssp"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/notificationIcon"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="👋 User invited you to join as a speaker" />
 

@@ -421,7 +421,7 @@ class ConvoWebRtcService : Service() {
 
                 }
 
-                enableAudioVolumeIndication(1800, 3, true)
+                enableAudioVolumeIndication(100, 3, true)
                 setAudioProfile(
                     AUDIO_PROFILE_SPEECH_STANDARD,
                     AUDIO_SCENARIO_GAME_STREAMING

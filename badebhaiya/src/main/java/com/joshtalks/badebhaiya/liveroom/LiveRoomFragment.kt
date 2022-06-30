@@ -24,7 +24,10 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.collection.arraySetOf
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.view.get
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
 import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
 import com.google.android.material.badge.BadgeDrawable
@@ -240,6 +243,20 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
             when(it){
                 LiveRoomState.EXPANDED -> expandLiveRoom()
                 LiveRoomState.COLLAPSED -> {}
+            }
+        }
+
+        lifecycleScope.launch{
+            repeatOnLifecycle(Lifecycle.State.STARTED){
+                PubNubManager.networkFlow.collect{
+                    if(it){
+                        setNotificationWithoutAction(
+                            "Poor connection. Try to find a stronger signal.", false,
+                            NotificationView.ConversationRoomNotificationState.DEFAULT,
+                            icon = R.drawable.ic_vector_wifi,
+                            )
+                    }
+                }
             }
         }
 
@@ -842,13 +859,17 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
     private fun setNotificationWithoutAction(
         heading: String,
         isGreenColorNotification: Boolean,
-        state: NotificationView.ConversationRoomNotificationState
+        state: NotificationView.ConversationRoomNotificationState,
+        icon:Int?=null
     ) {
         binding.notificationBar.apply {
             visibility = View.VISIBLE
             setNotificationState(state)
             hideActionLayout()
             setHeading(heading)
+            icon?.let {
+                setNotificationIcon(it)
+            }
             setBackgroundColor(isGreenColorNotification)
             startSound()
             loadAnimationSlideDown()
@@ -1308,6 +1329,8 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
                 mBoundService?.leaveRoom(roomId, roomQuestionId)
             }
         }
+        vm.pubNubState.value=PubNubState.ENDED
+        feedViewModel.pubNubState=PubNubState.ENDED
         binding.notificationBar.destroyMediaPlayer()
         requireActivity().stopService(Intent(requireActivity(), ConvoWebRtcService::class.java))
         super.onDestroy()

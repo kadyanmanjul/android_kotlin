@@ -248,7 +248,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
                 if (it.profilePicUrl.isNullOrEmpty().not()) Utils.setImage(ivProfilePic, it.profilePicUrl.toString())
                 else
                     Utils.setImage(ivProfilePic, it.firstName.toString())
-               binding.ivProfilePic.setUserImageOrInitials(it.profilePicUrl,it.firstName.toString(),30)
+               binding.ivProfilePic.setUserImageOrInitials(it.profilePicUrl,it.firstName.get(0),30)
                 tvUserName.text = getString(R.string.full_name_concatenated, it.firstName, it.lastName)
             }
         }
