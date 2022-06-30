@@ -283,13 +283,19 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
                     binding.notificationBar.loadAnimationSlideUp()
                 }
                 SHOW_NOTIFICATION_FOR_USER_TO_JOIN -> {
-                    setNotificationBarFieldsWithActions(
-                        "Maybe later?", "Join as speaker", String.format(
-                            "\uD83D\uDC4B %s invited you to join as a speaker",
-                            PubNubManager.moderatorName
-                        ), PubNubManager.moderatorUid,
-                        NotificationView.ConversationRoomNotificationState.JOIN_AS_SPEAKER
+                    PubNubEventsManager.moveToSpeakerEvent()
+                    isInviteRequestComeFromModerator = true
+                    setNotificationWithoutAction(
+                        "You have joined as a speaker", true,
+                        NotificationView.ConversationRoomNotificationState.DEFAULT
                     )
+//                    setNotificationBarFieldsWithActions(
+//                        "Maybe later?", "Join as speaker", String.format(
+//                            "\uD83D\uDC4B %s invited you to join as a speaker",
+//                            PubNubManager.moderatorName
+//                        ), PubNubManager.moderatorUid,
+//                        NotificationView.ConversationRoomNotificationState.JOIN_AS_SPEAKER
+//                    )
                 }
                 CHANGE_MIC_STATUS -> {
                     it.data?.let {
@@ -333,6 +339,10 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
                     }
                 }
                 MOVE_TO_AUDIENCE -> {
+                    setNotificationWithoutAction(
+                        "You have been moved back to audience", true,
+                        NotificationView.ConversationRoomNotificationState.DEFAULT
+                    )
                     it.data?.let {
                         val user = it.getParcelable<LiveRoomUser>(NOTIFICATION_USER)
                         if (PubNubManager.getLiveRoomProperties()?.agoraUid == user?.id) {
