@@ -33,6 +33,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.Response
 import timber.log.Timber
+import java.net.SocketTimeoutException
+import java.util.concurrent.TimeoutException
+
 const val ROOM_ITEM = "room_item"
 const val USER_ID = "user_id"
 const val ROOM_DETAILS = "room_details"
@@ -209,7 +212,11 @@ class FeedViewModel : ViewModel() {
                 }
                 Log.d("sahil", "joinRoom:$response")
 
-            } catch (e: Exception) {
+            }
+            catch (e:SocketTimeoutException){
+                showToast(AppObjectController.joshApplication.getString(R.string.internet_not_available_msz))
+            }
+            catch (e: Exception) {
                 Timber.d("JOIN ROOM ERROR => ${e.stackTrace}")
                 Timber.d("JOIN ROOM ERROR => ${e.message}")
                 e.printStackTrace()

@@ -10,9 +10,11 @@ import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.badebhaiya.BuildConfig
+import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.core.AppObjectController
 import com.joshtalks.badebhaiya.core.EMPTY
 import com.joshtalks.badebhaiya.core.LogException
+import com.joshtalks.badebhaiya.core.showToast
 import com.joshtalks.badebhaiya.feed.NotificationView
 import com.joshtalks.badebhaiya.feed.model.LiveRoomUser
 import com.joshtalks.badebhaiya.liveroom.*
@@ -50,6 +52,7 @@ import com.pubnub.api.models.consumer.pubsub.message_actions.PNMessageActionResu
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import timber.log.Timber
+import java.net.SocketTimeoutException
 import java.util.*
 
 /**
@@ -227,7 +230,13 @@ object PubNubManager {
 
                     extractUsersList(result, status)
                 }
-            } catch (e: Exception){
+            }
+            catch (e:SocketTimeoutException){
+                showToast(AppObjectController.joshApplication.getString(R.string.internet_not_available_msz))
+                sendPubNubException(e)
+                FallbackManager.getUsersList()
+            }
+            catch (e: Exception){
                 FallbackManager.getUsersList()
                 sendPubNubException(e)
             }
@@ -482,8 +491,14 @@ object PubNubManager {
                             Log.i("MODERATORSTATUS", "sendCustomMessage: $result && $status")
                         }
                 }
-            } catch (e: Exception){
+            }
+            catch (e:SocketTimeoutException){
+                sendPubNubException(e)
+                showToast(AppObjectController.joshApplication.getString(R.string.internet_not_available_msz))
+            }
+            catch (e: Exception){
                 e.printStackTrace()
+                sendPubNubException(e)
             }
             sendEventToFallback(eventData, channel)
         }
