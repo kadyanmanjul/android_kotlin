@@ -98,7 +98,9 @@ class FavoriteCallerViewModel : BaseViewModel() {
                     }
                 }
             } catch (ex: Throwable) {
-                progressAndEmptyCardVisibility(isProgress = false, isEmptyCard = true)
+                if (adapter.itemCount <= 0) {
+                    progressAndEmptyCardVisibility(isProgress = true, isEmptyCard = true)
+                }
                 showToast("An error occurred while fetching data")
                 ex.printStackTrace()
             }
