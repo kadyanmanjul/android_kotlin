@@ -912,14 +912,18 @@ class NotificationUtils(val context: Context) {
     }
 
     fun getDataFromMoengage(intentData: Bundle): Map<String, String?> {
-        val dataJson = intentData.getString("gcm_alert")?.let { JSONObject(it) }
-        return mapOf(
-            Pair("action", dataJson?.getString("client_action")),
-            Pair("action_data", dataJson?.getString("action_data")),
-            Pair("id", dataJson?.getString("notification_id")),
-            Pair("content_title", dataJson?.getString("title")),
-            Pair("content_text", dataJson?.getString("body"))
-        )
+        return try {
+            val dataJson = intentData.getString("gcm_alert")?.let { JSONObject(it) }
+            mapOf(
+                Pair("action", dataJson?.getString("client_action")),
+                Pair("action_data", dataJson?.getString("action_data")),
+                Pair("id", dataJson?.getString("notification_id")),
+                Pair("content_title", dataJson?.getString("title")),
+                Pair("content_text", dataJson?.getString("body"))
+            )
+        } catch (e: Exception) {        // because of wrong data or empty data
+            mapOf()
+        }
     }
 
     fun pushAnalytics(groupId: String?) {

@@ -159,6 +159,9 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     Pair("content_text", intent.extras?.getString("gcm.notification.body"))
                 )
 
+            if (data.isNullOrEmpty())
+                return
+
             val notificationTypeToken: Type = object : TypeToken<NotificationObject>() {}.type
             val gsonMapper = GsonBuilder()
                 .enableComplexMapKeySerialization()
