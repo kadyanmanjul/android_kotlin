@@ -83,7 +83,7 @@ class LiveRoomViewModel(application: Application) : AndroidViewModel(application
         ConversationRoomRepository()
     }
 
-    fun getSpeakerList() = this.speakersList.value ?: ArraySet<LiveRoomUser>()
+    fun getSpeakerList() = this.speakersList.value ?: listOf<LiveRoomUser>()
 
     fun getAudienceList() = this.audienceList.value ?: ArraySet<LiveRoomUser>()
 

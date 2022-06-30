@@ -20,9 +20,9 @@ class SpeakerAdapter : RecyclerView.Adapter<SpeakerAdapter.SpeakerViewHolder>() 
 
     fun updateFullList(newList: List<LiveRoomUser>) {
         newList.sortedByDescending { it.sortOrder }
-        newList.forEach {
-            Log.d("ABC3", "order called ${it.name}  ${it.sortOrder} ")
-        }
+//        newList.forEach {
+//            Log.d("ABC3", "order called ${it.name}  ${it.sortOrder} ")
+//        }
         Log.d("ABC3", "updateFullList() called with:")
         val diffCallback = ConversationUserDiffCallback(speakersList, newList)
         val diffResult = DiffUtil.calculateDiff(diffCallback)

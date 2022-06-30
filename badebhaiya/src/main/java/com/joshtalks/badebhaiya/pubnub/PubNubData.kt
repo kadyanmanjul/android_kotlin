@@ -8,6 +8,7 @@ import com.joshtalks.badebhaiya.feed.model.LiveRoomUser
 import com.joshtalks.badebhaiya.liveroom.model.ConversationRoomPubNubEventBus
 import kotlinx.coroutines.flow.*
 import org.json.JSONObject
+import java.util.concurrent.ConcurrentHashMap
 
 /**
     This Object provides data related to pubnub which can be consumed by view models and convert to states
@@ -34,7 +35,7 @@ object PubNubData {
     internal val _pubNubState = MutableSharedFlow<PubNubState>()
     val pubNubState = _pubNubState.asSharedFlow()
 
-    val eventsMap = mutableMapOf<Long, Long>()
+    val eventsMap = ConcurrentHashMap<Long, Long>()
 
     internal val moderatorStatus=MutableSharedFlow<Message>()
     val status= moderatorStatus.asSharedFlow()

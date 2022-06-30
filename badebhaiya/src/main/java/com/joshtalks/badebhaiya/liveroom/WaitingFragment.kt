@@ -351,9 +351,9 @@ class WaitingFragment : Fragment() {
               }
         }
 
-        viewModel.waitingRoomUsers.observe(viewLifecycleOwner) {
-            Timber.d("WAITING LIST => $it")
-        }
+//        viewModel.waitingRoomUsers.observe(viewLifecycleOwner) {
+//            Timber.d("WAITING LIST => $it")
+//        }
         viewModel.isRoomActive.observe(viewLifecycleOwner){
             Log.i("WAITINGWORLD", " wait addObserver: $it")
             if(it) {

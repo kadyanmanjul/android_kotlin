@@ -373,8 +373,9 @@ object PubNubManager {
 
      fun postToAudienceList(list: ArraySet<LiveRoomUser>) {
         jobs += CoroutineScope(Dispatchers.IO).launch {
-            val distinctedList = list.reversed().distinctBy { it.userId }.reversed().toSet()
-            _audienceList.emit(ArraySet(distinctedList))
+            if (!list.isEmpty())
+                { val distinctedList = list.reversed().distinctBy { it.userId }.reversed().toSet()
+            _audienceList.emit(ArraySet(distinctedList))}
         }
     }
 
