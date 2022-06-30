@@ -387,6 +387,7 @@ object PubNubManager {
         Timber.d("post to speaker list => $list")
         val distinctedList = list.reversed().distinctBy { it.userId }.reversed()
         jobs += CoroutineScope(Dispatchers.IO).launch {
+            distinctedList.map { if (it.isModerator) it.sortOrder = Int.MAX_VALUE  }
             _speakersList.emit(distinctedList)
         }
     }

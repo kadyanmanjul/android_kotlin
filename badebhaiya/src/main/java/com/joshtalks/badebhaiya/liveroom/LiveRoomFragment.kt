@@ -356,14 +356,16 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
                     }
                 }
                 MOVE_TO_AUDIENCE -> {
-                    setNotificationWithoutAction(
-                        "You have been moved back to audience", true,
-                        NotificationView.ConversationRoomNotificationState.DEFAULT
-                    )
                     it.data?.let {
                         val user = it.getParcelable<LiveRoomUser>(NOTIFICATION_USER)
                         if (PubNubManager.getLiveRoomProperties()?.agoraUid == user?.id) {
                             updateUiWhenSwitchToListener()
+                        }
+                        if (User.getInstance().userId == user?.userId){
+                            setNotificationWithoutAction(
+                                "You have been moved back to audience", true,
+                                NotificationView.ConversationRoomNotificationState.DEFAULT
+                            )
                         }
                         vm.setChannelMemberStateForUuid(user, channelName = channelName)
                     }
