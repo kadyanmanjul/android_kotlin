@@ -163,7 +163,7 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
                    submitAutomatically(checkedId,group,myAnim)
                }
                else{
-                   if(vm.ifDialogShow==1 && PrefManager.getBoolValue(IS_COURSE_BOUGHT)) {
+                   if(vm.ifDialogShow==1 && PrefManager.getBoolValue(IS_COURSE_BOUGHT) && PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID) {
                        if (prevSelectedRating in 0..6)
                            unSelectChange("fpp")
                        block.text = resources.getText(R.string.send_fpp_text)

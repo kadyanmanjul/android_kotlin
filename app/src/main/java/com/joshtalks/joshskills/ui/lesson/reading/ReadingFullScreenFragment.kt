@@ -54,6 +54,8 @@ class ReadingFullScreenFragment : BaseFragment() {
                     binding.loadingGroup.visibility = View.GONE
                     binding.mergedVideo.setVideoPath(it.obj as String)
                     binding.submitAnswerBtn.visibility = View.VISIBLE
+                    binding.ivBack.visibility = View.VISIBLE
+                    binding.ivClose.visibility = View.VISIBLE
                 }
             }
         }

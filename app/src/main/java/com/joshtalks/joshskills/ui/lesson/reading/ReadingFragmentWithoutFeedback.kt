@@ -1335,6 +1335,7 @@ class ReadingFragmentWithoutFeedback :
                             startTime
                         )
                     if (timeDifference > 1) {
+                        if(Utils.isInternetAvailable()){
                         viewModel.recordFile?.let {
                             isAudioRecordDone = true
 //                            Log.e("Ayaaz","${currentLessonQuestion?.videoList?.get(0)?.video_url}")
@@ -1388,6 +1389,10 @@ class ReadingFragmentWithoutFeedback :
                                 }
                             }
                             binding.playBtn.visibility = VISIBLE
+                        }
+                        }
+                        else{
+                            showToast(getString(R.string.internet_not_available_msz))
                         }
                     }
                 }
@@ -1661,83 +1666,88 @@ class ReadingFragmentWithoutFeedback :
     }
 
     fun submitPractise() {
-        MixPanelTracker.publishEvent(MixPanelEvent.READING_SUBMIT)
-            .addParam(ParamKeys.LESSON_ID, lessonID)
-            .push()
-        CoroutineScope(Dispatchers.IO).launch {
-            currentLessonQuestion?.expectedEngageType?.let {
-                if (EXPECTED_ENGAGE_TYPE.AU == it && isAudioRecordDone.not()) {
-                    showToast(getString(R.string.submit_practise_msz))
-                } else if (EXPECTED_ENGAGE_TYPE.VI == it && isAudioRecordDone.not()) {
-                    showToast(getString(R.string.submit_practise_msz))
-                } else {
-                    appAnalytics?.addParam(
-                        AnalyticsEvent.PRACTICE_SCREEN_TIME.NAME,
-                        System.currentTimeMillis() - totalTimeSpend
-                    )
-                    appAnalytics?.addParam(AnalyticsEvent.PRACTICE_SOLVED.NAME, true)
-                    appAnalytics?.addParam(AnalyticsEvent.PRACTICE_STATUS.NAME, "Submitted")
-                    appAnalytics?.addParam(
-                        AnalyticsEvent.PRACTICE_TYPE_SUBMITTED.NAME,
-                        "$it Practice Submitted"
-                    )
-                    appAnalytics?.addParam(
-                        AnalyticsEvent.PRACTICE_SUBMITTED.NAME,
-                        "Submit Practice $"
-                    )
-                    AppObjectController.uiHandler.post {
-                        if (video.isNullOrBlank().not()) {
-                            binding.btnWhatsapp.visibility = VISIBLE
-                            binding.practiseSubmitLayout.visibility = VISIBLE
-                            binding.continueBtn.visibility = VISIBLE
-                        }
-                    }
-                    MixPanelTracker.publishEvent(MixPanelEvent.READING_COMPLETED)
-                        .addParam(ParamKeys.LESSON_ID, lessonID)
-                        .push()
-                    val requestEngage = RequestEngage()
-                    if (it == EXPECTED_ENGAGE_TYPE.VI) {
-                        requestEngage.localPath = outputFile
+        if(Utils.isInternetAvailable()) {
+            MixPanelTracker.publishEvent(MixPanelEvent.READING_SUBMIT)
+                .addParam(ParamKeys.LESSON_ID, lessonID)
+                .push()
+            CoroutineScope(Dispatchers.IO).launch {
+                currentLessonQuestion?.expectedEngageType?.let {
+                    if (EXPECTED_ENGAGE_TYPE.AU == it && isAudioRecordDone.not()) {
+                        showToast(getString(R.string.submit_practise_msz))
+                    } else if (EXPECTED_ENGAGE_TYPE.VI == it && isAudioRecordDone.not()) {
+                        showToast(getString(R.string.submit_practise_msz))
                     } else {
-                        requestEngage.localPath = filePath
-                    }
-                    requestEngage.duration =
-                        Utils.getDurationOfMedia(requireActivity(), filePath)?.toInt()
-                    // requestEngage.feedbackRequire = currentLessonQuestion.feedback_require
-                    requestEngage.questionId = currentLessonQuestion!!.id
-                    requestEngage.mentor = Mentor.getInstance().getId()
-                    if (it == EXPECTED_ENGAGE_TYPE.AU) {
-                        requestEngage.answerUrl = filePath
-                    } else if (it == EXPECTED_ENGAGE_TYPE.VI) {
-                        requestEngage.answerUrl = outputFile
-                    }
-                    AppObjectController.uiHandler.post {
-                        // binding.progressLayout.visibility = INVISIBLE
-                        binding.feedbackLayout.visibility = GONE
-                        binding.progressLayout.visibility = VISIBLE
-                        binding.feedbackGrade.visibility = GONE
-                        binding.feedbackDescription.visibility = GONE
-                        binding.recordingViewFrame.visibility = GONE
-                        binding.recordTransparentContainer.visibility = GONE
-                        //binding.readingHoldHint.visibility = GONE
-                        binding.audioPractiseHint.visibility = GONE
-                        binding.counterTv.visibility = GONE
-                        binding.yourSubAnswerTv.text = getString(R.string.your_submitted_answer)
-                        disableSubmitButton()
-                    }
-                    // practiceViewModel.submitPractise(chatModel, requestEngage, engageType)
-                    viewModel.getPointsForVocabAndReading(currentLessonQuestion!!.id)
-                    viewModel.addTaskToService(requestEngage, PendingTask.READING_PRACTICE_OLD)
-                    //TODO : Jugaad ko hataana hai
-                    viewModel.updatePracticeEngagement(requestEngage)
-                    currentLessonQuestion!!.status = QUESTION_STATUS.IP
-                    delay(300)
-                    AppObjectController.uiHandler.post {
-                        showCompletedPractise()
-                    }
+                        appAnalytics?.addParam(
+                            AnalyticsEvent.PRACTICE_SCREEN_TIME.NAME,
+                            System.currentTimeMillis() - totalTimeSpend
+                        )
+                        appAnalytics?.addParam(AnalyticsEvent.PRACTICE_SOLVED.NAME, true)
+                        appAnalytics?.addParam(AnalyticsEvent.PRACTICE_STATUS.NAME, "Submitted")
+                        appAnalytics?.addParam(
+                            AnalyticsEvent.PRACTICE_TYPE_SUBMITTED.NAME,
+                            "$it Practice Submitted"
+                        )
+                        appAnalytics?.addParam(
+                            AnalyticsEvent.PRACTICE_SUBMITTED.NAME,
+                            "Submit Practice $"
+                        )
+                        AppObjectController.uiHandler.post {
+                            if (video.isNullOrBlank().not()) {
+                                binding.btnWhatsapp.visibility = VISIBLE
+                                binding.practiseSubmitLayout.visibility = VISIBLE
+                                binding.continueBtn.visibility = VISIBLE
+                            }
+                        }
+                        MixPanelTracker.publishEvent(MixPanelEvent.READING_COMPLETED)
+                            .addParam(ParamKeys.LESSON_ID, lessonID)
+                            .push()
+                        val requestEngage = RequestEngage()
+                        if (it == EXPECTED_ENGAGE_TYPE.VI) {
+                            requestEngage.localPath = outputFile
+                        } else {
+                            requestEngage.localPath = filePath
+                        }
+                        requestEngage.duration =
+                            Utils.getDurationOfMedia(requireActivity(), filePath)?.toInt()
+                        // requestEngage.feedbackRequire = currentLessonQuestion.feedback_require
+                        requestEngage.questionId = currentLessonQuestion!!.id
+                        requestEngage.mentor = Mentor.getInstance().getId()
+                        if (it == EXPECTED_ENGAGE_TYPE.AU) {
+                            requestEngage.answerUrl = filePath
+                        } else if (it == EXPECTED_ENGAGE_TYPE.VI) {
+                            requestEngage.answerUrl = outputFile
+                        }
+                        AppObjectController.uiHandler.post {
+                            // binding.progressLayout.visibility = INVISIBLE
+                            binding.feedbackLayout.visibility = GONE
+                            binding.progressLayout.visibility = VISIBLE
+                            binding.feedbackGrade.visibility = GONE
+                            binding.feedbackDescription.visibility = GONE
+                            binding.recordingViewFrame.visibility = GONE
+                            binding.recordTransparentContainer.visibility = GONE
+                            //binding.readingHoldHint.visibility = GONE
+                            binding.audioPractiseHint.visibility = GONE
+                            binding.counterTv.visibility = GONE
+                            binding.yourSubAnswerTv.text = getString(R.string.your_submitted_answer)
+                            disableSubmitButton()
+                        }
+                        // practiceViewModel.submitPractise(chatModel, requestEngage, engageType)
+                        viewModel.getPointsForVocabAndReading(currentLessonQuestion!!.id)
+                        viewModel.addTaskToService(requestEngage, PendingTask.READING_PRACTICE_OLD)
+                        //TODO : Jugaad ko hataana hai
+                        viewModel.updatePracticeEngagement(requestEngage)
+                        currentLessonQuestion!!.status = QUESTION_STATUS.IP
+                        delay(300)
+                        AppObjectController.uiHandler.post {
+                            showCompletedPractise()
+                        }
 
+                    }
                 }
             }
+        }
+        else{
+            showToast(getString(R.string.internet_not_available_msz))
         }
     }
 

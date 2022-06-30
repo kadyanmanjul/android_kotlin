@@ -33,6 +33,7 @@
                 android:padding="@dimen/_3sdp"
                 android:elevation="@dimen/_10sdp"
                 android:tint="@color/white"
+                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_cross" />
@@ -47,6 +48,7 @@
                 android:elevation="@dimen/_10sdp"
                 android:tint="@color/white"
                 android:padding="@dimen/_4sdp"
+                android:visibility="gone"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_arrow_back_2" />
