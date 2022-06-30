@@ -152,7 +152,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         binding.vm = viewModel
         binding.rootView.layoutTransition?.setAnimateParentHierarchy(false)
         binding.markAsCorrect.isVisible = BuildConfig.DEBUG
-        if (PrefManager.getStringValue(CURRENT_COURSE_ID) == PrefManager.getStringValue(DEFAULT_COURSE_ID))
+        if (PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID)
             binding.imgRecentCallsHistory.visibility = VISIBLE
         // showTooltip()
         return binding.rootView
