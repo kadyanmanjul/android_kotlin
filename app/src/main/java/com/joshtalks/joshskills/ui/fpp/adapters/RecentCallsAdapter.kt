@@ -77,7 +77,7 @@ class RecentCallsAdapter(var items: List<RecentCall> = listOf()) :
 
         fun initView(recentCall: RecentCall) {
             with(binding) {
-                if (!isFreeTrial && PrefManager.getStringValue(CURRENT_COURSE_ID)!=PrefManager.getStringValue(DEFAULT_COURSE_ID)){
+                if (!isFreeTrial) {
                     when (recentCall.fppRequestStatus) {
                         SENT_REQUEST -> {
                             setBtnVisibilityAndText(
