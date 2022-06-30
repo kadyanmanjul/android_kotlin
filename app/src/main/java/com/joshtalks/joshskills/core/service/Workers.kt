@@ -972,12 +972,17 @@ class NotificationEngagementSyncWorker(val context: Context, workerParams: Worke
         return try {
             NotificationAnalytics().fetchMissedNotification(context)
             if (shouldSendEnabledAnalytics()) {
-                AppObjectController.commonNetworkService.saveImpression(
+                val response = AppObjectController.commonNetworkService.saveImpression(
                     mapOf(
                         Pair("mentor_id", Mentor.getInstance().getId()),
                         Pair("event_name", notificationEnabledEvent())
                     )
                 )
+                if (response.isSuccessful) {
+                    val count = PrefManager.getIntValue(NOTIFICATION_STATUS_COUNT)
+                    PrefManager.put(NOTIFICATION_STATUS_COUNT, count + 1)
+                    PrefManager.put(NOTIFICATION_LAST_TIME_STATUS, System.currentTimeMillis())
+                }
             }
             when(NotificationAnalytics().pushToServer()) {
                 true -> Result.success()
@@ -994,15 +999,10 @@ class NotificationEngagementSyncWorker(val context: Context, workerParams: Worke
         val oneWeekMillis = 7 * oneDayMillis
         val count = PrefManager.getIntValue(NOTIFICATION_STATUS_COUNT)
         val timeDifference = System.currentTimeMillis() - PrefManager.getLongValue(NOTIFICATION_LAST_TIME_STATUS)
-        if (count < 7 && timeDifference > oneDayMillis) {
-            PrefManager.put(NOTIFICATION_STATUS_COUNT, count + 1)
-            PrefManager.put(NOTIFICATION_LAST_TIME_STATUS, System.currentTimeMillis())
+        if (count < 7 && timeDifference > oneDayMillis)
             return true
-        } else if (count >= 7 && timeDifference > oneWeekMillis) {
-            PrefManager.put(NOTIFICATION_STATUS_COUNT, count + 1)
-            PrefManager.put(NOTIFICATION_LAST_TIME_STATUS, System.currentTimeMillis())
+        else if (count >= 7 && timeDifference > oneWeekMillis)
             return true
-        }
         return false
     }
 
