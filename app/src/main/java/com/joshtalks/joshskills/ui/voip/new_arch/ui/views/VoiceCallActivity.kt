@@ -17,10 +17,12 @@ import com.joshtalks.joshskills.base.constants.*
 
 import com.joshtalks.joshskills.core.PermissionUtils.isCallingPermissionEnabled
 import com.joshtalks.joshskills.databinding.ActivityVoiceCallBinding
+import com.joshtalks.joshskills.quizgame.base.GameEventLiveData
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.VoiceCallViewModel
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.voipLog
 import com.joshtalks.joshskills.voip.Utils.Companion.onMultipleBackPress
 import com.joshtalks.joshskills.voip.constant.*
+import com.joshtalks.joshskills.voip.data.RecordingButtonState
 import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
@@ -32,6 +34,7 @@ class VoiceCallActivity : BaseActivity() {
     private val backPressMutex = Mutex(false)
     var recordingPermissionAlert: AlertDialog? = null
     private var isServiceBounded = false
+    private val recordingLiveEvent = GameEventLiveData
     private val voiceCallBinding by lazy<ActivityVoiceCallBinding> {
         DataBindingUtil.setContentView(this, R.layout.activity_voice_call)
     }
@@ -126,19 +129,24 @@ class VoiceCallActivity : BaseActivity() {
             Log.i(TAG, "initViewState: event -> ${it.what}")
             when (it.what) {
                 CALL_CONNECTED_EVENT -> replaceCallUserFragment()
+                CLOSE_CALL_SCREEN -> finish()
+                else -> {
+                    if (it.what < 0) {
+                        showToast("Error Occurred")
+                        finish()
+                    }
+                }
+            }
+        }
+        recordingLiveEvent.observe(this) {
+            Log.i(TAG, "initViewState: event -> ${it.what}")
+            when (it.what) {
                 SHOW_RECORDING_PERMISSION_DIALOG -> showRecordingPermissionDialog()
                 SHOW_RECORDING_REJECTED_DIALOG -> showRecordingRejectedDialog()
                 HIDE_RECORDING_PERMISSION_DIALOG -> {
                     hideRecordingPermissionDialog()
                     if (it.obj == true){
                         vm.startAudioVideoRecording(this@VoiceCallActivity.window.decorView)
-                    }
-                }
-                CLOSE_CALL_SCREEN -> finish()
-                else -> {
-                    if (it.what < 0) {
-                        showToast("Error Occurred")
-                        finish()
                     }
                 }
             }
@@ -230,6 +238,8 @@ class VoiceCallActivity : BaseActivity() {
             }
         else {
             super.onBackPressed()
+            if (vm.uiState.recordingButtonState == RecordingButtonState.SENTREQUEST)
+                vm.cancelRecording()
             vm.recordingStopButtonClickListener()
             vm.backPress()
         }

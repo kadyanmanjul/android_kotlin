@@ -104,7 +104,13 @@ public class SurfaceMediaRecorder extends MediaRecorder {
                     e.printStackTrace();
                     break;
                 }
-                mVideoFrameDrawer.onDraw(canvas);
+                try {
+                    mVideoFrameDrawer.onDraw(canvas);
+                } catch (Exception e){
+                    errorCode = MEDIA_RECORDER_ERROR_CODE_UNLOCK_CANVAS;
+                    e.printStackTrace();
+                    break;
+                }
                 try {
                     mSurface.unlockCanvasAndPost(canvas);
                 } catch (Exception e) {
