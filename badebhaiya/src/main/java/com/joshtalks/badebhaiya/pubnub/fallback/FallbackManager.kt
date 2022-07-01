@@ -33,14 +33,14 @@ This object is responsible to manage pubnub fallback which runs on Firebase Coul
 
 object FallbackManager {
 
-    private const val TIMESTAMP = "timestamp"
-    private const val COLLECTION_NAME = "live_room"
-    private const val EVENT_ID = "event_id"
-    private const val TAG = "FallbackManager"
-    private const val LIVE_ROOM = "LIVE_ROOM"
-    private const val CHANNELS = "CHANNELS"
-    private const val USER_LIST = "USER_LIST"
-    private const val user_list = "user_list"
+    const val TIMESTAMP = "timestamp"
+    const val COLLECTION_NAME = "live_room"
+    const val EVENT_ID = "event_id"
+    const val TAG = "FallbackManager"
+    const val LIVE_ROOM = "LIVE_ROOM"
+    const val CHANNELS = "CHANNELS"
+    const val USER_LIST = "USER_LIST"
+    const val user_list = "user_list"
 
     private var globalChannelListener: ListenerRegistration? = null
     private var privateChannelListener: ListenerRegistration? = null
@@ -181,7 +181,7 @@ object FallbackManager {
             }
     }
 
-    private fun getRoomId(): String {
+     fun getRoomId(): String {
         return PubNubManager.getLiveRoomProperties().roomId.toString()
     }
 

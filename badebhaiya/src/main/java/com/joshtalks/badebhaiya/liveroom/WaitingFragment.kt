@@ -47,9 +47,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.lifecycleScope
 import coil.compose.AsyncImage
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.joshtalks.badebhaiya.composeTheme.JoshBadeBhaiyaTheme
 import com.joshtalks.badebhaiya.composeTheme.NunitoSansFont
 import com.joshtalks.badebhaiya.feed.model.Waiting
+import com.joshtalks.badebhaiya.pubnub.fallback.FallbackManager
 import kotlinx.coroutines.*
 
 class WaitingFragment : Fragment() {
@@ -99,6 +102,7 @@ class WaitingFragment : Fragment() {
                 })
 
         //        return inflater.inflate(R.layout.fragment_waiting, container,false)
+        observeWaitingRoom()
         return ComposeView(requireContext()).apply {
             setContent {
                 JoshBadeBhaiyaTheme {
@@ -114,6 +118,10 @@ class WaitingFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun observeWaitingRoom() {
+        WaitingRoomManager.observeIfModeratorJoined()
     }
 
     @Composable
@@ -372,6 +380,11 @@ class WaitingFragment : Fragment() {
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        WaitingRoomManager.finish()
+    }
+
     companion object {
         const val TAG = "WaitingFragment"
 
@@ -383,4 +396,6 @@ class WaitingFragment : Fragment() {
                     .commit()
             }
     }
+
+
 }
