@@ -1136,7 +1136,7 @@ class ConversationActivity :
 
         conversationViewModel.pendingRequestsList.observe(this) {
             with(conversationBinding) {
-                if (it.pendingRequestsList.isNotEmpty() && inboxEntity.isCourseBought && inboxEntity.isCapsuleCourse) {
+                if (it.pendingRequestsList.isNotEmpty() && inboxEntity.isCourseBought && inboxEntity.isCapsuleCourse && PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID) {
                     fppRequestCountNumber.text = it.pendingRequestsList.size.toString()
                     fppRequestCountNumber.visibility = VISIBLE
                 } else {
