@@ -365,7 +365,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="यह Information आपके Practice partners को दिखाई देगी।"
+                    android:text="@string/sign_up_profile_occupation_aspiration_text"
                     android:paddingStart="14dp"
                     android:paddingEnd="14dp"
                     android:textColor="@color/dark_grey"/>
@@ -408,7 +408,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="यह Information आपके Practice partners को दिखाई देगी।"
+                    android:text="@string/sign_up_profile_occupation_aspiration_text"
                     android:paddingStart="14dp"
                     android:paddingEnd="14dp"
                     android:textColor="@color/dark_grey"/>
