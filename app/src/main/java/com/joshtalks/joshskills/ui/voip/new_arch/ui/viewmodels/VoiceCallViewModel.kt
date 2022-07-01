@@ -74,6 +74,7 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
     var isListening = false
     var isRequestDialogShowed = false
     var timer: CountDownTimer? = null
+    var recordButtonCount = ObservableInt(0)
 
     private val connectCallJob by lazy {
         viewModelScope.launch(start = CoroutineStart.LAZY) {
@@ -221,6 +222,7 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
     }
 
     fun stopRecording(recordFile: File) {
+        recordButtonCount.set(recordButtonCount.get().plus(1))
         viewModelScope.launch(Dispatchers.IO) {
             if (recordFile.absolutePath.isEmpty().not()) {
 

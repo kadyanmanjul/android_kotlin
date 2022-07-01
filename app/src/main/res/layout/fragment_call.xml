@@ -301,7 +301,7 @@
                     android:focusable="true"
                     android:onClick="@{vm::recordCall}"
                     android:padding="@dimen/_14sdp"
-                    android:visibility="@{(vm.uiState.isRecordingEnabled &amp;&amp; vm.uiState.startTime > 0 ) ? View.VISIBLE : View.GONE }"
+                    android:visibility="@{(true &amp;&amp; vm.uiState.startTime > 0 &amp;&amp; vm.recordButtonCount &lt; 2) ? View.VISIBLE : View.GONE }"
                     app:imageResource="@{vm.uiState.recordBtnImg}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/btn_speaker"
