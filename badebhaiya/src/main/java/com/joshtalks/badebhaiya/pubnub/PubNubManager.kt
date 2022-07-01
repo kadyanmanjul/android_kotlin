@@ -104,6 +104,10 @@ object PubNubManager {
         pubNubCallback = PubNubCallback()
     }
 
+    fun setStartingRoomProperties(startingLiveRoomProperties: StartingLiveRoomProperties){
+        liveRoomProperties = startingLiveRoomProperties
+    }
+
     fun warmUpChannel(channelName: String){
         Log.i("MODERATORSTATUS", "warmUpChannel: $channelName")
         this.channelName= channelName
@@ -884,7 +888,7 @@ object PubNubManager {
         postToLiveEvent(message)
     }
 
-    private fun isModerator(): Boolean =
+     fun isModerator(): Boolean =
         liveRoomProperties?.moderatorId == liveRoomProperties?.agoraUid
 
      fun sendPubNubException(e: Exception){

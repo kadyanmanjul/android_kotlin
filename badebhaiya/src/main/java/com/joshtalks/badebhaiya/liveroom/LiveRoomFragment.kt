@@ -168,6 +168,12 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
             initData()
             vm.startRoom()
         }
+
+        sendModeratorJoinedEvent()
+    }
+
+    private fun sendModeratorJoinedEvent() {
+        WaitingRoomManager.sendModeratorJoinedEvent()
     }
 
     private fun trackLiveRoomState(){
