@@ -357,6 +357,10 @@ class WaitingFragment : Fragment() {
         viewModel.isRoomActive.observe(viewLifecycleOwner){
             Log.i("WAITINGWORLD", " wait addObserver: $it")
             if(it) {
+                try {
+                    (activity as FeedActivity).swipeRefreshLayout.isEnabled = true
+                } catch (e: Exception) {
+                }
                 finishFragment()
             }
         }
