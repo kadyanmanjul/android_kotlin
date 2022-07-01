@@ -70,7 +70,7 @@ class FeedViewModel : ViewModel() {
     val waitingRoomUsers = MutableLiveData<List<Waiting>>(emptyList())
     var speakerName = ""
     init {
-        collectPubNubState()
+//        collectPubNubState()
 
 //            viewModelScope.launch {
 //                try{

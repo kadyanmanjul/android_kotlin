@@ -352,8 +352,14 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
     private fun addObserver() {
         liveRoomViewModel.pubNubState.observe(this) {
             when (it) {
-                PubNubState.STARTED -> onPubNubStart()
-                PubNubState.ENDED -> onPubNubEnd()
+                PubNubState.STARTED -> {
+                    onPubNubStart()
+                    viewModel.pubNubState=PubNubState.STARTED
+                }
+                PubNubState.ENDED -> {
+                    onPubNubEnd()
+                    viewModel.pubNubState=PubNubState.ENDED
+                }
             }
         }
 
