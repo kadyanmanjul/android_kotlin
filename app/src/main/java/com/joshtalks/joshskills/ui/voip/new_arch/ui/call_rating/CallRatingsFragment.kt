@@ -216,7 +216,7 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
     }
 
     private fun selectChange(s: String) {
-        if(s == "fpp" && vm.ifDialogShow==1  && PrefManager.getBoolValue(IS_COURSE_BOUGHT)){
+        if(s == "fpp" && vm.ifDialogShow==1  && PrefManager.getBoolValue(IS_COURSE_BOUGHT) && PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID){
             binding.block.chipStrokeColor = AppCompatResources.getColorStateList(requireContext(), R.color.colorPrimary)
             binding.block.chipBackgroundColor = AppCompatResources.getColorStateList(requireContext(), R.color.white)
             binding.block.setTextColor(resources.getColor(R.color.colorPrimary))
@@ -229,7 +229,7 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
 
     }
     private fun unSelectChange(s: String) {
-        if(s=="fpp"&& vm.ifDialogShow==1 && PrefManager.getBoolValue(IS_COURSE_BOUGHT)){
+        if(s=="fpp"&& vm.ifDialogShow==1 && PrefManager.getBoolValue(IS_COURSE_BOUGHT) && PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID){
             binding.block.chipStrokeColor = AppCompatResources.getColorStateList(requireContext(), R.color.pitch_black)
             binding.block.setTextColor(resources.getColor(R.color.pitch_black))
             binding.block.setTextColor(Color.BLACK)
