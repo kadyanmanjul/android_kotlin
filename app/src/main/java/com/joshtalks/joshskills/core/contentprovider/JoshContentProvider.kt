@@ -27,6 +27,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import java.lang.Exception
 
 private const val TAG = "JoshContentProvider"
 
@@ -115,16 +116,27 @@ class JoshContentProvider : ContentProvider() {
                 val cursor =
                     MatrixCursor(arrayOf(NOTIFICATION_TITLE_COLUMN, NOTIFICATION_SUBTITLE_COLUMN,
                         NOTIFICATION_LESSON_COLUMN))
-                val word = AppObjectController.appDatabase.lessonQuestionDao().getRandomWord()
-                Log.d(TAG, "query: Word ---> ${word.filter { it.word != null }}")
-                cursor.addRow(
-                    arrayOf(
-                        word.last { it.word != null }.word?: "Undertake",
-                        "Practice word of the day",
-                        word.last { it.word != null }.lessonId?: 21,
+                try{
+                    val word = AppObjectController.appDatabase.lessonQuestionDao().getRandomWord()
+                    Log.d(TAG, "query: Word ---> ${word.filter { it.word != null }}")
+                    cursor.addRow(
+                        arrayOf(
+                            word.last { it.word != null }.word?: "Undertake",
+                            "Practice word of the day",
+                            word.last { it.word != null }.lessonId?: 21,
                         )
-                )
-                return cursor
+                    )
+                    return cursor
+                }catch (e : Exception){
+                    cursor.addRow(
+                        arrayOf(
+                            "Appreciate",
+                            "Practice word of the day",
+                             21,
+                        )
+                    )
+                    return cursor
+                }
             }
         }
         return null

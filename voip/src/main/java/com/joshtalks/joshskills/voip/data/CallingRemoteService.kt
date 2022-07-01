@@ -370,11 +370,19 @@ class CallingRemoteService : Service() {
 // TODO: Need to Change
 class TestNotification(val notiData : Data) : NotificationData {
     override fun setTitle(): String {
-        return notiData.title
+        return if (Utils.courseId == "151" && notiData.title.isNotEmpty()) {
+            notiData.title
+        }else{
+            "Appreciate"
+        }
     }
 
     override fun setContent(): String {
-        return notiData.subTitle
+        return if (Utils.courseId == "151" && notiData.subTitle.isNotEmpty()) {
+            notiData.subTitle
+        }else{
+            "Practice word of the day"
+        }
     }
 
     override fun setTapAction(): PendingIntent? {
