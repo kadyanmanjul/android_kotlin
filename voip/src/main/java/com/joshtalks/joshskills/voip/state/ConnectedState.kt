@@ -54,6 +54,7 @@ class ConnectedState(val context: CallContext) : VoipState {
     private val TAG = "ConnectedState"
     private val scope = CoroutineScope(Dispatchers.IO)
     private var listenerJob: Job? = null
+    private var audioListenerJob: Job? = null
 
     init {
         Log.d("Call State", TAG)
@@ -433,7 +434,7 @@ class ConnectedState(val context: CallContext) : VoipState {
 
     private fun observeSpeakerVolumes() {
         Log.d(TAG, "Started observeSpeakerVolumes")
-        listenerJob = scope.launch {
+        audioListenerJob = scope.launch {
             try {
                 loop@ while (true) {
                     ensureActive()
@@ -485,6 +486,7 @@ class ConnectedState(val context: CallContext) : VoipState {
         scope.launch {
             try {
                 listenerJob?.cancel()
+                audioListenerJob?.cancel()
                 context.closeCallScreen()
                 context.stopRecording()
                 Log.d(TAG, "moveToLeavingState: after close screen")
