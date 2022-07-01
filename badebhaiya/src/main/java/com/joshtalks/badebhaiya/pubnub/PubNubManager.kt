@@ -388,7 +388,7 @@ object PubNubManager {
         val distinctedList = list.reversed().distinctBy { it.userId }.reversed()
         jobs += CoroutineScope(Dispatchers.IO).launch {
             distinctedList.map { if (it.isModerator) it.sortOrder = Int.MAX_VALUE  }
-            _speakersList.emit(distinctedList)
+            _speakersList.emit(distinctedList.toList())
         }
     }
 
@@ -596,33 +596,42 @@ object PubNubManager {
         isMicOn: Boolean? = null,
         channelName: String?
     ) {
-        jobs += CoroutineScope(Dispatchers.IO).launch {
-            if (user == null || pubnub == null || user.id == null) {
-                return@launch
-            }
-            val state = mutableMapOf<String, Any>()
-            state.put("id", user!!.id!!)
-            state.put("is_speaker", user.isSpeaker.toString())
-            state.put("short_name", user.name ?: DEFAULT_NAME)
-            state.put("photo_url", user.photoUrl ?: EMPTY)
-            state.put("sort_order", user.sortOrder ?: 0)
-            state.put("is_moderator", user.isModerator)
-            state.put("is_mic_on", (isMicOn ?: user.isMicOn))
-            state.put("is_speaking", user.isSpeaking)
-            state.put("is_hand_raised", user.isHandRaised)
-            state.put("user_id", user.userId)
+        try {
+            jobs += CoroutineScope(Dispatchers.IO).launch {
+                if (user == null || pubnub == null || user.id == null) {
+                    return@launch
+                }
+                val state = mutableMapOf<String, Any>()
+                state.put("id", user!!.id!!)
+                state.put("is_speaker", user.isSpeaker.toString())
+                state.put("short_name", user.name ?: DEFAULT_NAME)
+                state.put("photo_url", user.photoUrl ?: EMPTY)
+                state.put("sort_order", user.sortOrder ?: 0)
+                state.put("is_moderator", user.isModerator)
+                state.put("is_mic_on", (isMicOn ?: user.isMicOn))
+                state.put("is_speaking", user.isSpeaking)
+                state.put("is_hand_raised", user.isHandRaised)
+                state.put("user_id", user.userId)
 
-            pubnub.setChannelMembers().channel(liveRoomProperties?.channelName)
-                ?.uuids(
-                    Arrays.asList(
-                        PNUUID.uuidWithCustom(
-                            user.id.toString(),
-                            state as Map<String, Any>?
+                pubnub.setChannelMembers().channel(liveRoomProperties?.channelName)
+                    ?.uuids(
+                        Arrays.asList(
+                            PNUUID.uuidWithCustom(
+                                user.id.toString(),
+                                state as Map<String, Any>?
+                            )
                         )
                     )
-                )
-                ?.includeCustom(true)
-                ?.sync()
+                    ?.includeCustom(true)
+                    ?.sync()
+            }
+        } catch (e:SocketTimeoutException){
+            sendPubNubException(e)
+            postDataToNetworkFlow(true)
+        }
+        catch (e: Exception){
+            e.printStackTrace()
+            sendPubNubException(e)
         }
     }
 
