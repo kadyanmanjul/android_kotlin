@@ -343,7 +343,8 @@ class ConnectedState(val context: CallContext) : VoipState {
                                 val startTime = SystemClock.elapsedRealtime()
                                 val uiState = context.currentUiState.copy(
                                     recordingButtonState = RecordingButtonState.RECORDING,
-                                    recordingStartTime = startTime
+                                    recordingStartTime = startTime,
+                                    recordingButtonNooftimesclicked = context.currentUiState.recordingButtonNooftimesclicked.plus(1)
                                 )
                                 context.updateUIState(uiState = uiState)
                                 val userAction = UserAction(
@@ -360,7 +361,8 @@ class ConnectedState(val context: CallContext) : VoipState {
                                     val startTime = SystemClock.elapsedRealtime()
                                     val uiState = context.currentUiState.copy(
                                         recordingButtonState = RecordingButtonState.RECORDING,
-                                        recordingStartTime = startTime
+                                        recordingStartTime = startTime,
+                                        recordingButtonNooftimesclicked = context.currentUiState.recordingButtonNooftimesclicked.plus(1)
                                     )
                                     context.updateUIState(uiState = uiState)
                                     context.sendEventToUI(event)

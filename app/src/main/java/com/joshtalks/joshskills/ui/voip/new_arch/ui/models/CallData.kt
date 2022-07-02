@@ -209,4 +209,11 @@ class CallUIState : BaseObservable() {
             field = value
             notifyPropertyChanged(BR.callerSpeaking)
         }
+
+    @get:Bindable
+    var recordButtonPressedTwoTimes : Int = 0
+        set(value) {
+            field = value
+            notifyPropertyChanged(BR.callerSpeaking)
+        }
 }

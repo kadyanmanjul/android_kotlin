@@ -438,6 +438,7 @@ data class UIState(
     val isReconnecting: Boolean = false,
     val startTime: Long = 0L,
     val recordingButtonState: RecordingButtonState = RecordingButtonState.IDLE,
+    val recordingButtonNooftimesclicked : Int = 0,
     val recordingStartTime : Long = 0L,
     val isRecordingEnabled : Boolean = false,
     val isCallerSpeaking : Boolean = false,
