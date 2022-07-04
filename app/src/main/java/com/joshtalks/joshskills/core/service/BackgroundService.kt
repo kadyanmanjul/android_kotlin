@@ -202,7 +202,7 @@ class BackgroundService : Service() {
                         notificationDao.updateSyncStatus(it.notificationId)
                     } catch (e: Exception) {
                         if (e is HttpException) {
-                            if (e.code() == 501)
+                            if (e.code() == 400)
                                 notificationDao.updateSyncStatus(it.notificationId)
                         }
                         e.printStackTrace()
