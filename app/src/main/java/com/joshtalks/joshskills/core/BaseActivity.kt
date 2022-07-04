@@ -585,6 +585,7 @@ abstract class BaseActivity :
                 LocalBroadcastManager.getInstance(this@BaseActivity).sendBroadcast(broadcastIntent)
 
                 PrefManager.clearUser()
+                NotificationManagerCompat.from(this@BaseActivity).cancelAll()
                 AppObjectController.joshApplication.startActivity(intent)
             } catch (e: Exception) {
                 e.printStackTrace()
