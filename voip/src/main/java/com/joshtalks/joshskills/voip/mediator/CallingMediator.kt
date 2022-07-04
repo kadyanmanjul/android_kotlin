@@ -1,8 +1,11 @@
 package com.joshtalks.joshskills.voip.mediator
 
+import android.content.Intent
 import android.util.Log
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_INCOMING_CALL_ID
 import com.joshtalks.joshskills.base.constants.PEER_TO_PEER
+import com.joshtalks.joshskills.voip.Utils
+import com.joshtalks.joshskills.voip.Utils.Companion.context
 import com.joshtalks.joshskills.voip.audiomanager.SOUND_TYPE_RINGTONE
 import com.joshtalks.joshskills.voip.audiomanager.SoundManager
 import com.joshtalks.joshskills.voip.calldetails.IncomingCallData
@@ -190,7 +193,16 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                 if(e is CancellationException)
                     throw e
             }
-        }    }
+        }
+        val notificationActivity="com.joshtalks.joshskills.ui.voip.new_arch.ui.views.IncomingNotificationActivity"
+        val callingActivity = Intent()
+        callingActivity.apply {
+            setClassName(Utils.context!!,notificationActivity)
+            putExtra("destroy_activity",true)
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        context?.startActivity(callingActivity)
+    }
 
     override fun userAction(action: UserAction) {
         Log.d(TAG, "userAction : $action")
