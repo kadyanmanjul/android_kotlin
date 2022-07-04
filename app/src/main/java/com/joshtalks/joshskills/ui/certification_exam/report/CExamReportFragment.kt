@@ -2,7 +2,6 @@ package com.joshtalks.joshskills.ui.certification_exam.report
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,8 +10,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.IS_FIRST_TIME_FLOW_CERTI
-import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.databinding.FragmentCexamReportBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.EmptyEventBus
@@ -30,7 +27,6 @@ import com.joshtalks.joshskills.ui.certification_exam.report.vh.ReportOverviewVi
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-
 
 class CExamReportFragment : Fragment() {
 
@@ -62,7 +58,6 @@ class CExamReportFragment : Fragment() {
     private val viewModel: CertificationExamViewModel by lazy {
         ViewModelProvider(requireActivity()).get(CertificationExamViewModel::class.java)
     }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -123,7 +118,6 @@ class CExamReportFragment : Fragment() {
             }
         }*/
     }
-
 
     override fun onPause() {
         super.onPause()
@@ -188,5 +182,4 @@ class CExamReportFragment : Fragment() {
             binding.tempRv.removeAllViews()
         }
     }
-
 }
