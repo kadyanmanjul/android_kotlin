@@ -22,7 +22,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.Utils
-import com.joshtalks.joshskills.core.custom_ui.decorator.GridSpacingItemDecoration
+import com.joshtalks.joshskills.core.custom_ui.decorator.GridSpacingQuestionsDecoration
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.OpenReportQTypeEventBus
 import com.joshtalks.joshskills.repository.server.certification_exam.CertificateExamReportModel
@@ -37,7 +37,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.*
 
-
 @SuppressLint("NonConstantResourceId")
 @Layout(R.layout.layout_report_overview_view3)
 class ReportOverviewView3(
@@ -45,7 +44,6 @@ class ReportOverviewView3(
     private val totalQuestions: List<CertificationQuestion>,
     private val reportType: QuestionReportType
 ) {
-
     @com.mindorks.placeholderview.annotations.View(R.id.chart)
     lateinit var chart: PieChart
 
@@ -69,7 +67,6 @@ class ReportOverviewView3(
 
     @com.mindorks.placeholderview.annotations.View(R.id.ll_correct)
     lateinit var llcorrect: LinearLayout
-
 
     private val context: Context = AppObjectController.joshApplication
 
@@ -110,12 +107,11 @@ class ReportOverviewView3(
                 )
             }
             questionRecyclerView.apply {
-                addItemDecoration(GridSpacingItemDecoration(8, Utils.dpToPx(context, 6f), true))
+                addItemDecoration(GridSpacingQuestionsDecoration(6, Utils.dpToPx(context, 6f), true))
                 setHasFixedSize(true)
-                layoutManager = GridLayoutManager(context, 8)
+                layoutManager = GridLayoutManager(context, 6, RecyclerView.HORIZONTAL, false)
                 adapter = ReportQuestionListAdapter(answersList, reportType)
             }
-
         }
     }
 
@@ -197,7 +193,6 @@ class ReportOverviewView3(
             //chart.highlightValue(0f, 0, false)
         }
     }
-
 
     private fun generateCenterSpannableText(text: String): SpannableString {
         val span = SpannableString(text)
