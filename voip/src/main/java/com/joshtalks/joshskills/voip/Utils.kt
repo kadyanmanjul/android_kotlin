@@ -162,6 +162,20 @@ fun Context.getMentorId(): String {
     return mentorId
 }
 
+fun Context.isFreeTrialOrCourseBought(): Boolean {
+    val trialIdCursor = contentResolver.query(
+        Uri.parse(CONTENT_URI + IS_COURSE_BOUGHT_OR_FREE_TRIAL),
+        null,
+        null,
+        null,
+        null
+    )
+    trialIdCursor?.moveToFirst()
+    val isFreeTrialOrCourseBought = trialIdCursor.getStringData(FREE_TRIAL_OR_COURSE_BOUGHT_COLUMN)
+    trialIdCursor?.close()
+    return isFreeTrialOrCourseBought=="true"
+}
+
 fun Context.getVideoUrl():String{
     val videoUrl = contentResolver.query(
         Uri.parse(CONTENT_URI + RECORD_VIDEO_URI),

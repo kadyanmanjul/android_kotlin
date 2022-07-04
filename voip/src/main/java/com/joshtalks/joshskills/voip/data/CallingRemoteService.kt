@@ -7,7 +7,7 @@ import android.os.Binder
 import android.os.IBinder
 import android.util.Log
 import com.joshtalks.joshskills.base.constants.*
-import com.joshtalks.joshskills.voip.Utils
+import com.joshtalks.joshskills.voip.*
 import com.joshtalks.joshskills.voip.audiocontroller.AudioController
 import com.joshtalks.joshskills.voip.audiocontroller.AudioControllerInterface
 import com.joshtalks.joshskills.voip.audiocontroller.AudioRouteConstants
@@ -28,18 +28,14 @@ import com.joshtalks.joshskills.voip.constant.PSTN_STATE_IDLE
 import com.joshtalks.joshskills.voip.constant.PSTN_STATE_ONCALL
 import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.local.PrefManager
-import com.joshtalks.joshskills.voip.getHangUpIntent
-import com.joshtalks.joshskills.voip.getNotificationData
 import com.joshtalks.joshskills.voip.mediator.CallServiceMediator
 import com.joshtalks.joshskills.voip.mediator.CallingMediator
 import com.joshtalks.joshskills.voip.notification.NotificationData
 import com.joshtalks.joshskills.voip.notification.NotificationPriority
 import com.joshtalks.joshskills.voip.notification.VoipNotification
-import com.joshtalks.joshskills.voip.openCallScreen
 import com.joshtalks.joshskills.voip.pstn.PSTNController
 import com.joshtalks.joshskills.voip.pstn.PSTNState
 import com.joshtalks.joshskills.voip.state.CallConnectData
-import com.joshtalks.joshskills.voip.updateStartTime
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
 import kotlinx.coroutines.CancellationException
@@ -386,8 +382,8 @@ class TestNotification(val notiData : Data) : NotificationData {
     }
 
     override fun setTapAction(): PendingIntent? {
-        Log.d(TAG, "setTapAction: ${Utils.courseId }")
-        if (Utils.courseId == "151") {
+        Log.d(TAG, "setTapAction: ${Utils.courseId } ${Utils.context!!.isFreeTrialOrCourseBought()}")
+        if (Utils.courseId == "151" && Utils.context!!.isFreeTrialOrCourseBought()) {
             val notificationActivity = "com.joshtalks.joshskills.ui.lesson.LessonActivity"
             val callingActivity = Intent()
             callingActivity.apply {

@@ -201,9 +201,6 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        if(!PrefManager.getBoolValue(IS_COURSE_BOUGHT) &&  !PrefManager.getBoolValue(IS_FREE_TRIAL)){
-            startActivity(InboxActivity.getInboxIntent(this))
-        }
         if (getVoipState() == State.IDLE && WebRtcService.isCallOnGoing.value == false)
             viewModel.getButtonVisibility()
         binding = DataBindingUtil.setContentView(
