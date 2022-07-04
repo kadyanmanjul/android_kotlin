@@ -131,6 +131,8 @@ class FreeTrialPaymentViewModel(application: Application) : AndroidViewModel(app
                 if (orderDetailsResponse.code() == 201) {
                     val response: OrderDetailResponse = orderDetailsResponse.body()!!
                     orderDetailsLiveData.postValue(response)
+                } else {
+                    showToast(AppObjectController.joshApplication.getString(R.string.something_went_wrong))
                 }
                 // viewState?.postValue(PaymentSummaryViewModel.ViewState.PROCESSED)
             } catch (ex: Exception) {
