@@ -25,6 +25,8 @@ import timber.log.Timber
 class PubNubCallback: SubscribeCallback() {
 
     override fun status(pubnub: PubNub, pnStatus: PNStatus) {
+        Timber.tag("signal").d("RIGHT NOW STATUS IS => $pnStatus AND SIGNAL MESSAGE IS => ${pnStatus.statusCode}")
+
     }
 
     override fun message(pubnub: PubNub, pnMessageResult: PNMessageResult) {
@@ -58,15 +60,18 @@ class PubNubCallback: SubscribeCallback() {
     }
 
     override fun presence(pubnub: PubNub, pnPresenceEventResult: PNPresenceEventResult) {
+        Timber.tag("signal").d("RIGHT NOW PRESENCE IS => $pnPresenceEventResult AND SIGNAL MESSAGE IS => ${pnPresenceEventResult.event}")
     }
 
     override fun signal(pubnub: PubNub, pnSignalResult: PNSignalResult) {
+        Timber.tag("signal").d("RIGHT NOW SIGNAL IS => $pnSignalResult AND SIGNAL MESSAGE IS => ${pnSignalResult.message}")
     }
 
     override fun uuid(pubnub: PubNub, pnUUIDMetadataResult: PNUUIDMetadataResult) {
     }
 
     override fun channel(pubnub: PubNub, pnChannelMetadataResult: PNChannelMetadataResult) {
+        Timber.tag("signal").d("RIGHT NOW CHANNEL DATA IS => $pnChannelMetadataResult AND SIGNAL MESSAGE IS => ${pnChannelMetadataResult.data}")
     }
 
     override fun membership(pubnub: PubNub, pnMembershipResult: PNMembershipResult) {

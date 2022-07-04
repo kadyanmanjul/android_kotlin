@@ -24,6 +24,7 @@ import com.joshtalks.badebhaiya.liveroom.service.NotificationId.Companion.ROOM_C
 import com.joshtalks.badebhaiya.liveroom.service.NotificationId.Companion.ROOM_NOTIFICATION_CHANNEL
 import com.joshtalks.badebhaiya.liveroom.service.util.TelephonyUtil
 import com.joshtalks.badebhaiya.liveroom.service.util.WebRtcAudioManager
+import com.joshtalks.badebhaiya.network.NetworkManager
 import com.joshtalks.badebhaiya.pubnub.PubNubEventsManager
 import com.joshtalks.badebhaiya.pubnub.PubNubManager
 import com.joshtalks.badebhaiya.repository.ConversationRoomRepository
@@ -38,6 +39,7 @@ import io.agora.rtc.models.ClientRoleOptions
 import java.lang.ref.WeakReference
 import java.util.concurrent.ExecutorService
 import kotlinx.coroutines.*
+import timber.log.Timber
 
 const val ROOM_RTC_USER_UID_KEY = "room_user_uid"
 const val ROOM_RTC_MODERATOR_UID_KEY = "room_moderator_uid"
@@ -154,12 +156,26 @@ class ConvoWebRtcService : Service() {
 
             override fun onWarning(warn: Int) {
                 super.onWarning(warn)
+                Timber.tag("signal").d("AGORA WARTING IS => $warn")
+                when(warn){
+                    104, 106 -> {
+                        // Network is poor.
+                        NetworkManager.networkIsFlow()
+                    }
+                }
                 Log.d(TAG, "onWarning() called with: warn = $warn")
             }
 
             override fun onError(err: Int) {
                 super.onError(err)
+                Timber.tag("signal").d("AGORA ERROR IS => $err")
                 Log.d(TAG, "IRtcEngineEventHandler onError() called with: err = $err")
+                when(err){
+                    111, 112 -> {
+                        // Network is poor.
+                        NetworkManager.networkIsFlow()
+                    }
+                }
             }
 
             override fun onJoinChannelSuccess(channel: String, uid: Int, elapsed: Int) {
@@ -181,6 +197,8 @@ class ConvoWebRtcService : Service() {
 
             override fun onUserOffline(uid: Int, reason: Int) {
                 super.onUserOffline(uid, reason)
+                Timber.tag("signal").d("AGORA USER OFFLINE IS => $uid AND REASON => $reason")
+
                 Log.d(TAG, "IRtcEngineEventHandler onUserOffline() called with: uid = $uid, reason = $reason")
                 val isUserLeave = reason == USER_OFFLINE_QUIT
                 if (!isRoomCreatedByUser && isUserLeave) {

@@ -50,6 +50,7 @@ import com.joshtalks.badebhaiya.liveroom.model.StartingLiveRoomProperties
 import com.joshtalks.badebhaiya.liveroom.service.ConversationRoomCallback
 import com.joshtalks.badebhaiya.liveroom.service.ConvoWebRtcService
 import com.joshtalks.badebhaiya.liveroom.viewmodel.*
+import com.joshtalks.badebhaiya.network.NetworkManager
 import com.joshtalks.badebhaiya.notifications.HeadsUpNotificationService
 import com.joshtalks.badebhaiya.profile.ProfileFragment
 import com.joshtalks.badebhaiya.profile.ProfileViewModel
@@ -254,8 +255,8 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
 
         lifecycleScope.launch{
             repeatOnLifecycle(Lifecycle.State.STARTED){
-                PubNubManager.networkFlow.collect{
-                    if(it){
+                NetworkManager.networkSlowFlow.collect{ isNetworkSlow ->
+                    if(isNetworkSlow){
                         setNotificationWithoutAction(
                             "Poor connection. Try to find a stronger signal.", false,
                             NotificationView.ConversationRoomNotificationState.DEFAULT,
