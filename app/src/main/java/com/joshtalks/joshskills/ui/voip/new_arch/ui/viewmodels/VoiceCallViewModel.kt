@@ -351,10 +351,8 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                 if (uiState.isSpeakerOn != state.isSpeakerOn) {
                     if (state.isSpeakerOn) {
                         uiState.isSpeakerOn = true
-                        repository.turnOnSpeaker()
                     } else {
                         uiState.isSpeakerOn = false
-                        repository.turnOffSpeaker()
                     }
                 }
 
@@ -362,10 +360,8 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                     Log.d(TAG, "listenUIState: MUTE -- ${state.isOnMute}")
                     if (state.isOnMute) {
                         uiState.isMute = true
-                        repository.muteCall()
                     } else {
                         uiState.isMute = false
-                        repository.unmuteCall()
                     }
                 }
             }
