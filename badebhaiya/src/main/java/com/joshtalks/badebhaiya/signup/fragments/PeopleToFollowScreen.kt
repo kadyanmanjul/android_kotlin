@@ -62,7 +62,7 @@ fun PeopleToFollowScreen(
 
             itemsIndexed(list) { index, value ->
                 value?.let {
-                    ItemBadeBhaiya(badeBhaiya = it, bottomPadding = 0.dp, onClick = onItemClick)
+                    ItemBadeBhaiya(badeBhaiya = it, bottomPadding = getPeopleToFollowPadding(index, list.itemSnapshotList.items.toTypedArray()), onClick = onItemClick)
                 }
             }
 

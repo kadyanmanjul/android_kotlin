@@ -212,6 +212,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
 
             })
             checkAndOpenLiveRoom()
+
         }
         //setOnClickListener()
 
