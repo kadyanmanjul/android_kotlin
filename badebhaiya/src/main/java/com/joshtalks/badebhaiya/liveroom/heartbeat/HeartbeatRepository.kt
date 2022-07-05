@@ -13,10 +13,6 @@ class HeartbeatRepository @Inject constructor(
     private val roomApi: ConversationRoomNetworkService
 ) {
 
-//    private val roomApi by lazy {
-//        RetrofitInstance.conversationRoomNetworkService
-//    }
-
     val heartbeat = flow {
         while (true) {
             emit(

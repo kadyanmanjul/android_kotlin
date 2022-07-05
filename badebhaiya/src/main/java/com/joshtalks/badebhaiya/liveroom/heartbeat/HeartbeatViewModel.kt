@@ -14,10 +14,6 @@ class HeartbeatViewModel @Inject constructor(
     private val heartbeatRepository: HeartbeatRepository
 ): ViewModel() {
 
-//    private val heartbeatRepository by lazy {
-//        HeartbeatRepository()
-//    }
-
     fun initViewModel(){
         Timber.d("INITIALIZED VIEW MODEL")
     }
