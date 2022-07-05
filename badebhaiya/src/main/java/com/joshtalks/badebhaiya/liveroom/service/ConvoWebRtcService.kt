@@ -180,6 +180,7 @@ class ConvoWebRtcService : Service() {
             }
 
             override fun onUserOffline(uid: Int, reason: Int) {
+                Log.i("YAMIHONO", "onUserOffline: $uid")
                 super.onUserOffline(uid, reason)
                 Log.d(TAG, "IRtcEngineEventHandler onUserOffline() called with: uid = $uid, reason = $reason")
                 val isUserLeave = reason == USER_OFFLINE_QUIT

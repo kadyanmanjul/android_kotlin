@@ -155,8 +155,6 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         ViewModelProvider(this)[ProfileViewModel::class.java]
     }
 
-    private var pendingIntent: PendingIntent? = null
-
     private val liveRoomViewModel by lazy {
         ViewModelProvider(this)[LiveRoomViewModel::class.java]
     }
@@ -170,13 +168,10 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
             this.window.statusBarColor =
                 this.resources.getColor(R.color.conversation_room_color, this.theme)
         }
-//        var intent=Intent()
-//        var bundle=intent.extras
 
         var user = intent.getStringExtra("userId")
         val mUserId = intent.getStringExtra(USER_ID)
 
-//        this.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         val db = Firebase.firestore
         binding = DataBindingUtil.setContentView(this, R.layout.activity_feed)
         binding.lifecycleOwner = this
@@ -213,16 +208,6 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
             })
             checkAndOpenLiveRoom()
         }
-        //setOnClickListener()
-
-        // Testing pubnub exception api.
-
-//        try {
-//            throw Exception()
-//            showToast("sdf", Toast.LENGTH_LONG)
-//        } catch (e: Exception){
-//            PubNubManager.sendPubNubException(e)
-//        }
     }
 
     override fun onRestart() {
@@ -310,22 +295,16 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         bundle.putString("source","FEED_SCREEN")
 
         fragment.arguments = bundle
-//        fragmentTransaction.addToBackStack(null)
-        fragmentTransaction.replace(R.id.root_view, fragment)
+        fragmentTransaction.replace(R.id.fragmentContainer, fragment)
         fragmentTransaction.commit()
     }
 
     fun onSearchPressed() {
         profileViewModel.sendEvent(Impression("FEED_SCREEN","CLICKED_SEARCH"))
-
-        if (liveRoomViewModel.pubNubState.value != null && liveRoomViewModel.pubNubState.value == PubNubState.STARTED) {
-            liveRoomViewModel.liveRoomState.value = LiveRoomState.EXPANDED
-        } else {
             supportFragmentManager.findFragmentByTag(SearchFragment::class.java.simpleName)
             supportFragmentManager.beginTransaction()
-                .replace(R.id.root_view, SearchFragment(), SearchFragment::class.java.simpleName)
+                .replace(R.id.fragmentContainer, SearchFragment(), SearchFragment::class.java.simpleName)
                 .commit()
-        }
 
     }
 
@@ -350,18 +329,12 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
     }
 
     private fun addObserver() {
-        liveRoomViewModel.pubNubState.observe(this) {
-            when (it) {
-                PubNubState.STARTED -> {
-                    onPubNubStart()
-                    viewModel.pubNubState=PubNubState.STARTED
-                }
-                PubNubState.ENDED -> {
-                    onPubNubEnd()
-                    viewModel.pubNubState=PubNubState.ENDED
-                }
-            }
-        }
+        liveRoomViewModel.pubNubState.observe(this,androidx.lifecycle.Observer{
+            if(it==PubNubState.ENDED)
+                viewModel.pubNubState=PubNubState.ENDED
+            else
+                viewModel.pubNubState=PubNubState.STARTED
+        })
 
         viewModel.singleLiveEvent.observe(this, androidx.lifecycle.Observer {
             Log.d("ABC2", "Data class called with feed data message: ${it.what} bundle : ${it.data}")
@@ -642,18 +615,8 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
 
     }
 
-    fun openProfile(profile: String) {
-        var bundle = Bundle()
-        bundle.putString("user", profile)
-        supportFragmentManager.findFragmentByTag(ProfileFragment::class.java.simpleName)
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.root_view, ProfileFragment(), ProfileFragment::class.java.simpleName)
-            .commit()
-    }
-
     override fun viewProfile(profile: String?, deeplink: Boolean) {
         val fragment = ProfileFragment() // replace your custom fragment class
-
         val bundle = Bundle()
         val fragmentTransaction: FragmentTransaction = supportFragmentManager.beginTransaction()
         bundle.putString("user", profile) // use as per your need
@@ -663,21 +626,12 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
             bundle.putString("source","feed")
 
         fragment.arguments = bundle
-//        fragmentTransaction.addToBackStack(null)
-        fragmentTransaction.replace(R.id.root_view, fragment)
+        fragmentTransaction.replace(R.id.fragmentContainer, fragment)
         fragmentTransaction.commit()
     }
 
     override fun viewRoom(room: RoomListResponseItem, view: View,deeplink: Boolean) {
-//        room.speakersData?.userId?.let {
-//            ProfileActivity.openProfileActivity(this, it)
-////        }
-//        ProfileActivity().apply{
-//            room.speakersData?.userId?.let {
-//                arguments=Bundle().apply {putString("user",it)}
-//            }
-//
-//        }
+
         profileViewModel.sendEvent(Impression("FEED_SCREEN","CLICKED_CARD"))
         val fragment = ProfileFragment() // replace your custom fragment class
 
@@ -689,13 +643,8 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         else
             bundle.putString("source", "FEED_SCREEN")
         fragment.arguments = bundle
-//        fragmentTransaction.addToBackStack(null)
-        fragmentTransaction.replace(R.id.root_view, fragment)
+        fragmentTransaction.replace(R.id.fragmentContainer, fragment)
         fragmentTransaction.commit()
 
-//        supportFragmentManager.findFragmentByTag(ProfileActivity::class.java.simpleName)
-//        supportFragmentManager.beginTransaction()
-//            .replace(R.id.root_view, ProfileActivity(), ProfileActivity::class.java.simpleName)
-//            .commit()
     }
 }

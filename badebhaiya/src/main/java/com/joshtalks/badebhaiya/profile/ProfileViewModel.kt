@@ -45,7 +45,7 @@ class ProfileViewModel : ViewModel() {
     var pubNubState = PubNubState.ENDED
 
     init {
-        collectPubNubState()
+//        collectPubNubState()
     }
 
     private fun collectPubNubState() {
