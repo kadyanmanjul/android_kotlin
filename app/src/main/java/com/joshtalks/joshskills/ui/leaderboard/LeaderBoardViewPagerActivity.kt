@@ -869,7 +869,8 @@ class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity(), ViewBitmap {
     }
 
     fun setRecyclerViewItemAnimation(position: Int) {
-        if (!PrefManager.getBoolValue(HAS_SEEN_LEADERBOARD_ITEM_ANIMATION, true))
+        if (!PrefManager.getBoolValue(HAS_SEEN_LEADERBOARD_ITEM_ANIMATION, true)
+            && PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID)
             showOverlayLayoutForItem(position)
     }
 
