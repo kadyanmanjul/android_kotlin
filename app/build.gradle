@@ -304,11 +304,11 @@ dependencies {
 
     implementation 'com.google.firebase:firebase-crashlytics-ktx:18.2.4'
     implementation 'com.google.firebase:firebase-appindexing:20.0.0'
-    implementation 'com.google.firebase:firebase-analytics-ktx:20.0.0'
+    implementation 'com.google.firebase:firebase-analytics-ktx:21.0.0'
     implementation 'com.google.firebase:firebase-core:19.0.1'
     implementation 'com.google.firebase:firebase-messaging:22.0.0'
     implementation 'com.google.firebase:firebase-perf:20.0.2'
-    implementation 'com.google.firebase:firebase-config:21.0.1'
+    implementation 'com.google.firebase:firebase-config-ktx:21.1.0'
     implementation 'com.google.firebase:firebase-dynamic-links-ktx:20.1.1'
     implementation 'com.google.firebase:firebase-auth:21.0.1'
     implementation 'com.google.firebase:firebase-inappmessaging-ktx:20.1.0'

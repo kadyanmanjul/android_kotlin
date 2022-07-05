@@ -1,132 +1,412 @@
-<?xml version="1.0" encoding="utf-8"?>
-
-<defaultsMap>
+<?xml version="1.0" encoding="UTF-8"?>
+<defaults>
     <entry>
-        <key>registration_url</key>
-        <value>http://english.joshtalks.org/</value>
+        <key>CERTIFICATE_SHARE_TEXT_WHATSAPP</key>
+        <value>I have Completed the Josh Skills Spoken English Certification Exam!\nYou can also Download the app from
+            :
+        </value>
     </entry>
     <entry>
-        <key>self_register_text</key>
-        <value>Kya aapne kisi aur Whatsapp number se register kiya hai</value>
+        <key>FFCOURSE_CARD_CLICK_MSG</key>
+        <value>Select any course below &amp; get it for FREE!</value>
     </entry>
     <entry>
-        <key>helpline_number</key>
-        <value>08634503202</value>
+        <key>FREE_TRIAL_POPUP_BODY_TEXT_1881</key>
+        <value>हा 90 दिवसांचा कोर्स आहे\nआणि तुम्ही try केल्या नंतर, तुम्हाला हवे असल्यास, तुम्ही हा कोर्स 499 रुपयात
+            खरेदी करू शकता.\n \nतुम्हाला हा कोर्स एका दिवसासाठी अगदी मोफत try करायचा आहे का?
+        </value>
     </entry>
     <entry>
-        <key>update_force</key>
+        <key>GRAMMAR_CONTINUE_BUTTON_TEXT_1207</key>
+        <value>सुरू ठेवा</value>
+    </entry>
+    <entry>
+        <key>FREE_TRIAL_PAYMENT_TEST_ID</key>
+        <value>102</value>
+    </entry>
+    <entry>
+        <key>INBOX_OVERLAY_TOOLTIP_D0_1</key>
+        <value>Bade Bhaiya Tip: Please yaad rakhna ki agar aap subscription lena chahe to pehle 3 dino tak aapke paas
+            price pe 50% off hai.
+        </value>
+    </entry>
+    <entry>
+        <key>TOOLTIP_OPEN_PROFILE_151</key>
+        <value>आप किसी की भी Profile खोल सकते हैं</value>
+    </entry>
+    <entry>
+        <key>GRAMMAR_START_BUTTON_TEXT_1211</key>
+        <value>ప్రారంభించు</value>
+    </entry>
+    <entry>
+        <key>SPEAKING_TITLE</key>
+        <value>Speaking</value>
+    </entry>
+    <entry>
+        <key>DISABLED_VERSION_CODES</key>
+        <value>0</value>
+    </entry>
+    <entry>
+        <key>GRAMMAR_CONTINUE_BUTTON_TEXT_1206</key>
+        <value>ਜਾਰੀ ਰੱਖੋ</value>
+    </entry>
+    <entry>
+        <key>TOOLTIP_ONLINE_STATUS_1209</key>
+        <value>ഇനി നമുക്ക് STUDENTS-ൽ ആരൊക്കെ ഓൺലൈൻ ഉണ്ടെന്നു കാണാൻ സാധിക്കുന്നതാണ്.</value>
+    </entry>
+    <entry>
+        <key>GROUP_CHAT_TAGLINE</key>
+        <value>Practice with other users and Improve your skill here</value>
+    </entry>
+    <entry>
+        <key>FREE_TRIAL_POPUP_HUNDRED_POINTS_TEXT_1882</key>
+        <value>Josh Skills ਉਹਨਾਂ students ਦਾ ਪਰਿਵਾਰ ਹੈ ਜੋ ਆਪਣੀ ਜ਼ਿੰਦਗੀ ਵਿੱਚ serious ਹਨ। ਜੋ ਸਖ਼ਤ ਮਿਹਨਤ ਕਰਨਾ ਚਾਹੁੰਦੇ ਹਨ
+            ਅਤੇ ਅੱਗੇ ਵਧਣਾ ਚਾਹੁੰਦੇ ਹਨ। ਇਸ ਕੋਰਸ ਵਿੱਚ ਦਾਖਲਾ ਲੈਣ ਤੋਂ ਪਹਿਲਾਂ, ਤੁਹਾਨੂੰ ਇੱਕ ਦਿਨ ਇਸ ਕੋਰਸ ਦੀ ਵਰਤੋਂ ਕਰਨੀ ਪਵੇਗੀ। ਇਹ
+            ਬਿਲਕੁਲ ਮੁਫਤ ਹੈ। ਮੈਂ ਇਹ ਦੇਖਣਾ ਚਾਹੁੰਦਾ ਹਾਂ ਕਿ ਤੁਸੀਂ ਅੰਗਰੇਜ਼ੀ ਸਿੱਖਣ ਲਈ ਗੰਭੀਰ ਹੋ। ਤੁਹਾਨੂੰ ਅੱਜ 100 points ਕਮਾਉਣੇ
+            ਪੈਣਗੇ। ਜੇਕਰ ਤੁਸੀਂ ਅਗਲੇ 24 ਘੰਟਿਆਂ ਵਿੱਚ 100 points ਕਮਾ ਲੈਂਦੇ ਹੋ ਤਾਂ ਤੁਸੀਂ ਕੱਲ੍ਹ ਕੋਰਸ ਵਿੱਚ ਦਾਖਲਾ ਲੈ ਸਕਦੇ ਹੋ।
+        </value>
+    </entry>
+    <entry>
+        <key>READING_TITLE</key>
+        <value>Reading</value>
+    </entry>
+    <entry>
+        <key>INBOX_SCREEN_COURSE_PROGRESS_ENABLE</key>
         <value>false</value>
     </entry>
     <entry>
-        <key>helpline_start_time</key>
-        <value>10:00:00</value>
+        <key>FREE_TRIAL_POPUP_TITLE_TEXT_1889</key>
+        <value>അത്യാവശ്യ വിവരം</value>
     </entry>
     <entry>
-        <key>helpline_end_time</key>
-        <value>18:00:00</value>
+        <key>TOOLTIP_LEADERBOARD_SOTM_1203</key>
+        <value>যে শিক্ষার্থী এক মাসে সবার থেকে বেশি পরিশ্রম করে তাকে স্টুডেন্ট অফ দা মান্থ বানানো হয়।</value>
     </entry>
     <entry>
-        <key>buy_course_label</key>
-        <value>Buy Course Now</value>
+        <key>TOOLTIP_SEARCH_ANYONE_1211</key>
+        <value>ఇక్కడి నుంచీ మనం మిగితా స్టూడెంట్స్ ని సెర్చ్ చేద్దాం</value>
+    </entry>
+    <entry>
+        <key>FREE_TRIAL_POPUP_BODY_TEXT_1891</key>
+        <value>இது 90 பாடங்கள் கொண்ட திட்டம்.\nஇதை நீங்கள் இலவசமாக ஒரு நாள் முழுக்க பயன்படுத்தலாம். முழு கோர்ஸையும்
+            நீங்கள் 499/- செலுத்தி பெறலாம்.\n \nஒரு நாளைக்கு இலவசமாக பயன்படுத்த வேண்டுமா ?
+        </value>
     </entry>
     <entry>
         <key>terms_condition_url</key>
         <value>https://app.joshtalks.org/privacy-policy/</value>
     </entry>
     <entry>
-        <key>utm_source_filter</key>
-        <value>["Whatsappusers"]</value>
+        <key>TOOLTIP_LEADERBOARD_SOTD_1209</key>
+        <value>ഒരു ദിവസം ഏറ്റവും അധികം പ്രയത്നിക്കുന്ന STUDENT "student of the day" ആകുന്നതാണ്.</value>
     </entry>
     <entry>
-        <key>REFERRAL_EARN_AMOUNT</key>
-        <value>50</value>
+        <key>TOOLTIP_CONVERSAITON_1207</key>
+        <value>तुमचा वर्गमित्र कोण आहे आपण ते येथे पाहू शकता.</value>
     </entry>
     <entry>
-        <key>SHARE_DOMAIN</key>
-        <value>https://joshskill.page.link</value>
+        <key>SUBSCRIPTION_TRIAL_TIP_DAY1</key>
+        <value>Enjoy your free trial</value>
     </entry>
     <entry>
-        <key>testing_landing_page</key>
-        <value>true</value>
+        <key>P2P_IMAGE_SHARE_TEXT_1203</key>
+        <value>আমি রোজ speaking practice করছি call এ নতুন নতুন মানুষ জনের সাথে।</value>
     </entry>
     <entry>
-        <key>referral_screen_page</key>
-        <value>version_1</value>
+        <key>MINIMUM_STORAGE_REMOVE_IN_MB</key>
+        <value>512</value>
     </entry>
     <entry>
-        <key>CERTIFICATE_URL</key>
-        <value>https://s3.ap-south-1.amazonaws.com/www.static.skills.com/Icons/Certificate.jpg
-        </value>
+        <key>FREE_TRIAL_PAYMENT_TEST_ID_1889</key>
+        <value>1890</value>
     </entry>
     <entry>
-        <key>COURSE_COMPLETED_PERCENTAGE</key>
-        <value>70%</value>
+        <key>SUBSCRIPTION_END_SCREEN_MESSAGE</key>
+        <value>Your 1 year subscription has ended! Subscribe again and Access all your courses now &#x1f447;</value>
     </entry>
     <entry>
-        <key>MINIMUM_FEEDBACK_IN_A_DAY_COUNT</key>
-        <value>2</value>
+        <key>TOOLTIP_POINTS_HISTORY_SCREEN_1210</key>
+        <value>மாணவர்கள் எத்தனை புள்ளிகளைப் பெற்றனர், எப்படிப் பெற்றார்கள் என்பதை இங்கே பார்க்கலாம்.</value>
+    </entry>
+    <entry>
+        <key>TOOLTIP_LEADERBOARD_SOTW_151</key>
+        <value>जो student एक हफ्ते में सबसे ज़्यादा मेहनत करता है वह Student of the Week बनता है</value>
     </entry>
     <entry>
         <key>MINIMUM_NPS_IN_A_DAY_COUNT</key>
-        <value>2</value>
+        <value>-1</value>
     </entry>
     <entry>
-        <key>COURSE_BUY_MIN_OFFER_DAYS</key>
-        <value>5</value>
+        <key>REMINDERS_SCREEN_DESCRIPTION</key>
+        <value>Note : Students with 5 Reminders have higher probability of completing a course</value>
     </entry>
     <entry>
-        <key>SUPPORTED_COUNTRY_LIST</key>
-        <value>IN,BD</value>
+        <key>TOOLTIP_LEADERBOARD_SOTD_1207</key>
+        <value>जो विद्यार्थी एका दिवसात सर्वात जास्त मेहनत करतो तो दिवसाचा विद्यार्थी बनतो.</value>
+    </entry>
+    <entry>
+        <key>TOOLTIP_SEARCH_ANYONE_1207</key>
+        <value>येथून, आम्ही आमच्या मित्रांना आणि उर्वरित विद्यार्थ्यांना शोधू शकतो.</value>
+    </entry>
+    <entry>
+        <key>BB_TOOL_TIP_BELOW_FIND_COURSE_TEXT</key>
+        <value>Agar aap in course ke alawa kuch aur bhi seekhna chahte hai to agle %s dino tak aap free mei unlimited
+            courses unlock kar sakte hai
+        </value>
+    </entry>
+    <entry>
+        <key>FORCE_SIGN_IN_FEATURE_ENABLE</key>
+        <value>true</value>
+    </entry>
+    <entry>
+        <key>PROGRESS_MESSAGE</key>
+        <value>You have not unlocked this lesson yet.</value>
+    </entry>
+    <entry>
+        <key>NEW_LANGUAGES_SUPPORTED</key>
+        <value>[{ "code": "en", "name": "English"},{"code": "hi","name": "Hindi"}, {"code": "bn","name": "Bangla"},
+            {"code": "ml","name": "Malayalam"}, {"code": "pa","name": "Punjabi"}, {"code": "mr","name": "Marathi"},
+            {"code": "ta","name": "Tamil"}, {"code": "te","name": "Telugu"} ]
+        </value>
+    </entry>
+    <entry>
+        <key>GRAMMAR_TEST_COMPLETE_DESCRIPTION_1203</key>
+        <value>গ্রামার এর লেবেল চেক করার জন্য আপনার সব উত্তর গুলো ক রেকর্ড করা হয়েছ। \n \n আপনার গ্রামার এর Current
+            Status এর আধার এ আপনার কোর্স সেট করা হয়েছে।
+        </value>
+    </entry>
+    <entry>
+        <key>REFERRAL_SHARE_TEXT_1207</key>
+        <value>Mi Bharatachya &#x1f1ee;&#x1f1f3; best teachers shi spoken English aani personality Development shikat
+            aahe. Majha sobat tumhi hi suru kara &#x1f4aa;. Hey ghya majhya tarfe tumhala ** OFF: Use my code ****
+            Download the app by clicking on the link
+        </value>
+    </entry>
+    <entry>
+        <key>start_7_day_trial</key>
+        <value>Start 7-Day Free Trial</value>
+    </entry>
+    <entry>
+        <key>REFERRAL_SHARE_TEXT_1209</key>
+        <value>ഞാൻ ഭാരതത്തിലെ മികച്ച അധ്യാപകരിൽ നിന്നും Spoken English &amp; Personality Developement പഠിക്കുന്നു.
+            നിങ്ങളും എന്നോടൊപ്പം ഇപ്പോൾ തന്നെ ആരംഭിക്കൂ &#x1f4aa;. ഇതാ എന്റെ ഭാഗത്തു നിന്നും നിങ്ങൾക്കുള്ള ₹** OFF. Use
+            my code ****. Download the app by clicking on the link
+        </value>
+    </entry>
+    <entry>
+        <key>TOOLTIP_LEADERBOARD_SOTW_1209</key>
+        <value>ഒരു ആഴ്ചയിൽ ഏറ്റവും അധികം പ്രയത്നിക്കുന്ന STUDENT, "student of the week" ആകുന്നതാണ്.</value>
+    </entry>
+    <entry>
+        <key>SHOW_BB_TOOL_TIP_FIRST_TIME</key>
+        <value>true</value>
+    </entry>
+    <entry>
+        <key>TOOLTIP_USER_PROFILE_SCREEN_151</key>
+        <value>हम जितनी मेहनत करेंगे हमे उतने Points मिलेंगेै</value>
+    </entry>
+    <entry>
+        <key>SUBSCRIPTION_TRIAL_TIP_DAY3</key>
+        <value>Enjoy your free trial</value>
+    </entry>
+    <entry>
+        <key>FREE_TRIAL_COURSE_DETAIL_BTN_TXT</key>
+        <value>1 दिन के लिए मुफ्त में प्रयोग करें</value>
+    </entry>
+    <entry>
+        <key>INCOMPLETE_CERTIFICATION_TITLE</key>
+        <value>Incomplete lessons</value>
+    </entry>
+    <entry>
+        <key>AWARD_SPINNING_CODE</key>
+        <value>http://staging.joshtalks.org/api/skill/v1/reputation/award_render/</value>
+    </entry>
+    <entry>
+        <key>IS_OPEN_LESSON_NOTIFICATION_CRASH</key>
+        <value>true</value>
+    </entry>
+    <entry>
+        <key>TOOLTIP_USER_PROFILE_SCREEN_1210</key>
+        <value>நீங்கள் எவ்வளவு அதிகமாக வேலை செய்கிறீர்களோ, அவ்வளவு Points பெறுவீர்கள்</value>
+    </entry>
+    <entry>
+        <key>REFERRAL_SHARE_TEXT_151</key>
+        <value>Mai Bharat &#x1f1ee;&#x1f1f3; ke best teachers se Spoken English aur Personality Development seekh raha
+            hu. Mere saath seekhna abhi shuru karo &#x1f4aa;. Ye lo meri taraf se tumhe ₹** OFF: Use my code ****.
+            Download the app by clicking on the link
+        </value>
+    </entry>
+    <entry>
+        <key>TOOLTIP_SEARCH_ANYONE_1206</key>
+        <value>ਇੱਥੋਂ, ਅਸੀਂ ਆਪਣੇ ਦੋਸਤਾਂ ਅਤੇ ਬਾਕੀ ਵਿਦਿਆਰਥੀਆਂ ਦੀ ਖੋਜ ਕਰ ਸਕਦੇ ਹਾਂ।</value>
+    </entry>
+    <entry>
+        <key>SHOW_NEW_GROUP_BTN</key>
+        <value>false</value>
+    </entry>
+    <entry>
+        <key>FREE_TRIAL_ENTER_NAME_TEXT_1889</key>
+        <value>നിങ്ങളുടെ ടീച്ചർ അല്ലെങ്കിൽ സഹപാഠി നിങ്ങളെ ഈ പേരിൽ വിളിക്കുന്നതായിരിക്കും</value>
+    </entry>
+    <entry>
+        <key>FREE_TRIAL_POPUP_BODY_TEXT_1897</key>
+        <value>ఇది 90 రోజుల కోర్సు.\nమరియు మీరు ప్రయత్నించిన తర్వాత మీకు కావాలంటే ₹499కి కొనుగోలు చేయవచ్చు.\n\nమీరు ఈ
+            కోర్సును ఒక రోజు పూర్తిగా ఉచితంగా ప్రయత్నించాలనుకుంటున్నారా?
+        </value>
     </entry>
     <entry>
         <key>COURSE_MAX_OFFER_PER</key>
         <value>50%</value>
     </entry>
     <entry>
-        <key>show_details_label</key>
-        <value>Show Details</value>
+        <key>ADD_PROFILE_PHOTO_TEXT_1207</key>
+        <value>तुमचे शिक्षक आणि या कोर्सचे विद्यार्थी तुम्हाला हा फोटो पाहून ओळखतील</value>
     </entry>
     <entry>
-        <key>CTA_PAYMENT_SUMMARY</key>
-        <value>Pay</value>
+        <key>FREE_TRIAL_POPUP_TITLE_TEXT_784</key>
+        <value>जरुरी जानकारी</value>
     </entry>
     <entry>
-        <key>CTA_PAYMENT_SUMMARY_FREE</key>
-        <value>Get this course for free</value>
-    </entry>
-    <entry>
-        <key>SUBSCRIPTION_BB_TIP</key>
-        <value>
-            <u>Woohoo!</u>
+        <key>TOOLTIP_SEARCH_ANYONE_1209</key>
+        <value>ഇവിടെ നിന്നും നമുക്ക് നമ്മുടെ സുഹൃത്തുക്കളെ അല്ലെങ്കിൽ ബാക്കിയുള്ള students-നെ SEARCH ചെയ്യാവുന്നതാണ്
         </value>
     </entry>
     <entry>
-        <key>SUBSCRIPTION_BB_TEXT</key>
-        <value>👉 <b>1 year Subscription pack added!</b> You saved more then 3400 rupees 🎈
+        <key>TOOLTIP_LEADERBOARD_SOTD_1211</key>
+        <value>ఎవరైతే ఒక రోజులో అందరికంటే ఎక్కువ కష్టపడతారో వారు స్టూడెంట్ ఆఫ్ ది డే అవుతారు</value>
+    </entry>
+    <entry>
+        <key>TOOLTIP_USER_PROFILE_SCREEN_1209</key>
+        <value>നിങ്ങൾ എത്ര മാത്രം പ്രയത്നിക്കുന്നുവോ അത്രയും POINTS നിങ്ങൾക്ക് ലഭിക്കുന്നതാണ്</value>
+    </entry>
+    <entry>
+        <key>FREE_TRIAL_ENTER_NAME_TEXT_1880</key>
+        <value>আপনার টিচার আর সহপাঠী রা আপনাকে এই নামে ডাকবেন ।</value>
+    </entry>
+    <entry>
+        <key>SUBSCRIPTION_TRIAL_TIP_DAY5</key>
+        <value>Enjoy Your Free Trial (1 Day To Go)! ❤</value>
+    </entry>
+    <entry>
+        <key>HELP_SHARE_KEY</key>
+        <value>Mai har roz angrezi mei baat karke angrezi seekh rha hu. Mai chahta hu aap bhi mere saath angrezi seekhe.
+            Is link ko click karke yeh app download kare
         </value>
+    </entry>
+    <entry>
+        <key>FREE_TRIAL_PAYMENT_BTN_TXT</key>
+        <value>Start 1 day Free Trial</value>
+    </entry>
+    <entry>
+        <key>TOOLTIP_SPEAKING_SCREEN_1203</key>
+        <value>এই বিভাগটি সম্পূর্ণ করার জন্য আপনাকে 2 মিনিটের জন্য একজন প্র্যাক্টিস পার্টনার এর সাথে কথা বলতে হবে।
+        </value>
+    </entry>
+    <entry>
+        <key>GRAMMAR_TEST_COMPLETE_DESCRIPTION_1209</key>
+        <value>താങ്കളുടെ ഗ്രാമർ ലെവൽ അറിയുന്നതിന് താങ്കളുടെ എല്ലാ ഉത്തരങ്ങളും റെക്കോർഡ് ചെയ്തിരിക്കുന്നു \n \n താങ്കളുടെ
+            ഗ്രാമറിന്റെ &lt; current status &gt; അനുസരിച്ചു താങ്കളുടെ മുന്നോട്ടുള്ള കോഴ്സ് സെറ്റ്
+            ചെയ്തുകൊണ്ടിരിക്കുകയാണ്.
+        </value>
+    </entry>
+    <entry>
+        <key>FREE_TRIAL_PAYMENT_TEST_ID_784</key>
+        <value>102</value>
+    </entry>
+    <entry>
+        <key>GRAMMAR_CONTINUE_BUTTON_TEXT_1211</key>
+        <value>కొనసాగించండి</value>
+    </entry>
+    <entry>
+        <key>REQUEST_TO_JOIN_QUESTION</key>
+        <value>आप ये topic के लिए serious क्यूँ हैं, detail बताएं</value>
+    </entry>
+    <entry>
+        <key>TOOLTIP_POINTS_HISTORY_SCREEN_1207</key>
+        <value>या विद्यार्थ्याला येथून कसे points मिळाले हे आपण पाहू शकतो.</value>
+    </entry>
+    <entry>
+        <key>VOCAB_PRACTICE_TITLE</key>
+        <value>Read the above sentences</value>
+    </entry>
+    <entry>
+        <key>TOOLTIP_OPEN_PROFILE_1210</key>
+        <value>நீங்கள் யாருடைய Profileயும் திறக்கலாம்</value>
+    </entry>
+    <entry>
+        <key>FREE_TRIAL_COURSE_DETAIL_BTN_TXT_1897</key>
+        <value>1 రోజు ఉచితంగా ప్రయత్నించండి</value>
+    </entry>
+    <entry>
+        <key>GRAMMAR_START_BUTTON_TEXT_1209</key>
+        <value>ആരംഭിക്കുക</value>
+    </entry>
+    <entry>
+        <key>payment_checkout_url</key>
+        <value>https://pages.joshtalks.com/english-thank-you-1/</value>
+    </entry>
+    <entry>
+        <key>FREE_TRIAL_ENDED_FEATURE_LOCKED_1211</key>
+        <value>మీ Free trial ముగిసింది. Please take admission to course</value>
     </entry>
     <entry>
         <key>FIND_MORE_COURSE_HINT_FIRST_TIME</key>
-        <value>
-            Hello %s, Agar aap es course ke sath kuch aur bhi seekhna chahte hain to pehle %s dino
-            mai aapke paas har course pe %s off hai
+        <value>Hello %s, Agar aap es course ke sath kuch aur bhi seekhna chahte hain to pehle %s dino mai aapke paas har
+            course pe %s off hai
         </value>
     </entry>
     <entry>
-        <key>BUY_COURSE_OFFER_HINT</key>
-        <value>Get %s off on the next course you buy, Valid for %s days</value>
+        <key>GRAMMAR_CHOICE_PLAYBACK_SPEED</key>
+        <value>1.5F</value>
     </entry>
     <entry>
-        <key>COMPLETION_CERTIFICATE_HINT</key>
-        <value>
-            Iss course ke lessons aur practices %s complete karne par aapko ek digital certificate
-            milega
+        <key>COURSE_COMPLETED_PERCENTAGE</key>
+        <value>70%</value>
+    </entry>
+    <entry>
+        <key>COURSE_BUY_MIN_OFFER_DAYS</key>
+        <value>3</value>
+    </entry>
+    <entry>
+        <key>SHARE_SCREEN_MINUTES_THRESHOLD</key>
+        <value>20</value>
+    </entry>
+    <entry>
+        <key>ADD_PROFILE_PHOTO_TEXT_1210</key>
+        <value>உங்கள் புகைப்படத்தைப் பதிவேற்றவும்</value>
+    </entry>
+    <entry>
+        <key>FREE_TRIAL_POPUP_BODY_TEXT_1889</key>
+        <value>ഇത് ഒരു 90 ദിവസത്തെ course ആണ്.\nTry ചെയ്തതിനു ശേഷം താങ്കളുടെ താല്പര്യത്തിനു അനുസരിച്ചു 499 /- നു ഈ
+            കോഴ്സ് സ്വന്തമാക്കാൻ സാധിക്കുന്നതാണ്.\n \nതാങ്കൾ ഈ കോഴ്സ് ഒരു ദിവസത്തേക്ക് തികച്ചും സൗജന്യമായി try ചെയ്യാൻ
+            താല്പര്യപെടുന്നുണ്ടോ?
         </value>
     </entry>
     <entry>
-        <key>FIRST_TIME_USER_HINT</key>
-        <value>
-            Aapko apne course se related saari videos aur classes isko click karke milengi
+        <key>INTERVAL_TO_FIRE_ACTIVE_API</key>
+        <value>60</value>
+    </entry>
+    <entry>
+        <key>REFERRAL_SHARE_TEXT_1211</key>
+        <value>నేను Bharat లోని Best Teachers నుండి Spoken English మరియు Personality Development నేర్చుకుంటున్నాను
+            &#x1f4aa;. ఇప్పుడు నాతో ప్రారంభించండి.నా నుండి తీసుకో Rs.** OFF. Use my code ****. Download the app by
+            clicking on the link:
+        </value>
+    </entry>
+    <entry>
+        <key>NOTIFICATION_DESCRIPTION_ENABLED</key>
+        <value>Aapki notifications on hai. Aapko rozana time par class milti rahengi.</value>
+    </entry>
+    <entry>
+        <key>NOTIFICATION_SETTING_DESCRIPTION</key>
+        <value>Rojana class time par paane ke liye abhi notification on kare. Allow karne pe aap phone ki settings mein
+            jaayenge aur wahan se aap on karenge.
+        </value>
+    </entry>
+    <entry>
+        <key>FREE_TRIAL_POPUP_BODY_TEXT_784</key>
+        <value>यह एक 90 दिनों का कोर्स है\nऔर try करने के बाद अगर आप चाहें तो इसे ₹499 में खरीद सकते हैं\n \nक्या आप इस
+            कोर्स को एक दिन के लिए बिल्कुल मुफ्त में try करना चाहते हैं?
         </value>
     </entry>
     <entry>
@@ -134,65 +414,412 @@
         <value>true</value>
     </entry>
     <entry>
-        <key>IS_OPEN_LESSON_NOTIFICATION_CRASH</key>
-        <value>true</value>
+        <key>help_options</key>
+        <value>{"title":"Student Help Center","support_message":"Our Student Help Center Agents is available from 9:30
+            AM to 6:30 PM. We apologize for the inconvenience.","options":[{"id":1,"name":"Call
+            HelpLine","action":"CALL","url":"https://s3.ap-south-1.amazonaws.com/www.static.skills.com/Icons/Phone.svg","action_data":"+918634503202"},{"id":2,"name":"Chat
+            with
+            agent","action":"HELPCHAT","url":"https://s3.ap-south-1.amazonaws.com/www.static.skills.com/Icons/chat_bubble.svg","action_data":"********"},{"id":3,"name":"FAQ","action":"FAQ","url":"https://s3.ap-south-1.amazonaws.com/www.static.skills.com/Icons/QuestionMark.svg","action_data":"********"}]}
+        </value>
+    </entry>
+    <entry>
+        <key>SUBSCRIPTION_TRIAL_TIP_DAY2</key>
+        <value>Enjoy your free trial</value>
+    </entry>
+    <entry>
+        <key>FREE_TRIAL_COURSE_DETAIL_BTN_TXT_1882</key>
+        <value>1 ਦਿਨ ਲਈ ਮੁਫਤ ਵਿਚ ਵਰਤੋ।</value>
+    </entry>
+    <entry>
+        <key>READING_PRACTICE_TITLE</key>
+        <value>Read the following sentences</value>
+    </entry>
+    <entry>
+        <key>ADD_PROFILE_PHOTO_TEXT_1206</key>
+        <value>ਤੁਹਾਡੇ ਅਧਿਆਪਕ ਅਤੇ ਕੋਰਸ ਦੇ ਹੋਰ ਵਿਦਿਆਰਥੀ ਤੁਹਾਨੂੰ ਇਸ ਫੋਟੋ ਤੋਂ ਪਛਾਣ ਲੈਣਗੇ</value>
+    </entry>
+    <entry>
+        <key>GRAMMAR_START_BUTTON_TEXT_151</key>
+        <value>शुरू करें</value>
+    </entry>
+    <entry>
+        <key>FREE_TRIAL_POPUP_100_POINTS_BODY_TEXT</key>
+        <value>Josh skills उन students का परिवार है जो serious हैं अपनी life मे। जो मेहनत करना चाहते है और आगे बढ़ना
+            चाहते हैं। इस course में enroll होने से पहले आपको एक दिन ये course use करना है। ये बिलकुल मुफ्त है।\\n
+            \\nमैं देखना चाहता हु की आप serious हैं english सीखने के लिए। आपको आज 100 points कमाने हैं। अगर आप अगले 24
+            घंटो में 100 points कमा लेते हैं तो आप कल course में admission ले सकते हैं।
+        </value>
+    </entry>
+    <entry>
+        <key>FREE_TRIAL_DIALOG_TXT</key>
+        <value>Your Free Trial has ended</value>
+    </entry>
+    <entry>
+        <key>SIGNIN_DIALOG_DESCRIPTION</key>
+        <value>Apne subscription ko use karne ke liye sabse pehle apna registration complete kijiye</value>
     </entry>
     <entry>
         <key>IS_OPEN_SPEAKING_SECTION_NOTIFICATION_CRASH</key>
         <value>true</value>
     </entry>
     <entry>
+        <key>TOOLTIP_LESSON_GRAMMAR_1206</key>
+        <value>ਅੱਜ ਇਸ ਭਾਗ ਵਿੱਚ ਅਸੀਂ ਆਪਣੇ ਵਿਆਕਰਨ ਪੱਧਰ ਦੀ ਜਾਂਚ ਕਰਾਂਗੇ</value>
+    </entry>
+    <entry>
+        <key>helpline_start_time</key>
+        <value>10:00:00</value>
+    </entry>
+    <entry>
+        <key>TOOLTIP_POINTS_HISTORY_SCREEN_1209</key>
+        <value>STUDENTS എത്ര POINTS നേടിയെന്നും എങ്ങനെ നേടിയെന്നും ഇവിടെ കാണാൻ സാധിക്കുന്നതാണ്.</value>
+    </entry>
+    <entry>
+        <key>REFERRAL_EARN_AMOUNT</key>
+        <value>50</value>
+    </entry>
+    <entry>
+        <key>MINIMUM_TIME_TO_SHOW_REVIEW</key>
+        <value>30</value>
+    </entry>
+    <entry>
+        <key>BB_TOOL_TIP_BELOW_FIND_COURSE_TEXT_FREE</key>
+        <value>Agar aap in course ke alawa kuch aur bhi seekhna chahte hai to aaj aur aap free mei unlimited courses
+            unlock kar sakte hai.
+        </value>
+    </entry>
+    <entry>
+        <key>TOOLTIP_OPEN_PROFILE_1203</key>
+        <value>আপনি যে কারোর Profile খুলে দেখতে পারবেন</value>
+    </entry>
+    <entry>
+        <key>START_SUBSCRIPTION_HEADING</key>
+        <value>Unlimited Learning</value>
+    </entry>
+    <entry>
+        <key>course_explore_flag</key>
+        <value>true</value>
+    </entry>
+    <entry>
+        <key>REFERRAL_SHARE_TEXT_1206</key>
+        <value>ਮੈਂ Bharat ਵਿੱਚ Best Teacher ਤੋਂ Spoken English ਅਤੇ Personality Development ਸਿੱਖ ਰਿਹਾ ਹਾਂ ਹੁਣ ਮੇਰੇ ਨਾਲ
+            ਸ਼ੁਰੂ ਕਰੋ &#x1f4aa;. ਮੇਰੇ ਤੋਂ ਇਹ ₹ ** OFF ਲਓ Use my code ****. Download the app by clicking on the link:
+        </value>
+    </entry>
+    <entry>
+        <key>ONBOARDING_COURSE_1212</key>
+        <value>{"title":"Josh Money Course","course_info_1":"30 day course","course_info_2":"Complete foundations of
+            financial literacy","course_info_3":"Complex topics, aasan tareeke mein!"}
+        </value>
+    </entry>
+    <entry>
+        <key>FREE_TRIAL_COURSE_DETAIL_BTN_TXT_1881</key>
+        <value>1 दिवसासाठी मोफत प्रयोग करा.</value>
+    </entry>
+    <entry>
+        <key>GRAMMAR_CHECK_BUTTON_TEXT_151</key>
+        <value>चेक करें</value>
+    </entry>
+    <entry>
+        <key>SUBSCRIPTION_END_SCREEN_CTA_LABEL</key>
+        <value>Unlock All Courses</value>
+    </entry>
+    <entry>
+        <key>FREE_TRIAL_PAYMENT_TEST_ID_1882</key>
+        <value>1887</value>
+    </entry>
+    <entry>
+        <key>SETTINGS_CLEAR_DATA_CONFIRMATION</key>
+        <value>All your downloaded files will be deleted.</value>
+    </entry>
+    <entry>
+        <key>course_explorer_list</key>
+        <value>[{ "course_id":1, "course_title":"The 90 Day Spoken English Course", "course_description": "Master Spoken
+            English Experts ke saath: Improve Karo Apni Fluency &amp; Confidence with guaranteed results.",
+            "video_thumbnail":"",
+            "video_url":"https://s3.ap-south-1.amazonaws.com/www.static.skills.com/Course+Trailers/Warikoo_Trailer_40Sec.mp4",
+            "course_rating": 4.5, "course_enrolled_user": 70000, "course_duration": 14, "course_price":1234,
+            "course_discount_price":123,
+            "feedback_image_url":"https://s3.ap-south-1.amazonaws.com/www.static.skills.com/misc/OnePlus+6+%E2%80%93+26%402x.jpg",
+            "course_mentor":[ { "id":1, "name":"Vedant Maheshwari",
+            "image_url":"https://s3.ap-south-1.amazonaws.com/www.static.skills.com/misc/Vedant.png", "from":"Kota,
+            Rajasthan", "qualification_details":"Public Speaker &amp; Business Professional with 5+ Years of Experience,
+            having spoken at over 25 conferences in India and outside." }, { "id":2, "name":"Himanshi Arora",
+            "image_url":"https://s3.ap-south-1.amazonaws.com/www.static.skills.com/misc/IMG-20200123-WA0004.jpg",
+            "from":"New Delhi", "qualification_details":"Graduate of prestigious Delhi University, Professional Debater
+            &amp; Public Speaker, passionate about teaching" }, { "id":3, "name":"Saurav Chaudhary",
+            "image_url":"https://s3.ap-south-1.amazonaws.com/www.static.skills.com/misc/83710071_1058016897876778_5368775352690671616_n.jpg",
+            "from":"Durgapur, West Bangal", "qualification_details":"Content Creator &amp; Marketer, Professional Public
+            Speaker &amp; Educator." } ], "course_information": [ { "id":1, "is_list":false, "title":"Course
+            Description", "desc":"Judiye 20,000+ logo ko jo Josh ke saath English bolna aur padhna seekh rahe hai. Iss
+            Spoken English Course ko aise design kiya gaya hai, ki koi bhi basic learner iss course se apne theoretical
+            and practical grammar ko improve kar sakta hai. Everyday situations mei english ko kaise most effectively
+            use kiya jaa sakta hai - iss par bhi extra dhyaan diya jaata hai.&lt;br/&gt;Aaj ki duniya mei English bolna
+            is a very important and nessecary skill to grow in your career and in life. English difficult sirf unke liye
+            hota hai jo practice nahi kar paate - iss course mei daily video lessons &amp; daily practice ke saath aap
+            english mei face kari gayi sabse common problems ko tackle karne aur solve karna seekhenge.&lt;br/&gt;Har ek
+            concept ko aise design kiya gaya hai ki woh fundamentals par dhyan dete hue ek mazedaar tareeke se English
+            sikhata hai. Power Tools ke saath aapko grammar rules bhi yaad ho jayenge. Weekly PDF Notes &amp; Worksheets
+            ko use karke aap saare padhaye gaye concepts ko revise and review kar sakte hai - isse practice bhi barkarar
+            rahegi aur aapko roz kuch naya seekhne ko milega.&lt;br/&gt;Review Tests se aap apne progress ko track kar
+            sakte ho. Isse aapko clear ho jayega ki aapki learning kitni acchi chal rahi hai, aur aapko kahan par mehnat
+            karne ki zarurat hai. Finally, jab humare basic concepts first 2 months mei clear ho jayenge, hum chalenge
+            advanced concepts ki taraf jisse hum apne Spoken English ko aur zyaada enhance aur better kar sakte hai." },
+            { "id":2, "is_list":true, "title":"Course Requirements", "desc":"Aapko basic English aana chahiye: how to
+            read and pronounce basic words of english.~Will power to learn &amp; determination to succeed is very
+            important" }, { "id":3, "is_list":true, "title":"Mai Kya Seekhunga?", "desc":"Fluently English Bolna with
+            Correct Grammar &amp; Vast Vocabulary~Interview Preparation Techniques for Jobs, Competitive
+            Exams~Confidently English Mei Kisi Bhi Topic par Baat Karna~Grammar Rules, Tips &amp; Tricks Jo Help Karenge
+            Exams Aur Life Mei~Practical English for Everyday Situations ~Bina Jhijhak ke Fluently English Bolna" }, {
+            "id":4, "is_list":true, "title":"Course Requirements", "desc":"benefit1.benefit2" } ] }]
+        </value>
+    </entry>
+    <entry>
+        <key>ADD_PROFILE_PHOTO_TEXT_151</key>
+        <value>आपके टीचर और कोर्स के बाकी स्टूडेंट्स आपको इस फोटो से पेहचानेंगे</value>
+    </entry>
+    <entry>
+        <key>GRAMMAR_CHECK_BUTTON_TEXT_1211</key>
+        <value>చెక్ చేయండి</value>
+    </entry>
+    <entry>
+        <key>GRAMMAR_START_BUTTON_TEXT_1207</key>
+        <value>सुरु करा</value>
+    </entry>
+    <entry>
+        <key>show_details_label</key>
+        <value>Show Details</value>
+    </entry>
+    <entry>
+        <key>TOOLTIP_LESSON_GRAMMAR_1211</key>
+        <value>ఈరోజు ఈ భాగంలో మన వ్యాకరణం స్థాయిని తెలుసుకుందాం</value>
+    </entry>
+    <entry>
+        <key>TOOLTIP_CONVERSAITON_1209</key>
+        <value>നിങ്ങളുടെ സഹപാഠികൾ ആരൊക്കെയാണെന്നു ഇവിടെ കാണുവാൻ സാധിക്കുന്നതാണ്</value>
+    </entry>
+    <entry>
+        <key>FREE_TRIAL_POPUP_YES_BUTTON_TEXT_1891</key>
+        <value>வேண்டும்</value>
+    </entry>
+    <entry>
+        <key>self_register_text</key>
+        <value>Kya aapne Website se register kiya hai?</value>
+    </entry>
+    <entry>
+        <key>CERTIFICATE_SHARE_TEXT_INSTA</key>
+        <value>I am proud to share that I have passed the Ultimate Spoken English Certification Exam &#x1f973;&#x1f973;
+            \n
+            This achievement is another step towards becoming a better version of myself &#x1f680;&#x1f680; \n
+            Speaking to other learners and listening to classes on the JoshSkills app have really helped me improve my
+            English Fluency.\n
+            Download the app from :
+        </value>
+    </entry>
+    <entry>
+        <key>CERTIFICATE_SHARE_TEXT_FB</key>
+        <value>I am proud to share that I have passed the Ultimate Spoken English Certification Exam &#x1f973;&#x1f973;
+            \n
+            This achievement is another step towards becoming a better version of myself &#x1f680;&#x1f680; \n
+            Speaking to other learners and listening to classes on the JoshSkills app have really helped me improve my
+            English Fluency.\n
+            Download the app from :
+        </value>
+    </entry>
+    <entry>
+        <key>FREE_TRIAL_POPUP_YES_BUTTON_TEXT_1880</key>
+        <value>হ্যাঁ</value>
+    </entry>
+    <entry>
+        <key>MINIMUM_FEEDBACK_IN_A_DAY_COUNT</key>
+        <value>2</value>
+    </entry>
+    <entry>
+        <key>FREE_TRIAL_POPUP_HUNDRED_POINTS_TEXT_1891</key>
+        <value>Josh Skills என்பது வாழ்க்கையில் தீவிரமான மாணவர்களைக் கொண்ட குடும்பமாகும், அவர்கள் கடினமாக உழைத்து முன்னேற
+            விரும்புகிறார்கள். இந்தப் படிப்பில் சேருவதற்கு முன், இந்தப் படிப்பை ஒரு நாள் பயன்படுத்த வேண்டும். இது
+            முற்றிலும் இலவசம். நீங்கள் இன்று 100 புள்ளிகளைப் பெற முயறுங்கள். அடுத்த 24 மணி நேரத்தில் 100 புள்ளிகள்
+            பெற்றால் இலவசமாக முழு கோர்ஸையும் பயன்படுத்தலாம்.
+        </value>
+    </entry>
+    <entry>
+        <key>update_force</key>
+        <value>false</value>
+    </entry>
+    <entry>
+        <key>SHARE_DOMAIN</key>
+        <value>https://joshskill.page.link</value>
+    </entry>
+    <entry>
+        <key>SMART_LOOK_FEATURE_ENABLE</key>
+        <value>false</value>
+    </entry>
+    <entry>
+        <key>ONBOARDING_COURSE_60</key>
+        <value>{"title":"Keshav Suri Foundation","course_info_1":"365 days access","course_info_2":"All courses
+            unlockable","course_info_3":"Unlimited usage"}
+        </value>
+    </entry>
+    <entry>
+        <key>VOIP_FEEDBACK_MESSAGE_NEW</key>
+        <value>Do you want to add # to your Favorite Practice Partner list?</value>
+    </entry>
+    <entry>
+        <key>SETTINGS_LOGOUT_CONFIRMATION</key>
+        <value>Are you sure you want to logout?</value>
+    </entry>
+    <entry>
+        <key>VOCABULARY_COMPLETED</key>
+        <value>Congratulations you have completed vocabulary!</value>
+    </entry>
+    <entry>
+        <key>SUBSCRIPTION_BB_TIP</key>
+        <value>&lt;u&gt;Woohoo!&lt;/u&gt;</value>
+    </entry>
+    <entry>
+        <key>TOOLTIP_LEADERBOARD_SOTD_1210</key>
+        <value>அன்றைய நாளின் பரபரப்பான மாணவர் "அன்றைய மாணவர்".</value>
+    </entry>
+    <entry>
+        <key>TOOLTIP_USER_PROFILE_SCREEN_1207</key>
+        <value>आपण जितके कष्ट करतो तितके जास्त Points मिळतात.</value>
+    </entry>
+    <entry>
+        <key>TOOLTIP_ONLINE_STATUS_1210</key>
+        <value>இப்பொழுது எந்த மாணவர்கள் online என்று, நாம் இங்கே பாக்கலாம்.</value>
+    </entry>
+    <entry>
+        <key>FREE_TRIAL_ENDED_FEATURE_LOCKED_1206</key>
+        <value>ਤੁਹਾਡੀ free trial ਸਮਾਪਤ ਹੋ ਗਈ ਹੈ। ਕਿਰਪਾ ਕਰਕੇ ਕੋਰਸ ਲਈ ਰਜਿਸਟਰ ਕਰੋ।</value>
+    </entry>
+    <entry>
+        <key>is_demo_user</key>
+        <value />
+    </entry>
+    <entry>
+        <key>TOOLTIP_CONVERSAITON_1211</key>
+        <value>మీ క్లాస్‌మేట్స్ ఎవరో మీరు ఇక్కడ నుండి చూడవచ్చు</value>
+    </entry>
+    <entry>
+        <key>GRAMMAR_TEST_COMPLETE_DESCRIPTION_1207</key>
+        <value>तुमची व्याकरण पातळी तपासण्यासाठी तुमची सर्व उत्तरे रेकॉर्ड केली गेली आहेत \n \n तुमचा अभ्यासक्रम तुमच्या
+            व्याकरणाच्या के &lt;current status&gt; वर आधारित आहे
+        </value>
+    </entry>
+    <entry>
+        <key>FREE_TRIAL_ENTER_NAME_TEXT_1882</key>
+        <value>ਤੁਹਾਡੇ ਅਧਿਆਪਕ ਅਤੇ ਕੋਰਸ ਦੇ ਬਾਕੀ ਵਿਦਿਆਰਥੀ ਤੁਹਾਨੂੰ ਇਸ ਫੋਟੋ ਤੋਂ ਪਛਾਣ ਲੈਣਗੇ।</value>
+    </entry>
+    <entry>
+        <key>FREE_TRIAL_POPUP_BODY_TEXT_ICP_ENABLED_784</key>
+        <value>यह एक 90 दिनों का कोर्स है\nऔर try करने के बाद अगर आप चाहें तो इसे ₹799 में खरीद सकते हैं\n \nक्या आप इस
+            कोर्स को एक दिन के लिए बिल्कुल मुफ्त में try करना चाहते हैं?
+        </value>
+    </entry>
+    <entry>
+        <key>SUPPORTED_COUNTRY_LIST</key>
+        <value>IN,BD</value>
+    </entry>
+    <entry>
+        <key>TOOLTIP_OPEN_PROFILE_1206</key>
+        <value>ਤੁਸੀਂ ਕਿਸੇ ਦੀ ਵੀ profile ਖੋਲ੍ਹ ਸਕਦੇ ਹੋ</value>
+    </entry>
+    <entry>
         <key>IS_OPEN_PAYMENT_PAGE_NOTIFICATION_CRASH</key>
         <value>true</value>
     </entry>
     <entry>
-        <key>start_7_day_trial</key>
-        <value>Start 7-Day Free Trial</value>
+        <key>SHOW_AWARDS_FULL_SCREEN</key>
+        <value>false</value>
     </entry>
     <entry>
-        <key>start_free_course</key>
-        <value>Start Free Course Now</value>
+        <key>FREE_TRIAL_POPUP_BODY_TEXT_1880</key>
+        <value>এটি একটি 90 দিনের কোর্স আর\nএটা try করার পর আপনি চাইলে এই কোর্স টি ₹499 এ কিনে subscribe করতে পারেন।\n
+            \nআপনি কি এই কোর্স টা একদিনের জন্য বিনামূল্যে try করতে চান?
+        </value>
     </entry>
     <entry>
-        <key>start_subscription</key>
-        <value>Start 1-Year Subscription</value>
+        <key>START_TRAIL_HEADING</key>
+        <value>Unlimited Learning</value>
     </entry>
     <entry>
-        <key>SUBSCRIPTION_TRIAL_TIP_DAY0</key>
-        <value>Enjoy Your Free Trial!</value>
+        <key>START_TRAIL_FEATURE3</key>
+        <value>After 7 days, upgrade to yearly subscription &amp; continue learning!</value>
     </entry>
     <entry>
-        <key>SUBSCRIPTION_TRIAL_TIP_DAY1</key>
-        <value>Enjoy Your Free Trial!</value>
+        <key>GRAMMAR_TITLE</key>
+        <value>Grammar</value>
     </entry>
     <entry>
-        <key>SUBSCRIPTION_TRIAL_TIP_DAY2</key>
-        <value>Enjoy Your Free Trial!</value>
+        <key>INBOX_SCREEN_CTA_TEXT_FREETRIAL</key>
+        <value>Find More Courses</value>
     </entry>
     <entry>
-        <key>SUBSCRIPTION_TRIAL_TIP_DAY3</key>
-        <value>Enjoy Your Free Trial!</value>
+        <key>REFERRAL_IMAGE_URL</key>
+        <value>https://s3.ap-south-1.amazonaws.com/www.static.skills.com/misc/ezgif.com-gif-maker.webp</value>
     </entry>
     <entry>
-        <key>SUBSCRIPTION_TRIAL_TIP_DAY4</key>
-        <value>Enjoy Your Free Trial!</value>
+        <key>TOOLTIP_OPEN_PROFILE_1211</key>
+        <value>మీరు ఎవరి ప్రొఫైల్‌నైనా తెరవవచ్చు</value>
     </entry>
     <entry>
-        <key>SUBSCRIPTION_TRIAL_TIP_DAY5</key>
-        <value>Enjoy Your Free Trial!</value>
+        <key>TOOLTIP_LEADERBOARD_SOTM_1209</key>
+        <value>ഒരു മാസത്തിൽ ഏറ്റവും അധികം പ്രയത്നിക്കുന്ന STUDENT, “student of the month” ആകുന്നതാണ്</value>
+    </entry>
+    <entry>
+        <key>FREE_TRIAL_ENDED_FEATURE_LOCKED_1210</key>
+        <value>உங்களோட free trial முடிவடைந்து விட்டது . முழு கோர்ஸையும்ப பெற கோஸை வாங்கவும் .</value>
+    </entry>
+    <entry>
+        <key>TOOLTIP_LEADERBOARD_SOTD_151</key>
+        <value>जो student एक दिन में सबसे ज़्यादा मेहनत करता है वह Student of the Day बनता है</value>
+    </entry>
+    <entry>
+        <key>ERROR_API_IMAGE_URL</key>
+        <value>https://s3.ap-south-1.amazonaws.com/www.static.skills.com/Course+Information/under+construction.png
+        </value>
+    </entry>
+    <entry>
+        <key>help_options_new</key>
+        <value>{"title":"Student Help Center","support_message":"Our Student Help Center Agents is available from 9:30
+            AM to 6:30 PM. We apologize for the inconvenience.","options":[{"id":1,"name":"Call
+            HelpLine","action":"CALL","url":"https://s3.ap-south-1.amazonaws.com/www.static.skills.com/fixes_lalit/call.svg","action_data":"+918634503202"},{"id":2,"name":"Chat
+            with
+            agent","action":"HELPCHAT","url":"https://s3.ap-south-1.amazonaws.com/www.static.skills.com/fixes_lalit/chat.svg","action_data":"********"},{"id":3,"name":"FAQ","action":"FAQ","url":"https://s3.ap-south-1.amazonaws.com/www.static.skills.com/fixes_lalit/support.svg","action_data":"********"}]}
+        </value>
+    </entry>
+    <entry>
+        <key>FREE_TRIAL_PAYMENT_TEST_ID_1891</key>
+        <value>1892</value>
     </entry>
     <entry>
         <key>SUBSCRIPTION_TRIAL_TIP_DAY6</key>
-        <value>Last day for free subscription</value>
+        <value>Last Day For Free Trial &#x1f449;</value>
     </entry>
     <entry>
-        <key>SUBSCRIPTION_TRIAL_TIP_DAY7</key>
-        <value>Free trial has ended</value>
+        <key>UX_CAM_FEATURE_ENABLE</key>
+        <value>false</value>
     </entry>
     <entry>
-        <key>TRAIL_END_SCREEN_MESSAGE</key>
-        <value>
-            Your 7 day trial has ended! Access all your courses now 👇
+        <key>START_SUBSCRIPTION_FEATURE2</key>
+        <value>7 dino ke liye aap ALL COURSES unlimited access kar sakte hai.</value>
+    </entry>
+    <entry>
+        <key>TOOLTIP_CONVERSAITON_1203</key>
+        <value>তোমার সহপাঠি কে? এখানে দেখতে পারবেন</value>
+    </entry>
+    <entry>
+        <key>FIRST_TIME_USER_HINT</key>
+        <value>Aapko apne course se related saari videos aur classes isko click karke milengi</value>
+    </entry>
+    <entry>
+        <key>TOOLTIP_CONVERSAITON_1206</key>
+        <value>ਤੁਹਾਡਾ ਜਮਾਤੀ ਕੌਣ ਹੈ ਤੁਸੀਂ ਇਸਨੂੰ ਇੱਥੇ ਦੇਖ ਸਕਦੇ ਹੋ</value>
+    </entry>
+    <entry>
+        <key>GRAMMAR_TEST_COMPLETE_DESCRIPTION_1211</key>
+        <value>మీ గ్రామర్ లెవెల్ చెక్ చేయడానికి మీ సమాధానాలన్నీ రికార్డ్ చేయబడ్డాయి \n \n మీ గ్రామర్ యొక్క &lt;Current
+            Status&gt; ని అనుసరించి మీకు తర్వాతి కోర్స్ సెట్ చేయబడుతుంది
         </value>
     </entry>
     <entry>
@@ -200,146 +827,260 @@
         <value>Unlock All Courses</value>
     </entry>
     <entry>
-        <key>SUBSCRIPTION_END_SCREEN_MESSAGE</key>
-        <value>
-            Your 1 year subscription has ended! Subscribe again and Access all your courses now 👇
+        <key>FREE_TRIAL_POPUP_YES_BUTTON_TEXT_784</key>
+        <value>जी हाँ</value>
+    </entry>
+    <entry>
+        <key>FREE_TRIAL_POPUP_TITLE_TEXT_1882</key>
+        <value>ਜ਼ਰੂਰੀ ਜਾਣਕਾਰੀ</value>
+    </entry>
+    <entry>
+        <key>FREE_TRIAL_ENTER_NAME_TEXT_1897</key>
+        <value>మీ ఉపాధ్యాయులు మరియు సహవిద్యార్థులు మిమ్మల్ని ఈ పేరుతో పిలుస్తారు</value>
+    </entry>
+    <entry>
+        <key>FREE_TRIAL_PAYMENT_TEST_ID_1880</key>
+        <value>1884</value>
+    </entry>
+    <entry>
+        <key>SUBSCRIPTION_BB_TEXT</key>
+        <value>&#x1f449; &lt;b&gt;1 year Subscription pack added!&lt;/b&gt; You saved more then 3400 rupees &#x1f388;
         </value>
     </entry>
     <entry>
-        <key>SUBSCRIPTION_END_SCREEN_CTA_LABEL</key>
-        <value>Unlock All Courses</value>
+        <key>TOOLTIP_POINTS_HISTORY_SCREEN_1203</key>
+        <value>এই ছাত্র কিভাবে পয়েন্ট অর্জন করেছে আমরা এখান থেকে দেখতে পারি</value>
     </entry>
     <entry>
-        <key>START_TRAIL_TITLE</key>
-        <value>👉 India ka pehla Subscription with 👈</value>
-    </entry>
-    <entry>
-        <key>START_TRAIL_HEADING</key>
-        <value>Unlimited Learning</value>
-    </entry>
-    <entry>
-        <key>START_TRAIL_FEATURE1</key>
-        <value>Ye pass aapko ALL COURSE ACCESS dega for 7 days - Completely Free!</value>
-    </entry>
-    <entry>
-        <key>START_TRAIL_FEATURE2</key>
-        <value>7 dino ke liye aap ALL COURSES unlimited access kar sakte hai.</value>
-    </entry>
-    <entry>
-        <key>START_TRAIL_FEATURE3</key>
-        <value>After 7 days, upgrade to yearly subscription &amp; continue learning!</value>
-    </entry>
-    <entry>
-        <key>START_SUBSCRIPTION_TITLE</key>
-        <value>👉 India ka pehla Subscription with 👈</value>
-    </entry>
-    <entry>
-        <key>START_SUBSCRIPTION_HEADING</key>
-        <value>Unlimited Learning</value>
-    </entry>
-    <entry>
-        <key>START_SUBSCRIPTION_FEATURE1</key>
-        <value>Ye pass aapko ALL COURSE ACCESS dega for 7 days - Completely Free!</value>
-    </entry>
-    <entry>
-        <key>START_SUBSCRIPTION_FEATURE2</key>
-        <value>7 dino ke liye aap ALL COURSES unlimited access kar sakte hai.</value>
-    </entry>
-    <entry>
-        <key>START_SUBSCRIPTION_FEATURE3</key>
-        <value>After 7 days, upgrade to yearly subscription &amp; continue learning!</value>
-    </entry>
-    <entry>
-        <key>FFCOURSE_CARD_CLICK_MSG</key>
-        <value>Select any course below &amp; get it FREE</value>
-    </entry>
-    <entry>
-        <key>EXPLORE_TYPE_FFCOURSE_TIP</key>
-        <value>Enjoy your Free Trial!</value>
-    </entry>
-    <entry>
-        <key>EXPLORE_TYPE_NORMAL_TIP</key>
-        <value>Get all course pass for 1-Year</value>
-    </entry>
-
-    <entry>
-        <key>SET_REMINDER_DESCRIPTION</key>
-        <value>Note : Set a Reminder and Never Miss Your Class</value>
-    </entry>
-    <entry>
-        <key>REMINDERS_SCREEN_DESCRIPTION</key>
-        <value>Note : Students with 5 Reminders have higher probability of completing a course
+        <key>REFERRAL_WHATAPP_MESSAGE</key>
+        <value>Mai Bharat &#x1f1ee;&#x1f1f3; ke best teachers se Spoken English aur Personality Development seekh raha
+            hu. Mere saath seekhna abhi shuru karo &#x1f4aa;. Ye lo meri taraf se tumhe ₹50 OFF: Use my code 58HEM.
+            Download the app by clicking on the link https://joshskills.app.link/X24qJqifFqb
         </value>
     </entry>
     <entry>
-        <key>REMINDER_NOTIFIER_SCREEN_DESCRIPTION</key>
-        <value>Aaj nahi kiya , Toh kabhi nahi kiya</value>
-    </entry>
-    <entry>
-        <key>REMINDER_BOTTOM_POPUP_DESCRIPTION</key>
-        <value>Aapka Reminder Set ho gya hai. Your phone will vibrate on your set time. Keep
-            learning!!
+        <key>quick_reply</key>
+        <value>[ { "id":"1", "key":"/TX1", "type":"TX", "text":"Good Job, let's continue to work hard like this",
+            "url":null, "active":true }, { "id":"2", "key":"/A1", "type":"AU", "text":null,
+            "url":"https://s3.ap-south-1.amazonaws.com/www.static.skills.com/Answer+Auto+Reply/audio+1.ogg",
+            "active":true }, { "id":"3", "key":"/TX2", "type":"TX", "text":"Keep working hard. We will definitely
+            achieve success", "url":null, "active":true }, { "id":"4", "key":"/A2", "type":"AU", "text":null,
+            "url":"https://s3.ap-south-1.amazonaws.com/www.static.skills.com/Answer+Auto+Reply/audio+2.ogg",
+            "active":true }, { "id":"5", "key":"/TX3", "type":"TX", "text":"Very well done, keep practicing like this
+            daily and success will be yours!", "url":null, "active":true }, { "id":"6", "key":"/A3", "type":"AU",
+            "text":null,
+            "url":"https://s3.ap-south-1.amazonaws.com/www.static.skills.com/Answer+Auto+Reply/audio+3.ogg",
+            "active":true }, { "id":"7", "key":"/TX4", "type":"TX", "text":"Good job, very proud of you", "url":null,
+            "active":true }, { "id":"8", "key":"/A4", "type":"AU", "text":null,
+            "url":"https://s3.ap-south-1.amazonaws.com/www.static.skills.com/Answer+Auto+Reply/audio+4.og",
+            "active":true }, { "id":"9", "key":"/TX5", "type":"TX", "text":"Great practice, roz aise hi practice karte
+            rahiye!", "url":"null", "active":true }, { "id":"10", "key":"/A5", "type":"AU", "text":null,
+            "url":"https://s3.ap-south-1.amazonaws.com/www.static.skills.com/Answer+Auto+Reply/audio+5.ogg",
+            "active":true }, { "id":"11", "key":"/TX6", "type":"TX", "text":"Wow, good work. Always try to pronounce
+            words loudly and openly", "url":null, "active":true }, { "id":"12", "key":"/A6", "type":"AU", "text":null,
+            "url":"https://s3.ap-south-1.amazonaws.com/www.static.skills.com/Answer+Auto+Reply/audio+6.ogg",
+            "active":true }, { "id":"13", "key":"/TX7", "type":"TX", "text":"Zabardast! Great practice done, keep it
+            up", "url":null, "active":true }, { "id":"14", "key":"/A7", "type":"AU", "text":null,
+            "url":"https://s3.ap-south-1.amazonaws.com/www.static.skills.com/Answer+Auto+Reply/audio+7.ogg",
+            "active":true }, { "id":"15", "key":"/TX8", "type":"TX", "text":"Fantastic, this is very well done, I want
+            you to keep going like this", "url":"null", "active":true }, { "id":"16", "key":"/A8", "type":"AU",
+            "text":null,
+            "url":"https://s3.ap-south-1.amazonaws.com/www.static.skills.com/Answer+Auto+Reply/audio+8.ogg",
+            "active":true }, { "id":"17", "key":"/TX9", "type":"TX", "text":"Bahut acchha, aise hi lage rahiye, aur jeet
+            aapki hogi english par", "url":null, "active":true }, { "id":"18", "key":"/A9", "type":"AU", "text":null,
+            "url":"https://s3.ap-south-1.amazonaws.com/www.static.skills.com/Answer+Auto+Reply/audio+9.ogg",
+            "active":true }, { "id":"19", "key":"/TX10", "type":"TX", "text":"Practice makes perfect, so keep doing this
+            everyday without fail", "url":null, "active":true }, { "id":"20", "key":"/A10", "type":"AU", "text":null,
+            "url":"https://s3.ap-south-1.amazonaws.com/www.static.skills.com/Answer+Auto+Reply/audio+10.ogg ",
+            "active":true }, { "id":"21", "key":"/TX11", "type":"TX", "text":"Bahut badhia. Aise hi mehnat karte
+            rahiye", "url":"null", "active":true }, { "id":"22", "key":"/A11", "type":"AU", "text":null,
+            "url":"https://s3.ap-south-1.amazonaws.com/www.static.skills.com/Answer+Auto+Reply/audio+11.ogg",
+            "active":true }, { "id":"23", "key":"/TX12", "type":"TX", "text":"Bahut acchha, aise hi lage rahiye, aur
+            jeet aapki hogi english par", "url":null, "active":true }, { "id":"24", "key":"/AU12", "type":"AU",
+            "text":null,
+            "url":"https://s3.ap-south-1.amazonaws.com/www.static.skills.com/Answer+Auto+Reply/audio+12.ogg",
+            "active":true }, { "id":"25", "key":"/TX13", "type":"TX", "text":"Wow, good work. Always try to pronounce
+            words loudly and openly", "url":null, "active":true }, { "id":"26", "key":"/AU13", "type":"AU", "text":null,
+            "url":"https://s3.ap-south-1.amazonaws.com/www.static.skills.com/Answer+Auto+Reply/audio+13.ogg",
+            "active":true }, { "id":"27", "key":"/TX14", "type":"TX", "text":"Very well done, keep practicing like this
+            daily and success will be yours!", "url":null, "active":true }, { "id":"28", "key":"/AU14", "type":"AU",
+            "text":null,
+            "url":"https://s3.ap-south-1.amazonaws.com/www.static.skills.com/Answer+Auto+Reply/audio+14.ogg",
+            "active":true }, { "id":"29", "key":"/TX15", "type":"TX", "text":"Fantastic, this is very well done, I want
+            you to keep going like this", "url":null, "active":true }, { "id":"30", "key":"/AU15", "type":"AU",
+            "text":null, "url":"https://s3.ap-south-1.amazonaws.com/www.static.skills.com/Answer+Auto+Reply/audio+15.ogg
+            ", "active":true }, { "id":"31", "key":"/TX16", "type":"TX", "text":"Very well done, keep practicing like
+            this daily and success will be yours!", "url":null, "active":true }, { "id":"32", "key":"/AU16",
+            "type":"AU", "text":null,
+            "url":"https://s3.ap-south-1.amazonaws.com/www.static.skills.com/Answer+Auto+Reply/audio+16.ogg ",
+            "active":true } ]
         </value>
     </entry>
     <entry>
-        <key>REMINDER_NOTIFICATION_DESCRIPTION</key>
-        <value>Its time to learn something valuable</value>
+        <key>payment_title</key>
+        <value>Josh Spoken English Course</value>
     </entry>
     <entry>
-        <key>REMINDER_NOTIFICATION_TITLE</key>
-        <value>You have an update</value>
+        <key>IS_INVITATION_FOR_CALL_ENABLED</key>
+        <value>false</value>
     </entry>
     <entry>
-        <key>INBOX_SCREEN_CTA_TEXT_NORMAL</key>
-        <value>Find More Courses</value>
+        <key>FREE_TRIAL_PAYMENT_TEST_ID_1897</key>
+        <value>1898</value>
+    </entry>
+    <entry>
+        <key>TOOLTIP_OPEN_PROFILE_1209</key>
+        <value>നിങ്ങൾക്ക് ആരുടേയും profile തുറന്നു നോക്കാവുന്നതാണ്</value>
+    </entry>
+    <entry>
+        <key>SUBSCRIPTION_TRIAL_TIP_DAY7</key>
+        <value>Aapka Free Trial Over Ho Gaya Hai! &#x1f449;</value>
+    </entry>
+    <entry>
+        <key>course_show_by_browser</key>
+        <value>true</value>
+    </entry>
+    <entry>
+        <key>test_no</key>
+        <value>8432522643</value>
+    </entry>
+    <entry>
+        <key>INBOX_OVERLAY_TOOLTIP_D2_3</key>
+        <value>Hello Student, agar aap ye courses lena chahte hai to pehle 3 dino mai apke pass 50% off discount hai.
+        </value>
+    </entry>
+    <entry>
+        <key>FREE_TRIAL_ENTER_NAME_TEXT_1881</key>
+        <value>तुमचे शिक्षक आणि वर्गमित्र तुम्हाला या नावाने हाक मारतील</value>
     </entry>
     <entry>
         <key>INBOX_SCREEN_CTA_TEXT_FFCOURSE</key>
         <value>Find More Courses</value>
     </entry>
     <entry>
-        <key>INBOX_SCREEN_CTA_TEXT_FREETRIAL</key>
-        <value>Find More Courses</value>
+        <key>GRAMMAR_TEST_COMPLETE_DESCRIPTION_151</key>
+        <value>ग्रामर का लेवल चेक करने के लिए आपके सभी जवाबों को रिकॉर्ड कर लिया गया हैं \n \n आपकी ग्रामर के Current
+            Status के आधार पर आपके आगे का कोर्स सेट किया जा रहा हैं
+        </value>
     </entry>
     <entry>
-        <key>INBOX_SCREEN_CTA_TEXT_SUBSCRIPTION</key>
-        <value>Find More Courses</value>
+        <key>POSTAL_ADDRESS_SUBHEADING_CERT_FORM</key>
+        <value>Certificate will be sent to this address</value>
     </entry>
     <entry>
-        <key>INBOX_SCREEN_CTA_TEXT_ONBOARD_FLOW</key>
-        <value>Add More Courses</value>
+        <key>TOOLTIP_CONVERSAITON_151</key>
+        <value>आपके सहपाठी कौन है आप यहाँ से देख सकते है</value>
     </entry>
     <entry>
-        <key>PAYMENT_SUMMARY_CTA_LABEL_FREE</key>
-        <value>Start for Free</value>
-    </entry>
-
-    <entry>
-        <key>MAXIMUM_STORAGE_IN_MB</key>
-        <value>1024</value>
+        <key>EARN_SHARE_IMAGE_URL</key>
+        <value />
     </entry>
     <entry>
-        <key>MINIMUM_STORAGE_REMOVE_IN_MB</key>
-        <value>512</value>
+        <key>REFERRAL_SHARE_TEXT_1203</key>
+        <value>Ami bharoter &#x1f1ee;&#x1f1f3; shobche best teachers der kach theke spoken English ar personality
+            development sikhchi. Amar sathe shekha akhuni shuru korun &#x1f4aa;. এই নিন আমার তরফ থেকে আপনার জন্য Rs **
+            OFF. Use my Code ****. Download the app by Clicking on the link :
+        </value>
+    </entry>
+    <entry>
+        <key>TOOLTIP_LEADERBOARD_SOTM_1211</key>
+        <value>ఎవరైతే ఒక నెలలో అందరికంటే ఎక్కువ కష్టపడతారో వారు స్టూడెంట్ ఆఫ్ ది మంత్ అవుతారు.</value>
+    </entry>
+    <entry>
+        <key>TOOLTIP_LESSON_GRAMMAR_1207</key>
+        <value>आज या भागात आपण आपली व्याकरण पातळी तपासू</value>
+    </entry>
+    <entry>
+        <key>FREE_TRIAL_ENDED_FEATURE_LOCKED_1207</key>
+        <value>तुमचा free trial समाप्त झाला आहे Please course मध्ये admission घ्या</value>
+    </entry>
+    <entry>
+        <key>ADD_PROFILE_PHOTO_TEXT_1203</key>
+        <value>আপনার টিচার আর এই কোর্স এর স্টুডেন্টস রা আপনাকে এই ফটো দেখে চিনবে</value>
+    </entry>
+    <entry>
+        <key>FREE_TRIAL_PAYMENT_TEST_ID_1881</key>
+        <value>1888</value>
+    </entry>
+    <entry>
+        <key>REFERRAL_SHARE_TEXT_</key>
+        <value>"Mai Bharat &#x1f1ee;&#x1f1f3; ke best teachers se Spoken English aur Personality Development seekh raha
+            hu. Mere saath seekhna abhi shuru karo &#x1f4aa;. Ye lo meri taraf se tumhe ₹** OFF: Use my code ****.
+            Download the app by clicking on the link"
+        </value>
+    </entry>
+    <entry>
+        <key>BUY_COURSE_LAST_DAY_OFFER_HINT</key>
+        <value>Bade Bhaiya Tip: Get additional 50% off on final subscription price, last day for this offer!</value>
     </entry>
     <entry>
         <key>IS_APPLY_COUPON_ENABLED</key>
         <value>true</value>
     </entry>
     <entry>
+        <key>TOOLTIP_ONLINE_STATUS_1206</key>
+        <value>ਹੁਣ ਅਸੀਂ ਇਹ ਪਤਾ ਲਗਾ ਸਕਦੇ ਹਾਂ ਕਿ ਕਿਹੜੇ ਵਿਦਿਆਰਥੀ ਔਨਲਾਈਨ ਹਨ</value>
+    </entry>
+    <entry>
+        <key>FREE_TRIAL_ENDED_FEATURE_LOCKED_1203</key>
+        <value>আপনার free trial শেষ হয়ে গেছে. Please course এ admission নিন.</value>
+    </entry>
+    <entry>
+        <key>GRAMMAR_CHECK_BUTTON_TEXT_1209</key>
+        <value>ഉത്തരം check ചെയൂ!</value>
+    </entry>
+    <entry>
+        <key>SENTRY_SAMPLING_RATE</key>
+        <value>0.02</value>
+    </entry>
+    <entry>
+        <key>TODAYS_QUIZ_TITLE</key>
+        <value>Today's Quiz</value>
+    </entry>
+    <entry>
+        <key>CTA_PAYMENT_SUMMARY</key>
+        <value>Pay</value>
+    </entry>
+    <entry>
+        <key>SENTRY_ANR_TIME_OUT</key>
+        <value>5500</value>
+    </entry>
+    <entry>
+        <key>TOOLTIP_USER_PROFILE_SCREEN_1206</key>
+        <value>ਅਸੀਂ ਜਿੰਨੀ ਮਿਹਨਤ ਕਰਦੇ ਹਾਂ, ਓਨੇ ਹੀ ਜ਼ਿਆਦਾ ਅੰਕ ਪ੍ਰਾਪਤ ਕਰਦੇ ਹਾਂ</value>
+    </entry>
+    <entry>
+        <key>start_free_course</key>
+        <value>Start Free Course Now</value>
+    </entry>
+    <entry>
+        <key>INBOX_SCREEN_CTA_TEXT_ONBOARD_FLOW</key>
+        <value>Add More Courses</value>
+    </entry>
+    <entry>
+        <key>ADD_PROFILE_PHOTO_TEXT_1211</key>
+        <value>ఈ ఫోటో నుండి మీ ఉపాధ్యాయులు మరియు కోర్సులోని ఇతర విద్యార్థులు మిమ్మల్ని గుర్తిస్తారు</value>
+    </entry>
+    <entry>
         <key>APPLY_COUPON_TEXT</key>
         <value>Apply Coupon</value>
     </entry>
     <entry>
-        <key>NEW_ONBOARD_FLOW_TEXT_ON_ENROLLED</key>
-        <value>Aap aapne interest ke courses me enroll hogaye hai. Yeh Courses 7 Days tak Completely
-            FREE hai . Aap inke alawa bhi courses le sakte hai
-        </value>
+        <key>FREE_TRIAL_POPUP_YES_BUTTON_TEXT_1881</key>
+        <value>होय</value>
     </entry>
     <entry>
-        <key>BUY_COURSE_LAST_DAY_OFFER_HINT</key>
-        <value>Bade Bhaiya Tip: Get additional 50% off on final subscription price, last day for
-            this offer!
+        <key>SUBSCRIPTION_TEST_ID</key>
+        <value>122</value>
+    </entry>
+    <entry>
+        <key>GRAMMAR_CHECK_BUTTON_TEXT_1206</key>
+        <value>ਕਿਰਪਾ ਕਰਕੇ ਪੁਸ਼ਟੀ ਕਰੋ</value>
+    </entry>
+    <entry>
+        <key>GRAMMAR_TEST_COMPLETE_DESCRIPTION_1206</key>
+        <value>ਤੁਹਾਡੇ ਸਾਰੇ ਜਵਾਬ ਵਿਆਕਰਣ ਪੱਧਰ ਦੀ ਜਾਂਚ ਕਰਨ ਲਈ ਰਿਕਾਰਡ ਕੀਤੇ ਗਏ ਹਨ। \n \n ਤੁਹਾਡਾ ਕੋਰਸ ਤੁਹਾਡੇ ਵਿਆਕਰਣ ਕੇ &lt;ਮੌਜੂਦਾ
+            ਸਥਿਤੀ:&gt; ਦੇ ਆਧਾਰ 'ਤੇ ਸੈੱਟ ਕੀਤਾ ਗਿਆ ਹੈ।
         </value>
     </entry>
     <entry>
@@ -347,451 +1088,207 @@
         <value>Get %s off on the next course you buy, Valid for %s days</value>
     </entry>
     <entry>
-        <key>BB_TOOL_TIP_EXPIRY_TEXT</key>
-        <value>Trial ends in</value>
+        <key>SENTRY_SESSION_TIMEOUT</key>
+        <value>30000</value>
     </entry>
     <entry>
-        <key>BB_TOOL_TIP_BELOW_FIND_COURSE_TEXT</key>
-        <value>Agar aap in course ke alawa kuch aur bhi seekhna chahte hai to agle %s dino tak aap
-            free mei unlimited courses unlock kar sakte hai
-        </value>
+        <key>START_TRAIL_TITLE</key>
+        <value>&#x1f449; India ka pehla Subscription with &#x1f448;</value>
     </entry>
     <entry>
-        <key>BB_TOOL_TIP_BELOW_FIND_COURSE_TEXT_FREE</key>
-        <value>Agar aap in course ke alawa kuch aur bhi seekhna chahte hai to aaj aur aap free mei
-            unlimited courses unlock kar sakte hai.
-        </value>
+        <key>FREE_TRIAL_POPUP_TITLE_TEXT_1897</key>
+        <value>ముఖ్యమైన సమాచారం</value>
     </entry>
     <entry>
-        <key>INBOX_OVERLAY_TOOLTIP_D0_1</key>
-        <value>Bade Bhaiya Tip: Please yaad rakhna ki agar aap subscription lena chahe to pehle 3
-            dino tak aapke paas price pe 50% off hai.
-        </value>
+        <key>referral_screen_page</key>
+        <value>version_1</value>
     </entry>
     <entry>
-        <key>INBOX_OVERLAY_TOOLTIP_D2_3</key>
-        <value>Bade Bhaiya Tip: Please yaad rakhna ki agar aap subscription lena chahe to pehle 3
-            dino tak aapke paas price pe 50% off hai.
-        </value>
+        <key>CTA_PAYMENT_SUMMARY_FREE</key>
+        <value>"Get this couse for free"</value>
     </entry>
     <entry>
-        <key>BB_TOOL_TIP_FIRST_TIME_TEXT</key>
-        <value>Yeh aapke courses ki inbox screen hai. Aap jo bhi courses me enroll karte hai vo
-            aapko es screen pe mil jayengey. Aap first 7 days tak jitne chahe utne courses avail kar
-            sakte hai completely free
-        </value>
-    </entry>
-    <entry>
-        <key>BB_TOOL_TIP_FIRST_TIME_BTN_TEXT</key>
-        <value>Okay,got it</value>
-    </entry>
-    <entry>
-        <key>SHOW_BB_TOOL_TIP_FIRST_TIME</key>
-        <value>true</value>
-    </entry>
-    <entry>
-        <key>SETTINGS_LOGOUT_CONFIRMATION</key>
-        <value>Are you sure you want to logout?
-        </value>
-    </entry>
-    <entry>
-        <key>SETTINGS_SIGN_IN_PROMPT</key>
-        <value>You need to sign in or register to access this section.
-        </value>
-    </entry>
-    <entry>
-        <key>SETTINGS_CLEAR_DATA_CONFIRMATION</key>
-        <value>All your downloaded files will be deleted.
-        </value>
-    </entry>
-    <entry>
-        <key>NOTIFICATION_DESCRIPTION_DISABLED</key>
-        <value>Note : Aapki notifications Off hai. Permananent on karne ke liye yahan click kare.
-        </value>
-    </entry>
-    <entry>
-        <key>NOTIFICATION_DESCRIPTION_ENABLED</key>
-        <value>Aapki notifications on hai. Aapko rozana time par class milti rahengi.
-        </value>
-    </entry>
-    <entry>
-        <key>NOTIFICATION_SETTING_DESCRIPTION</key>
-        <value>Rojana class time par paane ke liye abhi notification on kare. Allow karne pe aap
-            phone ki settings mein jaayenge aur wahan se aap on karenge.
-        </value>
-    </entry>
-    <entry>
-        <key>SHOW_AUTOSTART_IMAGE</key>
-        <value>true</value>
-    </entry>
-    <entry>
-        <key>LANGUAGES_SUPPORTED</key>
-        <value>[{
-            "code": "en",
-            "name": "English"
-            },
-            {
-            "code": "hi",
-            "name": "Hindi"
-            }
-            ]
-        </value>
-    </entry>
-    <entry>
-        <key>UX_CAM_FEATURE_ENABLE</key>
-        <value>false</value>
-    </entry>
-    <entry>
-        <key>SMART_LOOK_FEATURE_ENABLE</key>
-        <value>true</value>
-    </entry>
-    <entry>
-        <key>FORCE_SIGN_IN_FEATURE_ENABLE</key>
-        <value>true</value>
-    </entry>
-    <entry>
-        <key>SIGNIN_DIALOG_DESCRIPTION</key>
-        <value>Apne subscription ko use karne ke liye sabse pehle apna registration complete
-            kijiye
-        </value>
-    </entry>
-    <entry>
-        <key>MINIMUM_TIME_TO_SHOW_REVIEW</key>
-        <value>30
-        </value>
-    </entry>
-
-    <entry>
-        <key>LANGUAGES_SUPPORTED</key>
-        <value>[{ "code": "en", "name": "English"},{"code": "hi","name": "Hindi"} ]</value>
-    </entry>
-
-    <entry>
-        <key>course_explore_flag</key>
-        <value>true</value>
-    </entry>
-
-    <entry>
-        <key>course_show_by_browser</key>
-        <value>true</value>
-    </entry>
-
-    <entry>
-        <key>REFERRAL_SHARE_TEXT</key>
-        <value>Mai Bharat 🇮🇳 ke best teachers se Spoken English aur Personality Development seekh
-            raha hu. Mere saath seekhna abhi shuru karo 💪. Ye lo meri taraf se tumhe ₹** OFF: Use
-            my code ****. Download the app by clicking on the link
-        </value>
-    </entry>
-
-    <entry>
-        <key>NPS_EVENT_LIST</key>
-        <value>
-            [{"id":1,"event":"PAYMENT_SUCCESS","event_name":"nps_course_payment","filter_by":"EVENT","day":-99,"enable":true},{"id":2,"event":"PAYMENT_FAILED","event_name":"nps_course_payment_failed","filter_by":"EVENT","day":-99,"enable":true},{"id":3,"event":"PRACTICE_COMPLETED","event_name":"nps_first_practise","filter_by":"DAY","day":3,"enable":true},{"id":4,"event":"FIRST_CLASS","event_name":"nps_first_class","filter_by":"DAY","day":0,"enable":true},{"id":5,"event":"STANDARD_TIME_EVENT","event_name":"nps_overall_course_7_days","filter_by":"DAY","day":7,"enable":true},{"id":6,"event":"PRACTICE_COMPLETED","event_name":"nps_first_practise","filter_by":"DAY","day":7,"enable":true},{"id":7,"event":"PRACTICE_COMPLETED","event_name":"nps_first_practise","filter_by":"DAY","day":5,"enable":true}]
-        </value>
-    </entry>
-
-    <entry>
-        <key>REFERRAL_SHARE_TEXT_SHARABLE_VIDEO</key>
-        <value>Download the Josh Skills App using the link -</value>
-    </entry>
-
-    <entry>
-        <key>help_options</key>
-        <value>{"title":"Student Help Center","support_message":"Our Student Help Center Agents is
-            available from 9:30 AM to 6:30 PM. We apologize for the
-            inconvenience.","options":[{"id":1,"name":"Call
-            HelpLine","action":"CALL","url":"https://s3.ap-south-1.amazonaws.com/www.static.skills.com/Icons/Phone.svg","action_data":"+918634503202"},{"id":2,"name":"Chat
-            with
-            agent","action":"HELPCHAT","url":"https://s3.ap-south-1.amazonaws.com/www.static.skills.com/Icons/chat_bubble.svg","action_data":"********"},{"id":3,"name":"FAQ","action":"FAQ","url":"https://s3.ap-south-1.amazonaws.com/www.static.skills.com/Icons/QuestionMark.svg","action_data":"********"}]}
-        </value>
-    </entry>
-
-
-    <entry>
-        <key>practise_flow_steps</key>
-        <value>[{ "header": "Listen", "sub_header": "Pehle baat ko suno" }, { "header": "Quiz",
-            "sub_header": "Sawaal ke jawaab do" }, { "header": "Practice", "sub_header": "Baat karne
-            ki koshish karo" }, { "header": "Record", "sub_header": "Final baat submit karo" } ]
-        </value>
-    </entry>
-
-    <entry>
-        <key>ERROR_API_IMAGE_URL</key>
-        <value>
-            https://s3.ap-south-1.amazonaws.com/www.static.skills.com/Course+Information/under+construction.png
-        </value>
-    </entry>
-
-    <entry>
-        <key>SUBSCRIPTION_COURSE_IDS</key>
-        <value>60</value>
-    </entry>
-    <entry>
-        <key>INBOX_SCREEN_COURSE_PROGRESS_ENABLE</key>
-        <value>false</value>
-    </entry>
-    <entry>
-        <key>SUBSCRIPTION_TEST_ID</key>
-        <value>122</value>
-    </entry>
-    <entry>
-        <key>READING_PRACTICE_TITLE</key>
-        <value>Read the following sentences</value>
-    </entry>
-    <entry>
-        <key>VOCAB_PRACTICE_TITLE</key>
-        <value>Read the above sentences</value>
-    </entry>
-    <entry>
-        <key>INTERVAL_TO_FIRE_ACTIVE_API</key>
-        <value>60</value>
-    </entry>
-
-    <entry>
-        <key>GRAMMAR_TITLE</key>
-        <value>Grammar</value>
-    </entry>
-
-    <entry>
-        <key>VOCABULARY_TITLE</key>
-        <value>Vocabulary</value>
-    </entry>
-
-    <entry>
-        <key>READING_TITLE</key>
-        <value>Reading</value>
-    </entry>
-
-    <entry>
-        <key>SPEAKING_TITLE</key>
-        <value>Speaking</value>
-    </entry>
-    <entry>
-        <key>ROOM_TITLE</key>
-        <value>Conversation</value>
-    </entry>
-    <entry>
-        <key>TODAYS_QUIZ_TITLE</key>
-        <value>Today's Quiz</value>
-    </entry>
-    <entry>
-        <key>VOCABULARY_COMPLETED</key>
-        <value>Congratulations you have completed vocabulary!</value>
-    </entry>
-    <entry>
-        <key>DISABLED_VERSION_CODES</key>
-        <value>0</value>
-    </entry>
-    <entry>
-        <key>SHOW_AWARDS_FULL_SCREEN</key>
-        <value>false</value>
-    </entry>
-    <entry>
-        <key>PROGRESS_MESSAGE</key>
-        <value>You have not unlocked this lesson yet.</value>
-    </entry>
-    <entry>
-        <key>INCOMPLETE_LESSONS_TITLE</key>
-        <value>Lesson not unlocked</value>
-    </entry>
-    <entry>
-        <key>INCOMPLETE_CERTIFICATION_MESSAGE</key>
-        <value>Please complete all previous lessons to unlock</value>
-    </entry>
-    <entry>
-        <key>INCOMPLETE_CERTIFICATION_TITLE</key>
-        <value>Incomplete lessons</value>
-    </entry>
-    <entry>
-        <key>SMART_LOOK_FEATURE_ENABLE</key>
-        <value>false</value>
-    </entry>
-    <entry>
-        <key>GROUP_CHAT_TAGLINE</key>
-        <value>Practice with other users and Improve your skill here</value>
-    </entry>
-
-    <entry>
-        <key>COURSE_PROGRESS_TOOLTIP_TEXT</key>
-        <value>Check when are your certificate examinations and which lesson you are currently at
-        </value>
-    </entry>
-
-    <entry>
-        <key>COURSE_PROGRESS_TOOLTIP_VISIBILITY</key>
-        <value>false
-        </value>
-    </entry>
-
-    <entry>
-        <key>IS_CONVERSATION_ROOM_ACTIVE</key>
-        <value>true</value>
-    </entry>
-
-    <entry>
-        <key>VOIP_CALL_RECONNECT_TIME</key>
-        <value>5000</value>
-    </entry>
-
-    <entry>
-        <key>VOIP_CALL_DISCONNECT_TIME</key>
-        <value>25000</value>
-    </entry>
-    <entry>
-        <key>VOIP_FEEDBACK_MESSAGE</key>
-        <value>#, do you want to speak with ## again?</value>
-    </entry>
-    <entry>
-        <key>VOIP_FEEDBACK_MESSAGE_NEW</key>
-        <value>Do you want to add # to your Favorite Practice Partner list?</value>
-    </entry>
-
-    <entry>
-        <key>ADD_PROFILE_PHOTO</key>
-        <value>Add your profile photo</value>
-    </entry>
-
-    <entry>
-        <key>ADD_PROFILE_PHOTO_TEXT</key>
-        <value>आपके टीचर और कोर्स के बाकी स्टूडेंट्स आपको इस फोटो से पेहचानेंगे</value>
-    </entry>
-
-    <entry>
-        <key>PROFILE_PIC_SUCCESSFUL_TEXT</key>
-        <value>Profile picture successfully uploaded</value>
-    </entry>
-
-    <entry>
-        <key>POINTS_HISTORY_TITLES</key>
-        <value>[{"label":"Grammar Video Watched","index":1},{"label":"Correct Answer in Quiz (Per
-            Question)","index":2},{"label":"Vocabulary Practice Submitted (Per
-            Word)","index":3},{"label":"Correct Answer in Vocab Revision (Per
-            Question)","index":4},{"label":"Reading Practice
-            Submitted","index":5},{"label":"Speaking with Practice Partner (+2 points per
-            minute)","index":6},{"label":"English Spoken in Group Chat (Per
-            Minute)","index":7},{"label":"English Spoken for 60 Mins in a
-            Day","index":8},{"label":"Call pickup from Practice Partner (+5 points per
-            call)","index":9},{"label":"1 Lesson Completed in a Day","index":10},{"label":"3 Lessons
-            Completed in a Day","index":11},{"label":"5 Lessons Completed in a
-            Day","index":12},{"label":"10 Lessons Completed in a Day","index":13},{"label":"Beginner
-            Certificate Exam Passed","index":14},{"label":"Intermediate Certificate Exam
-            Passed","index":15},{"label":"Advanced Certificate Exam
-            Passed","index":16},{"label":"Course Completed","index":17},{"label":"3 Days
-            Streak","index":18},{"label":"5 Days Streak","index":19},{"label":"15 Days
-            Streak","index":20},{"label":"30 Days Streak","index":21},{"label":"60 Days
-            Streak","index":22},{"label":"90 Days Streak","index":23},{"label":"150 Days
-            Streak","index":24},{"label":"Student Of The Year","index":25},{"label":"Student Of The
-            Month","index":26},{"label":"Student Of The Week","index":27},{"label":"Student Of The
-            Day","index":28},{"label":"Carried Forward","index":29}]
-        </value>
-    </entry>
-
-    <entry>
-        <key>GRAMMAR_CHOICE_PLAYBACK_SPEED</key>
-        <value>1.5F</value>
-    </entry>
-    <entry>
-        <key>FREE_TRIAL_PAYMENT_TEST_ID</key>
-        <value>102</value>
-    </entry>
-    <entry>
-        <key>FREE_TRIAL_COURSE_DETAIL_BTN_TXT</key>
-        <value>1 दिन के लिए मुफ्त में प्रयोग करें</value>
-    </entry>
-    <entry>
-        <key>FREE_TRIAL_PAYMENT_BTN_TXT</key>
-        <value>Start 1 day Free Trial</value>
-    </entry>
-    <entry>
-        <key>FREE_TRIAL_DIALOG_BTN_TXT</key>
-        <value>Buy Course</value>
-    </entry>
-    <entry>
-        <key>FREE_TRIAL_DIALOG_TXT</key>
-        <value>Your 1 day trial has ended! Kya aapko mazaa aaya?\nAccess this courses now.</value>
-    </entry>
-    <entry>
-        <key>SHOW_LOCAL_NOTIFICATIONS</key>
-        <value>true</value>
-    </entry>
-    <entry>
-        <key>TOOLTIP_CONVERSAITON_151</key>
-        <value>आपके सहपाठी कौन है आप यहाँ से देख सकते है</value>
-    </entry>
-    <entry>
-        <key>TOOLTIP_CONVERSAITON_1203</key>
-        <value>তোমার সহপাঠি কে? এখানে দেখতে পারবেন</value>
-    </entry>
-    <entry>
-        <key>TOOLTIP_USER_PROFILE_SCREEN_151</key>
-        <value>हम जितनी मेहनत करेंगे हमे उतने Points मिलेंगेै</value>
-    </entry>
-    <entry>
-        <key>TOOLTIP_USER_PROFILE_SCREEN_1203</key>
-        <value>আমরা যত বেশি পরিশ্রম করব, তত বেশি পয়েন্ট পাব</value>
-    </entry>
-    <entry>
-        <key>TOOLTIP_LESSON_GRAMMAR_151</key>
-        <value>आज इस भाग में हम अपने ग्रामर के लेवल का पता लगाएंगे</value>
-    </entry>
-    <entry>
-        <key>TOOLTIP_LESSON_GRAMMAR_1203</key>
-        <value>আজ এই ভাগে আমরা আমাদের গ্রামার এর লেভেল কে চেক করব</value>
-    </entry>
-    <entry>
-        <key>TOOLTIP_POINTS_HISTORY_SCREEN_151</key>
-        <value>इस student ने points कैसे कमाए हम यहाँ से देख सकते है</value>
-    </entry>
-    <entry>
-        <key>TOOLTIP_POINTS_HISTORY_SCREEN_1203</key>
-        <value>এই ছাত্র কিভাবে পয়েন্ট অর্জন করেছে আমরা এখান থেকে দেখতে পারি</value>
-    </entry>
-    <entry>
-        <key>TOOLTIP_OPEN_PROFILE_151</key>
-        <value>आप किसी की भी Profile खोल सकते हैं</value>
-    </entry>
-    <entry>
-        <key>TOOLTIP_OPEN_PROFILE_1203</key>
-        <value>আপনি যে কারোর Profile খুলে দেখতে পারবেন</value>
+        <key>TOOLTIP_SEARCH_ANYONE_1203</key>
+        <value>এখান থেকে আমরা নিজের বন্ধুদের আর বাকি ছাত্র দেড় কে সার্চ করতে পারবো।</value>
     </entry>
     <entry>
         <key>TOOLTIP_ONLINE_STATUS_151</key>
         <value>अब हम जान सकते हैं कि कौन से स्टूडेंट्स ऑनलाइन हैं |</value>
     </entry>
     <entry>
-        <key>TOOLTIP_ONLINE_STATUS_1203</key>
-        <value>এবার আমরা জানতে পারব কি কোন কোন স্টুডেন্ট অনলাইন আছে</value>
-    </entry>
-    <entry>
-        <key>TOOLTIP_LEADERBOARD_SOTD_151</key>
-        <value>जो student एक दिन में सबसे ज़्यादा मेहनत करता है वह Student of the Day बनता है</value>
-    </entry>
-    <entry>
-        <key>TOOLTIP_LEADERBOARD_SOTD_1203</key>
-        <value>যেই স্টুডেন্ট এক দিনে সব থেকে বেশি পরিশ্রম করে তাকে স্টুডেন্ট অফ দা ডে বানানো হয়।
+        <key>FREE_TRIAL_POPUP_BODY_TEXT_1882</key>
+        <value>ਇਹ 90 ਦਿਨ ਦਾ ਕੋਰਸ ਹੈ ਤੇ try ਕਰਨ ਤੋਂ ਬਾਅਦ ਜੇ ਤੁਸੀਂ ਚਾਹੋ ਤਾਂ ਇਸਨੂੰ ₹499 ਵਿੱਚ ਖਰੀਦ ਸਕਦੇ ਹੋਂ।\n \nਕੀ ਤੁਸੀਂ ਇਸ
+            ਕੋਰਸ ਨੂੰ ਇੱਕ ਦਿਨ ਦੇ ਲਈ ਬਿਲਕੁਲ ਮੁਫਤ try ਕਰਨਾ ਚਾਹੁੰਦੇ ਹੋਂ?
         </value>
     </entry>
     <entry>
-        <key>TOOLTIP_LEADERBOARD_SOTW_151</key>
-        <value>जो student एक हफ्ते में सबसे ज़्यादा मेहनत करता है वह Student of the Week बनता है
+        <key>ADD_PROFILE_PHOTO</key>
+        <value>Add your profile photo</value>
+    </entry>
+    <entry>
+        <key>FREE_TRIAL_POPUP_HUNDRED_POINTS_TEXT_1897</key>
+        <value>Josh Skill sఅనేది వారి జీవితంలో serious studentకుటుంబం. కష్టపడి ముందుకు సాగాలని కోరుకునే వారు. ఈ కోర్సులో
+            నమోదు చేసుకునే ముందు, మీరు ఒక రోజు ఈ కోర్సును ఉపయోగించాలి. ఇది పూర్తిగా ఉచితం.మీరు ఇంగ్లీషు నేర్చుకోవడం పట్ల
+            తీవ్రంగా ఉన్నారని నేను చూడాలనుకుంటున్నాను. మీరు ఈరోజు100 points సంపాదించాలి. మీరు తదుపరి 24 గంటల్లో 100
+            points సంపాదిస్తే, మీరు రేపు కోర్సులో అడ్మిషన్ తీసుకోవచ్చు.
+        </value>
+    </entry>
+    <entry>
+        <key>TOOLTIP_LESSON_GRAMMAR_1203</key>
+        <value>আজ এই ভাগে আমরা আমাদের গ্রামার এর লেভেল কে চেক করব</value>
+    </entry>
+    <entry>
+        <key>ADD_PROFILE_PHOTO_TEXT_1209</key>
+        <value>താങ്കളുടെ ടീച്ചറും കോഴ്സിലെ മറ്റ് വിദ്യാർത്ഥികളും ഈ ഫോട്ടോയിൽ നിന്നും നിങ്ങളെ തിരിച്ചറിയും</value>
+    </entry>
+    <entry>
+        <key>INCOMPLETE_CERTIFICATION_MESSAGE</key>
+        <value>Please complete all previous lessons to unlock</value>
+    </entry>
+    <entry>
+        <key>REMINDER_BOTTOM_POPUP_DESCRIPTION</key>
+        <value>Aapka Reminder Set ho gya hai. Your phone will vibrate on your set time. Keep learning!!</value>
+    </entry>
+    <entry>
+        <key>FREE_TRIAL_POPUP_YES_BUTTON_TEXT_1897</key>
+        <value>అవును</value>
+    </entry>
+    <entry>
+        <key>REMINDER_NOTIFIER_SCREEN_DESCRIPTION</key>
+        <value>Aaj nahi kiya , Toh kabhi nahi kiya</value>
+    </entry>
+    <entry>
+        <key>MAXIMUM_STORAGE_IN_MB</key>
+        <value>1024</value>
+    </entry>
+    <entry>
+        <key>START_SUBSCRIPTION_FEATURE3</key>
+        <value>After 7 days, upgrade to yearly subscription &amp; continue learning!</value>
+    </entry>
+    <entry>
+        <key>start_subscription</key>
+        <value>Start 1-Year Subscription</value>
+    </entry>
+    <entry>
+        <key>P2P_IMAGE_SHARE_TEXT_151</key>
+        <value>मैं रोज़ speaking practice कर रहा हूँ call पर new new persons के साथ</value>
+    </entry>
+    <entry>
+        <key>FREE_TRIAL_COURSE_DETAIL_BTN_TXT_784</key>
+        <value>1 दिन के लिए मुफ्त में प्रयोग करें</value>
+    </entry>
+    <entry>
+        <key>LANGUAGES_SUPPORTED</key>
+        <value>[{ "code": "en", "name": "Hinglish"},{"code": "hi","name": "Hindi"} ]</value>
+    </entry>
+    <entry>
+        <key>START_SUBSCRIPTION_FEATURE1</key>
+        <value>Ye pass aapko ALL COURSE ACCESS dega for 7 days - Completely Free!</value>
+    </entry>
+    <entry>
+        <key>START_TRAIL_FEATURE2</key>
+        <value>7 dino ke liye aap ALL COURSES unlimited access kar sakte hai.</value>
+    </entry>
+    <entry>
+        <key>buy_course_label</key>
+        <value>Buy Course Now</value>
+    </entry>
+    <entry>
+        <key>FREE_TRIAL_POPUP_YES_BUTTON_TEXT_1882</key>
+        <value>ਜੀ ਹਾਂ</value>
+    </entry>
+    <entry>
+        <key>TOOLTIP_LEADERBOARD_SOTM_1207</key>
+        <value>एका महिन्यात सर्वात जास्त मेहनत करणाऱ्या विद्यार्थ्याला स्टुडंट ऑफ द मंथ बनवले जाते.</value>
+    </entry>
+    <entry>
+        <key>GRAMMAR_CHECK_BUTTON_TEXT_1207</key>
+        <value>कृपया पडताळणी करा</value>
+    </entry>
+    <entry>
+        <key>START_TRAIL_FEATURE1</key>
+        <value>Ye pass aapko ALL COURSE ACCESS dega for 7 days - Completely Free!</value>
+    </entry>
+    <entry>
+        <key>BB_TOOL_TIP_FIRST_TIME_BTN_TEXT</key>
+        <value>Okay,got it</value>
+    </entry>
+    <entry>
+        <key>NEW_ONBOARD_FLOW_TEXT_ON_ENROLLED</key>
+        <value>Aap aapne interest ke courses me enroll hogaye hai. Yeh courses ₹999 ke hai magar pehle 7 dino ke liye
+            completely free hai
+        </value>
+    </entry>
+    <entry>
+        <key>COURSE_PROGRESS_TOOLTIP_VISIBILITY</key>
+        <value>true</value>
+    </entry>
+    <entry>
+        <key>FREE_TRIAL_ENDED_FEATURE_LOCKED_1209</key>
+        <value>നിങ്ങളുടെ free trial അവസാനിച്ചിരിക്കുന്നു. please കോഴ്സിൽ admission നേടൂ</value>
+    </entry>
+    <entry>
+        <key>VOCABULARY_TITLE</key>
+        <value>Vocabulary</value>
+    </entry>
+    <entry>
+        <key>TOOLTIP_LESSON_GRAMMAR_1210</key>
+        <value>இந்த பாடத்தில நீங்கள் உங்கள் Grammar திறமையை தெரிஞ்சு கொள்ளலாம்</value>
+    </entry>
+    <entry>
+        <key>SUBSCRIPTION_TRIAL_TIP_DAY0</key>
+        <value>Enjoy your free trial</value>
+    </entry>
+    <entry>
+        <key>practise_flow_steps</key>
+        <value>[ { "header": "Listen", "sub_header": "Pehle baat ko suno" }, { "header": "Quiz", "sub_header": "Sawaal
+            ke jawaab do" }, { "header": "Practice", "sub_header": "Baat karne ki koshish karo" }, { "header": "Record",
+            "sub_header": "Final baat submit karo" } ]
         </value>
     </entry>
     <entry>
         <key>TOOLTIP_LEADERBOARD_SOTW_1203</key>
-        <value>যে শিক্ষার্থী এক সপ্তাহে সবার থেকে বেশি পরিশ্রম করে তাকে স্টুডেন্ট অফ দা উইক বানানো
-            হয়।
+        <value>যে শিক্ষার্থী এক সপ্তাহে সবার থেকে বেশি পরিশ্রম করে তাকে স্টুডেন্ট অফ দা উইক বানানো হয়।</value>
+    </entry>
+    <entry>
+        <key>INCOMPLETE_LESSONS_TITLE</key>
+        <value>Lesson not unlocked</value>
+    </entry>
+    <entry>
+        <key>FREE_TRIAL_POPUP_HUNDRED_POINTS_TEXT_1881</key>
+        <value>Josh Skills हे अश्या student चे कुटुंब आहे जे त्यांच्या life बद्दल serious आहेत ज्यांना मेहनत करायची आहे
+            आणि पुढे जायचे आहे. या course मध्ये enroll करण्यापूर्वी तुम्हाला हा course एक दिवस वापरायचा आहे. हे पूर्णपणे
+            मोफत आहे.\\n \\न तुम्ही इंग्रजी शिकण्यासाठी serious आहात हे मला पहायचे आहे. तुम्हाला आज 100 points मिळवावे
+            लागतील. पुढील 24 तासात तुम्ही 100 points मिळवले तर तुम्ही उद्या course ला admission घेऊ शकता.
         </value>
     </entry>
     <entry>
-        <key>TOOLTIP_LEADERBOARD_SOTM_151</key>
-        <value>जो student एक महीने में सबसे ज़्यादा मेहनत करता है वह Student of the Month बनता है
+        <key>SET_REMINDER_DESCRIPTION</key>
+        <value>Note : Set a Reminder and Never Miss Your Class</value>
+    </entry>
+    <entry>
+        <key>GRAMMAR_CHECK_BUTTON_TEXT_1203</key>
+        <value>চেক করুন</value>
+    </entry>
+    <entry>
+        <key>SUBSCRIPTION_TRIAL_TIP_DAY4</key>
+        <value>Enjoy your free trial</value>
+    </entry>
+    <entry>
+        <key>FREE_TRIAL_COURSE_DETAIL_BTN_TXT_1880</key>
+        <value>১ দিনের জন্য বিনামূল্যে প্রয়োগ করুন।</value>
+    </entry>
+    <entry>
+        <key>P2P_CALL_SHARE_TEXT_1203</key>
+        <value>আমি যেখানে English শিখছি, সেখানে ইংলিশ বলার environment পাওয়া যায় নতুন নতুন মানুষজনের সাথে কথা বলে
+            ইংলিশ প্র্যাক্টিস করার। তুমিও শিখতে পারবে।
         </value>
     </entry>
     <entry>
-        <key>TOOLTIP_LEADERBOARD_SOTM_1203</key>
-        <value>যে শিক্ষার্থী এক মাসে সবার থেকে বেশি পরিশ্রম করে তাকে স্টুডেন্ট অফ দা মান্থ বানানো
-            হয়।
+        <key>FREE_TRIAL_POPUP_HUNDRED_POINTS_TEXT_1880</key>
+        <value>Josh Skills ওই students এর পরিবার, যেখানে Students রা নিজের Life নিয়ে অনেক serious.এই Course টি তে enroll
+            হওয়ার পর, আপনি একদিন এই কোর্স টি কে একদম বিনামূল্যে বেবহার করবেন। আপনাকে 24 ঘণ্টা থেকে 100 Points কামাতে
+            হবে। আপনি কালকে কোর্স এ অ্যাডমিশন নিতে পারেন।
         </value>
     </entry>
     <entry>
@@ -799,104 +1296,357 @@
         <value>यहाँ से हम अपने दोस्तों और बाकी स्टूडेंट्स को सर्च कर सकते हैं |</value>
     </entry>
     <entry>
-        <key>TOOLTIP_SEARCH_ANYONE_1203</key>
-        <value>এখান থেকে আমরা নিজের বন্ধুদের আর বাকি ছাত্র দেড় কে সার্চ করতে পারবো।</value>
+        <key>NOTIFICATION_DESCRIPTION_DISABLED</key>
+        <value>Note : Aapki notifications Off hai. Permananent on karne ke liye yahan click kare.</value>
     </entry>
     <entry>
-        <key>FREE_TRIAL_ENTER_NAME_TEXT_784</key>
-        <value>आपके टीचर और सहपाठी आपको इस नाम से पुकारेंगे</value>
+        <key>INBOX_SCREEN_CTA_TEXT_NORMAL</key>
+        <value>Find More Courses</value>
     </entry>
     <entry>
-        <key>FREE_TRIAL_ENTER_NAME_TEXT_1880</key>
-        <value>আপনার টিচার আর সহপাঠী রা আপনাকে এই নামে ডাকবেন ।</value>
+        <key>EXPLORE_TYPE_FFCOURSE_TIP</key>
+        <value>Enjoy your Free Trial!</value>
     </entry>
     <entry>
-        <key>FREE_TRIAL_PAYMENT_TEST_ID_784</key>
-        <value>102</value>
-    </entry>
-    <entry>
-        <key>FREE_TRIAL_PAYMENT_TEST_ID_1880</key>
-        <value>1884</value>
-    </entry>
-    <entry>
-        <key>GRAMMAR_CONTINUE_BUTTON_TEXT_151</key>
-        <value>जारी रखें</value>
-    </entry>
-    <entry>
-        <key>GRAMMAR_CONTINUE_BUTTON_TEXT_1203</key>
-        <value>চালিয়ে যান</value>
-    </entry>
-    <entry>
-        <key>GRAMMAR_START_BUTTON_TEXT_151</key>
-        <value>शुरू करें</value>
+        <key>SETTINGS_SIGN_IN_PROMPT</key>
+        <value>You need to sign in or register to access this section.</value>
     </entry>
     <entry>
         <key>GRAMMAR_START_BUTTON_TEXT_1203</key>
         <value>এবার শুরু করা যাক</value>
     </entry>
     <entry>
-        <key>GRAMMAR_CHECK_BUTTON_TEXT_151</key>
-        <value>चेक करें</value>
+        <key>POSTAL_ADDRESS</key>
+        <value>Correct Postal Address</value>
     </entry>
     <entry>
-        <key>GRAMMAR_CHECK_BUTTON_TEXT_1203</key>
-        <value>চেক করুন</value>
+        <key>FREE_TRIAL_ENTER_NAME_TEXT_784</key>
+        <value>आपके टीचर और सहपाठी आपको इस नाम से पुकारेंगे</value>
     </entry>
     <entry>
-        <key>FREE_TRIAL_POPUP_TITLE_TEXT_784</key>
-        <value>जरुरी जानकारी</value>
+        <key>TOOLTIP_LEADERBOARD_SOTW_1206</key>
+        <value>ਇੱਕ ਹਫ਼ਤੇ ਵਿੱਚ ਸਭ ਤੋਂ ਵੱਧ ਮਿਹਨਤ ਕਰਨ ਵਾਲੇ ਵਿਦਿਆਰਥੀ ਨੂੰ ਹਫ਼ਤੇ ਦਾ ਵਿਦਿਆਰਥੀ ਬਣਾਇਆ ਜਾਂਦਾ ਹੈ।</value>
+    </entry>
+    <entry>
+        <key>helpline_number</key>
+        <value>08634503202</value>
+    </entry>
+    <entry>
+        <key>GRAMMAR_START_BUTTON_TEXT_1210</key>
+        <value>ஆரமிக்கவும்</value>
+    </entry>
+    <entry>
+        <key>IS_CONVERSATION_ROOM_ACTIVE</key>
+        <value>false</value>
+    </entry>
+    <entry>
+        <key>GRAMMAR_CONTINUE_BUTTON_TEXT_1203</key>
+        <value>চালিয়ে যান</value>
+    </entry>
+    <entry>
+        <key>TRAIL_END_SCREEN_MESSAGE</key>
+        <value>Your 7 day trial has ended! Access all your courses now &#x1f447;</value>
+    </entry>
+    <entry>
+        <key>force_upgrade_after_version</key>
+        <value>40102</value>
+    </entry>
+    <entry>
+        <key>P2P_CALL_SHARE_TEXT_151</key>
+        <value>मैं English सीख रहा हूँ ,जहाँ enviroment मिलता है बेझिझक नए लोगों से बात करने का !तुम भी सीख सकते हो.
+        </value>
+    </entry>
+    <entry>
+        <key>TOOLTIP_POINTS_HISTORY_SCREEN_1206</key>
+        <value>ਅਸੀਂ ਦੇਖ ਸਕਦੇ ਹਾਂ ਕਿ ਇਸ ਵਿਦਿਆਰਥੀ ਨੇ ਇੱਥੋਂ ਕਿਵੇਂ ਅੰਕ ਪ੍ਰਾਪਤ ਕੀਤੇ</value>
+    </entry>
+    <entry>
+        <key>GRAMMAR_CHECK_BUTTON_TEXT_1210</key>
+        <value>சரி பார்க்கவும்</value>
+    </entry>
+    <entry>
+        <key>TOOLTIP_ONLINE_STATUS_1207</key>
+        <value>आता कोणते विद्यार्थी ऑनलाइन आहेत हे आपण शोधू शकतो</value>
+    </entry>
+    <entry>
+        <key>TOOLTIP_ONLINE_STATUS_1211</key>
+        <value>ఇప్పుడు మనం ఆన్‌లైన్‌లో ఉన్న విద్యార్థులను తెలుసుకోవచ్చు</value>
+    </entry>
+    <entry>
+        <key>TOOLTIP_LEADERBOARD_SOTW_1207</key>
+        <value>आठवडाभरात सर्वात जास्त मेहनत करणाऱ्या विद्यार्थ्याला आठवडाभरातील स्टुडंट ऑफ द वीक बनवले जाते.</value>
+    </entry>
+    <entry>
+        <key>BB_TOOL_TIP_FIRST_TIME_TEXT</key>
+        <value>Yeh aapke courses ki inbox screen hai. Aap jo bhi courses me enroll karte hai vo aapko es screen pe mil
+            jayengey. Aap first 7 days tak jitne chahe utne courses avail kar sakte hai completely free
+        </value>
+    </entry>
+    <entry>
+        <key>PAYMENT_SUMMARY_CTA_LABEL_FREE</key>
+        <value>Start for Free</value>
+    </entry>
+    <entry>
+        <key>TOOLTIP_LEADERBOARD_SOTD_1206</key>
+        <value>ਇੱਕ ਦਿਨ ਵਿੱਚ ਸਭ ਤੋਂ ਵੱਧ ਮਿਹਨਤ ਕਰਨ ਵਾਲੇ ਵਿਦਿਆਰਥੀ ਨੂੰ ਦਿਨ ਦਾ ਵਿਦਿਆਰਥੀ ਬਣਾਇਆ ਜਾਂਦਾ ਹੈ।</value>
+    </entry>
+    <entry>
+        <key>CERTIFICATE_URL</key>
+        <value>https://s3.ap-south-1.amazonaws.com/www.static.skills.com/Icons/Certificate.jpg</value>
+    </entry>
+    <entry>
+        <key>referral_text_video</key>
+        <value>Mein Spoken English seekh raha hu strangers se English me baat karke. Agar tum bhi seekhna chahte ho to
+            +91-9004823480 pe call karke strangers k saath Spoken English practice karo.
+        </value>
+    </entry>
+    <entry>
+        <key>FREE_TRIAL_DIALOG_BTN_TXT</key>
+        <value>Buy Now</value>
+    </entry>
+    <entry>
+        <key>EXPLORE_TYPE_NORMAL_TIP</key>
+        <value>Get all course pass for 1-Year</value>
     </entry>
     <entry>
         <key>FREE_TRIAL_POPUP_TITLE_TEXT_1880</key>
         <value>গুরুত্বপূর্ণ তথ্য</value>
     </entry>
     <entry>
-        <key>FREE_TRIAL_POPUP_BODY_TEXT_784</key>
-        <value>यह एक 90 दिनों का कोर्स है\nऔर try करने के बाद अगर आप चाहें तो इसे ₹499 में खरीद सकते
-            हैं\n \nक्या आप इस कोर्स को एक दिन के लिए बिल्कुल मुफ्त में try करना चाहते हैं?
+        <key>SUBSCRIPTION_COURSE_IDS</key>
+        <value>60</value>
+    </entry>
+    <entry>
+        <key>TOOLTIP_CONVERSAITON_1210</key>
+        <value>உங்கள் வகுப்பு தோழர்கள் யார் என்பதை இங்கே பார்க்கலாம்</value>
+    </entry>
+    <entry>
+        <key>GRAMMAR_CONTINUE_BUTTON_TEXT_151</key>
+        <value>जारी रखें</value>
+    </entry>
+    <entry>
+        <key>FREE_TRIAL_ENTER_NAME_TEXT_1891</key>
+        <value>உங்கள் பெயரை இங்கு குறிப்பிடவும்</value>
+    </entry>
+    <entry>
+        <key>REFERRAL_SHARE_TEXT_1210</key>
+        <value>நான் Bharat இன் சிறந்த ஆசிரியர்களிடம் ஸ்போக்கன் இங்கிலீஷ் மற்றும் ஆளுமை மேம்பாட்டைக் கற்றுக்கொள்கிறேன்
+            வாருங்கள் இன்றிலிருந்து நாம் சேர்ந்து கற்கலாம் இதோ என்னிடமிருந்து உங்களுக்கான Rs. ** OFF: Use my code ****.
+            Download the app by clicking on the link:
         </value>
     </entry>
     <entry>
-        <key>FREE_TRIAL_POPUP_BODY_TEXT_1880</key>
-        <value>এটি একটি 90 দিনের কোর্স আর\n এটা try করার পর আপনি চাইলে এই কোর্স টি ₹499 এ কিনে
-            subscribe করতে পারেন।\n \nআপনি কি এই কোর্স টা একদিনের জন্য বিনামূল্যে try করতে চান?
+        <key>TOOLTIP_SEARCH_ANYONE_1210</key>
+        <value>இங்கிருந்து நாம் நமது நண்பர்களையோ அல்லது மற்ற மாணவர்களையோ தேடலாம்</value>
+    </entry>
+    <entry>
+        <key>NPS_EVENT_LIST</key>
+        <value>
+            [{"id":1,"event":"PAYMENT_SUCCESS","event_name":"nps_course_payment","filter_by":"EVENT","day":-99,"enable":true},{"id":2,"event":"PAYMENT_FAILED","event_name":"nps_course_payment_failed","filter_by":"EVENT","day":-99,"enable":true},{"id":3,"event":"PRACTICE_COMPLETED","event_name":"nps_first_practise","filter_by":"DAY","day":3,"enable":true},{"id":4,"event":"FIRST_CLASS","event_name":"nps_first_class","filter_by":"DAY","day":0,"enable":true},{"id":5,"event":"STANDARD_TIME_EVENT","event_name":"nps_overall_course_7_days","filter_by":"DAY","day":7,"enable":true},{"id":6,"event":"PRACTICE_COMPLETED","event_name":"nps_first_practise","filter_by":"DAY","day":7,"enable":true},{"id":7,"event":"PRACTICE_COMPLETED","event_name":"nps_first_practise","filter_by":"DAY","day":5,"enable":true}]
         </value>
     </entry>
     <entry>
-        <key>FREE_TRIAL_POPUP_YES_BUTTON_TEXT_784</key>
-        <value>जी हाँ</value>
+        <key>registration_url</key>
+        <value>https://pages.joshtalks.com/spoken-english-course-click2pay-299/</value>
     </entry>
     <entry>
-        <key>FREE_TRIAL_POPUP_YES_BUTTON_TEXT_1880</key>
-        <value>হ্যাঁ</value>
+        <key>utm_source_filter</key>
+        <value>["Whatsappusers"]</value>
     </entry>
     <entry>
-        <key>FREE_TRIAL_COURSE_DETAIL_BTN_TXT_784</key>
-        <value>1 दिन के लिए मुफ्त में प्रयोग करें</value>
-    </entry>
-    <entry>
-        <key>FREE_TRIAL_COURSE_DETAIL_BTN_TXT_1880</key>
-        <value>১ দিনের জন্য বিনামূল্যে প্রয়োগ করুন।</value>
-    </entry>
-    <entry>
-        <key>GRAMMAR_TEST_COMPLETE_DESCRIPTION_151</key>
-        <value>ग्रामर का लेवल चेक करने के लिए आपके सभी जवाबों को रिकॉर्ड कर लिया गया हैं \n \n आपकी
-            ग्रामर के Current Status के आधार पर आपके आगे का कोर्स सेट किया जा रहा हैंं
+        <key>FREE_TRIAL_POPUP_HUNDRED_POINTS_TEXT_1889</key>
+        <value>ജീവിതത്തിൽ Serious ആയ വിദ്യാർത്ഥികളുടെ കുടുംബമാണ് ജോഷ് Skills .കഠിനാധ്വാനം ചെയ്യാനും മുന്നോട്ട് പോകാനും
+            ആഗ്രഹിക്കുന്നവർ. ഈ കോഴ്‌സിൽ ചേരുന്നതിന് മുമ്പ്, നിങ്ങൾ ഒരു ദിവസം ഈ കോഴ്‌സ് ഉപയോഗിക്കേണ്ടതുണ്ട്. ഇത് തികച്ചും
+            സൗജന്യമാണ്.\\n \\n ഇംഗ്ലീഷ് പഠിക്കുന്നതിൽ നിങ്ങൾ എത്രത്തോളം Serious ആണെന്ന് ഞങ്ങൾ കാണാൻ ആഗ്രഹിക്കുന്നു.
+            നിങ്ങൾ ഇന്ന് 100 പോയ്ന്റ്സ് നേടാൻ ശ്രമിക്കുക. അടുത്ത 24 മണിക്കൂറിനുള്ളിൽ നിങ്ങൾ 100 പോയ്ന്റ്സ് നേടിയാൽ
+            നിങ്ങൾക്ക് നാളെ കോഴ്‌സിൽ പ്രവേശനം നേടാം.
         </value>
     </entry>
     <entry>
-        <key>GRAMMAR_TEST_COMPLETE_DESCRIPTION_1203</key>
-        <value>গ্রামার এর লেবেল চেক করার জন্য আপনার সব উত্তর গুলো ক রেকর্ড করা হয়েছ। \n \n আপনার
-            গ্রামার এর Current Status এর আধার এ আপনার কোর্স সেট করা হয়েছে।
+        <key>helpline_end_time</key>
+        <value>18:00:00</value>
+    </entry>
+    <entry>
+        <key>INBOX_SCREEN_CTA_TEXT_SUBSCRIPTION</key>
+        <value>Find More Courses</value>
+    </entry>
+    <entry>
+        <key>TOOLTIP_LEADERBOARD_SOTW_1211</key>
+        <value>ఎవరైతే ఒక వారంలో అందరికంటే ఎక్కువ కష్టపడతారో వారు స్టూడెంట్ ఆఫ్ ది వీక్ అవుతారు</value>
+    </entry>
+    <entry>
+        <key>TOOLTIP_POINTS_HISTORY_SCREEN_151</key>
+        <value>इस student ने points कैसे कमाए हम यहाँ से देख सकते है</value>
+    </entry>
+    <entry>
+        <key>GRAMMAR_TEST_COMPLETE_DESCRIPTION_1210</key>
+        <value>உங்கள் அனைத்து பதில்களும் உங்கள் இலக்கண நிலையை அறிய பதிவு செய்யப்பட்டுள்ளன. \n \n உங்கள் இலக்கணத்தின்
+            தற்போதைய நிலைஏற்ப உங்கள் எதிர்கால பாடத்திட்டம் அமைக்கப்படுகிறது.
         </value>
     </entry>
     <entry>
-        <key>FREE_TRIAL_ENDED_FEATURE_LOCKED_151</key>
-        <value>आपका free trial खतम हो गया है. Please course में admission लें.</value>
+        <key>PROFILE_PIC_SUCCESSFUL_TEXT</key>
+        <value>Profile picture successfully uploaded</value>
     </entry>
     <entry>
-        <key>FREE_TRIAL_ENDED_FEATURE_LOCKED_1203</key>
-        <value>আপনার free trial শেষ হয়ে গেছে. Please course এ admission নিন.</value>
+        <key>TOOLTIP_LESSON_GRAMMAR_1209</key>
+        <value>ഇന്നത്തെ ഈ ഭാഗത്തിൽ നമുക്ക് നമ്മുടെ grammar level മനസിലാക്കാം.</value>
+    </entry>
+    <entry>
+        <key>TOOLTIP_OPEN_PROFILE_1207</key>
+        <value>तुम्ही कोणाचेही Profile उघडू शकता.</value>
+    </entry>
+    <entry>
+        <key>GRAMMAR_CONTINUE_BUTTON_TEXT_1209</key>
+        <value>തുടർന്നു ചെയുക</value>
+    </entry>
+    <entry>
+        <key>course_details</key>
+        <value>[{"course_id":1,"course_name":"Spoken english with Vedant","course_title":"The 90 Day Spoken English
+            Course","course_description":"Master Spoken English Experts ke saath: Improve Karo Apni Fluency &amp;
+            Confidence with guaranteed
+            results.","video_thumbnail":"https://s3.ap-south-1.amazonaws.com/www.static.skills.com/misc/Spoken+English+Vedant.jpg","video_url":"https://s3.ap-south-1.amazonaws.com/www.static.skills.com/Course+Trailers/trailer-v1.mp4","bg_image":"https://s3.ap-south-1.amazonaws.com/www.static.skills.com/misc/1489187.jpg","course_rating":4.4,"course_enrolled_user":37463,"course_duration":90,"course_price":499,"course_discount_price":299,"feedback_image_url":"https://s3.ap-south-1.amazonaws.com/www.static.skills.com/misc/Course_id_1_Feedback.jpg","course_mentor_image_url":"https://s3.ap-south-1.amazonaws.com/www.static.skills.com/misc/Course_id_1_teacher.jpg","course_mentor":[{"id":1,"name":"Vedant
+            Maheshwari","image_url":"https://s3.ap-south-1.amazonaws.com/www.static.skills.com/misc/Vedant.png","from":"Kota,
+            Rajasthan","qualification_details":"Public Speaker &amp; Business Professional with 5+ Years of Experience,
+            having spoken at over 25 conferences in India and outside."},{"id":2,"name":"Himanshi
+            Arora","image_url":"https://s3.ap-south-1.amazonaws.com/www.static.skills.com/misc/IMG-20200123-WA0004.jpg","from":"New
+            Delhi","qualification_details":"Graduate of prestigious Delhi University, Professional Debater &amp; Public
+            Speaker, passionate about teaching"},{"id":3,"name":"Saurav
+            Chaudhary","image_url":"https://s3.ap-south-1.amazonaws.com/www.static.skills.com/misc/83710071_1058016897876778_5368775352690671616_n.jpg","from":"Durgapur,
+            West Bangal","qualification_details":"Content Creator &amp; Marketer, Professional Public Speaker &amp;
+            Educator."}],"course_information":[{"id":3,"is_list":false,"title":"Course Description","desc":"Judiye
+            20,000+ logo ko jo Josh ke saath English bolna aur padhna seekh rahe hai. Iss Spoken English Course ko aise
+            design kiya gaya hai, ki koi bhi basic learner iss course se apne theoretical and practical grammar ko
+            improve kar sakta hai. Everyday situations mei english ko kaise most effectively use kiya jaa sakta hai -
+            iss par bhi extra dhyaan diya jaata hai.&lt;br/&gt;&lt;br/&gt;Aaj ki duniya mei English bolna is a very
+            important and nessecary skill to grow in your career and in life. English difficult sirf unke liye hota hai
+            jo practice nahi kar paate - iss course mei daily video lessons &amp; daily practice ke saath aap english
+            mei face kari gayi sabse common problems ko tackle karne aur solve karna seekhenge.&lt;br/&gt;&lt;br/&gt;Har
+            ek concept ko aise design kiya gaya hai ki woh fundamentals par dhyan dete hue ek mazedaar tareeke se
+            English sikhata hai. Power Tools ke saath aapko grammar rules bhi yaad ho jayenge. Weekly PDF Notes &amp;
+            Worksheets ko use karke aap saare padhaye gaye concepts ko revise and review kar sakte hai - isse practice
+            bhi barkarar rahegi aur aapko roz kuch naya seekhne ko milega.&lt;br/&gt;&lt;br/&gt;Review Tests se aap apne
+            progress ko track kar sakte ho. Isse aapko clear ho jayega ki aapki learning kitni acchi chal rahi hai, aur
+            aapko kahan par mehnat karne ki zarurat hai. Finally, jab humare basic concepts first 2 months mei clear ho
+            jayenge, hum chalenge advanced concepts ki taraf jisse hum apne Spoken English ko aur zyaada enhance aur
+            better kar sakte hai."},{"id":2,"is_list":true,"title":"Course Requirements","desc":"Aapko basic English
+            aana chahiye: how to read and pronounce basic words of english.~Will power to learn &amp; determination to
+            succeed is very important"},{"id":1,"is_list":true,"title":"Mai Kya Seekhunga?","desc":"Fluently English
+            Bolna with Correct Grammar &amp; Vast Vocabulary~Interview Preparation Techniques for Jobs, Competitive
+            Exams~Confidently English Mei Kisi Bhi Topic par Baat Karna~Grammar Rules, Tips &amp; Tricks Jo Help Karenge
+            Exams Aur Life Mei~Practical English for Everyday Situations ~Bina Jhijhak ke Fluently English
+            Bolna"}],"course_structure":[{"id":1,"title":"Week 1","cDetail":["Course Introduction + Structure","Basics
+            (Are Hindi and English so different?)","Introduction/Greetings","Understanding Sentences 1","Undertsnding
+            Sentences 2","Listening Practice 1","Introduction to Tenses","Weekly V-log"]},{"id":2,"title":"Week
+            2","cDetail":["Past Tense","Story telling","Good Manners","Future Tense","10 Golden Tips For Speaking
+            Fluentlly","Let's Revise","Test Day"]},{"id":3,"title":"Week 3","cDetail":["Present Tense 1","Present Tense
+            2","Developing the Correct Habits","Talk About: My Routine","Listening Practice","Talk About: My
+            Profession","V-Log"]},{"id":4,"title":"Week 4","cDetail":["Negatives 1","Negatives 2","Offers :
+            Acceptance","Offers : Rejection","Listening Practice","Unit Revision 1","MEGA Test
+            1"]},{"id":5,"title":"Week 5","cDetail":["Modals 1","Modals 2","Mentoring","Fanboys","Listening
+            Practice","Fanboys 2","V-log"]},{"id":6,"title":"Week 6","cDetail":["Adverb /
+            Adjectives","Compliments","Active Passive","Fevicol Words - 1","Fevicol Words - 2","Lets Revise 2","Test
+            Day"]},{"id":7,"title":"Week 7","cDetail":["Forms of Be 1","Forms of Be 2","Describing someone (
+            Person)","Forms of Be 3","Listening practice","Practical lessons","V log/Test day"]},{"id":8,"title":"Week
+            8","cDetail":["Continuous tense 1","Continuous tense 2","Continuous tense 3","Listening Practice","How to
+            talk about anything to anyone","Invitations and permissions","Test day"]},{"id":9,"title":"Week
+            9","cDetail":["Perfect Tense 1","Perfect Tense 2","Has/Have Ownership","Perfect Tense 3","Listening
+            Practice","Unit Revision 2"]},{"id":10,"title":"Week 10","cDetail":["Questions 1","Questions
+            2","Commands","Listening Practice","Sample GD","Narrations","Vlog"]},{"id":11,"title":"Week
+            11","cDetail":["Types of Phrases 1","Types of Phrases 2","Convesations Basic","Conversations
+            Advanced","Workplace communication","V log","Video Project 1"]},{"id":12,"title":"Week 12","cDetail":["Lets
+            get smarter- 1","Lets get smarter- 2","V log","Smarter Phrases - usage of Quotes","Listening Practice","V
+            log","Video Project 2","Interveiws 1 (GD round)","Interveiws 2","Interveiws 3","V-log","Public
+            Speaking","Final TEST"]}]},{"course_id":4,"course_name":"Personality Development Course with
+            Warikoo","course_title":"Personality Development Course with Warikoo","course_description":"Seekho Secrets
+            Ek Impressive &amp; Confident Personality Banane Ki: Master Self Confidence, Public Speaking &amp; more with
+            Daily Video Lessons From India’s Favourite Entrepreneur Ankur
+            Warikoo.","video_thumbnail":"https://s3.ap-south-1.amazonaws.com/www.static.skills.com/misc/Personality_development.png","video_url":"https://s3.ap-south-1.amazonaws.com/www.static.skills.com/Course+Trailers/Warikoo_Trailer_40Sec.mp4","bg_image":"https://s3.ap-south-1.amazonaws.com/www.static.skills.com/misc/1489187.jpg","course_rating":4.8,"course_enrolled_user":5492,"course_duration":60,"course_price":499,"course_discount_price":299,"feedback_image_url":"https://s3.ap-south-1.amazonaws.com/www.static.skills.com/misc/Course_id_4_Feedback.jpg","course_mentor_image_url":"https://s3.ap-south-1.amazonaws.com/www.static.skills.com/misc/Course_id_1_teacher.jpg","course_mentor":[{"id":1,"name":"Ankur
+            Warikoo","image_url":"https://s3.ap-south-1.amazonaws.com/www.static.skills.com/misc/ankur-warikoo.jpg","from":"New
+            Delhi","qualification_details":"Co-Founder &amp; EX-CEO of NearBuy.com, One of India's Top Entrepreneur
+            &amp; Public Speakers. With more than 20 years of experience in corporates and startups.
+            "}],"course_information":[{"id":3,"is_list":false,"title":"Course Description","desc":"For the first time
+            ever in India, Entrepreneur, Speaker, Author &amp; Coach Ankur Warikoo aapko sikhayenge ek dynamic aur
+            influencing personality banane ke taur aur tareeke. Kaun nahi chahta ki woh smart, confident, influencing
+            and compelling personality nahi bane? Ek acchi personality hona aapke personal aur professional life mei
+            bahut zaruuri hai, aur ek competitive advantage bhi hai.&lt;br/&gt;&lt;br/&gt;So ek acchi personality banti
+            kaise hai? Iss course ko 4 parts mei divide kiya gaya hai, jo aapko ek better personality banne mei help
+            karegi:&lt;br/&gt;&lt;br/&gt;Internal Influence: Khud Mei Changes Laana, improving your habits, working on
+            yourself is very important and there is NO other personality course in India that focuses not just on
+            external skills, but also on internal change and growth.&lt;br/&gt;&lt;br/&gt;External Influence: Duusro ko
+            kaise influence kare, unke saath interact kare aur ek zabardast impression de - how to get people to listen
+            to you, how to persuade and negotiate, becoming a leader &amp; improving body language.&lt;br/&gt;&lt;br/&gt;Etiquettes
+            &amp; Formal Techniques: How to dress, importance of body language, Table Manners, Business Conversations.&lt;br/&gt;&lt;br/&gt;Leadership,
+            Career Planning &amp; Growth: How to become a leader, Leadership Skills, How to Plan your career, Looking at
+            life with a long term perspective.&lt;br/&gt;&lt;br/&gt;Iske Saath Hum course mei invite karenge alag alag
+            influencers, industry leaders aur coaches ko jo aapko sikhanyenge ki personality banane ke aur kya
+            techniques hote hai. Ultimately, aap apni personality ko life-long improve karte rahenge. This course is
+            meant to be a kick-start on all things that will help you improve and make a personality that will impress
+            everyone around you!"},{"id":2,"is_list":true,"title":"Course Requirements","desc":"No requirements,
+            everyone can enroll and learn from this wonderful course."},{"id":1,"is_list":true,"title":"Mai Kya
+            Seekhunga?","desc":"Ek Dynamic Personality Banne Ke Tips &amp; Secrets.~Khud Ke Habits &amp; Personality Ko
+            Improve Karne Ke Tareeke.~Kaise Dusro Ke Saath Behave Kare &amp; Unhe Influence Kare.~Long Term Career
+            Planning Template.~Apna Confidence aur Motivation Improve Karna.~Body Language, Formal &amp; Business
+            Etiquettes.~Professional Behavior Techniques.~Leadership Skills That Help You Excel in
+            Life!"}],"course_structure":[{"id":1,"title":"Week 1","cDetail":["You are the most important person in the
+            world, for yourself","How to Invest in Yourself","Positivity Power"]},{"id":2,"title":"Week
+            2","cDetail":["Habit Building","Goal Setting - SMART goals","Beating
+            Procrastination"]},{"id":3,"title":"Week 3","cDetail":["Unit Test 1","Self Confidence","Anger
+            Management"]},{"id":4,"title":"Week 4","cDetail":["Stress Management","Ego Management","Time
+            Management"]},{"id":5,"title":"Week 5","cDetail":["Why Influence Others?","Body Language","Presentation
+            Skills"]},{"id":6,"title":"Week 6","cDetail":["Public Speaking
+            1","Negotiation","Persuasion","Teamwork"]},{"id":7,"title":"Week 7","cDetail":["Unit Test 2","First
+            Impression","Leaders v/s Managers","Planning For Your Career","Winners Mindset"]},{"id":8,"title":"Week
+            8","cDetail":["Business Awareness","Conversation Skills","Nail Your Next Interview","Why You Need A Mentor
+            In Your Life","Problem Solving &amp; Decisions","Unit Test 3"]}]}]
+        </value>
+    </entry>
+    <entry>
+        <key>payment_url</key>
+        <value>https://pages.joshtalks.com/spoken-english-course-299-app/</value>
+    </entry>
+    <entry>
+        <key>TOOLTIP_USER_PROFILE_SCREEN_1203</key>
+        <value>আমরা যত বেশি পরিশ্রম করব, তত বেশি পয়েন্ট পাব</value>
+    </entry>
+    <entry>
+        <key>COURSE_PROGRESS_TOOLTIP_TEXT</key>
+        <value>Check when your certificate examinations are and which lesson you are currently at</value>
+    </entry>
+    <entry>
+        <key>POINTS_HISTORY_TITLES</key>
+        <value>[{"label":"Grammar Video Watched","index":1},{"label":"Correct Answer in Quiz (Per
+            Question)","index":2},{"label":"Vocabulary Practice Submitted (Per Word)","index":3},{"label":"Correct
+            Answer in Vocab Revision (Per Question)","index":4},{"label":"Reading Practice
+            Submitted","index":5},{"label":"Speaking with Practice Partner (+2 points per
+            minute)","index":6},{"label":"English Spoken in Group Chat (Per Minute)","index":7},{"label":"English Spoken
+            for 60 Mins in a Day","index":8},{"label":"Call pickup from Practice Partner (+5 points per
+            call)","index":9},{"label":"1 Lesson Completed in a Day","index":10},{"label":"3 Lessons Completed in a
+            Day","index":11},{"label":"5 Lessons Completed in a Day","index":12},{"label":"10 Lessons Completed in a
+            Day","index":13},{"label":"Beginner Certificate Exam Passed","index":14},{"label":"Intermediate Certificate
+            Exam Passed","index":15},{"label":"Advanced Certificate Exam Passed","index":16},{"label":"Course
+            Completed","index":17},{"label":"3 Days Streak","index":18},{"label":"5 Days
+            Streak","index":19},{"label":"15 Days Streak","index":20},{"label":"30 Days Streak","index":21},{"label":"60
+            Days Streak","index":22},{"label":"90 Days Streak","index":23},{"label":"150 Days
+            Streak","index":24},{"label":"Student Of The Year","index":25},{"label":"Student Of The
+            Month","index":26},{"label":"Student Of The Week","index":27},{"label":"Student Of The
+            Day","index":28},{"label":"Carried Forward","index":29},{"label":"Free Trial Points Carried
+            Forward","index":30},{"label":"Conversation Room Points (+1 point per minute)","index":31},
+            {"label":"Speaking with New Practice Partner (+3 points per minute)","index":32}, {"label":"Speaking with
+            New Practice Partner (+4 points per minute)","index":33}]
+        </value>
+    </entry>
+    <entry>
+        <key>FREE_TRIAL_POPUP_TITLE_TEXT_1891</key>
+        <value>முக்கியமான தெரிவிப்பு</value>
+    </entry>
+    <entry>
+        <key>TOOLTIP_LESSON_GRAMMAR_151</key>
+        <value>आज इस भाग में हम अपने ग्रामर के लेवल का पता लगाएंगे</value>
+    </entry>
+    <entry>
+        <key>GRAMMAR_START_BUTTON_TEXT_1206</key>
+        <value>ਸ਼ੁਰੂ ਕਰੋ</value>
     </entry>
     <entry>
         <key>FREE_TRIAL_POPUP_HUNDRED_POINTS_TEXT_784</key>
@@ -907,131 +1657,119 @@
         </value>
     </entry>
     <entry>
-        <key>FREE_TRIAL_POPUP_HUNDRED_POINTS_TEXT_1880</key>
-        <value>Josh Skills সেই students দের পরিবার যারা serious নিজের life এ, যারা পরিশ্রম করতে চায় আর জীবনে এগিয়ে
-            যেতে চায়। এই কোর্স এ enroll হওয়ার পর আপনাকে এক দিন এই কোর্স টি use করতে হবে একদম বিনামূল্যে ।\n \n আমি
-            দেখতে চাই যে, আপনি ইংলিশ শেখার জন্য serious কিনা । আপনাকে আজ 100 points earn করতে হবে। যদি আপনি 24 ঘন্টায়ে
-            100 points earn করেন তাহলে আপনি এই কোর্স এ অ্যাডমিশন নিতে পারবেন।
-        </value>
-    </entry>
-    <entry>
-        <key>SHOW_NEW_GROUP_BTN</key>
-        <value>false</value>
-    </entry>
-    <entry>
-        <key>REQUEST_TO_JOIN_QUESTION</key>
-        <value>Why do you want to join this group?</value>
-    </entry>
-    <entry>
-        <key>ADD_PROFILE_PHOTO_TEXT_151</key>
-        <value>आपके टीचर और कोर्स के बाकी स्टूडेंट्स आपको इस फोटो से पेहचानेंगे</value>
-    </entry>
-    <entry>
-        <key>ADD_PROFILE_PHOTO_TEXT_1203</key>
-        <value>আপনার টিচার আর এই কোর্স এর স্টুডেন্টস রা আপনাকে এই ফটো দেখে চিনবে</value>
-    </entry>
-    <entry>
-        <key>ADD_PROFILE_PHOTO_TEXT_1206</key>
-        <value>ਤੁਹਾਡੇ ਅਧਿਆਪਕ ਅਤੇ ਕੋਰਸ ਦੇ ਹੋਰ ਵਿਦਿਆਰਥੀ ਤੁਹਾਨੂੰ ਇਸ ਫੋਟੋ ਤੋਂ ਪਛਾਣ ਲੈਣਗੇ</value>
-    </entry>
-    <entry>
-        <key>ADD_PROFILE_PHOTO_TEXT_1207</key>
-        <value>तुमचे शिक्षक आणि या कोर्सचे विद्यार्थी तुम्हाला हा फोटो पाहून ओळखतील</value>
-    </entry>
-    <entry>
-        <key>ADD_PROFILE_PHOTO_TEXT_1209</key>
-        <value>താങ്കളുടെ ടീച്ചറും കോഴ്സിലെ മറ്റ് വിദ്യാർത്ഥികളും ഈ ഫോട്ടോയിൽ നിന്നും നിങ്ങളെ തിരിച്ചറിയും</value>
-    </entry>
-    <entry>
-        <key>ADD_PROFILE_PHOTO_TEXT_1210</key>
-        <value>உங்கள் புகைப்படத்தைப் பதிவேற்றவும்</value>
-    </entry>
-    <entry>
-        <key>ADD_PROFILE_PHOTO_TEXT_1211</key>
-        <value>ఈ ఫోటో నుండి మీ ఉపాధ్యాయులు మరియు కోర్సులోని ఇతర విద్యార్థులు మిమ్మల్ని గుర్తిస్తారు</value>
-    </entry>
-    <entry>
-        <key>REFERRAL_WHATAPP_MESSAGE</key>
-        <value>https://www.youtube.com/watch?v=CMZohcIMQfc
-            Mai Bharat :flag-in: ke best teachers se Spoken English aur Personality Development seekh raha hu. Mere
-            saath seekhna abhi shuru karo :muscle:. Ye lo meri taraf se tumhe ₹50 OFF: Use my code 58HEM. Download the
-            app by clicking on the link
-            https://joshskills.app.link/YlhB9VN0Eqb
-        </value>
-    </entry>
-    <entry>
-        <key>IS_INVITATION_FOR_CALL_ENABLED</key>
-        <value>false</value>
-    </entry>
-    <entry>
-        <key>CERTIFICATE_SHARE_TEXT_WHATSAPP</key>
-        <value>I am proud to share that I have passed the Ultimate Spoken English Certification Exam 🥳🥳 \n
-            This achievement is another step towards becoming a better version of myself 🚀🚀 \n
-            Speaking to other learners and listening to classes on the JoshSkills app have really helped me improve my
-            English Fluency.\n
-            Download the app from :
-        </value>
-    </entry>
-    <entry>
-        <key>CERTIFICATE_SHARE_TEXT_FB</key>
-        <value>I am proud to share that I have passed the Ultimate Spoken English Certification Exam 🥳🥳 \n
-            This achievement is another step towards becoming a better version of myself 🚀🚀 \n
-            Speaking to other learners and listening to classes on the JoshSkills app have really helped me improve my
-            English Fluency.\n
-            Download the app from :
-        </value>
-    </entry>
-    <entry>
         <key>CERTIFICATE_SHARE_TEXT_LINKEDIN</key>
-        <value>I am proud to share that I have passed the Ultimate Spoken English Certification Exam 🥳🥳 \n
-            This achievement is another step towards becoming a better version of myself 🚀🚀 \n
+        <value>I am proud to share that I have passed the Ultimate Spoken English Certification Exam &#x1f973;&#x1f973;
+            \n
+            This achievement is another step towards becoming a better version of myself &#x1f680;&#x1f680; \n
             Speaking to other learners and listening to classes on the JoshSkills app have really helped me improve my
             English Fluency.\n
             Download the app from :
         </value>
     </entry>
     <entry>
-        <key>CERTIFICATE_SHARE_TEXT_INSTA</key>
-        <value>I am proud to share that I have passed the Ultimate Spoken English Certification Exam 🥳🥳 \n
-            This achievement is another step towards becoming a better version of myself 🚀🚀 \n
-            Speaking to other learners and listening to classes on the JoshSkills app have really helped me improve my
-            English Fluency.\n
-            Download the app from :
-        </value>
+        <key>FREE_TRIAL_POPUP_YES_BUTTON_TEXT_1889</key>
+        <value>അതെ</value>
     </entry>
-    <entry>
-        <key>POSTAL_ADDRESS</key>
-        <value>Postal Address</value>
-    </entry>
-    <entry>
-        <key>POSTAL_ADDRESS_SUBHEADING_CERT_FORM</key>
-        <value>Certificate will be sent to this address</value>
-    </entry>
-
     <entry>
         <key>RECORDING_SAVED_TEXT</key>
-        <value>Call recording will be saved in your Downloads folder shortly</value>
+        <value>Call recording will be saved in your device shortly</value>
     </entry>
     <entry>
-        <key>ONBOARDING_COURSE_1212</key>
-        <value>
-            {
-            "title": "Digital Financial Inclusion Course",
-            "course_info_1": "30 day course",
-            "course_info_2": "Complete foundations of financial literacy",
-            "course_info_3": "Complex topics, aasan tareeke mein!"
-            }
+        <key>FREE_TRIAL_ENDED_FEATURE_LOCKED_151</key>
+        <value>आपका free trial खतम हो गया है. Please course में admission लें.</value>
+    </entry>
+    <entry>
+        <key>FREE_TRIAL_COURSE_DETAIL_BTN_TXT_1891</key>
+        <value>நீங்கள் அதை 1 நாளுக்கு இலவசமாகப் பயன்படுத்தலாம்</value>
+    </entry>
+    <entry>
+        <key>TOOLTIP_USER_PROFILE_SCREEN_1211</key>
+        <value>మనం ఎంత కష్టపడి పని చేస్తే అంత ఎక్కువ పాయింట్లు వస్తాయి</value>
+    </entry>
+    <entry>
+        <key>TOOLTIP_LEADERBOARD_SOTM_1206</key>
+        <value>ਇੱਕ ਮਹੀਨੇ ਵਿੱਚ ਸਭ ਤੋਂ ਵੱਧ ਮਿਹਨਤ ਕਰਨ ਵਾਲੇ ਵਿਦਿਆਰਥੀ ਨੂੰ ਮਹੀਨੇ ਦਾ ਵਿਦਿਆਰਥੀ ਬਣਾਇਆ ਜਾਂਦਾ ਹੈ।</value>
+    </entry>
+    <entry>
+        <key>TOOLTIP_SPEAKING_SCREEN_151</key>
+        <value>To complete this section you have to speak to a practice partner for 2 minutes.</value>
+    </entry>
+    <entry>
+        <key>TOOLTIP_POINTS_HISTORY_SCREEN_1211</key>
+        <value>ఈ విద్యార్థి పాయింట్లు ఎలా సంపాదించాడో మనం ఇక్కడ చూడొచ్చు</value>
+    </entry>
+    <entry>
+        <key>COMPLETION_CERTIFICATE_HINT</key>
+        <value>Iss course ke lessons aur practices %s complete karne par aapko ek digital certificate milega</value>
+    </entry>
+    <entry>
+        <key>TOOLTIP_LEADERBOARD_SOTM_1210</key>
+        <value>ஒரு மாதத்தில் அதிக முயற்சி எடுக்கும் மாணவர் "மாதத்தின் மாணவர்"</value>
+    </entry>
+    <entry>
+        <key>TOOLTIP_LEADERBOARD_SOTM_151</key>
+        <value>जो student एक महीने में सबसे ज़्यादा मेहनत करता है वह Student of the Month बनता है</value>
+    </entry>
+    <entry>
+        <key>REFERRAL_SHARE_TEXT_SHARABLE_VIDEO</key>
+        <value>Download the Josh Skills App using the link -</value>
+    </entry>
+    <entry>
+        <key>testing_landing_page</key>
+        <value>true</value>
+    </entry>
+    <entry>
+        <key>START_SUBSCRIPTION_TITLE</key>
+        <value>&#x1f449; India ka pehla Subscription with &#x1f448;</value>
+    </entry>
+    <entry>
+        <key>TOOLTIP_LEADERBOARD_SOTW_1210</key>
+        <value>ஒரு வாரத்தில் அதிக முயற்சி எடுக்கும் மாணவர் "வாரத்தின் மாணவர்" ஆவார்.</value>
+    </entry>
+    <entry>
+        <key>FREE_TRIAL_COURSE_DETAIL_BTN_TXT_1889</key>
+        <value>1 ദിവസത്തേക്ക് സൗജന്യമായി ഉപയോഗിക്കൂ</value>
+    </entry>
+    <entry>
+        <key>GRAMMAR_CONTINUE_BUTTON_TEXT_1210</key>
+        <value>அடுத்து செல்லவும்</value>
+    </entry>
+    <entry>
+        <key>SHOW_AUTOSTART_IMAGE</key>
+        <value>true</value>
+    </entry>
+    <entry>
+        <key>TOOLTIP_LEADERBOARD_SOTD_1203</key>
+        <value>যেই স্টুডেন্ট এক দিনে সব থেকে বেশি পরিশ্রম করে তাকে স্টুডেন্ট অফ দা ডে বানানো হয়।</value>
+    </entry>
+    <entry>
+        <key>TOOLTIP_ONLINE_STATUS_1203</key>
+        <value>এবার আমরা জানতে পারব কি কোন কোন স্টুডেন্ট অনলাইন আছে</value>
+    </entry>
+    <entry>
+        <key>FREE_TRIAL_POPUP_TITLE_TEXT_1881</key>
+        <value>आवश्यक माहिती</value>
+    </entry>
+    <entry>
+        <key>FREE_TRIAL_COURSE_ID</key>
+        <value>16</value>
+    </entry>
+    <entry>
+        <key>NOTIFICATION_DAY_0_1</key>
+        <value>{ "action":"open_url", "image_url":"", "content_title":"Aji Hmabe", "content_text":"qucik brown foz jumo
+            djj djjjj", "action_data":"test" }
         </value>
     </entry>
     <entry>
-        <key>ONBOARDING_COURSE_60</key>
-        <value>
-            {
-            "title": "Keshav Suri Foundation",
-            "course_info_1": "365 days access",
-            "course_info_2": "All courses unlockable",
-            "course_info_3": "Unlimited usage"
-            }
-        </value>
+        <key>VOIP_CALL_RECONNECT_TIME</key>
+        <value>5000</value>
     </entry>
-</defaultsMap>
+    <entry>
+        <key>VOIP_CALL_DISCONNECT_TIME</key>
+        <value>25000</value>
+    </entry>
+    <entry>
+        <key>VOIP_FEEDBACK_MESSAGE</key>
+        <value>#, do you want to speak with ## again?</value>
+    </entry>
+</defaults>

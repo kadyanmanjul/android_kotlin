@@ -92,7 +92,6 @@ import java.net.HttpURLConnection
 import java.net.InetSocketAddress
 import java.net.Socket
 import java.net.URL
-import java.nio.ByteBuffer
 import java.nio.charset.Charset
 import java.text.DateFormat
 import java.text.DecimalFormat
@@ -231,6 +230,16 @@ object Utils {
         }
     }
 
+    fun getLangPaymentTestIdFromTestId(testId: String): String =
+        when (testId) {
+            "1880" -> "1884"
+            "1881" -> "1888"
+            "1882" -> "1887"
+            "1889" -> "1890"
+            "1891" -> "1892"
+            "1897" -> "1898"
+            else -> "102"
+        }
 
     const val MEGABYTE = 1024L * 1024L
 
