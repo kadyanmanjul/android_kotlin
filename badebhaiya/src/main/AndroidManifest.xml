@@ -91,6 +91,7 @@
             android:name=".feed.FeedActivity"
             android:exported="true"
             android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustNothing"
             android:launchMode="singleTop"/>
         <activity
             android:name=".appUpdater.ForceUpdateNoticeActivity"

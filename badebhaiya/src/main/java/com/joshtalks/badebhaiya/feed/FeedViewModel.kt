@@ -50,6 +50,7 @@ class FeedViewModel : ViewModel() {
     val isBadeBhaiyaSpeaker = ObservableBoolean(false)
     var userID: String = ""
     var isRoomActive = MutableLiveData(false)
+    var isRoomCreated = MutableLiveData(false)
     lateinit var respBody: ConversationRoomResponse
     val waitResponse = MutableLiveData<List<Waiting>>()
     var pubChannelName: String? = null
@@ -131,6 +132,7 @@ class FeedViewModel : ViewModel() {
                 showToast(AppObjectController.joshApplication.getString(R.string.enter_topic_name))
             } else {
                 try {
+
                     sendEvent(Impression("FEED_SCREEN", "CLICKED_CREATE"))
                     isLoading.set(true)
                     val response = repository.createRoom(
@@ -140,8 +142,13 @@ class FeedViewModel : ViewModel() {
                         )
                     )
                     if (response.isSuccessful) {
-                        showToast("Room created successfully")
-                        callback.onRoomCreated(response.body()!!, topic)
+                        isRoomCreated.value=true
+                        if(response.body()!=null) {
+                            showToast("Room created successfully")
+                            callback.onRoomCreated(response.body()!!, topic)
+                        }
+                        else
+                            showToast("Oops Something Went Wrong! Try Again")
                     } else callback.onError("An error occurred!")
                 } catch (e: Exception) {
                     callback.onError(e.localizedMessage)
@@ -178,24 +185,28 @@ class FeedViewModel : ViewModel() {
                 )
                 roomtopic = topic
                 if (response.isSuccessful) {
-                    if (moderatorId == User.getInstance().userId) {
-                        isModerator = true
-                        PubNubEventsManager.sendModeratorStatus(true, moderatorId.toString())
+                    if(response.body()!=null) {
+                        if (moderatorId == User.getInstance().userId) {
+                            isModerator = true
+                            PubNubEventsManager.sendModeratorStatus(true, moderatorId.toString())
+                        }
+                        showToast("Room joined successfully")
+                        message.what = OPEN_ROOM
+                        message.data = Bundle().apply {
+                            putParcelable(
+                                ROOM_DETAILS,
+                                response.body()
+                            )
+                            putString(
+                                TOPIC,
+                                topic
+                            )
+                        }
+                        Log.i("YASHEN", "postvalue: ")
+                        singleLiveEvent.value = message
                     }
-                    showToast("Room joined successfully")
-                    message.what = OPEN_ROOM
-                    message.data = Bundle().apply {
-                        putParcelable(
-                            ROOM_DETAILS,
-                            response.body()
-                        )
-                        putString(
-                            TOPIC,
-                            topic
-                        )
-                    }
-                    Log.i("YASHEN", "postvalue: ")
-                    singleLiveEvent.value = message
+                    else
+                        showToast("Oops Something Went Wrong! Try Again")
 
                 } else {
                     if (response.code() == 406) {

@@ -141,6 +141,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
         from = mBundle?.getString("source").toString()
         isSpeaker= mBundle?.getBoolean("isSpeaker") == true
         Log.i("LIVEROOMSOURCE", "onCreate: from:-$from")
+        feedViewModel.isRoomCreated.value=false
         //audienceAdapter?.audienceList?.add(me)
         attachBackPressedDispatcher()
         ConvoWebRtcService.initLibrary()
