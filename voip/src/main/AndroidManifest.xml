@@ -18,6 +18,13 @@
         <service android:name=".data.CallingRemoteService"
             android:process=":joshSkillsCallingService"
             android:foregroundServiceType="phoneCall"/>
+
+        <receiver android:name=".VoipBroadcastReceivers.VoipBroadcastReceiver$P2PNotificationHiddenBroadcastReceiver">
+            <intent-filter>
+                <action android:name="com.joshtalks.joshskills.android.action.broadcast"/>
+            </intent-filter>
+        </receiver>
+
         <provider
             android:authorities="com.joshtalks.joshskills.voipstate"
             android:name=".contentprovider.VoipStateContentProvider"

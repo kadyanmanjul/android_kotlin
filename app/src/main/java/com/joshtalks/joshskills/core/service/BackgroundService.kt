@@ -1,26 +1,23 @@
 package com.joshtalks.joshskills.core.service
 
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
-import android.app.Service
+import android.app.*
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.Build
 import android.os.IBinder
+import android.util.Log
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.gson.*
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.HeaderInterceptor
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.SERVER_TIME_OFFSET
-import com.joshtalks.joshskills.core.StatusCodeInterceptor
+import com.joshtalks.joshskills.base.constants.MENTOR_ID
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.firestore.NotificationAnalytics
 import com.joshtalks.joshskills.core.firestore.NotificationAnalyticsRequest
-import com.joshtalks.joshskills.core.getStethoInterceptor
 import com.joshtalks.joshskills.core.notification.NotificationUtils
 import com.joshtalks.joshskills.repository.local.AppDatabase
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -28,8 +25,8 @@ import com.joshtalks.joshskills.repository.local.model.NotificationObject
 import com.joshtalks.joshskills.repository.service.UtilsAPIService
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.util.ReminderUtil
-import java.lang.reflect.Type
-import java.util.concurrent.TimeUnit
+import com.joshtalks.joshskills.voip.VoipBroadcastReceivers.VoipBroadcastReceiver
+import com.joshtalks.joshskills.voip.constant.BROADCAST_P2P_STICKY_NOTIFICATION_CLOSED
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -38,8 +35,10 @@ import retrofit2.HttpException
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.lang.reflect.Modifier
+import java.lang.reflect.Type
 import java.text.DateFormat
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 private const val CONNECTION_TIMEOUT = 30L
 private const val CALL_TIMEOUT = 60L
@@ -86,6 +85,11 @@ class BackgroundService : Service() {
         fetchMissedNotifications()
         ReminderUtil(this).setAlarmNotificationWorker()
         return START_STICKY
+    }
+
+    private fun checkIfCallingRemoteServiceIsRunning() {
+        val intentFilter = IntentFilter(BROADCAST_P2P_STICKY_NOTIFICATION_CLOSED)
+        LocalBroadcastManager.getInstance(this).registerReceiver(VoipBroadcastReceiver.P2PNotificationHiddenBroadcastReceiver(), intentFilter)
     }
 
     private fun initRetrofit() {

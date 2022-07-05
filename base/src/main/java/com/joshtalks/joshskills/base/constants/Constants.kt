@@ -117,4 +117,3 @@ const val FROM_ACTIVITY = "josh_from_activity"
 const val INCOMING_CALL_ID = "josh_incoming_call_id"
 const val FROM_CALL_BAR = "josh_from_call_bar"
 const val STARTING_POINT = "josh_starting_point"
-

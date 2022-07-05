@@ -10,6 +10,7 @@ import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
@@ -215,6 +216,7 @@ class NotificationUtils(val context: Context) {
                         .setContentText(notificationObject.contentText)
                         .setContentIntent(pendingIntent)
                         .setStyle(style)
+                        .setNumber(6)
                         .setWhen(System.currentTimeMillis())
                         .setDefaults(Notification.DEFAULT_ALL)
                         .setColor(
@@ -223,6 +225,7 @@ class NotificationUtils(val context: Context) {
                                 R.color.colorAccent
                             )
                         )
+                Log.d("TAG", "sendNotification: notification sent")
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     notificationBuilder.priority = NotificationManager.IMPORTANCE_DEFAULT

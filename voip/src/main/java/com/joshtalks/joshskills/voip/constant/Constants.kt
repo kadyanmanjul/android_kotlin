@@ -45,7 +45,7 @@ const val PSTN_STATE_IDLE = "pstn_state_Idle"
 const val PSTN_STATE_ONCALL = "pstn_state_oncall"
 const val PREF_KEY_PSTN_STATE = "pstn_state_pstn_state"
 
-
+const val BROADCAST_P2P_STICKY_NOTIFICATION_CLOSED = "com.joshtalks.joshskills.android.action.broadcast"
 
 enum class Event {
     ERROR,
