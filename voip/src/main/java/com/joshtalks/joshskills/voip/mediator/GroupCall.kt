@@ -53,7 +53,8 @@ class GroupCall : CallCategory {
             Log.d(TAG, "onPreCallConnect: OUTGOING")
             val request = GroupConnectionRequest(
                 topicId = (callData[INTENT_DATA_TOPIC_ID] as String).toInt(),
-                groupId = (callData[INTENT_DATA_GROUP_ID] as String)
+                groupId = (callData[INTENT_DATA_GROUP_ID] as String),
+                courseId = Utils.courseId?.toInt()
             )
             val response = voipNetwork.startGroupCall(request)
             Log.d(TAG, "onPreCallConnect: $response")

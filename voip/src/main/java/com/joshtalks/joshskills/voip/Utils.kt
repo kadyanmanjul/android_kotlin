@@ -14,6 +14,8 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.Uri
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.widget.Toast
 import com.joshtalks.joshskills.base.constants.*
@@ -22,13 +24,13 @@ import com.joshtalks.joshskills.base.log.JoshLog
 import com.joshtalks.joshskills.base.model.ApiHeader
 import com.joshtalks.joshskills.base.model.NotificationData
 import com.joshtalks.joshskills.voip.constant.Category
-import com.joshtalks.joshskills.voip.constant.LEAVING
-import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.data.CallingRemoteService
 import com.joshtalks.joshskills.voip.recordinganalytics.CallRecordingAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import java.io.File
 import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -166,6 +168,20 @@ fun Context.getMentorId(): String {
     mentorIdCursor?.close()
     return mentorId
 }
+fun Context.getCourseId(): String {
+    val courserIdCursor = contentResolver.query(
+        Uri.parse(CONTENT_URI + COURSE_ID),
+        null,
+        null,
+        null,
+        null
+    )
+
+    courserIdCursor?.moveToFirst()
+    val courseId = courserIdCursor.getStringData(COURSE_ID_COLUMN)
+    courserIdCursor?.close()
+    return courseId
+}
 
 //fun Context.updateIncomingCallDetails() {
 //    voipLog?.log("QUERY")
@@ -299,7 +315,8 @@ class Utils {
             get() = context?.getApiHeader()
         val uuid : String?
             get() = context?.getMentorId()
-
+        val courseId :String?
+            get() = context?.getCourseId()
         fun initUtils(application: Application ) {
             this.context = application
         }

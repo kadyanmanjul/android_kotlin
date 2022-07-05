@@ -57,7 +57,9 @@ data class CallRecordingRequest(
 data class FavoriteConnectionRequest(
     @field:SerializedName("mentor_id")
     val mentorId: String? = null,
-)
+    @field:SerializedName("course_id")
+    val courseId: Int? = null,
+    )
 
 data class FavoriteCallActionRequest(
     @field:SerializedName("response")
@@ -73,6 +75,9 @@ data class GroupConnectionRequest(
 
     @field:SerializedName("topic_id")
     val topicId: Int? = null,
+
+    @field:SerializedName("course_id")
+    val courseId: Int? = null,
 )
 
 data class GroupCallActionRequest(

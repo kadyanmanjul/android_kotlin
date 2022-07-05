@@ -48,6 +48,7 @@ class FavoriteCall : CallCategory {
             Log.d(TAG, "onPreCallConnect: OUTGOING")
             val request = FavoriteConnectionRequest(
                 mentorId = callData[INTENT_DATA_FPP_MENTOR_ID] as String,
+                courseId = Utils.courseId?.toInt()
             )
             val response = voipNetwork.startFavouriteCall(request)
             Log.d(TAG, "onPreCallConnect: $response")
