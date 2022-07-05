@@ -25,6 +25,7 @@ import com.joshtalks.badebhaiya.liveroom.model.ConversationRoomPubNubEventBus
 import com.joshtalks.badebhaiya.liveroom.model.StartingLiveRoomProperties
 import com.joshtalks.badebhaiya.liveroom.service.ConvoWebRtcService
 import com.joshtalks.badebhaiya.liveroom.viewmodel.*
+import com.joshtalks.badebhaiya.network.NetworkManager
 import com.joshtalks.badebhaiya.pubnub.PubNubData._audienceList
 import com.joshtalks.badebhaiya.pubnub.PubNubData._speakersList
 import com.joshtalks.badebhaiya.pubnub.PubNubData.moderatorStatus
@@ -65,7 +66,6 @@ object PubNubManager {
     private var liveRoomProperties: StartingLiveRoomProperties? = null
     private var channelName:String?=null
 
-    val networkFlow= MutableSharedFlow<Boolean>()
 
     var moderatorName: String? = null
 
@@ -255,9 +255,8 @@ object PubNubManager {
     fun postDataToNetworkFlow(isSlow:Boolean){
         jobs+= CoroutineScope(Dispatchers.IO).launch {
             delay(200)
-            networkFlow.emit(isSlow)
+            NetworkManager.networkSlowFlow.emit(isSlow)
         }
-
     }
 
     private fun extractUsersList(result: PNGetChannelMembersResult?, status: PNStatus) {
