@@ -128,7 +128,6 @@ fun Context.getNotificationData(): NotificationData {
             null,
             null
         )
-
         notificationDataCursor?.moveToFirst()
         val notificationData = NotificationData(
             title = notificationDataCursor.getStringData(NOTIFICATION_TITLE_COLUMN),
@@ -218,6 +217,43 @@ fun Context.getMentorProfile(): String {
     val mentorProfile = mentorProfileCursor.getStringData(MENTOR_PROFILE_COLUMN)
     mentorProfileCursor?.close()
     return mentorProfile
+}
+
+fun Context.getServiceNotificationIntent(data: NotificationData): PendingIntent {
+    val callingActivity = Intent()
+    var pendingIntent: PendingIntent? = null
+    val flag =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE else PendingIntent.FLAG_UPDATE_CURRENT
+    if (Utils.courseId == "151" && Utils.context!!.isFreeTrialOrCourseBought() && data.lessonId != -1) {
+        val notificationActivity = "com.joshtalks.joshskills.ui.lesson.LessonActivity"
+        callingActivity.apply {
+            if (Utils.context != null) {
+                setClassName(Utils.context!!, notificationActivity)
+                putExtra("lesson_section", 3)
+                putExtra("lesson_id", data.lessonId)
+                putExtra("practice_word", data.title)
+                putExtra("reopen", true)
+                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+        }
+    } else {
+        val notificationActivity = "com.joshtalks.joshskills.ui.inbox.InboxActivity"
+        callingActivity.apply {
+            if (Utils.context != null) {
+                setClassName(Utils.context!!, notificationActivity)
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            }
+        }
+
+    }
+    pendingIntent = PendingIntent.getActivity(Utils.context,
+        (System.currentTimeMillis() and 0xfffffff).toInt(),
+        callingActivity,
+        flag)
+    return pendingIntent
+
 }
 
 fun Context.getRecordingText(): String {

@@ -93,6 +93,7 @@ class JoshContentProvider : ContentProvider() {
                         false
                     }
                 }
+                Log.d(TAG, "query:IS_COURSE_BOUGHT_OR_FREE_TRIAL ${PrefManager.getBoolValue(IS_COURSE_BOUGHT)} ${PrefManager.getBoolValue(IS_FREE_TRIAL, defValue = false)} $shouldHaveTapAction")
                 cursor.addRow(arrayOf(shouldHaveTapAction.toString()))
                 return cursor
             }
@@ -135,9 +136,9 @@ class JoshContentProvider : ContentProvider() {
                     Log.d(TAG, "query: Word ---> ${word.filter { it.word != null }}")
                     cursor.addRow(
                         arrayOf(
-                            word.last { it.word != null }.word?: "Undertake",
+                            word.last { it.word != null }.word?: "Appreciate",
                             "Practice word of the day",
-                            word.last { it.word != null }.lessonId?: 21,
+                            word.last { it.word != null }.lessonId?: -1,
                         )
                     )
                     return cursor
@@ -146,7 +147,7 @@ class JoshContentProvider : ContentProvider() {
                         arrayOf(
                             "Appreciate",
                             "Practice word of the day",
-                             21,
+                             -1,
                         )
                     )
                     return cursor

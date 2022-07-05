@@ -82,6 +82,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
     private val soundManager by lazy { SoundManager(SOUND_TYPE_RINGTONE, 20000) }
     private lateinit var voipNotification: VoipNotification
     private var isShowingIncomingCall = false
+    var currentIncomingNotificationId :Int? = null
     private val Communication?.hasMainEventChannelFailed: Boolean
         get() {
             return PrefManager.getLatestPubnubMessageTime() < (this?.getEventTime() ?: 0)
@@ -171,7 +172,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
         scope.launch {
             try {
                 stopAudio()
-                voipNotification.removeNotification()
+                voipNotification.removeNotification(currentIncomingNotificationId)
                 updateIncomingCallState(false)
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -653,6 +654,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
             calling.notificationLayout(incomingCall) ?: return // TODO: might throw error
         voipNotification = VoipNotification(remoteView, NotificationPriority.High)
         voipNotification.show()
+        currentIncomingNotificationId = voipNotification.getNotificationId()
         CallAnalytics.addAnalytics(
             event = EventName.INCOMING_CALL_SHOWN,
             agoraCallId = IncomingCallData.callId.toString(),
