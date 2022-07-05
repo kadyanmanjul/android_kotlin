@@ -2,6 +2,7 @@ package com.joshtalks.badebhaiya.repository.service
 
 import com.joshtalks.badebhaiya.feed.model.*
 import com.joshtalks.badebhaiya.impressions.Impression
+import com.joshtalks.badebhaiya.liveroom.heartbeat.Heartbeat
 import com.joshtalks.badebhaiya.profile.request.ReminderRequest
 import com.joshtalks.badebhaiya.profile.request.DeleteReminderRequest
 import com.joshtalks.badebhaiya.repository.model.ApiResponse
@@ -55,5 +56,8 @@ interface ConversationRoomNetworkService {
 
     @POST("$DIR/impressions/track_impressions/")
     suspend fun sendEvent(@Body event: Impression):Response<Void>
+
+    @POST("$DIR/conversation_room/live_room_users/")
+    suspend fun triggerHeartbeat(@Body body: Heartbeat):Response<Void>
 
 }

@@ -30,10 +30,8 @@ import com.joshtalks.badebhaiya.pubnub.PubNubManager
 import com.joshtalks.badebhaiya.repository.ConversationRoomRepository
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomRequest
 import com.joshtalks.badebhaiya.repository.model.User
-import io.agora.rtc.Constants
+import io.agora.rtc.*
 import io.agora.rtc.Constants.*
-import io.agora.rtc.IRtcEngineEventHandler
-import io.agora.rtc.RtcEngine
 import io.agora.rtc.models.ChannelMediaOptions
 import io.agora.rtc.models.ClientRoleOptions
 import java.lang.ref.WeakReference
@@ -140,8 +138,20 @@ class ConvoWebRtcService : Service() {
     }
 
     @Volatile
+    private var call: IRtcChannelEventHandler? = object : IRtcChannelEventHandler() {
+
+        override fun onUserOffline(rtcChannel: RtcChannel?, uid: Int, reason: Int) {
+            Timber.tag("signal").d("AGORA USER ON USER OFFLINE IN CHANNEL EVENT HANDLER => $uid")
+
+            super.onUserOffline(rtcChannel, uid, reason)
+        }
+    }
+
+    @Volatile
     private var conversationRoomEventListener: IRtcEngineEventHandler? =
         object : IRtcEngineEventHandler() {
+
+
 
             override fun onAudioRouteChanged(routing: Int) {
                 super.onAudioRouteChanged(routing)
@@ -185,6 +195,8 @@ class ConvoWebRtcService : Service() {
             }
 
             override fun onLeaveChannel(stats: RtcStats) {
+                Timber.tag("signal").d("AGORA USER ON LEAVE CHANNEL IS AND STATS ARE => ${stats.users}")
+
                 super.onLeaveChannel(stats)
                 Log.d(TAG, "IRtcEngineEventHandler onLeaveChannel() called with: stats = $stats")
             }
@@ -196,23 +208,41 @@ class ConvoWebRtcService : Service() {
             }
 
             override fun onUserOffline(uid: Int, reason: Int) {
+                Timber.tag("signal").d("AGORA USER OFFLINE IS => $uid AND REASON => $reason")
+
                 super.onUserOffline(uid, reason)
                 Timber.tag("signal").d("AGORA USER OFFLINE IS => $uid AND REASON => $reason")
+
+                    // TODO: Remove user from speaker and audience list is it's not moderator.
+
+                Timber.tag("heartbeat").d("USER IS OFFLINE INSIDE LIVE SERVICE AND UID => $uid")
+
+//                PubNubManager.removeUserWhenOffline(uid = uid)
+
 
                 Log.d(TAG, "IRtcEngineEventHandler onUserOffline() called with: uid = $uid, reason = $reason")
                 val isUserLeave = reason == USER_OFFLINE_QUIT
                 if (!isRoomCreatedByUser && isUserLeave) {
+                    Timber.tag("heartbeat").d("USER IS OFFLINE INSIDE LIVE SERVICE AND ROOM IS NOT CREATED BY USER AND UID => $uid")
                     conversationRoomCallback?.get()?.onUserOffline(uid)
                 }
                 if (isRoomCreatedByUser) {
+                    Timber.tag("heartbeat").d("USER IS OFFLINE INSIDE LIVE SERVICE AND ROOM IS CREATED BY USER AND UID => $uid")
+
                     if (isUserLeave) {
+                        Timber.tag("heartbeat").d("USER IS OFFLINE INSIDE LIVE SERVICE AND ROOM IS CREATED AND USER LEAVE BY USER AND UID => $uid")
+
                         Log.d(
                             TAG,
                             "IRtcEngineEventHandler isRoomCreatedByUser $isRoomCreatedByUser service OnUserOffline remove user by moderator $moderatorUid"
                         )
                     }
                 } else {
+                    Timber.tag("heartbeat").d("USER IS OFFLINE INSIDE LIVE SERVICE AND ROOM IS NOT CREATED BY USER AND USER LEAVE BY USER AND UID => $uid")
+
                     if (uid == moderatorUid && isUserLeave) {
+                        Timber.tag("heartbeat").d("USER IS OFFLINE INSIDE LIVE SERVICE AND IS MODERATOR AND USER LEAVE BY USER AND UID => $uid")
+
                         Log.d(
                             TAG,
                             "IRtcEngineEventHandler isRoomCreatedByUser $isRoomCreatedByUser  service OnUserOffline for moderator call $moderatorUid $reason"
@@ -410,6 +440,7 @@ class ConvoWebRtcService : Service() {
             if (conversationRoomEventListener != null) {
                 rtcEngine?.addHandler(conversationRoomEventListener)
             }
+
 
             if (isEngineInitialized) {
                 callback.invoke()

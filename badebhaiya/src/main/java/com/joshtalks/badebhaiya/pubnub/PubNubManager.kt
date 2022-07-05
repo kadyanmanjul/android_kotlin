@@ -412,7 +412,7 @@ object PubNubManager {
                 _audienceList.emit(distinctedList)
 
             } catch (Ex:Exception){
-                _audienceList.emit(emptyList())
+//                _audienceList.emit(emptyList())
             }
         }
     }
@@ -813,7 +813,36 @@ object PubNubManager {
 
     }
 
-    fun removeUserWhenLeft(
+    fun removeUserWhenOffline(uid: Int){
+        moderatorUid?.let {
+            if (it != uid){
+                // He's not moderator remove from the list.
+                val duplicateSpeakersList = mutableListOf<LiveRoomUser>()
+                val duplicateAudienceList = mutableListOf<LiveRoomUser>()
+
+                duplicateSpeakersList.addAll(speakersList)
+                duplicateAudienceList.addAll(audienceList)
+
+                // Remove if user is speaker
+                val foundSpeakers = duplicateSpeakersList.filter { it.id == uid }
+                val foundAudience = duplicateAudienceList.filter { it.id == uid }
+
+
+                if (!foundSpeakers.isNullOrEmpty()){
+                    // Remove user from speaker list.
+                   duplicateSpeakersList.removeIf { it.id == foundSpeakers[0].id }
+                    postToSpeakersList(duplicateSpeakersList.toList())
+                } else if (!foundAudience.isNullOrEmpty()){
+                    // Remove user from audience list.
+                    duplicateAudienceList.removeIf { it.id == foundSpeakers[0].id }
+                    postToAudienceList(duplicateAudienceList.toList())
+                }
+            }
+        }
+
+    }
+
+    fun removeUserUsingAgoraUid(
         uid: Int,
         speakerAdapter: SpeakerAdapter?,
         audienceAdapter: AudienceAdapter?

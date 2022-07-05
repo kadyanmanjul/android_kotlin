@@ -24,6 +24,7 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.collection.arraySetOf
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.view.get
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -45,6 +46,7 @@ import com.joshtalks.badebhaiya.liveroom.bottomsheet.ConversationRoomBottomSheet
 import com.joshtalks.badebhaiya.liveroom.bottomsheet.ConversationRoomBottomSheetAction
 import com.joshtalks.badebhaiya.liveroom.bottomsheet.ConversationRoomBottomSheetInfo
 import com.joshtalks.badebhaiya.liveroom.bottomsheet.RaisedHandsBottomSheet
+import com.joshtalks.badebhaiya.liveroom.heartbeat.HeartbeatViewModel
 import com.joshtalks.badebhaiya.liveroom.model.ConversationRoomListingNavigation
 import com.joshtalks.badebhaiya.liveroom.model.StartingLiveRoomProperties
 import com.joshtalks.badebhaiya.liveroom.service.ConversationRoomCallback
@@ -63,6 +65,7 @@ import com.joshtalks.badebhaiya.utils.setImage
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import dagger.hilt.android.AndroidEntryPoint
 import io.agora.rtc.IRtcEngineEventHandler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -75,6 +78,7 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 
+@AndroidEntryPoint
 class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel>(
     R.layout.fragment_live_room
 ),
@@ -89,6 +93,8 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
     }
     private var from:String= EMPTY
     private var isSpeaker:Boolean=false
+
+    private val heartbeatVewModel: HeartbeatViewModel by viewModels()
 
     private var mServiceBound: Boolean = false
     private lateinit var binding: FragmentLiveRoomBinding
@@ -171,6 +177,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
         }
 
         sendModeratorJoinedEvent()
+        heartbeatVewModel.initViewModel()
     }
 
     private fun sendModeratorJoinedEvent() {
@@ -552,7 +559,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
 
     private var callbackOld: ConversationRoomCallback = object : ConversationRoomCallback {
         override fun onUserOffline(uid: Int) {
-            removeUserWhenLeft(uid)
+            Timber.tag("heartbeat").d("REMOVE THE USER INSIDE LIVE FRAGMENT AND UID IS => $uid")
         }
 
         override fun onAudioVolumeIndication(
@@ -609,9 +616,6 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
 
 
 
-    private fun removeUserWhenLeft(uid: Int) {
-        PubNubManager.removeUserWhenLeft(uid, speakerAdapter, audienceAdapter)
-    }
 
     private fun refreshSpeakingUsers(uids: List<Int?>) {
         speakingListForGoldenRing.addAll(uids)
