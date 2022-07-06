@@ -125,11 +125,7 @@ class CreateRoom : BottomSheetDialogFragment() {
 
     fun addObserver(){
         viewModel.isRoomCreated.observe(viewLifecycleOwner){
-            if(it){
-                binding.createBtn.isEnabled=false
-            }
-            else
-                binding.createBtn.isEnabled=true
+            binding.createBtn.isEnabled = !it
         }
     }
 
