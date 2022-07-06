@@ -9,13 +9,16 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.IdRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.compose.ui.unit.dp
 import androidx.core.text.HtmlCompat
+import androidx.core.view.updateLayoutParams
 import androidx.core.widget.addTextChangedListener
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -123,8 +126,8 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         binding.handler = this
         binding.viewModel = viewModel
         //addObserver()
-        if(liveRoomViewModel.pubNubState.value==PubNubState.STARTED)
-        setpadding()
+//        if(liveRoomViewModel.pubNubState.value==PubNubState.STARTED)
+//        setpadding()
 
         binding.profileToolbar.iv_back.setOnClickListener{
             activity?.run {
@@ -178,13 +181,31 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
     }
 
     fun setpadding(){
+
         binding.rvSpeakerRoomList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
                 if (recyclerView.canScrollVertically(1).not()) {
                     recyclerView.setPadding(
                         resources.getDimension(R.dimen._8sdp).toInt(), 0,
-                        resources.getDimension(R.dimen._8sdp).toInt(), 234
+                        resources.getDimension(R.dimen._8sdp).toInt(), binding.view.height
+                    )
+                }
+            }
+        })
+        binding.view.visibility=View.VISIBLE
+    }
+
+    fun unsetPadding(){
+
+        binding.view.updateLayoutParams { height=1 }
+        binding.rvSpeakerRoomList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                if (recyclerView.canScrollVertically(1).not()) {
+                    recyclerView.setPadding(
+                        resources.getDimension(R.dimen._8sdp).toInt(), 0,
+                        resources.getDimension(R.dimen._8sdp).toInt(), binding.view.height
                     )
                 }
             }
@@ -293,6 +314,13 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
 //                feedViewModel.isBackPressed.value=false
             }
 
+        }
+
+        liveRoomViewModel.pubNubState.observe(viewLifecycleOwner){
+            if(it==PubNubState.STARTED)
+                setpadding()
+            else
+                unsetPadding()
         }
         feedViewModel.singleLiveEvent.observe(viewLifecycleOwner) {
             Log.d("ABC2", "Data class called with profile data message: ${it.what} bundle : ${it.data}")
