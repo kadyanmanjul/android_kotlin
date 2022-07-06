@@ -675,6 +675,7 @@
                         <View
                             android:layout_width="1dp"
                             android:layout_height="29dp"
+                            android:backgroundTint="@color/white"
                             android:layout_gravity="center_vertical"
                             android:layout_marginLeft="22dp"
                             android:background="@android:color/darker_gray" />
@@ -706,6 +707,65 @@
                                 android:textSize="14sp" />
 
                         </LinearLayout>
+
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/guess_the_word_linear_layout_p2p"
+                        android:layout_marginLeft="12dp"
+                        android:layout_marginBottom="24dp"
+                        android:orientation="horizontal"
+                        android:layout_marginRight="12dp"
+                        android:layout_marginTop="24dp">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <Button
+                                android:layout_width="210dp"
+                                android:layout_height="wrap_content"
+                                android:backgroundTint="@color/white"
+                                android:textAllCaps="false"
+                                android:layout_gravity="center_vertical"
+                                android:textColor="@color/p2p_game_dark_purple"
+                                android:text="Next Word"/>
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/before_record_text_right"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_toRightOf="@+id/before_record_text"
+                                android:gravity="center"
+                                android:lineSpacingMultiplier="1.5"
+                                android:text="Wait for your partner to click next"
+                                android:textColor="@color/white"
+                                android:textSize="@dimen/_10sdp"
+                                android:visibility="visible"
+                                tools:ignore="MissingPrefix" />
+
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"
+                            />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:layout_width="120dp"
+                            android:layout_height="wrap_content"
+                            app:strokeColor="@color/white"
+                            android:backgroundTint="@color/p2p_game_dark_purple"
+                            android:text="End Game"
+                            android:textAllCaps="false"
+                            app:cornerRadius="6dp"
+                            app:strokeWidth="1.5dp"
+                            />
 
                     </LinearLayout>
 
