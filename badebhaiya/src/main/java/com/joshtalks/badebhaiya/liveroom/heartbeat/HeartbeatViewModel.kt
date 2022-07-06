@@ -2,6 +2,7 @@ package com.joshtalks.badebhaiya.liveroom.heartbeat
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.joshtalks.badebhaiya.pubnub.PubNubManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
@@ -23,9 +24,11 @@ class HeartbeatViewModel @Inject constructor(
     }
 
     private fun startHeartbeat() {
-        viewModelScope.launch(Dispatchers.IO) {
-            heartbeatRepository.heartbeat.collect{
-                Timber.tag("HEARTBEAT TRIGGERED")
+        if (!PubNubManager.getLiveRoomProperties().isModerator){
+            viewModelScope.launch(Dispatchers.IO) {
+                heartbeatRepository.heartbeat.collect{
+                    Timber.tag("HEARTBEAT TRIGGERED")
+                }
             }
         }
     }
