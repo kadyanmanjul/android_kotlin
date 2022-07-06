@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.voip.notification
 
 import android.app.PendingIntent
+import android.util.Log
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import com.joshtalks.joshskills.base.model.NotificationData as Data
@@ -45,8 +46,9 @@ class VoipNotification : NotificationInterface {
         }
     }
 
-    override fun removeNotification() {
-        notificationHelper.removeNotification(notificationBuiltObj.id)
+    override fun removeNotification(notificationId: Int?) {
+        val id = notificationId?:notificationBuiltObj.id
+        notificationHelper.removeNotification(id)
     }
 
     override fun getNotificationObject(): NotificationCompat.Builder {

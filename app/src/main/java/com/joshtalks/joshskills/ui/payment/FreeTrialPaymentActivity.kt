@@ -136,8 +136,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
 
         if (intent.hasExtra(PaymentSummaryActivity.TEST_ID_PAYMENT)) {
             testId = if (PrefManager.getStringValue(FREE_TRIAL_TEST_ID).isEmpty().not()) {
-                AppObjectController.getFirebaseRemoteConfig()
-                    .getString(FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID + "_" + PrefManager.getStringValue(FREE_TRIAL_TEST_ID))
+                Utils.getLangPaymentTestIdFromTestId(PrefManager.getStringValue(FREE_TRIAL_TEST_ID))
             } else {
                 PrefManager.getStringValue(PAID_COURSE_TEST_ID)
             }
@@ -153,8 +152,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         }
         if (testId.isBlank()){
             testId = if (PrefManager.getStringValue(FREE_TRIAL_TEST_ID).isEmpty().not()) {
-                AppObjectController.getFirebaseRemoteConfig()
-                    .getString(FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID + "_" + PrefManager.getStringValue(FREE_TRIAL_TEST_ID))
+                Utils.getLangPaymentTestIdFromTestId(PrefManager.getStringValue(FREE_TRIAL_TEST_ID))
             } else {
                 PrefManager.getStringValue(PAID_COURSE_TEST_ID)
             }
@@ -846,9 +844,8 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                     if (PrefManager.getBoolValue(IS_DEMO_P2P, defValue = false)) {
                         PrefManager.put(IS_DEMO_P2P, false)
                     }
-                    val freeTrialTestId = AppObjectController.getFirebaseRemoteConfig()
-                        .getString(FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID + "_"
-                                + PrefManager.getStringValue(FREE_TRIAL_TEST_ID))
+                    val freeTrialTestId =
+                        Utils.getLangPaymentTestIdFromTestId(PrefManager.getStringValue(FREE_TRIAL_TEST_ID))
                     if (testId == freeTrialTestId) {
                         PrefManager.put(IS_COURSE_BOUGHT, true)
                         PrefManager.removeKey(IS_FREE_TRIAL_ENDED)
@@ -921,8 +918,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             PrefManager.put(IS_DEMO_P2P, false)
         }
         val freeTrialTestId = if (PrefManager.getStringValue(FREE_TRIAL_TEST_ID).isEmpty().not()) {
-            AppObjectController.getFirebaseRemoteConfig()
-                .getString(FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID + "_" + PrefManager.getStringValue(FREE_TRIAL_TEST_ID))
+            Utils.getLangPaymentTestIdFromTestId(PrefManager.getStringValue(FREE_TRIAL_TEST_ID))
         } else {
             PrefManager.getStringValue(PAID_COURSE_TEST_ID)
         }

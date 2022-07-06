@@ -249,7 +249,7 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
                     val response: OrderDetailResponse = paymentDetailsResponse.body()!!
                     mPaymentDetailsResponse.postValue(response)
                     MarketingAnalytics.initPurchaseEvent(data, response)
-                } else if (paymentDetailsResponse.code() == 501) {
+                } else if (paymentDetailsResponse.code() == 400) {
                     showToast("Course already exists with this mobile number. Please login with the entered phone number!", Toast.LENGTH_LONG)
                 } else {
                     showToast(AppObjectController.joshApplication.getString(R.string.something_went_wrong))

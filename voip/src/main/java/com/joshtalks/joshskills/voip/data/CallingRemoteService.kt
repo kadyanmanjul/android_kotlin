@@ -14,16 +14,7 @@ import com.joshtalks.joshskills.voip.audiocontroller.AudioRouteConstants
 import com.joshtalks.joshskills.voip.calldetails.IncomingCallData
 import com.joshtalks.joshskills.voip.communication.model.IncomingCall
 import com.joshtalks.joshskills.voip.constant.Event
-import com.joshtalks.joshskills.voip.constant.Event.CALL_CONNECTED_EVENT
-import com.joshtalks.joshskills.voip.constant.Event.CALL_INITIATED_EVENT
-import com.joshtalks.joshskills.voip.constant.Event.CALL_RECORDING_ACCEPT
-import com.joshtalks.joshskills.voip.constant.Event.CALL_RECORDING_REJECT
-import com.joshtalks.joshskills.voip.constant.Event.CANCEL_RECORDING_REQUEST
-import com.joshtalks.joshskills.voip.constant.Event.CLOSE_CALL_SCREEN
-import com.joshtalks.joshskills.voip.constant.Event.INCOMING_CALL
-import com.joshtalks.joshskills.voip.constant.Event.RECONNECTING_FAILED
-import com.joshtalks.joshskills.voip.constant.Event.START_RECORDING
-import com.joshtalks.joshskills.voip.constant.Event.STOP_RECORDING
+import com.joshtalks.joshskills.voip.constant.Event.*
 import com.joshtalks.joshskills.voip.constant.PSTN_STATE_IDLE
 import com.joshtalks.joshskills.voip.constant.PSTN_STATE_ONCALL
 import com.joshtalks.joshskills.voip.constant.State
@@ -38,15 +29,10 @@ import com.joshtalks.joshskills.voip.pstn.PSTNState
 import com.joshtalks.joshskills.voip.state.CallConnectData
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
 import timber.log.Timber
 import com.joshtalks.joshskills.base.model.NotificationData as Data
 import com.joshtalks.joshskills.voip.mediator.UserAction as Action
@@ -383,38 +369,7 @@ class TestNotification(val notiData : Data) : NotificationData {
 
     override fun setTapAction(): PendingIntent? {
         Log.d(TAG, "setTapAction: ${Utils.courseId } ${Utils.context!!.isFreeTrialOrCourseBought()}")
-        if (Utils.courseId == "151" && Utils.context!!.isFreeTrialOrCourseBought()) {
-            val notificationActivity = "com.joshtalks.joshskills.ui.lesson.LessonActivity"
-            val callingActivity = Intent()
-            callingActivity.apply {
-                if (Utils.context != null) {
-                    setClassName(Utils.context!!, notificationActivity)
-                    putExtra("lesson_section", 3)
-                    putExtra("lesson_id", notiData.lessonId)
-                    putExtra("practice_word", notiData.title)
-                    putExtra("reopen", true)
-                }
-            }
-            val pendingIntent = PendingIntent.getActivity(Utils.context,
-                (System.currentTimeMillis() and 0xfffffff).toInt(),
-                callingActivity,
-                PendingIntent.FLAG_UPDATE_CURRENT)
-            return pendingIntent
-        }else{
-            val notificationActivity = "com.joshtalks.joshskills.ui.inbox.InboxActivity"
-            val callingActivity = Intent()
-            callingActivity.apply {
-                if (Utils.context != null) {
-                    setClassName(Utils.context!!, notificationActivity)
-                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                }
-            }
-            val pendingIntent = PendingIntent.getActivity(Utils.context,
-                (System.currentTimeMillis() and 0xfffffff).toInt(),
-                callingActivity,
-                PendingIntent.FLAG_UPDATE_CURRENT)
-            return pendingIntent
-        }
+        return Utils.context!!.getServiceNotificationIntent(notiData)
     }
 }
 
@@ -425,8 +380,8 @@ data class UIState(
     val topicName: String,
     val callType: Int,
     val currentTopicImage: String,
-    val occupation : String,
-    val aspiration : String,
+    val occupation: String,
+    val aspiration: String,
     val isOnHold: Boolean = false,
     val isSpeakerOn: Boolean = false,
     val isRemoteUserMuted: Boolean = false,
@@ -434,11 +389,11 @@ data class UIState(
     val isReconnecting: Boolean = false,
     val startTime: Long = 0L,
     val recordingButtonState: RecordingButtonState = RecordingButtonState.IDLE,
-    val recordingButtonNooftimesclicked : Int = 0,
-    val recordingStartTime : Long = 0L,
-    val isRecordingEnabled : Boolean = false,
-    val isCallerSpeaking : Boolean = false,
-    val isCalleeSpeaking : Boolean = false
+    val recordingButtonNooftimesclicked: Int = 0,
+    val recordingStartTime: Long = 0L,
+    val isRecordingEnabled: Boolean = false,
+    val isCallerSpeaking: Boolean = false,
+    val isCalleeSpeaking: Boolean = false,
 ) {
     companion object {
         fun empty() = UIState("", null, "", 0,"","","")

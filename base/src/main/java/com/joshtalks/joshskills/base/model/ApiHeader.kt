@@ -21,7 +21,7 @@ data class NotificationData(val title : String, val subTitle : String,val lesson
             return NotificationData(
                 title = "Appreciate",
                 subTitle = "Practice word of the day",
-                lessonId = 20
+                lessonId = -1
             )
         }
     }

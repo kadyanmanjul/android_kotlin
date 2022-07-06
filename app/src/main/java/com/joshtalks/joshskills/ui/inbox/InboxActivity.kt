@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.location.Location
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.View.GONE
 import androidx.appcompat.widget.PopupMenu
@@ -253,7 +254,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         viewModel.increaseCoursePriceABtestLiveData.observe(this) { abTestCampaignData ->
             abTestCampaignData?.let { map ->
                 increaseCoursePrice = (map.variantKey == VariantKeys.ICP_ENABLED.NAME) && map.variableMap?.isEnabled == true
-                PrefManager.put(INCREASE_COURSE_PRICE_ABTEST,increaseCoursePrice)
+                PrefManager.put(INCREASE_COURSE_PRICE_ABTEST, increaseCoursePrice)
             }
         }
     }
@@ -267,7 +268,6 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
 //            PrefManager.put(IS_LOCALE_UPDATED_IN_INBOX,true)
 //            requestWorkerForChangeLanguage(getLangCodeFromCourseId(items[0].courseId), canCreateActivity = false)
 //        }
-
         var haveFreeTrialCourse = false
         lifecycleScope.launch(Dispatchers.Default) {
             val temp: ArrayList<InboxEntity> = arrayListOf()
@@ -310,7 +310,9 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
             courseListSet.addAll(temp)
             lifecycleScope.launch(Dispatchers.Main) {
                 inboxAdapter.addItems(temp)
-                if (haveFreeTrialCourse) {
+                val inboxEntityBought = temp.filter { it.isCapsuleCourse }.getOrNull(0)
+                Log.e(TAG, "addCourseInRecyclerView: $inboxEntityBought  ${inboxEntityBought?.isCourseBought?.not()} ${inboxEntityBought != null && inboxEntityBought.isCourseBought.not()}")
+                if (inboxEntityBought != null && inboxEntityBought.isCourseBought.not()) {
                     findMoreLayout.findViewById<MaterialTextView>(R.id.find_more).visibility =
                         View.GONE
                     findMoreLayout.findViewById<MaterialTextView>(R.id.find_more_new).visibility =
@@ -442,7 +444,8 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
             ExtendFreeTrialActivity.startExtendFreeTrialActivity(this, inboxEntity)
         } else {
             when {
-               inboxEntity.formSubmitted.not() && PrefManager.getBoolValue(HAS_COMMITMENT_FORM_SUBMITTED).not() && inboxEntity.courseId == DEFAULT_COURSE_ID -> {
+                inboxEntity.formSubmitted.not() && PrefManager.getBoolValue(HAS_COMMITMENT_FORM_SUBMITTED)
+                    .not() && inboxEntity.courseId == DEFAULT_COURSE_ID -> {
                     PrefManager.put(HAS_SEEN_TEXT_VIEW_CLASS_ANIMATION, false)
                     PrefManager.put(HAS_SEEN_GROUP_LIST_CBC_TOOLTIP, false)
                     val intent = Intent(this, CommitmentFormActivity::class.java)

@@ -95,7 +95,11 @@ class FreeTrialPaymentViewModel(application: Application) : AndroidViewModel(app
             try {
                 val res =
                     AppObjectController.signUpNetworkService.getFreeTrialPaymentData(data)
-                paymentDetailsLiveData.postValue(res)
+                if (res.isSuccessful) {
+                    paymentDetailsLiveData.postValue(res.body())
+                } else {
+                    showToast(AppObjectController.joshApplication.getString(R.string.something_went_wrong))
+                }
             } catch (ex: Exception) {
                 when (ex) {
                     is HttpException -> {
