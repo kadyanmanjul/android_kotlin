@@ -21,6 +21,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.core.*
 import com.joshtalks.badebhaiya.core.USER_ID
@@ -40,6 +41,7 @@ import com.joshtalks.badebhaiya.liveroom.viewmodel.LiveRoomViewModel
 import com.joshtalks.badebhaiya.notifications.NotificationScheduler
 import com.joshtalks.badebhaiya.profile.request.ReminderRequest
 import com.joshtalks.badebhaiya.profile.response.ProfileResponse
+import com.joshtalks.badebhaiya.pubnub.PubNubState
 import com.joshtalks.badebhaiya.repository.CommonRepository
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.signup.SignUpActivity
@@ -121,6 +123,9 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         binding.handler = this
         binding.viewModel = viewModel
         //addObserver()
+        if(liveRoomViewModel.pubNubState.value==PubNubState.STARTED)
+        setpadding()
+
         binding.profileToolbar.iv_back.setOnClickListener{
             activity?.run {
                 try {
@@ -170,6 +175,20 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         //setOnClickListener()
         return binding.root
 
+    }
+
+    fun setpadding(){
+        binding.rvSpeakerRoomList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                if (recyclerView.canScrollVertically(1).not()) {
+                    recyclerView.setPadding(
+                        resources.getDimension(R.dimen._8sdp).toInt(), 0,
+                        resources.getDimension(R.dimen._8sdp).toInt(), 234
+                    )
+                }
+            }
+        })
     }
 
     fun showPopup(roomId: Int, userId: String) {
