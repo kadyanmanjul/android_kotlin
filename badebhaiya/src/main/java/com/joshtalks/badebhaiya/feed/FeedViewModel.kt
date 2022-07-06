@@ -128,6 +128,7 @@ class FeedViewModel : ViewModel() {
             return
         }
         viewModelScope.launch {
+            isRoomCreated.value=true
             if (topic.isNullOrBlank()) {
                 showToast(AppObjectController.joshApplication.getString(R.string.enter_topic_name))
             } else {
@@ -142,14 +143,16 @@ class FeedViewModel : ViewModel() {
                         )
                     )
                     if (response.isSuccessful) {
-                        isRoomCreated.value=true
                         if(response.body()!=null) {
                             showToast("Room created successfully")
                             callback.onRoomCreated(response.body()!!, topic)
                         }
                         else
                             showToast("Oops Something Went Wrong! Try Again")
-                    } else callback.onError("An error occurred!")
+                    } else {
+                        isRoomCreated.value=false
+                        callback.onError("An error occurred!")
+                    }
                 } catch (e: Exception) {
                     callback.onError(e.localizedMessage)
                     e.showAppropriateMsg()

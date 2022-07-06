@@ -1344,6 +1344,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
                 mBoundService?.leaveRoom(roomId, roomQuestionId)
             }
         }
+        vm.unSubscribePubNub()
         Log.i("LIFECYCLE", "onDestroy: ")
         vm.pubNubState.value=PubNubState.ENDED
         feedViewModel.pubNubState=PubNubState.ENDED
