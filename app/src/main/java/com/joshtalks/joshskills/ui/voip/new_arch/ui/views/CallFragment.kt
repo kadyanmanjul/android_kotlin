@@ -110,6 +110,9 @@ class   CallFragment : BaseFragment() , SensorEventListener {
     override fun initViewState() {
         setUpProximitySensor()
         gainAudioFocus()
+        CoroutineScope(Dispatchers.IO).launch {
+            getAudioRoute()
+        }
 
         liveData.observe(viewLifecycleOwner) {
             when (it.what) {
@@ -122,6 +125,32 @@ class   CallFragment : BaseFragment() , SensorEventListener {
                     vm.saveImageAudioToFolder(imageFile)
                 }
             }
+        }
+    }
+
+    private suspend fun getAudioRoute() {
+        val audio = AudioController(CoroutineScope(Dispatchers.IO))
+        audio.registerAudioControllerReceivers()
+        audio.observeAudioRoute().collect{
+            Log.d(TAG, "getAudioRoute: $it")
+            when(it){
+                AudioRouteConstants.BluetoothAudio -> {
+                    CoroutineScope(Dispatchers.Main).launch {
+                    callBinding.tvGroupName.text = "Bluetooth"
+                }
+                }
+                AudioRouteConstants.Default -> {}
+                AudioRouteConstants.EarpieceAudio -> {   CoroutineScope(Dispatchers.Main).launch {
+                    callBinding.tvGroupName.text = "earpiece"
+                }}
+                AudioRouteConstants.HeadsetAudio -> {   CoroutineScope(Dispatchers.Main).launch {
+                    callBinding.tvGroupName.text = "headset"
+                }}
+                AudioRouteConstants.SpeakerAudio ->{   CoroutineScope(Dispatchers.Main).launch {
+                    callBinding.tvGroupName.text = "speaker"
+                }}
+            }
+
         }
     }
 

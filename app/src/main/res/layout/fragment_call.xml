@@ -67,16 +67,16 @@
             android:gravity="center"
             android:lineSpacingMultiplier="1.5"
             android:maxLines="1"
-            android:text="Practice Partner Call"
+            android:text="Normal"
             android:textColor="@color/white"
             android:textSize="@dimen/_14sdp"
             android:textStyle="bold"
-            android:visibility="gone"
-            app:layout_constraintBottom_toTopOf="@+id/caller_name"
+            android:visibility="visible"
+            app:layout_constraintBottom_toTopOf="@+id/c_image"
             app:layout_constraintEnd_toStartOf="@+id/guideline5"
             app:layout_constraintStart_toStartOf="@+id/guideline4"
             tools:ignore="MissingPrefix"
-            tools:visibility="gone" />
+            tools:visibility="visible" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/caller_name"
@@ -460,7 +460,7 @@
             android:visibility="@{vm.uiState.recordingButtonState == RecordingButtonState.RECORDING  ? View.VISIBLE : View.GONE}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            tools:visibility="visible">
+            tools:visibility="gone">
 
             <LinearLayout
                 android:id="@+id/photo_frames_layout"
@@ -484,8 +484,8 @@
                         setBackgroundForLocalUser="@{vm.uiState.startTime &lt;= 0 ? null : vm.uiState.localUserProfile}"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:scaleType="fitXY"
                         android:alpha="0.4"
+                        android:scaleType="fitXY"
                         android:src="@drawable/local_user_default_image" />
 
                     <FrameLayout
