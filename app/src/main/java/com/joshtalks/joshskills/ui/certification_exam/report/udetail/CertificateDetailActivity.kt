@@ -9,7 +9,6 @@ import android.content.pm.ActivityInfo
 import android.os.Build
 import android.os.Bundle
 import android.view.View
-import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
@@ -17,43 +16,29 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import com.google.android.gms.auth.api.credentials.Credential
-import com.google.android.gms.auth.api.credentials.CredentialPickerConfig
-import com.google.android.gms.auth.api.credentials.Credentials
-import com.google.android.gms.auth.api.credentials.CredentialsClient
-import com.google.android.gms.auth.api.credentials.CredentialsOptions
-import com.google.android.gms.auth.api.credentials.HintRequest
-import com.google.android.gms.auth.api.credentials.IdentityProviders
+import com.google.android.gms.auth.api.credentials.*
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
-import com.joshtalks.joshskills.core.ApiCallStatus
-import com.joshtalks.joshskills.core.BaseActivity
-import com.joshtalks.joshskills.core.DATE_FORMATTER
-import com.joshtalks.joshskills.core.DATE_FORMATTER_2
-import com.joshtalks.joshskills.core.EMAIL_HINT
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.MAX_YEAR
-import com.joshtalks.joshskills.core.RC_HINT
 import com.joshtalks.joshskills.core.Utils.isInternetAvailable
 import com.joshtalks.joshskills.core.custom_ui.spinnerdatepicker.DatePickerDialog
 import com.joshtalks.joshskills.core.custom_ui.spinnerdatepicker.SpinnerDatePickerDialogBuilder
 import com.joshtalks.joshskills.core.interfaces.FileDownloadCallback
 import com.joshtalks.joshskills.core.service.CONVERSATION_ID
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityCertificateDetailBinding
 import com.joshtalks.joshskills.repository.server.certification_exam.CertificationUserDetail
 import com.joshtalks.joshskills.ui.certification_exam.CertificationExamViewModel
-import com.joshtalks.joshskills.ui.certification_exam.constants.*
+import com.joshtalks.joshskills.ui.certification_exam.constants.CERTIFICATE_EXAM_ID
+import com.joshtalks.joshskills.ui.certification_exam.constants.CERTIFICATE_SHARE_FRAGMENT
+import com.joshtalks.joshskills.ui.certification_exam.constants.GENERATE_CERTIFICATE_FORM
 import com.joshtalks.joshskills.ui.certification_exam.utils.DelayedTypingListener
 import com.joshtalks.joshskills.ui.certification_exam.view.CertificateShareFragment
-import java.text.ParseException
-import java.util.Calendar
-import java.util.Date
-import java.util.regex.Pattern
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.single
 import kotlinx.coroutines.launch
+import java.text.ParseException
+import java.util.*
+import java.util.regex.Pattern
 
 const val REPORT_ID = "report_id"
 const val COUNTRY_CODE = "+91"
@@ -86,8 +71,8 @@ class CertificateDetailActivity : BaseActivity(), FileDownloadCallback {
             DataBindingUtil.setContentView(this, R.layout.activity_certificate_detail)
         binding.lifecycleOwner = this
         binding.handler = this
-        if(intent.hasExtra(CERTIFICATE_EXAM_ID)){
-            intent.getIntExtra(CERTIFICATE_EXAM_ID,0).let { viewModel.certificateExamId =it }
+        if (intent.hasExtra(CERTIFICATE_EXAM_ID)) {
+            intent.getIntExtra(CERTIFICATE_EXAM_ID, 0).let { viewModel.certificateExamId = it }
         }
         if (intent.hasExtra(CERTIFICATE_URL) && intent.getStringExtra(CERTIFICATE_URL) != null) {
             intent.getStringExtra(CERTIFICATE_URL)?.let { openCertificateShareFragment(it) }
@@ -98,8 +83,9 @@ class CertificateDetailActivity : BaseActivity(), FileDownloadCallback {
             addObserver()
             viewModel.getCertificateUserDetails()
         }
-        binding.etPinCode.addTextChangedListener(DelayedTypingListener(delayMillis = 500L){
-            if(binding.etPinCode.text?.length == 6){
+        binding.etPinCode.addTextChangedListener(DelayedTypingListener(delayMillis = 500L) {
+            if (binding.etPinCode.text?.length == 6) {
+                showProgressBar()
                 viewModel.getInfoFromPinNumber(binding.etPinCode.text.toString().toInt())
                 binding.linearLayoutAddress.visibility = View.VISIBLE
                 hideKeyboard(this)
@@ -121,7 +107,7 @@ class CertificateDetailActivity : BaseActivity(), FileDownloadCallback {
             findViewById<AppCompatTextView>(R.id.text_message_title).text = EXAMINATION_CERTI
             hideProgressBar()
             binding.progressBar.visibility = View.GONE
-        }else {
+        } else {
             findViewById<AppCompatTextView>(R.id.text_message_title).text = CERTI_DETAILS
             mCredentialsApiClient = Credentials.getClient(this)
             binding.etMobile.setOnFocusChangeListener { v, hasFocus ->
@@ -132,18 +118,6 @@ class CertificateDetailActivity : BaseActivity(), FileDownloadCallback {
                 if (hasFocus)
                     emailChooser()
             }
-
-            /*binding.etPostal.overScrollMode = View.OVER_SCROLL_ALWAYS
-            binding.etPostal.scrollBarStyle = View.SCROLLBARS_INSIDE_INSET
-            binding.etPostal.movementMethod = ScrollingMovementMethod.getInstance()
-            binding.etPostal.setOnTouchListener { view, motionEvent ->
-                view.parent.requestDisallowInterceptTouchEvent(true)
-                if (motionEvent.action and MotionEvent.ACTION_UP !== 0 && motionEvent.actionMasked and MotionEvent.ACTION_UP !== 0) {
-                    view.parent.requestDisallowInterceptTouchEvent(false)
-                }
-                false
-            }*/
-
         }
     }
 
@@ -272,9 +246,10 @@ class CertificateDetailActivity : BaseActivity(), FileDownloadCallback {
 
         lifecycleScope.launchWhenCreated {
             viewModel.cityUser.collectLatest {
-                if(it == ERROR){
+                hideProgressBar()
+                if (it == ERROR) {
                     showToast("Please enter a valid Pin Code")
-                }else{
+                } else {
                     binding.etTownOrCity.setText(it)
                 }
             }
@@ -282,9 +257,12 @@ class CertificateDetailActivity : BaseActivity(), FileDownloadCallback {
 
         lifecycleScope.launchWhenCreated {
             viewModel.stateUser.collectLatest {
-                for(i in 0 until binding.autoCompleteTextViewFirst.adapter.count){ //36 are number of states and UT with us
-                    if(binding.autoCompleteTextViewFirst.adapter.getItem(i) == it){
-                        binding.autoCompleteTextViewFirst.setText(binding.autoCompleteTextViewFirst.adapter.getItem(i).toString(),false)
+                for (i in 0 until binding.autoCompleteTextViewFirst.adapter.count) { //36 are number of states and UT with us
+                    if (binding.autoCompleteTextViewFirst.adapter.getItem(i) == it) {
+                        binding.autoCompleteTextViewFirst.setText(
+                            binding.autoCompleteTextViewFirst.adapter.getItem(i).toString(),
+                            false
+                        )
                         break
                     }
                 }
@@ -355,19 +333,19 @@ class CertificateDetailActivity : BaseActivity(), FileDownloadCallback {
                 showToast(getString(R.string.enter_valid_email_toast))
                 return@launch
             }
-            if(binding.etPinCode.text?.length !=6){
+            if (binding.etPinCode.text?.length != 6) {
                 showToast(getString(R.string.enter_postal_address))
                 return@launch
             }
-            if (binding.etHouseNum.text.isNullOrEmpty()){
+            if (binding.etHouseNum.text.isNullOrEmpty()) {
                 showToast(getString(R.string.enter_postal_house))
                 return@launch
             }
-            if (binding.etRoadNameColony.text.isNullOrEmpty()){
+            if (binding.etRoadNameColony.text.isNullOrEmpty()) {
                 showToast(getString(R.string.enter_postal_road))
                 return@launch
             }
-            if (binding.etTownOrCity.text.isNullOrEmpty()){
+            if (binding.etTownOrCity.text.isNullOrEmpty()) {
                 showToast(getString(R.string.enter_postal_town))
                 return@launch
             }
@@ -463,13 +441,13 @@ class CertificateDetailActivity : BaseActivity(), FileDownloadCallback {
             rId: Int = -1,
             conversationId: String? = null,
             certificateUrl: String? = null,
-            certificateExamId:Int?= null
+            certificateExamId: Int? = null
         ): Intent {
             return Intent(context, CertificateDetailActivity::class.java).apply {
                 putExtra(CONVERSATION_ID, conversationId)
                 putExtra(REPORT_ID, rId)
-                putExtra(CERTIFICATE_URL,certificateUrl)
-                putExtra(CERTIFICATE_EXAM_ID,certificateExamId)
+                putExtra(CERTIFICATE_URL, certificateUrl)
+                putExtra(CERTIFICATE_EXAM_ID, certificateExamId)
             }
         }
     }
@@ -490,6 +468,7 @@ class CertificateDetailActivity : BaseActivity(), FileDownloadCallback {
             ex.printStackTrace()
         }
     }
+
     fun showProgressDialog(msg: String) {
         progressDialog = ProgressDialog(this, R.style.AlertDialogStyle)
         progressDialog?.setCancelable(false)
