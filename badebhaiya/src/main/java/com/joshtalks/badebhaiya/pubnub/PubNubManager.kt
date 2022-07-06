@@ -114,12 +114,13 @@ object PubNubManager {
     }
 
     fun getLiveRoomProperties(): StartingLiveRoomProperties {
-        return if (liveRoomProperties != null){
-            liveRoomProperties!!
-        } else {
-            endPubNub()
-            StartingLiveRoomProperties()
-        }
+//        return if (liveRoomProperties != null){
+//            liveRoomProperties!!
+//        } else {
+//            endPubNub()
+//            StartingLiveRoomProperties()
+//        }
+        return liveRoomProperties!!
     }
 
     fun initPubNub() {
