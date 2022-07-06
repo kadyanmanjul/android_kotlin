@@ -68,6 +68,7 @@ class CreateRoom : BottomSheetDialogFragment() {
         binding = DataBindingUtil.inflate(
             inflater, R.layout.bottom_sheet_create_room, container, false
         )
+        addObserver()
         binding.lifecycleOwner = this
         binding.viewModel = viewModel
         binding.callback = callback
@@ -119,6 +120,16 @@ class CreateRoom : BottomSheetDialogFragment() {
                     timePicker.show()
                 }
             }
+        }
+    }
+
+    fun addObserver(){
+        viewModel.isRoomCreated.observe(viewLifecycleOwner){
+            if(it){
+                binding.createBtn.isEnabled=false
+            }
+            else
+                binding.createBtn.isEnabled=true
         }
     }
 

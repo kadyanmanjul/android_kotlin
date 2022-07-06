@@ -143,9 +143,11 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
         super.onCreate(savedInstanceState)
         var mBundle: Bundle? = Bundle()
         mBundle = this.arguments
+        Log.i("LIFECYCLE", "onCreate: ")
         from = mBundle?.getString("source").toString()
         isSpeaker= mBundle?.getBoolean("isSpeaker") == true
         Log.i("LIVEROOMSOURCE", "onCreate: from:-$from")
+        feedViewModel.isRoomCreated.value=false
         //audienceAdapter?.audienceList?.add(me)
         attachBackPressedDispatcher()
         ConvoWebRtcService.initLibrary()
@@ -1263,6 +1265,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
 
     override fun onStart() {
         super.onStart()
+        Log.i("LIFECYCLE", "onStart: ")
         requireActivity().bindService(
             Intent(requireActivity(), ConvoWebRtcService::class.java),
             myConnection,
@@ -1272,18 +1275,21 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
 
     override fun onPause() {
         super.onPause()
+        Log.i("LIFECYCLE", "onPause: ")
         compositeDisposable.clear()
         PubNubManager.pauseRoomDataCollection()
     }
 
     override fun onStop() {
         super.onStop()
+        Log.i("LIFECYCLE", "onStop: ")
         compositeDisposable.clear()
         requireActivity().unbindService(myConnection)
     }
 
     override fun onResume() {
         super.onResume()
+        Log.i("LIFECYCLE", "onResume: ")
         compositeDisposable.clear()
         observeNetwork()
         PubNubManager.collectPubNubEvents()
@@ -1342,6 +1348,8 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
                 mBoundService?.leaveRoom(roomId, roomQuestionId)
             }
         }
+        vm.unSubscribePubNub()
+        Log.i("LIFECYCLE", "onDestroy: ")
         vm.pubNubState.value=PubNubState.ENDED
         feedViewModel.pubNubState=PubNubState.ENDED
         binding.notificationBar.destroyMediaPlayer()
@@ -1392,7 +1400,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
                     activity
                         .supportFragmentManager
                         .beginTransaction()
-                        .replace(R.id.fragmentContainer, fragment)
+                        .replace(R.id.feedRoot, fragment)
                         .addToBackStack(null)
                         .commit()
                 }

@@ -43,13 +43,9 @@ class SignUpAddProfilePhotoFragment: Fragment() {
                 (activity as SignUpActivity).btnWelcome.visibility=View.VISIBLE
                 //showToast("Back Pressed")
                 activity?.run {
-//                    supportFragmentManager.beginTransaction().remove(this@SignUpAddProfilePhotoFragment)
-//                        .commitAllowingStateLoss()
                     viewModel.redirect= "ENTER_PIC"
                     Log.i("SIGNUPActivity", "handleOnBackPressed: ${viewModel.redirect}")
                     requireActivity().supportFragmentManager.beginTransaction().remove(this@SignUpAddProfilePhotoFragment).commit()
-
-                    //SignUpActivity.start(requireContext(), SignUpActivity.REDIRECT_TO_ENTER_PROFILE_PIC)
                 }
             }
         })
@@ -59,10 +55,6 @@ class SignUpAddProfilePhotoFragment: Fragment() {
         return binding.root
     }
 
-//    override fun onDetach() {
-//        super.onDetach()
-//        showToast("Detach is called")
-//    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -84,9 +76,7 @@ class SignUpAddProfilePhotoFragment: Fragment() {
 
     fun onSkipPressed() {
         viewModel.changeSignUpStepStatusToSkip()
-        //startActivityForState()
         PrefManager.put(SKIP,true)
-        //SignUpActivity.start(requireContext(), SignUpActivity.REDIRECT_PROFILE_SKIPPED)
     }
 
     private fun startProgress() {

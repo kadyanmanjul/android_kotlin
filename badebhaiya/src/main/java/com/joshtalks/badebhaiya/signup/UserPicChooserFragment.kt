@@ -88,7 +88,7 @@ class UserPicChooserFragment : BottomSheetDialogFragment() {
 
     fun change() {
         ImagePicker.with(this)
-            .crop()                    //Crop image(Optional), Check Customization for more option
+            .cropSquare() //Crop image(Optional), Check Customization for more option
             .galleryOnly()
             .saveDir(File(requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!, "ImagePicker"))
             .start(ImagePicker.REQUEST_CODE)
@@ -98,7 +98,7 @@ class UserPicChooserFragment : BottomSheetDialogFragment() {
 
     fun captureImage() {
         ImagePicker.with(this)
-            .crop()                    //Crop image(Optional), Check Customization for more option
+            .cropSquare()//Crop image(Optional), Check Customization for more option
             .cameraOnly()
             .saveDir(File(requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!, "ImagePicker"))
             .start(ImagePicker.REQUEST_CODE)
