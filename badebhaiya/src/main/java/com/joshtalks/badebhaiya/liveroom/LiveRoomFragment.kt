@@ -1,6 +1,7 @@
 package com.joshtalks.badebhaiya.liveroom
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.NotificationManager
 import android.content.ComponentName
 import android.content.Context
@@ -14,15 +15,18 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
+import android.util.DisplayMetrics
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import android.widget.FrameLayout
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.addCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.collection.arraySetOf
-import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.view.get
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -33,9 +37,11 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
 import com.google.android.material.badge.BadgeDrawable
 import com.google.android.material.badge.BadgeUtils
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.core.*
-import com.joshtalks.badebhaiya.core.base.BaseFragment
 import com.joshtalks.badebhaiya.databinding.FragmentLiveRoomBinding
 import com.joshtalks.badebhaiya.feed.*
 import com.joshtalks.badebhaiya.feed.model.LiveRoomUser
@@ -79,8 +85,11 @@ import timber.log.Timber
 
 
 @AndroidEntryPoint
-class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel>(
-    R.layout.fragment_live_room
+//class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel>(
+//    R.layout.fragment_live_room
+//),
+class LiveRoomFragment : BottomSheetDialogFragment(
+//    R.layout.fragment_live_room
 ),
     NotificationView.NotificationViewAction,
     RaisedHandsBottomSheet.HandRaiseSheetListener {
@@ -125,7 +134,8 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
     private val badgeDrawable: BadgeDrawable by lazy { BadgeDrawable.create(requireActivity()) }
 
     var fullName= User.getInstance().firstName+" "+ User.getInstance().lastName
-    var me= LiveRoomUser(123,
+    var me= LiveRoomUser(
+        123,
         false,
         User.getInstance().firstName,
         fullName,
@@ -156,11 +166,23 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
 
     }
 
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        binding = FragmentLiveRoomBinding.inflate(inflater, container, false)
+//        return super.onCreateView(inflater, container, savedInstanceState)
+        return binding.root
+    }
 
-    override fun onInitDataBinding(viewBinding: FragmentLiveRoomBinding) {
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+//    } {
         // View is initialized
-        viewBinding.handler = this
-        binding = viewBinding
+        binding.handler = this
+//        binding = viewBinding
         vm.lvRoomState = LiveRoomState.EXPANDED
         channelName = PubNubManager.getLiveRoomProperties()?.channelName
         binding.scrollView.isNestedScrollingEnabled = false
@@ -187,39 +209,39 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
     }
 
     private fun trackLiveRoomState(){
-        binding.liveRoomRootView.addTransitionListener(object : MotionLayout.TransitionListener{
-            override fun onTransitionStarted(
-                motionLayout: MotionLayout?,
-                startId: Int,
-                endId: Int
-            ) {
-            }
-
-            override fun onTransitionChange(
-                motionLayout: MotionLayout?,
-                startId: Int,
-                endId: Int,
-                progress: Float
-            ) {
-            }
-
-            override fun onTransitionCompleted(motionLayout: MotionLayout?, currentId: Int) {
-                if (currentId == R.id.collapsed){
-                    vm.lvRoomState = LiveRoomState.COLLAPSED
-                } else {
-                    vm.lvRoomState = LiveRoomState.EXPANDED
-                }
-            }
-
-            override fun onTransitionTrigger(
-                motionLayout: MotionLayout?,
-                triggerId: Int,
-                positive: Boolean,
-                progress: Float
-            ) {
-            }
-
-        })
+//        binding.liveRoomRootView.addTransitionListener(object : MotionLayout.TransitionListener{
+//            override fun onTransitionStarted(
+//                motionLayout: MotionLayout?,
+//                startId: Int,
+//                endId: Int
+//            ) {
+//            }
+//
+//            override fun onTransitionChange(
+//                motionLayout: MotionLayout?,
+//                startId: Int,
+//                endId: Int,
+//                progress: Float
+//            ) {
+//            }
+//
+//            override fun onTransitionCompleted(motionLayout: MotionLayout?, currentId: Int) {
+//                if (currentId == R.id.collapsed){
+//                    vm.lvRoomState = LiveRoomState.COLLAPSED
+//                } else {
+//                    vm.lvRoomState = LiveRoomState.EXPANDED
+//                }
+//            }
+//
+//            override fun onTransitionTrigger(
+//                motionLayout: MotionLayout?,
+//                triggerId: Int,
+//                positive: Boolean,
+//                progress: Float
+//            ) {
+//            }
+//
+//        })
     }
 
     private fun addViewModelObserver() {
@@ -281,7 +303,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
             Log.d("ABC2", "Data class called with data message: ${it.what} bundle : ${it.data}")
             when (it.what) {
                 HIDE_PROGRESSBAR -> {
-                    hideProgressBar()
+//                    hideProgressBar()
                 }
                 HIDE_SEARCHING_STATE -> {
                 }
@@ -391,13 +413,13 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
     }
 
     fun collapseLiveRoom(){
-        binding.liveRoomRootView.transitionToEnd()
+//        binding.liveRoomRootView.transitionToEnd()
 //        vm.lvRoomState = LiveRoomState.COLLAPSED
     }
 
      fun expandLiveRoom() {
          Log.i("YASHEN", "expandLiveRoom: ")
-        binding.liveRoomRootView.transitionToStart()
+//        binding.liveRoomRootView.transitionToStart()
     }
 
     @SuppressLint("UnsafeOptInUsageError")
@@ -423,6 +445,25 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
         requireActivity().supportFragmentManager.popBackStack()
     }
 
+    private fun setupFullHeight(bottomSheetDialog: BottomSheetDialog) {
+        val bottomSheet: FrameLayout =
+            bottomSheetDialog.findViewById(R.id.design_bottom_sheet) as FrameLayout
+        val behavior: BottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
+        val layoutParams: ViewGroup.LayoutParams = bottomSheet.getLayoutParams()
+        val windowHeight = getWindowHeight()
+        if (layoutParams != null) {
+            layoutParams.height = windowHeight
+        }
+        bottomSheet.setLayoutParams(layoutParams)
+        behavior.setState(BottomSheetBehavior.STATE_EXPANDED)
+    }
+
+    private fun getWindowHeight(): Int {
+        // Calculate window height for fullscreen use
+        val displayMetrics = DisplayMetrics()
+        (context as Activity?).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics)
+        return displayMetrics.heightPixels
+    }
 
     private fun initData() {
         binding.notificationBar.setNotificationViewEnquiryAction(this)
@@ -449,8 +490,10 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
         takePermissions()
     }
 
+
+
     private fun addJoinAPIObservers() {
-        showProgressBar()
+//        showProgressBar()
         vm.navigation.observe(this) {
             try {
                 when (it) {
@@ -463,7 +506,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
                         it.roomId
                     )
                     else -> {
-                        hideProgressBar()
+//                        hideProgressBar()
                     }
                 }
             } catch (ex: Exception) {
@@ -492,11 +535,11 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
         this.roomQuestionId = null
         initData()
         vm.startRoom()
-        hideProgressBar()
+//        hideProgressBar()
     }
 
     private fun showApiCallErrorToast(error: String) {
-        hideProgressBar()
+//        hideProgressBar()
         if (error.isNotEmpty()) {
             binding.notificationBar.apply {
                 visibility = View.VISIBLE
@@ -1382,8 +1425,8 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
                 showToast("Please Leave Current Room")
             } else {
                 Log.i("LIVEROOMSOURCE", "launch: $from")
-                var frag=activity.supportFragmentManager.findFragmentById(R.id.liveRoomRootView)
-                if(frag==null) {
+//                var frag=activity.supportFragmentManager.findFragmentById(R.id.liveRoomRootView)
+//                if(frag==null) {
 
                     val waitingFragment = activity.supportFragmentManager.findFragmentByTag(WaitingFragment.TAG)
                     waitingFragment?.let {
@@ -1397,13 +1440,14 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
                     bundle.putBoolean("isSpeaker",isSpeaker)
                     fragment.arguments = bundle
                     PubNubManager.warmUp(liveRoomProperties)
-                    activity
-                        .supportFragmentManager
-                        .beginTransaction()
-                        .replace(R.id.feedRoot, fragment)
-                        .addToBackStack(null)
-                        .commit()
-                }
+//                    activity
+//                        .supportFragmentManager
+//                        .beginTransaction()
+//                        .replace(R.id.feedRoot, fragment)
+//                        .addToBackStack(null)
+//                        .commit()
+                fragment.show(activity.supportFragmentManager, null)
+//                }
             }
         }
 
@@ -1411,7 +1455,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
 
 
 
-    override fun getViewModel(): LiveRoomViewModel = vm
+//    override fun getViewModel(): LiveRoomViewModel = vm
      fun itemClick(userId: String) {
         val nextFrag = ProfileFragment()
         val bundle = Bundle()

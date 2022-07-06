@@ -14,7 +14,7 @@
             type="com.joshtalks.badebhaiya.liveroom.viewmodel.LiveRoomViewModel" />
     </data>
 
-    <com.joshtalks.badebhaiya.custom_ui.SingleViewTouchableMotionLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/liveRoomRootView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -339,5 +339,5 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-    </com.joshtalks.badebhaiya.custom_ui.SingleViewTouchableMotionLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
