@@ -466,19 +466,6 @@ object PermissionUtils {
         }
     }
 
-    fun convoRoomPermissionPermanentlyDeniedDialog(
-        activity: Activity,
-        message: Int = R.string.call_start_permission_message
-    ) {
-        MaterialDialog(activity).show {
-            message(message)
-            positiveButton(R.string.settings) {
-                openSettings(activity)
-            }
-            negativeButton(R.string.not_now)
-        }
-    }
-
     fun demoCallingPermissionPermanentlyDeniedDialog(
         activity: Activity,
         message: Int = R.string.demo_call_start_permission_message

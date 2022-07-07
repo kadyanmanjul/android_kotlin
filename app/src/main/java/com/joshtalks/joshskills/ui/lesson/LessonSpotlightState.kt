@@ -10,5 +10,4 @@ enum class LessonSpotlightState(value: Int) {
     READING_SPOTLIGHT(6),
     GRAMMAR_SPOTLIGHT_PART2(7),
     SPEAKING_SPOTLIGHT_PART2(8),
-    CONVO_ROOM_SPOTLIGHT(9),
 }

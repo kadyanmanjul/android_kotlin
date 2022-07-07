@@ -37,16 +37,12 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.MutableLiveData
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.conversationRoom.liveRooms.ConversationLiveRoomActivity
-import com.joshtalks.joshskills.conversationRoom.model.JoinConversionRoomRequest
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CallType
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
-import com.joshtalks.joshskills.core.HAS_SEEN_CONVO_ROOM_POINTS
 import com.joshtalks.joshskills.core.IS_COURSE_BOUGHT
 import com.joshtalks.joshskills.core.JoshApplication
-import com.joshtalks.joshskills.core.PREF_IS_CONVERSATION_ROOM_ACTIVE
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.LogException
@@ -60,10 +56,8 @@ import com.joshtalks.joshskills.core.startServiceForWebrtc
 import com.joshtalks.joshskills.core.textDrawableBitmap
 import com.joshtalks.joshskills.core.urlToBitmap
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.eventbus.ConvoRoomPointsEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.WebrtcEventBus
 import com.joshtalks.joshskills.repository.local.model.FirestoreNotificationObject
-import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.NotificationAction
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
@@ -86,7 +80,6 @@ import io.agora.rtc.Constants.AUDIO_SCENARIO_EDUCATION
 import io.agora.rtc.Constants.CHANNEL_PROFILE_COMMUNICATION
 import io.agora.rtc.Constants.CONNECTION_CHANGED_INTERRUPTED
 import io.agora.rtc.Constants.CONNECTION_STATE_RECONNECTING
-import io.agora.rtc.Constants.USER_OFFLINE_QUIT
 import io.agora.rtc.IRtcEngineEventHandler
 import io.agora.rtc.RtcEngine
 import io.reactivex.Completable
@@ -122,13 +115,11 @@ const val RTC_GROUP_CALL_GROUP_NAME = "group_call_group_name"
 const val RTC_WEB_GROUP_CALL_GROUP_NAME = "group_web_call_group_name"
 const val RTC_WEB_GROUP_PHOTO = "group_url"
 const val RTC_PARTNER_ID = "partner_id"
-const val DEFAULT_NOTIFICATION_TITLE = "Josh Skills App Running"
 const val IS_CHANNEL_ACTIVE_KEY = "success"
 const val SHOW_FPP_DIALOG = "show_fpp_dialog"
 
 class WebRtcService : BaseWebRtcService() {
     private val TAG = "ABCWebRtcService"
-    private val log = Timber.tag("WebRtcService")
     private val mBinder: IBinder = MyBinder()
     private val hangUpRtcOnDeviceCallAnswered: PhoneStateListener =
         HangUpRtcOnPstnCallAnsweredListener()
@@ -149,29 +140,18 @@ class WebRtcService : BaseWebRtcService() {
     private var userDetailMap: HashMap<String, String>? = null
     var speakingUsersNewList = arrayListOf<Int>()
     var speakingUsersOldList = arrayListOf<Int>()
-    private val timber = Timber.tag(TAG)
     var fppDialogeFlag:String?=null
-    private val audioManager by lazy {
-        getSystemService(Context.AUDIO_SERVICE) as AudioManager
-    }
 
     companion object {
-        var isRoomEnded = false
         var incomingTimer: CoroutineScope? = null
-        var conversationRoomTopicName: String? = ""
-        private val TAG = WebRtcService::class.java.simpleName
         var pstnCallState = CallState.CALL_STATE_IDLE
 
         var isOnPstnCall = false
-        var isConversionRoomActive = false
-        var isRoomCreatedByUser = false
         var agoraUid: Int? = null
         var moderatorUid: Int? = null
         var roomId: String? = null
         var channelTopic: String? = null
         var roomQuestionId: Int? = null
-        var conversationRoomChannelName: String? = null
-        var conversationRoomToken: String? = null
         val incomingWaitJobsList = LinkedList<Job>()
 
         @JvmStatic
@@ -235,9 +215,6 @@ class WebRtcService : BaseWebRtcService() {
                 }
             }
         }
-
-        @Volatile
-        private var conversationRoomCallbackOld: WeakReference<ConversationRoomCallbackOld>? = null
 
         fun initLibrary() {
             val serviceIntent = Intent(
@@ -413,7 +390,7 @@ class WebRtcService : BaseWebRtcService() {
             totalVolume: Int
         ) {
             super.onAudioVolumeIndication(speakers, totalVolume)
-            //log.d("${speakers}")
+
             val isSpeaking = (speakers?.find { it.uid == 0 }) != null
             val isListening = (speakers?.find { it.uid > 0 }) != null
             if (isSpeaking)
@@ -427,11 +404,8 @@ class WebRtcService : BaseWebRtcService() {
         }
 
         suspend fun saveMicState() {
-            //log.d("saveMicState: ")
             micMutex.withLock {
-                //log.d("saveMicState --> lock")
                 val currentCallDetails = CurrentCallDetails.state()
-                //log.d("$currentCallDetails")
                 val timestamp = DateUtils.getCurrentTimeStamp()
                 if (!currentCallDetails.isSpeakingPushed && currentCallDetails.isCallConnectedScreenVisible) {
                     val agoraMentorUid = currentCallDetails.callieUid
@@ -447,16 +421,12 @@ class WebRtcService : BaseWebRtcService() {
                     if (agoraCallId.isNotEmpty() || agoraMentorUid.isNotEmpty())
                         CurrentCallDetails.speakingPushed()
                 }
-                //log.d("saveMicState --> unlock")
             }
         }
 
         suspend fun saveSpeakerState() {
-            //log.d("saveSpeakerState")
             speakerMutex.withLock {
-                //log.d("saveSpeakerState -- lock")
                 val currentCallDetails = CurrentCallDetails.state()
-                //log.d("$currentCallDetails")
                 val timestamp = DateUtils.getCurrentTimeStamp()
                 if (!currentCallDetails.isListeningPushed && currentCallDetails.isCallConnectedScreenVisible) {
                     val agoraMentorUid = currentCallDetails.callieUid
@@ -472,7 +442,6 @@ class WebRtcService : BaseWebRtcService() {
                     if (agoraCallId.isNotEmpty() || agoraMentorUid.isNotEmpty())
                         CurrentCallDetails.listeningPushed()
                 }
-                //log.d("saveSpeakerState -- unlock")
             }
         }
 
@@ -721,178 +690,9 @@ class WebRtcService : BaseWebRtcService() {
         }
     }
 
-    @Volatile
-    private var conversationRoomEventListener: IRtcEngineEventHandler? =
-        object : IRtcEngineEventHandler() {
-
-            override fun onJoinChannelSuccess(channel: String, uid: Int, elapsed: Int) {
-                super.onJoinChannelSuccess(channel, uid, elapsed)
-                Log.d(TAG, "joinChannelSuccess $uid")
-                Log.d(TAG, "moderatorUid in onJoinChannelSuccess: $moderatorUid")
-
-            }
-
-            override fun onLeaveChannel(stats: RtcStats) {
-                super.onLeaveChannel(stats)
-            }
-
-            override fun onRejoinChannelSuccess(channel: String?, uid: Int, elapsed: Int) {
-                super.onRejoinChannelSuccess(channel, uid, elapsed)
-                Log.d(TAG, "RejoinChannelSuccess $uid")
-
-            }
-
-            override fun onUserOffline(uid: Int, reason: Int) {
-                super.onUserOffline(uid, reason)
-                val isUserLeave = reason == USER_OFFLINE_QUIT
-                if (!isRoomCreatedByUser && isUserLeave) {
-                    conversationRoomCallbackOld?.get()?.onUserOffline(uid)
-                }
-                /*val usersReference = roomReference.document(roomId.toString()).collection("users")
-                if (isRoomCreatedByUser) {
-                    if (isUserLeave) {
-                        usersReference.document(uid.toString()).delete()
-                        Log.d(TAG, "isRoomCreatedByUser ${isRoomCreatedByUser} service OnUserOffline remove user by moderator $moderatorUid")
-                    }
-                } else {
-                    if (uid == moderatorUid && isUserLeave) {
-                        usersReference.get().addOnSuccessListener { documents ->
-                            Log.d(TAG, "isRoomCreatedByUser ${isRoomCreatedByUser}  service OnUserOffline for moderator call $moderatorUid $reason")
-                            if (documents.size() > 1) {
-                                if (documents.documents[0].id.toInt() == agoraUid) {
-                                    endRoom(roomId, roomQuestionId)
-                                } else if (documents.documents[1].id.toInt() == agoraUid) {
-                                    endRoom(roomId, roomQuestionId)
-                                }
-                            }
-
-                        }
-                    }
-                }*/
-
-            }
-
-            override fun onAudioVolumeIndication(
-                speakers: Array<out AudioVolumeInfo>?,
-                totalVolume: Int
-            ) {
-                super.onAudioVolumeIndication(speakers, totalVolume)
-                conversationRoomCallbackOld?.get()?.onAudioVolumeIndication(speakers, totalVolume)
-                /*if (isRoomCreatedByUser) {
-                    speakingUsersOldList.clear()
-                    speakingUsersOldList.addAll(speakingUsersNewList)
-                    speakingUsersNewList.clear()
-                    speakers?.forEach {
-                        if (it.uid != 0 && it.volume > 0) {
-                            speakingUsersNewList.add(it.uid)
-                        }
-                        if (it.uid == 0 && it.volume > 0) {
-                            speakingUsersNewList.add(agoraUid ?: 0)
-                        }
-                    }
-                    updateFirestoreData()
-                }*/
-                /*try {
-                    val user = speakers?.filter { it.uid == agoraUid!! }
-                    if (user!=null && user.size!! > 0){
-                        if (user[0].volume > 0) {
-                            roomReference.document(roomId.toString()).collection("users").document(user[0].uid.toString()).update("is_speaking", true)
-                        }
-                        else {
-                            roomReference.document(roomId.toString()).collection("users").document(user[0].uid.toString()).update("is_speaking", false)
-                        }
-                    }
-                } catch (ex:Exception){
-                    ex.printStackTrace()
-                }*/
-            }
-
-        }
-
-
-    fun endRoom(roomId: String?, conversationQuestionId: Int? = null) {
-        Log.d(
-            TAG,
-            "endRoom() service called with: roomId = $roomId, conversationQuestionId = $conversationQuestionId"
-        )
-        CoroutineScope(Dispatchers.IO).launch {
-            removeNotifications()
-            //removeConversationNotifications()
-            try {
-                if (isRoomEnded.not()) {
-                    var qId: Int? = null
-                    if (conversationQuestionId != null && (conversationQuestionId != 0 || conversationQuestionId != -1)) {
-                        qId = conversationQuestionId
-                    }
-                    val request =
-                        JoinConversionRoomRequest(
-                            Mentor.getInstance().getId(),
-                            roomId?.toInt() ?: 0,
-                            qId
-                        )
-                    val response =
-                        AppObjectController.conversationRoomsNetworkService.endConversationLiveRoom(
-                            request
-                        )
-                    Log.d(TAG, "end room api call ${response.code()}")
-                    if (response.isSuccessful) {
-                        isRoomEnded = false
-                        PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS, false)
-                        PrefManager.put(PREF_IS_CONVERSATION_ROOM_ACTIVE, false)
-                        RxBus2.publish(ConvoRoomPointsEventBus(null))
-                        conversationRoomChannelName = null
-                        mRtcEngine?.leaveChannel()
-                        //joshAudioManager?.endCommunication()
-                    }
-                }
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-            }
-        }
-    }
-
-    fun leaveRoom(roomId: String?, conversationQuestionId: Int? = null) {
-        if (roomId.isNullOrBlank().not()) {
-            CoroutineScope(Dispatchers.IO).launch {
-                if (isRoomEnded.not()) {
-                    removeNotifications()
-                    try {
-                        var qId: Int? = null
-                        if (conversationQuestionId != null && (conversationQuestionId != 0 || conversationQuestionId != -1)) {
-                            qId = conversationQuestionId
-                        }
-                        val request =
-                            JoinConversionRoomRequest(
-                                Mentor.getInstance().getId(),
-                                roomId?.toInt() ?: 0,
-                                qId
-                            )
-                        val response =
-                            AppObjectController.conversationRoomsNetworkService.leaveConversationLiveRoom(
-                                request
-                            )
-                        Log.d(TAG, "leave room api call")
-                        if (response.isSuccessful) {
-                            isRoomEnded = false
-                            PrefManager.put(HAS_SEEN_CONVO_ROOM_POINTS, false)
-                            PrefManager.put(PREF_IS_CONVERSATION_ROOM_ACTIVE, false)
-                            RxBus2.publish(ConvoRoomPointsEventBus(null))
-                            conversationRoomChannelName = null
-                            mRtcEngine?.leaveChannel()
-                            //joshAudioManager?.endCommunication()
-                        }
-                    } catch (ex: Exception) {
-                        ex.printStackTrace()
-                    }
-                }
-            }
-        }
-    }
-
     fun endService() {
         CoroutineScope(Dispatchers.IO).launch {
             removeNotifications()
-            conversationRoomChannelName = null
             mRtcEngine?.leaveChannel()
         }
     }
@@ -956,70 +756,32 @@ class WebRtcService : BaseWebRtcService() {
     inner class HangUpRtcOnPstnCallAnsweredListener : PhoneStateListener() {
         override fun onCallStateChanged(state: Int, phoneNumber: String?) {
             super.onCallStateChanged(state, phoneNumber)
-            Timber.tag(TAG)
-                .e("RTC=    %s isConversionRoomActive = %s", state, isConversionRoomActive)
             when (state) {
                 TelephonyManager.CALL_STATE_IDLE -> {
-                    if (isConversionRoomActive) {
-                        //TODO recheck this code
-                        /*val usersReference =
-                            roomReference.document(roomId.toString()).collection("users")
-                        usersReference.document(agoraUid.toString()).get().addOnSuccessListener {
-                            val isMicOn = it["is_mic_on"]
-                            val isSpeaker = it["is_speaker"]
-                            if (isSpeaker == true && isMicOn == true) {
-                                unMuteCall()
-                            }
-                        }*/
-                    } else {
-                        isOnPstnCall = false
-                        pstnCallState = CallState.CALL_STATE_IDLE
-                        mRtcEngine?.muteAllRemoteAudioStreams(false)
-                        mRtcEngine?.muteLocalAudioStream(false)
-                        mRtcEngine?.enableLocalAudio(true)
+                    isOnPstnCall = false
+                    pstnCallState = CallState.CALL_STATE_IDLE
+                    mRtcEngine?.muteAllRemoteAudioStreams(false)
+                    mRtcEngine?.muteLocalAudioStream(false)
+                    mRtcEngine?.enableLocalAudio(true)
 
-                        mRtcEngine?.adjustRecordingSignalVolume(400)
-                        val audio = getSystemService(AUDIO_SERVICE) as AudioManager
-                        val maxVolume = audio.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL)
-                        val currentVolume = audio.getStreamVolume(AudioManager.STREAM_VOICE_CALL)
-                        mRtcEngine?.adjustPlaybackSignalVolume((95 / maxVolume) * currentVolume)
+                    mRtcEngine?.adjustRecordingSignalVolume(400)
+                    val audio = getSystemService(AUDIO_SERVICE) as AudioManager
+                    val maxVolume = audio.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL)
+                    val currentVolume = audio.getStreamVolume(AudioManager.STREAM_VOICE_CALL)
+                    mRtcEngine?.adjustPlaybackSignalVolume((95 / maxVolume) * currentVolume)
 
-                        val message = Message()
-                        message.what = CallState.UNHOLD.state
-                        mHandler?.sendMessageDelayed(message, 500)
-                    }
+                    val message = Message()
+                    message.what = CallState.UNHOLD.state
+                    mHandler?.sendMessageDelayed(message, 500)
                 }
                 TelephonyManager.CALL_STATE_OFFHOOK -> {
-                    if (isConversionRoomActive) {
-                        if (isRoomCreatedByUser) {
-                            Log.d(
-                                TAG,
-                                "CALL_STATE_OFFHOOK  called with: state = $state, phoneNumber = $phoneNumber"
-                            )
-                            endRoom(roomId, roomQuestionId)
-                        } else {
-                            leaveRoom(roomId, roomQuestionId)
-                        }
-                    } else {
-                        isOnPstnCall = true
-                        val message = Message()
-                        message.what = CallState.ONHOLD.state
-                        mHandler?.sendMessage(message)
-                    }
-
+                    isOnPstnCall = true
+                    val message = Message()
+                    message.what = CallState.ONHOLD.state
+                    mHandler?.sendMessage(message)
                 }
                 TelephonyManager.CALL_STATE_RINGING -> {
-                    if (isConversionRoomActive) {
-                        /*val usersReference =
-                            roomReference.document(roomId.toString()).collection("users")
-                        usersReference.document(agoraUid.toString()).get().addOnSuccessListener {
-                            val isMicOn = it["is_mic_on"]
-                            val isSpeaker = it["is_speaker"]
-                            if (isSpeaker == true && isMicOn == true) {
-                                muteCall()
-                            }
-                        }*/
-                    }
+
                 }
                 else -> {
                     isOnPstnCall = true
@@ -1088,29 +850,12 @@ class WebRtcService : BaseWebRtcService() {
             } catch (e: InterruptedException) {
                 e.printStackTrace()
             }
-            Log.d(
-                TAG,
-                "initEngine called room id : $roomId isRoomCreatedByUser $isRoomCreatedByUser agoraUid:" +
-                        " $agoraUid moderatorUid: $moderatorUid isConversionRoomActive: $isConversionRoomActive"
-            )
 
-            when (isConversionRoomActive) {
-                false -> {
-                    if (eventListener != null) {
-                        mRtcEngine?.removeHandler(eventListener)
-                    }
-                    if (eventListener != null) {
-                        mRtcEngine?.addHandler(eventListener)
-                    }
-                }
-                true -> {
-                    if (conversationRoomEventListener != null) {
-                        mRtcEngine?.removeHandler(conversationRoomEventListener)
-                    }
-                    if (conversationRoomEventListener != null) {
-                        mRtcEngine?.addHandler(conversationRoomEventListener)
-                    }
-                }
+            if (eventListener != null) {
+                mRtcEngine?.removeHandler(eventListener)
+            }
+            if (eventListener != null) {
+                mRtcEngine?.addHandler(eventListener)
             }
 
             if (isEngineInitialized) {
@@ -1124,9 +869,6 @@ class WebRtcService : BaseWebRtcService() {
                 }
                 setParameters("{\"rtc.peer.offline_period\":$callReconnectTime}")
                 setParameters("{\"che.audio.keep.audiosession\":true}")
-                if (isConversionRoomActive) {
-                    setParameters("{\"che.audio.enable.aec\":true}")
-                }
 
                 disableVideo()
                 enableAudio()
@@ -1161,187 +903,184 @@ class WebRtcService : BaseWebRtcService() {
     @Suppress("UNCHECKED_CAST")
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Timber.tag(TAG).e("onStartCommand=  %s", intent?.action)
-        isConversionRoomActive = intent?.action == ConversationRoomJoin().action
-        if (!isConversionRoomActive) {
-            executor.execute {
-                intent?.action?.run {
-                    removeActionNotifications()
-                    if (this == DisableP2PAction().action) {
-                        addNotification(DisableP2PAction().action, null)
-                        removeInstance()
-                        return@execute
-                    }
-                    initEngine {
-                        try {
-                            callForceDisconnect = false
-                            when {
-                                this == InitLibrary().action -> {
-                                    Timber.tag(TAG).e("LibraryInit")
-                                    addNotification(InitLibrary().action, null)
+        executor.execute {
+            intent?.action?.run {
+                removeActionNotifications()
+                if (this == DisableP2PAction().action) {
+                    addNotification(DisableP2PAction().action, null)
+                    removeInstance()
+                    return@execute
+                }
+                initEngine {
+                    try {
+                        callForceDisconnect = false
+                        when {
+                            this == InitLibrary().action -> {
+                                Timber.tag(TAG).e("LibraryInit")
+                                addNotification(InitLibrary().action, null)
+                            }
+                            this == IncomingCall().action -> {
+                                if (CallState.CALL_STATE_BUSY == pstnCallState || isCallOnGoing.value == true) {
+                                    return@initEngine
                                 }
-                                this == IncomingCall().action -> {
-                                    if (CallState.CALL_STATE_BUSY == pstnCallState || isCallOnGoing.value == true) {
-                                        return@initEngine
-                                    }
-                                    val data =
-                                        intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>
-                                    data.let {
-                                        callData = it
-                                        CurrentCallDetails.fromMap(it)
-                                    }
-                                    setOppositeUserInfo(null)
-                                    callType = CallType.INCOMING
-                                    isTimeOutToPickCall = false
-                                    callStartTime = 0L
-                                    handleIncomingCall()
+                                val data =
+                                    intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>
+                                data.let {
+                                    callData = it
+                                    CurrentCallDetails.fromMap(it)
                                 }
-                                this == OutgoingCall().action -> {
-                                    setOppositeUserInfo(null)
-                                    callStartTime = 0L
-                                    isTimeOutToPickCall = false
-                                    val data: HashMap<String, String?> =
-                                        intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>
-                                    data.let {
-                                        callData = it
-                                        CurrentCallDetails.fromMap(it)
-                                    }
-                                    callType = CallType.OUTGOING
-                                    joinCall(data)
+                                setOppositeUserInfo(null)
+                                callType = CallType.INCOMING
+                                isTimeOutToPickCall = false
+                                callStartTime = 0L
+                                handleIncomingCall()
+                            }
+                            this == OutgoingCall().action -> {
+                                setOppositeUserInfo(null)
+                                callStartTime = 0L
+                                isTimeOutToPickCall = false
+                                val data: HashMap<String, String?> =
+                                    intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>
+                                data.let {
+                                    callData = it
+                                    CurrentCallDetails.fromMap(it)
                                 }
-                                this == CallConnect().action -> {
-                                    val state = CurrentCallDetails.state()
+                                callType = CallType.OUTGOING
+                                joinCall(data)
+                            }
+                            this == CallConnect().action -> {
+                                val state = CurrentCallDetails.state()
 
+                                VoipAnalytics.push(
+                                    VoipAnalytics.Event.CALL_ACCEPT,
+                                    agoraMentorUid = state.callieUid,
+                                    agoraCallId = state.callId,
+                                    timeStamp = DateUtils.getCurrentTimeStamp()
+                                )
+                                removeIncomingNotification()
+                                val callData: HashMap<String, String?>? =
+                                    intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>?
+                                addNotification(CallForceConnect().action,null)
+                                callConnectService(callData)
+                            }
+                            this == CallReject().action -> {
+                                addNotification(CallDisconnect().action, null)
+                                callData?.let {
+                                    callStatusNetworkApi(it, CallAction.DECLINE)
+                                    rejectCall()
+                                }
+                                val state = CurrentCallDetails.state()
+
+                                VoipAnalytics.push(
+                                    VoipAnalytics.Event.CALL_DECLINED,
+                                    agoraMentorUid = state.callieUid,
+                                    agoraCallId = state.callId,
+                                    timeStamp = DateUtils.getCurrentTimeStamp()
+                                )
+                                disconnectService()
+                            }
+                            this == CallDisconnect().action -> {
+                                addNotification(CallDisconnect().action, null)
+                                val reasonEnum =
+                                    intent.getSerializableExtra(DISCONNECT_REASON)
+                                val reason =
+                                    if (reasonEnum is VoipAnalytics.Event) reasonEnum else reasonEnum as DISCONNECT
+                                callData?.let {
+                                    callStatusNetworkApi(
+                                        it,
+                                        CallAction.DISCONNECT,
+                                        hasDisconnected = true
+                                    )
+                                }
+                                endCall(reason = reason)
+                            }
+                            this == NoUserFound().action -> {
+                                callData?.let {
+                                    callStatusNetworkApi(it, CallAction.NOUSERFOUND)
+                                }
+                                mRtcEngine?.leaveChannel()
+                                if (callCallback?.get() == null) {
+                                    val state = CurrentCallDetails.state()
                                     VoipAnalytics.push(
-                                        VoipAnalytics.Event.CALL_ACCEPT,
-                                        agoraMentorUid = state.callieUid,
+                                        DISCONNECT.NO_USER_FOUND_FAILURE,
                                         agoraCallId = state.callId,
+                                        agoraMentorUid = state.callieUid,
                                         timeStamp = DateUtils.getCurrentTimeStamp()
                                     )
-                                    removeIncomingNotification()
-                                    val callData: HashMap<String, String?>? =
-                                        intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>?
-                                    addNotification(CallForceConnect().action,null)
-                                    callConnectService(callData)
                                 }
-                                this == CallReject().action -> {
+                                callCallback?.get()?.onNoUserFound()
+                                disconnectService()
+                            }
+                            this == CallStop().action -> {
+                                addNotification(CallDisconnect().action, null)
+                                callStopWithoutIssue()
+                            }
+                            this == CallForceDisconnect().action -> {
+                                stopRing()
+                                stopPlaying()
+                                callForceDisconnect = true
+                                if (JoshApplication.isAppVisible.not()) {
                                     addNotification(CallDisconnect().action, null)
-                                    callData?.let {
-                                        callStatusNetworkApi(it, CallAction.DECLINE)
-                                        rejectCall()
-                                    }
-                                    val state = CurrentCallDetails.state()
-
-                                    VoipAnalytics.push(
-                                        VoipAnalytics.Event.CALL_DECLINED,
-                                        agoraMentorUid = state.callieUid,
-                                        agoraCallId = state.callId,
-                                        timeStamp = DateUtils.getCurrentTimeStamp()
-                                    )
-                                    disconnectService()
                                 }
-                                this == CallDisconnect().action -> {
+                                endCall(
+                                    apiCall = false,
+                                    reason = DISCONNECT.FORCE_DISCONNECT_NOTIFICATION_FAILURE
+                                )
+                                RxBus2.publish(WebrtcEventBus(CallState.DISCONNECT))
+                            }
+                            this == CallDeclineDisconnect().action -> {
+                                stopRing()
+                                stopPlaying()
+                                callForceDisconnect = true
+                                if (JoshApplication.isAppVisible.not()) {
                                     addNotification(CallDisconnect().action, null)
-                                    val reasonEnum =
-                                        intent.getSerializableExtra(DISCONNECT_REASON)
-                                    val reason =
-                                        if (reasonEnum is VoipAnalytics.Event) reasonEnum else reasonEnum as DISCONNECT
-                                    callData?.let {
-                                        callStatusNetworkApi(
-                                            it,
-                                            CallAction.DISCONNECT,
-                                            hasDisconnected = true
-                                        )
-                                    }
-                                    endCall(reason = reason)
                                 }
-                                this == NoUserFound().action -> {
-                                    callData?.let {
-                                        callStatusNetworkApi(it, CallAction.NOUSERFOUND)
-                                    }
-                                    mRtcEngine?.leaveChannel()
-                                    if (callCallback?.get() == null) {
-                                        val state = CurrentCallDetails.state()
-                                        VoipAnalytics.push(
-                                            DISCONNECT.NO_USER_FOUND_FAILURE,
-                                            agoraCallId = state.callId,
-                                            agoraMentorUid = state.callieUid,
-                                            timeStamp = DateUtils.getCurrentTimeStamp()
-                                        )
-                                    }
-                                    callCallback?.get()?.onNoUserFound()
-                                    disconnectService()
-                                }
-                                this == CallStop().action -> {
-                                    addNotification(CallDisconnect().action, null)
-                                    callStopWithoutIssue()
-                                }
-                                this == CallForceDisconnect().action -> {
-                                    stopRing()
-                                    stopPlaying()
-                                    callForceDisconnect = true
-                                    if (JoshApplication.isAppVisible.not()) {
-                                        addNotification(CallDisconnect().action, null)
-                                    }
-                                    endCall(
-                                        apiCall = false,
-                                        reason = DISCONNECT.FORCE_DISCONNECT_NOTIFICATION_FAILURE
-                                    )
-                                    RxBus2.publish(WebrtcEventBus(CallState.DISCONNECT))
-                                }
-                                this == CallDeclineDisconnect().action -> {
-                                    stopRing()
-                                    stopPlaying()
-                                    callForceDisconnect = true
-                                    if (JoshApplication.isAppVisible.not()) {
-                                        addNotification(CallDisconnect().action, null)
-                                    }
-                                    endCall(
-                                        apiCall = false,
-                                        reason = DISCONNECT.CALL_DECLINE_NOTIFICATION_FAILURE
-                                    )
-                                    RxBus2.publish(WebrtcEventBus(CallState.DISCONNECT))
-                                }
-                                this == CallForceConnect().action -> {
-                                    stopRing()
-                                    stopPlaying()
-                                    callStartTime = 0L
-                                    cancelCallieDisconnectTimer()
-                                    compositeDisposable.clear()
-                                    switchChannel = true
-                                    setOppositeUserInfo(null)
-                                    resetConfig()
-                                    addNotification(CallForceConnect().action, null)
-                                    callData = null
-                                    CurrentCallDetails.reset()
-                                    forceConnectData = intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>
-                                    isForceConnect.set(true)
-                                    if (isCallOnGoing.value == true) {
-                                        mRtcEngine?.leaveChannel() // TODO: Must listen the callback
-                                    }
-                                }
-                                this == HoldCall().action -> {
-                                    val message = Message()
-                                    message.what = CallState.CALL_HOLD_BY_OPPOSITE.state
-                                    mHandler?.sendMessage(message)
-                                }
-                                this == ResumeCall().action -> {
-                                    cancelCallieDisconnectTimer()
-                                    compositeDisposable.clear()
-                                    val message = Message()
-                                    message.what = CallState.CALL_RESUME_BY_OPPOSITE.state
-                                    mHandler?.sendMessage(message)
-                                }
-                                this == UserJoined().action -> {
-                                    val uid =
-                                        intent.getIntExtra(OPPOSITE_USER_UID, -1)
-                                    if (uid != -1) {
-                                        userJoined(uid, true)
-                                    }
+                                endCall(
+                                    apiCall = false,
+                                    reason = DISCONNECT.CALL_DECLINE_NOTIFICATION_FAILURE
+                                )
+                                RxBus2.publish(WebrtcEventBus(CallState.DISCONNECT))
+                            }
+                            this == CallForceConnect().action -> {
+                                stopRing()
+                                stopPlaying()
+                                callStartTime = 0L
+                                cancelCallieDisconnectTimer()
+                                compositeDisposable.clear()
+                                switchChannel = true
+                                setOppositeUserInfo(null)
+                                resetConfig()
+                                addNotification(CallForceConnect().action, null)
+                                callData = null
+                                CurrentCallDetails.reset()
+                                forceConnectData = intent.getSerializableExtra(CALL_USER_OBJ) as HashMap<String, String?>
+                                isForceConnect.set(true)
+                                if (isCallOnGoing.value == true) {
+                                    mRtcEngine?.leaveChannel() // TODO: Must listen the callback
                                 }
                             }
-                        } catch (ex: Exception) {
-                            ex.printStackTrace()
+                            this == HoldCall().action -> {
+                                val message = Message()
+                                message.what = CallState.CALL_HOLD_BY_OPPOSITE.state
+                                mHandler?.sendMessage(message)
+                            }
+                            this == ResumeCall().action -> {
+                                cancelCallieDisconnectTimer()
+                                compositeDisposable.clear()
+                                val message = Message()
+                                message.what = CallState.CALL_RESUME_BY_OPPOSITE.state
+                                mHandler?.sendMessage(message)
+                            }
+                            this == UserJoined().action -> {
+                                val uid =
+                                    intent.getIntExtra(OPPOSITE_USER_UID, -1)
+                                if (uid != -1) {
+                                    userJoined(uid, true)
+                                }
+                            }
                         }
+                    } catch (ex: Exception) {
+                        ex.printStackTrace()
                     }
                 }
             }
@@ -1360,10 +1099,6 @@ class WebRtcService : BaseWebRtcService() {
 
     fun addListener(callback: WebRtcCallback?) {
         callCallback = WeakReference(callback)
-    }
-
-    fun addListener(callbackOld: ConversationRoomCallbackOld) {
-        conversationRoomCallbackOld = WeakReference(callbackOld)
     }
 
     private fun callStopWithoutIssue() {
@@ -1647,12 +1382,6 @@ class WebRtcService : BaseWebRtcService() {
         isCallOnGoing.postValue(false)
     }
 
-    private fun showConversationRoomNotification() {
-        showNotification(
-            conversationRoomNotification(), ACTION_NOTIFICATION_ID
-        )
-    }
-
     fun answerCall(data: HashMap<String, String?>, callAcceptApi: Boolean = false) {
         executor.execute {
             try {
@@ -1901,15 +1630,6 @@ class WebRtcService : BaseWebRtcService() {
     }
 
     override fun onDestroy() {
-        Log.d(TAG, "service onDestroy() called isConversionRoomActive:${isConversionRoomActive}")
-        if (isConversionRoomActive) {
-            if (isRoomCreatedByUser) {
-                endRoom(roomId, roomQuestionId)
-            } else {
-                leaveRoom(roomId, roomQuestionId)
-            }
-            Log.d(TAG, "onDestroy: isRoomCreatedByUser : $isRoomCreatedByUser ")
-        }
         RtcEngine.destroy()
         stopRing()
         stopPlaying()
@@ -2312,72 +2032,6 @@ class WebRtcService : BaseWebRtcService() {
         return lNotificationBuilder.build()
     }
 
-    private fun conversationRoomNotification(): Notification {
-        Timber.tag(TAG).e("actionNotification  ")
-        mNotificationManager?.cancel(ACTION_NOTIFICATION_ID)
-        mNotificationManager?.cancel(INCOMING_CALL_NOTIFICATION_ID)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val notificationChannelName: CharSequence = "Voip Call Status"
-            val mChannel = NotificationChannel(
-                CALL_NOTIFICATION_CHANNEL,
-                notificationChannelName,
-                NotificationManager.IMPORTANCE_MIN,
-            ).apply {
-                description = "Notifications for voice calling"
-            }
-            mNotificationManager?.createNotificationChannel(mChannel)
-        }
-        val intent = ConversationLiveRoomActivity.getIntent(
-            context = this,
-            channelName = conversationRoomChannelName,
-            uid = agoraUid,
-            token = conversationRoomToken,
-            isRoomCreatedByUser = isRoomCreatedByUser,
-            roomId = roomId?.toInt(),
-            moderatorId = moderatorUid,
-            roomQuestionId = roomQuestionId,
-            topicName = channelTopic
-        )
-        Log.d(TAG, "channelName: $conversationRoomChannelName")
-
-        val uniqueInt = (System.currentTimeMillis() and 0xfffffff).toInt()
-
-        val pendingIntent: PendingIntent =
-            intent.let { notificationIntent ->
-                PendingIntent.getActivity(
-                    this,
-                    uniqueInt,
-                    notificationIntent,
-                    PendingIntent.FLAG_UPDATE_CURRENT
-                )
-            }
-        Log.d(
-            TAG,
-            "conversationRoomNotification: pending intent channel $conversationRoomChannelName"
-        )
-
-        val lNotificationBuilder =
-            NotificationCompat.Builder(this, CALL_NOTIFICATION_CHANNEL)
-                .setChannelId(CALL_NOTIFICATION_CHANNEL)
-                .setContentTitle("Conversation Room")
-                .setSmallIcon(R.drawable.ic_status_bar_notification)
-                .setContentIntent(pendingIntent)
-                .setColor(
-                    ContextCompat.getColor(
-                        AppObjectController.joshApplication,
-                        R.color.colorPrimary
-                    )
-                )
-                .setOngoing(true)
-                .setPriority(NotificationCompat.PRIORITY_MAX)
-        if (!conversationRoomTopicName.isNullOrEmpty()) {
-            lNotificationBuilder.setContentText(conversationRoomTopicName)
-        }
-
-        lNotificationBuilder.priority = NotificationCompat.PRIORITY_MAX
-        return lNotificationBuilder.build()
-    }
-
     private fun getWebRtcActivityIntent(callType: CallType): Intent {
         return Intent(
             this,
@@ -2525,8 +2179,6 @@ data class NoUserFound(val action: String = "calling.action.no_user_found") :
 data class HoldCall(val action: String = "calling.action.hold_call") : WebRtcCalling()
 data class ResumeCall(val action: String = "calling.action.resume_call") : WebRtcCalling()
 data class UserJoined(val action: String = "calling.action.user_joined") : WebRtcCalling()
-data class ConversationRoomJoin(val action: String = "calling.action.conversation_room_joined") :
-    WebRtcCalling()
 
 data class FavoriteIncomingCall(val action: String = "calling.action.favorite_incoming_call") :
     WebRtcCalling()
@@ -2550,10 +2202,8 @@ class NotificationId {
         const val ACTION_NOTIFICATION_ID = 200000
         const val INCOMING_CALL_NOTIFICATION_ID = 200001
         const val CONNECTED_CALL_NOTIFICATION_ID = 200002
-        const val ROOM_CALL_NOTIFICATION_ID = 200003
         const val CALL_NOTIFICATION_CHANNEL = "Call Notifications"
         const val LOCAL_NOTIFICATION_CHANNEL = "Local Notifications"
-        const val ROOM_NOTIFICATION_CHANNEL = "Rooms Notifications"
     }
 }
 
@@ -2571,20 +2221,6 @@ interface WebRtcCallback {
     fun onHoldCall() {}
     fun onUnHoldCall() {}
     fun onSpeakerOff() {}
-    fun onIncomingCallConnected() {}
-    fun onIncomingCallUserConnected() {}
-    fun onNewIncomingCallChannel() {}
-}
-
-interface ConversationRoomCallbackOld {
-    fun onUserOffline(uid: Int)
-    fun onAudioVolumeIndication(
-        speakers: Array<out IRtcEngineEventHandler.AudioVolumeInfo>?,
-        totalVolume: Int
-    )
-
-    fun onSwitchToSpeaker()
-    fun onSwitchToAudience()
     fun onIncomingCallConnected() {}
     fun onIncomingCallUserConnected() {}
     fun onNewIncomingCallChannel() {}

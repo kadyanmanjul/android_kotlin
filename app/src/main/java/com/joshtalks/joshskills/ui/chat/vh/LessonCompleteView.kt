@@ -18,7 +18,6 @@ class LessonCompleteView : FrameLayout {
     private lateinit var lessonNameTvCompleted: AppCompatTextView
     private lateinit var rootView: FrameLayout
     private var lessonModel: LessonModel? = null
-    private lateinit var roomStatus: ImageView
     private lateinit var translationStatus: ImageView
 
     constructor(context: Context) : super(context) {
@@ -36,13 +35,11 @@ class LessonCompleteView : FrameLayout {
         defStyle
     ) {
         init()
-
     }
 
     private fun init() {
         View.inflate(context, R.layout.lesson_complete_view, this)
         lessonNameTvCompleted = findViewById(R.id.lesson_name_tv__completed)
-        roomStatus = findViewById(R.id.view15)
         translationStatus = findViewById(R.id.view12)
         rootView = findViewById(R.id.root_view_completed)
         rootView.setOnClickListener {
@@ -52,11 +49,9 @@ class LessonCompleteView : FrameLayout {
         }
     }
 
-    fun setup(message: LessonModel, isConversationRoomActive: Boolean) {
+    fun setup(message: LessonModel) {
         this.lessonModel = message
-        lessonNameTvCompleted.text =
-            context.getString(R.string.lesson_name, message.lessonNo, message.lessonName)
-        roomStatus.isVisible = isConversationRoomActive
+        lessonNameTvCompleted.text = context.getString(R.string.lesson_name, message.lessonNo, message.lessonName)
         translationStatus.isVisible =
             message.isNewGrammar && PrefManager.hasKey(IS_A2_C1_RETENTION_ENABLED) &&
                     PrefManager.getBoolValue(IS_A2_C1_RETENTION_ENABLED)

@@ -62,7 +62,6 @@ class LauncherActivity : CoreJoshActivity(), Branch.BranchReferralInitListener {
         setObservers()
         initSingularSDK()
         viewModel.addAnalytics()
-        PrefManager.put(PREF_IS_CONVERSATION_ROOM_ACTIVE, false)
     }
 
     private fun initSingularSDK() {

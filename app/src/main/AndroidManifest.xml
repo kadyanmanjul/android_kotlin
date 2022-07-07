@@ -144,12 +144,6 @@
             android:theme="@style/AppNoBarTheme"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".conversationRoom.liveRooms.ConversationLiveRoomActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait"
-            android:showOnLockScreen="true"
-            android:showWhenLocked="true" />
-        <activity
             android:name=".ui.introduction.ReadyForDemoClassActivity"
             android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
             android:launchMode="singleTask"
@@ -732,13 +726,6 @@
             android:permission="android.permission.BIND_JOB_SERVICE"
             android:stopWithTask="true" />
         <service
-            android:name=".ui.lesson.room.ConvoWebRtcService"
-            android:enabled="true"
-            android:exported="false"
-            android:foregroundServiceType="phoneCall"
-            android:permission="android.permission.BIND_JOB_SERVICE"
-            android:stopWithTask="true" />
-        <service
             android:name=".util.FileUploadService"
             android:enabled="true"
             android:exported="true"
@@ -900,13 +887,6 @@
             android:permission="com.joshtalks.permission.READ_WRITE_CONTENT"
             android:enabled="true"
             android:exported="true"/>
-        <service
-            android:name=".core.notification.HeadsUpNotificationService"
-            android:enabled="true"
-            android:exported="false"
-            android:foregroundServiceType="phoneCall"
-            android:permission="android.permission.BIND_JOB_SERVICE"
-            android:stopWithTask="true" />
 
         <service
             android:name=".core.service.BackgroundService"
