@@ -28,15 +28,7 @@ import com.joshtalks.joshskills.ui.voip.new_arch.ui.call_recording.ProcessCallRe
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.models.CallUIState
 import com.joshtalks.joshskills.ui.voip.util.ScreenViewRecorder
 import com.joshtalks.joshskills.voip.*
-import com.joshtalks.joshskills.voip.constant.CALL_CONNECTED_EVENT
-import com.joshtalks.joshskills.voip.constant.CALL_INITIATED_EVENT
-import com.joshtalks.joshskills.voip.constant.CANCEL_INCOMING_TIMER
-import com.joshtalks.joshskills.voip.constant.CLOSE_CALL_SCREEN
-import com.joshtalks.joshskills.voip.constant.HIDE_RECORDING_PERMISSION_DIALOG
-import com.joshtalks.joshskills.voip.constant.RECONNECTING_FAILED
-import com.joshtalks.joshskills.voip.constant.SHOW_RECORDING_PERMISSION_DIALOG
-import com.joshtalks.joshskills.voip.constant.SHOW_RECORDING_REJECTED_DIALOG
-import com.joshtalks.joshskills.voip.constant.State
+import com.joshtalks.joshskills.voip.constant.*
 import com.joshtalks.joshskills.voip.data.RecordingButtonState
 import com.joshtalks.joshskills.voip.data.ServiceEvents
 import com.joshtalks.joshskills.voip.data.local.PrefManager
@@ -335,6 +327,14 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                     GROUP -> "Group Call"
                     else -> ""
                 }
+
+                if (state.nextGameWord == "") {
+                    uiState.p2pCallBackgroundColor = R.color.p2p_call_background_color
+                } else {
+                    uiState.p2pCallBackgroundColor = R.color.black
+                }
+
+
 
                 when(state.recordingButtonState) {
                     RecordingButtonState.IDLE -> stoppedRecUIchanges()

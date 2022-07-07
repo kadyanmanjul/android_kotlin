@@ -147,7 +147,10 @@ class VoiceCallActivity : BaseActivity() {
         recordingLiveEvent.observe(this) {
             Log.i(TAG, "initViewState: event -> ${it.what}")
             when (it.what) {
-                SHOW_RECORDING_PERMISSION_DIALOG -> showRecordingPermissionDialog()
+                SHOW_RECORDING_PERMISSION_DIALOG -> {
+                    vm.recordingStartedUIChanges()
+                    vm.acceptCallRecording(this@VoiceCallActivity.window.decorView)
+                }
                 SHOW_RECORDING_REJECTED_DIALOG -> showRecordingRejectedDialog()
                 HIDE_RECORDING_PERMISSION_DIALOG -> {
                     hideRecordingPermissionDialog()

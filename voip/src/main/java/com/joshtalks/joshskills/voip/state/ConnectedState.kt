@@ -364,7 +364,6 @@ class ConnectedState(val context: CallContext) : VoipState {
                                 val uiState = context.currentUiState.copy(
                                     recordingButtonState = RecordingButtonState.RECORDING,
                                     recordingStartTime = startTime,
-                                    recordingButtonNooftimesclicked = context.currentUiState.recordingButtonNooftimesclicked.plus(1)
                                 )
                                 context.updateUIState(uiState = uiState)
                                 val userAction = UserAction(
@@ -375,20 +374,20 @@ class ConnectedState(val context: CallContext) : VoipState {
                                 context.startRecording()
                                 context.sendMessageToServer(userAction)
                             } else {
-                                if (context.currentUiState.recordingButtonState.equals(
-                                        RecordingButtonState.SENTREQUEST
-                                )) {
-                                    val startTime = SystemClock.elapsedRealtime()
-                                    val uiState = context.currentUiState.copy(
-                                        recordingButtonState = RecordingButtonState.RECORDING,
-                                        recordingStartTime = startTime,
-                                        recordingButtonNooftimesclicked = context.currentUiState.recordingButtonNooftimesclicked.plus(1)
-                                    )
-                                    context.updateUIState(uiState = uiState)
-                                    context.sendEventToUI(event)
-                                } else {
-                                    Log.d(TAG, "observe: conflict accept and cancel")
-                                }
+//                                if (context.currentUiState.recordingButtonState.equals(
+//                                        RecordingButtonState.SENTREQUEST
+//                                )) {
+//
+//                                } else {
+//                                    Log.d(TAG, "observe: conflict accept and cancel")
+//                                }
+                                val startTime = SystemClock.elapsedRealtime()
+                                val uiState = context.currentUiState.copy(
+                                    recordingButtonState = RecordingButtonState.RECORDING,
+                                    recordingStartTime = startTime,
+                                )
+                                context.updateUIState(uiState = uiState)
+                                context.sendEventToUI(event)
                             }
                         }
                         CALL_RECORDING_REJECT -> {

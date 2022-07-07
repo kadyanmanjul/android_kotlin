@@ -20,11 +20,7 @@ import com.bumptech.glide.request.target.DrawableImageViewTarget
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.card.MaterialCardView
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.base.constants.FPP
-import com.joshtalks.joshskills.base.constants.FROM_INCOMING_CALL
-import com.joshtalks.joshskills.base.constants.GROUP
-import com.joshtalks.joshskills.base.constants.PEER_TO_PEER
-import com.joshtalks.joshskills.base.constants.STARTING_POINT
+import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.adapter.TopicImageAdapter
 import de.hdodenhof.circleimageview.CircleImageView
@@ -66,6 +62,9 @@ fun AppCompatTextView.setColorRemoteUser(isSpeaking : Boolean = false) {
 @BindingAdapter("setCallBackground")
 fun ConstraintLayout.setCallBackground(callType: Int) {
     when (callType) {
+        P2P_GAME -> {
+            this.setBackgroundColor(resources.getColor(R.color.black))
+        }
         PEER_TO_PEER -> {
 //                 Normal Call
             this.setBackgroundColor(resources.getColor(R.color.colorPrimary))

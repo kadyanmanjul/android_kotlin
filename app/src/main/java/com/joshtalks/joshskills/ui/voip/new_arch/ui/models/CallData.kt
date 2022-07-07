@@ -244,4 +244,11 @@ class CallUIState : BaseObservable() {
             field = value
             notifyPropertyChanged(BR.callerSpeaking)
         }
+
+    @get:Bindable
+    var p2pCallBackgroundColor : Int = R.color.p2p_call_background_color
+        set(value) {
+            field = value
+            notifyPropertyChanged(BR.p2pCallBackgroundColor)
+        }
 }

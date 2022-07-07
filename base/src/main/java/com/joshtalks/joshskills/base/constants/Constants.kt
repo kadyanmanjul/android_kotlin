@@ -89,6 +89,7 @@ const val PREF_KEY_INCOMING_CALL_TYPE = "josh_recent_incoming_call_type"
 const val PEER_TO_PEER = 1
 const val FPP = 2
 const val GROUP = 3
+const val P2P_GAME = 4
 
 // Call Direction
 const val INCOMING = 1

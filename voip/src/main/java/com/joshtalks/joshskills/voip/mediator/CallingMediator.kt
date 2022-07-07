@@ -265,6 +265,8 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                         stateChannel.send(envelope)
                     }
                     UserAction.NEXT_WORD_REQUEST -> {
+                        val envelopeEndGame = Envelope(Event.STOP_RECORDING, data = ActionDirection.LOCAL)
+                        stateChannel.send(envelopeEndGame)
                         val envelope = Envelope(Event.NEXT_WORD_REQUEST, data = ActionDirection.SERVER)
                         stateChannel.send(envelope)
                     }
@@ -273,6 +275,8 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                         stateChannel.send(envelope)
                     }
                     UserAction.END_GAME -> {
+                        val envelopeEndGame = Envelope(Event.STOP_RECORDING, data = ActionDirection.LOCAL)
+                        stateChannel.send(envelopeEndGame)
                         val envelope = Envelope(Event.END_GAME, data = ActionDirection.SERVER)
                         stateChannel.send(envelope)
                     }
@@ -387,6 +391,8 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                                                 stateChannel.send(envelope)
                                         }
                                         ServerConstants.NEXT_WORD_RECEIVED ->{
+                                            val envelopeStartRecording = Envelope(Event.CALL_RECORDING_ACCEPT, data = ActionDirection.LOCAL)
+                                            stateChannel.send(envelopeStartRecording)
                                             val incomingWorData = IncomingGameNextWord(word = it.getWord(), color = it.getWordColor())
                                             val envelope = Envelope(
                                                 Event.NEXT_WORD_RECEIVED,
@@ -609,6 +615,8 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                                                 stateChannel.send(envelope)
                                             }
                                             ServerConstants.NEXT_WORD_RECEIVED ->{
+                                                val envelopeStartRecording = Envelope(Event.CALL_RECORDING_ACCEPT, data = ActionDirection.LOCAL)
+                                                stateChannel.send(envelopeStartRecording)
                                                 val incomingWorData = IncomingGameNextWord(word = event.getWord(), color = event.getWordColor())
                                                 val envelope = Envelope(
                                                     Event.NEXT_WORD_RECEIVED,
