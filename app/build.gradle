@@ -14,11 +14,11 @@ def minorVersion = 1
 def patchVersion = 49
 
 android {
-    compileSdkVersion 31
+    compileSdkVersion 32
     defaultConfig {
         applicationId "com.joshtalks.joshskills"
         minSdkVersion 21
-        targetSdkVersion 30
+        targetSdkVersion 32
         versionCode majorVersion * 10000 + minorVersion * 100 + patchVersion
         versionName "${majorVersion}.${minorVersion}.${patchVersion}"
         vectorDrawables.useSupportLibrary true
