@@ -421,7 +421,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
     private fun takePermissions(room: String? = null, roomTopic: String, moderatorId: String?) {
         if (PermissionUtils.isCallingPermissionWithoutLocationEnabled(requireContext())) {
             if (room != null) {
-                feedViewModel.joinRoom(room, roomTopic, "PROFILE_SCREEN", moderatorId)
+                feedViewModel.joinRoom(room, roomTopic, "PROFILE_SCREEN")
             }
             return
         }
@@ -437,7 +437,6 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
                                     room,
                                     roomTopic,
                                     "PROFILE_SCREEN",
-                                    moderatorId
                                 )
                             }
                             return

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/round_rectangle_for_clubhouse_images">
+
+    <TextView
+        android:id="@+id/title_previous_room"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginHorizontal="@dimen/_16sdp"
+        android:layout_marginTop="@dimen/_24sdp"
+        android:fontFamily="@font/nunito_sans_regular"
+        android:textStyle="bold"
+        android:text="@string/your_call_crack_upsc_is_still_live_do_you_want_to_end_that_call"
+        android:textAppearance="@style/BB_Typography_Nunito_Sans_Regular"
+        android:textSize="@dimen/_14ssp"
+        android:textColor="#1E1D1B"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginHorizontal="@dimen/_16sdp"
+        android:fontFamily="@font/nunito_sans_regular"
+        android:text="@string/you_can_also_rejoin_your_previous_call_instead_of_starting_a_new_one"
+        android:textAppearance="@style/BB_Typography_Nunito_Sans_Regular"
+        android:textColor="#1E1D1B"
+        android:textSize="@dimen/_12ssp"
+        android:layout_marginTop="@dimen/_16sdp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title_previous_room" />
+
+    <TextView
+        android:id="@+id/endButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/_16sdp"
+        android:padding="@dimen/_16sdp"
+        android:textColor="@color/blue_text_color"
+        android:textSize="@dimen/_12ssp"
+        android:fontFamily="@font/nunito_regular"
+        android:text="@string/end_call"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/description" />
+
+    <TextView
+        android:id="@+id/iWillJoin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/_16sdp"
+        android:textSize="@dimen/_12ssp"
+        android:textColor="@color/blue_text_color"
+        android:fontFamily="@font/nunito_regular"
+        android:text="@string/sure_i_ll_rejoin"
+        app:layout_constraintEnd_toStartOf="@+id/endButton"
+        app:layout_constraintTop_toBottomOf="@+id/description" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

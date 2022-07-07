@@ -31,6 +31,7 @@ import com.joshtalks.badebhaiya.repository.model.ConversationRoomRequest
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomResponse
 import com.joshtalks.badebhaiya.repository.model.User
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import retrofit2.Response
 import timber.log.Timber
@@ -70,6 +71,12 @@ class FeedViewModel : ViewModel() {
     var isModerator = false
     val waitingRoomUsers = MutableLiveData<List<Waiting>>(emptyList())
     var speakerName = ""
+    private var pendingRoomTopic = ""
+    val previousRoomData = MutableLiveData<ConversationRoomResponse>()
+    val previousRoomDataForSchedule = MutableLiveData<RoomListResponseItem>()
+
+    var pendingRoomTopicForSchedule = ""
+    var pendingRoomTimeForSchedule = ""
 
     init {
 //        collectPubNubState()
@@ -104,7 +111,6 @@ class FeedViewModel : ViewModel() {
                 roomData.speakersData?.userId?.let { it1 ->
                     joinRoom(
                         roomData.roomId.toString(), roomData.topic.toString(), "FEED_SCREEN",
-                        it1
                     )
                 }
             }
@@ -128,7 +134,7 @@ class FeedViewModel : ViewModel() {
             return
         }
         viewModelScope.launch {
-            isRoomCreated.value=true
+            isRoomCreated.value = true
             if (topic.isNullOrBlank()) {
                 showToast(AppObjectController.joshApplication.getString(R.string.enter_topic_name))
             } else {
@@ -136,6 +142,7 @@ class FeedViewModel : ViewModel() {
 
                     sendEvent(Impression("FEED_SCREEN", "CLICKED_CREATE"))
                     isLoading.set(true)
+                    pendingRoomTopic = topic
                     val response = repository.createRoom(
                         ConversationRoomRequest(
                             userId = User.getInstance().userId,
@@ -143,18 +150,23 @@ class FeedViewModel : ViewModel() {
                         )
                     )
                     if (response.isSuccessful) {
-                        if(response.body()!=null) {
-                            showToast("Room created successfully")
-                            callback.onRoomCreated(response.body()!!, topic)
-                        }
-                        else
+                        if (response.body() != null) {
+                            if (response.code() == 200) {
+                                showToast("Room created successfully")
+                                callback?.onRoomCreated(response.body()!!, topic)
+                            } else if (response.code() == 202) {
+                                isRoomCreated.value = false
+                                callback?.onError("You Already have a Room")
+                                previousRoomData.postValue(response.body())
+                            }
+                        } else
                             showToast("Oops Something Went Wrong! Try Again")
                     } else {
-                        isRoomCreated.value=false
-                        callback.onError("An error occurred!")
+                        isRoomCreated.value = false
+                        callback?.onError("An error occurred!")
                     }
                 } catch (e: Exception) {
-                    callback.onError(e.localizedMessage)
+                    callback?.onError(e.localizedMessage)
                     e.showAppropriateMsg()
                 } finally {
                     isLoading.set(false)
@@ -163,9 +175,11 @@ class FeedViewModel : ViewModel() {
         }
     }
 
-    fun joinRoom(roomId: String, topic: String = "sahil", source: String, moderatorId: String?) {
+
+
+    fun joinRoom(roomId: String, topic: String, source: String) {
         Timber.d("JOIN ROOM PARAMS => room: $roomId and Topic => $topic")
-        pubChannelName = moderatorId
+//        pubChannelName = moderatorId
         if (pubNubState == PubNubState.STARTED) {
             if (roomId == PubNubManager.getLiveRoomProperties().roomId.toString()) {
 //                showToast("Room Already Active")
@@ -188,11 +202,11 @@ class FeedViewModel : ViewModel() {
                 )
                 roomtopic = topic
                 if (response.isSuccessful) {
-                    if(response.body()!=null) {
-                        if (moderatorId == User.getInstance().userId) {
-                            isModerator = true
-                            PubNubEventsManager.sendModeratorStatus(true, moderatorId.toString())
-                        }
+                    if (response.body() != null) {
+//                        if (moderatorId == User.getInstance().userId) {
+//                            isModerator = true
+//                            PubNubEventsManager.sendModeratorStatus(true, moderatorId.toString())
+//                        }
                         showToast("Room joined successfully")
                         message.what = OPEN_ROOM
                         message.data = Bundle().apply {
@@ -207,8 +221,7 @@ class FeedViewModel : ViewModel() {
                         }
                         Log.i("YASHEN", "postvalue: ")
                         singleLiveEvent.value = message
-                    }
-                    else
+                    } else
                         showToast("Oops Something Went Wrong! Try Again")
 
                 } else {
@@ -370,11 +383,19 @@ class FeedViewModel : ViewModel() {
                             startTime = startTime
                         )
                     )
+
+                    pendingRoomTimeForSchedule = startTime
+                    pendingRoomTopicForSchedule = topic
                     if (response.isSuccessful) {
                         response.body()?.let {
-                            showToast("Room scheduled successfully")
-                            feedAdapter.addScheduleRoom(it)
-                            callback.onRoomSchedule(it)
+                            if (response.code() == 200){
+                                showToast("Room scheduled successfully")
+                                feedAdapter.addScheduleRoom(it)
+                                callback.onRoomSchedule(it)
+                            } else if (response.code() == 202){
+                                callback.onError("You already have a room")
+                                previousRoomDataForSchedule.postValue(response.body())
+                            }
                         }
                     } else callback.onError("An error occurred!")
                 } catch (e: Exception) {
@@ -394,7 +415,116 @@ class FeedViewModel : ViewModel() {
     fun setScheduleStartTime(time: String) {
         scheduleRoomStartTime.set(time)
     }
-}
+
+    fun endPreviousRoom(roomId: Int, callback: CreateRoom.CreateRoomCallback) {
+        viewModelScope.launch {
+            try {
+                val response = repository.endRoom(
+                    ConversationRoomRequest(
+                        userId = User.getInstance().userId,
+                        roomId = roomId
+                    )
+                )
+
+                if (response.isSuccessful){
+                    delay(1000)
+                    createRoom(pendingRoomTopic, callback)
+                } else {
+                    showToast("Something went wrong")
+                }
+            } catch (e: Exception){
+                e.showAppropriateMsg()
+            }
+        }
+    }
+
+    fun endPreviousRoomAndSchedule(previousRoomId: Int, callback: CreateRoom.CreateRoomCallback){
+        viewModelScope.launch {
+            try {
+                val response = repository.endRoom(
+                    ConversationRoomRequest(
+                        userId = User.getInstance().userId,
+                        roomId = previousRoomId
+                    )
+                )
+
+                if (response.isSuccessful){
+                    scheduleRoom(pendingRoomTopicForSchedule, pendingRoomTimeForSchedule, callback)
+                } else {
+                    showToast("Something went wrong")
+                }
+            } catch (e: Exception){
+                e.showAppropriateMsg()
+            }
+        }
+    }
+
+    fun joinPreviousRoom() {
+            viewModelScope.launch(Dispatchers.Main) {
+                try {
+                    isLoading.set(true)
+                    Log.d("YASH", "joinRoom:")
+                    response = repository.joinRoom(
+                        ConversationRoomRequest(
+                            userId = User.getInstance().userId,
+                            roomId = previousRoomData.value?.roomId,
+                            fromPage = "FEED_SCREEN"
+                        )
+                    )
+                    roomtopic = previousRoomData.value?.roomName ?: ""
+                    if (response.isSuccessful) {
+                        if (response.body() != null) {
+//                            if (moderatorId == User.getInstance().userId) {
+                                isModerator = true
+                                PubNubEventsManager.sendModeratorStatus(true, User.getInstance().userId)
+//                            }
+                            showToast("Room joined successfully")
+                            message.what = OPEN_ROOM
+                            message.data = Bundle().apply {
+                                putParcelable(
+                                    ROOM_DETAILS,
+                                    response.body()
+                                )
+                                putString(
+                                    TOPIC,
+                                    roomtopic
+                                )
+                            }
+                            Log.i("YASHEN", "postvalue: ")
+                            singleLiveEvent.value = message
+                        } else
+                            showToast("Oops Something Went Wrong! Try Again")
+
+                    } else {
+                        if (response.code() == 406) {
+                            PubNubManager.setStartingRoomProperties(
+                                StartingLiveRoomProperties(
+                                    roomId = roomData.roomId
+                                )
+                            )
+                            message.what = OPEN_WAIT_ROOM
+                            singleLiveEvent.value = message
+                        }
+                        showToast(response.errorMessage())
+
+                        Log.i("YASHEN", "joinRoom: failed")
+                    }
+                    Log.d("sahil", "joinRoom:$response")
+
+                } catch (e: SocketTimeoutException) {
+                    showToast(AppObjectController.joshApplication.getString(R.string.internet_not_available_msz))
+                } catch (e: Exception) {
+                    Timber.d("JOIN ROOM ERROR => ${e.stackTrace}")
+                    Timber.d("JOIN ROOM ERROR => ${e.message}")
+                    e.printStackTrace()
+                    e.showAppropriateMsg()
+                } finally {
+                    isLoading.set(false)
+                }
+            }
+        }
+    }
+
 
 interface Call {
     fun itemClick(userId: String)

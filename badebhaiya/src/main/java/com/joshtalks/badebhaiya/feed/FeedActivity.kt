@@ -34,6 +34,7 @@ import com.joshtalks.badebhaiya.core.showToast
 import com.joshtalks.badebhaiya.databinding.ActivityFeedBinding
 import com.joshtalks.badebhaiya.databinding.WhyRoomBinding
 import com.joshtalks.badebhaiya.feed.adapter.FeedAdapter
+import com.joshtalks.badebhaiya.feed.joinPreviousRoom.PreviousRoomDialog
 import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
 import com.joshtalks.badebhaiya.impressions.Impression
 import com.joshtalks.badebhaiya.liveroom.*
@@ -73,7 +74,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallback {
+class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallback, CreateRoom.CreateRoomCallback {
 
     companion object {
         @JvmStatic
@@ -316,6 +317,36 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                 viewModel.pubNubState=PubNubState.STARTED
         })
 
+        viewModel.previousRoomData.observe(this){
+            PreviousRoomDialog(
+                this,
+                roomName = it.roomName ?: "",
+                onNegativeButtonClick = {
+                    viewModel.endPreviousRoom(it.roomId, this)
+                },
+                onPositiveButtonClick = {
+                    viewModel.joinRoom(it.roomId.toString(), it.roomName!!, "FEED_SCREEN")
+                }
+            ).apply {
+                show()
+            }
+        }
+
+        viewModel.previousRoomDataForSchedule.observe(this){
+            PreviousRoomDialog(
+                this,
+                roomName = it.previousRoomTopic,
+                onPositiveButtonClick = {
+                    viewModel.joinRoom(it.previousRoomId.toString(), it.previousRoomTopic, "FEED_SCREEN")
+                },
+                onNegativeButtonClick = {
+                    viewModel.endPreviousRoomAndSchedule(it.previousRoomId, this)
+                }
+            ).apply {
+                show()
+            }
+        }
+
         viewModel.singleLiveEvent.observe(this, androidx.lifecycle.Observer {
             Log.d("ABC2", "Data class called with feed data message: ${it.what} bundle : ${it.data}")
             when (it.what) {
@@ -450,7 +481,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         if (PermissionUtils.isCallingPermissionWithoutLocationEnabled(this)) {
             if (roomId == null) {
                 openCreateRoomDialog()
-            } else viewModel.joinRoom(roomId, roomTopic!!,"FEED_SCREEN",moderatorId)
+            } else viewModel.joinRoom(roomId, roomTopic!!,"FEED_SCREEN",)
             return
         }
 
@@ -466,7 +497,6 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                                 roomId,
                                 roomTopic!!,
                                 "FEED_SCREEN",
-                                moderatorId
                             )
                             return
                         }
@@ -619,5 +649,30 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         fragmentTransaction.replace(R.id.fragmentContainer, fragment)
         fragmentTransaction.commit()
 
+    }
+
+    override fun onRoomCreated(conversationRoomResponse: ConversationRoomResponse, topic: String) {
+        conversationRoomResponse.apply {
+            val liveRoomProperties = StartingLiveRoomProperties.createFromRoom(
+                this,
+                topic,
+                createdByUser = true
+            )
+            LiveRoomFragment.launch(
+                this@FeedActivity,
+                liveRoomProperties,
+                liveRoomViewModel,
+                "Feed",
+                true
+            )
+        }
+    }
+
+    override fun onRoomSchedule(room: RoomListResponseItem) {
+        notificationScheduler.scheduleNotificationsForSpeaker(this@FeedActivity, room)
+    }
+
+    override fun onError(error: String) {
+        showToast(error)
     }
 }

@@ -506,27 +506,27 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
     }
 
     private fun getIntentExtrasFromNotification() {
-        roomId = PubNubManager.getLiveRoomProperties().roomId
-        channelTopic = PubNubManager.getLiveRoomProperties().channelTopic
-        if (isActivityOpenFromNotification && roomId != null) {
-            vm.joinRoom(
-                RoomListResponseItem(
-                    roomId!!,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null
-                )
-
-            )
-        }
+//        roomId = PubNubManager.getLiveRoomProperties().roomId
+//        channelTopic = PubNubManager.getLiveRoomProperties().channelTopic
+//        if (isActivityOpenFromNotification && roomId != null) {
+//            vm.joinRoom(
+//                RoomListResponseItem(
+//                    roomId!!,
+//                    null,
+//                    null,
+//                    null,
+//                    null,
+//                    null,
+//                    null,
+//                    null,
+//                    null,
+//                    null,
+//                    null,
+//                    null
+//                )
+//
+//            )
+//        }
     }
 
 

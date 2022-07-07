@@ -39,6 +39,9 @@ data class ConversationRoomResponse(
     @SerializedName("pubnub_token")
     val pubnubToken: String?,
 
+    @SerializedName("topic")
+    val roomName: String? = null,
+
     val message: String? = null
 ) : Parcelable {
     fun isRoomCreatedByUser(): Boolean = moderatorId == uid
