@@ -1231,6 +1231,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
 
     private fun finishFragment(){
         if (isAdded){
+            Log.i("INFLATE ISSUE", "finishFragment: ")
             requireActivity().supportFragmentManager.popBackStack()
         }
     }
@@ -1406,7 +1407,6 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
                 }
                 else
                 {
-                    showToast("inflated")
                     activity.supportFragmentManager.beginTransaction().show(frag)
                 }
             }
