@@ -199,13 +199,14 @@ class ConnectedState(val context: CallContext) : VoipState {
                         }
                         Event.END_GAME -> {
                             ensureActive()
-                            val userAction = UserAction(
-                                ServerConstants.END_GAME,
-                                context.channelData.getChannel(),
-                                address = context.channelData.getPartnerMentorId()
-                            )
-                            context.sendMessageToServer(userAction)
-
+                            if(event.data == ActionDirection.SERVER) {
+                                val userAction = UserAction(
+                                    ServerConstants.END_GAME,
+                                    context.channelData.getChannel(),
+                                    address = context.channelData.getPartnerMentorId()
+                                )
+                                context.sendMessageToServer(userAction)
+                            }
                             val uiState = context.currentUiState.copy(isStartGameClicked = false, isNextWordClicked = false, nextGameWord = "")
                             context.updateUIState(uiState = uiState)
                         }

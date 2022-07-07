@@ -394,6 +394,14 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                                             )
                                             stateChannel.send(envelope)
                                         }
+
+                                        ServerConstants.END_GAME ->{
+                                            val envelope = Envelope(
+                                                Event.END_GAME,
+                                                data = ActionDirection.LOCAL
+                                            )
+                                            stateChannel.send(envelope)
+                                        }
                                         ServerConstants.DISCONNECTED -> {
                                             val envelope = Envelope(Event.REMOTE_USER_DISCONNECTED_MESSAGE)
                                             stateChannel.send(envelope)
@@ -592,6 +600,13 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                                                         event.getMsgData()
                                                     )
                                                     stateChannel.send(envelope)
+                                            }
+                                            ServerConstants.END_GAME ->{
+                                                val envelope = Envelope(
+                                                    Event.END_GAME,
+                                                    data = ActionDirection.LOCAL
+                                                )
+                                                stateChannel.send(envelope)
                                             }
                                             ServerConstants.NEXT_WORD_RECEIVED ->{
                                                 val incomingWorData = IncomingGameNextWord(word = event.getWord(), color = event.getWordColor())

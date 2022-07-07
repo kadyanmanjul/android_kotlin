@@ -585,8 +585,7 @@
                 app:cardCornerRadius="5dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="16dp"
-                app:layout_constraintTop_toBottomOf="@id/photo_frames_layout"
-                app:layout_constraintBottom_toTopOf="@id/bottom_card_view">
+                app:layout_constraintTop_toBottomOf="@id/photo_frames_layout">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -720,6 +719,17 @@
                                 nextWordBtn="@{vm.uiState.nextWordClicked}"
                                 android:textColor="@color/p2p_game_dark_purple"
                                 android:text="Next Word"/>
+
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/next_word_wait_text"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_horizontal"
+                                android:text="Wait for your partner to click next"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Semi_Bold"
+                                android:textColor="@color/white"
+                                android:visibility="@{vm.uiState.nextWordClicked ? View.VISIBLE : View.GONE}"
+                                android:textSize="@dimen/_9sdp" />
 
                         </LinearLayout>
 
