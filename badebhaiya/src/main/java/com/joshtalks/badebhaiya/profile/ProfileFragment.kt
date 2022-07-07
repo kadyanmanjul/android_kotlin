@@ -282,13 +282,11 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
                     requireActivity().supportFragmentManager.beginTransaction().remove(this).commit()
                     feedViewModel.isBackPressed.value = false
                 }
-//                feedViewModel.isBackPressed.value=false
             }
 
         }
-
-        liveRoomViewModel.pubNubState.observe(viewLifecycleOwner){
-            if(it==PubNubState.STARTED)
+        liveRoomViewModel.deflate.observe(viewLifecycleOwner){
+            if(it)
                 setpadding()
             else
                 unsetPadding()
