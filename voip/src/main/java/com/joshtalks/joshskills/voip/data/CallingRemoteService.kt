@@ -306,6 +306,12 @@ class CallingRemoteService : Service() {
 
     fun changeTopicImage() { mediator.userAction(Action.TOPIC_IMAGE_CHANGE) }
 
+    fun nextGameWord() { mediator.userAction(Action.NEXT_WORD_REQUEST) }
+
+    fun startGame() { mediator.userAction(Action.START_GAME) }
+
+    fun endGame() { mediator.userAction(Action.END_GAME) }
+
     fun acceptCallRecording() { mediator.userAction(Action.RECORDING_REQUEST_ACCEPTED) }
 
     fun rejectCallRecording() { mediator.userAction(Action.RECORDING_REQUEST_REJECTED) }
@@ -394,7 +400,11 @@ data class UIState(
     val isRecordingEnabled: Boolean = false,
     val isCallerSpeaking: Boolean = false,
     val isCalleeSpeaking: Boolean = false,
-) {
+    val isNextWordClicked: Boolean = false ,
+    val isStartGameClicked: Boolean = false,
+    val nextGameWord: String = "",
+    val nextGameWordColor: String = "",
+    ) {
     companion object {
         fun empty() = UIState("", null, "", 0,"","","")
     }

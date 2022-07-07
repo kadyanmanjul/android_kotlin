@@ -1317,4 +1317,7 @@
     <string name="onboarding_course_info2">Beginner to Advanced</string>
     <string name="onboarding_course_info3">English Speaking का माहौल</string>
     <string name="sign_up_profile_occupation_aspiration_text">यह Information आपके Practice partners को दिखाई देगी।</string>
+
+    <string name="recording_text"> of the game will get saved in your gallery</string>
+    <string name="recording_text_after">Waiting for your partner to start the game</string>
 </resources>

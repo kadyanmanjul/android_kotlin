@@ -8,6 +8,7 @@ import android.os.SystemClock
 import android.util.Log
 import android.view.View
 import androidx.databinding.ObservableArrayList
+import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
 import androidx.lifecycle.AndroidViewModel
@@ -60,6 +61,7 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
     private val repository = WebrtcRepository(viewModelScope)
     private val mutex = Mutex(false)
     val callType = ObservableField("")
+    var isEnabled = ObservableBoolean(true)
     val callStatus = ObservableInt(getCallStatus())
     var imageList = ObservableArrayList<String>()
     val callData = HashMap<String, Any>()
@@ -317,6 +319,11 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                     uiState.localUserName = Utils.context?.getMentorName()?:""
                     uiState.localUserProfile = Utils.context?.getMentorProfile()?:""
                 }catch (ex:Exception){ }
+
+                uiState.gameWord = state.nextGameWord
+                uiState.wordColor = state.nextGameWordColor
+                uiState.isStartGameClicked = state.isStartGameClicked
+                uiState.isNextWordClicked = state.isNextWordClicked
                 uiState.profileImage = state.remoteUserImage ?: ""
                 uiState.topic = state.topicName
                 uiState.topicImage = state.currentTopicImage
@@ -349,20 +356,12 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                 }
 
                 if (uiState.isSpeakerOn != state.isSpeakerOn) {
-                    if (state.isSpeakerOn) {
-                        uiState.isSpeakerOn = true
-                    } else {
-                        uiState.isSpeakerOn = false
-                    }
+                    uiState.isSpeakerOn = state.isSpeakerOn
                 }
 
                 if (uiState.isMute != state.isOnMute) {
                     Log.d(TAG, "listenUIState: MUTE -- ${state.isOnMute}")
-                    if (state.isOnMute) {
-                        uiState.isMute = true
-                    } else {
-                        uiState.isMute = false
-                    }
+                    uiState.isMute = state.isOnMute
                 }
             }
         }
@@ -572,5 +571,16 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
 
     fun cancelRecording(){
         repository.cancelRecordingRequest()
+    }
+    fun startGame(v:View){
+        repository.startGame()
+    }
+
+    fun endGame(v:View){
+        repository.endGame()
+    }
+
+    fun nextWord(v:View){
+        repository.nextGameWord()
     }
 }

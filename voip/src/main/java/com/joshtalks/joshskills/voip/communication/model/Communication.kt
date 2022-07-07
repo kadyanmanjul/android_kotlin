@@ -20,6 +20,12 @@ sealed interface IncomingData : Communication {
     fun getMsgData() : String{
         return ""
     }
+    fun getWordColor() : String{
+        return ""
+    }
+    fun getWord() : String{
+        return ""
+    }
 }
 
 sealed interface OutgoingData : Communication {
@@ -65,4 +71,6 @@ interface ChannelData : IncomingData {
 }
 
 class IncorrectCommunicationDataException(message: String) : Exception(message)
+
+data class IncomingGameNextWord(val word: String,val color:String)
 

@@ -162,6 +162,16 @@ class WebrtcRepository(scope : CoroutineScope) {
     fun cancelRecordingRequest() {
         mService?.cancelRecordingRequest()
     }
+
+    fun startGame() {
+        mService?.startGame()
+    }
+    fun endGame() {
+        mService?.endGame()
+    }
+    fun nextGameWord() {
+        mService?.nextGameWord()
+    }
 }
 
 enum class RepositoryConstants {

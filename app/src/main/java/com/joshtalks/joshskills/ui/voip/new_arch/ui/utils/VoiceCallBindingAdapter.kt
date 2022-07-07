@@ -1,7 +1,9 @@
 package com.joshtalks.joshskills.ui.voip.new_arch.ui.utils
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.SystemClock
+import android.util.Log
 import android.widget.Chronometer
 import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatImageButton
@@ -9,11 +11,13 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
+import androidx.databinding.ObservableBoolean
 import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions.bitmapTransform
 import com.bumptech.glide.request.target.DrawableImageViewTarget
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.card.MaterialCardView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.constants.FPP
@@ -208,4 +212,45 @@ fun ImageView.loadGif(imageUrl: String?) {
             .load(R.drawable.remote_user_image)
             .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
             .into(this)
+}
+
+@BindingAdapter("setWord","setColor")
+fun AppCompatTextView.setWord(word: String?,color:String?) {
+    if (!word.isNullOrEmpty()){
+        this.text = word
+    }
+    if (!color.isNullOrEmpty() && color != ""){
+        Log.d("naman", "setWord: $color ")
+        this.setTextColor(Color.parseColor(color))
+    }
+}
+
+@BindingAdapter("nextWordBtn")
+fun MaterialButton.nextWordBtn(isEnabled : Boolean?) {
+    if (isEnabled != null) {
+        when (isEnabled) {
+            true -> {
+                this.backgroundTintList = ContextCompat.getColorStateList(context, R.color.grey)
+                this.setTextColor(ContextCompat.getColor(context, R.color.white))
+            }
+            false -> {
+                this.backgroundTintList = ContextCompat.getColorStateList(context, R.color.white)
+                this.setTextColor(ContextCompat.getColor(context, R.color.p2p_game_dark_purple))
+            }
+        }
+    }
+}
+
+@BindingAdapter("setPlayBtnBackground")
+fun AppCompatTextView.setPlayBtnBackground(isEnabled: Boolean?) {
+    if (isEnabled != null) {
+        when (isEnabled) {
+            false -> {
+                this.backgroundTintList = null
+            }
+            true -> {
+                this.backgroundTintList = ContextCompat.getColorStateList(context, R.color.grey)
+            }
+        }
+    }
 }

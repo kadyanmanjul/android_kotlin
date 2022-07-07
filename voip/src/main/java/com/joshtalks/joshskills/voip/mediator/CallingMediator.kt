@@ -16,14 +16,7 @@ import com.joshtalks.joshskills.voip.communication.PubnubState.DISCONNECTED
 import com.joshtalks.joshskills.voip.communication.PubnubState.RECONNECTED
 import com.joshtalks.joshskills.voip.communication.constants.ServerConstants
 import com.joshtalks.joshskills.voip.communication.fallback.FirebaseChannelService
-import com.joshtalks.joshskills.voip.communication.model.ChannelData
-import com.joshtalks.joshskills.voip.communication.model.Communication
-import com.joshtalks.joshskills.voip.communication.model.Error
-import com.joshtalks.joshskills.voip.communication.model.IncomingCall
-import com.joshtalks.joshskills.voip.communication.model.MessageData
-import com.joshtalks.joshskills.voip.communication.model.OutgoingData
-import com.joshtalks.joshskills.voip.communication.model.PeerToPeerCallRequest
-import com.joshtalks.joshskills.voip.communication.model.UI
+import com.joshtalks.joshskills.voip.communication.model.*
 import com.joshtalks.joshskills.voip.constant.Event
 import com.joshtalks.joshskills.voip.constant.PSTN_STATE_IDLE
 import com.joshtalks.joshskills.voip.constant.State
@@ -271,6 +264,18 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                         val envelope = Envelope(Event.CANCEL_RECORDING_REQUEST, data = ActionDirection.SERVER)
                         stateChannel.send(envelope)
                     }
+                    UserAction.NEXT_WORD_REQUEST -> {
+                        val envelope = Envelope(Event.NEXT_WORD_REQUEST, data = ActionDirection.SERVER)
+                        stateChannel.send(envelope)
+                    }
+                    UserAction.START_GAME -> {
+                        val envelope = Envelope(Event.START_GAME, data = ActionDirection.SERVER)
+                        stateChannel.send(envelope)
+                    }
+                    UserAction.END_GAME -> {
+                        val envelope = Envelope(Event.END_GAME, data = ActionDirection.SERVER)
+                        stateChannel.send(envelope)
+                    }
                 }
             } catch (e: Exception) {
                 Log.d(TAG, "userAction : $e")
@@ -380,6 +385,14 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                                                     it.getMsgData()
                                                 )
                                                 stateChannel.send(envelope)
+                                        }
+                                        ServerConstants.NEXT_WORD_RECEIVED ->{
+                                            val incomingWorData = IncomingGameNextWord(word = it.getWord(), color = it.getWordColor())
+                                            val envelope = Envelope(
+                                                Event.NEXT_WORD_RECEIVED,
+                                                incomingWorData
+                                            )
+                                            stateChannel.send(envelope)
                                         }
                                         ServerConstants.DISCONNECTED -> {
                                             val envelope = Envelope(Event.REMOTE_USER_DISCONNECTED_MESSAGE)
@@ -579,6 +592,14 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                                                         event.getMsgData()
                                                     )
                                                     stateChannel.send(envelope)
+                                            }
+                                            ServerConstants.NEXT_WORD_RECEIVED ->{
+                                                val incomingWorData = IncomingGameNextWord(word = event.getWord(), color = event.getWordColor())
+                                                val envelope = Envelope(
+                                                    Event.NEXT_WORD_RECEIVED,
+                                                    incomingWorData
+                                                )
+                                                stateChannel.send(envelope)
                                             }
                                             // Remote User Disconnected
                                             ServerConstants.DISCONNECTED -> {

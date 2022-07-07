@@ -4,35 +4,12 @@ import android.os.SystemClock
 import android.util.Log
 import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.communication.constants.ServerConstants
+import com.joshtalks.joshskills.voip.communication.model.IncomingGameNextWord
 import com.joshtalks.joshskills.voip.communication.model.NetworkAction
 import com.joshtalks.joshskills.voip.communication.model.UI
 import com.joshtalks.joshskills.voip.communication.model.UserAction
 import com.joshtalks.joshskills.voip.constant.Event
-import com.joshtalks.joshskills.voip.constant.Event.CALL_RECORDING_ACCEPT
-import com.joshtalks.joshskills.voip.constant.Event.CALL_RECORDING_REJECT
-import com.joshtalks.joshskills.voip.constant.Event.CANCEL_RECORDING_REQUEST
-import com.joshtalks.joshskills.voip.constant.Event.HOLD
-import com.joshtalks.joshskills.voip.constant.Event.HOLD_REQUEST
-import com.joshtalks.joshskills.voip.constant.Event.MUTE
-import com.joshtalks.joshskills.voip.constant.Event.MUTE_REQUEST
-import com.joshtalks.joshskills.voip.constant.Event.RECEIVED_CHANNEL_DATA
-import com.joshtalks.joshskills.voip.constant.Event.RECONNECTED
-import com.joshtalks.joshskills.voip.constant.Event.RECONNECTING
-import com.joshtalks.joshskills.voip.constant.Event.REMOTE_USER_DISCONNECTED_AGORA
-import com.joshtalks.joshskills.voip.constant.Event.REMOTE_USER_DISCONNECTED_MESSAGE
-import com.joshtalks.joshskills.voip.constant.Event.REMOTE_USER_DISCONNECTED_USER_LEFT
-import com.joshtalks.joshskills.voip.constant.Event.SPEAKER_OFF_REQUEST
-import com.joshtalks.joshskills.voip.constant.Event.SPEAKER_ON_REQUEST
-import com.joshtalks.joshskills.voip.constant.Event.START_RECORDING
-import com.joshtalks.joshskills.voip.constant.Event.STOP_RECORDING
-import com.joshtalks.joshskills.voip.constant.Event.SYNC_UI_STATE
-import com.joshtalks.joshskills.voip.constant.Event.TOPIC_IMAGE_CHANGE_REQUEST
-import com.joshtalks.joshskills.voip.constant.Event.TOPIC_IMAGE_RECEIVED
-import com.joshtalks.joshskills.voip.constant.Event.UI_STATE_UPDATED
-import com.joshtalks.joshskills.voip.constant.Event.UNHOLD
-import com.joshtalks.joshskills.voip.constant.Event.UNHOLD_REQUEST
-import com.joshtalks.joshskills.voip.constant.Event.UNMUTE
-import com.joshtalks.joshskills.voip.constant.Event.UNMUTE_REQUEST
+import com.joshtalks.joshskills.voip.constant.Event.*
 import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.RecordingButtonState
 import com.joshtalks.joshskills.voip.data.local.PrefManager
@@ -208,6 +185,48 @@ class ConnectedState(val context: CallContext) : VoipState {
                                 address = Utils.uuid ?: ""
                             )
                             context.sendMessageToServer(userAction)
+                        }
+                        Event.START_GAME -> {
+                            ensureActive()
+                            val userAction = UserAction(
+                                ServerConstants.START_GAME,
+                                context.channelData.getChannel(),
+                                address = Utils.uuid ?: ""
+                            )
+                            val uiState = context.currentUiState.copy(isStartGameClicked = true)
+                            context.updateUIState(uiState = uiState)
+                            context.sendMessageToServer(userAction)
+                        }
+                        Event.END_GAME -> {
+                            ensureActive()
+                            val userAction = UserAction(
+                                ServerConstants.END_GAME,
+                                context.channelData.getChannel(),
+                                address = context.channelData.getPartnerMentorId()
+                            )
+                            context.sendMessageToServer(userAction)
+
+                            val uiState = context.currentUiState.copy(isStartGameClicked = false, isNextWordClicked = false)
+                            context.updateUIState(uiState = uiState)
+                        }
+                        Event.NEXT_WORD_REQUEST -> {
+                            ensureActive()
+                            val userAction = UserAction(
+                                ServerConstants.NEXT_WORD_REQUEST,
+                                context.channelData.getChannel(),
+                                address = Utils.uuid ?: ""
+                            )
+                            context.sendMessageToServer(userAction)
+
+                            val uiState = context.currentUiState.copy(isNextWordClicked = true)
+                            context.updateUIState(uiState = uiState)
+                        }
+                        Event.NEXT_WORD_RECEIVED -> {
+                            ensureActive()
+                            val incomingWord= event.data as IncomingGameNextWord
+                            val uiState = context.currentUiState.copy(nextGameWord = incomingWord.word, nextGameWordColor = incomingWord.color, isNextWordClicked = false)
+                            context.updateUIState(uiState = uiState)
+
                         }
                         SYNC_UI_STATE -> {
                             ensureActive()

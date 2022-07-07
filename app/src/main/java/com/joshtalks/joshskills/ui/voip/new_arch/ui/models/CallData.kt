@@ -169,6 +169,34 @@ class CallUIState : BaseObservable() {
     }
 
     @get:Bindable
+    var gameWord:String = ""
+        set(value) {
+            field = value
+            notifyPropertyChanged(BR.gameWord)
+        }
+
+    @get:Bindable
+    var wordColor:String = ""
+        set(value) {
+            field = value
+            notifyPropertyChanged(BR.wordColor)
+        }
+
+    @get:Bindable
+    var isNextWordClicked:Boolean = false
+        set(value) {
+            field = value
+            notifyPropertyChanged(BR.nextWordClicked)
+        }
+
+    @get:Bindable
+    var isStartGameClicked:Boolean = false
+        set(value) {
+            field = value
+            notifyPropertyChanged(BR.startGameClicked)
+        }
+
+    @get:Bindable
     var occupation:String = ""
         set(value) {
             field = value
