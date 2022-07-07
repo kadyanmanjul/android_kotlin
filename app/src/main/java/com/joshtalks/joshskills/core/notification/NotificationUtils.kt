@@ -20,17 +20,14 @@ import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.conversationRoom.liveRooms.ConversationLiveRoomActivity
 import com.joshtalks.joshskills.core.API_TOKEN
 import com.joshtalks.joshskills.core.ARG_PLACEHOLDER_URL
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.COURSE_ID
 import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.IS_CONVERSATION_ROOM_ACTIVE_FOR_USER
 import com.joshtalks.joshskills.core.IS_COURSE_BOUGHT
 import com.joshtalks.joshskills.core.JoshApplication
 import com.joshtalks.joshskills.core.JoshSkillExecutors
-import com.joshtalks.joshskills.core.PREF_IS_CONVERSATION_ROOM_ACTIVE
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.USER_ACTIVE_IN_GAME
 import com.joshtalks.joshskills.core.analytics.DismissNotifEventReceiver
@@ -38,7 +35,6 @@ import com.joshtalks.joshskills.core.firestore.FirestoreDB
 import com.joshtalks.joshskills.core.firestore.NotificationAnalytics
 import com.joshtalks.joshskills.core.io.LastSyncPrefManager
 import com.joshtalks.joshskills.core.isValidFullNumber
-import com.joshtalks.joshskills.core.startServiceForWebrtc
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.Question
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
@@ -169,7 +165,6 @@ class NotificationUtils(val context: Context) {
                         || notificationObject.action == NotificationAction.ACTION_OPEN_SPEAKING_SECTION
                         || notificationObject.action == NotificationAction.ACTION_OPEN_LESSON
                         || notificationObject.action == NotificationAction.ACTION_OPEN_CONVERSATION
-                        || notificationObject.action == NotificationAction.JOIN_CONVERSATION_ROOM
                         || notificationObject.action == NotificationAction.CALL_RECORDING_NOTIFICATION
                     ) {
                         val inboxIntent =
@@ -180,15 +175,6 @@ class NotificationUtils(val context: Context) {
                     } else {
                         arrayOf(this)
                     }
-
-                if (notificationObject.action == NotificationAction.JOIN_CONVERSATION_ROOM) {
-                    val obj = JSONObject(notificationObject.actionData)
-                    val name = obj.getString("moderator_name")
-                    val topic = obj.getString("topic")
-                    notificationObject.contentTitle = context.getString(R.string.room_title)
-                    notificationObject.contentText =
-                        context.getString(R.string.convo_notification_title, name, topic)
-                }
 
                 val uniqueInt = (System.currentTimeMillis() and 0xfffffff).toInt()
                 val defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
@@ -452,34 +438,8 @@ class NotificationUtils(val context: Context) {
                 }
             }
             NotificationAction.INCOMING_CALL_NOTIFICATION -> {
-                if (!PrefManager.getBoolValue(
-                        PREF_IS_CONVERSATION_ROOM_ACTIVE
-                    ) && !PrefManager.getBoolValue(USER_ACTIVE_IN_GAME)
-                ) {
+                if (!PrefManager.getBoolValue(USER_ACTIVE_IN_GAME)) {
                     incomingCallNotificationAction(notificationObject.actionData)
-                }
-                return null
-            }
-            NotificationAction.JOIN_CONVERSATION_ROOM -> {
-                if (!PrefManager.getBoolValue(PREF_IS_CONVERSATION_ROOM_ACTIVE) && User.getInstance().isVerified
-                    && PrefManager.getBoolValue(IS_CONVERSATION_ROOM_ACTIVE_FOR_USER)
-                ) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        val intent = Intent(context, HeadsUpNotificationService::class.java).apply {
-                            putExtra(ConfigKey.ROOM_DATA, actionData)
-                        }
-                        intent.startServiceForWebrtc()
-                    } else {
-                        val roomId = JSONObject(actionData).getString("room_id")
-                        val topic = JSONObject(actionData).getString("topic") ?: EMPTY
-
-                        if (roomId.isNotBlank()) {
-                            return ConversationLiveRoomActivity.getIntentForNotification(
-                                AppObjectController.joshApplication,
-                                roomId, topicName = topic
-                            )
-                        } else return null
-                    }
                 }
                 return null
             }

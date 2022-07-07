@@ -9,7 +9,6 @@ class LessonPagerAdapter(
     fragmentManager: FragmentManager,
     lifecycle: Lifecycle,
     val fragmentList:List<Fragment>,
-    val lessonIsConvoRoomActive: Boolean
 ) : FragmentStateAdapter(fragmentManager, lifecycle) {
 
     override fun getItemCount() = fragmentList.size

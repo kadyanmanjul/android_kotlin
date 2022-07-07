@@ -3,8 +3,6 @@ package com.joshtalks.joshskills.ui.chat.vh
 import android.view.View
 import android.widget.FrameLayout
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.IS_CONVERSATION_ROOM_ACTIVE_FOR_USER
-import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
 import com.joshtalks.joshskills.repository.local.entity.LessonModel
@@ -35,14 +33,13 @@ class LessonViewHolder(view: View, userId: String) : BaseViewHolder(view, userId
             lessonInProgressStub.get().visibility = View.GONE
             lessonCompleteStub.resolved().let {
                 lessonCompleteStub.get().visibility = View.VISIBLE
-                lessonCompleteStub.get().setup(lesson,
-                    PrefManager.getBoolValue(IS_CONVERSATION_ROOM_ACTIVE_FOR_USER))
+                lessonCompleteStub.get().setup(lesson)
             }
         } else {
             lessonCompleteStub.get().visibility = View.GONE
             lessonInProgressStub.resolved().let {
                 lessonInProgressStub.get().visibility = View.VISIBLE
-                lessonInProgressStub.get().setup(lesson,PrefManager.getBoolValue(IS_CONVERSATION_ROOM_ACTIVE_FOR_USER))
+                lessonInProgressStub.get().setup(lesson)
             }
         }
     }
