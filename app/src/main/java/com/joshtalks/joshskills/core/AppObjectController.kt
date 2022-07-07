@@ -27,7 +27,6 @@ import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.base.constants.DIR
-import com.joshtalks.joshskills.conversationRoom.network.ConversationRoomsNetworkService
 import com.joshtalks.joshskills.core.abTest.ABTestNetworkService
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.datetimeutils.DateTimeUtils
@@ -160,10 +159,6 @@ class AppObjectController {
 
         @JvmStatic
         lateinit var mediaDUNetworkService: MediaDUNetworkService
-            private set
-
-        @JvmStatic
-        lateinit var conversationRoomsNetworkService: ConversationRoomsNetworkService
             private set
 
         @JvmStatic
@@ -333,8 +328,6 @@ class AppObjectController {
                 commonNetworkService = retrofit.create(CommonNetworkService::class.java)
                 voipAnalyticsService = retrofit.create(VoipAnalyticsService::class.java)
                 seniorStudentService = retrofit.create(SeniorStudentService::class.java)
-                conversationRoomsNetworkService =
-                    retrofit.create(ConversationRoomsNetworkService::class.java)
                 abTestNetworkService = retrofit.create(ABTestNetworkService::class.java)
                 utilsAPIService = retrofit.create(UtilsAPIService::class.java)
                 groupsNetworkService = retrofit.create(GroupApiService::class.java)

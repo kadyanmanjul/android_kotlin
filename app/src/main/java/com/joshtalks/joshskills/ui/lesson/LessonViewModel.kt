@@ -94,7 +94,6 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     val grammarSpotlightClickLiveData: MutableLiveData<Unit> = MutableLiveData()
     val speakingSpotlightClickLiveData: MutableLiveData<Unit> = MutableLiveData()
     val eventLiveData: MutableLiveData<Event<Boolean>> = MutableLiveData()
-    var lessonIsConvoRoomActive: Boolean = false
     var isFreeTrail = false
     val introVideoLiveDataForSpeakingSection: MutableLiveData<VideoPopupItem> = MutableLiveData()
     val callBtnHideShowLiveData: MutableLiveData<Int> = MutableLiveData()
@@ -460,14 +459,6 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                         }
                     )
                 }
-                ROOM_POSITION -> {
-                    appDatabase.lessonDao().updateRoomSectionStatus(lessonId, status)
-                    lessonLiveData.postValue(
-                        lessonLiveData.value?.apply {
-                            this.conversationStatus = status
-                        }
-                    )
-                }
                 TRANSLATION_POSITION -> {
                     appDatabase.lessonDao().updateTranslationSectionStatus(lessonId, status)
                     lessonLiveData.postValue(
@@ -777,11 +768,6 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                     if (this.isNewGrammar && PrefManager.getBoolValue(IS_A2_C1_RETENTION_ENABLED)) {
                         lessonCompleted = lessonCompleted &&
                                 this.translationStatus == LESSON_STATUS.CO
-                    }
-
-                    if (lessonIsConvoRoomActive) {
-                        lessonCompleted = lessonCompleted &&
-                                this.conversationStatus == LESSON_STATUS.CO
                     }
                     val lessonStatus = if (lessonCompleted) {
                         LESSON_STATUS.CO

@@ -76,7 +76,6 @@ import com.joshtalks.joshskills.ui.lesson.grammar.GrammarFragment
 import com.joshtalks.joshskills.ui.lesson.lesson_completed.LessonCompletedActivity
 import com.joshtalks.joshskills.ui.lesson.reading.ReadingFragmentWithoutFeedback
 import com.joshtalks.joshskills.ui.lesson.reading.ReadingFullScreenFragment
-import com.joshtalks.joshskills.ui.lesson.room.ConversationRoomListingPubNubFragment
 import com.joshtalks.joshskills.ui.lesson.speaking.SpeakingPractiseFragment
 import com.joshtalks.joshskills.ui.lesson.speaking.spf_models.UserRating
 import com.joshtalks.joshskills.ui.lesson.vocabulary.VocabularyFragment
@@ -114,10 +113,10 @@ const val TRANSLATION_POSITION = 1
 const val SPEAKING_POSITION = 2
 const val VOCAB_POSITION = 3
 const val READING_POSITION = 4
-const val ROOM_POSITION = 5
 const val DEFAULT_SPOTLIGHT_DELAY_IN_MS = 1300L
 const val INTRO_VIDEO_ID = "-1"
 private const val TAG = "LessonActivity"
+private const val LESSON_BACKSTACK = "LESSON_BACKSTACK"
 val STORAGE_GRAMMER_REQUEST_CODE = 3456
 private val STORAGE_READING_REQUEST_CODE = 3457
 
@@ -164,7 +163,6 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
             supportFragmentManager,
             this.lifecycle,
             arrayFragment,
-            viewModel.lessonIsConvoRoomActive
         )
     }
 
@@ -379,10 +377,6 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                 .addParam(ParamKeys.LESSON_ID, getLessonId)
                 .addParam(ParamKeys.LESSON_NUMBER, lessonNumber)
                 .push()
-            viewModel.lessonIsConvoRoomActive =
-                (it.filter { it.chatType == CHAT_TYPE.CR }.isNotEmpty()
-                        && PrefManager.getBoolValue(IS_CONVERSATION_ROOM_ACTIVE_FOR_USER))
-            //viewModel.lessonIsConvoRoomActive  = true
 
             if (lessonIsNewGrammar) {
 
@@ -656,24 +650,6 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                     }
 
                 }
-
-                LessonSpotlightState.CONVO_ROOM_SPOTLIGHT -> {
-                    binding.overlayLayout.visibility = View.VISIBLE
-                    binding.spotlightTabGrammar.visibility = View.INVISIBLE
-                    binding.spotlightTabSpeaking.visibility = View.INVISIBLE
-                    binding.spotlightTabVocab.visibility = View.INVISIBLE
-                    binding.spotlightTabReading.visibility = View.INVISIBLE
-                    binding.spotlightTabConvo.visibility = View.VISIBLE
-                    binding.lessonSpotlightTooltip.visibility = View.INVISIBLE
-                    binding.convoRoomSpotlightTooltip.visibility = View.VISIBLE
-                    binding.convoRoomSpotlightTooltip.startAnimation(
-                        AnimationUtils.loadAnimation(this, R.anim.slide_in_left)
-                    )
-                    binding.spotlightStartGrammarTest.visibility = View.GONE
-                    binding.spotlightCallBtn.visibility = View.GONE
-                    binding.spotlightCallBtnText.visibility = View.GONE
-                    binding.arrowAnimation.visibility = View.GONE
-                }
                 else -> {
                     // Hide lesson Spotlight
                     binding.overlayLayout.visibility = View.GONE
@@ -682,7 +658,6 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                     binding.spotlightTabVocab.visibility = View.INVISIBLE
                     binding.spotlightTabReading.visibility = View.INVISIBLE
                     binding.spotlightTabConvo.visibility = View.INVISIBLE
-                    binding.convoRoomSpotlightTooltip.visibility = View.GONE
                     binding.lessonSpotlightTooltip.visibility = View.GONE
                     binding.spotlightStartGrammarTest.visibility = View.GONE
                     binding.spotlightCallBtn.visibility = View.GONE
@@ -818,6 +793,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         binding.containerReading.visibility = View.VISIBLE
         supportFragmentManager.commit {
             val fragment = ReadingFullScreenFragment()
+            addToBackStack(LESSON_BACKSTACK)
             replace(R.id.container_reading, fragment, ReadingFullScreenFragment::class.java.simpleName)
         }
     }
@@ -846,11 +822,6 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                             lesson.vocabStatus == LESSON_STATUS.CO &&
                             lesson.readingStatus == LESSON_STATUS.CO &&
                             lesson.speakingStatus == LESSON_STATUS.CO
-
-                    if (viewModel.lessonIsConvoRoomActive) {
-                        lessonCompleted = lessonCompleted &&
-                                lesson.conversationStatus == LESSON_STATUS.CO
-                    }
 
                     if (lesson.isNewGrammar && PrefManager.getBoolValue(IS_A2_C1_RETENTION_ENABLED)) {
                         lessonCompleted = lessonCompleted &&
@@ -890,10 +861,6 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                     if (lesson.isNewGrammar && PrefManager.getBoolValue(IS_A2_C1_RETENTION_ENABLED)) {
                         lessonCompleted = lessonCompleted &&
                                 lesson.translationStatus == LESSON_STATUS.CO
-                    }
-                    if (viewModel.lessonIsConvoRoomActive) {
-                        lessonCompleted = lessonCompleted &&
-                                lesson.conversationStatus == LESSON_STATUS.CO
                     }
                     if (lessonCompleted) {
                         if (lesson.status != LESSON_STATUS.CO) {
@@ -1008,7 +975,6 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                     }
                     VOCAB_POSITION -> lesson.vocabStatus = status
                     READING_POSITION -> lesson.readingStatus = status
-                    ROOM_POSITION -> lesson.conversationStatus = status
                     TRANSLATION_POSITION -> lesson.translationStatus = status
                 }
                 viewModel.updateSectionStatus(lesson.id, status, tabPosition)
@@ -1050,9 +1016,6 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
             READING_POSITION - isTranslationDisabled,
             ReadingFragmentWithoutFeedback.getInstance()
         )
-        if (viewModel.lessonIsConvoRoomActive) {
-            arrayFragment.add(ROOM_POSITION, ConversationRoomListingPubNubFragment.getInstance())
-        }
         binding.lessonViewpager.adapter = adapter
         binding.lessonViewpager.requestTransparentRegion(binding.lessonViewpager)
         binding.lessonViewpager.offscreenPageLimit = arrayFragment.size
@@ -1097,12 +1060,6 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                     tab.view.findViewById<TextView>(R.id.title_tv).text =
                         AppObjectController.getFirebaseRemoteConfig()
                             .getString(FirebaseRemoteConfigKey.READING_TITLE)
-                }
-                ROOM_POSITION - isTranslationDisabled -> {
-                    setUnselectedColor(tab)
-                    tab.view.findViewById<TextView>(R.id.title_tv)?.text =
-                        AppObjectController.getFirebaseRemoteConfig()
-                            .getString(FirebaseRemoteConfigKey.ROOM_TITLE)
                 }
                 TRANSLATION_POSITION -> {
                     setUnselectedColor(tab)
@@ -1187,14 +1144,6 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                             } else {
                                 nextTabIndex++
                             }
-                        ROOM_POSITION - isTranslationDisabled ->
-                            if (lesson.conversationStatus != LESSON_STATUS.CO) {
-                                binding.lessonViewpager.currentItem =
-                                    ROOM_POSITION - isTranslationDisabled
-                                return
-                            } else {
-                                nextTabIndex++
-                            }
                         TRANSLATION_POSITION ->
                             if (lesson.translationStatus != LESSON_STATUS.CO) {
                                 binding.lessonViewpager.currentItem = TRANSLATION_POSITION
@@ -1237,10 +1186,6 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                 setTabCompletionStatus(
                     tabs.getChildAt(SPEAKING_POSITION - isTranslationDisabled),
                     lesson.speakingStatus == LESSON_STATUS.CO
-                )
-                setTabCompletionStatus(
-                    tabs.getChildAt(ROOM_POSITION - isTranslationDisabled),
-                    lesson.conversationStatus == LESSON_STATUS.CO
                 )
             }
             if (isLesssonCompleted.not()) {
@@ -1293,16 +1238,6 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                         .addParam(ParamKeys.LESSON_ID, getLessonId)
                         .addParam(ParamKeys.LESSON_NUMBER, lessonNumber)
                         .push()
-                }
-                ROOM_POSITION - isTranslationDisabled -> {
-                    tab.view.background =
-                        ContextCompat.getDrawable(this, R.drawable.convo_room_tab_bg)
-                    viewModel.saveImpression(IMPRESSION_OPEN_ROOM_SCREEN)
-                    if (PrefManager.getBoolValue(HAS_SEEN_CONVO_ROOM_SPOTLIGHT)) {
-                        hideSpotlight()
-                    } else {
-                        showConvoRoomSpotlight()
-                    }
                 }
                 SPEAKING_POSITION - isTranslationDisabled -> {
                     tab.view.background =
@@ -1638,7 +1573,6 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         )
     }
     private fun closeReadingFullScreen(){
-        Log.e("Ayaaz","close reading fun")
         supportFragmentManager.popBackStackImmediate()
         container_reading.visibility = View.GONE
     }

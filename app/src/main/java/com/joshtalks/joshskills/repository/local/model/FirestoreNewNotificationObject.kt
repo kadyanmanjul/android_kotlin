@@ -110,7 +110,6 @@ data class FirestoreNewNotificationObject(
             NotificationAction.CALL_ON_HOLD_NOTIFICATION.type -> NotificationAction.CALL_ON_HOLD_NOTIFICATION
             NotificationAction.CALL_RESUME_NOTIFICATION.type -> NotificationAction.CALL_RESUME_NOTIFICATION
             NotificationAction.CALL_CONNECTED_NOTIFICATION.type -> NotificationAction.CALL_CONNECTED_NOTIFICATION
-            NotificationAction.JOIN_CONVERSATION_ROOM.type -> NotificationAction.JOIN_CONVERSATION_ROOM
             NotificationAction.ACTION_OPEN_FREE_TRIAL_SCREEN.type -> NotificationAction.ACTION_OPEN_FREE_TRIAL_SCREEN
             NotificationAction.ACTION_COMPLETE_ONBOARDING.type -> NotificationAction.ACTION_COMPLETE_ONBOARDING
             NotificationAction.GROUP_CHAT_PIN_MESSAGE.type -> NotificationAction.GROUP_CHAT_PIN_MESSAGE

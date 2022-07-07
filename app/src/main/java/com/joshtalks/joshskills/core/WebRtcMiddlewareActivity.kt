@@ -18,7 +18,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-
 open class WebRtcMiddlewareActivity : CoreJoshActivity() {
     private var mBoundService: WebRtcService? = null
     private var mServiceBound = false
@@ -108,7 +107,6 @@ open class WebRtcMiddlewareActivity : CoreJoshActivity() {
     }
 
     private fun callTimerUi() {
-        Log.d(TAG, "callTimerUi: ${this.javaClass.simpleName} -- ${(findViewById<Chronometer>(R.id.call_timer))}")
         with(findViewById<Chronometer>(R.id.call_timer)) {
             base = SystemClock.elapsedRealtime() - mBoundService?.getTimeOfTalk()!!
             start()
@@ -119,28 +117,17 @@ open class WebRtcMiddlewareActivity : CoreJoshActivity() {
     override fun onStart() {
         super.onStart()
         Log.d(TAG, "onStart: ${this.javaClass.simpleName}")
-        if (!isScreenOpenByConversationRoom) {
-            bindService(Intent(this, WebRtcService::class.java), myConnection, BIND_AUTO_CREATE)
-        }else{
-            PrefManager.put(PREF_IS_CONVERSATION_ROOM_ACTIVE, true)
-        }
+        bindService(Intent(this, WebRtcService::class.java), myConnection, BIND_AUTO_CREATE)
     }
 
     override fun onStop() {
         Log.d(TAG, "onStop: ${this.javaClass.simpleName}")
         try {
-            if (!isScreenOpenByConversationRoom) {
-                unbindService(myConnection)
-            }
+            unbindService(myConnection)
         } catch (ex: Exception) {
             Timber.e(ex)
         }
         super.onStop()
-    }
-
-    companion object{
-        var isScreenOpenByConversationRoom = false
-
     }
 
     override fun getConversationId(): String? {
