@@ -23,7 +23,7 @@ class AudienceAdapter(
         Timber.tag("localuser").d("AUDIENCE ADAPTER INIT CALLED")
     }
 
-//    val audienceList: ArrayList<LiveRoomUser> = arrayListOf()
+    //    val audienceList: ArrayList<LiveRoomUser> = arrayListOf()
     private var listenerUserAction: OnUserItemClickListener? = null
 
     fun updateFullList(newList: List<LiveRoomUser>) {
@@ -58,7 +58,8 @@ class AudienceAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(model: LiveRoomUser) {
-            Timber.tag("localuser").d("RECYCLERVIEW BIND CALLED AND LIST IS $currentList AND ITEM IS => $model")
+            Timber.tag("localuser")
+                .d("RECYCLERVIEW BIND CALLED AND LIST IS $currentList AND ITEM IS => $model")
 
             with(binding) {
                 name.text = model.name
@@ -66,7 +67,7 @@ class AudienceAdapter(
                     clipToOutline = true
                     setUserImageRectOrInitials(
                         model.photoUrl,
-                        model.name?: DEFAULT_NAME,
+                        model.name ?: DEFAULT_NAME,
                         22,
                         true,
                         16,
@@ -81,7 +82,7 @@ class AudienceAdapter(
                     raisedHands.visibility = View.GONE
                 }
 
-                if (model.isSpeaker== true && !model.isMicOn) {
+                if (model.isSpeaker == true && !model.isMicOn) {
                     volumeIcon.visibility = View.VISIBLE
                 } else {
                     volumeIcon.visibility = View.GONE
@@ -124,12 +125,28 @@ class AudienceAdapter(
 //    }
 }
 
-class AudienceDiffUtil: DiffUtil.ItemCallback<LiveRoomUser>() {
+class AudienceDiffUtil : DiffUtil.ItemCallback<LiveRoomUser>() {
     override fun areItemsTheSame(oldItem: LiveRoomUser, newItem: LiveRoomUser): Boolean {
-        return oldItem.userId == newItem.userId
+        val itemSame = oldItem.id == newItem.id
+        Timber.d("IS ITEM SAME => $itemSame")
+        return itemSame
     }
 
     override fun areContentsTheSame(oldItem: LiveRoomUser, newItem: LiveRoomUser): Boolean {
-        return oldItem == newItem
+        val contentSame = oldItem.id == newItem.id &&
+                oldItem.userId == newItem.userId &&
+                oldItem.isSpeaker == newItem.isSpeaker &&
+                oldItem.name == newItem.name &&
+                oldItem.fullName == newItem.fullName &&
+                oldItem.photoUrl == newItem.photoUrl &&
+                oldItem.isModerator == newItem.isModerator &&
+                oldItem.isMicOn == newItem.isMicOn &&
+                oldItem.isSpeaking == newItem.isSpeaking &&
+                oldItem.isHandRaised == newItem.isHandRaised &&
+                oldItem.isInviteSent == newItem.isInviteSent &&
+                oldItem.isSpeakerAccepted == newItem.isSpeakerAccepted
+
+        Timber.d("IS CONTENT SAME => $contentSame")
+        return contentSame
     }
 }

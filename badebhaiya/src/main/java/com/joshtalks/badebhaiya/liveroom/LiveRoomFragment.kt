@@ -224,6 +224,9 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
 //                    duplicateUser
 //                )
 //            }
+
+
+
             audienceAdapter?.submitList(list)
 //            audienceAdapter?.updateFullList(list)
             Log.i("AUDIENCE", "addViewModelObserver: ${it}")
