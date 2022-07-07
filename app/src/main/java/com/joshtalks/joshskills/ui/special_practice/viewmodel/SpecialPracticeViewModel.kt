@@ -18,8 +18,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.base.BaseViewModel
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.Utils.isInternetAvailable
 import com.joshtalks.joshskills.core.custom_ui.JoshVideoPlayer
-import com.joshtalks.joshskills.quizgame.util.UpdateReceiver
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.referral.REFERRAL_SHARE_TEXT_SHARABLE_VIDEO
 import com.joshtalks.joshskills.ui.special_practice.model.SpecialPractice
@@ -159,7 +159,7 @@ class SpecialPracticeViewModel : BaseViewModel() {
     }
 
     fun onCardSampleVideoPlayer(view: View) {
-        if (UpdateReceiver.isNetworkAvailable()) {
+        if (isInternetAvailable()) {
             message.what = SHOW_SAMPLE_VIDEO
             message.obj = false
             singleLiveEvent.value = message
@@ -174,7 +174,7 @@ class SpecialPracticeViewModel : BaseViewModel() {
     }
 
     fun startRecording(view: View) {
-        if (UpdateReceiver.isNetworkAvailable()) {
+        if (isInternetAvailable()) {
             message.what = START_VIDEO_RECORDING
             singleLiveEvent.value = message
         } else {

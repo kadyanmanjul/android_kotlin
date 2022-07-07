@@ -20,7 +20,6 @@ import com.joshtalks.joshskills.base.constants.GROUP
 import com.joshtalks.joshskills.base.constants.PEER_TO_PEER
 import com.joshtalks.joshskills.base.log.Feature
 import com.joshtalks.joshskills.base.log.JoshLog
-import com.joshtalks.joshskills.quizgame.base.GameEventLiveData
 import com.joshtalks.joshskills.ui.call.repository.RepositoryConstants.CONNECTION_ESTABLISHED
 import com.joshtalks.joshskills.ui.call.repository.WebrtcRepository
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.call_recording.ProcessCallRecordingService
@@ -67,7 +66,6 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
     val pendingEvents = ArrayDeque<Int>()
     var recordCnclStop = 0 // 0 = record, 1 = cancel, 2 = stop
     private var singleLiveEvent = EventLiveData
-    private var recordingLiveEvent = GameEventLiveData
     var audioRecordFile: File? = null
     var videoRecordFile: File? = null
     var visibleCrdView = false
@@ -177,7 +175,7 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                             obj = true
                         }
                         withContext(Dispatchers.Main) {
-                            recordingLiveEvent.value = msg
+                            singleLiveEvent.value = msg
                         }
                     }
                     ServiceEvents.CALL_RECORDING_REJECT -> {
@@ -186,7 +184,7 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                             what = SHOW_RECORDING_REJECTED_DIALOG
                         }
                         withContext(Dispatchers.Main) {
-                            recordingLiveEvent.value = msg
+                            singleLiveEvent.value = msg
                         }
                     }
                     ServiceEvents.CANCEL_RECORDING_REQUEST -> {
@@ -196,7 +194,7 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                             what = HIDE_RECORDING_PERMISSION_DIALOG
                         }
                         withContext(Dispatchers.Main) {
-                            recordingLiveEvent.value = msg
+                            singleLiveEvent.value = msg
                         }
                         stopAudioVideoRecording()
                         stoppedRecUIchanges()
@@ -301,7 +299,7 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                         what = SHOW_RECORDING_PERMISSION_DIALOG
                     }
                     withContext(Dispatchers.Main) {
-                        recordingLiveEvent.value = msg
+                        singleLiveEvent.value = msg
                     }
                 }
                 uiState.recordingButtonState = state.recordingButtonState

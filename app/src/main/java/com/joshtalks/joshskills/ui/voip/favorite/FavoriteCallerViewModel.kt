@@ -6,11 +6,13 @@ import androidx.databinding.ObservableBoolean
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.base.BaseViewModel
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.Utils.isInternetAvailable
+import com.joshtalks.joshskills.core.checkPstnState
 import com.joshtalks.joshskills.core.pstn_states.PSTNState
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
-import com.joshtalks.joshskills.quizgame.util.UpdateReceiver
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.entity.practise.FavoriteCaller
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.fpp.constants.FAV_CLICK_ON_CALL
@@ -111,15 +113,11 @@ class FavoriteCallerViewModel : BaseViewModel() {
                 if (list.isEmpty()) {
                     return@launch
                 }
-                if (Utils.isInternetAvailable()){
-                    val requestParams: HashMap<String, List<Int>> = HashMap()
-                    requestParams["mentor_ids"] = list
-                    val response = favoriteCallerRepository.removeUserFormFppLit(requestParams)
-                    if (response.isSuccessful) {
-                        favoriteCallerDao.removeFromFavorite(list)
-                    }
-                }else{
-                    showToast("No Internet Connection")
+                val requestParams: HashMap<String, List<Int>> = HashMap()
+                requestParams["mentor_ids"] = list
+                val response = favoriteCallerRepository.removeUserFormFppLit(requestParams)
+                if (response.isSuccessful) {
+                    favoriteCallerDao.removeFromFavorite(list)
                 }
             } catch (ex: Exception) {
                 ex.printStackTrace()
@@ -128,7 +126,7 @@ class FavoriteCallerViewModel : BaseViewModel() {
     }
 
     fun getCallOnGoing(toMentorId: String, uid: Int) {
-        if (UpdateReceiver.isNetworkAvailable()) {
+        if (isInternetAvailable()) {
             viewModelScope.launch(Dispatchers.IO) {
                 try {
                     val map: HashMap<String, String> = HashMap()
