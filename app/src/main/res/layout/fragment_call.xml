@@ -577,21 +577,37 @@
 
             </LinearLayout>
 
+            <Chronometer
+                android:id="@+id/call_time2"
+                startTimer="@{vm.uiState.startTime}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+                android:textColor="@color/white"
+                android:visibility='@{vm.uiState.currentState.equals("Timer") ? View.VISIBLE : View.INVISIBLE}'
+                app:layout_constraintBottom_toTopOf="@+id/game_card"
+                android:layout_marginVertical="@dimen/_5sdp"
+                android:gravity="center"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/photo_frames_layout"
+                tools:ignore="MissingPrefix" />
+
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
                 android:layout_height="wrap_content"
                 app:cardCornerRadius="5dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="16dp"
-                app:layout_constraintTop_toBottomOf="@id/photo_frames_layout">
+                android:layout_marginTop="@dimen/_5sdp"
+                android:id="@+id/game_card"
+                android:layout_marginBottom="@dimen/_5sdp"
+                app:layout_constraintTop_toBottomOf="@id/call_time2">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@drawable/record_call_game_card_view"
-                    >
+                    android:background="@drawable/record_call_game_card_view">
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/guess_the_word_text_view"
