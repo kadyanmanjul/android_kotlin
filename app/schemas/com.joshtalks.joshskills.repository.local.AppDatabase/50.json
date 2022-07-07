@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 50,
-    "identityHash": "d31df9f03bd6f8a229570b514bf218ef",
+    "identityHash": "81ff06b97a26a234c78955f44d403dca",
     "entities": [
       {
         "tableName": "course",
@@ -2975,38 +2975,6 @@
         "foreignKeys": []
       },
       {
-        "tableName": "game_analytics",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`event` TEXT NOT NULL, `mentorId` TEXT NOT NULL, `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)",
-        "fields": [
-          {
-            "fieldPath": "event",
-            "columnName": "event",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "mentorId",
-            "columnName": "mentorId",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "id",
-            "columnName": "id",
-            "affinity": "INTEGER",
-            "notNull": true
-          }
-        ],
-        "primaryKey": {
-          "columnNames": [
-            "id"
-          ],
-          "autoGenerate": true
-        },
-        "indices": [],
-        "foreignKeys": []
-      },
-      {
         "tableName": "ab_test_campaigns",
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`is_campaign_active` INTEGER NOT NULL, `campaign_key` TEXT NOT NULL, `variant_key` TEXT, `variable_map` TEXT, PRIMARY KEY(`campaign_key`))",
         "fields": [
@@ -3446,7 +3414,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd31df9f03bd6f8a229570b514bf218ef')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '81ff06b97a26a234c78955f44d403dca')"
     ]
   }
 }

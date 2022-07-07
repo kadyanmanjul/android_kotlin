@@ -11,12 +11,11 @@ import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseDialogFragment
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.custom_ui.PointSnackbar
 import com.joshtalks.joshskills.databinding.FragmentFeedbackDialogBinding
-import com.joshtalks.joshskills.quizgame.util.UtilsQuiz.showSnackBar
 import com.joshtalks.joshskills.repository.local.model.KFactor
 import com.joshtalks.joshskills.ui.call.data.local.VoipPref
 import com.joshtalks.joshskills.ui.practise.PracticeViewModel
-import com.joshtalks.joshskills.ui.voip.new_arch.ui.call_rating.CallRatingsFragment
 import com.joshtalks.joshskills.ui.voip.share_call.ShareWithFriendsActivity
 import retrofit2.Response
 
@@ -59,11 +58,7 @@ class FeedbackDialogFragment : BaseDialogFragment() {
             this
         ) {
             if (it.pointsList.isNullOrEmpty().not()) {
-                showSnackBar(
-                    binding.container,
-                    Snackbar.LENGTH_LONG,
-                    it.pointsList?.get(0)
-                )
+                PointSnackbar.make(binding.container, Snackbar.LENGTH_LONG, it.pointsList?.get(0))?.show()
                 PrefManager.put(
                     LESSON_COMPLETE_SNACKBAR_TEXT_STRING,
                     it.pointsList!!.last(),

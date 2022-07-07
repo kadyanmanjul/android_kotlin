@@ -17,8 +17,6 @@ import com.joshtalks.joshskills.engage_notification.AppActivityDao
 import com.joshtalks.joshskills.engage_notification.AppActivityModel
 import com.joshtalks.joshskills.engage_notification.AppUsageDao
 import com.joshtalks.joshskills.engage_notification.AppUsageModel
-import com.joshtalks.joshskills.quizgame.analytics.data.GameAnalyticsDao
-import com.joshtalks.joshskills.quizgame.analytics.data.GameAnalyticsEntity
 import com.joshtalks.joshskills.repository.local.dao.*
 import com.joshtalks.joshskills.repository.local.dao.reminder.ReminderDao
 import com.joshtalks.joshskills.repository.local.entity.*
@@ -70,11 +68,11 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
         PracticeEngagementV2::class, AwardMentorModel::class, LessonQuestion::class, SpeakingTopic::class,
         RecentSearch::class, FavoriteCaller::class, CourseUsageModel::class, AssessmentQuestionFeedback::class,
         VoipAnalyticsEntity::class, GroupsAnalyticsEntity::class, GroupChatAnalyticsEntity::class,
-        GroupsItem::class, TimeTokenRequest::class, ChatItem::class, GameAnalyticsEntity::class,
+        GroupsItem::class, TimeTokenRequest::class, ChatItem::class,
         ABTestCampaignData::class, GroupMember::class, SpecialPractice::class, ReadingVideo::class, CompressedVideo::class,
         PhonebookContact::class, BroadCastEvent::class, NotificationEvent::class, OnlineTestRequest::class
     ],
-    version = 50,
+    version = 51,
     exportSchema = true
 )
 @TypeConverters(
@@ -171,7 +169,8 @@ abstract class AppDatabase : RoomDatabase() {
                                 MIGRATION_46_47,
                                 MIGRATION_47_48,
                                 MIGRATION_48_49,
-                                MIGRATION_49_50
+                                MIGRATION_49_50,
+                                MIGRATION_50_51
                             )
                             .fallbackToDestructiveMigration()
                             .addCallback(sRoomDatabaseCallback)
@@ -600,6 +599,12 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        private val MIGRATION_50_51: Migration = object : Migration(50, 51) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("DROP TABLE `game_analytics`")
+            }
+        }
+
         fun clearDatabase() {
             INSTANCE?.clearAllTables()
         }
@@ -642,7 +647,6 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun groupListDao(): GroupListDao
     abstract fun timeTokenDao(): TimeTokenDao
     abstract fun groupChatDao(): GroupChatDao
-    abstract fun gameAnalyticsDao(): GameAnalyticsDao
     abstract fun specialDao(): SpecialDao
     abstract fun abCampaignDao(): ABTestCampaignDao
     abstract fun groupMemberDao(): GroupMemberDao

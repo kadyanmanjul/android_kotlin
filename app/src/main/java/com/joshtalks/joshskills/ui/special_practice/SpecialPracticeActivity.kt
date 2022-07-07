@@ -15,8 +15,8 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.Utils.isInternetAvailable
 import com.joshtalks.joshskills.databinding.ActivityRecordVideoBinding
-import com.joshtalks.joshskills.quizgame.util.UpdateReceiver
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.assessment.view.Stub
 import com.joshtalks.joshskills.ui.pdfviewer.CURRENT_VIDEO_PROGRESS_POSITION
@@ -88,7 +88,7 @@ class SpecialPracticeActivity : BaseKFactorActivity() {
                 Pair("mentor_id", Mentor.getInstance().getId()),
                 Pair("special_practice_id", spViewModel.specialId.get() ?: EMPTY)
             )
-            if (UpdateReceiver.isNetworkAvailable()) {
+            if (isInternetAvailable()) {
                 spViewModel.fetchSpecialPracticeData(map)
                 errorView?.resolved()?.let {
                     errorView!!.get().onSuccess()
