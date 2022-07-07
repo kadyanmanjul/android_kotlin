@@ -318,12 +318,16 @@ class OnlineTestFragment :
     private fun onPlayAudio(
         audioObject: AudioType
     ) {
-        audioManager?.playerListener = this
-        audioManager?.play(
-            audioObject.audio_url,
-            playbackSpeed = AppObjectController.getFirebaseRemoteConfig()
-                .getDouble(FirebaseRemoteConfigKey.GRAMMAR_CHOICE_PLAYBACK_SPEED).toFloat()
-        )
+        try {
+            audioManager?.playerListener = this
+            audioManager?.play(
+                audioObject.audio_url,
+                playbackSpeed = AppObjectController.getFirebaseRemoteConfig()
+                    .getDouble(FirebaseRemoteConfigKey.GRAMMAR_CHOICE_PLAYBACK_SPEED).toFloat()
+            )
+        }catch (ex:Exception){
+            ex.printStackTrace()
+        }
     }
 
     override fun toggleSubmitButton(isEnabled: Boolean) {

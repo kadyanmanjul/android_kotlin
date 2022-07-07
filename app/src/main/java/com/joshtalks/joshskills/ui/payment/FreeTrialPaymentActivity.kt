@@ -271,16 +271,19 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         }
 
         binding.applyCoupon.setOnClickListener {
-            MixPanelTracker.publishEvent(MixPanelEvent.APPLY_COUPON_CLICKED)
-                .addParam(ParamKeys.TEST_ID,viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.testId)
-                .addParam(ParamKeys.COURSE_PRICE,viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.discount)
-                .addParam(ParamKeys.COURSE_NAME,viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.courseName)
-                .addParam(ParamKeys.COURSE_ID,PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID))
-                .push()
-
-            viewModel.saveImpression(IMPRESSION_CLICKED_APPLY_COUPON)
-            val bottomSheetFragment = EnterReferralCodeFragment.newInstance(true)
-            bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
+            try {
+                MixPanelTracker.publishEvent(MixPanelEvent.APPLY_COUPON_CLICKED)
+                    .addParam(ParamKeys.TEST_ID, viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.testId)
+                    .addParam(ParamKeys.COURSE_PRICE, viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.discount)
+                    .addParam(ParamKeys.COURSE_NAME, viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.courseName)
+                    .addParam(ParamKeys.COURSE_ID, PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID))
+                    .push()
+                viewModel.saveImpression(IMPRESSION_CLICKED_APPLY_COUPON)
+                val bottomSheetFragment = EnterReferralCodeFragment.newInstance(true)
+                bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
+            }catch (ex:Exception){
+                ex.printStackTrace()
+            }
         }
     }
 
