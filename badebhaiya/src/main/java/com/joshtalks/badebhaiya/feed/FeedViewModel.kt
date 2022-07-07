@@ -258,7 +258,7 @@ class FeedViewModel : ViewModel() {
             try {
                 isLoading.set(true)
                 // isRoomsAvailable.set(true)
-                ProfileViewModel().sendEvent(Impression("FEED_SCREEN", "REFRESH_CALLED"))
+                sendEvent(Impression("FEED_SCREEN", "REFRESH_CALLED"))
                 val res = repository.getRoomList()
                 if (res.isSuccessful) {
                     res.body()?.let {

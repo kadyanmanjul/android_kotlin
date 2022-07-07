@@ -67,6 +67,8 @@ class AudienceAdapter(
                         bgColor = R.color.conversation_room_gray
                     )
                 }
+                if(model.isSpeaker == false && model.isHandRaised)
+                    raisedHands.visibility=View.VISIBLE
 
                 if (isModerator && model.isHandRaised) {
                     raisedHands.visibility = View.VISIBLE
