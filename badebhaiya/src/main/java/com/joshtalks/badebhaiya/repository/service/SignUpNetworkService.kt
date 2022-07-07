@@ -2,6 +2,7 @@ package com.joshtalks.badebhaiya.repository.service
 
 import com.joshtalks.badebhaiya.feed.model.Users
 import com.joshtalks.badebhaiya.impressions.Impression
+import com.joshtalks.badebhaiya.repository.model.LastLoginRequest
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.repository.server.AmazonPolicyResponse
 import com.joshtalks.badebhaiya.signup.request.VerifyOTPRequest
@@ -40,5 +41,10 @@ interface SignUpNetworkService {
     suspend fun speakersList(
         @Query("page") page: Int
     ):Response<BBtoFollow>
+
+    @POST("$DIR/user/last_login/")
+    suspend fun lastLogin(
+        @Body body: LastLoginRequest
+    ): Response<Void>
 
 }

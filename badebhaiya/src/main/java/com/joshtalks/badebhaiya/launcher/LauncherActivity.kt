@@ -11,6 +11,7 @@ import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.appUpdater.JoshAppUpdater
 import com.joshtalks.badebhaiya.core.workers.WorkManagerAdmin
 import com.joshtalks.badebhaiya.feed.FeedActivity
+import com.joshtalks.badebhaiya.repository.BBRepository
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.signup.SignUpActivity
 import com.joshtalks.badebhaiya.signup.SignUpActivity.Companion.REDIRECT_TO_ENTER_NAME
@@ -36,7 +37,7 @@ class LauncherActivity : AppCompatActivity() {
 
         appUpdater.checkAndUpdate(this)
 
-
+        BBRepository().lastLogin()
 
         UserExperior.startRecording(getApplicationContext(), BuildConfig.USER_EXPERIOR_API_KEY)
 

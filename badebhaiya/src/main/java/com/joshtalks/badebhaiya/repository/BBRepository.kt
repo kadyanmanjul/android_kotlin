@@ -2,10 +2,16 @@ package com.joshtalks.badebhaiya.repository
 
 import com.joshtalks.badebhaiya.impressions.Impression
 import com.joshtalks.badebhaiya.profile.response.ProfileResponse
+import com.joshtalks.badebhaiya.repository.model.LastLoginRequest
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.repository.peopleToFollow.PeoplePagingSource
 import com.joshtalks.badebhaiya.repository.service.RetrofitInstance
 import com.joshtalks.badebhaiya.signup.request.VerifyOTPRequest
+import com.joshtalks.badebhaiya.utils.Utils
+import io.agora.rtc.internal.DeviceUtils
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import retrofit2.Response
 
 class BBRepository {
@@ -33,4 +39,17 @@ class BBRepository {
 
      fun bbToFollowPaginatedList() = PeoplePagingSource()
     suspend fun sendEvent(param: Impression)=service.sendEvent(param)
+
+     fun lastLogin() {
+        CoroutineScope(Dispatchers.IO).launch {
+            if (User.getInstance().isLoggedIn()){
+                val response = service.lastLogin(
+                    LastLoginRequest(
+                        user = User.getInstance().userId,
+                        device_id = Utils.getDeviceId()
+                    )
+                )
+            }
+        }
+    }
 }
