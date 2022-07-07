@@ -206,7 +206,7 @@ class ConnectedState(val context: CallContext) : VoipState {
                             )
                             context.sendMessageToServer(userAction)
 
-                            val uiState = context.currentUiState.copy(isStartGameClicked = false, isNextWordClicked = false)
+                            val uiState = context.currentUiState.copy(isStartGameClicked = false, isNextWordClicked = false, nextGameWord = "")
                             context.updateUIState(uiState = uiState)
                         }
                         Event.NEXT_WORD_REQUEST -> {

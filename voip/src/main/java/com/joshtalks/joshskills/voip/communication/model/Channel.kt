@@ -50,8 +50,13 @@ data class Channel(
     private val isNewSearchingEnabled: Int? = null,
 
     @field:SerializedName("enable_call_recording")
-    private val isCallRecordingEnabled: Boolean = false
+    private val isCallRecordingEnabled: Boolean = false,
 
+    @field:SerializedName("word")
+    private val word: String? = null,
+
+    @field:SerializedName("color")
+    private val wordColor: String? = null
 ) : ChannelData {
 
     companion object {
@@ -73,6 +78,8 @@ data class Channel(
                 aspiration = map?.get("future_goals").toString(),
 				isNewSearchingEnabled = map?.get("is_new_search_enabled")?.toString()?.toInt() ?: 1,
 				isCallRecordingEnabled = map?.get("enable_call_recording")?.toString()?.toBoolean() ?: false,
+                word = map?.get("word")?.toString(),
+                wordColor = map?.get("color")?.toString(),
             )
         }
     }
@@ -135,6 +142,14 @@ data class Channel(
 
     override fun getAspiration(): String {
         return aspiration ?: ""
+    }
+
+    override fun getWord(): String {
+        return word ?: ""
+    }
+
+    override fun getWordColor(): String {
+        return wordColor ?: ""
     }
 
 	override fun isNewSearchingEnabled(): Boolean {
