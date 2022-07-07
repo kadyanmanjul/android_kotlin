@@ -53,7 +53,7 @@
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" /> <!-- <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" /> -->
     <!-- Custom Permissions for Oppo and Huawei devices -->
-    <uses-permission android:name="oppo.permission.OPPO_COMPONENT_SAFE" />
+    <uses-permission android:name="oppo.permission.OPPO_COMPONENT_SAFE" android:exported="true"/>
     <uses-permission android:name="com.huawei.permission.external_app_settings.USE_COMPONENT" />
 
     <permission android:name="android.permission.MEDIA_CONTENT_CONTROL" /> <!-- Add New Permission for phone number verification -->
@@ -63,12 +63,10 @@
     <uses-permission android:name="android.permission.DISABLE_KEYGUARD" /> <!-- For devices running Android 10.0 or later, you also need to add the following permission: -->
     <uses-permission
         android:name="android.permission.READ_PRIVILEGED_PHONE_STATE"
-        tools:ignore="ProtectedPermissions" /> <!-- for API level below 22 -->
+        tools:ignore="ProtectedPermissions" android:exported="true"/> <!-- for API level below 22 -->
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <!-- For Audio Control Module -->
-    <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
-    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="com.android.vending.CHECK_LICENSE" />
     <uses-permission android:name="com.google.android.gms.permission.AD_ID" />
 
@@ -167,6 +165,7 @@
             android:alwaysRetainTaskState="true"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
+            android:exported="true"
             android:theme="@style/AppTheme.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -248,6 +247,7 @@
             android:name=".ui.chat.ConversationActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
             android:launchMode="singleTop"
+            android:exported="true"
             android:parentActivityName=".ui.inbox.InboxActivity"
             android:theme="@style/AppNoBarTheme">
             <meta-data
@@ -289,6 +289,7 @@
             android:name=".ui.referral.ReferralActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
             android:launchMode="singleTask"
+            android:exported="true"
             android:parentActivityName=".ui.inbox.InboxActivity"
             android:theme="@style/AppNoBarTheme">
             <meta-data
@@ -466,7 +467,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppNoBarTheme"
             android:windowSoftInputMode="stateAlwaysHidden" />
-        <activity android:name=".ui.deeplink.DeeplinkAnalyzeActivity">
+        <activity android:name=".ui.deeplink.DeeplinkAnalyzeActivity" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -642,13 +643,13 @@
         </receiver>
         <receiver
             android:name=".core.analytics.DismissNotifEventReceiver"
-            android:exported="false" />
+            android:exported="true" />
         <receiver
             android:name=".core.analytics.LocalNotificationDismissEventReceiver"
-            android:exported="false" />
+            android:exported="true" />
         <receiver
             android:name=".ui.reminder.set_reminder.AlarmNotifDismissReceiver"
-            android:exported="false" />
+            android:exported="true" />
         <receiver
             android:name=".ui.reminder.set_reminder.AlarmReceiver"
             android:enabled="true"
@@ -667,6 +668,7 @@
         </receiver>
         <receiver
             android:name=".core.notification.StartUpBootReceiver"
+            android:exported="true"
             android:enabled="true">
             <intent-filter>
                 <action android:name="com.joshtalks.joshskills.start" />
@@ -684,14 +686,14 @@
         <!-- Audio Control Module Receivers -->
         <receiver
             android:name="com.joshtalks.joshskills.voip.audiocontroller.HeadsetReceiver"
-            android:exported="false">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.HEADSET_PLUG" />
             </intent-filter>
         </receiver>
         <receiver
             android:name="com.joshtalks.joshskills.voip.audiocontroller.BluetoothReceiver"
-            android:exported="false">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.media.ACTION_CONNECTION_STATE_CHANGED" />
             </intent-filter>
@@ -794,7 +796,7 @@
 
         <receiver
             android:name="com.xiaomi.push.service.receivers.PingReceiver"
-            android:exported="false"
+            android:exported="true"
             android:process=":pushservice">
             <intent-filter>
                 <action android:name="com.xiaomi.push.PING_TIMER" />

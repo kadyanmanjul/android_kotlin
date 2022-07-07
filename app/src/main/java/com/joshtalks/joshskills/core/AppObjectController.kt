@@ -17,6 +17,7 @@ import com.freshchat.consumer.sdk.Freshchat
 import com.freshchat.consumer.sdk.FreshchatConfig
 import com.freshchat.consumer.sdk.FreshchatNotificationConfig
 import com.freshchat.consumer.sdk.j.af
+import com.freshchat.consumer.sdk.j.d.aw
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
@@ -540,7 +541,7 @@ class AppObjectController {
                             BuildConfig.FRESH_CHAT_APP_ID,
                             BuildConfig.FRESH_CHAT_APP_KEY
                         )
-                    af.aw(joshApplication)?.let {
+                    af.eK()?.let {
                         Freshchat.setImageLoader(
                             it
                         )
