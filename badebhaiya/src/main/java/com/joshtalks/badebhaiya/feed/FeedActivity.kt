@@ -262,26 +262,6 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                 intent.getStringExtra(TOPIC_NAME) ?: "",
                 "moderatorId"
             )
-
-
-//            LiveRoomFragment.launch(
-//                this,
-//                StartingLiveRoomProperties(
-//                    isActivityOpenFromNotification = true,
-//                    roomId = intent.getIntExtra(LiveRoomFragment.ROOM_ID, 0),
-//                    channelTopic = intent.getStringExtra(LiveRoomFragment.TOPIC_NAME) ?: "",
-//                    channelName = intent.getStringExtra(LiveRoomFragment.CHANNEL_NAME) ?: "",
-//                    agoraUid = intent.getIntExtra(LiveRoomFragment.UID, 0),
-//                    moderatorId = intent.getIntExtra(LiveRoomFragment.MODERATOR_UID, 0),
-//                    token = intent.getStringExtra(LiveRoomFragment.TOKEN) ?: "",
-//                    roomQuestionId = intent.getIntExtra(LiveRoomFragment.ROOM_QUESTION_ID, 0),
-//                    isRoomCreatedByUser = intent.getBooleanExtra(
-//                        LiveRoomFragment.IS_ROOM_CREATED_BY_USER,
-//                        false
-//                    )
-//                ),
-//                liveRoomViewModel
-//            )
         }
     }
 
@@ -569,7 +549,6 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
     fun showPopup(roomId: Int, userId: String) {
         val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(binding.feedRoot.context)
         val dialogBinding = WhyRoomBinding.inflate(layoutInflater)
-//        val dialogView = inflater.inflate(R.layout.why_room, null)
         dialogBuilder.setView(dialogBinding.root)
         val alertDialog: AlertDialog = dialogBuilder.create()
         alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
@@ -600,14 +579,8 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
 
                     }
                     alertDialog.dismiss()
-
-//                    else
-//                        showToast("An Error Occured")
                 }
-
             }
-//            else
-//                showToast("Please Enter a Message")
         }
         dialogBinding.Skip.setOnClickListener {
             alertDialog.dismiss()

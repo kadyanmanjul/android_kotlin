@@ -125,20 +125,6 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
 
     private val badgeDrawable: BadgeDrawable by lazy { BadgeDrawable.create(requireActivity()) }
 
-//    var fullName= User.getInstance().firstName+" "+ User.getInstance().lastName
-//    var me= LiveRoomUser(PubNubManager.getLiveRoomProperties().agoraUid,
-//        false,
-//        User.getInstance().firstName,
-//        fullName,
-//        User.getInstance().profilePicUrl,
-//        sortOrder = null,
-//        false,
-//        false,
-//        false,
-//        false,
-//        User.getInstance().userId,
-//    )
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -181,29 +167,6 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
 
         sendModeratorJoinedEvent()
         heartbeatVewModel.initViewModel()
-
-//        addUserLocally()
-    }
-
-    private fun addUserLocally() {
-        if (PubNubManager.getLiveRoomProperties().isModerator){
-            // Add user to speaker list.
-            val localList = listOf<LiveRoomUser>(
-                PubNubManager.getCurrentUserLocally()
-            )
-            speakerAdapter?.updateFullList(localList)
-
-        } else {
-            // Add user to audience list.
-            val localList = listOf<LiveRoomUser>(
-                PubNubManager.getCurrentUserLocally()
-            )
-            Timber.tag("localuser").d("AUDIENCE LOCAL USER LIST => $localList")
-//            audienceAdapter?.notifyDataSetChanged()
-//            audienceAdapter?.audienceList?.addAll(localList)
-//            audienceAdapter?.notifyDataSetChanged()
-            audienceAdapter?.submitList(localList)
-        }
     }
 
     private fun sendModeratorJoinedEvent() {
@@ -1259,6 +1222,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
 
     private fun finishFragment(){
         if (isAdded){
+            Timber.d("finishFragment: ")
             requireActivity().supportFragmentManager.popBackStack()
         }
     }
@@ -1411,7 +1375,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
             } else {
                 Log.i("LIVEROOMSOURCE", "launch: $from")
                 var frag=activity.supportFragmentManager.findFragmentById(R.id.liveRoomRootView)
-//                if(frag==null) {
+                if(frag==null) {
 
                     val waitingFragment = activity.supportFragmentManager.findFragmentByTag(WaitingFragment.TAG)
                     waitingFragment?.let {
@@ -1431,7 +1395,11 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
                         .replace(R.id.feedRoot, fragment)
                         .addToBackStack(null)
                         .commit()
-//                }
+                }
+                else
+                {
+                    activity.supportFragmentManager.beginTransaction().show(frag)
+                }
             }
         }
 

@@ -141,6 +141,12 @@
             app:layout_constraintBottom_toBottomOf="parent"
             tools:listitem="@layout/li_room_event" />
 
+        <View
+            android:id="@+id/view"
+            android:layout_width="match_parent"
+            android:layout_height="90dp"
+            app:layout_constraintBottom_toBottomOf="@id/rvSpeakerRoomList" />
+
 <!--        <FrameLayout-->
 <!--            android:id="@+id/room_frame"-->
 <!--            android:layout_width="match_parent"-->
