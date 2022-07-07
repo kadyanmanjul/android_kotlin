@@ -113,6 +113,38 @@ object PubNubManager {
         this.channelName= channelName
     }
 
+    fun getCurrentUserLocally(): LiveRoomUser{
+        var fullName= User.getInstance().firstName+" "+ User.getInstance().lastName
+
+        return if (getLiveRoomProperties().isModerator){
+            LiveRoomUser(PubNubManager.getLiveRoomProperties().agoraUid,
+                true,
+                User.getInstance().firstName,
+                fullName,
+                User.getInstance().profilePicUrl,
+                sortOrder = 1,
+                true,
+                true,
+                false,
+                false,
+                User.getInstance().userId,
+            )
+        } else {
+            LiveRoomUser(PubNubManager.getLiveRoomProperties().agoraUid,
+                false,
+                User.getInstance().firstName,
+                fullName,
+                User.getInstance().profilePicUrl,
+                sortOrder = 1,
+                false,
+                false,
+                false,
+                false,
+                User.getInstance().userId,
+            )
+        }
+    }
+
     fun getLiveRoomProperties(): StartingLiveRoomProperties {
 //        return if (liveRoomProperties != null){
 //            liveRoomProperties!!
@@ -136,6 +168,7 @@ object PubNubManager {
         pubnub = PubNub(pnConf)
         Log.i("MODERATORSTATUS", "initPubNub: ")
 
+        addUserLocally()
         pubNubCallback?.let {
             pubnub.addListener(it)
         }
@@ -145,7 +178,6 @@ object PubNubManager {
         pubnub.subscribe().channels(
             listOf(liveRoomProperties?.channelName, liveRoomProperties?.agoraUid.toString())
         ).withPresence().execute()
-
         getLatestUserList()
         getSpeakerList()
         getAudienceList()
@@ -156,6 +188,16 @@ object PubNubManager {
 
         }
 
+    }
+
+    private fun addUserLocally() {
+        if (getLiveRoomProperties().isModerator){
+            // Add user to speaker list.
+            postToSpeakersList(listOf(getCurrentUserLocally()))
+        } else {
+            // Add user to audience list.
+            postToAudienceList(listOf(getCurrentUserLocally()))
+        }
     }
 
     fun initSpeakerJoined(){
@@ -291,10 +333,15 @@ object PubNubManager {
             }
             // post to a shared flow instead of live data
             Timber.d("THIS IS WITH MEMBERS LIST SPEAKER => $tempSpeakerList AND AUDIENCE => $tempAudienceList")
-            postToSpeakersList(tempSpeakerList.toList())
-            postToAudienceList(tempAudienceList.toList())
-        } catch (e: Exception){
+            if (tempSpeakerList.isEmpty() && tempAudienceList.isEmpty()){
+                FallbackManager.getUsersList()
+            } else {
+                postToSpeakersList(tempSpeakerList.toList())
+                postToAudienceList(tempAudienceList.toList())
+            }
 
+        } catch (e: Exception){
+            FallbackManager.getUsersList()
         }
 
     }
@@ -617,17 +664,23 @@ object PubNubManager {
                 state.put("is_hand_raised", user.isHandRaised)
                 state.put("user_id", user.userId)
 
-                pubnub.setChannelMembers().channel(liveRoomProperties?.channelName)
-                    ?.uuids(
-                        Arrays.asList(
-                            PNUUID.uuidWithCustom(
-                                user.id.toString(),
-                                state as Map<String, Any>?
+                try {
+                    pubnub.setChannelMembers().channel(liveRoomProperties?.channelName)
+                        ?.uuids(
+                            Arrays.asList(
+                                PNUUID.uuidWithCustom(
+                                    user.id.toString(),
+                                    state as Map<String, Any>?
+                                )
                             )
                         )
-                    )
-                    ?.includeCustom(true)
-                    ?.sync()
+                        ?.includeCustom(true)
+                        ?.sync()
+                } catch (e: Exception){
+                    sendPubNubException(e)
+                    postDataToNetworkFlow(true)
+                }
+
             }
         } catch (e:SocketTimeoutException){
             sendPubNubException(e)
@@ -858,7 +911,7 @@ object PubNubManager {
             val user = audienceList.filter { it.id == uid }
             audienceList.removeAll(user)
             CoroutineScope(Dispatchers.Main).launch {
-                audienceAdapter?.updateFullList(ArrayList(audienceList))
+                audienceAdapter?.submitList(ArrayList(audienceList))
             }
             postToAudienceList(audienceList)
         }

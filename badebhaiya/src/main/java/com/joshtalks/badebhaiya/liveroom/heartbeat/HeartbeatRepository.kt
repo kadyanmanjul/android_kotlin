@@ -15,13 +15,17 @@ class HeartbeatRepository @Inject constructor(
 
     val heartbeat = flow {
         while (true) {
-            emit(
-                roomApi.triggerHeartbeat(
-                    Heartbeat(
-                        roomId = PubNubManager.getLiveRoomProperties().roomId
+            try {
+                emit(
+                    roomApi.triggerHeartbeat(
+                        Heartbeat(
+                            roomId = PubNubManager.getLiveRoomProperties().roomId
+                        )
                     )
                 )
-            )
+            } catch (e: Exception){
+                throw Exception()
+            }
             delay(REFRESHING_INTERVAL)
         }
     }

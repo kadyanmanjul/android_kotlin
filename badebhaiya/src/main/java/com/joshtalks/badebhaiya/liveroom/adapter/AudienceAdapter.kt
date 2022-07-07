@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.core.setOnSingleClickListener
@@ -16,36 +17,40 @@ import timber.log.Timber
 
 class AudienceAdapter(
     val isModerator: Boolean
-) : RecyclerView.Adapter<AudienceAdapter.SpeakerViewHolder>() {
+) : ListAdapter<LiveRoomUser, AudienceAdapter.SpeakerViewHolder>(AudienceDiffUtil()) {
 
-    val audienceList: ArrayList<LiveRoomUser> = arrayListOf()
+    init {
+        Timber.tag("localuser").d("AUDIENCE ADAPTER INIT CALLED")
+    }
+
+//    val audienceList: ArrayList<LiveRoomUser> = arrayListOf()
     private var listenerUserAction: OnUserItemClickListener? = null
 
     fun updateFullList(newList: List<LiveRoomUser>) {
         Timber.d("AUDIENCE LIST IN ADAPTER => $newList")
-        var fullName= User.getInstance().firstName+" "+ User.getInstance().lastName
-        var me= LiveRoomUser(123, // TODO: Add real id
-            false,
-            User.getInstance().firstName,
-            fullName,
-            User.getInstance().profilePicUrl,
-            sortOrder = null,
-            false,
-            false,
-            false,
-            false,
-            User.getInstance().userId,
-        )
+//        var fullName= User.getInstance().firstName+" "+ User.getInstance().lastName
+//        var me= LiveRoomUser(123, // TODO: Add real id
+//            false,
+//            User.getInstance().firstName,
+//            fullName,
+//            User.getInstance().profilePicUrl,
+//            sortOrder = null,
+//            false,
+//            false,
+//            false,
+//            false,
+//            User.getInstance().userId,
+//        )
 //        newList.sortedByDescending { it.sortOrder }
-        Timber.tag("LiveRoomAudience").d("AUDIENCE LIST IN AFTER ADDING LOCAL USER => $newList")
-        val diffCallback = ConversationUserDiffCallback(audienceList, newList)
-        val diffResult = DiffUtil.calculateDiff(diffCallback)
-        audienceList.clear()
-        audienceList.addAll(newList)
-        audienceList.remove(me)
-        Timber.d("AUDEN")
-        Timber.tag("LiveRoomAudience").d("AUDIENCE LIST IN AFTER AFTER DOING DIFFUTIL CALCULATION => $newList")
-        diffResult.dispatchUpdatesTo(this)
+//        Timber.tag("LiveRoomAudience").d("AUDIENCE LIST IN AFTER ADDING LOCAL USER => $newList")
+//        val diffCallback = ConversationUserDiffCallback(audienceList, newList)
+//        val diffResult = DiffUtil.calculateDiff(diffCallback)
+//        audienceList.clear()
+//        audienceList.addAll(newList)
+////        audienceList.remove(me)
+//        Timber.d("AUDEN")
+//        Timber.tag("LiveRoomAudience").d("AUDIENCE LIST IN AFTER AFTER DOING DIFFUTIL CALCULATION => $newList")
+//        diffResult.dispatchUpdatesTo(this)
     }
 
 
@@ -53,6 +58,8 @@ class AudienceAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(model: LiveRoomUser) {
+            Timber.tag("localuser").d("RECYCLERVIEW BIND CALLED AND LIST IS $currentList AND ITEM IS => $model")
+
             with(binding) {
                 name.text = model.name
                 userImage.apply {
@@ -95,7 +102,7 @@ class AudienceAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SpeakerViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val binding = LiAudienceItemBinding.inflate(inflater, parent, false)
-
+        Timber.tag("localuser").d("RECYCLERVIEW ITEM INFLATED")
         return SpeakerViewHolder(binding)
     }
 
@@ -108,11 +115,21 @@ class AudienceAdapter(
     }
 
     override fun onBindViewHolder(holder: SpeakerViewHolder, position: Int) {
-        holder.bind(audienceList[position])
+        holder.bind(getItem(position))
     }
 
-    override fun getItemCount(): Int {
-        Timber.tag("LiveRoomAudience").d("AUDIENCE LIST IN AFTER COMING INTO ADAPTER => $audienceList and Size => ${audienceList.size}")
-        return  audienceList.size
+//    override fun getItemCount(): Int {
+//        Timber.tag("localuser").d("AUDIENCE LIST IN AFTER COMING INTO ADAPTER => $audienceList and Size => ${audienceList.size}")
+//        return  audienceList.size
+//    }
+}
+
+class AudienceDiffUtil: DiffUtil.ItemCallback<LiveRoomUser>() {
+    override fun areItemsTheSame(oldItem: LiveRoomUser, newItem: LiveRoomUser): Boolean {
+        return oldItem.userId == newItem.userId
+    }
+
+    override fun areContentsTheSame(oldItem: LiveRoomUser, newItem: LiveRoomUser): Boolean {
+        return oldItem == newItem
     }
 }

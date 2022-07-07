@@ -74,6 +74,7 @@ import kotlinx.android.synthetic.main.fragment_live_room.*
 import kotlinx.android.synthetic.main.li_audience_item.view.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -124,19 +125,19 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
 
     private val badgeDrawable: BadgeDrawable by lazy { BadgeDrawable.create(requireActivity()) }
 
-    var fullName= User.getInstance().firstName+" "+ User.getInstance().lastName
-    var me= LiveRoomUser(123,
-        false,
-        User.getInstance().firstName,
-        fullName,
-        User.getInstance().profilePicUrl,
-        sortOrder = null,
-        false,
-        false,
-        false,
-        false,
-        User.getInstance().userId,
-    )
+//    var fullName= User.getInstance().firstName+" "+ User.getInstance().lastName
+//    var me= LiveRoomUser(PubNubManager.getLiveRoomProperties().agoraUid,
+//        false,
+//        User.getInstance().firstName,
+//        fullName,
+//        User.getInstance().profilePicUrl,
+//        sortOrder = null,
+//        false,
+//        false,
+//        false,
+//        false,
+//        User.getInstance().userId,
+//    )
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -180,6 +181,29 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
 
         sendModeratorJoinedEvent()
         heartbeatVewModel.initViewModel()
+
+//        addUserLocally()
+    }
+
+    private fun addUserLocally() {
+        if (PubNubManager.getLiveRoomProperties().isModerator){
+            // Add user to speaker list.
+            val localList = listOf<LiveRoomUser>(
+                PubNubManager.getCurrentUserLocally()
+            )
+            speakerAdapter?.updateFullList(localList)
+
+        } else {
+            // Add user to audience list.
+            val localList = listOf<LiveRoomUser>(
+                PubNubManager.getCurrentUserLocally()
+            )
+            Timber.tag("localuser").d("AUDIENCE LOCAL USER LIST => $localList")
+//            audienceAdapter?.notifyDataSetChanged()
+//            audienceAdapter?.audienceList?.addAll(localList)
+//            audienceAdapter?.notifyDataSetChanged()
+            audienceAdapter?.submitList(localList)
+        }
     }
 
     private fun sendModeratorJoinedEvent() {
@@ -224,9 +248,9 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
 
     private fun addViewModelObserver() {
         vm.audienceList.observe(this, androidx.lifecycle.Observer {
-            val meList = it.toMutableList()
-                meList.add(me)
-            val list = meList.toList()
+//            val meList = it.toMutableList()
+//                meList.add(me)
+            val list = it.toList()
 //            val list = it.sortedBy { it.sortOrder }
             Timber.tag("LiveRoomAudience").d("AUDIENCE LIST IS => $list")
 //            val duplicateList = mutableListOf<LiveRoomUser>()
@@ -237,7 +261,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
 //                    duplicateUser
 //                )
 //            }
-            audienceAdapter?.updateFullList(list)
+            audienceAdapter?.submitList(list)
 //            audienceAdapter?.updateFullList(list)
             Log.i("AUDIENCE", "addViewModelObserver: ${it}")
             PubNubManager.getLiveRoomProperties().let {
@@ -777,9 +801,9 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
                         handRaiseBtn.visibility = View.VISIBLE
                         handUnraiseBtn.visibility = View.GONE
 
-                        for(i in audienceAdapter!!.audienceList)
+                        for(i in audienceAdapter!!.currentList)
                             if(i.userId==User.getInstance().userId) {
-                                val pos=audienceAdapter!!.audienceList.indexOf(i)
+                                val pos=audienceAdapter!!.currentList.indexOf(i)
                                 listener__recycler_view[pos].raised_hands.visibility= View.VISIBLE
                             }
 
@@ -798,9 +822,9 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
                     binding.apply {
                         handRaiseBtn.visibility = View.GONE
                         handUnraiseBtn.visibility = View.VISIBLE
-                        for(i in audienceAdapter!!.audienceList)
+                        for(i in audienceAdapter!!.currentList)
                             if(i.userId==User.getInstance().userId) {
-                                 val pos=audienceAdapter!!.audienceList.indexOf(i)
+                                 val pos=audienceAdapter!!.currentList.indexOf(i)
                                 listener__recycler_view[pos].raised_hands.visibility=View.GONE
                             }
                     }
@@ -1032,7 +1056,10 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
             setHeading("The Internet connection appears to be offline")
            var int= Intent(requireContext(), FeedActivity::class.java)
             startActivity(int)
-            finishFragment()
+            lifecycleScope.launch {
+                delay(3000)
+                finishFragment()
+            }
             setNotificationState(NotificationView.ConversationRoomNotificationState.NO_INTERNET_AVAILABLE)
             loadAnimationSlideDown()
             startSound()
@@ -1064,6 +1091,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
     private fun setUpRecyclerView() {
         speakerAdapter =
             SpeakerAdapter()
+        Timber.tag("localuser").d("AUDIENCE ADAPTER INITIALISED")
         audienceAdapter =
             AudienceAdapter(PubNubManager.getLiveRoomProperties().isRoomCreatedByUser)
 
@@ -1383,7 +1411,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
             } else {
                 Log.i("LIVEROOMSOURCE", "launch: $from")
                 var frag=activity.supportFragmentManager.findFragmentById(R.id.liveRoomRootView)
-                if(frag==null) {
+//                if(frag==null) {
 
                     val waitingFragment = activity.supportFragmentManager.findFragmentByTag(WaitingFragment.TAG)
                     waitingFragment?.let {
@@ -1403,7 +1431,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
                         .replace(R.id.feedRoot, fragment)
                         .addToBackStack(null)
                         .commit()
-                }
+//                }
             }
         }
 

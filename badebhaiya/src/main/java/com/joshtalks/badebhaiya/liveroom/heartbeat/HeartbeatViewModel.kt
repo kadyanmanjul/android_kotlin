@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.joshtalks.badebhaiya.pubnub.PubNubManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -13,9 +14,9 @@ import javax.inject.Inject
 @HiltViewModel
 class HeartbeatViewModel @Inject constructor(
     private val heartbeatRepository: HeartbeatRepository
-): ViewModel() {
+) : ViewModel() {
 
-    fun initViewModel(){
+    fun initViewModel() {
         Timber.d("INITIALIZED VIEW MODEL")
     }
 
@@ -24,11 +25,15 @@ class HeartbeatViewModel @Inject constructor(
     }
 
     private fun startHeartbeat() {
-        if (!PubNubManager.getLiveRoomProperties().isModerator){
+        if (!PubNubManager.getLiveRoomProperties().isModerator) {
             viewModelScope.launch(Dispatchers.IO) {
-                heartbeatRepository.heartbeat.collect{
-                    Timber.tag("HEARTBEAT TRIGGERED")
-                }
+                heartbeatRepository.heartbeat
+                    .catch {
+                        Timber.tag("HEARTBEAT EXCEPTION")
+                    }
+                    .collect {
+                        Timber.tag("HEARTBEAT TRIGGERED")
+                    }
             }
         }
     }
