@@ -105,7 +105,7 @@ class FavoriteCallerViewModel : BaseViewModel() {
                 if (list.isEmpty()) {
                     return@launch
                 }
-                if (Utils.isInternetAvailable()){
+                if (isInternetAvailable()){
                     val requestParams: HashMap<String, List<Int>> = HashMap()
                     requestParams["mentor_ids"] = list
                     val response = favoriteCallerRepository.removeUserFormFppLit(requestParams)
