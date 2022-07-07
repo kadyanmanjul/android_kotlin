@@ -124,8 +124,6 @@ const val SHOULD_SHOW_AUTOSTART_POPUP = "SHOULD_SHOW_AUTOSTART_POPUP"
 const val LAST_TIME_WORK_MANAGER_START = "LAST_TIME_WORK_MANAGER_START"
 const val HAS_SEEN_COHORT_BASE_COURSE_TOOLTIP = "joshskills_has_seen_cohort_base_course_tooltip"
 
-const val USER_ACTIVE_IN_GAME = "game_active"
-const val USER_LEAVE_THE_GAME = "game_left"
 const val USER_MUTE_OR_NOT = "mute_un_mute"
 const val HAS_SEEN_QUIZ_VIDEO_TOOLTIP = "has_seen_quiz_video_tooltip"
 const val LAST_SEEN_VIDEO_ID = "last_seen_video_id"

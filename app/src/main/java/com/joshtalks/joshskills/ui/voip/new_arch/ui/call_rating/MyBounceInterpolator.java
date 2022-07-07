@@ -1,4 +1,5 @@
-package com.joshtalks.joshskills.quizgame.util;
+package com.joshtalks.joshskills.ui.voip.new_arch.ui.call_rating;
+
 public class MyBounceInterpolator implements android.view.animation.Interpolator {
     private double mAmplitude = 1;
     private double mFrequency = 10;

@@ -29,7 +29,6 @@ import com.joshtalks.joshskills.core.IS_COURSE_BOUGHT
 import com.joshtalks.joshskills.core.JoshApplication
 import com.joshtalks.joshskills.core.JoshSkillExecutors
 import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.USER_ACTIVE_IN_GAME
 import com.joshtalks.joshskills.core.analytics.DismissNotifEventReceiver
 import com.joshtalks.joshskills.core.firestore.FirestoreDB
 import com.joshtalks.joshskills.core.firestore.NotificationAnalytics
@@ -438,9 +437,7 @@ class NotificationUtils(val context: Context) {
                 }
             }
             NotificationAction.INCOMING_CALL_NOTIFICATION -> {
-                if (!PrefManager.getBoolValue(USER_ACTIVE_IN_GAME)) {
-                    incomingCallNotificationAction(notificationObject.actionData)
-                }
+                incomingCallNotificationAction(notificationObject.actionData)
                 return null
             }
             NotificationAction.CALL_DISCONNECT_NOTIFICATION -> {
