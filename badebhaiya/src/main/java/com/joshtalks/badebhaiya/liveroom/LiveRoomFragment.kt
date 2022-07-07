@@ -139,6 +139,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
         attachBackPressedDispatcher()
         ConvoWebRtcService.initLibrary()
         removeIncomingNotification()
+        vm.deflate.value=true
         isBackPressed = false
 
     }
@@ -1226,6 +1227,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
     private fun finishFragment(){
         if (isAdded){
             Timber.d("finishFragment: ")
+            vm.deflate.value=false
             requireActivity().supportFragmentManager.popBackStack()
         }
     }
@@ -1343,6 +1345,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
                 mBoundService?.leaveRoom(roomId, roomQuestionId)
             }
         }
+        vm.deflate.value=false
         vm.unSubscribePubNub()
         Log.i("LIFECYCLE", "onDestroy: ")
         vm.pubNubState.value=PubNubState.ENDED
