@@ -16,17 +16,21 @@ import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.signup.SignUpActivity
 import com.joshtalks.badebhaiya.signup.SignUpActivity.Companion.REDIRECT_TO_ENTER_NAME
 import com.joshtalks.badebhaiya.utils.SingleDataManager
+import com.joshtalks.badebhaiya.utils.Utils
 import com.joshtalks.badebhaiya.utils.collectStateFlow
 import com.userexperior.UserExperior
 import dagger.hilt.android.AndroidEntryPoint
 import io.branch.referral.Branch
+import io.branch.referral.BranchError
+import io.branch.referral.Defines
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.json.JSONObject
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class LauncherActivity : AppCompatActivity() {
+class LauncherActivity : AppCompatActivity(), Branch.BranchReferralInitListener {
 
     @Inject
     lateinit var appUpdater: JoshAppUpdater
@@ -37,17 +41,19 @@ class LauncherActivity : AppCompatActivity() {
 
         appUpdater.checkAndUpdate(this)
 
-        BBRepository().lastLogin()
+
+        if (User.getInstance().isLoggedIn())
+            BBRepository().lastLogin()
 
         UserExperior.startRecording(getApplicationContext(), BuildConfig.USER_EXPERIOR_API_KEY)
 
         //if(Settings.Global.getInt(getContentResolver(), Settings.Global.AUTO_TIME) == 1)
         //     {
-                 // Enabled
-                 //showToast("Auto Time Enabled")
+        // Enabled
+        //showToast("Auto Time Enabled")
         SingleDataManager.pendingPilotAction = null
         SingleDataManager.pendingPilotEventData = null
-                 initApp()
+        initApp()
 
 //             }
 //             else
@@ -56,17 +62,25 @@ class LauncherActivity : AppCompatActivity() {
 //                 showToast("Auto Time Disabled")
 //                 finish()
 //             }
-            //setAutoTimeEnabled(boolean enabled)
-        collectStateFlow(appUpdater.isUpdateAvailable){ updateAvailable ->
-            if (!updateAvailable){
+        //setAutoTimeEnabled(boolean enabled)
+        collectStateFlow(appUpdater.isUpdateAvailable) { updateAvailable ->
+            if (!updateAvailable) {
                 appUpdater.flushResources()
-                initBranch()
+//                initBranch()
             }
         }
     }
 
     override fun onStart() {
         super.onStart()
+        if (Utils.isInternetAvailable()) {
+            Branch.sessionBuilder(this)
+                .withCallback(this)
+                .withData(this.intent?.data)
+                .init()
+        } else {
+            startActivityForState()
+        }
 
     }
 
@@ -83,39 +97,18 @@ class LauncherActivity : AppCompatActivity() {
 
     private fun initApp() {
         WorkManager.getInstance(applicationContext).cancelAllWork()
-        if(User.getInstance().isLoggedIn())
-        WorkManagerAdmin.appStartWorker()
+        if (User.getInstance().isLoggedIn())
+            WorkManagerAdmin.appStartWorker()
     }
 
     private fun initBranch() {
-        Branch.sessionBuilder(this@LauncherActivity).withCallback { referringParams, error ->
-            Log.d("YASHENDRA", "initBranch: $referringParams")
-            if (error == null) {
-                Log.d(
-                    "LauncherActivity.kt",
-                    "YASH => onInitFinished: $referringParams"
-                )
-                referringParams?.let {
-                    Log.d("YASHENDRA", "branch json data => ${it.has("user_id")}")
+        /*Branch.sessionBuilder(this@LauncherActivity).withCallback { referringParams, error ->
 
-                    startActivityForState(
-                        if (it.has("user_id"))
-                            it.getString("user_id")
-                        else null
-                    )
-
-//                    startActivityForState(
-//                        "cb91868f-2e8c-4c09-8003-2bd480534d7e"
-//                    )
-                }
-            } else {
-                Log.e("BRANCH SDK", error.message)
-                startActivityForState()
-            }
-        }.withData(this.intent.data).init()
+        }.withData(this.intent.data).init()*/
     }
 
     private fun startActivityForState(viewUserId: String? = null) {
+        Log.i("YASHENDRA", "startActivityForState: $viewUserId")
         val intent: Intent = when {
             User.getInstance().userId.isNotBlank() -> {
                 if (User.getInstance().firstName.isNullOrEmpty()) {
@@ -131,16 +124,16 @@ class LauncherActivity : AppCompatActivity() {
 //                    ProfileActivity.getIntent(this@LauncherActivity, viewUserId, true)
 //                }
                 val intent = Intent(this@LauncherActivity, FeedActivity::class.java)
-                intent.putExtra("userId",viewUserId)
+                intent.putExtra("userId", viewUserId)
                 intent
             }
             else -> {
                 // User is not logged in.
 
-                if (viewUserId != null){
+                if (viewUserId != null) {
                     // came by deeplink.. redirect to profile
                     val intent = Intent(this@LauncherActivity, FeedActivity::class.java)
-                    intent.putExtra("userId",viewUserId)
+                    intent.putExtra("userId", viewUserId)
                     intent.putExtra("profile_deeplink", true)
                     intent
 
@@ -159,6 +152,44 @@ class LauncherActivity : AppCompatActivity() {
                 addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             })
+        }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        this.intent = intent
+        if (intent.hasExtra(Defines.IntentKeys.ForceNewBranchSession.key) && intent.getBooleanExtra(
+                Defines.IntentKeys.ForceNewBranchSession.key,
+                false
+            )
+        ) {
+            Branch.sessionBuilder(this).withCallback(this@LauncherActivity).reInit()
+        }
+    }
+
+    override fun onInitFinished(referringParams: JSONObject?, error: BranchError?) {
+        Log.d("YASHENDRA", "initBranch: $referringParams")
+        if (error == null) {
+            Log.d(
+                "LauncherActivity.kt",
+                "YASH => onInitFinished: $referringParams"
+            )
+            referringParams?.let {
+                Log.d("YASHENDRA", "branch json data => ${it.has("user_id")}")
+
+                startActivityForState(
+                    if (it.has("user_id"))
+                        it.getString("user_id")
+                    else null
+                )
+
+//                    startActivityForState(
+//                        "cb91868f-2e8c-4c09-8003-2bd480534d7e"
+//                    )
+            }
+        } else {
+            Log.e("BRANCH SDK", error.message)
+            startActivityForState()
         }
     }
 }

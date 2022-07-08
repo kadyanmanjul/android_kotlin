@@ -19,7 +19,7 @@ interface ProfileNetworkService {
     @GET("$DIR/user/deeplink/profile/{id}/")
     suspend fun getProfileWithoutToken(
         @Path("id") userId: String,
-        source: String
+        @Query("from_page") source: String
     ): Response<ProfileResponse>
 
     @POST("$DIR/user/follow/")

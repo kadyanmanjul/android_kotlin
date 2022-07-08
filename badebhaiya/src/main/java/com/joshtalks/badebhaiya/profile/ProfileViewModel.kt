@@ -23,6 +23,7 @@ import com.joshtalks.badebhaiya.repository.ConversationRoomRepository
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.repository.service.RetrofitInstance
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 class ProfileViewModel : ViewModel() {
     //val userIdForOpenedProfile = MutableLiveData<String>()
@@ -138,6 +139,9 @@ class ProfileViewModel : ViewModel() {
                     }
                 }
             } catch(ex: Exception) {
+                Timber.tag("YASHENDRA").d( "getProfileForUser: Exception ${ex.message}")
+                ex.printStackTrace()
+                ex.cause
                 speakerProfileRoomsAdapter.submitList(emptyList())
             }
         }
