@@ -29,6 +29,7 @@ import com.joshtalks.joshskills.voip.constant.Event.UNMUTE
 import com.joshtalks.joshskills.voip.constant.Event.UNMUTE_REQUEST
 import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.local.PrefManager
+import com.joshtalks.joshskills.voip.mediator.ActionDirection
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
 import kotlinx.coroutines.CancellationException
@@ -254,14 +255,15 @@ class JoiningState(val context: CallContext) : VoipState {
                         }
                         Event.END_GAME -> {
                             ensureActive()
-                            val userAction = UserAction(
-                                ServerConstants.END_GAME,
-                                context.channelData.getChannel(),
-                                address = context.channelData.getPartnerMentorId()
-                            )
-                            context.sendMessageToServer(userAction)
-
-                            val uiState = context.currentUiState.copy(isStartGameClicked = false, isNextWordClicked = false)
+                            if(event.data == ActionDirection.SERVER) {
+                                val userAction = UserAction(
+                                    ServerConstants.END_GAME,
+                                    context.channelData.getChannel(),
+                                    address = context.channelData.getPartnerMentorId()
+                                )
+                                context.sendMessageToServer(userAction)
+                            }
+                            val uiState = context.currentUiState.copy(isStartGameClicked = false, isNextWordClicked = false, nextGameWord = "")
                             context.updateUIState(uiState = uiState)
                         }
                         Event.NEXT_WORD_REQUEST -> {

@@ -186,7 +186,7 @@ class ConnectedState(val context: CallContext) : VoipState {
                             )
                             context.sendMessageToServer(userAction)
                         }
-                        Event.START_GAME -> {
+                        START_GAME -> {
                             ensureActive()
                             val userAction = UserAction(
                                 ServerConstants.START_GAME,
@@ -197,7 +197,7 @@ class ConnectedState(val context: CallContext) : VoipState {
                             context.updateUIState(uiState = uiState)
                             context.sendMessageToServer(userAction)
                         }
-                        Event.END_GAME -> {
+                        END_GAME -> {
                             ensureActive()
                             if(event.data == ActionDirection.SERVER) {
                                 val userAction = UserAction(
@@ -210,7 +210,7 @@ class ConnectedState(val context: CallContext) : VoipState {
                             val uiState = context.currentUiState.copy(isStartGameClicked = false, isNextWordClicked = false, nextGameWord = "")
                             context.updateUIState(uiState = uiState)
                         }
-                        Event.NEXT_WORD_REQUEST -> {
+                        NEXT_WORD_REQUEST -> {
                             ensureActive()
                             val userAction = UserAction(
                                 ServerConstants.NEXT_WORD_REQUEST,
@@ -222,7 +222,7 @@ class ConnectedState(val context: CallContext) : VoipState {
                             val uiState = context.currentUiState.copy(isNextWordClicked = true)
                             context.updateUIState(uiState = uiState)
                         }
-                        Event.NEXT_WORD_RECEIVED -> {
+                        NEXT_WORD_RECEIVED -> {
                             ensureActive()
                             val incomingWord= event.data as IncomingGameNextWord
                             val uiState = context.currentUiState.copy(nextGameWord = incomingWord.word, nextGameWordColor = incomingWord.color, isNextWordClicked = false)

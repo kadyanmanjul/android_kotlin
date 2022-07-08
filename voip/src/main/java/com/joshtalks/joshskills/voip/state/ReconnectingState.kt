@@ -13,6 +13,7 @@ import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.RecordingButtonState
 import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.inSeconds
+import com.joshtalks.joshskills.voip.mediator.ActionDirection
 import com.joshtalks.joshskills.voip.showToast
 import com.joshtalks.joshskills.voip.updateLastCallDetails
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
@@ -232,7 +233,7 @@ class ReconnectingState(val context: CallContext) : VoipState {
                             )
                             context.sendMessageToServer(userAction)
                         }
-                       START_GAME -> {
+                        START_GAME -> {
                             ensureActive()
                             val userAction = UserAction(
                                 ServerConstants.START_GAME,
@@ -245,14 +246,15 @@ class ReconnectingState(val context: CallContext) : VoipState {
                         }
                         END_GAME -> {
                             ensureActive()
-                            val userAction = UserAction(
-                                ServerConstants.END_GAME,
-                                context.channelData.getChannel(),
-                                address = context.channelData.getPartnerMentorId()
-                            )
-                            context.sendMessageToServer(userAction)
-
-                            val uiState = context.currentUiState.copy(isStartGameClicked = false, isNextWordClicked = false)
+                            if(event.data == ActionDirection.SERVER) {
+                                val userAction = UserAction(
+                                    ServerConstants.END_GAME,
+                                    context.channelData.getChannel(),
+                                    address = context.channelData.getPartnerMentorId()
+                                )
+                                context.sendMessageToServer(userAction)
+                            }
+                            val uiState = context.currentUiState.copy(isStartGameClicked = false, isNextWordClicked = false, nextGameWord = "")
                             context.updateUIState(uiState = uiState)
                         }
                         NEXT_WORD_REQUEST -> {
