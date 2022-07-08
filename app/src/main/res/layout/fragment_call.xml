@@ -458,7 +458,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toTopOf="@id/bottom_card_view"
             android:paddingBottom="@dimen/_15sdp"
-            tools:visibility="gone">
+            tools:visibility="visible">
 
             <LinearLayout
                 android:id="@+id/photo_frames_layout"
@@ -583,7 +583,7 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
                 android:textColor="@color/white"
-                android:visibility='@{vm.uiState.currentState.equals("Timer") ? View.VISIBLE : View.INVISIBLE}'
+                android:visibility='@{vm.uiState.gameWord == "" ? View.GONE : View.VISIBLE}'
                 app:layout_constraintBottom_toTopOf="@+id/game_card"
                 android:layout_marginVertical="@dimen/_5sdp"
                 android:gravity="center"
@@ -594,10 +594,10 @@
 
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
+                android:layout_marginLeft="@dimen/_16sdp"
+                android:layout_marginRight="@dimen/_16sdp"
                 android:layout_height="wrap_content"
-                app:cardCornerRadius="5dp"
+                app:cardCornerRadius="@dimen/_5sdp"
                 android:layout_marginTop="@dimen/_5sdp"
                 android:id="@+id/game_card"
                 android:layout_marginBottom="@dimen/_5sdp"
@@ -613,8 +613,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerHorizontal="true"
-                        android:layout_marginTop="14dp"
-                        android:text="Guess The Word"
+                        android:layout_marginTop="@dimen/_14sdp"
+                        android:text="@string/guess_the_word"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5_Bold"
                         android:textColor="@color/white"
                         android:textStyle="bold" />
@@ -624,11 +624,11 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/guess_the_word_text_view"
-                        android:layout_marginLeft="42dp"
-                        android:layout_marginTop="4dp"
-                        android:layout_marginRight="42dp"
+                        android:layout_marginLeft="@dimen/_42sdp"
+                        android:layout_marginTop="@dimen/_4sdp"
+                        android:layout_marginRight="@dimen/_42sdp"
                         android:gravity="center"
-                        android:text="Describe your word without saying it and your partner will guess it"
+                        android:text="@string/describe_your_word_without_saying_it_and_your_partner_will_guess_it"
                         android:textAlignment="center"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Title_Message"
                         android:textColor="@color/white" />
@@ -639,7 +639,7 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@id/text_view_below_guess_the_word"
                         android:layout_centerHorizontal="true"
-                        android:layout_marginTop="24dp"
+                        android:layout_marginTop="@dimen/_24sdp"
                         android:orientation="horizontal">
 
                         <LinearLayout
@@ -651,10 +651,10 @@
                                 android:id="@+id/text_view_your_word"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Your Word"
+                                android:text="@string/your_word"
                                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Semi_Bold"
                                 android:textColor="@color/white"
-                                android:textSize="14sp" />
+                                android:textSize="@dimen/_14ssp" />
 
                             <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/text_view_word_user_has_to_guess"
@@ -664,23 +664,23 @@
                                 setColor="@{vm.uiState.wordColor}"
                                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Semi_Bold"
                                 android:textColor="@color/p2p_your_word_color_yellow"
-                                android:textSize="14sp" />
+                                android:textSize="@dimen/_14ssp" />
 
                         </LinearLayout>
 
                         <View
-                            android:layout_width="1dp"
-                            android:layout_height="29dp"
+                            android:layout_width="@dimen/_1sdp"
+                            android:layout_height="@dimen/_29sdp"
                             android:backgroundTint="@color/white"
                             android:layout_gravity="center_vertical"
-                            android:layout_marginLeft="22dp"
+                            android:layout_marginLeft="@dimen/_22sdp"
                             android:background="@android:color/darker_gray" />
 
                         <LinearLayout
                             android:id="@+id/linear_2"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginLeft="24dp"
+                            android:layout_marginLeft="@dimen/_24sdp"
                             android:orientation="vertical">
 
                             <androidx.appcompat.widget.AppCompatTextView
@@ -690,7 +690,7 @@
                                 android:text='@{String.format("%s %s",vm.uiState.name.concat("&apos;s"),"word")}'
                                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Semi_Bold"
                                 android:textColor="@color/white"
-                                android:textSize="14sp"
+                                android:textSize="@dimen/_14ssp"
                                 tools:text="Harsh"/>
 
                             <androidx.appcompat.widget.AppCompatTextView
@@ -698,10 +698,10 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center_horizontal"
-                                android:text="*********"
+                                android:text="@string/stars"
                                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Semi_Bold"
                                 android:textColor="@color/white"
-                                android:textSize="14sp" />
+                                android:textSize="@dimen/_14ssp" />
 
                         </LinearLayout>
 
@@ -712,10 +712,10 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/guess_the_word_linear_layout_p2p"
-                        android:layout_marginLeft="12dp"
-                        android:layout_marginTop="24dp"
-                        android:layout_marginRight="12dp"
-                        android:layout_marginBottom="24dp"
+                        android:layout_marginLeft="@dimen/_12sdp"
+                        android:layout_marginTop="@dimen/_24sdp"
+                        android:layout_marginRight="@dimen/_12sdp"
+                        android:layout_marginBottom="@dimen/_24sdp"
                         android:orientation="horizontal">
 
                         <LinearLayout
@@ -733,8 +733,8 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center_vertical"
                                 android:backgroundTint="@color/white"
-                                android:paddingLeft="40dp"
-                                android:paddingRight="40dp"
+                                android:paddingLeft="@dimen/_40sdp"
+                                android:paddingRight="@dimen/_40sdp"
                                 android:onClick="@{vm::nextWord}"
                                 android:text="Next Word"
                                 android:textAllCaps="false"
@@ -745,7 +745,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center_horizontal"
-                                android:text="Wait for your partner to click next"
+                                android:text="@string/wait_for_your_partner_to_click_next"
                                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Semi_Bold"
                                 android:textColor="@color/white"
                                 android:visibility="@{vm.uiState.nextWordClicked ? View.VISIBLE : View.GONE}"
@@ -760,7 +760,7 @@
                             android:onClick="@{vm::endGame}"
                             android:text="End Game"
                             android:textAllCaps="false"
-                            app:cornerRadius="6dp"
+                            app:cornerRadius="@dimen/_6sdp"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintHorizontal_bias="1.0"
@@ -768,7 +768,7 @@
                             app:layout_constraintTop_toTopOf="parent"
                             app:layout_constraintVertical_bias="0.0"
                             app:strokeColor="@color/white"
-                            app:strokeWidth="1.5dp" />
+                            app:strokeWidth="@dimen/_2sdp" />
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
