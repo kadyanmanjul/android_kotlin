@@ -717,46 +717,48 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             }
 
         }
-        PermissionUtils.callingFeaturePermission(
-            requireActivity(),
-            object : MultiplePermissionsListener {
-                override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
-                    report?.areAllPermissionsGranted()?.let { flag ->
-                        if (report.isAnyPermissionPermanentlyDenied) {
-                            PermissionUtils.callingPermissionPermanentlyDeniedDialog(
-                                requireActivity(),
-                                message = R.string.call_start_permission_message
-                            )
-                            return
-                        }
-                        if (flag) {
-                            if (isNewArch) {
-                                startPracticeCall()
-                                return
-                            } else {
-                                startPractiseSearchScreen(
-                                    favoriteUserCall = favoriteUserCall,
-                                    isNewUserCall = isNewUserCall
+        if (isAdded){
+            PermissionUtils.callingFeaturePermission(
+                requireActivity(),
+                object : MultiplePermissionsListener {
+                    override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                        report?.areAllPermissionsGranted()?.let { flag ->
+                            if (report.isAnyPermissionPermanentlyDenied) {
+                                PermissionUtils.callingPermissionPermanentlyDeniedDialog(
+                                    requireActivity(),
+                                    message = R.string.call_start_permission_message
                                 )
                                 return
                             }
-                        } else {
-                            MaterialDialog(requireActivity()).show {
-                                message(R.string.call_start_permission_message)
-                                positiveButton(R.string.ok)
+                            if (flag) {
+                                if (isNewArch) {
+                                    startPracticeCall()
+                                    return
+                                } else {
+                                    startPractiseSearchScreen(
+                                        favoriteUserCall = favoriteUserCall,
+                                        isNewUserCall = isNewUserCall
+                                    )
+                                    return
+                                }
+                            } else {
+                                MaterialDialog(requireActivity()).show {
+                                    message(R.string.call_start_permission_message)
+                                    positiveButton(R.string.ok)
+                                }
                             }
                         }
                     }
-                }
 
-                override fun onPermissionRationaleShouldBeShown(
-                    permissions: MutableList<PermissionRequest>?,
-                    token: PermissionToken?,
-                ) {
-                    token?.continuePermissionRequest()
+                    override fun onPermissionRationaleShouldBeShown(
+                        permissions: MutableList<PermissionRequest>?,
+                        token: PermissionToken?,
+                    ) {
+                        token?.continuePermissionRequest()
+                    }
                 }
-            }
-        )
+            )
+        }
     }
 
     private fun startPractiseSearchScreen(
@@ -781,21 +783,25 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
     }
 
     fun openNetworkDialog(v:View){
-        val dialog = AlertDialog.Builder(context)
-        dialog
-            .setMessage(getString(R.string.network_message))
-            .setPositiveButton("GOT IT")
-            { dialog, _ -> dialog.dismiss() }.show()
+        if (isAdded) {
+            val dialog = AlertDialog.Builder(context)
+            dialog
+                .setMessage(getString(R.string.network_message))
+                .setPositiveButton("GOT IT")
+                { dialog, _ -> dialog.dismiss() }.show()
+        }
     }
 
     fun openRatingDialog(v:View){
-        val rating=7
-        val dialog = AlertDialog.Builder(context)
-        dialog
-            .setTitle(getString(R.string.rating_title,rating.toString()))
-            .setMessage(getString(R.string.rating_message))
-            .setPositiveButton("GOT IT")
-            { dialog, _ -> dialog.dismiss() }.show()
+        if (isAdded) {
+            val rating = 7
+            val dialog = AlertDialog.Builder(context)
+            dialog
+                .setTitle(getString(R.string.rating_title, rating.toString()))
+                .setMessage(getString(R.string.rating_message))
+                .setPositiveButton("GOT IT")
+                { dialog, _ -> dialog.dismiss() }.show()
+        }
     }
 
     fun animateButton() {

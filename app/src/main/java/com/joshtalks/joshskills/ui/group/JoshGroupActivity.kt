@@ -364,7 +364,7 @@ class JoshGroupActivity : BaseGroupActivity() {
         if (supportFragmentManager.backStackEntryCount > 1) {
             try {
                 supportFragmentManager.popBackStackImmediate()
-            } catch ( ex:Exception){
+            } catch (ex: Exception) {
                 ex.printStackTrace()
             }
         } else

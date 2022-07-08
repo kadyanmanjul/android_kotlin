@@ -99,6 +99,7 @@ import timber.log.Timber
 import java.io.File
 import java.io.IOException
 import java.lang.Runnable
+import java.lang.ref.WeakReference
 import java.nio.ByteBuffer
 import java.util.concurrent.TimeUnit
 
@@ -136,11 +137,7 @@ class ReadingFragmentWithoutFeedback :
     private var muxerJob: Job? = null
     private var internetAvailableFlag: Boolean = true
     private val praticAudioAdapter: PracticeAudioAdapter by lazy { PracticeAudioAdapter(context) }
-    private val layoutManager: LinearLayoutManager by lazy {
-        LinearLayoutManager(activity).apply {
-            isSmoothScrollbarEnabled = true
-        }
-    }
+    private var linearLayoutManager: LinearLayoutManager?= null
     private var onDownloadCompleteListener = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             val id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
@@ -243,6 +240,7 @@ class ReadingFragmentWithoutFeedback :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         totalTimeSpend = System.currentTimeMillis()
+        linearLayoutManager = LinearLayoutManager(requireActivity())
     }
 
     override fun onCreateView(
@@ -1165,7 +1163,13 @@ class ReadingFragmentWithoutFeedback :
                 )
             )
         )
-        binding.audioListRv.setHasFixedSize(false)
+        try {
+            linearLayoutManager?.isSmoothScrollbarEnabled = true
+            binding.audioListRv.layoutManager = linearLayoutManager
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
+        binding.audioListRv.setHasFixedSize(true)
         binding.audioListRv.addItemDecoration(divider)
         binding.audioListRv.enforceSingleScrollDirection()
         binding.audioListRv.adapter = praticAudioAdapter
