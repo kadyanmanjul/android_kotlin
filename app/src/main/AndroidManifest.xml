@@ -53,7 +53,7 @@
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" /> <!-- <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" /> -->
     <!-- Custom Permissions for Oppo and Huawei devices -->
-    <uses-permission android:name="oppo.permission.OPPO_COMPONENT_SAFE" android:exported="true"/>
+    <uses-permission android:name="oppo.permission.OPPO_COMPONENT_SAFE"/>
     <uses-permission android:name="com.huawei.permission.external_app_settings.USE_COMPONENT" />
 
     <permission android:name="android.permission.MEDIA_CONTENT_CONTROL" /> <!-- Add New Permission for phone number verification -->
@@ -63,7 +63,7 @@
     <uses-permission android:name="android.permission.DISABLE_KEYGUARD" /> <!-- For devices running Android 10.0 or later, you also need to add the following permission: -->
     <uses-permission
         android:name="android.permission.READ_PRIVILEGED_PHONE_STATE"
-        tools:ignore="ProtectedPermissions" android:exported="true"/> <!-- for API level below 22 -->
+        tools:ignore="ProtectedPermissions"/> <!-- for API level below 22 -->
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <!-- For Audio Control Module -->
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
@@ -643,14 +643,11 @@
             </intent-filter>
         </receiver>
         <receiver
-            android:name=".core.analytics.DismissNotifEventReceiver"
-            android:exported="true" />
+            android:name=".core.analytics.DismissNotifEventReceiver"/>
         <receiver
-            android:name=".core.analytics.LocalNotificationDismissEventReceiver"
-            android:exported="true" />
+            android:name=".core.analytics.LocalNotificationDismissEventReceiver"/>
         <receiver
-            android:name=".ui.reminder.set_reminder.AlarmNotifDismissReceiver"
-            android:exported="true" />
+            android:name=".ui.reminder.set_reminder.AlarmNotifDismissReceiver"/>
         <receiver
             android:name=".ui.reminder.set_reminder.AlarmReceiver"
             android:enabled="true"
