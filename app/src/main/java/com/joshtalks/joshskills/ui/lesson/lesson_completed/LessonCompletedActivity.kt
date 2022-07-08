@@ -18,7 +18,7 @@ import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.core.extension.setImageAndFitCenter
-import com.joshtalks.joshskills.databinding.AcitivityUnlockNextClassLayoutBinding
+import com.joshtalks.joshskills.databinding.ActivityUnlockNextClassLayoutBinding
 import com.joshtalks.joshskills.repository.local.entity.LessonModel
 import com.joshtalks.joshskills.ui.video_player.IS_BATCH_CHANGED
 
@@ -30,7 +30,7 @@ class LessonCompletedActivity : BaseActivity() {
 
     private var lessonModel: LessonModel? = null
     private var snackBarText: String? = null
-    private lateinit var binding: AcitivityUnlockNextClassLayoutBinding
+    private lateinit var binding: ActivityUnlockNextClassLayoutBinding
 
     companion object {
         private val LESSON_MODEL = "lesson_model"
@@ -52,7 +52,7 @@ class LessonCompletedActivity : BaseActivity() {
 
         binding = DataBindingUtil.setContentView(
             this,
-            R.layout.acitivity_unlock_next_class_layout
+            R.layout.activity_unlock_next_class_layout
         )
         binding.handler = this
         val card = findViewById<CardView>(R.id.card)
