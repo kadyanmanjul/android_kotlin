@@ -1320,4 +1320,9 @@
 
     <string name="recording_text"> of the game will get saved in your gallery</string>
     <string name="recording_text_after">Waiting for your partner to start the game</string>
+    <string name="guess_the_word">Guess The Word</string>
+    <string name="describe_your_word_without_saying_it_and_your_partner_will_guess_it">Describe your word without saying it and your partner will guess it</string>
+    <string name="your_word">Your Word</string>
+    <string name="stars">*********</string>
+    <string name="wait_for_your_partner_to_click_next">Wait for your partner to click next</string>
 </resources>
