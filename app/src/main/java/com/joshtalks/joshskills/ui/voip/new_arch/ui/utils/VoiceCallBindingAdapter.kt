@@ -11,7 +11,6 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
-import androidx.databinding.ObservableBoolean
 import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -60,24 +59,12 @@ fun AppCompatTextView.setColorRemoteUser(isSpeaking : Boolean = false) {
 }
 
 @BindingAdapter("setCallBackground")
-fun ConstraintLayout.setCallBackground(callType: Int) {
-    when (callType) {
-        P2P_GAME -> {
-            this.setBackgroundColor(resources.getColor(R.color.black))
+fun ConstraintLayout.setCallBackground(isGameOn: Boolean) {
+    when (isGameOn) {
+        true -> {
+            this.setBackgroundColor(resources.getColor(R.color.black_quiz))
         }
-        PEER_TO_PEER -> {
-//                 Normal Call
-            this.setBackgroundColor(resources.getColor(R.color.colorPrimary))
-        }
-        FPP -> {
-//                 FPP
-            this.setBackgroundResource(R.drawable.voip_bg)
-        }
-        GROUP -> {
-//                 Group Call
-            this.setBackgroundColor(resources.getColor(R.color.colorPrimary))
-        }
-        else -> {
+        false -> {
             this.setBackgroundColor(resources.getColor(R.color.colorPrimary))
         }
     }

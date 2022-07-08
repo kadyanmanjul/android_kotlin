@@ -21,7 +21,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/container"
-        setCallBackground="@{vm.uiState.type}"
+        setCallBackground='@{!vm.uiState.gameWord.equals("") ? true : false}'
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fitsSystemWindows="true"
@@ -298,15 +298,14 @@
                     android:focusable="true"
                     android:onClick="@{vm::recordCall}"
                     android:padding="@dimen/_14sdp"
-                    android:visibility="@{(vm.uiState.isRecordingEnabled &amp;&amp; ((vm.uiState.recordButtonPressedTwoTimes &lt; 2))) || (vm.uiState.recordingButtonState == RecordingButtonState.RECORDING) ? View.VISIBLE : View.GONE }"
+                    android:visibility="gone"
                     app:imageResource="@{vm.uiState.recordBtnImg}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/btn_speaker"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    tools:src="@drawable/ic_rec_mic"
-                    tools:visibility="gone" />
+                    tools:src="@drawable/ic_rec_mic" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/text_record_call"
@@ -318,14 +317,14 @@
                     android:text="@{vm.uiState.recordBtnTxt}"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                     android:textColor="@color/white"
-                    android:visibility="@{(vm.uiState.isRecordingEnabled &amp;&amp; ((vm.uiState.recordButtonPressedTwoTimes &lt; 2))) || (vm.uiState.recordingButtonState == RecordingButtonState.RECORDING) ? View.VISIBLE : View.GONE }"
+                    android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="@+id/btn_record_call"
                     app:layout_constraintStart_toStartOf="@+id/btn_record_call"
                     app:layout_constraintTop_toBottomOf="@+id/btn_record_call"
                     tools:ignore="MissingPrefix"
                     tools:text="Record"
-                    tools:visibility="gone" />
+                    />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/txt_speaker"
@@ -459,7 +458,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toTopOf="@id/bottom_card_view"
             android:paddingBottom="@dimen/_15sdp"
-            tools:visibility="visible">
+            tools:visibility="gone">
 
             <LinearLayout
                 android:id="@+id/photo_frames_layout"
@@ -688,12 +687,11 @@
                                 android:id="@+id/text_view_your_word_2"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Your Word"
-                                setWord="@{}"
-                                setColor="@{}"
+                                android:text='@{String.format("%s %s",vm.uiState.name.concat("&apos;s"),"word")}'
                                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Semi_Bold"
                                 android:textColor="@color/white"
-                                android:textSize="14sp" />
+                                android:textSize="14sp"
+                                tools:text="Harsh"/>
 
                             <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/text_view_word_user_has_to_guess_2"
