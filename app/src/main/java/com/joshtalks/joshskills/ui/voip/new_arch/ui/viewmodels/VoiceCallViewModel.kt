@@ -274,7 +274,7 @@ class VoiceCallViewModel(application: Application) : AndroidViewModel(applicatio
                 if (uiState.recordTime != state.recordingStartTime)
                     uiState.recordTime = state.recordingStartTime
 
-                if(callType == Category.FPP && state.remoteUserName.isNotBlank()) {
+                if(voipState!=State.IDLE && voipState != State.SEARCHING) {
                     uiState.name = state.remoteUserName
                     uiState.profileImage = state.remoteUserImage ?: ""
                 }

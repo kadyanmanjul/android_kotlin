@@ -813,7 +813,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             putExtra(STARTING_POINT, FROM_ACTIVITY)
             putExtra(INTENT_DATA_CALL_CATEGORY,Category.PEER_TO_PEER.ordinal)
         }
-        voipLog?.log("Course ID --> $courseId   Topic ID --> $topicId")
+        Log.d(TAG, "startPracticeCall: Course ID --> $courseId   Topic ID --> $topicId")
         startActivity(callIntent)
     }
 

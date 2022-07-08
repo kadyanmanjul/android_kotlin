@@ -16,6 +16,7 @@ import com.joshtalks.joshskills.base.constants.INTENT_DATA_COURSE_ID
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_INCOMING_CALL_ID
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_TOPIC_ID
 import com.joshtalks.joshskills.base.constants.*
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.PermissionUtils.callingPermissionPermanentlyDeniedDialog
 import com.joshtalks.joshskills.core.PermissionUtils.isCallingPermissionEnabled
 import com.joshtalks.joshskills.databinding.ActivityVoiceCallBinding
@@ -136,12 +137,12 @@ class VoiceCallActivity : BaseActivity() {
     }
 
     private fun getSource(): String {
-        val topicId = intent?.getIntExtra(INTENT_DATA_TOPIC_ID,-1)
+        val topicId = intent?.getStringExtra(INTENT_DATA_TOPIC_ID)
         val mentorId = intent?.getStringExtra(INTENT_DATA_FPP_MENTOR_ID)
         val groupId = intent?.getStringExtra(INTENT_DATA_GROUP_ID)
         Log.d(TAG, "getSource: $topicId  $mentorId  $groupId")
 
-        val shouldOpenCallFragment = (topicId == -1 && mentorId == null && groupId == null )
+        val shouldOpenCallFragment = ((topicId == EMPTY || topicId==null) && mentorId == null && groupId == null )
         return if (shouldOpenCallFragment && PrefManager.getVoipState() == State.IDLE)
             FROM_INCOMING_CALL
         else if (shouldOpenCallFragment)
@@ -172,7 +173,6 @@ class VoiceCallActivity : BaseActivity() {
         }
     }
 
-
     private fun openFragment(fragment: () -> Unit) {
         if (vm.source == FROM_INCOMING_CALL || vm.source == FROM_CALL_BAR) {
             fragment.invoke()
@@ -180,7 +180,6 @@ class VoiceCallActivity : BaseActivity() {
             addSearchingUserFragment()
         }
     }
-
 
     override fun initViewState() {
         event.observe(this) {

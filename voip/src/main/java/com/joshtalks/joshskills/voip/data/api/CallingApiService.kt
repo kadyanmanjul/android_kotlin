@@ -26,26 +26,26 @@ interface CallingApiService {
     @POST("${BuildConfig.MS_BASE_URL}/$DIR/fpp/call")
     suspend fun startFavouriteCall(@Body request : FavoriteConnectionRequest) : Response<Unit>
 
-    @POST("${BuildConfig.MS_BASE_URL}/$DIR/fpp/call_response")
+    @POST("${BuildConfig.MS_BASE_URL}/$DIR/p2p/call_response")
     suspend fun favouriteCallAccept(@Body request : FavoriteCallActionRequest) : Response<Unit>
 
-    @POST("${BuildConfig.MS_BASE_URL}/$DIR/fpp/call_response")
+    @POST("${BuildConfig.MS_BASE_URL}/$DIR/p2p/call_response")
     suspend fun favouriteCallReject(@Body request : FavoriteCallActionRequest) : Response<Unit>
 
-    @POST("${BuildConfig.MS_BASE_URL}/$DIR/fpp/call_response")
+    @POST("${BuildConfig.MS_BASE_URL}/$DIR/p2p/call_response")
     suspend fun favouriteCallDisconnect(@Body request : CallDisconnectRequest) : Response<Unit>
 
 //    GROUP
     @POST("${BuildConfig.MS_BASE_URL}/$DIR/group/call")
     suspend fun startGroupCall(@Body request : GroupConnectionRequest) : Response<Unit>
 
-    @POST("${BuildConfig.MS_BASE_URL}/$DIR/group/call_response")
+    @POST("${BuildConfig.MS_BASE_URL}/$DIR/p2p/call_response")
     suspend fun groupCallAccept(@Body request : GroupCallActionRequest) : Response<Unit>
 
-    @POST("${BuildConfig.MS_BASE_URL}/$DIR/group/call_response")
+    @POST("${BuildConfig.MS_BASE_URL}/$DIR/p2p/call_response")
     suspend fun groupCallReject(@Body request : GroupCallActionRequest) : Response<Unit>
 
-    @POST("${BuildConfig.MS_BASE_URL}/$DIR/group/call_response")
+    @POST("${BuildConfig.MS_BASE_URL}/$DIR/p2p/call_response")
     suspend fun groupCallDisconnect(@Body request : CallDisconnectRequest) : Response<Unit>
 
 
