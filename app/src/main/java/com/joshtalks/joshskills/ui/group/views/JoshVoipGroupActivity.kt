@@ -1,7 +1,6 @@
 package com.joshtalks.joshskills.ui.group.views
 
 import android.os.Bundle
-import android.util.Log
 
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
@@ -19,7 +18,7 @@ import com.joshtalks.joshskills.constants.DISMISS_PROGRESS_BAR
 import com.joshtalks.joshskills.constants.OPEN_GROUP_REQUEST
 import com.joshtalks.joshskills.constants.REFRESH_GRP_LIST_HIDE_INFO
 import com.joshtalks.joshskills.core.PermissionUtils
-import com.joshtalks.joshskills.databinding.ActivityJoshVoipGroupctivityBinding
+import com.joshtalks.joshskills.databinding.ActivityJoshVoipGroupBinding
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.group.*
 import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics
@@ -43,8 +42,8 @@ class JoshVoipGroupActivity : BaseGroupActivity() {
         ViewModelProvider(this)[JoshGroupViewModel::class.java]
     }
 
-    val binding by lazy<ActivityJoshVoipGroupctivityBinding> {
-        DataBindingUtil.setContentView(this, R.layout.activity_josh_voip_groupctivity)
+    val binding by lazy<ActivityJoshVoipGroupBinding> {
+        DataBindingUtil.setContentView(this, R.layout.activity_josh_voip_group)
     }
 
     override fun setIntentExtras() {}
