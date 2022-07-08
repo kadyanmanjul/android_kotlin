@@ -216,7 +216,7 @@ object PrefManager {
 
     fun hasKey(key: String, isConsistent: Boolean = false): Boolean {
         return if (isConsistent) prefManagerConsistent.contains(key)
-        else prefManagerCommon?.contains(key)?:false
+        else prefManagerCommon?.contains(key) ?: false
     }
 
     @JvmStatic
@@ -226,7 +226,7 @@ object PrefManager {
         defValue: Boolean = false
     ): Boolean {
         return if (isConsistent) prefManagerConsistent.getBoolean(key, defValue)
-        else prefManagerCommon?.getBoolean(key, defValue)?:false
+        else prefManagerCommon?.getBoolean(key, defValue) ?: false
     }
 
     fun getStringValue(
