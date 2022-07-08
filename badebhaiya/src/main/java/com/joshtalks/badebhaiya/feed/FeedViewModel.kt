@@ -52,6 +52,7 @@ class FeedViewModel : ViewModel() {
     var userID: String = ""
     var isRoomActive = MutableLiveData(false)
     var isRoomCreated = MutableLiveData(false)
+    var isRoomsheduled = MutableLiveData(false)
     lateinit var respBody: ConversationRoomResponse
     val waitResponse = MutableLiveData<List<Waiting>>()
     var pubChannelName: String? = null
@@ -134,12 +135,12 @@ class FeedViewModel : ViewModel() {
             return
         }
         viewModelScope.launch {
-            isRoomCreated.value = true
+
             if (topic.isNullOrBlank()) {
                 showToast(AppObjectController.joshApplication.getString(R.string.enter_topic_name))
             } else {
                 try {
-
+                    isRoomCreated.value = true
                     sendEvent(Impression("FEED_SCREEN", "CLICKED_CREATE"))
                     isLoading.set(true)
                     pendingRoomTopic = topic
@@ -162,7 +163,6 @@ class FeedViewModel : ViewModel() {
                         } else
                             showToast("Oops Something Went Wrong! Try Again")
                     } else {
-                        isRoomCreated.value = false
                         callback?.onError("An error occurred!")
                     }
                 } catch (e: Exception) {
@@ -171,6 +171,7 @@ class FeedViewModel : ViewModel() {
                 } finally {
                     isLoading.set(false)
                 }
+                isRoomCreated.value = false
             }
         }
     }
@@ -369,6 +370,7 @@ class FeedViewModel : ViewModel() {
                 showToast(AppObjectController.joshApplication.getString(R.string.enter_topic_name))
             } else {
                 try {
+                    isRoomsheduled.value=true
 //                    if (Utils.getEpochTimeFromFullDate(startTime) <
 //                        (System.currentTimeMillis() + IST_TIME_DIFFERENCE + ALLOWED_SCHEDULED_TIME)) {
 //                        showToast("Schedule a room for 30 minutes or later!")
@@ -404,6 +406,7 @@ class FeedViewModel : ViewModel() {
                 } finally {
                     isLoading.set(false)
                 }
+                isRoomsheduled.value=false
             }
         }
     }
