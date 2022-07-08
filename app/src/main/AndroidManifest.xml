@@ -843,11 +843,6 @@
                 android:value="androidx.startup" />
         </provider>
         <provider
-            android:name="androidx.work.impl.WorkManagerInitializer"
-            android:authorities="${applicationId}.workmanager-init"
-            android:enabled="false"
-            android:exported="false" />
-        <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${file_provider}.provider"
             android:exported="false"
