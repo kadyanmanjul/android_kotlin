@@ -12,7 +12,6 @@
     <string name="downloading_complete">பதிவிறக்கம் முடிந்தது</string>
     <string name="not_now">Not Now</string>
     <string name="not_now_underline"><u>Not Now</u></string>
-    <string name="settings">அமைப்புகள்</string>
     <string name="header_congratulation">வாழ்த்துக்கள்</string>
     <string name="name">பெயர்</string>
     <string name="email">மின்னஞ்சல்</string>
@@ -205,7 +204,6 @@
     <string name="referral_success_info">உங்கள் நண்பர் %s ஆல் பரிந்துரைக்கப்பட்டீர்கள்</string>
     <string name="referral_success_info2">உங்கள் முதல் பாடத்திட்டத்தில் ₹ 50 தள்ளுபடி கிடைக்கும்.</string>
     <string name="page_number">பக்கம் %s / %s</string>
-    <string name="help">உதவி </string>
     <string name="close">அதை நிறுத்து </string>
     <string name="show_details">Show Details</string>
     <string name="coupon_applied_free_course">கூப்பன் பயன்படுத்தப்பட்டது! இந்தப் பாடத்திட்டத்தை நீங்கள் இலவசமாகப் பெற்றுள்ளீர்கள். இப்போது பதிவு செய்யவும்</string>
@@ -275,7 +273,6 @@
     <string name="faq_title">FAQ</string>
     <string name="delete_media_title">அனைத்தையும் அளிக்கவும்</string>
     <string name="delete_media_message">இந்தப் படிப்பிலிருந்து எல்லா மீடியாவையும் நிச்சயமாக அகற்ற விரும்புகிறீர்களா?</string>
-    <string name="referral">பரிந்துரை</string>
     <string name="reminders">நினைவூட்டல்கள்</string>
     <string name="set_reminder">நினைவூட்டலை அமை</string>
     <string name="add_reminder">நினைவூட்டலைச் சேர்</string>
@@ -306,7 +303,6 @@
     <string name="topic_for_pp">இந்த தலைப்பில் உங்கள் கூட்டாளரிடம் பேசலாம்</string>
     <string name="call_permission_message">இந்த அழைப்பிற்கு %s மூலம் பதிலளிக்க, உங்கள் மைக்ரோஃபோனுக்கான அணுகலை Josh Skills வழங்கவும்.</string>
     <string name="call_permission_permanent_message">இந்த அழைப்பிற்கு %s மூலம் பதிலளிக்க, உங்கள் மைக்ரோஃபோனுக்கான அணுகலை Josh Skills வழங்கவும். அமைப்புகள் &amp;gt; அனுமதிகள் என்பதைத் தட்டி, மைக்ரோஃபோனை இயக்கவும்.</string>
-    <string name="clear_all_media">அனைத்து மீடியாவையும் அழி</string>
     <string name="time_ago_full_seconds">%1$d வினாடிகளுக்கு முன்பு</string>
     <string name="inbox_header">Josh Skills</string>
     <string name="time_ago_seconds">%1$d வினாடிகளுக்கு முன்பு</string>
@@ -438,7 +434,6 @@
     <string name="word_tag">Word %1$d/%2$d - %3$s</string>
     <string name="ques_short_form">கேள்வி- %1$d/%2$d %3$s</string>
     <string name="completed">முடிந்தது</string>
-    <string name="profile">சுயவிவரம்</string>
     <string name="profile_photo">சுயவிவர படம்</string>
     <string name="age">Age:</string>
     <string name="joined_on">Joined on:</string>
@@ -490,5 +485,6 @@
     <string name="tooltip_search_anyone">இங்கிருந்து நாம் நமது நண்பர்களையோ அல்லது மற்ற மாணவர்களையோ தேடலாம்</string>
     <string name="tooltip_user_profile_screen">நீங்கள் எவ்வளவு அதிகமாக வேலை செய்கிறீர்களோ, அவ்வளவு Points பெறுவீர்கள்</string>
     <string name="referral_share_text">நான் Bharat இன் சிறந்த ஆசிரியர்களிடம் ஸ்போக்கன் இங்கிலீஷ் மற்றும் ஆளுமை மேம்பாட்டைக் கற்றுக்கொள்கிறேன்  வாருங்கள் இன்றிலிருந்து நாம் சேர்ந்து கற்கலாம்  இதோ என்னிடமிருந்து உங்களுக்கான Rs. ** OFF:  Use my code ****. Download the app by clicking on the link:</string>
+    <string name="sign_up_profile_occupation_aspiration_text">இந்தத் information உங்கள் பயிற்சி Practice Partnerகளுக்குத் தெரியும்</string>
 
 </resources>

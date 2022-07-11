@@ -8,6 +8,8 @@ import android.os.IBinder
 import android.util.Log
 import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.voip.*
+import com.joshtalks.joshskills.base.constants.*
+import com.joshtalks.joshskills.voip.*
 import com.joshtalks.joshskills.base.constants.PEER_TO_PEER
 import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_DISCONNECT_CALL
 import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_INCOMING_CALL_DECLINE
@@ -22,6 +24,7 @@ import com.joshtalks.joshskills.voip.constant.*
 import com.joshtalks.joshskills.voip.constant.Event.*
 import com.joshtalks.joshskills.voip.communication.model.IncomingCall
 import com.joshtalks.joshskills.voip.constant.Event
+import com.joshtalks.joshskills.voip.constant.Event.*
 import com.joshtalks.joshskills.voip.constant.Event.CALL_CONNECTED_EVENT
 import com.joshtalks.joshskills.voip.constant.Event.CALL_INITIATED_EVENT
 import com.joshtalks.joshskills.voip.constant.Event.CALL_RECORDING_ACCEPT
@@ -44,22 +47,15 @@ import com.joshtalks.joshskills.voip.notification.IncomingCallNotificationHandle
 import com.joshtalks.joshskills.voip.notification.NotificationData
 import com.joshtalks.joshskills.voip.notification.NotificationPriority
 import com.joshtalks.joshskills.voip.notification.VoipNotification
-import com.joshtalks.joshskills.voip.openCallScreen
 import com.joshtalks.joshskills.voip.pstn.PSTNController
 import com.joshtalks.joshskills.voip.pstn.PSTNState
 import com.joshtalks.joshskills.voip.state.CallConnectData
-import com.joshtalks.joshskills.voip.updateStartTime
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
 import timber.log.Timber
 import com.joshtalks.joshskills.base.model.NotificationData as Data
 import com.joshtalks.joshskills.voip.mediator.UserAction as Action
@@ -135,13 +131,18 @@ class CallingRemoteService : Service() {
                 disconnectCall()
                 return START_NOT_STICKY
             }
+            SERVICE_ACTION_INCOMING_CALL_HIDE->{
+                mediator.hideIncomingCall()
+            }
             SERVICE_ACTION_INCOMING_CALL_DECLINE -> {
                 CallAnalytics.addAnalytics(
                     event = EventName.INCOMING_CALL_DECLINE,
-                    agoraCallId = PrefManager.getIncomingCallId().toString(),
+                    agoraCallId ="-1",
                     agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
                 )
                 mediator.hideIncomingCall()
+                mediator.declineIncomingCall()
+
                 return START_NOT_STICKY
             }
         }
@@ -187,6 +188,12 @@ class CallingRemoteService : Service() {
                                 RECONNECTING_FAILED -> {
                                     serviceEvents.emit(ServiceEvents.RECONNECTING_FAILED)
                                     notification.idle(getNotificationData())
+                                }
+                                // TODO: Might have to refactor
+                                INCOMING_CALL -> {
+                                    PrefManager.setIncomingCallId(IncomingCallData.callId)
+                                    val data = IncomingCall(callId = IncomingCallData.callId)
+                                    mediator.showIncomingCall(data)
                                 }
                                 CALL_INITIATED_EVENT -> {
                                     serviceEvents.emit(ServiceEvents.CALL_INITIATED_EVENT)
@@ -248,6 +255,7 @@ class CallingRemoteService : Service() {
                             PSTNState.OnCall, PSTNState.Ringing -> {
                                 PrefManager.savePstnState(PSTN_STATE_ONCALL)
                                 mediator.userAction(Action.HOLD)
+                                mediator.hideIncomingCall()
                             }
                         }
                     }
@@ -375,26 +383,24 @@ class CallingRemoteService : Service() {
 // TODO: Need to Change
 class TestNotification(val notiData : Data) : NotificationData {
     override fun setTitle(): String {
-        return notiData.title
+        return if (Utils.courseId == "151" && notiData.title.isNotEmpty()) {
+            notiData.title
+        }else{
+            "Appreciate"
+        }
     }
 
     override fun setContent(): String {
-        return notiData.subTitle
+        return if (Utils.courseId == "151" && notiData.subTitle.isNotEmpty()) {
+            notiData.subTitle
+        }else{
+            "Practice word of the day"
+        }
     }
 
     override fun setTapAction(): PendingIntent? {
-        val notificationActivity="com.joshtalks.joshskills.ui.lesson.LessonActivity"
-        val callingActivity = Intent()
-        callingActivity.apply {
-            if (Utils.context != null) {
-                setClassName(Utils.context!!,notificationActivity)
-                putExtra("lesson_section", 2)
-                putExtra("lesson_id",notiData.lessonId)
-                putExtra("reopen",true)
-            }
-        }
-        val pendingIntent=PendingIntent.getActivity(Utils.context,(System.currentTimeMillis() and 0xfffffff).toInt(),callingActivity, PendingIntent.FLAG_UPDATE_CURRENT)
-        return pendingIntent
+        Log.d(TAG, "setTapAction: ${Utils.courseId } ${Utils.context!!.isFreeTrialOrCourseBought()}")
+        return Utils.context!!.getServiceNotificationIntent(notiData)
     }
 }
 
@@ -405,8 +411,8 @@ data class UIState(
     val topicName: String,
     val callType: Int,
     val currentTopicImage: String,
-    val occupation : String,
-    val aspiration : String,
+    val occupation: String,
+    val aspiration: String,
     val isOnHold: Boolean = false,
     val isSpeakerOn: Boolean = false,
     val isRemoteUserMuted: Boolean = false,
@@ -414,8 +420,11 @@ data class UIState(
     val isReconnecting: Boolean = false,
     val startTime: Long = 0L,
     val recordingButtonState: RecordingButtonState = RecordingButtonState.IDLE,
-    val recordingStartTime : Long = 0L,
-    val isRecordingEnabled : Boolean = false
+    val recordingButtonNooftimesclicked: Int = 0,
+    val recordingStartTime: Long = 0L,
+    val isRecordingEnabled: Boolean = false,
+    val isCallerSpeaking: Boolean = false,
+    val isCalleeSpeaking: Boolean = false,
 ) {
     companion object {
         fun empty() = UIState("", null, "", 0,"","","")
@@ -437,6 +446,7 @@ enum class ServiceEvents {
 
 enum class RecordingButtonState {
     IDLE,
-    REQUESTED,
+    SENTREQUEST,
+    GOTREQUEST,
     RECORDING
 }

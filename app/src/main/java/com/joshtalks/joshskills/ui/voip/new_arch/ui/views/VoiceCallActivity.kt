@@ -20,9 +20,14 @@ import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.PermissionUtils.callingPermissionPermanentlyDeniedDialog
 import com.joshtalks.joshskills.core.PermissionUtils.isCallingPermissionEnabled
 import com.joshtalks.joshskills.databinding.ActivityVoiceCallBinding
+import com.joshtalks.joshskills.quizgame.base.GameEventLiveData
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.VoiceCallViewModel
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.voipLog
+import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.Utils.Companion.onMultipleBackPress
 import com.joshtalks.joshskills.voip.constant.*
+import com.joshtalks.joshskills.voip.data.RecordingButtonState
+import com.joshtalks.joshskills.voip.data.CallingRemoteService
 import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
@@ -33,7 +38,7 @@ private const val TAG = "VoiceCallActivity"
 class VoiceCallActivity : BaseActivity() {
     private val backPressMutex = Mutex(false)
     private var isServiceBounded = false
-
+    private val recordingLiveEvent = GameEventLiveData
     private val voiceCallBinding by lazy<ActivityVoiceCallBinding> {
         DataBindingUtil.setContentView(this, R.layout.activity_voice_call)
     }
@@ -109,6 +114,9 @@ class VoiceCallActivity : BaseActivity() {
                     agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
                 )
                 vm.callData[INTENT_DATA_INCOMING_CALL_ID] = incomingCallId
+                val remoteServiceIntent = Intent(Utils.context, CallingRemoteService::class.java)
+                remoteServiceIntent.action = SERVICE_ACTION_INCOMING_CALL_HIDE
+                Utils.context?.startService(remoteServiceIntent)
             }
             else -> {
                 setCallData()
@@ -121,6 +129,7 @@ class VoiceCallActivity : BaseActivity() {
             Category.PEER_TO_PEER -> {
                 val topicId = intent?.getStringExtra(INTENT_DATA_TOPIC_ID)
                 val courseId = intent?.getStringExtra(INTENT_DATA_COURSE_ID)
+                voipLog?.log("Call Data --> $intent")
                 vm.callData[INTENT_DATA_COURSE_ID] = courseId ?: "0"
                 vm.callData[INTENT_DATA_TOPIC_ID] = topicId ?: "0"
             }
@@ -183,6 +192,7 @@ class VoiceCallActivity : BaseActivity() {
 
     override fun initViewState() {
         event.observe(this) {
+            Log.i(TAG, "initViewState: event -> ${it.what}")
             when (it.what) {
                 CALL_INITIATED_EVENT -> {
                     when (vm.callType) {
@@ -204,6 +214,58 @@ class VoiceCallActivity : BaseActivity() {
                 }
             }
         }
+        recordingLiveEvent.observe(this) {
+            Log.i(TAG, "initViewState: event -> ${it.what}")
+            when (it.what) {
+                SHOW_RECORDING_PERMISSION_DIALOG -> showRecordingPermissionDialog()
+                SHOW_RECORDING_REJECTED_DIALOG -> showRecordingRejectedDialog()
+                HIDE_RECORDING_PERMISSION_DIALOG -> {
+                    hideRecordingPermissionDialog()
+                    if (it.obj == true){
+                        vm.startAudioVideoRecording(this@VoiceCallActivity.window.decorView)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun showRecordingRejectedDialog() {
+        MaterialAlertDialogBuilder(this)
+            .setTitle("Recording request rejected")
+            .setMessage("User declined your request to start recording")
+            .setPositiveButton("Dismiss") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
+
+    }
+
+    private fun showRecordingPermissionDialog() {
+        recordingPermissionAlert = AlertDialog.Builder(this).apply {
+            setView(
+                LayoutInflater.from(this@VoiceCallActivity)
+                    .inflate(R.layout.dialog_record_call, null)
+            )
+            setPositiveButton("ACCEPT") { dialog, _ ->
+                vm.recordingStartedUIChanges()
+                vm.acceptCallRecording(this@VoiceCallActivity.window.decorView)
+                dialog.dismiss()
+            }
+            setNegativeButton("DECLINE") { dialog, which ->
+                vm.rejectCallRecording()
+                dialog.dismiss()
+            }
+            setOnCancelListener {
+                    vm.rejectCallRecording()
+            }
+        }.create()
+        recordingPermissionAlert?.setCanceledOnTouchOutside(false)
+        recordingPermissionAlert?.show()
+    }
+
+    private fun hideRecordingPermissionDialog() {
+        Log.i(TAG, "hideRecordingPermissionDialog: ")
+        recordingPermissionAlert?.dismiss()
     }
 
     private fun addSearchingUserFragment() {
@@ -246,6 +308,7 @@ class VoiceCallActivity : BaseActivity() {
 
     override fun onStart() {
         super.onStart()
+
         if(isCallingPermissionEnabled(this)) {
             if(!isServiceBounded) {
                 vm.boundService(this)
@@ -270,6 +333,9 @@ class VoiceCallActivity : BaseActivity() {
             }
         else {
             super.onBackPressed()
+            if (vm.uiState.recordingButtonState == RecordingButtonState.SENTREQUEST)
+                vm.cancelRecording()
+            vm.recordingStopButtonClickListener()
             vm.backPress()
         }
     }

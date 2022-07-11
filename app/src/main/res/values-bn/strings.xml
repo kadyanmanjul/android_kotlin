@@ -12,7 +12,6 @@
     <string name="downloading_complete">ডাউনলোড সম্পন্ন হয়েছে</string>
     <string name="not_now">Not Now</string>
     <string name="not_now_underline"><u>Not Now</u></string>
-    <string name="settings">সেটিংস</string>
     <string name="header_congratulation">অভিনন্দন</string>
     <string name="name">নাম</string>
     <string name="email">ই-মেইল</string>
@@ -207,7 +206,6 @@
     <string name="referral_success_info">আপনাকে আপনার বন্ধু %s দ্বারা রেফার করা হয়েছে</string>
     <string name="referral_success_info2">এবং আপনি আপনার প্রথম কোর্সে ₹ 50 ছাড় পাবেন।</string>
     <string name="page_number">"Page %s / %s"</string>
-    <string name="help">"সাহায্য"</string>
     <string name="close">"বন্ধ কর "</string>
     <string name="show_details">Show Details</string>
     <string name="coupon_applied_free_course">কুপন প্রয়োগ করা হয়েছে! আপনি বিনামূল্যে এই কোর্স পেয়েছেন. এখন রেজিস্টার করুন</string>
@@ -277,7 +275,6 @@
     <string name="add_this">Add This</string>
     <string name="delete_media_title">"ক্লিয়ার কোর্স মিডিয়া"</string>
     <string name="delete_media_message">আপনি কি নিশ্চিত যে আপনি এই কোর্স থেকে সমস্ত মিডিয়া সরাতে চান?</string>
-    <string name="referral">"সুপারিশ"</string>
     <string name="reminders">"রিমাইন্ডার"</string>
     <string name="set_reminder">"রিমাইন্ডার সেট করুন"</string>
     <string name="add_reminder">"রিমাইন্ডার যোগ করুন"</string>
@@ -308,7 +305,6 @@
     <string name="topic_for_pp">আপনি এই বিষয়ে আপনার প্র্যাক্টিস পার্টনার এর সাথে কথা বলতে পারেন</string>
     <string name="call_permission_message">%s-এর সাথে এই কলের উত্তর দিতে, আপনার মাইক্রোফোনে Josh Skills-কে অ্যাক্সেস দিন।</string>
     <string name="call_permission_permanent_message">%s-এর সাথে এই কলের উত্তর দিতে, Josh Skills কে আপনার মাইক্রোফোনে অ্যাক্সেস দিন। সেটিংস &amp;gt; অনুমতিতে আলতো চাপুন এবং মাইক্রোফোন চালু করুন।</string>
-    <string name="clear_all_media">"সমস্ত মিডিয়া সাফ করুন"</string>
     <string name="time_ago_full_seconds">"%1$d সেকেন্ড আগে"</string>
     <string name="inbox_header">Josh Skills</string>
     <string name="time_ago_seconds">"%1$d সেকেন্ড আগে"</string>
@@ -441,7 +437,6 @@
     <string name="word_tag">Word %1$d/%2$d - %3$s</string>
     <string name="ques_short_form">প্রশ্ন- %1$d/%2$d %3$s</string>
     <string name="completed">সম্পন্ন</string>
-    <string name="profile">প্রোফাইল</string>
     <string name="profile_photo">প্রোফাইল ছবি</string>
     <string name="age">Age:</string>
     <string name="joined_on">Joined on:</string>
@@ -492,5 +487,6 @@
     <string name="tooltip_points_history_screen">এই ছাত্র কিভাবে পয়েন্ট অর্জন করেছে আমরা এখান থেকে দেখতে পারি</string>
     <string name="tooltip_search_anyone">এখান থেকে আমরা নিজের বন্ধুদের আর বাকি ছাত্র দেড় কে সার্চ করতে পারবো।</string>
     <string name="tooltip_user_profile_screen">আমরা যত বেশি পরিশ্রম করব, তত বেশি পয়েন্ট পাব</string>
+    <string name="sign_up_profile_occupation_aspiration_text">এই Information টি আপনার প্রাক্টিস পার্টনার রা দেখতে পাবে</string>
     <string name="referral_share_text">Ami bharoter 🇮🇳 shobche best teachers der kach theke spoken English ar personality development sikhchi. Amar sathe shekha akhuni shuru korun 💪. এই নিন আমার তরফ থেকে আপনার জন্য Rs ** OFF. Use my Code ****. Download the app by Clicking on the link : </string>
 </resources>

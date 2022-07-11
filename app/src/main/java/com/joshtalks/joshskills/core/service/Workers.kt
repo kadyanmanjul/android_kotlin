@@ -12,6 +12,7 @@ import android.text.format.DateUtils
 import android.util.Log
 import androidx.concurrent.futures.CallbackToFutureAdapter
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.work.CoroutineWorker
 import androidx.work.ListenableWorker
@@ -25,41 +26,9 @@ import com.google.firebase.installations.FirebaseInstallations
 import com.google.firebase.messaging.FirebaseMessaging
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.API_TOKEN
-import com.joshtalks.joshskills.core.ApiRespStatus
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.CALL_RINGTONE_NOT_MUTE
-import com.joshtalks.joshskills.core.COUNTRY_ISO
-import com.joshtalks.joshskills.core.COURSE_EXPIRY_TIME_IN_MS
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
-import com.joshtalks.joshskills.core.INSTANCE_ID
-import com.joshtalks.joshskills.core.IS_COURSE_BOUGHT
-import com.joshtalks.joshskills.core.InstallReferralUtil
-import com.joshtalks.joshskills.core.LAST_ACTIVE_API_TIME
-import com.joshtalks.joshskills.core.LOCAL_NOTIFICATION_INDEX
-import com.joshtalks.joshskills.core.LOGIN_ON
-import com.joshtalks.joshskills.core.ONBOARDING_STAGE
-import com.joshtalks.joshskills.core.OnBoardingStage
-import com.joshtalks.joshskills.core.P2P_LAST_CALL
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.RATING_DETAILS_KEY
-import com.joshtalks.joshskills.core.RESTORE_ID
-import com.joshtalks.joshskills.core.SERVER_GID_ID
-import com.joshtalks.joshskills.core.SERVER_TIME_OFFSET
-import com.joshtalks.joshskills.core.SUBSCRIPTION_TEST_ID
-import com.joshtalks.joshskills.core.USER_LOCALE
-import com.joshtalks.joshskills.core.USER_LOCALE_UPDATED
-import com.joshtalks.joshskills.core.USER_UNIQUE_ID
-import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
-import com.joshtalks.joshskills.core.analytics.AppAnalytics
-import com.joshtalks.joshskills.core.analytics.LocalNotificationDismissEventReceiver
-import com.joshtalks.joshskills.core.analytics.LogException
-import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
-import com.joshtalks.joshskills.core.changeLocale
 import com.joshtalks.joshskills.core.firestore.NotificationAnalytics
-import com.joshtalks.joshskills.core.getDefaultCountryIso
 import com.joshtalks.joshskills.core.notification.FCM_ACTIVE
 import com.joshtalks.joshskills.core.notification.FCM_TOKEN
 import com.joshtalks.joshskills.core.notification.HAS_LOCAL_NOTIFICATION
@@ -85,6 +54,8 @@ import com.joshtalks.joshskills.repository.server.UpdateDeviceRequest
 import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.track.CourseUsageSync
 import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
+import com.joshtalks.joshskills.core.analytics.*
+import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.ui.launch.LauncherActivity
 import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
@@ -379,9 +350,8 @@ class WorkerAfterLoginInApp(context: Context, workerParams: WorkerParameters) :
 class WorkerInLandingScreen(context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
-        WorkManagerAdmin.syncNotifiationEngagement()
+        WorkManagerAdmin.syncNotificationEngagement()
         AppObjectController.clearDownloadMangerCallback()
-        // SyncChatService.syncChatWithServer()
         WorkManagerAdmin.readMessageUpdating()
         WorkManagerAdmin.syncAppCourseUsage()
         AppAnalytics.updateUser()
@@ -515,6 +485,7 @@ class DeterminedNPSEvent(context: Context, private var workerParams: WorkerParam
         return Result.success()
     }
 }
+
 
 class UpdateDeviceDetailsWorker(context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
@@ -995,10 +966,24 @@ class CourseUsageSyncWorker(context: Context, workerParams: WorkerParameters) :
     }
 }
 
-class NotificationEngagementSyncWorker(context: Context, workerParams: WorkerParameters) :
+class NotificationEngagementSyncWorker(val context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
         return try {
+            NotificationAnalytics().fetchMissedNotification(context)
+            if (shouldSendEnabledAnalytics()) {
+                val response = AppObjectController.commonNetworkService.saveImpression(
+                    mapOf(
+                        Pair("mentor_id", Mentor.getInstance().getId()),
+                        Pair("event_name", notificationEnabledEvent())
+                    )
+                )
+                if (response.isSuccessful) {
+                    val count = PrefManager.getIntValue(NOTIFICATION_STATUS_COUNT)
+                    PrefManager.put(NOTIFICATION_STATUS_COUNT, count + 1)
+                    PrefManager.put(NOTIFICATION_LAST_TIME_STATUS, System.currentTimeMillis())
+                }
+            }
             when(NotificationAnalytics().pushToServer()) {
                 true -> Result.success()
                 false -> Result.failure()
@@ -1007,6 +992,25 @@ class NotificationEngagementSyncWorker(context: Context, workerParams: WorkerPar
             ex.printStackTrace()
             Result.failure()
         }
+    }
+
+    private fun shouldSendEnabledAnalytics(): Boolean {
+        val oneDayMillis = 24 * 60 * 60 * 1000L
+        val oneWeekMillis = 7 * oneDayMillis
+        val count = PrefManager.getIntValue(NOTIFICATION_STATUS_COUNT)
+        val timeDifference = System.currentTimeMillis() - PrefManager.getLongValue(NOTIFICATION_LAST_TIME_STATUS)
+        if (count < 7 && timeDifference > oneDayMillis)
+            return true
+        else if (count >= 7 && timeDifference > oneWeekMillis)
+            return true
+        return false
+    }
+
+    private fun notificationEnabledEvent(): String {
+        if (NotificationManagerCompat.from(context).areNotificationsEnabled()) {
+            return AnalyticsEvent.NOTIFICATION_ENABLED.name
+        }
+        return AnalyticsEvent.NOTIFICATION_DISABLED.name
     }
 }
 

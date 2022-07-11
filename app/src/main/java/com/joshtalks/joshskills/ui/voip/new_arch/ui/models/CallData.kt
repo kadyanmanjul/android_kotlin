@@ -181,4 +181,39 @@ class CallUIState : BaseObservable() {
             field = value
             notifyPropertyChanged(BR.aspiration)
         }
+
+    @get:Bindable
+    var localUserName:String = ""
+        set(value) {
+            field = value
+            notifyPropertyChanged(BR.localUserName)
+        }
+
+    @get:Bindable
+    var localUserProfile:String = ""
+        set(value) {
+            field = value
+            notifyPropertyChanged(BR.localUserProfile)
+        }
+
+    @get:Bindable
+    var isCalleeSpeaking:Boolean = false
+        set(value) {
+            field = value
+            notifyPropertyChanged(BR.calleeSpeaking)
+        }
+
+    @get:Bindable
+    var isCallerSpeaking:Boolean = false
+        set(value) {
+            field = value
+            notifyPropertyChanged(BR.callerSpeaking)
+        }
+
+    @get:Bindable
+    var recordButtonPressedTwoTimes : Int = 0
+        set(value) {
+            field = value
+            notifyPropertyChanged(BR.callerSpeaking)
+        }
 }

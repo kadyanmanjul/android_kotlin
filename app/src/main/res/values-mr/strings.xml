@@ -11,7 +11,6 @@
     <string name="downloading_complete">डाउनलोड पूर्ण झाले</string>
     <string name="not_now">Not Now</string>
     <string name="not_now_underline"><u>Not Now</u></string>
-    <string name="settings">सेटिंग्ज</string>
     <string name="header_congratulation">अभिनंदन</string>
     <string name="name">नाव</string>
     <string name="email">ई-मेल</string>
@@ -205,7 +204,6 @@
     <string name="referral_success_info">तुम्हाला तुमच्या मित्र %s ने संदर्भित केले आहे</string>
     <string name="referral_success_info2">आणि तुम्हाला तुमच्या पहिल्या कोर्सवर ₹ 50 ची सूट मिळेल.</string>
     <string name="page_number">"पान %s / %s "</string>
-    <string name="help">"मदत"</string>
     <string name="close">"थांबवा "</string>
     <string name="show_details">Show Details</string>
     <string name="coupon_applied_free_course">कूपन लागू! तुम्हाला हा कोर्स मोफत मिळाला आहे. अाता रेजिस्ट्रेशन  करा</string>
@@ -275,7 +273,6 @@
     <string name="add_this">Add This</string>
     <string name="delete_media_title">"क्लीअर कोर्स मीडिया"</string>
     <string name="delete_media_message">तुमची खात्री आहे की तुम्ही या कोर्समधून सर्व मीडिया काढून टाकू इच्छिता?</string>
-    <string name="referral">"रेफरल"</string>
     <string name="reminders">"रिमाइंडर"</string>
     <string name="set_reminder">"रिमाइंडर सेट करा"</string>
     <string name="add_reminder">"रिमाइंडर  जोडा"</string>
@@ -306,7 +303,6 @@
     <string name="topic_for_pp">या विषयावर तुम्ही तुमच्या प्रैक्टिस पार्टनरशी बोलू शकता</string>
     <string name="call_permission_message">या कॉलला %s उत्तर देण्यासाठी, Josh Skills ला तुमच्या मायक्रोफोनमध्ये प्रवेश द्या.</string>
     <string name="call_permission_permanent_message">या कॉलला %s उत्तर देण्यासाठी, Josh Skills ला तुमच्या मायक्रोफोनमध्ये प्रवेश द्या. सेटिंग्ज मध्ये &amp;gt; परवानगी वर टॅप करा आणि मायक्रोफोन चालू करा.</string>
-    <string name="clear_all_media">"सर्व मीडिया साफ करा"</string>
     <string name="time_ago_full_seconds">"%1$d सेकंदांपूर्वी"</string>
     <string name="inbox_header">Josh Skills</string>
     <string name="time_ago_seconds">"%1$d सेकंदांपूर्वी"</string>
@@ -437,7 +433,6 @@
     <string name="word_tag">Word %1$d/%2$d - %3$s</string>
     <string name="ques_short_form">प्रश्न- %1$d/%2$d %3$s</string>
     <string name="completed">पूर्ण</string>
-    <string name="profile">प्रोफाइल</string>
     <string name="profile_photo">परिचय चित्र</string>
     <string name="age">Age:</string>
     <string name="joined_on">Joined on:</string>
@@ -489,4 +484,7 @@
     <string name="tooltip_search_anyone">येथून, आम्ही आमच्या मित्रांना आणि उर्वरित विद्यार्थ्यांना शोधू शकतो.</string>
     <string name="tooltip_user_profile_screen">आपण जितके कष्ट करतो तितके जास्त Points मिळतात.</string>
     <string name="referral_share_text">Mi Bharatachya 🇮🇳 best teachers shi spoken English aani personality Development shikat aahe. Majha sobat tumhi hi suru kara 💪. Hey ghya majhya tarfe tumhala ** OFF: Use my code **** Download the app by clicking on the link</string>
+    <string name="sign_up_profile_occupation_aspiration_text">ही information तुमच्या Practice Partners पाहू शकतात</string>
+
+
 </resources>

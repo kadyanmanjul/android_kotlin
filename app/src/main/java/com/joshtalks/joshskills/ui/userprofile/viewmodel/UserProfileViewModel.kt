@@ -12,6 +12,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
+import com.joshtalks.joshskills.base.constants.USER_NAME
+import com.joshtalks.joshskills.base.constants.USER_PROFILE
 import com.joshtalks.joshskills.constants.COURSE_LIST_DATA
 import com.joshtalks.joshskills.constants.INVITE_FRIENDS_METHOD
 import com.joshtalks.joshskills.constants.MY_GROUP_LIST_DATA
@@ -231,6 +233,14 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
                                 RxBus2.publish(SaveProfileClickedEvent(true))
                             }
                             getProfileData(mentorId, intervalType, previousPage)
+                            PrefManager.put(USER_NAME,updateProfilePayload.basicDetails?.firstName?: EMPTY)
+                            PrefManager.put(USER_PROFILE,updateProfilePayload.basicDetails?.photoUrl?: EMPTY)
+                            val user = Mentor.getInstance().getUser()
+                            user?.apply {
+                                firstName = updateProfilePayload.basicDetails?.firstName
+                                photo = updateProfilePayload.basicDetails?.photoUrl
+                                Mentor.getInstance().updateUser(user)
+                            }
                         }
                         apiCallStatus.postValue(ApiCallStatus.SUCCESS)
                         return@launch
@@ -694,18 +704,23 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
     }
 
     fun removeFpp(uId: Int) {
-        try {
-            viewModelScope.launch(Dispatchers.IO) {
-                val requestParams: HashMap<String, List<Int>> = HashMap()
-                requestParams["mentor_ids"] = uId.let { return@let listOf(uId) }
-                val response = favoriteCallerRepository.removeUserFormFppLit(requestParams)
-                if (response.isSuccessful) {
-                    favoriteCallerDao.removeFromFavorite(uId.let { return@let listOf(uId) })
-                    getFppStatusInProfile(mentorId)
-                    getProfileData(mentorId, null, null)
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                if (Utils.isInternetAvailable()) {
+                    val requestParams: HashMap<String, List<Int>> = HashMap()
+                    requestParams["mentor_ids"] = uId.let { return@let listOf(uId) }
+                    val response = favoriteCallerRepository.removeUserFormFppLit(requestParams)
+                    if (response.isSuccessful) {
+                        favoriteCallerDao.removeFromFavorite(uId.let { return@let listOf(uId) })
+                        getFppStatusInProfile(mentorId)
+                        getProfileData(mentorId, null, null)
+                    }
+                } else {
+                    showToast("No internet connection")
                 }
+            } catch (ex: Exception) {
+                ex.printStackTrace()
             }
-        } catch (ex: Exception) {
         }
     }
 }

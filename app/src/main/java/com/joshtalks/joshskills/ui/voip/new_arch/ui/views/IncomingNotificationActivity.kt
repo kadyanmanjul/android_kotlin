@@ -1,10 +1,12 @@
 package com.joshtalks.joshskills.ui.voip.new_arch.ui.views
 
+
 import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
+import android.util.Log
 import android.view.View
 import android.view.Window
 import android.view.WindowManager.LayoutParams
@@ -52,8 +54,11 @@ class IncomingNotificationActivity : AppCompatActivity() {
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         super.onCreate(savedInstanceState)
 
+        val shouldDestroy = intent?.getBooleanExtra("destroy_activity",false)
+        if(shouldDestroy == true) {
+            closeActivity()
+        }
         startTimer()
-
     }
 
     private fun startTimer() {
@@ -66,15 +71,15 @@ class IncomingNotificationActivity : AppCompatActivity() {
     private fun closeActivity() {
         finishAndRemoveTask()
     }
-    fun declineCall(v:View) {
+     fun declineCall(v:View) {
         val intent = Intent(Utils.context, CallingRemoteService::class.java).apply {
             action = SERVICE_ACTION_INCOMING_CALL_DECLINE
         }
         Utils.context?.startService(intent)
-        finishAndRemoveTask()
+         closeActivity()
     }
 
-    fun acceptCall(v: View) {
+     fun acceptCall(v: View) {
         val destination = "com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity"
         val intent = Intent()
         intent.apply {
@@ -91,5 +96,13 @@ class IncomingNotificationActivity : AppCompatActivity() {
         super.onPause()
         if(wl?.isHeld == true) wl.release()
         if(wlCpu?.isHeld == true) wlCpu.release()
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        val shouldDestroy = intent?.getBooleanExtra("destroy_activity",false)
+        if(shouldDestroy == true){
+           closeActivity()
+        }
     }
 }

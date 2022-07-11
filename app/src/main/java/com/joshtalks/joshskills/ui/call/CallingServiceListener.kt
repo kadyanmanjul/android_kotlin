@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.ui.call
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.base.constants.CALLING_SERVICE_ACTION
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_API_HEADER
@@ -18,13 +19,14 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.voipLog
 import com.joshtalks.joshskills.voip.data.CallingRemoteService
 
+private const val TAG = "CallingServiceReceiver"
 class CallingServiceReceiver : BroadcastReceiver() {
 
     override fun onReceive(p0: Context?, p1: Intent?) {
         if (p1?.action == CALLING_SERVICE_ACTION) {
             when (p1.getBooleanExtra(SERVICE_BROADCAST_KEY, false)) {
                 true -> {
-                    voipLog?.log("onReceive: start service")
+                    Log.d(TAG, "onReceive: start service")
                     val remoteServiceIntent =
                         Intent(
                             AppObjectController.joshApplication,
@@ -45,7 +47,7 @@ class CallingServiceReceiver : BroadcastReceiver() {
                     AppObjectController.joshApplication.startService(remoteServiceIntent)
                 }
                 false -> {
-                    voipLog?.log("onReceive: stop service")
+                    Log.d(TAG, "onReceive: stop service")
                     val remoteServiceIntent =
                         Intent(
                             AppObjectController.joshApplication,

@@ -107,7 +107,6 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import timber.log.Timber
 
-
 const val RTC_TOKEN_KEY = "token"
 const val RTC_CHANNEL_KEY = "channel_name"
 const val RTC_UID_KEY = "uid"
@@ -1873,7 +1872,8 @@ class WebRtcService : BaseWebRtcService() {
 
     private fun removeNotifications() {
         try {
-            mNotificationManager?.cancelAll()
+            mNotificationManager?.cancel(ACTION_NOTIFICATION_ID)
+            mNotificationManager?.cancel(INCOMING_CALL_NOTIFICATION_ID)
             stopForeground(true)
             addMissCallNotification()
         } catch (ex: Exception) {
@@ -2314,7 +2314,8 @@ class WebRtcService : BaseWebRtcService() {
 
     private fun conversationRoomNotification(): Notification {
         Timber.tag(TAG).e("actionNotification  ")
-        mNotificationManager?.cancelAll()
+        mNotificationManager?.cancel(ACTION_NOTIFICATION_ID)
+        mNotificationManager?.cancel(INCOMING_CALL_NOTIFICATION_ID)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val notificationChannelName: CharSequence = "Voip Call Status"
             val mChannel = NotificationChannel(
@@ -2457,7 +2458,6 @@ class WebRtcService : BaseWebRtcService() {
                                         data[RTC_CHANNEL_KEY] = newChannel
                                         data[RTC_TOKEN_KEY] = token
                                         data[RTC_UID_KEY] = uid
-                                        Log.e("Sagar", "callStatusNetworkApi: sagar $fppDialogeFlag $newChannel $token")
                                         val oldState = CurrentCallDetails.state()
                                         VoipAnalytics.push(
                                             VoipAnalytics.Event.RECEIVE_TIMER_STOP,

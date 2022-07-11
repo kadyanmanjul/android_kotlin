@@ -3,49 +3,60 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".ui.voip.new_arch.ui.views.CallFragment">
-<data>
-    <import type="android.view.View"/>
-    <import type="com.joshtalks.joshskills.base.constants.ConstantsKt"/>
-    <import type="com.joshtalks.joshskills.voip.data.RecordingButtonState" />
-    <variable
-        name="vm"
-        type="com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.VoiceCallViewModel" />
-</data>
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <import type="com.joshtalks.joshskills.R" />
+
+        <import type="com.joshtalks.joshskills.base.constants.ConstantsKt" />
+
+        <import type="com.joshtalks.joshskills.voip.data.RecordingButtonState" />
+
+        <import type="com.joshtalks.joshskills.voip.Utils" />
+
+        <variable
+            name="vm"
+            type="com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.VoiceCallViewModel" />
+
+        <variable
+            name="callFragment"
+            type="com.joshtalks.joshskills.ui.voip.new_arch.ui.views.CallFragment" />
+    </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/container"
-        setCallBackground="@{vm.uiState.type}"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="#0D5CB8"
         android:fitsSystemWindows="true"
-        android:orientation="vertical"
-        android:background="#0D5CB8">
+        android:orientation="vertical">
 
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/topic_viewpager"
+            setViewPagerAdapter="@{vm.uiState.topicImage}"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:padding="@dimen/_5sdp"
             android:layout_margin="@dimen/_10sdp"
-            setViewPagerAdapter="@{vm.uiState.topicImage}"
+            android:padding="@dimen/_5sdp"
             app:layout_constraintBottom_toTopOf="@+id/bottom_card_view"
             app:layout_constraintEnd_toStartOf="@+id/guideline5"
             app:layout_constraintStart_toStartOf="@+id/guideline4"
             app:layout_constraintTop_toBottomOf="@+id/topic_header" />
 
         <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/next_topic_btn"
             android:layout_width="@dimen/_30sdp"
             android:layout_height="@dimen/_30sdp"
-            android:id="@+id/next_topic_btn"
             android:layout_margin="@dimen/_10sdp"
-            android:onClick="@{vm::getNewTopicImage}"
-            app:layout_constraintBottom_toBottomOf="@+id/topic_viewpager"
-            app:layout_constraintEnd_toEndOf="@+id/topic_viewpager"
             android:background="@drawable/circle2"
             android:backgroundTint="@color/topic_btn_blue"
-            app:srcCompat = "@drawable/ic_arrow_back"
+            android:onClick="@{vm::getNewTopicImage}"
             android:rotation="180"
-            />
+            app:layout_constraintBottom_toBottomOf="@+id/topic_viewpager"
+            app:layout_constraintEnd_toEndOf="@+id/topic_viewpager"
+            app:srcCompat="@drawable/ic_arrow_back" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tv_group_name"
@@ -71,6 +82,7 @@
             android:id="@+id/caller_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/_5sdp"
             android:gravity="center"
             android:text='@{vm.uiState.startTime &lt;= 0 ? "" :  vm.uiState.name}'
             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Normal"
@@ -81,7 +93,6 @@
             app:layout_constraintStart_toStartOf="@+id/guideline4"
             app:layout_constraintTop_toBottomOf="@id/c_image"
             app:layout_constraintVertical_bias="0.113"
-            android:layout_marginBottom="@dimen/_5sdp"
             tools:ignore="MissingPrefix"
             tools:text="User Name" />
 
@@ -92,19 +103,20 @@
             android:layout_marginLeft="@dimen/_10sdp"
             android:layout_marginRight="@dimen/_10sdp"
             android:gravity="center"
+            android:lines="2"
+            android:text="@{vm.uiState.occupation}"
+            android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
             android:textColor="@color/white"
             android:textSize="@dimen/_14ssp"
-            android:textAlignment="center"
             android:visibility='@{vm.uiState.occupation.equals("")  ? View.GONE : View.VISIBLE}'
-            android:text="@{vm.uiState.occupation}"
-            android:lines="2"
-            app:layout_constraintTop_toBottomOf="@+id/caller_name"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/caller_name"
             tools:ignore="MissingPrefix"
-            tools:visibility="gone"
-            tools:text="Engineer, Dream - IAS Officer" />
+            tools:text="Engineer, Dream - IAS Officer"
+            tools:visibility="gone" />
+
         <TextView
             android:id="@+id/call_time"
             android:layout_width="wrap_content"
@@ -141,15 +153,15 @@
             android:id="@+id/record_call_cardview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="93dp"
             android:layout_marginTop="7.81dp"
             android:layout_marginBottom="7.81dp"
-            android:visibility="@{vm.uiState.recordingButtonState != RecordingButtonState.IDLE  ? View.VISIBLE : View.INVISIBLE}"
+            android:visibility="gone"
+            app:cardCornerRadius="93dp"
+            app:layout_constraintBottom_toTopOf="@id/topic_header"
             app:layout_constraintEnd_toEndOf="@+id/call_time1"
             app:layout_constraintStart_toStartOf="@+id/call_time1"
             app:layout_constraintTop_toBottomOf="@id/call_time1"
-            app:layout_constraintBottom_toTopOf="@id/topic_header"
-            >
+            tools:visibility="gone">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -169,22 +181,22 @@
                     android:layout_marginLeft="7.65dp"
                     android:layout_marginRight="7.65dp"
                     android:text="@{vm.uiState.recordCrdViewTxt}"
-                    tools:text="Waiting for your partner to accept"
                     android:textColor="@color/white"
-                    android:textSize="12sp" />
+                    android:textSize="12sp"
+                    tools:text="Waiting for your partner to accept" />
 
                 <Chronometer
                     android:id="@+id/call_time2"
                     startTimer="@{vm.uiState.recordTime}"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="12sp"
                     android:gravity="center"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
                     android:textColor="@color/white"
-                    tools:visibility="gone"
+                    android:textSize="12sp"
                     android:visibility='@{vm.uiState.recordingButtonState == RecordingButtonState.RECORDING ? View.VISIBLE : View.GONE}'
-                    tools:ignore="MissingPrefix" />
+                    tools:ignore="MissingPrefix"
+                    tools:visibility="gone" />
 
             </LinearLayout>
 
@@ -195,8 +207,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:barrierDirection="top"
-            app:layout_constraintTop_toBottomOf="@id/occupation_future_goals"
-            app:constraint_referenced_ids="call_time1,call_time" />
+            app:constraint_referenced_ids="call_time1,call_time"
+            app:layout_constraintTop_toBottomOf="@id/occupation_future_goals" />
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/c_image"
@@ -230,14 +242,15 @@
             app:layout_constraintTop_toBottomOf="@+id/record_call_cardview" />
 
         <com.google.android.material.card.MaterialCardView
+            android:id="@+id/bottom_card_view"
+            style="@style/CustomCardViewStyleNoBottomCorner"
+            setBottomCardBackground="@{vm.uiState.recordingButtonState != RecordingButtonState.RECORDING  ? false : true}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/bottom_card_view"
-            android:backgroundTint="@color/bottom_sheet_color"
-            style="@style/CustomCardViewStyleNoBottomCorner"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" >
+            app:layout_constraintStart_toStartOf="parent"
+            tools:backgroundTint="@color/bottom_sheet_color">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -271,9 +284,9 @@
                     android:focusable="true"
                     android:onClick="@{vm::switchSpeaker}"
                     android:padding="@dimen/_14sdp"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/btn_mute"
                     app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/btn_record_call"
                     app:layout_constraintTop_toTopOf="parent"
                     app:srcCompat="@drawable/ic_baseline_speaker_on" />
@@ -286,36 +299,36 @@
                     android:backgroundTint="@color/dis_color_10f"
                     android:clickable="true"
                     android:focusable="true"
-                    android:visibility="@{(vm.uiState.isRecordingEnabled &amp;&amp; vm.uiState.startTime > 0 ) ? View.VISIBLE : View.GONE }"
                     android:onClick="@{vm::recordCall}"
                     android:padding="@dimen/_14sdp"
-                    tools:visibility="visible"
+                    android:visibility="@{(vm.uiState.isRecordingEnabled &amp;&amp; ((vm.uiState.recordButtonPressedTwoTimes &lt; 2))) || (vm.uiState.recordingButtonState == RecordingButtonState.RECORDING) ? View.VISIBLE : View.GONE }"
+                    app:imageResource="@{vm.uiState.recordBtnImg}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/btn_speaker"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
-                    tools:src="@drawable/ic_rec_mic"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:imageResource="@{vm.uiState.recordBtnImg}" />
+                    tools:src="@drawable/ic_rec_mic"
+                    tools:visibility="visible" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/text_record_call"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
                     android:gravity="center"
                     android:paddingTop="@dimen/_4sdp"
                     android:text="@{vm.uiState.recordBtnTxt}"
-                    tools:text="Record"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                     android:textColor="@color/white"
-                    android:visibility="@{(vm.uiState.isRecordingEnabled &amp;&amp; vm.uiState.startTime > 0 ) ? View.VISIBLE : View.GONE }"
-                    tools:visibility="visible"
-                    android:layout_marginBottom="10dp"
+                    android:visibility="@{(vm.uiState.isRecordingEnabled &amp;&amp; ((vm.uiState.recordButtonPressedTwoTimes &lt; 2))) || (vm.uiState.recordingButtonState == RecordingButtonState.RECORDING) ? View.VISIBLE : View.GONE }"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="@+id/btn_record_call"
                     app:layout_constraintStart_toStartOf="@+id/btn_record_call"
                     app:layout_constraintTop_toBottomOf="@+id/btn_record_call"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    tools:ignore="MissingPrefix" />
+                    tools:ignore="MissingPrefix"
+                    tools:text="Record"
+                    tools:visibility="visible" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/txt_speaker"
@@ -387,8 +400,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:visibility="gone"
-            app:layout_constraintVertical_bias="0.43">
+            app:layout_constraintVertical_bias="0.43"
+            tools:visibility="gone">
 
             <com.google.android.material.progressindicator.CircularProgressIndicator
                 android:id="@+id/incoming_progress"
@@ -439,5 +452,147 @@
             android:orientation="vertical"
             app:layout_constraintGuide_percent="0.9" />
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/recording_ui"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/black_quiz"
+            android:visibility="@{vm.uiState.recordingButtonState == RecordingButtonState.RECORDING  ? View.VISIBLE : View.GONE}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:visibility="visible">
+
+            <LinearLayout
+                android:id="@+id/photo_frames_layout"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/_300sdp"
+                android:baselineAligned="false"
+                android:gravity="center_vertical"
+                android:weightSum="2"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <RelativeLayout
+                    android:id="@+id/local_user_background"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
+
+                    <ImageView
+                        setBackgroundForLocalUser="@{vm.uiState.startTime &lt;= 0 ? null : vm.uiState.localUserProfile}"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="fitXY"
+                        android:alpha="0.4"
+                        android:src="@drawable/local_user_default_image" />
+
+                    <FrameLayout
+                        android:layout_width="@dimen/_86sdp"
+                        android:layout_height="@dimen/_86sdp"
+                        android:layout_alignStart="@id/local_user_image"
+                        android:layout_alignTop="@id/local_user_image"
+                        android:layout_alignEnd="@id/local_user_image"
+                        android:layout_alignBottom="@+id/local_user_image"
+                        android:background="@drawable/circle2"
+                        android:backgroundTint="@color/green"
+                        android:visibility="@{vm.uiState.callerSpeaking ? View.VISIBLE : View.GONE}" />
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/local_user_image"
+                        setProfileImage="@{vm.uiState.startTime &lt;= 0 ? null : vm.uiState.localUserProfile}"
+                        android:layout_width="@dimen/_75sdp"
+                        android:layout_height="@dimen/_75sdp"
+                        android:layout_centerInParent="true"
+                        android:padding="@dimen/_4sdp"
+                        android:src="@drawable/ic_call_placeholder"
+                        tools:src="@drawable/local_user_default_image" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/local_user_name"
+                        setColorLocalUser='@{vm.uiState.callerSpeaking}'
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/local_user_image"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="@dimen/_13sdp"
+                        android:gravity="center"
+                        android:text='@{vm.uiState.startTime &lt;= 0 ? "" :  vm.uiState.localUserName}'
+                        android:textAlignment="center"
+                        android:textColor="@color/green"
+                        android:textStyle="bold"
+                        android:visibility="visible"
+                        tools:text="Shobhit" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
+
+                    <ImageView
+                        setBackgroundForRemoteUser="@{vm.uiState.startTime &lt;= 0 ? null : vm.uiState.profileImage}"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="fitXY"
+                        android:alpha="0.4"
+                        android:src="@drawable/remote_user_image" />
+
+                    <FrameLayout
+                        android:layout_width="@dimen/_86sdp"
+                        android:layout_height="@dimen/_86sdp"
+                        android:layout_alignStart="@id/remote_user_image"
+                        android:layout_alignTop="@id/remote_user_image"
+                        android:layout_alignEnd="@id/remote_user_image"
+                        android:layout_alignBottom="@+id/remote_user_image"
+                        android:background="@drawable/circle2"
+                        android:backgroundTint="@color/p2p_circle_yellow"
+                        android:visibility="@{vm.uiState.isCalleeSpeaking ? View.VISIBLE : View.GONE}" />
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/remote_user_image"
+                        setProfileImage="@{vm.uiState.startTime &lt;= 0 ? null : vm.uiState.profileImage}"
+                        android:layout_width="@dimen/_75sdp"
+                        android:layout_height="@dimen/_75sdp"
+                        android:layout_centerInParent="true"
+                        android:padding="@dimen/_4sdp"
+                        android:src="@drawable/ic_call_placeholder"
+                        tools:src="@drawable/remote_user_image" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/remote_user_name"
+                        setColorRemoteUser='@{vm.uiState.isCalleeSpeaking}'
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/remote_user_image"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="@dimen/_13sdp"
+                        android:gravity="center"
+                        android:text='@{vm.uiState.startTime &lt;= 0 ? "" :  vm.uiState.name}'
+                        android:textAlignment="center"
+                        android:textColor="@color/p2p_circle_yellow"
+                        android:textStyle="bold"
+                        android:visibility="visible"
+                        tools:text="Harsh" />
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/progress_bar_anim"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:elevation="@dimen/_10sdp"
+                android:rotation="90"
+                android:visibility="visible"
+                loadGif="@{vm.uiState.startTime &lt;= 0 ? null : `https://s3.ap-south-1.amazonaws.com/www.static.skills.com/animation.gif`}"
+                app:layout_constraintBottom_toBottomOf="@+id/photo_frames_layout"
+                app:layout_constraintEnd_toEndOf="@+id/photo_frames_layout"
+                app:layout_constraintStart_toStartOf="@+id/photo_frames_layout"
+                app:layout_constraintTop_toTopOf="@+id/photo_frames_layout" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

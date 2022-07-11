@@ -19,8 +19,8 @@ interface GroupChatDao {
     @Query("SELECT * FROM group_chat_db WHERE groupId = :id ORDER BY msgTime DESC")
     suspend fun getGroupMessage(id: String): List<ChatItem>
 
-    @Query("SELECT count(messageId) FROM group_chat_db WHERE groupId = :groupId")
-    suspend fun getChatCount(groupId: String): Int
+    @Query("SELECT count(messageId) FROM group_chat_db WHERE groupId = :groupId AND msgTime > :time")
+    suspend fun getChatCountByTime(groupId: String, time: Long): Int
 
     @Query("SELECT msgTime FROM group_chat_db WHERE groupId = :groupId AND messageId NOT LIKE 'unread%' ORDER BY msgTime ASC limit 1")
     suspend fun getLastMessageTime(groupId: String): Long?

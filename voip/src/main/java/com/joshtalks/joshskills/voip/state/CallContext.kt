@@ -131,6 +131,11 @@ data class CallContext(val callType: Category, val direction : CallDirection, va
         return mediator.stateChannel
     }
 
+    fun getSpeakerVolumePipe()  : Channel<Envelope<Event>> {
+        Log.d(TAG, "Get Stream Pipe ${mediator.stateChannel} - ${state}")
+        return mediator.speakerVolumeChannel
+    }
+
     fun sendMessageToServer(event : OutgoingData) {
         Log.d(TAG, "sendMessageToServer $event} - ${state}")
         mediator.sendEventToServer(event)

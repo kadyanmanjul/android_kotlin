@@ -246,5 +246,6 @@
     <color name="low_rating">#FDECEC</color>
     <color name="meduim_rating">#ECF4FD</color>
     <color name="high_rating">#F1FDEC</color>
+    <color name="p2p_circle_yellow">#FEF51C</color>
 
 </resources>

@@ -19,10 +19,8 @@ import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.PictureDrawable
 import android.graphics.drawable.VectorDrawable
-import android.media.AudioManager
+import android.media.*
 import android.media.AudioManager.STREAM_MUSIC
-import android.media.MediaMetadataRetriever
-import android.media.MediaPlayer
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.Uri
@@ -232,6 +230,16 @@ object Utils {
         }
     }
 
+    fun getLangPaymentTestIdFromTestId(testId: String): String =
+        when (testId) {
+            "1880" -> "1884"
+            "1881" -> "1888"
+            "1882" -> "1887"
+            "1889" -> "1890"
+            "1891" -> "1892"
+            "1897" -> "1898"
+            else -> "102"
+        }
 
     const val MEGABYTE = 1024L * 1024L
 
@@ -1123,23 +1131,27 @@ fun ImageView.setUserInitial(
     dpToPx: Int = 16,
     @ColorRes background: Int = R.color.button_color,
 ) {
-    val font = Typeface.createFromAsset(
-        AppObjectController.joshApplication.assets,
-        "fonts/OpenSans-SemiBold.ttf"
-    )
-    val drawable: TextDrawable = TextDrawable.builder()
-        .beginConfig()
-        .textColor(ContextCompat.getColor(AppObjectController.joshApplication, R.color.white))
-        .useFont(font)
-        .fontSize(Utils.dpToPx(dpToPx))
-        .toUpperCase()
-        .endConfig()
-        .buildRound(
-            getUserNameInShort(userName),
-            ContextCompat.getColor(AppObjectController.joshApplication, background)
+    try {
+        val font = Typeface.createFromAsset(
+            AppObjectController.joshApplication.assets,
+            "fonts/OpenSans-SemiBold.ttf"
         )
-    this.background = drawable
-    this.setImageDrawable(drawable)
+        val drawable: TextDrawable = TextDrawable.builder()
+            .beginConfig()
+            .textColor(ContextCompat.getColor(AppObjectController.joshApplication, R.color.white))
+            .useFont(font)
+            .fontSize(Utils.dpToPx(dpToPx))
+            .toUpperCase()
+            .endConfig()
+            .buildRound(
+                getUserNameInShort(userName),
+                ContextCompat.getColor(AppObjectController.joshApplication, background)
+            )
+        this.background = drawable
+        this.setImageDrawable(drawable)
+    }catch (ex:Exception){
+        ex.printStackTrace()
+    }
 }
 
 fun ImageView.setUserInitial(
@@ -1148,23 +1160,27 @@ fun ImageView.setUserInitial(
     background: Int = R.color.white,
     txtColor: Int = R.color.button_color
 ) {
-    val font = Typeface.createFromAsset(
-        AppObjectController.joshApplication.assets,
-        "fonts/OpenSans-SemiBold.ttf"
-    )
-    val drawable: TextDrawable = TextDrawable.builder()
-        .beginConfig()
-        .textColor(txtColor)
-        .useFont(font)
-        .fontSize(Utils.dpToPx(dpToPx))
-        .toUpperCase()
-        .endConfig()
-        .buildRound(
-            getUserNameInShort(userName),
-            ContextCompat.getColor(AppObjectController.joshApplication, background)
+    try {
+        val font = Typeface.createFromAsset(
+            AppObjectController.joshApplication.assets,
+            "fonts/OpenSans-SemiBold.ttf"
         )
-    this.background = drawable
-    this.setImageDrawable(drawable)
+        val drawable: TextDrawable = TextDrawable.builder()
+            .beginConfig()
+            .textColor(txtColor)
+            .useFont(font)
+            .fontSize(Utils.dpToPx(dpToPx))
+            .toUpperCase()
+            .endConfig()
+            .buildRound(
+                getUserNameInShort(userName),
+                ContextCompat.getColor(AppObjectController.joshApplication, background)
+            )
+        this.background = drawable
+        this.setImageDrawable(drawable)
+    }catch (ex:Exception){
+        ex.printStackTrace()
+    }
 }
 
 fun ImageView.setUserInitialInRect(
@@ -1174,24 +1190,28 @@ fun ImageView.setUserInitialInRect(
     textColor: Int = R.color.white,
     bgColor: Int = R.color.button_color
 ) {
-    val font = Typeface.createFromAsset(
-        AppObjectController.joshApplication.assets,
-        "fonts/OpenSans-SemiBold.ttf"
-    )
-    val drawable: TextDrawable = TextDrawable.builder()
-        .beginConfig()
-        .textColor(ContextCompat.getColor(AppObjectController.joshApplication, textColor))
-        .useFont(font)
-        .fontSize(Utils.dpToPx(dpToPx))
-        .toUpperCase()
-        .endConfig()
-        .buildRoundRect(
-            getUserNameInShort(userName),
-            ContextCompat.getColor(AppObjectController.joshApplication, bgColor),
-            radius
+    try {
+        val font = Typeface.createFromAsset(
+            AppObjectController.joshApplication.assets,
+            "fonts/OpenSans-SemiBold.ttf"
         )
-    this.background = drawable
-    this.setImageDrawable(drawable)
+        val drawable: TextDrawable = TextDrawable.builder()
+            .beginConfig()
+            .textColor(ContextCompat.getColor(AppObjectController.joshApplication, textColor))
+            .useFont(font)
+            .fontSize(Utils.dpToPx(dpToPx))
+            .toUpperCase()
+            .endConfig()
+            .buildRoundRect(
+                getUserNameInShort(userName),
+                ContextCompat.getColor(AppObjectController.joshApplication, bgColor),
+                radius
+            )
+        this.background = drawable
+        this.setImageDrawable(drawable)
+    }catch (ex:Exception){
+        ex.printStackTrace()
+    }
 }
 
 fun ImageView.setUserImageOrInitials(

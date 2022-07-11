@@ -90,7 +90,9 @@ class FavoriteCallerViewModel : BaseViewModel() {
                     }
                 }
             } catch (ex: Throwable) {
-                progressAndEmptyCardVisibility(isProgress = false, isEmptyCard = true)
+                if (adapter.itemCount <= 0) {
+                    progressAndEmptyCardVisibility(isProgress = true, isEmptyCard = true)
+                }
                 showToast("An error occurred while fetching data")
                 ex.printStackTrace()
             }
@@ -104,11 +106,15 @@ class FavoriteCallerViewModel : BaseViewModel() {
                 if (list.isEmpty()) {
                     return@launch
                 }
-                val requestParams: HashMap<String, List<Int>> = HashMap()
-                requestParams["mentor_ids"] = list
-                val response = favoriteCallerRepository.removeUserFormFppLit(requestParams)
-                if (response.isSuccessful) {
-                    favoriteCallerDao.removeFromFavorite(list)
+                if (Utils.isInternetAvailable()){
+                    val requestParams: HashMap<String, List<Int>> = HashMap()
+                    requestParams["mentor_ids"] = list
+                    val response = favoriteCallerRepository.removeUserFormFppLit(requestParams)
+                    if (response.isSuccessful) {
+                        favoriteCallerDao.removeFromFavorite(list)
+                    }
+                }else{
+                    showToast("No Internet Connection")
                 }
             } catch (ex: Exception) {
                 ex.printStackTrace()

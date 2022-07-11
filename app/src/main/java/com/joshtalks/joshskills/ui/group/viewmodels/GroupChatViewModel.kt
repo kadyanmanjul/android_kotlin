@@ -12,6 +12,7 @@ import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.lifecycle.viewModelScope
 import androidx.paging.ExperimentalPagingApi
+import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.recyclerview.widget.RecyclerView
 
@@ -30,6 +31,7 @@ import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics
 import com.joshtalks.joshskills.ui.group.constants.*
 import com.joshtalks.joshskills.ui.group.lib.ChatService
 import com.joshtalks.joshskills.ui.group.lib.PubNubService
+import com.joshtalks.joshskills.ui.group.model.ChatItem
 import com.joshtalks.joshskills.ui.group.model.GroupJoinRequest
 import com.joshtalks.joshskills.ui.group.model.GroupMember
 import com.joshtalks.joshskills.ui.group.model.LeaveGroupRequest
@@ -43,6 +45,7 @@ import com.pubnub.api.models.consumer.push.payload.PushPayloadHelper
 import de.hdodenhof.circleimageview.CircleImageView
 
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.internal.concat
@@ -425,7 +428,42 @@ class GroupChatViewModel : BaseViewModel() {
     }
 
     @ExperimentalPagingApi
-    fun getChatData() = repository.getGroupChatListResult(groupId).flow.cachedIn(viewModelScope)
+    fun getChatData(): Flow<PagingData<ChatItem>> {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val startTime = getFetchStartTime(groupId).times(10000)
+
+                if (startTime > 0 && chatService.getUnreadMessageCount(groupId, startTime) > repository.getChatCount(groupId, startTime))
+                    repository.getRecentTimeToken(groupId)?.let {
+                        repository.fetchUnreadMessage(startTime, groupId)
+                    }
+            } catch (e: Exception) {
+                setFetchTimeInPref(groupId, dateStartOfDay().time)
+            }
+        }
+        return repository.getGroupChatListResult(groupId).flow.cachedIn(viewModelScope)
+    }
+
+    private fun getFetchStartTime(groupId: String): Long {
+        val timeMap = PrefManager.getPrefMap(GROUP_CHAT_CHECK_TIMES) ?: mutableMapOf()
+        val lastTimeChecked = (timeMap[groupId] as Double?)?.toLong() ?: 0L
+
+        setFetchTimeInPref(groupId)
+
+        if (dateStartOfDay().time > lastTimeChecked) {
+            return dateStartOfDay().time
+        } else if (PrefManager.getLongValue(GROUP_SUBSCRIBE_TIME) > lastTimeChecked) {
+            return lastTimeChecked
+        }
+
+        return -1
+    }
+
+    private fun setFetchTimeInPref(groupId: String, time: Long = System.currentTimeMillis()) {
+        val timeMap = PrefManager.getPrefMap(GROUP_CHAT_CHECK_TIMES) ?: mutableMapOf()
+        timeMap[groupId] = time
+        PrefManager.putPrefObject(GROUP_CHAT_CHECK_TIMES, timeMap)
+    }
 
     //TODO: Refactor loading code (if conditions)
     fun getGroupInfo(showLoading: Boolean = true) {
@@ -492,8 +530,10 @@ class GroupChatViewModel : BaseViewModel() {
             )
             scrollToEnd = true
             viewModelScope.launch(Dispatchers.IO) {
-                if (shouldSendNotification(groupId))
+                if (shouldSendNotification(groupId)) {
                     chatService.sendGroupNotification(groupId, getNotification(msg))
+                    GroupAnalytics.push(GroupAnalytics.Event.NOTIFICATION_SENT, groupId)
+                }
                 if (repository.checkIfFirstMsg(groupId))
                     pushTimeMetaMessage(groupId)
                 chatService.sendMessage(groupId, message)
@@ -531,7 +571,8 @@ class GroupChatViewModel : BaseViewModel() {
                     mapOf(
                         Pair("is_group", "true"),
                         Pair("action", "open_group_chat_client"),
-                        Pair("action_data", Mentor.getInstance().getId())
+                        Pair("action_data", Mentor.getInstance().getId()),
+                        Pair("group_id", groupId)
                     )
                 )
         }
@@ -568,16 +609,26 @@ class GroupChatViewModel : BaseViewModel() {
     }
 
     fun removeFpp(uId: Int) {
-        try {
-            viewModelScope.launch(Dispatchers.IO) {
-                repository.removeUserFormFppLit(uId)
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                if (Utils.isInternetAvailable()) {
+                    repository.removeUserFormFppLit(uId)
+                    withContext(Dispatchers.Main) {
+                        message.what = REMOVE_GROUP_AND_CLOSE
+                        message.obj = groupId
+                        singleLiveEvent.value = message
+                        repository.startChatEventListener()
+                    }
+                } else {
+                    withContext(Dispatchers.Main) {
+                        showToast("No Internet Connection")
+                    }
+                }
+            } catch (ex: Exception) {
                 withContext(Dispatchers.Main) {
-                    message.what = REMOVE_GROUP_AND_CLOSE
-                    message.obj = groupId
-                    singleLiveEvent.value = message
-                    repository.startChatEventListener()
+                    showToast("Error removing user from FPP")
                 }
             }
-        } catch (ex: Exception) { }
+        }
     }
 }

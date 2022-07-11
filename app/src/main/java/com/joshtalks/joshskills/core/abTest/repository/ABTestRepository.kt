@@ -110,7 +110,7 @@ class ABTestRepository {
                 MixPanelTracker.mixPanel.people.set(prop)
             }
         } catch (ex: Throwable) {
-            ex.showAppropriateMsg()
+            ex.printStackTrace()
         }
     }
 

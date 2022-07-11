@@ -7,6 +7,9 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.CURRENT_COURSE_ID
+import com.joshtalks.joshskills.core.DEFAULT_COURSE_ID
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.analytics.ParamKeys
@@ -74,7 +77,7 @@ class RecentCallsAdapter(var items: List<RecentCall> = listOf()) :
 
         fun initView(recentCall: RecentCall) {
             with(binding) {
-                if (!isFreeTrial){
+                if (!isFreeTrial) {
                     when (recentCall.fppRequestStatus) {
                         SENT_REQUEST -> {
                             setBtnVisibilityAndText(

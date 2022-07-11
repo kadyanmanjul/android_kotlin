@@ -27,16 +27,21 @@ import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import java.util.*
 import kotlinx.android.synthetic.main.fragment_sign_up_profile.*
 
-class SignUpProfileForFreeTrialFragment(name: String,isVerified:Boolean) : BaseSignUpFragment() {
+class SignUpProfileForFreeTrialFragment : BaseSignUpFragment() {
 
     private lateinit var viewModel: SignUpViewModel
     private lateinit var binding: FragmentSignUpProfileForFreeTrialBinding
-    private var username = name
-    private var isUserVerified = isVerified
+    private var username = EMPTY
+    private var isUserVerified = false
     private var isNameEntered = false
 
     companion object {
-        fun newInstance(name: String,isVerified:Boolean) = SignUpProfileForFreeTrialFragment(name,isVerified)
+        fun newInstance(name: String, isVerified: Boolean) = SignUpProfileForFreeTrialFragment().apply {
+            arguments = Bundle().apply {
+                username = name
+                isUserVerified = isVerified
+            }
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

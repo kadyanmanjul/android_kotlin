@@ -23,6 +23,8 @@ internal interface CallServiceMediator {
     suspend fun handleIncomingCall(map: HashMap<String, String>)
     // Needed to hide Notification
     fun hideIncomingCall()
+    fun declineIncomingCall()
+
     // Needed to receive User Action
     fun userAction(action: UserAction)
     // Used to destroy Mediator

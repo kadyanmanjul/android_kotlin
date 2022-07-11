@@ -23,6 +23,7 @@ import com.joshtalks.joshskills.core.firestore.NotificationAnalyticsRequest
 import com.joshtalks.joshskills.core.getStethoInterceptor
 import com.joshtalks.joshskills.core.notification.NotificationUtils
 import com.joshtalks.joshskills.repository.local.AppDatabase
+import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.NotificationObject
 import com.joshtalks.joshskills.repository.service.UtilsAPIService
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
@@ -110,7 +111,7 @@ class BackgroundService : Service() {
     private fun fetchMissedNotifications() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val notifications = apiService.getMissedNotifications().body()
+                val notifications = apiService.getMissedNotifications(Mentor.getInstance().getId()).body()
                 if (notifications?.isNotEmpty() == true) {
                     for (item in notifications) {
                         val notificationTypeToken: Type = object : TypeToken<NotificationObject>() {}.type
@@ -201,7 +202,7 @@ class BackgroundService : Service() {
                         notificationDao.updateSyncStatus(it.notificationId)
                     } catch (e: Exception) {
                         if (e is HttpException) {
-                            if (e.code() == 501)
+                            if (e.code() == 400)
                                 notificationDao.updateSyncStatus(it.notificationId)
                         }
                         e.printStackTrace()

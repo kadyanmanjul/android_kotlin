@@ -23,10 +23,6 @@ class SignUpProfilePicUpdateFragment : BaseSignUpFragment() {
         fun newInstance() = SignUpProfilePicUpdateFragment()
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -40,14 +36,14 @@ class SignUpProfilePicUpdateFragment : BaseSignUpFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.addPhoto.text=
+        binding.addPhoto.text = AppObjectController.getFirebaseRemoteConfig().getString(FirebaseRemoteConfigKey.ADD_PROFILE_PHOTO)
+        binding.addPhotoText.text =
             AppObjectController.getFirebaseRemoteConfig()
-                .getString(FirebaseRemoteConfigKey.ADD_PROFILE_PHOTO)
-        binding.addPhotoText.text=
-            AppObjectController.getFirebaseRemoteConfig()
-                .getString(FirebaseRemoteConfigKey.ADD_PROFILE_PHOTO_TEXT + PrefManager.getStringValue(
-                    CURRENT_COURSE_ID , defaultValue = PrefManager.getStringValue(DEFAULT_COURSE_ID)))
-
+                .getString(
+                    FirebaseRemoteConfigKey.ADD_PROFILE_PHOTO_TEXT + PrefManager.getStringValue(
+                        CURRENT_COURSE_ID, defaultValue = DEFAULT_COURSE_ID
+                    )
+                )
     }
 
     fun submitProfilePic() {
@@ -69,5 +65,4 @@ class SignUpProfilePicUpdateFragment : BaseSignUpFragment() {
             .addUserDetails()
             .push()
     }
-
 }

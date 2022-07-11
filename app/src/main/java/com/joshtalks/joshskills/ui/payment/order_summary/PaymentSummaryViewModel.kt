@@ -7,6 +7,7 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.EXPLORE_TYPE
@@ -248,8 +249,10 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
                     val response: OrderDetailResponse = paymentDetailsResponse.body()!!
                     mPaymentDetailsResponse.postValue(response)
                     MarketingAnalytics.initPurchaseEvent(data, response)
-                } else if (paymentDetailsResponse.code() == 501) {
+                } else if (paymentDetailsResponse.code() == 400) {
                     showToast("Course already exists with this mobile number. Please login with the entered phone number!", Toast.LENGTH_LONG)
+                } else {
+                    showToast(AppObjectController.joshApplication.getString(R.string.something_went_wrong))
                 }
                 viewState?.postValue(ViewState.PROCESSED)
             } catch (ex: Exception) {

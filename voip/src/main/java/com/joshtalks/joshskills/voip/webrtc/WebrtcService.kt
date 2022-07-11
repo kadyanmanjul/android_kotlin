@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.voip.webrtc
 
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 
 internal interface WebrtcService {
@@ -11,6 +12,7 @@ internal interface WebrtcService {
     fun onDestroy()
     fun onStartRecording()
     fun onStopRecording()
+    fun observeSpeakersVolume() : SharedFlow<Int>
 }
 
 internal interface CallRequest {

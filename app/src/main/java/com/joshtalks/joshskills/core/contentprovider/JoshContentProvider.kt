@@ -5,8 +5,6 @@ import android.content.ContentValues
 import android.database.Cursor
 import android.database.MatrixCursor
 import android.net.Uri
-import android.os.Build
-import android.os.Bundle
 import android.util.Log
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.base.constants.*
@@ -15,18 +13,14 @@ import com.joshtalks.joshskills.base.model.ApiHeader
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.call.data.local.VoipPref
-import com.joshtalks.joshskills.ui.video_player.DURATION
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.voipLog
-import com.joshtalks.joshskills.voip.constant.IDLE
-import com.joshtalks.joshskills.voip.constant.LEAVING
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
+import java.lang.Exception
 
 private const val TAG = "JoshContentProvider"
 
@@ -88,20 +82,79 @@ class JoshContentProvider : ContentProvider() {
                 cursor.addRow(arrayOf(PrefManager.getStringValue(CURRENT_COURSE_ID,false, DEFAULT_COURSE_ID)))
                 return cursor
             }
+
+            IS_COURSE_BOUGHT_OR_FREE_TRIAL -> {
+                val cursor = MatrixCursor(arrayOf(FREE_TRIAL_OR_COURSE_BOUGHT_COLUMN))
+                val shouldHaveTapAction = when {
+                    PrefManager.getBoolValue(IS_COURSE_BOUGHT) -> {
+                        true
+                    }
+                    PrefManager.getBoolValue(IS_FREE_TRIAL, defValue = false) -> {
+                        !PrefManager.getBoolValue(IS_FREE_TRIAL_ENDED, defValue = true)
+                    }
+                    else -> {
+                        false
+                    }
+                }
+                Log.d(TAG, "query:IS_COURSE_BOUGHT_OR_FREE_TRIAL ${PrefManager.getBoolValue(IS_COURSE_BOUGHT)} ${PrefManager.getBoolValue(IS_FREE_TRIAL, defValue = false)} $shouldHaveTapAction")
+                cursor.addRow(arrayOf(shouldHaveTapAction.toString()))
+                return cursor
+            }
+
+            MENTOR_NAME -> {
+                val cursor = MatrixCursor(arrayOf(MENTOR_NAME_COLUMN))
+                if (PrefManager.getStringValue(USER_NAME)!= EMPTY)
+                    cursor.addRow(arrayOf(PrefManager.getStringValue(USER_NAME)))
+                else
+                    cursor.addRow(arrayOf(User.getInstance().firstName))
+                return cursor
+            }
+            MENTOR_PROFILE -> {
+                val cursor = MatrixCursor(arrayOf(MENTOR_PROFILE_COLUMN))
+                if (PrefManager.getStringValue(USER_PROFILE)!= EMPTY)
+                    cursor.addRow(arrayOf(PrefManager.getStringValue(USER_PROFILE)))
+                else
+                    cursor.addRow(arrayOf(User.getInstance().photo))
+                return cursor
+            }
+            RECORDING_TEXT -> {
+                val cursor = MatrixCursor(arrayOf(RECORDING_TEXT_COLUMN))
+                val toastText  = AppObjectController.getFirebaseRemoteConfig().getString("RECORDING_SAVED_TEXT")
+                cursor.addRow(arrayOf(toastText))
+                return cursor
+            }
+            RECORD_VIDEO_URI -> {
+                val cursor = MatrixCursor(arrayOf(VIDEO_COLUMN))
+                AppDirectory.videoSentFile().let { file ->
+                    cursor.addRow(arrayOf(file.absolutePath))
+                }
+                return cursor
+            }
             NOTIFICATION_DATA -> {
                 val cursor =
                     MatrixCursor(arrayOf(NOTIFICATION_TITLE_COLUMN, NOTIFICATION_SUBTITLE_COLUMN,
                         NOTIFICATION_LESSON_COLUMN))
-                val word = AppObjectController.appDatabase.lessonQuestionDao().getRandomWord()
-                Log.d(TAG, "query: Word ---> ${word.filter { it.word != null }}")
-                cursor.addRow(
-                    arrayOf(
-                        word.last { it.word != null }.word?: "Undertake",
-                        "Practice word of the day",
-                        word.last { it.word != null }.lessonId?: 21,
+                try{
+                    val word = AppObjectController.appDatabase.lessonQuestionDao().getRandomWord()
+                    Log.d(TAG, "query: Word ---> ${word.filter { it.word != null }}")
+                    cursor.addRow(
+                        arrayOf(
+                            word.last { it.word != null }.word?: "Appreciate",
+                            "Practice word of the day",
+                            word.last { it.word != null }.lessonId?: -1,
                         )
-                )
-                return cursor
+                    )
+                    return cursor
+                }catch (e : Exception){
+                    cursor.addRow(
+                        arrayOf(
+                            "Appreciate",
+                            "Practice word of the day",
+                             -1,
+                        )
+                    )
+                    return cursor
+                }
             }
         }
         return null

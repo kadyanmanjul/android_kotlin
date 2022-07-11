@@ -122,3 +122,8 @@ class DeepLinkUtil(private val context: Context) {
         CERTIFICATE
     }
 }
+
+enum class DeepLinkImpression {
+    REFERRAL,
+    REDIRECT_,
+}

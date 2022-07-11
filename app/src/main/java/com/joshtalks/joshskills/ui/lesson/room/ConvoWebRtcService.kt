@@ -1,12 +1,18 @@
 package com.joshtalks.joshskills.ui.lesson.room
 
 import android.annotation.SuppressLint
-import android.app.*
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ServiceInfo
 import android.media.AudioManager
-import android.os.*
+import android.os.Binder
+import android.os.Build
+import android.os.IBinder
 import android.telephony.PhoneStateListener
 import android.telephony.TelephonyManager
 import android.util.Log
@@ -16,7 +22,13 @@ import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.conversationRoom.liveRooms.ConversationLiveRoomActivity
 import com.joshtalks.joshskills.conversationRoom.model.JoinConversionRoomRequest
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
+import com.joshtalks.joshskills.core.HAS_SEEN_CONVO_ROOM_POINTS
+import com.joshtalks.joshskills.core.JoshSkillExecutors
+import com.joshtalks.joshskills.core.PREF_IS_CONVERSATION_ROOM_ACTIVE
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.startServiceForWebrtc
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.ConvoRoomPointsEventBus
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -29,16 +41,23 @@ import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.joshtalks.joshskills.ui.voip.util.TelephonyUtil
 import com.joshtalks.joshskills.ui.voip.util.WebRtcAudioManager
 import io.agora.rtc.Constants
-import io.agora.rtc.Constants.*
+import io.agora.rtc.Constants.AUDIENCE_LATENCY_LEVEL_LOW_LATENCY
+import io.agora.rtc.Constants.AUDIENCE_LATENCY_LEVEL_ULTRA_LOW_LATENCY
+import io.agora.rtc.Constants.AUDIO_PROFILE_SPEECH_STANDARD
+import io.agora.rtc.Constants.AUDIO_SCENARIO_GAME_STREAMING
+import io.agora.rtc.Constants.CLIENT_ROLE_AUDIENCE
+import io.agora.rtc.Constants.CLIENT_ROLE_BROADCASTER
+import io.agora.rtc.Constants.USER_OFFLINE_QUIT
 import io.agora.rtc.IRtcEngineEventHandler
 import io.agora.rtc.RtcEngine
 import io.agora.rtc.models.ChannelMediaOptions
 import io.agora.rtc.models.ClientRoleOptions
-import kotlinx.coroutines.*
-import timber.log.Timber
 import java.lang.ref.WeakReference
-import java.util.*
 import java.util.concurrent.ExecutorService
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import timber.log.Timber
 
 const val ROOM_RTC_USER_UID_KEY = "room_user_uid"
 const val ROOM_RTC_MODERATOR_UID_KEY = "room_moderator_uid"
@@ -601,7 +620,8 @@ class ConvoWebRtcService : Service() {
 
     private fun removeNotifications() {
         try {
-            mNotificationManager?.cancelAll()
+            mNotificationManager?.cancel(ROOM_CALL_NOTIFICATION_ID)
+            mNotificationManager?.cancel(INCOMING_CALL_NOTIFICATION_ID)
             stopForeground(true)
         } catch (ex: Exception) {
             ex.printStackTrace()

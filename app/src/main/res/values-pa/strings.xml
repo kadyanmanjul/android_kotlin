@@ -12,7 +12,6 @@
     <string name="downloading_complete">ਡਾਊਨਲੋਡ ਪੂਰਾ ਹੋਇਆ</string>
     <string name="not_now">Not Now</string>
     <string name="not_now_underline"><u>Not Now</u></string>
-    <string name="settings">ਸੈਟਿੰਗਾਂ</string>
     <string name="header_congratulation">ਵਧਾਈਆਂ</string>
     <string name="name">ਨਾਮ</string>
     <string name="email">ਈ - ਮੇਲ</string>
@@ -209,7 +208,6 @@
     <string name="referral_success_info">ਤੁਹਾਨੂੰ ਤੁਹਾਡੇ ਦੋਸਤ %s ਦੁਆਰਾ ਰੈਫਰ ਕੀਤਾ ਗਿਆ ਹੈ</string>
     <string name="referral_success_info2">ਅਤੇ ਤੁਹਾਨੂੰ ਆਪਣੇ ਪਹਿਲੇ ਕੋਰਸ &amp;#39;ਤੇ ₹ 50 ਦੀ ਛੋਟ ਮਿਲਦੀ ਹੈ।</string>
     <string name="page_number">"ਪੰਨਾ %s / %s"</string>
-    <string name="help">"ਮਦਦ ਕਰੋ "</string>
     <string name="close">"ਰੋਕੋ "</string>
     <string name="show_details">Show Details</string>
     <string name="coupon_applied_free_course">ਕੂਪਨ ਲਾਗੂ ਕੀਤਾ ਗਿਆ! ਤੁਹਾਨੂੰ ਇਹ ਕੋਰਸ ਮੁਫਤ ਵਿੱਚ ਮਿਲਿਆ ਹੈ। ਹੁਣੇ ਦਰਜ ਕਰਵਾਓ</string>
@@ -279,7 +277,6 @@
     <string name="add_this">Add This</string>
     <string name="delete_media_title">"ਕਲੀਅਰ ਕੋਰਸ ਮੀਡੀਆ"</string>
     <string name="delete_media_message">ਕੀ ਤੁਸੀਂ ਯਕੀਨੀ ਤੌਰ &amp;#39;ਤੇ ਇਸ ਕੋਰਸ ਤੋਂ ਸਾਰੇ ਮੀਡੀਆ ਨੂੰ ਹਟਾਉਣਾ ਚਾਹੁੰਦੇ ਹੋ?</string>
-    <string name="referral">"ਰੈਫਰਲ"</string>
     <string name="reminders">"ਰਿਮਾਈਂਡਰ"</string>
     <string name="set_reminder">"ਰੀਮਾਈਂਡਰ ਸੈੱਟ ਕਰੋ"</string>
     <string name="add_reminder">"ਰੀਮਾਈਂਡਰ ਸ਼ਾਮਲ ਕਰੋ"</string>
@@ -310,7 +307,6 @@
     <string name="topic_for_pp">ਤੁਸੀਂ ਇਸ ਵਿਸ਼ੇ &amp;#39;ਤੇ ਆਪਣੇ ਸਾਥੀ ਨਾਲ ਗੱਲ ਕਰ ਸਕਦੇ ਹੋ</string>
     <string name="call_permission_message">%s ਨਾਲ ਇਸ ਕਾਲ ਦਾ ਜਵਾਬ ਦੇਣ ਲਈ, ਜੋਸ਼ ਸਕਿੱਲਸ ਨੂੰ ਆਪਣੇ ਮਾਈਕ੍ਰੋਫ਼ੋਨ ਤੱਕ ਪਹੁੰਚ ਦਿਓ।</string>
     <string name="call_permission_permanent_message">%s ਨਾਲ ਇਸ ਕਾਲ ਦਾ ਜਵਾਬ ਦੇਣ ਲਈ, ਜੋਸ਼ ਸਕਿੱਲਸ ਨੂੰ ਆਪਣੇ ਮਾਈਕ੍ਰੋਫ਼ੋਨ ਤੱਕ ਪਹੁੰਚ ਦਿਓ। ਸੈਟਿੰਗਾਂ &amp;gt; ਅਨੁਮਤੀਆਂ &amp;#39;ਤੇ ਟੈਪ ਕਰੋ, ਅਤੇ ਮਾਈਕ੍ਰੋਫ਼ੋਨ ਚਾਲੂ ਕਰੋ।</string>
-    <string name="clear_all_media">"ਸਾਰਾ ਮੀਡੀਆ ਸਾਫ਼ ਕਰੋ"</string>
     <string name="time_ago_full_seconds">"%1$d ਸਕਿੰਟ ਪਹਿਲਾਂ"</string>
     <string name="inbox_header">Josh Skills</string>
     <string name="time_ago_seconds">"%1$d ਸਕਿੰਟ ਪਹਿਲਾਂ"</string>
@@ -443,7 +439,6 @@
     <string name="word_tag">Word %1$d/%2$d - %3$s</string>
     <string name="ques_short_form">ਸਵਾਲ- %1$d/%2$d %3$s</string>
     <string name="completed">ਹੋ ਗਿਆ</string>
-    <string name="profile">ਪ੍ਰੋਫਾਈਲ</string>
     <string name="profile_photo">ਪ੍ਰੋਫਾਈਲ ਤਸਵੀਰ</string>
     <string name="age">Age:</string>
     <string name="joined_on">Joined on:</string>
@@ -495,4 +490,6 @@
     <string name="tooltip_search_anyone">ਇੱਥੋਂ, ਅਸੀਂ ਆਪਣੇ ਦੋਸਤਾਂ ਅਤੇ ਬਾਕੀ ਵਿਦਿਆਰਥੀਆਂ ਦੀ ਖੋਜ ਕਰ ਸਕਦੇ ਹਾਂ।</string>
     <string name="tooltip_user_profile_screen">ਅਸੀਂ ਜਿੰਨੀ ਮਿਹਨਤ ਕਰਦੇ ਹਾਂ, ਓਨੇ ਹੀ ਜ਼ਿਆਦਾ ਅੰਕ ਪ੍ਰਾਪਤ ਕਰਦੇ ਹਾਂ</string>
     <string name="referral_share_text">ਮੈਂ Bharat ਵਿੱਚ Best  Teacher ਤੋਂ Spoken English ਅਤੇ Personality Development ਸਿੱਖ ਰਿਹਾ ਹਾਂ  ਹੁਣ ਮੇਰੇ ਨਾਲ ਸ਼ੁਰੂ ਕਰੋ 💪. ਮੇਰੇ ਤੋਂ ਇਹ ₹ ** OFF ਲਓ  Use my code ****. Download the app by clicking on the link:</string>
+    <string name="sign_up_profile_occupation_aspiration_text">ਇਹ information ਤੁਹਾਡੇ Practice Partners ਨੂੰ ਦਿਖਾਈ ਦੇਵੇਗੀ</string>
+
 </resources>

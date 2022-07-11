@@ -16,6 +16,10 @@ import com.joshtalks.joshskills.core.analytics.*
 import com.joshtalks.joshskills.core.firestore.NotificationAnalytics
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.model.*
+import com.joshtalks.joshskills.ui.inbox.mentor_id
+import com.joshtalks.joshskills.util.DeepLinkImpression
+import com.joshtalks.joshskills.util.DeepLinkUtil
+import com.singular.sdk.Singular
 import io.branch.referral.Branch
 import io.branch.referral.Defines
 import kotlinx.coroutines.Dispatchers
@@ -184,13 +188,6 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
                 PrefManager.put(IS_FREE_TRIAL, value = true, isConsistent = false)
             }
         }
-
-        val isAppOpenedForFirstTime = PrefManager.getBoolValue(IS_APP_OPENED_FOR_FIRST_TIME, true)
-        MixPanelTracker.mixPanel.track("app session")
-        if (isAppOpenedForFirstTime) {
-            PrefManager.put(IS_APP_OPENED_FOR_FIRST_TIME, value = false, isConsistent = true)
-            MixPanelTracker.publishEvent(MixPanelEvent.APP_OPENED_FOR_FIRST_TIME).push()
-        }
     }
 
     private fun getNetworkOperatorName() =
@@ -233,6 +230,32 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
                 it.utmTerm =
                     jsonParams.getString(Defines.Jsonkey.UTMCampaign.key)
             InstallReferrerModel.update(it)
+        }
+    }
+
+    fun saveDeepLinkImpression(deepLink: String, action: String) {
+        viewModelScope.launch {
+            try {
+                val response = AppObjectController.commonNetworkService.saveDeepLinkImpression(
+                    mapOf(
+                        "mentor" to Mentor.getInstance().getId(),
+                        "deep_link" to deepLink,
+                        "link_action" to action
+                    )
+                )
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun addAnalytics() {
+        val isAppOpenedForFirstTime = PrefManager.getBoolValue(IS_APP_OPENED_FOR_FIRST_TIME, true, true)
+        MixPanelTracker.mixPanel.track("app session")
+        if (isAppOpenedForFirstTime) {
+            PrefManager.put(IS_APP_OPENED_FOR_FIRST_TIME, value = false, isConsistent = true)
+            MixPanelTracker.publishEvent(MixPanelEvent.APP_OPENED_FOR_FIRST_TIME).push()
+            Singular.event(SingularEvent.APP_OPENED_FIRST_TIME.value)
         }
     }
 }

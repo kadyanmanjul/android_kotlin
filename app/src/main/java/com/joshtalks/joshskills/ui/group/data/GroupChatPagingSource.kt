@@ -10,8 +10,6 @@ import com.joshtalks.joshskills.ui.group.lib.ChatService
 import com.joshtalks.joshskills.ui.group.lib.PubNubService
 import com.joshtalks.joshskills.ui.group.model.ChatItem
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import java.io.IOException
 import retrofit2.HttpException
@@ -28,7 +26,7 @@ class GroupChatPagingSource(val apiService: GroupApiService, val channelId: Stri
         state: PagingState<Int, ChatItem>
     ): MediatorResult {
         return try {
-            var messages = mutableListOf<ChatItem>()
+            val messages = mutableListOf<ChatItem>()
             Log.d(TAG, "load: $loadType  ... ${state}")
             when (loadType) {
                 // Getting Older Messages
@@ -41,7 +39,6 @@ class GroupChatPagingSource(val apiService: GroupApiService, val channelId: Stri
                     }
 
                     database.groupChatDao().insertMessages(messages)
-                    Log.d(TAG, "load: APPEND : $loadType")
                 }
 
                 // Getting Recent Messages
@@ -53,9 +50,7 @@ class GroupChatPagingSource(val apiService: GroupApiService, val channelId: Stri
                         withContext(Dispatchers.IO) {
                             messages.addAll(chatService.getUnreadMessages(channelId, startTime = recentMessageTime))
                         }
-
                         database.groupChatDao().insertMessages(messages)
-                        Log.d(TAG, "load: PREPEND : $loadType")
                     }
                 }
             }

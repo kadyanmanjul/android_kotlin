@@ -39,7 +39,6 @@ import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.LoginViaEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.LoginViaStatus
 import com.joshtalks.joshskills.repository.local.model.User
-import com.joshtalks.joshskills.repository.server.onboarding.SpecificOnboardingCourseData
 import com.joshtalks.joshskills.ui.userprofile.viewmodel.UserProfileViewModel
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import com.karumi.dexter.Dexter
@@ -248,20 +247,15 @@ class SignUpActivity : BaseActivity() {
 
     private fun setupFacebookLogin() {
         LoginManager.getInstance().logOut()
-        LoginManager.getInstance().loginBehavior = LoginBehavior.NATIVE_WITH_FALLBACK
+        LoginManager.getInstance().setLoginBehavior(LoginBehavior.NATIVE_WITH_FALLBACK)
         LoginManager.getInstance().registerCallback(
             fbCallbackManager,
             object : FacebookCallback<LoginResult> {
-                override fun onSuccess(loginResult: LoginResult) {
-                    if (loginResult.accessToken != null) {
-                        MixPanelTracker.publishEvent(MixPanelEvent.FACEBOOK_VERIFICATION)
-                            .addParam(ParamKeys.IS_SUCCESS, true)
-                            .push()
-                        getUserDetailsFromFB(loginResult.accessToken)
-                    } else {
-                        showToast(getString(R.string.something_went_wrong))
-                        hideProgressBar()
-                    }
+                override fun onSuccess(result: LoginResult) {
+                    MixPanelTracker.publishEvent(MixPanelEvent.FACEBOOK_VERIFICATION)
+                        .addParam(ParamKeys.IS_SUCCESS, true)
+                        .push()
+                    getUserDetailsFromFB(result.accessToken)
                 }
 
                 override fun onCancel() {
@@ -271,9 +265,9 @@ class SignUpActivity : BaseActivity() {
                     hideProgressBar()
                 }
 
-                override fun onError(exception: FacebookException) {
-                    exception.printStackTrace()
-                    LogException.catchException(exception)
+                override fun onError(error: FacebookException) {
+                    error.printStackTrace()
+                    LogException.catchException(error)
                     hideProgressBar()
                     MixPanelTracker.publishEvent(MixPanelEvent.FACEBOOK_VERIFICATION)
                         .addParam(ParamKeys.IS_SUCCESS, false)
@@ -437,7 +431,7 @@ class SignUpActivity : BaseActivity() {
     }
 
     private fun facebookLogin() {
-        LoginManager.getInstance().logIn(this, listOf("public_profile", "email"))
+        LoginManager.getInstance().logInWithReadPermissions(this, listOf("public_profile", "email"))
     }
 
     private fun trueCallerLogin() {
@@ -465,22 +459,24 @@ class SignUpActivity : BaseActivity() {
     fun getUserDetailsFromFB(accessToken: AccessToken) {
         val request: GraphRequest = GraphRequest.newMeRequest(accessToken) { jsonObject, _ ->
             try {
-                val id = jsonObject.getString("id")
-                var name: String? = null
-                if (jsonObject.has("name")) {
-                    name = jsonObject.getString("name")
+                jsonObject?.let {
+                    val id = jsonObject.getString("id")
+                    var name: String? = null
+                    if (jsonObject.has("name")) {
+                        name = jsonObject.getString("name")
+                    }
+                    var email: String? = null
+                    if (jsonObject.has("email")) {
+                        email = jsonObject.getString("email")
+                    }
+                    viewModel.signUpUsingSocial(
+                        LoginViaStatus.FACEBOOK,
+                        id,
+                        name,
+                        email,
+                        getFBProfilePicture(id)
+                    )
                 }
-                var email: String? = null
-                if (jsonObject.has("email")) {
-                    email = jsonObject.getString("email")
-                }
-                viewModel.signUpUsingSocial(
-                    LoginViaStatus.FACEBOOK,
-                    id,
-                    name,
-                    email,
-                    getFBProfilePicture(id)
-                )
             } catch (ex: Exception) {
                 LogException.catchException(ex)
             }

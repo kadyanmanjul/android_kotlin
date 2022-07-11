@@ -1136,7 +1136,7 @@ class ConversationActivity :
 
         conversationViewModel.pendingRequestsList.observe(this) {
             with(conversationBinding) {
-                if (it.pendingRequestsList.isNotEmpty() && inboxEntity.isCourseBought && inboxEntity.isCapsuleCourse) {
+                if (it.pendingRequestsList.isNotEmpty() && inboxEntity.isCourseBought && inboxEntity.isCapsuleCourse && PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID) {
                     fppRequestCountNumber.text = it.pendingRequestsList.size.toString()
                     fppRequestCountNumber.visibility = VISIBLE
                 } else {
@@ -1343,7 +1343,7 @@ class ConversationActivity :
     }
 
     private fun showFavtMenuOption(showMenu: Boolean) {
-        if (showMenu) {
+        if (showMenu && PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID) {
             conversationBinding.toolbar.menu.findItem(R.id.menu_favorite_list).isVisible = true
             conversationBinding.toolbar.menu.findItem(R.id.menu_favorite_list).isEnabled = true
         } else {

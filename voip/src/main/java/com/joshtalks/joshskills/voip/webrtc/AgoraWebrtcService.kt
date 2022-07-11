@@ -36,6 +36,7 @@ internal class AgoraWebrtcService(val scope: CoroutineScope) : WebrtcService {
     private var agoraEngine: RtcEngine? = null
     private val eventFlow: MutableSharedFlow<CallState> = MutableSharedFlow(replay = 0)
     private var state = MutableSharedFlow<Int>(replay = 0)
+    private var eventUid = MutableSharedFlow<Int>(replay = 0)
 
     // TODO: Make State More reliable
     private var currentState = IDLE
@@ -58,9 +59,11 @@ internal class AgoraWebrtcService(val scope: CoroutineScope) : WebrtcService {
             setParameters("{\"che.audio.enable.aec\":false}")  //for automatic echo cancelling
             setParameters("{\"che.audio.enable.agc\":true}")  //automatic gain control
             setParameters("{\"che.audio.enable.ns\":false}")   //noise suppression
+            enableAudioVolumeIndication(500,3,true)
         }
         Log.d(TAG, "initWebrtcService: ${agoraEngine}")
         observeCallbacks()
+        observeSpeakersCalBack()
     }
 
     override suspend fun connectCall(request: CallRequest) {
@@ -158,9 +161,12 @@ internal class AgoraWebrtcService(val scope: CoroutineScope) : WebrtcService {
     }
 
     override fun onStartRecording() {
+        if (recordFile!=null){
+            return
+        }
         Utils.context?.getTempFileForCallRecording()?.let { file->
             recordFile = file
-            agoraEngine?.startAudioRecording(AudioRecordingConfiguration(file.absolutePath,1,0,32000))
+            agoraEngine?.startAudioRecording(AudioRecordingConfiguration(file.absolutePath,3,0,48000))
         }
     }
 
@@ -179,8 +185,11 @@ internal class AgoraWebrtcService(val scope: CoroutineScope) : WebrtcService {
             }
     }
 
+    override fun observeSpeakersVolume(): SharedFlow<Int> {
+        return eventUid
+    }
+
     private fun joinChannel(request: CallRequest): Int? {
-        Log.d(TAG, "joinChannel: $request")
         agoraEngine?.apply {
             val audio = Utils.context?.getSystemService(AUDIO_SERVICE) as AudioManager
             val maxVolume = audio.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL)
@@ -271,6 +280,25 @@ internal class AgoraWebrtcService(val scope: CoroutineScope) : WebrtcService {
                 if (e is CancellationException)
                     throw e
                 e.printStackTrace()
+            }
+        }
+    }
+
+    private fun observeSpeakersCalBack(){
+        scope.launch {
+            try {
+                listener.observeCallEventSpeaker().collect{ speakers ->
+                    speakers?.forEach { user ->
+                        if (user.volume > 15) {
+                            when (user.uid) {
+                                0 -> eventUid.emit(0)
+                                else -> eventUid.emit(1)
+                            }
+                        }
+                    }
+                }
+            }catch (ex:Exception){
+
             }
         }
     }

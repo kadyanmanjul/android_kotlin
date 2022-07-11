@@ -6,7 +6,7 @@ import androidx.core.app.NotificationCompat
 
 
 internal interface NotificationInterface {
-    fun removeNotification()
+    fun removeNotification(notificationId:Int? = null)
     fun getNotificationObject(): NotificationCompat.Builder
     fun getNotificationId(): Int
     fun updateTitle(title:String)

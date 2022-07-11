@@ -58,13 +58,14 @@ class VocabularyPracticeAdapter(
     val assessmentQuizList: ArrayList<AssessmentWithRelations>,
     val clickListener: PracticeClickListeners,
     private var lifecycleProvider: LifecycleOwner,
-    private val conversationId: String?
+    private val conversationId: String?,
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     var audioManager = ExoAudioPlayer.getInstance()
     var currentQuestion: LessonQuestion? = null
     var currentPlayingPosition: Int = 0
-    private var expandCardPosition: Int = -1
+    var expandCardPosition: Int = -1
+    var fromNotification: Boolean = false
     private var QUIZ_TYPE: Int = 1
     private var VOCAB_TYPE: Int = 0
     var wordsItemSize = itemList.size.minus(assessmentQuizList.size)
@@ -100,6 +101,7 @@ class VocabularyPracticeAdapter(
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+
         when (holder.itemViewType) {
             VOCAB_TYPE -> {
                 (holder as VocabularyViewHolder).lessonQuestion = itemList[position]
@@ -121,19 +123,26 @@ class VocabularyPracticeAdapter(
     override fun onBindViewHolder(
         holder: RecyclerView.ViewHolder,
         position: Int,
-        payloads: MutableList<Any>
+        payloads: MutableList<Any>,
     ) {
+        Log.d(TAG, "onBindViewHolder: 1 ${holder.itemView} $position")
+
         if (payloads.isNotEmpty() && payloads[0] as String == PAUSE_AUDIO) {
             (holder as VocabularyViewHolder).binding.root.tag = itemList[position].id
+            Log.d(TAG, "onBindViewHolder: 3 ${holder.itemView} $position")
+
             holder.lessonQuestion = itemList[position]
             holder.positionInList = position
             holder.pauseAudio()
         } else {
+
             when (holder.itemViewType) {
                 VOCAB_TYPE -> {
                     (holder as VocabularyViewHolder).lessonQuestion = itemList[position]
                     holder.positionInList = position
                     holder.bind(position)
+                    Log.d(TAG, "bind: 2 $position")
+
                 }
                 else -> {
                     (holder as QuizViewHolder).lessonQuestion = itemList[position]
@@ -195,7 +204,7 @@ class VocabularyPracticeAdapter(
     }
 
     inner class QuizViewHolder(
-        val binding: VocabQuizPracticeItemLayoutBinding
+        val binding: VocabQuizPracticeItemLayoutBinding,
     ) : RecyclerView.ViewHolder(binding.root) {
         private var isCorrect: Boolean = false
         var lessonQuestion: LessonQuestion? = null
@@ -280,7 +289,7 @@ class VocabularyPracticeAdapter(
         }
 
         fun bind(
-            position: Int
+            position: Int,
         ) {
             if (assessmentWithRelations?.questionList?.getOrNull(0) == null) {
                 return
@@ -321,7 +330,7 @@ class VocabularyPracticeAdapter(
 
         private fun onSubmitQuizClick(
             lessonQuestion: LessonQuestion,
-            assessmentQuestion: AssessmentQuestionWithRelations
+            assessmentQuestion: AssessmentQuestionWithRelations,
         ) {
             // binding.quizRadioGroup.tag is id of Radio button with correct answer.
             if (binding.quizRadioGroup.tag is Int) {
@@ -523,7 +532,7 @@ class VocabularyPracticeAdapter(
         private fun setupRadioButtonOption(
             radioButton: RadioButton,
             choice: Choice,
-            question: AssessmentQuestionWithRelations
+            question: AssessmentQuestionWithRelations,
         ): Boolean {
             var isCorrectAns = false
             radioButton.text = choice.text
@@ -681,7 +690,7 @@ class VocabularyPracticeAdapter(
                     override fun onProgressChanged(
                         seekBar: SeekBar,
                         progress: Int,
-                        fromUser: Boolean
+                        fromUser: Boolean,
                     ) {
                         if (fromUser) {
                             userSelectedPosition = progress
@@ -774,7 +783,7 @@ class VocabularyPracticeAdapter(
                     override fun onProgressChanged(
                         seekBar: SeekBar,
                         progress: Int,
-                        fromUser: Boolean
+                        fromUser: Boolean,
                     ) {
                         if (fromUser) {
                             userSelectedPosition = progress
@@ -882,8 +891,12 @@ class VocabularyPracticeAdapter(
             binding.submitBtnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
 
             if (expandCardPosition == positionInList && lessonQuestion?.status == QUESTION_STATUS.NA) {
-                expandCardPosition = -1
+                if(!fromNotification) {
+                    expandCardPosition = -1
+                }
+                Log.d(TAG, "bind: $positionInList $expandCardPosition  ${lessonQuestion?.status == QUESTION_STATUS.NA} $position")
                 expandCard()
+                fromNotification = false
                 if (position > 0)
                     clickListener.focusChild(position - 1)
             } else {
@@ -968,7 +981,7 @@ class VocabularyPracticeAdapter(
             lessonQuestion: LessonQuestion,
             audioObject: AudioType,
             position: Int,
-            progressListener: ExoAudioPlayer.ProgressUpdateListener?
+            progressListener: ExoAudioPlayer.ProgressUpdateListener?,
         ) {
 
             currentPlayingPosition = position
@@ -1509,7 +1522,7 @@ class VocabularyPracticeAdapter(
         fun submitPractice(
             lessonQuestion: LessonQuestion,
             positionInList: Int,
-            hasNextItem: Boolean
+            hasNextItem: Boolean,
         ): Boolean
 
         fun startRecording(lessonQuestion: LessonQuestion, position: Int, startTimeUnit: Long)
@@ -1522,7 +1535,7 @@ class VocabularyPracticeAdapter(
             questionId: Int,
             positionInList: Int,
             hasNextItem: Boolean,
-            canShowSectionCompletedCard: Boolean = true
+            canShowSectionCompletedCard: Boolean = true,
         )
 
         fun openNextScreen(canShowSectionCompletedCard: Boolean = true)
@@ -1530,10 +1543,19 @@ class VocabularyPracticeAdapter(
             lessonQuestion: LessonQuestion,
             assessmentQuestion: AssessmentQuestionWithRelations,
             positionInList: Int,
-            hasNextItem: Boolean
+            hasNextItem: Boolean,
         )
 
         fun playAudio(position: Int)
         fun cancelAudio()
+    }
+
+    fun getItemPosition(practiceWord: String?): Int {
+        for (i in itemList.indices) {
+            if (itemList[i].practiceWord.equals(practiceWord)) {
+                return i
+            }
+        }
+        return -1
     }
 }

@@ -135,7 +135,6 @@ fun Context.getNotificationData(): NotificationData {
             null,
             null
         )
-
         notificationDataCursor?.moveToFirst()
         val notificationData = NotificationData(
             title = notificationDataCursor.getStringData(NOTIFICATION_TITLE_COLUMN),
@@ -183,6 +182,131 @@ fun Context.getCourseId(): String {
     return courseId
 }
 
+fun Context.isFreeTrialOrCourseBought(): Boolean {
+    val trialIdCursor = contentResolver.query(
+        Uri.parse(CONTENT_URI + IS_COURSE_BOUGHT_OR_FREE_TRIAL),
+        null,
+        null,
+        null,
+        null
+    )
+    trialIdCursor?.moveToFirst()
+    val isFreeTrialOrCourseBought = trialIdCursor.getStringData(FREE_TRIAL_OR_COURSE_BOUGHT_COLUMN)
+    trialIdCursor?.close()
+    return isFreeTrialOrCourseBought=="true"
+}
+
+fun Context.getVideoUrl():String{
+    val videoUrl = contentResolver.query(
+        Uri.parse(CONTENT_URI + RECORD_VIDEO_URI),
+        null,
+        null,
+        null,
+        null
+    )
+    videoUrl?.moveToFirst()
+    val audioUrlId = videoUrl.getStringData(VIDEO_COLUMN)
+    videoUrl?.close()
+    return audioUrlId
+}
+
+fun Context.getMentorName(): String {
+    val mentorNameCursor = contentResolver.query(
+        Uri.parse(CONTENT_URI + MENTOR_NAME),
+        null,
+        null,
+        null,
+        null
+    )
+
+    mentorNameCursor?.moveToFirst()
+    val mentorName = mentorNameCursor.getStringData(MENTOR_NAME_COLUMN)
+    mentorNameCursor?.close()
+    return mentorName
+}
+
+fun Context.getMentorProfile(): String {
+    val mentorProfileCursor = contentResolver.query(
+        Uri.parse(CONTENT_URI + MENTOR_PROFILE),
+        null,
+        null,
+        null,
+        null
+    )
+
+    mentorProfileCursor?.moveToFirst()
+    val mentorProfile = mentorProfileCursor.getStringData(MENTOR_PROFILE_COLUMN)
+    mentorProfileCursor?.close()
+    return mentorProfile
+}
+
+fun Context.getServiceNotificationIntent(data: NotificationData): PendingIntent {
+    val callingActivity = Intent()
+    var pendingIntent: PendingIntent? = null
+    val flag =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE else PendingIntent.FLAG_UPDATE_CURRENT
+    if (Utils.courseId == "151" && Utils.context!!.isFreeTrialOrCourseBought() && data.lessonId != -1) {
+        val notificationActivity = "com.joshtalks.joshskills.ui.lesson.LessonActivity"
+        callingActivity.apply {
+            if (Utils.context != null) {
+                setClassName(Utils.context!!, notificationActivity)
+                putExtra("lesson_section", 3)
+                putExtra("lesson_id", data.lessonId)
+                putExtra("practice_word", data.title)
+                putExtra("reopen", true)
+                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+        }
+    } else {
+        val notificationActivity = "com.joshtalks.joshskills.ui.inbox.InboxActivity"
+        callingActivity.apply {
+            if (Utils.context != null) {
+                setClassName(Utils.context!!, notificationActivity)
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            }
+        }
+
+    }
+    pendingIntent = PendingIntent.getActivity(Utils.context,
+        (System.currentTimeMillis() and 0xfffffff).toInt(),
+        callingActivity,
+        flag)
+    return pendingIntent
+
+}
+
+fun Context.getRecordingText(): String {
+    val recordingCursor = contentResolver.query(
+        Uri.parse(CONTENT_URI + RECORDING_TEXT),
+        null,
+        null,
+        null,
+        null
+    )
+
+    recordingCursor?.moveToFirst()
+    val textData = recordingCursor.getStringData(RECORDING_TEXT_COLUMN)
+    recordingCursor?.close()
+    return textData
+}
+
+
+fun Context.getCourseId(): String {
+    val courserIdCursor = contentResolver.query(
+        Uri.parse(CONTENT_URI + COURSE_ID),
+        null,
+        null,
+        null,
+        null
+    )
+
+    courserIdCursor?.moveToFirst()
+    val courseId = courserIdCursor.getStringData(COURSE_ID_COLUMN)
+    courserIdCursor?.close()
+    return courseId
+}
 //fun Context.updateIncomingCallDetails() {
 //    voipLog?.log("QUERY")
 //    val values = ContentValues(2).apply {
@@ -257,6 +381,9 @@ fun Context.getHangUpIntent(): PendingIntent {
 fun Context.getTempFileForCallRecording(): File? {
     return File.createTempFile("record", ".aac", this.cacheDir)
 }
+fun Context.getTempFileForVideoCallRecording(): File? {
+    return File.createTempFile("ScreenRecord", ".mp4", this.cacheDir)
+}
 
 fun getDeclineCallIntent(): PendingIntent {
     val intent = Intent(Utils.context, CallingRemoteService::class.java).apply {
@@ -310,6 +437,9 @@ fun String.textDrawableBitmap(
 
 class Utils {
     companion object {
+        @JvmStatic
+        var uiHandler: Handler = Handler(Looper.getMainLooper())
+            private set
         var context : Application? = null
         val apiHeader : ApiHeader?
             get() = context?.getApiHeader()

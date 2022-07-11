@@ -28,11 +28,8 @@ import com.joshtalks.joshskills.core.AppObjectController.Companion.uiHandler
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.GoalKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
-import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
+import com.joshtalks.joshskills.core.analytics.*
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics.logNewPaymentPageOpened
-import com.joshtalks.joshskills.core.analytics.MixPanelEvent
-import com.joshtalks.joshskills.core.analytics.MixPanelTracker
-import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.core.countdowntimer.CountdownTimerBack
 import com.joshtalks.joshskills.databinding.ActivityFreeTrialPaymentBinding
 import com.joshtalks.joshskills.messaging.RxBus2
@@ -55,6 +52,7 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.razorpay.Checkout
 import com.razorpay.PaymentResultListener
+import com.singular.sdk.Singular
 import com.tonyodev.fetch2core.isNetworkAvailable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -138,8 +136,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
 
         if (intent.hasExtra(PaymentSummaryActivity.TEST_ID_PAYMENT)) {
             testId = if (PrefManager.getStringValue(FREE_TRIAL_TEST_ID).isEmpty().not()) {
-                AppObjectController.getFirebaseRemoteConfig()
-                    .getString(FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID + "_" + PrefManager.getStringValue(FREE_TRIAL_TEST_ID))
+                Utils.getLangPaymentTestIdFromTestId(PrefManager.getStringValue(FREE_TRIAL_TEST_ID))
             } else {
                 PrefManager.getStringValue(PAID_COURSE_TEST_ID)
             }
@@ -155,8 +152,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         }
         if (testId.isBlank()){
             testId = if (PrefManager.getStringValue(FREE_TRIAL_TEST_ID).isEmpty().not()) {
-                AppObjectController.getFirebaseRemoteConfig()
-                    .getString(FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID + "_" + PrefManager.getStringValue(FREE_TRIAL_TEST_ID))
+                Utils.getLangPaymentTestIdFromTestId(PrefManager.getStringValue(FREE_TRIAL_TEST_ID))
             } else {
                 PrefManager.getStringValue(PAID_COURSE_TEST_ID)
             }
@@ -166,6 +162,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         logNewPaymentPageOpened()
         dynamicCardCreation()
         setListeners()
+        Singular.event(SingularEvent.OPENED_FREE_TRIAL_PAYMENT.name, testId)
     }
 
     private fun dynamicCardCreation(){
@@ -274,16 +271,19 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         }
 
         binding.applyCoupon.setOnClickListener {
-            MixPanelTracker.publishEvent(MixPanelEvent.APPLY_COUPON_CLICKED)
-                .addParam(ParamKeys.TEST_ID,viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.testId)
-                .addParam(ParamKeys.COURSE_PRICE,viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.discount)
-                .addParam(ParamKeys.COURSE_NAME,viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.courseName)
-                .addParam(ParamKeys.COURSE_ID,PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID))
-                .push()
-
-            viewModel.saveImpression(IMPRESSION_CLICKED_APPLY_COUPON)
-            val bottomSheetFragment = EnterReferralCodeFragment.newInstance(true)
-            bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
+            try {
+                MixPanelTracker.publishEvent(MixPanelEvent.APPLY_COUPON_CLICKED)
+                    .addParam(ParamKeys.TEST_ID, viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.testId)
+                    .addParam(ParamKeys.COURSE_PRICE, viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.discount)
+                    .addParam(ParamKeys.COURSE_NAME, viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.courseName)
+                    .addParam(ParamKeys.COURSE_ID, PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID))
+                    .push()
+                viewModel.saveImpression(IMPRESSION_CLICKED_APPLY_COUPON)
+                val bottomSheetFragment = EnterReferralCodeFragment.newInstance(true)
+                bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
+            }catch (ex:Exception){
+                ex.printStackTrace()
+            }
         }
     }
 
@@ -820,6 +820,10 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             .addParam(ParamKeys.COURSE_ID,PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID))
             .push()
 
+        val jsonData = JSONObject()
+        jsonData.put(ParamKeys.TEST_ID.name, viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.testId)
+        jsonData.put(ParamKeys.COURSE_PRICE.name, viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.discount)
+        Singular.eventJSON(SingularEvent.INITIATED_PAYMENT.name, jsonData)
     }
 
     private fun String.verifyPayment() {
@@ -837,15 +841,14 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
 
     override fun onPaymentError(p0: Int, p1: String?) {
         // isBackPressDisabled = true
-        viewModel.mentorPaymentStatus.observe(this, {
-            when(it) {
-                true ->{
+        viewModel.mentorPaymentStatus.observe(this) {
+            when (it) {
+                true -> {
                     if (PrefManager.getBoolValue(IS_DEMO_P2P, defValue = false)) {
                         PrefManager.put(IS_DEMO_P2P, false)
                     }
-                    val freeTrialTestId = AppObjectController.getFirebaseRemoteConfig()
-                        .getString(FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID + "_"
-                                + PrefManager.getStringValue(FREE_TRIAL_TEST_ID))
+                    val freeTrialTestId =
+                        Utils.getLangPaymentTestIdFromTestId(PrefManager.getStringValue(FREE_TRIAL_TEST_ID))
                     if (testId == freeTrialTestId) {
                         PrefManager.put(IS_COURSE_BOUGHT, true)
                         PrefManager.removeKey(IS_FREE_TRIAL_ENDED)
@@ -870,28 +873,28 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                     }
                 }
             }
-        })
-        MixPanelTracker.publishEvent(MixPanelEvent.PAYMENT_FAILED)
-            .addParam(ParamKeys.AMOUNT_PAID,viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.discount)
-            .addParam(ParamKeys.TEST_ID,viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.testId)
-            .addParam(ParamKeys.COURSE_NAME,viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.courseName)
-            .addParam(ParamKeys.IS_COUPON_APPLIED,viewModel.paymentDetailsLiveData.value?.couponDetails?.isPromoCode)
-            .addParam(ParamKeys.COURSE_ID,PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID))
-            .push()
+        }
+        try {
+            MixPanelTracker.publishEvent(MixPanelEvent.PAYMENT_FAILED)
+                .addParam(ParamKeys.AMOUNT_PAID, viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.discount)
+                .addParam(ParamKeys.TEST_ID, viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.testId)
+                .addParam(ParamKeys.COURSE_NAME, viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.courseName)
+                .addParam(ParamKeys.IS_COUPON_APPLIED, viewModel.paymentDetailsLiveData.value?.couponDetails?.isPromoCode)
+                .addParam(ParamKeys.COURSE_ID, PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID))
+                .push()
 
+            val jsonData = JSONObject()
+            jsonData.put(ParamKeys.TEST_ID.name, viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.testId)
+            jsonData.put(ParamKeys.AMOUNT_PAID.name, viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.discount)
+            jsonData.put(ParamKeys.IS_COUPON_APPLIED.name, viewModel.paymentDetailsLiveData.value?.couponDetails?.isPromoCode)
+            Singular.eventJSON(SingularEvent.PAYMENT_FAILED.name, jsonData)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     @Synchronized
     override fun onPaymentSuccess(razorpayPaymentId: String) {
-        MixPanelTracker.publishEvent(MixPanelEvent.PAYMENT_SUCCESS)
-            .addParam(ParamKeys.AMOUNT_PAID,viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.discount)
-            .addParam(ParamKeys.TEST_ID,viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.testId)
-            .addParam(ParamKeys.COURSE_NAME,viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.courseName)
-            .addParam(ParamKeys.COURSE_ID,PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID))
-            .addParam(ParamKeys.IS_COUPON_APPLIED,viewModel.paymentDetailsLiveData.value?.couponDetails?.isPromoCode)
-            .addParam(ParamKeys.IS_100_POINTS_OBTAINED_IN_FREE_TRIAL,isPointsScoredMoreThanEqualTo100)
-            .push()
-
         if(viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.testId == FREE_TRIAL_PAYMENT_TEST_ID) {
             if(PrefManager.getBoolValue(INCREASE_COURSE_PRICE_CAMPAIGN_ACTIVE))
             viewModel.postGoal("ICP_COURSE_BOUGHT",CampaignKeys.INCREASE_COURSE_PRICE.name)
@@ -901,7 +904,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                 viewModel.postGoal("ICP_SUBSCRIPTION_BOUGHT",CampaignKeys.INCREASE_COURSE_PRICE.name)
         }
 
-        var obj = JSONObject()
+        val obj = JSONObject()
         obj.put("is paid",true)
         obj.put("is 100 points obtained in free trial",isPointsScoredMoreThanEqualTo100)
         MixPanelTracker.mixPanel.identify(PrefManager.getStringValue(USER_UNIQUE_ID))
@@ -918,8 +921,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             PrefManager.put(IS_DEMO_P2P, false)
         }
         val freeTrialTestId = if (PrefManager.getStringValue(FREE_TRIAL_TEST_ID).isEmpty().not()) {
-            AppObjectController.getFirebaseRemoteConfig()
-                .getString(FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID + "_" + PrefManager.getStringValue(FREE_TRIAL_TEST_ID))
+            Utils.getLangPaymentTestIdFromTestId(PrefManager.getStringValue(FREE_TRIAL_TEST_ID))
         } else {
             PrefManager.getStringValue(PAID_COURSE_TEST_ID)
         }
@@ -947,6 +949,24 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             )
         )
         //viewModel.updateSubscriptionStatus()
+        try {
+            MixPanelTracker.publishEvent(MixPanelEvent.PAYMENT_SUCCESS)
+                .addParam(ParamKeys.AMOUNT_PAID, viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.discount)
+                .addParam(ParamKeys.TEST_ID, viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.testId)
+                .addParam(ParamKeys.COURSE_NAME, viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.courseName)
+                .addParam(ParamKeys.COURSE_ID, PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID))
+                .addParam(ParamKeys.IS_COUPON_APPLIED, viewModel.paymentDetailsLiveData.value?.couponDetails?.isPromoCode)
+                .addParam(ParamKeys.IS_100_POINTS_OBTAINED_IN_FREE_TRIAL, isPointsScoredMoreThanEqualTo100)
+                .push()
+
+            val json = JSONObject()
+            json.put(ParamKeys.TEST_ID.name, viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.testId)
+            json.put(ParamKeys.AMOUNT_PAID.name, viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.discount ?: 0.0)
+            json.put(ParamKeys.IS_COUPON_APPLIED.name, viewModel.paymentDetailsLiveData.value?.couponDetails?.isPromoCode)
+            Singular.customRevenue(SingularEvent.PAYMENT_SUCCESSFUL.name, json)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
 
         uiHandler.post {
             PrefManager.put(IS_PAYMENT_DONE, true)

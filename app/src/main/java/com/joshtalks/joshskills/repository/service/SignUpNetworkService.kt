@@ -170,7 +170,7 @@ interface SignUpNetworkService {
 //    suspend fun activeUser(@Body params: ActiveUserRequest): Response<Any>
 
     @POST("$DIR/course/buy_expired_course_v2/")
-    suspend fun getFreeTrialPaymentData(@Body params: Map<String, Any>): FreeTrialPaymentResponse
+    suspend fun getFreeTrialPaymentData(@Body params: Map<String, Any>): Response<FreeTrialPaymentResponse>
 
     @GET("$DIR/user/profile_pictures//")
     suspend fun getPreviousProfilePics(): Response<PreviousProfilePictures>

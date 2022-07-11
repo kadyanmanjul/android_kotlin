@@ -68,6 +68,7 @@ import com.joshtalks.joshskills.repository.local.eventbus.MediaProgressEventBus
 import com.joshtalks.joshskills.repository.server.course_detail.VideoModel
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.chat.CHAT_ROOM_ID
+import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.ui.leaderboard.ItemOverlay
 import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_GRAMMAR_ANIMATION
 import com.joshtalks.joshskills.ui.lesson.grammar.GrammarFragment
@@ -202,7 +203,6 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
 
         if (getVoipState() == State.IDLE && WebRtcService.isCallOnGoing.value == false)
             viewModel.getButtonVisibility()
-
         binding = DataBindingUtil.setContentView(
             this,
             R.layout.lesson_activity
@@ -1389,7 +1389,6 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         }
         intent?.let {
             val lessonId = if (intent.hasExtra(LESSON_ID)) intent.getIntExtra(LESSON_ID, 0) else 0
-
             viewModel.getLesson(lessonId)
             viewModel.getTwentyMinFtuCallCampaignData(
                 CampaignKeys.TWENTY_MIN_TARGET.NAME,

@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.ui.lesson.vocabulary
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -197,6 +198,15 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
         binding.practiceRv.setHasFixedSize(true)
         binding.practiceRv.setItemViewCacheSize(5)
         binding.practiceRv.enforceSingleScrollDirection()
+
+        if (requireActivity().intent?.getBooleanExtra("reopen", false) == true) {
+            val pos = adapter.getItemPosition(requireActivity().intent?.getStringExtra("practice_word"))
+            if (pos >= 0) {
+                adapter.fromNotification = true
+                adapter.expandCardPosition = pos
+                binding.practiceRv.scrollToPosition(pos);
+            }
+        }
     }
 
     override fun submitQuiz(

@@ -9,6 +9,7 @@ import android.content.Intent
 import android.media.RingtoneManager
 import android.os.Build
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
@@ -114,11 +115,12 @@ class Mentor {
                     .addUserDetails()
                     .addParam(AnalyticsEvent.USER_LOGGED_OUT.NAME, true).push()
                 try {
+                    NotificationManagerCompat.from(joshApplication).cancelAll()
                     AppObjectController.signUpNetworkService.signoutUser(getInstance().getId())
                 } catch (ex:Exception){
                     LogException.catchException(ex)
                 }
-                if (AppObjectController.joshApplication.isAppVisible()) {
+                if (joshApplication.isAppVisible()) {
                     val intent = Intent(joshApplication, SignUpActivity::class.java)
                     intent.apply {
                         addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)

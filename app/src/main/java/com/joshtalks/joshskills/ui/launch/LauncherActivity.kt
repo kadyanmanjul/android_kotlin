@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.ui.launch
 
+import com.singular.sdk.*
 import android.animation.ArgbEvaluator
 import android.animation.ObjectAnimator
 import android.content.Intent
@@ -18,9 +19,11 @@ import com.joshtalks.joshskills.base.constants.CALLING_SERVICE_ACTION
 import com.joshtalks.joshskills.base.constants.SERVICE_BROADCAST_KEY
 import com.joshtalks.joshskills.base.constants.START_SERVICE
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.notification.FCM_TOKEN
 import com.joshtalks.joshskills.core.notification.HAS_LOCAL_NOTIFICATION
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.databinding.ActivityLauncherBinding
@@ -30,9 +33,7 @@ import com.joshtalks.joshskills.ui.call.CallingServiceReceiver
 import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.ui.signup.FreeTrialOnBoardActivity
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
-import com.joshtalks.joshskills.util.DeepLinkData
-import com.joshtalks.joshskills.util.DeepLinkRedirect
-import com.joshtalks.joshskills.util.DeepLinkRedirectUtil
+import com.joshtalks.joshskills.util.*
 import io.branch.referral.Branch
 import io.branch.referral.BranchError
 import io.branch.referral.Defines
@@ -59,7 +60,29 @@ class LauncherActivity : CoreJoshActivity(), Branch.BranchReferralInitListener {
         animatedProgressBar()
         handleIntent()
         setObservers()
+        initSingularSDK()
+        viewModel.addAnalytics()
         PrefManager.put(PREF_IS_CONVERSATION_ROOM_ACTIVE, false)
+    }
+
+    private fun initSingularSDK() {
+        val config = SingularConfig("joshtalks_ff0ca464", "5a43e20827ab76bba2669f90c575f28f")
+            .withCustomUserId(Mentor.getInstance().getId())
+            .withSessionTimeoutInSec(120) //optional
+
+        config.withSingularLink(intent) { params ->
+            // The deep link destination, as configured in the Manage Links page
+            val deeplink: String = params.getDeeplink()
+
+            // The passthrough parameters added to the link, if any.
+            val passthrough: String = params.getPassthrough()
+
+            // Whether the link configured as a deferred deep link.
+            val isDeferred: Boolean = params.isDeferred()
+
+            // Add deep link handling code here
+        }
+        Singular.init(this, config)
     }
 
     private fun setObservers() {
@@ -216,7 +239,10 @@ class LauncherActivity : CoreJoshActivity(), Branch.BranchReferralInitListener {
                             null
                         } else getInboxActivityIntent()
                     }
-                    PrefManager.hasKey(SPECIFIC_ONBOARDING, isConsistent = true) || (jsonParams != null && jsonParams!!.has(DeepLinkData.REDIRECT_TO.key)
+                    PrefManager.hasKey(
+                        SPECIFIC_ONBOARDING,
+                        isConsistent = true
+                    ) || (jsonParams != null && jsonParams!!.has(DeepLinkData.REDIRECT_TO.key)
                             && jsonParams!!.getString(DeepLinkData.REDIRECT_TO.key) == DeepLinkRedirect.ONBOARDING.key)
                     -> DeepLinkRedirectUtil.getIntentForCourseOnboarding(this, jsonParams)
                     (jsonParams != null && jsonParams!!.has(DeepLinkData.REDIRECT_TO.key)
@@ -241,7 +267,7 @@ class LauncherActivity : CoreJoshActivity(), Branch.BranchReferralInitListener {
             jsonParams != null -> if (DeepLinkRedirectUtil.getIntent(
                     this@LauncherActivity,
                     jsonParams!!,
-                     PrefManager.getBoolValue(IS_FREE_TRIAL)
+                    PrefManager.getBoolValue(IS_FREE_TRIAL)
                 )
             ) null else getInboxActivityIntent()
             else -> getInboxActivityIntent()
@@ -293,10 +319,36 @@ class LauncherActivity : CoreJoshActivity(), Branch.BranchReferralInitListener {
                 if (jsonParams.has(Defines.Jsonkey.UTMMedium.key) &&
                     jsonParams.getString(Defines.Jsonkey.UTMMedium.key) == "referral"
                 ) {
+                    viewModel.saveDeepLinkImpression(
+                        deepLink = (
+                                if (jsonParams.has(DeepLinkData.REFERRING_LINK.key))
+                                    jsonParams.getString(DeepLinkData.REFERRING_LINK.key)
+                                else ""
+                                ),
+                        action = DeepLinkImpression.REFERRAL.name
+                    )
                     viewModel.updateReferralModel(jsonParams)
                     viewModel.initReferral(testId = testId, exploreType = exploreType, jsonParams)
                 }
-                this.jsonParams = if (jsonParams.has(DeepLinkData.REDIRECT_TO.key)) jsonParams else null
+                if (jsonParams.has(DeepLinkData.REDIRECT_TO.key)) {
+                    this.jsonParams = jsonParams
+                    viewModel.saveDeepLinkImpression(
+                        deepLink = (
+                                if (jsonParams.has(DeepLinkData.REFERRING_LINK.key))
+                                    jsonParams.getString(DeepLinkData.REFERRING_LINK.key)
+                                else ""
+                                ),
+                        action = "${DeepLinkImpression.REDIRECT_}${
+                            jsonParams.getString(DeepLinkData.REDIRECT_TO.key).uppercase()
+                        }${
+                            if (jsonParams.getString(DeepLinkData.REDIRECT_TO.key) == DeepLinkRedirect.ONBOARDING.key)
+                                "_${jsonParams.getString(DeepLinkData.COURSE_ID.key)}"
+                            else if (jsonParams.getString(DeepLinkData.REDIRECT_TO.key) == DeepLinkRedirect.COURSE_DETAILS.key)
+                                "_${jsonParams.getString(DeepLinkData.TEST_ID.key)}"
+                            else ""
+                        }"
+                    )
+                }
                 initAfterBranch(exploreType = exploreType)
             }
         } catch (ex: Throwable) {

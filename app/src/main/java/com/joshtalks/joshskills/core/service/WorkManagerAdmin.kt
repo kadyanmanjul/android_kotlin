@@ -162,7 +162,7 @@ object WorkManagerAdmin {
             )
     }
 
-    fun syncNotifiationEngagement() {
+    fun syncNotificationEngagement() {
         WorkManager.getInstance(AppObjectController.joshApplication)
             .enqueue(
                 OneTimeWorkRequestBuilder<NotificationEngagementSyncWorker>().build()
@@ -329,10 +329,8 @@ object WorkManagerAdmin {
     fun setLocalNotificationWorker() {
         WorkManager.getInstance(AppObjectController.joshApplication)
             .cancelAllWorkByTag(LocalNotificationWorker::class.java.name)
-        val delay = 600L
         val workRequest = OneTimeWorkRequestBuilder<LocalNotificationWorker>()
             .setInputData(workDataOf())
-            .setInitialDelay(delay, TimeUnit.SECONDS)
             .addTag(LocalNotificationWorker::class.java.name)
             .build()
         WorkManager.getInstance(AppObjectController.joshApplication).enqueue(workRequest)

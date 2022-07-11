@@ -23,11 +23,24 @@ import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_INCOMING_CALL
 import com.joshtalks.joshskills.conversationRoom.liveRooms.ConversationLiveRoomActivity
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.API_TOKEN
+import com.joshtalks.joshskills.core.ARG_PLACEHOLDER_URL
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.COURSE_ID
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.IS_CONVERSATION_ROOM_ACTIVE_FOR_USER
+import com.joshtalks.joshskills.core.IS_COURSE_BOUGHT
+import com.joshtalks.joshskills.core.JoshApplication
+import com.joshtalks.joshskills.core.JoshSkillExecutors
+import com.joshtalks.joshskills.core.PREF_IS_CONVERSATION_ROOM_ACTIVE
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.USER_ACTIVE_IN_GAME
 import com.joshtalks.joshskills.core.analytics.DismissNotifEventReceiver
 import com.joshtalks.joshskills.core.firestore.FirestoreDB
 import com.joshtalks.joshskills.core.firestore.NotificationAnalytics
 import com.joshtalks.joshskills.core.io.LastSyncPrefManager
+import com.joshtalks.joshskills.core.isValidFullNumber
+import com.joshtalks.joshskills.core.startServiceForWebrtc
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.Question
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
@@ -47,6 +60,7 @@ import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.fpp.SeeAllRequestsActivity
 import com.joshtalks.joshskills.ui.group.JoshGroupActivity
+import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.ui.launch.LauncherActivity
 import com.joshtalks.joshskills.ui.leaderboard.LeaderBoardViewPagerActivity
@@ -75,6 +89,8 @@ import com.joshtalks.joshskills.ui.voip.favorite.FavoriteListActivity
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
 import com.joshtalks.joshskills.voip.constant.*
 import com.joshtalks.joshskills.voip.data.CallingRemoteService
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.CallRecordingShare
+import com.joshtalks.joshskills.voip.constant.State
 import java.lang.reflect.Type
 import java.util.concurrent.ExecutorService
 import kotlinx.coroutines.CoroutineScope
@@ -158,6 +174,7 @@ class NotificationUtils(val context: Context) {
                         || notificationObject.action == NotificationAction.ACTION_OPEN_LESSON
                         || notificationObject.action == NotificationAction.ACTION_OPEN_CONVERSATION
                         || notificationObject.action == NotificationAction.JOIN_CONVERSATION_ROOM
+                        || notificationObject.action == NotificationAction.CALL_RECORDING_NOTIFICATION
                     ) {
                         val inboxIntent =
                             InboxActivity.getInboxIntent(context)
@@ -184,7 +201,6 @@ class NotificationUtils(val context: Context) {
                     uniqueInt, activityList,
                     PendingIntent.FLAG_UPDATE_CURRENT
                 )
-
                 val style = NotificationCompat.BigTextStyle()
                 style.setBigContentTitle(notificationObject.contentTitle)
                 style.bigText(notificationObject.contentText)
@@ -249,6 +265,9 @@ class NotificationUtils(val context: Context) {
                     }
                     NotificationAction.GROUP_CHAT_PIN_MESSAGE -> {
                         notificationManager.notify(10132, notificationBuilder.build())
+                    }
+                    NotificationAction.GROUP_CHAT_PIN_MESSAGE -> {
+                        notificationManager.notify(10192, notificationBuilder.build())
                     }
                     else -> {
                         notificationManager.notify(uniqueInt, notificationBuilder.build())
@@ -607,6 +626,14 @@ class NotificationUtils(val context: Context) {
                     e.printStackTrace()
                 }
                 return null            }
+            NotificationAction.CALL_RECORDING_NOTIFICATION -> {
+               if (notificationObject.extraData.isNullOrBlank()){
+                   return null
+               } else return CallRecordingShare.getActivityIntentForSharableCallRecording(
+                    context = context,
+                    videoUrl = notificationObject.extraData,
+                )
+            }
             else -> {
                 return null
             }
@@ -933,13 +960,23 @@ class NotificationUtils(val context: Context) {
     }
 
     fun getDataFromMoengage(intentData: Bundle): Map<String, String?> {
-        val dataJson = intentData.getString("gcm_alert")?.let { JSONObject(it) }
-        return mapOf(
-            Pair("action", dataJson?.getString("client_action")),
-            Pair("action_data", dataJson?.getString("action_data")),
-            Pair("id", dataJson?.getString("notification_id")),
-            Pair("content_title", dataJson?.getString("title")),
-            Pair("content_text", dataJson?.getString("body"))
-        )
+        return try {
+            val dataJson = intentData.getString("gcm_alert")?.let { JSONObject(it) }
+            mapOf(
+                Pair("action", dataJson?.getString("client_action")),
+                Pair("action_data", dataJson?.getString("action_data")),
+                Pair("id", dataJson?.getString("notification_id")),
+                Pair("content_title", dataJson?.getString("title")),
+                Pair("content_text", dataJson?.getString("body"))
+            )
+        } catch (e: Exception) {        // because of wrong data or empty data
+            mapOf()
+        }
+    }
+
+    fun pushAnalytics(groupId: String?) {
+        if (groupId != null) {
+            GroupAnalytics.push(GroupAnalytics.Event.NOTIFICATION_RECEIVED, groupId)
+        }
     }
 }

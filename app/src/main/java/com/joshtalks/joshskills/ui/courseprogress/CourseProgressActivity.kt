@@ -159,20 +159,24 @@ class CourseProgressActivity :
 
     fun setUserImage(url: String?) {
         if (url.isNullOrEmpty()) {
-            val font = Typeface.createFromAsset(assets, "fonts/OpenSans-SemiBold.ttf")
-            val drawable: TextDrawable = TextDrawable.builder()
-                .beginConfig()
-                .textColor(ContextCompat.getColor(applicationContext, R.color.white))
-                .useFont(font)
-                .fontSize(Utils.dpToPx(28))
-                .toUpperCase()
-                .endConfig()
-                .buildRound(
-                    getUserNameInShort(),
-                    ContextCompat.getColor(applicationContext, R.color.button_color)
-                )
-            binding.userImage.background = drawable
-            binding.userImage.setImageDrawable(drawable)
+            try {
+                val font = Typeface.createFromAsset(assets, "fonts/OpenSans-SemiBold.ttf")
+                val drawable: TextDrawable = TextDrawable.builder()
+                    .beginConfig()
+                    .textColor(ContextCompat.getColor(applicationContext, R.color.white))
+                    .useFont(font)
+                    .fontSize(Utils.dpToPx(28))
+                    .toUpperCase()
+                    .endConfig()
+                    .buildRound(
+                        getUserNameInShort(),
+                        ContextCompat.getColor(applicationContext, R.color.button_color)
+                    )
+                binding.userImage.background = drawable
+                binding.userImage.setImageDrawable(drawable)
+            }catch (ex:Exception){
+                ex.printStackTrace()
+            }
         } else {
             Glide.with(applicationContext)
                 .load(url)

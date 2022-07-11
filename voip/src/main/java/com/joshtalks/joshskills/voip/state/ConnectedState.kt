@@ -7,6 +7,7 @@ import com.joshtalks.joshskills.voip.communication.constants.ServerConstants
 import com.joshtalks.joshskills.voip.communication.model.NetworkAction
 import com.joshtalks.joshskills.voip.communication.model.UI
 import com.joshtalks.joshskills.voip.communication.model.UserAction
+import com.joshtalks.joshskills.voip.constant.Event
 import com.joshtalks.joshskills.voip.constant.Event.CALL_RECORDING_ACCEPT
 import com.joshtalks.joshskills.voip.constant.Event.CALL_RECORDING_REJECT
 import com.joshtalks.joshskills.voip.constant.Event.CANCEL_RECORDING_REQUEST
@@ -53,10 +54,12 @@ class ConnectedState(val context: CallContext) : VoipState {
     private val TAG = "ConnectedState"
     private val scope = CoroutineScope(Dispatchers.IO)
     private var listenerJob: Job? = null
+    private var audioListenerJob: Job? = null
 
     init {
         Log.d("Call State", TAG)
         observe()
+        observeSpeakerVolumes()
     }
 
     // Red Button Pressed
@@ -279,7 +282,7 @@ class ConnectedState(val context: CallContext) : VoipState {
                             ensureActive()
                             if(event.data == ActionDirection.SERVER) {
                                 val uiState =
-                                    context.currentUiState.copy(recordingButtonState = RecordingButtonState.REQUESTED)
+                                    context.currentUiState.copy(recordingButtonState = RecordingButtonState.SENTREQUEST)
                                 context.updateUIState(uiState = uiState)
                                 val userAction = UserAction(
                                     ServerConstants.START_RECORDING,
@@ -288,10 +291,30 @@ class ConnectedState(val context: CallContext) : VoipState {
                                 )
                                 context.sendMessageToServer(userAction)
                             } else {
-                                val uiState =
-                                    context.currentUiState.copy(recordingButtonState = RecordingButtonState.REQUESTED)
-                                context.updateUIState(uiState = uiState)
-                                context.sendEventToUI(event)
+                                when (context.currentUiState.recordingButtonState) {
+                                    RecordingButtonState.IDLE -> {
+                                        val uiState =
+                                            context.currentUiState.copy(recordingButtonState = RecordingButtonState.GOTREQUEST)
+                                        context.updateUIState(uiState = uiState)
+                                        context.sendEventToUI(event)
+                                    }
+                                    RecordingButtonState.SENTREQUEST -> {
+                                        Log.d(TAG, "observe: conflict")
+                                        val startTime = SystemClock.elapsedRealtime()
+                                        val uiState = context.currentUiState.copy(
+                                            recordingButtonState = RecordingButtonState.RECORDING,
+                                            recordingStartTime = startTime
+                                        )
+                                        context.updateUIState(uiState = uiState)
+                                        val userAction = UserAction(
+                                            ServerConstants.CALL_RECORDING_ACCEPT,
+                                            context.channelData.getChannel(),
+                                            address = context.channelData.getPartnerMentorId()
+                                        )
+                                        context.startRecording()
+                                        context.sendMessageToServer(userAction)
+                                    }
+                                }
                             }
                         }
                         STOP_RECORDING -> {
@@ -320,7 +343,8 @@ class ConnectedState(val context: CallContext) : VoipState {
                                 val startTime = SystemClock.elapsedRealtime()
                                 val uiState = context.currentUiState.copy(
                                     recordingButtonState = RecordingButtonState.RECORDING,
-                                    recordingStartTime = startTime
+                                    recordingStartTime = startTime,
+                                    recordingButtonNooftimesclicked = context.currentUiState.recordingButtonNooftimesclicked.plus(1)
                                 )
                                 context.updateUIState(uiState = uiState)
                                 val userAction = UserAction(
@@ -331,13 +355,20 @@ class ConnectedState(val context: CallContext) : VoipState {
                                 context.startRecording()
                                 context.sendMessageToServer(userAction)
                             } else {
-                                val startTime = SystemClock.elapsedRealtime()
-                                val uiState = context.currentUiState.copy(
-                                    recordingButtonState = RecordingButtonState.RECORDING,
-                                    recordingStartTime = startTime
-                                )
-                                context.updateUIState(uiState = uiState)
-                                context.sendEventToUI(event)
+                                if (context.currentUiState.recordingButtonState.equals(
+                                        RecordingButtonState.SENTREQUEST
+                                )) {
+                                    val startTime = SystemClock.elapsedRealtime()
+                                    val uiState = context.currentUiState.copy(
+                                        recordingButtonState = RecordingButtonState.RECORDING,
+                                        recordingStartTime = startTime,
+                                        recordingButtonNooftimesclicked = context.currentUiState.recordingButtonNooftimesclicked.plus(1)
+                                    )
+                                    context.updateUIState(uiState = uiState)
+                                    context.sendEventToUI(event)
+                                } else {
+                                    Log.d(TAG, "observe: conflict accept and cancel")
+                                }
                             }
                         }
                         CALL_RECORDING_REJECT -> {
@@ -403,10 +434,61 @@ class ConnectedState(val context: CallContext) : VoipState {
         }
     }
 
+    private fun observeSpeakerVolumes() {
+        Log.d(TAG, "Started observeSpeakerVolumes")
+        audioListenerJob = scope.launch {
+            try {
+                loop@ while (true) {
+                    ensureActive()
+                    val event = context.getSpeakerVolumePipe().receive()
+                    Log.d(TAG, "Received after observing : ${event.type}")
+                    ensureActive()
+                    when (event.type) {
+                        Event.AGORA_CALL_SPEAKER_VOLUME -> {
+                            val data = event.data as Int?
+                            if (data == 1){
+                                ensureActive()
+                                val uiState = context.currentUiState.copy(isCalleeSpeaking = true , isCallerSpeaking = false)
+                                context.updateUIState(uiState = uiState)
+                                context.sendEventToUI(event)
+                            } else {
+
+                                ensureActive()
+                                val uiState = context.currentUiState.copy(isCalleeSpeaking = false , isCallerSpeaking = true)
+                                context.updateUIState(uiState = uiState)
+                                context.sendEventToUI(event)
+                            }
+                        }
+                        else -> {
+                            val msg = "In $TAG but received ${event.type} event don't know how to process"
+                            CallAnalytics.addAnalytics(
+                                event = EventName.ILLEGAL_EVENT_RECEIVED,
+                                agoraCallId = context.channelData.getCallingId().toString(),
+                                agoraMentorId = context.channelData.getAgoraUid().toString(),
+                                extra = msg
+                            )
+                            throw IllegalEventException(msg)
+                        }
+                    }
+                }
+                scope.cancel()
+            } catch (e: Throwable) {
+                if (e is CancellationException)
+                    throw e
+                else {
+                    e.printStackTrace()
+                    Log.d(TAG, "disconnect : Exception $e switching to Leaving State")
+                    moveToLeavingState()
+                }
+            }
+        }
+    }
+
     private fun moveToLeavingState() {
         scope.launch {
             try {
                 listenerJob?.cancel()
+                audioListenerJob?.cancel()
                 context.closeCallScreen()
                 context.stopRecording()
                 Log.d(TAG, "moveToLeavingState: after close screen")

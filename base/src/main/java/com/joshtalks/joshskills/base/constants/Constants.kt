@@ -30,6 +30,8 @@ const val SERVICE_ACTION_STOP_SERVICE = "josh_service_action_stop_service"
 const val SERVICE_ACTION_INCOMING_CALL = "josh_service_action_incoming_call"
 const val SERVICE_ACTION_DISCONNECT_CALL = "josh_service_action_disconnect_call"
 const val SERVICE_ACTION_INCOMING_CALL_DECLINE = "josh_service_action_incoming_call_decline"
+const val SERVICE_ACTION_INCOMING_CALL_HIDE = "josh_service_action_incoming_call_hide"
+
 
 // Content Provider UI
 const val CONTENT_URI = "content://com.joshtalks.joshskills.contentprovider"
@@ -37,6 +39,9 @@ const val START_CALL_TIME_URI = "/start_call_time"
 const val CALL_DISCONNECTED_URI = "/call_disconnect"
 const val API_HEADER = "/api_header"
 const val MENTOR_ID = "/mentor_id"
+const val COURSE_ID = "/course_id"
+const val RECORD_VIDEO_URI = "/video_url"
+const val IS_COURSE_BOUGHT_OR_FREE_TRIAL = "/is_course_bought_or_free_trial"
 const val COURSE_ID = "/course_id"
 const val RECORD_VIDEO_URI = "/video_url"
 const val NOTIFICATION_DATA = "/notification_data"
@@ -109,6 +114,8 @@ const val MENTOR_NAME_COLUMN = "MENTOR_NAME"
 const val MENTOR_PROFILE_COLUMN = "MENTOR_PROFILE"
 const val RECORDING_TEXT_COLUMN = "RECORDING_TEXT_COLUMN"
 const val COURSE_ID_COLUMN = "COURSE_ID"
+const val FREE_TRIAL_OR_COURSE_BOUGHT_COLUMN = "FREE_TRIAL_OR_COURSE_BOUGHT_COLUMN"
+
 
 
 // Broadcast Receiver
@@ -124,3 +131,5 @@ const val INCOMING_CALL_ID = "josh_incoming_call_id"
 const val FROM_CALL_BAR = "josh_from_call_bar"
 const val STARTING_POINT = "josh_starting_point"
 
+const val USER_NAME= "USER_NAME"
+const val USER_PROFILE = "USER_PROFILE"

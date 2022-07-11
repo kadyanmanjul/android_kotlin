@@ -21,6 +21,7 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.NotificationObject
 import com.moengage.firebase.MoEFireBaseHelper
 import com.moengage.pushbase.MoEPushHelper
+import com.singular.sdk.Singular
 import java.lang.reflect.Type
 import kotlin.collections.set
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -127,6 +128,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             } else if (remoteMessage.data.containsKey("is_group")) {
                 NotificationUtils(this)
                     .processRemoteMessage(remoteMessage, NotificationAnalytics.Channel.GROUPS)
+                NotificationUtils(this).pushAnalytics(remoteMessage.data["group_id"])
                 return
             } else {
                 NotificationUtils(this)
@@ -142,8 +144,12 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             Timber.tag(FirebaseNotificationService::class.java.name).e("intent : ${intent.extras}")
 
             val intentData = intent.extras
+            var channel = NotificationAnalytics.Channel.FCM
             val data = if (intentData?.getString("push_from").equals(NotificationAnalytics.Channel.MOENGAGE.action))
-                intentData?.let { NotificationUtils(this).getDataFromMoengage(it) }
+                intentData?.let {
+                    channel = NotificationAnalytics.Channel.MOENGAGE
+                    NotificationUtils(this).getDataFromMoengage(it)
+                }
             else
                 mapOf(
                     Pair("action", intent.extras?.getString("action")),
@@ -152,6 +158,9 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     Pair("content_title", intent.extras?.getString("gcm.notification.title")),
                     Pair("content_text", intent.extras?.getString("gcm.notification.body"))
                 )
+
+            if (data.isNullOrEmpty())
+                return
 
             val notificationTypeToken: Type = object : TypeToken<NotificationObject>() {}.type
             val gsonMapper = GsonBuilder()
@@ -180,6 +189,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
 
             if (intent.extras?.containsKey("is_group") == true) {
                 NotificationUtils(this@FirebaseNotificationService).sendNotification(nc)
+                NotificationUtils(this).pushAnalytics(intent.extras?.getString("group_id"))
                 return
             }
 
@@ -187,7 +197,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 val isFirstTimeNotification = NotificationAnalytics().addAnalytics(
                     notificationId = nc.id.toString(),
                     mEvent = NotificationAnalytics.Action.RECEIVED,
-                    channel = NotificationAnalytics.Channel.FCM
+                    channel = channel
                 )
                 if (isFirstTimeNotification)
                     NotificationUtils(this@FirebaseNotificationService).sendNotification(nc)

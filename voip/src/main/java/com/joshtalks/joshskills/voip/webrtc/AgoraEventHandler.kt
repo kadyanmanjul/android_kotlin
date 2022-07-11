@@ -28,8 +28,16 @@ internal class AgoraEventHandler(val scope: CoroutineScope) : IRtcEngineEventHan
         MutableSharedFlow<CallState>(replay = 0)
     }
 
+    private val callingEventSpeakers by lazy {
+        MutableSharedFlow<Array<out IRtcEngineEventHandler.AudioVolumeInfo>?>(replay = 0)
+    }
+
     fun observeCallEvents() : SharedFlow<CallState> {
         return callingEvent
+    }
+
+    fun observeCallEventSpeaker() : SharedFlow<Array<out IRtcEngineEventHandler.AudioVolumeInfo>?>{
+        return callingEventSpeakers
     }
 
     /**
@@ -44,6 +52,7 @@ internal class AgoraEventHandler(val scope: CoroutineScope) : IRtcEngineEventHan
         totalVolume: Int
     ) {
         Log.d(TAG, "onAudioVolumeIndication: $totalVolume  $speakers")
+        emitSpeakers(speakers)
     }
 
     // Occurs when the local audio playback route changes
@@ -175,6 +184,20 @@ internal class AgoraEventHandler(val scope: CoroutineScope) : IRtcEngineEventHan
         scope.launch {
             try{
                 callingEvent.emit(event)
+            }
+            catch (e : Exception){
+                if(e is CancellationException)
+                    throw e
+                e.printStackTrace()
+            }
+        }
+    }
+
+    private fun emitSpeakers(eventHandler: Array<out AudioVolumeInfo>?){
+        Log.d(TAG, " Emitting Event : $eventHandler")
+        scope.launch {
+            try{
+                callingEventSpeakers.emit(eventHandler)
             }
             catch (e : Exception){
                 if(e is CancellationException)

@@ -11,7 +11,7 @@ if (!project.hasProperty("devBuild")) {
 //-PdevBuild --warning-mode=all --stacktrace
 def majorVersion = 5
 def minorVersion = 1
-def patchVersion = 13
+def patchVersion = 21
 
 android {
     compileSdkVersion 31
@@ -304,11 +304,11 @@ dependencies {
 
     implementation 'com.google.firebase:firebase-crashlytics-ktx:18.2.4'
     implementation 'com.google.firebase:firebase-appindexing:20.0.0'
-    implementation 'com.google.firebase:firebase-analytics-ktx:20.0.0'
+    implementation 'com.google.firebase:firebase-analytics-ktx:21.0.0'
     implementation 'com.google.firebase:firebase-core:19.0.1'
     implementation 'com.google.firebase:firebase-messaging:22.0.0'
     implementation 'com.google.firebase:firebase-perf:20.0.2'
-    implementation 'com.google.firebase:firebase-config:21.0.1'
+    implementation 'com.google.firebase:firebase-config-ktx:21.1.0'
     implementation 'com.google.firebase:firebase-dynamic-links-ktx:20.1.1'
     implementation 'com.google.firebase:firebase-auth:21.0.1'
     implementation 'com.google.firebase:firebase-inappmessaging-ktx:20.1.0'
@@ -327,7 +327,7 @@ dependencies {
     implementation 'com.android.installreferrer:installreferrer:2.2'
 
     implementation 'com.facebook.shimmer:shimmer:0.5.0'
-    implementation 'com.facebook.android:facebook-android-sdk:9.0.0'
+    implementation 'com.facebook.android:facebook-android-sdk:13.0.0'
     implementation 'com.facebook.stetho:stetho:1.6.0'
     implementation 'com.facebook.stetho:stetho-okhttp3:1.6.0'
     implementation 'com.facebook.android:facebook-login:9.0.0'
@@ -472,4 +472,8 @@ dependencies {
     implementation(moengage.pushAmp)
     implementation(moengage.pushAmpPlus)
     implementation group: 'org.slf4j', name: 'slf4j-android', version: '1.7.36'
+
+    //singular
+//    implementation 'com.singular.sdk:singular_sdk:12.0.5'
+    implementation files("libs/singular_sdk-12.0.5.aar")
 }
