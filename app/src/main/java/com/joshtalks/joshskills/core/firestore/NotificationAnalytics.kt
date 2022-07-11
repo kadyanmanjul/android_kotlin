@@ -9,6 +9,7 @@ import com.joshtalks.joshskills.core.notification.NotificationUtils
 import com.joshtalks.joshskills.core.notification.model.NotificationEvent
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.NotificationObject
+import com.joshtalks.joshskills.util.showAppropriateMsg
 import retrofit2.HttpException
 import timber.log.Timber
 import java.lang.reflect.Type
@@ -96,20 +97,11 @@ class NotificationAnalytics {
             }
             return true
         } catch (ex: Exception) {
-            when (ex) {
-                is HttpException -> {
-                    showToast(AppObjectController.joshApplication.getString(R.string.something_went_wrong))
-                }
-                is SocketTimeoutException, is UnknownHostException -> {
-                    showToast(AppObjectController.joshApplication.getString(R.string.internet_not_available_msz))
-                }
-                else -> {
-                    try {
-                        FirebaseCrashlytics.getInstance().recordException(ex)
-                    }catch (ex:Exception){
-                        ex.printStackTrace()
-                    }
-                }
+            ex.showAppropriateMsg()
+            try {
+                FirebaseCrashlytics.getInstance().recordException(ex)
+            } catch (ex: Exception) {
+                ex.printStackTrace()
             }
             return false
         }
@@ -137,20 +129,11 @@ class NotificationAnalytics {
                 }
             }
         } catch (e: Exception) {
-            when (e) {
-                is HttpException -> {
-                    showToast(AppObjectController.joshApplication.getString(R.string.something_went_wrong))
-                }
-                is SocketTimeoutException, is UnknownHostException -> {
-                    showToast(AppObjectController.joshApplication.getString(R.string.internet_not_available_msz))
-                }
-                else -> {
-                    try {
-                        FirebaseCrashlytics.getInstance().recordException(e)
-                    }catch (ex:Exception){
-                        ex.printStackTrace()
-                    }
-                }
+            e.showAppropriateMsg()
+            try {
+                FirebaseCrashlytics.getInstance().recordException(e)
+            } catch (ex: Exception) {
+                ex.printStackTrace()
             }
         }
     }

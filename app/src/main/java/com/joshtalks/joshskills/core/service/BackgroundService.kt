@@ -25,6 +25,7 @@ import com.joshtalks.joshskills.repository.local.model.NotificationObject
 import com.joshtalks.joshskills.repository.service.UtilsAPIService
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.util.ReminderUtil
+import com.joshtalks.joshskills.util.showAppropriateMsg
 import java.lang.reflect.Type
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CoroutineScope
@@ -130,20 +131,11 @@ class BackgroundService : Service() {
                     }
                 }
             } catch (e: Exception) {
-                when (e) {
-                    is HttpException -> {
-                        showToast(AppObjectController.joshApplication.getString(R.string.something_went_wrong))
-                    }
-                    is SocketTimeoutException, is UnknownHostException -> {
-                        showToast(AppObjectController.joshApplication.getString(R.string.internet_not_available_msz))
-                    }
-                    else -> {
-                        try {
-                            FirebaseCrashlytics.getInstance().recordException(e)
-                        }catch (ex:Exception){
-                            ex.printStackTrace()
-                        }
-                    }
+                e.showAppropriateMsg()
+                try {
+                    FirebaseCrashlytics.getInstance().recordException(e)
+                } catch (ex: Exception) {
+                    ex.printStackTrace()
                 }
             }
             stopForeground(true)
@@ -222,20 +214,11 @@ class BackgroundService : Service() {
                     }
                 }
             } catch (e: Exception) {
-                when (e) {
-                    is HttpException -> {
-                        showToast(AppObjectController.joshApplication.getString(R.string.something_went_wrong))
-                    }
-                    is SocketTimeoutException, is UnknownHostException -> {
-                        showToast(AppObjectController.joshApplication.getString(R.string.internet_not_available_msz))
-                    }
-                    else -> {
-                        try {
-                            FirebaseCrashlytics.getInstance().recordException(e)
-                        }catch (ex:Exception){
-                            ex.printStackTrace()
-                        }
-                    }
+                e.showAppropriateMsg()
+                try {
+                    FirebaseCrashlytics.getInstance().recordException(e)
+                } catch (ex: Exception) {
+                    ex.printStackTrace()
                 }
             }
         }
