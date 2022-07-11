@@ -89,6 +89,10 @@ class CertificateShareFragment : CoreJoshFragment() {
 
 
         binding.btnShareWhatsapp.setOnClickListener {
+            if (url.isEmpty()) {
+                showToast("Oops! something went wrong")
+                return@setOnClickListener
+            }
             if (Utils.isInternetAvailable()){
                 packageName = PKG_AFTER_COM_WHATSAPP
                 viewModel.progressBarVisibility.set(true)
@@ -101,6 +105,10 @@ class CertificateShareFragment : CoreJoshFragment() {
         }
 
         binding.btnShareFacebook.setOnClickListener {
+            if (url.isEmpty()) {
+                showToast("Oops! something went wrong")
+                return@setOnClickListener
+            }
             if (Utils.isInternetAvailable()){
                 packageName = PKG_AFTER_COM_FACEBOOK
                 viewModel.progressBarVisibility.set(true)
@@ -113,6 +121,10 @@ class CertificateShareFragment : CoreJoshFragment() {
         }
 
         binding.btnShareInsta.setOnClickListener {
+            if (url.isEmpty()) {
+                showToast("Oops! something went wrong")
+                return@setOnClickListener
+            }
             if (Utils.isInternetAvailable()){
                 packageName = PKG_AFTER_COM_INSTA
                 viewModel.progressBarVisibility.set(true)
@@ -124,6 +136,10 @@ class CertificateShareFragment : CoreJoshFragment() {
         }
 
         binding.btnShareLinkedIn.setOnClickListener {
+            if (url.isEmpty()) {
+                showToast("Oops! something went wrong")
+                return@setOnClickListener
+            }
             if (Utils.isInternetAvailable()){
                 packageName = PKG_AFTER_COM_LINKEDIN
                 viewModel.progressBarVisibility.set(true)
@@ -136,6 +152,10 @@ class CertificateShareFragment : CoreJoshFragment() {
         }
 
         binding.btnShareDownload.setOnClickListener {
+            if (url.isEmpty()) {
+                showToast("Oops! something went wrong")
+                return@setOnClickListener
+            }
             if (Utils.isInternetAvailable()){
                 packageName = NULL
                 viewModel.progressBarVisibility.set(true)
@@ -203,6 +223,10 @@ class CertificateShareFragment : CoreJoshFragment() {
     }
 
     fun downloadImage(url: String) {
+        if (url.isEmpty()) {
+            showToast("Oops! something went wrong")
+            return
+        }
         PermissionUtils.storageReadAndWritePermission(requireContext(), object : MultiplePermissionsListener {
             override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                 report?.areAllPermissionsGranted()?.let { flag ->

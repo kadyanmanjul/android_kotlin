@@ -704,20 +704,21 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         isNewArch: Boolean = false,
     ) {
         PrefManager.put(CALL_BTN_CLICKED, true)
-        if (PermissionUtils.isCallingPermissionEnabled(requireContext())) {
-            if (isNewArch) {
-                startPracticeCall()
-                return
-            } else {
-                startPractiseSearchScreen(
-                    favoriteUserCall = favoriteUserCall,
-                    isNewUserCall = isNewUserCall
-                )
-                return
+        if (isAdded && activity != null) {
+            if (PermissionUtils.isCallingPermissionEnabled(requireContext())) {
+                if (isNewArch) {
+                    startPracticeCall()
+                    return
+                } else {
+                    startPractiseSearchScreen(
+                        favoriteUserCall = favoriteUserCall,
+                        isNewUserCall = isNewUserCall
+                    )
+                    return
+                }
+
             }
 
-        }
-        if (isAdded && activity != null){
             PermissionUtils.callingFeaturePermission(
                 requireActivity(),
                 object : MultiplePermissionsListener {
