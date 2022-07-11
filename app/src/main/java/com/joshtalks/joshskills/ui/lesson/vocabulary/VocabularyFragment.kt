@@ -208,6 +208,8 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
                     binding.practiceRv.scrollToPosition(pos);
                 }
             }
+        }else{
+            showToast(getString(R.string.something_went_wrong))
         }
     }
 
@@ -371,16 +373,19 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
                     val requestEngage = RequestEngage()
 //                requestEngage.text = binding.etPractise.text.toString()
                     requestEngage.localPath = lessonQuestion.filePath
-                    if (isAdded && activity != null)
+                    if (isAdded && activity != null) {
                         requestEngage.duration = Utils.getDurationOfMedia(requireActivity(), lessonQuestion.filePath)?.toInt()
-                    // requestEngage.feedbackRequire = lessonQuestion.feedback_require
-                    requestEngage.questionId = lessonQuestion.id
-                    requestEngage.mentor = Mentor.getInstance().getId()
-                    if (it == EXPECTED_ENGAGE_TYPE.AU || it == EXPECTED_ENGAGE_TYPE.VI || it == EXPECTED_ENGAGE_TYPE.DX) {
-                        requestEngage.answerUrl = lessonQuestion.filePath
+                        // requestEngage.feedbackRequire = lessonQuestion.feedback_require
+                        requestEngage.questionId = lessonQuestion.id
+                        requestEngage.mentor = Mentor.getInstance().getId()
+                        if (it == EXPECTED_ENGAGE_TYPE.AU || it == EXPECTED_ENGAGE_TYPE.VI || it == EXPECTED_ENGAGE_TYPE.DX) {
+                            requestEngage.answerUrl = lessonQuestion.filePath
+                        }
+                        delay(1000)
+                        viewModel.addTaskToService(requestEngage, PendingTask.VOCABULARY_PRACTICE)
+                    }else{
+                        showToast(getString(R.string.something_went_wrong))
                     }
-                    delay(1000)
-                    viewModel.addTaskToService(requestEngage, PendingTask.VOCABULARY_PRACTICE)
                 }
                 return true
             }
@@ -444,6 +449,8 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
                     }
                 }
             )
+        }else{
+            showToast(getString(R.string.something_went_wrong))
         }
     }
 

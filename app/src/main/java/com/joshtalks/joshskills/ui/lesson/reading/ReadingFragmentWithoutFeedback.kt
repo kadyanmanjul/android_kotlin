@@ -273,6 +273,7 @@ class ReadingFragmentWithoutFeedback :
                     binding.mergedVideo.scaleY = 1f / scaleX
                 }
             }catch (ex:Exception){
+                showToast(getString(R.string.something_went_wrong))
                 ex.printStackTrace()
             }
         }
@@ -757,6 +758,8 @@ class ReadingFragmentWithoutFeedback :
 //                    imgArtwork.visibility = View.VISIBLE
                     }
                 }
+            }else{
+                showToast(getString(R.string.something_went_wrong))
             }
         }
     }
@@ -1292,6 +1295,8 @@ class ReadingFragmentWithoutFeedback :
                     }
                 }
             )
+        }else{
+            showToast(getString(R.string.something_went_wrong))
         }
     }
 

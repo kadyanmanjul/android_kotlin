@@ -439,6 +439,10 @@ class CertificateDetailActivity : BaseActivity(), FileDownloadCallback {
     }
     private fun openCertificateShareFragment(url: String?) {
         try {
+            if (url.isNullOrEmpty()){
+                showToast(getString(R.string.something_went_wrong))
+                return
+            }
             supportFragmentManager.commit {
                 setReorderingAllowed(true)
                 val fragment = viewModel.certificateExamId?.let { CertificateShareFragment.newInstance(url?: EMPTY, certificateExamId = it) }

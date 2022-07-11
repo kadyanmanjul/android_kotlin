@@ -30,7 +30,7 @@ object BranchIOAnalytics {
                 try {
                     FirebaseCrashlytics.getInstance().recordException(ex)
                 }catch (ex: Exception) {
-                    FirebaseCrashlytics.getInstance().recordException(ex)
+                    ex.printStackTrace()
                 }
                 ex.printStackTrace()
             }

@@ -1047,6 +1047,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             )
             this.finish()
         }catch (ex:Exception){
+            showToast(getString(R.string.something_went_wrong))
             ex.printStackTrace()
         }
     }

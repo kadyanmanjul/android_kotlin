@@ -497,6 +497,8 @@ class OnlineTestFragment :
                     }
                 }
             )
+        }else{
+            showToast(getString(R.string.something_went_wrong))
         }
     }
 
