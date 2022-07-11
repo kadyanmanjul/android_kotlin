@@ -24,14 +24,12 @@ import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.databinding.FragmentGrammarOnlineTestBinding
-import com.joshtalks.joshskills.ui.assessment.view.Stub
 import com.joshtalks.joshskills.ui.chat.DEFAULT_TOOLTIP_DELAY_IN_MS
 import com.joshtalks.joshskills.ui.leaderboard.ItemOverlay
 import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_GRAMMAR_ANIMATION
 import com.joshtalks.joshskills.ui.lesson.*
 import com.joshtalks.joshskills.ui.online_test.util.A2C1Impressions
 import com.joshtalks.joshskills.ui.online_test.util.TestCompletedListener
-import com.joshtalks.joshskills.ui.special_practice.utils.ErrorView
 import com.joshtalks.joshskills.ui.tooltip.TooltipUtils
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -49,7 +47,6 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), TestCompletedListener {
     private var lessonId: Int = -1
     private var scoreText: Int = -1
     private var pointsList: String? = null
-    private var errorView: Stub<ErrorView>? = null
 
     private var currentTooltipIndex = 0
     private var grammarAnimationListener: GrammarAnimation? = null
@@ -133,7 +130,6 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), TestCompletedListener {
                 container,
                 false
             )
-        errorView = Stub(binding.rootView.findViewById(R.id.error_view))
         binding.lifecycleOwner = viewLifecycleOwner
         binding.handler = this
         return binding.root
