@@ -263,13 +263,17 @@ class ReadingFragmentWithoutFeedback :
         addObserver()
         // showTooltip()
         binding.mergedVideo.setOnPreparedListener { mediaPlayer ->
-            val videoRatio = mediaPlayer.videoWidth / mediaPlayer.videoHeight.toFloat()
-            val screenRatio = binding.mergedVideo.width / binding.mergedVideo.height.toFloat()
-            val scaleX = videoRatio / screenRatio
-            if (scaleX >= 1f) {
-                binding.mergedVideo.scaleX = scaleX
-            } else {
-                binding.mergedVideo.scaleY = 1f / scaleX
+            try {
+                val videoRatio = mediaPlayer.videoWidth / mediaPlayer.videoHeight.toFloat()
+                val screenRatio = binding.mergedVideo.width / binding.mergedVideo.height.toFloat()
+                val scaleX = videoRatio / screenRatio
+                if (scaleX >= 1f) {
+                    binding.mergedVideo.scaleX = scaleX
+                } else {
+                    binding.mergedVideo.scaleY = 1f / scaleX
+                }
+            }catch (ex:Exception){
+                ex.printStackTrace()
             }
         }
 
@@ -741,15 +745,17 @@ class ReadingFragmentWithoutFeedback :
 
     private fun setVideoThumbnail(thumbnailUrl: String?) {
         lifecycleScope.launch(Dispatchers.IO) {
-            val thumbnailDrawable: Drawable? =
-                Utils.getDrawableFromUrl(thumbnailUrl)
-            if (thumbnailDrawable != null) {
-                AppObjectController.uiHandler.post {
-                    binding.videoPlayer.useArtwork = true
-                    binding.videoPlayer.defaultArtwork = thumbnailDrawable
+            if (isAdded && activity != null) {
+                val thumbnailDrawable: Drawable? =
+                    Utils.getDrawableFromUrl(requireContext(),thumbnailUrl)
+                if (thumbnailDrawable != null) {
+                    AppObjectController.uiHandler.post {
+                        binding.videoPlayer.useArtwork = true
+                        binding.videoPlayer.defaultArtwork = thumbnailDrawable
 //                    val imgArtwork: ImageView = binding.videoPlayer.findViewById(R.id.exo_artwork) as ImageView
 //                    imgArtwork.setImageDrawable(thumbnailDrawable)
 //                    imgArtwork.visibility = View.VISIBLE
+                    }
                 }
             }
         }

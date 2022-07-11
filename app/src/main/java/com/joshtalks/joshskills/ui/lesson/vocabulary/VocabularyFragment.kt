@@ -199,12 +199,14 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
         binding.practiceRv.setItemViewCacheSize(5)
         binding.practiceRv.enforceSingleScrollDirection()
 
-        if (requireActivity().intent?.getBooleanExtra("reopen", false) == true) {
-            val pos = adapter.getItemPosition(requireActivity().intent?.getStringExtra("practice_word"))
-            if (pos >= 0) {
-                adapter.fromNotification = true
-                adapter.expandCardPosition = pos
-                binding.practiceRv.scrollToPosition(pos);
+        if (isAdded && activity!=null) {
+            if (requireActivity().intent?.getBooleanExtra("reopen", false) == true) {
+                val pos = adapter.getItemPosition(requireActivity().intent?.getStringExtra("practice_word"))
+                if (pos >= 0) {
+                    adapter.fromNotification = true
+                    adapter.expandCardPosition = pos
+                    binding.practiceRv.scrollToPosition(pos);
+                }
             }
         }
     }
@@ -369,9 +371,8 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
                     val requestEngage = RequestEngage()
 //                requestEngage.text = binding.etPractise.text.toString()
                     requestEngage.localPath = lessonQuestion.filePath
-                    requestEngage.duration =
-                        Utils.getDurationOfMedia(requireActivity(), lessonQuestion.filePath)
-                            ?.toInt()
+                    if (isAdded && activity != null)
+                        requestEngage.duration = Utils.getDurationOfMedia(requireActivity(), lessonQuestion.filePath)?.toInt()
                     // requestEngage.feedbackRequire = lessonQuestion.feedback_require
                     requestEngage.questionId = lessonQuestion.id
                     requestEngage.mentor = Mentor.getInstance().getId()
@@ -419,30 +420,31 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
     }
 
     override fun askRecordPermission() {
-
-        PermissionUtils.audioRecordStorageReadAndWritePermission(
-            requireActivity(),
-            object : MultiplePermissionsListener {
-                override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
-                    report?.areAllPermissionsGranted()?.let {
-                        if (report.isAnyPermissionPermanentlyDenied) {
-                            PermissionUtils.permissionPermanentlyDeniedDialog(
-                                requireActivity(),
-                                R.string.record_permission_message
-                            )
-                            return
+        if (isAdded && activity != null) {
+            PermissionUtils.audioRecordStorageReadAndWritePermission(
+                requireActivity(),
+                object : MultiplePermissionsListener {
+                    override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                        report?.areAllPermissionsGranted()?.let {
+                            if (report.isAnyPermissionPermanentlyDenied) {
+                                PermissionUtils.permissionPermanentlyDeniedDialog(
+                                    requireActivity(),
+                                    R.string.record_permission_message
+                                )
+                                return
+                            }
                         }
                     }
-                }
 
-                override fun onPermissionRationaleShouldBeShown(
-                    permissions: MutableList<PermissionRequest>?,
-                    token: PermissionToken?
-                ) {
-                    token?.continuePermissionRequest()
+                    override fun onPermissionRationaleShouldBeShown(
+                        permissions: MutableList<PermissionRequest>?,
+                        token: PermissionToken?
+                    ) {
+                        token?.continuePermissionRequest()
+                    }
                 }
-            }
-        )
+            )
+        }
     }
 
     override fun focusChild(position: Int) {

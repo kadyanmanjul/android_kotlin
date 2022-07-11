@@ -68,7 +68,11 @@ class ReminderViewModel(application: Application) : AndroidViewModel(application
                         showToast(context.getString(R.string.internet_not_available_msz))
                     }
                     else -> {
-                        FirebaseCrashlytics.getInstance().recordException(ex)
+                        try {
+                            FirebaseCrashlytics.getInstance().recordException(ex)
+                        }catch (ex:Exception){
+                            ex.printStackTrace()
+                        }
                     }
                 }
                 submitApiCallStatusLiveData.postValue(ApiCallStatus.FAILED)

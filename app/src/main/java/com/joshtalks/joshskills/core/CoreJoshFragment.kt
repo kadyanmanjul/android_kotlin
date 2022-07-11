@@ -28,6 +28,13 @@ open class CoreJoshFragment : TrackFragment() {
     }
 
     override fun getConversationId(): String? {
-        return (requireActivity() as AppCompatActivity).intent.getStringExtra(CONVERSATION_ID)
+        try {
+            if (isAdded){
+                return (requireActivity() as AppCompatActivity).intent.getStringExtra(CONVERSATION_ID)
+            }
+        }catch (ex: Exception) {
+            ex.printStackTrace()
+        }
+        return null
     }
 }

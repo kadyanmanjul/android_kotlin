@@ -94,7 +94,7 @@ class CertificateDetailActivity : BaseActivity(), FileDownloadCallback {
             intent.getIntExtra(CERTIFICATE_EXAM_ID,0).let { viewModel.certificateExamId =it }
         }
         if (intent.hasExtra(CERTIFICATE_URL) && intent.getStringExtra(CERTIFICATE_URL) != null) {
-            intent.getStringExtra(CERTIFICATE_URL)?.let { openCertificateShareFragment(it) }
+            openCertificateShareFragment(intent.getStringExtra(CERTIFICATE_URL)?: EMPTY)
             initView()
         } else {
             initDOBPicker()
@@ -232,7 +232,7 @@ class CertificateDetailActivity : BaseActivity(), FileDownloadCallback {
         }
         lifecycleScope.launchWhenCreated {
             viewModel.certificateUrl.collectLatest {
-                openCertificateShareFragment(it)
+                openCertificateShareFragment(it?: EMPTY)
             }
         }
 
@@ -437,13 +437,17 @@ class CertificateDetailActivity : BaseActivity(), FileDownloadCallback {
             }
         }
     }
-    private fun openCertificateShareFragment(url: String) {
-        supportFragmentManager.commit {
-            setReorderingAllowed(true)
-            val fragment = viewModel.certificateExamId?.let { CertificateShareFragment.newInstance(url, certificateExamId = it) }
-            if (fragment != null) {
-                replace(R.id.container_frame, fragment, CERTIFICATE_SHARE_FRAGMENT)
+    private fun openCertificateShareFragment(url: String?) {
+        try {
+            supportFragmentManager.commit {
+                setReorderingAllowed(true)
+                val fragment = viewModel.certificateExamId?.let { CertificateShareFragment.newInstance(url?: EMPTY, certificateExamId = it) }
+                if (fragment != null) {
+                    replace(R.id.container_frame, fragment, CERTIFICATE_SHARE_FRAGMENT)
+                }
             }
+        }catch (ex:Exception){
+            ex.printStackTrace()
         }
     }
     /*fun showProgressDialog(msg: String) {

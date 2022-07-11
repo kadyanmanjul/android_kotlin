@@ -284,7 +284,7 @@ dependencies {
     implementation "androidx.room:room-ktx:$room_version"
     implementation "androidx.room:room-rxjava2:$room_version"
 
-    implementation 'com.google.android.material:material:1.4.0'
+    implementation 'com.google.android.material:material:1.6.1'
     kapt 'com.android.databinding:compiler:3.1.4'
 
     implementation('com.github.bumptech.glide:glide:4.12.0') {

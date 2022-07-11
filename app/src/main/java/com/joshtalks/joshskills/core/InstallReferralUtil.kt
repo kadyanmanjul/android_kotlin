@@ -122,7 +122,11 @@ object InstallReferralUtil {
                                     }
                                 } catch (ex: RemoteException) {
                                     PrefHelper.Debug("onInstallReferrerSetupFinished() Exception: " + ex.message)
-                                    FirebaseCrashlytics.getInstance().recordException(ex)
+                                    try {
+                                        FirebaseCrashlytics.getInstance().recordException(ex)
+                                    }catch (ex:Exception){
+
+                                    }
                                     ex.printStackTrace()
                                 }
                             }

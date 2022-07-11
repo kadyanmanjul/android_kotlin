@@ -65,7 +65,12 @@ object RecentBindingAdapter {
     @JvmStatic
     fun recentCallImage(imageView: ImageView, caller: RecentCall?) {
         caller?.let {
-            imageView.setUserImageOrInitials(it.photoUrl, it.firstName?:"", isRound = true)
+            try {
+                imageView.setUserImageOrInitials(it.photoUrl, it.firstName?:"", isRound = true)
+            }catch (e:Error){
+                imageView.setImageResource(R.drawable.ic_call_placeholder)
+                e.printStackTrace()
+            }
         } ?: imageView.setImageResource(R.drawable.ic_call_placeholder)
     }
 }

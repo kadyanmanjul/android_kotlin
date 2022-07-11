@@ -109,7 +109,11 @@ class FreeTrialPaymentViewModel(application: Application) : AndroidViewModel(app
                         showToast(AppObjectController.joshApplication.getString(R.string.internet_not_available_msz))
                     }
                     else -> {
-                        FirebaseCrashlytics.getInstance().recordException(ex)
+                        try {
+                            FirebaseCrashlytics.getInstance().recordException(ex)
+                        }catch (ex:Exception){
+                            ex.printStackTrace()
+                        }
                     }
                 }
             }
@@ -151,7 +155,11 @@ class FreeTrialPaymentViewModel(application: Application) : AndroidViewModel(app
                     }
                     else -> {
                         // viewState?.postValue(PaymentSummaryViewModel.ViewState.PROCESSED)
-                        FirebaseCrashlytics.getInstance().recordException(ex)
+                        try {
+                            FirebaseCrashlytics.getInstance().recordException(ex)
+                        }catch (ex:Exception){
+                            ex.printStackTrace()
+                        }
                     }
                 }
             }

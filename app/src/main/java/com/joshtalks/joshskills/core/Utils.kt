@@ -892,7 +892,7 @@ object Utils {
         return outputFormat.format(date)
     }
 
-    fun getDrawableFromUrl(url: String?): Drawable? {
+    fun getDrawableFromUrl(context: Context,url: String?): Drawable? {
         return try {
             val bitmap: Bitmap
             val connection: HttpURLConnection = URL(url).openConnection() as HttpURLConnection
@@ -900,9 +900,9 @@ object Utils {
             val input: InputStream = connection.inputStream
             bitmap = BitmapFactory.decodeStream(input)
             BitmapDrawable(Resources.getSystem(), bitmap)
-        } catch (ex: Exception) {
-            Timber.e(ex)
-            null
+        } catch (e: Error) {
+            Timber.e(e)
+            AppCompatResources.getDrawable(context,R.drawable.ic_file_error)
         }
     }
 }

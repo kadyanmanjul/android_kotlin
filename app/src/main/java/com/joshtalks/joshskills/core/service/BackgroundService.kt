@@ -10,17 +10,14 @@ import android.content.Intent
 import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.gson.*
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.HeaderInterceptor
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.SERVER_TIME_OFFSET
-import com.joshtalks.joshskills.core.StatusCodeInterceptor
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.firestore.NotificationAnalytics
 import com.joshtalks.joshskills.core.firestore.NotificationAnalyticsRequest
-import com.joshtalks.joshskills.core.getStethoInterceptor
 import com.joshtalks.joshskills.core.notification.NotificationUtils
 import com.joshtalks.joshskills.repository.local.AppDatabase
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -38,6 +35,8 @@ import retrofit2.HttpException
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.lang.reflect.Modifier
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 import java.text.DateFormat
 import java.util.*
 
@@ -131,7 +130,21 @@ class BackgroundService : Service() {
                     }
                 }
             } catch (e: Exception) {
-                e.printStackTrace()
+                when (e) {
+                    is HttpException -> {
+                        showToast(AppObjectController.joshApplication.getString(R.string.something_went_wrong))
+                    }
+                    is SocketTimeoutException, is UnknownHostException -> {
+                        showToast(AppObjectController.joshApplication.getString(R.string.internet_not_available_msz))
+                    }
+                    else -> {
+                        try {
+                            FirebaseCrashlytics.getInstance().recordException(e)
+                        }catch (ex:Exception){
+                            ex.printStackTrace()
+                        }
+                    }
+                }
             }
             stopForeground(true)
             stopSelf()
@@ -209,7 +222,21 @@ class BackgroundService : Service() {
                     }
                 }
             } catch (e: Exception) {
-                e.printStackTrace()
+                when (e) {
+                    is HttpException -> {
+                        showToast(AppObjectController.joshApplication.getString(R.string.something_went_wrong))
+                    }
+                    is SocketTimeoutException, is UnknownHostException -> {
+                        showToast(AppObjectController.joshApplication.getString(R.string.internet_not_available_msz))
+                    }
+                    else -> {
+                        try {
+                            FirebaseCrashlytics.getInstance().recordException(e)
+                        }catch (ex:Exception){
+                            ex.printStackTrace()
+                        }
+                    }
+                }
             }
         }
     }

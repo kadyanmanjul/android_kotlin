@@ -11,6 +11,7 @@ import com.joshtalks.joshskills.ui.fpp.constants.FPP_SEE_ALL_BACK_PRESSED
 import com.joshtalks.joshskills.ui.fpp.constants.FPP_OPEN_USER_PROFILE
 import com.joshtalks.joshskills.ui.fpp.viewmodels.SeeAllRequestsViewModel
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
+import java.lang.Exception
 
 class SeeAllRequestsActivity : BaseFppActivity() {
 
@@ -55,6 +56,14 @@ class SeeAllRequestsActivity : BaseFppActivity() {
     }
 
     private fun popBackStack() {
-        this.onBackPressed()
+        try {
+            if (supportFragmentManager.backStackEntryCount>0) {
+                supportFragmentManager.popBackStack()
+            } else {
+                onBackPressed()
+            }
+        }catch (ex: Exception){
+            ex.printStackTrace()
+        }
     }
 }

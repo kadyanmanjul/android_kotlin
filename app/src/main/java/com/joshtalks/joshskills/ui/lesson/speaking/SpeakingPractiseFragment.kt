@@ -717,7 +717,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             }
 
         }
-        if (isAdded){
+        if (isAdded && activity != null){
             PermissionUtils.callingFeaturePermission(
                 requireActivity(),
                 object : MultiplePermissionsListener {
@@ -783,7 +783,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
     }
 
     fun openNetworkDialog(v:View){
-        if (isAdded) {
+        if (isAdded && activity != null) {
             val dialog = AlertDialog.Builder(context)
             dialog
                 .setMessage(getString(R.string.network_message))
@@ -793,7 +793,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
     }
 
     fun openRatingDialog(v:View){
-        if (isAdded) {
+        if (isAdded && activity != null) {
             val rating = 7
             val dialog = AlertDialog.Builder(context)
             dialog

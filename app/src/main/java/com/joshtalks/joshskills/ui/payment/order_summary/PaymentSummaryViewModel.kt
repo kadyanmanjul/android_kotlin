@@ -195,7 +195,11 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
                         viewState?.postValue(ViewState.INTERNET_NOT_AVAILABLE)
                     }
                     else -> {
-                        FirebaseCrashlytics.getInstance().recordException(ex)
+                        try {
+                            FirebaseCrashlytics.getInstance().recordException(ex)
+                        }catch (ex:Exception){
+                            ex.printStackTrace()
+                        }
                     }
                 }
             }
@@ -219,7 +223,11 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
                         viewState?.postValue(ViewState.INTERNET_NOT_AVAILABLE)
                     }
                     else -> {
-                        FirebaseCrashlytics.getInstance().recordException(ex)
+                        try {
+                            FirebaseCrashlytics.getInstance().recordException(ex)
+                        }catch (ex:Exception){
+                            ex.printStackTrace()
+                        }
                     }
                 }
             }
@@ -265,7 +273,11 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
                     }
                     else -> {
                         viewState?.postValue(ViewState.PROCESSED)
-                        FirebaseCrashlytics.getInstance().recordException(ex)
+                        try {
+                            FirebaseCrashlytics.getInstance().recordException(ex)
+                        }catch (ex:Exception){
+                            ex.printStackTrace()
+                        }
                     }
                 }
             }
@@ -311,7 +323,11 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
                         viewState?.postValue(ViewState.INTERNET_NOT_AVAILABLE)
                     }
                     else -> {
-                        FirebaseCrashlytics.getInstance().recordException(ex)
+                        try {
+                            FirebaseCrashlytics.getInstance().recordException(ex)
+                        }catch (ex:Exception){
+                            ex.printStackTrace()
+                        }
                     }
                 }
             }
