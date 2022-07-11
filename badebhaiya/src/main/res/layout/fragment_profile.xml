@@ -62,6 +62,26 @@
             app:layout_constraintVertical_bias="1.0" />
 
         <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/callRequestsBtn"
+            android:layout_width="@dimen/_120sdp"
+            android:layout_height="@dimen/_24sdp"
+            android:background="@drawable/following_button_background"
+            android:gravity="center"
+            android:onClick="@{() -> handler.navigateToRequestsList()}"
+            android:text="@string/call_requests"
+            android:elevation="@dimen/_4sdp"
+            android:textAppearance="@style/BB_Typography_Nunito_Semi_Bold"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_12ssp"
+            android:visibility="@{(viewModel.isBadeBhaiyaSpeaker &amp;&amp; viewModel.isSelfProfile) ? View.VISIBLE : View.GONE}"
+            app:layout_constraintBottom_toBottomOf="@id/iv_profile_pic"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.933"
+            app:layout_constraintStart_toStartOf="@id/iv_profile_pic"
+            app:layout_constraintTop_toBottomOf="@id/profile_toolbar"
+            app:layout_constraintVertical_bias="1.0" />
+
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvUserName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

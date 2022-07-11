@@ -44,9 +44,11 @@ import com.joshtalks.badebhaiya.liveroom.viewmodel.LiveRoomViewModel
 import com.joshtalks.badebhaiya.notifications.NotificationScheduler
 import com.joshtalks.badebhaiya.profile.request.ReminderRequest
 import com.joshtalks.badebhaiya.profile.response.ProfileResponse
+import com.joshtalks.badebhaiya.pubnub.PubNubManager
 import com.joshtalks.badebhaiya.pubnub.PubNubState
 import com.joshtalks.badebhaiya.repository.CommonRepository
 import com.joshtalks.badebhaiya.repository.model.User
+import com.joshtalks.badebhaiya.showCallRequests.CallRequestsListActivity
 import com.joshtalks.badebhaiya.signup.SignUpActivity
 import com.joshtalks.badebhaiya.signup.viewmodel.SignUpViewModel
 import com.joshtalks.badebhaiya.utils.SingleDataManager
@@ -308,6 +310,14 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
                 tvFollowers.text = HtmlCompat.fromHtml(getString(R.string.bb_following, "<big>"+profileResponse.followingCount.toString()+"</big>"),
                     HtmlCompat.FROM_HTML_MODE_LEGACY)
             }
+        }
+    }
+
+    fun navigateToRequestsList(){
+        if (!PubNubManager.isRoomActive){
+            CallRequestsListActivity.open(requireActivity())
+        } else {
+            showToast(getString(R.string.please_leave_current_room))
         }
     }
 
