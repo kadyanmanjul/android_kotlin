@@ -253,5 +253,7 @@
     <color name="p2p_your_word_color_yellow">#FEF51C</color>
 
     <color name="p2p_call_background_color">#0D5CB8</color>
+    <color name="purple_txt_color_p2p_game">#F5E5FF</color>
+    <color name="p2p_game_call_recording_grey">#EAEAEA</color>
 
 </resources>
