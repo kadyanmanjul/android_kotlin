@@ -164,7 +164,7 @@
             app:layout_constraintEnd_toStartOf="@+id/guideline5"
             app:layout_constraintHorizontal_bias="0.0"
             android:gravity="center"
-            android:paddingHorizontal="@dimen/_40sdp"
+            android:paddingHorizontal="@dimen/_38sdp"
             android:layout_marginTop="@dimen/_5sdp"
             app:layout_constraintStart_toStartOf="@+id/guideline4"
             app:layout_constraintTop_toBottomOf="@+id/play_game_btn">
@@ -192,11 +192,13 @@
                 android:layout_toRightOf="@+id/before_record_text"
                 android:gravity="center"
                 android:lineSpacingMultiplier="1.5"
+                android:layout_marginLeft="@dimen/_2sdp"
                 android:text="@{vm.uiState.startGameClicked == false ? @string/recording_text : @string/recording_text_after}"
                 android:textColor="@color/white"
-                android:visibility="@{vm.uiState.startGameClicked == true ? View.GONE : View.VISIBLE}"
                 android:textSize="@dimen/_10sdp"
-                tools:ignore="MissingPrefix" />
+                android:visibility="@{vm.uiState.startGameClicked == true ? View.GONE : View.VISIBLE}"
+                tools:ignore="MissingPrefix"
+                tools:text="of the game will get" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/before_record_text_below"
@@ -457,7 +459,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toTopOf="@id/bottom_card_view"
             android:paddingBottom="@dimen/_15sdp"
-            tools:visibility="visible">
+            tools:visibility="gone">
 
             <LinearLayout
                 android:id="@+id/photo_frames_layout"
