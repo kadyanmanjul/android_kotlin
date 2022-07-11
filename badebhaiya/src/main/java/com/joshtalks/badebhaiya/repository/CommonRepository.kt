@@ -1,5 +1,6 @@
 package com.joshtalks.badebhaiya.repository
 
+import com.joshtalks.badebhaiya.core.models.FormRequest
 import com.joshtalks.badebhaiya.core.models.FormResponse
 import com.joshtalks.badebhaiya.core.models.InstallReferrerModel
 import com.joshtalks.badebhaiya.core.models.UpdateDeviceRequest
@@ -23,6 +24,9 @@ class CommonRepository {
     fun requestUploadMediaAsync(requestParams: Map<String, String>) = service.requestUploadMediaAsync(requestParams)
 
     suspend fun sendMsg(params:FormResponse)=service.sendMsg(params)
+
+    suspend fun sendRequest(params:FormRequest)=service.sendRequest(params)
+
     suspend fun getInstallReferrerAsync(obj: InstallReferrerModel) =
         service.getInstallReferrerAsync(obj)
 

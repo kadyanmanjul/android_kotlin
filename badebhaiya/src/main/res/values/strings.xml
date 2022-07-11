@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">BadeBhaiya</string>
     <string name="follow">Follow</string>
+    <string name="request">Request Call</string>
     <string name="following">Following</string>
     <string name="set_reminder">Set reminder</string>
     <string name="reminder_on">Reminder set</string>

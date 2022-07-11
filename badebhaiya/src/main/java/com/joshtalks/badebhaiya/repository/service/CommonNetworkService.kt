@@ -1,9 +1,6 @@
 package com.joshtalks.badebhaiya.repository.service
 
-import com.joshtalks.badebhaiya.core.models.DeviceDetailsResponse
-import com.joshtalks.badebhaiya.core.models.FormResponse
-import com.joshtalks.badebhaiya.core.models.InstallReferrerModel
-import com.joshtalks.badebhaiya.core.models.UpdateDeviceRequest
+import com.joshtalks.badebhaiya.core.models.*
 import com.joshtalks.badebhaiya.repository.model.FCMData
 import com.joshtalks.badebhaiya.repository.server.AmazonPolicyResponse
 import kotlinx.coroutines.Deferred
@@ -29,6 +26,9 @@ interface CommonNetworkService {
 
     @POST("$DIR/user/reminder_form_response/")
     suspend fun sendMsg(@Body params: FormResponse):Response<Void>
+
+    @POST("$DIR/request_call/submit_request/")
+    suspend fun sendRequest(@Body params: FormRequest):Response<Void>
 
     @FormUrlEncoded
     @POST("$DIR/core/signed_url/")

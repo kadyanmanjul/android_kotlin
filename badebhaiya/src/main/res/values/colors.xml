@@ -21,6 +21,7 @@
     <color name="next_button_disabled">#CDD0D7</color>
     <color name="next_button_enabled">#5576AB</color>
     <color name="skip_button_color">#838079</color>
+    <color name="request_button_disabled">#C1CAC5</color>
 
     <color name="colorPrimary">#107BE5</color>
     <color name="colorPrimary_alfa_6">#0F107BE5</color>

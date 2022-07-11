@@ -28,11 +28,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.core.*
 import com.joshtalks.badebhaiya.core.USER_ID
+import com.joshtalks.badebhaiya.core.models.FormRequest
 import com.joshtalks.badebhaiya.core.models.FormResponse
 import com.joshtalks.badebhaiya.core.models.PendingPilotEvent
 import com.joshtalks.badebhaiya.core.models.PendingPilotEvent.*
 import com.joshtalks.badebhaiya.core.models.PendingPilotEventData
 import com.joshtalks.badebhaiya.databinding.FragmentProfileBinding
+import com.joshtalks.badebhaiya.databinding.RequestRoomBinding
 import com.joshtalks.badebhaiya.databinding.WhyRoomBinding
 import com.joshtalks.badebhaiya.feed.*
 import com.joshtalks.badebhaiya.feed.adapter.FeedAdapter
@@ -184,6 +186,38 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
                 }
             }
         })
+    }
+
+    fun requestRoomPopup() {
+        val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
+        val dialogBinding = RequestRoomBinding.inflate(layoutInflater)
+        dialogBuilder.setView(dialogBinding.root)
+        val alertDialog: AlertDialog = dialogBuilder.create()
+        alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        alertDialog.show()
+
+        dialogBinding.message.addTextChangedListener {
+            dialogBinding.submit.isEnabled = !it.toString().trim().isEmpty()
+        }
+
+        dialogBinding.submit.setOnClickListener{
+            val msg:String
+            if(dialogBinding.message.toString().isNotBlank()) {
+                msg = dialogBinding.message.text.toString()
+                val obj=FormRequest(User.getInstance().userId,msg,userId!!)
+                CoroutineScope(Dispatchers.IO).launch {
+                    try {
+                        val resp= CommonRepository().sendRequest(obj)
+                        if(resp.isSuccessful)
+                            showToast("request Send")
+                    } catch (e: Exception){
+                        Log.i("REQUESTMSG", "requestRoomPopup: ${e.message}")
+                    }
+                }
+                alertDialog.dismiss()
+            }
+        }
+
     }
 
     fun showPopup(roomId: Int, userId: String) {

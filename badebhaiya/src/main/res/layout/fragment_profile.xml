@@ -41,6 +41,29 @@
             app:shapeAppearanceOverlay="@style/roundedCornersImageView_28dp"
             tools:background="@drawable/user_profile_background" />
 
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/btnRequest"
+            android:layout_width="@dimen/_90sdp"
+            android:layout_height="@dimen/_24sdp"
+            android:background="@drawable/request_button_background"
+            android:gravity="center"
+            android:onClick="@{() -> handler.requestRoomPopup()}"
+            android:text="@string/request"
+            android:elevation="@dimen/_4sdp"
+            android:textAppearance="@style/BB_Typography_Nunito_Semi_Bold"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_12ssp"
+            android:layout_marginRight="@dimen/_10sdp"
+            android:visibility="@{(viewModel.isBadeBhaiyaSpeaker &amp;&amp; !viewModel.isSelfProfile) ? View.VISIBLE : View.GONE}"
+            app:layout_constraintBottom_toBottomOf="@id/iv_profile_pic"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.384"
+            app:layout_constraintStart_toStartOf="@id/iv_profile_pic"
+            app:layout_constraintTop_toBottomOf="@id/profile_toolbar"
+            app:layout_constraintVertical_bias="1.0" />
+
+
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/btnFollow"
             android:layout_width="@dimen/_100sdp"
