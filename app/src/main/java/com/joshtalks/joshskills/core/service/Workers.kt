@@ -554,12 +554,12 @@ class UserActiveWorker(context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
         try {
-            val instanceId = when {
-                PrefManager.hasKey(INSTANCE_ID, true) -> {
-                    PrefManager.getStringValue(INSTANCE_ID, true)
+            val gaid = when {
+                PrefManager.hasKey(USER_UNIQUE_ID, true) -> {
+                    PrefManager.getStringValue(USER_UNIQUE_ID, true)
                 }
-                PrefManager.hasKey(INSTANCE_ID, false) -> {
-                    PrefManager.getStringValue(INSTANCE_ID, false)
+                PrefManager.hasKey(USER_UNIQUE_ID, false) -> {
+                    PrefManager.getStringValue(USER_UNIQUE_ID, false)
                 }
                 else -> {
                     null
@@ -567,7 +567,7 @@ class UserActiveWorker(context: Context, workerParams: WorkerParameters) :
             }
             val response = AppObjectController.signUpNetworkService.userActive(
                 Mentor.getInstance().getId(),
-                mapOf("instance_id" to instanceId, "device_id" to Utils.getDeviceId())
+                mapOf("gaid" to gaid, "device_id" to Utils.getDeviceId())
             )
 
             if (response.isSuccessful && response.body()?.isLatestLoginDevice == false) {

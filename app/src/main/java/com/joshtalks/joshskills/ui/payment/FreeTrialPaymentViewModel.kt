@@ -6,16 +6,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.INSTANCE_ID
-import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.analytics.ParamKeys
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.FreeTrialPaymentResponse
 import com.joshtalks.joshskills.repository.server.OrderDetailResponse
@@ -86,7 +82,7 @@ class FreeTrialPaymentViewModel(application: Application) : AndroidViewModel(app
             isProcessing.postValue(true)
             val data = HashMap<String, Any>()
             data["test_id"] = testId
-            data["instance_id"] = PrefManager.getStringValue(INSTANCE_ID, false)
+            data["gaid"] = PrefManager.getStringValue(USER_UNIQUE_ID, false)
             data["code"] = couponCode
             if (Mentor.getInstance().getId().isNotEmpty()) {
                 data["mentor_id"] = Mentor.getInstance().getId()
@@ -117,14 +113,14 @@ class FreeTrialPaymentViewModel(application: Application) : AndroidViewModel(app
         }
     }
 
-    fun getOrderDetails(testId: String, mobileNumber: String,encryptedText:String) {
+    fun getOrderDetails(testId: String, mobileNumber: String, encryptedText: String) {
         // viewState?.postValue(PaymentSummaryViewModel.ViewState.PROCESSING)
         viewModelScope.launch(Dispatchers.IO) {
             isProcessing.postValue(true)
             try {
                 val data = mutableMapOf(
                     "encrypted_text" to encryptedText,
-                    "instance_id" to PrefManager.getStringValue(INSTANCE_ID, false),
+                    "gaid" to PrefManager.getStringValue(USER_UNIQUE_ID, false),
                     "mobile" to mobileNumber,
                     "test_id" to testId,
                     "mentor_id" to Mentor.getInstance().getId()
@@ -151,6 +147,7 @@ class FreeTrialPaymentViewModel(application: Application) : AndroidViewModel(app
                     }
                     else -> {
                         // viewState?.postValue(PaymentSummaryViewModel.ViewState.PROCESSED)
+                        showToast(AppObjectController.joshApplication.getString(R.string.something_went_wrong))
                         FirebaseCrashlytics.getInstance().recordException(ex)
                     }
                 }
@@ -172,6 +169,7 @@ class FreeTrialPaymentViewModel(application: Application) : AndroidViewModel(app
             }
         }
     }
+
     fun checkMentorIdPaid() {
         viewModelScope.launch(Dispatchers.IO) {
             try {

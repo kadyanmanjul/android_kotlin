@@ -32,6 +32,7 @@ import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.ChooseLanguages
 import com.joshtalks.joshskills.repository.server.onboarding.OnboardingCourseData
 import com.joshtalks.joshskills.repository.server.onboarding.SpecificOnboardingCourseData
+import com.joshtalks.joshskills.repository.server.signup.LastLoginType
 import com.joshtalks.joshskills.ui.activity_feed.utils.IS_USER_EXIST
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.truecaller.android.sdk.*
@@ -119,6 +120,14 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         btnStartTrial.setOnClickListener {
             if (PrefManager.hasKey(SPECIFIC_ONBOARDING, isConsistent = true))
                 signUp()
+            else if (PrefManager.getStringValue(LAST_LOGIN_TYPE) == LastLoginType.VERIFIED_LOGIN.name)
+                signUp()
+            else if (PrefManager.getStringValue(LAST_LOGIN_TYPE) == LastLoginType.UNVERIFIED_LOGIN.name) {
+                moveToInboxScreen()
+                PrefManager.put(IS_GUEST_ENROLLED, true)
+                PrefManager.put(IS_PAYMENT_DONE, false)
+
+            }
             else if (languageActive)
                 openChooseLanguageFragment()
             else if (is100PointsActive)

@@ -11,8 +11,8 @@ data class TrueCallerLoginRequest(
     val signature: String,
     @SerializedName("signature_algo")
     val signatureAlgo: String,
-    @SerializedName("instance_id")
-    val instanceID: String,
+    @SerializedName("gaid")
+    val gaid: String,
     @SerializedName("device_id")
     val deviceId: String = Utils.getDeviceId()
 )

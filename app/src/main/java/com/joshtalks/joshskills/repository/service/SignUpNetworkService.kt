@@ -44,8 +44,8 @@ interface SignUpNetworkService {
     @POST("$DIR/user/truecaller/login/")
     suspend fun verifyViaTrueCaller(@Body requestVerifyOTP: TrueCallerLoginRequest): Response<LoginResponse>
 
-    @POST("$DIR/user/verify_user/")
-    suspend fun verifyGuestUser(@Body socialSignUpRequest: SocialSignUpRequest): Response<LoginResponse>
+    /*@POST("$DIR/user/verify_user/")
+    suspend fun verifyGuestUser(@Body socialSignUpRequest: SocialSignUpRequest): Response<LoginResponse>*/
 
     @GET("$DIR/version/get_onboarding_status/")
     suspend fun getOnBoardingStatus(
