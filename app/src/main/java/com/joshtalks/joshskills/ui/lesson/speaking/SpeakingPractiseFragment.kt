@@ -718,7 +718,8 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                 }
 
             }
-
+        }
+        if (isAdded && activity != null) {
             PermissionUtils.callingFeaturePermission(
                 requireActivity(),
                 object : MultiplePermissionsListener {

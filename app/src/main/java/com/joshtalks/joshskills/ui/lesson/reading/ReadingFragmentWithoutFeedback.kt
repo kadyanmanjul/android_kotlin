@@ -1262,35 +1262,37 @@ class ReadingFragmentWithoutFeedback :
     }
 
     private fun recordPermission() {
-        PermissionUtils.audioRecordStorageReadAndWritePermission(
-            requireActivity(),
-            object : MultiplePermissionsListener {
-                override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
-                    report?.areAllPermissionsGranted()?.let { flag ->
-                        if (flag) {
-                            binding.recordingView.setOnClickListener(null)
-                            binding.recordTransparentContainer.setOnClickListener(null)
-                            audioRecordTouchListener()
-                            return
-                        }
-                        if (report.isAnyPermissionPermanentlyDenied) {
-                            PermissionUtils.permissionPermanentlyDeniedDialog(
-                                requireActivity(),
-                                R.string.record_permission_message
-                            )
-                            return
+        if (isAdded && activity!=null) {
+            PermissionUtils.audioRecordStorageReadAndWritePermission(
+                requireActivity(),
+                object : MultiplePermissionsListener {
+                    override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                        report?.areAllPermissionsGranted()?.let { flag ->
+                            if (flag) {
+                                binding.recordingView.setOnClickListener(null)
+                                binding.recordTransparentContainer.setOnClickListener(null)
+                                audioRecordTouchListener()
+                                return
+                            }
+                            if (report.isAnyPermissionPermanentlyDenied) {
+                                PermissionUtils.permissionPermanentlyDeniedDialog(
+                                    requireActivity(),
+                                    R.string.record_permission_message
+                                )
+                                return
+                            }
                         }
                     }
-                }
 
-                override fun onPermissionRationaleShouldBeShown(
-                    permissions: MutableList<PermissionRequest>?,
-                    token: PermissionToken?
-                ) {
-                    token?.continuePermissionRequest()
+                    override fun onPermissionRationaleShouldBeShown(
+                        permissions: MutableList<PermissionRequest>?,
+                        token: PermissionToken?
+                    ) {
+                        token?.continuePermissionRequest()
+                    }
                 }
-            }
-        )
+            )
+        }
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -1299,7 +1301,7 @@ class ReadingFragmentWithoutFeedback :
             if (isCallOngoing() || requireActivity().getVoipState()!= State.IDLE) {
                 return@setOnTouchListener false
             }
-            if (isAdded) {
+            if (isAdded && activity!=null) {
                 if (PermissionUtils.isAudioAndStoragePermissionEnable(requireContext()).not()) {
                     recordPermission()
                     return@setOnTouchListener true
