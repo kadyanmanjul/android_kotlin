@@ -42,6 +42,7 @@ import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
 import com.joshtalks.badebhaiya.impressions.Impression
 import com.joshtalks.badebhaiya.liveroom.LiveRoomState
 import com.joshtalks.badebhaiya.liveroom.ROOM_EXPAND
+import com.joshtalks.badebhaiya.liveroom.bottomsheet.EnterBioBottomSheet
 import com.joshtalks.badebhaiya.liveroom.viewmodel.LiveRoomViewModel
 import com.joshtalks.badebhaiya.notifications.NotificationScheduler
 import com.joshtalks.badebhaiya.profile.request.ReminderRequest
@@ -188,6 +189,16 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         })
     }
 
+
+    fun showBottomSheet() {
+        val bottomSheet =
+            EnterBioBottomSheet.newInstance(userId!!)
+        bottomSheet.show(requireActivity().supportFragmentManager, "Bottom sheet")
+
+        bottomSheet.dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+    }
+
     fun requestRoomPopup() {
         val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
         val dialogBinding = RequestRoomBinding.inflate(layoutInflater)
@@ -330,7 +341,15 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
     private fun handleSpeakerProfile(profileResponse: ProfileResponse) {
         binding.apply {
             if (profileResponse.isSpeaker) {
-                tvProfileBio.text = profileResponse.bioText
+                if(profileResponse.bioText.isNullOrEmpty() )
+                {
+                    addABio.visibility=View.VISIBLE
+                    tvProfileBio.visibility=View.GONE
+                }
+                else {
+                    addABio.visibility=View.GONE
+                    tvProfileBio.text = profileResponse.bioText
+                }
                 tvFollowers.text = HtmlCompat.fromHtml(getString(R.string.bb_followers, "<big>"+profileResponse.followersCount.toString()+"</big>"),
                     HtmlCompat.FROM_HTML_MODE_LEGACY)
                 if (profileResponse.isSpeakerFollowed) {

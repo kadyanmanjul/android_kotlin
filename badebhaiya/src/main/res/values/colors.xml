@@ -22,6 +22,9 @@
     <color name="next_button_enabled">#5576AB</color>
     <color name="skip_button_color">#838079</color>
     <color name="request_button_disabled">#C1CAC5</color>
+    <color name="update_bio_background">#F8F6F2</color>
+    <color name="update_bio_text">#EB5A5C</color>
+    <color name="default_bio_text">#646365</color>
 
     <color name="colorPrimary">#107BE5</color>
     <color name="colorPrimary_alfa_6">#0F107BE5</color>
