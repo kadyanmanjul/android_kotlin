@@ -72,11 +72,11 @@
         <item name="android:textColorPrimary">@color/colorAccent</item>
         <item name="android:colorControlNormal">@color/colorAccent</item>
     </style>
+
     <style name="YearPickerAlertDialogStyle" parent="Theme.AppCompat.Light.Dialog">
-        <item name="android:textColor">#FF4081</item>  // you can change the color of the yearPiker dialog
+        <item name="android:textColor">#FF4081</item> // you can change the color of the yearPiker dialog
         <item name="android:textColorPrimary">#FF4081</item> // you can change the color of the yearPiker dialog
     </style>
-
 
     <style name="VideoPlayerTheme" parent="@style/Theme.AppCompat.Light">
         <item name="colorPrimary">@color/colorPrimary</item>
@@ -87,7 +87,6 @@
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowContentOverlay">@null</item>
     </style>
-
 
     <style name="BottomProgressBar" parent="@style/Widget.AppCompat.ProgressBar.Horizontal">
         <item name="android:progressBackgroundTint">@color/pdf_bg_color</item>
@@ -201,7 +200,7 @@
         <item name="android:letterSpacing">0.05</item>
     </style>
 
-    <style name="TabLayoutStyleBold" parent="TabLayoutStyle"></style>
+    <style name="TabLayoutStyleBold" parent="TabLayoutStyle" />
 
     <style name="LeaderBoardTabLayoutStyle" parent="Base.Widget.Design.TabLayout">
         <item name="android:textSize">@dimen/_13ssp</item>
@@ -251,13 +250,6 @@
         <item name="android:numbersBackgroundColor">@color/artboard_color</item>
     </style>
 
-    <!-- <style name="TextAppearance.JoshTypography.Heading_H1" parent="TextAppearance.MaterialComponents.Headline1">
-         <item name="fontPath">fonts/OpenSans-SemiBold.ttf</item>
-         <item name="android:textSize">@dimen/_56ssp</item>
-         <item name="android:lineSpacingMultiplier">1.5</item>
-         <item name="android:letterSpacing">0.05</item>
-     </style>-->
-
     <style name="TextAppearance.JoshTypography.Heading_H2" parent="TextAppearance.MaterialComponents.Headline2">
         <item name="fontPath">fonts/OpenSans-Bold.ttf</item>
         <item name="android:textSize">@dimen/_32ssp</item>
@@ -278,7 +270,6 @@
         <item name="android:lineSpacingMultiplier">1.5</item>
         <item name="android:letterSpacing">0.05</item>
     </style>
-
 
     <style name="TextAppearance.JoshTypography.Heading_H2_SEMI_BOLD" parent="TextAppearance.MaterialComponents.Headline3">
         <item name="fontPath">fonts/OpenSans-SemiBold.ttf</item>
@@ -336,13 +327,6 @@
         <item name="android:textSize">@dimen/_16ssp</item>
         <item name="android:lineSpacingMultiplier">1.1</item>
         <item name="android:letterSpacing">0.025</item>
-    </style>
-
-    <style name="TextAppearance.JoshTypography.Heading_H4_Semi_Bold_Nunito" parent="TextAppearance.MaterialComponents.Headline4">
-        <item name="fontPath">fonts/NunitoSans-SemiBold.ttf</item>
-        <item name="android:textSize">@dimen/_16ssp</item>
-        <item name="android:lineSpacingMultiplier">1.5</item>
-        <item name="android:letterSpacing">0.00</item>
     </style>
 
     <style name="TextAppearance.JoshTypography.Heading_H5" parent="TextAppearance.MaterialComponents.Headline5">
@@ -436,19 +420,6 @@
         <item name="android:letterSpacing">0.05</item>
     </style>
 
-    <!--
-        <style name="TextAppearance.JoshTypography.Body_Text_Large_Bold" parent="TextAppearance.MaterialComponents.Body1">
-            <item name="fontPath">fonts/OpenSans-Bold.ttf</item>
-            <item name="android:textSize">@dimen/_16ssp</item>
-            <item name="android:lineSpacingMultiplier">1.8</item>
-            <item name="android:letterSpacing">0.05</item>
-        </style>
-    -->
-    <!--
-
-
-    -->
-
     <style name="TextAppearance.JoshTypography.Body_Text_Medium_Bold" parent="TextAppearance.MaterialComponents.Body2">
         <item name="fontPath">fonts/OpenSans-Bold.ttf</item>
         <item name="android:textSize">@dimen/_14ssp</item>
@@ -483,7 +454,6 @@
         <item name="android:lineSpacingMultiplier">1.1</item>
         <item name="android:letterSpacing">0.025</item>
     </style>
-
 
     <style name="TextAppearance.JoshTypography.Body_Text_Normal_Regular" parent="TextAppearance.MaterialComponents.Body2">
         <item name="fontPath">fonts/OpenSans-Regular.ttf</item>
@@ -520,39 +490,11 @@
         <item name="android:letterSpacing">0.00</item>
     </style>
 
-    <style name="TextAppearance.JoshTypography.Body_Text_Small_Regular_Nunito" parent="TextAppearance.MaterialComponents.Body2">
-        <item name="fontPath">fonts/NunitoSans-Regular.ttf</item>
-        <item name="android:textSize">@dimen/_12ssp</item>
-        <item name="android:lineSpacingMultiplier">1.5</item>
-        <item name="android:letterSpacing">0.00</item>
-    </style>
-
-    <style name="TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold_Nunito" parent="TextAppearance.MaterialComponents.Body2">
-        <item name="fontPath">fonts/NunitoSans-SemiBold.ttf</item>
-        <item name="android:textSize">@dimen/_12ssp</item>
-        <item name="android:lineSpacingMultiplier">1.5</item>
-        <item name="android:letterSpacing">0.00</item>
-    </style>
-
     <style name="TextAppearance.JoshTypography.Certi_Details_Bold" parent="TextAppearance.MaterialComponents.Caption">
         <item name="fontPath">fonts/OpenSans-Bold.ttf</item>
         <item name="android:textSize">@dimen/_11ssp</item>
         <item name="android:lineSpacingMultiplier">1.5</item>
     </style>
-
-    <!--<style name="TextAppearance.JoshTypography.Caption_Large_Bold" parent="TextAppearance.MaterialComponents.Caption">
-        <item name="fontPath">fonts/OpenSans-Bold.ttf</item>
-        <item name="android:textSize">@dimen/_12ssp</item>
-        <item name="android:lineSpacingMultiplier">1.5</item>
-        <item name="android:letterSpacing">0.05</item>
-    </style>
--->
-    <!--    <style name="TextAppearance.JoshTypography.Caption_Large_Regular" parent="TextAppearance.MaterialComponents.Caption">
-            <item name="fontPath">fonts/OpenSans-Regular.ttf</item>
-            <item name="android:textSize">@dimen/_12ssp</item>
-            <item name="android:lineSpacingMultiplier">1.5</item>
-            <item name="android:letterSpacing">0.05</item>
-        </style>-->
 
     <style name="TextAppearance.JoshTypography.Salsa_SemiBold" parent="TextAppearance.MaterialComponents.Caption">
         <item name="fontPath">fonts/Salsa-Regular.ttf</item>
@@ -560,7 +502,6 @@
         <item name="android:lineSpacingMultiplier">1.2</item>
         <item name="android:letterSpacing">0.025</item>
     </style>
-
 
     <style name="TextAppearance.JoshTypography.Caption_Normal_SemiBold" parent="TextAppearance.MaterialComponents.Caption">
         <item name="fontPath">fonts/OpenSans-SemiBold.ttf</item>
@@ -681,15 +622,6 @@
         <item name="android:lineSpacingMultiplier">1.5</item>
         <item name="android:letterSpacing">0.00</item>
     </style>
-    <!--
-        <style name="TextAppearance.JoshTypography.Link_Small" parent="TextAppearance.MaterialComponents.Button">
-            <item name="fontPath">fonts/OpenSans-Bold.ttf</item>
-            <item name="android:textSize">@dimen/_12ssp</item>
-            <item name="android:lineSpacingMultiplier">1.5</item>
-            <item name="android:letterSpacing">0.05</item>
-            <item name="android:textAllCaps">false</item>
-            <item name="textAllCaps">false</item>
-        </style>-->
 
     <style name="TransparentCompat" parent="AppTheme">
         <item name="colorPrimary">@color/colorPrimary</item>
@@ -767,7 +699,6 @@
         <item name="android:windowBackground">@drawable/splash_drawable</item>
     </style>
 
-
     <style name="CustomCardViewStyleNoTopCorner" parent="@style/Widget.MaterialComponents.CardView">
         <item name="shapeAppearanceOverlay">
             @style/ShapeAppearanceOverlay_card_custom_bottom_corners
@@ -778,7 +709,6 @@
         <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay_card_custom_top_corners
         </item>
     </style>
-
 
     <style name="ShapeAppearanceOverlay_card_custom_bottom_corners" parent="">
         <item name="cornerFamily">rounded</item>
@@ -795,7 +725,7 @@
         <item name="cornerSizeBottomRight">0dp</item>
         <item name="cornerSizeBottomLeft">0dp</item>
     </style>
-<!--    style of dialog box-->
+    <!--    style of dialog box-->
     <style name="dialog_theme" parent="AppTheme">
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowFullscreen">true</item>
@@ -837,6 +767,7 @@
         <item name="android:shadowDy">4</item>
         <item name="android:shadowRadius">4</item>
     </style>
+
     <style name="who_said_if">
         <item name="android:textSize">20.5sp</item>
         <item name="android:letterSpacing">0.03</item>
@@ -873,11 +804,10 @@
         <item name="android:height">20dp</item>
     </style>
 
-
     <style name="RatingRadioButtonStyle" parent="@style/Widget.MaterialComponents.Chip.Choice">
         <item name="chipBackgroundColor">@color/language_chip_bg_color_selector</item>
         <item name="android:textColor">@color/chip_text_color_black</item>
     </style>
 
-    <style name="BlockButtonChipStyle" parent="Widget.MaterialComponents.Chip.Choice"/>
+    <style name="BlockButtonChipStyle" parent="Widget.MaterialComponents.Chip.Choice" />
 </resources>
