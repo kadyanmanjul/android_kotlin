@@ -13,9 +13,9 @@ data class PendingTaskModel(
     @ColumnInfo(name = "type")
     var type: PendingTask,
     @ColumnInfo(name = "retry_count")
-    var numberOfRetries: Int = 0
-
-
+    var numberOfRetries: Int = 0,
+    @ColumnInfo(name = "uploaded_url")
+    var uploadedUrl: String? = null,
 ) {
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
@@ -26,5 +26,5 @@ enum class PendingTask {
     VOCABULARY_PRACTICE,
     READING_PRACTICE_NEW,
     READING_PRACTICE_OLD,
-
+    APP_SCREENSHOT,
 }

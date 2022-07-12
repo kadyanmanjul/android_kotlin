@@ -68,6 +68,9 @@ interface ChatNetworkService {
     @POST("$DIR/engage/image/")
     suspend fun engageImage(@Body messageObject: Any)
 
+    @POST("$DIR/engage/screenshot/")
+    suspend fun engageScreenshot(@Body messageObject: Any): Response<Any>
+
     @FormUrlEncoded
     @PATCH("$DIR/notification/{id}/")
     suspend fun engageNotificationAsync(

@@ -21,4 +21,7 @@ interface PendingTaskDao {
 
     @Query("UPDATE pending_task_table SET retry_count = :numberOfRetries WHERE id = :id")
     fun updateRetryCount(id: Long, numberOfRetries: Int)
+
+    @Query("UPDATE pending_task_table SET uploaded_url = :uploadedUrl WHERE id = :id")
+    fun updateUploadedUrl(id: Long, uploadedUrl: String)
 }

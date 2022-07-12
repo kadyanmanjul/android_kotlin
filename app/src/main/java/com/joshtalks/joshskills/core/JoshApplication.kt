@@ -32,6 +32,7 @@ import com.joshtalks.joshskills.di.ApplicationComponent
 import com.joshtalks.joshskills.di.DaggerApplicationComponent
 import com.joshtalks.joshskills.ui.call.data.local.VoipPref
 import com.joshtalks.joshskills.util.ReminderUtil
+import com.joshtalks.joshskills.util.ScreenshotDetector
 import com.joshtalks.joshskills.voip.Utils
 import com.moengage.core.DataCenter
 import com.moengage.core.MoEngage
@@ -57,6 +58,8 @@ class JoshApplication :
     val applicationGraph: ApplicationComponent by lazy {
         DaggerApplicationComponent.create()
     }
+
+    lateinit var screenshotDetector: ScreenshotDetector
 
     companion object {
         @Volatile
@@ -91,14 +94,15 @@ class JoshApplication :
             registerBroadcastReceiver()
             initMoEngage()
             initGroups()
-            } else {
-                FirebaseApp.initializeApp(this)
-                Timber.plant(Timber.DebugTree())
-                Utils.initUtils(this)
-                Stetho.initializeWithDefaults(this);
-            }
+            screenshotDetector = ScreenshotDetector(this)
+        } else {
+            FirebaseApp.initializeApp(this)
+            Timber.plant(Timber.DebugTree())
+            Utils.initUtils(this)
+            Stetho.initializeWithDefaults(this);
+        }
 
-            Log.d(TAG, "onCreate: STARTING MAIN PROCESS CHECK END")
+        Log.d(TAG, "onCreate: STARTING MAIN PROCESS CHECK END")
 //        Log.d(TAG, "onCreate: $isMainProcess ... $packageName")
 //        if(isMainProcess()) {
 //            CoroutineScope(Dispatchers.IO).launch {
@@ -111,7 +115,12 @@ class JoshApplication :
         val moEngage = MoEngage.Builder(this, "DU9ICNBN2A9TTT38BS59KEU6")
             .setDataCenter(DataCenter.DATA_CENTER_3)
             .configureMiPush(MiPushConfig("2882303761518451933", "5761845183933", true))
-            .configureNotificationMetaData(NotificationConfig(R.drawable.ic_status_bar_notification, R.mipmap.ic_launcher_round))
+            .configureNotificationMetaData(
+                NotificationConfig(
+                    R.drawable.ic_status_bar_notification,
+                    R.mipmap.ic_launcher_round
+                )
+            )
             .build()
 
         MoEngage.initialiseDefaultInstance(moEngage)
@@ -228,6 +237,9 @@ class JoshApplication :
 //            WorkManagerAdmin.setRepeatingNotificationWorker(i)
             removeAlarmReminder(i)
         }
+        if (this::screenshotDetector.isInitialized) {
+            screenshotDetector.start()
+        }
 //        UsageStatsService.activeUserService(this)
     }
 
@@ -267,6 +279,9 @@ class JoshApplication :
             }
         }
 //        UsageStatsService.inactiveUserService(this)
+        if (this::screenshotDetector.isInitialized) {
+            screenshotDetector.stop()
+        }
         WorkManagerAdmin.setLocalNotificationWorker()
         ReminderUtil(this).setAlarmNotificationWorker()
     }
@@ -302,7 +317,8 @@ class JoshApplication :
     }
 
     private fun getConditionForShowLocalNotifications(): Boolean {
-        return AppObjectController.getFirebaseRemoteConfig().getBoolean(FirebaseRemoteConfigKey.SHOW_LOCAL_NOTIFICATIONS) &&
+        return AppObjectController.getFirebaseRemoteConfig()
+            .getBoolean(FirebaseRemoteConfigKey.SHOW_LOCAL_NOTIFICATIONS) &&
                 PrefManager.getIntValue(LOCAL_NOTIFICATION_INDEX, defValue = 0) < 3 &&
                 PrefManager.getBoolValue(CHAT_OPENED_FOR_NOTIFICATION, defValue = false) &&
                 PrefManager.getBoolValue(IS_COURSE_BOUGHT).not() &&
@@ -313,6 +329,8 @@ class JoshApplication :
         Timber.tag(TAG).e("************* onAppDestroy")
         AppObjectController.releaseInstance()
         PstnObserver.unregisterPstnReceiver()
+        if (this::screenshotDetector.isInitialized)
+            screenshotDetector.stop()
     }
 
     private fun isActivityVisible(): String {
@@ -347,14 +365,14 @@ class JoshApplication :
     }
 
     override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
-        when(event){
-            Lifecycle.Event.ON_START ->{
+        when (event) {
+            Lifecycle.Event.ON_START -> {
                 onAppForegrounded()
             }
-            Lifecycle.Event.ON_STOP ->{
+            Lifecycle.Event.ON_STOP -> {
                 onAppBackgrounded()
             }
-            Lifecycle.Event.ON_DESTROY ->{
+            Lifecycle.Event.ON_DESTROY -> {
                 onAppDestroy()
             }
 

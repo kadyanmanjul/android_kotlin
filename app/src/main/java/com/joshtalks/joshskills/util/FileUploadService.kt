@@ -159,10 +159,16 @@ class FileUploadService : Service() {
                     try {
                         val filePath = fileQueue.take()
                         Log.e(TAG, "Upload File: $filePath")
-                        if (filePath.type == PendingTask.READING_PRACTICE_NEW) {
-                            callUploadFileApiForReadingPractice(filePath)
-                        } else {
-                            callUploadFileApi(filePath)
+                        when (filePath.type) {
+                            PendingTask.READING_PRACTICE_NEW -> {
+                                callUploadFileApiForReadingPractice(filePath)
+                            }
+                            PendingTask.APP_SCREENSHOT -> {
+                                uploadPendingTask(filePath)
+                            }
+                            else -> {
+                                callUploadFileApi(filePath)
+                            }
                         }
                         AppObjectController.uiHandler.post {
                             showUploadNotification()
@@ -198,8 +204,10 @@ class FileUploadService : Service() {
                             )
                         )
                         responseObj.pointsList?.let {
-                            PrefManager.put(LESSON_COMPLETE_SNACKBAR_TEXT_STRING,
-                                it.last(),false)
+                            PrefManager.put(
+                                LESSON_COMPLETE_SNACKBAR_TEXT_STRING,
+                                it.last(), false
+                            )
                         }
 
                     }
@@ -239,7 +247,11 @@ class FileUploadService : Service() {
                                     pendingTaskModel.requestObject.questionId
                                 )
                             )
-                            PrefManager.put(LESSON_COMPLETE_SNACKBAR_TEXT_STRING,resp.body()!!.pointsList!!.last(),false)
+                            PrefManager.put(
+                                LESSON_COMPLETE_SNACKBAR_TEXT_STRING,
+                                resp.body()!!.pointsList!!.last(),
+                                false
+                            )
                         }
                     } else {
                         val lessonQuestion = AppObjectController.appDatabase.lessonQuestionDao()
@@ -259,7 +271,11 @@ class FileUploadService : Service() {
                                         pendingTaskModel.requestObject.questionId
                                     )
                                 )
-                                PrefManager.put(LESSON_COMPLETE_SNACKBAR_TEXT_STRING,resp.body()!!.pointsList!!.last(),false)
+                                PrefManager.put(
+                                    LESSON_COMPLETE_SNACKBAR_TEXT_STRING,
+                                    resp.body()!!.pointsList!!.last(),
+                                    false
+                                )
                             }
                         }
                     }
@@ -269,6 +285,49 @@ class FileUploadService : Service() {
                     handleRetry(pendingTaskModel)
                 }
             } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
+        }
+    }
+
+    private fun uploadPendingTask(pendingTaskModel: PendingTaskModel) {
+        CoroutineScope(Dispatchers.IO).launch(Dispatchers.IO) {
+            try {
+                val requestEngage = pendingTaskModel.requestObject
+                if (pendingTaskModel.uploadedUrl == null && requestEngage.localPath.isNullOrEmpty().not()) {
+                    val obj = mapOf("media_path" to File(requestEngage.localPath!!).name)
+                    val responseObj =
+                        AppObjectController.chatNetworkService.requestUploadMediaAsync(obj)
+                            .await()
+                    val statusCode: Int = uploadOnS3Server(responseObj, requestEngage.localPath!!)
+                    if (statusCode in 200..210) {
+                        val url = responseObj.url.plus(File.separator).plus(responseObj.fields["key"])
+                        pendingTaskModel.uploadedUrl = url
+                        AppObjectController.appDatabase.pendingTaskDao().updateUploadedUrl(
+                            pendingTaskModel.id,
+                            url
+                        )
+                        requestEngage.answerUrl = url
+                    } else {
+                        handleRetry(pendingTaskModel)
+                        return@launch
+                    }
+                }
+                val resp =
+                    AppObjectController.chatNetworkService.engageScreenshot(
+                        mapOf(
+                            "image_url" to pendingTaskModel.uploadedUrl,
+                            "screen_name" to (requestEngage.text ?: ""),
+                        )
+                    )
+                Log.e(TAG, "uploadPendingTask: $resp")
+                if (resp.isSuccessful) {
+                    AppObjectController.appDatabase.pendingTaskDao()
+                        .deleteTask(pendingTaskModel.id)
+                } else {
+                    handleRetry(pendingTaskModel)
+                }
+            } catch (ex: Throwable) {
                 ex.printStackTrace()
             }
         }
@@ -332,7 +391,6 @@ class FileUploadService : Service() {
             fileQueue.add(pendingTaskModel)
         } else {
             deleteRequestFromDbAndMarkQuestionIncomplete(pendingTaskModel)
-
         }
     }
 
