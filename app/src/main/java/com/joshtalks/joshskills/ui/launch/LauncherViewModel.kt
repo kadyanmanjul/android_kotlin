@@ -12,6 +12,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.work.WorkManager
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
 import com.joshtalks.joshskills.core.analytics.*
 import com.joshtalks.joshskills.core.firestore.NotificationAnalytics
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
@@ -259,6 +260,12 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
             PrefManager.put(IS_APP_OPENED_FOR_FIRST_TIME, value = false, isConsistent = true)
             MixPanelTracker.publishEvent(MixPanelEvent.APP_OPENED_FOR_FIRST_TIME).push()
             Singular.event(SingularEvent.APP_OPENED_FIRST_TIME.value)
+        }
+    }
+
+    fun updateABTestCampaigns() {
+        viewModelScope.launch {
+            ABTestRepository().updateAllCampaigns()
         }
     }
 }

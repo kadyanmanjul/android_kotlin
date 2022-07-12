@@ -14,6 +14,7 @@ import com.joshtalks.joshskills.base.constants.CALLING_SERVICE_ACTION
 import com.joshtalks.joshskills.base.constants.SERVICE_BROADCAST_KEY
 import com.joshtalks.joshskills.base.constants.START_SERVICE
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
@@ -238,6 +239,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
             fetchMentor()
 //            WorkManagerAdmin.userActiveStatusWorker(true)
             WorkManagerAdmin.requiredTaskAfterLoginComplete()
+            ABTestRepository().updateAllCampaigns()
             val isCourseBought = PrefManager.getBoolValue(IS_COURSE_BOUGHT,false)
             val courseExpiryTime =
                 PrefManager.getLongValue(com.joshtalks.joshskills.core.COURSE_EXPIRY_TIME_IN_MS)

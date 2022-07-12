@@ -36,15 +36,12 @@ object WorkManagerAdmin {
             ).enqueue()
     }
 
-    fun appStartWorker(isUserLoggingOut: Boolean = false) {
+    fun appStartWorker() {
         val workerList = mutableListOf(
             OneTimeWorkRequestBuilder<UniqueIdGenerationWorker>().build(),
             OneTimeWorkRequestBuilder<AppRunRequiredTaskWorker>().build(),
             OneTimeWorkRequestBuilder<UpdateServerTimeWorker>().build()
         )
-        if (isUserLoggingOut.not()) {
-            workerList.add(OneTimeWorkRequestBuilder<UpdateABTestCampaignsWorker>().build())
-        }
         WorkManager.getInstance(AppObjectController.joshApplication)
             .beginWith(
                 workerList
@@ -67,7 +64,6 @@ object WorkManagerAdmin {
             .beginWith(
                 mutableListOf(
                     OneTimeWorkRequestBuilder<WorkerAfterLoginInApp>().build(),
-                    OneTimeWorkRequestBuilder<UpdateABTestCampaignsWorker>().build()
                 )
             )
             .then(OneTimeWorkRequestBuilder<RegenerateFCMTokenWorker>().build())

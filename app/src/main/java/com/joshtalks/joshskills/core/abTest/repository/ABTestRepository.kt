@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.core.abTest.repository
 
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
+import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.util.showAppropriateMsg
@@ -13,13 +14,29 @@ class ABTestRepository {
 
     private val apiService by lazy { AppObjectController.abTestNetworkService }
     private val database = AppObjectController.appDatabase.abCampaignDao()
+    private val listOfCampaigns = listOf(
+        CampaignKeys.SPEAKING_INTRODUCTION_VIDEO.name,
+        CampaignKeys.ACTIVITY_FEED.name,
+        CampaignKeys.P2P_IMAGE_SHARING.name,
+        CampaignKeys.HUNDRED_POINTS.NAME,
+        CampaignKeys.ENGLISH_SYLLABUS_DOWNLOAD.name,
+        CampaignKeys.BUY_LAYOUT_CHANGED.name,
+        CampaignKeys.WHATSAPP_REMARKETING.name,
+        CampaignKeys.PEOPLE_HELP_COUNT.name,
+        CampaignKeys.EXTEND_FREE_TRIAL.name,
+        CampaignKeys.ACTIVITY_FEED_V2.name,
+        CampaignKeys.TWENTY_MIN_TARGET.NAME,
+        CampaignKeys.NEW_LANGUAGE.name,
+        CampaignKeys.A2_C1.name,
+        CampaignKeys.INCREASE_COURSE_PRICE.name
+    )
 
     suspend fun getCampaignData(campaign: String): ABTestCampaignData? {
 
         return database.getABTestCampaign(campaign)
     }
 
-    suspend fun updateAllCampaigns(list: List<String>) {
+    suspend fun updateAllCampaigns(list: List<String> = listOfCampaigns) {
         try {
             database.deleteAllCampaigns()
             val prop = JSONObject()

@@ -1086,35 +1086,6 @@ fun getGoogleAdId(context: Context): String? {
     return null
 }
 
-class UpdateABTestCampaignsWorker(context: Context, workerParams: WorkerParameters) :
-    CoroutineWorker(context, workerParams) {
-    override suspend fun doWork(): Result {
-        try {
-            ABTestRepository().updateAllCampaigns(
-                listOf(
-                    CampaignKeys.SPEAKING_INTRODUCTION_VIDEO.name,
-                    CampaignKeys.ACTIVITY_FEED.name,
-                    CampaignKeys.P2P_IMAGE_SHARING.name,
-                    CampaignKeys.HUNDRED_POINTS.NAME,
-                    CampaignKeys.ENGLISH_SYLLABUS_DOWNLOAD.name,
-                    CampaignKeys.BUY_LAYOUT_CHANGED.name,
-                    CampaignKeys.WHATSAPP_REMARKETING.name,
-                    CampaignKeys.PEOPLE_HELP_COUNT.name,
-                    CampaignKeys.EXTEND_FREE_TRIAL.name,
-                    CampaignKeys.ACTIVITY_FEED_V2.name,
-                    CampaignKeys.TWENTY_MIN_TARGET.NAME,
-                    CampaignKeys.NEW_LANGUAGE.name,
-                    CampaignKeys.A2_C1.name,
-                    CampaignKeys.INCREASE_COURSE_PRICE.name
-                )
-            )
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-        }
-        return Result.success()
-    }
-}
-
 class UpdateServerTimeWorker(context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {

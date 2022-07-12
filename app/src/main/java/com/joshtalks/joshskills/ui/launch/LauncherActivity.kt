@@ -209,6 +209,7 @@ class LauncherActivity : CoreJoshActivity(), Branch.BranchReferralInitListener {
     }
 
     private fun startNextActivity() {
+        viewModel.updateABTestCampaigns()
         lifecycleScope.launch {
             WorkManagerAdmin.appStartWorker()
             AppObjectController.uiHandler.removeCallbacksAndMessages(null)

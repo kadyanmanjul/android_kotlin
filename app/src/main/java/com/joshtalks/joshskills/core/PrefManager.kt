@@ -362,7 +362,7 @@ object PrefManager {
         LastSyncPrefManager.clear()
         WorkManagerAdmin.instanceIdGenerateWorker()
         WorkManagerAdmin.appInitWorker()
-        WorkManagerAdmin.appStartWorker(true)
+        WorkManagerAdmin.appStartWorker()
     }
 
     fun clearUser() {
@@ -372,7 +372,7 @@ object PrefManager {
         AppDatabase.clearDatabase()
         WorkManagerAdmin.instanceIdGenerateWorker()
         WorkManagerAdmin.appInitWorker()
-        WorkManagerAdmin.appStartWorker(true)
+        WorkManagerAdmin.appStartWorker()
     }
 
     fun clearDatabase() {

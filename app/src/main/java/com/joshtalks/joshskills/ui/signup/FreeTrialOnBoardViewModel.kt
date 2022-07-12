@@ -69,10 +69,6 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
             try {
                 repository.getCampaignData(campaign)?.let { campaign ->
                     newLanguageABtestLiveData.postValue(campaign)
-                } ?: run {
-                    AppObjectController.abTestNetworkService.getCampaignData(campaign).let { response ->
-                        newLanguageABtestLiveData.postValue(response.body())
-                    }
                 }
             } catch (ex: Exception) {
                 ex.printStackTrace()
@@ -86,11 +82,6 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
             try {
                 repository.getCampaignData(campaign)?.let { campaign ->
                     increaseCoursePriceABtestLiveData.postValue(campaign)
-                } ?: run {
-                    AppObjectController.abTestNetworkService.getCampaignData(campaign).let { response ->
-                        increaseCoursePriceABtestLiveData.postValue(response.body())
-
-                    }
                 }
             } catch (ex: Exception) {
                 ex.printStackTrace()
