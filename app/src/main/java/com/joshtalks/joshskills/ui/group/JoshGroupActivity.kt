@@ -16,10 +16,7 @@ import com.github.dhaval2404.imagepicker.ImagePicker
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.constants.*
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.IS_VOIP_NEW_ARCH_ENABLED
-import com.joshtalks.joshskills.core.PermissionUtils
-import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.analytics.ParamKeys
@@ -166,7 +163,7 @@ class JoshGroupActivity : BaseGroupActivity() {
                 bundle.getString(GROUPS_ID) ?: ""
             )
 
-            if (PrefManager.getIntValue(IS_VOIP_NEW_ARCH_ENABLED, defValue = 1) == 1) {
+            if (PrefManager.getIntValue(IS_GROUP_FPP_NEW_ARCH_ENABLED, defValue = 1) == 1) {
                 val callIntent = Intent(applicationContext, VoiceCallActivity::class.java)
                 callIntent.apply {
                     putExtra(STARTING_POINT, FROM_ACTIVITY)

@@ -192,7 +192,7 @@ class FavoriteCallerViewModel : BaseViewModel() {
         if (WebRtcService.isCallOnGoing.value == false && AppObjectController.joshApplication.getVoipState() == State.IDLE) {
             Log.d("naa", "clickOnPhoneCall: ${favoriteCaller.mentorId}")
             selectedUser = favoriteCaller
-            if (PrefManager.getIntValue(IS_VOIP_NEW_ARCH_ENABLED, defValue = 1) == 1) {
+            if (PrefManager.getIntValue(IS_GROUP_FPP_NEW_ARCH_ENABLED, defValue = 1) == 1) {
                 message.what = START_FPP_CALL
                 singleLiveEvent.value = message
             }else{
