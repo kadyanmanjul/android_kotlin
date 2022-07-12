@@ -9,14 +9,12 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.IdRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
-import androidx.compose.ui.unit.dp
 import androidx.core.text.HtmlCompat
 import androidx.core.view.updateLayoutParams
 import androidx.core.widget.addTextChangedListener
@@ -40,14 +38,11 @@ import com.joshtalks.badebhaiya.feed.*
 import com.joshtalks.badebhaiya.feed.adapter.FeedAdapter
 import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
 import com.joshtalks.badebhaiya.impressions.Impression
-import com.joshtalks.badebhaiya.liveroom.LiveRoomState
-import com.joshtalks.badebhaiya.liveroom.ROOM_EXPAND
 import com.joshtalks.badebhaiya.liveroom.bottomsheet.EnterBioBottomSheet
 import com.joshtalks.badebhaiya.liveroom.viewmodel.LiveRoomViewModel
 import com.joshtalks.badebhaiya.notifications.NotificationScheduler
 import com.joshtalks.badebhaiya.profile.request.ReminderRequest
 import com.joshtalks.badebhaiya.profile.response.ProfileResponse
-import com.joshtalks.badebhaiya.pubnub.PubNubState
 import com.joshtalks.badebhaiya.repository.CommonRepository
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.signup.SignUpActivity
@@ -192,7 +187,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
 
     fun showBottomSheet() {
         val bottomSheet =
-            EnterBioBottomSheet.newInstance(userId!!)
+            EnterBioBottomSheet.newInstance(userId!!, viewModel.userProfileData.value?.bioText)
         bottomSheet.show(requireActivity().supportFragmentManager, "Bottom sheet")
 
         bottomSheet.dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
@@ -343,13 +338,15 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
             if (profileResponse.isSpeaker) {
                 if(profileResponse.bioText.isNullOrEmpty() )
                 {
-                    addABio.visibility=View.VISIBLE
+//                    addABio.visibility=View.VISIBLE
                     tvProfileBio.visibility=View.GONE
                 }
                 else {
-                    addABio.visibility=View.GONE
+//                    addABio.visibility=View.GONE
                     tvProfileBio.text = profileResponse.bioText
                 }
+                tvCalls.text=HtmlCompat.fromHtml(getString(R.string.bb_calls, "<big>"+profileResponse.followersCount.toString()+"</big>"),
+                    HtmlCompat.FROM_HTML_MODE_LEGACY)
                 tvFollowers.text = HtmlCompat.fromHtml(getString(R.string.bb_followers, "<big>"+profileResponse.followersCount.toString()+"</big>"),
                     HtmlCompat.FROM_HTML_MODE_LEGACY)
                 if (profileResponse.isSpeakerFollowed) {

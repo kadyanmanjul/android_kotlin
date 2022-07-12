@@ -110,6 +110,20 @@
             tools:text="99 followers" />
 
         <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvCalls"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="168dp"
+            android:layout_marginTop="@dimen/_11sdp"
+            android:textAppearance="@style/BB_Typography_Nunito_Regular"
+            android:textColor="@color/profile_font_color"
+            android:textSize="@dimen/_12ssp"
+            app:flow_verticalAlign="top"
+            app:layout_constraintStart_toStartOf="@id/tvUserName"
+            app:layout_constraintTop_toBottomOf="@id/tvUserName"
+            tools:text="99 calls" />
+
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvProfileBio"
             android:layout_width="@dimen/_170sdp"
             android:layout_height="wrap_content"
@@ -129,7 +143,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_10sdp"
             android:text="Add a bio"
-            android:visibility="@{(viewModel.isBadeBhaiyaSpeaker &amp;&amp; viewModel.isSelfProfile) ? View.VISIBLE : View.GONE}"
+            android:visibility="@{(viewModel.isBadeBhaiyaSpeaker &amp;&amp; viewModel.isSelfProfile &amp;&amp; !viewModel.isBioTextAvailable()) ? View.VISIBLE : View.GONE}"
             onSingleClick="@{()->handler.showBottomSheet()}"
             android:textColor="#5576AB"
             android:textSize="@dimen/_14sdp"

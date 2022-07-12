@@ -22,6 +22,8 @@ import com.joshtalks.badebhaiya.repository.BBRepository
 import com.joshtalks.badebhaiya.repository.ConversationRoomRepository
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.repository.service.RetrofitInstance
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class ProfileViewModel : ViewModel() {
@@ -55,6 +57,26 @@ class ProfileViewModel : ViewModel() {
             }
         }
     }
+
+     fun saveProfileInfo(url: String?) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val requestMap = mutableMapOf<String, String?>()
+                requestMap["bio"] = url
+                val response = repository.updateUserProfile(User.getInstance().userId, requestMap)
+                if (response.isSuccessful) {
+                    Log.i("BOTTOMSHEET", "saveProfileInfo: success")
+                    response.body()?.let {
+                        User.getInstance().updateFromResponse(it)
+                    }
+                }
+            } catch (ex: Exception) {
+                Log.i("BOTTOMSHEET", "saveProfileInfo: ${ex.message}")
+
+            }
+        }
+    }
+
     fun updateFollowStatus(userId: String, isFromBBPage: Boolean, isFromDeeplink: Boolean) {
         speakerFollowed.value?.let {
             if (it.not()) {

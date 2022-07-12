@@ -3,25 +3,18 @@ package com.joshtalks.badebhaiya.liveroom.bottomsheet
 import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.widget.addTextChangedListener
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.joshtalks.badebhaiya.R
-import com.joshtalks.badebhaiya.core.models.FormRequest
-import com.joshtalks.badebhaiya.core.showToast
-import com.joshtalks.badebhaiya.repository.CommonRepository
-import com.joshtalks.badebhaiya.repository.model.User
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import java.lang.Exception
+import com.joshtalks.badebhaiya.profile.ProfileViewModel
 
 class EnterBioBottomSheet : BottomSheetDialogFragment() {
 
@@ -30,17 +23,23 @@ class EnterBioBottomSheet : BottomSheetDialogFragment() {
     private var bioText:EditText?=null
     private var userId:String?=null
     private var size:TextView?=null
+    private var defaultBioText:String?=null
 
 
     companion object {
         fun newInstance(
-            user: String
+            user: String,
+            bio_Text: String?
         ): EnterBioBottomSheet {
             return EnterBioBottomSheet().apply {
                 userId = user
+                defaultBioText=bio_Text
             }
         }
+    }
 
+    private val viewModel by lazy {
+        ViewModelProvider(this)[ProfileViewModel::class.java]
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -75,6 +74,7 @@ class EnterBioBottomSheet : BottomSheetDialogFragment() {
 
         submitBtn=contentView.findViewById(R.id.submit)
         bioText=contentView.findViewById(R.id.bio_text)
+        bioText?.setText(defaultBioText)
         size=contentView.findViewById(R.id.size)
 
         bioText?.addTextChangedListener {
@@ -88,20 +88,10 @@ class EnterBioBottomSheet : BottomSheetDialogFragment() {
 
         }
         submitBtn?.setOnClickListener{
-            showToast("Updated")
             val msg:String
             if(bioText.toString().isNotBlank()) {
                 msg = bioText?.text.toString()
-                val obj= FormRequest(User.getInstance().userId,msg,userId!!)
-                CoroutineScope(Dispatchers.IO).launch {
-                    try {
-                        val resp= CommonRepository().sendRequest(obj)
-                        if(resp.isSuccessful)
-                            showToast("Bio Updated")
-                    } catch (e: Exception){
-                        Log.i("REQUESTMSG", "requestRoomPopup: ${e.message}")
-                    }
-                }
+                viewModel.saveProfileInfo(msg)
                 dialog.dismiss()
             }
         }
