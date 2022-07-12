@@ -51,11 +51,11 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/_16sdp"
                     android:layout_marginEnd="@dimen/_16sdp"
-                    android:fontFamily="@font/open_sans"
                     android:gravity="left"
                     android:text="@string/Schedule_timings_selection"
                     android:textColor="#5B6272"
                     android:textSize="@dimen/_12ssp"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
