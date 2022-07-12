@@ -131,6 +131,7 @@
             android:visibility="@{(viewModel.isBadeBhaiyaSpeaker &amp;&amp; viewModel.isBioTextAvailable)? View.VISIBLE : View.GONE}"
             android:textColor="@color/profile_font_color"
             android:textSize="@dimen/_12ssp"
+            android:clickable="@{viewModel.isSelfProfile()}"
             onSingleClick="@{()->handler.showBottomSheet()}"
             app:layout_constraintStart_toStartOf="@id/tvFollowers"
             android:textAppearance="@style/BB_Typography_Nunito_Regular"
