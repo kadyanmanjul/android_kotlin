@@ -704,59 +704,65 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         isNewArch: Boolean = false,
     ) {
         PrefManager.put(CALL_BTN_CLICKED, true)
-        if (PermissionUtils.isCallingPermissionEnabled(requireContext())) {
-            if (isNewArch) {
-                startPracticeCall()
-                return
-            } else {
-                startPractiseSearchScreen(
-                    favoriteUserCall = favoriteUserCall,
-                    isNewUserCall = isNewUserCall
-                )
-                return
-            }
+        if (isAdded && activity != null) {
+            if (PermissionUtils.isCallingPermissionEnabled(requireContext())) {
+                if (isNewArch) {
+                    startPracticeCall()
+                    return
+                } else {
+                    startPractiseSearchScreen(
+                        favoriteUserCall = favoriteUserCall,
+                        isNewUserCall = isNewUserCall
+                    )
+                    return
+                }
 
+            }
         }
-        PermissionUtils.callingFeaturePermission(
-            requireActivity(),
-            object : MultiplePermissionsListener {
-                override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
-                    report?.areAllPermissionsGranted()?.let { flag ->
-                        if (report.isAnyPermissionPermanentlyDenied) {
-                            PermissionUtils.callingPermissionPermanentlyDeniedDialog(
-                                requireActivity(),
-                                message = R.string.call_start_permission_message
-                            )
-                            return
-                        }
-                        if (flag) {
-                            if (isNewArch) {
-                                startPracticeCall()
-                                return
-                            } else {
-                                startPractiseSearchScreen(
-                                    favoriteUserCall = favoriteUserCall,
-                                    isNewUserCall = isNewUserCall
+        if (isAdded && activity != null) {
+            PermissionUtils.callingFeaturePermission(
+                requireActivity(),
+                object : MultiplePermissionsListener {
+                    override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                        report?.areAllPermissionsGranted()?.let { flag ->
+                            if (report.isAnyPermissionPermanentlyDenied) {
+                                PermissionUtils.callingPermissionPermanentlyDeniedDialog(
+                                    requireActivity(),
+                                    message = R.string.call_start_permission_message
                                 )
                                 return
                             }
-                        } else {
-                            MaterialDialog(requireActivity()).show {
-                                message(R.string.call_start_permission_message)
-                                positiveButton(R.string.ok)
+                            if (flag) {
+                                if (isNewArch) {
+                                    startPracticeCall()
+                                    return
+                                } else {
+                                    startPractiseSearchScreen(
+                                        favoriteUserCall = favoriteUserCall,
+                                        isNewUserCall = isNewUserCall
+                                    )
+                                    return
+                                }
+                            } else {
+                                MaterialDialog(requireActivity()).show {
+                                    message(R.string.call_start_permission_message)
+                                    positiveButton(R.string.ok)
+                                }
                             }
                         }
                     }
-                }
 
-                override fun onPermissionRationaleShouldBeShown(
-                    permissions: MutableList<PermissionRequest>?,
-                    token: PermissionToken?,
-                ) {
-                    token?.continuePermissionRequest()
+                    override fun onPermissionRationaleShouldBeShown(
+                        permissions: MutableList<PermissionRequest>?,
+                        token: PermissionToken?,
+                    ) {
+                        token?.continuePermissionRequest()
+                    }
                 }
-            }
-        )
+            )
+        }else{
+            showToast(getString(R.string.something_went_wrong))
+        }
     }
 
     private fun startPractiseSearchScreen(
@@ -781,21 +787,29 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
     }
 
     fun openNetworkDialog(v:View){
-        val dialog = AlertDialog.Builder(context)
-        dialog
-            .setMessage(getString(R.string.network_message))
-            .setPositiveButton("GOT IT")
-            { dialog, _ -> dialog.dismiss() }.show()
+        if (isAdded && activity != null) {
+            val dialog = AlertDialog.Builder(context)
+            dialog
+                .setMessage(getString(R.string.network_message))
+                .setPositiveButton("GOT IT")
+                { dialog, _ -> dialog.dismiss() }.show()
+        }else{
+            showToast(getString(R.string.something_went_wrong))
+        }
     }
 
     fun openRatingDialog(v:View){
-        val rating=7
-        val dialog = AlertDialog.Builder(context)
-        dialog
-            .setTitle(getString(R.string.rating_title,rating.toString()))
-            .setMessage(getString(R.string.rating_message))
-            .setPositiveButton("GOT IT")
-            { dialog, _ -> dialog.dismiss() }.show()
+        if (isAdded && activity != null) {
+            val rating = 7
+            val dialog = AlertDialog.Builder(context)
+            dialog
+                .setTitle(getString(R.string.rating_title, rating.toString()))
+                .setMessage(getString(R.string.rating_message))
+                .setPositiveButton("GOT IT")
+                { dialog, _ -> dialog.dismiss() }.show()
+        }else{
+            showToast(getString(R.string.something_went_wrong))
+        }
     }
 
     fun animateButton() {

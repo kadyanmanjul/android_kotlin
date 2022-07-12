@@ -99,6 +99,7 @@ import timber.log.Timber
 import java.io.File
 import java.io.IOException
 import java.lang.Runnable
+import java.lang.ref.WeakReference
 import java.nio.ByteBuffer
 import java.util.concurrent.TimeUnit
 
@@ -136,11 +137,7 @@ class ReadingFragmentWithoutFeedback :
     private var muxerJob: Job? = null
     private var internetAvailableFlag: Boolean = true
     private val praticAudioAdapter: PracticeAudioAdapter by lazy { PracticeAudioAdapter(context) }
-    private val layoutManager: LinearLayoutManager by lazy {
-        LinearLayoutManager(activity).apply {
-            isSmoothScrollbarEnabled = true
-        }
-    }
+    private var linearLayoutManager: LinearLayoutManager?= null
     private var onDownloadCompleteListener = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             val id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
@@ -243,6 +240,7 @@ class ReadingFragmentWithoutFeedback :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         totalTimeSpend = System.currentTimeMillis()
+        linearLayoutManager = LinearLayoutManager(requireActivity())
     }
 
     override fun onCreateView(
@@ -265,13 +263,18 @@ class ReadingFragmentWithoutFeedback :
         addObserver()
         // showTooltip()
         binding.mergedVideo.setOnPreparedListener { mediaPlayer ->
-            val videoRatio = mediaPlayer.videoWidth / mediaPlayer.videoHeight.toFloat()
-            val screenRatio = binding.mergedVideo.width / binding.mergedVideo.height.toFloat()
-            val scaleX = videoRatio / screenRatio
-            if (scaleX >= 1f) {
-                binding.mergedVideo.scaleX = scaleX
-            } else {
-                binding.mergedVideo.scaleY = 1f / scaleX
+            try {
+                val videoRatio = mediaPlayer.videoWidth / mediaPlayer.videoHeight.toFloat()
+                val screenRatio = binding.mergedVideo.width / binding.mergedVideo.height.toFloat()
+                val scaleX = videoRatio / screenRatio
+                if (scaleX >= 1f) {
+                    binding.mergedVideo.scaleX = scaleX
+                } else {
+                    binding.mergedVideo.scaleY = 1f / scaleX
+                }
+            }catch (ex:Exception){
+                showToast(getString(R.string.something_went_wrong))
+                ex.printStackTrace()
             }
         }
 
@@ -743,16 +746,20 @@ class ReadingFragmentWithoutFeedback :
 
     private fun setVideoThumbnail(thumbnailUrl: String?) {
         lifecycleScope.launch(Dispatchers.IO) {
-            val thumbnailDrawable: Drawable? =
-                Utils.getDrawableFromUrl(thumbnailUrl)
-            if (thumbnailDrawable != null) {
-                AppObjectController.uiHandler.post {
-                    binding.videoPlayer.useArtwork = true
-                    binding.videoPlayer.defaultArtwork = thumbnailDrawable
+            if (isAdded && activity != null) {
+                val thumbnailDrawable: Drawable? =
+                    Utils.getDrawableFromUrl(requireContext(),thumbnailUrl)
+                if (thumbnailDrawable != null) {
+                    AppObjectController.uiHandler.post {
+                        binding.videoPlayer.useArtwork = true
+                        binding.videoPlayer.defaultArtwork = thumbnailDrawable
 //                    val imgArtwork: ImageView = binding.videoPlayer.findViewById(R.id.exo_artwork) as ImageView
 //                    imgArtwork.setImageDrawable(thumbnailDrawable)
 //                    imgArtwork.visibility = View.VISIBLE
+                    }
                 }
+            }else{
+                showToast(getString(R.string.something_went_wrong))
             }
         }
     }
@@ -1165,7 +1172,13 @@ class ReadingFragmentWithoutFeedback :
                 )
             )
         )
-        binding.audioListRv.setHasFixedSize(false)
+        try {
+            linearLayoutManager?.isSmoothScrollbarEnabled = true
+            binding.audioListRv.layoutManager = linearLayoutManager
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
+        binding.audioListRv.setHasFixedSize(true)
         binding.audioListRv.addItemDecoration(divider)
         binding.audioListRv.enforceSingleScrollDirection()
         binding.audioListRv.adapter = praticAudioAdapter
@@ -1252,35 +1265,39 @@ class ReadingFragmentWithoutFeedback :
     }
 
     private fun recordPermission() {
-        PermissionUtils.audioRecordStorageReadAndWritePermission(
-            requireActivity(),
-            object : MultiplePermissionsListener {
-                override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
-                    report?.areAllPermissionsGranted()?.let { flag ->
-                        if (flag) {
-                            binding.recordingView.setOnClickListener(null)
-                            binding.recordTransparentContainer.setOnClickListener(null)
-                            audioRecordTouchListener()
-                            return
-                        }
-                        if (report.isAnyPermissionPermanentlyDenied) {
-                            PermissionUtils.permissionPermanentlyDeniedDialog(
-                                requireActivity(),
-                                R.string.record_permission_message
-                            )
-                            return
+        if (isAdded && activity!=null) {
+            PermissionUtils.audioRecordStorageReadAndWritePermission(
+                requireActivity(),
+                object : MultiplePermissionsListener {
+                    override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                        report?.areAllPermissionsGranted()?.let { flag ->
+                            if (flag) {
+                                binding.recordingView.setOnClickListener(null)
+                                binding.recordTransparentContainer.setOnClickListener(null)
+                                audioRecordTouchListener()
+                                return
+                            }
+                            if (report.isAnyPermissionPermanentlyDenied) {
+                                PermissionUtils.permissionPermanentlyDeniedDialog(
+                                    requireActivity(),
+                                    R.string.record_permission_message
+                                )
+                                return
+                            }
                         }
                     }
-                }
 
-                override fun onPermissionRationaleShouldBeShown(
-                    permissions: MutableList<PermissionRequest>?,
-                    token: PermissionToken?
-                ) {
-                    token?.continuePermissionRequest()
+                    override fun onPermissionRationaleShouldBeShown(
+                        permissions: MutableList<PermissionRequest>?,
+                        token: PermissionToken?
+                    ) {
+                        token?.continuePermissionRequest()
+                    }
                 }
-            }
-        )
+            )
+        }else{
+            showToast(getString(R.string.something_went_wrong))
+        }
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -1289,7 +1306,7 @@ class ReadingFragmentWithoutFeedback :
             if (isCallOngoing() || requireActivity().getVoipState()!= State.IDLE) {
                 return@setOnTouchListener false
             }
-            if (isAdded) {
+            if (isAdded && activity!=null) {
                 if (PermissionUtils.isAudioAndStoragePermissionEnable(requireContext()).not()) {
                     recordPermission()
                     return@setOnTouchListener true

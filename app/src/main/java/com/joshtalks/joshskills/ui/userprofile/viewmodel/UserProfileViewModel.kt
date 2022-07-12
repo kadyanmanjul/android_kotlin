@@ -704,18 +704,23 @@ class UserProfileViewModel(application: Application) : AndroidViewModel(applicat
     }
 
     fun removeFpp(uId: Int) {
-        try {
-            viewModelScope.launch(Dispatchers.IO) {
-                val requestParams: HashMap<String, List<Int>> = HashMap()
-                requestParams["mentor_ids"] = uId.let { return@let listOf(uId) }
-                val response = favoriteCallerRepository.removeUserFormFppLit(requestParams)
-                if (response.isSuccessful) {
-                    favoriteCallerDao.removeFromFavorite(uId.let { return@let listOf(uId) })
-                    getFppStatusInProfile(mentorId)
-                    getProfileData(mentorId, null, null)
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                if (Utils.isInternetAvailable()) {
+                    val requestParams: HashMap<String, List<Int>> = HashMap()
+                    requestParams["mentor_ids"] = uId.let { return@let listOf(uId) }
+                    val response = favoriteCallerRepository.removeUserFormFppLit(requestParams)
+                    if (response.isSuccessful) {
+                        favoriteCallerDao.removeFromFavorite(uId.let { return@let listOf(uId) })
+                        getFppStatusInProfile(mentorId)
+                        getProfileData(mentorId, null, null)
+                    }
+                } else {
+                    showToast("No internet connection")
                 }
+            } catch (ex: Exception) {
+                ex.printStackTrace()
             }
-        } catch (ex: Exception) {
         }
     }
 }

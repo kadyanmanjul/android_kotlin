@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.core
 import android.content.Context
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.custom_ui.PointSnackbar
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.track.TrackFragment
@@ -28,6 +29,15 @@ open class CoreJoshFragment : TrackFragment() {
     }
 
     override fun getConversationId(): String? {
-        return (requireActivity() as AppCompatActivity).intent.getStringExtra(CONVERSATION_ID)
+        try {
+            if (isAdded && activity != null) {
+                return (requireActivity() as AppCompatActivity).intent.getStringExtra(CONVERSATION_ID)
+            }else{
+                showToast(getString(R.string.something_went_wrong))
+            }
+        }catch (ex: Exception) {
+            ex.printStackTrace()
+        }
+        return null
     }
 }

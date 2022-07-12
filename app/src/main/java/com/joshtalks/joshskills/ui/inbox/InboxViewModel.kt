@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
 import com.joshtalks.joshskills.core.abTest.VariantKeys
@@ -57,20 +58,28 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
 
     fun getA2C1CampaignData(campaign: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            repository.getCampaignData(campaign)?.let { campaign ->
-                PrefManager.put(
-                    IS_A2_C1_RETENTION_ENABLED,
-                    (campaign.variantKey == VariantKeys.A2_C1_RETENTION.name) && campaign.variableMap?.isEnabled == true
-                )
-            } ?: run {
-                AppObjectController.abTestNetworkService.getCampaignData(campaign).let { response ->
-                    response.body()?.let { campaign ->
+            try {
+                if (Utils.isInternetAvailable()) {
+                    repository.getCampaignData(campaign)?.let { campaign ->
                         PrefManager.put(
                             IS_A2_C1_RETENTION_ENABLED,
                             (campaign.variantKey == VariantKeys.A2_C1_RETENTION.name) && campaign.variableMap?.isEnabled == true
                         )
+                    } ?: run {
+                        AppObjectController.abTestNetworkService.getCampaignData(campaign).let { response ->
+                            response.body()?.let { campaign ->
+                                PrefManager.put(
+                                    IS_A2_C1_RETENTION_ENABLED,
+                                    (campaign.variantKey == VariantKeys.A2_C1_RETENTION.name) && campaign.variableMap?.isEnabled == true
+                                )
+                            }
+                        }
                     }
+                }else{
+                    showToast("No internet connection")
                 }
+            }catch (ex:Exception){
+                ex.printStackTrace()
             }
         }
     }
@@ -78,14 +87,18 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
     fun getICPABTest(campaign: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                repository.getCampaignData(campaign)?.let { campaign ->
-                    increaseCoursePriceABtestLiveData.postValue(campaign)
-                } ?: run {
-                    AppObjectController.abTestNetworkService.getCampaignData(campaign)
-                        .let { response ->
-                            increaseCoursePriceABtestLiveData.postValue(response.body())
+                if (Utils.isInternetAvailable()) {
+                    repository.getCampaignData(campaign)?.let { campaign ->
+                        increaseCoursePriceABtestLiveData.postValue(campaign)
+                    } ?: run {
+                        AppObjectController.abTestNetworkService.getCampaignData(campaign)
+                            .let { response ->
+                                increaseCoursePriceABtestLiveData.postValue(response.body())
 
-                        }
+                            }
+                    }
+                }else{
+                    showToast("No internet connection")
                 }
             } catch (ex: Exception) {
                 ex.printStackTrace()
@@ -112,17 +125,21 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
     private fun getCourseFromServer() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val courseListResponse =
-                    AppObjectController.chatNetworkService.getRegisteredCourses()
-                if (courseListResponse.isEmpty()) {
-                    _registerCourseNetworkData.emit(emptyList())
-                    return@launch
-                }
-                appDatabase.courseDao().insertRegisterCourses(courseListResponse).let {
-                    delay(1000)
-                    _registerCourseNetworkData.emit(
-                        appDatabase.courseDao().getRegisterCourseMinimal()
-                    )
+                if (Utils.isInternetAvailable()) {
+                    val courseListResponse =
+                        AppObjectController.chatNetworkService.getRegisteredCourses()
+                    if (courseListResponse.isEmpty()) {
+                        _registerCourseNetworkData.emit(emptyList())
+                        return@launch
+                    }
+                    appDatabase.courseDao().insertRegisterCourses(courseListResponse).let {
+                        delay(1000)
+                        _registerCourseNetworkData.emit(
+                            appDatabase.courseDao().getRegisterCourseMinimal()
+                        )
+                    }
+                } else {
+                    showToast("No internet connection")
                 }
             } catch (ex: Exception) {
                 ex.printStackTrace()
@@ -135,53 +152,58 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
         apiCallStatusLiveData.postValue(ApiCallStatus.START)
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val response = AppObjectController.commonNetworkService.getUserProfileData(
-                    mentorId, null,
-                    USER_PROFILE_FLOW_FROM.INBOX_SCREEN.value
-                )
-                if (response.isSuccessful && response.body() != null) {
-                    apiCallStatusLiveData.postValue(ApiCallStatus.SUCCESS)
-                    response.body()?.awardCategory?.sortedBy { it.sortOrder }?.map {
-                        it.awards?.sortedBy { it.sortOrder }
-                    }
-                    if (mentorId == Mentor.getInstance().getId()) {
-                        response.body()?.colorCode?.let {
-                            PrefManager.put(MY_COLOR_CODE, it, false)
+                if (Utils.isInternetAvailable()) {
+                    val response = AppObjectController.commonNetworkService.getUserProfileData(
+                        mentorId, null,
+                        USER_PROFILE_FLOW_FROM.INBOX_SCREEN.value
+                    )
+                    if (response.isSuccessful && response.body() != null) {
+                        apiCallStatusLiveData.postValue(ApiCallStatus.SUCCESS)
+                        response.body()?.awardCategory?.sortedBy { it.sortOrder }?.map {
+                            it.awards?.sortedBy { it.sortOrder }
                         }
-                    }
-                    MixPanelTracker.mixPanel.identify(PrefManager.getStringValue(USER_UNIQUE_ID))
-                    MixPanelTracker.mixPanel.people.identify(
-                        PrefManager.getStringValue(
-                            USER_UNIQUE_ID
+                        if (mentorId == Mentor.getInstance().getId()) {
+                            response.body()?.colorCode?.let {
+                                PrefManager.put(MY_COLOR_CODE, it, false)
+                            }
+                        }
+                        MixPanelTracker.mixPanel.identify(PrefManager.getStringValue(USER_UNIQUE_ID))
+                        MixPanelTracker.mixPanel.people.identify(
+                            PrefManager.getStringValue(
+                                USER_UNIQUE_ID
+                            )
                         )
-                    )
-                    val prop = JSONObject()
-                    prop.put("total points", response.body()?.points)
-                    prop.put("total min spoken", response.body()?.minutesSpoken)
-                    MixPanelTracker.mixPanel.people.set(prop)
-                    userData.postValue(response.body()!!)
-                    PrefManager.put(
-                        IS_PROFILE_FEATURE_ACTIVE,
-                        response.body()?.isPointsActive ?: false
-                    )
-                    PrefManager.put(
-                        IS_CONVERSATION_ROOM_ACTIVE_FOR_USER,
-                        response.body()?.isConvRoomActive ?: false
-                    )
-                    return@launch
-                } else if (response.errorBody() != null
-                    && response.errorBody()!!.string().contains("mentor_id is not valid")
-                ) {
-                    apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)
-                } else {
-                    apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)
+                        val prop = JSONObject()
+                        prop.put("total points", response.body()?.points)
+                        prop.put("total min spoken", response.body()?.minutesSpoken)
+                        MixPanelTracker.mixPanel.people.set(prop)
+                        userData.postValue(response.body()!!)
+                        PrefManager.put(
+                            IS_PROFILE_FEATURE_ACTIVE,
+                            response.body()?.isPointsActive ?: false
+                        )
+                        PrefManager.put(
+                            IS_CONVERSATION_ROOM_ACTIVE_FOR_USER,
+                            response.body()?.isConvRoomActive ?: false
+                        )
+                        return@launch
+                    } else if (response.errorBody() != null
+                        && response.errorBody()!!.string().contains("mentor_id is not valid")
+                    ) {
+                        apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)
+                    } else {
+                        apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)
+                    }
+                }else{
+                    showToast("No internet connection")
                 }
-
-            } catch (ex: Throwable) {
-                ex.printStackTrace()
             }
-            apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)
+            catch (ex: Exception) {
+                ex.printStackTrace()
+                apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)
+            }
         }
+        apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)
     }
 
 
@@ -220,9 +242,13 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
         CoroutineScope(Dispatchers.IO).launch {
             for (event in appDatabase.broadcastDao().getAllEvents()) {
                 try {
-                    val res = AppObjectController.commonNetworkService.saveBroadcastEvent(event)
-                    if (res.isSuccessful)
-                        appDatabase.broadcastDao().deleteEvent(event.id)
+                    if (Utils.isInternetAvailable()) {
+                        val res = AppObjectController.commonNetworkService.saveBroadcastEvent(event)
+                        if (res.isSuccessful)
+                            appDatabase.broadcastDao().deleteEvent(event.id)
+                    }else{
+                        showToast("No internet connection")
+                    }
                 } catch (ex: Exception) {
                     LogException.catchException(ex)
                 }

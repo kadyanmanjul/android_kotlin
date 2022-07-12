@@ -134,8 +134,7 @@ object VoipPref {
         }
 
         private fun showFeedBackDialog(fragmentActivity: FragmentActivity) {
-            val function = fun() {}
-            FeedbackDialogFragment.newInstance(function)
+            FeedbackDialogFragment.newInstance()
                 .show(fragmentActivity.supportFragmentManager, "FeedBackDialogFragment")
         }
 

@@ -59,7 +59,7 @@ class CertificateShareFragment : CoreJoshFragment() {
         viewModel.typeOfExam()
 
         if(url.isEmpty()){
-            showToast("Oops! something went wrong")
+            showToast(getString(R.string.something_went_wrong))
         }
 
         Glide.with(binding.imgCertificate.context).load(url)
@@ -89,6 +89,10 @@ class CertificateShareFragment : CoreJoshFragment() {
 
 
         binding.btnShareWhatsapp.setOnClickListener {
+            if (url.isEmpty()) {
+                showToast(getString(R.string.something_went_wrong))
+                return@setOnClickListener
+            }
             if (Utils.isInternetAvailable()){
                 packageName = PKG_AFTER_COM_WHATSAPP
                 viewModel.progressBarVisibility.set(true)
@@ -96,11 +100,15 @@ class CertificateShareFragment : CoreJoshFragment() {
                 viewModel.saveImpression(CERTIFICATE_SHARED_WHATSAPP)
             }
             else {
-                showToast("No Internet Available")
+                showToast(getString(R.string.internet_not_available_msz))
             }
         }
 
         binding.btnShareFacebook.setOnClickListener {
+            if (url.isEmpty()) {
+                showToast(getString(R.string.something_went_wrong))
+                return@setOnClickListener
+            }
             if (Utils.isInternetAvailable()){
                 packageName = PKG_AFTER_COM_FACEBOOK
                 viewModel.progressBarVisibility.set(true)
@@ -108,22 +116,30 @@ class CertificateShareFragment : CoreJoshFragment() {
                 viewModel.saveImpression(CERTIFICATE_SHARED_FB)
             }
             else {
-                showToast("No Internet Available")
+                showToast(getString(R.string.internet_not_available_msz))
             }
         }
 
         binding.btnShareInsta.setOnClickListener {
+            if (url.isEmpty()) {
+                showToast(getString(R.string.something_went_wrong))
+                return@setOnClickListener
+            }
             if (Utils.isInternetAvailable()){
                 packageName = PKG_AFTER_COM_INSTA
                 viewModel.progressBarVisibility.set(true)
                 downloadImage(url)
                 viewModel.saveImpression(CERTIFICATE_SHARED_INSTA)
             }else {
-                showToast("No Internet Available")
+                showToast(getString(R.string.internet_not_available_msz))
             }
         }
 
         binding.btnShareLinkedIn.setOnClickListener {
+            if (url.isEmpty()) {
+                showToast(getString(R.string.something_went_wrong))
+                return@setOnClickListener
+            }
             if (Utils.isInternetAvailable()){
                 packageName = PKG_AFTER_COM_LINKEDIN
                 viewModel.progressBarVisibility.set(true)
@@ -131,11 +147,15 @@ class CertificateShareFragment : CoreJoshFragment() {
                 viewModel.saveImpression(CERTIFICATE_SHARED_LINKED)
             }
             else{
-                showToast("No Internet Available")
+                showToast(getString(R.string.internet_not_available_msz))
             }
         }
 
         binding.btnShareDownload.setOnClickListener {
+            if (url.isEmpty()) {
+                showToast(getString(R.string.something_went_wrong))
+                return@setOnClickListener
+            }
             if (Utils.isInternetAvailable()){
                 packageName = NULL
                 viewModel.progressBarVisibility.set(true)
@@ -143,7 +163,7 @@ class CertificateShareFragment : CoreJoshFragment() {
                 viewModel.saveImpression(CERTIFICATE_DOWNLOAD)
             }
             else {
-                showToast("No Internet Available")
+                showToast(getString(R.string.internet_not_available_msz))
             }
         }
         return binding.root
@@ -203,6 +223,10 @@ class CertificateShareFragment : CoreJoshFragment() {
     }
 
     fun downloadImage(url: String) {
+        if (url.isEmpty()) {
+            showToast(getString(R.string.something_went_wrong))
+            return
+        }
         PermissionUtils.storageReadAndWritePermission(requireContext(), object : MultiplePermissionsListener {
             override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                 report?.areAllPermissionsGranted()?.let { flag ->
