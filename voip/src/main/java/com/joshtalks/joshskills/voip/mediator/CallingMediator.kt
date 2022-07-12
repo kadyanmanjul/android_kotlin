@@ -1,15 +1,11 @@
 package com.joshtalks.joshskills.voip.mediator
 
 import android.content.Intent
-import android.content.Intent
 import android.util.Log
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_INCOMING_CALL_ID
 import com.joshtalks.joshskills.voip.communication.fallback.FirebaseChannelService
-import com.joshtalks.joshskills.base.constants.PEER_TO_PEER
 import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.Utils.Companion.context
-import com.joshtalks.joshskills.voip.audiomanager.SOUND_TYPE_RINGTONE
-import com.joshtalks.joshskills.voip.audiomanager.SoundManager
 import com.joshtalks.joshskills.voip.calldetails.IncomingCallData
 import com.joshtalks.joshskills.voip.communication.EventChannel
 import com.joshtalks.joshskills.voip.communication.PubNubChannelService
@@ -33,7 +29,6 @@ import com.joshtalks.joshskills.voip.webrtc.WebrtcService
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -46,6 +41,7 @@ import kotlinx.coroutines.sync.withLock
 const val PER_USER_TIMEOUT_IN_MILLIS = 10 * 1000L
 const val FAV_USER_TIMEOUT_IN_MILLIS = 20 * 1000L
 private const val TAG = "CallingMediator"
+
 enum class ActionDirection {
     SERVER,
     LOCAL
@@ -62,9 +58,9 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
         FirebaseChannelService(scope)
     }
 
-    var calling : CallCategory = PeerToPeerCall()
-    private set
-    private var callCategory : Category = Category.PEER_TO_PEER
+    var calling: CallCategory = PeerToPeerCall()
+        private set
+    private var callCategory: Category = Category.PEER_TO_PEER
 
     val flow by lazy {
         MutableSharedFlow<Envelope<Event>>(replay = 0)
@@ -74,19 +70,18 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
     private val mutex = Mutex(false)
     private val incomingNotificationMutex = Mutex(false)
     private lateinit var incomingCallNotificationHandler: IncomingCallNotificationHandler
-    var currentIncomingNotificationId :Int? = null
     private val Communication?.hasMainEventChannelFailed: Boolean
         get() {
             return PrefManager.getLatestPubnubMessageTime() < (this?.getEventTime() ?: 0)
         }
-    var callContext : CallContext? = null
-    lateinit var stateChannel : Channel<Envelope<Event>>
-    lateinit var speakerVolumeChannel : Channel<Envelope<Event>>
+    var callContext: CallContext? = null
+    lateinit var stateChannel: Channel<Envelope<Event>>
+    lateinit var speakerVolumeChannel: Channel<Envelope<Event>>
 
     init {
         Log.d(TAG, "Inside Init : ${scope.isActive}")
         scope.launch {
-            try{
+            try {
                 mutex.withLock {
                     handleWebrtcEvent()
                     handleWebrtcSpeakerVolume()
@@ -94,15 +89,13 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                     handleFallbackEvents()
                     observeChannelState()
                 }
-            }
-            catch (e : Exception){
-                if(e is CancellationException)
+            } catch (e: Exception) {
+                if (e is CancellationException)
                     throw e
                 e.printStackTrace()
             }
         }
     }
-
 
     override fun observerUIState(): StateFlow<UIState> {
         return uiStateFlow
@@ -121,9 +114,9 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
         // TODO: IMPORTANT- We have to make sure that in any case this should not be called twice
         scope.launch {
             Log.d(TAG, "connectCall : Inside Scope")
-            try{
+            try {
                 mutex.withLock {
-                    calling = when(callCategory) {
+                    calling = when (callCategory) {
                         Category.PEER_TO_PEER -> PeerToPeerCall()
                         Category.FPP -> FavoriteCall()
                         Category.GROUP -> GroupCall()
@@ -147,9 +140,8 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                     )
                     callContext?.connect()
                 }
-            }
-            catch (e : Exception){
-                if(e is CancellationException)
+            } catch (e: Exception) {
+                if (e is CancellationException)
                     throw e
                 e.printStackTrace()
             }
@@ -161,18 +153,18 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
         networkEventChannel.emitEvent(data)
     }
 
-
     override fun hideIncomingCall() {
         scope.launch {
             try {
                 incomingCallNotificationHandler.removeNotification()
             } catch (e: Exception) {
                 e.printStackTrace()
-                if(e is CancellationException)
+                if (e is CancellationException)
                     throw e
             }
         }
     }
+
     override fun declineIncomingCall() {
         scope.launch {
             try {
@@ -182,15 +174,15 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                 calling.onCallDecline(map)
             } catch (e: Exception) {
                 e.printStackTrace()
-                if(e is CancellationException)
+                if (e is CancellationException)
                     throw e
             }
         }
-        val notificationActivity="com.joshtalks.joshskills.ui.voip.new_arch.ui.views.IncomingNotificationActivity"
+        val notificationActivity = "com.joshtalks.joshskills.ui.voip.new_arch.ui.views.IncomingNotificationActivity"
         val callingActivity = Intent()
         callingActivity.apply {
-            setClassName(Utils.context!!,notificationActivity)
-            putExtra("destroy_activity",true)
+            setClassName(Utils.context!!, notificationActivity)
+            putExtra("destroy_activity", true)
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
         context?.startActivity(callingActivity)
@@ -216,7 +208,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                         stateChannel.send(envelope)
                     }
                     UserAction.HOLD -> {
-                        if(callContext?.hasChannelData() == true) {
+                        if (callContext?.hasChannelData() == true) {
                             CallAnalytics.addAnalytics(
                                 event = EventName.PSTN_CALL_RECEIVED,
                                 agoraCallId = callContext?.channelData?.getCallingId().toString(),
@@ -266,7 +258,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
             } catch (e: Exception) {
                 Log.d(TAG, "userAction : $e")
                 e.printStackTrace()
-                if(e is CancellationException)
+                if (e is CancellationException)
                     throw e
             }
         }
@@ -277,18 +269,17 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
             try {
                 networkEventChannel.observeChannelState().collect {
                     Log.d(TAG, "observeChannelState : $it")
-                    try{
+                    try {
                         when (it) {
-                            CONNECTED ->  {}
+                            CONNECTED -> {}
                             RECONNECTED -> {
                                 val envelope = Envelope(Event.SYNC_UI_STATE)
                                 stateChannel.send(envelope)
                             }
                             DISCONNECTED -> {}
                         }
-                    }
-                    catch (e : Exception){
-                        if(e is CancellationException)
+                    } catch (e: Exception) {
+                        if (e is CancellationException)
                             throw e
                         e.printStackTrace()
                     }
@@ -296,7 +287,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
             } catch (e: Exception) {
                 Log.d(TAG, "observeChannelState: $e")
                 e.printStackTrace()
-                if(e is CancellationException)
+                if (e is CancellationException)
                     throw e
             }
         }
@@ -324,126 +315,38 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
         startRecording()
     }
 
-//    // Handle Events coming from Backend
-//    private fun handlePubnubEvent() {
-//        Log.d(TAG, "handlePubnubEvent: Observe")
-//        scope.launch {
-//            try {
-//                networkEventChannel.observeChannelEvents().collect {
-//                    try{
-//                        Log.d(TAG, "handlePubnubEvent: Collect $it")
-//                        val latestEventTimestamp = it.getEventTime() ?: 0L
-//                        PrefManager.setLatestPubnubMessageTime(latestEventTimestamp)
-//                        when (it) {
-//                            is Error -> {
-//                                Log.d(TAG, "handlePubnubEvent : $it")
-//                                callContext?.onError(it.reason)
-//                            }
-//                            is ChannelData -> {
-//                                Log.d(TAG, "handlePubnubEvent : $it")
-//                                val envelope = Envelope(Event.RECEIVED_CHANNEL_DATA,it)
-//                                stateChannel.send(envelope)
-//                            }
-//                            is MessageData -> {
-//                                Log.d(TAG, "handlePubnubEvent : $it")
-//                                if (isMessageForSameChannel(it.getChannel())) {
-//                                    when (it.getType()) {
-//                                        ServerConstants.ONHOLD -> {
-//                                            val envelope = Envelope(Event.HOLD)
-//                                            stateChannel.send(envelope)
-//                                        }
-//                                        ServerConstants.RESUME -> {
-//                                            val envelope = Envelope(Event.UNHOLD)
-//                                            stateChannel.send(envelope)
-//                                        }
-//                                        ServerConstants.MUTE -> {
-//                                            val envelope = Envelope(Event.MUTE)
-//                                            stateChannel.send(envelope)
-//                                        }
-//                                        ServerConstants.UNMUTE -> {
-//                                            val envelope = Envelope(Event.UNMUTE)
-//                                            stateChannel.send(envelope)
-//                                        }
-//                                        ServerConstants.TOPIC_IMAGE_RECEIVED ->{
-//                                                val envelope = Envelope(
-//                                                    Event.TOPIC_IMAGE_RECEIVED,
-//                                                    it.getMsgData()
-//                                                )
-//                                                stateChannel.send(envelope)
-//                                        }
-//                                        ServerConstants.DISCONNECTED -> {
-//                                            val envelope = Envelope(Event.REMOTE_USER_DISCONNECTED_MESSAGE)
-//                                            stateChannel.send(envelope)
-//                                        }
-//                                        ServerConstants.START_RECORDING -> {
-//                                            val envelope = Envelope(Event.START_RECORDING, data = ActionDirection.LOCAL)
-//                                            stateChannel.send(envelope)
-//                                        }
-//                                        ServerConstants.STOP_RECORDING -> {
-//                                            val envelope = Envelope(Event.STOP_RECORDING, data = ActionDirection.LOCAL)
-//                                            stateChannel.send(envelope)
-//                                        }
-//                                        ServerConstants.CALL_RECORDING_ACCEPT -> {
-//                                            val envelope = Envelope(Event.CALL_RECORDING_ACCEPT, data = ActionDirection.LOCAL)
-//                                            stateChannel.send(envelope)
-//                                        }
-//                                        ServerConstants.CALL_RECORDING_REJECT -> {
-//                                            val envelope = Envelope(Event.CALL_RECORDING_REJECT, data = ActionDirection.LOCAL)
-//                                            stateChannel.send(envelope)
-//                                        }
-//                                        ServerConstants.CANCEL_RECORDING_REQUEST -> {
-//                                            val envelope = Envelope(Event.CANCEL_RECORDING_REQUEST, data = ActionDirection.LOCAL)
-//                                            stateChannel.send(envelope)
-//                                        }
-//                                    }
-//                                }
-//                            }
-//                            is IncomingCall -> {
-//                                incomingNotificationMutex.withLock {
-//                                    Log.d(TAG, "handlePubnubEvent : $it")
-//                                    if (isShowingIncomingCall.not() && PrefManager.getVoipState() == State.IDLE && PrefManager.getPstnState()== PSTN_STATE_IDLE) {
-//                                        CallAnalytics.addAnalytics(
-//                                            event = EventName.INCOMING_CALL_RECEIVED,
-//                                            agoraCallId = IncomingCallData.callId.toString(),
-//                                            agoraMentorId = "-1"
-//                                        )
-//                                        updateIncomingCallState(true)
-//                                        Log.d(TAG, "handlePubnubEvent: Incoming Call -> $it")
-//                                        IncomingCallData.set(it.getCallId(), PEER_TO_PEER)
-//                                        val envelope = Envelope(Event.INCOMING_CALL)
-//                                        flow.emit(envelope)
-//                                    }
-//                                }
-//                            }
-//                            is UI -> {
-//                                Log.d(TAG, "handlePubnubEvent : $it")
-//                                if (isMessageForSameChannel(it.getChannelName())) {
-//                                    val envelope = Envelope(Event.UI_STATE_UPDATED,it)
-//                                    stateChannel.send(envelope)
-//                                }
-//                            }
-//                        }
-//                    }
-//                    catch (e : Exception){
-//                        if(e is CancellationException)
-//                            throw e
-//                        e.printStackTrace()
-//                    }
-//                }
-//            } catch (e: Exception) {
-//                Log.d(TAG, "handlePubnubEvent : $e")
-//                e.printStackTrace()
-//                if(e is CancellationException)
-//                    throw e
-//            }
-//        }
-//    }
+    // Handle Events coming from Backend
+    private fun handlePubnubEvent() {
+        Log.d(TAG, "handlePubnubEvent: Observe")
+        scope.launch {
+            try {
+                networkEventChannel.observeChannelEvents().collect {
+                    try{
+                        Log.d(TAG, "handlePubnubEvent: Collect $it")
+                        val latestEventTimestamp = it.getEventTime() ?: 0L
+                        PrefManager.setLatestPubnubMessageTime(latestEventTimestamp)
+                        processNetworkEvent(it)
+                    }
+                    catch (e : Exception){
+                        if(e is CancellationException)
+                            throw e
+                        e.printStackTrace()
+                    }
+                }
+            } catch (e: Exception) {
+                Log.d(TAG, "handlePubnubEvent : $e")
+                e.printStackTrace()
+                if(e is CancellationException)
+                    throw e
+            }
+        }
+    }
 
     private fun handleWebrtcEvent() {
         scope.launch {
             try {
                 webrtcService.observeCallingEvents().collect {
-                    try{
+                    try {
                         Log.d(TAG, "handleWebrtcEvent : $it")
                         when (it) {
                             CallState.CallConnected -> {
@@ -485,16 +388,16 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                                 flow.emit(envelope)
                             }
                         }
-                    }
-                    catch (e : Exception){
-                        if(e is CancellationException)
+                    } catch (e: Exception) {
+                        if (e is CancellationException)
                             throw e
                         e.printStackTrace()
-                    }                }
+                    }
+                }
             } catch (e: Exception) {
                 Log.d(TAG, "handleWebrtcEvent : $e")
                 e.printStackTrace()
-                if(e is CancellationException)
+                if (e is CancellationException)
                     throw e
             }
         }
@@ -505,50 +408,22 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
             try {
                 webrtcService.observeSpeakersVolume().collect {
                     try {
-                        val envelope = Envelope(Event.AGORA_CALL_SPEAKER_VOLUME,it)
+                        val envelope = Envelope(Event.AGORA_CALL_SPEAKER_VOLUME, it)
                         speakerVolumeChannel.send(envelope)
-                    }
-                    catch (e : Exception){
-                        if(e is CancellationException)
+                    } catch (e: Exception) {
+                        if (e is CancellationException)
                             throw e
                         e.printStackTrace()
-                    }                }
+                    }
+                }
             } catch (e: Exception) {
                 Log.d(TAG, "handleWebrtcEvent : $e")
                 e.printStackTrace()
-                if(e is CancellationException)
+                if (e is CancellationException)
                     throw e
             }
         }
     }
-//    private fun handleFallbackEvents() {
-//        scope.launch {
-//            try{
-//                fallbackEventChannel.observeChannelEvents().collect { event ->
-//                    try{
-//                        if (event.hasMainEventChannelFailed) {
-//                            Log.d(TAG, "handleFallbackEvents: Pubnub Listener Failed ...")
-//                            networkEventChannel.reconnect()
-//                            processNetworkEvent(event)
-//                        }
-//                    }
-//                    catch (e : Exception){
-//                        if(e is CancellationException)
-//                            throw e
-//                        e.printStackTrace()
-//                    }
-//
-//                }
-//            }
-//            catch (e : Exception){
-//                if(e is CancellationException)
-//                    throw e
-//                e.printStackTrace()
-//            }
-//
-//        }
-//    }
-
     private fun handleFallbackEvents() {
         scope.launch {
             try{
@@ -557,88 +432,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                         if (event.hasMainEventChannelFailed) {
                             Log.d(TAG, "handleFallbackEvents: Pubnub Listener Failed ...")
                             networkEventChannel.reconnect()
-                            when (event) {
-                                is Error -> {
-                                    callContext?.onError(event.reason)
-                                }
-                                is ChannelData -> {
-                                    val envelope = Envelope(Event.RECEIVED_CHANNEL_DATA,event)
-                                    stateChannel.send(envelope)
-                                }
-                                is MessageData -> {
-                                    if (isMessageForSameChannel(event.getChannel())) {
-                                        when (event.getType()) {
-                                            ServerConstants.ONHOLD -> {
-                                                // Transfer to Service
-                                                val envelope = Envelope(Event.HOLD)
-                                                stateChannel.send(envelope)
-                                            }
-                                            ServerConstants.RESUME -> {
-                                                val envelope = Envelope(Event.UNHOLD)
-                                                stateChannel.send(envelope)
-                                            }
-                                            ServerConstants.MUTE -> {
-                                                val envelope = Envelope(Event.MUTE)
-                                                stateChannel.send(envelope)
-                                            }
-                                            ServerConstants.UNMUTE -> {
-                                                val envelope = Envelope(Event.UNMUTE)
-                                                stateChannel.send(envelope)
-                                            }
-                                            ServerConstants.TOPIC_IMAGE_RECEIVED ->{
-                                                    val envelope = Envelope(
-                                                        Event.TOPIC_IMAGE_RECEIVED,
-                                                        event.getMsgData()
-                                                    )
-                                                    stateChannel.send(envelope)
-                                            }
-                                            // Remote User Disconnected
-                                            ServerConstants.DISCONNECTED -> {
-                                                val envelope = Envelope(Event.REMOTE_USER_DISCONNECTED_MESSAGE)
-                                                stateChannel.send(envelope)
-                                            }
-                                            ServerConstants.START_RECORDING -> {
-                                                val envelope = Envelope(Event.START_RECORDING, data = ActionDirection.LOCAL)
-                                                stateChannel.send(envelope)
-                                            }
-                                            ServerConstants.STOP_RECORDING -> {
-                                                val envelope = Envelope(Event.STOP_RECORDING, data = ActionDirection.LOCAL)
-                                                stateChannel.send(envelope)
-                                            }
-                                            ServerConstants.CALL_RECORDING_ACCEPT -> {
-                                                val envelope = Envelope(Event.CALL_RECORDING_ACCEPT, data = ActionDirection.LOCAL)
-                                                stateChannel.send(envelope)
-                                            }
-                                            ServerConstants.CALL_RECORDING_REJECT -> {
-                                                val envelope = Envelope(Event.CALL_RECORDING_REJECT, data = ActionDirection.LOCAL)
-                                                stateChannel.send(envelope)
-                                            }
-                                            ServerConstants.CANCEL_RECORDING_REQUEST -> {
-                                                val envelope = Envelope(Event.CANCEL_RECORDING_REQUEST, data = ActionDirection.LOCAL)
-                                                stateChannel.send(envelope)
-                                            }
-                                        }
-                                    }
-                                }
-                                is IncomingCall -> {
-                                    val map = HashMap<String,String>()
-                                    map[INCOMING_CALL_CATEGORY] = Category.PEER_TO_PEER.category
-                                    map[INTENT_DATA_INCOMING_CALL_ID] = event.getCallId().toString()
-                                    handleIncomingCall(map)
-                                }
-                                is GroupIncomingCall -> {
-                                    val map = HashMap<String,String>()
-                                    map[INCOMING_CALL_CATEGORY] = Category.GROUP.category
-                                    map[INTENT_DATA_INCOMING_CALL_ID] = event.getCallId().toString()
-                                    handleIncomingCall(map)
-                                }
-                                is UI -> {
-                                    if (isMessageForSameChannel(event.getChannelName())) {
-                                        val envelope = Envelope(Event.UI_STATE_UPDATED,event)
-                                        stateChannel.send(envelope)
-                                    }
-                                }
-                            }
+                            processNetworkEvent(event)
                         }
                     }
                     catch (e : Exception){
@@ -646,110 +440,122 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                             throw e
                         e.printStackTrace()
                     }
-                    private suspend fun processNetworkEvent(event : Communication) {
-                        when (event) {
-                            is Error -> {
-                                callContext?.onError(event.reason)
-                            }
-                            is ChannelData -> {
-                                val envelope = Envelope(Event.RECEIVED_CHANNEL_DATA,event)
-                                stateChannel.send(envelope)
-                            }
-                            is MessageData -> {
-                                if (isMessageForSameChannel(event.getChannel())) {
-                                    when (event.getType()) {
-                                        ServerConstants.ONHOLD -> {
-                                            // Transfer to Service
-                                            val envelope = Envelope(Event.HOLD)
-                                            stateChannel.send(envelope)
-                                        }
-                                        ServerConstants.RESUME -> {
-                                            val envelope = Envelope(Event.UNHOLD)
-                                            stateChannel.send(envelope)
-                                        }
-                                        ServerConstants.MUTE -> {
-                                            val envelope = Envelope(Event.MUTE)
-                                            stateChannel.send(envelope)
-                                        }
-                                        ServerConstants.UNMUTE -> {
-                                            val envelope = Envelope(Event.UNMUTE)
-                                            stateChannel.send(envelope)
-                                        }
-                                        ServerConstants.TOPIC_IMAGE_RECEIVED ->{
-                                            val envelope = Envelope(
-                                                Event.TOPIC_IMAGE_RECEIVED,
-                                                event.getMsgData()
-                                            )
-                                            stateChannel.send(envelope)
-                                        }
-                                        // Remote User Disconnected
-                                        ServerConstants.DISCONNECTED -> {
-                                            val envelope = Envelope(Event.REMOTE_USER_DISCONNECTED_MESSAGE)
-                                            stateChannel.send(envelope)
-                                        }
-                                        ServerConstants.START_RECORDING -> {
-                                            val envelope = Envelope(Event.START_RECORDING, data = ActionDirection.LOCAL)
-                                            stateChannel.send(envelope)
-                                        }
-                                        ServerConstants.STOP_RECORDING -> {
-                                            val envelope = Envelope(Event.STOP_RECORDING, data = ActionDirection.LOCAL)
-                                            stateChannel.send(envelope)
-                                        }
-                                        ServerConstants.CALL_RECORDING_ACCEPT -> {
-                                            val envelope = Envelope(Event.CALL_RECORDING_ACCEPT, data = ActionDirection.LOCAL)
-                                            stateChannel.send(envelope)
-                                        }
-                                        ServerConstants.CALL_RECORDING_REJECT -> {
-                                            val envelope = Envelope(Event.CALL_RECORDING_REJECT, data = ActionDirection.LOCAL)
-                                            stateChannel.send(envelope)
-                                        }
-                                        ServerConstants.CANCEL_RECORDING_REQUEST -> {
-                                            val envelope = Envelope(Event.CANCEL_RECORDING_REQUEST, data = ActionDirection.LOCAL)
-                                            stateChannel.send(envelope)
-                                        }
-                                    }
-                                }
-                            }
-                            is IncomingCall -> {
-                                val map = HashMap<String,String>()
-                                map[INCOMING_CALL_CATEGORY] = Category.PEER_TO_PEER.category
-                                map[INTENT_DATA_INCOMING_CALL_ID] = event.getCallId().toString()
-                                handleIncomingCall(map)
-                            }
-                            is GroupIncomingCall -> {
-                                val map = HashMap<String,String>()
-                                map[INCOMING_CALL_CATEGORY] = Category.GROUP.category
-                                map[INTENT_DATA_INCOMING_CALL_ID] = event.getCallId().toString()
-                                handleIncomingCall(map)
-                            }
-                            is UI -> {
-                                if (isMessageForSameChannel(event.getChannelName())) {
-                                    val envelope = Envelope(Event.UI_STATE_UPDATED,event)
-                                    stateChannel.send(envelope)
-                                }
-                            }
+
+                }
+            }
+            catch (e : Exception){
+                if(e is CancellationException)
+                    throw e
+                e.printStackTrace()
+            }
+
+        }
+    }
+
+    private suspend fun processNetworkEvent(event: Communication) {
+        when (event) {
+            is Error -> {
+                callContext?.onError(event.reason)
+            }
+            is ChannelData -> {
+                val envelope = Envelope(Event.RECEIVED_CHANNEL_DATA, event)
+                stateChannel.send(envelope)
+            }
+            is MessageData -> {
+                if (isMessageForSameChannel(event.getChannel())) {
+                    when (event.getType()) {
+                        ServerConstants.ONHOLD -> {
+                            // Transfer to Service
+                            val envelope = Envelope(Event.HOLD)
+                            stateChannel.send(envelope)
+                        }
+                        ServerConstants.RESUME -> {
+                            val envelope = Envelope(Event.UNHOLD)
+                            stateChannel.send(envelope)
+                        }
+                        ServerConstants.MUTE -> {
+                            val envelope = Envelope(Event.MUTE)
+                            stateChannel.send(envelope)
+                        }
+                        ServerConstants.UNMUTE -> {
+                            val envelope = Envelope(Event.UNMUTE)
+                            stateChannel.send(envelope)
+                        }
+                        ServerConstants.TOPIC_IMAGE_RECEIVED -> {
+                            val envelope = Envelope(
+                                Event.TOPIC_IMAGE_RECEIVED,
+                                event.getMsgData()
+                            )
+                            stateChannel.send(envelope)
+                        }
+                        // Remote User Disconnected
+                        ServerConstants.DISCONNECTED -> {
+                            val envelope = Envelope(Event.REMOTE_USER_DISCONNECTED_MESSAGE)
+                            stateChannel.send(envelope)
+                        }
+                        ServerConstants.START_RECORDING -> {
+                            val envelope = Envelope(Event.START_RECORDING, data = ActionDirection.LOCAL)
+                            stateChannel.send(envelope)
+                        }
+                        ServerConstants.STOP_RECORDING -> {
+                            val envelope = Envelope(Event.STOP_RECORDING, data = ActionDirection.LOCAL)
+                            stateChannel.send(envelope)
+                        }
+                        ServerConstants.CALL_RECORDING_ACCEPT -> {
+                            val envelope = Envelope(Event.CALL_RECORDING_ACCEPT, data = ActionDirection.LOCAL)
+                            stateChannel.send(envelope)
+                        }
+                        ServerConstants.CALL_RECORDING_REJECT -> {
+                            val envelope = Envelope(Event.CALL_RECORDING_REJECT, data = ActionDirection.LOCAL)
+                            stateChannel.send(envelope)
+                        }
+                        ServerConstants.CANCEL_RECORDING_REQUEST -> {
+                            val envelope = Envelope(Event.CANCEL_RECORDING_REQUEST, data = ActionDirection.LOCAL)
+                            stateChannel.send(envelope)
                         }
                     }
+                }
+            }
+            is IncomingCall -> {
+                val map = HashMap<String, String>()
+                map[INCOMING_CALL_CATEGORY] = Category.PEER_TO_PEER.category
+                map[INTENT_DATA_INCOMING_CALL_ID] = event.getCallId().toString()
+                handleIncomingCall(map)
+            }
+            is GroupIncomingCall -> {
+                val map = HashMap<String, String>()
+                map[INCOMING_CALL_CATEGORY] = Category.GROUP.category
+                map[INTENT_DATA_INCOMING_CALL_ID] = event.getCallId().toString()
+                handleIncomingCall(map)
+            }
+            is UI -> {
+                if (isMessageForSameChannel(event.getChannelName())) {
+                    val envelope = Envelope(Event.UI_STATE_UPDATED, event)
+                    stateChannel.send(envelope)
+                }
+            }
+        }
+    }
 
     override suspend fun handleIncomingCall(map: HashMap<String, String>) {
         val callType = map[INCOMING_CALL_CATEGORY]
         incomingNotificationMutex.withLock {
-            val ifNotificationVisible = if(this@CallingMediator::incomingCallNotificationHandler.isInitialized){
+            val ifNotificationVisible = if (this@CallingMediator::incomingCallNotificationHandler.isInitialized) {
                 incomingCallNotificationHandler.isNotificationVisible()
-            }else{
+            } else {
                 false
             }
-            if (ifNotificationVisible.not() && PrefManager.getVoipState() == State.IDLE  && PrefManager.getPstnState() == PSTN_STATE_IDLE) {
+            if (ifNotificationVisible.not() && PrefManager.getVoipState() == State.IDLE && PrefManager.getPstnState() == PSTN_STATE_IDLE) {
                 when (callType) {
                     Category.PEER_TO_PEER.category -> {
                         callCategory = Category.PEER_TO_PEER
-                        calling =PeerToPeerCall()
+                        calling = PeerToPeerCall()
                     }
                     Category.FPP.category -> {
                         callCategory = Category.FPP
-                        calling =FavoriteCall()
+                        calling = FavoriteCall()
                     }
-                    Category.GROUP.category-> {
+                    Category.GROUP.category -> {
                         callCategory = Category.GROUP
                         calling = GroupCall()
                     }
@@ -763,19 +569,19 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                 )
                 incomingCallNotificationHandler = IncomingCallNotificationHandler()
                 incomingCallNotificationHandler.inflateNotification(map)
-//                currentIncomingNotificationId = voipNotification.getNotificationId()
             }
         }
     }
 
-    private fun isMessageForSameChannel(channel: String) = callContext?.hasChannelData() == true && channel == callContext?.channelData?.getChannel()
+    private fun isMessageForSameChannel(channel: String) =
+        callContext?.hasChannelData() == true && channel == callContext?.channelData?.getChannel()
 
     // TODO: Change Name
     suspend fun disconnectCallFromWebrtc() {
         webrtcService.disconnectCall()
     }
 
-    fun changeSpeaker(isEnable:Boolean) {
+    fun changeSpeaker(isEnable: Boolean) {
         webrtcService.enableSpeaker(isEnable)
     }
 

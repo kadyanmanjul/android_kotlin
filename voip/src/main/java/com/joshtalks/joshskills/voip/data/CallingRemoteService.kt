@@ -189,12 +189,12 @@ class CallingRemoteService : Service() {
                                     serviceEvents.emit(ServiceEvents.RECONNECTING_FAILED)
                                     notification.idle(getNotificationData())
                                 }
-                                // TODO: Might have to refactor
-                                INCOMING_CALL -> {
-                                    PrefManager.setIncomingCallId(IncomingCallData.callId)
-                                    val data = IncomingCall(callId = IncomingCallData.callId)
-                                    mediator.showIncomingCall(data)
-                                }
+//                                // TODO: Might have to refactor
+//                                INCOMING_CALL -> {
+//                                    PrefManager.setIncomingCallId(IncomingCallData.callId)
+//                                    val data = IncomingCall(callId = IncomingCallData.callId)
+//                                    mediator.showIncomingCall(data)
+//                                }
                                 CALL_INITIATED_EVENT -> {
                                     serviceEvents.emit(ServiceEvents.CALL_INITIATED_EVENT)
                                 }

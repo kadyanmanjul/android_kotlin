@@ -12,9 +12,6 @@ import com.joshtalks.joshskills.base.constants.COURSE_ID
 import com.joshtalks.joshskills.base.model.ApiHeader
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.io.AppDirectory
-import com.joshtalks.joshskills.core.*
-import com.joshtalks.joshskills.core.*
-import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.call.data.local.VoipPref

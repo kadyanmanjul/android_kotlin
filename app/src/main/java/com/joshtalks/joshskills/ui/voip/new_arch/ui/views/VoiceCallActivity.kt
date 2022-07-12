@@ -1,12 +1,16 @@
 package com.joshtalks.joshskills.ui.voip.new_arch.ui.views
 
 import android.Manifest
+import android.app.AlertDialog
+import android.content.Intent
 import android.util.Log
+import android.view.LayoutInflater
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseActivity
 import com.joshtalks.joshskills.base.constants.FROM_ACTIVITY
@@ -39,6 +43,7 @@ class VoiceCallActivity : BaseActivity() {
     private val backPressMutex = Mutex(false)
     private var isServiceBounded = false
     private val recordingLiveEvent = GameEventLiveData
+    var recordingPermissionAlert: AlertDialog? = null
     private val voiceCallBinding by lazy<ActivityVoiceCallBinding> {
         DataBindingUtil.setContentView(this, R.layout.activity_voice_call)
     }

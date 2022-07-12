@@ -172,7 +172,7 @@ class JoshGroupActivity : BaseGroupActivity() {
                     putExtra(STARTING_POINT, FROM_ACTIVITY)
                     putExtra(INTENT_DATA_CALL_CATEGORY, Category.GROUP.ordinal)
                     putExtra(INTENT_DATA_GROUP_ID,bundle.getString(GROUPS_ID))
-                    putExtra(INTENT_DATA_TOPIC_ID,5)
+                    putExtra(INTENT_DATA_TOPIC_ID,"5")
                     putExtra(INTENT_DATA_GROUP_NAME,bundle.getString(GROUPS_TITLE))
                 }
                 startActivity(callIntent)

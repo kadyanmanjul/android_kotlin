@@ -234,7 +234,7 @@
             android:theme="@style/AppNoBarTheme" />
         <activity
             android:name=".ui.voip.new_arch.ui.views.IncomingNotificationActivity"
-            android:launchMode="singleTask"
+            android:launchMode="singleTop"
             android:showForAllUsers="true"
             android:showWhenLocked="true"
             android:turnScreenOn="true"

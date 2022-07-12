@@ -8,7 +8,6 @@ import android.os.SystemClock
 import android.util.Log
 import android.view.View
 import androidx.databinding.ObservableArrayList
-import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
@@ -354,20 +353,12 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                 }
 
                 if (uiState.isSpeakerOn != state.isSpeakerOn) {
-                    if (state.isSpeakerOn) {
-                        uiState.isSpeakerOn = true
-                    } else {
-                        uiState.isSpeakerOn = false
-                    }
+                    uiState.isSpeakerOn = state.isSpeakerOn
                 }
 
                 if (uiState.isMute != state.isOnMute) {
                     Log.d(TAG, "listenUIState: MUTE -- ${state.isOnMute}")
-                    if (state.isOnMute) {
-                        uiState.isMute = true
-                    } else {
-                        uiState.isMute = false
-                    }
+                    uiState.isMute = state.isOnMute
                 }
             }
         }

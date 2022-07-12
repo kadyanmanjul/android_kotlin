@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.voip.notification
 
-import android.util.Log
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_INCOMING_CALL_ID
 import com.joshtalks.joshskills.voip.audiomanager.SOUND_TYPE_RINGTONE
 import com.joshtalks.joshskills.voip.audiomanager.SoundManager
@@ -22,8 +21,8 @@ class IncomingCallNotificationHandler : NotificationData.IncomingNotification{
         private var isShowingIncomingCall = false
         private var calling : CallCategory = PeerToPeerCall()
         private var callCategory : Category = Category.PEER_TO_PEER
+        private var currentIncomingCallNotificationId : Int? = null
     }
-
 
     override fun inflateNotification(map: HashMap<String, String>) {
         when (map[INCOMING_CALL_CATEGORY]) {
@@ -45,6 +44,7 @@ class IncomingCallNotificationHandler : NotificationData.IncomingNotification{
             val remoteView = calling.notificationLayout(map) ?: return
             voipNotification = VoipNotification(remoteView, NotificationPriority.High)
             voipNotification.show()
+            currentIncomingCallNotificationId = voipNotification.getNotificationId()
             updateIncomingCallState(true)
             CallAnalytics.addAnalytics(
                 event = EventName.INCOMING_CALL_SHOWN,
@@ -71,7 +71,7 @@ class IncomingCallNotificationHandler : NotificationData.IncomingNotification{
     }
 
     override fun removeNotification() {
-        voipNotification.removeNotification()
+        voipNotification.removeNotification(currentIncomingCallNotificationId)
         stopAudio()
         updateIncomingCallState(false)
     }
