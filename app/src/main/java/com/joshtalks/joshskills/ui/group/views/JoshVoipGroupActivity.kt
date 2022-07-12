@@ -33,6 +33,7 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import java.lang.Exception
 
 private const val TAG = "JoshVoipGroupActivity"
 
@@ -62,7 +63,7 @@ class JoshVoipGroupActivity : BaseGroupActivity() {
     override fun initViewState() {
         event.observe(this) {
             when (it.what) {
-                ON_BACK_PRESSED -> onBackPressed()
+                ON_BACK_PRESSED -> popBackStack()
                 OPEN_GROUP -> {
                     if (supportFragmentManager.backStackEntryCount == 0)
                         startGroupCall(it.obj as? GroupItemData)
@@ -80,6 +81,18 @@ class JoshVoipGroupActivity : BaseGroupActivity() {
                     vm.setGroupsCount()
                 }
             }
+        }
+    }
+
+    private fun popBackStack() {
+        try {
+            if (supportFragmentManager.backStackEntryCount > 0) {
+                supportFragmentManager.popBackStack()
+            } else {
+                onBackPressed()
+            }
+        } catch (ex: Exception) {
+            ex.printStackTrace()
         }
     }
 

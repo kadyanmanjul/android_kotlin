@@ -134,28 +134,32 @@ class ExoAudioPlayer2 {
         delayProgress: Long = 50,
         playbackSpeed :Float = 1F
     ) {
-        var param = PlaybackParameters(playbackSpeed)
-        if (isPlaybackSpeed) {
-            param = PlaybackParameters(0.50F, 1F)//pitch sexy hai
-        }
-        player.setPlaybackParameters(param)
-        currentPlayingUrl = audioUrl
-        val dataSourceFactory: DataSource.Factory = DefaultDataSourceFactory(
-            context!!,
-            Util.getUserAgent(context!!, "joshskills")
-        )
+        try {
+            var param = PlaybackParameters(playbackSpeed)
+            if (isPlaybackSpeed) {
+                param = PlaybackParameters(0.50F, 1F)//pitch sexy hai
+            }
+            player.setPlaybackParameters(param)
+            currentPlayingUrl = audioUrl
+            val dataSourceFactory: DataSource.Factory = DefaultDataSourceFactory(
+                context!!,
+                Util.getUserAgent(context!!, "joshskills")
+            )
 
-        LAST_ID = id
-        val factory = ProgressiveMediaSource.Factory(dataSourceFactory)
-        player.repeatMode = ExoPlayer.REPEAT_MODE_OFF
-        player.playWhenReady = true
-        progressTracker = ProgressTracker(player, delayProgress)
-        player.setWakeMode(C.WAKE_MODE_NETWORK)
-        player.setHandleAudioBecomingNoisy(true)
-        val audioSource: MediaSource =
-            factory.createMediaSource(Uri.parse(audioUrl))
-        player.prepare(audioSource,true,false)
-        player.seekTo(seekDuration)
+            LAST_ID = id
+            val factory = ProgressiveMediaSource.Factory(dataSourceFactory)
+            player.repeatMode = ExoPlayer.REPEAT_MODE_OFF
+            player.playWhenReady = true
+            progressTracker = ProgressTracker(player, delayProgress)
+            player.setWakeMode(C.WAKE_MODE_NETWORK)
+            player.setHandleAudioBecomingNoisy(true)
+            val audioSource: MediaSource =
+                factory.createMediaSource(Uri.parse(audioUrl))
+            player.prepare(audioSource,true,false)
+            player.seekTo(seekDuration)
+        }catch (ex:Exception){
+            ex.printStackTrace()
+        }
     }
 
     fun isPlaying(): Boolean {

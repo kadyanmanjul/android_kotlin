@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.ui.voip.new_arch.ui.call_rating
 import android.app.Dialog
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
@@ -217,12 +218,12 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
 
     private fun selectChange(s: String) {
         if(s == "fpp" && vm.ifDialogShow==1  && PrefManager.getBoolValue(IS_COURSE_BOUGHT) && PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID){
-            binding.block.chipStrokeColor = AppCompatResources.getColorStateList(requireContext(), R.color.colorPrimary)
-            binding.block.chipBackgroundColor = AppCompatResources.getColorStateList(requireContext(), R.color.white)
+            binding.block.strokeColor = AppCompatResources.getColorStateList(requireContext(), R.color.colorPrimary)
+            binding.block.backgroundTintList = AppCompatResources.getColorStateList(requireContext(), R.color.white)
             binding.block.setTextColor(resources.getColor(R.color.colorPrimary))
         }else{
-            binding.block.chipStrokeColor = AppCompatResources.getColorStateList(requireContext(), R.color.pitch_black)
-            binding.block.chipBackgroundColor = AppCompatResources.getColorStateList(requireContext(), R.color.pitch_black)
+            binding.block.strokeColor = AppCompatResources.getColorStateList(requireContext(), R.color.pitch_black)
+            binding.block.backgroundTintList = AppCompatResources.getColorStateList(requireContext(), R.color.pitch_black)
             binding.block.setTextColor(Color.WHITE)
         }
         isBlockSelected = true
@@ -230,15 +231,13 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
     }
     private fun unSelectChange(s: String) {
         if(s=="fpp"&& vm.ifDialogShow==1 && PrefManager.getBoolValue(IS_COURSE_BOUGHT) && PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID){
-            binding.block.chipStrokeColor = AppCompatResources.getColorStateList(requireContext(), R.color.pitch_black)
+            binding.block.strokeColor = ColorStateList.valueOf(Color.BLACK)
             binding.block.setTextColor(resources.getColor(R.color.pitch_black))
             binding.block.setTextColor(Color.BLACK)
-            binding.block.background = AppCompatResources.getDrawable(requireContext(),R.drawable.rectangle_with_grey_round_stroke)
-            binding.block.chipBackgroundColor = AppCompatResources.getColorStateList(requireContext(), R.color.white)
+            binding.block.backgroundTintList = AppCompatResources.getColorStateList(requireContext(), R.color.white)
         }else{
-            binding.block.chipStrokeColor = AppCompatResources.getColorStateList(requireContext(), R.color.pitch_black)
-            binding.block.background = AppCompatResources.getDrawable(requireContext(),R.drawable.rectangle_with_grey_round_stroke)
-            binding.block.chipBackgroundColor = AppCompatResources.getColorStateList(requireContext(), R.color.white)
+            binding.block.strokeColor = ColorStateList.valueOf(Color.BLACK)
+            binding.block.backgroundTintList = AppCompatResources.getColorStateList(requireContext(), R.color.white)
             binding.block.setTextColor(Color.BLACK)
         }
         isBlockSelected = false
@@ -247,9 +246,9 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
     private fun closeSheet(){
         if(vm.ifDialogShow==0){
             showFeedBackDialog()
-            dismiss()
+            dismissAllowingStateLoss()
         }else{
-            dismiss()
+            dismissAllowingStateLoss()
         }
     }
 
@@ -295,8 +294,7 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
     }
 
     private fun showFeedBackDialog() {
-        val function = fun() {}
-        FeedbackDialogFragment.newInstance(function)
+        FeedbackDialogFragment.newInstance()
             .show(requireActivity().supportFragmentManager, "FeedBackDialogFragment")
     }
 

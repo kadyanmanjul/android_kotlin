@@ -360,15 +360,15 @@ class JoshGroupActivity : BaseGroupActivity() {
     }
 
     private fun popBackStack() {
-        MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
-        if (supportFragmentManager.backStackEntryCount > 1) {
-            try {
+        try {
+            MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
+            if (supportFragmentManager.backStackEntryCount > 1)
                 supportFragmentManager.popBackStackImmediate()
-            } catch ( ex:Exception){
-                ex.printStackTrace()
-            }
-        } else
-            this.onBackPressed()
+            else
+                this.onBackPressed()
+        }catch (ex:Exception){
+            ex.printStackTrace()
+        }
     }
 
     private fun openImageChooser() {

@@ -505,15 +505,17 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
     private fun setVideoThumbnail(thumbnailUrl: String?) {
         lifecycleScope.launch(Dispatchers.IO) {
             try {
-                val thumbnailDrawable: Drawable? =
-                    Utils.getDrawableFromUrl(thumbnailUrl)
-                if (thumbnailDrawable != null) {
-                    AppObjectController.uiHandler.post {
-                        binding.videoPlayer.useArtwork = true
-                        binding.videoPlayer.defaultArtwork = thumbnailDrawable
+                if (isAdded && activity != null) {
+                    val thumbnailDrawable: Drawable? =
+                        Utils.getDrawableFromUrl(requireContext(), thumbnailUrl)
+                    if (thumbnailDrawable != null) {
+                        AppObjectController.uiHandler.post {
+                            binding.videoPlayer.useArtwork = true
+                            binding.videoPlayer.defaultArtwork = thumbnailDrawable
 //                    val imgArtwork: ImageView = binding.videoPlayer.findViewById(R.id.exo_artwork) as ImageView
 //                    imgArtwork.setImageDrawable(thumbnailDrawable)
 //                    imgArtwork.visibility = View.VISIBLE
+                        }
                     }
                 }
             } catch (e: java.lang.Exception) {

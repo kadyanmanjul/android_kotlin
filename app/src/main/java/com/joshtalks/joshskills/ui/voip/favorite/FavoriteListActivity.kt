@@ -100,10 +100,14 @@ class FavoriteListActivity : BaseFppActivity() {
     }
 
     private fun popBackStack() {
-        if (supportFragmentManager.backStackEntryCount>0) {
-            supportFragmentManager.popBackStack()
-        } else {
-            onBackPressed()
+        try {
+            if (supportFragmentManager.backStackEntryCount>0) {
+                supportFragmentManager.popBackStack()
+            } else {
+                onBackPressed()
+            }
+        }catch (ex:Exception){
+            ex.printStackTrace()
         }
     }
 

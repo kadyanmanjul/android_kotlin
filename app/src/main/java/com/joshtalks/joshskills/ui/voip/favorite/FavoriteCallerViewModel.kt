@@ -6,13 +6,10 @@ import androidx.databinding.ObservableBoolean
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.base.BaseViewModel
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.checkPstnState
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.pstn_states.PSTNState
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.quizgame.util.UpdateReceiver
 import com.joshtalks.joshskills.repository.local.entity.practise.FavoriteCaller
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -114,11 +111,15 @@ class FavoriteCallerViewModel : BaseViewModel() {
                 if (list.isEmpty()) {
                     return@launch
                 }
-                val requestParams: HashMap<String, List<Int>> = HashMap()
-                requestParams["mentor_ids"] = list
-                val response = favoriteCallerRepository.removeUserFormFppLit(requestParams)
-                if (response.isSuccessful) {
-                    favoriteCallerDao.removeFromFavorite(list)
+                if (Utils.isInternetAvailable()){
+                    val requestParams: HashMap<String, List<Int>> = HashMap()
+                    requestParams["mentor_ids"] = list
+                    val response = favoriteCallerRepository.removeUserFormFppLit(requestParams)
+                    if (response.isSuccessful) {
+                        favoriteCallerDao.removeFromFavorite(list)
+                    }
+                }else{
+                    showToast("No Internet Connection")
                 }
             } catch (ex: Exception) {
                 ex.printStackTrace()

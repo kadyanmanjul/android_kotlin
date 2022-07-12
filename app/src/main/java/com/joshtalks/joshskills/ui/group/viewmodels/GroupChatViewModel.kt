@@ -609,16 +609,26 @@ class GroupChatViewModel : BaseViewModel() {
     }
 
     fun removeFpp(uId: Int) {
-        try {
-            viewModelScope.launch(Dispatchers.IO) {
-                repository.removeUserFormFppLit(uId)
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                if (Utils.isInternetAvailable()) {
+                    repository.removeUserFormFppLit(uId)
+                    withContext(Dispatchers.Main) {
+                        message.what = REMOVE_GROUP_AND_CLOSE
+                        message.obj = groupId
+                        singleLiveEvent.value = message
+                        repository.startChatEventListener()
+                    }
+                } else {
+                    withContext(Dispatchers.Main) {
+                        showToast("No Internet Connection")
+                    }
+                }
+            } catch (ex: Exception) {
                 withContext(Dispatchers.Main) {
-                    message.what = REMOVE_GROUP_AND_CLOSE
-                    message.obj = groupId
-                    singleLiveEvent.value = message
-                    repository.startChatEventListener()
+                    showToast("Error removing user from FPP")
                 }
             }
-        } catch (ex: Exception) { }
+        }
     }
 }

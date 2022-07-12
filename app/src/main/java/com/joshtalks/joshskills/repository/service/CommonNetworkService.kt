@@ -202,7 +202,7 @@ interface CommonNetworkService {
     suspend fun getCertificateUserDetails(): CertificationUserDetail?
 
     @POST("$DIR/certificateexam/user_details")
-    suspend fun submitUserDetailForCertificate(@Body certificationUserDetail: CertificationUserDetail): Map<String, String>
+    suspend fun submitUserDetailForCertificate(@Body certificationUserDetail: CertificationUserDetail): Map<String, String>?
 
     @GET("$DIR/group/user_profile_v2/{mentor_id}/")
     suspend fun getUserProfileData(

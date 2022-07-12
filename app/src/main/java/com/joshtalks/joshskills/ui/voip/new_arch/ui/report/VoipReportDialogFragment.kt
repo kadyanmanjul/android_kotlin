@@ -11,7 +11,7 @@ import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.databinding.FragmentReportDialogBinding
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.report.model.VoipReportModel
 
-class VoipReportDialogFragment(val function: () -> Unit) : BaseDialogFragment() {
+class VoipReportDialogFragment : BaseDialogFragment() {
 
     private val FEEDBACK_OPTIONS = "feedback_option"
     private val REPORTED_BY_ID = "reported_by_id"
@@ -66,7 +66,7 @@ class VoipReportDialogFragment(val function: () -> Unit) : BaseDialogFragment() 
         vm.getReportOptionsListFromSharedPref(type1)
         binding.crossBtn.setOnClickListener {
             closeDialog()
-            function.invoke()
+            submitReport?.invoke()
         }
     }
 
@@ -83,8 +83,9 @@ class VoipReportDialogFragment(val function: () -> Unit) : BaseDialogFragment() 
             channelName: String,
             function: () -> Unit
         ) =
-            VoipReportDialogFragment(function).apply {
+            VoipReportDialogFragment().apply {
                 arguments = Bundle().apply {
+                    submitReport = function
                     putString(ARG_TYPE, type)
                     putInt(ARG_CALLER_ID, callerID)
                     putInt(ARG_CURRENT_ID, currentID)
@@ -101,7 +102,7 @@ class VoipReportDialogFragment(val function: () -> Unit) : BaseDialogFragment() 
         map[REPORTED_AGAINST_ID] = callerId1
         vm.submitReportOption(map)
         closeDialog()
-        function.invoke()
+        submitReport?.invoke()
     }
 
     override fun show(manager: FragmentManager, tag: String?) {
