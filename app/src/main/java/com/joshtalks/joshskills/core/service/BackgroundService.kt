@@ -10,17 +10,14 @@ import android.content.Intent
 import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.gson.*
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.HeaderInterceptor
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.SERVER_TIME_OFFSET
-import com.joshtalks.joshskills.core.StatusCodeInterceptor
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.firestore.NotificationAnalytics
 import com.joshtalks.joshskills.core.firestore.NotificationAnalyticsRequest
-import com.joshtalks.joshskills.core.getStethoInterceptor
 import com.joshtalks.joshskills.core.notification.NotificationUtils
 import com.joshtalks.joshskills.repository.local.AppDatabase
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -28,6 +25,7 @@ import com.joshtalks.joshskills.repository.local.model.NotificationObject
 import com.joshtalks.joshskills.repository.service.UtilsAPIService
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.util.ReminderUtil
+import com.joshtalks.joshskills.util.showAppropriateMsg
 import java.lang.reflect.Type
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CoroutineScope
@@ -38,6 +36,8 @@ import retrofit2.HttpException
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.lang.reflect.Modifier
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 import java.text.DateFormat
 import java.util.*
 
@@ -131,7 +131,12 @@ class BackgroundService : Service() {
                     }
                 }
             } catch (e: Exception) {
-                e.printStackTrace()
+                e.showAppropriateMsg()
+                try {
+                    FirebaseCrashlytics.getInstance().recordException(e)
+                } catch (ex: Exception) {
+                    ex.printStackTrace()
+                }
             }
             stopForeground(true)
             stopSelf()
@@ -209,7 +214,12 @@ class BackgroundService : Service() {
                     }
                 }
             } catch (e: Exception) {
-                e.printStackTrace()
+                e.showAppropriateMsg()
+                try {
+                    FirebaseCrashlytics.getInstance().recordException(e)
+                } catch (ex: Exception) {
+                    ex.printStackTrace()
+                }
             }
         }
     }

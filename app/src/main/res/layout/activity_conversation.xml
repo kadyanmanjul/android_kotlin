@@ -7,6 +7,8 @@
 
         <import type="android.view.View" />
 
+        <import type="com.joshtalks.joshskills.R" />
+
         <variable
             name="handler"
             type="com.joshtalks.joshskills.ui.chat.ConversationActivity" />
@@ -51,12 +53,13 @@
             tools:visibility="gone" />
 
         <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/chat_background"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:adjustViewBounds="true"
             android:scaleType="centerCrop"
             android:tintMode="multiply"
-            app:srcCompat="@drawable/chat_bg_final" />
+            chatScreenBackground="@{R.drawable.chat_bg_final}" />
 
         <LinearLayout
             android:id="@+id/toolbar_container"

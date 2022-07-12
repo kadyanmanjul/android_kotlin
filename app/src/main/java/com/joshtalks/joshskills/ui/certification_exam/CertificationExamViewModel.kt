@@ -23,6 +23,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 class CertificationExamViewModel(application: Application) : AndroidViewModel(application) {
@@ -174,7 +175,7 @@ class CertificationExamViewModel(application: Application) : AndroidViewModel(ap
     }
 
     val cUserDetails = MutableSharedFlow<CertificationUserDetail?>(replay = 0)
-    val certificateUrl = MutableSharedFlow<String>(replay = 0)
+    val certificateUrl = MutableSharedFlow<String?>(replay = 0)
 
     fun getCertificateUserDetails() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -192,10 +193,15 @@ class CertificationExamViewModel(application: Application) : AndroidViewModel(ap
     fun postCertificateUserDetails(certificationUserDetail: CertificationUserDetail) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val resp =
-                    AppObjectController.commonNetworkService.submitUserDetailForCertificate(certificationUserDetail)
-                //certificateUrl.emit(resp.getOrDefault("pdf", ""))
-                certificateUrl.emit(resp.getOrDefault("img", ""))
+                val resp = AppObjectController.commonNetworkService.submitUserDetailForCertificate(certificationUserDetail)
+                if (resp != null)
+                    certificateUrl.emit(resp.getOrDefault("img", ""))
+                else {
+                    apiStatus.postValue(ApiCallStatus.FAILED)
+                    withContext(Dispatchers.Main) {
+                        showToast("Something went wrong")
+                    }
+                }
             } catch (ex: Throwable) {
                 ex.showAppropriateMsg()
                 apiStatus.postValue(ApiCallStatus.FAILED)

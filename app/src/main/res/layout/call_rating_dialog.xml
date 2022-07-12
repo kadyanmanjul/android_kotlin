@@ -225,8 +225,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/very_bad_text"
             app:strokeColor="@color/black_quiz"
-            app:strokeWidth="@dimen/_1sdp"
-            tools:visibility="visible" />
+            app:strokeWidth="@dimen/_1sdp" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/submit"

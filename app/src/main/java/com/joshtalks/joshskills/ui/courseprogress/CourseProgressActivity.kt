@@ -346,7 +346,11 @@ class CourseProgressActivity :
                     }
                     else -> {
                         showToast(getString(R.string.generic_message_for_error))
-                        FirebaseCrashlytics.getInstance().recordException(ex)
+                        try {
+                            FirebaseCrashlytics.getInstance().recordException(ex)
+                        }catch (ex:Exception){
+                            ex.printStackTrace()
+                        }
                     }
                 }
                 hideProgressBar2()

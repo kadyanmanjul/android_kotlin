@@ -245,9 +245,9 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
     private fun closeSheet(){
         if(vm.ifDialogShow==0){
             showFeedBackDialog()
-            dismiss()
+            dismissAllowingStateLoss()
         }else{
-            dismiss()
+            dismissAllowingStateLoss()
         }
     }
 
@@ -293,8 +293,7 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
     }
 
     private fun showFeedBackDialog() {
-        val function = fun() {}
-        FeedbackDialogFragment.newInstance(function)
+        FeedbackDialogFragment.newInstance()
             .show(requireActivity().supportFragmentManager, "FeedBackDialogFragment")
     }
 

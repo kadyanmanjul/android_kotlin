@@ -20,7 +20,7 @@ import com.joshtalks.joshskills.ui.voip.new_arch.ui.call_rating.CallRatingsFragm
 import com.joshtalks.joshskills.ui.voip.share_call.ShareWithFriendsActivity
 import retrofit2.Response
 
-class FeedbackDialogFragment(val function: () -> Unit) : BaseDialogFragment() {
+class FeedbackDialogFragment : BaseDialogFragment() {
 
     lateinit var binding: FragmentFeedbackDialogBinding
     val YES = "YES"
@@ -95,9 +95,7 @@ class FeedbackDialogFragment(val function: () -> Unit) : BaseDialogFragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance(
-            function: () -> Unit
-        ) = FeedbackDialogFragment(function)
+        fun newInstance() = FeedbackDialogFragment()
     }
 
     override fun show(manager: FragmentManager, tag: String?) {

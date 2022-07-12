@@ -702,20 +702,22 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         isNewArch: Boolean = false,
     ) {
         PrefManager.put(CALL_BTN_CLICKED, true)
-        if (PermissionUtils.isCallingPermissionEnabled(requireContext())) {
-            if (isNewArch) {
-                startPracticeCall()
-                return
-            } else {
-                startPractiseSearchScreen(
-                    favoriteUserCall = favoriteUserCall,
-                    isNewUserCall = isNewUserCall
-                )
-                return
-            }
+        if (isAdded && activity != null) {
+            if (PermissionUtils.isCallingPermissionEnabled(requireContext())) {
+                if (isNewArch) {
+                    startPracticeCall()
+                    return
+                } else {
+                    startPractiseSearchScreen(
+                        favoriteUserCall = favoriteUserCall,
+                        isNewUserCall = isNewUserCall
+                    )
+                    return
+                }
 
+            }
         }
-        if (isAdded){
+        if (isAdded && activity != null) {
             PermissionUtils.callingFeaturePermission(
                 requireActivity(),
                 object : MultiplePermissionsListener {
@@ -756,6 +758,8 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                     }
                 }
             )
+        }else{
+            showToast(getString(R.string.something_went_wrong))
         }
     }
 
@@ -781,17 +785,19 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
     }
 
     fun openNetworkDialog(v:View){
-        if (isAdded) {
+        if (isAdded && activity != null) {
             val dialog = AlertDialog.Builder(context)
             dialog
                 .setMessage(getString(R.string.network_message))
                 .setPositiveButton("GOT IT")
                 { dialog, _ -> dialog.dismiss() }.show()
+        }else{
+            showToast(getString(R.string.something_went_wrong))
         }
     }
 
     fun openRatingDialog(v:View){
-        if (isAdded) {
+        if (isAdded && activity != null) {
             val rating = 7
             val dialog = AlertDialog.Builder(context)
             dialog
@@ -799,6 +805,8 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                 .setMessage(getString(R.string.rating_message))
                 .setPositiveButton("GOT IT")
                 { dialog, _ -> dialog.dismiss() }.show()
+        }else{
+            showToast(getString(R.string.something_went_wrong))
         }
     }
 
