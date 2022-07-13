@@ -254,6 +254,11 @@
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">@dimen/_8sdp</item>
     </style>
+
+    <style name="roundedCornersImageView_12dp" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">@dimen/_12sdp</item>
+    </style>
     <style name="roundedCornersImageView_4dp" parent="">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">@dimen/_4sdp</item>

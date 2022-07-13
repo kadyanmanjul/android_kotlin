@@ -13,11 +13,23 @@ import androidx.annotation.IdRes
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.badebhaiya.composeTheme.JoshBadeBhaiyaTheme
+import com.joshtalks.badebhaiya.liveroom.viewmodel.LiveRoomViewModel
 import com.joshtalks.badebhaiya.profile.ProfileFragment
+import com.joshtalks.badebhaiya.showCallRequests.viewModel.RequestsViewModel
 import com.joshtalks.badebhaiya.utils.open
+import dagger.hilt.android.AndroidEntryPoint
 
+//@AndroidEntryPoint
 class CallRequestsListFragment : Fragment() {
+
+//    private val viewModel: RequestsViewModel by viewModels()
+
+    private val viewModel by lazy {
+        ViewModelProvider(this)[RequestsViewModel::class.java]
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -29,7 +41,7 @@ class CallRequestsListFragment : Fragment() {
         ).apply {
             setContent {
                 JoshBadeBhaiyaTheme {
-                    CallRequestsListScreen()
+                    CallRequestsListScreen(viewModel = viewModel)
                 }
             }
         }

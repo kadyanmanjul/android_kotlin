@@ -1,10 +1,7 @@
 package com.joshtalks.badebhaiya.showCallRequests
 
 import android.annotation.SuppressLint
-import android.app.Activity
-import androidx.activity.ComponentActivity
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -12,6 +9,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -23,13 +21,17 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.intl.Locale
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.joshtalks.badebhaiya.R
+import com.joshtalks.badebhaiya.showCallRequests.model.RequestData
+import com.joshtalks.badebhaiya.showCallRequests.viewModel.RequestsViewModel
 import com.joshtalks.badebhaiya.signup.fragments.ListBioText
 import com.joshtalks.badebhaiya.signup.fragments.NameText
 import com.joshtalks.badebhaiya.signup.fragments.ToolbarHeadingText
@@ -45,28 +47,49 @@ data class CallRequest(
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-@Preview(showBackground = true)
-fun CallRequestsListScreen() {
-    val list = List(100) {
-        CallRequest(
-            profilePicture = "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8cGVyc29ufGVufDB8fDB8fA%3D%3D&w=1000&q=80",
-            firstName = "Sahil Khan",
-            latestRequest = "Hi Please mere liye room krdo muje bht kuch sikhna h apse isliye please krdo",
-            requestTime = "6:07 PM",
-            didRead = true
+fun CallRequestsListScreen(viewModel: RequestsViewModel) {
+//    val list = List(100) {
+//        CallRequest(
+//            profilePicture = "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8cGVyc29ufGVufDB8fDB8fA%3D%3D&w=1000&q=80",
+//            firstName = "Sahil Khan",
+//            latestRequest = "Hi Please mere liye room krdo muje bht kuch sikhna h apse isliye please krdo",
+//            requestTime = "6:07 PM",
+//            didRead = true
+//        )
+//    }
+    val data = viewModel.requestsList.collectAsState()
+
+            Scaffold(
+                scaffoldState = rememberScaffoldState(),
+                topBar = {
+                    CallRequestsToolbar()
+                },
+                content = {
+                    Divider()
+
+                    if (data.value != null){
+                        if (data.value!!.request_data.isNullOrEmpty()){
+                            EmptyData()
+                        } else {
+                            CallRequestsList(list = data.value!!.request_data)
+                        }
+                    } else {
+                        JoshProgress()
+                    }
+                },
+                backgroundColor = colorResource(id = R.color.conversation_room_color)
+            )
+
+}
+
+@Composable
+fun JoshProgress(){
+    Box(modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center) {
+        CircularProgressIndicator(
+            modifier = Modifier.size(36.dp)
         )
     }
-    Scaffold(
-        scaffoldState = rememberScaffoldState(),
-        topBar = {
-            CallRequestsToolbar()
-        },
-        content = {
-            Divider()
-            CallRequestsList(list = list)
-        },
-        backgroundColor = colorResource(id = R.color.conversation_room_color)
-    )
 }
 
 @Composable
@@ -91,7 +114,7 @@ fun CallRequestsToolbar() {
 }
 
 @Composable
-fun CallRequestsList(list: List<CallRequest>) {
+fun CallRequestsList(list: List<RequestData>) {
     LazyColumn {
         itemsIndexed(list) { index, item ->
             ItemCallRequest(item)
@@ -100,33 +123,35 @@ fun CallRequestsList(list: List<CallRequest>) {
 }
 
 @Composable
-fun ItemCallRequest(callRequest: CallRequest) {
+fun ItemCallRequest(callRequest: RequestData) {
     Column() {
         val activityObj = LocalContext.current.getActivity()
         Row(
             modifier = Modifier
                 .padding(18.dp)
                 .clickable {
-                    // TODO: Open BottomSheet for showing Request.
-                           activityObj?.let { myActivity ->
-                               RequestBottomSheetFragment(callRequest).also {
-                                   it.show(myActivity.supportFragmentManager, RequestBottomSheetFragment.TAG)
-                               }
-                           }
+                    activityObj?.let { myActivity ->
+                        RequestBottomSheetFragment(callRequest).also {
+                            it.show(
+                                myActivity.supportFragmentManager,
+                                RequestBottomSheetFragment.TAG
+                            )
+                        }
+                    }
                 },
             verticalAlignment = Alignment.CenterVertically
         ) {
             ProfilePicture(
-                imageUrl = callRequest.profilePicture
+                imageUrl = if (callRequest.user.photo_url.isNullOrEmpty()) "https://commons.wikimedia.org/wiki/File:Unknown_Member.jpg" else callRequest.user.photo_url,
             )
             Spacer(modifier = Modifier.width(12.dp))
             Column(
                 modifier = Modifier.fillMaxWidth(0.75f)
             ) {
-                NameText(text = callRequest.firstName, fontSize = 14.sp)
+                NameText(text = callRequest.user.short_name, fontSize = 14.sp)
                 Spacer(modifier = Modifier.height(4.dp))
                 ListBioText(
-                    text = callRequest.latestRequest,
+                    text = callRequest.request_submitted,
                     textColor = if (callRequest.didRead) colorResource(
                         id = R.color.gray_txt
                     ) else Color.Black,
@@ -150,7 +175,7 @@ fun ItemCallRequest(callRequest: CallRequest) {
                 )
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
-                    text = callRequest.requestTime, color = if (callRequest.didRead) colorResource(
+                    text = "6:40 PM", color = if (callRequest.didRead) colorResource(
                             id = R.color.gray_txt
                             ) else Color.Black,
                     fontSize = 12.sp
@@ -178,4 +203,20 @@ fun ProfilePicture(modifier: Modifier = Modifier, imageUrl: String) {
         contentDescription = "Profile Picture",
         contentScale = ContentScale.Crop
     )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun EmptyData(){
+    Box(modifier = Modifier.fillMaxSize(),
+    contentAlignment = Alignment.Center) {
+        Text(
+            modifier = Modifier.width(200.dp),
+            text = stringResource(R.string.no_call_request),
+            fontSize = 16.sp,
+            color = colorResource(id = R.color.gray_txt),
+            textAlign = TextAlign.Center,
+            fontWeight = FontWeight.Bold
+        )
+    }
 }

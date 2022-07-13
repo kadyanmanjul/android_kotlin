@@ -127,5 +127,6 @@
     <string name="you_can_also_rejoin_your_previous_call_instead_of_starting_a_new_one">You can also rejoin your previous call instead of starting a new one.</string>
     <string name="call_requests">Call Requests</string>
     <string name="please_leave_current_room">Please Leave Current Room</string>
+    <string name="no_call_request">You do not have any call requests yet</string>
 
 </resources>
