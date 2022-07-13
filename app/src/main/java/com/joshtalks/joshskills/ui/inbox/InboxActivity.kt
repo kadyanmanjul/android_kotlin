@@ -17,6 +17,12 @@ import androidx.lifecycle.observe
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.textview.MaterialTextView
+import com.google.android.play.core.review.ReviewInfo
+import com.google.android.play.core.review.ReviewManager
+import com.google.android.play.core.review.ReviewManagerFactory
+import com.google.android.play.core.review.testing.FakeReviewManager
+import com.google.android.play.core.tasks.OnCompleteListener
+import com.google.android.play.core.tasks.Task
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.constants.CALLING_SERVICE_ACTION
@@ -80,6 +86,8 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
     private var increaseCoursePrice = false
 
     var progressDialog: ProgressDialog? = null
+    var reviewManager: ReviewManager? = null
+    var reviewlnfo: ReviewInfo? = null
 
     private val refViewModel: ReferralViewModel by lazy {
         ViewModelProvider(this).get(ReferralViewModel::class.java)
@@ -95,6 +103,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         initView()
         addLiveDataObservable()
         addAfterTime()
+        //showInAppReview()
         viewModel.handleGroupTimeTokens()
         viewModel.handleBroadCastEvents()
     }
@@ -161,6 +170,26 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
             )
         }
     }
+
+//    private fun showInAppReview() {
+//        showToast("Call")
+//        val manager = FakeReviewManager(applicationContext)
+//        manager.requestReviewFlow().addOnCompleteListener { request ->
+//            if (request.isSuccessful) {
+//                Log.e("sagar", "showInAppReview: ${request.result}")
+//                val reviewInfo = request.result
+//                manager.launchReviewFlow(this, reviewInfo).addOnCompleteListener { result ->
+//                    if (result.isSuccessful) {
+//                       showToast("Review Success")
+//                    } else {
+//                        showToast("Review Failed")
+//                    }
+//                }
+//            }else{
+//                showToast(request.exception?.message ?: "")
+//            }
+//        }
+//    }
 
     private fun openPopupMenu(view: View) {
         if (popupMenu == null) {

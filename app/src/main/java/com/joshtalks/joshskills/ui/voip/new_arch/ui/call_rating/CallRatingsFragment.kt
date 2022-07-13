@@ -32,6 +32,7 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.play.core.review.testing.FakeReviewManager
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.databinding.CallRatingDialogBinding
@@ -218,12 +219,14 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
 
     private fun selectChange(s: String) {
         if(s == "fpp" && vm.ifDialogShow==1  && PrefManager.getBoolValue(IS_COURSE_BOUGHT) && PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID){
-            binding.block.strokeColor = AppCompatResources.getColorStateList(requireContext(), R.color.colorPrimary)
-            binding.block.backgroundTintList = AppCompatResources.getColorStateList(requireContext(), R.color.white)
+            binding.block.background = AppCompatResources.getDrawable(requireContext(),R.drawable.block_button_round_stroke)
+//            binding.block.stroke = AppCompatResources.getColorStateList(requireContext(), R.color.colorPrimary)
+//            binding.block.backgroundTintList = AppCompatResources.getColorStateList(requireContext(), R.color.white)
             binding.block.setTextColor(resources.getColor(R.color.colorPrimary))
         }else{
-            binding.block.strokeColor = AppCompatResources.getColorStateList(requireContext(), R.color.pitch_black)
-            binding.block.backgroundTintList = AppCompatResources.getColorStateList(requireContext(), R.color.pitch_black)
+            binding.block.background = AppCompatResources.getDrawable(requireContext(),R.drawable.block_button_round_stroke_black)
+//            binding.block.strokeColor = AppCompatResources.getColorStateList(requireContext(), R.color.pitch_black)
+//            binding.block.backgroundTintList = AppCompatResources.getColorStateList(requireContext(), R.color.pitch_black)
             binding.block.setTextColor(Color.WHITE)
         }
         isBlockSelected = true
@@ -231,13 +234,16 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
     }
     private fun unSelectChange(s: String) {
         if(s=="fpp"&& vm.ifDialogShow==1 && PrefManager.getBoolValue(IS_COURSE_BOUGHT) && PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID){
-            binding.block.strokeColor = ColorStateList.valueOf(Color.BLACK)
+            binding.block.background = AppCompatResources.getDrawable(requireContext(),R.drawable.block_button_round_stroke_black)
             binding.block.setTextColor(resources.getColor(R.color.pitch_black))
-            binding.block.setTextColor(Color.BLACK)
-            binding.block.backgroundTintList = AppCompatResources.getColorStateList(requireContext(), R.color.white)
+//            binding.block.strokeColor = ColorStateList.valueOf(Color.BLACK)
+//            binding.block.setTextColor(resources.getColor(R.color.pitch_black))
+//            binding.block.setTextColor(Color.BLACK)
+//            binding.block.backgroundTintList = AppCompatResources.getColorStateList(requireContext(), R.color.white)
         }else{
-            binding.block.strokeColor = ColorStateList.valueOf(Color.BLACK)
-            binding.block.backgroundTintList = AppCompatResources.getColorStateList(requireContext(), R.color.white)
+            binding.block.background = AppCompatResources.getDrawable(requireContext(),R.drawable.block_button_round_stroke_black)
+//            binding.block.strokeColor = ColorStateList.valueOf(Color.BLACK)
+//            binding.block.backgroundTintList = AppCompatResources.getColorStateList(requireContext(), R.color.white)
             binding.block.setTextColor(Color.BLACK)
         }
         isBlockSelected = false
@@ -247,6 +253,8 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
         if(vm.ifDialogShow==0){
             showFeedBackDialog()
             dismissAllowingStateLoss()
+
+            showInAppReview()
         }else{
             dismissAllowingStateLoss()
         }
@@ -375,5 +383,23 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
             .apply(requestOptions)
             .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
             .into(this)
+    }
+
+    fun showInAppReview() {
+        val manager = FakeReviewManager(requireActivity())
+        manager.requestReviewFlow().addOnCompleteListener { request ->
+            if (request.isSuccessful) {
+                val reviewInfo = request.result
+                manager.launchReviewFlow(requireActivity(), reviewInfo).addOnCompleteListener { result ->
+                    if (result.isSuccessful) {
+                        showToast("Review Success")
+                    } else {
+                        showToast("Review Failed")
+                    }
+                }
+            } else {
+                showToast(request.exception?.message ?: "")
+            }
+        }
     }
 }

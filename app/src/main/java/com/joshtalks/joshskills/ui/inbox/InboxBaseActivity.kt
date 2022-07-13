@@ -54,7 +54,7 @@ abstract class InboxBaseActivity :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         activityRef = WeakReference(this)
-        addObserver()
+       // addObserver()
         lifecycleScope.launch(Dispatchers.IO) {
             versionResponse = VersionResponse.getInstance()
         }
@@ -70,45 +70,45 @@ abstract class InboxBaseActivity :
         }
     }
 
-    private fun addObserver() {
-        lifecycleScope.launchWhenResumed {
-            viewModel.overAllWatchTime.collectLatest {
-                lifecycleScope.launch(Dispatchers.IO) {
-                    var reviewCount = PrefManager.getIntValue(IN_APP_REVIEW_COUNT)
-                    val reviewFrequency =
-                        AppObjectController.getFirebaseRemoteConfig()
-                            .getLong(FirebaseRemoteConfigKey.MINIMUM_TIME_TO_SHOW_REVIEW)
-                    when (reviewCount) {
-                        0 -> if (it > reviewFrequency) {
-                            showInAppReview()
-                            PrefManager.put(IN_APP_REVIEW_COUNT, ++reviewCount)
-                        }
-                        1 -> if (it > reviewFrequency * 2) {
-                            PrefManager.put(IN_APP_REVIEW_COUNT, ++reviewCount)
-                            showInAppReview()
-                        }
-                        2 -> if (it > reviewFrequency * 3) {
-                            PrefManager.put(IN_APP_REVIEW_COUNT, ++reviewCount)
-                            showInAppReview()
-                        }
-                    }
-                }
-            }
-        }
-    }
+//    private fun addObserver() {
+//        lifecycleScope.launchWhenResumed {
+//            viewModel.overAllWatchTime.collectLatest {
+//                lifecycleScope.launch(Dispatchers.IO) {
+//                    var reviewCount = PrefManager.getIntValue(IN_APP_REVIEW_COUNT)
+//                    val reviewFrequency =
+//                        AppObjectController.getFirebaseRemoteConfig()
+//                            .getLong(FirebaseRemoteConfigKey.MINIMUM_TIME_TO_SHOW_REVIEW)
+//                    when (reviewCount) {
+//                        0 -> if (it > reviewFrequency) {
+//                            showInAppReview()
+//                            PrefManager.put(IN_APP_REVIEW_COUNT, ++reviewCount)
+//                        }
+//                        1 -> if (it > reviewFrequency * 2) {
+//                            PrefManager.put(IN_APP_REVIEW_COUNT, ++reviewCount)
+//                            showInAppReview()
+//                        }
+//                        2 -> if (it > reviewFrequency * 3) {
+//                            PrefManager.put(IN_APP_REVIEW_COUNT, ++reviewCount)
+//                            showInAppReview()
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//    }
 
-    private fun showInAppReview() {
-        val manager = ReviewManagerFactory.create(applicationContext)
-        manager.requestReviewFlow().addOnCompleteListener { request ->
-            if (request.isSuccessful) {
-                val reviewInfo = request.result
-                manager.launchReviewFlow(this, reviewInfo).addOnCompleteListener { result ->
-                    println("result = [${result.isSuccessful}]")
-                    result.exception?.printStackTrace()
-                }
-            }
-        }
-    }
+//    private fun showInAppReview() {
+//        val manager = ReviewManagerFactory.create(applicationContext)
+//        manager.requestReviewFlow().addOnCompleteListener { request ->
+//            if (request.isSuccessful) {
+//                val reviewInfo = request.result
+//                manager.launchReviewFlow(this, reviewInfo).addOnCompleteListener { result ->
+//                    println("result = [${result.isSuccessful}]")
+//                    result.exception?.printStackTrace()
+//                }
+//            }
+//        }
+//    }
 
     protected fun initNewUserTip() {
         lifecycleScope.launchWhenStarted {

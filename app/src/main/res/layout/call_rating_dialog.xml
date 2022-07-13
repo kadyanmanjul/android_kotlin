@@ -210,7 +210,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/rating_list" />
 
-        <com.google.android.material.button.MaterialButton
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/block"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -220,13 +220,11 @@
             android:textSize="@dimen/_11ssp"
             android:textColor="@color/black"
             android:visibility="gone"
-            app:backgroundTint="@color/white"
+            android:background="@drawable/block_button_round_stroke_black"
             app:cornerRadius="@dimen/_18sdp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/very_bad_text"
-            app:strokeColor="@color/black_quiz"
-            app:strokeWidth="@dimen/_1sdp" />
+            app:layout_constraintTop_toBottomOf="@+id/very_bad_text" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/submit"
