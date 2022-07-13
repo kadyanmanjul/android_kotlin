@@ -32,7 +32,7 @@
         android:theme="@style/AppTheme"
         tools:replace="android:allowBackup">
         <activity
-            android:name=".showCallRequests.CallRequestsListActivity"
+            android:name=".showCallRequests.CallRequestsListFragment"
             android:exported="false" />
         <activity
             android:name=".signup.PeopleToFollowActivity"

@@ -8,6 +8,7 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
         <item name="windowNoTitle">true</item>
+        <item name="enableEdgeToEdge">true</item>
     </style>
 
     <style name="AppBottomSheetDialogTheme" parent="Theme.Design.Light.BottomSheetDialog">
@@ -252,6 +253,10 @@
     <style name="roundedCornersImageView_8dp" parent="">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">@dimen/_8sdp</item>
+    </style>
+    <style name="roundedCornersImageView_4dp" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">@dimen/_4sdp</item>
     </style>
 
     <style name="roundedCornersImageView_28dp" parent="">

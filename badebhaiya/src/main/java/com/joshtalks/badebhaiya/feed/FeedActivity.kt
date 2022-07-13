@@ -277,6 +277,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
 
         fragment.arguments = bundle
         fragmentTransaction.replace(R.id.fragmentContainer, fragment)
+        fragmentTransaction.addToBackStack(ProfileFragment.TAG)
         fragmentTransaction.commit()
     }
 

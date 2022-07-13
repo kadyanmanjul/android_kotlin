@@ -9,14 +9,12 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.IdRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
-import androidx.compose.ui.unit.dp
 import androidx.core.text.HtmlCompat
 import androidx.core.view.updateLayoutParams
 import androidx.core.widget.addTextChangedListener
@@ -38,17 +36,14 @@ import com.joshtalks.badebhaiya.feed.*
 import com.joshtalks.badebhaiya.feed.adapter.FeedAdapter
 import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
 import com.joshtalks.badebhaiya.impressions.Impression
-import com.joshtalks.badebhaiya.liveroom.LiveRoomState
-import com.joshtalks.badebhaiya.liveroom.ROOM_EXPAND
 import com.joshtalks.badebhaiya.liveroom.viewmodel.LiveRoomViewModel
 import com.joshtalks.badebhaiya.notifications.NotificationScheduler
 import com.joshtalks.badebhaiya.profile.request.ReminderRequest
 import com.joshtalks.badebhaiya.profile.response.ProfileResponse
 import com.joshtalks.badebhaiya.pubnub.PubNubManager
-import com.joshtalks.badebhaiya.pubnub.PubNubState
 import com.joshtalks.badebhaiya.repository.CommonRepository
 import com.joshtalks.badebhaiya.repository.model.User
-import com.joshtalks.badebhaiya.showCallRequests.CallRequestsListActivity
+import com.joshtalks.badebhaiya.showCallRequests.CallRequestsListFragment
 import com.joshtalks.badebhaiya.signup.SignUpActivity
 import com.joshtalks.badebhaiya.signup.viewmodel.SignUpViewModel
 import com.joshtalks.badebhaiya.utils.SingleDataManager
@@ -314,11 +309,11 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
     }
 
     fun navigateToRequestsList(){
-        if (!PubNubManager.isRoomActive){
-            CallRequestsListActivity.open(requireActivity())
-        } else {
-            showToast(getString(R.string.please_leave_current_room))
-        }
+//        if (!PubNubManager.isRoomActive){
+            CallRequestsListFragment.open(requireActivity().supportFragmentManager, R.id.fragmentContainer)
+//        } else {
+//            showToast(getString(R.string.please_leave_current_room))
+//        }
     }
 
     fun updateFollowStatus() {

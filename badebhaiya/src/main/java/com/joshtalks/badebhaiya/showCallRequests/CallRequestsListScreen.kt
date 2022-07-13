@@ -2,6 +2,7 @@ package com.joshtalks.badebhaiya.showCallRequests
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -70,16 +71,6 @@ fun CallRequestsListScreen() {
 
 @Composable
 fun CallRequestsToolbar() {
-//    TopAppBar() {
-//        Image(
-//            painter = painterResource(id = R.drawable.ic_arrow_back),
-//            contentDescription = "Back Button",
-//            colorFilter = ColorFilter.tint(colorResource(id = R.color.black)),
-//        )
-
-//        Row(
-//            verticalAlignment = Alignment.CenterVertically
-//        ) {
     val activity = LocalContext.current.getActivity()
     Box(
     ) {
@@ -96,8 +87,6 @@ fun CallRequestsToolbar() {
         )
         ToolbarHeadingText(text = stringResource(id = R.string.call_requests).toUpperCase(Locale.current))
 
-//            }
-//        }
     }
 }
 
@@ -113,11 +102,17 @@ fun CallRequestsList(list: List<CallRequest>) {
 @Composable
 fun ItemCallRequest(callRequest: CallRequest) {
     Column() {
+        val activityObj = LocalContext.current.getActivity()
         Row(
             modifier = Modifier
                 .padding(18.dp)
                 .clickable {
                     // TODO: Open BottomSheet for showing Request.
+                           activityObj?.let { myActivity ->
+                               RequestBottomSheetFragment(callRequest).also {
+                                   it.show(myActivity.supportFragmentManager, RequestBottomSheetFragment.TAG)
+                               }
+                           }
                 },
             verticalAlignment = Alignment.CenterVertically
         ) {

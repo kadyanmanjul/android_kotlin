@@ -29,8 +29,8 @@ fun <T> AppCompatActivity.collectStateFlow(flow: Flow<T>, collect: suspend (T) -
 
 }
 
-fun Context.getActivity(): Activity? = when (this) {
-    is Activity -> this
+fun Context.getActivity(): AppCompatActivity? = when (this) {
+    is AppCompatActivity -> this
     is ContextWrapper -> baseContext.getActivity()
     else -> null
 }
