@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.dynamic.feature
+package com.joshtalks.joshskills.dynamic
 
 import android.content.ContentValues
 import android.content.Context
@@ -29,9 +29,9 @@ import java.nio.ByteBuffer
 
 
 const val DURATION_FIRST: String = "first"
-
+class MuxerUtils {
 @RequiresApi(api = Build.VERSION_CODES.Q)
-fun saveVideoQ(ctx: Context, videoPath: String): String? {
+public fun saveVideoQ(ctx: Context, videoPath: String): String? {
     try {
         val valuesVideos = ContentValues()
         val videoFileName = "MergedVideo_" + System.currentTimeMillis() + ".mp4"
@@ -132,7 +132,6 @@ fun extractAudioFromVideo(videoPath: String): String {
 }
 
 fun mergeAudioWithAudio(audio1: String, audio2: String ,videoPath: String ,output: String) {
-
     val outputPath = getAudioFilePathMP3()
     val pathsList = ArrayList<String>()
 
@@ -160,7 +159,7 @@ fun mergeAudioWithAudio(audio1: String, audio2: String ,videoPath: String ,outpu
     })
 }
 
- fun increaseAudioVolume(inputAudio: String) {
+ public fun increaseAudioVolume(inputAudio: String) {
     val outputPath = getAudioFilePathMP3()
     val query = audioVolumeUpdate(inputAudio, volume = 5.0f, output = outputPath)
     CallBackOfQuery().callQuery(query, object : FFmpegCallBack {
@@ -360,6 +359,7 @@ private fun mergeVideo(co: Array<String>) {
             what = VIDEO_AUDIO_MERGED_PATH
         }
     }
+}
 }
 
 /*
