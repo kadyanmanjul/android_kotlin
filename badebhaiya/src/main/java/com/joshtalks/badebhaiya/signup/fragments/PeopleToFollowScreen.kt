@@ -23,6 +23,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.paging.compose.LazyPagingItems
@@ -158,18 +159,21 @@ fun ItemBadeBhaiya(
 }
 
 @Composable
-fun NameText(modifier: Modifier = Modifier, text: String) {
+fun NameText(modifier: Modifier = Modifier, text: String, fontSize: TextUnit = TextUnit.Unspecified) {
     Text(
         text = text,
         fontWeight = FontWeight.Bold,
+        fontSize = fontSize
     )
 }
 
 @Composable
-fun ListBioText(modifier: Modifier = Modifier, text: String) {
+fun ListBioText(modifier: Modifier = Modifier, text: String, textColor: Color = Color.Black, fontSize: TextUnit = TextUnit.Unspecified) {
     Text(
         text = text,
-        maxLines = 2
+        maxLines = 2,
+        color = textColor,
+        fontSize = fontSize
     )
 }
 

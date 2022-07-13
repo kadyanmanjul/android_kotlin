@@ -1,5 +1,8 @@
 package com.joshtalks.badebhaiya.utils
 
+import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -24,4 +27,10 @@ fun <T> AppCompatActivity.collectStateFlow(flow: Flow<T>, collect: suspend (T) -
         }
     }
 
+}
+
+fun Context.getActivity(): Activity? = when (this) {
+    is Activity -> this
+    is ContextWrapper -> baseContext.getActivity()
+    else -> null
 }
