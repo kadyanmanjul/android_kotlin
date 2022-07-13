@@ -17,19 +17,33 @@ import androidx.lifecycle.observe
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.textview.MaterialTextView
-import com.google.android.play.core.review.ReviewInfo
-import com.google.android.play.core.review.ReviewManager
-import com.google.android.play.core.review.ReviewManagerFactory
-import com.google.android.play.core.review.testing.FakeReviewManager
-import com.google.android.play.core.tasks.OnCompleteListener
-import com.google.android.play.core.tasks.Task
+import com.google.android.play.core.splitinstall.SplitInstallManagerFactory
+import com.google.android.play.core.splitinstall.SplitInstallRequest
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.constants.CALLING_SERVICE_ACTION
 import com.joshtalks.joshskills.base.constants.SERVICE_BROADCAST_KEY
 import com.joshtalks.joshskills.base.constants.START_SERVICE
 import com.joshtalks.joshskills.base.constants.STOP_SERVICE
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.COURSE_EXPLORER_NEW
+import com.joshtalks.joshskills.core.CURRENT_COURSE_ID
+import com.joshtalks.joshskills.core.DEFAULT_COURSE_ID
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
+import com.joshtalks.joshskills.core.IMPRESSION_REFER_VIA_INBOX_ICON
+import com.joshtalks.joshskills.core.IMPRESSION_REFER_VIA_INBOX_MENU
+import com.joshtalks.joshskills.core.INBOX_SCREEN_VISIT_COUNT
+import com.joshtalks.joshskills.core.INCREASE_COURSE_PRICE_ABTEST
+import com.joshtalks.joshskills.core.IS_EFT_VARIENT_ENABLED
+import com.joshtalks.joshskills.core.IS_FREE_TRIAL
+import com.joshtalks.joshskills.core.IS_FREE_TRIAL_CAMPAIGN_ACTIVE
+import com.joshtalks.joshskills.core.MOENGAGE_USER_CREATED
+import com.joshtalks.joshskills.core.ONBOARDING_STAGE
+import com.joshtalks.joshskills.core.OnBoardingStage
+import com.joshtalks.joshskills.core.PAID_COURSE_TEST_ID
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.TAG
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
@@ -39,6 +53,7 @@ import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.core.interfaces.OnOpenCourseListener
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
@@ -58,9 +73,14 @@ import com.joshtalks.joshskills.util.FileUploadService
 import com.moengage.core.analytics.MoEAnalyticsHelper
 import io.agora.rtc.RtcEngine
 import io.reactivex.disposables.CompositeDisposable
-import kotlinx.android.synthetic.main.activity_inbox.*
-import kotlinx.android.synthetic.main.find_more_layout.*
-import kotlinx.android.synthetic.main.inbox_toolbar.*
+import kotlinx.android.synthetic.main.activity_inbox.recycler_view_inbox
+import kotlinx.android.synthetic.main.find_more_layout.buy_english_course
+import kotlinx.android.synthetic.main.find_more_layout.find_more
+import kotlinx.android.synthetic.main.find_more_layout.find_more_new
+import kotlinx.android.synthetic.main.inbox_toolbar.iv_icon_referral
+import kotlinx.android.synthetic.main.inbox_toolbar.iv_reminder
+import kotlinx.android.synthetic.main.inbox_toolbar.iv_setting
+import kotlinx.android.synthetic.main.inbox_toolbar.text_message_title
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -106,6 +126,27 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         //showInAppReview()
         viewModel.handleGroupTimeTokens()
         viewModel.handleBroadCastEvents()
+        val splitManager = SplitInstallManagerFactory.create(this)
+        val module = "dynamic"
+        showToast("Loading module $module")
+        if (splitManager.installedModules.contains(module)){
+            showToast("Already $module installed")
+            // Get the asset manager with a refreshed context, to access content of newly installed apk.
+            val classes = createPackageContext(packageName, 0)
+            //classes.classLoader.loadClass()
+            // Now treat it like any other asset file.
+        } else{
+            // We just added the following lines
+            showToast("Starting install for$module")
+            val request = SplitInstallRequest.newBuilder()
+                .addModule(module)
+                .build()
+
+            splitManager.startInstall(request)
+                .addOnCompleteListener { showToast("Module ${module} installed") }
+                .addOnSuccessListener {showToast("Loading ${module}") }
+                .addOnFailureListener { showToast("Error Loading ${module}") }
+        }
     }
 
     private fun initABTest() {
