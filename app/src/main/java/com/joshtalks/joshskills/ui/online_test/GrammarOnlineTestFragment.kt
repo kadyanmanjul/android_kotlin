@@ -68,35 +68,38 @@ class GrammarOnlineTestFragment : CoreJoshFragment(), TestCompletedListener {
         val currentPaddingBottom = v.paddingBottom
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
-                val drawable = R.drawable.blue_new_btn_pressed_state
-                v.background = ContextCompat.getDrawable(
-                    requireContext(),
-                    drawable
-                )
-
-                v.setPaddingRelative(
-                    v.paddingLeft,
-                    currentPaddingTop + Utils.sdpToPx(R.dimen._1sdp).toInt(),
-                    v.paddingRight,
-                    currentPaddingBottom - Utils.sdpToPx(R.dimen._1sdp).toInt(),
-                )
-                v.invalidate()
+                if (isAdded && activity!=null) {
+                    val drawable = R.drawable.blue_new_btn_pressed_state
+                    v.background = ContextCompat.getDrawable(
+                        requireActivity(),
+                        drawable
+                    )
+                    v.setPaddingRelative(
+                        v.paddingLeft,
+                        currentPaddingTop + Utils.sdpToPx(R.dimen._1sdp).toInt(),
+                        v.paddingRight,
+                        currentPaddingBottom - Utils.sdpToPx(R.dimen._1sdp).toInt(),
+                    )
+                    v.invalidate()
+                }
             }
 
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
 
-                val drawable = R.drawable.blue_new_btn_unpressed_state
-                v.background = ContextCompat.getDrawable(
-                    requireContext(),
-                    drawable
-                )
-                v.setPaddingRelative(
-                    v.paddingLeft,
-                    currentPaddingTop - Utils.sdpToPx(R.dimen._1sdp).toInt(),
-                    v.paddingRight,
-                    currentPaddingBottom + Utils.sdpToPx(R.dimen._1sdp).toInt(),
-                )
-                v.invalidate()
+                if (isAdded && activity!=null) {
+                    val drawable = R.drawable.blue_new_btn_unpressed_state
+                    v.background = ContextCompat.getDrawable(
+                        requireActivity(),
+                        drawable
+                    )
+                    v.setPaddingRelative(
+                        v.paddingLeft,
+                        currentPaddingTop - Utils.sdpToPx(R.dimen._1sdp).toInt(),
+                        v.paddingRight,
+                        currentPaddingBottom + Utils.sdpToPx(R.dimen._1sdp).toInt(),
+                    )
+                    v.invalidate()
+                }
             }
         }
         false

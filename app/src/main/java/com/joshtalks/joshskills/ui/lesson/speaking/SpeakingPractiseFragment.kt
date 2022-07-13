@@ -821,15 +821,19 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
     }
 
     private fun startPracticeCall() {
-        val callIntent = Intent(requireContext(), VoiceCallActivity::class.java)
-        callIntent.apply {
-            putExtra(INTENT_DATA_COURSE_ID, courseId)
-            putExtra(INTENT_DATA_TOPIC_ID, topicId)
-            putExtra(STARTING_POINT, FROM_ACTIVITY)
-            putExtra(INTENT_DATA_CALL_CATEGORY,Category.PEER_TO_PEER.ordinal)
+        if (isAdded && activity!=null) {
+            val callIntent = Intent(requireActivity(), VoiceCallActivity::class.java)
+            callIntent.apply {
+                putExtra(INTENT_DATA_COURSE_ID, courseId)
+                putExtra(INTENT_DATA_TOPIC_ID, topicId)
+                putExtra(STARTING_POINT, FROM_ACTIVITY)
+                putExtra(INTENT_DATA_CALL_CATEGORY, Category.PEER_TO_PEER.ordinal)
+            }
+            voipLog?.log("Course ID --> $courseId   Topic ID --> $topicId")
+            startActivity(callIntent)
+        }else{
+            showToast(getString(R.string.something_went_wrong))
         }
-        Log.d(TAG, "startPracticeCall: Course ID --> $courseId   Topic ID --> $topicId")
-        startActivity(callIntent)
     }
 
     fun showSeniorStudentScreen() {

@@ -849,7 +849,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             val jsonData = JSONObject()
             jsonData.put(ParamKeys.TEST_ID.name, viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.testId)
             jsonData.put(ParamKeys.COURSE_PRICE.name, viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.discount)
-            Singular.eventJSON(SingularEvent.INITIATED_PAYMENT.name, jsonData)
+            Singular.customRevenue(SingularEvent.INITIATED_PAYMENT.name, jsonData)
         }catch (ex:Exception){
             ex.printStackTrace()
         }
@@ -916,7 +916,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             jsonData.put(ParamKeys.TEST_ID.name, viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.testId)
             jsonData.put(ParamKeys.AMOUNT_PAID.name, viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.discount)
             jsonData.put(ParamKeys.IS_COUPON_APPLIED.name, viewModel.paymentDetailsLiveData.value?.couponDetails?.isPromoCode)
-            Singular.eventJSON(SingularEvent.PAYMENT_FAILED.name, jsonData)
+            Singular.customRevenue(SingularEvent.PAYMENT_FAILED.name, jsonData)
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -988,11 +988,15 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                 .addParam(ParamKeys.IS_100_POINTS_OBTAINED_IN_FREE_TRIAL, isPointsScoredMoreThanEqualTo100)
                 .push()
 
-            val json = JSONObject()
-            json.put(ParamKeys.TEST_ID.name, viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.testId)
-            json.put(ParamKeys.AMOUNT_PAID.name, viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.discount ?: 0.0)
-            json.put(ParamKeys.IS_COUPON_APPLIED.name, viewModel.paymentDetailsLiveData.value?.couponDetails?.isPromoCode)
-            Singular.customRevenue(SingularEvent.PAYMENT_SUCCESSFUL.name, json)
+            Singular.customRevenue(
+                SingularEvent.PAYMENT_SUCCESSFUL.name,
+                "INR",
+                viewModel.orderDetailsLiveData.value?.amount ?: 0.0,
+                mapOf(
+                    Pair(ParamKeys.TEST_ID.name, viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.testId),
+                    Pair(ParamKeys.IS_COUPON_APPLIED.name, viewModel.paymentDetailsLiveData.value?.couponDetails?.isPromoCode)
+                )
+            )
         } catch (e: Exception) {
             e.printStackTrace()
         }
