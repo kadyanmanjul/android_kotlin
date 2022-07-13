@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.dynamic.feature
+package com.joshtalks.joshskills.dynamic
 
 import android.media.MediaDrm
 import com.arthenica.mobileffmpeg.LogMessage

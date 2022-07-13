@@ -1413,9 +1413,7 @@ class ReadingFragmentWithoutFeedback :
 //                            Log.e("Ayaaz","${currentLessonQuestion?.videoList?.get(0)?.video_url}")
 //                            if(!currentLessonQuestion?.videoList?.get(0)?.video_url.isNullOrEmpty())
 //                            viewModel.showVideoOnFullScreen()
-                            if (File(outputFile).exists()) {
-                                File(outputFile).delete()
-                            }
+
                             if (Build.VERSION.SDK_INT >= 29) {
                                 if (isAdded) {
                                     outputFile = getOutputFileFromMuxer(requireContext(),videoDownPath)
@@ -1423,7 +1421,6 @@ class ReadingFragmentWithoutFeedback :
                             } else {
                                 outputFile = getVideoFilePath()
                             }
-
                             filePath = AppDirectory.getAudioSentFile(null).absolutePath
                             AppDirectory.copy(it.absolutePath, filePath!!)
                             audioAttachmentInit()
@@ -1452,10 +1449,10 @@ class ReadingFragmentWithoutFeedback :
                             muxerJob = scope.launch {
                                 if (isActive) {
                                     mutex.withLock {
-                                        Log.e("Ayaaz","normalaudio - $filePath")
                                         increaseAudioVolume(filePath!!)
                                         if(videoDownPath!=null && outputFile!=null){
-                                            extractAudioFromVideo(videoDownPath!!)?.let { extractedPath ->
+                                            val extractedPath = extractAudioFromVideo(videoDownPath!!)
+                                            extractedPath?.let {
                                                 mergeAudioWithAudio(filePath!!,
                                                     extractedPath, videoDownPath!!, outputFile!!)
                                             }
@@ -1850,10 +1847,15 @@ class ReadingFragmentWithoutFeedback :
     }
 
     private fun getOutputFileFromMuxer(context: Context, path: String?): String? {
+
         try {
-            val cls = Class.forName("com.joshtalks.joshskills.dynamic.feature.MuxerUtils")
-            val kotlinClass = cls.kotlin
-            return (cls.getMethod("saveVideoQ").invoke(kotlinClass.objectInstance,context,path?: EMPTY)) as String
+            val cls = Class.forName("com.joshtalks.joshskills.dynamic.MuxerUtils")
+            cls.declaredMethods.forEach {
+                if(it.name == "saveVideoQ"){
+                    it.isAccessible = true
+                    return it.invoke(cls.newInstance(),context,path) as String?
+                }
+            }
         }catch (ex:Exception){
             ex.printStackTrace()
         }
@@ -1862,7 +1864,13 @@ class ReadingFragmentWithoutFeedback :
 
     private fun getVideoFilePath(): String? {
         try {
-            return  callMethodOfClassViaReflection("com.joshtalks.joshskills.dynamic.feature.MuxerUtils","getVideoFilePath") as String
+            val cls = Class.forName("com.joshtalks.joshskills.dynamic.MuxerUtils")
+            cls.declaredMethods.forEach {
+                if(it.name == "getVideoFilePath"){
+                    it.isAccessible = true
+                    return it.invoke(cls.newInstance()) as String?
+                }
+            }
         }catch (ex:Exception){
             ex.printStackTrace()
         }
@@ -1871,9 +1879,14 @@ class ReadingFragmentWithoutFeedback :
 
     private fun increaseAudioVolume(filePath: String) {
         try {
-            val cls = Class.forName("com.joshtalks.joshskills.dynamic.feature.MuxerUtils")
-            val kotlinClass = cls.kotlin
-             cls.getMethod("increaseAudioVolume").invoke(kotlinClass.objectInstance,filePath)
+            val cls = Class.forName("com.joshtalks.joshskills.dynamic.MuxerUtils")
+            cls.declaredMethods.forEach {
+                if(it.name == "increaseAudioVolume"){
+                    it.isAccessible = true
+                    it.invoke(cls.newInstance(),filePath)
+                }
+            }
+
         }catch (ex:Exception){
             ex.printStackTrace()
         }
@@ -1881,9 +1894,13 @@ class ReadingFragmentWithoutFeedback :
 
     private fun extractAudioFromVideo(filePath: String): String?{
         try {
-            val cls = Class.forName("com.joshtalks.joshskills.dynamic.feature.MuxerUtils")
-            val kotlinClass = cls.kotlin
-             return cls.getMethod("extractAudioFromVideo").invoke(kotlinClass.objectInstance,filePath) as String
+            val cls = Class.forName("com.joshtalks.joshskills.dynamic.MuxerUtils")
+            cls.declaredMethods.forEach {
+                if(it.name == "extractAudioFromVideo"){
+                    it.isAccessible = true
+                    return it.invoke(cls.newInstance(),filePath)  as String?
+                }
+            }
         }catch (ex:Exception){
             ex.printStackTrace()
         }
@@ -1897,9 +1914,13 @@ class ReadingFragmentWithoutFeedback :
         outputFile: String
     ) {
         try {
-            val cls = Class.forName("com.joshtalks.joshskills.dynamic.feature.MuxerUtils")
-            val kotlinClass = cls.kotlin
-            cls.getMethod("mergeAudioWithAudio").invoke(kotlinClass.objectInstance,filePath,extractedPath,videoDownPath,outputFile) as String
+            val cls = Class.forName("com.joshtalks.joshskills.dynamic.MuxerUtils")
+            cls.declaredMethods.forEach {
+                if(it.name == "mergeAudioWithAudio"){
+                    it.isAccessible = true
+                    it.invoke(cls.newInstance(),context,filePath,extractedPath,videoDownPath,outputFile) as String?
+                }
+            }
         }catch (ex:Exception){
             ex.printStackTrace()
         }
@@ -1907,16 +1928,16 @@ class ReadingFragmentWithoutFeedback :
 
     private fun getAudioFilePathFromMuxer(): String {
         try {
-            return  callMethodOfClassViaReflection("com.joshtalks.joshskills.dynamic.feature.MuxerUtils","getAudioFilePathMP3") as String
+            val cls = Class.forName("com.joshtalks.joshskills.dynamic.MuxerUtils")
+            cls.declaredMethods.forEach {
+                if(it.name == "getAudioFilePathMP3"){
+                    it.isAccessible = true
+                    return it.invoke(cls.newInstance()) as String
+                }
+            }
         }catch (ex:Exception){
             ex.printStackTrace()
         }
         return EMPTY
-    }
-
-    private fun callMethodOfClassViaReflection(fullClassName:String,callMethod:String) : Any?{
-        val cls = Class.forName(fullClassName)
-        val kotlinClass = cls.kotlin
-        return (cls.getMethod(callMethod).invoke(kotlinClass.objectInstance))
     }
 }
