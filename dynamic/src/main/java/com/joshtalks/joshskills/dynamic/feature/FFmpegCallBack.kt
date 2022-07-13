@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.lesson.reading
+package com.joshtalks.joshskills.dynamic.feature
 
 import com.arthenica.mobileffmpeg.LogMessage
 import com.arthenica.mobileffmpeg.Statistics

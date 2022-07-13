@@ -13,7 +13,9 @@ import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
-import android.media.*
+import android.media.AudioAttributes
+import android.media.AudioFocusRequest
+import android.media.AudioManager
 import android.net.NetworkInfo
 import android.net.Uri
 import android.os.Build
@@ -21,8 +23,15 @@ import android.os.Bundle
 import android.os.Environment
 import android.os.SystemClock
 import android.util.Log
-import android.view.*
-import android.view.View.*
+import android.view.Gravity
+import android.view.LayoutInflater
+import android.view.MotionEvent
+import android.view.View
+import android.view.View.GONE
+import android.view.View.INVISIBLE
+import android.view.View.VISIBLE
+import android.view.ViewGroup
+import android.view.WindowManager
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.SeekBar
@@ -46,17 +55,53 @@ import com.google.android.exoplayer2.Player
 import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
-import com.joshtalks.joshskills.constants.*
-import com.joshtalks.joshskills.core.*
-import com.joshtalks.joshskills.core.analytics.*
+import com.joshtalks.joshskills.constants.CANCEL_BUTTON_CLICK
+import com.joshtalks.joshskills.constants.INCREASE_AUDIO_VOLUME
+import com.joshtalks.joshskills.constants.PERMISSION_FROM_READING_GRANTED
+import com.joshtalks.joshskills.constants.SHARE_VIDEO
+import com.joshtalks.joshskills.constants.SHOW_VIDEO_VIEW
+import com.joshtalks.joshskills.constants.SUBMIT_BUTTON_CLICK
+import com.joshtalks.joshskills.constants.VIDEO_AUDIO_MERGED_PATH
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.CoreJoshFragment
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
+import com.joshtalks.joshskills.core.HAS_SEEN_READING_HAND_TOOLTIP
+import com.joshtalks.joshskills.core.HAS_SEEN_READING_PLAY_ANIMATION
+import com.joshtalks.joshskills.core.HAS_SEEN_READING_TOOLTIP
+import com.joshtalks.joshskills.core.IS_A2_C1_RETENTION_ENABLED
+import com.joshtalks.joshskills.core.LESSON_COMPLETE_SNACKBAR_TEXT_STRING
+import com.joshtalks.joshskills.core.PermissionUtils
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.READING_SHARED_WHATSAPP
+import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.analytics.MixPanelEvent
+import com.joshtalks.joshskills.core.analytics.MixPanelTracker
+import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
 import com.joshtalks.joshskills.core.extension.setImageAndFitCenter
 import com.joshtalks.joshskills.core.io.AppDirectory
+import com.joshtalks.joshskills.core.isCallOngoing
 import com.joshtalks.joshskills.core.service.DownloadUtils
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.core.videotranscoder.enforceSingleScrollDirection
 import com.joshtalks.joshskills.databinding.ReadingPracticeFragmentWithoutFeedbackBinding
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.entity.*
+import com.joshtalks.joshskills.repository.local.entity.AudioType
+import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
+import com.joshtalks.joshskills.repository.local.entity.CompressedVideo
+import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
+import com.joshtalks.joshskills.repository.local.entity.EXPECTED_ENGAGE_TYPE
+import com.joshtalks.joshskills.repository.local.entity.LessonMaterialType
+import com.joshtalks.joshskills.repository.local.entity.LessonQuestion
+import com.joshtalks.joshskills.repository.local.entity.PendingTask
+import com.joshtalks.joshskills.repository.local.entity.PracticeEngagement
+import com.joshtalks.joshskills.repository.local.entity.PracticeEngagementWrapper
+import com.joshtalks.joshskills.repository.local.entity.PracticeFeedback2
+import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
+import com.joshtalks.joshskills.repository.local.entity.ReadingVideo
 import com.joshtalks.joshskills.repository.local.eventbus.RemovePracticeAudioEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.SnackBarEvent
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -85,6 +130,8 @@ import com.tonyodev.fetch2core.DownloadBlock
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import java.io.File
+import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -96,12 +143,6 @@ import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseDrawable
 import timber.log.Timber
-import java.io.File
-import java.io.IOException
-import java.lang.Runnable
-import java.lang.ref.WeakReference
-import java.nio.ByteBuffer
-import java.util.concurrent.TimeUnit
 
 private const val TAG = "ReadingFragmentWithoutFeedback"
 
@@ -128,7 +169,7 @@ class ReadingFragmentWithoutFeedback :
     var lessonActivityListener: LessonActivityListener? = null
     private var video: String? = null
     private var videoDownPath: String? = null
-    private var outputFile: String = EMPTY
+    private var outputFile: String? = null
     private var downloadID: Long = -1
     lateinit var fileName: String
     private var fileDir: String = EMPTY
@@ -136,7 +177,7 @@ class ReadingFragmentWithoutFeedback :
     private val mutex = Mutex(false)
     private var muxerJob: Job? = null
     private var internetAvailableFlag: Boolean = true
-    var increasedAudio = getAudioFilePathMP3()
+    var increasedAudio = getAudioFilePathFromMuxer()
     private val praticAudioAdapter: PracticeAudioAdapter by lazy { PracticeAudioAdapter(context) }
     private var linearLayoutManager: LinearLayoutManager?= null
     private var onDownloadCompleteListener = object : BroadcastReceiver() {
@@ -309,7 +350,7 @@ class ReadingFragmentWithoutFeedback :
                 SHOW_VIDEO_VIEW -> binding.practiseSubmitLayout.visibility = VISIBLE
                 VIDEO_AUDIO_MERGED_PATH -> {
                     binding.progressDialog.visibility = GONE
-                    viewModel.sendOutputToFullScreen(outputFile)
+                    outputFile?.let { file -> viewModel.sendOutputToFullScreen(file) }
                     binding.mergedVideo.setVideoPath(outputFile)
                 }
                 INCREASE_AUDIO_VOLUME -> {
@@ -1091,7 +1132,7 @@ class ReadingFragmentWithoutFeedback :
             binding.ivClose.visibility = GONE
             binding.btnWhatsapp.visibility = VISIBLE
             binding.btnWhatsapp.setOnClickListener {
-                viewModel.shareVideoForAudio(outputFile)
+                outputFile?.let { file -> viewModel.shareVideoForAudio(file) }
                 viewModel.saveReadingPracticeImpression(READING_SHARED_WHATSAPP,lessonID.toString())
             }
         }
@@ -1373,7 +1414,7 @@ class ReadingFragmentWithoutFeedback :
                             }
                             if (Build.VERSION.SDK_INT >= 29) {
                                 if (isAdded) {
-                                    outputFile = saveVideoQ(requireContext(), videoDownPath ?: EMPTY) ?: EMPTY
+                                    outputFile = getOutputFileFromMuxer(requireContext(),videoDownPath)
                                 }
                             } else {
                                 outputFile = getVideoFilePath()
@@ -1409,9 +1450,11 @@ class ReadingFragmentWithoutFeedback :
                                     mutex.withLock {
                                         Log.e("Ayaaz","normalaudio - $filePath")
                                         increaseAudioVolume(filePath!!)
-                                        if(videoDownPath!=null){
-                                            val extractedPath = extractAudioFromVideo(videoDownPath!!)
-                                            mergeAudioWithAudio(filePath!!, extractedPath, videoDownPath!!, outputFile)
+                                        if(videoDownPath!=null && outputFile!=null){
+                                            extractAudioFromVideo(videoDownPath!!)?.let { extractedPath ->
+                                                mergeAudioWithAudio(filePath!!,
+                                                    extractedPath, videoDownPath!!, outputFile!!)
+                                            }
                                         }
                                     }
                                 }
@@ -1800,5 +1843,76 @@ class ReadingFragmentWithoutFeedback :
                     }
                 }
         )
+    }
+
+    private fun getOutputFileFromMuxer(context: Context, path: String?): String? {
+        try {
+            val cls = Class.forName("com.joshtalks.joshskills.dynamic.feature.MuxerUtils")
+            val kotlinClass = cls.kotlin
+            return (cls.getMethod("saveVideoQ").invoke(kotlinClass.objectInstance,context,path?: EMPTY)) as String
+        }catch (ex:Exception){
+            ex.printStackTrace()
+        }
+        return null
+    }
+
+    private fun getVideoFilePath(): String? {
+        try {
+            return  callMethodOfClassViaReflection("com.joshtalks.joshskills.dynamic.feature.MuxerUtils","getVideoFilePath") as String
+        }catch (ex:Exception){
+            ex.printStackTrace()
+        }
+        return null
+    }
+
+    private fun increaseAudioVolume(filePath: String) {
+        try {
+            val cls = Class.forName("com.joshtalks.joshskills.dynamic.feature.MuxerUtils")
+            val kotlinClass = cls.kotlin
+             cls.getMethod("increaseAudioVolume").invoke(kotlinClass.objectInstance,filePath)
+        }catch (ex:Exception){
+            ex.printStackTrace()
+        }
+    }
+
+    private fun extractAudioFromVideo(filePath: String): String?{
+        try {
+            val cls = Class.forName("com.joshtalks.joshskills.dynamic.feature.MuxerUtils")
+            val kotlinClass = cls.kotlin
+             return cls.getMethod("extractAudioFromVideo").invoke(kotlinClass.objectInstance,filePath) as String
+        }catch (ex:Exception){
+            ex.printStackTrace()
+        }
+        return null
+    }
+
+    private fun mergeAudioWithAudio(
+        filePath: String,
+        extractedPath: String,
+        videoDownPath: String,
+        outputFile: String
+    ) {
+        try {
+            val cls = Class.forName("com.joshtalks.joshskills.dynamic.feature.MuxerUtils")
+            val kotlinClass = cls.kotlin
+            cls.getMethod("mergeAudioWithAudio").invoke(kotlinClass.objectInstance,filePath,extractedPath,videoDownPath,outputFile) as String
+        }catch (ex:Exception){
+            ex.printStackTrace()
+        }
+    }
+
+    private fun getAudioFilePathFromMuxer(): String {
+        try {
+            return  callMethodOfClassViaReflection("com.joshtalks.joshskills.dynamic.feature.MuxerUtils","getAudioFilePathMP3") as String
+        }catch (ex:Exception){
+            ex.printStackTrace()
+        }
+        return EMPTY
+    }
+
+    private fun callMethodOfClassViaReflection(fullClassName:String,callMethod:String) : Any?{
+        val cls = Class.forName(fullClassName)
+        val kotlinClass = cls.kotlin
+        return (cls.getMethod(callMethod).invoke(kotlinClass.objectInstance))
     }
 }

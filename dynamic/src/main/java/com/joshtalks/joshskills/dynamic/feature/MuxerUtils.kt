@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.lesson.reading
+package com.joshtalks.joshskills.dynamic.feature
 
 import android.content.ContentValues
 import android.content.Context
@@ -13,7 +13,6 @@ import android.os.Message
 import android.os.ParcelFileDescriptor
 import android.provider.MediaStore
 import android.util.Log
-import android.view.View
 import androidx.annotation.RequiresApi
 import com.arthenica.mobileffmpeg.FFmpeg
 import com.arthenica.mobileffmpeg.FFmpegExecution
@@ -23,7 +22,6 @@ import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.constants.INCREASE_AUDIO_VOLUME
 import com.joshtalks.joshskills.constants.VIDEO_AUDIO_MERGED_PATH
 import com.joshtalks.joshskills.core.showToast
-import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -323,10 +321,10 @@ fun audioVideoMuxer(filePath: String?, videoDownPath: String?, outputFile: Strin
         return outputFile
 
     } catch (e: IOException) {
-        Timber.tag("Ayaaz error").e(e)
+        e.printStackTrace()
         return outputFile
     } catch (e: Exception) {
-        Timber.tag("Ayaaz error").e(e)
+        e.printStackTrace()
         return outputFile
     }
 }

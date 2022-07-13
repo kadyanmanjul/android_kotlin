@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest
+    xmlns:dist="http://schemas.android.com/apk/distribution"
+    package="com.dynamic.module"
+    split="dynamic-module">
+
+    <dist:module
+        dist:onDemand="true"
+        dist:title="title_test">
+        <dist:fusing include="true" />
+    </dist:module>
+
+    <application>
+    </application>
+
+</manifest>

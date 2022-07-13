@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.lesson.reading
+package com.joshtalks.joshskills.dynamic.feature
 
 import android.os.Handler
 import android.os.Looper
