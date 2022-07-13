@@ -7,14 +7,15 @@ import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.joshtalks.badebhaiya.core.showToast
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import com.joshtalks.badebhaiya.feed.adapter.FeedAdapter
 import com.joshtalks.badebhaiya.feed.model.ConversationRoomType
+import com.joshtalks.badebhaiya.feed.model.Fans
 import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
 import com.joshtalks.badebhaiya.impressions.Impression
-import com.joshtalks.badebhaiya.profile.request.DeleteReminderRequest
 import com.joshtalks.badebhaiya.profile.request.FollowRequest
-import com.joshtalks.badebhaiya.profile.request.ReminderRequest
 import com.joshtalks.badebhaiya.profile.response.ProfileResponse
 import com.joshtalks.badebhaiya.pubnub.PubNubData
 import com.joshtalks.badebhaiya.pubnub.PubNubState
@@ -24,6 +25,7 @@ import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.repository.service.RetrofitInstance
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 class ProfileViewModel : ViewModel() {
@@ -35,7 +37,7 @@ class ProfileViewModel : ViewModel() {
     val userProfileData = MutableLiveData<ProfileResponse>()
 
     val convoRepo = ConversationRoomRepository()
-    val isLoading = ObservableBoolean(false)
+    val closeFansList = ObservableBoolean(false)
 
     val userFullName = ObservableField<String>()
     val isBioTextAvailable = ObservableBoolean(false)
@@ -45,6 +47,9 @@ class ProfileViewModel : ViewModel() {
     val speakerFollowed = MutableLiveData(false)
     val isSelfProfile = ObservableBoolean(false)
     var pubNubState = PubNubState.ENDED
+    val isNextEnabled = MutableLiveData<Boolean>(false)
+    val openProfile = MutableLiveData<String>()
+
 
     init {
 //        collectPubNubState()
@@ -56,6 +61,10 @@ class ProfileViewModel : ViewModel() {
                 pubNubState = it
             }
         }
+    }
+
+    fun openProfile(userId: String){
+        openProfile.value = userId
     }
 
      fun saveProfileInfo(url: String?) {
@@ -76,6 +85,12 @@ class ProfileViewModel : ViewModel() {
             }
         }
     }
+
+    val fansList: Flow<PagingData<Fans>> = Pager(
+        config = PagingConfig(pageSize = 10, enablePlaceholders = false),
+        pagingSourceFactory = { repository.fansPaginatedList() }
+    )
+        .flow
 
     fun updateFollowStatus(userId: String, isFromBBPage: Boolean, isFromDeeplink: Boolean) {
         speakerFollowed.value?.let {

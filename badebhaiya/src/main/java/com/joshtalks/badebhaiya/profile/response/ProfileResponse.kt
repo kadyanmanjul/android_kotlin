@@ -5,6 +5,7 @@ import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
 
 data class ProfileResponse(
     @SerializedName("bio") val bioText: String?,
+    @SerializedName("call_count")val callsCount:Int?,
     @SerializedName("created_source") val created_source: String,
     @SerializedName("date_of_birth") val date_of_birth: String?,
     @SerializedName("email") val email: String?,

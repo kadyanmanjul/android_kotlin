@@ -38,6 +38,7 @@ class BBRepository {
     suspend fun getBBtoFollowList(page: Int) = service.speakersList(page)
 
      fun bbToFollowPaginatedList() = PeoplePagingSource()
+    fun fansPaginatedList() = FansPagingSource()
     suspend fun sendEvent(param: Impression)=service.sendEvent(param)
 
      fun lastLogin() {

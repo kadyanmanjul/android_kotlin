@@ -14,6 +14,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.joshtalks.badebhaiya.R
+import com.joshtalks.badebhaiya.core.showToast
 import com.joshtalks.badebhaiya.profile.ProfileViewModel
 
 class EnterBioBottomSheet : BottomSheetDialogFragment() {
@@ -76,14 +77,29 @@ class EnterBioBottomSheet : BottomSheetDialogFragment() {
         bioText=contentView.findViewById(R.id.bio_text)
         bioText?.setText(defaultBioText)
         size=contentView.findViewById(R.id.size)
+        size?.text= "${bioText?.text?.length.toString()}/70"
 
         bioText?.addTextChangedListener {
             submitBtn?.isEnabled = !it.toString().trim().isEmpty()
             size?.text= "${bioText?.text?.length.toString()}/70"
-            if(bioText?.text?.length!! >70)
-                size?.setTextColor(context?.let { it1 -> AppCompatResources.getColorStateList(it1,R.color.update_bio_text) })
-            else
-                size?.setTextColor(context?.let { it1 -> AppCompatResources.getColorStateList(it1,R.color.default_bio_text) })
+            if(bioText?.text?.length!! >70) {
+                size?.setTextColor(context?.let { it1 ->
+                    AppCompatResources.getColorStateList(
+                        it1,
+                        R.color.update_bio_text
+                    )
+                })
+                submitBtn?.isEnabled=false
+            }
+            else {
+                size?.setTextColor(context?.let { it1 ->
+                    AppCompatResources.getColorStateList(
+                        it1,
+                        R.color.default_bio_text
+                    )
+                })
+                submitBtn?.isEnabled=true
+            }
 
 
         }

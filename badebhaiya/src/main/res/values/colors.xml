@@ -40,7 +40,7 @@
     <color name="notification_orange">#F4792A</color>
     <color name="conversation_room_gray">#ACA9A9</color>
 
-    <color name="checkbox_color">#ff0000</color>
+    <color name="checkbox_color">#FF4963</color>
     <color name="action_color">#4bb543</color>
     <color name="call_decline_color">#ef5050</color>
     <color name="call_action_color">#5ee067</color>

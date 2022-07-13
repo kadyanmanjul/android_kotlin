@@ -226,6 +226,10 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
 
     }
 
+    fun openFansList(){
+        FansListFragment.open(supportFragmentManager =requireActivity().supportFragmentManager,R.id.fans_frame)
+    }
+
     fun showPopup(roomId: Int, userId: String) {
         val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
         val dialogBinding = WhyRoomBinding.inflate(layoutInflater)
@@ -345,7 +349,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
 //                    addABio.visibility=View.GONE
                     tvProfileBio.text = profileResponse.bioText
                 }
-                tvCalls.text=HtmlCompat.fromHtml(getString(R.string.bb_calls, "<big>"+profileResponse.followersCount.toString()+"</big>"),
+                tvCalls.text=HtmlCompat.fromHtml(getString(R.string.bb_calls, "<big>"+profileResponse.callsCount.toString()+"</big>"),
                     HtmlCompat.FROM_HTML_MODE_LEGACY)
                 tvFollowers.text = HtmlCompat.fromHtml(getString(R.string.bb_followers, "<big>"+profileResponse.followersCount.toString()+"</big>"),
                     HtmlCompat.FROM_HTML_MODE_LEGACY)

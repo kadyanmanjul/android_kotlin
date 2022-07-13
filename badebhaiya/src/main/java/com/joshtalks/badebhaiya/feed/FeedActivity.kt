@@ -309,6 +309,17 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
     }
 
     private fun addObserver() {
+        profileViewModel.openProfile.observe(this){
+            val fragment = ProfileFragment() // replace your custom fragment class
+            val bundle = Bundle()
+            val fragmentTransaction: FragmentTransaction = supportFragmentManager.beginTransaction()
+            bundle.putString("user", it) // use as per your need
+                bundle.putString("source","FANS_LIST")
+            fragment.arguments = bundle
+            fragmentTransaction.replace(R.id.room_frame, fragment)
+            fragmentTransaction.commit()
+        }
+
         liveRoomViewModel.pubNubState.observe(this,androidx.lifecycle.Observer{
             if(it==PubNubState.ENDED)
                 viewModel.pubNubState=PubNubState.ENDED

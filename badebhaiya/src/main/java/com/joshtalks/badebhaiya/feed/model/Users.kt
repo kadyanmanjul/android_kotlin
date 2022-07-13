@@ -20,6 +20,17 @@ data class Users(
     var is_speaker_followed : Boolean
 )
 
+data class Fans(
+    @SerializedName("user_id")
+    val user_id:String?=null,
+    @SerializedName("short_name")
+    val shortName:String?=null,
+    @SerializedName("full_name")
+    val fullName:String?=null,
+    @SerializedName("photo_url")
+    val profilePic:String?=null
+    )
+
 data class Waiting(
     @SerializedName("user_id")
     val user_id:String = "",

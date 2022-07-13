@@ -1380,7 +1380,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
                 showToast("Please Leave Current Room")
             } else {
                 Log.i("LIVEROOMSOURCE", "launch: $from")
-                var frag=activity.supportFragmentManager.findFragmentById(R.id.liveRoomRootView)
+                val frag=activity.supportFragmentManager.findFragmentById(R.id.liveRoomRootView)
                 if(frag==null) {
 
                     val waitingFragment = activity.supportFragmentManager.findFragmentByTag(WaitingFragment.TAG)
