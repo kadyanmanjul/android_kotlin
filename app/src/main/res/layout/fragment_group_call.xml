@@ -21,8 +21,8 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/container"
-        setCallBackground="@{vm.uiState.type}"
         android:layout_width="match_parent"
+        setCallBackground='@{!vm.uiState.gameWord.equals("") ? true : false}'
         android:layout_height="match_parent"
         android:background="#0D5CB8"
         android:fitsSystemWindows="true"

@@ -13,7 +13,6 @@ import com.joshtalks.joshskills.voip.communication.PubnubState.CONNECTED
 import com.joshtalks.joshskills.voip.communication.PubnubState.DISCONNECTED
 import com.joshtalks.joshskills.voip.communication.PubnubState.RECONNECTED
 import com.joshtalks.joshskills.voip.communication.constants.ServerConstants
-import com.joshtalks.joshskills.voip.communication.fallback.FirebaseChannelService
 import com.joshtalks.joshskills.voip.communication.model.*
 import com.joshtalks.joshskills.voip.constant.Event
 import com.joshtalks.joshskills.voip.constant.PSTN_STATE_IDLE
@@ -513,7 +512,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                         ServerConstants.NEXT_WORD_RECEIVED ->{
                             val envelopeStartRecording = Envelope(Event.CALL_RECORDING_ACCEPT, data = ActionDirection.LOCAL)
                             stateChannel.send(envelopeStartRecording)
-                            val incomingWorData = IncomingGameNextWord(word = it.getWord(), color = it.getWordColor())
+                            val incomingWorData = IncomingGameNextWord(word = event.getWord(), color = event.getWordColor())
                             val envelope = Envelope(
                                 Event.NEXT_WORD_RECEIVED,
                                 incomingWorData
