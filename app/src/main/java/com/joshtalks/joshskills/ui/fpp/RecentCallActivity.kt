@@ -67,15 +67,23 @@ class RecentCallActivity : BaseFppActivity() {
         event.observe(this) {
             when (it.what) {
                 FPP_RECENT_CALL_ON_BACK_PRESS -> popBackStack()
-                RECENT_OPEN_USER_PROFILE -> openUserProfileActivity(it.obj.toString())
+                RECENT_OPEN_USER_PROFILE -> {
+                    if (it.obj != null)
+                        openUserProfileActivity(it.obj.toString())
+                }
                 SCROLL_TO_POSITION -> {
-                    binding.recentListRv.layoutManager?.scrollToPosition(it.obj as Int)
+                    if (it.obj != null)
+                        binding.recentListRv.layoutManager?.scrollToPosition(it.obj as Int)
                 }
                 RECENT_CALL_USER_BLOCK -> {
-                    onUserBlock(it.obj as RecentCall)
+                    if (it.obj != null && it.obj is RecentCall) {
+                        onUserBlock(it.obj as RecentCall)
+                    }
                 }
                 RECENT_CALL_HAS_RECIEVED_REQUESTED -> {
-                    onRecentCallHasRequest(it.obj as RecentCall)
+                    if (it.obj != null && it.obj is RecentCall) {
+                        onRecentCallHasRequest(it.obj as RecentCall)
+                    }
                 }
             }
         }
