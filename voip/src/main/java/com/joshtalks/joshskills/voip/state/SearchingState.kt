@@ -11,12 +11,7 @@ import com.joshtalks.joshskills.voip.communication.model.Timeout
 import com.joshtalks.joshskills.voip.communication.model.UserAction
 import com.joshtalks.joshskills.voip.constant.Category
 import com.joshtalks.joshskills.voip.constant.Event
-import com.joshtalks.joshskills.voip.constant.Event.RECEIVED_CHANNEL_DATA
-import com.joshtalks.joshskills.voip.constant.Event.REMOTE_USER_DISCONNECTED_AGORA
-import com.joshtalks.joshskills.voip.constant.Event.REMOTE_USER_DISCONNECTED_MESSAGE
-import com.joshtalks.joshskills.voip.constant.Event.REMOTE_USER_DISCONNECTED_USER_LEFT
-import com.joshtalks.joshskills.voip.constant.Event.SYNC_UI_STATE
-import com.joshtalks.joshskills.voip.constant.Event.TOPIC_IMAGE_RECEIVED
+import com.joshtalks.joshskills.voip.constant.Event.*
 import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.UIState
 import com.joshtalks.joshskills.voip.data.local.PrefManager
@@ -251,7 +246,7 @@ class SearchingState(val context: CallContext) : VoipState {
                         TOPIC_IMAGE_RECEIVED, SYNC_UI_STATE, REMOTE_USER_DISCONNECTED_MESSAGE,
                         REMOTE_USER_DISCONNECTED_AGORA, REMOTE_USER_DISCONNECTED_USER_LEFT,
                         Event.START_RECORDING, Event.STOP_RECORDING, Event.CALL_RECORDING_ACCEPT,
-                        Event.CALL_RECORDING_REJECT, Event.CANCEL_RECORDING_REQUEST  -> {
+                        Event.CALL_RECORDING_REJECT, Event.CANCEL_RECORDING_REQUEST,START_GAME,END_GAME,NEXT_WORD_RECEIVED,NEXT_WORD_REQUEST  -> {
 
                             val msg =
                                 "Ignoring : In $TAG but received ${event.type} expected $RECEIVED_CHANNEL_DATA"
