@@ -98,14 +98,13 @@
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvFollowers"
-            onSingleClick="@{()->handler.openFansList()}"
+            onSingleClick="@{()->handler.openList()}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_11sdp"
             android:textAppearance="@style/BB_Typography_Nunito_Semi_Bold"
             android:textColor="@color/profile_font_color"
             android:textSize="@dimen/_12ssp"
-            android:clickable="@{viewModel.isBadeBhaiyaSpeaker() }"
             app:flow_verticalAlign="top"
             app:layout_constraintStart_toStartOf="@id/tvUserName"
             app:layout_constraintTop_toBottomOf="@id/tvUserName"

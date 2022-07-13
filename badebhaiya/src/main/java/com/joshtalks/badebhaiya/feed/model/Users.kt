@@ -22,13 +22,13 @@ data class Users(
 
 data class Fans(
     @SerializedName("user_id")
-    val user_id:String?=null,
+    val user_id:String="",
     @SerializedName("short_name")
-    val shortName:String?=null,
+    val shortName:String="",
     @SerializedName("full_name")
-    val fullName:String?=null,
+    val fullName:String="",
     @SerializedName("photo_url")
-    val profilePic:String?=null
+    val profilePic:String=""
     )
 
 data class Waiting(

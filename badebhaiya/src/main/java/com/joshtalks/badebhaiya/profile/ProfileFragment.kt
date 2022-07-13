@@ -116,6 +116,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
 
         handleIntent()
         viewModel.getProfileForUser(userId!!, source)
+        feedViewModel.profileUuid=userId
         feedViewModel.setIsBadeBhaiyaSpeaker()
         binding.handler = this
         binding.viewModel = viewModel
@@ -227,7 +228,16 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
     }
 
     fun openFansList(){
-        FansListFragment.open(supportFragmentManager =requireActivity().supportFragmentManager,R.id.fans_frame)
+        FansListFragment.open(supportFragmentManager =requireActivity().supportFragmentManager,R.id.room_frame)
+    }
+
+    fun openFollowingList(){
+        FollowingListFragment.open(supportFragmentManager =requireActivity().supportFragmentManager,R.id.room_frame)
+    }
+
+    fun openList(){
+        if(viewModel.isSpeaker) openFansList()
+        else openFollowingList()
     }
 
     fun showPopup(roomId: Int, userId: String) {
@@ -296,6 +306,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
     }
 
     private fun addObserver() {
+
         viewModel.userProfileData.observe(viewLifecycleOwner) {
             binding.apply {
                 handleSpeakerProfile(it)

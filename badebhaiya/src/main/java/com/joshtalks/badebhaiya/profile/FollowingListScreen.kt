@@ -1,5 +1,6 @@
-package com.joshtalks.badebhaiya.profile
+package com.joshtalks.badebhaiya.profile.response
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -28,13 +29,13 @@ import coil.compose.AsyncImage
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.composeTheme.JoshBadeBhaiyaTheme
 import com.joshtalks.badebhaiya.composeTheme.NunitoFont
-import com.joshtalks.badebhaiya.composeTheme.NunitoSansFont
-import com.joshtalks.badebhaiya.feed.model.Fans
+import com.joshtalks.badebhaiya.feed.model.Users
+import com.joshtalks.badebhaiya.signup.fragments.ListBioText
 
 @Composable
-fun FansListScreen(
-    peopleList: LazyPagingItems<Fans>,
-    onItemClick: (Fans) -> Unit = {},
+fun FollowingListScreen(
+    peopleList: LazyPagingItems<Users>,
+    onItemClick: (Users) -> Unit = {},
     onCloseCall: () -> Unit ={}
 ) {
     JoshBadeBhaiyaTheme {
@@ -49,14 +50,14 @@ fun FansListScreen(
             ) {
                 item {
                     ToolbarHeadingText(
-                        text = "FANS",
+                        text = "FOLLOWING",
                         onClick = onCloseCall
                     )
                 }
 
             itemsIndexed(list) { index, value ->
                 value?.let {
-                    ItemFans(fan = it, bottomPadding = 0.dp, onClick = onItemClick)
+                    ItemFans(following = it, bottomPadding = 0.dp, onClick = onItemClick)
                 }
             }
 
@@ -81,7 +82,7 @@ fun ToolbarHeadingText(
                 colorFilter = ColorFilter.tint(Color.Black),
                 modifier = Modifier
                     .size(29.dp)
-                    .clickable {onClick() },
+                    .clickable { onClick() },
                 contentDescription = "Fan Profile Picture",
                 contentScale = ContentScale.Crop
             )
@@ -105,14 +106,14 @@ fun ToolbarHeadingText(
 @Composable
 fun ItemFans(
     modifier: Modifier = Modifier,
-    fan: Fans = Fans("", "sahil", "Sahil Khan", "https://imageio.forbes.com/specials-images/imageserve/61688aa1d4a8658c3f4d8640/Antonio-Juliano/0x0.jpg?format=jpg&width=960"),
+    following: Users = Users("", "sahil", "Sahil Khan", "https://imageio.forbes.com/specials-images/imageserve/61688aa1d4a8658c3f4d8640/Antonio-Juliano/0x0.jpg?format=jpg&width=960", "This is Akhand Swarup’s Bio He's an IES Officer.", is_speaker_followed = false),
     bottomPadding: Dp = 0.dp,
-    onClick: (Fans) -> Unit = {}
+    onClick: (Users) -> Unit = {}
 ) {
     Row(
         modifier = modifier
             .clickable {
-                onClick(fan)
+                onClick(following)
             }
             .padding(
                 horizontal = 18.dp,
@@ -122,9 +123,9 @@ fun ItemFans(
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        if (fan.profilePic != null)
+        if (following.profilePic != null)
             AsyncImage(
-                model = fan.profilePic,
+                model = following.profilePic,
                 modifier = Modifier
                     .size(62.dp)
                     .clip(RoundedCornerShape(dimensionResource(id = R.dimen._20sdp))),
@@ -147,7 +148,9 @@ fun ItemFans(
             verticalArrangement = Arrangement.Center,
             modifier = Modifier.fillMaxWidth(.8f)
         ) {
-            NameText(text = fan.fullName ?: "")
+            Log.i("FOLLOWING", "ItemFans: ${following.full_name}")
+            NameText(text = following.full_name ?: "")
+            ListBioText(text = following.bio ?: "")
         }
     }
 }

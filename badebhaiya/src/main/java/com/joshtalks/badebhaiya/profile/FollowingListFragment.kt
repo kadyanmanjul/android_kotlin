@@ -1,6 +1,7 @@
 package com.joshtalks.badebhaiya.profile
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -11,10 +12,15 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.joshtalks.badebhaiya.feed.FeedActivity
 import com.joshtalks.badebhaiya.feed.FeedViewModel
+import com.joshtalks.badebhaiya.profile.response.FollowingListScreen
+import com.joshtalks.badebhaiya.signup.fragments.PeopleToFollowScreen
+import kotlinx.android.synthetic.main.activity_feed.*
 import timber.log.Timber
+import java.lang.Exception
 
-class FansListFragment : Fragment() {
+class FollowingListFragment : Fragment() {
 
     private val viewModel by lazy {
         ViewModelProvider(requireActivity()).get(ProfileViewModel::class.java)
@@ -33,8 +39,8 @@ class FansListFragment : Fragment() {
         activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 activity?.run {
-                    Timber.d("back from profile")
-                    supportFragmentManager.popBackStack()
+                        Timber.d("back from profile")
+                        supportFragmentManager.popBackStack()
                 }
             }
         })
@@ -42,8 +48,8 @@ class FansListFragment : Fragment() {
             requireContext()
         ).apply {
             setContent {
-                    val peopleList = feedViewModel.fansList.collectAsLazyPagingItems()
-                    FansListScreen(
+                    val peopleList = feedViewModel.followingList.collectAsLazyPagingItems()
+                FollowingListScreen(
                         peopleList,
                         onItemClick = {
                           viewModel.openProfile(it.user_id)
@@ -54,6 +60,8 @@ class FansListFragment : Fragment() {
                     )
             }
         }
+
+
     }
 
     private fun dismissFragment(){
@@ -66,7 +74,7 @@ class FansListFragment : Fragment() {
 
             supportFragmentManager
                 .beginTransaction()
-                .add(containerId, FansListFragment())
+                .add(containerId, FollowingListFragment())
                 .addToBackStack(null)
                 .commit()
         }

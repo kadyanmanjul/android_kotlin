@@ -9,3 +9,7 @@ data class BBtoFollow(
 data class FansList(
     val follower_data: List<Fans>
 )
+
+data class FollowingList(
+    val following_data: List<Users>
+)

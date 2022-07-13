@@ -7,12 +7,8 @@ import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
-import androidx.paging.PagingData
 import com.joshtalks.badebhaiya.feed.adapter.FeedAdapter
 import com.joshtalks.badebhaiya.feed.model.ConversationRoomType
-import com.joshtalks.badebhaiya.feed.model.Fans
 import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
 import com.joshtalks.badebhaiya.impressions.Impression
 import com.joshtalks.badebhaiya.profile.request.FollowRequest
@@ -25,7 +21,6 @@ import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.repository.service.RetrofitInstance
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 class ProfileViewModel : ViewModel() {
@@ -49,6 +44,7 @@ class ProfileViewModel : ViewModel() {
     var pubNubState = PubNubState.ENDED
     val isNextEnabled = MutableLiveData<Boolean>(false)
     val openProfile = MutableLiveData<String>()
+    var isSpeaker=false
 
 
     init {
@@ -86,11 +82,7 @@ class ProfileViewModel : ViewModel() {
         }
     }
 
-    val fansList: Flow<PagingData<Fans>> = Pager(
-        config = PagingConfig(pageSize = 10, enablePlaceholders = false),
-        pagingSourceFactory = { repository.fansPaginatedList() }
-    )
-        .flow
+
 
     fun updateFollowStatus(userId: String, isFromBBPage: Boolean, isFromDeeplink: Boolean) {
         speakerFollowed.value?.let {
@@ -144,6 +136,7 @@ class ProfileViewModel : ViewModel() {
                         profileUrl= it.profilePicUrl?: ""
                         speakerFollowed.postValue(it.isSpeakerFollowed)
                         isBadeBhaiyaSpeaker.set(it.isSpeaker)
+                        isSpeaker=it.isSpeaker
                         isBadeBhaiyaSpeaker.notifyChange()
                         isBioTextAvailable.set(it.bioText.isNullOrEmpty().not())
                         isSelfProfile.set(it.userId == User.getInstance().userId)

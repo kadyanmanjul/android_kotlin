@@ -7,6 +7,7 @@ import com.joshtalks.badebhaiya.profile.request.ReminderRequest
 import com.joshtalks.badebhaiya.profile.response.ProfileResponse
 import com.joshtalks.badebhaiya.signup.response.BBtoFollow
 import com.joshtalks.badebhaiya.signup.response.FansList
+import com.joshtalks.badebhaiya.signup.response.FollowingList
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -24,11 +25,17 @@ interface ProfileNetworkService {
         source: String
     ): Response<ProfileResponse>
 
-    @GET("$DIR/user/followers/")
+    @GET("$DIR/user/followers/{uuid}/")
     suspend fun fansList(
+        @Path("uuid")uuid:String,
         @Query("page") page: Int
     ):Response<FansList>
 
+    @GET("$DIR/user/following/{uuid}/")
+    suspend fun followingList(
+        @Path("uuid")uuid:String,
+        @Query("page") page: Int
+    ):Response<FollowingList>
     @POST("$DIR/user/follow/")
     suspend fun updateFollowStatus(@Body followRequest: FollowRequest): Response<Void>
 

@@ -8,7 +8,6 @@ import com.joshtalks.badebhaiya.repository.peopleToFollow.PeoplePagingSource
 import com.joshtalks.badebhaiya.repository.service.RetrofitInstance
 import com.joshtalks.badebhaiya.signup.request.VerifyOTPRequest
 import com.joshtalks.badebhaiya.utils.Utils
-import io.agora.rtc.internal.DeviceUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -38,7 +37,8 @@ class BBRepository {
     suspend fun getBBtoFollowList(page: Int) = service.speakersList(page)
 
      fun bbToFollowPaginatedList() = PeoplePagingSource()
-    fun fansPaginatedList() = FansPagingSource()
+    fun fansPaginatedList(userId: String) = FansPagingSource(userId )
+    fun followingPaginatedList(userId:String) = FollowingPagingSource(userId)
     suspend fun sendEvent(param: Impression)=service.sendEvent(param)
 
      fun lastLogin() {
