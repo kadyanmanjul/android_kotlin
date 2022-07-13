@@ -216,6 +216,7 @@
             android:layout_height="wrap_content"
             android:elevation="0dp"
             android:text="@string/block_caller"
+            android:textAllCaps="false"
             android:textSize="@dimen/_11ssp"
             android:textColor="@color/black"
             android:visibility="visible"
