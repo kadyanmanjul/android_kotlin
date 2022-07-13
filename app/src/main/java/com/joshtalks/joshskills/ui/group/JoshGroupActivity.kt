@@ -114,7 +114,7 @@ class JoshGroupActivity : BaseGroupActivity() {
     private fun startGroupCall(data: Bundle) {
         if (PermissionUtils.isCallingPermissionEnabled(this)) {
             if (data.get(GROUP_TYPE) == DM_CHAT)
-                openFppCallScreen(vm.agoraId)
+                openFppCallScreen(vm.agoraId,data)
             else
                 openCallingActivity(data)
             return
@@ -133,7 +133,7 @@ class JoshGroupActivity : BaseGroupActivity() {
                         }
                         if (flag) {
                             if (data.get(GROUP_TYPE) == DM_CHAT)
-                                openFppCallScreen(vm.agoraId)
+                                openFppCallScreen(vm.agoraId,data)
                             else
                                 openCallingActivity(data)
                             return
@@ -192,17 +192,29 @@ class JoshGroupActivity : BaseGroupActivity() {
         }
     }
 
-    private fun openFppCallScreen(uid: Int) {
-        if (WebRtcService.isCallOnGoing.value == false && getVoipState() == State.IDLE){
-            val intent =
-                WebRtcActivity.getFavMissedCallbackIntent(uid, this).apply {
-                    addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                }
-            startActivity(intent)
-        }else{
-            showToast("You are already on a call")
-        }
+    private fun openFppCallScreen(uid: Int,data:Bundle) {
+            if (WebRtcService.isCallOnGoing.value == false && getVoipState() == State.IDLE) {
+                if (PrefManager.getIntValue(IS_GROUP_FPP_NEW_ARCH_ENABLED, defValue = 1) == 1) {
+                    val callIntent = Intent(applicationContext, VoiceCallActivity::class.java)
+                    callIntent.apply {
+                        putExtra(STARTING_POINT, FROM_ACTIVITY)
+                        putExtra(INTENT_DATA_CALL_CATEGORY, Category.FPP.ordinal)
+                        putExtra(INTENT_DATA_FPP_MENTOR_ID, vm.mentorId)
+                        putExtra(INTENT_DATA_FPP_NAME, data.getString(INTENT_DATA_FPP_NAME))
+                        putExtra(INTENT_DATA_FPP_IMAGE, data.getString(INTENT_DATA_FPP_IMAGE))
+                        startActivity(callIntent)
+                    }
+                }else {
+                val intent =
+                    WebRtcActivity.getFavMissedCallbackIntent(uid, this).apply {
+                        addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    }
+                startActivity(intent)
+            }
+        }else {
+                showToast("You are already on a call")
+            }
     }
 
     private fun openGroupListFragment() {

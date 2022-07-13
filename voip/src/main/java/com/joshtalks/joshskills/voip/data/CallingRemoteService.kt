@@ -213,7 +213,7 @@ class CallingRemoteService : Service() {
                                 CANCEL_RECORDING_REQUEST -> {
                                     serviceEvents.emit(ServiceEvents.CANCEL_RECORDING_REQUEST)
                                 }
-                                Event.AGORA_CALL_RECORDED -> {
+                                AGORA_CALL_RECORDED -> {
                                     serviceEvents.emit(ServiceEvents.PROCESS_AGORA_CALL_RECORDING)
                                 }
                             }
@@ -307,6 +307,7 @@ class CallingRemoteService : Service() {
     fun connectCall(callData: HashMap<String, Any>, category: Category = Category.PEER_TO_PEER) {
         if (callData != null) {
             mediator.connectCall(category, callData)
+            notification.searching()
             Log.d(TAG, "Connecting Call Data --> $callData")
         } else
             Log.d(TAG, "connectCall: Call Data is Null")

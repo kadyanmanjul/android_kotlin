@@ -242,7 +242,6 @@ class VoiceCallActivity : BaseActivity() {
                 dialog.dismiss()
             }
             .show()
-
     }
 
     private fun showRecordingPermissionDialog() {

@@ -19,10 +19,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
-import com.joshtalks.joshskills.base.constants.FROM_ACTIVITY
-import com.joshtalks.joshskills.base.constants.FROM_INCOMING_CALL
-import com.joshtalks.joshskills.base.constants.INTENT_DATA_FPP_IMAGE
-import com.joshtalks.joshskills.base.constants.INTENT_DATA_FPP_NAME
+import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.databinding.FragmentFppCallBinding
 import com.joshtalks.joshskills.ui.userprofile.adapters.setImage
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.setProfileImage
@@ -94,6 +91,10 @@ class FppCallFragment : BaseFragment() , SensorEventListener {
                     .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                     .into(callBinding.cImage)
         }
+
+        if(vm.source== FROM_CALL_BAR){
+            callBinding.groupUserdata.visibility = View.VISIBLE
+        }
     }
 
     override fun initViewState() {
@@ -113,7 +114,6 @@ class FppCallFragment : BaseFragment() , SensorEventListener {
     }
 
     override fun setArguments() {}
-
 
     private fun setUpProximitySensor() {
         try {

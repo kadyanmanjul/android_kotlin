@@ -18,6 +18,9 @@ import androidx.recyclerview.widget.RecyclerView
 
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseViewModel
+import com.joshtalks.joshskills.base.constants.INTENT_DATA_FPP_IMAGE
+import com.joshtalks.joshskills.base.constants.INTENT_DATA_FPP_MENTOR_ID
+import com.joshtalks.joshskills.base.constants.INTENT_DATA_FPP_NAME
 import com.joshtalks.joshskills.constants.*
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
@@ -150,6 +153,11 @@ class GroupChatViewModel : BaseViewModel() {
             putString(GROUPS_ID, groupId)
             putString(GROUPS_TITLE, groupHeader.get())
             putString(GROUP_TYPE, groupType.get())
+            putString(GROUP_TYPE, groupType.get())
+//            for FPP
+            putString(INTENT_DATA_FPP_IMAGE,imageUrl.get())
+            putString(INTENT_DATA_FPP_NAME,groupHeader.get())
+
             if (groupId == DM_CHAT)
                 putInt(AGORA_UID, agoraId)
         }

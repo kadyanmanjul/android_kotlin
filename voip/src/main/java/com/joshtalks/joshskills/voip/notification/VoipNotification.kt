@@ -75,6 +75,10 @@ class VoipNotification : NotificationInterface {
         notificationHelper.connected(username, notificationBuiltObj, onTap, onNegativeAction)
     }
 
+    fun searching() {
+        notificationHelper.searching(notificationBuiltObj)
+    }
+
     fun idle(notificationData: Data) {
         notificationHelper.idle(notificationBuiltObj, notificationData)
     }

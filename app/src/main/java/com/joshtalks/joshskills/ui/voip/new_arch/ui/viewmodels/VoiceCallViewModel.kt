@@ -81,13 +81,16 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                     Log.d(TAG, " connectCallJob : Inside - $callData  $callType")
                     repository.connectCall(callData,callType)
                     isConnectionRequestSent = true
+                    if(callType==Category.FPP && source == FROM_ACTIVITY){
+                        uiState.currentState = "Ringing..."
+                    }
                 }
+
             }
         }
     }
 
     init {
-        uiState.currentState = "Ringing..."
         listenRepositoryEvents()
     }
 
