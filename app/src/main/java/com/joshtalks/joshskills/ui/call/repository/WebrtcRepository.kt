@@ -11,6 +11,7 @@ import com.joshtalks.joshskills.base.constants.INTENT_DATA_API_HEADER
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_MENTOR_ID
 import com.joshtalks.joshskills.ui.call.repository.RepositoryConstants.CONNECTION_ESTABLISHED
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.voipLog
+import com.joshtalks.joshskills.voip.constant.Category
 import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.CallingRemoteService
 import com.joshtalks.joshskills.voip.data.local.PrefManager
@@ -85,10 +86,10 @@ class WebrtcRepository(scope : CoroutineScope) {
         }
     }
 
-    fun connectCall(callData: HashMap<String, Any>) {
+    fun connectCall(callData: HashMap<String, Any>, category: Category = Category.PEER_TO_PEER) {
         Log.d(TAG, "connectCall: - $callData")
         if(mService != null && PrefManager.getVoipState() == State.IDLE)
-            mService?.connectCall(callData)
+            mService?.connectCall(callData, category)
     }
 
     fun disconnectCall() {

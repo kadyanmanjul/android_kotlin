@@ -7,10 +7,6 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import android.media.AudioAttributes
-import android.media.AudioFocusRequest
-import android.media.AudioManager
-import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
 import android.util.Log
@@ -23,14 +19,11 @@ import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
 import com.joshtalks.joshskills.base.constants.FROM_INCOMING_CALL
-import com.joshtalks.joshskills.databinding.FragmentCallBinding
+import com.joshtalks.joshskills.databinding.FragmentGroupCallBinding
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.VoiceCallViewModel
-import com.joshtalks.joshskills.util.getBitMapFromView
-import com.joshtalks.joshskills.util.toFile
 import com.joshtalks.joshskills.voip.audiocontroller.AudioController
 import com.joshtalks.joshskills.voip.audiocontroller.AudioRouteConstants
 import com.joshtalks.joshskills.voip.constant.CANCEL_INCOMING_TIMER
-import com.joshtalks.joshskills.voip.constant.GET_FRAGMENT_BITMAP
 import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
@@ -39,25 +32,21 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+class GroupCallFragment : BaseFragment(), SensorEventListener {
 
-class   CallFragment : BaseFragment() , SensorEventListener {
-    private val TAG = "CallFragment"
+    private val TAG = "GroupCallFragment"
 
-    lateinit var callBinding: FragmentCallBinding
+    lateinit var callBinding: FragmentGroupCallBinding
     private var isAnimationCanceled = false
     private var sensorManager: SensorManager? = null
     private var proximity: Sensor? = null
     private var powerManager: PowerManager? = null
-    private  var lock: PowerManager.WakeLock? = null
-    private var audioRequest :AudioFocusRequest? = null
-    private var isFragmentRestarted = false
-
-    private val audioManager by lazy {
-        requireActivity().getSystemService(Context.AUDIO_SERVICE) as AudioManager
-    }
+    private var lock: PowerManager.WakeLock? = null
     private val audioController by lazy {
         AudioController(CoroutineScope((Dispatchers.IO)))
     }
+
+    private var isFragmentRestarted = false
 
     val vm by lazy {
         ViewModelProvider(requireActivity())[VoiceCallViewModel::class.java]
@@ -71,6 +60,7 @@ class   CallFragment : BaseFragment() , SensorEventListener {
             }
         }
     }
+
     private val textAnimator by lazy<ValueAnimator> {
         ValueAnimator.ofFloat(0.8f, 1.2f, 1f).apply {
             duration = 300
@@ -86,7 +76,7 @@ class   CallFragment : BaseFragment() , SensorEventListener {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        callBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_call, container, false)
+        callBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_group_call, container, false)
         return callBinding.root
     }
 
@@ -98,9 +88,11 @@ class   CallFragment : BaseFragment() , SensorEventListener {
             agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
         )
     }
+
     override fun initViewBinding() {
         callBinding.vm = vm
-        if(vm.source == FROM_INCOMING_CALL && PrefManager.getVoipState() != State.CONNECTED) {
+        callBinding.callFragment = this
+        if (vm.source == FROM_INCOMING_CALL && PrefManager.getVoipState() != State.CONNECTED) {
             startIncomingTimer()
         }
         callBinding.executePendingBindings()
@@ -108,46 +100,13 @@ class   CallFragment : BaseFragment() , SensorEventListener {
 
     override fun initViewState() {
         setUpProximitySensor()
-        gainAudioFocus()
-
         liveData.observe(viewLifecycleOwner) {
             when (it.what) {
                 CANCEL_INCOMING_TIMER -> {
                     stopAnimation()
                     callBinding.incomingTimerContainer.visibility = View.INVISIBLE
                 }
-                GET_FRAGMENT_BITMAP -> {
-                    val imageFile = getBitMapFromView(callBinding.container).toFile(requireContext())
-                    vm.saveImageAudioToFolder(imageFile)
-                }
             }
-        }
-    }
-
-    private fun gainAudioFocus() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-           audioRequest =  AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN).run {
-                setAudioAttributes(
-                    AudioAttributes.Builder().run {
-                        setUsage(AudioAttributes.USAGE_VOICE_COMMUNICATION)
-                        setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                        build()
-                    }
-                )
-                setAcceptsDelayedFocusGain(true)
-                setOnAudioFocusChangeListener{}.build()
-            }
-            audioRequest?.acceptsDelayedFocusGain()
-            val result = audioRequest?.let { audioManager.requestAudioFocus(it) }
-            Log.d(TAG, "gainAudioFocus 1: request result $result")
-        } else {
-            val result = audioManager.requestAudioFocus(
-                { },
-                AudioManager.STREAM_VOICE_CALL,
-                AudioManager.AUDIOFOCUS_GAIN
-            )
-            Log.d(TAG, "gainAudioFocus 2: request result $result")
-
         }
     }
 
@@ -160,7 +119,7 @@ class   CallFragment : BaseFragment() , SensorEventListener {
                 PowerManager.PROXIMITY_SCREEN_OFF_WAKE_LOCK,
                 "simplewakelock:wakelocktag"
             )
-        }catch (ex : NullPointerException){
+        } catch (ex: NullPointerException) {
             ex.printStackTrace()
         }
     }
@@ -192,6 +151,7 @@ class   CallFragment : BaseFragment() , SensorEventListener {
                 if (textAnimator.isStarted && textAnimator.isRunning)
                     textAnimator.cancel()
             }
+
             override fun onAnimationRepeat(animation: Animator?) {}
         })
         progressAnimator.start()
@@ -211,7 +171,7 @@ class   CallFragment : BaseFragment() , SensorEventListener {
             sensorManager?.registerListener(this, proximity, SensorManager.SENSOR_DELAY_NORMAL)
         }
         if (callBinding.incomingTimerContainer.visibility == View.VISIBLE) {
-            CoroutineScope(Dispatchers.Main).launch{
+            CoroutineScope(Dispatchers.Main).launch {
                 progressAnimator.resume()
             }
         }
@@ -222,13 +182,16 @@ class   CallFragment : BaseFragment() , SensorEventListener {
         setCurrentCallState()
     }
 
-
+    fun changeTopicImage(v: View) {
+        if (callBinding.topicViewpager.currentItem < callBinding.topicViewpager.adapter!!.itemCount)
+            callBinding.topicViewpager.currentItem = callBinding.topicViewpager.currentItem + 1
+    }
 
     private fun setCurrentCallState() {
-        if(isFragmentRestarted) {
-            if(vm.source == FROM_INCOMING_CALL && (PrefManager.getVoipState() == State.SEARCHING || PrefManager.getVoipState() == State.JOINING))
+        if (isFragmentRestarted) {
+            if (vm.source == FROM_INCOMING_CALL && (PrefManager.getVoipState() == State.SEARCHING || PrefManager.getVoipState() == State.JOINING))
                 return
-            else if((PrefManager.getVoipState() == State.JOINED || PrefManager.getVoipState() == State.CONNECTED).not())
+            else if ((PrefManager.getVoipState() == State.JOINED || PrefManager.getVoipState() == State.CONNECTED).not())
                 requireActivity().finish()
         } else
             isFragmentRestarted = true
@@ -243,6 +206,7 @@ class   CallFragment : BaseFragment() , SensorEventListener {
             turnScreenOn()
         }
     }
+
     override fun onAccuracyChanged(p0: Sensor?, p1: Int) {}
 
     private fun turnScreenOff() {
@@ -256,13 +220,6 @@ class   CallFragment : BaseFragment() , SensorEventListener {
     override fun onPause() {
         super.onPause()
         sensorManager?.unregisterListener(this)
-        if(lock?.isHeld == true) lock?.release()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            audioRequest?.let { audioManager.abandonAudioFocusRequest(it) }
-        }
+        if (lock?.isHeld == true) lock?.release()
     }
 }

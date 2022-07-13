@@ -3,9 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".ui.voip.new_arch.ui.views.CallFragment">
+
     <data>
-        <import type="android.view.View"/>
-        <import type="com.joshtalks.joshskills.base.constants.ConstantsKt"/>
+
+        <import type="android.view.View" />
+
+        <import type="com.joshtalks.joshskills.R" />
+
+        <import type="com.joshtalks.joshskills.base.constants.ConstantsKt" />
+
         <import type="com.joshtalks.joshskills.voip.data.RecordingButtonState" />
 
         <import type="com.joshtalks.joshskills.voip.Utils" />
@@ -73,13 +79,13 @@
             android:layout_marginLeft="@dimen/_10sdp"
             android:layout_marginRight="@dimen/_10sdp"
             android:gravity="center"
+            android:lines="2"
+            android:text="@{vm.uiState.occupation}"
             android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
             android:textColor="@color/white"
             android:textSize="@dimen/_14ssp"
             android:textAlignment="center"
             android:visibility='@{vm.uiState.occupation.equals("")  ? View.GONE : View.VISIBLE}'
-            android:text="@{vm.uiState.occupation}"
-            android:lines="2"
             app:layout_constraintTop_toBottomOf="@+id/caller_name"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

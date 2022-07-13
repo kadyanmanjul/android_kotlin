@@ -15,10 +15,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
-import com.joshtalks.joshskills.base.constants.FPP
-import com.joshtalks.joshskills.base.constants.FROM_INCOMING_CALL
-import com.joshtalks.joshskills.base.constants.GROUP
-import com.joshtalks.joshskills.base.constants.PEER_TO_PEER
+import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.base.log.Feature
 import com.joshtalks.joshskills.base.log.JoshLog
 import com.joshtalks.joshskills.quizgame.base.GameEventLiveData
@@ -26,6 +23,9 @@ import com.joshtalks.joshskills.ui.call.repository.RepositoryConstants.CONNECTIO
 import com.joshtalks.joshskills.ui.call.repository.WebrtcRepository
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.call_recording.ProcessCallRecordingService
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.models.CallUIState
+import com.joshtalks.joshskills.voip.Utils
+import com.joshtalks.joshskills.voip.constant.*
+import com.joshtalks.joshskills.voip.constant.Category.*
 import com.joshtalks.joshskills.ui.voip.util.ScreenViewRecorder
 import com.joshtalks.joshskills.voip.*
 import com.joshtalks.joshskills.voip.constant.*
@@ -52,7 +52,7 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
     lateinit var source: String
     private val repository = WebrtcRepository(viewModelScope)
     private val mutex = Mutex(false)
-    val callType = ObservableField("")
+    var callType : Category = Category.PEER_TO_PEER
     var isEnabled = ObservableBoolean(true)
     val callStatus = ObservableInt(getCallStatus())
     var imageList = ObservableArrayList<String>()
@@ -73,10 +73,14 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
         viewModelScope.launch(start = CoroutineStart.LAZY) {
             mutex.withLock {
                 if (PrefManager.getVoipState() == State.IDLE && isConnectionRequestSent.not()) {
-                    Log.d(TAG, " connectCallJob : Inside - $callData")
-                    repository.connectCall(callData)
+                    Log.d(TAG, " connectCallJob : Inside - $callData  $callType")
+                    repository.connectCall(callData,callType)
                     isConnectionRequestSent = true
+                    if(callType==Category.FPP && source == FROM_ACTIVITY){
+                        uiState.currentState = "Ringing..."
+                    }
                 }
+
             }
         }
     }
@@ -301,12 +305,17 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                 uiState.recordingButtonState = state.recordingButtonState
                 if (uiState.recordTime != state.recordingStartTime)
                     uiState.recordTime = state.recordingStartTime
+
+                if(voipState!=State.IDLE && voipState != State.SEARCHING) {
+                    uiState.name = state.remoteUserName
+                    uiState.profileImage = state.remoteUserImage ?: ""
+                }
+
                 withContext(Dispatchers.Main) {
                     uiState
                     timer = getTime(state.recordingButtonState)
                     timer?.start()
                 }
-                uiState.name = state.remoteUserName
                 try {
                     uiState.localUserName = Utils.context?.getMentorName()?:""
                     uiState.localUserProfile = Utils.context?.getMentorProfile()?:""
@@ -333,8 +342,6 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                 } else {
                     uiState.p2pCallBackgroundColor = R.color.black
                 }
-
-
 
                 when(state.recordingButtonState) {
                     RecordingButtonState.IDLE -> stoppedRecUIchanges()

@@ -31,7 +31,6 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.databinding.CallRatingDialogBinding
@@ -142,6 +141,7 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
                    }
                }
            }
+
            ratingList.setOnCheckedChangeListener(RadioGroup.OnCheckedChangeListener { group, checkedId ->
                val myAnim = AnimationUtils.loadAnimation(activity, R.anim.zoom_in)
                val interpolator = MyBounceInterpolator(0.8, 10.0)
@@ -227,8 +227,8 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
             binding.block.setTextColor(Color.WHITE)
         }
         isBlockSelected = true
-
     }
+
     private fun unSelectChange(s: String) {
         if(s=="fpp"&& vm.ifDialogShow==1 && PrefManager.getBoolValue(IS_COURSE_BOUGHT) && PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID){
             binding.block.strokeColor = ColorStateList.valueOf(Color.BLACK)

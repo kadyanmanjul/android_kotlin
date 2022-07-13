@@ -5,14 +5,11 @@ import com.google.gson.Gson
 import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.communication.constants.ServerConstants.Companion.ACK_UI_STATE_UPDATED
 import com.joshtalks.joshskills.voip.communication.constants.ServerConstants.Companion.CHANNEL
+import com.joshtalks.joshskills.voip.communication.constants.ServerConstants.Companion.FPP_INCOMING_CALL
+import com.joshtalks.joshskills.voip.communication.constants.ServerConstants.Companion.GROUP_INCOMING_CALL
 import com.joshtalks.joshskills.voip.communication.constants.ServerConstants.Companion.INCOMING_CALL
 import com.joshtalks.joshskills.voip.communication.constants.ServerConstants.Companion.UI_STATE_UPDATED
-import com.joshtalks.joshskills.voip.communication.model.Channel
-import com.joshtalks.joshskills.voip.communication.model.Communication
-import com.joshtalks.joshskills.voip.communication.model.Error
-import com.joshtalks.joshskills.voip.communication.model.IncomingCall
-import com.joshtalks.joshskills.voip.communication.model.Message
-import com.joshtalks.joshskills.voip.communication.model.UI
+import com.joshtalks.joshskills.voip.communication.model.*
 import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.pubnub.api.PubNub
 import com.pubnub.api.callbacks.SubscribeCallback
@@ -67,6 +64,8 @@ internal class PubNubSubscriber(val scope: CoroutineScope) : SubscribeCallback()
                 val message = when(pnMessageResult.userMetadata.asInt) {
                     CHANNEL -> Gson().fromJson(messageJson, Channel::class.java)
                     INCOMING_CALL -> Gson().fromJson(messageJson, IncomingCall::class.java)
+                    GROUP_INCOMING_CALL -> Gson().fromJson(messageJson, GroupIncomingCall::class.java)
+                    FPP_INCOMING_CALL -> Gson().fromJson(messageJson, FppIncomingCall::class.java)
                     UI_STATE_UPDATED, ACK_UI_STATE_UPDATED -> Gson().fromJson(messageJson, UI::class.java)
                     else -> Gson().fromJson(messageJson, Message::class.java)
                 }

@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.voip.mediator
 
 import com.joshtalks.joshskills.voip.communication.model.IncomingCall
+import com.joshtalks.joshskills.voip.constant.Category
 import com.joshtalks.joshskills.voip.constant.Event
 import com.joshtalks.joshskills.voip.data.ServiceEvents
 import com.joshtalks.joshskills.voip.data.UIState
@@ -17,9 +18,9 @@ internal interface CallServiceMediator {
     // To Observer Mediator Events
     fun observeEvents() : SharedFlow<Envelope<Event>>
     // Needed for Connect Call
-    fun connectCall(callType: Int, callData : HashMap<String, Any>)
+    fun connectCall(callCategory: Category, callData : HashMap<String, Any>)
     // Needed to show Incoming Call TODO: Need to check
-    fun showIncomingCall(incomingCall : IncomingCall)
+    suspend fun handleIncomingCall(map: HashMap<String, String>)
     // Needed to hide Notification
     fun hideIncomingCall()
     fun declineIncomingCall()

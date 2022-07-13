@@ -53,7 +53,7 @@ internal class AgoraWebrtcService(val scope: CoroutineScope) : WebrtcService {
             listener
         ).apply {
             setParameters("{\"rtc.peer.offline_period\":5000}")
-            setParameters("{\"che.audio.keep.audiosession\":true}")
+            setParameters("{\"che.audio.keep.audiosession\":false}")
 
             //            TODO:SOUND PROBLEM
             setParameters("{\"che.audio.enable.aec\":false}")  //for automatic echo cancelling
