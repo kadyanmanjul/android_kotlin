@@ -11,7 +11,7 @@ if (!project.hasProperty("devBuild")) {
 //-PdevBuild --warning-mode=all --stacktrace
 def majorVersion = 5
 def minorVersion = 1
-def patchVersion = 22
+def patchVersion = 25
 
 android {
     compileSdkVersion 31
@@ -105,6 +105,8 @@ android {
             resValue("bool", "branch_test", "true")
             resValue("string", "truecaller_key", "P31uP46c15762366b41fdba957b16b9a7c620")
             crunchPngs false
+            shrinkResources false
+
             ext.enableCrashlytics = true
         }
         release {
@@ -478,4 +480,5 @@ dependencies {
     //singular
 //    implementation 'com.singular.sdk:singular_sdk:12.0.5'
     implementation files("libs/singular_sdk-12.0.5.aar")
+    implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 }

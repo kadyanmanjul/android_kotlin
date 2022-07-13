@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest
     xmlns:dist="http://schemas.android.com/apk/distribution"
-    package="com.dynamic.module"
+    package="com.joshtalks.joshskills.dynamic.dynamic"
     split="dynamic-module">
 
     <dist:module
         dist:onDemand="true"
-        dist:title="title_test">
+        dist:title="dynamic">
         <dist:fusing include="true" />
     </dist:module>
 

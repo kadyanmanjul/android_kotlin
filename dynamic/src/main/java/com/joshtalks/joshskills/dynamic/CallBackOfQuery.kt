@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.dynamic.feature
+package com.joshtalks.joshskills.dynamic
 
 import android.os.Handler
 import android.os.Looper
