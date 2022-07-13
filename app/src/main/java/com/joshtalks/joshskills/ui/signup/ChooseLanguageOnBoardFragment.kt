@@ -9,22 +9,18 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
-import com.joshtalks.joshskills.core.IS_EFT_VARIENT_ENABLED
 import com.joshtalks.joshskills.core.LANGUAGE_SELECTION_SCREEN_OPENED
-import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.Utils
-import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.databinding.FragmentChooseLanguageOnboardBinding
 import com.joshtalks.joshskills.repository.server.ChooseLanguages
 import com.joshtalks.joshskills.ui.signup.adapters.ChooseLanguageAdapter
 
-class ChooseLanguageOnBoardFragment: BaseFragment() {
+class ChooseLanguageOnBoardFragment : BaseFragment() {
     private lateinit var binding: FragmentChooseLanguageOnboardBinding
     private var languageAdapter = ChooseLanguageAdapter()
     private var is100PointsActive = false
     private var eftActive = false
-    private var language: ChooseLanguages?=null
 
     val viewModel by lazy {
         ViewModelProvider(requireActivity()).get(FreeTrialOnBoardViewModel::class.java)
@@ -74,37 +70,15 @@ class ChooseLanguageOnBoardFragment: BaseFragment() {
                 languageAdapter.setData(it)
             }
         }
-        viewModel.eftABtestLiveData.observe(viewLifecycleOwner){ abTestCampaignData ->
-            abTestCampaignData?.let { map ->
-                eftActive =(map.variantKey == VariantKeys.EFT_ENABLED.NAME) && map.variableMap?.isEnabled == true
-                PrefManager.put(IS_EFT_VARIENT_ENABLED, eftActive)
-            }
-        }
-        viewModel.points100ABtestLiveData.observe(viewLifecycleOwner) { map ->
-            if (map != null) {
-                is100PointsActive =
-                    (map.variantKey == VariantKeys.POINTS_HUNDRED_ENABLED.NAME) && map.variableMap?.isEnabled == true
-
-                language?.let {
-                    (requireActivity() as FreeTrialOnBoardActivity).showStartTrialPopup(
-                        it,
-                        is100PointsActive
-                    )
-                }
-            }else{
-                language?.let {
-                    (requireActivity() as FreeTrialOnBoardActivity).showStartTrialPopup(
-                        it,
-                        false
-                    )
-                }
-            }
+        viewModel.abTestRepository.apply {
+            eftActive = isVariantActive(VariantKeys.EFT_ENABLED)
+            is100PointsActive = isVariantActive(VariantKeys.POINTS_HUNDRED_ENABLED)
         }
     }
 
     private fun initRV() {
         val linearLayoutManager = LinearLayoutManager(activity)
-        languageAdapter.setLanguageItemClickListener(this::initABTest)
+        languageAdapter.setLanguageItemClickListener(this::onLanguageSelected)
         binding.rvChooseLanguage.apply {
             layoutManager = linearLayoutManager
             adapter = languageAdapter
@@ -112,9 +86,13 @@ class ChooseLanguageOnBoardFragment: BaseFragment() {
     }
 
 
-    fun initABTest(language: ChooseLanguages) {
-        this.language = language
-        viewModel.get100PCampaignData(CampaignKeys.HUNDRED_POINTS.NAME, CampaignKeys.EXTEND_FREE_TRIAL.name)
+    fun onLanguageSelected(language: ChooseLanguages) {
+        language.let {
+            (requireActivity() as FreeTrialOnBoardActivity).showStartTrialPopup(
+                it,
+                is100PointsActive
+            )
+        }
     }
 
     fun onBackPressed() {

@@ -9,7 +9,6 @@ import android.graphics.Outline
 import android.graphics.PorterDuff
 import android.graphics.Rect
 import android.net.Uri
-import android.opengl.Visibility
 import android.os.Bundle
 import android.os.Handler
 import android.util.DisplayMetrics
@@ -25,7 +24,6 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
@@ -49,7 +47,6 @@ import com.joshtalks.joshskills.constants.OPEN_READING_SHARING_FULLSCREEN
 import com.joshtalks.joshskills.constants.PERMISSION_FROM_READING
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.ApiCallStatus.*
-import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
@@ -68,7 +65,6 @@ import com.joshtalks.joshskills.repository.local.eventbus.MediaProgressEventBus
 import com.joshtalks.joshskills.repository.server.course_detail.VideoModel
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.chat.CHAT_ROOM_ID
-import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.ui.leaderboard.ItemOverlay
 import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_GRAMMAR_ANIMATION
 import com.joshtalks.joshskills.ui.lesson.grammar.GrammarFragment
@@ -100,7 +96,6 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.fragment_chat_n_pay.*
 import kotlinx.android.synthetic.main.lesson_activity.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -249,13 +244,8 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         titleView = findViewById(R.id.text_message_title)
 
         setObservers()
-        viewModel.getWhatsappRemarketingCampaign(CampaignKeys.WHATSAPP_REMARKETING.name)
         viewModel.getLesson(lessonId)
-        viewModel.getTwentyMinFtuCallCampaignData(
-            CampaignKeys.TWENTY_MIN_TARGET.NAME,
-            lessonId,
-            isDemo
-        )
+        viewModel.getQuestions(lessonId, isDemo)
 
         val helpIv: ImageView = findViewById(R.id.iv_help)
         helpIv.visibility = View.GONE
@@ -345,6 +335,10 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
     }
 
     private fun setObservers() {
+        viewModel.abTestRepository.apply {
+            isWhatsappRemarketingActive = isVariantActive(VariantKeys.WR_ENABLED)
+            isTwentyMinFtuCallActive = isVariantActive(VariantKeys.TWENTY_MIN_ENABLED)
+        }
         viewModel.apiStatus.observe(this) {
             when (it) {
                 START -> {
@@ -707,20 +701,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                 }
             }
         }
-        viewModel.whatsappRemarketingLiveData.observe(this) { abTestCampaignData ->
-            abTestCampaignData?.let { map ->
-                isWhatsappRemarketingActive =
-                    (map.variantKey == VariantKeys.WR_ENABLED.NAME) && map.variableMap?.isEnabled == true
-            }
-        }
 
-        viewModel.twentyMinCallFtuAbTestLiveData.observe(this) { abTestCampaignData ->
-            abTestCampaignData?.let { map ->
-                isTwentyMinFtuCallActive =
-                    (map.variantKey == VariantKeys.TWENTY_MIN_ENABLED.NAME) && map.variableMap?.isEnabled == true
-                PrefManager.put(IS_TWENTY_MIN_CALL_ENABLED, isTwentyMinFtuCallActive)
-            }
-        }
         videoEvent.observe(this) { event ->
             event.getContentIfNotHandledOrReturnNull()?.let {
                 binding.apply {
@@ -1384,17 +1365,13 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        if (intent?.getBooleanExtra("reopen",false)==true) {
+        if (intent?.getBooleanExtra("reopen", false) == true) {
             return
         }
         intent?.let {
             val lessonId = if (intent.hasExtra(LESSON_ID)) intent.getIntExtra(LESSON_ID, 0) else 0
             viewModel.getLesson(lessonId)
-            viewModel.getTwentyMinFtuCallCampaignData(
-                CampaignKeys.TWENTY_MIN_TARGET.NAME,
-                lessonId,
-                isDemo
-            )
+            viewModel.getQuestions(lessonId, isDemo)
         }
     }
 
@@ -1629,16 +1606,17 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                 )
         )
     }
-    private fun closeReadingFullScreen(){
+
+    private fun closeReadingFullScreen() {
         supportFragmentManager.popBackStackImmediate()
         container_reading.visibility = View.GONE
     }
 }
 
 @BindingAdapter("setRatingText")
-fun AppCompatTextView.ratingText(rating:UserRating?){
+fun AppCompatTextView.ratingText(rating: UserRating?) {
     Log.d(TAG, "ratingText: $rating")
-    if(rating!=null) {
+    if (rating != null) {
         if (rating.rating.toInt() == -1 || rating.rating.isNaN()) {
             this.visibility = View.GONE
         } else {

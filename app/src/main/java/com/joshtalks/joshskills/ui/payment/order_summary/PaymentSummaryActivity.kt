@@ -48,6 +48,7 @@ import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIA
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.PAYMENT_SUMMARY_CTA_LABEL_FREE
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.GoalKeys
+import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.analytics.*
 import com.joshtalks.joshskills.databinding.ActivityPaymentSummaryBinding
 import com.joshtalks.joshskills.messaging.RxBus2
@@ -489,7 +490,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         }
 
         if(binding.materialButton.text != AppObjectController.getFirebaseRemoteConfig().getString(FREE_TRIAL_PAYMENT_BTN_TXT)) {
-            if(PrefManager.getBoolValue(INCREASE_COURSE_PRICE_CAMPAIGN_ACTIVE)) {
+            if(viewModel.abTestRepository.isVariantActive(VariantKeys.ICP_ENABLED)) {
                 viewModel.postGoal("ICP_BUY_PAGE_SEEN",CampaignKeys.INCREASE_COURSE_PRICE.name)
             }
         }
@@ -868,7 +869,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                 .getString(FirebaseRemoteConfigKey.FREE_TRIAL_POPUP_HUNDRED_POINTS_TEXT + testId)
                 .replace("\\n", "\n")
         }else{
-            popUpText =   if(PrefManager.getBoolValue(INCREASE_COURSE_PRICE_ABTEST) && testId == ENGLISH_FREE_TRIAL_1D_TEST_ID){
+            popUpText =   if(viewModel.abTestRepository.isVariantActive(VariantKeys.ICP_ENABLED) && testId == ENGLISH_FREE_TRIAL_1D_TEST_ID){
                 getString(R.string.free_trial_popup_for_icp)
             }
             else {
@@ -943,11 +944,9 @@ class PaymentSummaryActivity : CoreJoshActivity(),
     @Synchronized
     override fun onPaymentSuccess(razorpayPaymentId: String) {
         if(viewModel.getPaymentTestId() == ENGLISH_COURSE_TEST_ID) {
-            PrefManager.getBoolValue(INCREASE_COURSE_PRICE_CAMPAIGN_ACTIVE)
             viewModel.postGoal("ICP_COURSE_BOUGHT",CampaignKeys.INCREASE_COURSE_PRICE.name)
         }
         else if(viewModel.getPaymentTestId() == SUBSCRIPTION_TEST_ID) {
-            PrefManager.getBoolValue(INCREASE_COURSE_PRICE_CAMPAIGN_ACTIVE)
             viewModel.postGoal("ICP_SUBSCRIPTION_BOUGHT",CampaignKeys.INCREASE_COURSE_PRICE.name)
         }
 

@@ -7,7 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.core.*
-import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
+import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
@@ -19,7 +19,6 @@ import com.joshtalks.joshskills.repository.server.ChooseLanguages
 import com.joshtalks.joshskills.repository.server.TrueCallerLoginRequest
 import com.joshtalks.joshskills.repository.server.signup.LoginResponse
 import com.joshtalks.joshskills.ui.activity_feed.utils.IS_USER_EXIST
-import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import com.truecaller.android.sdk.TrueProfile
 import com.userexperior.UserExperior
@@ -39,56 +38,7 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
     var userName: String? = null
     var isVerified: Boolean = false
     var isUserExist: Boolean = false
-    val points100ABtestLiveData = MutableLiveData<ABTestCampaignData?>()
-    val eftABtestLiveData = MutableLiveData<ABTestCampaignData?>()
-    var newLanguageABtestLiveData = MutableLiveData<ABTestCampaignData?>()
-    var increaseCoursePriceABtestLiveData = MutableLiveData<ABTestCampaignData?>()
-
-    val repository: ABTestRepository by lazy { ABTestRepository() }
-    fun get100PCampaignData(campaign: String, campaignEft: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                repository.getCampaignData(campaignEft)?.let { campaign ->
-                    eftABtestLiveData.postValue(campaign)
-                }
-                val response = repository.getCampaignData(campaign)
-                if (response != null) {
-                    points100ABtestLiveData.postValue(response)
-                } else {
-                    points100ABtestLiveData.postValue(null)
-                }
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-                points100ABtestLiveData.postValue(null)
-            }
-        }
-    }
-
-    fun getNewLanguageABTest(campaign: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                repository.getCampaignData(campaign)?.let { campaign ->
-                    newLanguageABtestLiveData.postValue(campaign)
-                }
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-                newLanguageABtestLiveData.postValue(null)
-            }
-        }
-    }
-
-    fun getICPABTest(campaign: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                repository.getCampaignData(campaign)?.let { campaign ->
-                    increaseCoursePriceABtestLiveData.postValue(campaign)
-                }
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-                increaseCoursePriceABtestLiveData.postValue(null)
-            }
-        }
-    }
+    val abTestRepository by lazy { ABTestRepository() }
 
     fun saveImpression(eventName: String) {
         viewModelScope.launch(Dispatchers.IO) {

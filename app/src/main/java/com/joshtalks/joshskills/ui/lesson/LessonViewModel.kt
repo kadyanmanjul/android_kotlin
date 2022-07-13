@@ -19,7 +19,6 @@ import com.joshtalks.joshskills.constants.PERMISSION_FROM_READING_GRANTED
 import com.joshtalks.joshskills.constants.SHARE_VIDEO
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.AppObjectController.Companion.appDatabase
-import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
 import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
@@ -57,7 +56,6 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableSharedFlow
 import timber.log.Timber
 import java.io.File
-import java.text.SimpleDateFormat
 import java.util.*
 
 
@@ -116,39 +114,11 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     fun isD2pIntroVideoComplete(event: Boolean) = introVideoCompleteLiveData.postValue(event)
     fun isHowToSpeakClicked(event: Boolean) = howToSpeakLiveData.postValue(event)
     fun showHideSpeakingFragmentCallButtons(event: Int) = callBtnHideShowLiveData.postValue(event)
-    val whatsappRemarketingLiveData = MutableLiveData<ABTestCampaignData?>()
-    val twentyMinCallFtuAbTestLiveData = MutableLiveData<ABTestCampaignData?>()
-    val speakingABtestLiveData = MutableLiveData<ABTestCampaignData?>()
 
-    val repository: ABTestRepository by lazy { ABTestRepository() }
+    val abTestRepository: ABTestRepository by lazy { ABTestRepository() }
 
     init{
         getRating()
-    }
-
-    fun getWhatsappRemarketingCampaign(campaign: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            repository.getCampaignData(campaign)?.let { campaign ->
-                whatsappRemarketingLiveData.postValue(campaign)
-            }
-        }
-    }
-
-    fun getSpeakingABTestCampaign(campaign: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            repository.getCampaignData(campaign)?.let { campaign ->
-                speakingABtestLiveData.postValue(campaign)
-            }
-        }
-    }
-
-    fun getTwentyMinFtuCallCampaignData(campaign: String, lessonId: Int, isDemo: Boolean = false) {
-        viewModelScope.launch(Dispatchers.IO) {
-            repository.getCampaignData(campaign)?.let { campaign ->
-                twentyMinCallFtuAbTestLiveData.postValue(campaign)
-            }
-            getQuestions(lessonId, isDemo)
-        }
     }
 
     fun getVideoData() {
@@ -918,7 +888,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
 
     fun postGoal(goal: String, campaign: String?) {
         viewModelScope.launch(Dispatchers.IO) {
-            repository.postGoal(goal)
+            abTestRepository.postGoal(goal)
             if (campaign != null) {
                 val data = ABTestRepository().getCampaignData(campaign)
                 data?.let {

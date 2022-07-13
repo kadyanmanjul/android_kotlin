@@ -6,7 +6,6 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
@@ -23,8 +22,8 @@ import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIA
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIAL_POPUP_TITLE_TEXT
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIAL_POPUP_YES_BUTTON_TEXT
 import com.joshtalks.joshskills.core.Utils.getLangCodeFromlangTestId
-import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
+import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
 import com.joshtalks.joshskills.core.analytics.*
 import com.joshtalks.joshskills.databinding.ActivityFreeTrialOnBoardBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -55,6 +54,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
     private var eftActive = false
     private var is100PointsActive = false
     private var increaseCoursePrice = false
+    private var isFreemiumCourse = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -127,8 +127,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
                 PrefManager.put(IS_GUEST_ENROLLED, true)
                 PrefManager.put(IS_PAYMENT_DONE, false)
 
-            }
-            else if (languageActive)
+            } else if (languageActive)
                 openChooseLanguageFragment()
             else if (is100PointsActive)
                 showStartTrialPopup(language, true)
@@ -158,30 +157,6 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         viewModel.progressBarStatus.observe(this, {
             showProgressBar()
         })
-        viewModel.newLanguageABtestLiveData.observe(this) { abTestCampaignData ->
-            abTestCampaignData?.let { map ->
-                languageActive =
-                    (map.variantKey == VariantKeys.NEW_LANGUAGE_ENABLED.NAME) && map.variableMap?.isEnabled == true
-            }
-        }
-        viewModel.eftABtestLiveData.observe(this) { abTestCampaignData ->
-            abTestCampaignData?.let { map ->
-                eftActive = (map.variantKey == VariantKeys.EFT_ENABLED.NAME) && map.variableMap?.isEnabled == true
-                PrefManager.put(IS_EFT_VARIENT_ENABLED, eftActive)
-            }
-        }
-        viewModel.points100ABtestLiveData.observe(this) { map ->
-            is100PointsActive =
-                (map?.variantKey == VariantKeys.POINTS_HUNDRED_ENABLED.NAME) && map.variableMap?.isEnabled == true
-        }
-
-        viewModel.increaseCoursePriceABtestLiveData.observe(this) { abTestCampaignData ->
-            abTestCampaignData?.let { map ->
-                increaseCoursePrice =
-                    (map.variantKey == VariantKeys.ICP_ENABLED.NAME) && map.variableMap?.isEnabled == true
-                PrefManager.put(INCREASE_COURSE_PRICE_ABTEST, increaseCoursePrice)
-            }
-        }
     }
 
     fun signUp() {
@@ -224,7 +199,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
                     .replace("\\n", "\n")
         } else {
             dialogView.findViewById<TextView>(R.id.e_g_motivat).text =
-                if (PrefManager.getBoolValue(INCREASE_COURSE_PRICE_ABTEST) && language.testId == HINDI_TO_ENGLISH_TEST_ID) {
+                if (viewModel.abTestRepository.isVariantActive(VariantKeys.ICP_ENABLED) && language.testId == HINDI_TO_ENGLISH_TEST_ID) {
                     getString(R.string.free_trial_popup_for_icp)
                 } else {
                     AppObjectController.getFirebaseRemoteConfig()
@@ -388,9 +363,13 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
     }
 
     fun initABTest() {
-        viewModel.getNewLanguageABTest(CampaignKeys.NEW_LANGUAGE.name)
-        viewModel.get100PCampaignData(CampaignKeys.HUNDRED_POINTS.NAME, CampaignKeys.EXTEND_FREE_TRIAL.name)
-        viewModel.getICPABTest(CampaignKeys.INCREASE_COURSE_PRICE.name)
+        ABTestRepository().apply {
+            languageActive = isVariantActive(VariantKeys.NEW_LANGUAGE_ENABLED)
+            eftActive = isVariantActive(VariantKeys.EFT_ENABLED)
+            increaseCoursePrice = isVariantActive(VariantKeys.ICP_ENABLED)
+            is100PointsActive = isVariantActive(VariantKeys.POINTS_HUNDRED_ENABLED)
+            isFreemiumCourse = isVariantActive(VariantKeys.FREEMIUM_ENABLED)
+        }
     }
 
     companion object {

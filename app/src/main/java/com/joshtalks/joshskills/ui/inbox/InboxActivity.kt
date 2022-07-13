@@ -13,7 +13,6 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.observe
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.textview.MaterialTextView
@@ -100,8 +99,6 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
     }
 
     private fun initABTest() {
-        viewModel.getEFTCampaignData(CampaignKeys.EXTEND_FREE_TRIAL.name)
-        viewModel.getICPABTest(CampaignKeys.INCREASE_COURSE_PRICE.name)
         viewModel.getA2C1CampaignData(CampaignKeys.A2_C1.name)
     }
 
@@ -243,20 +240,6 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
             }
         }
 
-        viewModel.extendFreeTrialAbTestLiveData.observe(this) { abTestCampaignData ->
-            abTestCampaignData?.let { map ->
-                isExtendFreeTrialActive =
-                    (map.variantKey == VariantKeys.EFT_ENABLED.name) && map.variableMap?.isEnabled == true
-                PrefManager.put(IS_EFT_VARIENT_ENABLED, isExtendFreeTrialActive)
-            }
-        }
-
-        viewModel.increaseCoursePriceABtestLiveData.observe(this) { abTestCampaignData ->
-            abTestCampaignData?.let { map ->
-                increaseCoursePrice = (map.variantKey == VariantKeys.ICP_ENABLED.NAME) && map.variableMap?.isEnabled == true
-                PrefManager.put(INCREASE_COURSE_PRICE_ABTEST, increaseCoursePrice)
-            }
-        }
     }
 
     private fun addCourseInRecyclerView(items: List<InboxEntity>) {
@@ -356,6 +339,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         Runtime.getRuntime().gc()
         initABTest()
         initMoEngage()
+        viewModel.getRegisterCourses()
         viewModel.getProfileData(Mentor.getInstance().getId())
     }
 
@@ -438,7 +422,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
 
     override fun onClick(inboxEntity: InboxEntity) {
         PrefManager.put(ONBOARDING_STAGE, OnBoardingStage.COURSE_OPENED.value)
-        val check = PrefManager.getBoolValue(IS_EFT_VARIENT_ENABLED)
+        val check = viewModel.abTestRepository.isVariantActive(VariantKeys.EFT_ENABLED)
         if (check && inboxEntity.isFreeTrialExtendable) {
             PrefManager.put(IS_FREE_TRIAL_CAMPAIGN_ACTIVE, true)
             ExtendFreeTrialActivity.startExtendFreeTrialActivity(this, inboxEntity)

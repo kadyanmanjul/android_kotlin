@@ -1,5 +1,7 @@
 package com.joshtalks.joshskills.core.abTest.repository
 
+import android.util.Log
+import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
@@ -14,6 +16,8 @@ class ABTestRepository {
 
     private val apiService by lazy { AppObjectController.abTestNetworkService }
     private val database = AppObjectController.appDatabase.abCampaignDao()
+    var data: Map<String, Boolean> = getABTestData()
+
     private val listOfCampaigns = listOf(
         CampaignKeys.SPEAKING_INTRODUCTION_VIDEO.name,
         CampaignKeys.ACTIVITY_FEED.name,
@@ -28,11 +32,11 @@ class ABTestRepository {
         CampaignKeys.TWENTY_MIN_TARGET.NAME,
         CampaignKeys.NEW_LANGUAGE.name,
         CampaignKeys.A2_C1.name,
-        CampaignKeys.INCREASE_COURSE_PRICE.name
+        CampaignKeys.INCREASE_COURSE_PRICE.name,
+        CampaignKeys.FREEMIUM_COURSE.name,
     )
 
     suspend fun getCampaignData(campaign: String): ABTestCampaignData? {
-
         return database.getABTestCampaign(campaign)
     }
 
@@ -42,102 +46,32 @@ class ABTestRepository {
             val prop = JSONObject()
             val apiResponse = apiService.getAllCampaigns(list.joinToString(","))
             if (apiResponse.isSuccessful && apiResponse.body() != null) {
-                database.insertCampaigns(apiResponse.body()!!)
-
+                putABTestData(apiResponse.body()!!)
                 for (i in apiResponse.body()!!) {
-                    when (i.campaignKey) {
-                        "SPEAKING_INTRODUCTION_VIDEO" -> {
-                            if (i.isCampaignActive) {
-                                prop.put("SPEAKING_INTRODUCTION_VIDEO", i.variantKey)
-                            }
-                        }
-                        "ENGLISH_SYLLABUS_DOWNLOAD" -> {
-                            if (i.isCampaignActive) {
-                                prop.put("ENGLISH_SYLLABUS_DOWNLOAD", i.variantKey)
-                            }
-                        }
-                        "ACTIVITY_FEED" -> {
-                            if (i.isCampaignActive) {
-                                prop.put("ACTIVITY_FEED", i.variantKey)
-                            }
-                        }
-                        "P2P_IMAGE_SHARING" -> {
-                            if (i.isCampaignActive) {
-                                prop.put("P2P_IMAGE_SHARING", i.variantKey)
-                            }
-                        }
-                        "100_POINTS" -> {
-                            if (i.isCampaignActive) {
-                                prop.put("100_POINTS", i.variantKey)
-                            }
-                        }
-                        "BUY_LAYOUT_CHANGED" -> {
-                            if (i.isCampaignActive) {
-                                prop.put("BUY_LAYOUT_CHANGED", i.variantKey)
-                            }
-                        }
-                        "WHATSAPP_REMARKETING" -> {
-                            if (i.isCampaignActive) {
-                                prop.put("WHATSAPP_REMARKETING", i.variantKey)
-                            }
-                        }
-                        "PEOPLE_HELP_COUNT" -> {
-                            if (i.isCampaignActive) {
-                                prop.put("PEOPLE_HELP_COUNT", i.variantKey)
-                            }
-                        }
-                        "EXTEND_FREE_TRIAL" -> {
-                            if (i.isCampaignActive) {
-                                prop.put("EXTEND_FREE_TRIAL", i.variantKey)
-                            }
-                        }
-                        "ACTIVITY_FEED_V2" -> {
-                            if (i.isCampaignActive) {
-                                prop.put("ACTIVITY_FEED_V2", i.variantKey)
-                            }
-                        }
-                        "20_MIN_TARGET" -> {
-                            if (i.isCampaignActive) {
-                                prop.put("20_MIN_TARGET", i.variantKey)
-                            }
-                        }
-                        "A2_C1" -> {
-                            if (i.isCampaignActive) {
-                                prop.put("A2_C1", i.variantKey)
-                                PrefManager.put(
-                                    IS_A2_C1_RETENTION_ENABLED,
-                                    (i.variantKey == VariantKeys.A2_C1_RETENTION.name) && i.variableMap?.isEnabled == true
-                                )
-                            }
-                        }
-                        "INCREASE_COURSE_PRICE" -> {
-                            if(i.isCampaignActive) {
-                                PrefManager.put(INCREASE_COURSE_PRICE_CAMPAIGN_ACTIVE,i.isCampaignActive)
-                            }
+                    if (i.isCampaignActive)
+                        prop.put(i.campaignKey, i.variantKey)
+                    if (i.campaignKey == "A2_C1") {
+                        if (i.isCampaignActive) {
+                            prop.put("A2_C1", i.variantKey)
+                            PrefManager.put(
+                                IS_A2_C1_RETENTION_ENABLED,
+                                (i.variantKey == VariantKeys.A2_C1_RETENTION.name) && i.variableMap?.isEnabled == true
+                            )
                         }
                     }
                 }
-
-                val exp = "experiment_started"
-                val obj = JSONObject()
-                MixPanelTracker.mixPanel.track("$$exp", obj)
-                MixPanelTracker.mixPanel.registerSuperProperties(prop)
-                MixPanelTracker.mixPanel.identify(PrefManager.getStringValue(USER_UNIQUE_ID))
-                MixPanelTracker.mixPanel.people.identify(PrefManager.getStringValue(USER_UNIQUE_ID))
-                MixPanelTracker.mixPanel.people.set(prop)
             }
+
+            val exp = "experiment_started"
+            val obj = JSONObject()
+            MixPanelTracker.mixPanel.track("$$exp", obj)
+            MixPanelTracker.mixPanel.registerSuperProperties(prop)
+            MixPanelTracker.mixPanel.identify(PrefManager.getStringValue(USER_UNIQUE_ID))
+            MixPanelTracker.mixPanel.people.identify(PrefManager.getStringValue(USER_UNIQUE_ID))
+            MixPanelTracker.mixPanel.people.set(prop)
         } catch (ex: Throwable) {
             ex.printStackTrace()
         }
-    }
-
-    suspend fun getAllCampaigns(): List<ABTestCampaignData>? {
-        try {
-            return database.getAllABTestCampaigns()
-        } catch (ex: Throwable) {
-            ex.showAppropriateMsg()
-        }
-        return null
     }
 
     suspend fun postGoal(goal: String) {
@@ -148,4 +82,45 @@ class ABTestRepository {
         }
     }
 
+    private fun getABTestData(): Map<String, Boolean> {
+        return try {
+            AppObjectController.gsonMapperForLocal.fromJson(
+                PrefManager.getStringValue(AB_TEST_DATA),
+                object : TypeToken<Map<String, Boolean>>() {}.type
+            )
+        } catch (e: Exception) {
+            mapOf<String, Boolean>()
+        }
+    }
+
+    private fun putABTestData(data: Map<String, Boolean>) {
+        PrefManager.put(AB_TEST_DATA, AppObjectController.gsonMapperForLocal.toJson(data))
+    }
+
+    fun putABTestData(campaigns: List<ABTestCampaignData>) {
+        val data = mutableMapOf<String, Boolean>()
+        for (campaign in campaigns) {
+            if (campaign.isCampaignActive && campaign.variantKey != null) {
+                data[campaign.variantKey] = campaign.variableMap?.isEnabled == true
+            }
+        }
+        putABTestData(data)
+    }
+
+    fun isVariantActive(variantName: VariantKeys): Boolean {
+        return if (data.containsKey(variantName.name)) {
+            data[variantName.name] ?: false
+        } else {
+            false
+        }
+    }
+
+    fun putCampaignData(campaignData: ABTestCampaignData) {
+        if (campaignData.variantKey != null) {
+            data.toMutableMap().apply {
+                this[campaignData.variantKey] = campaignData.variableMap?.isEnabled == true
+                putABTestData(this)
+            }
+        }
+    }
 }
