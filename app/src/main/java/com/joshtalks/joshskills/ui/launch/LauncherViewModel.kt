@@ -18,9 +18,6 @@ import com.joshtalks.joshskills.core.firestore.NotificationAnalytics
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.model.*
 import com.joshtalks.joshskills.repository.server.signup.LastLoginType
-import com.joshtalks.joshskills.ui.inbox.mentor_id
-import com.joshtalks.joshskills.util.DeepLinkImpression
-import com.joshtalks.joshskills.util.DeepLinkUtil
 import com.singular.sdk.Singular
 import io.branch.referral.Branch
 import io.branch.referral.Defines
@@ -33,6 +30,7 @@ import java.util.*
 class LauncherViewModel(application: Application) : AndroidViewModel(application) {
 
     val apiCallStatus: MutableLiveData<ApiCallStatus> = MutableLiveData()
+    val abTestRepository by lazy { ABTestRepository() }
 
     fun logAppLaunchEvent(networkOperatorName: String) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -263,9 +261,6 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-    fun updateABTestCampaigns() {
-        viewModelScope.launch {
-            ABTestRepository().updateAllCampaigns()
-        }
-    }
+    suspend fun updateABTestCampaigns() =
+        abTestRepository.updateAllCampaigns()
 }

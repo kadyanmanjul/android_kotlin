@@ -107,13 +107,8 @@ class ABTestRepository {
         putABTestData(data)
     }
 
-    fun isVariantActive(variantName: VariantKeys): Boolean {
-        return if (data.containsKey(variantName.name)) {
-            data[variantName.name] ?: false
-        } else {
-            false
-        }
-    }
+    fun isVariantActive(variantName: VariantKeys): Boolean =
+        data.containsKey(variantName.name) && (data[variantName.name] == true)
 
     fun putCampaignData(campaignData: ABTestCampaignData) {
         if (campaignData.variantKey != null) {
