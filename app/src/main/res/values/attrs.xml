@@ -459,4 +459,34 @@
         <attr name="android:shadowColor"/>
     </declare-styleable>
 
+    <declare-styleable name="JoshButton">
+        <attr name="android:text" format="string" />
+        <attr name="android:padding" format="dimension" />
+        <attr name="android:paddingLeft" format="dimension" />
+        <attr name="android:paddingRight" format="dimension" />
+        <attr name="android:paddingTop" format="dimension" />
+        <attr name="android:paddingBottom" format="dimension" />
+        <attr name="android:backgroundTint" format="color" />
+        <attr name="android:elevation" format="dimension" />
+        <attr name="android:textColor" format="color" />
+        <attr name="android:textSize" format="dimension" />
+        <attr name="android:textAllCaps" format="boolean" />
+        <attr name="android:enabled" format="boolean" />
+        <attr name="textAppearance" format="reference" />
+        <attr name="rippleColor" format="color" />
+        <attr name="android:strokeColor" format="color"/>
+        <attr name="android:strokeWidth" format="dimension"/>
+    </declare-styleable>
+
+    <declare-styleable name="JoshLoadingButton">
+        <attr name="android:text" format="string" />
+        <attr name="android:enabled" format="boolean" />
+        <attr name="android:autoStart" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="JoshShimmerButton">
+        <attr name="android:text" format="string" />
+        <attr name="android:autoStart" format="boolean" />
+        <attr name="android:enabled" format="boolean" />
+    </declare-styleable>
 </resources>
