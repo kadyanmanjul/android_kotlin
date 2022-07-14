@@ -8,6 +8,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
+import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.databinding.FragmentScheduleBinding
 import com.joshtalks.joshskills.ui.cohort_based_course.viewmodels.CommitmentFormViewModel
 
@@ -22,6 +23,11 @@ class ScheduleFragment: BaseFragment() {
     override fun initViewBinding() {
         binding.vm=vm
         binding.executePendingBindings()
+        val check = vm.abTest.isVariantActive(VariantKeys.FREEMIUM_ENABLED)
+        if (check){
+            binding.txtEmail.visibility = View.GONE
+            binding.emailEditText.visibility = View.GONE
+        }
     }
 
     override fun initViewState() {}

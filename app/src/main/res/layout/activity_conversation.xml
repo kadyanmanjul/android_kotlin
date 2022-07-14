@@ -925,6 +925,84 @@
                 app:lottie_loop="true"
                 app:lottie_repeatMode="reverse" />
         </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/overlay_AB_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:alpha="1"
+            android:background="@color/transparent_blue_alpha_75"
+            android:elevation="@dimen/_4sdp"
+            android:visibility="gone"
+            tools:visibility="gone">
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="@dimen/_20sdp">
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnSelectBatch"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_42sdp"
+                    android:layout_marginStart="@dimen/_9sdp"
+                    android:layout_marginEnd="@dimen/_9sdp"
+                    android:layout_marginBottom="@dimen/_30sdp"
+                    android:background="@drawable/rounded_primary_button_bg"
+                    android:onClick="@{()->handler.openScheduleFragmentCohortAB()}"
+                    android:ellipsize="end"
+                    android:visibility="gone"
+                    android:elevation="@dimen/_20sdp"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackgroundBorderless"
+                    android:maxLines="1"
+                    android:text="@string/select_batch_timing"
+                    android:textAllCaps="false"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_12ssp"
+                    android:textStyle="bold"/>
+
+                <com.joshtalks.joshskills.ui.tooltip.JoshTooltip
+                    android:id="@+id/explaination_tooltip"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/_20sdp"
+                    android:layout_centerHorizontal="true"
+                    app:layout_constraintBottom_toTopOf="@id/cbcTooltipFreemium"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_marginHorizontal="@dimen/_24sdp"
+                    android:visibility="invisible"
+                    app:tooltipText="Choose a slot for daily live group discussion sessions  "
+                    tools:visibility="gone" />
+                <FrameLayout
+                    android:id="@+id/cbcTooltipFreemium"
+                    android:layout_width="@dimen/_90sdp"
+                    android:layout_height="@dimen/_100sdp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="-20dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toTopOf="@+id/btnSelectBatch"
+                    android:elevation="@dimen/_20sdp"
+                    android:visibility="gone">
+
+                    <com.airbnb.lottie.LottieAnimationView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        app:lottie_autoPlay="true"
+                        android:rotation="90"
+                        android:elevation="@dimen/_30sdp"
+                        app:lottie_fileName="lottie/leaderboard_arrow.json"
+                        app:lottie_imageAssetsFolder="lottie"
+                        app:lottie_loop="true"
+                        app:lottie_repeatMode="reverse" />
+                </FrameLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </FrameLayout>
+
     </RelativeLayout>
 
 </layout>

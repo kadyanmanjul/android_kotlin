@@ -1,6 +1,8 @@
 package com.joshtalks.joshskills.ui.cohort_based_course.viewmodels
 
 import android.os.Message
+import android.util.Log
+import android.util.Patterns
 import android.view.View
 import android.widget.Toast
 import androidx.databinding.ObservableArrayList
@@ -15,13 +17,14 @@ import com.joshtalks.joshskills.constants.START_CONVERSATION_ACTIVITY
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.abTest.VariantKeys
+import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.cohort_based_course.models.CohortItemModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.util.*
 
 private const val TAG = "CommitmentFormViewModel"
 
@@ -31,12 +34,15 @@ class CommitmentFormViewModel : ViewModel() {
     private var reminder: String = "Yes"
     val shapath = ObservableField("Yes")
     val selectedSlot = ObservableField<CohortItemModel>()
+    val buttonEnable = ObservableField(false)
     val cohortBatchList = ObservableArrayList<CohortItemModel>()
     val userName = ObservableField(EMPTY)
+    val email = ObservableField(EMPTY)
+    val abTest by lazy{ ABTestRepository() }
 
     init {
         getCohortBatches()
-        getUsername()
+        getUsernameEmail()
     }
 
     fun openPromiseFragment(v: View) {
@@ -87,8 +93,12 @@ class CommitmentFormViewModel : ViewModel() {
                     if (resp.isSuccessful) {
                         sendEvent(START_CONVERSATION_ACTIVITY)
                     } else {
-                        showToast("Something Went Wrong, Please try again later!", Toast.LENGTH_LONG)
-                        sendEvent(CLOSE_ACTIVITY)
+                        if(resp.code() == 406 && !abTest.isVariantActive(VariantKeys.FREEMIUM_ENABLED)){
+                            showToast("This email already exists")
+                        }else{
+                            showToast("Something Went Wrong, Please try again later!", Toast.LENGTH_LONG)
+                            sendEvent(CLOSE_ACTIVITY)
+                        }
                     }
                 }else{
                     showToast("No Internet Connection!", Toast.LENGTH_LONG)
@@ -102,13 +112,29 @@ class CommitmentFormViewModel : ViewModel() {
     }
 
     fun sendBatchSelected(v: View) {
-        if (selectedSlot.get() != null) {
-            val map: HashMap<String, Any> = HashMap()
-            map["time_slot"] = selectedSlot.get()!!.name.toString()
-            map["reminder"] = reminder == "Yes"
-            postSelectedBatch(map)
-        } else {
-            showToast("Please select a slot")
+        if (abTest.isVariantActive(VariantKeys.FREEMIUM_ENABLED)){
+            if (selectedSlot.get() != null) {
+                val map: HashMap<String, Any> = HashMap()
+                map["time_slot"] = selectedSlot.get()!!.name
+                map["reminder"] = reminder == "Yes"
+                postSelectedBatch(map)
+            } else {
+                showToast("Please select a slot")
+            }
+        }else{
+            if (selectedSlot.get() != null) {
+                if (isEmailValid(email.get())){
+                    val map: HashMap<String, Any> = HashMap()
+                    map["time_slot"] = selectedSlot.get()!!.name
+                    map["reminder"] = reminder == "Yes"
+                    map["email"] = email.get().toString()
+                    postSelectedBatch(map)
+                }else{
+                    showToast("Please enter valid email id")
+                }
+            } else {
+                showToast("Please select a slot")
+            }
         }
     }
 
@@ -124,8 +150,17 @@ class CommitmentFormViewModel : ViewModel() {
         selectedSlot.set(it)
     }
 
-    fun getUsername() {
+    fun getUsernameEmail() {
         userName.set(User.getInstance().firstName ?: EMPTY)
+        email.set(User.getInstance().email?: EMPTY)
+        Log.i(TAG, "getUsernameEmail: ${email.get()}")
+    }
+
+    private fun isEmailValid(email: String?): Boolean {
+        if (email.isNullOrEmpty()) {
+            return false
+        }
+        return Patterns.EMAIL_ADDRESS.matcher(email).matches()
     }
 
    /* fun submitReminder(

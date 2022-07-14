@@ -1,6 +1,6 @@
 package com.joshtalks.joshskills.ui.cohort_based_course.views
 
-import android.icu.number.NumberFormatter
+import android.view.WindowManager
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
@@ -10,17 +10,13 @@ import com.joshtalks.joshskills.constants.CLOSE_ACTIVITY
 import com.joshtalks.joshskills.constants.OPEN_PROMISE_FRAGMENT
 import com.joshtalks.joshskills.constants.OPEN_SCHEDULE_FRAGMENT
 import com.joshtalks.joshskills.constants.START_CONVERSATION_ACTIVITY
-import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.databinding.ActivityCommitmentFormBinding
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
-import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.ui.cohort_based_course.viewmodels.CommitmentFormViewModel
 import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_COMMITMENT_FORM_SUBMITTED
-import com.joshtalks.joshskills.util.ReminderUtil
-import kotlin.math.nextUp
-
 
 class CommitmentFormActivity : BaseActivity() {
 
@@ -37,7 +33,11 @@ class CommitmentFormActivity : BaseActivity() {
     }
 
     override fun onCreated() {
-        addCommitmentFormLaunchFragment()
+        if(!vm.abTest.isVariantActive(VariantKeys.FREEMIUM_ENABLED)){
+            addScheduleFragmentAB()
+        }else{
+            addCommitmentFormLaunchFragment()
+        }
     }
 
     override fun initViewState() {
@@ -54,6 +54,9 @@ class CommitmentFormActivity : BaseActivity() {
                 }
                 CLOSE_ACTIVITY -> finish()
             }
+        }
+        if(!vm.abTest.isVariantActive(VariantKeys.FREEMIUM_ENABLED)){
+            window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
         }
     }
 
@@ -76,6 +79,12 @@ class CommitmentFormActivity : BaseActivity() {
         supportFragmentManager.commit {
             replace(R.id.commitment_form_container, ScheduleFragment(), "ScheduleFragment")
             addToBackStack("ScheduleFragment")
+        }
+    }
+
+    private fun addScheduleFragmentAB() {
+        supportFragmentManager.commit {
+            add(R.id.commitment_form_container, ScheduleFragment(), "ScheduleFragment")
         }
     }
 

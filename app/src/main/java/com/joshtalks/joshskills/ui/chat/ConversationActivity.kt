@@ -76,6 +76,7 @@ import com.joshtalks.joshskills.ui.assessment.AssessmentActivity
 import com.joshtalks.joshskills.ui.certification_exam.CertificationBaseActivity
 import com.joshtalks.joshskills.ui.chat.adapter.ConversationAdapter
 import com.joshtalks.joshskills.ui.chat.service.DownloadMediaService
+import com.joshtalks.joshskills.ui.cohort_based_course.views.CommitmentFormActivity
 import com.joshtalks.joshskills.ui.conversation_practice.ConversationPracticeActivity
 import com.joshtalks.joshskills.ui.course_progress_new.CourseProgressActivityNew
 import com.joshtalks.joshskills.ui.courseprogress.CourseProgressActivity
@@ -322,6 +323,21 @@ class ConversationActivity :
         fetchMessage()
         readMessageDatabaseUpdate()
         addIssuesToSharedPref()
+
+        if(conversationViewModel.repository.isVariantActive(VariantKeys.FREEMIUM_ENABLED)){
+            val count = PrefManager.getIntValue(COHORT_INBOX_COUNT_AB, defValue = 0)
+            if (count < 4 && count != 0){
+                if(inboxEntity.formSubmitted.not() && inboxEntity.courseId == DEFAULT_COURSE_ID){
+                    showCohortToolTipAB()
+                }else if (inboxEntity.formSubmitted){
+                    showLeaderBoardSpotlight()
+                }
+            }else if(count==0){
+                PrefManager.put(COHORT_INBOX_COUNT_AB,count+1)
+            } else if(PrefManager.getBoolValue(HAS_SEEN_LEADERBOARD_TOOLTIP, defValue = false)){
+                showLeaderBoardSpotlight()
+            }
+        }
         if (inboxEntity.isCapsuleCourse) {
             PrefManager.put(CHAT_OPENED_FOR_NOTIFICATION, true)
         }
@@ -330,6 +346,7 @@ class ConversationActivity :
     private fun initABTest() {
         conversationViewModel.getCampaignData(CampaignKeys.ACTIVITY_FEED_V2.name)
         conversationViewModel.getCampaignData(CampaignKeys.A2_C1.name)
+        conversationViewModel.getCampaignData(CampaignKeys.FREEMIUM_COURSE.name)
     }
 
     private fun getAllPendingRequest() {
@@ -458,6 +475,33 @@ class ConversationActivity :
                 conversationBinding.overlayLayout.setOnClickListener(null)
             }
         }
+    }
+
+    private fun showCohortToolTipAB(){
+        conversationBinding.btnSelectBatch.visibility = VISIBLE
+        conversationBinding.btnSelectBatch.elevation = 24F
+        conversationBinding.explainationTooltip.visibility = VISIBLE
+        conversationBinding.cbcTooltipFreemium.visibility = VISIBLE
+        conversationBinding.overlayABLayout.visibility = VISIBLE
+        conversationBinding.labelTapToDismiss.visibility = GONE
+        conversationBinding.imgGroupChatBtn.elevation = 2f
+        conversationBinding.imgFppBtn.elevation = 2f
+        conversationBinding.ringingIcon.elevation = 4f
+        conversationBinding.overlayABLayout.setOnClickListener(null)
+    }
+    private fun hideCohortToolTipAB(){
+        conversationBinding.btnSelectBatch.visibility = GONE
+        conversationBinding.cbcTooltipFreemium.visibility = GONE
+        conversationBinding.explainationTooltip.visibility = GONE
+        conversationBinding.overlayABLayout.visibility = GONE
+        groupAndFppButtonElevation()
+    }
+
+    fun openScheduleFragmentCohortAB(){
+        hideCohortToolTipAB()
+        val intent = Intent(this, CommitmentFormActivity::class.java)
+        intent.putExtra("inboxEntity", inboxEntity)
+        startActivity(intent)
     }
 
     fun hideCohortCourseTooltip() {
@@ -2180,6 +2224,9 @@ class ConversationActivity :
         countdownTimerBack?.stop()
         AppObjectController.currentPlayingAudioObject = null
         audioPlayerManager?.release()
+        if(PrefManager.hasKey(IS_SECOND_TIME_INBOX_AB)){
+            PrefManager.put(IS_SECOND_TIME_INBOX_AB,true)
+        }
     }
 
     override fun onBackPressed() {
@@ -2197,6 +2244,12 @@ class ConversationActivity :
             conversationBinding.welcomeContainer.visibility == VISIBLE -> {
                 conversationBinding.welcomeContainer.visibility = INVISIBLE
                 conversationBinding.overlayView.visibility = INVISIBLE
+                return
+            }
+            conversationBinding.overlayABLayout.visibility == VISIBLE ->{
+                hideCohortToolTipAB()
+                val count = PrefManager.getIntValue(COHORT_INBOX_COUNT_AB, defValue = 0)
+                PrefManager.put(COHORT_INBOX_COUNT_AB,count+1)
                 return
             }
             else -> {
@@ -2603,11 +2656,11 @@ class ConversationActivity :
 
     fun getStatusBarHeight(): Int {
         val rectangle = Rect()
-        window.getDecorView().getWindowVisibleDisplayFrame(rectangle)
+        window.decorView.getWindowVisibleDisplayFrame(rectangle)
         val statusBarHeight = rectangle.top
-        val contentViewTop: Int = window.findViewById<View>(Window.ID_ANDROID_CONTENT).getTop()
+        val contentViewTop: Int = window.findViewById<View>(Window.ID_ANDROID_CONTENT).top
         val titleBarHeight = contentViewTop - statusBarHeight
-        Log.d(TAG, "getStatusBarHeight: $titleBarHeight")
+//        Log.d(TAG, "getStatusBarHeight: $titleBarHeight")
         return if (titleBarHeight < 0) titleBarHeight * -1 else titleBarHeight
     }
 

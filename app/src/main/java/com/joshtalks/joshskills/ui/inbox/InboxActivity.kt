@@ -432,22 +432,26 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
 
     override fun onClick(inboxEntity: InboxEntity) {
         PrefManager.put(ONBOARDING_STAGE, OnBoardingStage.COURSE_OPENED.value)
-        val check = viewModel.abTestRepository.isVariantActive(VariantKeys.EFT_ENABLED)
-        if (check && inboxEntity.isFreeTrialExtendable) {
-            PrefManager.put(IS_FREE_TRIAL_CAMPAIGN_ACTIVE, true)
-            ExtendFreeTrialActivity.startExtendFreeTrialActivity(this, inboxEntity)
-        } else {
-            when {
-                inboxEntity.formSubmitted.not() && PrefManager.getBoolValue(HAS_COMMITMENT_FORM_SUBMITTED)
-                    .not() && inboxEntity.courseId == DEFAULT_COURSE_ID -> {
-                    PrefManager.put(HAS_SEEN_TEXT_VIEW_CLASS_ANIMATION, false)
-                    PrefManager.put(HAS_SEEN_GROUP_LIST_CBC_TOOLTIP, false)
-                    val intent = Intent(this, CommitmentFormActivity::class.java)
-                    intent.putExtra("inboxEntity", inboxEntity)
-                    startActivity(intent)
-                }
-                else -> {
-                    ConversationActivity.startConversionActivity(this, inboxEntity)
+        if (viewModel.abTestRepository.isVariantActive(VariantKeys.FREEMIUM_ENABLED)){
+            ConversationActivity.startConversionActivity(this, inboxEntity)
+        }else{
+            val check = viewModel.abTestRepository.isVariantActive(VariantKeys.EFT_ENABLED)
+            if (check && inboxEntity.isFreeTrialExtendable) {
+                PrefManager.put(IS_FREE_TRIAL_CAMPAIGN_ACTIVE, true)
+                ExtendFreeTrialActivity.startExtendFreeTrialActivity(this, inboxEntity)
+            } else {
+                when {
+                    inboxEntity.formSubmitted.not() && PrefManager.getBoolValue(HAS_COMMITMENT_FORM_SUBMITTED)
+                        .not() && inboxEntity.courseId == DEFAULT_COURSE_ID -> {
+                        PrefManager.put(HAS_SEEN_TEXT_VIEW_CLASS_ANIMATION, false)
+                        PrefManager.put(HAS_SEEN_GROUP_LIST_CBC_TOOLTIP, false)
+                        val intent = Intent(this, CommitmentFormActivity::class.java)
+                        intent.putExtra("inboxEntity", inboxEntity)
+                        startActivity(intent)
+                    }
+                    else -> {
+                        ConversationActivity.startConversionActivity(this, inboxEntity)
+                    }
                 }
             }
         }
