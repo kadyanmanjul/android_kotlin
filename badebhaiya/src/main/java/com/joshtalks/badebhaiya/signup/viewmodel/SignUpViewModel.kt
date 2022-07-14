@@ -121,12 +121,9 @@ class SignUpViewModel(application: Application): AndroidViewModel(application) {
                         PrefManager.put(IS_NEW_USER, it.isUserExist.not())
                         updateUserFromLoginResponse(it)
                     }
-                    sendEvent(Impression("SIGNUP_VIEW_MODEL","OTP_LOGIN"))
+//                    sendEvent(Impression("SIGNUP_VIEW_MODEL","OTP_LOGIN"))
 
-                    if (TruecallerSDK.getInstance().isUsable)
-                        sendEvent(Impression("SIGNUP_VIEW_MODEL","TC_INSTALLED"))
-                    else
-                        sendEvent(Impression("SIGNUP_VIEW_MODEL","TC_NOT_INSTALLED"))
+
 
                     return@launch
                 } else {

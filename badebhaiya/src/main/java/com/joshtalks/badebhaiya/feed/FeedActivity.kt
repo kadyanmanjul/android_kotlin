@@ -542,7 +542,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
     }
 
     override fun setReminder(room: RoomListResponseItem, view: View) {
-        profileViewModel.sendEvent(Impression("FEED_SCREEN","CLICKED_SET_REMINDER"))
+//        profileViewModel.sendEvent(Impression("FEED_SCREEN","CLICKED_SET_REMINDER"))
         showPopup(room.roomId,User.getInstance().userId)
         Timber.d("ROOM KA STARTING TIME => ${room.currentTime}")
 
@@ -552,7 +552,8 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                 roomId = room.roomId.toString(),
                 userId = User.getInstance().userId,
                 reminderTime = room.startTimeDate,
-                false
+                false,
+                "FEED_SCREEN"
             )
         )
     }

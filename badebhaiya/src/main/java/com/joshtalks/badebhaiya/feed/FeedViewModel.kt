@@ -195,7 +195,7 @@ class FeedViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.Main) {
             try {
                 isLoading.set(true)
-                Log.d("YASH", "joinRoom:")
+                Log.d("YASH", "joinRoom: $source")
                 response = repository.joinRoom(
                     ConversationRoomRequest(
                         userId = User.getInstance().userId,

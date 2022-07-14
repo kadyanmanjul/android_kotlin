@@ -146,10 +146,11 @@ class SearchAdapter(private val searchResult: List<Users>,var call: Call): ListA
                                         searchResult[position].user_id,
                                         User.getInstance().userId,
                                         false,
-                                        false
+                                        false,
+                                        "SEARCH_FRAGMENT"
                                     )
                                 try {
-                                    RetrofitInstance.profileNetworkService.sendEvent(Impression("SEARCH_FRAGMENT","CLICKED_FOLLOW"))
+//                                    RetrofitInstance.profileNetworkService.sendEvent(Impression("SEARCH_FRAGMENT","CLICKED_FOLLOW"))
                                 } catch (e: Exception){
 
                                 }
@@ -169,7 +170,8 @@ class SearchAdapter(private val searchResult: List<Users>,var call: Call): ListA
                                             searchResult[position].user_id,
                                             User.getInstance().userId,
                                             false,
-                                            false
+                                            false,
+                                            "SEARCH_FRAGMENT"
                                         )
 
                                     try {

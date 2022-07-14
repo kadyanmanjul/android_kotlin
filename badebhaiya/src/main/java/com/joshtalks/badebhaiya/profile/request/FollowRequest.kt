@@ -10,5 +10,7 @@ class FollowRequest(
     @SerializedName("is_from_speakers_to_follow_page")
     val isFromBBPage: Boolean,
     @SerializedName("is_from_deeplink")
-    val isFromDeepLink:Boolean
+    val isFromDeepLink:Boolean,
+    @SerializedName("from")
+    val from:String
 )

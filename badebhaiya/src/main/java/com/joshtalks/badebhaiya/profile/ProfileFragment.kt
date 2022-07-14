@@ -409,7 +409,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         else
             viewModel.userProfileData.value?.let {
                 signUpViewModel.followSpeaker()
-                viewModel.sendEvent(Impression("PROFILE_SCREEN","CLICKED_FOLLOW"))
+//                viewModel.sendEvent(Impression("PROFILE_SCREEN","CLICKED_FOLLOW"))
                 speakerFollowedUIChanges()
                 binding.tvFollowers.text =HtmlCompat.fromHtml(getString(R.string.bb_followers,
                     ("<big>"+it.followersCount.plus(1)?:0).toString()+"</big>"),
@@ -577,14 +577,15 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
             return
         }
         showPopup(room.roomId,User.getInstance().userId)
-        viewModel.sendEvent(Impression("PROFILE_SCREEN","CLICKED_SET_REMINDER"))
+//        viewModel.sendEvent(Impression("PROFILE_SCREEN","CLICKED_SET_REMINDER"))
         notificationScheduler.scheduleNotificationAsListener(requireActivity() as AppCompatActivity, room)
             feedViewModel.setReminder(
                 ReminderRequest(
                     roomId = room.roomId.toString(),
                     userId = User.getInstance().userId,
                     reminderTime = room.startTimeDate,
-                    false
+                    false,
+                    from="PROFILE_SCREEN",
                 )
             )
         viewModel.getProfileForUser(userId ?: (User.getInstance().userId),source)

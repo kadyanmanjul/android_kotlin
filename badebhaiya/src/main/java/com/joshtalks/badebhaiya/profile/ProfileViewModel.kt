@@ -90,7 +90,7 @@ class ProfileViewModel : ViewModel() {
                 viewModelScope.launch {
                     try {
                         val followRequest =
-                            FollowRequest(userId, User.getInstance().userId,isFromBBPage,isFromDeeplink)
+                            FollowRequest(userId, User.getInstance().userId,isFromBBPage,isFromDeeplink,"PROFILE_SCREEN")
                         val response = service.updateFollowStatus(followRequest)
                         if (response.isSuccessful) {
                             speakerFollowed.value = true
@@ -106,7 +106,7 @@ class ProfileViewModel : ViewModel() {
                 viewModelScope.launch {
                     try {
                         val followRequest =
-                            FollowRequest(userId, User.getInstance().userId, isFromBBPage, isFromDeeplink)
+                            FollowRequest(userId, User.getInstance().userId, isFromBBPage, isFromDeeplink,"PROFILE_SCREEN")
                         val response=service.updateUnfollowStatus(followRequest)
                         if(response.isSuccessful)
                         {
