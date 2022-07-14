@@ -1,14 +1,13 @@
 package com.joshtalks.badebhaiya.profile
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.IdRes
@@ -23,6 +22,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.badge.BadgeDrawable
+import com.google.android.material.badge.BadgeDrawable.*
+import com.google.android.material.badge.BadgeUtils
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.core.*
 import com.joshtalks.badebhaiya.core.USER_ID
@@ -40,7 +42,6 @@ import com.joshtalks.badebhaiya.liveroom.viewmodel.LiveRoomViewModel
 import com.joshtalks.badebhaiya.notifications.NotificationScheduler
 import com.joshtalks.badebhaiya.profile.request.ReminderRequest
 import com.joshtalks.badebhaiya.profile.response.ProfileResponse
-import com.joshtalks.badebhaiya.pubnub.PubNubManager
 import com.joshtalks.badebhaiya.repository.CommonRepository
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.showCallRequests.CallRequestsListFragment
@@ -55,11 +56,10 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_feed.*
 import kotlinx.android.synthetic.main.base_toolbar.view.*
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import kotlinx.coroutines.CoroutineScope
-import java.lang.Exception
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -92,6 +92,9 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
     @Inject
     lateinit var notificationScheduler: NotificationScheduler
 
+    private lateinit var badgeDrawable: BadgeDrawable
+//    by lazy { BadgeDrawable.create(requireContext()) }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -119,6 +122,9 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         binding.handler = this
         binding.viewModel = viewModel
 
+        badgeDrawable = create(requireContext())
+
+        setBadgeDrawable(5)
         binding.profileToolbar.iv_back.setOnClickListener{
             activity?.run {
                 try {
@@ -152,6 +158,47 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         return binding.root
 
     }
+
+    @SuppressLint("UnsafeOptInUsageError")
+    private fun setBadgeDrawable(callRequestCount: Int) {
+        Timber.tag("profilebadge").d(
+            "setBadgeDrawable() called with: raisedHandAudienceSize = $callRequestCount"
+        )
+        badgeDrawable.number = callRequestCount
+
+        badgeDrawable.horizontalOffset = 20
+        badgeDrawable.verticalOffset = 10
+//        badgeDrawable.isVisible = true
+//        badgeDrawable.badgeGravity = TOP_END
+        binding.callRequestsBtnRoot.setForeground(badgeDrawable)
+        binding.callRequestsBtnRoot.addOnLayoutChangeListener { v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
+
+
+            //either of the following two lines of code  work
+            //badgeDrawable.updateBadgeCoordinates(imageView, frameLayout);
+            BadgeUtils.attachBadgeDrawable(
+                badgeDrawable,
+                binding.callRequestsBtn,
+                binding.callRequestsBtnRoot
+            )
+        }
+
+//        BadgeUtils.attachBadgeDrawable(badgeDrawable, binding.callRequestsBtn)
+////        binding.callRequestsBtn.foregroundGravity = Gravity.END
+//        binding.callRequestsBtn.foreground = badgeDrawable
+////        binding.callRequestsBtn.foreground = badgeDrawable
+//        badgeDrawable.badgeGravity = BadgeDrawable.TOP_END
+
+
+
+    }
+
+//    private fun BadgeDrawable.setBoundsFor(anchor: View, parent: FrameLayout){
+//        val rect = Rect()
+//        parent.getDrawingRect(rect)
+//        this.setBounds(rect)
+//        this.updateBadgeCoordinates(anchor, parent)
+//    }
 
     fun setpadding(){
         binding.rvSpeakerRoomList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -226,9 +273,28 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+//        binding.callRequestsBtn.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+//            @SuppressLint("UnsafeOptInUsageError")
+//            override fun onGlobalLayout() {
+//                val mbadgeDrawable = BadgeDrawable.create(requireContext());
+//                mbadgeDrawable.setNumber(7);
+//                mbadgeDrawable.setBackgroundColor(Color.RED);
+//                mbadgeDrawable.setVerticalOffset(20);
+//                mbadgeDrawable.setHorizontalOffset(15);
+//                mbadgeDrawable.badgeGravity = TOP_END
+//
+//                BadgeUtils.attachBadgeDrawable(mbadgeDrawable, binding.callRequestsBtn);
+//
+//                binding.callRequestsBtn.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+//            }
+//
+//        })
+
         Timber.d("THIS IS FCM TOKEN => ${PrefManager.getStringValue(com.joshtalks.badebhaiya.notifications.FCM_TOKEN)}")
         addObserver()
         executePendingActions()
+        Timber.tag("profilebadge").d("profile badge functton called")
     }
 
     private fun executePendingActions( ) {

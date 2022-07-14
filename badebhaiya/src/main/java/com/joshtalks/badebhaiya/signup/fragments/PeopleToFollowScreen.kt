@@ -193,7 +193,8 @@ fun ListBioText(
         text = text,
         maxLines = 2,
         color = textColor,
-        fontSize = fontSize
+        fontSize = fontSize,
+        fontWeight = fontWeight
     )
 }
 
