@@ -37,26 +37,10 @@ import com.joshtalks.badebhaiya.signup.fragments.NameText
 import com.joshtalks.badebhaiya.signup.fragments.ToolbarHeadingText
 import com.joshtalks.badebhaiya.utils.getActivity
 
-data class CallRequest(
-    val profilePicture: String,
-    val firstName: String,
-    val latestRequest: String,
-    val requestTime: String,
-    val didRead: Boolean
-)
-
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun CallRequestsListScreen(viewModel: RequestsViewModel) {
-//    val list = List(100) {
-//        CallRequest(
-//            profilePicture = "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8cGVyc29ufGVufDB8fDB8fA%3D%3D&w=1000&q=80",
-//            firstName = "Sahil Khan",
-//            latestRequest = "Hi Please mere liye room krdo muje bht kuch sikhna h apse isliye please krdo",
-//            requestTime = "6:07 PM",
-//            didRead = true
-//        )
-//    }
+
     val data = viewModel.requestsList.collectAsState()
 
             Scaffold(
@@ -142,7 +126,7 @@ fun ItemCallRequest(callRequest: RequestData) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             ProfilePicture(
-                imageUrl = if (callRequest.user.photo_url.isNullOrEmpty()) "https://commons.wikimedia.org/wiki/File:Unknown_Member.jpg" else callRequest.user.photo_url,
+                imageUrl = if (callRequest.user.photo_url.isNullOrEmpty()) "https://upload.wikimedia.org/wikipedia/commons/9/9d/Unknown_Member.jpg" else callRequest.user.photo_url,
             )
             Spacer(modifier = Modifier.width(12.dp))
             Column(
@@ -152,10 +136,11 @@ fun ItemCallRequest(callRequest: RequestData) {
                 Spacer(modifier = Modifier.height(4.dp))
                 ListBioText(
                     text = callRequest.request_submitted,
-                    textColor = if (callRequest.didRead) colorResource(
+                    textColor = if (callRequest.is_read) colorResource(
                         id = R.color.gray_txt
                     ) else Color.Black,
-                    fontSize = 14.sp
+                    fontSize = 14.sp,
+                    fontWeight = if (callRequest.is_read) FontWeight.Normal else FontWeight.Bold
                 )
             }
             Spacer(modifier = Modifier.width(8.dp))
@@ -168,17 +153,18 @@ fun ItemCallRequest(callRequest: RequestData) {
                     painter = painterResource(id = R.drawable.ic_forward_arrow),
                     contentDescription = "see request",
                     colorFilter = ColorFilter.tint(
-                        if (callRequest.didRead) colorResource(
+                        if (callRequest.is_read) colorResource(
                             id = R.color.gray_txt
                         ) else Color.Black
                     )
                 )
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
-                    text = "6:40 PM", color = if (callRequest.didRead) colorResource(
+                    text = callRequest.submitTime, color = if (callRequest.is_read) colorResource(
                             id = R.color.gray_txt
                             ) else Color.Black,
-                    fontSize = 12.sp
+                    fontSize = 12.sp,
+                    fontWeight = if (callRequest.is_read) FontWeight.Normal else FontWeight.Bold
                 )
             }
         }

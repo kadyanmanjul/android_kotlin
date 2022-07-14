@@ -52,8 +52,7 @@ fun PeopleToFollowScreen(
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(color = Color.White)
-                ,
+                    .background(color = Color.White),
             ) {
                 item {
                     ToolbarHeadingText(
@@ -61,29 +60,33 @@ fun PeopleToFollowScreen(
                     )
                 }
 
-            itemsIndexed(list) { index, value ->
-                value?.let {
-                    ItemBadeBhaiya(badeBhaiya = it, bottomPadding = 0.dp, onClick = onItemClick)
+                itemsIndexed(list) { index, value ->
+                    value?.let {
+                        ItemBadeBhaiya(badeBhaiya = it, bottomPadding = 0.dp, onClick = onItemClick)
+                    }
                 }
-            }
 
             }
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.BottomCenter
             ) {
-                MediumButton(modifier = Modifier.padding(vertical = 20.dp), text = stringResource(id = R.string.next), onClick = onNextClick, isNextEnabled)
+                MediumButton(
+                    modifier = Modifier.padding(vertical = 20.dp),
+                    text = stringResource(id = R.string.next),
+                    onClick = onNextClick,
+                    isNextEnabled
+                )
             }
         }
     }
 }
 
 fun getPeopleToFollowPadding(index: Int, peopleList: Array<Users>): Dp {
-    return if (index == peopleList.lastIndex){
+    return if (index == peopleList.lastIndex) {
         Timber.d("Ye last tha => $index")
         80.dp
-    }
-    else {
+    } else {
         Timber.d("Ye last nahi tha => $index")
         0.dp
     }
@@ -110,7 +113,14 @@ fun ToolbarHeadingText(
 @Composable
 fun ItemBadeBhaiya(
     modifier: Modifier = Modifier,
-    badeBhaiya: Users = Users("", "sahil", "Sahil Khan", "https://imageio.forbes.com/specials-images/imageserve/61688aa1d4a8658c3f4d8640/Antonio-Juliano/0x0.jpg?format=jpg&width=960", "This is Akhand Swarup’s Bio He's an IES Officer.", is_speaker_followed = false),
+    badeBhaiya: Users = Users(
+        "",
+        "sahil",
+        "Sahil Khan",
+        "https://imageio.forbes.com/specials-images/imageserve/61688aa1d4a8658c3f4d8640/Antonio-Juliano/0x0.jpg?format=jpg&width=960",
+        "This is Akhand Swarup’s Bio He's an IES Officer.",
+        is_speaker_followed = false
+    ),
     bottomPadding: Dp = 0.dp,
     onClick: (Users) -> Unit = {}
 ) {
@@ -159,7 +169,11 @@ fun ItemBadeBhaiya(
 }
 
 @Composable
-fun NameText(modifier: Modifier = Modifier, text: String, fontSize: TextUnit = TextUnit.Unspecified) {
+fun NameText(
+    modifier: Modifier = Modifier,
+    text: String,
+    fontSize: TextUnit = TextUnit.Unspecified
+) {
     Text(
         text = text,
         fontWeight = FontWeight.Bold,
@@ -168,7 +182,13 @@ fun NameText(modifier: Modifier = Modifier, text: String, fontSize: TextUnit = T
 }
 
 @Composable
-fun ListBioText(modifier: Modifier = Modifier, text: String, textColor: Color = Color.Black, fontSize: TextUnit = TextUnit.Unspecified) {
+fun ListBioText(
+    modifier: Modifier = Modifier,
+    text: String,
+    textColor: Color = Color.Black,
+    fontSize: TextUnit = TextUnit.Unspecified,
+    fontWeight: FontWeight = FontWeight.Normal
+) {
     Text(
         text = text,
         maxLines = 2,
@@ -183,7 +203,7 @@ fun MediumButton(
     text: String,
     onClick: () -> Unit = {},
     isNextEnabled: State<Boolean>
-){
+) {
     Button(
         modifier = modifier,
         onClick = onClick,
