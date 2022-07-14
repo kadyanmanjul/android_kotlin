@@ -360,8 +360,10 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
 //                    addABio.visibility=View.GONE
                     tvProfileBio.text = profileResponse.bioText
                 }
-                tvCalls.text=HtmlCompat.fromHtml(getString(R.string.bb_calls, "<big>"+profileResponse.callsCount.toString()+"</big>"),
+                tvCalls.text=HtmlCompat.fromHtml(getString(R.string.bb_calls, profileResponse.callsCount.toString()),
                     HtmlCompat.FROM_HTML_MODE_LEGACY)
+                tvCalls.setTextAppearance(R.style.BB_Typography_Nunito_Bold)
+                tvCalls.textSize=19f
                 tvFollowers.text = HtmlCompat.fromHtml(getString(R.string.bb_followers, "<big>"+profileResponse.followersCount.toString()+"</big>"),
                     HtmlCompat.FROM_HTML_MODE_LEGACY)
                 if (profileResponse.isSpeakerFollowed) {

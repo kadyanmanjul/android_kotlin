@@ -316,8 +316,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
             bundle.putString("user", it) // use as per your need
                 bundle.putString("source","FANS_LIST")
             fragment.arguments = bundle
-            fragmentTransaction.replace(R.id.room_frame, fragment)
-                .addToBackStack(null)
+            fragmentTransaction.add(R.id.room_frame, fragment)
             fragmentTransaction.commit()
         }
 
