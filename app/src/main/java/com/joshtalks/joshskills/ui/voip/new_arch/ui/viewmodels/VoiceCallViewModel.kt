@@ -9,7 +9,6 @@ import android.util.Log
 import android.view.View
 import androidx.databinding.ObservableArrayList
 import androidx.databinding.ObservableBoolean
-import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
@@ -25,10 +24,8 @@ import com.joshtalks.joshskills.ui.voip.new_arch.ui.call_recording.ProcessCallRe
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.models.CallUIState
 import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.constant.*
-import com.joshtalks.joshskills.voip.constant.Category.*
 import com.joshtalks.joshskills.ui.voip.util.ScreenViewRecorder
 import com.joshtalks.joshskills.voip.*
-import com.joshtalks.joshskills.voip.constant.*
 import com.joshtalks.joshskills.voip.data.RecordingButtonState
 import com.joshtalks.joshskills.voip.data.ServiceEvents
 import com.joshtalks.joshskills.voip.data.local.PrefManager
@@ -68,6 +65,7 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
     var isListening = false
     var isRequestDialogShowed = false
     var timer: CountDownTimer? = null
+    var isPermissionGranted: ObservableBoolean = ObservableBoolean(false)
 
     private val connectCallJob by lazy {
         viewModelScope.launch(start = CoroutineStart.LAZY) {
@@ -325,7 +323,6 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                 uiState.wordColor = state.nextGameWordColor
                 uiState.isStartGameClicked = state.isStartGameClicked
                 uiState.isNextWordClicked = state.isNextWordClicked
-                uiState.profileImage = state.remoteUserImage ?: ""
                 uiState.topic = state.topicName
                 uiState.topicImage = state.currentTopicImage
                 uiState.type = state.callType

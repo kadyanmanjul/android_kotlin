@@ -218,10 +218,12 @@ fun MaterialButton.nextWordBtn(isEnabled : Boolean?) {
             true -> {
                 this.backgroundTintList = ContextCompat.getColorStateList(context, R.color.grey)
                 this.setTextColor(ContextCompat.getColor(context, R.color.white))
+                this.isEnabled = false
             }
             false -> {
                 this.backgroundTintList = ContextCompat.getColorStateList(context, R.color.white)
                 this.setTextColor(ContextCompat.getColor(context, R.color.p2p_game_dark_purple))
+                this.isEnabled = true
             }
         }
     }
@@ -233,9 +235,11 @@ fun AppCompatTextView.setPlayBtnBackground(isEnabled: Boolean?) {
         when (isEnabled) {
             false -> {
                 this.backgroundTintList = null
+                this.isEnabled = true
             }
             true -> {
                 this.backgroundTintList = ContextCompat.getColorStateList(context, R.color.grey)
+                this.isEnabled = false
             }
         }
     }

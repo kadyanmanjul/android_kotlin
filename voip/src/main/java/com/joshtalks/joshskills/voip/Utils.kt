@@ -83,7 +83,7 @@ fun Context.updateLastCallDetails(
         Uri.parse(CONTENT_URI + CALL_DISCONNECTED_URI),
         values
     )
-    voipLog?.log("Data --> $data")
+    Log.d(TAG, "updateStartCallTime: Data --> $data")
 }
 
 fun Context.updateStartTime(startTime : Long) {

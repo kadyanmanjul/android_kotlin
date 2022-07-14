@@ -171,8 +171,10 @@ class CallUIState : BaseObservable() {
     @get:Bindable
     var gameWord:String = ""
         set(value) {
-            field = value
-            notifyPropertyChanged(BR.gameWord)
+            if(isStartGameClicked) {
+                field = value
+                notifyPropertyChanged(BR.gameWord)
+            }
         }
 
     @get:Bindable

@@ -27,7 +27,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/container"
-        setCallBackground='@{!vm.uiState.gameWord.equals("") ? true : false}'
+        setCallBackground='@{!vm.uiState.gameWord.equals("") &amp;&amp; vm.uiState.startGameClicked  ? true : false}'
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fitsSystemWindows="true"
@@ -129,6 +129,7 @@
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toTopOf="@+id/bottom_card_view"
             app:layout_constraintEnd_toEndOf="parent"
+            android:id="@+id/play_game_group"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/call_time1">
 
@@ -253,7 +254,7 @@
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/bottom_card_view"
             style="@style/CustomCardViewStyleNoBottomCorner"
-            setBottomCardBackground='@{vm.uiState.gameWord.equals("") ? false : true}'
+            setBottomCardBackground='@{!vm.uiState.gameWord.equals("") &amp;&amp; vm.uiState.startGameClicked ? true : false}'
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -443,7 +444,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="@{vm.uiState.startTime &lt;= 0 &amp;&amp; vm.source == ConstantsKt.FROM_INCOMING_CALL ? View.INVISIBLE : View.VISIBLE }"
-            app:constraint_referenced_ids="c_image, occupation_future_goals"
+            app:constraint_referenced_ids="occupation_future_goals,play_game_group"
             tools:visibility="visible" />
 
         <androidx.constraintlayout.widget.Guideline
@@ -465,13 +466,13 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:background="@color/black_quiz"
-            android:visibility='@{!vm.uiState.gameWord.equals("") ? View.VISIBLE : View.GONE}'
+            android:visibility='@{!vm.uiState.gameWord.equals("") &amp;&amp; vm.uiState.startGameClicked ? View.VISIBLE : View.GONE}'
             app:layout_constraintBottom_toTopOf="@id/bottom_card_view"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             android:elevation="1dp"
             app:layout_constraintTop_toTopOf="parent"
-            tools:visibility="visible">
+            tools:visibility="gone">
 
             <LinearLayout
                 android:id="@+id/photo_frames_layout"
@@ -601,7 +602,7 @@
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
                 android:textColor="@color/white"
                 android:textSize="@dimen/_12ssp"
-                android:visibility='@{vm.uiState.gameWord == "" ? View.GONE : View.VISIBLE}'
+                android:visibility='@{vm.uiState.gameWord == "" &amp;&amp; !vm.uiState.startGameClicked ? View.GONE : View.VISIBLE}'
                 app:layout_constraintBottom_toTopOf="@+id/wrapper_game_card"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

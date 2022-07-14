@@ -14,6 +14,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.databinding.Observable
+import androidx.databinding.Observable.OnPropertyChangedCallback
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -21,8 +23,6 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
 import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.databinding.FragmentFppCallBinding
-import com.joshtalks.joshskills.ui.userprofile.adapters.setImage
-import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.setProfileImage
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.VoiceCallViewModel
 import com.joshtalks.joshskills.voip.audiocontroller.AudioController
 import com.joshtalks.joshskills.voip.audiocontroller.AudioRouteConstants
@@ -56,7 +56,7 @@ class FppCallFragment : BaseFragment() , SensorEventListener {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         callBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_fpp_call, container, false)
         return callBinding.root
@@ -64,8 +64,18 @@ class FppCallFragment : BaseFragment() , SensorEventListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if(vm.source== FROM_ACTIVITY)
+
+        vm.isPermissionGranted.addOnPropertyChangedCallback(object : OnPropertyChangedCallback() {
+            override fun onPropertyChanged(sender: Observable, propertyId: Int) {
+                if(vm.source== FROM_ACTIVITY && vm.isPermissionGranted.get()) {
+                    startPlaying()
+                }
+            }
+        })
+
+        if(vm.source== FROM_ACTIVITY && vm.isPermissionGranted.get()) {
             startPlaying()
+        }
         CallAnalytics.addAnalytics(
             event = EventName.CALL_SCREEN_SHOWN,
             agoraCallId = PrefManager.getAgraCallId().toString(),

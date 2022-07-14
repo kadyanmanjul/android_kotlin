@@ -181,6 +181,7 @@
             android:paddingHorizontal="@dimen/_8sdp"
             android:text="@string/how_was_your_call_name"
             android:textAlignment="center"
+            android:textColor="#000000"
             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5_Semi_Bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

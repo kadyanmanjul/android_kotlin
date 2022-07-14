@@ -58,6 +58,7 @@ class VoiceCallActivity : BaseActivity() {
                 Log.d(TAG, "requestPermissionsLauncher: given")
                 vm.boundService(this)
                 isServiceBounded = true
+                vm.isPermissionGranted.set(true)
             } else {
                 Log.d(TAG, "requestPermissionsLauncher: not given")
                 Toast.makeText(applicationContext,"Please Allow Permissions to make call",Toast.LENGTH_LONG).show()
