@@ -1,20 +1,22 @@
 package com.joshtalks.joshskills.ui.voip.new_arch.ui.call_rating
 
+import android.app.Activity
+import android.app.AlertDialog
 import android.app.Dialog
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
-import android.view.KeyEvent
-import android.view.LayoutInflater
-import android.view.View
+import android.view.*
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import android.widget.Button
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import androidx.activity.result.ActivityResultLauncher
@@ -219,44 +221,33 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
 
     private fun selectChange(s: String) {
         if(s == "fpp" && vm.ifDialogShow==1  && PrefManager.getBoolValue(IS_COURSE_BOUGHT) && PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID){
-            binding.block.background = AppCompatResources.getDrawable(requireContext(),R.drawable.block_button_round_stroke)
-//            binding.block.stroke = AppCompatResources.getColorStateList(requireContext(), R.color.colorPrimary)
-//            binding.block.backgroundTintList = AppCompatResources.getColorStateList(requireContext(), R.color.white)
+            binding.block.background = AppCompatResources.getDrawable(requireContext(),R.drawable.block_button_round_stroke_blue)
             binding.block.setTextColor(resources.getColor(R.color.colorPrimary))
         }else{
             binding.block.background = AppCompatResources.getDrawable(requireContext(),R.drawable.block_button_round_stroke_black)
-//            binding.block.strokeColor = AppCompatResources.getColorStateList(requireContext(), R.color.pitch_black)
-//            binding.block.backgroundTintList = AppCompatResources.getColorStateList(requireContext(), R.color.pitch_black)
             binding.block.setTextColor(Color.WHITE)
         }
         isBlockSelected = true
 
     }
     private fun unSelectChange(s: String) {
-        if(s=="fpp"&& vm.ifDialogShow==1 && PrefManager.getBoolValue(IS_COURSE_BOUGHT) && PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID){
-            binding.block.background = AppCompatResources.getDrawable(requireContext(),R.drawable.block_button_round_stroke_black)
-            binding.block.setTextColor(resources.getColor(R.color.pitch_black))
-//            binding.block.strokeColor = ColorStateList.valueOf(Color.BLACK)
-//            binding.block.setTextColor(resources.getColor(R.color.pitch_black))
-//            binding.block.setTextColor(Color.BLACK)
-//            binding.block.backgroundTintList = AppCompatResources.getColorStateList(requireContext(), R.color.white)
-        }else{
-            binding.block.background = AppCompatResources.getDrawable(requireContext(),R.drawable.block_button_round_stroke_black)
-//            binding.block.strokeColor = ColorStateList.valueOf(Color.BLACK)
-//            binding.block.backgroundTintList = AppCompatResources.getColorStateList(requireContext(), R.color.white)
-            binding.block.setTextColor(Color.BLACK)
-        }
+        binding.block.background = AppCompatResources.getDrawable(requireContext(),R.drawable.block_button_round_stroke)
+        binding.block.setTextColor(resources.getColor(R.color.black_quiz))
         isBlockSelected = false
     }
 
     private fun closeSheet(){
-        if(vm.ifDialogShow==0){
-            showFeedBackDialog()
-            dismissAllowingStateLoss()
-
-            showInAppReview()
-        }else{
-            dismissAllowingStateLoss()
+        when (vm.ifDialogShow) {
+            0 -> {
+                showFeedBackDialog()
+                dismissAllowingStateLoss()
+            }
+            3 -> {
+                showCustomRatingAndReviewDialog(requireActivity())
+            }
+            else -> {
+                dismissAllowingStateLoss()
+            }
         }
     }
 
@@ -385,20 +376,47 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
             .into(this)
     }
 
-    fun showInAppReview() {
-        val manager = FakeReviewManager(requireActivity())
-        manager.requestReviewFlow().addOnCompleteListener { request ->
-            if (request.isSuccessful) {
-                val reviewInfo = request.result
-                manager.launchReviewFlow(requireActivity(), reviewInfo).addOnCompleteListener { result ->
-                    if (result.isSuccessful) {
-                        showToast("Review Success")
-                    } else {
-                        showToast("Review Failed")
+    fun showInAppReview(context: Activity) {
+        if (isAdded && activity!=null){
+            val manager = FakeReviewManager(context)
+            manager.requestReviewFlow().addOnCompleteListener { request ->
+                if (request.isSuccessful) {
+                    val reviewInfo = request.result
+                    manager.launchReviewFlow(context, reviewInfo).addOnCompleteListener { result ->
+                        if (result.isSuccessful) {
+                            showToast("Review Success")
+                        } else {
+                            showToast("Review Failed")
+                        }
                     }
+                } else {
+                    showToast(request.exception?.message ?: "")
                 }
-            } else {
-                showToast(request.exception?.message ?: "")
+            }
+        }
+    }
+
+    fun showCustomRatingAndReviewDialog(context: Activity){
+        if (isAdded && activity!=null){
+            val dialog = Dialog(context)
+            dialog.setContentView(R.layout.custom_google_review_dialog)
+            dialog.setCancelable(false)
+            dialog.setCanceledOnTouchOutside(false)
+            dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            dialog.window?.setLayout(
+                WindowManager.LayoutParams.MATCH_PARENT,
+                WindowManager.LayoutParams.WRAP_CONTENT
+            )
+            dialog.window?.setGravity(Gravity.CENTER)
+            dialog.window?.attributes?.windowAnimations = R.style.DialogAnimation
+            dialog.show()
+            dialog.findViewById<Button>(R.id.btnNahi).setOnClickListener {
+                dialog.dismiss()
+                showInAppReview(context)
+            }
+            dialog.findViewById<Button>(R.id.btnHaBilkul).setOnClickListener {
+                dialog.dismiss()
+                showInAppReview(context)
             }
         }
     }

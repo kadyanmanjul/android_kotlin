@@ -215,18 +215,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:elevation="0dp"
+            android:paddingHorizontal="@dimen/_3sdp"
             android:text="@string/block_caller"
             android:textAllCaps="false"
             android:textSize="@dimen/_11ssp"
             android:textColor="@color/black"
             android:visibility="gone"
-            android:background="@drawable/block_button_round_stroke_black"
+            android:background="@drawable/block_button_round_stroke"
             app:cornerRadius="@dimen/_18sdp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/very_bad_text" />
 
-        <com.google.android.material.textview.MaterialTextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/submit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
