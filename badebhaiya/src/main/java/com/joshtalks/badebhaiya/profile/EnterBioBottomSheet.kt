@@ -52,7 +52,7 @@ class EnterBioBottomSheet : BottomSheetDialogFragment() {
 
     private fun setupFullHeight(bottomSheet: View) {
         val layoutParams = bottomSheet.layoutParams
-        layoutParams.height = WindowManager.LayoutParams.MATCH_PARENT
+        layoutParams.height = 2100
         bottomSheet.layoutParams = layoutParams
     }
 

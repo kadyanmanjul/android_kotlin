@@ -15,6 +15,7 @@ import androidx.annotation.IdRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.text.HtmlCompat
 import androidx.core.view.updateLayoutParams
 import androidx.core.widget.addTextChangedListener
@@ -353,12 +354,20 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
             if (profileResponse.isSpeaker) {
                 if(profileResponse.bioText.isNullOrEmpty() )
                 {
-//                    addABio.visibility=View.VISIBLE
                     tvProfileBio.visibility=View.GONE
+                    val param = divider.layoutParams as ViewGroup.MarginLayoutParams
+                    param.topMargin=100
+                    divider.updateLayoutParams<ConstraintLayout.LayoutParams> {
+                        topToTop = addABio.id}
                 }
                 else {
-//                    addABio.visibility=View.GONE
                     tvProfileBio.text = profileResponse.bioText
+                    tvProfileBio.setTextAppearance(R.style.BB_Typography_Nunito_Sans_Semi_Bold)
+                    tvProfileBio.textSize=18f
+                        divider.updateLayoutParams<ConstraintLayout.LayoutParams> {
+                            topToBottom = tvProfileBio.id
+                        }
+                    Log.i("SOMEHEIGHT", "handleSpeakerProfile: ${tvProfileBio.layoutParams.height} && ${tvProfileBio.measuredHeight} } ")
                 }
                 tvCalls.text=HtmlCompat.fromHtml(getString(R.string.bb_calls, profileResponse.callsCount.toString()),
                     HtmlCompat.FROM_HTML_MODE_LEGACY)

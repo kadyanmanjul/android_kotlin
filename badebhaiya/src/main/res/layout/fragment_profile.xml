@@ -35,7 +35,7 @@
             android:layout_marginTop="@dimen/_1sdp"
             android:scaleType="centerCrop"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.08"
+            app:layout_constraintHorizontal_bias="0.07"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/profile_toolbar"
             app:shapeAppearanceOverlay="@style/roundedCornersImageView_28dp"
@@ -157,8 +157,8 @@
             android:id="@+id/divider"
             android:layout_width="0dp"
             android:layout_height="1dp"
-            android:layout_marginStart="@dimen/_30sdp"
-            android:layout_marginTop="38dp"
+            android:layout_marginStart="@dimen/_32sdp"
+            android:layout_marginTop="28dp"
             android:layout_marginEnd="@dimen/_30sdp"
             android:background="#C4C4C4"
             app:layout_constraintEnd_toEndOf="parent"
@@ -172,7 +172,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/_10sdp"
             android:layout_marginTop="@dimen/_12sdp"
-            android:fontFamily="@font/nunito_regular"
+            android:fontFamily="@font/nunito_sans_semi_bold"
             android:paddingStart="12dp"
             android:text="@string/upcoming_rooms"
             android:textColor="@color/profile_font_color"
@@ -202,17 +202,12 @@
             android:layout_height="90dp"
             app:layout_constraintBottom_toBottomOf="@id/rvSpeakerRoomList" />
 
-        <FrameLayout
-            android:id="@+id/fans_frame"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
 
-        <FrameLayout
-            android:id="@+id/room_frame"
-            android:elevation="@dimen/_11sdp"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-
+            <FrameLayout
+                android:id="@+id/room_frame"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:elevation="@dimen/_11sdp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

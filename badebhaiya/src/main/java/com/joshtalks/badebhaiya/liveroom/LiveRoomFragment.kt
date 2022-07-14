@@ -605,6 +605,20 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
                 }
             }
         }
+
+        vm.audienceList.observe(requireActivity()) {
+            Timber.d("WE GOT RAISED HAND USERS => $it")
+            refreshAudienceAdapter(it)
+        }
+
+    }
+
+    private fun refreshAudienceAdapter(handRaisedList: List<LiveRoomUser>?) {
+        val list = handRaisedList?.filter { it.isSpeaker==false && it.isHandRaised }
+        Log.i("Prepare", "refreshAudienceAdapter: ")
+        list?.let {
+            audienceAdapter?.updateFullList(it.distinctBy { it.userId })
+        }
     }
 
 
@@ -1059,6 +1073,8 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
         speakerAdapter =
             SpeakerAdapter()
         Timber.tag("localuser").d("AUDIENCE ADAPTER INITIALISED")
+        val raisedHandList =
+            vm.getAudienceList().filter { it.isSpeaker == false && it.isHandRaised }
         audienceAdapter =
             AudienceAdapter(PubNubManager.getLiveRoomProperties().isRoomCreatedByUser)
 
@@ -1178,6 +1194,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
     fun openRaisedHandsBottomSheet() {
         val raisedHandList =
             vm.getAudienceList().filter { it.isSpeaker == false && it.isHandRaised }
+        Log.i("Prepare", "open: ${raisedHandList.size}")
         val bottomSheet =
             RaisedHandsBottomSheet.newInstance(
                 roomId ?: 0, PubNubManager.getLiveRoomProperties().agoraUid, PubNubManager.moderatorName, PubNubManager.getLiveRoomProperties().channelName,
@@ -1231,6 +1248,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
             requireActivity().supportFragmentManager.popBackStack()
         }
     }
+
 
     private fun showLeaveRoomPopup() {
         val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
