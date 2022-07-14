@@ -26,6 +26,10 @@ public enum DateTimeStyle {
      */
     SHORT,
     /**
+     * Style short e.g 06/13/17
+     */
+    SMALL,
+    /**
      * Style for ago time e.g 3h ago
      */
     AGO_SHORT_STRING,

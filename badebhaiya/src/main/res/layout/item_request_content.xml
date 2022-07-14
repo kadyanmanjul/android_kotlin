@@ -21,17 +21,33 @@
         android:paddingVertical="@dimen/_8sdp">
 
         <TextView
+            android:id="@+id/requestContentDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/nunito_bold"
+            android:text="@{requestContent.submitDate}"
+            android:textColor="@color/gray_txt_two"
+            android:textSize="@dimen/_10ssp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/requestContentTime"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Today" />
+
+        <TextView
             android:id="@+id/requestContentTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/nunito_regular"
-            android:textColor="@color/gray_txt_two"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:textSize="@dimen/_10ssp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
             android:text="@{requestContent.submitTime}"
-            tools:text="Today 6:37 pm" />
+            android:layout_marginStart="@dimen/_4sdp"
+            android:textColor="@color/gray_txt_two"
+            android:textSize="@dimen/_10ssp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/requestContentDate"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="6:37 pm" />
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/requestContentDp"
@@ -44,8 +60,8 @@
             android:layout_marginTop="@dimen/_10sdp"
             android:scaleType="centerCrop"
             app:layout_constraintStart_toStartOf="parent"
-            app:shapeAppearanceOverlay="@style/roundedCornersImageView_12dp"
-            app:layout_constraintTop_toBottomOf="@+id/requestContentTime" />
+            app:layout_constraintTop_toBottomOf="@+id/requestContentTime"
+            app:shapeAppearanceOverlay="@style/roundedCornersImageView_12dp" />
 
         <androidx.cardview.widget.CardView
             android:layout_width="0dp"
@@ -64,8 +80,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/nunito_bold"
-                android:textColor="@color/black"
                 android:text="@{requestContent.request_submitted}"
+                android:textColor="@color/black"
                 tools:text="Sir aapke room ne maari
 life badal dee, Sample sample sample sample lsass sample sample sample slasa sample sample sample aaaa sample sample sample aaaa sample sample sample aaaa" />
         </androidx.cardview.widget.CardView>

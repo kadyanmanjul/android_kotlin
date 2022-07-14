@@ -268,6 +268,8 @@ public class DateTimeUtils {
             pattern = "EEE, MMM dd";
         } else if (style.equals(DateTimeStyle.SHORT)) {
             pattern = "MM/dd/yy";
+        } else if (style.equals(DateTimeStyle.SMALL)) {
+            pattern = "MMMM dd";
         } else {
             pattern = "EEEE, MMMM dd, yyyy";
         }
