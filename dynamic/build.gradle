@@ -53,6 +53,7 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation project(':app')
+    implementation project(':base')
     implementation project(':mediapicker')
     //ffmpeg
     implementation 'com.arthenica:mobile-ffmpeg-full:4.4'
