@@ -65,6 +65,7 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
     var isListening = false
     var isRequestDialogShowed = false
     var timer: CountDownTimer? = null
+    val toastText  = Utils.context?.getRecordingText()?:""
     var isPermissionGranted: ObservableBoolean = ObservableBoolean(false)
 
     private val connectCallJob by lazy {
@@ -219,16 +220,10 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
     fun stopRecording(recordFile: File) {
         viewModelScope.launch(Dispatchers.IO) {
             if (recordFile.absolutePath.isEmpty().not()) {
-
-                val toastText  = Utils.context?.getRecordingText()?:""
-                withContext(Dispatchers.Main) {
-                    Utils.showToast(toastText)
-                }
                 val len = recordFile.length()
                 if (len < 1) {
                     return@launch
                 }
-
                 val currentTime = SystemClock.elapsedRealtime()
                 ProcessCallRecordingService.processSingleCallRecording(context = Utils.context, videoPath = videoRecordFile?.absolutePath?:"", audioPath = recordFile.absolutePath, callId = PrefManager.getAgraCallId().toString(),agoraMentorId = PrefManager.getLocalUserAgoraId().toString(),recordDuration = ((currentTime - uiState.recordTime)/1000).toInt())
                 CallRecordingAnalytics.addAnalytics(
@@ -384,8 +379,7 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                     }
                 }
             }
-        } catch (ex: Exception) {
-        }
+        } catch (ex: Exception) {}
         return timer
     }
 
@@ -586,5 +580,8 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
 
     fun nextWord(v:View){
         repository.nextGameWord()
+        viewModelScope.launch(Dispatchers.Main) {
+            Utils.showToast(toastText)
+        }
     }
 }
