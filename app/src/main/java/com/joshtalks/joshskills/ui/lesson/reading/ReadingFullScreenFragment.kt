@@ -12,7 +12,6 @@ import com.joshtalks.joshskills.base.BaseFragment
 import com.joshtalks.joshskills.constants.CLOSE_VIDEO_VIEW
 import com.joshtalks.joshskills.constants.SEND_OUTPUT_FILE
 import com.joshtalks.joshskills.databinding.FragmentReadingFullScreenBinding
-import com.joshtalks.joshskills.ui.assessment.fragment.QuizSuccessFragment
 import com.joshtalks.joshskills.ui.lesson.LessonViewModel
 
 class ReadingFullScreenFragment : BaseFragment() {
@@ -89,6 +88,7 @@ class ReadingFullScreenFragment : BaseFragment() {
 
     override fun onPause() {
         super.onPause()
+        binding.mergedVideo.stopPlayback()
         Log.e("Ayaaz","onpause")
     }
 

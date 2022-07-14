@@ -27,8 +27,16 @@ import com.joshtalks.joshskills.ui.referral.REFERRAL_SHARE_TEXT_SHARABLE_VIDEO
 import com.joshtalks.joshskills.ui.special_practice.model.SaveVideoModel
 import com.joshtalks.joshskills.ui.special_practice.model.SpecialPractice
 import com.joshtalks.joshskills.ui.special_practice.repo.SpecialPracticeRepo
-import com.joshtalks.joshskills.ui.special_practice.utils.*
+import com.joshtalks.joshskills.ui.special_practice.utils.CALL_INVITE_FRIENDS_METHOD
+import com.joshtalks.joshskills.ui.special_practice.utils.PLAY_RECORDED_VIDEO
+import com.joshtalks.joshskills.ui.special_practice.utils.WHATSAPP_PACKAGE_STRING
+import com.joshtalks.joshskills.ui.special_practice.utils.deleteFile
+import com.joshtalks.joshskills.ui.special_practice.utils.getHeightByPixel
+import com.joshtalks.joshskills.ui.special_practice.utils.getVideoFilePath
+import com.joshtalks.joshskills.ui.special_practice.utils.getWindowWidth
+import com.joshtalks.joshskills.ui.special_practice.utils.saveVideoFromPracticeModelQ
 import com.joshtalks.joshskills.util.DeepLinkUtil
+import java.io.File
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -36,7 +44,6 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
-import java.io.File
 
 class ViewAndShareViewModel : BaseViewModel() {
     val specialIdData = MutableLiveData<SpecialPractice>()
@@ -182,7 +189,7 @@ class ViewAndShareViewModel : BaseViewModel() {
         try {
             var filePath: String? = null
             filePath = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
-                saveVideoQ(context, spViewModel)
+                saveVideoFromPracticeModelQ(context, spViewModel)
             } else {
                 getVideoFilePath()
             }

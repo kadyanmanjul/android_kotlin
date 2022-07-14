@@ -53,6 +53,7 @@ import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
 import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.Player
 import com.google.android.material.snackbar.Snackbar
+import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.constants.CANCEL_BUTTON_CLICK
@@ -136,10 +137,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseDrawable
 import timber.log.Timber
@@ -177,9 +176,8 @@ class ReadingFragmentWithoutFeedback :
     private val mutex = Mutex(false)
     private var muxerJob: Job? = null
     private var internetAvailableFlag: Boolean = true
-    var increasedAudio = getAudioFilePathFromMuxer()
     private val praticAudioAdapter: PracticeAudioAdapter by lazy { PracticeAudioAdapter(context) }
-    private var linearLayoutManager: LinearLayoutManager?= null
+    private var linearLayoutManager: LinearLayoutManager? = null
     private var onDownloadCompleteListener = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             val id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
@@ -314,7 +312,7 @@ class ReadingFragmentWithoutFeedback :
                 } else {
                     binding.mergedVideo.scaleY = 1f / scaleX
                 }
-            }catch (ex:Exception){
+            } catch (ex: Exception) {
                 showToast(getString(R.string.something_went_wrong))
                 ex.printStackTrace()
             }
@@ -350,12 +348,12 @@ class ReadingFragmentWithoutFeedback :
                 SHOW_VIDEO_VIEW -> binding.practiseSubmitLayout.visibility = VISIBLE
                 VIDEO_AUDIO_MERGED_PATH -> {
                     binding.progressDialog.visibility = GONE
+                    outputFile = it.obj as String
                     outputFile?.let { file -> viewModel.sendOutputToFullScreen(file) }
                     binding.mergedVideo.setVideoPath(outputFile)
                 }
                 INCREASE_AUDIO_VOLUME -> {
-                    increasedAudio = it.obj as String
-                    Log.e("Ayaaz","increasedaudio - $increasedAudio")
+
                 }
             }
         }
@@ -799,7 +797,7 @@ class ReadingFragmentWithoutFeedback :
         lifecycleScope.launch(Dispatchers.IO) {
             if (isAdded && activity != null) {
                 val thumbnailDrawable: Drawable? =
-                    Utils.getDrawableFromUrl(requireContext(),thumbnailUrl)
+                    Utils.getDrawableFromUrl(requireContext(), thumbnailUrl)
                 if (thumbnailDrawable != null) {
                     AppObjectController.uiHandler.post {
                         binding.videoPlayer.useArtwork = true
@@ -809,7 +807,7 @@ class ReadingFragmentWithoutFeedback :
 //                    imgArtwork.visibility = View.VISIBLE
                     }
                 }
-            }else{
+            } else {
                 showToast(getString(R.string.something_went_wrong))
             }
         }
@@ -882,7 +880,10 @@ class ReadingFragmentWithoutFeedback :
                             binding.mergedVideo.setVideoPath(this.practiceEngagement?.get(0)?.localPath)
                         }
                         binding.btnWhatsapp.setOnClickListener {
-                            viewModel.saveReadingPracticeImpression(READING_SHARED_WHATSAPP,lessonID.toString())
+                            viewModel.saveReadingPracticeImpression(
+                                READING_SHARED_WHATSAPP,
+                                lessonID.toString()
+                            )
                             scope.launch {
                                 if (currentLessonQuestion?.practiceEngagement?.get(0)?.localPath.isNullOrEmpty()
                                         .not()
@@ -988,7 +989,7 @@ class ReadingFragmentWithoutFeedback :
                 download()
             }
         }
-        if(video.isNullOrEmpty()) {
+        if (video.isNullOrEmpty()) {
             binding.info.visibility = GONE
         }
     }
@@ -1133,7 +1134,10 @@ class ReadingFragmentWithoutFeedback :
             binding.btnWhatsapp.visibility = VISIBLE
             binding.btnWhatsapp.setOnClickListener {
                 outputFile?.let { file -> viewModel.shareVideoForAudio(file) }
-                viewModel.saveReadingPracticeImpression(READING_SHARED_WHATSAPP,lessonID.toString())
+                viewModel.saveReadingPracticeImpression(
+                    READING_SHARED_WHATSAPP,
+                    lessonID.toString()
+                )
             }
         }
 
@@ -1316,7 +1320,7 @@ class ReadingFragmentWithoutFeedback :
     }
 
     private fun recordPermission() {
-        if (isAdded && activity!=null) {
+        if (isAdded && activity != null) {
             PermissionUtils.audioRecordStorageReadAndWritePermission(
                 requireActivity(),
                 object : MultiplePermissionsListener {
@@ -1346,7 +1350,7 @@ class ReadingFragmentWithoutFeedback :
                     }
                 }
             )
-        }else{
+        } else {
             showToast(getString(R.string.something_went_wrong))
         }
     }
@@ -1354,10 +1358,10 @@ class ReadingFragmentWithoutFeedback :
     @SuppressLint("ClickableViewAccessibility")
     private fun audioRecordTouchListener() {
         binding.recordTransparentContainer.setOnTouchListener { _, event ->
-            if (isCallOngoing() || requireActivity().getVoipState()!= State.IDLE) {
+            if (isCallOngoing() || requireActivity().getVoipState() != State.IDLE) {
                 return@setOnTouchListener false
             }
-            if (isAdded && activity!=null) {
+            if (isAdded && activity != null) {
                 if (PermissionUtils.isAudioAndStoragePermissionEnable(requireContext()).not()) {
                     recordPermission()
                     return@setOnTouchListener true
@@ -1403,63 +1407,43 @@ class ReadingFragmentWithoutFeedback :
                             startTime
                         )
                     if (timeDifference > 1) {
-                        if(Utils.isInternetAvailable()){
-                        viewModel.recordFile?.let {
-                            isAudioRecordDone = true
+                        if (Utils.isInternetAvailable()) {
+                            viewModel.recordFile?.let {
+                                isAudioRecordDone = true
 //                            Log.e("Ayaaz","${currentLessonQuestion?.videoList?.get(0)?.video_url}")
 //                            if(!currentLessonQuestion?.videoList?.get(0)?.video_url.isNullOrEmpty())
 //                            viewModel.showVideoOnFullScreen()
 
-                            if (Build.VERSION.SDK_INT >= 29) {
-                                if (isAdded) {
-                                    outputFile = getOutputFileFromMuxer(requireContext(),videoDownPath)
+                                filePath = AppDirectory.getAudioSentFile(null).absolutePath
+                                AppDirectory.copy(it.absolutePath, filePath!!)
+                                if (isAdded && videoDownPath !=null) {
+                                    startService(videoDownPath!!,filePath!!,)
                                 }
-                            } else {
-                                outputFile = getVideoFilePath()
-                            }
-                            filePath = AppDirectory.getAudioSentFile(null).absolutePath
-                            AppDirectory.copy(it.absolutePath, filePath!!)
-                            audioAttachmentInit()
-                            MixPanelTracker.publishEvent(MixPanelEvent.READING_RECORD)
-                                .addParam(ParamKeys.LESSON_ID, lessonID)
-                                .addParam(ParamKeys.RECORD_DURATION, timeDifference)
-                                .push()
-                            AppObjectController.uiHandler.postDelayed(
-                                {
-                                    binding.submitAnswerBtn.parent.requestChildFocus(
-                                        binding.submitAnswerBtn,
-                                        binding.submitAnswerBtn
-                                    )
-                                }, 200
-                            )
-
-                            val duration = event.eventTime - event.downTime
-
-                            if (duration < CLICK_OFFSET_PERIOD) {
-                                AppObjectController.uiHandler.removeCallbacks(
-                                    longPressAnimationCallback
+                                audioAttachmentInit()
+                                MixPanelTracker.publishEvent(MixPanelEvent.READING_RECORD)
+                                    .addParam(ParamKeys.LESSON_ID, lessonID)
+                                    .addParam(ParamKeys.RECORD_DURATION, timeDifference)
+                                    .push()
+                                AppObjectController.uiHandler.postDelayed(
+                                    {
+                                        binding.submitAnswerBtn.parent.requestChildFocus(
+                                            binding.submitAnswerBtn,
+                                            binding.submitAnswerBtn
+                                        )
+                                    }, 200
                                 )
-                                showRecordHintAnimation()
-                            }
 
-                            muxerJob = scope.launch {
-                                if (isActive) {
-                                    mutex.withLock {
-                                        increaseAudioVolume(filePath!!)
-                                        if(videoDownPath!=null && outputFile!=null){
-                                            val extractedPath = extractAudioFromVideo(videoDownPath!!)
-                                            extractedPath?.let {
-                                                mergeAudioWithAudio(filePath!!,
-                                                    extractedPath, videoDownPath!!, outputFile!!)
-                                            }
-                                        }
-                                    }
+                                val duration = event.eventTime - event.downTime
+
+                                if (duration < CLICK_OFFSET_PERIOD) {
+                                    AppObjectController.uiHandler.removeCallbacks(
+                                        longPressAnimationCallback
+                                    )
+                                    showRecordHintAnimation()
                                 }
+                                binding.playBtn.visibility = VISIBLE
                             }
-                            binding.playBtn.visibility = VISIBLE
-                        }
-                        }
-                        else{
+                        } else {
                             showToast(getString(R.string.internet_not_available_msz))
                         }
                     }
@@ -1489,6 +1473,7 @@ class ReadingFragmentWithoutFeedback :
         binding.playBtn.visibility = INVISIBLE
         binding.mergedVideo.start()
     }
+
     private fun gainAudioFocus() {
         val mAudioManager =
             context?.getSystemService(Context.AUDIO_SERVICE) as AudioManager?
@@ -1653,7 +1638,7 @@ class ReadingFragmentWithoutFeedback :
     }
 
     fun submitPractise() {
-        if(Utils.isInternetAvailable()) {
+        if (Utils.isInternetAvailable()) {
             MixPanelTracker.publishEvent(MixPanelEvent.READING_SUBMIT)
                 .addParam(ParamKeys.LESSON_ID, lessonID)
                 .push()
@@ -1732,8 +1717,7 @@ class ReadingFragmentWithoutFeedback :
                     }
                 }
             }
-        }
-        else{
+        } else {
             showToast(getString(R.string.internet_not_available_msz))
         }
     }
@@ -1842,98 +1826,35 @@ class ReadingFragmentWithoutFeedback :
         )
     }
 
-    private fun getOutputFileFromMuxer(context: Context, path: String?): String? {
-
+    private fun extractAudioFromVideo(filePath: String): String? {
         try {
             val cls = Class.forName("com.joshtalks.joshskills.dynamic.MuxerUtils")
             cls.declaredMethods.forEach {
-                if(it.name == "saveVideoQ"){
+                if (it.name == "extractAudioFromVideo") {
                     it.isAccessible = true
-                    return it.invoke(cls.newInstance(),context,path) as String?
+                    return it.invoke(cls.newInstance(), filePath) as String?
                 }
             }
-        }catch (ex:Exception){
+        } catch (ex: Exception) {
             ex.printStackTrace()
         }
         return null
     }
 
-    private fun getVideoFilePath(): String? {
-        try {
-            val cls = Class.forName("com.joshtalks.joshskills.dynamic.MuxerUtils")
-            cls.declaredMethods.forEach {
-                if(it.name == "getVideoFilePath"){
-                    it.isAccessible = true
-                    return it.invoke(cls.newInstance()) as String?
-                }
-            }
-        }catch (ex:Exception){
-            ex.printStackTrace()
-        }
-        return null
-    }
-
-    private fun increaseAudioVolume(filePath: String) {
-        try {
-            val cls = Class.forName("com.joshtalks.joshskills.dynamic.MuxerUtils")
-            cls.declaredMethods.forEach {
-                if(it.name == "increaseAudioVolume"){
-                    it.isAccessible = true
-                    it.invoke(cls.newInstance(),filePath)
-                }
-            }
-
-        }catch (ex:Exception){
-            ex.printStackTrace()
-        }
-    }
-
-    private fun extractAudioFromVideo(filePath: String): String?{
-        try {
-            val cls = Class.forName("com.joshtalks.joshskills.dynamic.MuxerUtils")
-            cls.declaredMethods.forEach {
-                if(it.name == "extractAudioFromVideo"){
-                    it.isAccessible = true
-                    return it.invoke(cls.newInstance(),filePath)  as String?
-                }
-            }
-        }catch (ex:Exception){
-            ex.printStackTrace()
-        }
-        return null
-    }
-
-    private fun mergeAudioWithAudio(
-        filePath: String,
-        extractedPath: String,
+    private fun startService(
         videoDownPath: String,
-        outputFile: String
+        audioPath: String
     ) {
         try {
-            val cls = Class.forName("com.joshtalks.joshskills.dynamic.MuxerUtils")
-            cls.declaredMethods.forEach {
-                if(it.name == "mergeAudioWithAudio"){
-                    it.isAccessible = true
-                    it.invoke(cls.newInstance(),context,filePath,extractedPath,videoDownPath,outputFile) as String?
-                }
+            val cls = Class.forName("com.joshtalks.joshskills.dynamic.VideoMergeService")
+            Intent().setClassName(BuildConfig.APPLICATION_ID,cls.name).also {
+                it.putExtra("VIDEO_PATH",videoDownPath)
+                it.putExtra("AUDIO_PATH",audioPath)
+                ContextCompat.startForegroundService(requireActivity(),it)
             }
-        }catch (ex:Exception){
-            ex.printStackTrace()
+        } catch (e:Exception){
+            e.printStackTrace()
         }
     }
 
-    private fun getAudioFilePathFromMuxer(): String {
-        try {
-            val cls = Class.forName("com.joshtalks.joshskills.dynamic.MuxerUtils")
-            cls.declaredMethods.forEach {
-                if(it.name == "getAudioFilePathMP3"){
-                    it.isAccessible = true
-                    return it.invoke(cls.newInstance()) as String
-                }
-            }
-        }catch (ex:Exception){
-            ex.printStackTrace()
-        }
-        return EMPTY
-    }
 }
