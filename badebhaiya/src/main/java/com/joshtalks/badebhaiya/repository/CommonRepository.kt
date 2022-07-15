@@ -4,7 +4,9 @@ import com.joshtalks.badebhaiya.core.models.FormResponse
 import com.joshtalks.badebhaiya.core.models.InstallReferrerModel
 import com.joshtalks.badebhaiya.core.models.UpdateDeviceRequest
 import com.joshtalks.badebhaiya.core.showToast
+import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.repository.service.RetrofitInstance
+import com.joshtalks.badebhaiya.showCallRequests.model.RoomRequestCount
 import com.joshtalks.badebhaiya.signup.request.VerifyOTPRequest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
@@ -60,4 +62,16 @@ class CommonRepository {
      .catch {
          showToast("Something Went Wrong")
      }
+
+    suspend fun roomRequestCount() : Int? {
+        if (User.getInstance().isSpeaker){
+            val response = service.getRoomRequestCount()
+            if (response.isSuccessful) {
+                response.body()?.let {
+                    return it.request_count
+                }
+            }
+        }
+        return null
+    }
 }

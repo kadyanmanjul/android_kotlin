@@ -92,8 +92,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
     @Inject
     lateinit var notificationScheduler: NotificationScheduler
 
-    private lateinit var badgeDrawable: BadgeDrawable
-//    by lazy { BadgeDrawable.create(requireContext()) }
+    private val badgeDrawable: BadgeDrawable by lazy { BadgeDrawable.create(requireContext()) }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -122,9 +121,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         binding.handler = this
         binding.viewModel = viewModel
 
-        badgeDrawable = create(requireContext())
 
-        setBadgeDrawable(5)
         binding.profileToolbar.iv_back.setOnClickListener{
             activity?.run {
                 try {
@@ -164,32 +161,22 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         Timber.tag("profilebadge").d(
             "setBadgeDrawable() called with: raisedHandAudienceSize = $callRequestCount"
         )
-        badgeDrawable.number = callRequestCount
 
-        badgeDrawable.horizontalOffset = 20
-        badgeDrawable.verticalOffset = 10
-//        badgeDrawable.isVisible = true
-//        badgeDrawable.badgeGravity = TOP_END
-        binding.callRequestsBtnRoot.setForeground(badgeDrawable)
-        binding.callRequestsBtnRoot.addOnLayoutChangeListener { v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
+        if (User.getInstance().isSpeaker && callRequestCount > 0){
+            badgeDrawable.number = callRequestCount
 
+            badgeDrawable.horizontalOffset = 20
+            badgeDrawable.verticalOffset = 10
+            binding.callRequestsBtnRoot.setForeground(badgeDrawable)
+            binding.callRequestsBtnRoot.addOnLayoutChangeListener { v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
 
-            //either of the following two lines of code  work
-            //badgeDrawable.updateBadgeCoordinates(imageView, frameLayout);
-            BadgeUtils.attachBadgeDrawable(
-                badgeDrawable,
-                binding.callRequestsBtn,
-                binding.callRequestsBtnRoot
-            )
+                BadgeUtils.attachBadgeDrawable(
+                    badgeDrawable,
+                    binding.callRequestsBtn,
+                    binding.callRequestsBtnRoot
+                )
+            }
         }
-
-//        BadgeUtils.attachBadgeDrawable(badgeDrawable, binding.callRequestsBtn)
-////        binding.callRequestsBtn.foregroundGravity = Gravity.END
-//        binding.callRequestsBtn.foreground = badgeDrawable
-////        binding.callRequestsBtn.foreground = badgeDrawable
-//        badgeDrawable.badgeGravity = BadgeDrawable.TOP_END
-
-
 
     }
 
@@ -274,27 +261,10 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-//        binding.callRequestsBtn.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
-//            @SuppressLint("UnsafeOptInUsageError")
-//            override fun onGlobalLayout() {
-//                val mbadgeDrawable = BadgeDrawable.create(requireContext());
-//                mbadgeDrawable.setNumber(7);
-//                mbadgeDrawable.setBackgroundColor(Color.RED);
-//                mbadgeDrawable.setVerticalOffset(20);
-//                mbadgeDrawable.setHorizontalOffset(15);
-//                mbadgeDrawable.badgeGravity = TOP_END
-//
-//                BadgeUtils.attachBadgeDrawable(mbadgeDrawable, binding.callRequestsBtn);
-//
-//                binding.callRequestsBtn.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-//            }
-//
-//        })
-
+        viewModel.getRoomRequestCount()
         Timber.d("THIS IS FCM TOKEN => ${PrefManager.getStringValue(com.joshtalks.badebhaiya.notifications.FCM_TOKEN)}")
         addObserver()
         executePendingActions()
-        Timber.tag("profilebadge").d("profile badge functton called")
     }
 
     private fun executePendingActions( ) {
@@ -315,6 +285,10 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
     }
 
     private fun addObserver() {
+        viewModel.roomRequestCount.observe(viewLifecycleOwner){
+            setBadgeDrawable(it)
+        }
+
         viewModel.userProfileData.observe(viewLifecycleOwner) {
             binding.apply {
                 handleSpeakerProfile(it)

@@ -26,12 +26,14 @@ import com.joshtalks.badebhaiya.pubnub.PubNubEventsManager
 import com.joshtalks.badebhaiya.pubnub.PubNubManager
 import com.joshtalks.badebhaiya.pubnub.PubNubState
 import com.joshtalks.badebhaiya.repository.BBRepository
+import com.joshtalks.badebhaiya.repository.CommonRepository
 import com.joshtalks.badebhaiya.repository.ConversationRoomRepository
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomRequest
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomResponse
 import com.joshtalks.badebhaiya.repository.model.User
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import retrofit2.Response
 import timber.log.Timber
@@ -75,6 +77,11 @@ class FeedViewModel : ViewModel() {
     private var pendingRoomTopic = ""
     val previousRoomData = MutableLiveData<ConversationRoomResponse>()
     val previousRoomDataForSchedule = MutableLiveData<RoomListResponseItem>()
+    val roomRequestCount = MutableLiveData<Int>()
+
+    private val commonRepository by lazy {
+        CommonRepository()
+    }
 
     var pendingRoomTopicForSchedule = ""
     var pendingRoomTimeForSchedule = ""
@@ -98,6 +105,14 @@ class FeedViewModel : ViewModel() {
         viewModelScope.launch {
             PubNubData.pubNubState.collect {
                 pubNubState = it
+            }
+        }
+    }
+
+    fun getRoomRequestCount(){
+        viewModelScope.launch {
+            commonRepository.roomRequestCount()?.let { count ->
+                roomRequestCount.postValue(count)
             }
         }
     }

@@ -19,6 +19,7 @@ import com.joshtalks.badebhaiya.profile.response.ProfileResponse
 import com.joshtalks.badebhaiya.pubnub.PubNubData
 import com.joshtalks.badebhaiya.pubnub.PubNubState
 import com.joshtalks.badebhaiya.repository.BBRepository
+import com.joshtalks.badebhaiya.repository.CommonRepository
 import com.joshtalks.badebhaiya.repository.ConversationRoomRepository
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.repository.service.RetrofitInstance
@@ -44,6 +45,12 @@ class ProfileViewModel : ViewModel() {
     val speakerFollowed = MutableLiveData(false)
     val isSelfProfile = ObservableBoolean(false)
     var pubNubState = PubNubState.ENDED
+    val roomRequestCount = MutableLiveData<Int>()
+
+
+    private val commonRepository by lazy {
+        CommonRepository()
+    }
 
     init {
 //        collectPubNubState()
@@ -56,6 +63,8 @@ class ProfileViewModel : ViewModel() {
             }
         }
     }
+
+
     fun updateFollowStatus(userId: String, isFromBBPage: Boolean, isFromDeeplink: Boolean) {
         speakerFollowed.value?.let {
             if (it.not()) {
@@ -91,6 +100,14 @@ class ProfileViewModel : ViewModel() {
                     }
 
                 }
+            }
+        }
+    }
+
+    fun getRoomRequestCount(){
+        viewModelScope.launch {
+            commonRepository.roomRequestCount()?.let { count ->
+                roomRequestCount.postValue(count)
             }
         }
     }

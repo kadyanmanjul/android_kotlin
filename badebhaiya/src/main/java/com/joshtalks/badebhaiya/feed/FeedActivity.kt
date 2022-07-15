@@ -1,5 +1,6 @@
 package com.joshtalks.badebhaiya.feed
 
+import android.annotation.SuppressLint
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
@@ -22,6 +23,8 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.badge.BadgeDrawable
+import com.google.android.material.badge.BadgeUtils
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
@@ -160,6 +163,8 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         ViewModelProvider(this)[LiveRoomViewModel::class.java]
     }
 
+    private val badgeDrawable: BadgeDrawable by lazy { BadgeDrawable.create(this) }
+
     private lateinit var binding: ActivityFeedBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d("sahil", "onCreate of feed activity ")
@@ -209,6 +214,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
             })
             checkAndOpenLiveRoom()
         }
+
     }
 
     override fun onRestart() {
@@ -310,6 +316,31 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         })
     }
 
+    @SuppressLint("UnsafeOptInUsageError")
+    private fun setBadgeDrawable(callRequestCount: Int) {
+        Timber.tag("profilebadge").d(
+            "setBadgeDrawable() called with: raisedHandAudienceSize = $callRequestCount"
+        )
+
+        if (User.getInstance().isSpeaker && callRequestCount > 0) {
+
+            badgeDrawable.number = callRequestCount
+
+            badgeDrawable.horizontalOffset = 20
+            badgeDrawable.verticalOffset = 10
+            binding.profileIvRoot.setForeground(badgeDrawable)
+            binding.profileIvRoot.addOnLayoutChangeListener { v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
+
+                BadgeUtils.attachBadgeDrawable(
+                    badgeDrawable,
+                    binding.profileIv,
+                    binding.profileIvRoot
+                )
+            }
+        }
+
+    }
+
     private fun addObserver() {
         liveRoomViewModel.pubNubState.observe(this,androidx.lifecycle.Observer{
             if(it==PubNubState.ENDED)
@@ -317,6 +348,10 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
             else
                 viewModel.pubNubState=PubNubState.STARTED
         })
+
+        viewModel.roomRequestCount.observe(this){
+            setBadgeDrawable(it)
+        }
 
         viewModel.previousRoomData.observe(this){
             PreviousRoomDialog(
@@ -521,6 +556,11 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                 }
             }
         )
+    }
+
+    override fun onStart() {
+        super.onStart()
+        viewModel.getRoomRequestCount()
     }
 
     fun takePermissionsXml() {

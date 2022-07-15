@@ -8,6 +8,7 @@ import com.joshtalks.badebhaiya.repository.model.FCMData
 import com.joshtalks.badebhaiya.repository.server.AmazonPolicyResponse
 import com.joshtalks.badebhaiya.showCallRequests.model.RequestContent
 import com.joshtalks.badebhaiya.showCallRequests.model.RequestsList
+import com.joshtalks.badebhaiya.showCallRequests.model.RoomRequestCount
 import kotlinx.coroutines.Deferred
 import retrofit2.Response
 import retrofit2.http.*
@@ -52,5 +53,8 @@ interface CommonNetworkService {
     suspend fun getRequestContent(
         @Path("user_id") userId: String
     ): Response<RequestContent>
+
+    @GET("$DIR/request_call/request_count/")
+    suspend fun getRoomRequestCount(): Response<RoomRequestCount>
 
 }

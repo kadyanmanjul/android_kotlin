@@ -68,8 +68,8 @@
             app:layout_constraintBottom_toBottomOf="@id/iv_profile_pic"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.933"
-            android:paddingTop="@dimen/_12sdp"
-            android:paddingEnd="@dimen/_12sdp"
+            android:paddingTop="@dimen/_6sdp"
+            android:paddingEnd="@dimen/_6sdp"
             app:layout_constraintStart_toStartOf="@id/iv_profile_pic"
             app:layout_constraintTop_toBottomOf="@id/profile_toolbar"
             app:layout_constraintVertical_bias="1.0" >

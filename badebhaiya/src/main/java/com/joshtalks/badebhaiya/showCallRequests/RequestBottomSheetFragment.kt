@@ -25,7 +25,7 @@ import kotlinx.android.synthetic.main.bottom_sheet_request.view.*
 import timber.log.Timber
 
 class RequestBottomSheetFragment(
-    private val callRequest: RequestData
+    private val callRequest: RequestData,
 ) : BottomSheetDialogFragment() {
 
     private val viewModel by lazy {

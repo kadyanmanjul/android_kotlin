@@ -29,6 +29,7 @@ import com.joshtalks.badebhaiya.liveroom.model.StartingLiveRoomProperties
 import com.joshtalks.badebhaiya.pubnub.PubNubData
 import com.joshtalks.badebhaiya.pubnub.PubNubManager
 import com.joshtalks.badebhaiya.pubnub.PubNubState
+import com.joshtalks.badebhaiya.repository.CommonRepository
 import com.joshtalks.badebhaiya.repository.ConversationRoomRepository
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomRequest
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomResponse
@@ -83,6 +84,11 @@ class LiveRoomViewModel(application: Application) : AndroidViewModel(application
     private val repository by lazy {
         ConversationRoomRepository()
     }
+    private val commonRepository by lazy {
+        CommonRepository()
+    }
+    val roomRequestCount = MutableLiveData<Int>()
+
 
     fun getSpeakerList() = this.speakersList.value ?: emptyList<LiveRoomUser>()
 
@@ -168,6 +174,14 @@ class LiveRoomViewModel(application: Application) : AndroidViewModel(application
         viewModelScope.launch(Dispatchers.IO) {
             PubNubData.pubNubState.collect {
                 pubNubState.postValue(it)
+            }
+        }
+    }
+
+    fun getRoomRequestCount(){
+        viewModelScope.launch {
+            commonRepository.roomRequestCount()?.let { count ->
+                roomRequestCount.postValue(count)
             }
         }
     }

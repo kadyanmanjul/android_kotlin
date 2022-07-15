@@ -49,14 +49,26 @@
                 android:gravity="center_vertical|start"
                 onSingleClick="@{() -> handler.onSearchPressed()}"
                 android:visibility="visible"
-                app:layout_constraintBottom_toBottomOf="@+id/profile_iv"
-                app:layout_constraintEnd_toStartOf="@+id/profile_iv"
+                app:layout_constraintBottom_toBottomOf="@+id/profileIvRoot"
+                app:layout_constraintEnd_toStartOf="@+id/profileIvRoot"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/profile_iv"
+                app:layout_constraintTop_toTopOf="@+id/profileIvRoot"
                 app:srcCompat="@drawable/ic_vector_search"
                 app:tint="@color/black" />
 
+            <FrameLayout
+                android:id="@+id/profileIvRoot"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.95"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:paddingTop="@dimen/_6sdp"
+                android:paddingEnd="@dimen/_6sdp"
+                app:layout_constraintVertical_bias="0.019">
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/profile_iv"
@@ -65,14 +77,11 @@
                 android:layout_height="24dp"
                 onSingleClick="@{() -> handler.onProfileClicked()}"
                 android:scaleType="centerCrop"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.95"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.019"
                 app:shapeAppearanceOverlay="@style/roundedCornersImageView_6dp"
                 app:srcCompat="@drawable/ic_profile_header" />
+
+            </FrameLayout>
+
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerView"
@@ -87,7 +96,7 @@
                 android:paddingEnd="@dimen/_8sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/profile_iv"
+                app:layout_constraintTop_toBottomOf="@+id/profileIvRoot"
                 tools:listitem="@layout/li_room_event" />
 
             <androidx.appcompat.widget.LinearLayoutCompat
