@@ -5,9 +5,10 @@
     split="dynamic-module">
 
     <dist:module
+        dist:instant="false"
         dist:onDemand="true"
         dist:title="dynamic">
-        <dist:fusing include="true" />
+        <dist:fusing dist:include="false"/>
     </dist:module>
 
     <application>
