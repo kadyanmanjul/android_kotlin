@@ -148,7 +148,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="128dp"
-            android:layout_marginTop="@dimen/_12sdp"
+            android:layout_marginTop="@dimen/_11sdp"
             android:textAppearance="@style/BB_Typography_Nunito_Semi_Bold"
             android:textColor="@color/profile_font_color"
             android:textSize="@dimen/_12ssp"
