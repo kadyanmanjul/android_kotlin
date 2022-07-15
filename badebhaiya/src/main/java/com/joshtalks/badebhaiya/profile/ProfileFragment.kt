@@ -8,12 +8,16 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.IdRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.text.HtmlCompat
 import androidx.core.view.updateLayoutParams
 import androidx.core.widget.addTextChangedListener
@@ -28,16 +32,19 @@ import com.google.android.material.badge.BadgeUtils
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.core.*
 import com.joshtalks.badebhaiya.core.USER_ID
+import com.joshtalks.badebhaiya.core.models.FormRequest
 import com.joshtalks.badebhaiya.core.models.FormResponse
 import com.joshtalks.badebhaiya.core.models.PendingPilotEvent
 import com.joshtalks.badebhaiya.core.models.PendingPilotEvent.*
 import com.joshtalks.badebhaiya.core.models.PendingPilotEventData
 import com.joshtalks.badebhaiya.databinding.FragmentProfileBinding
+import com.joshtalks.badebhaiya.databinding.RequestRoomBinding
 import com.joshtalks.badebhaiya.databinding.WhyRoomBinding
 import com.joshtalks.badebhaiya.feed.*
 import com.joshtalks.badebhaiya.feed.adapter.FeedAdapter
 import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
 import com.joshtalks.badebhaiya.impressions.Impression
+import com.joshtalks.badebhaiya.liveroom.bottomsheet.EnterBioBottomSheet
 import com.joshtalks.badebhaiya.liveroom.viewmodel.LiveRoomViewModel
 import com.joshtalks.badebhaiya.notifications.NotificationScheduler
 import com.joshtalks.badebhaiya.profile.request.ReminderRequest
@@ -117,6 +124,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
 
         handleIntent()
         viewModel.getProfileForUser(userId!!, source)
+        feedViewModel.profileUuid=userId
         feedViewModel.setIsBadeBhaiyaSpeaker()
         binding.handler = this
         binding.viewModel = viewModel
@@ -215,6 +223,66 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
                 }
             }
         })
+    }
+
+
+    fun showBottomSheet() {
+        val bottomSheet =
+            EnterBioBottomSheet.newInstance(userId!!, binding.tvProfileBio.text.toString(), onBioUpdated = {
+                binding.tvProfileBio.text=it
+            })
+        bottomSheet.show(requireActivity().supportFragmentManager, "Bottom sheet")
+
+        bottomSheet.dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+    }
+
+    fun requestRoomPopup() {
+        val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
+        val dialogBinding = RequestRoomBinding.inflate(layoutInflater)
+        dialogBuilder.setView(dialogBinding.root)
+        val alertDialog: AlertDialog = dialogBuilder.create()
+        alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        alertDialog.show()
+
+        dialogBinding.message.addTextChangedListener {
+            dialogBinding.submit.isEnabled = !it.toString().trim().isEmpty()
+        }
+
+        dialogBinding.submit.setOnClickListener{
+            val msg:String
+            if(dialogBinding.message.toString().isNotBlank()) {
+                msg = dialogBinding.message.text.toString()
+                val obj=FormRequest(User.getInstance().userId,msg,userId!!)
+                CoroutineScope(Dispatchers.IO).launch {
+                    try {
+                        val resp= CommonRepository().sendRequest(obj)
+                        if(resp.isSuccessful)
+                            showToast("Request Sent")
+                        else
+                            showToast(resp.errorMessage())
+
+                    } catch (e: Exception){
+                        Log.i("REQUESTMSG", "requestRoomPopup: ${e.message}")
+                    }
+                }
+                alertDialog.dismiss()
+            }
+        }
+
+    }
+
+    fun openFansList(){
+        FansListFragment.open(supportFragmentManager =requireActivity().supportFragmentManager,R.id.room_frame)
+    }
+
+    fun openFollowingList(){
+        FollowingListFragment.open(supportFragmentManager =requireActivity().supportFragmentManager,R.id.room_frame)
+    }
+
+    fun openList(){
+        if(viewModel.isSpeaker) openFansList()
+        else openFollowingList()
     }
 
     fun showPopup(roomId: Int, userId: String) {
@@ -333,7 +401,27 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
     private fun handleSpeakerProfile(profileResponse: ProfileResponse) {
         binding.apply {
             if (profileResponse.isSpeaker) {
-                tvProfileBio.text = profileResponse.bioText
+                if(profileResponse.bioText.isNullOrEmpty() )
+                {
+                    tvProfileBio.visibility=View.GONE
+                    val param = divider.layoutParams as ViewGroup.MarginLayoutParams
+                    param.topMargin=100
+                    divider.updateLayoutParams<ConstraintLayout.LayoutParams> {
+                        topToTop = addABio.id}
+                }
+                else {
+                    tvProfileBio.text = profileResponse.bioText
+                    tvProfileBio.setTextAppearance(R.style.BB_Typography_Nunito_Sans_Semi_Bold)
+                    tvProfileBio.textSize=18f
+                        divider.updateLayoutParams<ConstraintLayout.LayoutParams> {
+                            topToBottom = tvProfileBio.id
+                        }
+                    Log.i("SOMEHEIGHT", "handleSpeakerProfile: ${tvProfileBio.layoutParams.height} && ${tvProfileBio.measuredHeight} } ")
+                }
+                tvCalls.text=HtmlCompat.fromHtml(getString(R.string.bb_calls, profileResponse.callsCount.toString()),
+                    HtmlCompat.FROM_HTML_MODE_LEGACY)
+                tvCalls.setTextAppearance(R.style.BB_Typography_Nunito_Bold)
+                tvCalls.textSize=19f
                 tvFollowers.text = HtmlCompat.fromHtml(getString(R.string.bb_followers, "<big>"+profileResponse.followersCount.toString()+"</big>"),
                     HtmlCompat.FROM_HTML_MODE_LEGACY)
                 if (profileResponse.isSpeakerFollowed) {
@@ -378,7 +466,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         else
             viewModel.userProfileData.value?.let {
                 signUpViewModel.followSpeaker()
-                viewModel.sendEvent(Impression("PROFILE_SCREEN","CLICKED_FOLLOW"))
+//                viewModel.sendEvent(Impression("PROFILE_SCREEN","CLICKED_FOLLOW"))
                 speakerFollowedUIChanges()
                 binding.tvFollowers.text =HtmlCompat.fromHtml(getString(R.string.bb_followers,
                     ("<big>"+it.followersCount.plus(1)?:0).toString()+"</big>"),
@@ -545,14 +633,15 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
             return
         }
         showPopup(room.roomId,User.getInstance().userId)
-        viewModel.sendEvent(Impression("PROFILE_SCREEN","CLICKED_SET_REMINDER"))
+//        viewModel.sendEvent(Impression("PROFILE_SCREEN","CLICKED_SET_REMINDER"))
         notificationScheduler.scheduleNotificationAsListener(requireActivity() as AppCompatActivity, room)
             feedViewModel.setReminder(
                 ReminderRequest(
                     roomId = room.roomId.toString(),
                     userId = User.getInstance().userId,
                     reminderTime = room.startTimeDate,
-                    false
+                    false,
+                    from="PROFILE_SCREEN",
                 )
             )
         viewModel.getProfileForUser(userId ?: (User.getInstance().userId),source)

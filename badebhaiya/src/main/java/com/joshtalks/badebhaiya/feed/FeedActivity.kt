@@ -318,17 +318,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                 //binding.profileIv.setUserImageOrInitials(profilePicUrl, firstName.toString())
             }
         }
-        binding.recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                super.onScrollStateChanged(recyclerView, newState)
-                if (recyclerView.canScrollVertically(1).not()) {
-                    recyclerView.setPadding(
-                        resources.getDimension(R.dimen._8sdp).toInt(), 0,
-                        resources.getDimension(R.dimen._8sdp).toInt(), binding.bg.height
-                    )
-                }
-            }
-        })
+
     }
 
     @SuppressLint("UnsafeOptInUsageError")
@@ -357,6 +347,35 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
     }
 
     private fun addObserver() {
+
+        viewModel.isSpeaker.observe(this){
+            if(it)
+            {
+                binding.recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                    override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                        super.onScrollStateChanged(recyclerView, newState)
+                        if (recyclerView.canScrollVertically(1).not()) {
+                            recyclerView.setPadding(
+                                resources.getDimension(R.dimen._8sdp).toInt(), 0,
+                                resources.getDimension(R.dimen._8sdp).toInt(), binding.bg.height
+                            )
+                        }
+                    }
+                })
+            }
+        }
+
+        profileViewModel.openProfile.observe(this){
+            val fragment = ProfileFragment() // replace your custom fragment class
+            val bundle = Bundle()
+            val fragmentTransaction: FragmentTransaction = supportFragmentManager.beginTransaction()
+            bundle.putString("user", it) // use as per your need
+                bundle.putString("source","FANS_LIST")
+            fragment.arguments = bundle
+            fragmentTransaction.add(R.id.room_frame, fragment)
+            fragmentTransaction.commit()
+        }
+
         liveRoomViewModel.pubNubState.observe(this,androidx.lifecycle.Observer{
             if(it==PubNubState.ENDED)
                 viewModel.pubNubState=PubNubState.ENDED
@@ -617,7 +636,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
     }
 
     override fun setReminder(room: RoomListResponseItem, view: View) {
-        profileViewModel.sendEvent(Impression("FEED_SCREEN","CLICKED_SET_REMINDER"))
+//        profileViewModel.sendEvent(Impression("FEED_SCREEN","CLICKED_SET_REMINDER"))
         showPopup(room.roomId,User.getInstance().userId)
         Timber.d("ROOM KA STARTING TIME => ${room.currentTime}")
 
@@ -627,7 +646,8 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                 roomId = room.roomId.toString(),
                 userId = User.getInstance().userId,
                 reminderTime = room.startTimeDate,
-                false
+                false,
+                "FEED_SCREEN"
             )
         )
     }

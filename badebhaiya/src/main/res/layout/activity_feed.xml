@@ -136,7 +136,7 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/start_room_button_background"
                 android:gravity="center"
-                android:visibility="@{User.getInstance().isSpeaker ? View.VISIBLE : View.GONE}"
+                android:visibility="@{viewModel.isSpeaker ? View.VISIBLE : View.GONE}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent">
@@ -148,12 +148,15 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/_10sdp"
                     android:clickable="true"
+                    android:shadowColor="@color/reminder_button_color"
+                    android:shadowDy="10"
+                    android:padding="@dimen/_12sdp"
                     android:drawableLeft="@drawable/ic_plus"
                     android:drawablePadding="@dimen/_3sdp"
                     android:focusable="true"
                     onSingleClick="@{()->handler.takePermissionsXml()}"
                     android:text="@string/start_a_room"
-                    android:textSize="@dimen/_12ssp" />
+                    android:textSize="@dimen/_15ssp" />
 
             </androidx.appcompat.widget.LinearLayoutCompat>
 

@@ -22,35 +22,17 @@ class AudienceAdapter(
     init {
         Timber.tag("localuser").d("AUDIENCE ADAPTER INIT CALLED")
     }
-
-    //    val audienceList: ArrayList<LiveRoomUser> = arrayListOf()
     private var listenerUserAction: OnUserItemClickListener? = null
-
+    val handRaisedList: ArrayList<LiveRoomUser> = arrayListOf()
     fun updateFullList(newList: List<LiveRoomUser>) {
         Timber.d("AUDIENCE LIST IN ADAPTER => $newList")
-//        var fullName= User.getInstance().firstName+" "+ User.getInstance().lastName
-//        var me= LiveRoomUser(123, // TODO: Add real id
-//            false,
-//            User.getInstance().firstName,
-//            fullName,
-//            User.getInstance().profilePicUrl,
-//            sortOrder = null,
-//            false,
-//            false,
-//            false,
-//            false,
-//            User.getInstance().userId,
-//        )
-//        newList.sortedByDescending { it.sortOrder }
-//        Timber.tag("LiveRoomAudience").d("AUDIENCE LIST IN AFTER ADDING LOCAL USER => $newList")
-//        val diffCallback = ConversationUserDiffCallback(audienceList, newList)
-//        val diffResult = DiffUtil.calculateDiff(diffCallback)
-//        audienceList.clear()
-//        audienceList.addAll(newList)
-////        audienceList.remove(me)
-//        Timber.d("AUDEN")
-//        Timber.tag("LiveRoomAudience").d("AUDIENCE LIST IN AFTER AFTER DOING DIFFUTIL CALCULATION => $newList")
-//        diffResult.dispatchUpdatesTo(this)
+        val diffCallback = ConversationUserDiffCallback(handRaisedList, newList)
+        val diffResult = DiffUtil.calculateDiff(diffCallback)
+        handRaisedList.clear()
+        handRaisedList.addAll(newList)
+        Timber.d("AUDEN")
+        Timber.tag("LiveRoomAudience").d("AUDIENCE LIST IN AFTER AFTER DOING DIFFUTIL CALCULATION => $newList")
+        diffResult.dispatchUpdatesTo(this)
     }
 
 
@@ -75,9 +57,8 @@ class AudienceAdapter(
                         bgColor = R.color.conversation_room_gray
                     )
                 }
-                if(model.isSpeaker == false && model.isHandRaised)
+                if(handRaisedList.contains(model))
                     raisedHands.visibility=View.VISIBLE
-
                 if (isModerator && model.isHandRaised) {
                     raisedHands.visibility = View.VISIBLE
                 } else {
@@ -120,11 +101,6 @@ class AudienceAdapter(
     override fun onBindViewHolder(holder: SpeakerViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
-
-//    override fun getItemCount(): Int {
-//        Timber.tag("localuser").d("AUDIENCE LIST IN AFTER COMING INTO ADAPTER => $audienceList and Size => ${audienceList.size}")
-//        return  audienceList.size
-//    }
 }
 
 class AudienceDiffUtil : DiffUtil.ItemCallback<LiveRoomUser>() {

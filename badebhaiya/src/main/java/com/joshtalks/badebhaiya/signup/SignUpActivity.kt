@@ -188,7 +188,7 @@ class SignUpActivity : AppCompatActivity(), Call {
             }
             intent.extras?.getString(REDIRECT) == REDIRECT_TO_PROFILE_ACTIVITY -> {
                 //ProfileActivity.openProfileActivity(this, intent.extras?.getString(USER_ID) ?: EMPTY)
-                var bundle = Bundle()
+                val bundle = Bundle()
                 bundle.putString("user", intent.extras?.getString(USER_ID))
                 supportFragmentManager.findFragmentByTag(ProfileFragment::class.java.simpleName)
                 supportFragmentManager.beginTransaction()

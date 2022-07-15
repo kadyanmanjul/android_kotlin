@@ -11,6 +11,9 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.lifecycle.*
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.core.*
 import com.joshtalks.badebhaiya.feed.adapter.FeedAdapter
@@ -32,6 +35,7 @@ import com.joshtalks.badebhaiya.repository.model.ConversationRoomRequest
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomResponse
 import com.joshtalks.badebhaiya.repository.model.User
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -58,12 +62,14 @@ class FeedViewModel : ViewModel() {
     lateinit var respBody: ConversationRoomResponse
     val waitResponse = MutableLiveData<List<Waiting>>()
     var pubChannelName: String? = null
+    var isSpeaker=MutableLiveData(false)
     lateinit var response: Response<ConversationRoomResponse>
     lateinit var roomtopic: String
     var isBackPressed = MutableLiveData(false)
     val searchResponse = MutableLiveData<SearchRoomsResponseList>()
     val feedAdapter = FeedAdapter()
     var message = Message()
+    var profileUuid:String?=null
     lateinit var roomData: RoomListResponseItem
     var singleLiveEvent: MutableLiveData<Message> = MutableLiveData()
     val repository = ConversationRoomRepository()
@@ -100,6 +106,18 @@ class FeedViewModel : ViewModel() {
 //            }
 
     }
+
+    val fansList: Flow<PagingData<Fans>> = Pager(
+        config = PagingConfig(pageSize = 10, enablePlaceholders = false),
+        pagingSourceFactory = { BBRepository().fansPaginatedList(profileUuid!!) }
+    )
+        .flow
+
+    val followingList: Flow<PagingData<Users>> = Pager(
+        config = PagingConfig(pageSize = 10, enablePlaceholders = false),
+        pagingSourceFactory = { BBRepository().followingPaginatedList(profileUuid!!) }
+    )
+        .flow
 
     private fun collectPubNubState() {
         viewModelScope.launch {
@@ -208,7 +226,7 @@ class FeedViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.Main) {
             try {
                 isLoading.set(true)
-                Log.d("YASH", "joinRoom:")
+                Log.d("YASH", "joinRoom: $source")
                 response = repository.joinRoom(
                     ConversationRoomRequest(
                         userId = User.getInstance().userId,
@@ -292,6 +310,8 @@ class FeedViewModel : ViewModel() {
                 val res = repository.getRoomList()
                 if (res.isSuccessful) {
                     res.body()?.let {
+                        isSpeaker.value=it.isSpeaker
+                        User.getInstance().isSpeaker=it.isSpeaker!!
                         val list = mutableListOf<RoomListResponseItem>()
                         if (it.liveRoomList.isNullOrEmpty().not())
                             list.addAll(it.liveRoomList!!.map { roomListResponseItem ->

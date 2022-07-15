@@ -7,14 +7,11 @@ import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.joshtalks.badebhaiya.core.showToast
 import com.joshtalks.badebhaiya.feed.adapter.FeedAdapter
 import com.joshtalks.badebhaiya.feed.model.ConversationRoomType
 import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
 import com.joshtalks.badebhaiya.impressions.Impression
-import com.joshtalks.badebhaiya.profile.request.DeleteReminderRequest
 import com.joshtalks.badebhaiya.profile.request.FollowRequest
-import com.joshtalks.badebhaiya.profile.request.ReminderRequest
 import com.joshtalks.badebhaiya.profile.response.ProfileResponse
 import com.joshtalks.badebhaiya.pubnub.PubNubData
 import com.joshtalks.badebhaiya.pubnub.PubNubState
@@ -23,6 +20,8 @@ import com.joshtalks.badebhaiya.repository.CommonRepository
 import com.joshtalks.badebhaiya.repository.ConversationRoomRepository
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.repository.service.RetrofitInstance
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -35,7 +34,7 @@ class ProfileViewModel : ViewModel() {
     val userProfileData = MutableLiveData<ProfileResponse>()
 
     val convoRepo = ConversationRoomRepository()
-    val isLoading = ObservableBoolean(false)
+    val closeFansList = ObservableBoolean(false)
 
     val userFullName = ObservableField<String>()
     val isBioTextAvailable = ObservableBoolean(false)
@@ -51,6 +50,10 @@ class ProfileViewModel : ViewModel() {
     private val commonRepository by lazy {
         CommonRepository()
     }
+    val isNextEnabled = MutableLiveData<Boolean>(false)
+    val openProfile = MutableLiveData<String>()
+    var isSpeaker=false
+
 
     init {
 //        collectPubNubState()
@@ -64,6 +67,30 @@ class ProfileViewModel : ViewModel() {
         }
     }
 
+    fun openProfile(userId: String){
+        openProfile.value = userId
+    }
+
+     fun saveProfileInfo(url: String?) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val requestMap = mutableMapOf<String, String?>()
+                requestMap["bio"] = url
+                val response = repository.updateUserProfile(User.getInstance().userId, requestMap)
+                if (response.isSuccessful) {
+                    Log.i("BOTTOMSHEET", "saveProfileInfo: success")
+                    response.body()?.let {
+                        User.getInstance().updateFromResponse(it)
+                    }
+                }
+            } catch (ex: Exception) {
+                Log.i("BOTTOMSHEET", "saveProfileInfo: ${ex.message}")
+
+            }
+        }
+    }
+
+
 
     fun updateFollowStatus(userId: String, isFromBBPage: Boolean, isFromDeeplink: Boolean) {
         speakerFollowed.value?.let {
@@ -71,7 +98,7 @@ class ProfileViewModel : ViewModel() {
                 viewModelScope.launch {
                     try {
                         val followRequest =
-                            FollowRequest(userId, User.getInstance().userId,isFromBBPage,isFromDeeplink)
+                            FollowRequest(userId, User.getInstance().userId,isFromBBPage,isFromDeeplink,"PROFILE_SCREEN")
                         val response = service.updateFollowStatus(followRequest)
                         if (response.isSuccessful) {
                             speakerFollowed.value = true
@@ -87,7 +114,7 @@ class ProfileViewModel : ViewModel() {
                 viewModelScope.launch {
                     try {
                         val followRequest =
-                            FollowRequest(userId, User.getInstance().userId, isFromBBPage, isFromDeeplink)
+                            FollowRequest(userId, User.getInstance().userId, isFromBBPage, isFromDeeplink,"PROFILE_SCREEN")
                         val response=service.updateUnfollowStatus(followRequest)
                         if(response.isSuccessful)
                         {
@@ -125,6 +152,7 @@ class ProfileViewModel : ViewModel() {
                         profileUrl= it.profilePicUrl?: ""
                         speakerFollowed.postValue(it.isSpeakerFollowed)
                         isBadeBhaiyaSpeaker.set(it.isSpeaker)
+                        isSpeaker=it.isSpeaker
                         isBadeBhaiyaSpeaker.notifyChange()
                         isBioTextAvailable.set(it.bioText.isNullOrEmpty().not())
                         isSelfProfile.set(it.userId == User.getInstance().userId)

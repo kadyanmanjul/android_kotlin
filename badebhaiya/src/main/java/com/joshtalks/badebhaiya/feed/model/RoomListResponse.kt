@@ -14,7 +14,10 @@ data class RoomListResponse(
     val scheduledRoomList: List<RoomListResponseItem>?,
 
     @SerializedName("current_time")
-    var currentTime: Long
+    var currentTime: Long,
+
+    @SerializedName("is_speaker")
+    val isSpeaker:Boolean?
 )
 
 @Parcelize

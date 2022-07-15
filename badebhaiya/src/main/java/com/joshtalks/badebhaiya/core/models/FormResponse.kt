@@ -14,3 +14,13 @@ data class FormResponse(
     @SerializedName("room")
     internal val room:Int
 )
+
+
+data class FormRequest(
+    @SerializedName("user")
+    internal val user: String,
+    @SerializedName("request_submitted")
+    internal val msg:String,
+    @SerializedName("requested_speaker")
+    internal val speaker:String
+)

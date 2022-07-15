@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background_bottomsheet"
+    android:padding="@dimen/_30sdp"
+    android:paddingBottom="@dimen/_40sdp">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:paddingHorizontal="@dimen/_30sdp"
+        android:layout_marginTop="@dimen/_7sdp"
+        android:gravity="center"
+        android:text="Update your Bio"
+        android:textAppearance="@style/BB_Typography_Nunito_Regular"
+        android:textSize="@dimen/_20ssp"
+        android:textColor="#1E1D1B"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/bio_text"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/_200sdp"
+        android:layout_marginTop="@dimen/_20sdp"
+        android:background="@drawable/round_rectangle_for_update_bio"
+        android:gravity="top"
+        android:hint="Write Here"
+        android:padding="@dimen/_10sdp"
+        android:elevation="@dimen/_2sdp"
+        android:textAppearance="@style/BB_Typography_Nunito_Regular"
+        android:textSize="@dimen/_15sdp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title" />
+
+    <TextView
+        android:id="@+id/size"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0/70"
+        android:padding="5dp"
+        android:elevation="@dimen/_11sdp"
+        android:paddingEnd="@dimen/_8sdp"
+        android:textAppearance="@style/BB_Typography_Nunito_Regular"
+        android:textSize="@dimen/_8sdp"
+        android:textColor="@color/default_bio_text"
+        app:layout_constraintBottom_toBottomOf="@+id/bio_text"
+        app:layout_constraintEnd_toEndOf="@+id/bio_text" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/submit"
+        android:layout_width="@dimen/_150sdp"
+        android:layout_height="@dimen/_40sdp"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="@dimen/_7sdp"
+        android:background="@drawable/next_button_selector"
+        android:elevation="@dimen/_3sdp"
+        android:enabled="false"
+        android:gravity="center"
+        android:text="Done"
+        android:textAppearance="@style/BB_Typography_Nunito_Regular"
+        android:textColor="@color/white"
+        android:textSize="@dimen/_22ssp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.502"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/bio_text"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="#646365"
+        android:text="This is visible to everyone"
+        android:textAppearance="@style/BB_Typography_Nunito_Regular"
+        android:textSize="@dimen/_10sdp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/submit" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
