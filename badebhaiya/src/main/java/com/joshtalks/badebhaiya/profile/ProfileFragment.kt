@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.net.NetworkInfo
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -24,6 +25,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
+import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.core.*
 import com.joshtalks.badebhaiya.core.USER_ID
@@ -44,6 +46,7 @@ import com.joshtalks.badebhaiya.liveroom.viewmodel.LiveRoomViewModel
 import com.joshtalks.badebhaiya.notifications.NotificationScheduler
 import com.joshtalks.badebhaiya.profile.request.ReminderRequest
 import com.joshtalks.badebhaiya.profile.response.ProfileResponse
+import com.joshtalks.badebhaiya.pubnub.PubNubState
 import com.joshtalks.badebhaiya.repository.CommonRepository
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.signup.SignUpActivity
@@ -55,6 +58,8 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import dagger.hilt.android.AndroidEntryPoint
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_feed.*
 import kotlinx.android.synthetic.main.base_toolbar.view.*
 import kotlinx.coroutines.Dispatchers
@@ -156,6 +161,21 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
 
     }
 
+    override fun onResume() {
+        super.onResume()
+
+        ReactiveNetwork.observeNetworkConnectivity(requireActivity().applicationContext)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { connectivity ->
+                Log.d("ABC2", "observeNetwork() called with: connectivity = $connectivity")
+                internetAvailableFlag =
+                    connectivity.state() == NetworkInfo.State.CONNECTED && connectivity.available()
+
+
+            }
+    }
+
     fun setpadding(){
         binding.rvSpeakerRoomList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
@@ -187,65 +207,81 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
     }
 
 
-    fun showBottomSheet() {
-        val bottomSheet =
-            EnterBioBottomSheet.newInstance(userId!!, binding.tvProfileBio.text.toString(), onBioUpdated = {
-                if(!it.isEmpty()) {
-                    binding.tvProfileBio.text = it
-                    binding.tvProfileBio.setTextAppearance(R.style.BB_Typography_Nunito_Sans_Semi_Bold)
-                    binding.tvProfileBio.textSize = 18f
-                    binding.divider.updateLayoutParams<ConstraintLayout.LayoutParams> {
-                        topToBottom = binding.tvProfileBio.id
-                    }
-                    binding.addABio.visibility = View.GONE
-                    binding.tvProfileBio.visibility = View.VISIBLE
-                }
-                else
-                {
-                    binding.tvProfileBio.text = it
-                    binding.addABio.visibility=View.VISIBLE
-                    binding.tvProfileBio.visibility=View.GONE
-                    binding.divider.updateLayoutParams<ConstraintLayout.LayoutParams> {
-                        topMargin=25
-                        topToBottom = binding.addABio.id}
-                }
-            })
-        bottomSheet.show(requireActivity().supportFragmentManager, "Bottom sheet")
+    var internetAvailableFlag:Boolean=false
 
-        bottomSheet.dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+
+    fun showBottomSheet() {
+        if(internetAvailableFlag) {
+            val bottomSheet =
+                EnterBioBottomSheet.newInstance(
+                    userId!!,
+                    binding.tvProfileBio.text.toString(),
+                    onBioUpdated = {
+                        if (!it.isEmpty()) {
+                            binding.tvProfileBio.text = it
+                            binding.tvProfileBio.setTextAppearance(R.style.BB_Typography_Nunito_Sans_Semi_Bold)
+                            binding.tvProfileBio.textSize = 18f
+                            binding.divider.updateLayoutParams<ConstraintLayout.LayoutParams> {
+                                topToBottom = binding.tvProfileBio.id
+                            }
+                            binding.addABio.visibility = View.GONE
+                            binding.tvProfileBio.visibility = View.VISIBLE
+                        } else {
+                            binding.tvProfileBio.text = it
+                            binding.addABio.visibility = View.VISIBLE
+                            binding.tvProfileBio.visibility = View.GONE
+                            binding.divider.updateLayoutParams<ConstraintLayout.LayoutParams> {
+                                topMargin = 25
+                                topToBottom = binding.addABio.id
+                            }
+                        }
+                    })
+            bottomSheet.show(requireActivity().supportFragmentManager, "Bottom sheet")
+
+            bottomSheet.dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        }
+        else showToast("No internet")
 
     }
 
     fun requestRoomPopup() {
-        val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
-        val dialogBinding = RequestRoomBinding.inflate(layoutInflater)
-        dialogBuilder.setView(dialogBinding.root)
-        val alertDialog: AlertDialog = dialogBuilder.create()
-        alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        alertDialog.show()
-
-        dialogBinding.message.addTextChangedListener {
-            dialogBinding.submit.isEnabled = !it.toString().trim().isEmpty()
+        if(liveRoomViewModel.pubNubState.value==PubNubState.STARTED)
+        {
+            showToast("Can't Sent Request During Call")
         }
+        else
+        {
+            val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
+            val dialogBinding = RequestRoomBinding.inflate(layoutInflater)
+            dialogBuilder.setView(dialogBinding.root)
+            val alertDialog: AlertDialog = dialogBuilder.create()
+            alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            alertDialog.show()
 
-        dialogBinding.submit.setOnClickListener{
-            val msg:String
-            if(dialogBinding.message.toString().isNotBlank()) {
-                msg = dialogBinding.message.text.toString()
-                val obj=FormRequest(User.getInstance().userId,msg,userId!!)
-                CoroutineScope(Dispatchers.IO).launch {
-                    try {
-                        val resp= CommonRepository().sendRequest(obj)
-                        if(resp.isSuccessful)
-                            showToast("Request Sent")
-                        else
-                            showToast(resp.errorMessage())
+            dialogBinding.message.addTextChangedListener {
+                dialogBinding.submit.isEnabled = !it.toString().trim().isEmpty()
+            }
 
-                    } catch (e: Exception){
-                        Log.i("REQUESTMSG", "requestRoomPopup: ${e.message}")
+            dialogBinding.submit.setOnClickListener{
+                val msg:String
+                if(dialogBinding.message.toString().isNotBlank()) {
+                    msg = dialogBinding.message.text.toString()
+                    val obj=FormRequest(User.getInstance().userId,msg,userId!!)
+                    CoroutineScope(Dispatchers.IO).launch {
+                        try {
+                            val resp= CommonRepository().sendRequest(obj)
+                            if(resp.isSuccessful)
+                                showToast("Request Sent Successfully")
+                            else
+                                showToast(resp.errorMessage())
+
+                        } catch (e: Exception){
+                            Log.i("REQUESTMSG", "requestRoomPopup: ${e.message}")
+                        }
                     }
+                    alertDialog.dismiss()
                 }
-                alertDialog.dismiss()
             }
         }
 

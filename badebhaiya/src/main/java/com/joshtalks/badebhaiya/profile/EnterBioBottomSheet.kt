@@ -2,7 +2,9 @@ package com.joshtalks.badebhaiya.liveroom.bottomsheet
 
 import android.app.Dialog
 import android.content.DialogInterface
+import android.net.NetworkInfo
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.widget.EditText
@@ -10,12 +12,15 @@ import android.widget.TextView
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.ViewModelProvider
+import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.core.showToast
 import com.joshtalks.badebhaiya.profile.ProfileViewModel
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 
 class EnterBioBottomSheet(
     private val onBioUpdated: (String) -> Unit
@@ -51,6 +56,21 @@ class EnterBioBottomSheet(
         getActivity()?.getWindow()?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         setStyle(STYLE_NORMAL, R.style.BaseBottomSheetDialog)
 
+    }
+
+    var internetAvailableFlag=false
+    override fun onResume() {
+        super.onResume()
+        ReactiveNetwork.observeNetworkConnectivity(requireActivity().applicationContext)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { connectivity ->
+                Log.d("ABC2", "observeNetwork() called with: connectivity = $connectivity")
+                internetAvailableFlag =
+                    connectivity.state() == NetworkInfo.State.CONNECTED && connectivity.available()
+
+
+            }
     }
 
     private fun setupFullHeight(bottomSheet: View) {
@@ -109,12 +129,16 @@ class EnterBioBottomSheet(
         }
         submitBtn?.setOnClickListener{
             val msg:String
-            if(bioText.toString().isNotBlank()) {
-                msg = bioText?.text.toString()
-                viewModel.saveProfileInfo(msg)
-                onBioUpdated(msg)
-                dialog.dismiss()
+            if(internetAvailableFlag){
+                if (bioText.toString().isNotBlank()) {
+                    msg = bioText?.text.toString()
+                    viewModel.saveProfileInfo(msg)
+                    onBioUpdated(msg)
+                    dialog.dismiss()
+                }
             }
+            else
+                showToast("No Internet")
         }
 
 
