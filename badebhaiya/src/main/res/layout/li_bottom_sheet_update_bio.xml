@@ -63,7 +63,6 @@
         android:layout_marginBottom="@dimen/_7sdp"
         android:background="@drawable/next_button_selector"
         android:elevation="@dimen/_3sdp"
-        android:enabled="false"
         android:gravity="center"
         android:text="Done"
         android:textAppearance="@style/BB_Typography_Nunito_Regular"

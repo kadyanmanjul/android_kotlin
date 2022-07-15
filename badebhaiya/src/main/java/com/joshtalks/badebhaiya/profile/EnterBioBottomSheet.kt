@@ -103,7 +103,7 @@ class EnterBioBottomSheet(
                 })
                 submitBtn?.isEnabled=true
             }
-            submitBtn?.isEnabled = !it.toString().trim().isEmpty()
+//            submitBtn?.isEnabled = !it.toString().trim().isEmpty()
 
 
         }

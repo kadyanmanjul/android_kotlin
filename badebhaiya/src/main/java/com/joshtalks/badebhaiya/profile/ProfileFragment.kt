@@ -190,7 +190,25 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
     fun showBottomSheet() {
         val bottomSheet =
             EnterBioBottomSheet.newInstance(userId!!, binding.tvProfileBio.text.toString(), onBioUpdated = {
-                binding.tvProfileBio.text=it
+                if(!it.isEmpty()) {
+                    binding.tvProfileBio.text = it
+                    binding.tvProfileBio.setTextAppearance(R.style.BB_Typography_Nunito_Sans_Semi_Bold)
+                    binding.tvProfileBio.textSize = 18f
+                    binding.divider.updateLayoutParams<ConstraintLayout.LayoutParams> {
+                        topToBottom = binding.tvProfileBio.id
+                    }
+                    binding.addABio.visibility = View.GONE
+                    binding.tvProfileBio.visibility = View.VISIBLE
+                }
+                else
+                {
+                    binding.tvProfileBio.text = it
+                    binding.addABio.visibility=View.VISIBLE
+                    binding.tvProfileBio.visibility=View.GONE
+                    binding.divider.updateLayoutParams<ConstraintLayout.LayoutParams> {
+                        topMargin=25
+                        topToBottom = binding.addABio.id}
+                }
             })
         bottomSheet.show(requireActivity().supportFragmentManager, "Bottom sheet")
 
@@ -376,10 +394,11 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
                 }
                 tvCalls.text=HtmlCompat.fromHtml(getString(R.string.bb_calls, profileResponse.callsCount.toString()),
                     HtmlCompat.FROM_HTML_MODE_LEGACY)
-                tvCalls.setTextAppearance(R.style.BB_Typography_Nunito_Bold)
+//                tvCalls.setTextAppearance(R.style.BB_Typography_Nunito_Bold)
                 tvCalls.textSize=19f
-                tvFollowers.text = HtmlCompat.fromHtml(getString(R.string.bb_followers, "<big>"+profileResponse.followersCount.toString()+"</big>"),
+                tvFollowers.text = HtmlCompat.fromHtml(getString(R.string.bb_followers, profileResponse.followersCount.toString()),
                     HtmlCompat.FROM_HTML_MODE_LEGACY)
+                tvFollowers.textSize=19f
                 if (profileResponse.isSpeakerFollowed) {
                     speakerFollowedUIChanges()
                 }
