@@ -65,11 +65,15 @@ class CommonRepository {
 
     suspend fun roomRequestCount() : Int? {
         if (User.getInstance().isSpeaker){
-            val response = service.getRoomRequestCount()
-            if (response.isSuccessful) {
-                response.body()?.let {
-                    return it.request_count
+            try {
+                val response = service.getRoomRequestCount()
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        return it.request_count
+                    }
                 }
+            } catch (e: Exception){
+
             }
         }
         return null
