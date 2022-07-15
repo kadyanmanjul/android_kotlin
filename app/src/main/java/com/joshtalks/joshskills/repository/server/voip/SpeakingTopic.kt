@@ -12,8 +12,10 @@ import androidx.room.Query
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.repository.local.entity.LeftCallsData
 import kotlinx.android.parcel.IgnoredOnParcel
 import kotlinx.android.parcel.Parcelize
+import kotlinx.android.parcel.RawValue
 
 @Entity
 @Parcelize
@@ -51,6 +53,10 @@ data class SpeakingTopic(
     @ColumnInfo(name = "call_duration_status")
     @SerializedName("call_duration_status")
     val callDurationStatus: String = "NFT",
+
+    @ColumnInfo(name = "left_calls_data")
+    @SerializedName("left_calls_data")
+    val leftCallsData : @RawValue LeftCallsData = LeftCallsData(14,7),
 
     @IgnoredOnParcel
     @Expose

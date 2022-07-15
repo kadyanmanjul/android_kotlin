@@ -107,7 +107,8 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
     ConverterForLessonMaterialType::class,
     AwardTypeConverter::class,
     BigDecimalConverters::class,
-    VariableMapConverters::class
+    VariableMapConverters::class,
+    ConverterForLeftCalls::class
 )
 abstract class AppDatabase : RoomDatabase() {
 
@@ -1068,5 +1069,18 @@ class VariableMapConverters {
     @TypeConverter
     fun fromVariableMapType(variableMap: VariableMap): String {
         return AppObjectController.gsonMapper.toJson(variableMap)
+    }
+}
+
+class ConverterForLeftCalls {
+    @TypeConverter
+    fun fromleftCallsData(leftCallsData: LeftCallsData) : String {
+        return AppObjectController.gsonMapper.toJson(leftCallsData)
+    }
+
+    @TypeConverter
+    fun toLeftCallsData(string: String) : LeftCallsData {
+        val type = object : TypeToken<LeftCallsData>() {}.type
+        return AppObjectController.gsonMapper.fromJson(string, type)
     }
 }

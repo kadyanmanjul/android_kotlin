@@ -267,6 +267,9 @@ class FirebaseRemoteConfigKey {
         // Enable/disable post address change
         const val POSTAL_ADDRESS = "POSTAL_ADDRESS"
         const val POSTAL_ADDRESS_SUBHEADING_CERT_FORM = "POSTAL_ADDRESS_SUBHEADING_CERT_FORM"
+
+        // FREEMIUM COURSE PRICE
+        const val FREEMIUM_COURSE_PRICE = "FREEMIUM_COURSE_PRICE"
     }
 }
 

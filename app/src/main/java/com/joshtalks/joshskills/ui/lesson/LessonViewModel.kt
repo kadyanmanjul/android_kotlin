@@ -1,11 +1,17 @@
 package com.joshtalks.joshskills.ui.lesson
 
+import android.app.AlertDialog
 import android.app.Application
 import android.content.Intent
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Message
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.widget.TextView
+import android.widget.Toast
+import androidx.databinding.DataBindingUtil
 import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
 import androidx.lifecycle.AndroidViewModel
@@ -30,6 +36,7 @@ import com.joshtalks.joshskills.core.custom_ui.recorder.OnAudioRecordListener
 import com.joshtalks.joshskills.core.custom_ui.recorder.RecordingItem
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.io.LastSyncPrefManager
+import com.joshtalks.joshskills.databinding.GetUnlimitedCallsDialogBoxBinding
 import com.joshtalks.joshskills.repository.local.entity.*
 import com.joshtalks.joshskills.repository.local.entity.practise.PointsListResponse
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -184,6 +191,34 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                 showToast(AppObjectController.joshApplication.getString(R.string.generic_message_for_error))
             }
         }
+    }
+
+    fun onHowManyCallsAvailableTextViewClicked(v : View) {
+        Log.d(TAG, "onHowManyCallsAvailableTextViewClicked: buy course dialog showed")
+        val buyCourseDialog = AlertDialog.Builder(v.context).apply {
+            val inflater = LayoutInflater.from(v.context)
+                .inflate(R.layout.get_unlimited_calls_dialog_box, null)
+            inflater.findViewById<TextView>(R.id.get_unlimited_calling_price_text_view).text = "Get Unlimited calling @" + AppObjectController.getFirebaseRemoteConfig()
+                .getDouble(FirebaseRemoteConfigKey.FREEMIUM_COURSE_PRICE).toString()
+            setView(inflater)
+        }.create()
+        buyCourseDialog.window?.setBackgroundDrawable(ColorDrawable(android.graphics.Color.TRANSPARENT))
+        buyCourseDialog.show()
+    }
+
+    fun onCallExpertTeacherButtonClicked(v : View) {
+        Toast.makeText(v.context, "Move to Buy page Layout", Toast.LENGTH_SHORT).show()
+        // Move to Buy page Layout => Has to be done by Yash Kasera
+    }
+
+    fun onCallFemalePracticePartnerButtonClicked(v : View) {
+        Toast.makeText(v.context, "Move to Buy page Layout", Toast.LENGTH_SHORT).show()
+        // Move to Buy page Layout => Has to be done by Yash Kasera
+    }
+
+    fun onCallHigherLevelSpeakerButtonClicked(v : View) {
+        Toast.makeText(v.context, "Move to Buy page Layout", Toast.LENGTH_SHORT).show()
+        // Move to Buy page Layout => Has to be done by Yash Kasera
     }
 
     private suspend fun getLessonFromDB(lessonId: Int): LessonModel? {

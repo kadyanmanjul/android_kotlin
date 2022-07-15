@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 50,
-    "identityHash": "d31df9f03bd6f8a229570b514bf218ef",
+    "identityHash": "e9c30dcc5da003faa22b27986e5cc75e",
     "entities": [
       {
         "tableName": "course",
@@ -2379,7 +2379,7 @@
       },
       {
         "tableName": "SpeakingTopic",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `topic_name` TEXT NOT NULL, `duration` INTEGER NOT NULL, `already_talked` INTEGER NOT NULL, `total_new_student_calls` INTEGER NOT NULL, `required_new_student_calls` INTEGER NOT NULL, `is_new_student_calls_activated` INTEGER NOT NULL, `call_duration_status` TEXT NOT NULL, `isFromDb` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `topic_name` TEXT NOT NULL, `duration` INTEGER NOT NULL, `already_talked` INTEGER NOT NULL, `total_new_student_calls` INTEGER NOT NULL, `required_new_student_calls` INTEGER NOT NULL, `is_new_student_calls_activated` INTEGER NOT NULL, `call_duration_status` TEXT NOT NULL, `left_calls_data` TEXT NOT NULL, `isFromDb` INTEGER NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -2426,6 +2426,12 @@
           {
             "fieldPath": "callDurationStatus",
             "columnName": "call_duration_status",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "leftCallsData",
+            "columnName": "left_calls_data",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -3446,7 +3452,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd31df9f03bd6f8a229570b514bf218ef')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'e9c30dcc5da003faa22b27986e5cc75e')"
     ]
   }
 }
