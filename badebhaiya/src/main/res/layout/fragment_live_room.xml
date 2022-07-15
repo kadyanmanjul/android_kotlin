@@ -60,21 +60,30 @@
                 app:layout_constraintStart_toEndOf="@id/down_arrow"
                 app:layout_constraintTop_toTopOf="@id/down_arrow" />
 
+            <FrameLayout
+                android:id="@+id/userPhotoRoot"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginEnd="@dimen/_16sdp"
+                android:paddingEnd="@dimen/_4sdp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/user_photo"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_marginVertical="@dimen/_10sdp"
-                android:layout_marginTop="@dimen/_10sdp"
-                android:layout_marginEnd="@dimen/_16sdp"
                 android:background="@color/base_app_color"
-                android:scaleType="fitXY"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="1"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
+                android:scaleType="centerCrop"
                 app:shapeAppearanceOverlay="@style/roundedCornersImageView_6dp" />
+
+            </FrameLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -1,5 +1,6 @@
 package com.joshtalks.badebhaiya.profile
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
@@ -7,6 +8,7 @@ import android.graphics.drawable.ColorDrawable
 import android.net.NetworkInfo
 import android.os.Bundle
 import android.util.Log
+import android.view.*
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,6 +28,9 @@ import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
+import com.google.android.material.badge.BadgeDrawable
+import com.google.android.material.badge.BadgeDrawable.*
+import com.google.android.material.badge.BadgeUtils
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.core.*
 import com.joshtalks.badebhaiya.core.USER_ID
@@ -49,6 +54,7 @@ import com.joshtalks.badebhaiya.profile.response.ProfileResponse
 import com.joshtalks.badebhaiya.pubnub.PubNubState
 import com.joshtalks.badebhaiya.repository.CommonRepository
 import com.joshtalks.badebhaiya.repository.model.User
+import com.joshtalks.badebhaiya.showCallRequests.CallRequestsListFragment
 import com.joshtalks.badebhaiya.signup.SignUpActivity
 import com.joshtalks.badebhaiya.signup.viewmodel.SignUpViewModel
 import com.joshtalks.badebhaiya.utils.SingleDataManager
@@ -62,11 +68,10 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_feed.*
 import kotlinx.android.synthetic.main.base_toolbar.view.*
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import kotlinx.coroutines.CoroutineScope
-import java.lang.Exception
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -99,6 +104,8 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
     @Inject
     lateinit var notificationScheduler: NotificationScheduler
 
+    private val badgeDrawable: BadgeDrawable by lazy { BadgeDrawable.create(requireContext()) }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -126,6 +133,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         feedViewModel.setIsBadeBhaiyaSpeaker()
         binding.handler = this
         binding.viewModel = viewModel
+
 
         binding.profileToolbar.iv_back.setOnClickListener{
             activity?.run {
@@ -160,6 +168,37 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         return binding.root
 
     }
+
+    @SuppressLint("UnsafeOptInUsageError")
+    private fun setBadgeDrawable(callRequestCount: Int) {
+        Timber.tag("profilebadge").d(
+            "setBadgeDrawable() called with: raisedHandAudienceSize = $callRequestCount"
+        )
+
+        if (User.getInstance().isSpeaker && callRequestCount > 0){
+            badgeDrawable.number = callRequestCount
+
+            badgeDrawable.horizontalOffset = 20
+            badgeDrawable.verticalOffset = 10
+            binding.callRequestsBtnRoot.setForeground(badgeDrawable)
+            binding.callRequestsBtnRoot.addOnLayoutChangeListener { v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
+
+                BadgeUtils.attachBadgeDrawable(
+                    badgeDrawable,
+                    binding.callRequestsBtn,
+                    binding.callRequestsBtnRoot
+                )
+            }
+        }
+
+    }
+
+//    private fun BadgeDrawable.setBoundsFor(anchor: View, parent: FrameLayout){
+//        val rect = Rect()
+//        parent.getDrawingRect(rect)
+//        this.setBounds(rect)
+//        this.updateBadgeCoordinates(anchor, parent)
+//    }
 
     override fun onResume() {
         super.onResume()
@@ -343,6 +382,8 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        viewModel.getRoomRequestCount()
         Timber.d("THIS IS FCM TOKEN => ${PrefManager.getStringValue(com.joshtalks.badebhaiya.notifications.FCM_TOKEN)}")
         addObserver()
         executePendingActions()
@@ -366,6 +407,9 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
     }
 
     private fun addObserver() {
+        viewModel.roomRequestCount.observe(viewLifecycleOwner){
+            setBadgeDrawable(it)
+        }
 
         viewModel.userProfileData.observe(viewLifecycleOwner) {
             binding.apply {
@@ -445,6 +489,14 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
                     HtmlCompat.FROM_HTML_MODE_LEGACY)
             }
         }
+    }
+
+    fun navigateToRequestsList(){
+//        if (!PubNubManager.isRoomActive){
+            CallRequestsListFragment.open(requireActivity().supportFragmentManager, R.id.fragmentContainer)
+//        } else {
+//            showToast(getString(R.string.please_leave_current_room))
+//        }
     }
 
     fun updateFollowStatus() {
@@ -557,7 +609,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
     private fun takePermissions(room: String? = null, roomTopic: String, moderatorId: String?) {
         if (PermissionUtils.isCallingPermissionWithoutLocationEnabled(requireContext())) {
             if (room != null) {
-                feedViewModel.joinRoom(room, roomTopic, "PROFILE_SCREEN", moderatorId)
+                feedViewModel.joinRoom(room, roomTopic, "PROFILE_SCREEN")
             }
             return
         }
@@ -573,7 +625,6 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
                                     room,
                                     roomTopic,
                                     "PROFILE_SCREEN",
-                                    moderatorId
                                 )
                             }
                             return

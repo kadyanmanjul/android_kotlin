@@ -48,6 +48,10 @@ data class RoomListResponseItem(
     val speakersData: SpeakerData?,
     @SerializedName("current_time")
     var currentTime: Long = 0,
+    @SerializedName("previous_room_id")
+    val previousRoomId: Int,
+    @SerializedName("previous_room_topic")
+    val previousRoomTopic: String,
     var conversationRoomQuestionId: Int? = null,
     var conversationRoomType: ConversationRoomType? = null
 ) : Parcelable {

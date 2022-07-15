@@ -4,8 +4,15 @@ import com.joshtalks.badebhaiya.core.models.FormRequest
 import com.joshtalks.badebhaiya.core.models.FormResponse
 import com.joshtalks.badebhaiya.core.models.InstallReferrerModel
 import com.joshtalks.badebhaiya.core.models.UpdateDeviceRequest
+import com.joshtalks.badebhaiya.core.showToast
+import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.repository.service.RetrofitInstance
+import com.joshtalks.badebhaiya.showCallRequests.model.RoomRequestCount
 import com.joshtalks.badebhaiya.signup.request.VerifyOTPRequest
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 
 class CommonRepository {
 
@@ -35,4 +42,44 @@ class CommonRepository {
 
     suspend fun patchDeviceDetails(deviceId: Int,obj: UpdateDeviceRequest) =
         service.patchDeviceDetails(deviceId,obj)
+
+    val requestsList = flow {
+        val response = service.getRequestsList()
+        if (response.isSuccessful){
+            emit(response.body())
+        } else {
+            showToast("Something Went Wrong")
+        }
+    }.flowOn(Dispatchers.IO)
+     .catch {
+         showToast("Something Went Wrong")
+     }
+
+    suspend fun requestsContent(selectedUserId: String) = flow {
+        val response = service.getRequestContent(selectedUserId)
+        if (response.isSuccessful){
+            emit(response.body())
+        } else {
+            showToast("Something Went Wrong")
+        }
+    }.flowOn(Dispatchers.IO)
+     .catch {
+         showToast("Something Went Wrong")
+     }
+
+    suspend fun roomRequestCount() : Int? {
+        if (User.getInstance().isSpeaker){
+            try {
+                val response = service.getRoomRequestCount()
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        return it.request_count
+                    }
+                }
+            } catch (e: Exception){
+
+            }
+        }
+        return null
+    }
 }

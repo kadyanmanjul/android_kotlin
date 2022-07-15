@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+<!--        <variable-->
+<!--            name="callRequest"-->
+<!--            type="com.joshtalks.badebhaiya.showCallRequests.model.RequestData" />-->
+
+        <variable
+            name="viewModel"
+            type="com.joshtalks.badebhaiya.showCallRequests.viewModel.RequestContentViewModel" />
+
+        <variable
+            name="handler"
+            type="com.joshtalks.badebhaiya.showCallRequests.RequestBottomSheetFragment" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/top_rounded_corner"
+        android:padding="@dimen/_12sdp"
+        tools:context=".showCallRequests.RequestBottomSheetFragment">
+
+        <ImageView
+            android:id="@+id/backButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_arrow_back"
+            app:layout_constraintBottom_toBottomOf="@+id/requestProfilePicture"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/requestProfilePicture"
+            android:onClick="@{() -> handler.dismiss()}"
+            app:tint="@color/black"
+            tools:ignore="ContentDescription" />
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/requestProfilePicture"
+            imageCornerRadius="@{@dimen/_16sdp}"
+            imageUrl="@{viewModel.requestContent.user.photo_url}"
+            initialsFontSize="@{12}"
+            userName="@{viewModel.requestContent.user.short_name}"
+            android:layout_width="@dimen/_32sdp"
+            android:layout_height="@dimen/_32sdp"
+            android:layout_marginTop="@dimen/_12sdp"
+            android:scaleType="centerCrop"
+            app:layout_constraintEnd_toStartOf="@+id/requestUserName"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:shapeAppearanceOverlay="@style/roundedCornersImageView_12dp"
+            tools:background="@drawable/user_profile_background" />
+
+        <TextView
+            android:id="@+id/requestUserName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/nunito_regular"
+            android:text="@{viewModel.requestContent.user.full_name}"
+            android:textAllCaps="true"
+            android:textSize="@dimen/_12ssp"
+            android:textStyle="bold"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:textColor="@color/black"
+            app:layout_constraintBottom_toBottomOf="@+id/requestProfilePicture"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/requestProfilePicture"
+            app:layout_constraintTop_toTopOf="@+id/requestProfilePicture"
+            tools:text="SUMIT SINGH" />
+
+        <View
+            android:id="@+id/divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@drawable/gray_background"
+            android:layout_marginTop="@dimen/_12sdp"
+            app:layout_constraintTop_toBottomOf="@+id/requestProfilePicture"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/requests"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/item_request_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/divider" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

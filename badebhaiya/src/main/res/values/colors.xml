@@ -54,5 +54,8 @@
     <color name="da_grey">#F2F2F2</color>
 <color name="notification_icon">#665BEB</color>
     <color name="blue_text_color">#248CC5</color>
+    <color name="gray_txt">#6C6C6C</color>
+    <color name="gray_txt_two">#8A8A8A</color>
+    <color name="light_blue">#E4FEFD</color>
 
 </resources>

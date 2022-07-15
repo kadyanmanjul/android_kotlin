@@ -96,6 +96,8 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
     private var isSpeaker:Boolean=false
 
     private val heartbeatVewModel: HeartbeatViewModel by viewModels()
+    private val badgeDrawable: BadgeDrawable by lazy { BadgeDrawable.create(requireContext()) }
+
 
     private var mServiceBound: Boolean = false
     private lateinit var binding: FragmentLiveRoomBinding
@@ -123,7 +125,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
     private val vm by lazy { ViewModelProvider(requireActivity()).get(LiveRoomViewModel::class.java) }
     val speakingListForGoldenRing: androidx.collection.ArraySet<Int?> = arraySetOf()
 
-    private val badgeDrawable: BadgeDrawable by lazy { BadgeDrawable.create(requireActivity()) }
+    private val profileBadgeDrawable: BadgeDrawable by lazy { BadgeDrawable.create(requireContext()) }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -168,6 +170,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
 
         sendModeratorJoinedEvent()
         heartbeatVewModel.initViewModel()
+        vm.getRoomRequestCount()
     }
 
     private fun sendModeratorJoinedEvent() {
@@ -251,6 +254,10 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
                 LiveRoomState.EXPANDED -> expandLiveRoom()
                 LiveRoomState.COLLAPSED -> {}
             }
+        }
+
+        vm.roomRequestCount.observe(this){
+            setProfileBadgeDrawable(it)
         }
 
         lifecycleScope.launch{
@@ -506,27 +513,51 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
     }
 
     private fun getIntentExtrasFromNotification() {
-        roomId = PubNubManager.getLiveRoomProperties().roomId
-        channelTopic = PubNubManager.getLiveRoomProperties().channelTopic
-        if (isActivityOpenFromNotification && roomId != null) {
-            vm.joinRoom(
-                RoomListResponseItem(
-                    roomId!!,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null
-                )
+//        roomId = PubNubManager.getLiveRoomProperties().roomId
+//        channelTopic = PubNubManager.getLiveRoomProperties().channelTopic
+//        if (isActivityOpenFromNotification && roomId != null) {
+//            vm.joinRoom(
+//                RoomListResponseItem(
+//                    roomId!!,
+//                    null,
+//                    null,
+//                    null,
+//                    null,
+//                    null,
+//                    null,
+//                    null,
+//                    null,
+//                    null,
+//                    null,
+//                    null
+//                )
+//
+//            )
+//        }
+    }
 
-            )
+    @SuppressLint("UnsafeOptInUsageError")
+    private fun setProfileBadgeDrawable(callRequestCount: Int) {
+        Timber.tag("profilebadge").d(
+            "setBadgeDrawable() called with: raisedHandAudienceSize = $callRequestCount"
+        )
+
+        if (User.getInstance().isSpeaker && callRequestCount > 0) {
+
+            profileBadgeDrawable.number = callRequestCount
+            profileBadgeDrawable.horizontalOffset = 20
+            profileBadgeDrawable.verticalOffset = 10
+            binding.userPhotoRoot.setForeground(profileBadgeDrawable)
+            binding.userPhotoRoot.addOnLayoutChangeListener { v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
+
+                BadgeUtils.attachBadgeDrawable(
+                    profileBadgeDrawable,
+                    binding.userPhoto,
+                    binding.userPhotoRoot
+                )
+            }
         }
+
     }
 
 
@@ -792,8 +823,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
                     }
                     setNotificationWithoutAction(
                         String.format(
-                            "\uD83D\uDC4B You raised your hand! We’ll let the speakers\n" +
-                                    "know you want to talk..."
+                            "\uD83D\uDC4B You raised your hand! We’ll let the speakers know you want to talk..."
                         ), true,
                         NotificationView.ConversationRoomNotificationState.YOUR_HAND_RAISED
                     )

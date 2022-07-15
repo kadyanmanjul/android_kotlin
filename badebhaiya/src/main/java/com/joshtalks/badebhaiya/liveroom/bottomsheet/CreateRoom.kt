@@ -127,6 +127,9 @@ class CreateRoom : BottomSheetDialogFragment() {
         viewModel.isRoomCreated.observe(viewLifecycleOwner){
             binding.createBtn.isEnabled = !it
         }
+        viewModel.isRoomsheduled.observe(viewLifecycleOwner){
+            binding.scheduleBtn.isEnabled=!it
+        }
     }
 
     fun addRoomCallbacks(callback: CreateRoomCallback) {

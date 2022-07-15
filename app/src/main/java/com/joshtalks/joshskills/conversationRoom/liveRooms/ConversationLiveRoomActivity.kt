@@ -659,8 +659,7 @@ class ConversationLiveRoomActivity : BaseActivity(), ConversationLiveRoomSpeaker
                     }
                     setNotificationWithoutAction(
                         String.format(
-                            "\uD83D\uDC4B You raised your hand! We’ll let the speakers\n" +
-                                    "know you want to talk..."
+                            "\uD83D\uDC4B You raised your hand! We’ll let the speakers know you want to talk..."
                         ), true,
                         NotificationView.ConversationRoomNotificationState.YOUR_HAND_RAISED
                     )

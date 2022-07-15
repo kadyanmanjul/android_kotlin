@@ -17,7 +17,9 @@ data class ConversationRoomRequest(
     @SerializedName("start_time")
     val startTime: String? = null,
     @SerializedName("from_page")
-    val fromPage:String? = null
+    val fromPage:String? = null,
+
+    val is_rejoin: Boolean = false
 )
 @Parcelize
 data class ConversationRoomResponse(
@@ -38,6 +40,9 @@ data class ConversationRoomResponse(
 
     @SerializedName("pubnub_token")
     val pubnubToken: String?,
+
+    @SerializedName("topic")
+    val roomName: String? = null,
 
     val message: String? = null
 ) : Parcelable {

@@ -16,12 +16,14 @@ import com.joshtalks.badebhaiya.profile.response.ProfileResponse
 import com.joshtalks.badebhaiya.pubnub.PubNubData
 import com.joshtalks.badebhaiya.pubnub.PubNubState
 import com.joshtalks.badebhaiya.repository.BBRepository
+import com.joshtalks.badebhaiya.repository.CommonRepository
 import com.joshtalks.badebhaiya.repository.ConversationRoomRepository
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.repository.service.RetrofitInstance
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 class ProfileViewModel : ViewModel() {
     //val userIdForOpenedProfile = MutableLiveData<String>()
@@ -42,6 +44,12 @@ class ProfileViewModel : ViewModel() {
     val speakerFollowed = MutableLiveData(false)
     val isSelfProfile = ObservableBoolean(false)
     var pubNubState = PubNubState.ENDED
+    val roomRequestCount = MutableLiveData<Int>()
+
+
+    private val commonRepository by lazy {
+        CommonRepository()
+    }
     val isNextEnabled = MutableLiveData<Boolean>(false)
     val openProfile = MutableLiveData<String>()
     var isSpeaker=false
@@ -123,6 +131,14 @@ class ProfileViewModel : ViewModel() {
         }
     }
 
+    fun getRoomRequestCount(){
+        viewModelScope.launch {
+            commonRepository.roomRequestCount()?.let { count ->
+                roomRequestCount.postValue(count)
+            }
+        }
+    }
+
     fun getProfileForUser(userId: String, source: String) {
         viewModelScope.launch {
             try {
@@ -168,6 +184,9 @@ class ProfileViewModel : ViewModel() {
                     }
                 }
             } catch(ex: Exception) {
+                Timber.tag("YASHENDRA").d( "getProfileForUser: Exception ${ex.message}")
+                ex.printStackTrace()
+                ex.cause
                 speakerProfileRoomsAdapter.submitList(emptyList())
             }
         }

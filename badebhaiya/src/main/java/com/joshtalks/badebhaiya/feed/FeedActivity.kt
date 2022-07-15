@@ -1,5 +1,6 @@
 package com.joshtalks.badebhaiya.feed
 
+import android.annotation.SuppressLint
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
@@ -22,6 +23,8 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.badge.BadgeDrawable
+import com.google.android.material.badge.BadgeUtils
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
@@ -34,6 +37,7 @@ import com.joshtalks.badebhaiya.core.showToast
 import com.joshtalks.badebhaiya.databinding.ActivityFeedBinding
 import com.joshtalks.badebhaiya.databinding.WhyRoomBinding
 import com.joshtalks.badebhaiya.feed.adapter.FeedAdapter
+import com.joshtalks.badebhaiya.feed.joinPreviousRoom.PreviousRoomDialog
 import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
 import com.joshtalks.badebhaiya.impressions.Impression
 import com.joshtalks.badebhaiya.liveroom.*
@@ -53,6 +57,7 @@ import com.joshtalks.badebhaiya.repository.ConversationRoomRepository
 import com.joshtalks.badebhaiya.repository.PubNubExceptionRepository
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomResponse
 import com.joshtalks.badebhaiya.repository.model.User
+import com.joshtalks.badebhaiya.showCallRequests.RequestBottomSheetFragment
 import com.joshtalks.badebhaiya.signup.PeopleToFollowActivity
 import com.joshtalks.badebhaiya.signup.fragments.PeopleToFollowFragment
 import com.joshtalks.badebhaiya.utils.SingleDataManager
@@ -73,7 +78,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallback {
+class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallback, CreateRoom.CreateRoomCallback {
 
     companion object {
         @JvmStatic
@@ -90,6 +95,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         const val ROOM_QUESTION_ID = "room_question_id"
         const val TOPIC_NAME = "topic_name"
         const val USER_ID = "user_id"
+        const val ROOM_REQUEST_ID = "room_request_id"
 
 
         fun getFeedActivityIntent(
@@ -143,6 +149,12 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
             }
         }
 
+        fun getIntentForRoomRequest(context: Context, userId: String): Intent {
+            return Intent(context, FeedActivity::class.java).also {
+                it.putExtra(ROOM_REQUEST_ID, userId)
+            }
+        }
+
     }
 
     @Inject
@@ -158,6 +170,8 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
     private val liveRoomViewModel by lazy {
         ViewModelProvider(this)[LiveRoomViewModel::class.java]
     }
+
+    private val badgeDrawable: BadgeDrawable by lazy { BadgeDrawable.create(this) }
 
     private lateinit var binding: ActivityFeedBinding
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -180,7 +194,12 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
 
 
         Timber.d("FEED INTENT ${intent.extras}")
-        if (user != null) {
+
+        val roomRequestId = intent.getStringExtra(ROOM_REQUEST_ID)
+
+         if(!roomRequestId.isNullOrEmpty()){
+            RequestBottomSheetFragment.open(roomRequestId, supportFragmentManager)
+        } else if (user != null) {
             viewProfile(user, true)
         } else if (mUserId != null){
             viewProfile(mUserId, false)
@@ -208,11 +227,13 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
             })
             checkAndOpenLiveRoom()
         }
+
     }
 
     override fun onRestart() {
         super.onRestart()
         checkAndOpenLiveRoom()
+//        viewModel.getRoomRequestCount()
 
     }
 
@@ -223,6 +244,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
 
     override fun onResume() {
         super.onResume()
+//        viewModel.getRoomRequestCount()
         if (User.getInstance().isLoggedIn()) {
             viewModel.getRooms()
         }
@@ -276,6 +298,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
 
         fragment.arguments = bundle
         fragmentTransaction.replace(R.id.fragmentContainer, fragment)
+        fragmentTransaction.addToBackStack(ProfileFragment.TAG)
         fragmentTransaction.commit()
     }
 
@@ -293,6 +316,31 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
             User.getInstance().apply {
                 profilePicUrl?.let { binding.profileIv.setImage(it, radius = 16) }
                 //binding.profileIv.setUserImageOrInitials(profilePicUrl, firstName.toString())
+            }
+        }
+
+    }
+
+    @SuppressLint("UnsafeOptInUsageError")
+    private fun setBadgeDrawable(callRequestCount: Int) {
+        Timber.tag("profilebadge").d(
+            "setBadgeDrawable() called with: raisedHandAudienceSize = $callRequestCount"
+        )
+
+        if (User.getInstance().isSpeaker && callRequestCount > 0) {
+
+            badgeDrawable.number = callRequestCount
+
+            badgeDrawable.horizontalOffset = 20
+            badgeDrawable.verticalOffset = 10
+            binding.profileIvRoot.setForeground(badgeDrawable)
+            binding.profileIvRoot.addOnLayoutChangeListener { v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
+
+                BadgeUtils.attachBadgeDrawable(
+                    badgeDrawable,
+                    binding.profileIv,
+                    binding.profileIvRoot
+                )
             }
         }
 
@@ -334,6 +382,40 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
             else
                 viewModel.pubNubState=PubNubState.STARTED
         })
+
+        viewModel.roomRequestCount.observe(this){
+            setBadgeDrawable(it)
+        }
+
+        viewModel.previousRoomData.observe(this){
+            PreviousRoomDialog(
+                this,
+                roomName = it.roomName ?: "",
+                onNegativeButtonClick = {
+                    viewModel.endPreviousRoom(it.roomId, this)
+                },
+                onPositiveButtonClick = {
+                    viewModel.joinRoom(it.roomId.toString(), it.roomName!!, "FEED_SCREEN", isRejoin = true)
+                }
+            ).apply {
+                show()
+            }
+        }
+
+        viewModel.previousRoomDataForSchedule.observe(this){
+            PreviousRoomDialog(
+                this,
+                roomName = it.previousRoomTopic,
+                onPositiveButtonClick = {
+                    viewModel.joinRoom(it.previousRoomId.toString(), it.previousRoomTopic, "FEED_SCREEN", isRejoin = true)
+                },
+                onNegativeButtonClick = {
+                    viewModel.endPreviousRoomAndSchedule(it.previousRoomId, this)
+                }
+            ).apply {
+                show()
+            }
+        }
 
         viewModel.singleLiveEvent.observe(this, androidx.lifecycle.Observer {
             Log.d("ABC2", "Data class called with feed data message: ${it.what} bundle : ${it.data}")
@@ -469,7 +551,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         if (PermissionUtils.isCallingPermissionWithoutLocationEnabled(this)) {
             if (roomId == null) {
                 openCreateRoomDialog()
-            } else viewModel.joinRoom(roomId, roomTopic!!,"FEED_SCREEN",moderatorId)
+            } else viewModel.joinRoom(roomId, roomTopic!!,"FEED_SCREEN",)
             return
         }
 
@@ -485,7 +567,6 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                                 roomId,
                                 roomTopic!!,
                                 "FEED_SCREEN",
-                                moderatorId
                             )
                             return
                         }
@@ -509,6 +590,11 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                 }
             }
         )
+    }
+
+    override fun onStart() {
+        super.onStart()
+        viewModel.getRoomRequestCount()
     }
 
     fun takePermissionsXml() {
@@ -639,5 +725,30 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         fragmentTransaction.replace(R.id.fragmentContainer, fragment)
         fragmentTransaction.commit()
 
+    }
+
+    override fun onRoomCreated(conversationRoomResponse: ConversationRoomResponse, topic: String) {
+        conversationRoomResponse.apply {
+            val liveRoomProperties = StartingLiveRoomProperties.createFromRoom(
+                this,
+                topic,
+                createdByUser = true
+            )
+            LiveRoomFragment.launch(
+                this@FeedActivity,
+                liveRoomProperties,
+                liveRoomViewModel,
+                "Feed",
+                true
+            )
+        }
+    }
+
+    override fun onRoomSchedule(room: RoomListResponseItem) {
+        notificationScheduler.scheduleNotificationsForSpeaker(this@FeedActivity, room)
+    }
+
+    override fun onError(error: String) {
+        showToast(error)
     }
 }
