@@ -37,8 +37,8 @@ import com.joshtalks.joshskills.core.isValidFullNumber
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentSignUpOptionsBinding
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.eventbus.LoginViaEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.LoginViaStatus
+import com.joshtalks.joshskills.base.local.eventbus.LoginViaEventBus
+import com.joshtalks.joshskills.base.local.eventbus.LoginViaStatus
 import java.util.concurrent.TimeUnit
 
 class SignUpOptionsFragment : BaseSignUpFragment() {

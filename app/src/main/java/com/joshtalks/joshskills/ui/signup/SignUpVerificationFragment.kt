@@ -28,9 +28,9 @@ import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentSignUpVerificationBinding
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.eventbus.LoginViaEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.LoginViaStatus
-import com.joshtalks.joshskills.repository.local.eventbus.OTPReceivedEventBus
+import com.joshtalks.joshskills.base.local.eventbus.LoginViaEventBus
+import com.joshtalks.joshskills.base.local.eventbus.LoginViaStatus
+import com.joshtalks.joshskills.base.local.eventbus.OTPReceivedEventBus
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers

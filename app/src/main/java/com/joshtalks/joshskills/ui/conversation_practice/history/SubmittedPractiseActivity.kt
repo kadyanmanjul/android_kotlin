@@ -15,7 +15,7 @@ import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioModel
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.eventbus.RequestAudioPlayEventBus
+import com.joshtalks.joshskills.base.local.eventbus.RequestAudioPlayEventBus
 import com.joshtalks.joshskills.repository.server.conversation_practice.SubmittedConversationPractiseModel
 import com.joshtalks.joshskills.ui.conversation_practice.ConversationPracticeViewModel
 import com.joshtalks.joshskills.ui.conversation_practice.PRACTISE_ID

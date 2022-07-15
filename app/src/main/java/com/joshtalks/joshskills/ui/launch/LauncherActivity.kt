@@ -27,8 +27,8 @@ import com.joshtalks.joshskills.core.notification.FCM_TOKEN
 import com.joshtalks.joshskills.core.notification.HAS_LOCAL_NOTIFICATION
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.databinding.ActivityLauncherBinding
-import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.repository.local.model.User
+import com.joshtalks.joshskills.base.local.model.Mentor
+import com.joshtalks.joshskills.base.local.model.User
 import com.joshtalks.joshskills.ui.call.CallingServiceReceiver
 import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.ui.signup.FreeTrialOnBoardActivity

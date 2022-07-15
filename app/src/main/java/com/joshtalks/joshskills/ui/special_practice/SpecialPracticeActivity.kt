@@ -17,7 +17,7 @@ import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.Utils.isInternetAvailable
 import com.joshtalks.joshskills.databinding.ActivityRecordVideoBinding
-import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.base.local.model.Mentor
 import com.joshtalks.joshskills.ui.assessment.view.Stub
 import com.joshtalks.joshskills.ui.pdfviewer.CURRENT_VIDEO_PROGRESS_POSITION
 import com.joshtalks.joshskills.ui.special_practice.base.BaseKFactorActivity

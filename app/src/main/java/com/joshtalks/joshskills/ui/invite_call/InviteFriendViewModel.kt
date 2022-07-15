@@ -8,8 +8,8 @@ import androidx.databinding.ObservableBoolean
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.repository.local.entity.PhonebookContact
-import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.base.local.entity.PhonebookContact
+import com.joshtalks.joshskills.base.local.model.Mentor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch

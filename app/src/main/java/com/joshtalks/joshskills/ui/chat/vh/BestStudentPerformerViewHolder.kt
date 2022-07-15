@@ -3,9 +3,9 @@ package com.joshtalks.joshskills.ui.chat.vh
 import android.view.View
 import android.widget.FrameLayout
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.repository.local.entity.AwardMentorModel
-import com.joshtalks.joshskills.repository.local.entity.AwardTypes
-import com.joshtalks.joshskills.repository.local.entity.ChatModel
+import com.joshtalks.joshskills.base.local.entity.AwardMentorModel
+import com.joshtalks.joshskills.base.local.entity.AwardTypes
+import com.joshtalks.joshskills.base.local.entity.ChatModel
 import com.joshtalks.joshskills.ui.assessment.view.Stub
 
 class BestStudentPerformerViewHolder(view: View, userId: String) : BaseViewHolder(view, userId) {

@@ -1,7 +1,7 @@
 package com.joshtalks.joshskills.repository.service
 
 import com.joshtalks.joshskills.base.constants.DIR
-import com.joshtalks.joshskills.repository.local.model.*
+import com.joshtalks.joshskills.base.local.model.*
 import com.joshtalks.joshskills.repository.server.*
 import com.joshtalks.joshskills.repository.server.onboarding.EnrollMentorWithTagIdRequest
 import com.joshtalks.joshskills.repository.server.onboarding.EnrollMentorWithTestIdRequest

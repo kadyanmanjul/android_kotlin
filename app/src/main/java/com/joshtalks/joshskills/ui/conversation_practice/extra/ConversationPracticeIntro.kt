@@ -10,7 +10,7 @@ import com.github.vipulasri.timelineview.TimelineView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.setImage
 import com.joshtalks.joshskills.databinding.ConversationPracticeTimelineItemBinding
-import com.joshtalks.joshskills.repository.local.model.PractiseFlowOptionModel
+import com.joshtalks.joshskills.base.local.model.PractiseFlowOptionModel
 import com.joshtalks.joshskills.repository.server.conversation_practice.ConversationPractiseModel
 import com.joshtalks.joshskills.ui.conversation_practice.IMAGE_URL
 import com.joshtalks.joshskills.ui.conversation_practice.adapter.ARG_PRACTISE_OBJ

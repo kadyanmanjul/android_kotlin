@@ -23,7 +23,7 @@ import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.analytics.ParamKeys
-import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.base.local.model.Mentor
 import com.joshtalks.joshskills.track.AGORA_UID
 import com.joshtalks.joshskills.ui.group.adapters.GroupChatAdapter
 import com.joshtalks.joshskills.ui.group.adapters.GroupMemberAdapter
@@ -31,11 +31,11 @@ import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics
 import com.joshtalks.joshskills.ui.group.constants.*
 import com.joshtalks.joshskills.ui.group.lib.ChatService
 import com.joshtalks.joshskills.ui.group.lib.PubNubService
-import com.joshtalks.joshskills.ui.group.model.ChatItem
-import com.joshtalks.joshskills.ui.group.model.GroupJoinRequest
-import com.joshtalks.joshskills.ui.group.model.GroupMember
-import com.joshtalks.joshskills.ui.group.model.LeaveGroupRequest
-import com.joshtalks.joshskills.ui.group.model.MessageItem
+import com.joshtalks.joshskills.base.local.entity.group.ChatItem
+import com.joshtalks.joshskills.base.local.entity.group.GroupJoinRequest
+import com.joshtalks.joshskills.base.local.entity.group.GroupMember
+import com.joshtalks.joshskills.base.local.entity.group.LeaveGroupRequest
+import com.joshtalks.joshskills.base.local.entity.group.MessageItem
 import com.joshtalks.joshskills.ui.group.repository.GroupRepository
 import com.joshtalks.joshskills.ui.group.utils.GroupChatComparator
 import com.joshtalks.joshskills.ui.group.utils.getMemberCount

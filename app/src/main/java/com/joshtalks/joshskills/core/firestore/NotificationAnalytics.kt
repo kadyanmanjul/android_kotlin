@@ -7,8 +7,8 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.notification.NotificationUtils
 import com.joshtalks.joshskills.core.notification.model.NotificationEvent
-import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.repository.local.model.NotificationObject
+import com.joshtalks.joshskills.base.local.model.Mentor
+import com.joshtalks.joshskills.base.local.model.NotificationObject
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import retrofit2.HttpException
 import timber.log.Timber

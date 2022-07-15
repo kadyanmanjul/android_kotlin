@@ -10,7 +10,7 @@ import com.joshtalks.joshskills.core.INSTANCE_ID
 import com.joshtalks.joshskills.core.IS_GUEST_ENROLLED
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.USER_UNIQUE_ID
-import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.base.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.CourseExploreModel
 import com.joshtalks.joshskills.repository.server.onboarding.*
 import com.joshtalks.joshskills.util.showAppropriateMsg

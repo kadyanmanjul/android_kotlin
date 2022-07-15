@@ -14,7 +14,7 @@ import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.databinding.ActivityExtendFreeTrialBinding
-import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
+import com.joshtalks.joshskills.base.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
 
 class ExtendFreeTrialActivity : AppCompatActivity() {

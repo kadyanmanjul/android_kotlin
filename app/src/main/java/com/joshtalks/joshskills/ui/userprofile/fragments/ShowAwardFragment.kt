@@ -29,7 +29,7 @@ import com.joshtalks.joshskills.core.USER_PROFILE_FLOW_FROM
 import com.joshtalks.joshskills.core.setImage
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentAwardShowBinding
-import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.base.local.model.Mentor
 import com.joshtalks.joshskills.ui.userprofile.models.Award
 import com.joshtalks.joshskills.repository.service.DIR
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity

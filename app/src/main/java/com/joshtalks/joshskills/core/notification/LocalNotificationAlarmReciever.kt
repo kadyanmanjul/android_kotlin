@@ -16,8 +16,8 @@ import com.joshtalks.joshskills.core.analytics.LocalNotificationDismissEventRece
 import com.joshtalks.joshskills.core.service.NOTIFICATION_DELAY
 import com.joshtalks.joshskills.core.service.NOTIFICATION_TEXT_TEXT
 import com.joshtalks.joshskills.core.service.NOTIFICATION_TITLE_TEXT
-import com.joshtalks.joshskills.repository.local.model.NotificationChannelNames
-import com.joshtalks.joshskills.repository.local.model.User
+import com.joshtalks.joshskills.base.local.model.NotificationChannelNames
+import com.joshtalks.joshskills.base.local.model.User
 import com.joshtalks.joshskills.ui.launch.LauncherActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

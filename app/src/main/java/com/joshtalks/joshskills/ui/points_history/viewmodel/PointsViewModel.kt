@@ -9,7 +9,7 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CURRENT_COURSE_ID
 import com.joshtalks.joshskills.core.DEFAULT_COURSE_ID
 import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.base.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.points.PointsHistoryResponse
 import com.joshtalks.joshskills.repository.server.points.PointsInfoResponse
 import com.joshtalks.joshskills.repository.server.points.SpokenMinutesHistoryResponse

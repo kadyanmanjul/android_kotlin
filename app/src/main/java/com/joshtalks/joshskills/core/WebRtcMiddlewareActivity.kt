@@ -10,7 +10,7 @@ import android.view.View
 import android.widget.Chronometer
 import androidx.lifecycle.lifecycleScope
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.repository.local.model.User
+import com.joshtalks.joshskills.base.local.model.User
 import com.joshtalks.joshskills.ui.voip.WebRtcCallback
 import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.joshtalks.joshskills.ui.voip.voip_rating.VoipCallFeedbackActivity

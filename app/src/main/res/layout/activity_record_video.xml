@@ -19,7 +19,7 @@
 
         <variable
             name="itemdata"
-            type="com.joshtalks.joshskills.ui.special_practice.model.SpecialPractice" />
+            type="com.joshtalks.joshskills.base.local.dao.special_practice.SpecialPractice" />
     </data>
 
     <FrameLayout

@@ -1,6 +1,6 @@
 package com.joshtalks.joshskills.ui.group.lib
 
-import com.joshtalks.joshskills.ui.group.model.GroupMember
+import com.joshtalks.joshskills.base.local.entity.group.GroupMember
 import com.pubnub.api.models.consumer.objects_api.member.PNGetChannelMembersResult
 
 data class PubNubMemberData(val data: PNGetChannelMembersResult) : MemberNetworkData {

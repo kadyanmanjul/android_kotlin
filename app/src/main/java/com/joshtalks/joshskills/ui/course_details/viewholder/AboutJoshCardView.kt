@@ -14,7 +14,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.eventbus.ImageShowEvent
+import com.joshtalks.joshskills.base.local.eventbus.ImageShowEvent
 import com.joshtalks.joshskills.repository.server.course_detail.Detail
 import com.mindorks.placeholderview.annotations.Click
 import com.mindorks.placeholderview.annotations.Layout

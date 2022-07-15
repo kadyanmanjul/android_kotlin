@@ -15,7 +15,7 @@ import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.service.CONVERSATION_ID
-import com.joshtalks.joshskills.repository.local.entity.CExamStatus
+import com.joshtalks.joshskills.base.local.entity.CExamStatus
 import com.joshtalks.joshskills.ui.certification_exam.examview.CExamMainActivity
 import com.joshtalks.joshskills.ui.certification_exam.report.CExamReportActivity
 import com.joshtalks.joshskills.ui.certification_exam.view.InstructionFragment

@@ -13,7 +13,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.custom_ui.PlayerUtil
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.eventbus.RequestAudioPlayEventBus
+import com.joshtalks.joshskills.base.local.eventbus.RequestAudioPlayEventBus
 import com.joshtalks.joshskills.repository.server.conversation_practice.SubmittedConversationPractiseModel
 import com.mindorks.placeholderview.annotations.Click
 import com.mindorks.placeholderview.annotations.Layout

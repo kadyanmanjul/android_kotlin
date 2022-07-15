@@ -36,8 +36,8 @@ import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.core.countdowntimer.CountdownTimerBack
 import com.joshtalks.joshskills.core.interfaces.OnOpenCourseListener
 import com.joshtalks.joshskills.databinding.InboxItemLayoutBinding
-import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
-import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
+import com.joshtalks.joshskills.base.local.entity.BASE_MESSAGE_TYPE
+import com.joshtalks.joshskills.base.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.ui.view_holders.ROUND_CORNER
 import java.util.ArrayList
 import java.util.Date

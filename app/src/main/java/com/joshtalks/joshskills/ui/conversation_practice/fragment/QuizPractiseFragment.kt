@@ -16,7 +16,7 @@ import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentQuizPractiseBinding
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.eventbus.VPPageChangeEventBus
+import com.joshtalks.joshskills.base.local.eventbus.VPPageChangeEventBus
 import com.joshtalks.joshskills.repository.server.conversation_practice.QuizModel
 import com.joshtalks.joshskills.ui.conversation_practice.adapter.OnChoiceClickListener2
 import com.joshtalks.joshskills.ui.conversation_practice.adapter.QuizPractiseAdapter

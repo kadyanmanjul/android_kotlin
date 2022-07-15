@@ -7,14 +7,14 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.io.AppDirectory
-import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.base.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
 import com.joshtalks.joshskills.ui.group.analytics.data.local.GroupChatAnalyticsEntity
 import com.joshtalks.joshskills.ui.group.constants.UNREAD_MESSAGE
 import com.joshtalks.joshskills.ui.group.data.GroupChatPagingSource
 import com.joshtalks.joshskills.ui.group.data.GroupPagingNetworkSource
 import com.joshtalks.joshskills.ui.group.lib.*
-import com.joshtalks.joshskills.ui.group.model.*
+import com.joshtalks.joshskills.base.local.entity.group.*
 import com.joshtalks.joshskills.ui.group.utils.pushMetaMessage
 import com.pubnub.api.callbacks.SubscribeCallback
 import id.zelory.compressor.Compressor

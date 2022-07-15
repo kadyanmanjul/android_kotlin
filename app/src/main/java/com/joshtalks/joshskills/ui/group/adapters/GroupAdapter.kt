@@ -17,7 +17,7 @@ import com.joshtalks.joshskills.constants.REMOVE_GROUP_AND_CLOSE
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.databinding.GroupItemBinding
-import com.joshtalks.joshskills.ui.group.model.GroupItemData
+import com.joshtalks.joshskills.base.local.entity.group.GroupItemData
 import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_GROUP_LIST_CBC_TOOLTIP
 
 class GroupAdapter(diffCallback: DiffUtil.ItemCallback<GroupItemData>,var search:String = EMPTY) : PagingDataAdapter<GroupItemData, GroupAdapter.GroupViewHolder>(

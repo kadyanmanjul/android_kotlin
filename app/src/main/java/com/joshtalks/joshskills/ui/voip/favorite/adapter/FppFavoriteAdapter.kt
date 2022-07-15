@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.databinding.FppItemListBinding
-import com.joshtalks.joshskills.repository.local.entity.practise.FavoriteCaller
+import com.joshtalks.joshskills.base.local.entity.practise.FavoriteCaller
 import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.ui.fpp.constants.FAV_CLICK_ON_CALL
 import com.joshtalks.joshskills.ui.fpp.constants.FAV_CLICK_ON_PROFILE

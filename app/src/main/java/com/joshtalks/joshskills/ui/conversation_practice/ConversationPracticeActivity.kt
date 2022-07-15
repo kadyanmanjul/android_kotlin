@@ -21,9 +21,9 @@ import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.custom_ui.FullScreenProgressDialog
 import com.joshtalks.joshskills.databinding.ActivityConversationPractice2Binding
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.eventbus.ConversationPractiseSubmitEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.VPPageChangeEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.ViewPagerDisableEventBus
+import com.joshtalks.joshskills.base.local.eventbus.ConversationPractiseSubmitEventBus
+import com.joshtalks.joshskills.base.local.eventbus.VPPageChangeEventBus
+import com.joshtalks.joshskills.base.local.eventbus.ViewPagerDisableEventBus
 import com.joshtalks.joshskills.repository.server.conversation_practice.ConversationPractiseModel
 import com.joshtalks.joshskills.ui.conversation_practice.adapter.PractiseViewPagerAdapter
 import com.joshtalks.joshskills.ui.conversation_practice.extra.ConversationPracticeIntro

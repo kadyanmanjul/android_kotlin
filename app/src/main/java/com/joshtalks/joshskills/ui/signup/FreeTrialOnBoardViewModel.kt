@@ -11,10 +11,10 @@ import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
-import com.joshtalks.joshskills.repository.local.model.DeviceDetailsResponse
-import com.joshtalks.joshskills.repository.local.model.FCMResponse
-import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.repository.local.model.User
+import com.joshtalks.joshskills.base.local.model.DeviceDetailsResponse
+import com.joshtalks.joshskills.base.local.model.FCMResponse
+import com.joshtalks.joshskills.base.local.model.Mentor
+import com.joshtalks.joshskills.base.local.model.User
 import com.joshtalks.joshskills.repository.server.ChooseLanguages
 import com.joshtalks.joshskills.repository.server.TrueCallerLoginRequest
 import com.joshtalks.joshskills.repository.server.signup.LoginResponse

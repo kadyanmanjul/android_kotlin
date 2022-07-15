@@ -28,10 +28,10 @@ import com.joshtalks.joshskills.core.custom_ui.recorder.RecordingItem
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.databinding.FragmentRecordFeedbackBinding
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
-import com.joshtalks.joshskills.repository.local.entity.practise.PracticeEngagementV2
-import com.joshtalks.joshskills.repository.local.entity.practise.PractiseType
-import com.joshtalks.joshskills.repository.local.eventbus.ViewPagerDisableEventBus
+import com.joshtalks.joshskills.base.local.entity.DOWNLOAD_STATUS
+import com.joshtalks.joshskills.base.local.entity.practise.PracticeEngagementV2
+import com.joshtalks.joshskills.base.local.entity.practise.PractiseType
+import com.joshtalks.joshskills.base.local.eventbus.ViewPagerDisableEventBus
 import com.joshtalks.joshskills.ui.practise.PracticeViewModel
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.VoipUtils
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState

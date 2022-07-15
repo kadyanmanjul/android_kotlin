@@ -16,7 +16,7 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.showToast
-import com.joshtalks.joshskills.repository.local.model.User
+import com.joshtalks.joshskills.base.local.model.User
 import com.joshtalks.joshskills.ui.cohort_based_course.models.CohortItemModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

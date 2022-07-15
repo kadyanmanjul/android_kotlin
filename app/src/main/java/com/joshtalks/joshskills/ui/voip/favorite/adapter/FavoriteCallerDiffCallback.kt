@@ -1,7 +1,7 @@
 package com.joshtalks.joshskills.ui.inbox.adapter
 
 import androidx.recyclerview.widget.DiffUtil
-import com.joshtalks.joshskills.repository.local.entity.practise.FavoriteCaller
+import com.joshtalks.joshskills.base.local.entity.practise.FavoriteCaller
 
 data class FavoriteCallerDiffCallback(
     private val mOldModelList: List<FavoriteCaller>,

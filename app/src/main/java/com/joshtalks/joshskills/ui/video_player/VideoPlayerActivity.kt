@@ -35,11 +35,11 @@ import com.joshtalks.joshskills.core.service.video_download.VideoDownloadControl
 import com.joshtalks.joshskills.core.videoplayer.VideoPlayerEventListener
 import com.joshtalks.joshskills.databinding.ActivityVideoPlayer1Binding
 import com.joshtalks.joshskills.messaging.RxBus2.publish
-import com.joshtalks.joshskills.repository.local.DatabaseUtils
-import com.joshtalks.joshskills.repository.local.entity.*
-import com.joshtalks.joshskills.repository.local.eventbus.MediaProgressEventBus
-import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
-import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.base.local.DatabaseUtils
+import com.joshtalks.joshskills.base.local.entity.*
+import com.joshtalks.joshskills.base.local.eventbus.MediaProgressEventBus
+import com.joshtalks.joshskills.base.local.minimalentity.InboxEntity
+import com.joshtalks.joshskills.base.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.engage.Graph
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
 import com.joshtalks.joshskills.repository.service.NetworkRequestHelper.isVideoPresentInUpdatedChat

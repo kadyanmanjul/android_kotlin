@@ -16,8 +16,8 @@ import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.databinding.ActivityPdfViewerBinding
-import com.joshtalks.joshskills.repository.local.DatabaseUtils
-import com.joshtalks.joshskills.repository.local.entity.PdfType
+import com.joshtalks.joshskills.base.local.DatabaseUtils
+import com.joshtalks.joshskills.base.local.entity.PdfType
 import com.joshtalks.joshskills.repository.server.engage.PdfEngage
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
 import com.joshtalks.joshskills.track.CONVERSATION_ID

@@ -30,11 +30,11 @@ import com.joshtalks.joshskills.core.custom_ui.recorder.OnAudioRecordListener
 import com.joshtalks.joshskills.core.custom_ui.recorder.RecordingItem
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.io.LastSyncPrefManager
-import com.joshtalks.joshskills.repository.local.entity.*
-import com.joshtalks.joshskills.repository.local.entity.practise.PointsListResponse
-import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
-import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentWithRelations
+import com.joshtalks.joshskills.base.local.entity.*
+import com.joshtalks.joshskills.base.local.entity.practise.PointsListResponse
+import com.joshtalks.joshskills.base.local.model.Mentor
+import com.joshtalks.joshskills.base.local.model.assessment.AssessmentQuestionWithRelations
+import com.joshtalks.joshskills.base.local.model.assessment.AssessmentWithRelations
 import com.joshtalks.joshskills.repository.server.RequestEngage
 import com.joshtalks.joshskills.repository.server.UpdateLessonResponse
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentRequest

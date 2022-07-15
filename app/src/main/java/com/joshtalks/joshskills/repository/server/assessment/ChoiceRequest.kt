@@ -3,7 +3,7 @@ package com.joshtalks.joshskills.repository.server.assessment
 
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
-import com.joshtalks.joshskills.repository.local.model.assessment.Choice
+import com.joshtalks.joshskills.base.local.model.assessment.Choice
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize

@@ -1,9 +1,9 @@
 package com.joshtalks.joshskills.repository.service
 
 import com.joshtalks.joshskills.base.constants.DIR
-import com.joshtalks.joshskills.repository.local.entity.practise.FavoriteCaller
-import com.joshtalks.joshskills.repository.local.model.FirestoreNotificationObject
-import com.joshtalks.joshskills.repository.local.model.KFactor
+import com.joshtalks.joshskills.base.local.entity.practise.FavoriteCaller
+import com.joshtalks.joshskills.base.local.model.FirestoreNotificationObject
+import com.joshtalks.joshskills.base.local.model.KFactor
 import com.joshtalks.joshskills.repository.server.voip.AgoraTokenRequest
 import com.joshtalks.joshskills.repository.server.voip.RequestUserLocation
 import com.joshtalks.joshskills.ui.voip.voip_rating.model.ReportModel

@@ -32,7 +32,7 @@ import com.joshtalks.joshskills.core.HAS_SEEN_GROUP_TOOLTIP
 import com.joshtalks.joshskills.core.ONE_GROUP_REQUEST_SENT
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.databinding.FragmentGroupListBinding
-import com.joshtalks.joshskills.ui.group.model.GroupItemData
+import com.joshtalks.joshskills.base.local.entity.group.GroupItemData
 import com.joshtalks.joshskills.ui.group.viewmodels.JoshGroupViewModel
 import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_GROUP_LIST_CBC_TOOLTIP
 import com.joshtalks.joshskills.ui.tooltip.TooltipUtils

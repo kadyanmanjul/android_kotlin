@@ -6,13 +6,13 @@ import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.constants.REMOVE_AND_BLOCK_FPP
 import com.joshtalks.joshskills.constants.REMOVE_GROUP_AND_CLOSE
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.base.local.model.Mentor
 import com.joshtalks.joshskills.ui.group.constants.FROM_BACKEND_MSG_TIME
 import com.joshtalks.joshskills.ui.group.constants.RECEIVE_META_MESSAGE_LOCAL
 import com.joshtalks.joshskills.ui.group.constants.SENT_META_MESSAGE_LOCAL
-import com.joshtalks.joshskills.ui.group.model.ChatItem
-import com.joshtalks.joshskills.ui.group.model.GroupMember
-import com.joshtalks.joshskills.ui.group.model.MessageItem
+import com.joshtalks.joshskills.base.local.entity.group.ChatItem
+import com.joshtalks.joshskills.base.local.entity.group.GroupMember
+import com.joshtalks.joshskills.base.local.entity.group.MessageItem
 import com.joshtalks.joshskills.ui.group.utils.getLastMessage
 import com.joshtalks.joshskills.ui.group.utils.getMessageType
 import com.pubnub.api.PubNub

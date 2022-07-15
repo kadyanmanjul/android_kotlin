@@ -4,8 +4,8 @@ import android.content.pm.PackageManager
 import androidx.lifecycle.MutableLiveData
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
-import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
-import com.joshtalks.joshskills.repository.local.entity.ChatModel
+import com.joshtalks.joshskills.base.local.entity.BASE_MESSAGE_TYPE
+import com.joshtalks.joshskills.base.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
 import com.joshtalks.joshskills.repository.server.chat_message.*
 import kotlinx.coroutines.*

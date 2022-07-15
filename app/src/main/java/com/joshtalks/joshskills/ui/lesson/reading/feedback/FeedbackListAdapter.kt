@@ -3,8 +3,8 @@ package com.joshtalks.joshskills.ui.lesson.reading.feedback
 
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
-import com.joshtalks.joshskills.repository.local.entity.practise.PracticeEngagementV2
+import com.joshtalks.joshskills.base.local.entity.DOWNLOAD_STATUS
+import com.joshtalks.joshskills.base.local.entity.practise.PracticeEngagementV2
 
 const val MAX_ATTEMPT = 4
 

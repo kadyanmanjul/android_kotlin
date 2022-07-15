@@ -12,9 +12,9 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.databinding.FragmentCexamReportBinding
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.eventbus.EmptyEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.GotoCEQuestionEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.OpenReportQTypeEventBus
+import com.joshtalks.joshskills.base.local.eventbus.EmptyEventBus
+import com.joshtalks.joshskills.base.local.eventbus.GotoCEQuestionEventBus
+import com.joshtalks.joshskills.base.local.eventbus.OpenReportQTypeEventBus
 import com.joshtalks.joshskills.repository.server.certification_exam.CertificateExamReportModel
 import com.joshtalks.joshskills.repository.server.certification_exam.CertificationQuestion
 import com.joshtalks.joshskills.repository.server.certification_exam.QuestionReportType

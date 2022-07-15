@@ -25,7 +25,7 @@ import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.hideKeyboard
 import com.joshtalks.joshskills.databinding.FragmentEnterReferralCodeBinding
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.eventbus.PromoCodeSubmitEventBus
+import com.joshtalks.joshskills.base.local.eventbus.PromoCodeSubmitEventBus
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import java.util.HashMap
 import kotlinx.coroutines.CoroutineScope

@@ -1,7 +1,7 @@
 package com.joshtalks.joshskills.ui.online_test.util
 
 import com.joshtalks.joshskills.core.*
-import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.base.local.model.Mentor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

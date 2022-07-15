@@ -30,10 +30,10 @@ import com.joshtalks.joshskills.core.extension.setImageAndFitCenter
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.databinding.PracticeItemLayoutBinding
 import com.joshtalks.joshskills.databinding.VocabQuizPracticeItemLayoutBinding
-import com.joshtalks.joshskills.repository.local.entity.*
-import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
-import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentWithRelations
-import com.joshtalks.joshskills.repository.local.model.assessment.Choice
+import com.joshtalks.joshskills.base.local.entity.*
+import com.joshtalks.joshskills.base.local.model.assessment.AssessmentQuestionWithRelations
+import com.joshtalks.joshskills.base.local.model.assessment.AssessmentWithRelations
+import com.joshtalks.joshskills.base.local.model.assessment.Choice
 import com.joshtalks.joshskills.repository.server.assessment.QuestionStatus
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState

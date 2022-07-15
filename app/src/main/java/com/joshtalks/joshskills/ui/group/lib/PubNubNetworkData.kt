@@ -6,8 +6,8 @@ import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.ui.group.constants.DM_CHAT
 import com.joshtalks.joshskills.ui.group.constants.OPENED_GROUP
-import com.joshtalks.joshskills.ui.group.model.GroupListResponse
-import com.joshtalks.joshskills.ui.group.model.GroupsItem
+import com.joshtalks.joshskills.base.local.entity.group.GroupListResponse
+import com.joshtalks.joshskills.base.local.entity.group.GroupsItem
 import com.joshtalks.joshskills.ui.group.repository.GroupRepository
 import com.pubnub.api.models.consumer.objects_api.membership.PNGetMembershipsResult
 

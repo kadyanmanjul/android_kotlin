@@ -36,9 +36,9 @@ import com.joshtalks.joshskills.core.analytics.*
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.databinding.ActivitySignUpV2Binding
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.eventbus.LoginViaEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.LoginViaStatus
-import com.joshtalks.joshskills.repository.local.model.User
+import com.joshtalks.joshskills.base.local.eventbus.LoginViaEventBus
+import com.joshtalks.joshskills.base.local.eventbus.LoginViaStatus
+import com.joshtalks.joshskills.base.local.model.User
 import com.joshtalks.joshskills.ui.userprofile.viewmodel.UserProfileViewModel
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import com.karumi.dexter.Dexter

@@ -24,10 +24,10 @@ import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.databinding.FragmentNetPromotorScoreBinding
-import com.joshtalks.joshskills.repository.local.entity.NPSEventModel
-import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.repository.local.model.User
-import com.joshtalks.joshskills.repository.local.model.nps.NPSQuestionModel
+import com.joshtalks.joshskills.base.local.entity.NPSEventModel
+import com.joshtalks.joshskills.base.local.model.Mentor
+import com.joshtalks.joshskills.base.local.model.User
+import com.joshtalks.joshskills.base.local.model.nps.NPSQuestionModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay

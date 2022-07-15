@@ -25,9 +25,9 @@ import com.joshtalks.joshskills.core.interfaces.FileDownloadCallback
 import com.joshtalks.joshskills.core.service.CONVERSATION_ID
 import com.joshtalks.joshskills.databinding.ActivityCexamReportBinding
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.eventbus.DownloadFileEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.GotoCEQuestionEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.OpenReportQTypeEventBus
+import com.joshtalks.joshskills.base.local.eventbus.DownloadFileEventBus
+import com.joshtalks.joshskills.base.local.eventbus.GotoCEQuestionEventBus
+import com.joshtalks.joshskills.base.local.eventbus.OpenReportQTypeEventBus
 import com.joshtalks.joshskills.repository.server.certification_exam.CertificateExamReportModel
 import com.joshtalks.joshskills.repository.server.certification_exam.CertificationExamView
 import com.joshtalks.joshskills.repository.server.certification_exam.CertificationQuestionModel

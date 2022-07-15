@@ -11,8 +11,8 @@ import com.joshtalks.joshskills.core.Utils.isInternetAvailable
 import com.joshtalks.joshskills.core.pstn_states.PSTNState
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
-import com.joshtalks.joshskills.repository.local.entity.practise.FavoriteCaller
-import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.base.local.entity.practise.FavoriteCaller
+import com.joshtalks.joshskills.base.local.model.Mentor
 import com.joshtalks.joshskills.ui.fpp.constants.FAV_CLICK_ON_CALL
 import com.joshtalks.joshskills.ui.fpp.constants.FAV_CLICK_ON_PROFILE
 import com.joshtalks.joshskills.ui.fpp.constants.FAV_LIST_SCREEN_BACK_PRESSED

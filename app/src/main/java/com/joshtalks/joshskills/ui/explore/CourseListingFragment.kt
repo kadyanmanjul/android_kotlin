@@ -12,7 +12,7 @@ import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.custom_ui.SmoothLinearLayoutManager
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.databinding.FragmentCourseListingBinding
-import com.joshtalks.joshskills.repository.local.model.ExploreCardType
+import com.joshtalks.joshskills.base.local.model.ExploreCardType
 import com.joshtalks.joshskills.repository.server.CourseExploreModel
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator
 

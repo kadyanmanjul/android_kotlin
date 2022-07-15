@@ -22,7 +22,7 @@ import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.setRoundImage
 import com.joshtalks.joshskills.databinding.ActivityShareWithFriendsBinding
-import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.base.local.model.Mentor
 import com.joshtalks.joshskills.util.DeepLinkUtil
 import java.io.File
 import java.io.FileOutputStream

@@ -22,7 +22,7 @@ import com.joshtalks.joshskills.core.INTRODUCTION_YES_EXCITED_CLICKED
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.databinding.ActivityReadyForDemoBinding
-import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
+import com.joshtalks.joshskills.base.local.entity.CHAT_TYPE
 import com.joshtalks.joshskills.ui.lesson.LessonViewModel
 import com.joshtalks.joshskills.ui.signup.FLOW_FROM
 import com.joshtalks.joshskills.ui.signup.SignUpActivity

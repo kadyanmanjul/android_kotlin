@@ -2,7 +2,7 @@ package com.joshtalks.joshskills.repository.server
 
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
-import com.joshtalks.joshskills.repository.local.entity.ChatModel
+import com.joshtalks.joshskills.base.local.entity.ChatModel
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize

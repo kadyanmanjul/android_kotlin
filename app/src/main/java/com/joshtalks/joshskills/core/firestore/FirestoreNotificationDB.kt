@@ -3,8 +3,8 @@ package com.joshtalks.joshskills.core.firestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.joshtalks.joshskills.repository.local.model.FirestoreNewNotificationObject
-import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.base.local.model.FirestoreNewNotificationObject
+import com.joshtalks.joshskills.base.local.model.Mentor
 import timber.log.Timber
 
 const val COLLECTION_NOTIFICATION = "NotificationsV2"

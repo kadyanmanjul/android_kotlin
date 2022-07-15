@@ -14,10 +14,10 @@ import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.io.LastSyncPrefManager
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.DatabaseUtils
-import com.joshtalks.joshskills.repository.local.entity.*
-import com.joshtalks.joshskills.repository.local.eventbus.DBInsertion
-import com.joshtalks.joshskills.repository.local.eventbus.MessageCompleteEventBus
+import com.joshtalks.joshskills.base.local.DatabaseUtils
+import com.joshtalks.joshskills.base.local.entity.*
+import com.joshtalks.joshskills.base.local.eventbus.DBInsertion
+import com.joshtalks.joshskills.base.local.eventbus.MessageCompleteEventBus
 import com.joshtalks.joshskills.repository.server.ChatMessageReceiver
 import com.joshtalks.joshskills.repository.server.chat_message.BaseChatMessage
 import com.joshtalks.joshskills.repository.server.chat_message.BaseMediaMessage

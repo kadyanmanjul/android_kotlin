@@ -20,11 +20,11 @@ import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
 import com.joshtalks.joshskills.core.extension.setImageViewPH
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
-import com.joshtalks.joshskills.repository.local.entity.ChatModel
-import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
-import com.joshtalks.joshskills.repository.local.eventbus.DownloadMediaEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.PdfOpenEventBus
+import com.joshtalks.joshskills.base.local.entity.BASE_MESSAGE_TYPE
+import com.joshtalks.joshskills.base.local.entity.ChatModel
+import com.joshtalks.joshskills.base.local.entity.DOWNLOAD_STATUS
+import com.joshtalks.joshskills.base.local.eventbus.DownloadMediaEventBus
+import com.joshtalks.joshskills.base.local.eventbus.PdfOpenEventBus
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest

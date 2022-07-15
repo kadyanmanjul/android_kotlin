@@ -11,10 +11,10 @@ import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.bytesToKB
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
-import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
-import com.joshtalks.joshskills.repository.local.entity.ChatModel
-import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
-import com.joshtalks.joshskills.repository.local.entity.Question
+import com.joshtalks.joshskills.base.local.entity.BASE_MESSAGE_TYPE
+import com.joshtalks.joshskills.base.local.entity.ChatModel
+import com.joshtalks.joshskills.base.local.entity.DOWNLOAD_STATUS
+import com.joshtalks.joshskills.base.local.entity.Question
 import timber.log.Timber
 import java.io.File
 

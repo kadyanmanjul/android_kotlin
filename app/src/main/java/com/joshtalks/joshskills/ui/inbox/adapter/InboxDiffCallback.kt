@@ -1,7 +1,7 @@
 package com.joshtalks.joshskills.ui.inbox.adapter
 
 import androidx.recyclerview.widget.DiffUtil
-import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
+import com.joshtalks.joshskills.base.local.minimalentity.InboxEntity
 
 data class InboxDiffCallback(
     private val mOldInboxModelList: List<InboxEntity>,

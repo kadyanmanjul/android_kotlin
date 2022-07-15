@@ -39,8 +39,8 @@ import com.joshtalks.joshskills.core.videotranscoder.enforceSingleScrollDirectio
 import com.joshtalks.joshskills.core.videotranscoder.recyclerView
 import com.joshtalks.joshskills.databinding.ActivityLeaderboardViewPagerBinding
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.eventbus.OpenPreviousLeaderboard
-import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.base.local.eventbus.OpenPreviousLeaderboard
+import com.joshtalks.joshskills.base.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.LeaderboardMentor
 import com.joshtalks.joshskills.repository.server.LeaderboardResponse
 import com.joshtalks.joshskills.track.CONVERSATION_ID

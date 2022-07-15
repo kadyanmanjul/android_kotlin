@@ -17,8 +17,8 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.custom_ui.MiniExoPlayer
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.eventbus.AssessmentLastQuestionSubmitEvent
-import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
+import com.joshtalks.joshskills.base.local.eventbus.AssessmentLastQuestionSubmitEvent
+import com.joshtalks.joshskills.base.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentMediaType
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable

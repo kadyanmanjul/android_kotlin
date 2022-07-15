@@ -18,7 +18,7 @@ import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.databinding.FragmentSelectCourseHeadingBinding
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.eventbus.CourseHeadingSelectedEvent
+import com.joshtalks.joshskills.base.local.eventbus.CourseHeadingSelectedEvent
 import com.joshtalks.joshskills.repository.server.onboarding.CourseHeading
 import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.ui.newonboarding.viewholder.CourseHeadingViewHolder

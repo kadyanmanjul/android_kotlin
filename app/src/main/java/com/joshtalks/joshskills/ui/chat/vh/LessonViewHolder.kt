@@ -3,9 +3,9 @@ package com.joshtalks.joshskills.ui.chat.vh
 import android.view.View
 import android.widget.FrameLayout
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.repository.local.entity.ChatModel
-import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
-import com.joshtalks.joshskills.repository.local.entity.LessonModel
+import com.joshtalks.joshskills.base.local.entity.ChatModel
+import com.joshtalks.joshskills.base.local.entity.LESSON_STATUS
+import com.joshtalks.joshskills.base.local.entity.LessonModel
 import com.joshtalks.joshskills.ui.assessment.view.Stub
 
 class LessonViewHolder(view: View, userId: String) : BaseViewHolder(view, userId) {

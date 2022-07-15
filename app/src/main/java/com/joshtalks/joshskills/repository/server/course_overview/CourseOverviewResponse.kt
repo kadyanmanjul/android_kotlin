@@ -3,7 +3,7 @@ package com.joshtalks.joshskills.repository.server.course_overview
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.repository.local.entity.CExamStatus
+import com.joshtalks.joshskills.base.local.entity.CExamStatus
 import java.util.Date
 
 data class CourseOverviewBaseResponse(

@@ -19,9 +19,9 @@ import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.firestore.NotificationAnalytics
 import com.joshtalks.joshskills.core.firestore.NotificationAnalyticsRequest
 import com.joshtalks.joshskills.core.notification.NotificationUtils
-import com.joshtalks.joshskills.repository.local.AppDatabase
-import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.repository.local.model.NotificationObject
+import com.joshtalks.joshskills.base.local.AppDatabase
+import com.joshtalks.joshskills.base.local.model.Mentor
+import com.joshtalks.joshskills.base.local.model.NotificationObject
 import com.joshtalks.joshskills.repository.service.UtilsAPIService
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.util.ReminderUtil

@@ -5,11 +5,11 @@ import com.google.gson.Gson
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.notification.FCM_TOKEN
-import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.base.local.model.Mentor
 import com.joshtalks.joshskills.ui.group.constants.DM_CHAT
 import com.joshtalks.joshskills.ui.group.constants.FROM_BACKEND_MSG_TIME
-import com.joshtalks.joshskills.ui.group.model.ChatItem
-import com.joshtalks.joshskills.ui.group.model.MessageItem
+import com.joshtalks.joshskills.base.local.entity.group.ChatItem
+import com.joshtalks.joshskills.base.local.entity.group.MessageItem
 import com.joshtalks.joshskills.ui.group.utils.getMessageType
 import com.pubnub.api.PNConfiguration
 import com.pubnub.api.PubNub

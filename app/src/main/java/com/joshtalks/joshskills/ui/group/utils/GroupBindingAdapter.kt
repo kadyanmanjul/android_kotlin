@@ -19,9 +19,9 @@ import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
 import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.ui.group.adapters.*
 import com.joshtalks.joshskills.ui.group.constants.OPENED_GROUP
-import com.joshtalks.joshskills.ui.group.model.DefaultImage
-import com.joshtalks.joshskills.ui.group.model.GroupItemData
-import com.joshtalks.joshskills.ui.group.model.GroupMember
+import com.joshtalks.joshskills.base.local.entity.group.DefaultImage
+import com.joshtalks.joshskills.base.local.entity.group.GroupItemData
+import com.joshtalks.joshskills.base.local.entity.group.GroupMember
 import com.joshtalks.joshskills.ui.group.views.GroupsAppBar
 
 import de.hdodenhof.circleimageview.CircleImageView

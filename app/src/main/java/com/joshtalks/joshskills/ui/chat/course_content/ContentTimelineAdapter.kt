@@ -7,8 +7,8 @@ import com.github.vipulasri.timelineview.TimelineView
 import com.joshtalks.joshskills.core.convertCamelCase
 import com.joshtalks.joshskills.databinding.ContentTimelineItemBinding
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.eventbus.ContentClickEventBus
-import com.joshtalks.joshskills.repository.local.minimalentity.CourseContentEntity
+import com.joshtalks.joshskills.base.local.eventbus.ContentClickEventBus
+import com.joshtalks.joshskills.base.local.minimalentity.CourseContentEntity
 
 class ContentTimelineAdapter(private var items: List<CourseContentEntity>) :
     RecyclerView.Adapter<ContentTimelineAdapter.ViewHolder>() {

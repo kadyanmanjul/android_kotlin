@@ -15,7 +15,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.custom_ui.blurdialog.BlurDialogFragment
 import com.joshtalks.joshskills.databinding.FragmentFeedbackPronBinding
-import com.joshtalks.joshskills.repository.local.entity.practise.WrongWord
+import com.joshtalks.joshskills.base.local.entity.practise.WrongWord
 import com.joshtalks.joshskills.util.ExoAudioPlayer2
 
 

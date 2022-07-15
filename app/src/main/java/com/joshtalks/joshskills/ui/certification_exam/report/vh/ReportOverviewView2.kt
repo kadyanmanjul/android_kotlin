@@ -21,7 +21,7 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.custom_ui.decorator.GridSpacingQuestionsDecoration
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.eventbus.OpenReportQTypeEventBus
+import com.joshtalks.joshskills.base.local.eventbus.OpenReportQTypeEventBus
 import com.joshtalks.joshskills.repository.server.certification_exam.CertificateExamReportModel
 import com.joshtalks.joshskills.repository.server.certification_exam.CertificationQuestion
 import com.joshtalks.joshskills.repository.server.certification_exam.QuestionReportType

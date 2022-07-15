@@ -51,11 +51,11 @@ import com.joshtalks.joshskills.core.abTest.GoalKeys
 import com.joshtalks.joshskills.core.analytics.*
 import com.joshtalks.joshskills.databinding.ActivityPaymentSummaryBinding
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.entity.NPSEvent
-import com.joshtalks.joshskills.repository.local.entity.NPSEventModel
-import com.joshtalks.joshskills.repository.local.eventbus.PromoCodeSubmitEventBus
-import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.repository.local.model.User
+import com.joshtalks.joshskills.base.local.entity.NPSEvent
+import com.joshtalks.joshskills.base.local.entity.NPSEventModel
+import com.joshtalks.joshskills.base.local.eventbus.PromoCodeSubmitEventBus
+import com.joshtalks.joshskills.base.local.model.Mentor
+import com.joshtalks.joshskills.base.local.model.User
 import com.joshtalks.joshskills.repository.server.OrderDetailResponse
 import com.joshtalks.joshskills.repository.server.PaymentSummaryResponse
 import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener

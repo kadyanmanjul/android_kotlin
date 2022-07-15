@@ -35,7 +35,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.databinding.CallRatingDialogBinding
-import com.joshtalks.joshskills.repository.local.entity.LessonModel
+import com.joshtalks.joshskills.base.local.entity.LessonModel
 import com.joshtalks.joshskills.ui.call.data.local.VoipPref
 import com.joshtalks.joshskills.ui.chat.CHAT_ROOM_ID
 import com.joshtalks.joshskills.ui.lesson.LessonActivity

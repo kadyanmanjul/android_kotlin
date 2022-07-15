@@ -56,9 +56,9 @@ import com.joshtalks.joshskills.core.startServiceForWebrtc
 import com.joshtalks.joshskills.core.textDrawableBitmap
 import com.joshtalks.joshskills.core.urlToBitmap
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.eventbus.WebrtcEventBus
-import com.joshtalks.joshskills.repository.local.model.FirestoreNotificationObject
-import com.joshtalks.joshskills.repository.local.model.NotificationAction
+import com.joshtalks.joshskills.base.local.eventbus.WebrtcEventBus
+import com.joshtalks.joshskills.base.local.model.FirestoreNotificationObject
+import com.joshtalks.joshskills.base.local.model.NotificationAction
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
 import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.ACTION_NOTIFICATION_ID

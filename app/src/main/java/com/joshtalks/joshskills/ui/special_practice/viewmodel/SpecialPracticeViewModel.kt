@@ -20,9 +20,9 @@ import com.joshtalks.joshskills.base.BaseViewModel
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.Utils.isInternetAvailable
 import com.joshtalks.joshskills.core.custom_ui.JoshVideoPlayer
-import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.base.local.model.Mentor
 import com.joshtalks.joshskills.ui.referral.REFERRAL_SHARE_TEXT_SHARABLE_VIDEO
-import com.joshtalks.joshskills.ui.special_practice.model.SpecialPractice
+import com.joshtalks.joshskills.base.local.dao.special_practice.SpecialPractice
 import com.joshtalks.joshskills.ui.special_practice.model.SpecialPracticeModel
 import com.joshtalks.joshskills.ui.special_practice.repo.SpecialPracticeRepo
 import com.joshtalks.joshskills.ui.special_practice.utils.*

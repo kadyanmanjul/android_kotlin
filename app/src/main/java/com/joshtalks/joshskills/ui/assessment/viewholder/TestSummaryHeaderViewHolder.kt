@@ -3,9 +3,9 @@ package com.joshtalks.joshskills.ui.assessment.viewholder
 import androidx.appcompat.widget.AppCompatTextView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.repository.local.model.User
-import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
-import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentWithRelations
+import com.joshtalks.joshskills.base.local.model.User
+import com.joshtalks.joshskills.base.local.model.assessment.AssessmentQuestionWithRelations
+import com.joshtalks.joshskills.base.local.model.assessment.AssessmentWithRelations
 import com.joshtalks.joshskills.repository.server.assessment.ChoiceType
 import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve

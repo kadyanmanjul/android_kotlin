@@ -1,6 +1,6 @@
 package com.joshtalks.joshskills.ui.online_test.util
 
-import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
+import com.joshtalks.joshskills.base.local.model.assessment.AssessmentQuestionWithRelations
 
 interface GrammarSubmitButtonListener {
     fun toggleSubmitButton(isEnabled: Boolean)

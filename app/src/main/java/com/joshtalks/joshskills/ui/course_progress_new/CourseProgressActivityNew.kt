@@ -18,9 +18,9 @@ import com.joshtalks.joshskills.core.custom_ui.decorator.SmoothScrollingLinearLa
 import com.joshtalks.joshskills.core.custom_ui.decorator.StickHeaderItemDecoration
 import com.joshtalks.joshskills.core.extension.deepEquals
 import com.joshtalks.joshskills.databinding.CourseProgressActivityNewBinding
-import com.joshtalks.joshskills.repository.local.entity.CExamStatus
-import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
-import com.joshtalks.joshskills.repository.local.model.User
+import com.joshtalks.joshskills.base.local.entity.CExamStatus
+import com.joshtalks.joshskills.base.local.entity.LESSON_STATUS
+import com.joshtalks.joshskills.base.local.model.User
 import com.joshtalks.joshskills.repository.server.course_overview.CourseOverviewItem
 import com.joshtalks.joshskills.repository.server.course_overview.CourseOverviewResponse
 import com.joshtalks.joshskills.track.CONVERSATION_ID

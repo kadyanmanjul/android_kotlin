@@ -8,7 +8,7 @@ import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.target.Target
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.repository.local.model.assessment.Choice
+import com.joshtalks.joshskills.base.local.model.assessment.Choice
 import com.joshtalks.joshskills.repository.server.assessment.ChoiceType
 
 abstract class ChoiceBaseCell(

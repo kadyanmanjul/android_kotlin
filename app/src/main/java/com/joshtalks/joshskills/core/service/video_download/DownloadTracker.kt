@@ -19,9 +19,9 @@ import com.joshtalks.joshskills.core.PrefManager.getStringValue
 import com.joshtalks.joshskills.core.SELECTED_QUALITY
 import com.joshtalks.joshskills.core.videoplayer.VideoQualityTrack
 import com.joshtalks.joshskills.messaging.RxBus2.publish
-import com.joshtalks.joshskills.repository.local.entity.ChatModel
-import com.joshtalks.joshskills.repository.local.entity.LessonQuestion
-import com.joshtalks.joshskills.repository.local.eventbus.MediaProgressEventBus
+import com.joshtalks.joshskills.base.local.entity.ChatModel
+import com.joshtalks.joshskills.base.local.entity.LessonQuestion
+import com.joshtalks.joshskills.base.local.eventbus.MediaProgressEventBus
 import java.io.IOException
 import java.util.*
 import java.util.concurrent.CopyOnWriteArraySet

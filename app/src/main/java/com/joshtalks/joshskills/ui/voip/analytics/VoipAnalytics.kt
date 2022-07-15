@@ -2,7 +2,7 @@ package com.joshtalks.joshskills.ui.voip.analytics
 
 import android.util.Log
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.repository.local.AppDatabase
+import com.joshtalks.joshskills.base.local.AppDatabase
 import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.joshtalks.joshskills.ui.voip.analytics.data.local.VoipAnalyticsEntity
 import com.joshtalks.joshskills.util.DateUtils

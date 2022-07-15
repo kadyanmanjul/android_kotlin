@@ -39,7 +39,7 @@ import com.joshtalks.joshskills.core.interfaces.OnDismissClaimCertificateDialog
 import com.joshtalks.joshskills.core.service.CONVERSATION_ID
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentClaimCertificateBinding
-import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.base.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.CertificateDetail
 import com.joshtalks.joshskills.repository.server.RequestCertificateGenerate
 import com.karumi.dexter.MultiplePermissionsReport

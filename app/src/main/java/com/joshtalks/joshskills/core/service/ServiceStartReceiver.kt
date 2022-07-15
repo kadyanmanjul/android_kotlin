@@ -5,9 +5,9 @@ import android.content.Context
 import android.content.Intent
 import com.joshtalks.joshskills.core.LAST_TIME_WORK_MANAGER_START
 import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.repository.local.AppDatabase
-import com.joshtalks.joshskills.repository.local.entity.BroadCastEvent
-import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.base.local.AppDatabase
+import com.joshtalks.joshskills.base.local.entity.BroadCastEvent
+import com.joshtalks.joshskills.base.local.model.Mentor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

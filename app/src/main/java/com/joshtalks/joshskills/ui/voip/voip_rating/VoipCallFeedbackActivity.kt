@@ -32,7 +32,7 @@ import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.databinding.VoipCallFeedbackViewBinding
-import com.joshtalks.joshskills.repository.local.model.KFactor
+import com.joshtalks.joshskills.base.local.model.KFactor
 import com.joshtalks.joshskills.ui.practise.PracticeViewModel
 import com.joshtalks.joshskills.ui.voip.SHOW_FPP_DIALOG
 import com.joshtalks.joshskills.ui.voip.share_call.ShareWithFriendsActivity

@@ -10,9 +10,9 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.extension.setImageFromUrl
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
-import com.joshtalks.joshskills.repository.local.entity.ChatModel
-import com.joshtalks.joshskills.repository.local.eventbus.OpenBestPerformerRaceEventBus
+import com.joshtalks.joshskills.base.local.entity.BASE_MESSAGE_TYPE
+import com.joshtalks.joshskills.base.local.entity.ChatModel
+import com.joshtalks.joshskills.base.local.eventbus.OpenBestPerformerRaceEventBus
 
 class ReviewVideoViewHolder(view: View, userId: String) : BaseViewHolder(view, userId) {
 

@@ -21,8 +21,8 @@ import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.extension.slideUpAnimation
-import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionFeedback
-import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
+import com.joshtalks.joshskills.base.local.model.assessment.AssessmentQuestionFeedback
+import com.joshtalks.joshskills.base.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.ui.online_test.util.GrammarButtonViewCallback
 
 class GrammarButtonView : FrameLayout {

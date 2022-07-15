@@ -5,8 +5,8 @@ import android.util.AttributeSet
 import android.view.View
 import android.widget.RadioGroup
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
-import com.joshtalks.joshskills.repository.local.model.assessment.Choice
+import com.joshtalks.joshskills.base.local.model.assessment.AssessmentQuestionWithRelations
+import com.joshtalks.joshskills.base.local.model.assessment.Choice
 import com.joshtalks.joshskills.ui.online_test.vh.McqOptionState
 import com.joshtalks.joshskills.ui.online_test.vh.McqOptionView
 import com.joshtalks.joshskills.ui.online_test.util.AssessmentQuestionViewCallback

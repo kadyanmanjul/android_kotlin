@@ -17,8 +17,8 @@ import com.joshtalks.joshskills.core.CallType
 import com.joshtalks.joshskills.core.JoshSkillExecutors
 import com.joshtalks.joshskills.core.textDrawableBitmap
 import com.joshtalks.joshskills.core.urlToBitmap
-import com.joshtalks.joshskills.repository.local.entity.practise.FavoriteCaller
-import com.joshtalks.joshskills.repository.local.model.NotificationChannelNames
+import com.joshtalks.joshskills.base.local.entity.practise.FavoriteCaller
+import com.joshtalks.joshskills.base.local.model.NotificationChannelNames
 import com.joshtalks.joshskills.ui.voip.CALL_TYPE
 import com.joshtalks.joshskills.ui.voip.CALL_USER_OBJ
 import com.joshtalks.joshskills.ui.voip.RTC_IS_FAVORITE

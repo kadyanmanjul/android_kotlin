@@ -9,7 +9,7 @@ import androidx.appcompat.widget.AppCompatRadioButton
 import androidx.core.content.ContextCompat
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.Utils
-import com.joshtalks.joshskills.repository.local.model.assessment.Choice
+import com.joshtalks.joshskills.base.local.model.assessment.Choice
 
 class McqOptionView(context: Context) : AppCompatRadioButton(context) {
 

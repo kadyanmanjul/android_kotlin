@@ -7,7 +7,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.databinding.GroupMemberItemBinding
-import com.joshtalks.joshskills.ui.group.model.GroupMember
+import com.joshtalks.joshskills.base.local.entity.group.GroupMember
 
 class GroupMemberAdapter(var memberList: List<GroupMember> = listOf()) :
     RecyclerView.Adapter<GroupMemberAdapter.MemberViewHolder>() {

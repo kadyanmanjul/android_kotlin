@@ -12,8 +12,8 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isNotEmpty
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.Utils
-import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
-import com.joshtalks.joshskills.repository.local.model.assessment.Choice
+import com.joshtalks.joshskills.base.local.model.assessment.AssessmentQuestionWithRelations
+import com.joshtalks.joshskills.base.local.model.assessment.Choice
 import com.joshtalks.joshskills.repository.server.assessment.ChoiceColumn
 import com.joshtalks.joshskills.ui.online_test.util.AssessmentQuestionViewCallback
 import com.joshtalks.joshskills.ui.online_test.util.GrammarSubmitButtonListener

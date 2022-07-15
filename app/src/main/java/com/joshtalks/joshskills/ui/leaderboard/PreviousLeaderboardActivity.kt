@@ -15,9 +15,9 @@ import com.joshtalks.joshskills.core.USER_PROFILE_FLOW_FROM
 import com.joshtalks.joshskills.core.WebRtcMiddlewareActivity
 import com.joshtalks.joshskills.databinding.ActivityPreviousLeaderboardBinding
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.eventbus.DeleteProfilePicEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.OpenUserProfile
-import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.base.local.eventbus.DeleteProfilePicEventBus
+import com.joshtalks.joshskills.base.local.eventbus.OpenUserProfile
+import com.joshtalks.joshskills.base.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.PreviousLeaderboardResponse
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity

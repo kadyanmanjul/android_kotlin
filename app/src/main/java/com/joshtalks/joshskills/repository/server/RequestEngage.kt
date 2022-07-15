@@ -3,7 +3,7 @@ package com.joshtalks.joshskills.repository.server
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
-import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.base.local.model.Mentor
 
 class RequestEngage {
     @SerializedName("answer_url")

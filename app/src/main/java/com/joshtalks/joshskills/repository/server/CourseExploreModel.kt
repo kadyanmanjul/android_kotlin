@@ -4,7 +4,7 @@ package com.joshtalks.joshskills.repository.server
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.repository.local.model.ExploreCardType
+import com.joshtalks.joshskills.base.local.model.ExploreCardType
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize

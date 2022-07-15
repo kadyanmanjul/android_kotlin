@@ -9,7 +9,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.eventbus.OpenDemoLessonEventBus
+import com.joshtalks.joshskills.base.local.eventbus.OpenDemoLessonEventBus
 import com.joshtalks.joshskills.repository.server.course_detail.CardType
 import com.joshtalks.joshskills.repository.server.course_detail.demoCourseDetails.CourseAToZResponse
 import com.joshtalks.joshskills.ui.course_details.viewholder.CourseDetailsBaseCell

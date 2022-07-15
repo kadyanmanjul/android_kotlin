@@ -1,7 +1,7 @@
 package com.joshtalks.joshskills.ui.group.utils
 
 import androidx.recyclerview.widget.DiffUtil
-import com.joshtalks.joshskills.ui.group.model.ChatItem
+import com.joshtalks.joshskills.base.local.entity.group.ChatItem
 
 object GroupChatComparator : DiffUtil.ItemCallback<ChatItem>() {
     override fun areItemsTheSame(oldItem: ChatItem, newItem: ChatItem): Boolean {

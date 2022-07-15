@@ -30,7 +30,7 @@ import com.joshtalks.joshskills.ui.group.adapters.GroupStateAdapter
 import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics
 import com.joshtalks.joshskills.ui.group.constants.CLOSED_GROUP
 import com.joshtalks.joshskills.ui.group.constants.OPENED_GROUP
-import com.joshtalks.joshskills.ui.group.model.*
+import com.joshtalks.joshskills.base.local.entity.group.*
 import com.joshtalks.joshskills.ui.group.utils.GroupItemComparator
 import com.joshtalks.joshskills.ui.group.repository.GroupRepository
 import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_GROUP_LIST_CBC_TOOLTIP

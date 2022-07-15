@@ -1,11 +1,11 @@
 package com.joshtalks.joshskills.ui.group.utils
 
 import com.joshtalks.joshskills.core.dateStartOfDay
-import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.base.local.model.Mentor
 import com.joshtalks.joshskills.ui.group.constants.*
 import com.joshtalks.joshskills.ui.group.lib.ChatService
 import com.joshtalks.joshskills.ui.group.lib.PubNubService
-import com.joshtalks.joshskills.ui.group.model.MessageItem
+import com.joshtalks.joshskills.base.local.entity.group.MessageItem
 import com.joshtalks.joshskills.ui.group.repository.GroupRepository
 import java.lang.Math.abs
 

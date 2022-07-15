@@ -24,7 +24,7 @@ import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.core.memory.MemoryManagementWorker
 import com.joshtalks.joshskills.databinding.FragmentSettingsBinding
-import com.joshtalks.joshskills.repository.local.model.User
+import com.joshtalks.joshskills.base.local.model.User
 import com.joshtalks.joshskills.repository.server.LanguageItem
 import com.joshtalks.joshskills.ui.extra.AUTO_START_SETTINGS_POPUP
 import com.joshtalks.joshskills.ui.settings.SettingsActivity

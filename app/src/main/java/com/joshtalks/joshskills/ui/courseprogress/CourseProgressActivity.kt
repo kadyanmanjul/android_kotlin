@@ -48,11 +48,11 @@ import com.joshtalks.joshskills.core.interfaces.OnDismissDialog
 import com.joshtalks.joshskills.core.io.LastSyncPrefManager
 import com.joshtalks.joshskills.databinding.ActivityCourseProgressBinding
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.entity.ChatModel
-import com.joshtalks.joshskills.repository.local.eventbus.ContentClickEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.OpenClickProgressEventBus
-import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
-import com.joshtalks.joshskills.repository.local.model.User
+import com.joshtalks.joshskills.base.local.entity.ChatModel
+import com.joshtalks.joshskills.base.local.eventbus.ContentClickEventBus
+import com.joshtalks.joshskills.base.local.eventbus.OpenClickProgressEventBus
+import com.joshtalks.joshskills.base.local.minimalentity.InboxEntity
+import com.joshtalks.joshskills.base.local.model.User
 import com.joshtalks.joshskills.repository.server.CertificateDetail
 import com.joshtalks.joshskills.ui.chat.CHAT_ROOM_OBJECT
 import com.joshtalks.joshskills.ui.chat.FOCUS_ON_CHAT_ID

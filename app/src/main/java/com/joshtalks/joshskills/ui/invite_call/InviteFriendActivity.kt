@@ -14,8 +14,8 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.databinding.ActivityInviteFriendBinding
-import com.joshtalks.joshskills.repository.local.entity.PhonebookContact
-import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.base.local.entity.PhonebookContact
+import com.joshtalks.joshskills.base.local.model.Mentor
 import com.joshtalks.joshskills.util.DeepLinkUtil
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionDeniedResponse

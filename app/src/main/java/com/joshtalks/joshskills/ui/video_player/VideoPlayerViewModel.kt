@@ -3,7 +3,7 @@ package com.joshtalks.joshskills.ui.video_player
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.base.local.model.Mentor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber

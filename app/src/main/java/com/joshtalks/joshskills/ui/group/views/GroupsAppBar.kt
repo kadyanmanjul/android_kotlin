@@ -17,7 +17,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.setUserImageOrInitialsWithWhiteBackground
 import com.joshtalks.joshskills.ui.group.constants.CLOSED_GROUP
 import com.joshtalks.joshskills.ui.group.constants.DM_CHAT
-import com.joshtalks.joshskills.ui.group.model.DefaultImage
+import com.joshtalks.joshskills.base.local.entity.group.DefaultImage
 
 import java.lang.Exception
 

@@ -42,8 +42,8 @@ import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.analytics.*
 import com.joshtalks.joshskills.databinding.ActivityCourseDetailsBinding
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.eventbus.*
-import com.joshtalks.joshskills.repository.local.model.ExploreCardType
+import com.joshtalks.joshskills.base.local.eventbus.*
+import com.joshtalks.joshskills.base.local.model.ExploreCardType
 import com.joshtalks.joshskills.repository.server.course_detail.*
 import com.joshtalks.joshskills.repository.server.onboarding.FreeTrialData
 import com.joshtalks.joshskills.repository.server.onboarding.SubscriptionData

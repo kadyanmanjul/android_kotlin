@@ -1,5 +1,5 @@
 package com.joshtalks.joshskills.repository.server
 
-import com.joshtalks.joshskills.repository.local.model.User
+import com.joshtalks.joshskills.base.local.model.User
 
 class UpdateProfileResponse : User()

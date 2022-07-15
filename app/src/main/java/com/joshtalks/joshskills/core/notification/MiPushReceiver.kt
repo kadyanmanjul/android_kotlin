@@ -4,7 +4,7 @@ import android.content.Context
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.firestore.FirestoreDB
-import com.joshtalks.joshskills.repository.local.model.ShortNotificationObject
+import com.joshtalks.joshskills.base.local.model.ShortNotificationObject
 import com.joshtalks.joshskills.ui.voip.analytics.VoipAnalytics
 import com.moengage.core.LogLevel
 import com.moengage.core.internal.logger.Logger

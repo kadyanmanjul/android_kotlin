@@ -12,7 +12,7 @@ import androidx.core.content.ContextCompat
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.eventbus.OpenClickProgressEventBus
+import com.joshtalks.joshskills.base.local.eventbus.OpenClickProgressEventBus
 import com.joshtalks.joshskills.repository.server.ModuleData
 import com.mindorks.placeholderview.annotations.Click
 import com.mindorks.placeholderview.annotations.Layout

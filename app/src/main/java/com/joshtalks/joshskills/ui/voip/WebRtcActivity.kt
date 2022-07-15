@@ -49,9 +49,9 @@ import com.joshtalks.joshskills.core.custom_ui.PointSnackbar
 import com.joshtalks.joshskills.core.custom_ui.TextDrawable
 import com.joshtalks.joshskills.databinding.ActivityCallingBinding
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.eventbus.SnackBarEvent
-import com.joshtalks.joshskills.repository.local.eventbus.WebrtcEventBus
-import com.joshtalks.joshskills.repository.local.model.User
+import com.joshtalks.joshskills.base.local.eventbus.SnackBarEvent
+import com.joshtalks.joshskills.base.local.eventbus.WebrtcEventBus
+import com.joshtalks.joshskills.base.local.model.User
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
 import com.joshtalks.joshskills.ui.voip.WebRtcService.Companion.cancelCallieDisconnectTimer

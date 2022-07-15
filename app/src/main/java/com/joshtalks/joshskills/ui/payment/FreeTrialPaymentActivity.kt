@@ -33,8 +33,8 @@ import com.joshtalks.joshskills.core.analytics.MarketingAnalytics.logNewPaymentP
 import com.joshtalks.joshskills.core.countdowntimer.CountdownTimerBack
 import com.joshtalks.joshskills.databinding.ActivityFreeTrialPaymentBinding
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.eventbus.PromoCodeSubmitEventBus
-import com.joshtalks.joshskills.repository.local.model.User
+import com.joshtalks.joshskills.base.local.eventbus.PromoCodeSubmitEventBus
+import com.joshtalks.joshskills.base.local.model.User
 import com.joshtalks.joshskills.repository.server.OrderDetailResponse
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity

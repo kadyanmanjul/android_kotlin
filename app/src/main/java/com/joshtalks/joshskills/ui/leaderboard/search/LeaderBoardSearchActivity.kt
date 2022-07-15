@@ -17,7 +17,7 @@ import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.databinding.ActivityLeaderboardSearchBinding
-import com.joshtalks.joshskills.repository.local.entity.leaderboard.RecentSearch
+import com.joshtalks.joshskills.base.local.entity.leaderboard.RecentSearch
 import com.joshtalks.joshskills.repository.server.LeaderboardResponse
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.track.COURSE_EXPIRY_TIME_IN_MS

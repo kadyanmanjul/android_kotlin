@@ -9,9 +9,9 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.getRandomName
 import com.joshtalks.joshskills.core.setUserImageOrInitials
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.eventbus.OpenUserProfile
-import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.repository.local.model.User
+import com.joshtalks.joshskills.base.local.eventbus.OpenUserProfile
+import com.joshtalks.joshskills.base.local.model.Mentor
+import com.joshtalks.joshskills.base.local.model.User
 import com.joshtalks.joshskills.repository.server.LeaderboardMentor
 import com.mindorks.placeholderview.SmoothLinearLayoutManager
 import com.mindorks.placeholderview.annotations.Click

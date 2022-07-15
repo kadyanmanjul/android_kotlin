@@ -60,11 +60,11 @@ import com.joshtalks.joshskills.core.videotranscoder.enforceSingleScrollDirectio
 import com.joshtalks.joshskills.core.videotranscoder.recyclerView
 import com.joshtalks.joshskills.databinding.LessonActivityBinding
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
-import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
-import com.joshtalks.joshskills.repository.local.entity.LessonModel
-import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
-import com.joshtalks.joshskills.repository.local.eventbus.MediaProgressEventBus
+import com.joshtalks.joshskills.base.local.entity.CHAT_TYPE
+import com.joshtalks.joshskills.base.local.entity.LESSON_STATUS
+import com.joshtalks.joshskills.base.local.entity.LessonModel
+import com.joshtalks.joshskills.base.local.entity.QUESTION_STATUS
+import com.joshtalks.joshskills.base.local.eventbus.MediaProgressEventBus
 import com.joshtalks.joshskills.repository.server.course_detail.VideoModel
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.chat.CHAT_ROOM_ID

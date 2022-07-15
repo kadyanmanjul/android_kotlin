@@ -11,7 +11,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.custom_ui.decorator.StickHeaderItemDecoration
 import com.joshtalks.joshskills.databinding.ProgressActivityAdapterHeaderViewLayoutBinding
 import com.joshtalks.joshskills.databinding.ProgressActivityAdapterMainViewLayoutBinding
-import com.joshtalks.joshskills.repository.local.entity.CExamStatus
+import com.joshtalks.joshskills.base.local.entity.CExamStatus
 import com.joshtalks.joshskills.repository.server.course_overview.CourseOverviewResponse
 import java.util.ArrayList
 
