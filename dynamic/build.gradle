@@ -10,6 +10,8 @@ android {
 
     defaultConfig {
         minSdkVersion 24
+        targetSdkVersion 30
+        multiDexEnabled true
     }
 
     buildTypes {
@@ -44,17 +46,10 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-    defaultConfig {
-        applicationId "com.joshtalks.joshskills.dynamic"
-        multiDexEnabled true
-    }
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation project(':app')
-    implementation project(':base')
-    implementation project(':mediapicker')
     //ffmpeg
     implementation 'com.arthenica:mobile-ffmpeg-full:4.4'
     testImplementation 'junit:junit:4.13.2'

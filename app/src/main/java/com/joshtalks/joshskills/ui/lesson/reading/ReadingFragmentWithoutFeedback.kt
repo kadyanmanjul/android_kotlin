@@ -22,7 +22,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.os.SystemClock
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -53,6 +52,7 @@ import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
 import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.Player
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.play.core.splitinstall.SplitInstallManagerFactory
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
@@ -834,6 +834,10 @@ class ReadingFragmentWithoutFeedback :
         ) {
             currentLessonQuestion = it.filter { it.chatType == CHAT_TYPE.RP }.getOrNull(0)
             video = currentLessonQuestion?.videoList?.getOrNull(0)?.video_url
+            if (!SplitInstallManagerFactory.create(AppObjectController.joshApplication).installedModules.contains("dynamic")){
+                showToast("Dynamic module isn't installed")
+                video = null
+            }
             lifecycleScope.launch {
                 lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
                     fetchVideo()

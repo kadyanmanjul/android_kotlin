@@ -17,8 +17,6 @@ import androidx.lifecycle.observe
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.textview.MaterialTextView
-import com.google.android.play.core.splitinstall.SplitInstallManagerFactory
-import com.google.android.play.core.splitinstall.SplitInstallRequest
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.constants.CALLING_SERVICE_ACTION
@@ -53,7 +51,6 @@ import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.core.interfaces.OnOpenCourseListener
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
@@ -123,27 +120,6 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         addAfterTime()
         viewModel.handleGroupTimeTokens()
         viewModel.handleBroadCastEvents()
-        val splitManager = SplitInstallManagerFactory.create(this)
-        val module = "dynamic"
-        showToast("Loading module $module")
-        if (splitManager.installedModules.contains(module)){
-            showToast("Already $module installed")
-            // Get the asset manager with a refreshed context, to access content of newly installed apk.
-            val classes = createPackageContext(packageName, 0)
-            //classes.classLoader.loadClass()
-            // Now treat it like any other asset file.
-        } else{
-            // We just added the following lines
-            showToast("Starting install for$module")
-            val request = SplitInstallRequest.newBuilder()
-                .addModule(module)
-                .build()
-
-            splitManager.startInstall(request)
-                .addOnCompleteListener { showToast("Module ${module} installed") }
-                .addOnSuccessListener {showToast("Loading ${module}") }
-                .addOnFailureListener { showToast("Error Loading ${module}") }
-        }
     }
 
     private fun initABTest() {
