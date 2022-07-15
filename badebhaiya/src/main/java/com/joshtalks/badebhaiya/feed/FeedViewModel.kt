@@ -16,6 +16,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.core.*
+import com.joshtalks.badebhaiya.datastore.BbDatastore
 import com.joshtalks.badebhaiya.feed.adapter.FeedAdapter
 import com.joshtalks.badebhaiya.feed.model.*
 import com.joshtalks.badebhaiya.impressions.Impression
@@ -93,17 +94,8 @@ class FeedViewModel : ViewModel() {
     var pendingRoomTimeForSchedule = ""
 
     init {
-//        collectPubNubState()
 
-//            viewModelScope.launch {
-//                try{
-//                    val response = signUpRepository.getBBtoFollowList(1)
-//                    Timber.d("response => ${response.body()}")
-//
-//                } catch (e: Exception){
-//                    e.printStackTrace()
-//                }
-//            }
+        collectRoomRequestCount()
 
     }
 
@@ -127,12 +119,16 @@ class FeedViewModel : ViewModel() {
         }
     }
 
-    fun getRoomRequestCount(){
+    private fun collectRoomRequestCount(){
         viewModelScope.launch {
-            commonRepository.roomRequestCount()?.let { count ->
-                roomRequestCount.postValue(count)
+            BbDatastore.roomRequestCount.collectLatest {
+                roomRequestCount.postValue(it)
             }
         }
+    }
+
+    fun getRoomRequestCount(){
+            commonRepository.roomRequestCount()
     }
 
     private fun collectModeratorStatus() {

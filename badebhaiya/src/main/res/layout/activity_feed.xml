@@ -173,6 +173,7 @@
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 
+
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/fragmentContainer"
             android:layout_width="match_parent"

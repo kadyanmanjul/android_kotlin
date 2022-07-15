@@ -49,7 +49,7 @@ class RequestBottomSheetFragment(
         super.onViewCreated(view, savedInstanceState)
         viewModel.getRequestContent(userId)
 //        binding.requestProfilePicture
-
+        viewModel.getRequestCount()
         attachObservers()
     }
 

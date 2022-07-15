@@ -22,6 +22,7 @@ import androidx.core.widget.addTextChangedListener
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.badge.BadgeDrawable
 import com.google.android.material.badge.BadgeUtils
@@ -36,6 +37,7 @@ import com.joshtalks.badebhaiya.core.models.FormResponse
 import com.joshtalks.badebhaiya.core.showToast
 import com.joshtalks.badebhaiya.databinding.ActivityFeedBinding
 import com.joshtalks.badebhaiya.databinding.WhyRoomBinding
+import com.joshtalks.badebhaiya.datastore.BbDatastore
 import com.joshtalks.badebhaiya.feed.adapter.FeedAdapter
 import com.joshtalks.badebhaiya.feed.joinPreviousRoom.PreviousRoomDialog
 import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
@@ -76,6 +78,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
+import kotlin.random.Random
 
 @AndroidEntryPoint
 class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallback, CreateRoom.CreateRoomCallback {
@@ -228,6 +231,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
             checkAndOpenLiveRoom()
         }
 
+
     }
 
     override fun onRestart() {
@@ -326,6 +330,8 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         Timber.tag("profilebadge").d(
             "setBadgeDrawable() called with: raisedHandAudienceSize = $callRequestCount"
         )
+
+        badgeDrawable.isVisible = callRequestCount > 0
 
         if (User.getInstance().isSpeaker && callRequestCount > 0) {
 
@@ -751,4 +757,5 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
     override fun onError(error: String) {
         showToast(error)
     }
+
 }
