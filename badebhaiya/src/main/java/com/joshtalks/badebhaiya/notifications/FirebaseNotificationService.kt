@@ -306,6 +306,12 @@ class FirebaseNotificationService : FirebaseMessagingService() {
 //                }
             }
 
+            NotificationAction.ROOM_REQUEST_NOTIFICATION -> {
+                val roomRequestUserId = JSONObject(actionData).getString("room_request_id")
+                return FeedActivity.getIntentForRoomRequest(this, roomRequestUserId)
+            }
+
+
             else -> null
         }
     }

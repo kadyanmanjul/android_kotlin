@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -25,7 +26,7 @@ import kotlinx.android.synthetic.main.bottom_sheet_request.view.*
 import timber.log.Timber
 
 class RequestBottomSheetFragment(
-    private val callRequest: RequestData,
+    private val userId: String,
 ) : BottomSheetDialogFragment() {
 
     private val viewModel by lazy {
@@ -33,34 +34,33 @@ class RequestBottomSheetFragment(
     }
 
     private lateinit var binding: BottomSheetRequestBinding
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         binding = BottomSheetRequestBinding.inflate(inflater, container, false)
-        Timber.d("CALL REQUEST => ${callRequest.user}")
-        binding.callRequest = callRequest
         binding.handler = this
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.getRequestContent(callRequest.user.user_id)
+        viewModel.getRequestContent(userId)
 //        binding.requestProfilePicture
-        if (callRequest.user.photo_url.isNullOrEmpty().not())
-            Utils.setImage(binding.requestProfilePicture, callRequest.user.photo_url)
-        else
-            Utils.setImage(binding.requestProfilePicture, callRequest.user.short_name)
-        binding.requestProfilePicture.setUserImageOrInitials(callRequest.user.photo_url,
-            callRequest.user.short_name[0],30)
+
         attachObservers()
     }
 
     private fun attachObservers() {
         viewModel.requestContent.observe(this){
-           binding.requests.requests.adapter = RequestContentAdapter(it.reqeust_data, callRequest.user)
+            if (it.user.photo_url.isNullOrEmpty().not())
+                Utils.setImage(binding.requestProfilePicture, it.user.photo_url)
+            else
+                Utils.setImage(binding.requestProfilePicture, it.user.short_name)
+            binding.requestProfilePicture.setUserImageOrInitials(it.user.photo_url,
+                it.user.short_name[0],30)
+           binding.requests.requests.adapter = RequestContentAdapter(it.reqeust_data, it.user)
         }
     }
 
@@ -100,5 +100,14 @@ class RequestBottomSheetFragment(
 
     companion object {
         const val TAG = "RequestBottomSheetFragment"
+
+        fun open(userId: String, fragmentManager: FragmentManager){
+            RequestBottomSheetFragment(userId).also {
+                it.show(
+                    fragmentManager,
+                    TAG
+                )
+            }
+        }
     }
 }

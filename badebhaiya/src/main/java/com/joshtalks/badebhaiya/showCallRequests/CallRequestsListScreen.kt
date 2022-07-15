@@ -10,6 +10,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -110,17 +112,27 @@ fun CallRequestsList(list: List<RequestData>) {
 fun ItemCallRequest(callRequest: RequestData) {
     Column() {
         val activityObj = LocalContext.current.getActivity()
+        val didRead = remember {
+            mutableStateOf(callRequest.is_read)
+        }
         Row(
             modifier = Modifier
                 .padding(18.dp)
                 .clickable {
                     activityObj?.let { myActivity ->
-                        RequestBottomSheetFragment(callRequest).also {
-                            it.show(
-                                myActivity.supportFragmentManager,
-                                RequestBottomSheetFragment.TAG
-                            )
-                        }
+                        didRead.value = true
+                        RequestBottomSheetFragment.open(
+                            callRequest.user.user_id,
+                            myActivity.supportFragmentManager
+                        )
+
+
+//                        RequestBottomSheetFragment(callRequest.user.user_id).also {
+//                            it.show(
+//                                myActivity.supportFragmentManager,
+//                                RequestBottomSheetFragment.TAG
+//                            )
+//                        }
                     }
                 },
             verticalAlignment = Alignment.CenterVertically
@@ -136,11 +148,11 @@ fun ItemCallRequest(callRequest: RequestData) {
                 Spacer(modifier = Modifier.height(4.dp))
                 ListBioText(
                     text = callRequest.request_submitted,
-                    textColor = if (callRequest.is_read) colorResource(
+                    textColor = if (didRead.value) colorResource(
                         id = R.color.gray_txt
                     ) else Color.Black,
                     fontSize = 14.sp,
-                    fontWeight = if (callRequest.is_read) FontWeight.Normal else FontWeight.Bold
+                    fontWeight = if (didRead.value) FontWeight.Normal else FontWeight.Bold
                 )
             }
             Spacer(modifier = Modifier.width(8.dp))
@@ -153,18 +165,18 @@ fun ItemCallRequest(callRequest: RequestData) {
                     painter = painterResource(id = R.drawable.ic_forward_arrow),
                     contentDescription = "see request",
                     colorFilter = ColorFilter.tint(
-                        if (callRequest.is_read) colorResource(
+                        if (didRead.value) colorResource(
                             id = R.color.gray_txt
                         ) else Color.Black
                     )
                 )
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
-                    text = callRequest.submitTime, color = if (callRequest.is_read) colorResource(
+                    text = callRequest.submitTime, color = if (didRead.value) colorResource(
                             id = R.color.gray_txt
                             ) else Color.Black,
                     fontSize = 12.sp,
-                    fontWeight = if (callRequest.is_read) FontWeight.Normal else FontWeight.Bold
+                    fontWeight = if (didRead.value) FontWeight.Normal else FontWeight.Bold
                 )
             }
         }

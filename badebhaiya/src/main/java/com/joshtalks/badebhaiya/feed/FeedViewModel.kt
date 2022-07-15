@@ -193,7 +193,7 @@ class FeedViewModel : ViewModel() {
 
 
 
-    fun joinRoom(roomId: String, topic: String, source: String) {
+    fun joinRoom(roomId: String, topic: String, source: String, isRejoin: Boolean = false) {
         Timber.d("JOIN ROOM PARAMS => room: $roomId and Topic => $topic")
 //        pubChannelName = moderatorId
         if (pubNubState == PubNubState.STARTED) {
@@ -213,7 +213,8 @@ class FeedViewModel : ViewModel() {
                     ConversationRoomRequest(
                         userId = User.getInstance().userId,
                         roomId = roomId.toInt(),
-                        fromPage = source
+                        fromPage = source,
+                        is_rejoin = isRejoin
                     )
                 )
                 roomtopic = topic

@@ -8,13 +8,14 @@ import com.joshtalks.badebhaiya.databinding.ItemRequestContentBinding
 import com.joshtalks.badebhaiya.showCallRequests.model.ReqeustData
 import com.joshtalks.badebhaiya.showCallRequests.model.RequestData
 import com.joshtalks.badebhaiya.showCallRequests.model.User
+import com.joshtalks.badebhaiya.showCallRequests.model.UserX
 import com.joshtalks.badebhaiya.utils.Utils
 import com.joshtalks.badebhaiya.utils.setUserImageOrInitials
 import timber.log.Timber
 
 class RequestContentAdapter(
     private val requestList: List<ReqeustData>,
-    private val callRequestUser: User,
+    private val callRequestUser: UserX,
 ): RecyclerView.Adapter<RequestContentAdapter.RequestViewHolder>()  {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RequestViewHolder {

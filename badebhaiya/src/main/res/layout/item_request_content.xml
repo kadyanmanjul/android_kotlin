@@ -11,7 +11,7 @@
 
         <variable
             name="requestUser"
-            type="com.joshtalks.badebhaiya.showCallRequests.model.User" />
+            type="com.joshtalks.badebhaiya.showCallRequests.model.UserX" />
 
     </data>
 

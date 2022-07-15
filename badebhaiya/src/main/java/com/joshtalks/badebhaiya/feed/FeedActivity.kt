@@ -57,6 +57,7 @@ import com.joshtalks.badebhaiya.repository.ConversationRoomRepository
 import com.joshtalks.badebhaiya.repository.PubNubExceptionRepository
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomResponse
 import com.joshtalks.badebhaiya.repository.model.User
+import com.joshtalks.badebhaiya.showCallRequests.RequestBottomSheetFragment
 import com.joshtalks.badebhaiya.signup.PeopleToFollowActivity
 import com.joshtalks.badebhaiya.signup.fragments.PeopleToFollowFragment
 import com.joshtalks.badebhaiya.utils.SingleDataManager
@@ -94,6 +95,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         const val ROOM_QUESTION_ID = "room_question_id"
         const val TOPIC_NAME = "topic_name"
         const val USER_ID = "user_id"
+        const val ROOM_REQUEST_ID = "room_request_id"
 
 
         fun getFeedActivityIntent(
@@ -147,6 +149,12 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
             }
         }
 
+        fun getIntentForRoomRequest(context: Context, userId: String): Intent {
+            return Intent(context, FeedActivity::class.java).also {
+                it.putExtra(ROOM_REQUEST_ID, userId)
+            }
+        }
+
     }
 
     @Inject
@@ -186,12 +194,17 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
 
 
         Timber.d("FEED INTENT ${intent.extras}")
+
+        val roomRequestId = intent.getStringExtra(ROOM_REQUEST_ID)
+
         if (user != null) {
             viewProfile(user, true)
         } else if (mUserId != null){
             viewProfile(mUserId, false)
         } else if (SingleDataManager.pendingPilotAction != null) {
             viewProfile(SingleDataManager.pendingPilotEventData!!.pilotUserId, true)
+        } else if(!roomRequestId.isNullOrEmpty()){
+            RequestBottomSheetFragment.open(roomRequestId, supportFragmentManager)
         }
         if (User.getInstance().isLoggedIn()) {
             viewModel.setIsBadeBhaiyaSpeaker()
@@ -220,6 +233,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
     override fun onRestart() {
         super.onRestart()
         checkAndOpenLiveRoom()
+//        viewModel.getRoomRequestCount()
 
     }
 
@@ -230,6 +244,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
 
     override fun onResume() {
         super.onResume()
+//        viewModel.getRoomRequestCount()
         if (User.getInstance().isLoggedIn()) {
             viewModel.getRooms()
         }
@@ -361,7 +376,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                     viewModel.endPreviousRoom(it.roomId, this)
                 },
                 onPositiveButtonClick = {
-                    viewModel.joinRoom(it.roomId.toString(), it.roomName!!, "FEED_SCREEN")
+                    viewModel.joinRoom(it.roomId.toString(), it.roomName!!, "FEED_SCREEN", isRejoin = true)
                 }
             ).apply {
                 show()
@@ -373,7 +388,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                 this,
                 roomName = it.previousRoomTopic,
                 onPositiveButtonClick = {
-                    viewModel.joinRoom(it.previousRoomId.toString(), it.previousRoomTopic, "FEED_SCREEN")
+                    viewModel.joinRoom(it.previousRoomId.toString(), it.previousRoomTopic, "FEED_SCREEN", isRejoin = true)
                 },
                 onNegativeButtonClick = {
                     viewModel.endPreviousRoomAndSchedule(it.previousRoomId, this)
