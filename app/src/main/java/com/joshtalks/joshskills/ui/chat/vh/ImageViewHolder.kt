@@ -13,8 +13,8 @@ import com.joshtalks.joshskills.core.custom_ui.ShimmerImageView
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
 import com.joshtalks.joshskills.core.extension.setImageViewPH
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.entity.ChatModel
-import com.joshtalks.joshskills.repository.local.eventbus.ImageShowEvent
+import com.joshtalks.joshskills.base.local.entity.ChatModel
+import com.joshtalks.joshskills.base.local.eventbus.ImageShowEvent
 
 class ImageViewHolder(view: View, userId: String) : BaseViewHolder(view, userId) {
     lateinit var rootView: FrameLayout

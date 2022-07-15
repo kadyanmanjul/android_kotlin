@@ -9,7 +9,7 @@ import com.android.installreferrer.api.InstallReferrerStateListener
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
-import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel
+import com.joshtalks.joshskills.base.local.model.InstallReferrerModel
 import io.branch.referral.PrefHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

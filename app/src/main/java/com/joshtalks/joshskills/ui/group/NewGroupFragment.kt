@@ -21,10 +21,10 @@ import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.core.isValidContextForGlide
 import com.joshtalks.joshskills.databinding.FragmentNewGroupBinding
-import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.base.local.model.Mentor
 import com.joshtalks.joshskills.ui.group.constants.*
-import com.joshtalks.joshskills.ui.group.model.AddGroupRequest
-import com.joshtalks.joshskills.ui.group.model.EditGroupRequest
+import com.joshtalks.joshskills.base.local.entity.group.AddGroupRequest
+import com.joshtalks.joshskills.base.local.entity.group.EditGroupRequest
 import com.joshtalks.joshskills.ui.group.viewmodels.JoshGroupViewModel
 
 import java.io.File

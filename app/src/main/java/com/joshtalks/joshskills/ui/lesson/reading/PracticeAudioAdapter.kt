@@ -20,10 +20,10 @@ import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEvent
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.databinding.PracticeAudioItemBinding
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.entity.AudioType
-import com.joshtalks.joshskills.repository.local.entity.PracticeEngagement
-import com.joshtalks.joshskills.repository.local.entity.PracticeEngagementWrapper
-import com.joshtalks.joshskills.repository.local.eventbus.RemovePracticeAudioEventBus
+import com.joshtalks.joshskills.base.local.entity.AudioType
+import com.joshtalks.joshskills.base.local.entity.PracticeEngagement
+import com.joshtalks.joshskills.base.local.entity.PracticeEngagementWrapper
+import com.joshtalks.joshskills.base.local.eventbus.RemovePracticeAudioEventBus
 import com.joshtalks.joshskills.util.ExoAudioPlayer
 import com.muddzdev.styleabletoast.StyleableToast
 import java.util.Date

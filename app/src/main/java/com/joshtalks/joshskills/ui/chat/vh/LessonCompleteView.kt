@@ -11,8 +11,8 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.IS_A2_C1_RETENTION_ENABLED
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.entity.LessonModel
-import com.joshtalks.joshskills.repository.local.eventbus.LessonItemClickEventBus
+import com.joshtalks.joshskills.base.local.entity.LessonModel
+import com.joshtalks.joshskills.base.local.eventbus.LessonItemClickEventBus
 
 class LessonCompleteView : FrameLayout {
     private lateinit var lessonNameTvCompleted: AppCompatTextView

@@ -16,11 +16,11 @@ import com.joshtalks.joshskills.core.DD_MM_YYYY
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.DatabaseUtils
-import com.joshtalks.joshskills.repository.local.entity.CExamStatus
-import com.joshtalks.joshskills.repository.local.entity.CertificationExamDetailModel
-import com.joshtalks.joshskills.repository.local.entity.ChatModel
-import com.joshtalks.joshskills.repository.local.eventbus.StartCertificationExamEventBus
+import com.joshtalks.joshskills.base.local.DatabaseUtils
+import com.joshtalks.joshskills.base.local.entity.CExamStatus
+import com.joshtalks.joshskills.base.local.entity.CertificationExamDetailModel
+import com.joshtalks.joshskills.base.local.entity.ChatModel
+import com.joshtalks.joshskills.base.local.eventbus.StartCertificationExamEventBus
 import com.joshtalks.joshskills.repository.server.certification_exam.CertificationQuestionModel
 import com.mindorks.placeholderview.annotations.Click
 import com.mindorks.placeholderview.annotations.Layout

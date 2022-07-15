@@ -1,7 +1,7 @@
 package com.joshtalks.joshskills.repository.server
 
 import com.google.gson.annotations.SerializedName
-import com.joshtalks.joshskills.repository.local.model.googlelocation.Locality
+import com.joshtalks.joshskills.base.local.model.googlelocation.Locality
 
 data class ProfileResponse(
     @SerializedName("about")

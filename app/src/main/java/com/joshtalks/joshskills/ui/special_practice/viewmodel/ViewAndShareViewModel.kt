@@ -21,11 +21,11 @@ import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.custom_ui.JoshVideoPlayer
 import com.joshtalks.joshskills.core.showToast
-import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.base.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
 import com.joshtalks.joshskills.ui.referral.REFERRAL_SHARE_TEXT_SHARABLE_VIDEO
 import com.joshtalks.joshskills.ui.special_practice.model.SaveVideoModel
-import com.joshtalks.joshskills.ui.special_practice.model.SpecialPractice
+import com.joshtalks.joshskills.base.local.dao.special_practice.SpecialPractice
 import com.joshtalks.joshskills.ui.special_practice.repo.SpecialPracticeRepo
 import com.joshtalks.joshskills.ui.special_practice.utils.CALL_INVITE_FRIENDS_METHOD
 import com.joshtalks.joshskills.ui.special_practice.utils.PLAY_RECORDED_VIDEO

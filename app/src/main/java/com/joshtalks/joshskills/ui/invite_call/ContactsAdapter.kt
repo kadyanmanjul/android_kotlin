@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.databinding.LiContactBinding
-import com.joshtalks.joshskills.repository.local.entity.PhonebookContact
+import com.joshtalks.joshskills.base.local.entity.PhonebookContact
 
 class ContactsAdapter :
     ListAdapter<PhonebookContact, ContactsAdapter.ContactViewHolder>(ContactDiffCallback) {

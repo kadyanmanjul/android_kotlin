@@ -1,10 +1,10 @@
 package com.joshtalks.joshskills.repository.service
 
 import com.joshtalks.joshskills.engage_notification.AppUsageModel
-import com.joshtalks.joshskills.repository.local.entity.BroadCastEvent
-import com.joshtalks.joshskills.repository.local.model.GaIDMentorModel
-import com.joshtalks.joshskills.repository.local.model.RequestRegisterGAId
-import com.joshtalks.joshskills.repository.local.model.nps.NPSQuestionModel
+import com.joshtalks.joshskills.base.local.entity.BroadCastEvent
+import com.joshtalks.joshskills.base.local.model.GaIDMentorModel
+import com.joshtalks.joshskills.base.local.model.RequestRegisterGAId
+import com.joshtalks.joshskills.base.local.model.nps.NPSQuestionModel
 import com.joshtalks.joshskills.repository.server.*
 import com.joshtalks.joshskills.repository.server.certification_exam.*
 import com.joshtalks.joshskills.repository.server.conversation_practice.ConversationPractiseModel

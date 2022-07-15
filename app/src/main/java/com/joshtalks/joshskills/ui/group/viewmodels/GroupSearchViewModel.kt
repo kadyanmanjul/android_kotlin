@@ -20,7 +20,7 @@ import com.joshtalks.joshskills.ui.group.adapters.GroupAdapter
 import com.joshtalks.joshskills.ui.group.adapters.GroupStateAdapter
 import com.joshtalks.joshskills.ui.group.analytics.GroupAnalytics
 import com.joshtalks.joshskills.ui.group.utils.GroupItemComparator
-import com.joshtalks.joshskills.ui.group.model.GroupItemData
+import com.joshtalks.joshskills.base.local.entity.group.GroupItemData
 import com.joshtalks.joshskills.ui.group.repository.GroupRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview

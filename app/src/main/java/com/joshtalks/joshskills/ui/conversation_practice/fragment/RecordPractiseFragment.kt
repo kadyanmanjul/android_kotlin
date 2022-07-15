@@ -24,8 +24,8 @@ import com.joshtalks.joshskills.core.custom_ui.recorder.RecordingItem
 import com.joshtalks.joshskills.core.interfaces.OnConversationPractiseSubmit
 import com.joshtalks.joshskills.databinding.FragmentRecordPractiseBinding
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.eventbus.ConversationPractiseSubmitEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.ViewPagerDisableEventBus
+import com.joshtalks.joshskills.base.local.eventbus.ConversationPractiseSubmitEventBus
+import com.joshtalks.joshskills.base.local.eventbus.ViewPagerDisableEventBus
 import com.joshtalks.joshskills.repository.server.conversation_practice.ConversationPractiseModel
 import com.joshtalks.joshskills.repository.server.conversation_practice.ListenModel
 import com.joshtalks.joshskills.ui.conversation_practice.ConversationPracticeViewModel

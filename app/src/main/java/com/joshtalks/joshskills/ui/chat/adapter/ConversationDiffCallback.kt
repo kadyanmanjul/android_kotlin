@@ -1,7 +1,7 @@
 package com.joshtalks.joshskills.ui.inbox.adapter
 
 import androidx.recyclerview.widget.DiffUtil
-import com.joshtalks.joshskills.repository.local.entity.ChatModel
+import com.joshtalks.joshskills.base.local.entity.ChatModel
 
 data class ConversationDiffCallback(
     private val mOldInboxModelList: List<ChatModel>,

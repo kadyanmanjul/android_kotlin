@@ -16,7 +16,7 @@ import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.JoshVideoPlayer
 import com.joshtalks.joshskills.core.custom_ui.PlayerListener
 import com.joshtalks.joshskills.databinding.FragmentFullScreenVideoBinding
-import com.joshtalks.joshskills.repository.local.entity.VideoEngage
+import com.joshtalks.joshskills.base.local.entity.VideoEngage
 import com.joshtalks.joshskills.repository.server.engage.Graph
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
 

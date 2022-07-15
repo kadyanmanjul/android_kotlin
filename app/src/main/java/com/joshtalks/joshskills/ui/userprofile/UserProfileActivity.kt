@@ -56,10 +56,10 @@ import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.databinding.ActivityUserProfileBinding
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.eventbus.AwardItemClickedEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.DeleteProfilePicEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.SaveProfileClickedEvent
-import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.base.local.eventbus.AwardItemClickedEventBus
+import com.joshtalks.joshskills.base.local.eventbus.DeleteProfilePicEventBus
+import com.joshtalks.joshskills.base.local.eventbus.SaveProfileClickedEvent
+import com.joshtalks.joshskills.base.local.model.Mentor
 import com.joshtalks.joshskills.track.AGORA_UID
 import com.joshtalks.joshskills.track.CHANNEL_ID
 import com.joshtalks.joshskills.track.CONVERSATION_ID
@@ -67,7 +67,7 @@ import com.joshtalks.joshskills.ui.fpp.constants.*
 import com.joshtalks.joshskills.ui.group.JoshGroupActivity
 import com.joshtalks.joshskills.ui.group.constants.DM_CHAT
 import com.joshtalks.joshskills.ui.group.constants.DM_CHAT_DATA
-import com.joshtalks.joshskills.ui.group.model.GroupsItem
+import com.joshtalks.joshskills.base.local.entity.group.GroupsItem
 import com.joshtalks.joshskills.ui.leaderboard.constants.HAS_SEEN_PROFILE_ANIMATION
 import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
 import com.joshtalks.joshskills.ui.points_history.PointsInfoActivity

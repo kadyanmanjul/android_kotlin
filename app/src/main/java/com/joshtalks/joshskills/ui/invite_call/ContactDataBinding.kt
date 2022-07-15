@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.setUserInitial
-import com.joshtalks.joshskills.repository.local.entity.PhonebookContact
+import com.joshtalks.joshskills.base.local.entity.PhonebookContact
 
 @BindingAdapter("contactAdapter", "contactClickListener", "scrollToTop")
 fun setContactAdapter(

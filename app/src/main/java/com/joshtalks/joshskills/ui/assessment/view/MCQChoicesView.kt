@@ -14,11 +14,11 @@ import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.SmoothLinearLayoutManager
 import com.joshtalks.joshskills.core.custom_ui.decorator.GridSpacingItemDecoration
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.eventbus.AssessmentButtonStateEvent
-import com.joshtalks.joshskills.repository.local.eventbus.McqSubmitEvent
-import com.joshtalks.joshskills.repository.local.model.assessment.Assessment
-import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
-import com.joshtalks.joshskills.repository.local.model.assessment.Choice
+import com.joshtalks.joshskills.base.local.eventbus.AssessmentButtonStateEvent
+import com.joshtalks.joshskills.base.local.eventbus.McqSubmitEvent
+import com.joshtalks.joshskills.base.local.model.assessment.Assessment
+import com.joshtalks.joshskills.base.local.model.assessment.AssessmentQuestionWithRelations
+import com.joshtalks.joshskills.base.local.model.assessment.Choice
 import com.joshtalks.joshskills.repository.server.assessment.ChoiceType
 import com.joshtalks.joshskills.ui.assessment.extra.AssessmentQuestionViewType
 import com.joshtalks.joshskills.ui.assessment.listener.OnChoiceClickListener

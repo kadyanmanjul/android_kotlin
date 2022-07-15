@@ -1,14 +1,14 @@
 package com.joshtalks.joshskills.repository.service
 
 import com.joshtalks.joshskills.base.constants.DIR
-import com.joshtalks.joshskills.repository.local.entity.CertificationExamDetailModel
-import com.joshtalks.joshskills.repository.local.entity.Course
-import com.joshtalks.joshskills.repository.local.entity.GetLessonQuestionsResponse
-import com.joshtalks.joshskills.repository.local.entity.LessonModel
-import com.joshtalks.joshskills.repository.local.entity.PracticeEngagement
-import com.joshtalks.joshskills.repository.local.entity.PracticeFeedback2
-import com.joshtalks.joshskills.repository.local.entity.practise.PointsListResponse
-import com.joshtalks.joshskills.repository.local.entity.practise.PracticeEngagementV2
+import com.joshtalks.joshskills.base.local.entity.CertificationExamDetailModel
+import com.joshtalks.joshskills.base.local.entity.Course
+import com.joshtalks.joshskills.base.local.entity.GetLessonQuestionsResponse
+import com.joshtalks.joshskills.base.local.entity.LessonModel
+import com.joshtalks.joshskills.base.local.entity.PracticeEngagement
+import com.joshtalks.joshskills.base.local.entity.PracticeFeedback2
+import com.joshtalks.joshskills.base.local.entity.practise.PointsListResponse
+import com.joshtalks.joshskills.base.local.entity.practise.PracticeEngagementV2
 import com.joshtalks.joshskills.repository.server.*
 import com.joshtalks.joshskills.repository.server.assessment.*
 import com.joshtalks.joshskills.repository.server.chat_message.UpdateQuestionStatus

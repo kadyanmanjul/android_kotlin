@@ -18,8 +18,8 @@ import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.memory.MemoryManagementWorker
 import com.joshtalks.joshskills.core.memory.RemoveMediaWorker
 import com.joshtalks.joshskills.core.notification.NOTIFICATION_ID
-import com.joshtalks.joshskills.repository.local.entity.NPSEvent
-import com.joshtalks.joshskills.repository.local.model.User
+import com.joshtalks.joshskills.base.local.entity.NPSEvent
+import com.joshtalks.joshskills.base.local.model.User
 import java.util.UUID
 import java.util.concurrent.TimeUnit
 import timber.log.Timber

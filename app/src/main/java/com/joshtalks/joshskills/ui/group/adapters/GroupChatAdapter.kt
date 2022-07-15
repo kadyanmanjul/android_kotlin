@@ -17,10 +17,10 @@ import com.joshtalks.joshskills.databinding.GroupChatLeftMsgBinding
 import com.joshtalks.joshskills.databinding.GroupChatMetadataBinding
 import com.joshtalks.joshskills.databinding.GroupChatRightMsgBinding
 import com.joshtalks.joshskills.databinding.GroupChatUnreadMsgBinding
-import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.base.local.model.Mentor
 import com.joshtalks.joshskills.ui.group.constants.*
-import com.joshtalks.joshskills.ui.group.model.ChatItem
-import com.joshtalks.joshskills.ui.group.model.GroupMember
+import com.joshtalks.joshskills.base.local.entity.group.ChatItem
+import com.joshtalks.joshskills.base.local.entity.group.GroupMember
 import com.joshtalks.joshskills.ui.group.viewholder.ChatViewHolder
 
 class GroupChatAdapter(diffCallback: DiffUtil.ItemCallback<ChatItem>) :

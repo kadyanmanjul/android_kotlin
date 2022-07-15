@@ -21,7 +21,7 @@ import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.databinding.FragmentSeeAllAwardBinding
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.eventbus.AwardItemClickedEventBus
+import com.joshtalks.joshskills.base.local.eventbus.AwardItemClickedEventBus
 import com.joshtalks.joshskills.ui.userprofile.models.Award
 import com.joshtalks.joshskills.ui.userprofile.models.AwardCategory
 import com.joshtalks.joshskills.track.CONVERSATION_ID

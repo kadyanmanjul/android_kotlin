@@ -5,8 +5,8 @@ import android.util.AttributeSet
 import android.view.View
 import android.widget.FrameLayout
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.repository.local.model.assessment.Assessment
-import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
+import com.joshtalks.joshskills.base.local.model.assessment.Assessment
+import com.joshtalks.joshskills.base.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.server.assessment.ChoiceType
 import com.joshtalks.joshskills.ui.assessment.extra.AssessmentQuestionViewType
 import timber.log.Timber

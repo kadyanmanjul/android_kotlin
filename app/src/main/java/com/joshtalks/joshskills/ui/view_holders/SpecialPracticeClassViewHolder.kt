@@ -5,8 +5,8 @@ import android.widget.LinearLayout
 import androidx.appcompat.widget.AppCompatTextView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.entity.ChatModel
-import com.joshtalks.joshskills.repository.local.eventbus.SpecialPracticeEventBus
+import com.joshtalks.joshskills.base.local.entity.ChatModel
+import com.joshtalks.joshskills.base.local.eventbus.SpecialPracticeEventBus
 import com.joshtalks.joshskills.ui.chat.vh.BaseViewHolder
 
 

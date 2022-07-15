@@ -1,7 +1,7 @@
 package com.joshtalks.joshskills.ui.group.data
 
 import com.joshtalks.joshskills.base.constants.DIR
-import com.joshtalks.joshskills.ui.group.model.*
+import com.joshtalks.joshskills.base.local.entity.group.*
 import org.json.JSONArray
 import retrofit2.Response
 import retrofit2.http.Body

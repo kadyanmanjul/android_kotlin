@@ -19,7 +19,7 @@ import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.core.extension.setImageAndFitCenter
 import com.joshtalks.joshskills.databinding.ActivityUnlockNextClassLayoutBinding
-import com.joshtalks.joshskills.repository.local.entity.LessonModel
+import com.joshtalks.joshskills.base.local.entity.LessonModel
 import com.joshtalks.joshskills.ui.video_player.IS_BATCH_CHANGED
 
 class LessonCompletedActivity : BaseActivity() {

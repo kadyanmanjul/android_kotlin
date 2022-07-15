@@ -15,13 +15,13 @@ import com.joshtalks.joshskills.constants.REQUEST_GROUP_VALIDATION
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.databinding.GroupRequestFragmentBinding
-import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.base.local.model.Mentor
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.group.constants.CLOSED_GROUP_TEXT
 import com.joshtalks.joshskills.ui.group.constants.GROUPS_ID
 import com.joshtalks.joshskills.ui.group.constants.GROUPS_IMAGE
 import com.joshtalks.joshskills.ui.group.constants.GROUPS_TITLE
-import com.joshtalks.joshskills.ui.group.model.GroupJoinRequest
+import com.joshtalks.joshskills.base.local.entity.group.GroupJoinRequest
 import com.joshtalks.joshskills.ui.group.viewmodels.GroupChatViewModel
 
 private const val TAG = "RequestListFragment"

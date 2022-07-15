@@ -17,8 +17,8 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.setImage
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.eventbus.CategorySelectEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.LandingPageCategorySelectEventBus
+import com.joshtalks.joshskills.base.local.eventbus.CategorySelectEventBus
+import com.joshtalks.joshskills.base.local.eventbus.LandingPageCategorySelectEventBus
 import com.joshtalks.joshskills.repository.server.FAQCategory
 import com.mindorks.placeholderview.annotations.Click
 import com.mindorks.placeholderview.annotations.Layout

@@ -19,7 +19,7 @@ import com.joshtalks.joshskills.core.STARTED_FROM
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.ActivityStartSubscriptionBinding
-import com.joshtalks.joshskills.repository.local.model.ExploreCardType
+import com.joshtalks.joshskills.base.local.model.ExploreCardType
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 
 class StartSubscriptionActivity : BaseActivity() {

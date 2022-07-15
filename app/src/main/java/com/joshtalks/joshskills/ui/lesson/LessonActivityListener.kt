@@ -1,6 +1,6 @@
 package com.joshtalks.joshskills.ui.lesson
 
-import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
+import com.joshtalks.joshskills.base.local.entity.QUESTION_STATUS
 
 interface LessonActivityListener {
 

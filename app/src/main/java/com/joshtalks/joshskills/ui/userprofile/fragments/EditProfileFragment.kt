@@ -33,7 +33,7 @@ import com.joshtalks.joshskills.core.custom_ui.spinnerdatepicker.SpinnerDatePick
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentEditProfileBinding
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.eventbus.SaveProfileClickedEvent
+import com.joshtalks.joshskills.base.local.eventbus.SaveProfileClickedEvent
 import com.joshtalks.joshskills.ui.userprofile.FOR_BASIC_DETAILS
 import com.joshtalks.joshskills.ui.userprofile.FOR_EDIT_SCREEN
 import com.joshtalks.joshskills.ui.userprofile.FOR_REST

@@ -16,7 +16,7 @@ import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
 import com.joshtalks.joshskills.core.analytics.*
 import com.joshtalks.joshskills.core.firestore.NotificationAnalytics
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
-import com.joshtalks.joshskills.repository.local.model.*
+import com.joshtalks.joshskills.base.local.model.*
 import com.joshtalks.joshskills.ui.inbox.mentor_id
 import com.joshtalks.joshskills.util.DeepLinkImpression
 import com.joshtalks.joshskills.util.DeepLinkUtil

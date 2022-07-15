@@ -13,7 +13,7 @@ import com.joshtalks.joshskills.base.BaseDialogFragment
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.custom_ui.PointSnackbar
 import com.joshtalks.joshskills.databinding.FragmentFeedbackDialogBinding
-import com.joshtalks.joshskills.repository.local.model.KFactor
+import com.joshtalks.joshskills.base.local.model.KFactor
 import com.joshtalks.joshskills.ui.call.data.local.VoipPref
 import com.joshtalks.joshskills.ui.practise.PracticeViewModel
 import com.joshtalks.joshskills.ui.voip.share_call.ShareWithFriendsActivity

@@ -19,7 +19,7 @@ import com.google.gson.reflect.TypeToken;
 import com.joshtalks.joshskills.R;
 import com.joshtalks.joshskills.core.AppObjectController;
 import com.joshtalks.joshskills.messaging.RxBus2;
-import com.joshtalks.joshskills.repository.local.DatabaseUtils;
+import com.joshtalks.joshskills.base.local.DatabaseUtils;
 import com.joshtalks.joshskills.repository.local.entity.ChatModel;
 import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS;
 import com.joshtalks.joshskills.repository.local.eventbus.MediaProgressEventBus;

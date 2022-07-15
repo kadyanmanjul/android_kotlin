@@ -17,8 +17,8 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.eventbus.DownloadFileEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.EmptyEventBus
+import com.joshtalks.joshskills.base.local.eventbus.DownloadFileEventBus
+import com.joshtalks.joshskills.base.local.eventbus.EmptyEventBus
 import com.joshtalks.joshskills.repository.server.certification_exam.CertificateExamReportModel
 import com.joshtalks.joshskills.ui.certification_exam.constants.EXAM_TYPE_ADVANCED
 import com.joshtalks.joshskills.ui.certification_exam.constants.EXAM_TYPE_BEGINNER

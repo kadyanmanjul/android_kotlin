@@ -6,8 +6,8 @@ import android.content.Intent
 import android.util.Log
 import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.core.*
-import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
-import com.joshtalks.joshskills.repository.local.model.User
+import com.joshtalks.joshskills.base.local.entity.LESSON_STATUS
+import com.joshtalks.joshskills.base.local.model.User
 import com.joshtalks.joshskills.repository.server.onboarding.SpecificOnboardingCourseData
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.chat.ConversationActivity

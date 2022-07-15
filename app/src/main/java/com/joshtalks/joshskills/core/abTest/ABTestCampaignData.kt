@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 import com.google.gson.annotations.SerializedName
-import com.joshtalks.joshskills.repository.local.VariableMapConverters
+import com.joshtalks.joshskills.base.local.VariableMapConverters
 
 @Entity(tableName = "ab_test_campaigns")
 data class ABTestCampaignData(

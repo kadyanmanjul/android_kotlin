@@ -9,8 +9,8 @@ import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
 import com.joshtalks.joshskills.core.setRoundImage
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.entity.ChatModel
-import com.joshtalks.joshskills.repository.local.eventbus.OpenBestPerformerRaceEventBus
+import com.joshtalks.joshskills.base.local.entity.ChatModel
+import com.joshtalks.joshskills.base.local.eventbus.OpenBestPerformerRaceEventBus
 
 class BestPerformerRaceViewHolder(view: View, userId: String) : BaseViewHolder(view, userId) {
 

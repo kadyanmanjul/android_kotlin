@@ -1,6 +1,6 @@
 package com.joshtalks.joshskills.ui.group.lib
 
-import com.joshtalks.joshskills.ui.group.model.*
+import com.joshtalks.joshskills.base.local.entity.group.*
 import com.pubnub.api.models.consumer.objects_api.uuid.PNGetUUIDMetadataResult
 
 interface ChatService {

@@ -4,17 +4,17 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.base.BaseViewModel
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.repository.local.model.KFactor
-import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.base.local.model.Mentor
+import com.joshtalks.joshskills.base.local.model.KFactor
 import com.joshtalks.joshskills.ui.call.data.local.VoipPref
 import kotlinx.coroutines.*
 import retrofit2.Response
 import timber.log.Timber
 
-class CallRatingsViewModel: BaseViewModel() {
+class CallRatingsViewModel : BaseViewModel() {
 
     private val callRatingsRepository by lazy { CallRatingsRepository() }
-    var ifDialogShow : Int = 1
+    var ifDialogShow: Int = 1
     var responseLiveData = MutableLiveData<Response<KFactor>?>()
 
 
@@ -29,7 +29,8 @@ class CallRatingsViewModel: BaseViewModel() {
             }
         }
     }
-    fun getCallDurationString() : String{
+
+    fun getCallDurationString(): String {
         getFppDialogFlag()
         val mTime = StringBuilder()
         var second = VoipPref.getLastCallDurationInSec()
@@ -38,9 +39,9 @@ class CallRatingsViewModel: BaseViewModel() {
             mTime.append(minute).append(getMinuteString(minute))
         }
         if (second > 0) {
-            if(second<60){
+            if (second < 60) {
                 mTime.append(second).append(getSecondString(second))
-            }else{
+            } else {
                 second %= 60
                 mTime.append(second).append(getSecondString(second))
             }
@@ -66,9 +67,9 @@ class CallRatingsViewModel: BaseViewModel() {
             try {
                 val map: java.util.HashMap<String, Int?> = java.util.HashMap()
                 map["agora_call_id"] = VoipPref.getLastCallId()
-                val resp = AppObjectController.p2pNetworkService.showFppDialogNew(map).body()?.get("fpp_option")?:1
+                val resp = AppObjectController.p2pNetworkService.showFppDialogNew(map).body()?.get("fpp_option") ?: 1
                 ifDialogShow = resp
-            }catch (ex: Throwable) {
+            } catch (ex: Throwable) {
                 ex.printStackTrace()
             }
         }
@@ -81,7 +82,7 @@ class CallRatingsViewModel: BaseViewModel() {
         return " second "
     }
 
-    fun submitCallRatings(agoraCallId : String, rating : Int?, callerMentorId : String,userAction:String?) {
+    fun submitCallRatings(agoraCallId: String, rating: Int?, callerMentorId: String, userAction: String?) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val map: HashMap<String, Any?> = HashMap()
@@ -98,15 +99,16 @@ class CallRatingsViewModel: BaseViewModel() {
 
     fun sendFppRequest(mentorId: String) {
         CoroutineScope(Dispatchers.IO).launch {
-                try {
-                   val map =  HashMap<String,String>()
-                    map["page_type"] = "CALL_RATING"
-                      callRatingsRepository.sendFppRequest(mentorId,map)
-                } catch (ex: Throwable) {
-                    ex.printStackTrace()
-                }
+            try {
+                val map = HashMap<String, String>()
+                map["page_type"] = "CALL_RATING"
+                callRatingsRepository.sendFppRequest(mentorId, map)
+            } catch (ex: Throwable) {
+                ex.printStackTrace()
             }
         }
+    }
+
     fun saveImpression(eventName: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {

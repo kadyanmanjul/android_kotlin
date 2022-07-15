@@ -12,11 +12,11 @@ import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.eventbus.AssessmentButtonClick
-import com.joshtalks.joshskills.repository.local.eventbus.AssessmentButtonClickEvent
-import com.joshtalks.joshskills.repository.local.eventbus.AssessmentButtonStateEvent
-import com.joshtalks.joshskills.repository.local.eventbus.TestItemClickedEventBus
-import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
+import com.joshtalks.joshskills.base.local.eventbus.AssessmentButtonClick
+import com.joshtalks.joshskills.base.local.eventbus.AssessmentButtonClickEvent
+import com.joshtalks.joshskills.base.local.eventbus.AssessmentButtonStateEvent
+import com.joshtalks.joshskills.base.local.eventbus.TestItemClickedEventBus
+import com.joshtalks.joshskills.base.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentType
 import com.joshtalks.joshskills.repository.server.assessment.ChoiceType
 import io.reactivex.android.schedulers.AndroidSchedulers

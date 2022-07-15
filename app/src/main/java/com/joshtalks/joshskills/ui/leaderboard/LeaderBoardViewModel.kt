@@ -10,8 +10,8 @@ import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.HAS_ENTERED_NAME_IN_FREE_TRIAL
 import com.joshtalks.joshskills.core.IS_ENTERED_NAME_IN_FREE_TRIAL
 import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.repository.local.model.User
+import com.joshtalks.joshskills.base.local.model.Mentor
+import com.joshtalks.joshskills.base.local.model.User
 import com.joshtalks.joshskills.repository.server.LeaderboardMentor
 import com.joshtalks.joshskills.repository.server.LeaderboardResponse
 import com.joshtalks.joshskills.util.showAppropriateMsg

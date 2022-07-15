@@ -8,7 +8,7 @@ import android.widget.FrameLayout
 import androidx.appcompat.widget.AppCompatEditText
 import androidx.core.widget.doOnTextChanged
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
+import com.joshtalks.joshskills.base.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.ui.online_test.util.AssessmentQuestionViewCallback
 import com.joshtalks.joshskills.ui.online_test.util.GrammarSubmitButtonListener
 import java.util.*

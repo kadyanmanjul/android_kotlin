@@ -27,7 +27,7 @@ import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.core.textColorSet
 import com.joshtalks.joshskills.databinding.SelfPractiseLayoutBinding
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.eventbus.ViewPagerDisableEventBus
+import com.joshtalks.joshskills.base.local.eventbus.ViewPagerDisableEventBus
 import com.joshtalks.joshskills.repository.server.conversation_practice.ConversationPractiseModel
 import com.joshtalks.joshskills.repository.server.conversation_practice.ListenModel
 import com.joshtalks.joshskills.ui.conversation_practice.ConversationPracticeViewModel

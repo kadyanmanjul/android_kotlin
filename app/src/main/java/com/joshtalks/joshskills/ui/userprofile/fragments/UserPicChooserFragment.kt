@@ -19,7 +19,7 @@ import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.databinding.UserPicChooserDialogBinding
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.eventbus.DeleteProfilePicEventBus
+import com.joshtalks.joshskills.base.local.eventbus.DeleteProfilePicEventBus
 import java.io.File
 
 class UserPicChooserFragment : BottomSheetDialogFragment() {

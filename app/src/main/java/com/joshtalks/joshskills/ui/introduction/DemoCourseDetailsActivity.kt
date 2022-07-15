@@ -41,9 +41,9 @@ import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.STARTED_FROM
 import com.joshtalks.joshskills.databinding.ActivityDemoCourseDetailsBinding
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
-import com.joshtalks.joshskills.repository.local.eventbus.OpenDemoLessonEventBus
-import com.joshtalks.joshskills.repository.local.model.ExploreCardType
+import com.joshtalks.joshskills.base.local.entity.LESSON_STATUS
+import com.joshtalks.joshskills.base.local.eventbus.OpenDemoLessonEventBus
+import com.joshtalks.joshskills.base.local.model.ExploreCardType
 import com.joshtalks.joshskills.repository.server.course_detail.AboutJosh
 import com.joshtalks.joshskills.repository.server.course_detail.Card
 import com.joshtalks.joshskills.repository.server.course_detail.CardType

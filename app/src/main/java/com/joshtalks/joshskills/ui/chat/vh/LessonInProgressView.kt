@@ -18,9 +18,9 @@ import com.joshtalks.joshskills.core.IS_A2_C1_RETENTION_ENABLED
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.extension.setImageInLessonView
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
-import com.joshtalks.joshskills.repository.local.entity.LessonModel
-import com.joshtalks.joshskills.repository.local.eventbus.LessonItemClickEventBus
+import com.joshtalks.joshskills.base.local.entity.LESSON_STATUS
+import com.joshtalks.joshskills.base.local.entity.LessonModel
+import com.joshtalks.joshskills.base.local.eventbus.LessonItemClickEventBus
 import com.joshtalks.joshskills.ui.lesson.*
 
 class LessonInProgressView : FrameLayout {

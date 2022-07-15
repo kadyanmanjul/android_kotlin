@@ -18,7 +18,7 @@ import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.CourseExplorerViewHolderBinding
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.model.ExploreCardType
+import com.joshtalks.joshskills.base.local.model.ExploreCardType
 import com.joshtalks.joshskills.repository.server.CourseExploreModel
 
 class CourseExploreAdapter(private var courseList: List<CourseExploreModel>,private val isClickable: Boolean) :

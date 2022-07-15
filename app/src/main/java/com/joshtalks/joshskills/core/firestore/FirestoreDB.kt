@@ -8,9 +8,9 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.joshtalks.joshskills.core.LAST_FIRESTORE_NOTIFICATION_TIME
 import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.repository.local.model.FirestoreNotificationAction
-import com.joshtalks.joshskills.repository.local.model.FirestoreNotificationObject
-import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.base.local.model.FirestoreNotificationAction
+import com.joshtalks.joshskills.base.local.model.FirestoreNotificationObject
+import com.joshtalks.joshskills.base.local.model.Mentor
 import timber.log.Timber
 
 const val COLLECTION_AGORA_NOTIFICATION = "Notifications"

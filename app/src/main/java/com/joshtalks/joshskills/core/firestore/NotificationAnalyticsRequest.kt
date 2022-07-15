@@ -1,7 +1,7 @@
 package com.joshtalks.joshskills.core.firestore
 
 import com.google.gson.annotations.SerializedName
-import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.base.local.model.Mentor
 
 data class NotificationAnalyticsRequest(
     val id: String,

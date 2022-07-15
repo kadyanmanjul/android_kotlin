@@ -20,7 +20,7 @@ import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.DemoSpeakingPractiseFragmentBinding
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.eventbus.SnackBarEvent
+import com.joshtalks.joshskills.base.local.eventbus.SnackBarEvent
 import com.joshtalks.joshskills.ui.lesson.LessonViewModel
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers

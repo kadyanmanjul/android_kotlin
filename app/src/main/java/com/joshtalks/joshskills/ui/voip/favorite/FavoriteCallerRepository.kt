@@ -1,7 +1,7 @@
 package com.joshtalks.joshskills.ui.voip.favorite
 
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.base.local.model.Mentor
 import java.util.HashMap
 
 class FavoriteCallerRepository {

@@ -17,7 +17,7 @@ import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.SET_REMIN
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.ActivityReminderBinding
-import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.base.local.model.Mentor
 import com.joshtalks.joshskills.ui.reminder.reminder_listing.ReminderListActivity
 import com.joshtalks.joshskills.util.ReminderUtil
 import java.text.DecimalFormat

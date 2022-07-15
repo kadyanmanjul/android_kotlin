@@ -1,7 +1,7 @@
 package com.joshtalks.joshskills.ui.userprofile.repository
 
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.base.local.model.Mentor
 import com.joshtalks.joshskills.ui.userprofile.models.UpdateProfilePayload
 import java.util.HashMap
 

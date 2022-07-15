@@ -13,7 +13,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.databinding.CourseSelectionViewHolderBinding
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.eventbus.CourseSelectedEventBus
+import com.joshtalks.joshskills.base.local.eventbus.CourseSelectedEventBus
 import com.joshtalks.joshskills.repository.server.CourseExploreModel
 
 class CourseSelectionAdapter(

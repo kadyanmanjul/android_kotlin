@@ -3,7 +3,7 @@ package com.joshtalks.joshskills.ui.group.data
 import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.joshtalks.joshskills.ui.group.model.GroupItemData
+import com.joshtalks.joshskills.base.local.entity.group.GroupItemData
 import java.lang.Exception
 
 private const val TAG = "GroupPagingNetworkSourc"

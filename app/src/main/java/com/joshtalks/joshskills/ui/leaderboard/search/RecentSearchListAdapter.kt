@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.databinding.RecentSearchHeaderItemBinding
 import com.joshtalks.joshskills.databinding.RecentSearchItemBinding
-import com.joshtalks.joshskills.repository.local.entity.leaderboard.RecentSearch
+import com.joshtalks.joshskills.base.local.entity.leaderboard.RecentSearch
 
 class RecentSearchListAdapter(
     val itemList: List<RecentSearch>,

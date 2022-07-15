@@ -22,9 +22,9 @@ import com.joshtalks.joshskills.core.IS_TRIAL_STARTED
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.DismissNotifEventReceiver
-import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel
-import com.joshtalks.joshskills.repository.local.model.NotificationAction
-import com.joshtalks.joshskills.repository.local.model.NotificationObject
+import com.joshtalks.joshskills.base.local.model.InstallReferrerModel
+import com.joshtalks.joshskills.base.local.model.NotificationAction
+import com.joshtalks.joshskills.base.local.model.NotificationObject
 import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
 import java.lang.reflect.Type
 import java.util.Calendar

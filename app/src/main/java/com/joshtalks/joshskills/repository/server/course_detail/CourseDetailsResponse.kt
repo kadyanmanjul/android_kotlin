@@ -4,7 +4,7 @@ package com.joshtalks.joshskills.repository.server.course_detail
 import android.os.Parcelable
 import androidx.room.ColumnInfo
 import com.google.gson.annotations.SerializedName
-import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
+import com.joshtalks.joshskills.base.local.entity.BASE_MESSAGE_TYPE
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize

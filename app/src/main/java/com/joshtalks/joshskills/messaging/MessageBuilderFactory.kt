@@ -2,8 +2,8 @@ package com.joshtalks.joshskills.messaging
 
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
-import com.joshtalks.joshskills.repository.local.entity.*
-import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.base.local.entity.*
+import com.joshtalks.joshskills.base.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.chat_message.*
 import com.joshtalks.joshskills.util.RandomString
 import java.util.*
