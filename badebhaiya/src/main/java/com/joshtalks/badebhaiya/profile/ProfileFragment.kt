@@ -189,7 +189,9 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
 
     fun showBottomSheet() {
         val bottomSheet =
-            EnterBioBottomSheet.newInstance(userId!!, viewModel.userProfileData.value?.bioText)
+            EnterBioBottomSheet.newInstance(userId!!, binding.tvProfileBio.text.toString(), onBioUpdated = {
+                binding.tvProfileBio.text=it
+            })
         bottomSheet.show(requireActivity().supportFragmentManager, "Bottom sheet")
 
         bottomSheet.dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
@@ -217,7 +219,10 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
                     try {
                         val resp= CommonRepository().sendRequest(obj)
                         if(resp.isSuccessful)
-                            showToast("request Send")
+                            showToast("Request Sent")
+                        else
+                            showToast(resp.errorMessage())
+
                     } catch (e: Exception){
                         Log.i("REQUESTMSG", "requestRoomPopup: ${e.message}")
                     }

@@ -58,6 +58,7 @@ class FeedViewModel : ViewModel() {
     lateinit var respBody: ConversationRoomResponse
     val waitResponse = MutableLiveData<List<Waiting>>()
     var pubChannelName: String? = null
+    var isSpeaker=MutableLiveData(false)
     lateinit var response: Response<ConversationRoomResponse>
     lateinit var roomtopic: String
     var isBackPressed = MutableLiveData(false)
@@ -279,6 +280,8 @@ class FeedViewModel : ViewModel() {
                 val res = repository.getRoomList()
                 if (res.isSuccessful) {
                     res.body()?.let {
+                        isSpeaker.value=it.isSpeaker
+                        User.getInstance().isSpeaker=it.isSpeaker!!
                         val list = mutableListOf<RoomListResponseItem>()
                         if (it.liveRoomList.isNullOrEmpty().not())
                             list.addAll(it.liveRoomList!!.map { roomListResponseItem ->

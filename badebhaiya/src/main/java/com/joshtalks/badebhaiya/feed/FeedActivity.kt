@@ -295,20 +295,28 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                 //binding.profileIv.setUserImageOrInitials(profilePicUrl, firstName.toString())
             }
         }
-        binding.recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                super.onScrollStateChanged(recyclerView, newState)
-                if (recyclerView.canScrollVertically(1).not()) {
-                    recyclerView.setPadding(
-                        resources.getDimension(R.dimen._8sdp).toInt(), 0,
-                        resources.getDimension(R.dimen._8sdp).toInt(), binding.bg.height
-                    )
-                }
-            }
-        })
+
     }
 
     private fun addObserver() {
+
+        viewModel.isSpeaker.observe(this){
+            if(it)
+            {
+                binding.recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                    override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                        super.onScrollStateChanged(recyclerView, newState)
+                        if (recyclerView.canScrollVertically(1).not()) {
+                            recyclerView.setPadding(
+                                resources.getDimension(R.dimen._8sdp).toInt(), 0,
+                                resources.getDimension(R.dimen._8sdp).toInt(), binding.bg.height
+                            )
+                        }
+                    }
+                })
+            }
+        }
+
         profileViewModel.openProfile.observe(this){
             val fragment = ProfileFragment() // replace your custom fragment class
             val bundle = Bundle()

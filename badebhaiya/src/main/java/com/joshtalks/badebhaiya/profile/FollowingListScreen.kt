@@ -30,6 +30,7 @@ import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.composeTheme.JoshBadeBhaiyaTheme
 import com.joshtalks.badebhaiya.composeTheme.NunitoFont
 import com.joshtalks.badebhaiya.feed.model.Users
+import com.joshtalks.badebhaiya.profile.SetInitials
 import com.joshtalks.badebhaiya.signup.fragments.ListBioText
 
 @Composable
@@ -133,14 +134,7 @@ fun ItemFans(
                 contentScale = ContentScale.Crop
             )
         else
-            Image(
-                painter = painterResource(id = R.drawable.profile_dummy_dp),
-                modifier = Modifier
-                    .size(62.dp)
-                    .clip(RoundedCornerShape(dimensionResource(id = R.dimen._16sdp))),
-                contentDescription = "Fan Profile Picture",
-                contentScale = ContentScale.Crop
-            )
+            SetInitials(name = following.short_name)
 
         Spacer(modifier = Modifier.size(16.dp))
 

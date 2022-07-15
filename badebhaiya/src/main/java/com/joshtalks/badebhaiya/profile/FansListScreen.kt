@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -132,14 +133,7 @@ fun ItemFans(
                 contentScale = ContentScale.Crop
             )
         else
-            Image(
-                painter = painterResource(id = R.drawable.profile_dummy_dp),
-                modifier = Modifier
-                    .size(62.dp)
-                    .clip(RoundedCornerShape(dimensionResource(id = R.dimen._16sdp))),
-                contentDescription = "Fan Profile Picture",
-                contentScale = ContentScale.Crop
-            )
+            SetInitials(name = fan.shortName)
 
         Spacer(modifier = Modifier.size(16.dp))
 
@@ -149,6 +143,24 @@ fun ItemFans(
         ) {
             NameText(text = fan.fullName ?: "")
         }
+    }
+}
+
+@Composable
+fun SetInitials(name:String){
+    Card(modifier =Modifier
+        .clip(RoundedCornerShape(dimensionResource(id = R.dimen._20sdp)
+    ) )){
+        Text(text = name[0].toString(),
+            textAlign= TextAlign.Center,
+            fontSize=35.sp,
+            color= colorResource(id = R.color.white),
+            fontWeight = FontWeight.SemiBold,
+            modifier = Modifier
+                .size(62.dp)
+                .background(colorResource(id = R.color.button_color))
+                .padding(top = 5.dp)
+        )
     }
 }
 

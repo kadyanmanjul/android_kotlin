@@ -17,7 +17,9 @@ import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.core.showToast
 import com.joshtalks.badebhaiya.profile.ProfileViewModel
 
-class EnterBioBottomSheet : BottomSheetDialogFragment() {
+class EnterBioBottomSheet(
+    private val onBioUpdated: (String) -> Unit
+) : BottomSheetDialogFragment() {
 
     private var roomUserClickAction: ConversationRoomBottomSheetAction? = null
     private var submitBtn:TextView?=null
@@ -30,9 +32,10 @@ class EnterBioBottomSheet : BottomSheetDialogFragment() {
     companion object {
         fun newInstance(
             user: String,
-            bio_Text: String?
+            bio_Text: String?,
+            onBioUpdated: (String) -> Unit
         ): EnterBioBottomSheet {
-            return EnterBioBottomSheet().apply {
+            return EnterBioBottomSheet(onBioUpdated).apply {
                 userId = user
                 defaultBioText=bio_Text
             }
@@ -80,7 +83,7 @@ class EnterBioBottomSheet : BottomSheetDialogFragment() {
         size?.text= "${bioText?.text?.length.toString()}/70"
 
         bioText?.addTextChangedListener {
-            submitBtn?.isEnabled = !it.toString().trim().isEmpty()
+
             size?.text= "${bioText?.text?.length.toString()}/70"
             if(bioText?.text?.length!! >70) {
                 size?.setTextColor(context?.let { it1 ->
@@ -100,6 +103,7 @@ class EnterBioBottomSheet : BottomSheetDialogFragment() {
                 })
                 submitBtn?.isEnabled=true
             }
+            submitBtn?.isEnabled = !it.toString().trim().isEmpty()
 
 
         }
@@ -108,6 +112,7 @@ class EnterBioBottomSheet : BottomSheetDialogFragment() {
             if(bioText.toString().isNotBlank()) {
                 msg = bioText?.text.toString()
                 viewModel.saveProfileInfo(msg)
+                onBioUpdated(msg)
                 dialog.dismiss()
             }
         }
