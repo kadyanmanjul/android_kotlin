@@ -606,7 +606,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
             }
         }
 
-        vm.audienceList.observe(requireActivity()) {
+        vm.audienceList.observe(viewLifecycleOwner) {
             Timber.d("WE GOT RAISED HAND USERS => $it")
             refreshAudienceAdapter(it)
         }
