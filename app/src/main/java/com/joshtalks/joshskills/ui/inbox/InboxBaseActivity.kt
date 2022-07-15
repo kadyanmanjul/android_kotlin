@@ -10,7 +10,17 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.android.play.core.review.ReviewManagerFactory
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.ARG_PLACEHOLDER_URL
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.COURSE_ID
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
+import com.joshtalks.joshskills.core.IN_APP_REVIEW_COUNT
+import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_ENDED
+import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_STARTED
+import com.joshtalks.joshskills.core.PREF_IS_CONVERSATION_ROOM_ACTIVE
+import com.joshtalks.joshskills.core.PermissionUtils
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.WebRtcMiddlewareActivity
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
@@ -24,18 +34,17 @@ import com.joshtalks.joshskills.repository.server.onboarding.ONBOARD_VERSIONS
 import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.ui.assessment.view.Stub
 import com.joshtalks.joshskills.ui.inbox.extra.NewUserLayout
+import com.joshtalks.joshskills.ui.inbox.extra.OnDemandFeatureDownloadService
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import kotlinx.android.synthetic.main.activity_inbox.*
-import kotlinx.android.synthetic.main.find_more_layout.*
+import java.lang.ref.WeakReference
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import java.lang.ref.WeakReference
 
 abstract class InboxBaseActivity :
     WebRtcMiddlewareActivity(),
@@ -59,6 +68,7 @@ abstract class InboxBaseActivity :
             versionResponse = VersionResponse.getInstance()
         }
         AppObjectController.isSettingUpdate = false
+        defferInstallOnDemandModule()
     }
 
     override fun onStart() {
@@ -97,7 +107,11 @@ abstract class InboxBaseActivity :
 //        }
 //    }
 
-//    private fun showInAppReview() {
+    private fun defferInstallOnDemandModule() {
+        OnDemandFeatureDownloadService.startOnDemandFeatureDownloadService(this,false)
+    }
+
+    //    private fun showInAppReview() {
 //        val manager = ReviewManagerFactory.create(applicationContext)
 //        manager.requestReviewFlow().addOnCompleteListener { request ->
 //            if (request.isSuccessful) {
