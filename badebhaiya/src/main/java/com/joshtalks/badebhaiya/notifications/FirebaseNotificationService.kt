@@ -119,6 +119,8 @@ class FirebaseNotificationService : FirebaseMessagingService() {
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         Timber.d("PUSH NOTIFICATION AGAYI AUR DATA HAI => ${remoteMessage.data}")
+        Timber.tag("ROOMREQUEST").d("PUSH NOTIFICATION AGAYI AUR DATA HAI => ${remoteMessage.data}")
+
         try {
             super.onMessageReceived(remoteMessage)
         } catch (e: Exception){
@@ -145,6 +147,8 @@ class FirebaseNotificationService : FirebaseMessagingService() {
 
     private fun sendNotification(notificationObject: NotificationObject) {
         executor.execute {
+            Timber.tag("ROOMREQUEST").d("inside executor")
+
             Log.i("CHECKNOTIFICATION", "sendNotification: $notificationObject")
             val intent = getIntentAccordingAction(
                 notificationObject,
@@ -153,7 +157,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             )
 
             if (intent == null)
-                Timber.d("Intent null hai")
+                Timber.tag("ROOMREQUEST").d("intent is null")
             intent?.run {
                 putExtra(HAS_NOTIFICATION, true)
                 putExtra(NOTIFICATION_ID, notificationObject.id)
@@ -214,6 +218,9 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                             )
                         )
 
+                Timber.tag("ROOMREQUEST").d("ready to notify")
+
+
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     notificationBuilder.priority = NotificationManager.IMPORTANCE_DEFAULT
                 }
@@ -244,7 +251,11 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 }
 
                 when(notificationObject.action) {
-                    else -> notificationManager.notify(uniqueInt, notificationBuilder.build())
+                    else ->{
+                        Timber.tag("ROOMREQUEST").d("notify hogya")
+
+                        notificationManager.notify(uniqueInt, notificationBuilder.build())
+                    }
                 }
 
             }
@@ -256,6 +267,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         action: NotificationAction?,
         actionData: String?
     ): Intent? {
+        Timber.tag("ROOMREQUEST").d("get intent according action")
         Log.i("CHECKNOTIFICATION", "getIntentAccordingAction: notification data:-$notificationObject  ------- actionData:$actionData ------- action:-$action")
         return when(action) {
             NotificationAction.ACTION_LOGOUT_USER -> {
@@ -307,12 +319,17 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             }
 
             NotificationAction.ROOM_REQUEST_NOTIFICATION -> {
+                Timber.tag("ROOMREQUEST").d("room request notification aya aur user id h => ${JSONObject(actionData).getString("room_request_id")}")
+
                 val roomRequestUserId = JSONObject(actionData).getString("room_request_id")
                 return FeedActivity.getIntentForRoomRequest(this, roomRequestUserId)
             }
 
 
-            else -> null
+            else -> {
+                Timber.tag("ROOMREQUEST").d("action nhi h isliye null bheja")
+                null
+            }
         }
     }
 

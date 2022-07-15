@@ -41,6 +41,7 @@ class RequestBottomSheetFragment(
     ): View? {
         binding = BottomSheetRequestBinding.inflate(inflater, container, false)
         binding.handler = this
+        binding.viewModel = viewModel
         return binding.root
     }
 
@@ -54,6 +55,7 @@ class RequestBottomSheetFragment(
 
     private fun attachObservers() {
         viewModel.requestContent.observe(this){
+            binding.requestUserName.text = it.user.full_name
             if (it.user.photo_url.isNullOrEmpty().not())
                 Utils.setImage(binding.requestProfilePicture, it.user.photo_url)
             else

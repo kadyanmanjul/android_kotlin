@@ -197,14 +197,14 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
 
         val roomRequestId = intent.getStringExtra(ROOM_REQUEST_ID)
 
-        if (user != null) {
+         if(!roomRequestId.isNullOrEmpty()){
+            RequestBottomSheetFragment.open(roomRequestId, supportFragmentManager)
+        } else if (user != null) {
             viewProfile(user, true)
         } else if (mUserId != null){
             viewProfile(mUserId, false)
         } else if (SingleDataManager.pendingPilotAction != null) {
             viewProfile(SingleDataManager.pendingPilotEventData!!.pilotUserId, true)
-        } else if(!roomRequestId.isNullOrEmpty()){
-            RequestBottomSheetFragment.open(roomRequestId, supportFragmentManager)
         }
         if (User.getInstance().isLoggedIn()) {
             viewModel.setIsBadeBhaiyaSpeaker()
