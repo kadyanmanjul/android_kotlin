@@ -189,6 +189,7 @@ internal class NotificationGenerator {
         notificationBuiltObj.notificationBuilder.setContentTitle("Connecting to Practice Partner")
         notificationBuiltObj.notificationBuilder.setContentText("Connecting...")
         notificationBuiltObj.notificationBuilder.setSilent(true)
+        notificationBuiltObj.notificationBuilder.setContentIntent(null)
         notificationBuiltObj.notificationBuilder.setOnlyAlertOnce(true)
         NotificationManagerCompat.from(context!!).notify(notificationBuiltObj.id, notificationBuiltObj.notificationBuilder.build())
     }

@@ -176,7 +176,7 @@ class CallingRemoteService : Service() {
                                     updateStartTime(data.startTime)
                                     notification.connected(
                                         data.userName,
-                                        openCallScreen(),
+                                        intentOnNotificationTap(),
                                         getHangUpIntent()
                                     )
                                     serviceEvents.emit(ServiceEvents.CALL_CONNECTED_EVENT)

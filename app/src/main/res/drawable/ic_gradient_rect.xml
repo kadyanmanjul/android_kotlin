@@ -1,21 +1,12 @@
-<vector xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:aapt="http://schemas.android.com/aapt"
-    android:width="220dp"
-    android:height="44dp"
-    android:viewportWidth="220"
-    android:viewportHeight="44">
-  <path
-      android:pathData="M22,0L198,0A22,22 0,0 1,220 22L220,22A22,22 0,0 1,198 44L22,44A22,22 0,0 1,0 22L0,22A22,22 0,0 1,22 0z">
-    <aapt:attr name="android:fillColor">
-      <gradient 
-          android:startY="0"
-          android:startX="103.644"
-          android:endY="44"
-          android:endX="103.644"
-          android:type="linear">
-        <item android:offset="0" android:color="#FFD28AFF"/>
-        <item android:offset="1" android:color="#FFB742FF"/>
-      </gradient>
-    </aapt:attr>
-  </path>
-</vector>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+  <solid android:color="@color/button_color" />
+  <corners android:radius="@dimen/_320sdp"/>
+  <gradient
+      android:angle="270"
+      android:endColor="#FFB742FF"
+      android:startColor="#FFD28AFF" />
+</shape>
+
+<!--<item android:offset="0" android:color="#FFD28AFF"/>-->
+<!--<item android:offset="1" android:color="#FFB742FF"/>-->

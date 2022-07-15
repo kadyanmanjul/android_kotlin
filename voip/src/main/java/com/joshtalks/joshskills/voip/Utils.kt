@@ -320,6 +320,23 @@ fun openCallScreen(): PendingIntent {
         PendingIntent.FLAG_CANCEL_CURRENT
     )
 }
+
+fun intentOnNotificationTap(): PendingIntent {
+    val destination = "com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity"
+    val intent = Intent()
+    intent.apply {
+        setClassName(Utils.context!!.applicationContext, destination)
+        putExtra(STARTING_POINT, FROM_CALL_BAR)
+        flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
+    }
+    return PendingIntent.getActivity(
+        Utils.context,
+        1102,
+        intent,
+        PendingIntent.FLAG_CANCEL_CURRENT
+    )
+}
+
 fun openFavoriteCallScreen(): PendingIntent {
     val destination = "com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity"
     val intent = Intent()

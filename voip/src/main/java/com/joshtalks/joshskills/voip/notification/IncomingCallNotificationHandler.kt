@@ -5,6 +5,9 @@ import com.joshtalks.joshskills.voip.audiomanager.SOUND_TYPE_RINGTONE
 import com.joshtalks.joshskills.voip.audiomanager.SoundManager
 import com.joshtalks.joshskills.voip.constant.Category
 import com.joshtalks.joshskills.voip.constant.INCOMING_CALL_CATEGORY
+import com.joshtalks.joshskills.voip.constant.PSTN_STATE_IDLE
+import com.joshtalks.joshskills.voip.constant.State
+import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.mediator.*
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
@@ -13,6 +16,8 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
 class IncomingCallNotificationHandler : NotificationData.IncomingNotification{
+
+    private var ignoreNotificationScope = CoroutineScope(Dispatchers.IO)
 
     companion object{
         private val incomingCallMutex = Mutex(false)
@@ -40,7 +45,7 @@ class IncomingCallNotificationHandler : NotificationData.IncomingNotification{
             }
         }
 
-        if(!isShowingIncomingCall) {
+        if(!isShowingIncomingCall && PrefManager.getVoipState() == State.IDLE && PrefManager.getPstnState() == PSTN_STATE_IDLE) {
             val remoteView = calling.notificationLayout(map) ?: return
             voipNotification = VoipNotification(remoteView, NotificationPriority.High)
             voipNotification.show()
@@ -52,7 +57,7 @@ class IncomingCallNotificationHandler : NotificationData.IncomingNotification{
                 agoraMentorId = "-1"
             )
             soundManager.startRingtoneAndVibration()
-            CoroutineScope(Dispatchers.IO).launch {
+            ignoreNotificationScope.launch {
                 try {
                     delay(20000)
                     removeNotification()
@@ -74,6 +79,7 @@ class IncomingCallNotificationHandler : NotificationData.IncomingNotification{
         voipNotification.removeNotification(currentIncomingCallNotificationId)
         stopAudio()
         updateIncomingCallState(false)
+        ignoreNotificationScope.cancel()
     }
 
     override fun isNotificationVisible() :Boolean {

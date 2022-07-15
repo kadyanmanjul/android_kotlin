@@ -574,41 +574,41 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
             }
         }
     }
-                    override suspend fun handleIncomingCall(map: HashMap<String, String>) {
-                        val callType = map[INCOMING_CALL_CATEGORY]
-                        incomingNotificationMutex.withLock {
-                            val ifNotificationVisible = if (this@CallingMediator::incomingCallNotificationHandler.isInitialized) {
-                                incomingCallNotificationHandler.isNotificationVisible()
-                            } else {
-                                false
-                            }
-                            if (ifNotificationVisible.not() && PrefManager.getVoipState() == State.IDLE && PrefManager.getPstnState() == PSTN_STATE_IDLE) {
-                                when (callType) {
-                                    Category.PEER_TO_PEER.category -> {
-                                        callCategory = Category.PEER_TO_PEER
-                                        calling = PeerToPeerCall()
-                                    }
-                                    Category.FPP.category -> {
-                                        callCategory = Category.FPP
-                                        calling = FavoriteCall()
-                                    }
-                                    Category.GROUP.category -> {
-                                        callCategory = Category.GROUP
-                                        calling = GroupCall()
-                                    }
-                                }
-                                PrefManager.setCallCategory(callCategory)
-                                PrefManager.setIncomingCallId(map[INTENT_DATA_INCOMING_CALL_ID]!!.toInt())
-                                CallAnalytics.addAnalytics(
-                                    event = EventName.INCOMING_CALL_RECEIVED,
-                                    agoraCallId = map[INTENT_DATA_INCOMING_CALL_ID],
-                                    agoraMentorId = "-1"
-                                )
-                                incomingCallNotificationHandler = IncomingCallNotificationHandler()
-                                incomingCallNotificationHandler.inflateNotification(map)
-                            }
-                        }
+    override suspend fun handleIncomingCall(map: HashMap<String, String>) {
+        val callType = map[INCOMING_CALL_CATEGORY]
+        incomingNotificationMutex.withLock {
+            val ifNotificationVisible = if (this@CallingMediator::incomingCallNotificationHandler.isInitialized) {
+                incomingCallNotificationHandler.isNotificationVisible()
+            } else {
+                false
+            }
+            if (ifNotificationVisible.not() && PrefManager.getVoipState() == State.IDLE && PrefManager.getPstnState() == PSTN_STATE_IDLE) {
+                when (callType) {
+                    Category.PEER_TO_PEER.category -> {
+                        callCategory = Category.PEER_TO_PEER
+                        calling = PeerToPeerCall()
                     }
+                    Category.FPP.category -> {
+                        callCategory = Category.FPP
+                        calling = FavoriteCall()
+                    }
+                    Category.GROUP.category -> {
+                        callCategory = Category.GROUP
+                        calling = GroupCall()
+                    }
+                }
+                PrefManager.setCallCategory(callCategory)
+                PrefManager.setIncomingCallId(map[INTENT_DATA_INCOMING_CALL_ID]!!.toInt())
+                CallAnalytics.addAnalytics(
+                    event = EventName.INCOMING_CALL_RECEIVED,
+                    agoraCallId = map[INTENT_DATA_INCOMING_CALL_ID],
+                    agoraMentorId = "-1"
+                )
+                incomingCallNotificationHandler = IncomingCallNotificationHandler()
+                incomingCallNotificationHandler.inflateNotification(map)
+            }
+        }
+    }
 
     private fun isMessageForSameChannel(channel: String) = callContext?.hasChannelData() == true && channel == callContext?.channelData?.getChannel()
 

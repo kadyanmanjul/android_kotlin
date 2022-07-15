@@ -312,7 +312,7 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                 try {
                     uiState.localUserName = Utils.context?.getMentorName()?:""
                     uiState.localUserProfile = Utils.context?.getMentorProfile()?:""
-                }catch (ex:Exception){ }
+                }catch (ex:Exception){}
 
                 uiState.gameWord = state.nextGameWord
                 uiState.wordColor = state.nextGameWordColor

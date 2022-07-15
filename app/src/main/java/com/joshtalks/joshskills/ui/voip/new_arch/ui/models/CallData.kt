@@ -22,6 +22,9 @@ sealed class CallType{
 
 class CallUIState : BaseObservable() {
 
+   companion object{
+       private var isGameStarted = false
+   }
     @get:Bindable
     var profileImage : String = ""
     set(value) {
@@ -171,7 +174,7 @@ class CallUIState : BaseObservable() {
     @get:Bindable
     var gameWord:String = ""
         set(value) {
-            if(isStartGameClicked) {
+            if(isGameStarted) {
                 field = value
                 notifyPropertyChanged(BR.gameWord)
             }
@@ -195,6 +198,7 @@ class CallUIState : BaseObservable() {
     var isStartGameClicked:Boolean = false
         set(value) {
             field = value
+            isGameStarted = field
             notifyPropertyChanged(BR.startGameClicked)
         }
 

@@ -329,8 +329,10 @@ class VoiceCallActivity : BaseActivity() {
 
     override fun onStop() {
         super.onStop()
-        if(isServiceBounded)
-        vm.unboundService(this)
+        if(isServiceBounded) {
+            vm.unboundService(this)
+            isServiceBounded = false
+        }
     }
 
     override fun onBackPressed() {
