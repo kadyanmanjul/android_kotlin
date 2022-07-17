@@ -72,27 +72,26 @@ class OnDemandFeatureDownloadService : Service() {
 
     private fun startDownloadLibraryInBackground() {
         manager?.registerListener(listener)
-        val module = "dynamic"
+        val module = getString(R.string.dynamic_feature_title)
         showToast("Loading module $module")
         if (manager?.installedModules?.contains(module) == true){
             showToast("Already $module installed")
-
+            hideNotification()
         } else{
             showToast("Starting install for$module")
-            manager?.deferredInstall(listOf("dynamic"))
+            manager?.deferredInstall(listOf(getString(R.string.dynamic_feature_title)))
                 ?.addOnSuccessListener { showToast("Loading ${module}") }
                 ?.addOnFailureListener { showToast("Error Loading ${module}") }
-
         }
     }
 
     private fun startDownloadLibraryInForeground() {
         manager?.registerListener(listener)
-        val module = "dynamic"
+        val module = getString(R.string.dynamic_feature_title)
         showToast("Loading module $module")
         if (manager?.installedModules?.contains(module) == true){
             showToast("Already $module installed")
-
+            hideNotification()
         } else{
              showToast("Starting install for$module")
 

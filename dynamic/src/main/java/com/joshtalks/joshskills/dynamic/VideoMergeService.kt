@@ -21,6 +21,7 @@ import android.os.Message
 import android.os.ParcelFileDescriptor
 import android.provider.DocumentsContract
 import android.provider.MediaStore
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -30,7 +31,6 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.constants.INCREASE_AUDIO_VOLUME
 import com.joshtalks.joshskills.constants.VIDEO_AUDIO_MERGED_PATH
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.model.NotificationChannelNames
 import java.io.File
 import java.io.FileOutputStream
@@ -47,6 +47,7 @@ const val DURATION_FIRST: String = "first"
 
 const val CHANNEL_ID = "VIDEO_AUDIO_PROCESSING"
 const val NOTIFICATION_ID = 1681
+const val TAG = "VideoMergeService"
 
 class VideoMergeService : Service() {
     private var mNotificationManager: NotificationManager? = null
@@ -64,6 +65,10 @@ class VideoMergeService : Service() {
         val videoPath = intent?.getStringExtra(VIDEO_PATH)
         val audioPath = intent?.getStringExtra(AUDIO_PATH)
         if (videoPath != null && audioPath != null) {
+            Log.d(
+                TAG,
+                "onStartCommand() called with: videoPath = $videoPath, audioPath = $audioPath"
+            )
             startVideoMuxing(videoPath, audioPath)
             showNotification()
         }
@@ -96,6 +101,7 @@ class VideoMergeService : Service() {
     }
 
     private fun hideNotification() {
+        Log.d(TAG, "hideNotification() called")
         NotificationManagerCompat.from(this).cancel(NOTIFICATION_ID)
         stopForeground(true)
     }
@@ -106,7 +112,6 @@ class VideoMergeService : Service() {
     ) {
         CoroutineScope(Dispatchers.IO).launch {
             if (isActive) {
-                //TODO : shownotification for the crash fix
                 var outputFile: String? = ""
                 if (Build.VERSION.SDK_INT >= 29) {
                     outputFile = saveVideoQ(this@VideoMergeService, videoDownPath)
@@ -241,20 +246,22 @@ class VideoMergeService : Service() {
 
         CallBackOfQuery().callQuery(query, object : FFmpegCallBack {
             override fun process(logMessage: LogMessage) {
+                Log.d(TAG, "mergeAudioWithAudio process() called with: logMessage = $logMessage")
             }
 
             override fun success() {
+                Log.d(TAG, "mergeAudioWithAudio success() called")
                 mergeAudioWithVideo(videoPath, outputPath, output)
             }
 
             override fun cancel() {
+                Log.d(TAG, "mergeAudioWithAudio cancel() called")
                 hideNotification()
-                showToast("An error has occurred")
             }
 
             override fun failed() {
+                Log.d(TAG, "mergeAudioWithAudio failed() called")
                 hideNotification()
-                showToast("An error has occurred")
             }
         })
     }
@@ -309,6 +316,10 @@ class VideoMergeService : Service() {
 
     private fun mergeVideo(co: Array<String>, output: String) {
         FFmpeg.executeAsync(co) { executionId, returnCode ->
+            Log.d(
+                TAG,
+                "mergeVideo() called with: executionId = $executionId, returnCode = $returnCode"
+            )
             EventLiveData.value = Message().apply {
                 what = VIDEO_AUDIO_MERGED_PATH
                 obj = output
