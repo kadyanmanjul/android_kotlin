@@ -834,7 +834,7 @@ class ReadingFragmentWithoutFeedback :
         ) {
             currentLessonQuestion = it.filter { it.chatType == CHAT_TYPE.RP }.getOrNull(0)
             video = currentLessonQuestion?.videoList?.getOrNull(0)?.video_url
-            if (!SplitInstallManagerFactory.create(AppObjectController.joshApplication).installedModules.contains("dynamic")){
+            if (!SplitInstallManagerFactory.create(AppObjectController.joshApplication).installedModules.contains(getString(R.string.dynamic_feature_title))){
                 showToast("Dynamic module isn't installed")
                 video = null
             }
