@@ -8,6 +8,7 @@ import androidx.lifecycle.lifecycleScope
 import com.facebook.share.internal.ShareConstants
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.play.core.review.ReviewManagerFactory
+import com.google.android.play.core.splitinstall.SplitInstallManagerFactory
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.ARG_PLACEHOLDER_URL
@@ -28,6 +29,7 @@ import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.inapp_update.Constants
 import com.joshtalks.joshskills.core.inapp_update.InAppUpdateManager
 import com.joshtalks.joshskills.core.inapp_update.InAppUpdateStatus
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.NotificationAction
 import com.joshtalks.joshskills.repository.server.onboarding.ONBOARD_VERSIONS
@@ -108,7 +110,12 @@ abstract class InboxBaseActivity :
     }
 
     private fun defferInstallOnDemandModule() {
-        OnDemandFeatureDownloadService.startOnDemandFeatureDownloadService(this,false)
+        val manager = SplitInstallManagerFactory.create(this)
+        if(manager.installedModules.contains(getString(R.string.dynamic_feature_title)) == true){
+            showToast("Inbox : Already installed")
+        } else {
+            OnDemandFeatureDownloadService.startOnDemandFeatureDownloadService(this, false)
+        }
     }
 
     private fun showInAppReview() {
