@@ -35,7 +35,7 @@
             android:layout_marginTop="@dimen/_1sdp"
             android:scaleType="centerCrop"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.07"
+            app:layout_constraintHorizontal_bias="0.05"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/profile_toolbar"
             app:shapeAppearanceOverlay="@style/roundedCornersImageView_28dp"
@@ -98,20 +98,19 @@
             app:layout_constraintVertical_bias="1.0" >
 
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/callRequestsBtn"
-            android:layout_width="@dimen/_120sdp"
-            android:layout_height="@dimen/_24sdp"
-            android:background="@drawable/following_button_background"
-            android:gravity="center"
-            android:onClick="@{() -> handler.navigateToRequestsList()}"
-            android:text="@string/call_requests"
-            android:elevation="@dimen/_4sdp"
-            android:textAppearance="@style/BB_Typography_Nunito_Semi_Bold"
-            android:textColor="@color/white"
-            android:textSize="@dimen/_12ssp"
-            android:visibility="@{(viewModel.isBadeBhaiyaSpeaker &amp;&amp; viewModel.isSelfProfile) ? View.VISIBLE : View.GONE}"
-         />
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/callRequestsBtn"
+                android:layout_width="@dimen/_120sdp"
+                android:layout_height="@dimen/_24sdp"
+                android:background="@drawable/following_button_background"
+                android:elevation="@dimen/_4sdp"
+                android:gravity="center"
+                android:onClick="@{() -> handler.navigateToRequestsList()}"
+                android:text="@string/call_requests"
+                android:textAppearance="@style/BB_Typography_Nunito_Semi_Bold"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_12ssp"
+                android:visibility="@{(viewModel.isBadeBhaiyaSpeaker &amp;&amp; viewModel.isSelfProfile) ? View.VISIBLE : View.GONE}" />
 
         </FrameLayout>
 
@@ -147,7 +146,7 @@
             android:id="@+id/tvCalls"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="128dp"
+            android:layout_marginStart="118dp"
             android:layout_marginTop="@dimen/_11sdp"
             android:textAppearance="@style/BB_Typography_Nunito_Semi_Bold"
             android:textColor="@color/profile_font_color"
@@ -160,7 +159,7 @@
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tvProfileBio"
             onSingleClick="@{()->handler.showBottomSheet()}"
-            android:layout_width="@dimen/_170sdp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_10sdp"
             android:clickable="@{viewModel.isSelfProfile()}"
@@ -190,12 +189,11 @@
             android:id="@+id/divider"
             android:layout_width="0dp"
             android:layout_height="1dp"
-            android:layout_marginStart="@dimen/_32sdp"
-            android:layout_marginTop="28dp"
+            android:layout_marginStart="@dimen/_25sdp"
+            android:layout_marginTop="20dp"
             android:layout_marginEnd="@dimen/_30sdp"
             android:background="#C4C4C4"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvProfileBio" />
 
@@ -206,7 +204,7 @@
             android:layout_margin="@dimen/_10sdp"
             android:layout_marginTop="@dimen/_12sdp"
             android:fontFamily="@font/nunito_sans_semi_bold"
-            android:paddingStart="12dp"
+            android:paddingStart="3dp"
             android:text="@string/upcoming_rooms"
             android:textColor="@color/profile_font_color"
             android:textSize="@dimen/_12ssp"
@@ -222,7 +220,7 @@
             android:layout_height="0dp"
             android:layout_marginTop="@dimen/_2sdp"
             android:layout_marginBottom="@dimen/_2sdp"
-            android:paddingStart="@dimen/_8sdp"
+            android:paddingStart="@dimen/_4sdp"
             android:paddingEnd="@dimen/_8sdp"
             android:visibility="@{viewModel.isBadeBhaiyaSpeaker ? View.VISIBLE : View.GONE}"
             app:layout_constraintBottom_toBottomOf="parent"
