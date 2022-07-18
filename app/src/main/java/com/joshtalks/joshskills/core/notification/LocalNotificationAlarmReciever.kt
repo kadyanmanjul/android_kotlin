@@ -67,61 +67,61 @@ class LocalNotificationAlarmReciever : BroadcastReceiver() {
                 putExtra(HAS_LOCAL_NOTIFICATION, true)
             }
 
-            intent?.run {
-                val activityList = arrayOf(this)
-                val uniqueInt = (System.currentTimeMillis() and 0xfffffff).plus(delay).toInt()
+        intent.run {
+            val activityList = arrayOf(this)
+            val uniqueInt = (System.currentTimeMillis() and 0xfffffff).plus(delay).toInt()
 
 
-                val pendingIntent = PendingIntent.getActivities(
-                    context,
-                    uniqueInt, activityList,
-                    PendingIntent.FLAG_UPDATE_CURRENT
+            val pendingIntent = PendingIntent.getActivities(
+                context,
+                uniqueInt, activityList,
+                PendingIntent.FLAG_UPDATE_CURRENT
+            )
+            val style = NotificationCompat.BigTextStyle()
+            style.setBigContentTitle(title)
+            style.bigText(description)
+            style.setSummaryText("")
+
+            val builder = NotificationCompat.Builder(context, channelId)
+
+                .setStyle(style)
+                .setDefaults(Notification.DEFAULT_ALL)
+                .setColor(
+                    ContextCompat.getColor(
+                        context,
+                        R.color.colorAccent
+                    )
                 )
-                val style = NotificationCompat.BigTextStyle()
-                style.setBigContentTitle(title)
-                style.bigText(description)
-                style.setSummaryText("")
-
-                val builder = NotificationCompat.Builder(context, channelId)
-
-                    .setStyle(style)
-                    .setDefaults(Notification.DEFAULT_ALL)
-                    .setColor(
-                        ContextCompat.getColor(
-                            context,
-                            R.color.colorAccent
-                        )
+                .setSmallIcon(R.drawable.ic_status_bar_notification)
+                .setContentTitle(title)
+                .setContentIntent(pendingIntent)
+                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                .setAutoCancel(true)
+                .setContentText(description)
+                .setCategory(Notification.CATEGORY_REMINDER)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setSmallIcon(R.drawable.ic_status_bar_notification).setColor(
+                    ContextCompat.getColor(
+                        context,
+                        R.color.colorAccent
                     )
-                    .setSmallIcon(R.drawable.ic_status_bar_notification)
-                    .setContentTitle(title)
-                    .setContentIntent(pendingIntent)
-                    .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-                    .setAutoCancel(true)
-                    .setContentText(description)
-                    .setCategory(Notification.CATEGORY_REMINDER)
-                    .setPriority(NotificationCompat.PRIORITY_HIGH)
-                    .setSmallIcon(R.drawable.ic_status_bar_notification).setColor(
-                        ContextCompat.getColor(
-                            context,
-                            R.color.colorAccent
-                        )
-                    )
-                val dismissIntent =
-                    Intent(applicationContext, LocalNotificationDismissEventReceiver::class.java)
-                val dismissPendingIntent: PendingIntent =
-                    PendingIntent.getBroadcast(applicationContext, 1, dismissIntent, 0)
+                )
+            val dismissIntent =
+                Intent(applicationContext, LocalNotificationDismissEventReceiver::class.java)
+            val dismissPendingIntent: PendingIntent =
+                PendingIntent.getBroadcast(applicationContext, 1, dismissIntent, 0)
 
-                builder.setDeleteIntent(dismissPendingIntent)
+            builder.setDeleteIntent(dismissPendingIntent)
 
-                val notificationManager =
-                    getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            val notificationManager =
+                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-                with(notificationManager) {
-                    buildChannel()
-                    val notification = builder.build()
-                    notify(NOTIFICATION_ID, notification)
-                }
+            with(notificationManager) {
+                buildChannel()
+                val notification = builder.build()
+                notify(NOTIFICATION_ID, notification)
             }
+        }
     }
 
     private fun NotificationManager.buildChannel() {

@@ -227,11 +227,9 @@ class JoshApplication :
 //        userPresenceStatus.setUserPresence(Mentor.getInstance().getId(),System.currentTimeMillis())
         WorkManagerAdmin.userAppUsage(isAppVisible)
 //        WorkManagerAdmin.userActiveStatusWorker(isAppVisible)
-//        WorkManagerAdmin.removeRepeatingNotificationWorker()
         ReminderUtil(this).deleteNotificationAlarms()
         val startIndex = PrefManager.getIntValue(LOCAL_NOTIFICATION_INDEX)
         for (i in startIndex..2) {
-//            WorkManagerAdmin.setRepeatingNotificationWorker(i)
             removeAlarmReminder(i)
         }
 //        UsageStatsService.activeUserService(this)
@@ -268,7 +266,6 @@ class JoshApplication :
         if (getConditionForShowLocalNotifications()) {
             val startIndex = PrefManager.getIntValue(LOCAL_NOTIFICATION_INDEX)
             for (i in startIndex..2) {
-                //WorkManagerAdmin.setRepeatingNotificationWorker(i)
                 setAlarmReminder(i)
             }
         }

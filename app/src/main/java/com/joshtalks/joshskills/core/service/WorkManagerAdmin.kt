@@ -264,44 +264,6 @@ object WorkManagerAdmin {
         )
     }
 
-    fun setRepeatingNotificationWorker(notificationIndex: Int) {
-
-        val delay = NOTIFICATION_DELAY.get(notificationIndex).toLong()
-        val text = NOTIFICATION_TEXT_TEXT.get(notificationIndex)
-        var title: String? = null
-        if (notificationIndex == 0) {
-            title =
-                NOTIFICATION_TITLE_TEXT.get(notificationIndex)
-                    .replace("%num", (24..78).random().toString())
-                    .replace("%name", User.getInstance().firstName.toString())
-        } else {
-            title =
-                NOTIFICATION_TITLE_TEXT.get(notificationIndex)
-        }
-        Timber.d(
-            "Local Notification Set LOCAL_NOTIFICATION_INDEX: ${notificationIndex}"
-        )
-        val data = workDataOf(
-            NOTIFICATION_TEXT to text,
-            NOTIFICATION_TITLE to title,
-            NOTIFICATION_ID to notificationIndex
-        )
-        val workRequest = OneTimeWorkRequestBuilder<SetLocalNotificationWorker>()
-            .setInputData(data)
-            .setInitialDelay(delay, TimeUnit.MINUTES)
-            .addTag(SetLocalNotificationWorker::class.java.name)
-            .build()
-
-        WorkManager.getInstance(AppObjectController.joshApplication).enqueue(
-            workRequest
-        )
-    }
-
-    fun removeRepeatingNotificationWorker() {
-        WorkManager.getInstance(AppObjectController.joshApplication)
-            .cancelAllWorkByTag(SetLocalNotificationWorker::class.java.name)
-    }
-
     fun setFakeCallNotificationWorker() {
         WorkManager.getInstance(AppObjectController.joshApplication)
             .cancelAllWorkByTag(FakeCallNotificationWorker::class.java.name)

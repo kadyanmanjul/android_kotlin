@@ -59,7 +59,6 @@ import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.ui.launch.LauncherActivity
 import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
-import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.LOCAL_NOTIFICATION_CHANNEL
 import com.joshtalks.joshskills.util.ReminderUtil
 import com.yariksoffice.lingver.Lingver
 import io.branch.referral.Branch
@@ -683,115 +682,6 @@ class IsUserActiveWorker(context: Context, private var workerParams: WorkerParam
                 if (active.not()) {
                     PrefManager.put(LAST_ACTIVE_API_TIME, 0L)
                 }
-            }
-        } catch (ex: Throwable) {
-            ex.printStackTrace()
-        }
-        return Result.success()
-    }
-}
-
-class SetLocalNotificationWorker(val context: Context, private var workerParams: WorkerParameters) :
-    CoroutineWorker(context, workerParams) {
-    override suspend fun doWork(): Result {
-        try {
-
-            val textDescription =
-                workerParams.inputData.getString(NOTIFICATION_TEXT)
-                    ?: "Atta boy ! Practise with 94 people who are online rightnow."
-
-            val title =
-                workerParams.inputData.getString(NOTIFICATION_TITLE) ?: "Missed your class"
-
-            val index =
-                workerParams.inputData.getInt(NOTIFICATION_ID, 0)
-
-            val intent = Intent(applicationContext, LauncherActivity::class.java).apply {
-                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                putExtra(HAS_NOTIFICATION, true)
-                putExtra(HAS_LOCAL_NOTIFICATION, true)
-            }
-
-            intent.run {
-                val activityList = arrayOf(this)
-                val uniqueInt = (System.currentTimeMillis() and 0xfffffff).plus(index).toInt()
-                val defaultSound =
-                    RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-                val pendingIntent = PendingIntent.getActivities(
-                    context,
-                    uniqueInt, activityList,
-                    PendingIntent.FLAG_UPDATE_CURRENT
-                )
-
-                val style = NotificationCompat.BigTextStyle()
-                style.setBigContentTitle(title)
-                style.bigText(textDescription)
-                style.setSummaryText("")
-
-                val notificationBuilder =
-                    NotificationCompat.Builder(
-                        context,
-                        LOCAL_NOTIFICATION_CHANNEL + index
-                    )
-                        .setSmallIcon(R.drawable.ic_status_bar_notification)
-                        .setContentTitle(title)
-                        .setAutoCancel(true)
-                        .setSound(defaultSound)
-                        .setContentText(textDescription)
-                        .setContentIntent(pendingIntent)
-                        .setStyle(style)
-                        .setWhen(System.currentTimeMillis())
-                        .setDefaults(Notification.DEFAULT_ALL)
-                        .setColor(
-                            ContextCompat.getColor(
-                                context,
-                                R.color.colorAccent
-                            )
-                        )
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    notificationBuilder.priority = NotificationManager.IMPORTANCE_DEFAULT
-                }
-
-                val dismissIntent =
-                    Intent(
-                        context.applicationContext,
-                        LocalNotificationDismissEventReceiver::class.java
-                    )
-                val dismissPendingIntent: PendingIntent =
-                    PendingIntent.getBroadcast(
-                        context.applicationContext,
-                        uniqueInt,
-                        dismissIntent,
-                        0
-                    )
-
-                notificationBuilder.setDeleteIntent(dismissPendingIntent)
-
-                val notificationManager =
-                    context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    val notificationChannel = NotificationChannel(
-                        LOCAL_NOTIFICATION_CHANNEL + index,
-                        LOCAL_NOTIFICATION_CHANNEL + index,
-                        NotificationManager.IMPORTANCE_HIGH
-                    )
-                    notificationChannel.enableLights(true)
-                    notificationChannel.enableVibration(true)
-                    notificationBuilder.setChannelId(LOCAL_NOTIFICATION_CHANNEL + index)
-                    notificationManager.createNotificationChannel(notificationChannel)
-                }
-                Timber.d(
-                    "Local Notification Set LOCAL_NOTIFICATION_INDEX: ${
-                        PrefManager.getIntValue(
-                            LOCAL_NOTIFICATION_INDEX,
-                            defValue = 0
-                        )
-                    }"
-                )
-                notificationManager.notify(uniqueInt, notificationBuilder.build())
-
             }
         } catch (ex: Throwable) {
             ex.printStackTrace()
