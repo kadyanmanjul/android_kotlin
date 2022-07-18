@@ -217,29 +217,24 @@ class CallRatingsFragment :BottomSheetDialogFragment() {
     }
 
     private fun selectChange(s: String) {
-        if(s == "fpp" && vm.ifDialogShow==1  && PrefManager.getBoolValue(IS_COURSE_BOUGHT) && PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID){
-            binding.block.strokeColor = AppCompatResources.getColorStateList(requireContext(), R.color.colorPrimary)
-            binding.block.backgroundTintList = AppCompatResources.getColorStateList(requireContext(), R.color.white)
+        if (s == "fpp" && vm.ifDialogShow == 1 && PrefManager.getBoolValue(IS_COURSE_BOUGHT) && PrefManager.getStringValue(
+                CURRENT_COURSE_ID
+            ) == DEFAULT_COURSE_ID
+        ) {
+            binding.block.background = AppCompatResources.getDrawable(requireContext(), R.drawable.block_button_round_stroke_blue)
             binding.block.setTextColor(resources.getColor(R.color.colorPrimary))
-        }else{
-            binding.block.strokeColor = AppCompatResources.getColorStateList(requireContext(), R.color.pitch_black)
-            binding.block.backgroundTintList = AppCompatResources.getColorStateList(requireContext(), R.color.pitch_black)
+        } else {
+            binding.block.background =
+                AppCompatResources.getDrawable(requireContext(), R.drawable.block_button_round_stroke_black)
             binding.block.setTextColor(Color.WHITE)
         }
         isBlockSelected = true
 
     }
+
     private fun unSelectChange(s: String) {
-        if(s=="fpp"&& vm.ifDialogShow==1 && PrefManager.getBoolValue(IS_COURSE_BOUGHT) && PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID){
-            binding.block.strokeColor = ColorStateList.valueOf(Color.BLACK)
-            binding.block.setTextColor(resources.getColor(R.color.pitch_black))
-            binding.block.setTextColor(Color.BLACK)
-            binding.block.backgroundTintList = AppCompatResources.getColorStateList(requireContext(), R.color.white)
-        }else{
-            binding.block.strokeColor = ColorStateList.valueOf(Color.BLACK)
-            binding.block.backgroundTintList = AppCompatResources.getColorStateList(requireContext(), R.color.white)
-            binding.block.setTextColor(Color.BLACK)
-        }
+        binding.block.background = AppCompatResources.getDrawable(requireContext(), R.drawable.block_button_round_stroke)
+        binding.block.setTextColor(resources.getColor(R.color.black_quiz))
         isBlockSelected = false
     }
 

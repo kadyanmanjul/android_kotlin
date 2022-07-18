@@ -250,6 +250,7 @@ class ConversationActivity :
         super.onCreate(savedInstanceState)
         conversationBinding = DataBindingUtil.setContentView(this, R.layout.activity_conversation)
         conversationBinding.handler = this
+        conversationBinding.executePendingBindings()
         activityRef = WeakReference(this)
         initIntentObject()
         if (::inboxEntity.isInitialized.not()) {

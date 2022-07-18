@@ -893,17 +893,20 @@ object Utils {
     }
 
     fun getDrawableFromUrl(context: Context,url: String?): Drawable? {
-        return try {
-            val bitmap: Bitmap
-            val connection: HttpURLConnection = URL(url).openConnection() as HttpURLConnection
-            connection.connect()
-            val input: InputStream = connection.inputStream
-            bitmap = BitmapFactory.decodeStream(input)
-            BitmapDrawable(Resources.getSystem(), bitmap)
+        try {
+            if (isInternetAvailable()) {
+                val bitmap: Bitmap
+                val connection: HttpURLConnection = URL(url).openConnection() as HttpURLConnection
+                connection.connect()
+                val input: InputStream = connection.inputStream
+                bitmap = BitmapFactory.decodeStream(input)
+                return BitmapDrawable(Resources.getSystem(), bitmap)
+            }
         } catch (e: Error) {
             Timber.e(e)
-            AppCompatResources.getDrawable(context,R.drawable.ic_file_error)
+            return AppCompatResources.getDrawable(context,R.drawable.ic_file_error)
         }
+        return null
     }
 }
 

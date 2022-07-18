@@ -760,8 +760,6 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                     }
                 }
             )
-        }else{
-            showToast(getString(R.string.something_went_wrong))
         }
     }
 
@@ -793,8 +791,6 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                 .setMessage(getString(R.string.network_message))
                 .setPositiveButton("GOT IT")
                 { dialog, _ -> dialog.dismiss() }.show()
-        }else{
-            showToast(getString(R.string.something_went_wrong))
         }
     }
 
@@ -807,8 +803,6 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                 .setMessage(getString(R.string.rating_message))
                 .setPositiveButton("GOT IT")
                 { dialog, _ -> dialog.dismiss() }.show()
-        }else{
-            showToast(getString(R.string.something_went_wrong))
         }
     }
 
@@ -832,8 +826,6 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             }
             voipLog?.log("Course ID --> $courseId   Topic ID --> $topicId")
             startActivity(callIntent)
-        }else{
-            showToast(getString(R.string.something_went_wrong))
         }
     }
 
