@@ -36,8 +36,6 @@ import retrofit2.HttpException
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.lang.reflect.Modifier
-import java.net.SocketTimeoutException
-import java.net.UnknownHostException
 import java.text.DateFormat
 import java.util.*
 
@@ -48,9 +46,9 @@ private const val READ_TIMEOUT = 30L
 
 class BackgroundService : Service() {
 
-    private val NOTIF_ID = 12301
-    private val NOTIF_CHANNEL_ID = "12301"
-    private val NOTIF_CHANNEL_NAME = "NOTIFICATION SERVICE"
+    val NOTIF_ID = 12301
+    val NOTIF_CHANNEL_ID = "12301"
+    val NOTIF_CHANNEL_NAME = "NOTIFICATION SERVICE"
 
     lateinit var apiService: UtilsAPIService
 
@@ -75,16 +73,21 @@ class BackgroundService : Service() {
             .create()
     }
 
+    override fun onCreate() {
+        super.onCreate()
+        showNotification()
+    }
+
     override fun onBind(intent: Intent): IBinder? {
         return null
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        startForeground()
         initRetrofit()
+        ReminderUtil(this).deleteNotificationAlarms()
+        ReminderUtil(this).setAlarmNotificationWorker()
         pushAnalyticsToServer()
         fetchMissedNotifications()
-        ReminderUtil(this).setAlarmNotificationWorker()
         return START_STICKY
     }
 
@@ -143,16 +146,17 @@ class BackgroundService : Service() {
         }
     }
 
-    private fun startForeground() {
+    private fun showNotification() {
         val notificationIntent = Intent(this, InboxActivity::class.java)
 
         val pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0)
 
-        startForeground(BackgroundService().NOTIF_ID, buildNotification(pendingIntent))
+        startForeground(NOTIF_ID, buildNotification(pendingIntent))
     }
 
     private fun buildNotification(pendingIntent: PendingIntent): Notification {
-        val notificationBuilder = NotificationCompat.Builder(this, BackgroundService().NOTIF_CHANNEL_ID)
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationBuilder = NotificationCompat.Builder(this, NOTIF_CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_status_bar_notification)
                 .setOngoing(true)
                 .setAutoCancel(false)
@@ -164,9 +168,6 @@ class BackgroundService : Service() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             notificationBuilder.priority = NotificationManager.IMPORTANCE_LOW
         }
-
-        val notificationManager =
-            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val notificationChannel = NotificationChannel(
