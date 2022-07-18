@@ -142,6 +142,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
         ConvoWebRtcService.initLibrary()
         removeIncomingNotification()
         vm.deflate.value=true
+        feedViewModel.requestChannelEnd()
         isBackPressed = false
 
     }
@@ -1394,6 +1395,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
                 mBoundService?.leaveRoom(roomId, roomQuestionId)
             }
         }
+        feedViewModel.readRequestCount()
         vm.deflate.value=false
         vm.unSubscribePubNub()
         Log.i("LIFECYCLE", "onDestroy: ")

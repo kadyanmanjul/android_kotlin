@@ -180,7 +180,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
             badgeDrawable.number = callRequestCount
 
             badgeDrawable.horizontalOffset = 20
-            badgeDrawable.verticalOffset = 10
+            badgeDrawable.verticalOffset = 20
 
             binding.callRequestsBtnRoot.setForeground(badgeDrawable)
             binding.callRequestsBtnRoot.addOnLayoutChangeListener { v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->

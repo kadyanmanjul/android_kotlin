@@ -77,7 +77,7 @@ class CommonRepository {
                     val response = service.getRoomRequestCount()
                     if (response.isSuccessful) {
                         response.body()?.let {
-                            BbDatastore.updateRoomRequestCount(it.request_count)
+                            BbDatastore.updateRoomRequestCount(it.request_count as Long)
 //                        return it.request_count
                         }
                     }

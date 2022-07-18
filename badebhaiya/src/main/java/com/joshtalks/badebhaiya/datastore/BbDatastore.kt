@@ -21,9 +21,9 @@ object BbDatastore {
             preferences[ROOM_REQUEST_COUNT] ?: 0
         }
 
-    suspend fun updateRoomRequestCount(count: Int){
+    suspend fun updateRoomRequestCount(count: Long){
             AppObjectController.joshApplication.dataStore.edit { pref ->
-                pref[ROOM_REQUEST_COUNT] = count
+                pref[ROOM_REQUEST_COUNT] = count.toInt()
             }
 
     }

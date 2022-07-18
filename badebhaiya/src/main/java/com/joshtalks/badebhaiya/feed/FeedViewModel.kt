@@ -14,6 +14,8 @@ import androidx.lifecycle.*
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ListenerRegistration
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.core.*
 import com.joshtalks.badebhaiya.datastore.BbDatastore
@@ -29,6 +31,7 @@ import com.joshtalks.badebhaiya.pubnub.PubNubData
 import com.joshtalks.badebhaiya.pubnub.PubNubEventsManager
 import com.joshtalks.badebhaiya.pubnub.PubNubManager
 import com.joshtalks.badebhaiya.pubnub.PubNubState
+import com.joshtalks.badebhaiya.pubnub.fallback.FallbackManager
 import com.joshtalks.badebhaiya.repository.BBRepository
 import com.joshtalks.badebhaiya.repository.CommonRepository
 import com.joshtalks.badebhaiya.repository.ConversationRoomRepository
@@ -36,6 +39,7 @@ import com.joshtalks.badebhaiya.repository.model.ConversationRoomRequest
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomResponse
 import com.joshtalks.badebhaiya.repository.model.User
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
@@ -85,6 +89,10 @@ class FeedViewModel : ViewModel() {
     val previousRoomData = MutableLiveData<ConversationRoomResponse>()
     val previousRoomDataForSchedule = MutableLiveData<RoomListResponseItem>()
     val roomRequestCount = MutableLiveData<Int>()
+    private var requestChannel: ListenerRegistration? = null
+    private val jobs = mutableListOf<Job>()
+
+
 
     private val commonRepository by lazy {
         CommonRepository()
@@ -125,6 +133,31 @@ class FeedViewModel : ViewModel() {
                 roomRequestCount.postValue(it)
             }
         }
+    }
+
+    fun readRequestCount(){
+        val db= FirebaseFirestore.getInstance()
+        requestChannel=db.collection("PERSONAL_REQEUST_COUNT")
+            .addSnapshotListener{ querySnapshot,firestoreException->
+                firestoreException?.let {
+                    showToast("Error")
+                    return@addSnapshotListener
+                }
+                querySnapshot?.let {
+                    viewModelScope.launch {
+                        BbDatastore.updateRoomRequestCount(it.documents.get(0).data?.get("request_count") as Long )
+                    }
+                }
+            }
+    }
+
+    fun requestChannelEnd() {
+        jobs.forEach {
+            it.cancel()
+        }
+        jobs.clear()
+        requestChannel?.remove()
+        requestChannel?.remove()
     }
 
     fun getRoomRequestCount(){

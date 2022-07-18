@@ -231,7 +231,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
             checkAndOpenLiveRoom()
         }
 
-
+        viewModel.readRequestCount()
     }
 
     override fun onRestart() {
