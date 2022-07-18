@@ -271,10 +271,7 @@ class CallRatingsFragment : BottomSheetDialogFragment() {
                 dismissAllowingStateLoss()
             }
             3 -> {
-                if (PrefManager.getIntValue(IS_CUSTOM_RATING_AND_REVIEW_DIALOG_SHOWN) < 2 && selectedRating in 9..10 && PrefManager.getLongValue(
-                        ONE_WEEK_TIME_STAMP,false
-                    ) < System.currentTimeMillis()
-                ) {
+                if (PrefManager.getIntValue(IS_CUSTOM_RATING_AND_REVIEW_DIALOG_SHOWN) < 2 && selectedRating in 9..10 && PrefManager.getLongValue(ONE_WEEK_TIME_STAMP,false) < System.currentTimeMillis() && !PrefManager.getBoolValue(GOOGLE_IN_APP_REVIEW_DIALOG_SEEN)) {
                     dismissAllowingStateLoss()
                     showCustomRatingAndReviewDialog(requireActivity())
                     val timestamp = Calendar.getInstance().apply {
@@ -431,6 +428,7 @@ class CallRatingsFragment : BottomSheetDialogFragment() {
                     val reviewInfo = request.result
                     manager.launchReviewFlow(context, reviewInfo).addOnCompleteListener { result ->
                         if (result.isSuccessful) {
+                            PrefManager.put(GOOGLE_IN_APP_REVIEW_DIALOG_SEEN, true)
                             showToast("Review Success")
                         } else {
                             showToast("Review Failed")
@@ -466,7 +464,6 @@ class CallRatingsFragment : BottomSheetDialogFragment() {
             dialog.findViewById<Button>(R.id.btnHaBilkul).setOnClickListener {
                 dialog.dismiss()
                 showInAppReview(context)
-                PrefManager.put(IS_CUSTOM_RATING_AND_REVIEW_DIALOG_SHOWN, isRatingSubmittedCount)
             }
         }
     }
