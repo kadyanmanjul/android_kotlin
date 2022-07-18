@@ -532,7 +532,7 @@ abstract class BaseActivity :
 
     fun isRegProfileComplete(): Boolean {
         val user = User.getInstance()
-        return (!user.firstName.isNullOrEmpty() && !user.phoneNumber.isNullOrEmpty() && !user.dateOfBirth.isNullOrEmpty() && !user.gender.isNullOrEmpty())
+        return (!user.firstName.isNullOrEmpty() && (user.phoneNumber.isNullOrEmpty().not() || user.email.isNullOrEmpty().not()) && !user.dateOfBirth.isNullOrEmpty() && !user.gender.isNullOrEmpty())
     }
 
     fun replaceFragment(

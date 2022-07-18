@@ -127,44 +127,17 @@
 
         </androidx.cardview.widget.CardView>
 
-        <com.airbnb.lottie.LottieAnimationView
+        <com.joshtalks.joshskills.core.custom_ui.JoshShimmerButton
             android:id="@+id/btnStartTrial"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
             android:layout_marginHorizontal="@dimen/_14sdp"
-            android:clickable="true"
-            android:focusable="true"
-            android:gravity="center"
-            android:paddingHorizontal="@dimen/_8sdp"
+            android:text="Start Now"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/cardViewHighlights"
-            app:layout_constraintVertical_bias="0.65"
-            app:lottie_autoPlay="true"
-            app:lottie_fileName="lottie/button11.json"
-            app:lottie_imageAssetsFolder="lottie"
-            app:lottie_loop="true"
-            app:lottie_repeatMode="restart"
-            app:lottie_scale="1"
-            app:lottie_speed="1" />
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/btnStartTrialText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:elevation="@dimen/_2sdp"
-            android:gravity="center"
-            android:text="Start Now"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Button"
-            android:textColor="@color/white"
-            app:cornerRadius="@dimen/_32sdp"
-            app:layout_constraintBottom_toBottomOf="@id/btnStartTrial"
-            app:layout_constraintEnd_toEndOf="@id/btnStartTrial"
-            app:layout_constraintStart_toStartOf="@id/btnStartTrial"
-            app:layout_constraintTop_toTopOf="@id/btnStartTrial" />
+            app:layout_constraintVertical_bias="0.65" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/txtLogin"

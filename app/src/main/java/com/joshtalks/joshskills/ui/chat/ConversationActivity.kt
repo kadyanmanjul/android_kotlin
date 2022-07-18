@@ -1259,10 +1259,16 @@ class ConversationActivity :
         }
         lifecycleScope.launchWhenCreated {
             unlockClassViewModel.batchChange.collectLatest {
-                if (it) {
-                    conversationViewModel.refreshChatOnManual()
-                } else {
-                    conversationBinding.refreshLayout.isRefreshing = false
+                when (it) {
+                    UnlockClassViewModel.BatchChangeRequest.SUCCESS -> conversationViewModel.refreshChatOnManual()
+                    UnlockClassViewModel.BatchChangeRequest.FAILURE -> conversationBinding.refreshLayout.isRefreshing = false
+                    UnlockClassViewModel.BatchChangeRequest.BUY_NOW -> FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
+                        this@ConversationActivity,
+                        AppObjectController.getFirebaseRemoteConfig().getString(
+                            FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
+                        ),
+                        inboxEntity.expiryDate?.time
+                    )
                 }
             }
         }

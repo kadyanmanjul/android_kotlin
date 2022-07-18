@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.ui.signup
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -21,6 +22,7 @@ class ChooseLanguageOnBoardFragment : BaseFragment() {
     private var languageAdapter = ChooseLanguageAdapter()
     private var is100PointsActive = false
     private var eftActive = false
+    private var isFreemiumActive = false
 
     val viewModel by lazy {
         ViewModelProvider(requireActivity()).get(FreeTrialOnBoardViewModel::class.java)
@@ -46,7 +48,7 @@ class ChooseLanguageOnBoardFragment : BaseFragment() {
 
     override fun setArguments() {}
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_choose_language_onboard, container, false)
         binding.lifecycleOwner = this
         return binding.root
@@ -65,14 +67,15 @@ class ChooseLanguageOnBoardFragment : BaseFragment() {
     }
 
     private fun addObservers() {
+        viewModel.abTestRepository.apply {
+            eftActive = isVariantActive(VariantKeys.EFT_ENABLED)
+            is100PointsActive = isVariantActive(VariantKeys.POINTS_HUNDRED_ENABLED)
+            isFreemiumActive = isVariantActive(VariantKeys.FREEMIUM_ENABLED)
+        }
         viewModel.availableLanguages.observe(viewLifecycleOwner) {
             if (it.isNullOrEmpty().not()) {
                 languageAdapter.setData(it)
             }
-        }
-        viewModel.abTestRepository.apply {
-            eftActive = isVariantActive(VariantKeys.EFT_ENABLED)
-            is100PointsActive = isVariantActive(VariantKeys.POINTS_HUNDRED_ENABLED)
         }
     }
 
@@ -87,9 +90,11 @@ class ChooseLanguageOnBoardFragment : BaseFragment() {
 
 
     fun onLanguageSelected(language: ChooseLanguages) {
-        language.let {
+        if (isFreemiumActive && language.testId == HINDI_TO_ENGLISH_TEST_ID) {
+            SignUpActivity.start(requireActivity(), language.testId)
+        } else {
             (requireActivity() as FreeTrialOnBoardActivity).showStartTrialPopup(
-                it,
+                language,
                 is100PointsActive
             )
         }

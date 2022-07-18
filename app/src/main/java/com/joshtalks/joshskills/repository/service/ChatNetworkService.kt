@@ -107,7 +107,10 @@ interface ChatNetworkService {
     ): Response<AssessmentResponse>
 
     @PATCH("$DIR/chat/add_next_class/{id}/")
-    suspend fun changeBatchRequest(@Path("id") conversationId: String): Response<Void>
+    suspend fun changeBatchRequest(
+        @Path("id") conversationId: String,
+        @Query("is_freemium") isFreemium: Boolean = false
+    ): Response<Void>
 
     @GET("$DIR/chat/lessons/")
     suspend fun getLessonList(

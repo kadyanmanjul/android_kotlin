@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.ui.signup
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -38,6 +39,7 @@ import com.joshtalks.joshskills.databinding.ActivitySignUpV2Binding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.LoginViaEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.LoginViaStatus
+import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.userprofile.viewmodel.UserProfileViewModel
 import com.joshtalks.joshskills.util.showAppropriateMsg
@@ -76,7 +78,7 @@ class SignUpActivity : BaseActivity() {
     // var verification: Verification? = null
     // private var sinchConfig: Config? = null
     private lateinit var auth: FirebaseAuth
-
+    private var testId: String? = null
     /*init {
         sinchConfig = SinchVerification.config()
             .applicationKey(BuildConfig.SINCH_API_KEY)
@@ -148,6 +150,8 @@ class SignUpActivity : BaseActivity() {
                         viewModel.saveTrueCallerImpression(IMPRESSION_ALREADY_ALREADYUSER)
                     if (PrefManager.hasKey(SPECIFIC_ONBOARDING, isConsistent = true))
                         viewModel.registerSpecificCourse()
+                    else if (intent?.hasExtra(TEST_ID) == true)
+                        viewModel.startFreeTrial(Mentor.getInstance().getId(), intent.getStringExtra(TEST_ID))
                     else {
                         startActivity(getInboxActivityIntent())
                         this@SignUpActivity.finishAffinity()
@@ -824,6 +828,17 @@ class SignUpActivity : BaseActivity() {
     override fun onDestroy() {
         window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         super.onDestroy()
+    }
+
+    companion object {
+        private const val TEST_ID: String = "TEST_ID"
+
+        @JvmStatic
+        fun start(context: Context, testId: String? = null) {
+            val starter = Intent(context, SignUpActivity::class.java)
+                .putExtra(TEST_ID, testId)
+            context.startActivity(starter)
+        }
     }
 }
 

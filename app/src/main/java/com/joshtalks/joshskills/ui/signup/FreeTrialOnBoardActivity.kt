@@ -126,9 +126,10 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
                 moveToInboxScreen()
                 PrefManager.put(IS_GUEST_ENROLLED, true)
                 PrefManager.put(IS_PAYMENT_DONE, false)
-
             } else if (languageActive)
                 openChooseLanguageFragment()
+            else if(isFreemiumCourse)
+                signUp()
             else if (is100PointsActive)
                 showStartTrialPopup(language, true)
             else
@@ -180,7 +181,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         viewModel.saveImpression(IMPRESSION_START_FREE_TRIAL)
         PrefManager.put(ONBOARDING_STAGE, OnBoardingStage.START_NOW_CLICKED.value)
         PrefManager.put(FREE_TRIAL_TEST_ID, language.testId)
-        layout.btnStartTrial.pauseAnimation()
+        layout.btnStartTrial.hideShimmer()
         val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(this)
         val inflater = this.layoutInflater
         val dialogView: View = inflater.inflate(R.layout.freetrial_alert_dialog, null)

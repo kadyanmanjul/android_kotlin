@@ -26,9 +26,9 @@
             android:contentInsetStart="0dp"
             android:contentInsetLeft="0dp"
             android:contentInsetEnd="0dp"
-            android:visibility="gone"
             android:contentInsetRight="0dp"
             android:minHeight="?attr/actionBarSize"
+            android:visibility="gone"
             app:contentInsetEnd="0dp"
             app:contentInsetEndWithActions="0dp"
             app:contentInsetLeft="0dp"
@@ -37,210 +37,87 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:theme="@style/Theme.GuidelinesCompat.Light.DarkToolbar">
-        </com.google.android.material.appbar.MaterialToolbar>
+            app:theme="@style/Theme.GuidelinesCompat.Light.DarkToolbar" />
 
-        <ScrollView
-            android:id="@+id/scroll_view"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/header"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:fillViewport="true"
-            app:layout_constraintBottom_toTopOf="@id/floating_container"
+            android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_4sdp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_vertical|start"
+                android:paddingStart="@dimen/_4sdp"
+                android:paddingTop="@dimen/_6sdp"
+                android:paddingBottom="@dimen/_6sdp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_arrow_back" />
 
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/iv_back"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/_4sdp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:gravity="center_vertical|start"
-                    android:paddingTop="@dimen/_6sdp"
-                    android:paddingBottom="@dimen/_6sdp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/ic_arrow_back" />
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/no_internet"
+                android:layout_width="@dimen/_100sdp"
+                android:layout_height="@dimen/_100sdp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_no_internet" />
 
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/no_internet"
-                    android:layout_width="@dimen/_100sdp"
-                    android:layout_height="@dimen/_100sdp"
-                    android:visibility="gone"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:srcCompat="@drawable/ic_no_internet"/>
 
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/free_trial_timer"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/_16sdp"
-                    android:layout_marginTop="33dp"
-                    android:layout_marginEnd="@dimen/_6sdp"
-                    android:background="@drawable/free_trial_bg_timer"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
-                    android:textColor="#FF0000"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/iv_back"
-                    tools:text="Free Trial ends in 06:00:00" />
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/apply_coupon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_12sdp"
+                android:layout_marginRight="@dimen/_7sdp"
+                android:shadowColor="#4A4545"
+                android:shadowDx="0"
+                android:shadowDy="4"
+                android:shadowRadius="8"
+                android:text="Apply Coupon"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8"
+                android:textColor="@color/white"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/apply_coupon"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_12sdp"
-                    android:layout_marginRight="@dimen/_7sdp"
-                    android:shadowColor="#4A4545"
-                    android:shadowDx="0"
-                    android:shadowDy="4"
-                    android:shadowRadius="8"
-                    android:text="Apply Coupon"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8"
-                    android:textColor="@color/white"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/discount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/_7sdp"
+                android:shadowColor="@color/black"
+                android:shadowDx="3"
+                android:shadowDy="3"
+                android:shadowRadius="10"
+                android:text="20% OFF"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8"
+                android:textColor="#25D366"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/apply_coupon" />
 
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/discount"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:shadowColor="@color/black"
-                    android:layout_marginRight="@dimen/_7sdp"
-                    android:shadowDx="3"
-                    android:shadowDy="3"
-                    android:shadowRadius="10"
-                    android:text="20% OFF"
-                    android:visibility="gone"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8"
-                    android:textColor="#25D366"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/apply_coupon" />
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/txt_label_heading"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/_16sdp"
-                    android:layout_marginEnd="@dimen/_12sdp"
-                    android:layout_marginTop="@dimen/_12sdp"
-                    android:letterSpacing="0"
-                    android:text="Your Free Trial has ended"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3_Bold"
-                    android:textColor="@color/black"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/free_trial_timer" />
-
-                <androidx.appcompat.widget.LinearLayoutCompat
-                    android:id="@+id/old_view_course_info"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/_32sdp"
-                    android:layout_marginTop="@dimen/_20sdp"
-                    android:layout_marginEnd="@dimen/_26sdp"
-                    android:orientation="vertical"
-                    android:visibility="gone"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/txt_label_heading"/>
-
-                <androidx.appcompat.widget.LinearLayoutCompat
-                    android:id="@+id/syllabus_layout"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone"
-                    android:layout_marginHorizontal="@dimen/_15sdp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/old_view_course_info">
-
-                    <include
-                        layout="@layout/syllabus_pdf_layout"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
-
-                </androidx.appcompat.widget.LinearLayoutCompat>
-
-                <androidx.appcompat.widget.LinearLayoutCompat
-                    android:id="@+id/cards_container"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_15sdp"
-                    android:orientation="vertical"
-                    android:paddingTop="@dimen/_5sdp"
-                    android:visibility="visible"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/syllabus_layout"/>
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/see_course_list"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/_8sdp"
-                    android:layout_marginHorizontal="@dimen/_16sdp"
-                    android:text="See course list >>>"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
-                    android:textColor="@color/colorPrimary"
-                    android:visibility="gone"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="@id/cards_container"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintStart_toStartOf="@id/cards_container"
-                    app:layout_constraintTop_toBottomOf="@id/cards_container" />
-
-                <androidx.constraintlayout.widget.Barrier
-                    android:id="@+id/barrier_phone"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone"
-                    app:barrierDirection="bottom"
-                    app:constraint_referenced_ids="see_course_list,cards_container" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-        </ScrollView>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <FrameLayout
-            android:id="@+id/progress_bar"
-            android:layout_width="0dp"
+            android:id="@+id/container"
+            android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:background="@color/transparent_black_alpha_70"
-            android:elevation="@dimen/_2sdp"
-            android:visibility="gone"
-            android:onClick="@{null}"
             app:layout_constraintBottom_toTopOf="@id/floating_container"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toBottomOf="@id/header" />
 
-            <com.pnikosis.materialishprogress.ProgressWheel
-                android:layout_width="@dimen/_82sdp"
-                android:layout_height="@dimen/_82sdp"
-                android:layout_gravity="center"
-                wheel:matProg_barColor="@color/button_color"
-                wheel:matProg_fillRadius="true"
-                wheel:matProg_linearProgress="false"
-                wheel:matProg_progressIndeterminate="true"
-                wheel:matProg_rimColor="#33128C7E"
-                wheel:matProg_rimWidth="@dimen/_2sdp" />
-
-        </FrameLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/floating_container"
@@ -253,13 +130,13 @@
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/materialTextView"
+                onSingleClick="@{()->handler.startPayment()}"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/_10sdp"
                 android:layout_marginVertical="@dimen/_10sdp"
                 android:background="@drawable/bg_cta_button"
                 android:gravity="center"
-                onSingleClick="@{()->handler.startPayment()}"
                 android:padding="@dimen/_10sdp"
                 android:text="Buy Now"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7"
@@ -289,6 +166,31 @@
                 app:layout_constraintWidth_percent="0.9" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <FrameLayout
+            android:id="@+id/progress_bar"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@color/transparent_black_alpha_70"
+            android:elevation="@dimen/_2sdp"
+            android:onClick="@{null}"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.pnikosis.materialishprogress.ProgressWheel
+                android:layout_width="@dimen/_82sdp"
+                android:layout_height="@dimen/_82sdp"
+                android:layout_gravity="center"
+                wheel:matProg_barColor="@color/button_color"
+                wheel:matProg_fillRadius="true"
+                wheel:matProg_linearProgress="false"
+                wheel:matProg_progressIndeterminate="true"
+                wheel:matProg_rimColor="#33128C7E"
+                wheel:matProg_rimWidth="@dimen/_2sdp" />
+
+        </FrameLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

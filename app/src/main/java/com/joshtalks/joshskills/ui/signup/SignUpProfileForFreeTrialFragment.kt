@@ -100,7 +100,7 @@ class SignUpProfileForFreeTrialFragment : BaseSignUpFragment() {
                 }
             }
         })
-        viewModel.apiStatus.observe(viewLifecycleOwner, {
+        viewModel.apiStatus.observe(viewLifecycleOwner) {
             when (it) {
                 ApiCallStatus.START -> {
                     startProgress()
@@ -116,7 +116,7 @@ class SignUpProfileForFreeTrialFragment : BaseSignUpFragment() {
                     handleOnBackPressed(false)
                 }
             }
-        })
+        }
         viewModel.mentorPaymentStatus.observe(viewLifecycleOwner, {
             when (it) {
                 true -> moveToInboxScreen()

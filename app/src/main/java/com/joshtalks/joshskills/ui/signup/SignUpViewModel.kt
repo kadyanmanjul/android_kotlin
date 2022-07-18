@@ -59,6 +59,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
     var countryCode = String()
     var loginViaStatus: LoginViaStatus? = null
     val service = AppObjectController.signUpNetworkService
+    val abTestRepository by lazy { ABTestRepository() }
 
     fun signUpUsingSocial(
         loginViaStatus: LoginViaStatus,
@@ -239,12 +240,13 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
             fetchMentor()
 //            WorkManagerAdmin.userActiveStatusWorker(true)
             WorkManagerAdmin.requiredTaskAfterLoginComplete()
-            ABTestRepository().updateAllCampaigns()
-            val isCourseBought = PrefManager.getBoolValue(IS_COURSE_BOUGHT,false)
+            abTestRepository.updateAllCampaigns()
+            val isCourseBought = PrefManager.getBoolValue(IS_COURSE_BOUGHT, false)
             val courseExpiryTime =
                 PrefManager.getLongValue(com.joshtalks.joshskills.core.COURSE_EXPIRY_TIME_IN_MS)
-            if ((isCourseBought && User.getInstance().isVerified) ||  courseExpiryTime != 0L &&
-                courseExpiryTime >= System.currentTimeMillis()) {
+            if ((isCourseBought && User.getInstance().isVerified) || courseExpiryTime != 0L &&
+                courseExpiryTime >= System.currentTimeMillis()
+            ) {
                 val broadcastIntent = Intent().apply {
                     action = CALLING_SERVICE_ACTION
                     putExtra(SERVICE_BROADCAST_KEY, START_SERVICE)
@@ -316,7 +318,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
             try {
                 val map = mapOf(Pair("mentor_id", Mentor.getInstance().getId()))
                 val response = AppObjectController.commonNetworkService.checkMentorPayStatus(map)
-                if(response!=null) {
+                if (response != null) {
                     mentorPaymentStatus.postValue(response["payment"] as Boolean)
                 }
             } catch (e: Exception) {
@@ -334,7 +336,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                 if (response.isSuccessful) {
                     response.body()?.let {
                         it.isVerified = isUserVerified
-                        if(!phoneNumberComingFromTrueCaller.isNullOrEmpty() && it.phoneNumber.isNullOrEmpty()) {
+                        if (!phoneNumberComingFromTrueCaller.isNullOrEmpty() && it.phoneNumber.isNullOrEmpty()) {
                             it.phoneNumber = phoneNumberComingFromTrueCaller
                         }
                         User.getInstance().updateFromResponse(it)
@@ -432,7 +434,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
         _signUpStatus.postValue(SignUpStepStatus.ProfilePicSkipped)
     }
 
-    fun startFreeTrial(mentorId: String) {
+    fun startFreeTrial(mentorId: String, testId: String? = null) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 apiStatus.postValue(ApiCallStatus.START)
@@ -443,7 +445,11 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                             "mentor_id" to mentorId,
                             "gaid" to PrefManager.getStringValue(USER_UNIQUE_ID, false),
                             "event_name" to IMPRESSION_REGISTER_FREE_TRIAL,
-                            "test_id" to PrefManager.getStringValue(FREE_TRIAL_TEST_ID, false, FREE_TRIAL_DEFAULT_TEST_ID)
+                            "test_id" to (testId ?: PrefManager.getStringValue(
+                                FREE_TRIAL_TEST_ID,
+                                false,
+                                FREE_TRIAL_DEFAULT_TEST_ID
+                            ))
                         )
                     )
 
@@ -479,7 +485,12 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
     fun registerSpecificCourse() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val courseData = AppObjectController.gsonMapper.fromJson(PrefManager.getStringValue(SPECIFIC_ONBOARDING, isConsistent = true), SpecificOnboardingCourseData::class.java)
+                val courseData = AppObjectController.gsonMapper.fromJson(
+                    PrefManager.getStringValue(
+                        SPECIFIC_ONBOARDING,
+                        isConsistent = true
+                    ), SpecificOnboardingCourseData::class.java
+                )
                 apiStatus.postValue(ApiCallStatus.START)
                 val requestData = hashMapOf(
                     "mentor_id" to Mentor.getInstance().getId(),

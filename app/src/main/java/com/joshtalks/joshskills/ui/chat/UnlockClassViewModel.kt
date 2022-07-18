@@ -4,6 +4,8 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.abTest.VariantKeys
+import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import java.util.*
@@ -21,8 +23,9 @@ class UnlockClassViewModel(
     private val chatDao = AppObjectController.appDatabase.chatDao()
     private val lessonDao = AppObjectController.appDatabase.lessonDao()
 
-    val batchChange = MutableSharedFlow<Boolean>(replay = 0)
+    val batchChange = MutableSharedFlow<BatchChangeRequest>(replay = 0)
     val unlockNextClass = MutableSharedFlow<Boolean>(replay = 0)
+    private val abTestRepository by lazy { ABTestRepository() }
 
     fun canWeAddUnlockNextClass(chatId: String) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -56,15 +59,19 @@ class UnlockClassViewModel(
     fun updateBatchChangeRequest() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val response = chatNetworkService.changeBatchRequest(inboxEntity.conversation_id)
-                if (response.isSuccessful) {
-                    batchChange.emit(true)
+                val isFreemium = abTestRepository.isVariantActive(VariantKeys.FREEMIUM_ENABLED)
+                val response = chatNetworkService.changeBatchRequest(inboxEntity.conversation_id, isFreemium)
+                if (response.code() == 405) {
+                    batchChange.emit(BatchChangeRequest.BUY_NOW)
+                    return@launch
+                } else if (response.isSuccessful) {
+                    batchChange.emit(BatchChangeRequest.SUCCESS)
                     return@launch
                 }
             } catch (ex: Throwable) {
                 ex.printStackTrace()
             }
-            batchChange.emit(false)
+            batchChange.emit(BatchChangeRequest.FAILURE)
         }
 
     }
@@ -79,4 +86,9 @@ class UnlockClassViewModel(
         }
     }
 
+    enum class BatchChangeRequest {
+        BUY_NOW,
+        SUCCESS,
+        FAILURE
+    }
 }

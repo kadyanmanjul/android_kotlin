@@ -1,34 +1,52 @@
 package com.joshtalks.joshskills.ui.payment
 
 import android.app.Application
+import android.os.Message
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.FreeTrialPaymentResponse
+import com.joshtalks.joshskills.repository.server.FreemiumPaymentResponse
 import com.joshtalks.joshskills.repository.server.OrderDetailResponse
-import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
-import java.net.SocketTimeoutException
-import java.net.UnknownHostException
+import com.joshtalks.joshskills.util.showAppropriateMsg
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import retrofit2.Response
 import timber.log.Timber
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
+
+const val ERROR_OCCURRED = 0
+const val ENABLE_BUY_BUTTON = 1
+const val DISABLE_BUY_BUTTON = 2
+const val HIDE_PROGRESS_BAR = 3
+const val SHOW_PROGRESS_BAR = 4
+const val OPEN_COURSE_EXPLORE_ACTIVITY = 5
+const val ENGLISH_CARD_TAPPED = 6
+const val SUBSCRIPTION_CARD_TAPPED = 7
 
 class FreeTrialPaymentViewModel(application: Application) : AndroidViewModel(application) {
 
+    val freemiumPaymentDetailsLiveData: MutableLiveData<FreemiumPaymentResponse> = MutableLiveData()
+    val paymentButtonText = MutableLiveData("Buy Now")
     var paymentDetailsLiveData = MutableLiveData<FreeTrialPaymentResponse>()
     var orderDetailsLiveData = MutableLiveData<OrderDetailResponse>()
     var isProcessing = MutableLiveData<Boolean>()
     val mentorPaymentStatus: MutableLiveData<Boolean> = MutableLiveData()
     val abTestRepository: ABTestRepository by lazy { ABTestRepository() }
+    val event = EventLiveData
+    val index = MutableLiveData<Int>(1)
 
     fun postGoal(goal: String, campaign: String?) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -148,6 +166,31 @@ class FreeTrialPaymentViewModel(application: Application) : AndroidViewModel(app
                 mentorPaymentStatus.postValue(response["payment"] as Boolean)
             } catch (e: Exception) {
                 e.printStackTrace()
+            }
+        }
+    }
+
+    fun getFreemiumPaymentDetails(testId: String, couponCode: String = EMPTY) {
+        viewModelScope.launch(Dispatchers.IO) {
+            isProcessing.postValue(true)
+            val data = HashMap<String, Any>()
+            data["test_id"] = testId
+            data["coupon"] = couponCode
+            try {
+                val response = AppObjectController.signUpNetworkService.getFreemiumPaymentData(data)
+                if (response.isSuccessful) {
+                    freemiumPaymentDetailsLiveData.postValue(response.body())
+                } else {
+                    showToast(AppObjectController.joshApplication.getString(R.string.something_went_wrong))
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                event.postValue(Message().apply {
+                    what = ERROR_OCCURRED
+                })
+                e.showAppropriateMsg()
+            } finally {
+                isProcessing.postValue(false)
             }
         }
     }
