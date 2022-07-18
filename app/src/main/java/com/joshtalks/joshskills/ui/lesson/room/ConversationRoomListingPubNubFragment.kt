@@ -49,7 +49,6 @@ import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
 import com.joshtalks.joshskills.ui.lesson.LessonViewModel
 import com.joshtalks.joshskills.ui.lesson.ROOM_POSITION
-import com.joshtalks.joshskills.ui.voip.WebRtcService.Companion.isRoomCreatedByUser
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -825,7 +824,6 @@ class ConversationRoomListingPubNubFragment : CoreJoshFragment(),
         }
         super.onDestroy()
         pubnub?.destroy()
-        isRoomCreatedByUser = false
     }
 
     private fun setUpRecyclerView() {

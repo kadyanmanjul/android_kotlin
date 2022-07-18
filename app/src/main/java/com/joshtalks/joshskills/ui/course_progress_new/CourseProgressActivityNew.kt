@@ -37,9 +37,7 @@ import kotlinx.coroutines.launch
 
 const val COURSE_ID = "course_id"
 
-class CourseProgressActivityNew :
-    WebRtcMiddlewareActivity(),
-    CourseProgressAdapter.ProgressItemClickListener {
+class CourseProgressActivityNew : CoreJoshActivity(), CourseProgressAdapter.ProgressItemClickListener {
     private var pdfViewStub: Stub<PdfCourseProgressView>? = null
     private var courseOverviewResponse: List<CourseOverviewResponse>? = null
 

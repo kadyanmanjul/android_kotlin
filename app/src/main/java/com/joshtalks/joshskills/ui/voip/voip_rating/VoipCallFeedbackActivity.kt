@@ -34,7 +34,6 @@ import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.databinding.VoipCallFeedbackViewBinding
 import com.joshtalks.joshskills.repository.local.model.KFactor
 import com.joshtalks.joshskills.ui.practise.PracticeViewModel
-import com.joshtalks.joshskills.ui.voip.SHOW_FPP_DIALOG
 import com.joshtalks.joshskills.ui.voip.share_call.ShareWithFriendsActivity
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -151,7 +150,7 @@ class VoipCallFeedbackActivity : BaseActivity(){
             yourAgoraId = it.getIntExtra(ARG_YOUR_AGORA_ID, 0)
             callerName = it.getStringExtra(ARG_CALLER_NAME) ?: EMPTY
             yourName = it.getStringExtra(ARG_YOUR_NAME) ?: EMPTY
-            fppDialogFlag = it.getStringExtra(SHOW_FPP_DIALOG)
+            fppDialogFlag = "false" //TODO : Remove this fppDialogFlag
             binding.txtMessage.text = msz.replaceFirst("#", callerName)
 
             if (fppDialogFlag=="true"){
@@ -332,7 +331,6 @@ class VoipCallFeedbackActivity : BaseActivity(){
                 putExtra(ARG_DIM_BACKGROUND, dimBg)
                 putExtra(ARG_CALLER_ID, callerId)
                 putExtra(ARG_CURRENT_ID, currentUserId)
-                putExtra(SHOW_FPP_DIALOG, fppDialogFlag)
                 flags.forEach { flag ->
                     this.addFlags(flag)
                 }

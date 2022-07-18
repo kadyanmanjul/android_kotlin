@@ -101,15 +101,6 @@ data class FirestoreNewNotificationObject(
         it.deeplink = deeplink
         it.extraData = extraData
         it.action = when (action) {
-            NotificationAction.INCOMING_CALL_NOTIFICATION.type -> NotificationAction.INCOMING_CALL_NOTIFICATION
-            NotificationAction.CALL_DISCONNECT_NOTIFICATION.type -> NotificationAction.CALL_DISCONNECT_NOTIFICATION
-            NotificationAction.CALL_FORCE_CONNECT_NOTIFICATION.type -> NotificationAction.CALL_FORCE_CONNECT_NOTIFICATION
-            NotificationAction.CALL_FORCE_DISCONNECT_NOTIFICATION.type -> NotificationAction.CALL_FORCE_DISCONNECT_NOTIFICATION
-            NotificationAction.CALL_DECLINE_NOTIFICATION.type -> NotificationAction.CALL_DECLINE_NOTIFICATION
-            NotificationAction.CALL_NO_USER_FOUND_NOTIFICATION.type -> NotificationAction.CALL_NO_USER_FOUND_NOTIFICATION
-            NotificationAction.CALL_ON_HOLD_NOTIFICATION.type -> NotificationAction.CALL_ON_HOLD_NOTIFICATION
-            NotificationAction.CALL_RESUME_NOTIFICATION.type -> NotificationAction.CALL_RESUME_NOTIFICATION
-            NotificationAction.CALL_CONNECTED_NOTIFICATION.type -> NotificationAction.CALL_CONNECTED_NOTIFICATION
             NotificationAction.JOIN_CONVERSATION_ROOM.type -> NotificationAction.JOIN_CONVERSATION_ROOM
             NotificationAction.ACTION_OPEN_FREE_TRIAL_SCREEN.type -> NotificationAction.ACTION_OPEN_FREE_TRIAL_SCREEN
             NotificationAction.ACTION_COMPLETE_ONBOARDING.type -> NotificationAction.ACTION_COMPLETE_ONBOARDING

@@ -23,7 +23,6 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.conversationRoom.liveRooms.ConversationLiveRoomActivity
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.ui.voip.NotificationId
 import org.json.JSONObject
 import java.util.*
 
@@ -91,12 +90,7 @@ class HeadsUpNotificationService : Service() {
                         stopForeground(true)
                         stopSelf()
                     } else {
-                        addNotification(
-                            moderatorName,
-                            topic,
-                            roomId,
-                            intent
-                        )
+//                        addNotification(moderatorName, topic, roomId, intent)
                     }
                 }
             } catch (e: Exception) {
@@ -106,7 +100,7 @@ class HeadsUpNotificationService : Service() {
         return START_STICKY
     }
 
-    private fun addNotification(name: String, topic: String, roomId: String, intent: Intent?) {
+    /*private fun addNotification(name: String, topic: String, roomId: String, intent: Intent?) {
         val notificationBuilder = incomingCallNotification(roomId, intent, name, topic)
 
         var incomingCallNotification: Notification? = null
@@ -120,7 +114,7 @@ class HeadsUpNotificationService : Service() {
                     applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
                 notificationManager.cancel(9999)
                 val it = Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS)
-                sendBroadcast(it)
+                //sendBroadcast(it)
                 stopSelf()
             }
         }
@@ -272,7 +266,7 @@ class HeadsUpNotificationService : Service() {
         }
         builder.setShowWhen(false)
         return builder
-    }
+    }*/
 
     private fun getRemoteViews(isFavorite: Boolean, name: String, topic: String): RemoteViews {
         val layout = if (isFavorite) {

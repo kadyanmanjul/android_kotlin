@@ -8,7 +8,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.WebRtcMiddlewareActivity
+import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.databinding.ActivitySpokenHistoryBinding
@@ -19,7 +19,7 @@ import com.joshtalks.joshskills.ui.points_history.viewmodel.PointsViewModel
 import kotlinx.android.synthetic.main.base_toolbar.*
 import java.text.DecimalFormat
 
-class SpokenHistoryActivity : WebRtcMiddlewareActivity() {
+class SpokenHistoryActivity : CoreJoshActivity() {
     private val viewModel: PointsViewModel by lazy {
         ViewModelProvider(this).get(PointsViewModel::class.java)
     }

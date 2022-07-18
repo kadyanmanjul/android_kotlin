@@ -76,7 +76,8 @@ import com.joshtalks.joshskills.core.datetimeutils.DateTimeUtils
 import com.joshtalks.joshskills.core.pstn_states.PSTNState
 import com.joshtalks.joshskills.core.pstn_states.PstnObserver
 import com.joshtalks.joshskills.repository.local.model.User
-import com.joshtalks.joshskills.ui.voip.WebRtcService
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
+import com.joshtalks.joshskills.voip.constant.State
 import com.muddzdev.styleabletoast.StyleableToast
 import de.hdodenhof.circleimageview.CircleImageView
 import github.nisrulz.easydeviceinfo.base.EasyConfigMod
@@ -1050,7 +1051,7 @@ fun getCountryIsoCode(number: String, countryRegion: String): String {
 }
 
 fun isCallOngoing(message: Int = R.string.call_engage_record_message): Boolean {
-    if (WebRtcService.isCallOnGoing.value == true) {
+    if (AppObjectController.joshApplication.getVoipState() == State.IDLE) {
         showToast(
             message = AppObjectController.joshApplication.getString(message),
             length = Toast.LENGTH_SHORT

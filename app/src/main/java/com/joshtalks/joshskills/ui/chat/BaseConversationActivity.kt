@@ -11,8 +11,8 @@ import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
 import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.PermissionUtils
-import com.joshtalks.joshskills.core.WebRtcMiddlewareActivity
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.analytics.ParamKeys
@@ -31,7 +31,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import java.util.*
 
-abstract class BaseConversationActivity : WebRtcMiddlewareActivity() {
+abstract class BaseConversationActivity : CoreJoshActivity() {
     private lateinit var internetAvailableStatus: Snackbar
     protected val uiHandler = AppObjectController.uiHandler
     protected val compositeDisposable = CompositeDisposable()
@@ -206,101 +206,4 @@ abstract class BaseConversationActivity : WebRtcMiddlewareActivity() {
             created = lastMessage.created
         }
     }
-
-/*
-
-   override fun onNewIntent(mIntent: Intent) {
-        intent = mIntent
-        super.processIntent(mIntent)
-        if (intent.hasExtra(UPDATED_CHAT_ROOM_OBJECT)) {
-            flowFrom = "Notification"
-            val temp = intent.getParcelableExtra(UPDATED_CHAT_ROOM_OBJECT) as InboxEntity?
-            if (temp == null) {
-                this.finish()
-            }
-            temp?.let { inboxObj ->
-                try {
-                    val tempIn: InboxEntity = inboxEntity
-                    if (tempIn.conversation_id != inboxObj.conversation_id) {
-                        this.inboxEntity = inboxObj
-                    }
-                } catch (ex: Exception) {
-                    this.finish()
-                    ex.printStackTrace()
-                }
-                fetchMessage()
-            }
-        }
-        if (intent.hasExtra(HAS_COURSE_REPORT)) {
-            openCourseProgressListingScreen()
-        }
-        if (intent.hasExtra(FOCUS_ON_CHAT_ID)) {
-            mIntent.getParcelableExtra<ChatModel>(FOCUS_ON_CHAT_ID)?.chatId?.run {
-                scrollToPosition(this)
-            }
-        }
-        notificationActionProcess()
-        super.onNewIntent(mIntent)
-    }
-
-
-    private fun notificationActionProcess() {
-        val questionId = intent.getStringExtra(QUESTION_ID) ?: EMPTY
-        (intent.getSerializableExtra(ShareConstants.ACTION_TYPE) as NotificationAction?)?.let {
-            if (it == NotificationAction.ACTION_OPEN_QUESTION && questionId.isNotEmpty()) {
-                intent.removeExtra(QUESTION_ID)
-                intent.removeExtra(ShareConstants.ACTION_TYPE)
-                CoroutineScope(Dispatchers.IO).launch {
-                    val question: Question? =
-                        AppObjectController.appDatabase.chatDao().getQuestionOnIdV2(questionId)
-                    if (question != null) {
-                        val chatModel: ChatModel =
-                            AppObjectController.appDatabase.chatDao()
-                                .getUpdatedChatObjectViaId(question.chatId)
-
-                        when {
-                            question.type == BASE_MESSAGE_TYPE.QUIZ || question.type == BASE_MESSAGE_TYPE.TEST -> {
-                                AssessmentActivity.startAssessmentActivity(
-                                    this@ConversationActivity,
-                                    ASSESSMENT_REQUEST_CODE,
-                                    question.assessmentId ?: 0
-                                )
-                            }
-                            question.type == BASE_MESSAGE_TYPE.CP -> {
-
-                                chatModel.question?.conversationPracticeId?.let { cpId ->
-                                    ConversationPracticeActivity.startConversationPracticeActivity(
-                                        this@ConversationActivity,
-                                        CONVERSATION_PRACTISE_REQUEST_CODE,
-                                        cpId,
-                                        chatModel.question?.imageList?.getOrNull(0)?.imageUrl
-                                    )
-                                }
-                            }
-                            question.type == BASE_MESSAGE_TYPE.PR -> {
-                                PractiseSubmitActivity.startPractiseSubmissionActivity(
-                                    this@ConversationActivity,
-                                    PRACTISE_SUBMIT_REQUEST_CODE,
-                                    chatModel
-                                )
-                            }
-                            question.material_type == BASE_MESSAGE_TYPE.VI -> {
-                                VideoPlayerActivity.startConversionActivity(
-                                    this@ConversationActivity,
-                                    chatModel,
-                                    inboxEntity.course_name,
-                                    inboxEntity.duration
-                                )
-                            }
-                            else -> {
-                                return@launch
-                            }
-                        }
-                    }
-                }
-            }
-
-        }
-    }
-*/
 }

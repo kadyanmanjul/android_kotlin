@@ -31,7 +31,6 @@ import com.joshtalks.joshskills.ui.group.constants.*
 import com.joshtalks.joshskills.ui.group.model.GroupItemData
 import com.joshtalks.joshskills.ui.group.utils.getMemberCount
 import com.joshtalks.joshskills.ui.group.viewmodels.JoshGroupViewModel
-import com.joshtalks.joshskills.ui.voip.SearchingUserActivity
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity
 import com.joshtalks.joshskills.voip.constant.Category
 
@@ -175,18 +174,6 @@ class JoshVoipGroupActivity : BaseGroupActivity() {
                 putExtra(INTENT_DATA_GROUP_NAME, groupItemData?.getTitle())
             }
             startActivity(callIntent)
-        } else {
-            val intent = SearchingUserActivity.startUserForPractiseOnPhoneActivity(
-                this,
-                courseId = "151",
-                topicId = 5,
-                groupId = groupItemData?.getUniqueId(),
-                isGroupCallCall = true,
-                topicName = "Group Call",
-                favoriteUserCall = false,
-                groupName = groupItemData?.getTitle()
-            )
-            startActivity(intent)
         }
         finish()
     }

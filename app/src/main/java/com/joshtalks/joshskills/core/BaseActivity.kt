@@ -85,7 +85,6 @@ import com.joshtalks.joshskills.ui.termsandconditions.WebViewFragment
 import com.joshtalks.joshskills.ui.userprofile.fragments.ShowAnimatedLeaderBoardFragment
 import com.joshtalks.joshskills.ui.userprofile.fragments.ShowAwardFragment
 import com.joshtalks.joshskills.ui.userprofile.models.Award
-import com.joshtalks.joshskills.ui.voip.WebRtcActivity
 import com.moengage.core.MoECoreHelper
 import com.patloew.colocation.CoLocation
 import io.branch.referral.Branch
@@ -264,27 +263,6 @@ abstract class BaseActivity :
             ex.printStackTrace()
         }
         return false
-    }
-
-    fun containsFavUserCallBackUrl(): Boolean {
-        try {
-            return intent?.dataString?.contains("app.joshtalks.org/sht/ag") ?: false
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-        }
-        return false
-    }
-
-    fun getWebRtcActivityIntent(): Intent {
-        val partnerUid = intent?.dataString?.split("/")?.lastOrNull()?.toInt()
-        return if (partnerUid != null) {
-            WebRtcActivity.getFavMissedCallbackIntent(partnerUid, this).apply {
-                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            }
-        } else {
-            getInboxActivityIntent()
-        }
     }
 
     fun getInboxActivityIntent(isFromOnBoardingFlow: Boolean = false): Intent {

@@ -67,7 +67,6 @@ import com.joshtalks.joshskills.ui.referral.EnterReferralCodeFragment
 import com.joshtalks.joshskills.ui.signup.FLOW_FROM
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.ui.startcourse.StartCourseActivity
-import com.joshtalks.joshskills.ui.voip.IS_DEMO_P2P
 import com.razorpay.Checkout
 import com.razorpay.PaymentResultListener
 import com.singular.sdk.Singular

@@ -5,7 +5,6 @@ import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.firestore.FirestoreDB
 import com.joshtalks.joshskills.repository.local.model.ShortNotificationObject
-import com.joshtalks.joshskills.ui.voip.analytics.VoipAnalytics
 import com.moengage.core.LogLevel
 import com.moengage.core.internal.logger.Logger
 import com.moengage.mi.MoEMiPushHelper
@@ -123,11 +122,6 @@ class MiPushReceiver : PushMessageReceiver() {
 
             FirestoreDB.getNotification {
                 val nc = it.toNotificationObject(shortNc.id)
-                if (remoteData["nType"] == "CR") {
-                    nc.actionData?.let {
-                        VoipAnalytics.pushIncomingCallAnalytics(it)
-                    }
-                }
                 NotificationUtils(context).sendNotification(nc)
             }
         }

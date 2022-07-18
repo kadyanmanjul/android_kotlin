@@ -32,12 +32,6 @@ import com.joshtalks.joshskills.core.startServiceForWebrtc
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.ConvoRoomPointsEventBus
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.ui.voip.ConversationRoomJoin
-import com.joshtalks.joshskills.ui.voip.InitLibrary
-import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.INCOMING_CALL_NOTIFICATION_ID
-import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.ROOM_CALL_NOTIFICATION_ID
-import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.ROOM_NOTIFICATION_CHANNEL
-import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.joshtalks.joshskills.ui.voip.util.TelephonyUtil
 import com.joshtalks.joshskills.ui.voip.util.WebRtcAudioManager
 import io.agora.rtc.Constants
@@ -116,17 +110,6 @@ class ConvoWebRtcService : Service() {
         @Volatile
         private var conversationRoomCallback: WeakReference<ConversationRoomCallback>? = null
 
-        fun initLibrary() {
-            val serviceIntent = Intent(
-                AppObjectController.joshApplication,
-                ConvoWebRtcService::class.java
-            ).apply {
-                action = InitLibrary().action
-            }
-            WebRtcService.disableP2P()
-            serviceIntent.startServiceForWebrtc()
-        }
-
         fun conversationRoomJoin(
             token: String?,
             channelName: String?,
@@ -140,7 +123,7 @@ class ConvoWebRtcService : Service() {
                 AppObjectController.joshApplication,
                 ConvoWebRtcService::class.java
             ).apply {
-                action = ConversationRoomJoin().action
+//                action = ConversationRoomJoin().action
                 putExtra(ROOM_RTC_TOKEN_KEY, token)
                 putExtra(ROOM_RTC_CHANNEL_KEY, channelName)
                 putExtra(ROOM_RTC_USER_UID_KEY, uid)
@@ -458,7 +441,7 @@ class ConvoWebRtcService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Timber.tag(TAG).e("onStartCommand=  %s", intent?.action)
         removeNotifications()
-        executor.execute {
+        /*executor.execute {
             intent?.action?.run {
                 setData(intent)
                 initEngine {
@@ -499,7 +482,7 @@ class ConvoWebRtcService : Service() {
                     }
                 }
             }
-        }
+        }*/
         return START_NOT_STICKY
     }
 
@@ -575,8 +558,8 @@ class ConvoWebRtcService : Service() {
     }
 
     fun removeIncomingNotification() {
-        mNotificationManager?.cancel(ROOM_CALL_NOTIFICATION_ID)
-        mNotificationManager?.cancel(INCOMING_CALL_NOTIFICATION_ID)
+//        mNotificationManager?.cancel(ROOM_CALL_NOTIFICATION_ID)
+//        mNotificationManager?.cancel(INCOMING_CALL_NOTIFICATION_ID)
     }
 
     fun muteCall() {
@@ -620,8 +603,8 @@ class ConvoWebRtcService : Service() {
 
     private fun removeNotifications() {
         try {
-            mNotificationManager?.cancel(ROOM_CALL_NOTIFICATION_ID)
-            mNotificationManager?.cancel(INCOMING_CALL_NOTIFICATION_ID)
+//            mNotificationManager?.cancel(ROOM_CALL_NOTIFICATION_ID)
+//            mNotificationManager?.cancel(INCOMING_CALL_NOTIFICATION_ID)
             stopForeground(true)
         } catch (ex: Exception) {
             ex.printStackTrace()
@@ -669,8 +652,7 @@ class ConvoWebRtcService : Service() {
         }
     }
 
-    private fun conversationRoomNotification(action : String): Notification {
-        // TODO
+    /*private fun conversationRoomNotification(action : String): Notification {
         var isHavingPendingIntent = true
         if (action == InitLibrary().action){
             isHavingPendingIntent = false
@@ -741,7 +723,7 @@ class ConvoWebRtcService : Service() {
 
         lNotificationBuilder.priority = NotificationCompat.PRIORITY_MAX
         return lNotificationBuilder.build()
-    }
+    }*/
 
 }
 

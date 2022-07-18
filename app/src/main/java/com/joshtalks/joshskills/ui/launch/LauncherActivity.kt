@@ -264,7 +264,6 @@ class LauncherActivity : CoreJoshActivity(), Branch.BranchReferralInitListener {
                 }
             }
             isUserProfileNotComplete() -> Intent(this@LauncherActivity, SignUpActivity::class.java)
-            containsFavUserCallBackUrl() -> getWebRtcActivityIntent()
             jsonParams != null -> if (DeepLinkRedirectUtil.getIntent(
                     this@LauncherActivity,
                     jsonParams!!,

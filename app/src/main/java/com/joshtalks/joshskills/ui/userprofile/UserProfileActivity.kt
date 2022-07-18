@@ -100,8 +100,8 @@ const val FOR_REST = "For_Rest"
 const val FOR_EDIT_SCREEN = "For_Edit_Screen"
 const val TOOLTIP_USER_PROFILE_SCREEN = "TOOLTIP_USER_PROFILE_SCREEN_"
 const val REFERRAL_COUNT = "REFERRAL_COUNT"
-class
-UserProfileActivity : WebRtcMiddlewareActivity() {
+
+class UserProfileActivity : CoreJoshActivity() {
 
     lateinit var binding: ActivityUserProfileBinding
     private var mentorId: String = EMPTY

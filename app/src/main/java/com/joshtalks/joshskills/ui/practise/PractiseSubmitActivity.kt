@@ -38,8 +38,6 @@ import com.google.android.exoplayer2.Player
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.greentoad.turtlebody.mediapicker.MediaPicker
 import com.greentoad.turtlebody.mediapicker.core.MediaPickerConfig
-import com.joshtalks.joshcamerax.utils.ImageQuality
-import com.joshtalks.joshcamerax.utils.Options
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
@@ -81,7 +79,7 @@ const val IMAGE_OR_VIDEO_SELECT_REQUEST_CODE = 1081
 const val TEXT_FILE_ATTACHMENT_REQUEST_CODE = 1082
 
 class PractiseSubmitActivity :
-    WebRtcMiddlewareActivity(),
+    CoreJoshActivity(),
     Player.EventListener,
     AudioPlayerEventListener,
     ProgressUpdateListener {

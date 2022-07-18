@@ -9,7 +9,6 @@ import android.content.Intent
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
-import android.util.Log
 import android.os.Bundle
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
@@ -34,7 +33,6 @@ import com.joshtalks.joshskills.core.JoshApplication
 import com.joshtalks.joshskills.core.JoshSkillExecutors
 import com.joshtalks.joshskills.core.PREF_IS_CONVERSATION_ROOM_ACTIVE
 import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.USER_ACTIVE_IN_GAME
 import com.joshtalks.joshskills.core.analytics.DismissNotifEventReceiver
 import com.joshtalks.joshskills.core.firestore.FirestoreDB
 import com.joshtalks.joshskills.core.firestore.NotificationAnalytics
@@ -71,20 +69,6 @@ import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.reminder.reminder_listing.ReminderListActivity
 import com.joshtalks.joshskills.ui.signup.FreeTrialOnBoardActivity
-import com.joshtalks.joshskills.ui.voip.OPPOSITE_USER_UID
-import com.joshtalks.joshskills.ui.voip.RTC_CALLER_PHOTO
-import com.joshtalks.joshskills.ui.voip.RTC_CALLER_UID_KEY
-import com.joshtalks.joshskills.ui.voip.RTC_CALL_ID
-import com.joshtalks.joshskills.ui.voip.RTC_CHANNEL_KEY
-import com.joshtalks.joshskills.ui.voip.RTC_IS_FAVORITE
-import com.joshtalks.joshskills.ui.voip.RTC_IS_GROUP_CALL
-import com.joshtalks.joshskills.ui.voip.RTC_NAME
-import com.joshtalks.joshskills.ui.voip.RTC_TOKEN_KEY
-import com.joshtalks.joshskills.ui.voip.RTC_UID_KEY
-import com.joshtalks.joshskills.ui.voip.RTC_WEB_GROUP_CALL_GROUP_NAME
-import com.joshtalks.joshskills.ui.voip.RTC_WEB_GROUP_PHOTO
-import com.joshtalks.joshskills.ui.voip.WebRtcService
-import com.joshtalks.joshskills.ui.voip.analytics.VoipAnalytics
 import com.joshtalks.joshskills.ui.voip.favorite.FavoriteListActivity
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
 import com.joshtalks.joshskills.voip.constant.*
@@ -124,11 +108,6 @@ class NotificationUtils(val context: Context) {
 
             FirestoreDB.getNotification {
                 val nc = it.toNotificationObject(shortNc.id)
-                if (remoteData.data["nType"] == "CR") {
-                    nc.actionData?.let {
-                        VoipAnalytics.pushIncomingCallAnalytics(it)
-                    }
-                }
                 sendNotification(nc)
             }
         } else {
@@ -455,15 +434,6 @@ class NotificationUtils(val context: Context) {
                     flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
                 }
             }
-            NotificationAction.INCOMING_CALL_NOTIFICATION -> {
-                if (!PrefManager.getBoolValue(
-                        PREF_IS_CONVERSATION_ROOM_ACTIVE
-                    ) && !PrefManager.getBoolValue(USER_ACTIVE_IN_GAME)
-                ) {
-                    incomingCallNotificationAction(notificationObject.actionData)
-                }
-                return null
-            }
             NotificationAction.JOIN_CONVERSATION_ROOM -> {
                 if (!PrefManager.getBoolValue(PREF_IS_CONVERSATION_ROOM_ACTIVE) && User.getInstance().isVerified
                     && PrefManager.getBoolValue(IS_CONVERSATION_ROOM_ACTIVE_FOR_USER)
@@ -483,45 +453,6 @@ class NotificationUtils(val context: Context) {
                                 roomId, topicName = topic
                             )
                         } else return null
-                    }
-                }
-                return null
-            }
-            NotificationAction.CALL_DISCONNECT_NOTIFICATION -> {
-                callDisconnectNotificationAction()
-                return null
-            }
-            NotificationAction.CALL_FORCE_CONNECT_NOTIFICATION -> {
-                callForceConnect(notificationObject.actionData)
-                return null
-            }
-            NotificationAction.CALL_FORCE_DISCONNECT_NOTIFICATION -> {
-                callForceDisconnect()
-                return null
-            }
-            NotificationAction.CALL_DECLINE_NOTIFICATION -> {
-                callDeclineDisconnect()
-                return null
-            }
-            NotificationAction.CALL_NO_USER_FOUND_NOTIFICATION -> {
-                WebRtcService.noUserFoundCallDisconnect()
-                return null
-            }
-            NotificationAction.CALL_ON_HOLD_NOTIFICATION -> {
-                WebRtcService.holdCall()
-                return null
-            }
-            NotificationAction.CALL_RESUME_NOTIFICATION -> {
-                WebRtcService.resumeCall()
-                return null
-            }
-            NotificationAction.CALL_CONNECTED_NOTIFICATION -> {
-                if (notificationObject.actionData != null) {
-                    try {
-                        val obj = JSONObject(notificationObject.actionData!!)
-                        WebRtcService.userJoined(obj.getInt(OPPOSITE_USER_UID))
-                    } catch (ex: Exception) {
-                        ex.printStackTrace()
                     }
                 }
                 return null
@@ -871,92 +802,6 @@ class NotificationUtils(val context: Context) {
 //            }
 //        }
         return rIntent
-    }
-
-    private fun callForceDisconnect() {
-        WebRtcService.forceDisconnect()
-    }
-
-    private fun callDeclineDisconnect() {
-        WebRtcService.declineDisconnect()
-    }
-
-    private fun callForceConnect(actionData: String?) {
-        actionData?.let {
-            try {
-                val obj = JSONObject(it)
-                val data = HashMap<String, String>()
-                data[RTC_TOKEN_KEY] = obj.getString("token")
-                data[RTC_CHANNEL_KEY] = obj.getString("channel_name")
-                data[RTC_UID_KEY] = obj.getString("uid")
-                data[RTC_CALLER_UID_KEY] = obj.getString("caller_uid")
-                try {
-                    data[RTC_CALL_ID] = obj.getString("agoraCallId")
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-                if (obj.has("group_name"))
-                    data[RTC_WEB_GROUP_CALL_GROUP_NAME] = obj.getString("group_name")
-
-                if (obj.has("is_group_call"))
-                    data[RTC_IS_GROUP_CALL] = obj.getString("is_group_call")
-
-                if (obj.has("group_url"))
-                    data[RTC_WEB_GROUP_PHOTO] = obj.getString("group_url")
-
-                WebRtcService.currentCallingGroupName =
-                    data[RTC_WEB_GROUP_CALL_GROUP_NAME] ?: ""
-                WebRtcService.forceConnect(data)
-            } catch (t: Throwable) {
-                t.printStackTrace()
-            }
-        }
-    }
-
-    private fun callDisconnectNotificationAction() {
-        WebRtcService.disconnectCallFromCallie()
-    }
-
-    private fun incomingCallNotificationAction(actionData: String?) {
-        actionData?.let {
-            try {
-                val obj = JSONObject(it)
-                val data = HashMap<String, String?>()
-                data[RTC_TOKEN_KEY] = obj.getString("token")
-                data[RTC_CHANNEL_KEY] = obj.getString("channel_name")
-                data[RTC_UID_KEY] = obj.getString("uid")
-                data[RTC_CALLER_UID_KEY] = obj.getString("caller_uid")
-                try {
-                    data[RTC_CALL_ID] = obj.getString("agoraCallId")
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-                if (obj.has("group_name"))
-                    data[RTC_WEB_GROUP_CALL_GROUP_NAME] = obj.getString("group_name")
-
-                if (obj.has("is_group_call"))
-                    data[RTC_IS_GROUP_CALL] = obj.getString("is_group_call")
-
-                if (obj.has("group_url"))
-                    data[RTC_WEB_GROUP_PHOTO] = obj.getString("group_url")
-
-                if (obj.has("f")) {
-                    val id = obj.getInt("caller_uid")
-                    val caller =
-                        AppObjectController.appDatabase.favoriteCallerDao()
-                            .getFavoriteCaller(id)
-                    Thread.sleep(25)
-                    if (caller != null) {
-                        data[RTC_NAME] = caller.name
-                        data[RTC_CALLER_PHOTO] = caller.image
-                        data[RTC_IS_FAVORITE] = "true"
-                    }
-                }
-                WebRtcService.startOnNotificationIncomingCall(data)
-            } catch (t: Throwable) {
-                t.printStackTrace()
-            }
-        }
     }
 
     fun getDataFromMoengage(intentData: Bundle): Map<String, String?> {

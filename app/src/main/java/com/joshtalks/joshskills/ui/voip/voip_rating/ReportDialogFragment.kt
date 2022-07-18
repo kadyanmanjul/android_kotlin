@@ -17,7 +17,6 @@ import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.databinding.LayoutReportDialogFragmentBinding
-import com.joshtalks.joshskills.ui.voip.SHOW_FPP_DIALOG
 import com.joshtalks.joshskills.ui.voip.voip_rating.adapter.ReportAdapter
 
 
@@ -89,7 +88,6 @@ class ReportDialogFragment : BaseDialogFragment() {
         callerId1= mArgs?.getInt(ARG_CALLER_ID)!!
         currentId1= mArgs?.getInt(ARG_CURRENT_ID)
         channelName= mArgs?.getString(CHANNEL_NAME).toString()
-        fppDialogFlag = mArgs.getString(SHOW_FPP_DIALOG)
 
         vm.getReportOptionsListFromSharedPref(type1)
 
@@ -146,7 +144,6 @@ class ReportDialogFragment : BaseDialogFragment() {
                     putInt(ARG_CALLER_ID,callerID)
                     putInt(ARG_CURRENT_ID,currentID)
                     putString(CHANNEL_NAME,channelName)
-                    putString(SHOW_FPP_DIALOG,fppDialogFlag)
                 }
             }
     }

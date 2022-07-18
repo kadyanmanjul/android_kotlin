@@ -89,7 +89,6 @@ import com.joshtalks.joshskills.ui.tooltip.JoshTooltip
 import com.joshtalks.joshskills.ui.video_player.IS_BATCH_CHANGED
 import com.joshtalks.joshskills.ui.video_player.LAST_LESSON_INTERVAL
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
-import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
 import com.joshtalks.joshskills.voip.constant.State
 import com.karumi.dexter.MultiplePermissionsReport
@@ -117,7 +116,7 @@ private const val TAG = "LessonActivity"
 val STORAGE_GRAMMER_REQUEST_CODE = 3456
 private val STORAGE_READING_REQUEST_CODE = 3457
 
-class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, GrammarAnimation {
+class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimation {
     private val event = EventLiveData
     private lateinit var binding: LessonActivityBinding
     private val courseId = PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID)
@@ -199,9 +198,9 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         super.onCreate(savedInstanceState)
 
         try {
-            if (getVoipState() == State.IDLE && WebRtcService.isCallOnGoing.value == false)
+            if (getVoipState() == State.IDLE)
                 viewModel.getButtonVisibility()
-        }catch (ex:Exception){
+        } catch (ex: Exception) {
             ex.printStackTrace()
         }
         binding = DataBindingUtil.setContentView(
@@ -1616,7 +1615,6 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         )
     }
     private fun closeReadingFullScreen(){
-        Log.e("Ayaaz","close reading fun")
         supportFragmentManager.popBackStackImmediate()
         container_reading.visibility = View.GONE
     }

@@ -154,9 +154,9 @@ class GroupChatViewModel : BaseViewModel() {
             putString(GROUPS_TITLE, groupHeader.get())
             putString(GROUP_TYPE, groupType.get())
             putString(GROUP_TYPE, groupType.get())
-//            for FPP
-            putString(INTENT_DATA_FPP_IMAGE,imageUrl.get())
-            putString(INTENT_DATA_FPP_NAME,groupHeader.get())
+            // for FPP
+            putString(INTENT_DATA_FPP_IMAGE, imageUrl.get())
+            putString(INTENT_DATA_FPP_NAME, groupHeader.get())
 
             if (groupId == DM_CHAT)
                 putInt(AGORA_UID, agoraId)

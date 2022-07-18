@@ -1312,7 +1312,7 @@ class ReadingFragmentWithoutFeedback :
     private fun audioRecordTouchListener() {
         binding.recordTransparentContainer.setOnTouchListener { _, event ->
             if (isAdded && activity != null) {
-                if (isCallOngoing() || requireActivity().getVoipState() != State.IDLE) {
+                if (isCallOngoing()) {
                     return@setOnTouchListener false
                 }
                 if (PermissionUtils.isAudioAndStoragePermissionEnable(requireContext()).not()) {

@@ -63,10 +63,8 @@ import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.referral.ReferralViewModel
 import com.joshtalks.joshskills.ui.settings.SettingsActivity
-import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.joshtalks.joshskills.util.FileUploadService
 import com.moengage.core.analytics.MoEAnalyticsHelper
-import io.agora.rtc.RtcEngine
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.activity_inbox.recycler_view_inbox
 import kotlinx.android.synthetic.main.find_more_layout.buy_english_course
@@ -457,9 +455,6 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
 
     override fun onDestroy() {
         super.onDestroy()
-        if (WebRtcService.isCallOnGoing.value == false) {
-            RtcEngine.destroy()
-        }
         inAppUpdateManager = null
         inAppUpdateManager?.onDestroy()
     }

@@ -45,9 +45,6 @@ import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
 import com.joshtalks.joshskills.ui.referral.EnterReferralCodeFragment
 import com.joshtalks.joshskills.ui.special_practice.utils.ErrorView
 import com.joshtalks.joshskills.ui.startcourse.StartCourseActivity
-import com.joshtalks.joshskills.ui.voip.CallForceDisconnect
-import com.joshtalks.joshskills.ui.voip.IS_DEMO_P2P
-import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -150,7 +147,6 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             expiredTime = intent.getLongExtra(EXPIRED_TIME, -1)
         }
         if (intent.hasExtra(IS_FAKE_CALL)) {
-            forceDisconnectCall()
             val nameArr = User.getInstance().firstName?.split(" ")
             val firstName = if (nameArr != null) nameArr[0] else EMPTY
             showToast(getString(R.string.feature_locked, firstName), Toast.LENGTH_LONG)
@@ -189,17 +185,6 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         if (viewModel.abTestRepository.isVariantActive(VariantKeys.ICP_ENABLED)) {
             viewModel.postGoal("ICP_BUY_PAGE_SEEN", CampaignKeys.INCREASE_COURSE_PRICE.name)
         }
-    }
-
-    private fun forceDisconnectCall() {
-        val serviceIntent = Intent(
-            this,
-            WebRtcService::class.java
-        ).apply {
-            action = CallForceDisconnect().action
-            putExtra(IS_FAKE_CALL, true)
-        }
-        serviceIntent.startServiceForWebrtc()
     }
 
     override fun onBackPressed() {

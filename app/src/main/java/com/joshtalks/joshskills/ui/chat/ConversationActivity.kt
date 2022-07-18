@@ -105,7 +105,6 @@ import com.joshtalks.joshskills.ui.userprofile.models.Award
 import com.joshtalks.joshskills.ui.userprofile.models.UserProfileResponse
 import com.joshtalks.joshskills.ui.video_player.VIDEO_OBJECT
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
-import com.joshtalks.joshskills.ui.voip.IS_DEMO_P2P
 import com.joshtalks.joshskills.ui.voip.favorite.FavoriteListActivity
 import com.joshtalks.joshskills.util.ExoAudioPlayer
 import com.joshtalks.joshskills.util.StickyHeaderDecoration

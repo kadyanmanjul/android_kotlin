@@ -12,7 +12,7 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.core.USER_PROFILE_FLOW_FROM
-import com.joshtalks.joshskills.core.WebRtcMiddlewareActivity
+import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.databinding.ActivityPreviousLeaderboardBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.DeleteProfilePicEventBus
@@ -27,7 +27,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 
-class PreviousLeaderboardActivity : WebRtcMiddlewareActivity() {
+class PreviousLeaderboardActivity : CoreJoshActivity() {
 
     lateinit var binding: ActivityPreviousLeaderboardBinding
     private var intervalType: String = EMPTY
