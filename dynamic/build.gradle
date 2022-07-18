@@ -6,22 +6,39 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-parcelize'
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 32
+    signingConfigs {
+        debug {
+            storeFile file("JoshSkill.jks")
+            storePassword "app@joshskill"
+            keyAlias "joshskill"
+            keyPassword "app@joshskill"
+        }
+
+        release {
+            storeFile file("JoshSkill.jks")
+            storePassword "app@joshskill"
+            keyAlias "joshskill"
+            keyPassword "app@joshskill"
+        }
+    }
 
     defaultConfig {
         minSdkVersion 24
-        targetSdkVersion 30
+        targetSdkVersion 32
         multiDexEnabled true
     }
 
     buildTypes {
-        release {
-            minifyEnabled false
-            consumerProguardFiles 'proguard-rules-dynamic-features.pro'
-        }
         debug {
+            debuggable true
+            signingConfig signingConfigs.debug
             minifyEnabled false
-            consumerProguardFiles 'proguard-rules-dynamic-features.pro'
+        }
+        release {
+            signingConfig signingConfigs.d
+            debuggable false
+            minifyEnabled false
         }
     }
 
@@ -39,12 +56,6 @@ android {
         prod {
 
         }
-    }
-
-    compileOptions {
-        coreLibraryDesugaringEnabled true
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
     }
 }
 

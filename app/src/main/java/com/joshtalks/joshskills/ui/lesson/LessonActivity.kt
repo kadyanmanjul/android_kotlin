@@ -1270,8 +1270,6 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
     }
 
     private fun showConvoRoomSpotlight() {
-        viewModel.lessonSpotlightStateLiveData.postValue(LessonSpotlightState.CONVO_ROOM_SPOTLIGHT)
-        PrefManager.put(HAS_SEEN_CONVO_ROOM_SPOTLIGHT, true)
         binding.overlayLayout.setOnClickListener {
             hideSpotlight()
         }
