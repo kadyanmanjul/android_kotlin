@@ -71,21 +71,21 @@ class CommonRepository {
      }
 
      fun roomRequestCount() {
-        CoroutineScope(Dispatchers.IO).launch {
-            if (User.getInstance().isSpeaker){
-                try {
-                    val response = service.getRoomRequestCount()
-                    if (response.isSuccessful) {
-                        response.body()?.let {
-                            BbDatastore.updateRoomRequestCount(it.request_count as Long)
-//                        return it.request_count
-                        }
-                    }
-                } catch (e: Exception){
-
-                }
-            }
-        }
+//        CoroutineScope(Dispatchers.IO).launch {
+//            if (User.getInstance().isSpeaker){
+//                try {
+//                    val response = service.getRoomRequestCount()
+//                    if (response.isSuccessful) {
+//                        response.body()?.let {
+//                            BbDatastore.updateRoomRequestCount(it.request_count as Long)
+////                        return it.request_count
+//                        }
+//                    }
+//                } catch (e: Exception){
+//
+//                }
+//            }
+//        }
 //        return null
     }
 }
