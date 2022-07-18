@@ -104,7 +104,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
     @Inject
     lateinit var notificationScheduler: NotificationScheduler
 
-    private val badgeDrawable: BadgeDrawable by lazy { BadgeDrawable.create(requireContext()) }
+//    private val badgeDrawable: BadgeDrawable by lazy { BadgeDrawable.create(requireContext()) }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -175,23 +175,25 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
             "setBadgeDrawable() called with: raisedHandAudienceSize = $callRequestCount"
         )
 
-        badgeDrawable.isVisible = callRequestCount > 0
-        if (User.getInstance().isSpeaker && callRequestCount > 0){
-            badgeDrawable.number = callRequestCount
-
-            badgeDrawable.horizontalOffset = 20
-            badgeDrawable.verticalOffset = 20
-
-            binding.callRequestsBtnRoot.setForeground(badgeDrawable)
-            binding.callRequestsBtnRoot.addOnLayoutChangeListener { v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
-
-                BadgeUtils.attachBadgeDrawable(
-                    badgeDrawable,
-                    binding.callRequestsBtn,
-                    binding.callRequestsBtnRoot
-                )
-            }
-        }
+        binding.requestCountNumber.text= callRequestCount.toString()
+        binding.requestCountNumber.visibility=View.VISIBLE
+//        badgeDrawable.isVisible = !(callRequestCount > 0)
+//        if (User.getInstance().isSpeaker && callRequestCount > 0){
+//            badgeDrawable.number = callRequestCount
+//
+//            badgeDrawable.horizontalOffset = 20
+//            badgeDrawable.verticalOffset = 20
+//
+//            binding.callRequestsBtnRoot.setForeground(badgeDrawable)
+//            binding.callRequestsBtnRoot.addOnLayoutChangeListener { v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
+//
+//                BadgeUtils.attachBadgeDrawable(
+//                    badgeDrawable,
+//                    binding.callRequestsBtn,
+//                    binding.callRequestsBtnRoot
+//                )
+//            }
+//        }
 
     }
 

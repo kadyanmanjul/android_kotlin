@@ -84,6 +84,26 @@
             app:layout_constraintTop_toBottomOf="@id/profile_toolbar"
             app:layout_constraintVertical_bias="0.95" />
 
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/request_count_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginHorizontal="@dimen/_2sdp"
+            android:layout_marginVertical="@dimen/_8sdp"
+            android:background="@drawable/request_count_badge"
+            android:elevation="@dimen/_5sdp"
+            android:gravity="right"
+            android:padding="@dimen/_3sdp"
+            android:textAppearance="@style/BB_Typography_Nunito_Bold"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_10sdp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@+id/btnFollow"
+            app:layout_constraintEnd_toEndOf="@+id/callRequestsBtnRoot"
+            tools:text="39"
+            tools:visibility="visible" />
+
         <FrameLayout
             android:id="@+id/callRequestsBtnRoot"
             android:layout_width="wrap_content"
@@ -96,6 +116,7 @@
             app:layout_constraintStart_toStartOf="@id/iv_profile_pic"
             app:layout_constraintTop_toBottomOf="@id/profile_toolbar"
             app:layout_constraintVertical_bias="0.95" >
+
 
 
             <androidx.appcompat.widget.AppCompatTextView
