@@ -297,9 +297,7 @@ internal class AgoraWebrtcService(val scope: CoroutineScope) : WebrtcService {
                         }
                     }
                 }
-            }catch (ex:Exception){
-
-            }
+            }catch (ex:Exception){}
         }
     }
 }

@@ -216,6 +216,9 @@ enum class NotificationAction(val type: String) {
     @SerializedName("open_group_call")
     ACTION_GROUP_INCOMING_CALL("open_group_call"),
 
+    @SerializedName("add_missed_call")
+    ACTION_ADD_MISSED_CALL("add_missed_call"),
+
     @SerializedName("call_recording_notification")
     CALL_RECORDING_NOTIFICATION("call_recording_notification"),
 }

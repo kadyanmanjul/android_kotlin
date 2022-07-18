@@ -21,7 +21,7 @@ import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_INCOMING_CALL
+import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.conversationRoom.liveRooms.ConversationLiveRoomActivity
 import com.joshtalks.joshskills.core.API_TOKEN
 import com.joshtalks.joshskills.core.ARG_PLACEHOLDER_URL
@@ -90,7 +90,13 @@ import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
 import com.joshtalks.joshskills.voip.constant.*
 import com.joshtalks.joshskills.voip.data.CallingRemoteService
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.CallRecordingShare
+import com.joshtalks.joshskills.voip.Utils
+import com.joshtalks.joshskills.voip.constant.INCOMING_CALL_ID
+import com.joshtalks.joshskills.voip.constant.REMOTE_USER_NAME
 import com.joshtalks.joshskills.voip.constant.State
+import com.joshtalks.joshskills.voip.notification.NotificationData
+import com.joshtalks.joshskills.voip.notification.NotificationPriority
+import com.joshtalks.joshskills.voip.notification.VoipNotification
 import java.lang.reflect.Type
 import java.util.concurrent.ExecutorService
 import kotlinx.coroutines.CoroutineScope
@@ -625,7 +631,49 @@ class NotificationUtils(val context: Context) {
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
-                return null            }
+                return null
+            }
+            NotificationAction.ACTION_ADD_MISSED_CALL -> {
+                try {
+                    val jsonObj = JSONObject(actionData ?: EMPTY)
+                    val callContext = context
+                    val destination = "com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity"
+                    val intent = Intent()
+                    intent.apply {
+                        setClassName(Utils.context!!.applicationContext, destination)
+                        putExtra(STARTING_POINT, FROM_ACTIVITY)
+//                        putExtra(INTENT_DATA_CALL_CATEGORY, Category.FPP.ordinal)
+//                        putExtra(INTENT_DATA_FPP_MENTOR_ID, viewModel.selectedUser?.mentorId)
+//                        putExtra(INTENT_DATA_FPP_NAME, viewModel.selectedUser?.name)
+//                        putExtra(INTENT_DATA_FPP_IMAGE, viewModel.selectedUser?.image)
+                    }
+                    val pendingIntent =  PendingIntent.getActivity(
+                        Utils.context,
+                        1102,
+                        intent,
+                        PendingIntent.FLAG_CANCEL_CURRENT
+                    )
+                    val notificationData = object :NotificationData{
+
+                        override fun setTitle(): String {
+                          return  "Missed Call"
+                        }
+
+                        override fun setContent(): String {
+                           return jsonObj.getString(REMOTE_USER_NAME)
+                        }
+
+                        override fun setTapAction(): PendingIntent? {
+                            return pendingIntent
+                        }
+
+                    }
+                    VoipNotification(notificationData,NotificationPriority.High).show()
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+                return null
+            }
             NotificationAction.CALL_RECORDING_NOTIFICATION -> {
                if (notificationObject.extraData.isNullOrBlank()){
                    return null
