@@ -14,6 +14,7 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -236,7 +237,11 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                             showToast("Seems like you have no internet")
                             return@setOnSingleClickListener
                         }
-                        startPractise(isNewArch = true)
+                        if (viewModel.speakingTopicLiveData.value?.leftCallsData?.calls_left!! > 0) {
+                            startPractise(isNewArch = true)
+                        } else {
+                            Toast.makeText(requireActivity(), "No calls left", Toast.LENGTH_SHORT).show()
+                        }
                     } else {
                         showToast("Cannot make this call while on another call")
                     }
@@ -344,6 +349,15 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                     }
 
                     binding.tvTodayTopic.text = response.topicName
+                    binding.numberOfCallsAvailableTextView.text = response.leftCallsData.calls_left.toString()
+                    binding.numberOfCallsAvailableTextView.paintFlags =
+                        binding.numberOfCallsAvailableTextView.paintFlags or Paint.UNDERLINE_TEXT_FLAG
+
+                    if (response.leftCallsData.calls_left==0) {
+                        binding.numberOfDaysLeftTextView.text = "Calls will be added in {${response.leftCallsData.days_left}} days"
+                    } else {
+                        binding.numberOfDaysLeftTextView.text = ""
+                    }
 
                     if (!isTwentyMinFtuCallActive || response.callDurationStatus == UPGRADED_USER) {
                         PrefManager.put(

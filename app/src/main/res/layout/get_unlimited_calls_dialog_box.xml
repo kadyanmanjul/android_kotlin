@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+        <variable
+            name="vm"
+            type="com.joshtalks.joshskills.ui.lesson.LessonViewModel" />
+    </data>
+
+    <androidx.cardview.widget.CardView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_marginHorizontal="@dimen/_10sdp"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/get_unlimited_calling_price_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Get Unlimited calling @1499"
+                android:layout_marginLeft="@dimen/_18sdp"
+                android:textStyle="bold"
+                android:layout_marginTop="@dimen/_24sdp"
+                android:textSize="@dimen/_16ssp"
+                android:textColor="@color/black"/>
+
+            <TextView
+                android:id="@+id/calls_will_get_added_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Your calls will get added in 3 days."
+                android:visibility="gone"
+                android:layout_marginTop="@dimen/_14sdp"
+                android:textSize="@dimen/_13ssp"
+                android:textColor="@color/gray_6F"
+                android:layout_marginLeft="@dimen/_18sdp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="In the Free Version, You will get 14 calls  per week. (including incoming and outgoing calls)"
+                android:layout_marginLeft="@dimen/_18sdp"
+                android:layout_marginTop="@dimen/_18sdp"
+                android:textSize="@dimen/_13ssp"
+                android:textColor="@color/gray_6F"
+                android:layout_marginRight="@dimen/_18sdp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Unused calls will not be carried foward to the next week."
+                android:layout_marginLeft="@dimen/_18sdp"
+                android:layout_marginTop="@dimen/_18sdp"
+                android:textColor="@color/gray_6F"
+                android:textSize="@dimen/_13ssp"
+                android:layout_marginRight="@dimen/_18sdp"/>
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Buy Now"
+                app:cornerRadius="@dimen/_15sdp"
+                android:backgroundTint="@color/colorAccent"
+                android:paddingHorizontal="@dimen/_16sdp"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/_13sdp"
+                android:layout_marginBottom="@dimen/_13sdp"/>
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+</layout>

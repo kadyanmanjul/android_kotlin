@@ -1318,4 +1318,23 @@
     <string name="onboarding_course_info3">English Speaking का माहौल</string>
     <string name="sign_up_profile_occupation_aspiration_text">यह Information आपके Practice partners को दिखाई देगी।</string>
     <string name="free">Free</string>
+    <string name="pin_code">PIN code</string>
+    <string name="house_number_building_name">House number, Building name</string>
+    <string name="road_name_area_colony">Road Name, Area, Colony</string>
+    <string name="landmark">Landmark</string>
+    <string name="like_famous_shop_nearby">Like famous shop nearby</string>
+    <string name="town_city">Town/City</string>
+    <string name="state">State</string>
+    <string name="select_state">Select State</string>
+    <string name="_6_digits_pin_code">6 digits PIN Code</string>
+
+    <string name="recording_text"> of the game will get</string>
+    <string name="recording_text_after">Waiting for your partner to start the game</string>
+    <string name="guess_the_word">Guess The Word</string>
+    <string name="describe_your_word_without_saying_it_and_your_partner_will_guess_it">Describe your word without saying it and your partner will guess it</string>
+    <string name="your_word">Your Word</string>
+    <string name="stars">*********</string>
+    <string name="wait_for_your_partner_to_click_next">Wait for your partner to click next</string>
+    <string name="_14_calls_available"><u> Calls Left</u></string>
+    <string name="_14"><u>14</u></string>
 </resources>

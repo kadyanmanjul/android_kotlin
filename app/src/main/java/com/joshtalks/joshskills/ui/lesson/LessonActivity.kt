@@ -55,6 +55,7 @@ import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.core.extension.translationAnimationNew
 import com.joshtalks.joshskills.core.videotranscoder.enforceSingleScrollDirection
 import com.joshtalks.joshskills.core.videotranscoder.recyclerView
+import com.joshtalks.joshskills.databinding.GetUnlimitedCallsDialogBoxBinding
 import com.joshtalks.joshskills.databinding.LessonActivityBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE

@@ -266,7 +266,7 @@ class FirebaseRemoteConfigKey {
         const val POSTAL_ADDRESS = "POSTAL_ADDRESS"
         const val POSTAL_ADDRESS_SUBHEADING_CERT_FORM = "POSTAL_ADDRESS_SUBHEADING_CERT_FORM"
 
-        //Freemium
+        // FREEMIUM COURSE PRICE
         const val FREEMIUM_COURSE_PRICE = "FREEMIUM_COURSE_PRICE"
     }
 }
