@@ -432,10 +432,11 @@ class VocabularyFragment : CoreJoshFragment(), VocabularyPracticeAdapter.Practic
                     override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                         report?.areAllPermissionsGranted()?.let {
                             if (report.isAnyPermissionPermanentlyDenied) {
-                                PermissionUtils.permissionPermanentlyDeniedDialog(
-                                    requireActivity(),
-                                    R.string.record_permission_message
-                                )
+                                if (isAdded && activity != null)
+                                    PermissionUtils.permissionPermanentlyDeniedDialog(
+                                        requireActivity(),
+                                        R.string.record_permission_message
+                                    )
                                 return
                             }
                         }

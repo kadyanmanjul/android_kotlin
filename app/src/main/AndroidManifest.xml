@@ -349,7 +349,8 @@
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.explore.CourseExploreActivity"
-            android:theme="@style/AppNoBarTheme">
+            android:theme="@style/AppNoBarTheme"
+            android:exported="true">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.explore.CourseExploreActivity" />

@@ -356,7 +356,8 @@ class ReadingFragmentWithoutFeedback :
                             return
                         }
                         if (report.isAnyPermissionPermanentlyDenied) {
-                            PermissionUtils.permissionPermanentlyDeniedDialog(requireActivity())
+                            if (isAdded && activity != null)
+                                PermissionUtils.permissionPermanentlyDeniedDialog(requireActivity())
                             return
                         }
                     }
@@ -694,14 +695,16 @@ class ReadingFragmentWithoutFeedback :
                     binding.imageView.setImageResource(R.drawable.ic_practise_pdf_ph)
                     this.pdfList?.getOrNull(0)?.let { pdfType ->
                         binding.imageView.setOnClickListener {
-                            PdfViewerActivity.startPdfActivity(
-                                requireActivity(),
-                                pdfType.id,
-                                EMPTY,
-                                conversationId = requireActivity().intent.getStringExtra(
-                                    CONVERSATION_ID
+                            if (isAdded && activity != null) {
+                                PdfViewerActivity.startPdfActivity(
+                                    requireActivity(),
+                                    pdfType.id,
+                                    EMPTY,
+                                    conversationId = requireActivity().intent.getStringExtra(
+                                        CONVERSATION_ID
+                                    )
                                 )
-                            )
+                            }
                         }
                     }
                 }
@@ -1303,10 +1306,10 @@ class ReadingFragmentWithoutFeedback :
     @SuppressLint("ClickableViewAccessibility")
     private fun audioRecordTouchListener() {
         binding.recordTransparentContainer.setOnTouchListener { _, event ->
-            if (isCallOngoing() || requireActivity().getVoipState()!= State.IDLE) {
-                return@setOnTouchListener false
-            }
-            if (isAdded && activity!=null) {
+            if (isAdded && activity != null) {
+                if (isCallOngoing() || requireActivity().getVoipState() != State.IDLE) {
+                    return@setOnTouchListener false
+                }
                 if (PermissionUtils.isAudioAndStoragePermissionEnable(requireContext()).not()) {
                     recordPermission()
                     return@setOnTouchListener true
@@ -1325,7 +1328,8 @@ class ReadingFragmentWithoutFeedback :
                     audioManager?.seekTo(0)
                     binding.mergedVideo.seekTo(0)
                     binding.videoPlayer.seekToStart()
-                    requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                    if (isAdded && activity != null)
+                        requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                     appAnalytics?.addParam(AnalyticsEvent.AUDIO_RECORD.NAME, "Audio Recording")
                     binding.counterTv.base = SystemClock.elapsedRealtime()
                     startTime = System.currentTimeMillis()
@@ -1398,9 +1402,11 @@ class ReadingFragmentWithoutFeedback :
                                 if (isActive) {
                                     mutex.withLock {
                                         audioVideoMuxer()
-                                        requireActivity().runOnUiThread {
-                                            binding.progressDialog.visibility = GONE
-                                            viewModel.sendOutputToFullScreen(outputFile)
+                                        if (isAdded && activity != null) {
+                                            requireActivity().runOnUiThread {
+                                                binding.progressDialog.visibility = GONE
+                                                viewModel.sendOutputToFullScreen(outputFile)
+                                            }
                                         }
                                     }
                                 }
