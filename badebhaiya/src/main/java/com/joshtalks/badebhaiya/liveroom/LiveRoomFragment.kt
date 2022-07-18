@@ -541,6 +541,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
         Timber.tag("profilebadge").d(
             "setBadgeDrawable() called with: raisedHandAudienceSize = $callRequestCount"
         )
+        profileBadgeDrawable.isVisible = callRequestCount > 0
 
         if (User.getInstance().isSpeaker && callRequestCount > 0) {
 

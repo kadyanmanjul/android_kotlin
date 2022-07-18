@@ -7,6 +7,7 @@ import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.joshtalks.badebhaiya.datastore.BbDatastore
 import com.joshtalks.badebhaiya.feed.adapter.FeedAdapter
 import com.joshtalks.badebhaiya.feed.model.ConversationRoomType
 import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
@@ -22,6 +23,7 @@ import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.repository.service.RetrofitInstance
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -132,9 +134,17 @@ class ProfileViewModel : ViewModel() {
     }
 
     fun getRoomRequestCount(){
+            commonRepository.roomRequestCount()
+    }
+
+    init {
+        collectRoomRequestCount()
+    }
+
+    private fun collectRoomRequestCount(){
         viewModelScope.launch {
-            commonRepository.roomRequestCount()?.let { count ->
-                roomRequestCount.postValue(count)
+            BbDatastore.roomRequestCount.collectLatest {
+                roomRequestCount.postValue(it)
             }
         }
     }

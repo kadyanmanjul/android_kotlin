@@ -25,4 +25,8 @@ class RequestContentViewModel: ViewModel() {
             }
         }
     }
+
+    fun getRequestCount(){
+        repository.roomRequestCount()
+    }
 }

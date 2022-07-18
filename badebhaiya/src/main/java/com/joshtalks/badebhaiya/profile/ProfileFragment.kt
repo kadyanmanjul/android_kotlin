@@ -175,11 +175,13 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
             "setBadgeDrawable() called with: raisedHandAudienceSize = $callRequestCount"
         )
 
+        badgeDrawable.isVisible = callRequestCount > 0
         if (User.getInstance().isSpeaker && callRequestCount > 0){
             badgeDrawable.number = callRequestCount
 
             badgeDrawable.horizontalOffset = 20
             badgeDrawable.verticalOffset = 10
+
             binding.callRequestsBtnRoot.setForeground(badgeDrawable)
             binding.callRequestsBtnRoot.addOnLayoutChangeListener { v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
 
