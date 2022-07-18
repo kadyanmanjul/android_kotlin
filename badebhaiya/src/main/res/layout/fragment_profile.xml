@@ -32,7 +32,7 @@
             userName="@{viewModel.userFullName}"
             android:layout_width="@dimen/_68sdp"
             android:layout_height="@dimen/_68sdp"
-            android:layout_marginTop="@dimen/_1sdp"
+            android:layout_marginTop="@dimen/_3sdp"
             android:scaleType="centerCrop"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.05"
@@ -44,8 +44,8 @@
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/btnRequest"
-            android:layout_width="@dimen/_90sdp"
-            android:layout_height="@dimen/_24sdp"
+            android:layout_width="@dimen/_88sdp"
+            android:layout_height="@dimen/_23sdp"
             android:background="@drawable/request_button_background"
             android:gravity="center"
             android:onClick="@{() -> handler.requestRoomPopup()}"
@@ -66,8 +66,8 @@
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/btnFollow"
-            android:layout_width="@dimen/_100sdp"
-            android:layout_height="@dimen/_24sdp"
+            android:layout_width="@dimen/_98sdp"
+            android:layout_height="@dimen/_23sdp"
             android:background="@drawable/follow_button_background"
             android:gravity="center"
             android:onClick="@{() -> handler.updateFollowStatus()}"
@@ -82,7 +82,7 @@
             app:layout_constraintHorizontal_bias="0.933"
             app:layout_constraintStart_toStartOf="@id/iv_profile_pic"
             app:layout_constraintTop_toBottomOf="@id/profile_toolbar"
-            app:layout_constraintVertical_bias="1.0" />
+            app:layout_constraintVertical_bias="0.95" />
 
         <FrameLayout
             android:id="@+id/callRequestsBtnRoot"
@@ -95,7 +95,7 @@
             android:paddingEnd="@dimen/_6sdp"
             app:layout_constraintStart_toStartOf="@id/iv_profile_pic"
             app:layout_constraintTop_toBottomOf="@id/profile_toolbar"
-            app:layout_constraintVertical_bias="1.0" >
+            app:layout_constraintVertical_bias="0.95" >
 
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -133,7 +133,7 @@
             onSingleClick="@{()->handler.openList()}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_11sdp"
+            android:layout_marginTop="@dimen/_9sdp"
             android:textAppearance="@style/BB_Typography_Nunito_Semi_Bold"
             android:textColor="@color/profile_font_color"
             android:textSize="@dimen/_12ssp"
@@ -147,7 +147,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="118dp"
-            android:layout_marginTop="@dimen/_11sdp"
+            android:layout_marginTop="@dimen/_9sdp"
             android:textAppearance="@style/BB_Typography_Nunito_Semi_Bold"
             android:textColor="@color/profile_font_color"
             android:textSize="@dimen/_12ssp"

@@ -476,10 +476,10 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
                 tvCalls.text=HtmlCompat.fromHtml(getString(R.string.bb_calls, "<big>"+profileResponse.callsCount.toString()+"</big>"),
                     HtmlCompat.FROM_HTML_MODE_LEGACY)
 //                tvCalls.setTextAppearance(R.style.BB_Typography_Nunito_Semi_Bold)
-                tvCalls.textSize=16f
+                tvCalls.textSize=17f
                 tvFollowers.text = HtmlCompat.fromHtml(getString(R.string.bb_followers, "<big>"+profileResponse.followersCount.toString()+"</big>"),
                     HtmlCompat.FROM_HTML_MODE_LEGACY)
-                tvFollowers.textSize=16f
+                tvFollowers.textSize=17f
                 if (profileResponse.isSpeakerFollowed) {
                     speakerFollowedUIChanges()
                 }
