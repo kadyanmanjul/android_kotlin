@@ -14,6 +14,7 @@ import android.provider.MediaStore
 import androidx.annotation.RequiresApi
 import java.io.*
 import java.nio.ByteBuffer
+import java.util.*
 
 const val APP_DIRECTORY = "JoshSkill"
 const val MEDIA_DIRECTORY = "Media"
@@ -168,7 +169,6 @@ fun audioVideoMuxer(recordAudioFile: File, recordVideoFile: File?,context: Conte
                 audioExtractor.advance()
             }
         }
-
         muxer.stop()
         muxer.release()
         return outputFile

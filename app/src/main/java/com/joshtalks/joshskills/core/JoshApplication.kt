@@ -44,9 +44,11 @@ import io.github.inflationx.viewpump.ViewPumpContextWrapper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import retrofit2.Retrofit
 import timber.log.Timber
 import java.lang.reflect.Method
 import java.util.*
+import javax.inject.Inject
 
 const val TAG = "JoshSkill"
 
@@ -54,13 +56,19 @@ class JoshApplication :
     MultiDexApplication(),
     LifecycleEventObserver,
     ComponentCallbacks2/*, Configuration.Provider*/ {
-    val applicationGraph: ApplicationComponent by lazy {
-        DaggerApplicationComponent.create()
-    }
+
+    @Inject lateinit var retrofit: Retrofit
+    @Inject lateinit var appObject : Application
 
     companion object {
         @Volatile
         public var isAppVisible = false
+    }
+
+    val applicationGraph : ApplicationComponent by lazy {
+        DaggerApplicationComponent.builder()
+            .application(this)
+            .build()
     }
 
     fun isAppVisible(): Boolean {
@@ -99,6 +107,9 @@ class JoshApplication :
             }
 
             Log.d(TAG, "onCreate: STARTING MAIN PROCESS CHECK END")
+        applicationGraph.inject(this)
+        Log.d(TAG, "onCreate: Retrofit Object --> $retrofit")
+        Log.d(TAG, "onCreate: Application Object --> $appObject  .... $this")
 //        Log.d(TAG, "onCreate: $isMainProcess ... $packageName")
 //        if(isMainProcess()) {
 //            CoroutineScope(Dispatchers.IO).launch {

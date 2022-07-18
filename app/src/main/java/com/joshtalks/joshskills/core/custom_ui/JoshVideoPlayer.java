@@ -82,6 +82,7 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
         public void run() {
             timeHandler.postDelayed(this, 1000);
 
+
             if (player == null) {
                 return;
             }

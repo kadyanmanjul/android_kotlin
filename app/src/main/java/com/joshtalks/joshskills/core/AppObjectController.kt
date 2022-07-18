@@ -250,6 +250,8 @@ class AppObjectController {
                 configureCrashlytics()
                 //   initNewRelic(context)
                 initFonts()
+                //
+                // TODO: Remove Work Manager and use Coroutine
                 WorkManagerAdmin.deviceIdGenerateWorker()
                 WorkManagerAdmin.runMemoryManagementWorker()
 
@@ -293,7 +295,7 @@ class AppObjectController {
                     .hostnameVerifier { _, _ -> true }
                     //  .addInterceptor(OfflineInterceptor())
                     .cache(cache())
-
+                // TODO: Remove
                 if (BuildConfig.DEBUG.not() && BuildConfig.FLAVOR == "prod2") {
                     builder.certificatePinner(
                         CertificatePinner.Builder()
@@ -334,6 +336,7 @@ class AppObjectController {
                     .addCallAdapterFactory(CoroutineCallAdapterFactory())
                     .addConverterFactory(GsonConverterFactory.create(gsonMapper))
                     .build()
+                // TODO: Will have specific Modules
                 signUpNetworkService = retrofit.create(SignUpNetworkService::class.java)
                 chatNetworkService = retrofit.create(ChatNetworkService::class.java)
                 commonNetworkService = retrofit.create(CommonNetworkService::class.java)

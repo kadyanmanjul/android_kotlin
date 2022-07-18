@@ -48,33 +48,34 @@ const val PREF_KEY_PSTN_STATE = "pstn_state_pstn_state"
 
 
 enum class Event {
-    ERROR,
-    CALL_INITIATED_EVENT,
-    CALL_CONNECTED_EVENT,
-    CALL_DISCONNECTED,
-    RECONNECTING_FAILED,
-    MUTE,
-    UNMUTE,
-    HOLD,
-    UNHOLD,
-    RECONNECTING,
-    RECONNECTED,
+    ERROR, //onVoipCallStateChange
+    CALL_INITIATED_EVENT, //onVoipCallStateChange
+    CALL_CONNECTED_EVENT, //onVoipCallStateChange
+    CALL_DISCONNECTED, //onVoipCallStateChange
+    RECONNECTING_FAILED, //onVoipCallStateChange
+    MUTE, //onRemoteMicStateChange
+    UNMUTE, //onRemoteMicStateChange
+    HOLD, //onRemotePhoneStateChange
+    UNHOLD, //onRemotePhoneStateChange
+    RECONNECTING, // onVoipCallStateChange
+    RECONNECTED, // onVoipCallStateChange
     INCOMING_CALL,
-    RECEIVED_CHANNEL_DATA,
-    UI_STATE_UPDATED,
+    RECEIVED_CHANNEL_DATA, // onVoipCallStateChange
+    UI_STATE_UPDATED, // Will be handled by base class
     CLOSE_CALL_SCREEN,
-    REMOTE_USER_DISCONNECTED_AGORA,
-    REMOTE_USER_DISCONNECTED_USER_LEFT,
-    REMOTE_USER_DISCONNECTED_MESSAGE,
-    SYNC_UI_STATE,
-    SPEAKER_ON_REQUEST,
-    SPEAKER_OFF_REQUEST,
-    HOLD_REQUEST,
-    UNHOLD_REQUEST,
-    MUTE_REQUEST,
-    UNMUTE_REQUEST,
-    TOPIC_IMAGE_CHANGE_REQUEST,
-    TOPIC_IMAGE_RECEIVED,
+    REMOTE_USER_DISCONNECTED_AGORA, // onCallDisconnectRequest
+    REMOTE_USER_DISCONNECTED_USER_LEFT, // onCallDisconnectRequest
+    REMOTE_USER_DISCONNECTED_MESSAGE, // onCallDisconnectRequest
+    SYNC_UI_STATE, // Will be handled by base class
+    SPEAKER_ON_REQUEST, // onUserAction
+    SPEAKER_OFF_REQUEST, // onUserAction
+    HOLD_REQUEST, //onUserAction
+    UNHOLD_REQUEST, //onUserAction
+    MUTE_REQUEST, //onUserAction
+    UNMUTE_REQUEST, //onUserAction
+    TOPIC_IMAGE_CHANGE_REQUEST, // onUserAction
+    TOPIC_IMAGE_RECEIVED, // onUserAction
+    //-------------------------------------------
     START_RECORDING,
     STOP_RECORDING,
     CALL_RECORDING_ACCEPT,
