@@ -42,6 +42,7 @@ android {
 
         prod {
             buildConfigField "String", "BASE_URL", "${rootProject.ext.prod_base_url}"
+            buildConfigField "String", "MS_BASE_URL", "${rootProject.ext.voip_ms_prod_base_url}"
             buildConfigField "String", "PUBNUB_PUB_P2P_KEY", "\"pub-c-ca4c4308-ae44-4431-9a31-c4dfdd6b0bf1\""
             buildConfigField "String", "PUBNUB_SUB_P2P_KEY", "\"sub-c-d19da452-a164-11ec-a074-1a3740267833\""
             buildConfigField "String", "AGORA_API_KEY", "\"56eb9bed99fd4dd889cd0375056039fe\""
