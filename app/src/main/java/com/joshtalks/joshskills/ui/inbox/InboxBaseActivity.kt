@@ -28,7 +28,6 @@ import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.inapp_update.Constants
 import com.joshtalks.joshskills.core.inapp_update.InAppUpdateManager
 import com.joshtalks.joshskills.core.inapp_update.InAppUpdateStatus
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.NotificationAction
 import com.joshtalks.joshskills.repository.server.onboarding.ONBOARD_VERSIONS
@@ -110,10 +109,8 @@ abstract class InboxBaseActivity :
 
     private fun defferInstallOnDemandModule() {
         val manager = SplitInstallManagerFactory.create(this)
-        if(manager.installedModules.contains(getString(R.string.dynamic_feature_title)) == true){
-            showToast("Inbox : Already installed")
-        } else {
-            OnDemandFeatureDownloadService.startOnDemandFeatureDownloadService(this, false)
+        if(manager.installedModules.contains(getString(R.string.dynamic_feature_title)) == false){
+            OnDemandFeatureDownloadService.startOnDemandFeatureDownloadService(this, true)
         }
     }
 

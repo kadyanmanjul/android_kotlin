@@ -15,7 +15,6 @@ import com.google.android.play.core.splitinstall.SplitInstallRequest
 import com.google.android.play.core.splitinstall.SplitInstallStateUpdatedListener
 import com.google.android.play.core.splitinstall.model.SplitInstallSessionStatus
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.model.NotificationChannelNames
 
 
@@ -26,28 +25,17 @@ class OnDemandFeatureDownloadService : Service() {
     private var mNotificationManager: NotificationManager? = null
     private var manager: SplitInstallManager? = null
     private val listener = SplitInstallStateUpdatedListener { state ->
-        val multiInstall = state.moduleNames().size > 1
-        val names = state.moduleNames().joinToString(" - ")
         when (state.status()) {
-            SplitInstallSessionStatus.DOWNLOADING -> {
-                showToast("SplitInstallStateUpdatedListener state: DOWNLOADING ")
-            }
             SplitInstallSessionStatus.REQUIRES_USER_CONFIRMATION -> {
-                showToast("SplitInstallStateUpdatedListener state: REQUIRES_USER_CONFIRMATION ")
                 startIntentSender(state.resolutionIntent()?.intentSender, null, 0, 0, 0)
             }
-            SplitInstallSessionStatus.INSTALLED -> {
-                showToast("SplitInstallStateUpdatedListener state: INSTALLED ")
-            }
-
-            SplitInstallSessionStatus.INSTALLING -> {
-                showToast("SplitInstallStateUpdatedListener state: INSTALLING ")
-            }
-            SplitInstallSessionStatus.FAILED -> {
-                showToast("SplitInstallStateUpdatedListener state: FAILED ")
+            SplitInstallSessionStatus.INSTALLING, SplitInstallSessionStatus.DOWNLOADING -> {}
+            else -> {
+                hideNotification()
             }
         }
     }
+
     override fun onCreate() {
         super.onCreate()
         mNotificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager?
@@ -60,9 +48,9 @@ class OnDemandFeatureDownloadService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         intent?.let {
-            if (intent.getBooleanExtra(IS_INSTANT_DOWNLOAD,false)){
+            if (intent.getBooleanExtra(IS_INSTANT_DOWNLOAD, false)) {
                 startDownloadLibraryInForeground()
-            }else {
+            } else {
                 startDownloadLibraryInBackground()
             }
         }
@@ -73,37 +61,29 @@ class OnDemandFeatureDownloadService : Service() {
     private fun startDownloadLibraryInBackground() {
         manager?.registerListener(listener)
         val module = getString(R.string.dynamic_feature_title)
-        showToast("Loading module $module")
-        if (manager?.installedModules?.contains(module) == true){
-            showToast("Already $module installed")
+        if (manager?.installedModules?.contains(module) == true) {
             hideNotification()
-        } else{
-            showToast("Starting install for$module")
+        } else {
             manager?.deferredInstall(listOf(getString(R.string.dynamic_feature_title)))
-                ?.addOnSuccessListener { showToast("Loading ${module}") }
-                ?.addOnFailureListener { showToast("Error Loading ${module}") }
+                ?.addOnSuccessListener { }
+                ?.addOnFailureListener { }
         }
     }
 
     private fun startDownloadLibraryInForeground() {
         manager?.registerListener(listener)
         val module = getString(R.string.dynamic_feature_title)
-        showToast("Loading module $module")
-        if (manager?.installedModules?.contains(module) == true){
-            showToast("Already $module installed")
+        if (manager?.installedModules?.contains(module) == true) {
             hideNotification()
-        } else{
-             showToast("Starting install for$module")
-
+        } else {
             val request = SplitInstallRequest.newBuilder()
                 .addModule(module)
                 .build()
 
             manager?.startInstall(request)
-                ?.addOnCompleteListener { showToast("Module ${module} installed") }
-                ?.addOnSuccessListener { showToast("Loading ${module}") }
-                ?.addOnFailureListener { showToast("Error Loading ${module}") }
-
+                ?.addOnCompleteListener { }
+                ?.addOnSuccessListener { }
+                ?.addOnFailureListener { }
         }
     }
 
@@ -144,10 +124,10 @@ class OnDemandFeatureDownloadService : Service() {
 
         fun startOnDemandFeatureDownloadService(
             context: Context,
-            instantDownload:Boolean = false
+            instantDownload: Boolean = false
         ) {
             val intent = Intent(context, OnDemandFeatureDownloadService::class.java).apply {
-                putExtra(IS_INSTANT_DOWNLOAD,instantDownload)
+                putExtra(IS_INSTANT_DOWNLOAD, instantDownload)
             }
             context.startService(intent)
         }
