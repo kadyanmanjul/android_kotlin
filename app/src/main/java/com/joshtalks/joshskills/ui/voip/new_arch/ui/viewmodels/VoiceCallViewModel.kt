@@ -576,6 +576,11 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
             Utils.showToast("Seems like you have no internet")
             return
         }
+        CallAnalytics.addAnalytics(
+            event = EventName.PLAY_GAME_CLICK,
+            agoraCallId = PrefManager.getAgraCallId().toString(),
+            agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
+        )
         repository.startGame()
     }
 
@@ -584,10 +589,20 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
             Utils.showToast("Wait for the internet to reconnect...")
             return
         }
+        CallAnalytics.addAnalytics(
+            event = EventName.END_GAME_CLICK,
+            agoraCallId = PrefManager.getAgraCallId().toString(),
+            agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
+        )
         repository.endGame()
     }
 
     fun nextWord(v:View){
+        CallAnalytics.addAnalytics(
+            event = EventName.NEW_WORD_CLICK,
+            agoraCallId = PrefManager.getAgraCallId().toString(),
+            agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
+        )
         if (Utils.isInternetAvailable().not()) {
             Utils.showToast("Seems like you have no internet")
             return
