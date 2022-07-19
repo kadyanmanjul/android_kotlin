@@ -449,7 +449,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
                 else {
                     tvProfileBio.text = profileResponse.bioText
                     tvProfileBio.setTextAppearance(R.style.BB_Typography_Nunito_Sans_Semi_Bold)
-                    tvProfileBio.textSize=18f
+                    tvProfileBio.textSize=16f
                         divider.updateLayoutParams<ConstraintLayout.LayoutParams> {
                             topToBottom = tvProfileBio.id
                         }

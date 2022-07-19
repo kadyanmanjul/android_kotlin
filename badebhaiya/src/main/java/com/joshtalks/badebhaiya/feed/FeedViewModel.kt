@@ -137,7 +137,7 @@ class FeedViewModel : ViewModel() {
 
     fun readRequestCount(){
         val db= FirebaseFirestore.getInstance()
-        requestChannel=db.collection("PERSONAL_REQEUST_COUNT")
+        requestChannel=db.collection("PERSONAL_REQUEST_COUNT")
             .addSnapshotListener{ querySnapshot,firestoreException->
                 firestoreException?.let {
                     showToast("Error")

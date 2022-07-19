@@ -44,7 +44,7 @@
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/btnRequest"
-            android:layout_width="@dimen/_88sdp"
+            android:layout_width="@dimen/_92sdp"
             android:layout_height="@dimen/_23sdp"
             android:background="@drawable/request_button_background"
             android:gravity="center"
@@ -58,7 +58,7 @@
             android:visibility="@{(viewModel.isBadeBhaiyaSpeaker &amp;&amp; !viewModel.isSelfProfile) ? View.VISIBLE : View.GONE}"
             app:layout_constraintBottom_toBottomOf="@id/iv_profile_pic"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.384"
+            app:layout_constraintHorizontal_bias="0.41"
             app:layout_constraintStart_toStartOf="@id/iv_profile_pic"
             app:layout_constraintTop_toBottomOf="@id/profile_toolbar"
             app:layout_constraintVertical_bias="1.0" />
@@ -66,7 +66,7 @@
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/btnFollow"
-            android:layout_width="@dimen/_98sdp"
+            android:layout_width="@dimen/_96sdp"
             android:layout_height="@dimen/_23sdp"
             android:background="@drawable/follow_button_background"
             android:gravity="center"
@@ -82,7 +82,7 @@
             app:layout_constraintHorizontal_bias="0.933"
             app:layout_constraintStart_toStartOf="@id/iv_profile_pic"
             app:layout_constraintTop_toBottomOf="@id/profile_toolbar"
-            app:layout_constraintVertical_bias="0.95" />
+            app:layout_constraintVertical_bias="1.0" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/request_count_number"
@@ -116,7 +116,7 @@
             android:paddingEnd="@dimen/_6sdp"
             app:layout_constraintStart_toStartOf="@id/iv_profile_pic"
             app:layout_constraintTop_toBottomOf="@id/profile_toolbar"
-            app:layout_constraintVertical_bias="0.95" >
+            app:layout_constraintVertical_bias="1.0" >
 
 
 
@@ -187,7 +187,7 @@
             android:clickable="@{viewModel.isSelfProfile()}"
             android:textAppearance="@style/BB_Typography_Nunito_Semi_Bold"
             android:textColor="@color/profile_font_color"
-            android:textSize="@dimen/_12ssp"
+            android:textSize="@dimen/_9ssp"
             android:visibility="@{(viewModel.isBadeBhaiyaSpeaker &amp;&amp; viewModel.isBioTextAvailable)? View.VISIBLE : View.GONE}"
             app:layout_constraintStart_toStartOf="@id/tvFollowers"
             app:layout_constraintTop_toBottomOf="@id/tvFollowers"

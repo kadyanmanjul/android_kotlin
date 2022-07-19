@@ -57,31 +57,50 @@
                 app:srcCompat="@drawable/ic_vector_search"
                 app:tint="@color/black" />
 
+
             <FrameLayout
                 android:id="@+id/profileIvRoot"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.95"
+                android:layout_marginStart="@dimen/_261sdp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                android:paddingTop="@dimen/_6sdp"
-                android:paddingEnd="@dimen/_6sdp"
-                app:layout_constraintVertical_bias="0.019">
+                app:layout_constraintVertical_bias="0.023">
 
-            <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/profile_iv"
-                initialsFontSize="@{16}"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                onSingleClick="@{() -> handler.onProfileClicked()}"
-                android:scaleType="centerCrop"
-                app:shapeAppearanceOverlay="@style/roundedCornersImageView_6dp"
-                app:srcCompat="@drawable/ic_profile_header" />
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/request_count_number"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginVertical="@dimen/_1sdp"
+                    android:layout_marginStart="@dimen/_10sdp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginBottom="16dp"
+                    android:background="@drawable/request_count_badge"
+                    android:elevation="@dimen/_5sdp"
+                    android:gravity="right"
+                    android:paddingHorizontal="@dimen/_7sdp"
+                    android:paddingVertical="@dimen/_3sdp"
+                    android:textAppearance="@style/BB_Typography_Nunito_Bold"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_10sdp"
+                    android:visibility="gone"
+                    tools:text="39"
+                    tools:visibility="visible" />
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/profile_iv"
+                    initialsFontSize="@{16}"
+                    onSingleClick="@{() -> handler.onProfileClicked()}"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginVertical="@dimen/_10sdp"
+                    android:scaleType="centerCrop"
+                    app:shapeAppearanceOverlay="@style/roundedCornersImageView_6dp"
+                    app:srcCompat="@drawable/ic_profile_header" />
 
             </FrameLayout>
-
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerView"
@@ -171,7 +190,6 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-
 
 
         <androidx.fragment.app.FragmentContainerView
