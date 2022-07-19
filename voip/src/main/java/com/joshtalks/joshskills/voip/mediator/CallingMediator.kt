@@ -239,7 +239,7 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                         stateChannel.send(envelope)
                     }
                     UserAction.START_RECORDING -> {
-                        val envelope = Envelope(Event.START_RECORDING, data = ActionDirection.SERVER)
+                        val envelope = Envelope(Event.CALL_RECORDING_ACCEPT, data = ActionDirection.LOCAL)
                         stateChannel.send(envelope)
                     }
                     UserAction.STOP_RECORDING -> {
