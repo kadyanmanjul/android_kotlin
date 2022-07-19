@@ -37,11 +37,11 @@
         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
         android:textColor="@color/white"
         android:visibility="visible"
-        tools:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/top_line"
-        app:rippleColor="@color/white" />
+        app:rippleColor="@color/white"
+        tools:visibility="gone" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/find_more_new"
@@ -58,13 +58,13 @@
         android:text="@string/find_more_courses"
         android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8"
         android:textColor="@color/colorPrimary"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/buy_english_course"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/top_line"
-        android:visibility="gone"
-        tools:visibility="visible"
-        app:rippleColor="@color/white" />
+        app:rippleColor="@color/white"
+        tools:visibility="visible" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/buy_english_course"
@@ -72,23 +72,24 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="@dimen/_16sdp"
-        android:layout_marginBottom="@dimen/_16sdp"
         android:layout_marginEnd="@dimen/_8sdp"
+        android:layout_marginBottom="@dimen/_16sdp"
         android:background="@drawable/round_rectangle"
         android:backgroundTint="@color/button_color"
         android:gravity="center"
         android:paddingTop="@dimen/_10sdp"
         android:paddingBottom="@dimen/_10sdp"
         android:text="@string/buy_english_course"
-        tools:visibility="visible"
         android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H8"
         android:textColor="@color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
         android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/find_more_new"
         app:layout_constraintTop_toBottomOf="@+id/top_line"
-        app:rippleColor="@color/white" />
+        app:layout_goneMarginStart="@dimen/_8sdp"
+        app:rippleColor="@color/white"
+        tools:visibility="visible" />
 
 
     <androidx.constraintlayout.widget.Barrier

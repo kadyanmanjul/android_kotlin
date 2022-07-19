@@ -16,6 +16,7 @@ import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.databinding.FragmentChooseLanguageOnboardBinding
 import com.joshtalks.joshskills.repository.server.ChooseLanguages
 import com.joshtalks.joshskills.ui.signup.adapters.ChooseLanguageAdapter
+import com.truecaller.android.sdk.TruecallerSDK
 
 class ChooseLanguageOnBoardFragment : BaseFragment() {
     private lateinit var binding: FragmentChooseLanguageOnboardBinding
@@ -91,7 +92,10 @@ class ChooseLanguageOnBoardFragment : BaseFragment() {
 
     fun onLanguageSelected(language: ChooseLanguages) {
         if (isFreemiumActive && language.testId == HINDI_TO_ENGLISH_TEST_ID) {
-            SignUpActivity.start(requireActivity(), language.testId)
+            if (TruecallerSDK.getInstance().isUsable)
+                (requireActivity() as FreeTrialOnBoardActivity).openTrueCallerBottomSheet()
+            else
+                SignUpActivity.start(requireActivity(), language.testId)
         } else {
             (requireActivity() as FreeTrialOnBoardActivity).showStartTrialPopup(
                 language,

@@ -14,6 +14,7 @@ import com.joshtalks.joshskills.base.constants.CALLING_SERVICE_ACTION
 import com.joshtalks.joshskills.base.constants.SERVICE_BROADCAST_KEY
 import com.joshtalks.joshskills.base.constants.START_SERVICE
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
@@ -35,7 +36,6 @@ import com.joshtalks.joshskills.repository.server.signup.RequestUserVerification
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import com.truecaller.android.sdk.TrueProfile
 import com.userexperior.UserExperior
-import java.util.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -438,6 +438,8 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 apiStatus.postValue(ApiCallStatus.START)
+                val isFreemiumActive = abTestRepository.isVariantActive(VariantKeys.FREEMIUM_ENABLED) &&
+                        PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID
                 val resp =
                     AppObjectController.commonNetworkService.enrollFreeTrialMentorWithCourse(
                         mapOf(
@@ -449,11 +451,10 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                                 FREE_TRIAL_TEST_ID,
                                 false,
                                 FREE_TRIAL_DEFAULT_TEST_ID
-                            ))
+                            )),
+                            "is_freemium" to isFreemiumActive
                         )
                     )
-
-
                 if (resp.isSuccessful) {
                     PrefManager.put(IS_GUEST_ENROLLED, value = true)
                     apiStatus.postValue(ApiCallStatus.SUCCESS)

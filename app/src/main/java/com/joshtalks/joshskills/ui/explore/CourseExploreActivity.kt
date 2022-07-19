@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.ui.explore
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -10,12 +11,9 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.google.android.material.tabs.TabLayoutMediator
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
-import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
-import com.joshtalks.joshskills.core.analytics.AppAnalytics
-import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
-import com.joshtalks.joshskills.core.analytics.MixPanelEvent
-import com.joshtalks.joshskills.core.analytics.MixPanelTracker
-import com.joshtalks.joshskills.core.analytics.ParamKeys
+import com.joshtalks.joshskills.core.abTest.VariantKeys
+import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
+import com.joshtalks.joshskills.core.analytics.*
 import com.joshtalks.joshskills.databinding.ActivityCourseExploreBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
@@ -33,8 +31,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 import kotlin.collections.set
 
 const val COURSE_EXPLORER_SCREEN_NAME = "Course Explorer"
@@ -111,7 +107,7 @@ class CourseExploreActivity : CoreJoshActivity() {
                         message(R.string.logout_message)
                         positiveButton(R.string.ok) {
                             MixPanelTracker.publishEvent(MixPanelEvent.LOGOUT_CLICKED)
-                                .addParam(ParamKeys.LOGOUT,"ok")
+                                .addParam(ParamKeys.LOGOUT, "ok")
                                 .push()
                             AppAnalytics.create(AnalyticsEvent.LOGOUT_CLICKED.NAME)
                                 .addUserDetails()
@@ -133,7 +129,7 @@ class CourseExploreActivity : CoreJoshActivity() {
                         }
                         negativeButton(R.string.cancel) {
                             MixPanelTracker.publishEvent(MixPanelEvent.LOGOUT_CLICKED)
-                                .addParam(ParamKeys.LOGOUT,"cancel")
+                                .addParam(ParamKeys.LOGOUT, "cancel")
                                 .push()
                             AppAnalytics.create(AnalyticsEvent.LOGOUT_CLICKED.NAME)
                                 .addUserDetails()
@@ -150,13 +146,13 @@ class CourseExploreActivity : CoreJoshActivity() {
                     message(R.string.logout_message)
                     positiveButton(R.string.ok) {
                         MixPanelTracker.publishEvent(MixPanelEvent.LOGOUT_CLICKED)
-                            .addParam(ParamKeys.LOGOUT,"ok")
+                            .addParam(ParamKeys.LOGOUT, "ok")
                             .push()
                         logout()
                     }
                     negativeButton(R.string.cancel) {
                         MixPanelTracker.publishEvent(MixPanelEvent.LOGOUT_CLICKED)
-                            .addParam(ParamKeys.LOGOUT,"cancel")
+                            .addParam(ParamKeys.LOGOUT, "cancel")
                             .push()
                         AppAnalytics.create(AnalyticsEvent.LOGOUT_CLICKED.NAME)
                             .addUserDetails()
@@ -191,7 +187,7 @@ class CourseExploreActivity : CoreJoshActivity() {
                 }
                 var response = emptyList<CourseExploreModel>()
                 if (isClickable) {
-                    val data = HashMap<String, String>()
+                    val data = HashMap<String, Any>()
                     if (PrefManager.getStringValue(USER_UNIQUE_ID).isNotEmpty()) {
                         data["gaid"] = PrefManager.getStringValue(USER_UNIQUE_ID)
                     }
@@ -201,6 +197,8 @@ class CourseExploreActivity : CoreJoshActivity() {
                     if (data.isNullOrEmpty()) {
                         data["is_default"] = "true"
                     }
+                    data["is_freemium"] = ABTestRepository().isVariantActive(VariantKeys.FREEMIUM_ENABLED) &&
+                            PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID
                     response =
                         AppObjectController.signUpNetworkService.exploreCourses(data)
                 } else {
@@ -289,10 +287,13 @@ class CourseExploreActivity : CoreJoshActivity() {
                 extras["course_name"] = courseExploreModel.courseName
 
                 MixPanelTracker.publishEvent(MixPanelEvent.SHOW_COURSE_DETAILS)
-                    .addParam(ParamKeys.TEST_ID,courseExploreModel.id)
-                    .addParam(ParamKeys.COURSE_NAME,courseExploreModel.courseName)
-                    .addParam(ParamKeys.COURSE_PRICE,courseExploreModel.amount)
-                    .addParam(ParamKeys.COURSE_ID,PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID))
+                    .addParam(ParamKeys.TEST_ID, courseExploreModel.id)
+                    .addParam(ParamKeys.COURSE_NAME, courseExploreModel.courseName)
+                    .addParam(ParamKeys.COURSE_PRICE, courseExploreModel.amount)
+                    .addParam(
+                        ParamKeys.COURSE_ID,
+                        PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID)
+                    )
                     .push()
 
                 AppAnalytics.create(AnalyticsEvent.COURSE_THUMBNAIL_CLICKED.NAME)

@@ -360,7 +360,7 @@ interface CommonNetworkService {
     ): Response<PreviousLeaderboardResponse>
 
     @POST("$DIR/course/free_trial_register_course/")
-    suspend fun enrollFreeTrialMentorWithCourse(@Body params: Map<String, String>): Response<Void>
+    suspend fun enrollFreeTrialMentorWithCourse(@Body params: Map<String, Any>): Response<Void>
 
     @POST("$DIR/impression/track_impressions/")
     suspend fun saveImpression(@Body params: Map<String, String>): Response<Void>

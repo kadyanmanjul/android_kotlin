@@ -129,7 +129,7 @@ interface SignUpNetworkService {
     fun createPaymentOrder(@Body params: Map<String, String?>): Deferred<Response<OrderDetailResponse>>
 
     @GET("$DIR/course/test_v2/")
-    suspend fun exploreCourses(@QueryMap params: Map<String, String>? = mapOf("is_default" to "true")): List<CourseExploreModel>
+    suspend fun exploreCourses(@QueryMap params: Map<String, Any>? = mapOf("is_default" to "true")): List<CourseExploreModel>
 
     @GET("$DIR/course/subscription_course_list/")
     suspend fun getFreeTrialCourses(): List<CourseExploreModel>

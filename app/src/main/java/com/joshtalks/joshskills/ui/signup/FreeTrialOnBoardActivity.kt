@@ -128,7 +128,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
                 PrefManager.put(IS_PAYMENT_DONE, false)
             } else if (languageActive)
                 openChooseLanguageFragment()
-            else if(isFreemiumCourse)
+            else if (isFreemiumCourse)
                 signUp()
             else if (is100PointsActive)
                 showStartTrialPopup(language, true)
@@ -256,7 +256,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
             viewModel.saveTrueCallerImpression(IMPRESSION_TC_NOT_INSTALLED)
     }
 
-    private fun openTrueCallerBottomSheet() {
+    fun openTrueCallerBottomSheet() {
         showProgressBar()
         viewModel.saveTrueCallerImpression(TC_BOTTOMSHEET_SHOWED)
         TruecallerSDK.getInstance().getUserProfile(this)
@@ -290,6 +290,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
             user.phoneNumber = trueProfile.phoneNumber
             user.email = trueProfile.email
             user.gender = trueProfile.gender
+            user.isVerified = true
             User.update(user)
             viewModel.userName = trueProfile.firstName
             viewModel.verifyUserViaTrueCaller(trueProfile)
@@ -313,16 +314,25 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
     }
 
     private fun openProfileDetailFragment() {
-        supportFragmentManager.commit(true) {
-            addToBackStack(null)
-            replace(
-                R.id.container,
-                SignUpProfileForFreeTrialFragment.newInstance(
-                    viewModel.userName ?: EMPTY,
-                    viewModel.isVerified
-                ),
-                SignUpProfileForFreeTrialFragment::class.java.name
-            )
+        if (isFreemiumCourse) {
+            SignUpActivity.start(
+                context = this,
+                testId = HINDI_TO_ENGLISH_TEST_ID,
+            ).also {
+                this.finish()
+            }
+        } else {
+            supportFragmentManager.commit(true) {
+                addToBackStack(null)
+                replace(
+                    R.id.container,
+                    SignUpProfileForFreeTrialFragment.newInstance(
+                        viewModel.userName ?: EMPTY,
+                        viewModel.isVerified
+                    ),
+                    SignUpProfileForFreeTrialFragment::class.java.name
+                )
+            }
         }
     }
 

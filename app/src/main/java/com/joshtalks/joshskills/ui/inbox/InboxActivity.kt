@@ -295,13 +295,23 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
                 inboxAdapter.addItems(temp)
                 val inboxEntityBought = temp.filter { it.isCapsuleCourse }.getOrNull(0)
                 Log.e(TAG, "addCourseInRecyclerView: $inboxEntityBought  ${inboxEntityBought?.isCourseBought?.not()} ${inboxEntityBought != null && inboxEntityBought.isCourseBought.not()}")
-                if (inboxEntityBought != null && inboxEntityBought.isCourseBought.not()) {
-                    findMoreLayout.findViewById<MaterialTextView>(R.id.find_more).visibility =
-                        View.GONE
-                    findMoreLayout.findViewById<MaterialTextView>(R.id.find_more_new).visibility =
-                        View.VISIBLE
-                    findMoreLayout.findViewById<MaterialTextView>(R.id.buy_english_course).visibility =
-                        View.VISIBLE
+                 if (inboxEntityBought != null && inboxEntityBought.isCourseBought.not()) {
+                    val isFreemiumActive = viewModel.abTestRepository.isVariantActive(VariantKeys.FREEMIUM_ENABLED)
+                    if(isFreemiumActive) {
+                        findMoreLayout.findViewById<MaterialTextView>(R.id.find_more).visibility =
+                            View.GONE
+                        findMoreLayout.findViewById<MaterialTextView>(R.id.find_more_new).visibility =
+                            View.GONE
+                        findMoreLayout.findViewById<MaterialTextView>(R.id.buy_english_course).visibility =
+                            View.VISIBLE
+                    } else {
+                        findMoreLayout.findViewById<MaterialTextView>(R.id.find_more).visibility =
+                            View.GONE
+                        findMoreLayout.findViewById<MaterialTextView>(R.id.find_more_new).visibility =
+                            View.VISIBLE
+                        findMoreLayout.findViewById<MaterialTextView>(R.id.buy_english_course).visibility =
+                            View.VISIBLE
+                    }
                 } else {
                     findMoreLayout.findViewById<MaterialTextView>(R.id.find_more).visibility =
                         View.VISIBLE

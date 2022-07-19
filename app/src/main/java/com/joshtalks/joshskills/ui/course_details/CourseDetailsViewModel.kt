@@ -6,17 +6,14 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.INSTANCE_ID
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.USER_UNIQUE_ID
-import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
+import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.course_detail.CourseDetailsResponseV2
 import com.joshtalks.joshskills.repository.server.course_detail.demoCourseDetails.DemoCourseDetailsResponse
 import com.joshtalks.joshskills.repository.server.onboarding.EnrollMentorWithTestIdRequest
-import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
 import com.joshtalks.joshskills.util.showAppropriateMsg
-import java.util.HashMap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -27,17 +24,9 @@ class CourseDetailsViewModel(application: Application) : AndroidViewModel(applic
     val courseDetailsLiveData: MutableLiveData<CourseDetailsResponseV2> = MutableLiveData()
     val demoCourseDetailsLiveData: MutableLiveData<DemoCourseDetailsResponse> = MutableLiveData()
     val apiCallStatusLiveData: MutableLiveData<ApiCallStatus> = MutableLiveData()
-    val points100ABtestLiveData = MutableLiveData<ABTestCampaignData?>()
+    val abTestRepository by lazy { ABTestRepository() }
 
     val repository: ABTestRepository by lazy { ABTestRepository() }
-    fun get100PCampaignData(campaign: String, testId: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            repository.getCampaignData(campaign)?.let { campaign ->
-                points100ABtestLiveData.postValue(campaign)
-            }
-            fetchCourseDetails(testId)
-        }
-    }
 
     fun fetchCourseDetails(testId: String) {
         jobs += viewModelScope.launch(Dispatchers.IO) {

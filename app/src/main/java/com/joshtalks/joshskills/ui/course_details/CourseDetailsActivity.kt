@@ -2,11 +2,7 @@ package com.joshtalks.joshskills.ui.course_details
 
 import android.app.Activity
 import android.app.DownloadManager
-import android.content.ActivityNotFoundException
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.content.*
 import android.content.pm.ActivityInfo
 import android.graphics.Paint
 import android.location.Location
@@ -37,7 +33,6 @@ import com.bumptech.glide.request.target.Target
 import com.google.android.material.appbar.AppBarLayout
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
-import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.analytics.*
 import com.joshtalks.joshskills.databinding.ActivityCourseDetailsBinding
@@ -85,6 +80,7 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
     private var flowFrom: String? = null
     private var downloadID: Long = -1
     private var is100PointsActive = false
+    private var isFreemiumActive = false
 
     var expiredTime: Long = 0L
     var isPointsScoredMoreThanEqualTo100 = false
@@ -125,16 +121,12 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
         if (intent.hasExtra(STARTED_FROM)) {
             flowFrom = intent.getStringExtra(STARTED_FROM)
         }
-        if(testId == ENGLISH_COURSE_TEST_ID || testId == ENGLISH_FREE_TRIAL_1D_TEST_ID){
-            initABTest()
-        }else{
-            if (testId != 0) {
-                getCourseDetails(testId)
-            } else {
-                finish()
-            }
+        initABTest()
+        if (testId != 0) {
+            getCourseDetails(testId)
+        } else {
+            finish()
         }
-
         AppAnalytics.create(AnalyticsEvent.LANDING_SCREEN.NAME)
             .addBasicParam()
             .addUserDetails()
@@ -168,8 +160,12 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
         jsonData.put(ParamKeys.VIA.name, flowFrom)
         Singular.eventJSON(SingularEvent.OPENED_PRE_CHECKOUT_PAGE.name, jsonData)
     }
+
     private fun initABTest() {
-        viewModel.get100PCampaignData(CampaignKeys.HUNDRED_POINTS.NAME, testId.toString())
+        viewModel.abTestRepository.apply {
+            is100PointsActive = isVariantActive(VariantKeys.POINTS_HUNDRED_ENABLED)
+            isFreemiumActive = isVariantActive(VariantKeys.FREEMIUM_ENABLED)
+        }
     }
 
     private fun showTooltip(remainingTrialDays: Int) {
@@ -214,22 +210,26 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
         linearLayoutManager.isSmoothScrollbarEnabled = true
         binding.placeHolderView.builder.setHasFixedSize(true)
             .setLayoutManager(linearLayoutManager)
-        binding.placeHolderView.addOnScrollListener(object :
-            RecyclerView.OnScrollListener() {
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                super.onScrollStateChanged(recyclerView, newState)
-                if (linearLayoutManager.findFirstCompletelyVisibleItemPosition() > 0) {
-                    visibleBuyButton()
+        if (PrefManager.getStringValue(CURRENT_COURSE_ID) != DEFAULT_COURSE_ID ||
+            (PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID && isFreemiumActive.not())
+        ) {
+            binding.placeHolderView.addOnScrollListener(object :
+                RecyclerView.OnScrollListener() {
+                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                    super.onScrollStateChanged(recyclerView, newState)
+                    if (linearLayoutManager.findFirstCompletelyVisibleItemPosition() > 0) {
+                        visibleBuyButton()
+                    }
                 }
-            }
 
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-                if (dy > 100) {
-                    visibleBuyButton()
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
+                    if (dy > 100) {
+                        visibleBuyButton()
+                    }
                 }
-            }
-        })
+            })
+        }
         binding.placeHolderView.addItemDecoration(
             DividerItemDecoration(
                 this,
@@ -248,7 +248,7 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
             binding.buyCourseLl.visibility = View.VISIBLE
             if (intent.hasExtra(WHATSAPP_URL) && intent.getStringExtra(WHATSAPP_URL)
                     .isNullOrBlank()
-                    .not() && (PrefManager.getStringValue(CURRENT_COURSE_ID)== DEFAULT_COURSE_ID)
+                    .not() && (PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID)
             ) {
                 binding.linkToWhatsapp.visibility = View.VISIBLE
             }
@@ -256,14 +256,14 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
     }
 
     private fun subscribeLiveData() {
-        viewModel.courseDetailsLiveData.observe(this, { data ->
-            if(data.totalPoints > 100){
+        viewModel.courseDetailsLiveData.observe(this) { data ->
+            if (data.totalPoints > 100) {
                 isPointsScoredMoreThanEqualTo100 = true
             }
 
-            if(is100PointsActive && testId == ENGLISH_COURSE_TEST_ID ) {
+            if (is100PointsActive && testId == ENGLISH_COURSE_TEST_ID) {
                 expiredTime = data.expiredDate.time
-                if (isPointsScoredMoreThanEqualTo100  || expiredTime <= System.currentTimeMillis()) {
+                if (isPointsScoredMoreThanEqualTo100 || expiredTime <= System.currentTimeMillis()) {
                     binding.btnStartCourse.isEnabled = true
                     binding.btnStartCourse.alpha = 1f
                 } else if (!isPointsScoredMoreThanEqualTo100 && expiredTime > System.currentTimeMillis()) {
@@ -287,7 +287,7 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
                         data.paymentData.discountedAmount
                     )
             } else {
-                binding.txtExtraHint.visibility=View.GONE
+                binding.txtExtraHint.visibility = View.GONE
             }
             if (data.version.isNotBlank()) {
                 appAnalytics.addParam(VERSION, PrefManager.getStringValue(VERSION))
@@ -314,9 +314,9 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
 
             updateButtonText(data.paymentData.discountedAmount.substring(1).toDouble())
 
-        })
+        }
 
-        viewModel.apiCallStatusLiveData.observe(this, {
+        viewModel.apiCallStatusLiveData.observe(this) {
             binding.progressBar.visibility = View.GONE
             if (it == ApiCallStatus.FAILED) {
                 val imageUrl =
@@ -344,13 +344,6 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
             } else if (it == ApiCallStatus.START) {
                 showMoveToInboxScreen()
             }
-        })
-
-        viewModel.points100ABtestLiveData.observe(this) { abTestCampaignData ->
-            abTestCampaignData?.let { map ->
-                is100PointsActive =
-                    (map.variantKey == VariantKeys.POINTS_HUNDRED_ENABLED.NAME) && map.variableMap?.isEnabled == true
-            }
         }
     }
 
@@ -361,7 +354,6 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
 
     private fun getCourseDetails(testId: Int) {
         viewModel.fetchCourseDetails(testId.toString())
-
     }
 
     private fun getViewHolder(card: Card): CourseDetailsBaseCell? {
@@ -639,10 +631,16 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     MixPanelTracker.publishEvent(MixPanelEvent.COURSE_PLAY_DEMO)
-                        .addParam(ParamKeys.TEST_ID,testId)
-                        .addParam(ParamKeys.COURSE_NAME,courseName)
-                        .addParam(ParamKeys.COURSE_PRICE,viewModel.courseDetailsLiveData.value?.paymentData?.discountedAmount)
-                        .addParam(ParamKeys.COURSE_ID,PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID))
+                        .addParam(ParamKeys.TEST_ID, testId)
+                        .addParam(ParamKeys.COURSE_NAME, courseName)
+                        .addParam(
+                            ParamKeys.COURSE_PRICE,
+                            viewModel.courseDetailsLiveData.value?.paymentData?.discountedAmount
+                        )
+                        .addParam(
+                            ParamKeys.COURSE_ID,
+                            PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID)
+                        )
                         .push()
 
                     AppAnalytics.create(AnalyticsEvent.DEMO_VIDEO_PLAYED.NAME)
@@ -733,23 +731,29 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
                     isFromNewFreeTrial = isFromNewFreeTrial
                 )
             } else {
-                if(isFromNewFreeTrial) {
+                if (isFromNewFreeTrial) {
                     loginFreeTrial = true
                     MixPanelTracker.publishEvent(MixPanelEvent.LOGIN_FREE_TRIAL_CLICKED).push()
                 }
                 logStartCourseAnalyticEvent(testId)
-                PaymentSummaryActivity.startPaymentSummaryActivity(this, testId.toString(),isFromNewFreeTrial = isFromNewFreeTrial, is100PointsObtained = isPointsScoredMoreThanEqualTo100 && testId == ENGLISH_COURSE_TEST_ID && is100PointsActive, isHundredPointsActive = is100PointsActive)
+                PaymentSummaryActivity.startPaymentSummaryActivity(
+                    this,
+                    testId.toString(),
+                    isFromNewFreeTrial = isFromNewFreeTrial,
+                    is100PointsObtained = isPointsScoredMoreThanEqualTo100 && testId == ENGLISH_COURSE_TEST_ID && is100PointsActive,
+                    isHundredPointsActive = is100PointsActive
+                )
             }
             appAnalytics.addParam(AnalyticsEvent.START_COURSE_NOW.NAME, "Clicked")
         }
     }
 
     private fun logStartCourseAnalyticEvent(testId: Int) {
-        if(!loginFreeTrial){
+        if (!loginFreeTrial) {
             MixPanelTracker.publishEvent(MixPanelEvent.COURSE_START_NOW)
-                .addParam(ParamKeys.TEST_ID,testId)
-                .addParam(ParamKeys.COURSE_NAME,courseName)
-                .addParam(ParamKeys.COURSE_PRICE,viewModel.courseDetailsLiveData.value?.paymentData?.discountedAmount)
+                .addParam(ParamKeys.TEST_ID, testId)
+                .addParam(ParamKeys.COURSE_NAME, courseName)
+                .addParam(ParamKeys.COURSE_PRICE, viewModel.courseDetailsLiveData.value?.paymentData?.discountedAmount)
                 .push()
         }
         AppAnalytics.create(AnalyticsEvent.START_COURSE_NOW.NAME)
@@ -761,11 +765,11 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
 
     private fun logMeetMeAnalyticEvent(name: String) {
         MixPanelTracker.publishEvent(MixPanelEvent.COURSE_MEET_INSTRUCTOR)
-            .addParam(ParamKeys.TEST_ID,testId)
-            .addParam(ParamKeys.COURSE_NAME,courseName)
-            .addParam(ParamKeys.INSTRUCTOR_NAME,name)
-            .addParam(ParamKeys.COURSE_PRICE,viewModel.courseDetailsLiveData.value?.paymentData?.discountedAmount)
-            .addParam(ParamKeys.COURSE_ID,PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID))
+            .addParam(ParamKeys.TEST_ID, testId)
+            .addParam(ParamKeys.COURSE_NAME, courseName)
+            .addParam(ParamKeys.INSTRUCTOR_NAME, name)
+            .addParam(ParamKeys.COURSE_PRICE, viewModel.courseDetailsLiveData.value?.paymentData?.discountedAmount)
+            .addParam(ParamKeys.COURSE_ID, PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID))
             .push()
 
         AppAnalytics.create(AnalyticsEvent.MEET_ME_CLICKED.NAME)
@@ -778,10 +782,10 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
 
     private fun logDownloadFileAnalyticEvent() {
         MixPanelTracker.publishEvent(MixPanelEvent.COURSE_DOWNLOAD_SYLLABUS)
-            .addParam(ParamKeys.TEST_ID,testId)
-            .addParam(ParamKeys.COURSE_NAME,courseName)
-            .addParam(ParamKeys.COURSE_PRICE,viewModel.courseDetailsLiveData.value?.paymentData?.discountedAmount)
-            .addParam(ParamKeys.COURSE_ID,PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID))
+            .addParam(ParamKeys.TEST_ID, testId)
+            .addParam(ParamKeys.COURSE_NAME, courseName)
+            .addParam(ParamKeys.COURSE_PRICE, viewModel.courseDetailsLiveData.value?.paymentData?.discountedAmount)
+            .addParam(ParamKeys.COURSE_ID, PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID))
             .push()
 
         AppAnalytics.create(AnalyticsEvent.DOWNLOAD_FILE_CLICKED.NAME)
@@ -876,10 +880,10 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
 
     fun openWhatsapp() {
         MixPanelTracker.publishEvent(MixPanelEvent.COURSE_WHATSAPP_CLICKED)
-            .addParam(ParamKeys.TEST_ID,testId)
-            .addParam(ParamKeys.COURSE_NAME,courseName)
-            .addParam(ParamKeys.COURSE_PRICE,viewModel.courseDetailsLiveData.value?.paymentData?.discountedAmount)
-            .addParam(ParamKeys.COURSE_ID,PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID))
+            .addParam(ParamKeys.TEST_ID, testId)
+            .addParam(ParamKeys.COURSE_NAME, courseName)
+            .addParam(ParamKeys.COURSE_PRICE, viewModel.courseDetailsLiveData.value?.paymentData?.discountedAmount)
+            .addParam(ParamKeys.COURSE_ID, PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID))
             .push()
         try {
             val whatsappIntent = Intent(Intent.ACTION_VIEW)
@@ -888,7 +892,7 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
             startActivity(whatsappIntent)
-        }catch (ex: ActivityNotFoundException ){
+        } catch (ex: ActivityNotFoundException) {
             ex.printStackTrace()
             showToast(getString(R.string.whatsApp_not_installed))
         }
@@ -912,7 +916,7 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
             }
         }
 
-        if (viewModel.courseDetailsLiveData.value?.isFreeTrial?:false || isFromNewFreeTrial ) {
+        if (viewModel.courseDetailsLiveData.value?.isFreeTrial ?: false || isFromNewFreeTrial) {
             binding.btnStartCourse.text =
                 AppObjectController.getFirebaseRemoteConfig()
                     .getString("${FirebaseRemoteConfigKey.FREE_TRIAL_COURSE_DETAIL_BTN_TXT}_$testId")

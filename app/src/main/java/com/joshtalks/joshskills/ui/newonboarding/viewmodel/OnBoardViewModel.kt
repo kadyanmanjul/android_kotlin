@@ -4,12 +4,9 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.joshtalks.joshskills.core.ApiCallStatus
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.INSTANCE_ID
-import com.joshtalks.joshskills.core.IS_GUEST_ENROLLED
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.USER_UNIQUE_ID
+import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.abTest.VariantKeys
+import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.CourseExploreModel
 import com.joshtalks.joshskills.repository.server.onboarding.*
@@ -123,7 +120,7 @@ class OnBoardViewModel(application: Application) :
         jobs += viewModelScope.launch(Dispatchers.IO) {
             try {
                 apiCallStatusLiveData.postValue(ApiCallStatus.START)
-                val data = HashMap<String, String>()
+                val data = HashMap<String, Any>()
                 if (PrefManager.getStringValue(USER_UNIQUE_ID).isNotEmpty()) {
                     data["gaid"] = PrefManager.getStringValue(USER_UNIQUE_ID)
                 }
@@ -133,6 +130,8 @@ class OnBoardViewModel(application: Application) :
                 if (data.isNullOrEmpty()) {
                     data["is_default"] = "true"
                 }
+                data["isFreemium"] = ABTestRepository().isVariantActive(VariantKeys.FREEMIUM_ENABLED) &&
+                        PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID
                 val response: List<CourseExploreModel> =
                     AppObjectController.signUpNetworkService.exploreCourses(data)
 
@@ -180,7 +179,7 @@ class OnBoardViewModel(application: Application) :
         jobs.forEach {
             try {
                 it.cancel()
-            } catch (e : Exception) {
+            } catch (e: Exception) {
                 e.printStackTrace()
             }
         }

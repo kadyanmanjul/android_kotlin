@@ -16,40 +16,54 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/feature_name"
+        <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_9sdp"
-            android:includeFontPadding="false"
+            android:orientation="vertical"
             android:paddingHorizontal="@dimen/_20sdp"
-            android:text="@{item.feature}"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
-            android:textSize="@dimen/_12sdp"
-            app:layout_constraintBottom_toTopOf="@id/feature_description"
-            app:layout_constraintEnd_toStartOf="@id/guideline1"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_goneMarginBottom="@dimen/_9sdp"
-            tools:text="Lorem Ipsum" />
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/feature_description"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/_9sdp"
-            android:includeFontPadding="false"
-            android:paddingHorizontal="@dimen/_20sdp"
-            android:text="@{item.featureDesc}"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
-            android:textSize="@dimen/_10sdp"
-            android:visibility="@{(item.featureDesc != null) ? View.VISIBLE : View.GONE}"
+            android:paddingVertical="@dimen/_9sdp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/guideline1"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/feature_name"
-            tools:text="Lorem Ipsum Dolor Sit Amet!"
-            tools:visibility="gone" />
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/feature_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:includeFontPadding="false"
+                android:text="@{item.feature}"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                android:textSize="@dimen/_12sdp"
+                app:layout_constraintBottom_toTopOf="@id/feature_description"
+                app:layout_constraintEnd_toStartOf="@id/guideline1"
+                tools:text="Lorem Ipsum" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/feature_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:includeFontPadding="false"
+                android:text="@{item.featureDesc}"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                android:textSize="@dimen/_10sdp"
+                android:visibility="@{(item.featureDesc != null) ? View.VISIBLE : View.GONE}"
+                tools:text="Lorem Ipsum Dolor Sit Amet!"
+                tools:visibility="visible" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/feature_link"
+                onFeatureLinkClick="@{item.featureLink}"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:includeFontPadding="false"
+                android:text="@{(item.featureLink != null) ? item.featureLink.text : null}"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                android:textSize="@dimen/_10sdp"
+                android:visibility="@{(item.featureLink != null) ? View.VISIBLE : View.GONE}"
+                tools:text="Lorem Ipsum!"
+                tools:visibility="visible" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
 
         <View
             android:id="@+id/divider1"
@@ -81,8 +95,8 @@
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/freemium_enabled_icon"
-            android:layout_width="@dimen/_24sdp"
-            android:layout_height="@dimen/_24sdp"
+            android:layout_width="@dimen/_16sdp"
+            android:layout_height="@dimen/_16sdp"
             android:visibility="@{(item.showFreemiumIcon() != null) ? View.VISIBLE : View.GONE}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/guideline2"

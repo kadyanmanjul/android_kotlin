@@ -1,7 +1,15 @@
 package com.joshtalks.joshskills.repository.server
 
 
+import android.content.Intent
+import android.text.SpannableString
+import android.text.method.LinkMovementMethod
+import android.text.style.ClickableSpan
+import android.view.View
+import androidx.databinding.BindingAdapter
+import com.google.android.material.textview.MaterialTextView
 import com.google.gson.annotations.SerializedName
+import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 
 data class FreemiumPaymentResponse(
     @SerializedName("test_id")
@@ -45,6 +53,9 @@ data class FreemiumPaymentFeature(
     @SerializedName("feature_desc")
     var featureDesc: String?,
 
+    @SerializedName("feature_link")
+    var featureLink: FreemiumFeatureLink? = null,
+
     @SerializedName("freemium")
     val freemium: String,
 
@@ -55,4 +66,28 @@ data class FreemiumPaymentFeature(
     fun showFreemiumIcon(): Boolean? = freemium.toBooleanStrictOrNull()
     fun showPremiumIcon(): Boolean? = premium.toBooleanStrictOrNull()
 
+}
+
+enum class FreemiumFeatureLink(val text: String) {
+    @SerializedName("Explore Courses")
+    EXPLORE_COURSES("Explore Courses"), ;
+}
+
+@BindingAdapter("onFeatureLinkClick")
+fun setOnFeatureLinkClick(textView: MaterialTextView, featureLink: FreemiumFeatureLink? = null) {
+    if (featureLink == null) return
+    val spannableString = SpannableString(featureLink.text)
+    spannableString.setSpan(object : ClickableSpan() {
+        override fun onClick(widget: View) {
+            when (featureLink) {
+                FreemiumFeatureLink.EXPLORE_COURSES -> {
+                    Intent(textView.context, CourseExploreActivity::class.java).also {
+                        textView.context.startActivity(it)
+                    }
+                }
+            }
+        }
+    }, 0, featureLink.text.length, SpannableString.SPAN_INCLUSIVE_EXCLUSIVE)
+    textView.text = spannableString
+    textView.movementMethod = LinkMovementMethod.getInstance();
 }
