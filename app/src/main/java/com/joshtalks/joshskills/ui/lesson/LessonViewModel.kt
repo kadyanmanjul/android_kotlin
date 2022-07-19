@@ -170,8 +170,9 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                 .inflate(R.layout.get_unlimited_calls_dialog_box, null)
             inflater.findViewById<TextView>(R.id.get_unlimited_calling_price_text_view).text = "Get Unlimited calling @" + AppObjectController.getFirebaseRemoteConfig()
                 .getDouble(FirebaseRemoteConfigKey.FREEMIUM_COURSE_PRICE).toString()
+            //if (speakingTopicLiveData.value?.leftCallsData?.calls_left == 0) {
             if (speakingTopicLiveData.value?.leftCallsData?.calls_left == 0) {
-                inflater.findViewById<TextView>(R.id.calls_will_get_added_text_view).text = "Your calls will get added in {${speakingTopicLiveData.value?.leftCallsData?.days_left}} days."
+                inflater.findViewById<TextView>(R.id.calls_will_get_added_text_view).text = "Your calls will get added in ${speakingTopicLiveData.value?.leftCallsData?.days_left} days."
                 inflater.findViewById<TextView>(R.id.calls_will_get_added_text_view).visibility = View.VISIBLE
             } else {
                 inflater.findViewById<TextView>(R.id.calls_will_get_added_text_view).visibility = View.GONE

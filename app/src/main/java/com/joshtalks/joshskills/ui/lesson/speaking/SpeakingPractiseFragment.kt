@@ -354,9 +354,15 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                         binding.numberOfCallsAvailableTextView.paintFlags or Paint.UNDERLINE_TEXT_FLAG
 
                     if (response.leftCallsData.calls_left==0) {
-                        binding.numberOfDaysLeftTextView.text = "Calls will be added in {${response.leftCallsData.days_left}} days"
+                        binding.numberOfDaysLeftTextView.text = "Calls will be added in ${response.leftCallsData.days_left} days"
+                        binding.numberOfCallsAvailableTextView.setTextColor(resources.getColor(R.color.red))
+                        binding.callsAvailableTextView.setTextColor(resources.getColor(R.color.red))
+                        binding.callsAvailableIcInfo.visibility = View.INVISIBLE
+                        binding.callsAvailableIcInfoRed.visibility = View.VISIBLE
                     } else {
                         binding.numberOfDaysLeftTextView.text = ""
+                        binding.callsAvailableIcInfo.visibility = View.VISIBLE
+                        binding.callsAvailableIcInfoRed.visibility = View.INVISIBLE
                     }
 
                     if (!isTwentyMinFtuCallActive || response.callDurationStatus == UPGRADED_USER) {

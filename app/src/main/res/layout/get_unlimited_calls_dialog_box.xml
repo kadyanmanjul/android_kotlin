@@ -44,7 +44,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="In the Free Version, You will get 14 calls  per week. (including incoming and outgoing calls)"
+                android:text="Free version में आपको हर हफ्ते 14 calls मिलेंगी। (incoming  और outgoing calls, दोनों मिला कर। )"
                 android:layout_marginLeft="@dimen/_18sdp"
                 android:layout_marginTop="@dimen/_18sdp"
                 android:textSize="@dimen/_13ssp"
@@ -54,7 +54,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Unused calls will not be carried foward to the next week."
+                android:text="14 calls में से जो calls आप नहीं कर पायेंगे,  उनको next week में add नहीं किया जायेगा।"
                 android:layout_marginLeft="@dimen/_18sdp"
                 android:layout_marginTop="@dimen/_18sdp"
                 android:textColor="@color/gray_6F"
@@ -63,7 +63,7 @@
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Buy Now"
+                android:text="See Details"
                 app:cornerRadius="@dimen/_15sdp"
                 android:backgroundTint="@color/colorAccent"
                 android:paddingHorizontal="@dimen/_16sdp"
