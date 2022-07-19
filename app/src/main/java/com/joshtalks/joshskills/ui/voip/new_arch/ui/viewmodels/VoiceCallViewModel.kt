@@ -375,6 +375,7 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                     if (recordingButtonState == RecordingButtonState.RECORDING) {
                         if (uiState.recordTime > 0) {
                             recordingStopButtonClickListener()
+                            repository.startCallRecording()
                         }
                     }
                 }
@@ -571,14 +572,26 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
         repository.cancelRecordingRequest()
     }
     fun startGame(v:View){
+        if (Utils.isInternetAvailable().not()) {
+            Utils.showToast("Seems like you have no internet")
+            return
+        }
         repository.startGame()
     }
 
     fun endGame(v:View){
+        if (Utils.isInternetAvailable().not()) {
+            Utils.showToast("Wait for the internet to reconnect...")
+            return
+        }
         repository.endGame()
     }
 
     fun nextWord(v:View){
+        if (Utils.isInternetAvailable().not()) {
+            Utils.showToast("Seems like you have no internet")
+            return
+        }
         repository.nextGameWord()
         viewModelScope.launch(Dispatchers.Main) {
             Utils.showToast(toastText)

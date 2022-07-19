@@ -592,6 +592,22 @@
 
             </LinearLayout>
 
+            <TextView
+                android:id="@+id/call_time3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@{vm.uiState.currentState}"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+                android:textColor="@color/white"
+                android:visibility='@{vm.uiState.gameWord != "" &amp;&amp; vm.uiState.startGameClicked &amp;&amp; !vm.uiState.currentState.equals("Timer") ? View.VISIBLE : View.GONE}'
+                app:layout_constraintBottom_toTopOf="@+id/wrapper_game_card"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/photo_frames_layout"
+                tools:ignore="MissingPrefix"
+                tools:text="" />
+
             <Chronometer
                 android:id="@+id/call_time2"
                 startTimer="@{vm.uiState.startTime}"
@@ -602,7 +618,7 @@
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
                 android:textColor="@color/white"
                 android:textSize="@dimen/_12ssp"
-                android:visibility='@{vm.uiState.gameWord == "" &amp;&amp; !vm.uiState.startGameClicked ? View.GONE : View.VISIBLE}'
+                android:visibility='@{vm.uiState.gameWord != "" &amp;&amp; vm.uiState.startGameClicked &amp;&amp; vm.uiState.currentState.equals("Timer")  ? View.VISIBLE : View.GONE}'
                 app:layout_constraintBottom_toTopOf="@+id/wrapper_game_card"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
