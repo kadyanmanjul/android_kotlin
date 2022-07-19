@@ -176,33 +176,12 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         )
 
         binding.requestCountNumber.text= callRequestCount.toString()
+        if(callRequestCount>0 && userId==User.getInstance().userId)
         binding.requestCountNumber.visibility=View.VISIBLE
-//        badgeDrawable.isVisible = !(callRequestCount > 0)
-//        if (User.getInstance().isSpeaker && callRequestCount > 0){
-//            badgeDrawable.number = callRequestCount
-//
-//            badgeDrawable.horizontalOffset = 20
-//            badgeDrawable.verticalOffset = 20
-//
-//            binding.callRequestsBtnRoot.setForeground(badgeDrawable)
-//            binding.callRequestsBtnRoot.addOnLayoutChangeListener { v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
-//
-//                BadgeUtils.attachBadgeDrawable(
-//                    badgeDrawable,
-//                    binding.callRequestsBtn,
-//                    binding.callRequestsBtnRoot
-//                )
-//            }
-//        }
+        else
+            binding.requestCountNumber.visibility=View.GONE
 
     }
-
-//    private fun BadgeDrawable.setBoundsFor(anchor: View, parent: FrameLayout){
-//        val rect = Rect()
-//        parent.getDrawingRect(rect)
-//        this.setBounds(rect)
-//        this.updateBadgeCoordinates(anchor, parent)
-//    }
 
     override fun onResume() {
         super.onResume()
