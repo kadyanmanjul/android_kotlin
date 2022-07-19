@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.ui.voip.favorite.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +15,7 @@ import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.ui.fpp.constants.FAV_CLICK_ON_CALL
 import com.joshtalks.joshskills.ui.fpp.constants.FAV_CLICK_ON_PROFILE
 import com.joshtalks.joshskills.ui.fpp.constants.FAV_USER_LONG_PRESS_CLICK
+import com.joshtalks.joshskills.ui.fpp.constants.SEND_MESSAGE_FPP
 import com.joshtalks.joshskills.ui.inbox.adapter.FavoriteCallerDiffCallback
 
 class FppFavoriteAdapter : RecyclerView.Adapter<FppFavoriteAdapter.FavoriteItemViewHolder>() {
@@ -97,6 +99,11 @@ class FppFavoriteAdapter : RecyclerView.Adapter<FppFavoriteAdapter.FavoriteItemV
 
                 fppCallIcon.setOnSingleClickListener {
                     itemClick?.invoke(favoriteCaller, FAV_CLICK_ON_CALL, position)
+                }
+
+                fppMessIcon.setOnSingleClickListener {
+                    Log.i("TAG", "bind mihir: $favoriteCaller")
+                    itemClick?.invoke(favoriteCaller, SEND_MESSAGE_FPP, position)
                 }
 
                 groupItemContainer.setOnLongClickListener {

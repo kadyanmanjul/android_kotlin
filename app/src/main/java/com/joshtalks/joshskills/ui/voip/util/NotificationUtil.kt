@@ -113,7 +113,7 @@ class NotificationUtil(val context: Context) {
         return if (favoriteCaller.image == null) {
             favoriteCaller.name.substring(0, 2).textDrawableBitmap(width = 36, height = 36)
         } else {
-            favoriteCaller.image.urlToBitmap(width = 36, height = 36)
+            favoriteCaller.image?.urlToBitmap(width = 36, height = 36)
         }
     }
 

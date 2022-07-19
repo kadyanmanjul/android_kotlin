@@ -127,6 +127,20 @@
             </androidx.appcompat.widget.LinearLayoutCompat>
 
             <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/fpp_mess_icon"
+                android:layout_width="@dimen/_46sdp"
+                android:layout_height="@dimen/_46sdp"
+                android:layout_centerInParent="true"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:padding="@dimen/_14sdp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/fpp_call_icon"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="1.0"
+                app:srcCompat="@drawable/ic_baseline_message_24"
+                tools:visibility="visible" />
+
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/fpp_call_icon"
                 android:layout_width="@dimen/_46sdp"
                 android:layout_height="@dimen/_46sdp"

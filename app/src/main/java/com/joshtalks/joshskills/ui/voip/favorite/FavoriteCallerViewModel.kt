@@ -173,7 +173,16 @@ class FavoriteCallerViewModel : BaseViewModel() {
             FAV_USER_LONG_PRESS_CLICK -> {
                 updateListRow(position)
             }
+            SEND_MESSAGE_FPP ->{
+                clickOnMessage(it)
+            }
         }
+    }
+
+    fun clickOnMessage(it: FavoriteCaller) {
+        selectedUser = it
+        message.what = SEND_MESSAGE_FPP
+        singleLiveEvent.value = message
     }
 
     fun onClickOpenRecentCall(view: View) {

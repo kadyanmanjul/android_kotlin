@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.ui.voip.favorite
 
 import android.app.Activity
 import android.content.Intent
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.view.ActionMode
@@ -10,11 +11,21 @@ import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.repository.local.entity.practise.FavoriteCaller
 import com.joshtalks.joshskills.databinding.FavoriteListActivityBinding
+import com.joshtalks.joshskills.track.AGORA_UID
+import com.joshtalks.joshskills.track.CHANNEL_ID
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.fpp.BaseFppActivity
 import com.joshtalks.joshskills.ui.fpp.RecentCallActivity
 import com.joshtalks.joshskills.ui.fpp.constants.*
+import com.joshtalks.joshskills.ui.group.JoshGroupActivity
+import com.joshtalks.joshskills.ui.group.constants.DM_CHAT
+import com.joshtalks.joshskills.ui.group.constants.DM_CHAT_DATA
+import com.joshtalks.joshskills.ui.group.constants.GROUPS_ID
+import com.joshtalks.joshskills.ui.group.model.GroupsItem
+import com.joshtalks.joshskills.ui.inbox.mentor_id
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
 import com.joshtalks.joshskills.ui.voip.WebRtcActivity
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity
@@ -107,6 +118,30 @@ class FavoriteListActivity : BaseFppActivity() {
                     }
                 }
                 FINISH_ACTION_MODE -> finishActionMode()
+                SEND_MESSAGE_FPP->{
+                    com.joshtalks.joshskills.voip.data.local.PrefManager.initServicePref(applicationContext)
+                    val intent = Intent(this, JoshGroupActivity::class.java).apply {
+                        putExtra(CONVERSATION_ID, conversationId1)
+                        putExtra(CHANNEL_ID, viewModel.selectedUser?.groupId)
+                        putExtra(AGORA_UID, com.joshtalks.joshskills.voip.data.local.PrefManager.getAgraCallId())
+                        putExtra(MENTOR_ID, mentor_id)
+                        putExtra(
+                            DM_CHAT_DATA, viewModel.selectedUser?.groupId?.let { it1 ->
+                                GroupsItem(
+                                    groupIcon = viewModel.selectedUser?.image,
+                                    groupId = it1,
+                                    unreadCount = "0",
+                                    name = viewModel.selectedUser?.name,
+                                    groupType = DM_CHAT,
+                                    lastMessage = DM_CHAT
+                                )
+                            }
+                        )
+
+                    }
+                    Log.i("TAG", "initViewState: ${intent.extras}")
+                    startActivity(intent)
+                }
             }
         }
     }

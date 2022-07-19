@@ -74,7 +74,7 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
         ABTestCampaignData::class, GroupMember::class, SpecialPractice::class, ReadingVideo::class, CompressedVideo::class,
         PhonebookContact::class, BroadCastEvent::class, NotificationEvent::class, OnlineTestRequest::class
     ],
-    version = 50,
+    version = 51,
     exportSchema = true
 )
 @TypeConverters(
@@ -171,7 +171,8 @@ abstract class AppDatabase : RoomDatabase() {
                                 MIGRATION_46_47,
                                 MIGRATION_47_48,
                                 MIGRATION_48_49,
-                                MIGRATION_49_50
+                                MIGRATION_49_50,
+                                MIGRATION_50_51
                             )
                             .fallbackToDestructiveMigration()
                             .addCallback(sRoomDatabaseCallback)
@@ -597,6 +598,12 @@ abstract class AppDatabase : RoomDatabase() {
                 database.execSQL("ALTER TABLE `lessonmodel` ADD COLUMN `translationStatus` TEXT")
                 database.execSQL("CREATE TABLE IF NOT EXISTS `notification_event_table` (`id` TEXT NOT NULL, `platform` TEXT, `time_stamp` INTEGER NOT NULL, `action` TEXT NOT NULL, `analytics_sent` INTEGER NOT NULL DEFAULT 0, `notificationId` INTEGER NOT NULL PRIMARY KEY)")
                 database.execSQL("ALTER TABLE course ADD COLUMN form_submitted INTEGER NOT NULL DEFAULT 0")
+            }
+        }
+
+        private val MIGRATION_50_51: Migration = object :Migration(50,51) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE 'favorite_caller' ADD COLUMN 'group_id'")
             }
         }
 

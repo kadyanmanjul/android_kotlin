@@ -16,11 +16,11 @@ data class FavoriteCaller(
 
     @ColumnInfo(name = "name")
     @SerializedName("name")
-    val name: String,
+    var name: String,
 
     @ColumnInfo(name = "photo_url")
     @SerializedName("photo_url")
-    val image: String?,
+    var image: String?,
 
     @ColumnInfo(name = "minutes_spoken")
     @SerializedName("minutes_spoken")
@@ -44,7 +44,11 @@ data class FavoriteCaller(
 
     @Expose
     @SerializedName("is_online")
-    val isOnline: Boolean = false
+    val isOnline: Boolean = false,
+
+    @ColumnInfo(name = "group_id")
+    @SerializedName("group_id")
+    val groupId:String = EMPTY
 
 ) : Parcelable {
     @Ignore
