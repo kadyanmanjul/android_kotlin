@@ -506,11 +506,9 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
     }
 
     companion object {
-
         fun getInboxIntent(context: Context) = Intent(context, InboxActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
-
     }
 
     override fun onBackPressed() {

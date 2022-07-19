@@ -52,6 +52,7 @@ import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
 import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.Player
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.play.core.splitinstall.SplitInstallManager
 import com.google.android.play.core.splitinstall.SplitInstallManagerFactory
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
@@ -178,6 +179,7 @@ class ReadingFragmentWithoutFeedback :
     private var internetAvailableFlag: Boolean = true
     private val praticAudioAdapter: PracticeAudioAdapter by lazy { PracticeAudioAdapter(context) }
     private var linearLayoutManager: LinearLayoutManager? = null
+    private var splitManager: SplitInstallManager? = null
     private var onDownloadCompleteListener = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             val id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
@@ -281,6 +283,7 @@ class ReadingFragmentWithoutFeedback :
         super.onCreate(savedInstanceState)
         totalTimeSpend = System.currentTimeMillis()
         linearLayoutManager = LinearLayoutManager(requireActivity())
+        splitManager = SplitInstallManagerFactory.create(requireActivity())
     }
 
     override fun onCreateView(
@@ -836,8 +839,16 @@ class ReadingFragmentWithoutFeedback :
             viewLifecycleOwner
         ) {
             currentLessonQuestion = it.filter { it.chatType == CHAT_TYPE.RP }.getOrNull(0)
+            var isDynamicModuleInstalled = false
+            splitManager?.installedModules?.forEach { module->
+                if(module.equals(getString(R.string.dynamic_feature_title))){
+                    isDynamicModuleInstalled = true
+                }
+            }
             video = currentLessonQuestion?.videoList?.getOrNull(0)?.video_url
-            if (!SplitInstallManagerFactory.create(AppObjectController.joshApplication).installedModules.contains(getString(R.string.dynamic_feature_title))){
+            if (isDynamicModuleInstalled){
+                showToast("Dynamic module is installed")
+            } else {
                 showToast("Dynamic module isn't installed")
                 video = null
             }
