@@ -80,7 +80,6 @@
                     android:background="@drawable/request_count_badge"
                     android:elevation="@dimen/_5sdp"
                     android:gravity="right"
-                    android:visibility="@{viewModel.isSpeaker ? View.VISIBLE : View.GONE}"
                     android:paddingHorizontal="@dimen/_7sdp"
                     android:paddingVertical="@dimen/_3sdp"
                     android:textAppearance="@style/BB_Typography_Nunito_Bold"

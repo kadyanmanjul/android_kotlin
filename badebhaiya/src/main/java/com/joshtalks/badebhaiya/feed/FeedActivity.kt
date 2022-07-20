@@ -333,7 +333,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         )
 
         binding.requestCountNumber.text= callRequestCount.toString()
-        if(callRequestCount>0 && User.getInstance().isSpeaker && User.getInstance().isSpeaker)
+        if(callRequestCount>0 && User.getInstance().isSpeaker && viewModel.isSpeaker.value==true)
             binding.requestCountNumber.visibility=View.VISIBLE
         else
             binding.requestCountNumber.visibility=View.GONE
@@ -377,8 +377,10 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                     }
                 })
             }
-            else
+            else {
                 viewModel.requestChannelEnd()
+                viewModel.roomRequestCount.value=0
+            }
         }
 
         profileViewModel.openProfile.observe(this){

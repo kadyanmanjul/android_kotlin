@@ -176,7 +176,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         )
 
         binding.requestCountNumber.text= callRequestCount.toString()
-        if(callRequestCount>0 && userId==User.getInstance().userId)
+        if(feedViewModel.isSpeaker.value==true && callRequestCount>0 && userId==User.getInstance().userId )
         binding.requestCountNumber.visibility=View.VISIBLE
         else
             binding.requestCountNumber.visibility=View.GONE
