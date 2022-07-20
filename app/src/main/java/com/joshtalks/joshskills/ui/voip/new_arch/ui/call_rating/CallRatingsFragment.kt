@@ -79,6 +79,7 @@ class CallRatingsFragment : BottomSheetDialogFragment() {
     private var checked = 0
     private var count = 0
     private var isRatingSubmittedCount = 0
+    private var isRatingSubmittedCountBilkul = 0
 
     val vm: CallRatingsViewModel by lazy {
         ViewModelProvider(requireActivity())[CallRatingsViewModel::class.java]
@@ -271,7 +272,7 @@ class CallRatingsFragment : BottomSheetDialogFragment() {
                 dismissAllowingStateLoss()
             }
             3 -> {
-                if (PrefManager.getIntValue(IS_CUSTOM_RATING_AND_REVIEW_DIALOG_SHOWN) < 2 && selectedRating in 9..10 && PrefManager.getLongValue(ONE_WEEK_TIME_STAMP,false) < System.currentTimeMillis() && !PrefManager.getBoolValue(GOOGLE_IN_APP_REVIEW_DIALOG_SEEN)) {
+                if (PrefManager.getIntValue(IS_CUSTOM_RATING_AND_REVIEW_DIALOG_SHOWN) < 2  && PrefManager.getIntValue(IS_CUSTOM_RATING_AND_REVIEW_DIALOG_SHOWN_BILKUL) < 2 && selectedRating in 9..10 && PrefManager.getLongValue(ONE_WEEK_TIME_STAMP, false) < System.currentTimeMillis()) {
                     dismissAllowingStateLoss()
                     showCustomRatingAndReviewDialog(requireActivity())
                     val timestamp = Calendar.getInstance().apply {
@@ -426,11 +427,8 @@ class CallRatingsFragment : BottomSheetDialogFragment() {
             if (request.isSuccessful) {
                 val reviewInfo = request.result
                 manager.launchReviewFlow(context, reviewInfo).addOnCompleteListener { result ->
-                    if (result.isSuccessful) {
-                        PrefManager.put(GOOGLE_IN_APP_REVIEW_DIALOG_SEEN, true)
-                        showToast("Review Success")
-                    } else {
-                        showToast("Review Failed")
+                    if (!result.isSuccessful) {
+                        showToast("Review failed")
                     }
                 }
             } else {
@@ -460,6 +458,9 @@ class CallRatingsFragment : BottomSheetDialogFragment() {
                 dialog.dismiss()
             }
             dialog.findViewById<Button>(R.id.btnHaBilkul).setOnClickListener {
+                isRatingSubmittedCountBilkul = PrefManager.getIntValue(IS_CUSTOM_RATING_AND_REVIEW_DIALOG_SHOWN_BILKUL)
+                isRatingSubmittedCountBilkul += 1
+                PrefManager.put(IS_CUSTOM_RATING_AND_REVIEW_DIALOG_SHOWN_BILKUL, isRatingSubmittedCountBilkul)
                 dialog.dismiss()
                 showInAppReview(context)
             }
