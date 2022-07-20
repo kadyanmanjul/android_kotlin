@@ -103,8 +103,6 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
     private var increaseCoursePrice = false
 
     var progressDialog: ProgressDialog? = null
-    var reviewManager: ReviewManager? = null
-    var reviewlnfo: ReviewInfo? = null
 
     private val refViewModel: ReferralViewModel by lazy {
         ViewModelProvider(this).get(ReferralViewModel::class.java)
