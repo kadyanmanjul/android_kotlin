@@ -216,24 +216,9 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
 
     private fun addViewModelObserver() {
         vm.audienceList.observe(this, androidx.lifecycle.Observer {
-//            val meList = it.toMutableList()
-//                meList.add(me)
             val list = it.toList()
-//            val list = it.sortedBy { it.sortOrder }
             Timber.tag("LiveRoomAudience").d("AUDIENCE LIST IS => $list")
-//            val duplicateList = mutableListOf<LiveRoomUser>()
-//            for (i in 1..100){
-//                val duplicateUser = list[0]
-//                duplicateUser.userId = System.currentTimeMillis().toString()
-//                duplicateList.add(
-//                    duplicateUser
-//                )
-//            }
-
-
-
             audienceAdapter?.submitList(list)
-//            audienceAdapter?.updateFullList(list)
             Log.i("AUDIENCE", "addViewModelObserver: ${it}")
             PubNubManager.getLiveRoomProperties().let {
                 if (it.isModerator){
@@ -605,19 +590,6 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
             }
         }
 
-        vm.audienceList.observe(viewLifecycleOwner) {
-            Timber.d("WE GOT RAISED HAND USERS => $it")
-            refreshAudienceAdapter(it)
-        }
-
-    }
-
-    private fun refreshAudienceAdapter(handRaisedList: List<LiveRoomUser>?) {
-        val list = handRaisedList?.filter { it.isSpeaker==false && it.isHandRaised }
-        Log.i("Prepare", "refreshAudienceAdapter: ")
-        list?.let {
-            audienceAdapter?.updateFullList(it.distinctBy { it.userId })
-        }
     }
 
 
