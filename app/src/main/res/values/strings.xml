@@ -1313,9 +1313,9 @@
     <string name="your_rating">Your Rating:</string>
     <string name="progress_network_text">Checking your Internet Connection</string>
     <string name="onboarding_course_heading">Spoken English Course</string>
-    <string name="onboarding_course_info1">90 Day Course</string>
+    <string name="onboarding_course_info1">English Speaking Environment</string>
     <string name="onboarding_course_info2">Beginner to Advanced</string>
-    <string name="onboarding_course_info3">English Speaking का माहौल</string>
+    <string name="onboarding_course_info3">90 Day Course</string>
     <string name="sign_up_profile_occupation_aspiration_text">यह Information आपके Practice partners को दिखाई देगी।</string>
     <string name="free">Free</string>
     <string name="pin_code">PIN code</string>
@@ -1337,4 +1337,6 @@
     <string name="wait_for_your_partner_to_click_next">Wait for your partner to click next</string>
     <string name="_14_calls_available"><u> Calls Left</u></string>
     <string name="_14"><u>14</u></string>
+    <string name="start_now_for_free">Start Now For Free</string>
+
 </resources>

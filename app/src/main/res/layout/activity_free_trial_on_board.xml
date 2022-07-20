@@ -91,7 +91,7 @@
                     android:textColor="@color/black"
                     app:drawableStartCompat="@drawable/ic_check_box"
                     app:drawableTint="@color/right_answer_color"
-                    tools:text="90 Day Course"/>
+                    tools:text="English Speaking Environment"/>
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/course_info_2"
@@ -121,7 +121,7 @@
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
                     android:textColor="@color/black"
                     app:drawableTint="@color/right_answer_color"
-                    tools:text="English Speaking का माहौल"/>
+                    tools:text="90 Day Course"/>
 
             </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -132,7 +132,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/_14sdp"
-            android:text="Start Now"
+            android:text="@string/start_now_for_free"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
