@@ -304,12 +304,12 @@ class ConnectedState(val context: CallContext) : VoipState {
                                 val uiState =
                                     context.currentUiState.copy(recordingButtonState = RecordingButtonState.SENTREQUEST)
                                 context.updateUIState(uiState = uiState)
-                                val userAction = UserAction(
-                                    ServerConstants.START_RECORDING,
-                                    context.channelData.getChannel(),
-                                    address = context.channelData.getPartnerMentorId()
-                                )
-                                context.sendMessageToServer(userAction)
+//                                val userAction = UserAction(
+//                                    ServerConstants.START_RECORDING,
+//                                    context.channelData.getChannel(),
+//                                    address = context.channelData.getPartnerMentorId()
+//                                )
+////                                context.sendMessageToServer(userAction)
                             } else {
                                 when (context.currentUiState.recordingButtonState) {
                                     RecordingButtonState.IDLE -> {
@@ -326,13 +326,13 @@ class ConnectedState(val context: CallContext) : VoipState {
                                             recordingStartTime = startTime
                                         )
                                         context.updateUIState(uiState = uiState)
-                                        val userAction = UserAction(
-                                            ServerConstants.CALL_RECORDING_ACCEPT,
-                                            context.channelData.getChannel(),
-                                            address = context.channelData.getPartnerMentorId()
-                                        )
+//                                        val userAction = UserAction(
+//                                            ServerConstants.CALL_RECORDING_ACCEPT,
+//                                            context.channelData.getChannel(),
+//                                            address = context.channelData.getPartnerMentorId()
+//                                        )
                                         context.startRecording()
-                                        context.sendMessageToServer(userAction)
+//                                        context.sendMessageToServer(userAction)
                                     }
                                 }
                             }
@@ -343,13 +343,13 @@ class ConnectedState(val context: CallContext) : VoipState {
                                 val uiState =
                                     context.currentUiState.copy(recordingButtonState = RecordingButtonState.IDLE)
                                 context.updateUIState(uiState = uiState)
-                                val userAction = UserAction(
-                                    ServerConstants.STOP_RECORDING,
-                                    context.channelData.getChannel(),
-                                    address = context.channelData.getPartnerMentorId()
-                                )
+//                                val userAction = UserAction(
+//                                    ServerConstants.STOP_RECORDING,
+//                                    context.channelData.getChannel(),
+//                                    address = context.channelData.getPartnerMentorId()
+//                                )
                                 context.stopRecording()
-                                context.sendMessageToServer(userAction)
+//                                context.sendMessageToServer(userAction)
                             } else {
                                 val uiState =
                                     context.currentUiState.copy(recordingButtonState = RecordingButtonState.IDLE)

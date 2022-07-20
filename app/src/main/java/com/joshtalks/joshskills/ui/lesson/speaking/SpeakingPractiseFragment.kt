@@ -233,6 +233,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                 .addParam(ParamKeys.LESSON_NUMBER, lessonNo)
                 .addParam(ParamKeys.VIA, "speaking screen")
                 .push()
+
             if (PrefManager.getIntValue(IS_VOIP_NEW_ARCH_ENABLED, defValue = 1) == 1) {
                 val state = getVoipState()
                 Log.d(TAG, " Start Call Button - Voip State $state")
@@ -699,7 +700,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
     private fun startPractise(
         favoriteUserCall: Boolean = false,
         isNewUserCall: Boolean = false,
-        isNewArch: Boolean = false,
+        isNewArch: Boolean = true,
     ) {
         PrefManager.put(CALL_BTN_CLICKED, true)
         if (isAdded && activity != null) {
@@ -824,7 +825,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                 putExtra(INTENT_DATA_CALL_CATEGORY, Category.PEER_TO_PEER.ordinal)
             }
             voipLog?.log("Course ID --> $courseId   Topic ID --> $topicId")
-            startActivity(callIntent)
+             startActivity(callIntent)
         }
     }
 
