@@ -243,7 +243,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
                         if (!it.isEmpty()) {
                             binding.tvProfileBio.text = it
                             binding.tvProfileBio.setTextAppearance(R.style.BB_Typography_Nunito_Sans_Semi_Bold)
-                            binding.tvProfileBio.textSize = 18f
+                            binding.tvProfileBio.textSize = 16f
                             binding.divider.updateLayoutParams<ConstraintLayout.LayoutParams> {
                                 topToBottom = binding.tvProfileBio.id
                             }
