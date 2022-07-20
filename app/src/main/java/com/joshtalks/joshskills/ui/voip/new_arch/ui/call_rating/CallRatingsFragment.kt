@@ -421,22 +421,20 @@ class CallRatingsFragment : BottomSheetDialogFragment() {
     }
 
     fun showInAppReview(context: Activity) {
-        if (isAdded && activity != null) {
-            val manager = ReviewManagerFactory.create(context)
-            manager.requestReviewFlow().addOnCompleteListener { request ->
-                if (request.isSuccessful) {
-                    val reviewInfo = request.result
-                    manager.launchReviewFlow(context, reviewInfo).addOnCompleteListener { result ->
-                        if (result.isSuccessful) {
-                            PrefManager.put(GOOGLE_IN_APP_REVIEW_DIALOG_SEEN, true)
-                            showToast("Review Success")
-                        } else {
-                            showToast("Review Failed")
-                        }
+        val manager = ReviewManagerFactory.create(context)
+        manager.requestReviewFlow().addOnCompleteListener { request ->
+            if (request.isSuccessful) {
+                val reviewInfo = request.result
+                manager.launchReviewFlow(context, reviewInfo).addOnCompleteListener { result ->
+                    if (result.isSuccessful) {
+                        PrefManager.put(GOOGLE_IN_APP_REVIEW_DIALOG_SEEN, true)
+                        showToast("Review Success")
+                    } else {
+                        showToast("Review Failed")
                     }
-                } else {
-                    showToast(request.exception?.message ?: "")
                 }
+            } else {
+                showToast(request.exception?.message ?: "")
             }
         }
     }
