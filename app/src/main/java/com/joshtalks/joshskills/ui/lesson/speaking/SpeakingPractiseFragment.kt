@@ -53,6 +53,7 @@ import com.joshtalks.joshskills.ui.lesson.LessonActivityListener
 import com.joshtalks.joshskills.ui.lesson.LessonSpotlightState
 import com.joshtalks.joshskills.ui.lesson.LessonViewModel
 import com.joshtalks.joshskills.ui.lesson.SPEAKING_POSITION
+import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
 import com.joshtalks.joshskills.ui.senior_student.SeniorStudentActivity
 import com.joshtalks.joshskills.ui.voip.SearchingUserActivity
 import com.joshtalks.joshskills.ui.voip.WebRtcService
@@ -80,6 +81,7 @@ const val NOT_ATTEMPTED = "NA"
 const val COMPLETED = "CO"
 const val ATTEMPTED = "AT"
 const val UPGRADED_USER = "NFT"
+const val MOVE_TO_PAYMENT_PAGE = 0
 
 class SpeakingPractiseFragment : CoreJoshFragment() {
 
@@ -353,8 +355,9 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                     binding.numberOfCallsAvailableTextView.paintFlags =
                         binding.numberOfCallsAvailableTextView.paintFlags or Paint.UNDERLINE_TEXT_FLAG
 
-                    if (response.leftCallsData.calls_left==0) {
-                        binding.numberOfDaysLeftTextView.text = "Calls will be added in ${response.leftCallsData.days_left} days"
+                    if (response.leftCallsData.calls_left == 0) {
+                        binding.numberOfDaysLeftTextView.text =
+                            "Calls will be added in ${response.leftCallsData.days_left} days"
                         binding.numberOfCallsAvailableTextView.setTextColor(resources.getColor(R.color.red))
                         binding.callsAvailableTextView.setTextColor(resources.getColor(R.color.red))
                         binding.callsAvailableIcInfo.visibility = View.INVISIBLE
@@ -586,6 +589,18 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         viewModel.introVideoCompleteLiveData.observe(viewLifecycleOwner) {
             if (it == true) {
                 binding.btnCallDemo.visibility = View.GONE
+            }
+        }
+
+        viewModel.event.observe(viewLifecycleOwner) {
+            when (it.what) {
+                MOVE_TO_PAYMENT_PAGE ->
+                    FreeTrialPaymentActivity.startFreeTrialPaymentActivity(
+                        activity = requireActivity(),
+                        testId = AppObjectController.getFirebaseRemoteConfig().getString(
+                            FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
+                        )
+                    )
             }
         }
         initDemoViews(lessonNo)

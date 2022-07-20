@@ -51,6 +51,7 @@ import com.joshtalks.joshskills.repository.server.engage.Graph
 import com.joshtalks.joshskills.repository.server.introduction.DemoOnboardingData
 import com.joshtalks.joshskills.repository.server.voip.SpeakingTopic
 import com.joshtalks.joshskills.repository.service.NetworkRequestHelper
+import com.joshtalks.joshskills.ui.lesson.speaking.MOVE_TO_PAYMENT_PAGE
 import com.joshtalks.joshskills.ui.lesson.speaking.spf_models.UserRating
 import com.joshtalks.joshskills.ui.lesson.speaking.spf_models.VideoPopupItem
 import com.joshtalks.joshskills.ui.referral.WHATSAPP_PACKAGE_STRING
@@ -114,6 +115,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     val filePath: MutableLiveData<String> = MutableLiveData()
     val videoDownPath: MutableLiveData<String> = MutableLiveData()
     val outputFile: MutableLiveData<String> = MutableLiveData()
+    val event: MutableLiveData<Message> = MutableLiveData()
 
     fun practicePartnerCallDurationFromNewScreen(time: Long) =
         practicePartnerCallDurationLiveData.postValue(time)
@@ -124,7 +126,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
 
     val abTestRepository: ABTestRepository by lazy { ABTestRepository() }
 
-    init{
+    init {
         getRating()
     }
 
@@ -163,16 +165,17 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    fun onHowManyCallsAvailableTextViewClicked(v : View) {
-        Log.d(TAG, "onHowManyCallsAvailableTextViewClicked: buy course dialog showed")
+    fun onHowManyCallsAvailableTextViewClicked(v: View) {
         val buyCourseDialog = AlertDialog.Builder(v.context).apply {
             val inflater = LayoutInflater.from(v.context)
                 .inflate(R.layout.get_unlimited_calls_dialog_box, null)
-            inflater.findViewById<TextView>(R.id.get_unlimited_calling_price_text_view).text = "Get Unlimited calling @" + AppObjectController.getFirebaseRemoteConfig()
-                .getDouble(FirebaseRemoteConfigKey.FREEMIUM_COURSE_PRICE).toString()
+            inflater.findViewById<TextView>(R.id.get_unlimited_calling_price_text_view).text =
+                "Get Unlimited calling @" + AppObjectController.getFirebaseRemoteConfig()
+                    .getDouble(FirebaseRemoteConfigKey.FREEMIUM_COURSE_PRICE).toString()
             //if (speakingTopicLiveData.value?.leftCallsData?.calls_left == 0) {
             if (speakingTopicLiveData.value?.leftCallsData?.calls_left == 0) {
-                inflater.findViewById<TextView>(R.id.calls_will_get_added_text_view).text = "Your calls will get added in ${speakingTopicLiveData.value?.leftCallsData?.days_left} days."
+                inflater.findViewById<TextView>(R.id.calls_will_get_added_text_view).text =
+                    "Your calls will get added in ${speakingTopicLiveData.value?.leftCallsData?.days_left} days."
                 inflater.findViewById<TextView>(R.id.calls_will_get_added_text_view).visibility = View.VISIBLE
             } else {
                 inflater.findViewById<TextView>(R.id.calls_will_get_added_text_view).visibility = View.GONE
@@ -183,19 +186,16 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
         buyCourseDialog.show()
     }
 
-    fun onCallExpertTeacherButtonClicked(v : View) {
-        Toast.makeText(v.context, "Move to Buy page Layout", Toast.LENGTH_SHORT).show()
-        // Move to Buy page Layout => Has to be done by Yash Kasera
+    fun onCallExpertTeacherButtonClicked(v: View) {
+        event.postValue(Message().apply { what = MOVE_TO_PAYMENT_PAGE })
     }
 
-    fun onCallFemalePracticePartnerButtonClicked(v : View) {
-        Toast.makeText(v.context, "Move to Buy page Layout", Toast.LENGTH_SHORT).show()
-        // Move to Buy page Layout => Has to be done by Yash Kasera
+    fun onCallFemalePracticePartnerButtonClicked(v: View) {
+        event.postValue(Message().apply { what = MOVE_TO_PAYMENT_PAGE })
     }
 
-    fun onCallHigherLevelSpeakerButtonClicked(v : View) {
-        Toast.makeText(v.context, "Move to Buy page Layout", Toast.LENGTH_SHORT).show()
-        // Move to Buy page Layout => Has to be done by Yash Kasera
+    fun onCallHigherLevelSpeakerButtonClicked(v: View) {
+        event.postValue(Message().apply { what = MOVE_TO_PAYMENT_PAGE })
     }
 
     private suspend fun getLessonFromDB(lessonId: Int): LessonModel? {
@@ -963,31 +963,31 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
             .build()
     }
 
-     fun getButtonVisibility(){
-         if(PrefManager.getIntValue(THRESHOLD_SPEED_IN_KBPS)==-1){
-             isInternetSpeedGood.set(2)
-             return
-         }
-        if(isInternetSpeedGood.get()!=0)
-         isInternetSpeedGood.set(0)
+    fun getButtonVisibility() {
+        if (PrefManager.getIntValue(THRESHOLD_SPEED_IN_KBPS) == -1) {
+            isInternetSpeedGood.set(2)
+            return
+        }
+        if (isInternetSpeedGood.get() != 0)
+            isInternetSpeedGood.set(0)
 
         viewModelScope.launch(Dispatchers.IO) {
-            if(ConnectionDetails.getInternetSpeed()!= Speed.LOW){
+            if (ConnectionDetails.getInternetSpeed() != Speed.LOW) {
                 isInternetSpeedGood.set(2)
-            }else{
+            } else {
                 isInternetSpeedGood.set(1)
 
             }
         }
     }
 
-    fun recheckSpeed(v: View){
+    fun recheckSpeed(v: View) {
         getButtonVisibility()
     }
 
-    fun getRating()  {
+    fun getRating() {
         val currentTime = Date().time
-        if(ifRatingFromApi(currentTime)) {
+        if (ifRatingFromApi(currentTime)) {
             viewModelScope.launch(Dispatchers.IO)
             {
                 try {
@@ -1002,13 +1002,13 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                     Timber.e(ex)
                 }
             }
-        }else{
+        } else {
             userRating.set(PrefManager.getRatingObject(RATING_OBJECT))
         }
     }
 
-    private fun ifRatingFromApi(currentTime :Long) : Boolean{
-        val previousTime: Long = PrefManager.getLongValue(RATING_TIMESTAMP,false)
+    private fun ifRatingFromApi(currentTime: Long): Boolean {
+        val previousTime: Long = PrefManager.getLongValue(RATING_TIMESTAMP, false)
         val differ = currentTime - previousTime
         return !(differ < 86400000 && differ > -86400000)
     }
@@ -1038,7 +1038,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
         singleLiveEvent.value = message
     }
 
-    fun closeCurrentFragment(){
+    fun closeCurrentFragment() {
         message.what = CLOSE_FULL_READING_FRAGMENT
         singleLiveEvent.value = message
     }
@@ -1049,22 +1049,22 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
         singleLiveEvent.value = message
     }
 
-    fun submitButton(){
+    fun submitButton() {
         message.what = SUBMIT_BUTTON_CLICK
         singleLiveEvent.value = message
     }
 
-    fun cancelButton(){
+    fun cancelButton() {
         message.what = CANCEL_BUTTON_CLICK
         singleLiveEvent.value = message
     }
 
-    fun showVideoView(){
+    fun showVideoView() {
         message.what = SHOW_VIDEO_VIEW
         singleLiveEvent.value = message
     }
 
-    fun updatePracticeEngagement(requestEngage:RequestEngage) {
+    fun updatePracticeEngagement(requestEngage: RequestEngage) {
         viewModelScope.launch {
             val lessonQuestion = AppObjectController.appDatabase.lessonQuestionDao()
                 .getLessonQuestionById(requestEngage.questionId)
@@ -1080,11 +1080,11 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    fun saveReadingPracticeImpression(eventName: String,lessonId: String) {
+    fun saveReadingPracticeImpression(eventName: String, lessonId: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val requestData = hashMapOf(
-                    Pair("lesson_id",lessonId),
+                    Pair("lesson_id", lessonId),
                     Pair("event_name", eventName)
                 )
                 AppObjectController.commonNetworkService.saveReadingPracticeImpression(requestData)
