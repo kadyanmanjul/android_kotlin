@@ -922,9 +922,6 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         viewModel.mentorPaymentStatus.observe(this) {
             when (it) {
                 true -> {
-                    if (PrefManager.getBoolValue(IS_DEMO_P2P, defValue = false)) {
-                        PrefManager.put(IS_DEMO_P2P, false)
-                    }
                     val freeTrialTestId =
                         Utils.getLangPaymentTestIdFromTestId(PrefManager.getStringValue(FREE_TRIAL_TEST_ID))
                     if (testId == freeTrialTestId) {
@@ -1011,9 +1008,6 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             viewModel.saveImpression(IMPRESSION_PAY_FULL_FEES)
         }
         viewModel.postGoal(GoalKeys.PAYMENT_COMPLETE.NAME, CampaignKeys.ENGLISH_FOR_GOVT_EXAM.NAME)
-        if (PrefManager.getBoolValue(IS_DEMO_P2P, defValue = false)) {
-            PrefManager.put(IS_DEMO_P2P, false)
-        }
         val freeTrialTestId = if (PrefManager.getStringValue(FREE_TRIAL_TEST_ID).isEmpty().not()) {
             Utils.getLangPaymentTestIdFromTestId(PrefManager.getStringValue(FREE_TRIAL_TEST_ID))
         } else {

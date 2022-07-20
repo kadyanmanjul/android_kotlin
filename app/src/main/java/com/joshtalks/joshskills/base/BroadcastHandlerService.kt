@@ -57,13 +57,9 @@ class BroadcastHandlerService : Service() {
         when (intent?.action) {
             SAVE_BROADCAST_EVENT -> {
                 scope.handleRequest {
-                    if (System.currentTimeMillis() - PrefManager.getLongValue(
-                            LAST_TIME_WORK_MANAGER_START
-                        ) >= 30 * 60 * 1000L
-                    ) {
+                    if (System.currentTimeMillis() - PrefManager.getLongValue(LAST_TIME_WORK_MANAGER_START) >= 30 * 60 * 1000L) {
                         PrefManager.put(LAST_TIME_WORK_MANAGER_START, System.currentTimeMillis())
                         CoroutineScope(Dispatchers.IO).launch {
-                            Timber.tag("ReceiverCheck").e("${intent.action} : ${intent.dataString}")
                             AppDatabase.getDatabase(this@BroadcastHandlerService)?.broadcastDao()
                                 ?.insertBroadcastEvent(
                                     BroadCastEvent(

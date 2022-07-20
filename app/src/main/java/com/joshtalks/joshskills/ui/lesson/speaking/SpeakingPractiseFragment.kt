@@ -230,28 +230,20 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                 .addParam(ParamKeys.VIA, "speaking screen")
                 .push()
             viewModel.postGoal(GoalKeys.CALL_PP_CLICKED.NAME, CampaignKeys.ENGLISH_FOR_GOVT_EXAM.NAME)
-            if (PrefManager.getIntValue(IS_VOIP_NEW_ARCH_ENABLED, defValue = 1) == 1) {
-                val state = getVoipState()
-                Log.d(TAG, " Start Call Button - Voip State $state")
-                if (state == State.IDLE) {
-                    if (checkPstnState() == PSTNState.Idle) {
-                        if (Utils.isInternetAvailable().not()) {
-                            showToast("Seems like you have no internet")
-                            return@setOnSingleClickListener
-                        }
-                        startPractise(isNewArch = true)
-                    } else {
-                        showToast("Cannot make this call while on another call")
+            val state = getVoipState()
+            Log.d(TAG, " Start Call Button - Voip State $state")
+            if (state == State.IDLE) {
+                if (checkPstnState() == PSTNState.Idle) {
+                    if (Utils.isInternetAvailable().not()) {
+                        showToast("Seems like you have no internet")
+                        return@setOnSingleClickListener
                     }
-                } else
-                    showToast("Wait for last call to get disconnected")
-            } else {
-                viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
-                if (getVoipState() == State.IDLE)
                     startPractise()
-                else
-                    showToast("Wait for last call to get disconnected")
-            }
+                } else {
+                    showToast("Cannot make this call while on another call")
+                }
+            } else
+                showToast("Wait for last call to get disconnected")
         }
 
         binding.btnGroupCall.setOnClickListener {
@@ -272,28 +264,20 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         }
 
         viewModel.speakingSpotlightClickLiveData.observe(viewLifecycleOwner) {
-            if (PrefManager.getIntValue(IS_VOIP_NEW_ARCH_ENABLED, defValue = 1) == 1) {
-                val state = getVoipState()
-                Log.d(TAG, " Start Call Button - Voip State $state")
-                if (state == State.IDLE) {
-                    if (checkPstnState() == PSTNState.Idle) {
-                        if (Utils.isInternetAvailable().not()) {
-                            showToast("Seems like you have no internet")
-                            return@observe
-                        }
-                        startPractise(isNewArch = true)
-                    } else {
-                        showToast("Cannot make this call while on another call")
+            val state = getVoipState()
+            Log.d(TAG, " Start Call Button - Voip State $state")
+            if (state == State.IDLE) {
+                if (checkPstnState() == PSTNState.Idle) {
+                    if (Utils.isInternetAvailable().not()) {
+                        showToast("Seems like you have no internet")
+                        return@observe
                     }
-                } else
-                    showToast("Wait for last call to get disconnected")
-            } else {
-                viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
-                if (getVoipState() == State.IDLE)
                     startPractise()
-                else
-                    showToast("Wait for last call to get disconnected")
-            }
+                } else {
+                    showToast("Cannot make this call while on another call")
+                }
+            } else
+                showToast("Wait for last call to get disconnected")
         }
 
         binding.btnContinue.setOnClickListener {
@@ -700,15 +684,12 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
     private fun startPractise(
         favoriteUserCall: Boolean = false,
         isNewUserCall: Boolean = false,
-        isNewArch: Boolean = true,
     ) {
         PrefManager.put(CALL_BTN_CLICKED, true)
         if (isAdded && activity != null) {
             if (PermissionUtils.isCallingPermissionEnabled(requireContext())) {
-                if (isNewArch) {
-                    startPracticeCall()
-                    return
-                }
+                startPracticeCall()
+                return
             }
         }
         if (isAdded && activity != null) {
@@ -729,11 +710,8 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                                 }
                             }
                             if (flag) {
-                                if (isNewArch) {
-                                    startPracticeCall()
-                                    return
-                                } else
-                                    return  //TODO : Remove this isNewArch
+                                startPracticeCall()
+                                return
                             } else {
                                 MaterialDialog(requireActivity()).show {
                                     message(R.string.call_start_permission_message)

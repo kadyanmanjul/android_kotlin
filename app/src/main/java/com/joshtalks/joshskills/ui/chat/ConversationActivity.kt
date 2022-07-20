@@ -547,9 +547,6 @@ class ConversationActivity :
         MixPanelTracker.mixPanel.people.set(obj)
         MixPanelTracker.mixPanel.registerSuperProperties(obj)
         try {
-            if (inboxEntity.isCapsuleCourse) {
-                PrefManager.put(IS_DEMO_P2P, false)
-            }
             conversationBinding.textMessageTitle.text = inboxEntity.course_name
             conversationBinding.imageViewLogo.setImageWithPlaceholder(inboxEntity.course_icon)
             conversationBinding.imageViewLogo.visibility = VISIBLE

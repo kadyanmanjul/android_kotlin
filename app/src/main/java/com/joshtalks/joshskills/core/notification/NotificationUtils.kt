@@ -29,12 +29,10 @@ import com.joshtalks.joshskills.core.COURSE_ID
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.IS_CONVERSATION_ROOM_ACTIVE_FOR_USER
 import com.joshtalks.joshskills.core.IS_COURSE_BOUGHT
-import com.joshtalks.joshskills.core.JoshApplication
 import com.joshtalks.joshskills.core.JoshSkillExecutors
 import com.joshtalks.joshskills.core.PREF_IS_CONVERSATION_ROOM_ACTIVE
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.analytics.DismissNotifEventReceiver
-import com.joshtalks.joshskills.core.firestore.FirestoreDB
 import com.joshtalks.joshskills.core.firestore.NotificationAnalytics
 import com.joshtalks.joshskills.core.io.LastSyncPrefManager
 import com.joshtalks.joshskills.core.isValidFullNumber
@@ -46,7 +44,6 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.NotificationAction
 import com.joshtalks.joshskills.repository.local.model.NotificationChannelNames
 import com.joshtalks.joshskills.repository.local.model.NotificationObject
-import com.joshtalks.joshskills.repository.local.model.ShortNotificationObject
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.assessment.AssessmentActivity
@@ -70,11 +67,9 @@ import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.reminder.reminder_listing.ReminderListActivity
 import com.joshtalks.joshskills.ui.signup.FreeTrialOnBoardActivity
 import com.joshtalks.joshskills.ui.voip.favorite.FavoriteListActivity
-import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
 import com.joshtalks.joshskills.voip.constant.*
 import com.joshtalks.joshskills.voip.data.CallingRemoteService
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.CallRecordingShare
-import com.joshtalks.joshskills.voip.constant.State
 import java.lang.reflect.Type
 import java.util.concurrent.ExecutorService
 import kotlinx.coroutines.CoroutineScope
@@ -97,42 +92,27 @@ class NotificationUtils(val context: Context) {
     }
 
     fun processRemoteMessage(remoteData: RemoteMessage, channel: NotificationAnalytics.Channel) {
-        if (remoteData.data.containsKey("nType")) {
-            if(remoteData.data["nType"] == "CR" && (context.applicationContext as JoshApplication)?.getVoipState() != State.IDLE)
-                return
-            val notificationTypeToken: Type = object : TypeToken<ShortNotificationObject>() {}.type
-            val shortNc: ShortNotificationObject = AppObjectController.gsonMapper.fromJson(
-                AppObjectController.gsonMapper.toJson(remoteData.data),
-                notificationTypeToken
+        val notificationTypeToken: Type = object : TypeToken<NotificationObject>() {}.type
+        val nc: NotificationObject = AppObjectController.gsonMapper.fromJson(
+            AppObjectController.gsonMapper.toJson(remoteData.data),
+            notificationTypeToken
+        )
+        nc.contentTitle = remoteData.notification?.title ?: remoteData.data["title"]
+        nc.contentText = remoteData.notification?.body ?: remoteData.data["body"]
+
+        if (channel == NotificationAnalytics.Channel.GROUPS) {
+            sendNotification(nc)
+            return
+        }
+
+        CoroutineScope(Dispatchers.IO).launch {
+            val isFirstTimeNotification = NotificationAnalytics().addAnalytics(
+                notificationId = nc.id.toString(),
+                mEvent = NotificationAnalytics.Action.RECEIVED,
+                channel = channel
             )
-
-            FirestoreDB.getNotification {
-                val nc = it.toNotificationObject(shortNc.id)
+            if (isFirstTimeNotification)
                 sendNotification(nc)
-            }
-        } else {
-            val notificationTypeToken: Type = object : TypeToken<NotificationObject>() {}.type
-            val nc: NotificationObject = AppObjectController.gsonMapper.fromJson(
-                AppObjectController.gsonMapper.toJson(remoteData.data),
-                notificationTypeToken
-            )
-            nc.contentTitle = remoteData.notification?.title ?: remoteData.data["title"]
-            nc.contentText = remoteData.notification?.body ?: remoteData.data["body"]
-
-            if (channel == NotificationAnalytics.Channel.GROUPS) {
-                sendNotification(nc)
-                return
-            }
-
-            CoroutineScope(Dispatchers.IO).launch {
-                val isFirstTimeNotification = NotificationAnalytics().addAnalytics(
-                    notificationId = nc.id.toString(),
-                    mEvent = NotificationAnalytics.Action.RECEIVED,
-                    channel = channel
-                )
-                if (isFirstTimeNotification)
-                    sendNotification(nc)
-            }
         }
     }
 

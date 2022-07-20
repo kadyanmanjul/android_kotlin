@@ -958,9 +958,6 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         MixPanelTracker.mixPanel.people.set(obj)
         MixPanelTracker.mixPanel.registerSuperProperties(obj)
 
-        if (PrefManager.getBoolValue(IS_DEMO_P2P, defValue = false)) {
-            PrefManager.put(IS_DEMO_P2P, false)
-        }
         val freeTrialTestId = AppObjectController.getFirebaseRemoteConfig()
             .getString(FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID)
         if (testId == freeTrialTestId) {
