@@ -2,11 +2,13 @@ package com.joshtalks.joshskills.ui.signup
 
 import android.app.Application
 import android.os.Message
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.abTest.GoalKeys
 import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
@@ -93,11 +95,13 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
                         )
                         updateFromLoginResponse(this)
                     }
+                } else {
+                    signUpStatus.postValue(SignUpStepStatus.ERROR)
                 }
             } catch (ex: Throwable) {
                 ex.showAppropriateMsg()
+                signUpStatus.postValue(SignUpStepStatus.ERROR)
             }
-            signUpStatus.postValue(SignUpStepStatus.ERROR)
         }
     }
 
@@ -155,12 +159,18 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
                     }
                     AppAnalytics.updateUser()
                     analyzeUserProfile()
+                    if (isUserExist.not()) {
+                        liveEvent.postValue(Message().apply { what = USER_CREATED_SUCCESSFULLy })
+                        postGoal(GoalKeys.REGISTRATION_COMPLETE)
+                    }
                     return@launch
+                } else {
+                    signUpStatus.postValue(SignUpStepStatus.ERROR)
                 }
             } catch (ex: Throwable) {
+                signUpStatus.postValue(SignUpStepStatus.ERROR)
                 ex.showAppropriateMsg()
             }
-            signUpStatus.postValue(SignUpStepStatus.ERROR)
         }
     }
 
@@ -181,6 +191,12 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
             } catch (ex: Throwable) {
                 ex.showAppropriateMsg()
             }
+        }
+    }
+
+    fun postGoal(goal: GoalKeys) {
+        viewModelScope.launch {
+            abTestRepository.postGoal(goal.NAME)
         }
     }
 }

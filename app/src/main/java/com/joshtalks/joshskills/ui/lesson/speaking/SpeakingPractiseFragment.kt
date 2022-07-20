@@ -103,6 +103,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
     private var beforeTwoMinTalked = -1
     private var afterTwoMinTalked = -1
     private val twoMinutes: Int = 2
+    private val fiveMinutes: Int = 5
     private val viewModel: LessonViewModel by lazy {
         ViewModelProvider(requireActivity()).get(LessonViewModel::class.java)
     }
@@ -223,6 +224,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             courseId = it
         }
         binding.btnStartTrialText.setOnSingleClickListener {
+            viewModel.postGoal(GoalKeys.CALL_PP_CLICKED.NAME, CampaignKeys.FREEMIUM_COURSE.NAME)
             if (PrefManager.getBoolValue(IS_LOGIN_VIA_TRUECALLER))
                 viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
             MixPanelTracker.publishEvent(MixPanelEvent.CALL_PRACTICE_PARTNER)
@@ -337,6 +339,10 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                     } else if (response.alreadyTalked >= twoMinutes) {
                         beforeTwoMinTalked = afterTwoMinTalked
                         afterTwoMinTalked = 1
+                        viewModel.postGoal(GoalKeys.CALL_2MIN_COMPLETE.NAME, CampaignKeys.FREEMIUM_COURSE.NAME)
+                    }
+                    if(response.alreadyTalked >= fiveMinutes) {
+                        viewModel.postGoal(GoalKeys.CALL_5MIN_COMPLETE.NAME, CampaignKeys.FREEMIUM_COURSE.NAME)
                     }
 
                     if (beforeTwoMinTalked == 0 && afterTwoMinTalked == 1 && topicId != null && topicId == LESSON_ONE_TOPIC_ID && PrefManager.getBoolValue(
@@ -356,6 +362,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                         binding.numberOfCallsAvailableTextView.paintFlags or Paint.UNDERLINE_TEXT_FLAG
 
                     if (response.leftCallsData.calls_left == 0) {
+                        viewModel.postGoal(GoalKeys.CALLS_LIMIT_REACHED.NAME, CampaignKeys.FREEMIUM_COURSE.NAME)
                         binding.numberOfDaysLeftTextView.text =
                             "Calls will be added in ${response.leftCallsData.days_left} days"
                         binding.numberOfCallsAvailableTextView.setTextColor(resources.getColor(R.color.red))

@@ -47,6 +47,8 @@ import com.joshtalks.joshskills.constants.OPEN_READING_SHARING_FULLSCREEN
 import com.joshtalks.joshskills.constants.PERMISSION_FROM_READING
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.ApiCallStatus.*
+import com.joshtalks.joshskills.core.abTest.CampaignKeys
+import com.joshtalks.joshskills.core.abTest.GoalKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
@@ -55,7 +57,6 @@ import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.core.extension.translationAnimationNew
 import com.joshtalks.joshskills.core.videotranscoder.enforceSingleScrollDirection
 import com.joshtalks.joshskills.core.videotranscoder.recyclerView
-import com.joshtalks.joshskills.databinding.GetUnlimitedCallsDialogBoxBinding
 import com.joshtalks.joshskills.databinding.LessonActivityBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
@@ -369,6 +370,8 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                 lessonNumber = it.lessonNo
                 lessonIsNewGrammar = it.isNewGrammar
             }
+            if (lessonNumber == 1)
+                viewModel.postGoal(GoalKeys.LESSON1_OPENED.NAME, CampaignKeys.FREEMIUM_COURSE.NAME)
             MixPanelTracker.publishEvent(MixPanelEvent.GRAMMAR_OPENED)
                 .addParam(ParamKeys.LESSON_ID, getLessonId)
                 .addParam(ParamKeys.LESSON_NUMBER, lessonNumber)

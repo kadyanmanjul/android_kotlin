@@ -509,4 +509,10 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
             }
         }
     }
+
+    fun postGoal(goal: String) {
+        viewModelScope.launch {
+            abTestRepository.postGoal(goal)
+        }
+    }
 }

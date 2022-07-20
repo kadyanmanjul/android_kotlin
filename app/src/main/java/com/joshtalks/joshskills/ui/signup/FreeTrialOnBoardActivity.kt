@@ -6,6 +6,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
@@ -16,7 +17,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIAL_POPUP_BODY_TEXT
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIAL_POPUP_TITLE_TEXT
@@ -42,6 +42,7 @@ import java.util.*
 
 const val SHOW_SIGN_UP_FRAGMENT = "SHOW_SIGN_UP_FRAGMENT"
 const val HINDI_TO_ENGLISH_TEST_ID = "784"
+const val USER_CREATED_SUCCESSFULLy = 1000
 
 class FreeTrialOnBoardActivity : CoreJoshActivity() {
 
@@ -49,7 +50,6 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
     private val viewModel: FreeTrialOnBoardViewModel by lazy {
         ViewModelProvider(this).get(FreeTrialOnBoardViewModel::class.java)
     }
-    private val liveEvent = EventLiveData
     private var languageActive = false
     private var eftActive = false
     private var is100PointsActive = false
@@ -101,9 +101,10 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
 
     override fun onStart() {
         super.onStart()
-        liveEvent.observe(this) {
+        viewModel.liveEvent.observe(this) {
             when (it.what) {
                 IS_USER_EXIST -> moveToInboxScreen()
+                USER_CREATED_SUCCESSFULLy -> openProfileDetailFragment()
             }
         }
         initTrueCallerUI()
@@ -150,7 +151,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
                     openProfileDetailFragment()
                 }
                 SignUpStepStatus.SignUpCompleted, SignUpStepStatus.ERROR -> {
-                    openProfileDetailFragment()
+                    openProfileDetailFragment(true)
                 }
                 else -> return@Observer
             }
@@ -293,9 +294,8 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
             user.isVerified = true
             User.update(user)
             viewModel.userName = trueProfile.firstName
-            viewModel.verifyUserViaTrueCaller(trueProfile)
             viewModel.isVerified = true
-            openProfileDetailFragment()
+            viewModel.verifyUserViaTrueCaller(trueProfile)
         }
     }
 
@@ -313,8 +313,8 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         startActivity(intent)
     }
 
-    private fun openProfileDetailFragment() {
-        if (isFreemiumCourse) {
+    private fun openProfileDetailFragment(forceOpen: Boolean = false) {
+        if (isFreemiumCourse && forceOpen.not()) {
             SignUpActivity.start(
                 context = this,
                 testId = HINDI_TO_ENGLISH_TEST_ID,

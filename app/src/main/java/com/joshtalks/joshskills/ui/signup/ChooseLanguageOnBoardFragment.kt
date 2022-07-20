@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.ui.signup
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +11,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
 import com.joshtalks.joshskills.core.LANGUAGE_SELECTION_SCREEN_OPENED
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.abTest.GoalKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.databinding.FragmentChooseLanguageOnboardBinding
 import com.joshtalks.joshskills.repository.server.ChooseLanguages
@@ -91,6 +91,9 @@ class ChooseLanguageOnBoardFragment : BaseFragment() {
 
 
     fun onLanguageSelected(language: ChooseLanguages) {
+        if (language.testId == HINDI_TO_ENGLISH_TEST_ID) {
+            viewModel.postGoal(GoalKeys.HINDI_LANG_SELECTED)
+        }
         if (isFreemiumActive && language.testId == HINDI_TO_ENGLISH_TEST_ID) {
             if (TruecallerSDK.getInstance().isUsable)
                 (requireActivity() as FreeTrialOnBoardActivity).openTrueCallerBottomSheet()

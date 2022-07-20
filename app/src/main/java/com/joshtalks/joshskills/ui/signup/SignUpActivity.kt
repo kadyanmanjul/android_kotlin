@@ -33,6 +33,8 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.abTest.GoalKeys
+import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.analytics.*
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.databinding.ActivitySignUpV2Binding
@@ -101,6 +103,8 @@ class SignUpActivity : BaseActivity() {
                 AnalyticsEvent.FLOW_FROM_PARAM.NAME,
                 intent.getStringExtra(FLOW_FROM)
             )
+        if (intent.hasExtra(TEST_ID))
+            testId = intent.getStringExtra(TEST_ID)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_sign_up_v2)
         binding.handler = this
         addViewModelObserver()
@@ -137,7 +141,11 @@ class SignUpActivity : BaseActivity() {
                 }
                 SignUpStepStatus.ProfileCompleted -> {
                     binding.ivBack.visibility = View.GONE
-                    openProfilePicUpdateFragment()
+                    if (viewModel.abTestRepository.isVariantActive(VariantKeys.FREEMIUM_ENABLED)) {
+                        viewModel.changeSignupStatusToProfilePicSkipped()
+                    } else {
+                        openProfilePicUpdateFragment()
+                    }
                 }
                 SignUpStepStatus.ProfilePicUploaded -> {
                     binding.ivBack.visibility = View.GONE
@@ -148,6 +156,8 @@ class SignUpActivity : BaseActivity() {
                     logLoginSuccessAnalyticsEvent(viewModel.loginViaStatus?.toString())
                     if (!isFirstTime)
                         viewModel.saveTrueCallerImpression(IMPRESSION_ALREADY_ALREADYUSER)
+                    else
+                        viewModel.postGoal(GoalKeys.REGISTRATION_COMPLETE.NAME)
                     if (PrefManager.hasKey(SPECIFIC_ONBOARDING, isConsistent = true))
                         viewModel.registerSpecificCourse()
                     else if (intent?.hasExtra(TEST_ID) == true)

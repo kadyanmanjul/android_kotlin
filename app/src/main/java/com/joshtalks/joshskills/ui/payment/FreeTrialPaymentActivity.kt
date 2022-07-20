@@ -578,6 +578,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         }
 
         uiHandler.postDelayed({
+            viewModel.postGoal(GoalKeys.PAYMENT_COMPLETE.NAME, CampaignKeys.FREEMIUM_COURSE.NAME)
             navigateToStartCourseActivity()
         }, 1000L * 5L)
     }

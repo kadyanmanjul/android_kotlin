@@ -5,6 +5,8 @@
 
     <data>
 
+        <import type="android.view.View" />
+
         <variable
             name="handler"
             type="com.joshtalks.joshskills.ui.signup.SignUpProfileFragment" />
@@ -13,9 +15,9 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/_24sdp"
         android:background="@color/white"
         android:fillViewport="true"
-        android:layout_marginTop="@dimen/_24sdp"
         android:paddingStart="@dimen/_8sdp"
         android:paddingEnd="@dimen/_8sdp"
         android:scrollbarThumbHorizontal="@null"
@@ -47,12 +49,12 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_6sdp"
                     android:background="@drawable/mobile_no_bg"
+                    android:digits="@string/allowed_name_characters"
                     android:gravity="start"
                     android:hint="@string/hint_name_field"
                     android:imeOptions="actionNext"
                     android:inputType="textCapWords"
                     android:lines="1"
-                    android:digits="@string/allowed_name_characters"
                     android:maxLength="24"
                     android:maxLines="1"
                     android:minLines="1"
@@ -210,12 +212,12 @@
                         android:layout_centerVertical="true"
                         android:layout_marginStart="@dimen/_4sdp"
                         android:gravity="center_vertical|start"
-                        app:srcCompat="@drawable/ic_small_tick"
                         android:tint="@color/colorPrimary"
                         android:visibility="visible"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/ic_small_tick"
                         tools:visibility="visible" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
@@ -344,12 +346,12 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_6sdp"
                     android:background="@drawable/mobile_no_bg"
+                    android:digits="@string/allowed_name_characters"
                     android:gravity="start"
                     android:hint="@string/occupation_filed_hint_text"
                     android:imeOptions="actionNext"
                     android:inputType="textCapWords"
                     android:lines="1"
-                    android:digits="@string/allowed_name_characters"
                     android:maxLength="24"
                     android:maxLines="1"
                     android:minLines="1"
@@ -363,12 +365,13 @@
                     android:textCursorDrawable="@drawable/cursor_drawable" />
 
                 <TextView
+                    android:id="@+id/occupation_helper_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/sign_up_profile_occupation_aspiration_text"
                     android:paddingStart="14dp"
                     android:paddingEnd="14dp"
-                    android:textColor="@color/dark_grey"/>
+                    android:text="@string/sign_up_profile_occupation_aspiration_text"
+                    android:textColor="@color/dark_grey" />
 
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/text_view_aspiration"
@@ -387,12 +390,12 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_6sdp"
                     android:background="@drawable/mobile_no_bg"
+                    android:digits="@string/allowed_name_characters"
                     android:gravity="start"
                     android:hint="@string/aspiration_filed_hint_text"
                     android:imeOptions="actionNext"
                     android:inputType="textCapWords"
                     android:lines="1"
-                    android:digits="@string/allowed_name_characters"
                     android:maxLength="24"
                     android:maxLines="1"
                     android:minLines="1"
@@ -406,14 +409,16 @@
                     android:textCursorDrawable="@drawable/cursor_drawable" />
 
                 <TextView
+                    android:id="@+id/aspiration_helper_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/sign_up_profile_occupation_aspiration_text"
                     android:paddingStart="14dp"
                     android:paddingEnd="14dp"
-                    android:textColor="@color/dark_grey"/>
+                    android:text="@string/sign_up_profile_occupation_aspiration_text"
+                    android:textColor="@color/dark_grey" />
 
             </LinearLayout>
+
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"

@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.ui.signup
 
 import android.content.res.ColorStateList
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,11 +15,8 @@ import com.github.razir.progressbutton.showProgress
 import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
-import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
-import com.joshtalks.joshskills.core.analytics.AppAnalytics
-import com.joshtalks.joshskills.core.analytics.MixPanelEvent
-import com.joshtalks.joshskills.core.analytics.MixPanelTracker
-import com.joshtalks.joshskills.core.analytics.ParamKeys
+import com.joshtalks.joshskills.core.abTest.VariantKeys
+import com.joshtalks.joshskills.core.analytics.*
 import com.joshtalks.joshskills.core.custom_ui.spinnerdatepicker.DatePickerDialog
 import com.joshtalks.joshskills.core.custom_ui.spinnerdatepicker.SpinnerDatePickerDialogBuilder
 import com.joshtalks.joshskills.databinding.FragmentSignUpProfileBinding
@@ -38,19 +36,20 @@ class SignUpProfileFragment : BaseSignUpFragment() {
 
     companion object {
         const val IS_REGISTRATION_SCREEEN_FIRST_TIME = "is_registration_screen_first_time"
-        fun newInstance(isRegistrationScreenFirstTime:Boolean) = SignUpProfileFragment().apply {
-            arguments=Bundle().apply {
-                putBoolean(IS_REGISTRATION_SCREEEN_FIRST_TIME,isRegistrationScreenFirstTime)
+        fun newInstance(isRegistrationScreenFirstTime: Boolean) = SignUpProfileFragment().apply {
+            arguments = Bundle().apply {
+                putBoolean(IS_REGISTRATION_SCREEEN_FIRST_TIME, isRegistrationScreenFirstTime)
             }
         }
     }
-    private var isRegistrationFirstTime: Boolean=true
+
+    private var isRegistrationFirstTime: Boolean = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
             isRegistrationFirstTime =
-                it.getBoolean(IS_REGISTRATION_SCREEEN_FIRST_TIME,true)
+                it.getBoolean(IS_REGISTRATION_SCREEEN_FIRST_TIME, true)
         }
         viewModel = ViewModelProvider(requireActivity()).get(SignUpViewModel::class.java)
     }
@@ -82,18 +81,18 @@ class SignUpProfileFragment : BaseSignUpFragment() {
         logRegistrationAnalyticsEvent(isRegistrationFirstTime)
     }
 
-    private fun logRegistrationAnalyticsEvent(eventName:Boolean) {
+    private fun logRegistrationAnalyticsEvent(eventName: Boolean) {
         AppAnalytics.create(AnalyticsEvent.REGISTRATION_STARTED.NAME)
             .addBasicParam()
             .addUserDetails()
-            .addParam(AnalyticsEvent.IS_REGISTRATION_FIRST_TIME.NAME,eventName)
+            .addParam(AnalyticsEvent.IS_REGISTRATION_FIRST_TIME.NAME, eventName)
             .push()
         MixPanelTracker.publishEvent(MixPanelEvent.IS_REGISTRATION_FOR_FIRST_TIME)
-            .addParam(ParamKeys.FIRST_NAME,eventName)
+            .addParam(ParamKeys.FIRST_NAME, eventName)
             .push()
     }
 
-    private fun logAnalyticsEvent(eventName:String) {
+    private fun logAnalyticsEvent(eventName: String) {
         AppAnalytics.create(eventName)
             .addBasicParam()
             .addUserDetails()
@@ -136,7 +135,16 @@ class SignUpProfileFragment : BaseSignUpFragment() {
     private fun initUI() {
         initCountryCodePicker()
         val user = User.getInstance()
-
+        if (viewModel.abTestRepository.isVariantActive(VariantKeys.FREEMIUM_ENABLED)) {
+            with(binding) {
+                textViewOccupation.visibility = View.GONE
+                occupationEditText.visibility = View.GONE
+                occupationHelperText.visibility = View.GONE
+                textViewAspiration.visibility = View.GONE
+                aspirationEditText.visibility = View.GONE
+                aspirationHelperText.visibility = View.GONE
+            }
+        }
         if (user.firstName.isNullOrEmpty().not()) {
             binding.nameEditText.setText(user.firstName)
             binding.nameEditText.isEnabled = false
