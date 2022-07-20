@@ -56,6 +56,7 @@ import com.joshtalks.joshskills.ui.lesson.SPEAKING_POSITION
 import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
 import com.joshtalks.joshskills.ui.senior_student.SeniorStudentActivity
 import com.joshtalks.joshskills.ui.voip.SearchingUserActivity
+import com.joshtalks.joshskills.repository.local.model.*
 import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.joshtalks.joshskills.ui.voip.favorite.FavoriteListActivity
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
@@ -147,6 +148,9 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         if (PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID)
             binding.imgRecentCallsHistory.visibility = VISIBLE
         // showTooltip()
+        binding.nestedScrollView.post {
+            binding.nestedScrollView.smoothScrollTo(0, binding.btnStartTrialText.bottom)
+        }
         return binding.rootView
     }
 
@@ -193,6 +197,13 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
     }
 
     private fun addObservers() {
+        // com.joshtalks.joshskills.repository.local.model
+        if (User.getInstance().gender == "F") {
+            binding.callFemalePracticePartner.visibility = View.VISIBLE
+        } else {
+            binding.callFemalePracticePartner.visibility = View.GONE
+            binding.callFemalePracticePartnerBtnChild.visibility = View.GONE
+        }
         viewModel.abTestRepository.apply {
             isTwentyMinFtuCallActive = viewModel.abTestRepository.isVariantActive(VariantKeys.TWENTY_MIN_ENABLED)
             isIntroVideoEnabled = viewModel.abTestRepository.isVariantActive(VariantKeys.SIV_ENABLED)
