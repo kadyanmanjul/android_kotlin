@@ -418,10 +418,6 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                 .addParam(ParamKeys.LESSON_ID, getLessonId)
                 .addParam(ParamKeys.LESSON_NUMBER, lessonNumber)
                 .push()
-            viewModel.lessonIsConvoRoomActive =
-                (it.filter { it.chatType == CHAT_TYPE.CR }.isNotEmpty()
-                        && PrefManager.getBoolValue(IS_CONVERSATION_ROOM_ACTIVE_FOR_USER))
-            //viewModel.lessonIsConvoRoomActive  = true
 
             if (lessonIsNewGrammar) {
 
@@ -1332,16 +1328,6 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                         .addParam(ParamKeys.LESSON_ID, getLessonId)
                         .addParam(ParamKeys.LESSON_NUMBER, lessonNumber)
                         .push()
-                }
-                ROOM_POSITION - isTranslationDisabled -> {
-                    tab.view.background =
-                        ContextCompat.getDrawable(this, R.drawable.convo_room_tab_bg)
-                    viewModel.saveImpression(IMPRESSION_OPEN_ROOM_SCREEN)
-                    if (PrefManager.getBoolValue(HAS_SEEN_CONVO_ROOM_SPOTLIGHT)) {
-                        hideSpotlight()
-                    } else {
-                        showConvoRoomSpotlight()
-                    }
                 }
                 SPEAKING_POSITION - isTranslationDisabled -> {
                     tab.view.background =
