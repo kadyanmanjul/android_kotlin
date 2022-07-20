@@ -188,8 +188,12 @@ class SearchingState(val context: CallContext) : VoipState {
     }
 
     private fun sendDataToServer() {
-        if (context.direction == CallDirection.OUTGOING)
-            timeoutTimer.cancel()
+        if (context.direction == CallDirection.OUTGOING) {
+            if(context.callType == Category.FPP)
+            favTimeoutTimer.cancel()
+            else
+                timeoutTimer.cancel()
+        }
         val networkAction = NetworkAction(
             channelName = "",
             uid = 0,
@@ -235,8 +239,12 @@ class SearchingState(val context: CallContext) : VoipState {
                                 isRecordingEnabled = context.channelData.isCallRecordingEnabled()
                             )
                             context.updateUIState(uiState)
-                            if (context.direction == CallDirection.OUTGOING)
-                                timeoutTimer.cancel()
+                            if (context.direction == CallDirection.OUTGOING) {
+                                if(context.callType == Category.FPP)
+                                favTimeoutTimer.cancel()
+                                else
+                                    timeoutTimer.cancel()
+                            }
                             ensureActive()
                             PrefManager.setVoipState(State.JOINING)
                             context.state = JoiningState(context)

@@ -7,7 +7,7 @@ buildscript {
         prod_base_url = "\"https://app.joshtalks.org\""
         voip_debug_base_url = "\"http://staging.joshtalks.org\""
         voip_ms_debug_base_url = "\"http://p2p-stg.joshtalks.org\""
-        voip_ms_prod_base_url = "\"http://p2p.joshtalks.org\""
+        voip_ms_prod_base_url = "\"https://p2p.joshtalks.org\""
     }
 
     repositories {
