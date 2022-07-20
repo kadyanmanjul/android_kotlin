@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.base.constants
 
 const val DIR = "api/skill/v1"
+const val DIR_FPP_GROUP = "api/p2p"
 
 const val KEY_AUTHORIZATION = "Authorization"
 const val KEY_APP_VERSION_CODE = "app-version-code"
