@@ -8,19 +8,42 @@ import android.os.IBinder
 import android.util.Log
 import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.voip.*
+import com.joshtalks.joshskills.base.constants.*
+import com.joshtalks.joshskills.voip.*
+import com.joshtalks.joshskills.base.constants.PEER_TO_PEER
+import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_DISCONNECT_CALL
+import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_INCOMING_CALL_DECLINE
+import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_STOP_SERVICE
+import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.audiocontroller.AudioController
 import com.joshtalks.joshskills.voip.audiocontroller.AudioControllerInterface
 import com.joshtalks.joshskills.voip.audiocontroller.AudioRouteConstants
 import com.joshtalks.joshskills.voip.calldetails.IncomingCallData
+import com.joshtalks.joshskills.voip.communication.model.*
+import com.joshtalks.joshskills.voip.constant.*
+import com.joshtalks.joshskills.voip.constant.Event.*
 import com.joshtalks.joshskills.voip.communication.model.IncomingCall
 import com.joshtalks.joshskills.voip.constant.Event
 import com.joshtalks.joshskills.voip.constant.Event.*
+import com.joshtalks.joshskills.voip.constant.Event.CALL_CONNECTED_EVENT
+import com.joshtalks.joshskills.voip.constant.Event.CALL_INITIATED_EVENT
+import com.joshtalks.joshskills.voip.constant.Event.CALL_RECORDING_ACCEPT
+import com.joshtalks.joshskills.voip.constant.Event.CALL_RECORDING_REJECT
+import com.joshtalks.joshskills.voip.constant.Event.CANCEL_RECORDING_REQUEST
+import com.joshtalks.joshskills.voip.constant.Event.CLOSE_CALL_SCREEN
+import com.joshtalks.joshskills.voip.constant.Event.RECONNECTING_FAILED
+import com.joshtalks.joshskills.voip.constant.Event.START_RECORDING
+import com.joshtalks.joshskills.voip.constant.Event.STOP_RECORDING
 import com.joshtalks.joshskills.voip.constant.PSTN_STATE_IDLE
 import com.joshtalks.joshskills.voip.constant.PSTN_STATE_ONCALL
 import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.local.PrefManager
+import com.joshtalks.joshskills.voip.mediator.CallCategory
+import com.joshtalks.joshskills.voip.getHangUpIntent
+import com.joshtalks.joshskills.voip.getNotificationData
 import com.joshtalks.joshskills.voip.mediator.CallServiceMediator
 import com.joshtalks.joshskills.voip.mediator.CallingMediator
+import com.joshtalks.joshskills.voip.notification.IncomingCallNotificationHandler
 import com.joshtalks.joshskills.voip.notification.NotificationData
 import com.joshtalks.joshskills.voip.notification.NotificationPriority
 import com.joshtalks.joshskills.voip.notification.VoipNotification
@@ -79,6 +102,16 @@ class CallingRemoteService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.d(TAG, "StartService --- OnStartCommand")
         when(intent?.action) {
+            // TODO: have to change
+            SERVICE_ACTION_INCOMING_CALL -> {
+                val map = HashMap<String,String>()
+                map[INCOMING_CALL_CATEGORY] = intent.extras?.getString(com.joshtalks.joshskills.voip.constant.INCOMING_CALL_CATEGORY,"")?:""
+                map[INTENT_DATA_INCOMING_CALL_ID] = intent.extras?.getString(com.joshtalks.joshskills.voip.constant.INCOMING_CALL_ID,"")?:""
+                map[com.joshtalks.joshskills.voip.constant.REMOTE_USER_NAME] = intent.extras?.getString(com.joshtalks.joshskills.voip.constant.REMOTE_USER_NAME,"")?:""
+                map[com.joshtalks.joshskills.voip.constant.INCOMING_GROUP_NAME] = intent.extras?.getString(com.joshtalks.joshskills.voip.constant.INCOMING_GROUP_NAME,"")?:""
+                map[com.joshtalks.joshskills.voip.constant.INCOMING_GROUP_IMAGE] = intent.extras?.getString(com.joshtalks.joshskills.voip.constant.INCOMING_GROUP_IMAGE,"")?:""
+                ioScope.launch { mediator.handleIncomingCall(map) }
+            }
             SERVICE_ACTION_STOP_SERVICE -> {
                 // TODO: Might Need to refactor
                 if (PrefManager.getVoipState() == State.CONNECTED) {
@@ -125,8 +158,6 @@ class CallingRemoteService : Service() {
 
     private fun Intent?.initService(): Int {
         isServiceInitialize = true
-        //Utils.apiHeader = this?.getParcelableExtra(INTENT_DATA_API_HEADER)
-        //Utils.uuid = this?.getStringExtra(INTENT_DATA_MENTOR_ID)
         observeNetworkEvents()
         return START_REDELIVER_INTENT
     }
@@ -145,7 +176,7 @@ class CallingRemoteService : Service() {
                                     updateStartTime(data.startTime)
                                     notification.connected(
                                         data.userName,
-                                        openCallScreen(),
+                                        intentOnNotificationTap(),
                                         getHangUpIntent()
                                     )
                                     serviceEvents.emit(ServiceEvents.CALL_CONNECTED_EVENT)
@@ -158,12 +189,12 @@ class CallingRemoteService : Service() {
                                     serviceEvents.emit(ServiceEvents.RECONNECTING_FAILED)
                                     notification.idle(getNotificationData())
                                 }
-                                // TODO: Might have to refactor
-                                INCOMING_CALL -> {
-                                    PrefManager.setIncomingCallId(IncomingCallData.callId)
-                                    val data = IncomingCall(callId = IncomingCallData.callId)
-                                    mediator.showIncomingCall(data)
-                                }
+//                                // TODO: Might have to refactor
+//                                INCOMING_CALL -> {
+//                                    PrefManager.setIncomingCallId(IncomingCallData.callId)
+//                                    val data = IncomingCall(callId = IncomingCallData.callId)
+//                                    mediator.showIncomingCall(data)
+//                                }
                                 CALL_INITIATED_EVENT -> {
                                     serviceEvents.emit(ServiceEvents.CALL_INITIATED_EVENT)
                                 }
@@ -182,7 +213,7 @@ class CallingRemoteService : Service() {
                                 CANCEL_RECORDING_REQUEST -> {
                                     serviceEvents.emit(ServiceEvents.CANCEL_RECORDING_REQUEST)
                                 }
-                                Event.AGORA_CALL_RECORDED -> {
+                                AGORA_CALL_RECORDED -> {
                                     serviceEvents.emit(ServiceEvents.PROCESS_AGORA_CALL_RECORDING)
                                 }
                             }
@@ -273,9 +304,10 @@ class CallingRemoteService : Service() {
     /**
      * Events Which Repository can Use --- Start
      */
-    fun connectCall(callData: HashMap<String, Any>) {
+    fun connectCall(callData: HashMap<String, Any>, category: Category = Category.PEER_TO_PEER) {
         if (callData != null) {
-            mediator.connectCall(PEER_TO_PEER, callData)
+            mediator.connectCall(category, callData)
+            notification.searching()
             Log.d(TAG, "Connecting Call Data --> $callData")
         } else
             Log.d(TAG, "connectCall: Call Data is Null")
@@ -305,6 +337,12 @@ class CallingRemoteService : Service() {
     fun stopRecording() { mediator.userAction(Action.STOP_RECORDING) }
 
     fun changeTopicImage() { mediator.userAction(Action.TOPIC_IMAGE_CHANGE) }
+
+    fun nextGameWord() { mediator.userAction(Action.NEXT_WORD_REQUEST) }
+
+    fun startGame() { mediator.userAction(Action.START_GAME) }
+
+    fun endGame() { mediator.userAction(Action.END_GAME) }
 
     fun acceptCallRecording() { mediator.userAction(Action.RECORDING_REQUEST_ACCEPTED) }
 
@@ -394,7 +432,11 @@ data class UIState(
     val isRecordingEnabled: Boolean = false,
     val isCallerSpeaking: Boolean = false,
     val isCalleeSpeaking: Boolean = false,
-) {
+    val isNextWordClicked: Boolean = false ,
+    val isStartGameClicked: Boolean = false,
+    val nextGameWord: String = "",
+    val nextGameWordColor: String = "",
+    ) {
     companion object {
         fun empty() = UIState("", null, "", 0,"","","")
     }

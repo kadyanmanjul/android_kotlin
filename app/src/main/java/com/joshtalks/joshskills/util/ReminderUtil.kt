@@ -90,22 +90,26 @@ class ReminderUtil(val context: Context) {
     }
 
     fun setAlarmNotificationWorker() {
-        val intent = Intent(context, BackgroundService::class.java)
-        val pendingIntent = PendingIntent.getService(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-        val triggerTime = System.currentTimeMillis() + (30 * 60 * 1000) // 30 minutes
+        if (context.applicationContext != null) {
+            val intent = Intent(context.applicationContext, BackgroundService::class.java)
+            val pendingIntent =
+                PendingIntent.getService(context.applicationContext, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+            val triggerTime = System.currentTimeMillis() + (30 * 60 * 1000) // 30 minutes
 
-        val alarmManager: AlarmManager = context.applicationContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
-        } else {
-            alarmManager.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+            val alarmManager: AlarmManager = context.applicationContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+            } else {
+                alarmManager.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+            }
         }
     }
 
     fun deleteNotificationAlarms() {
         val alarmManager = context.applicationContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val intent = Intent(context, BackgroundService::class.java)
-        val pendingIntent = PendingIntent.getService(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        val intent = Intent(context.applicationContext, BackgroundService::class.java)
+        val pendingIntent =
+            PendingIntent.getService(context.applicationContext, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
         alarmManager.cancel(pendingIntent)
     }
 }

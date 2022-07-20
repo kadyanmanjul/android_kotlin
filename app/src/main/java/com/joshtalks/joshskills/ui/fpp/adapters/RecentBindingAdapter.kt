@@ -77,7 +77,11 @@ object RecentBindingAdapter {
     @JvmStatic
     fun chatScreenBackground(imageView: ImageView, image: Int) {
         try {
-            imageView.setImageResource(image)
+            if (image==0) {
+                imageView.setBackgroundResource(R.color.chat_bg_color)
+            } else {
+                imageView.setImageResource(image)
+            }
         }catch (e:Error){
             imageView.setBackgroundResource(R.color.chat_bg_color)
             e.printStackTrace()

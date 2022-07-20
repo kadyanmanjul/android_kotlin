@@ -11,4 +11,6 @@ data class VoipStatusResponse(
     val speedTestFile: String?,
     @SerializedName("file_size")
     val testFileSize: Int?,
+    @SerializedName("fpp_group_status")
+    val groupFppStatus: Int?,
 )

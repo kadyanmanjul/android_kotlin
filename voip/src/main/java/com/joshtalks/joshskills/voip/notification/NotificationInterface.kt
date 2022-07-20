@@ -4,6 +4,7 @@ import android.app.PendingIntent
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 
+
 internal interface NotificationInterface {
     fun removeNotification(notificationId:Int? = null)
     fun getNotificationObject(): NotificationCompat.Builder
@@ -27,4 +28,11 @@ interface NotificationData{
     fun setAction2():NotificationActionObj?{
         return null
     }
+
+    interface IncomingNotification{
+        fun inflateNotification(map: HashMap<String, String>)
+        fun removeNotification()
+        fun isNotificationVisible():Boolean
+    }
+
 }

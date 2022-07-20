@@ -1601,11 +1601,16 @@ UserProfileActivity : WebRtcMiddlewareActivity() {
     fun getUserProfileTooltip() :String {
         return getString(R.string.tooltip_user_profile_screen)
     }
-    override fun onBackPressed() {
-        MixPanelTracker.publishEvent(MixPanelEvent.BACK)
-            .addParam(ParamKeys.SCREEN_NAME,"user profile")
-            .push()
-        super.onBackPressed()
+   fun onBackStack() {
+       try {
+           if (supportFragmentManager.backStackEntryCount>0) {
+               supportFragmentManager.popBackStack()
+           } else {
+               onBackPressed()
+           }
+       }catch (ex: java.lang.Exception){
+           ex.printStackTrace()
+       }
     }
 
 }

@@ -10,7 +10,7 @@ class IncomingCall(
     private val type: Int? = null,
 
     @field:SerializedName("timetoken")
-    private val timeToken: Long? = null
+    private val timeToken: Long? = null,
 
 ) : IncomingCallData {
 

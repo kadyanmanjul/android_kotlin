@@ -23,5 +23,11 @@ class ServerConstants {
         val CALL_RECORDING_ACCEPT = 18
         val CALL_RECORDING_REJECT = 19
         val CANCEL_RECORDING_REQUEST = 20
+        val GROUP_INCOMING_CALL = 21
+        val FPP_INCOMING_CALL = 22
+        val START_GAME = 23
+        val END_GAME = 24
+        val NEXT_WORD_RECEIVED = 25
+        val NEXT_WORD_REQUEST = 26
     }
 }

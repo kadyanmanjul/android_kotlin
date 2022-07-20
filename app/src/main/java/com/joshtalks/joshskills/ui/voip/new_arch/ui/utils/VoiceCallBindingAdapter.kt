@@ -1,7 +1,9 @@
 package com.joshtalks.joshskills.ui.voip.new_arch.ui.utils
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.SystemClock
+import android.util.Log
 import android.widget.Chronometer
 import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatImageButton
@@ -14,13 +16,10 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions.bitmapTransform
 import com.bumptech.glide.request.target.DrawableImageViewTarget
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.card.MaterialCardView
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.base.constants.FPP
-import com.joshtalks.joshskills.base.constants.FROM_INCOMING_CALL
-import com.joshtalks.joshskills.base.constants.GROUP
-import com.joshtalks.joshskills.base.constants.PEER_TO_PEER
-import com.joshtalks.joshskills.base.constants.STARTING_POINT
+import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.adapter.TopicImageAdapter
 import de.hdodenhof.circleimageview.CircleImageView
@@ -60,21 +59,12 @@ fun AppCompatTextView.setColorRemoteUser(isSpeaking : Boolean = false) {
 }
 
 @BindingAdapter("setCallBackground")
-fun ConstraintLayout.setCallBackground(callType: Int) {
-    when (callType) {
-        PEER_TO_PEER -> {
-//                 Normal Call
-            this.setBackgroundColor(resources.getColor(R.color.colorPrimary))
+fun ConstraintLayout.setCallBackground(isGameOn: Boolean) {
+    when (isGameOn) {
+        true -> {
+            this.setBackgroundColor(resources.getColor(R.color.black_quiz))
         }
-        FPP -> {
-//                 FPP
-            this.setBackgroundResource(R.drawable.voip_bg)
-        }
-        GROUP -> {
-//                 Group Call
-            this.setBackgroundColor(resources.getColor(R.color.colorPrimary))
-        }
-        else -> {
+        false -> {
             this.setBackgroundColor(resources.getColor(R.color.colorPrimary))
         }
     }
@@ -208,4 +198,49 @@ fun ImageView.loadGif(imageUrl: String?) {
             .load(R.drawable.remote_user_image)
             .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
             .into(this)
+}
+
+@BindingAdapter("setWord","setColor")
+fun AppCompatTextView.setWord(word: String?,color:String?) {
+    if (!word.isNullOrEmpty()){
+        this.text = word
+    }
+    if (!color.isNullOrEmpty() && color != ""){
+        Log.d("naman", "setWord: $color ")
+        this.setTextColor(Color.parseColor(color))
+    }
+}
+
+@BindingAdapter("nextWordBtn")
+fun MaterialButton.nextWordBtn(isEnabled : Boolean?) {
+    if (isEnabled != null) {
+        when (isEnabled) {
+            true -> {
+                this.backgroundTintList = ContextCompat.getColorStateList(context, R.color.grey)
+                this.setTextColor(ContextCompat.getColor(context, R.color.white))
+                this.isEnabled = false
+            }
+            false -> {
+                this.backgroundTintList = ContextCompat.getColorStateList(context, R.color.white)
+                this.setTextColor(ContextCompat.getColor(context, R.color.p2p_game_dark_purple))
+                this.isEnabled = true
+            }
+        }
+    }
+}
+
+@BindingAdapter("setPlayBtnBackground")
+fun AppCompatTextView.setPlayBtnBackground(isEnabled: Boolean?) {
+    if (isEnabled != null) {
+        when (isEnabled) {
+            false -> {
+                this.backgroundTintList = null
+                this.isEnabled = true
+            }
+            true -> {
+                this.backgroundTintList = ContextCompat.getColorStateList(context, R.color.grey)
+                this.isEnabled = false
+            }
+        }
+    }
 }

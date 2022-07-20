@@ -186,40 +186,41 @@ class CertificateShareFragment : CoreJoshFragment() {
     }
 
     fun shareOn(packageName: String, message: String, uri: Uri) {
-        PermissionUtils.storageReadAndWritePermission(requireContext(), object : MultiplePermissionsListener {
-            override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
-                report?.areAllPermissionsGranted()?.let { flag ->
-                    if (flag) {
-                        val intent = Intent(Intent.ACTION_SEND)
-                        intent.`package` = "com.$packageName"
-                        intent.putExtra(Intent.EXTRA_TEXT, message)
-                        intent.type = "image/*"
-                        intent.putExtra(Intent.EXTRA_STREAM, uri)
-                        intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
-                        try {
-                            if (intent.resolveActivity(requireActivity().packageManager) == null) {
-                                showToast("$packageName not found on device", Toast.LENGTH_LONG)
+        if (isAdded && activity!=null) {
+            PermissionUtils.storageReadAndWritePermission(requireContext(), object : MultiplePermissionsListener {
+                override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                    report?.areAllPermissionsGranted()?.let { flag ->
+                        if (flag) {
+                            val intent = Intent(Intent.ACTION_SEND)
+                            intent.`package` = "com.$packageName"
+                            intent.putExtra(Intent.EXTRA_TEXT, message)
+                            intent.type = "image/*"
+                            intent.putExtra(Intent.EXTRA_STREAM, uri)
+                            intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+                            try {
+                                if (intent.resolveActivity(requireActivity().packageManager) == null) {
+                                    showToast("$packageName not found on device", Toast.LENGTH_LONG)
+                                }
+                                startActivity(intent)
+                            } catch (e: Exception) {
+                                e.printStackTrace()
                             }
-                            startActivity(intent)
-                        } catch (e: Exception) {
-                            e.printStackTrace()
+                            return
                         }
-                        return
-                    }
-                    if (report.isAnyPermissionPermanentlyDenied) {
-                        showToast("Permission denied", Toast.LENGTH_LONG)
+                        if (report.isAnyPermissionPermanentlyDenied) {
+                            showToast("Permission denied", Toast.LENGTH_LONG)
+                        }
                     }
                 }
-            }
 
-            override fun onPermissionRationaleShouldBeShown(
-                permissions: MutableList<PermissionRequest>?,
-                token: PermissionToken?
-            ) {
-                token?.continuePermissionRequest()
-            }
-        })
-
+                override fun onPermissionRationaleShouldBeShown(
+                    permissions: MutableList<PermissionRequest>?,
+                    token: PermissionToken?
+                ) {
+                    token?.continuePermissionRequest()
+                }
+            })
+        }
     }
 
     fun downloadImage(url: String) {
@@ -273,7 +274,7 @@ class CertificateShareFragment : CoreJoshFragment() {
                         viewModel.progressBarVisibility.set(false)
                         val downloadedFileId = it.getLong(DownloadManager.EXTRA_DOWNLOAD_ID)
                         val downloadManager = getSystemService(requireContext(), DOWNLOAD_SERVICE) as DownloadManager
-                        val uri: Uri = downloadManager.getUriForDownloadedFile(downloadedFileId)
+                        val uri: Uri? = downloadManager.getUriForDownloadedFile(downloadedFileId)
                         when (packageName) {
                             PKG_AFTER_COM_WHATSAPP -> {
                                 message = AppObjectController.getFirebaseRemoteConfig()
@@ -305,14 +306,18 @@ class CertificateShareFragment : CoreJoshFragment() {
         }
     }
 
-    private fun getDeepLinkAndShare(uri: Uri) {
+    private fun getDeepLinkAndShare(uri: Uri?) {
         DeepLinkUtil(requireContext())
             .setReferralCode(Mentor.getInstance().referralCode)
             .setReferralCampaign()
             .setSharedItem(DeepLinkUtil.SharedItem.CERTIFICATE)
             .setListener(object : DeepLinkUtil.OnDeepLinkListener {
                 override fun onDeepLinkCreated(deepLink: String) {
-                    shareOn(packageName, message + "\n" + deepLink, uri)
+                    if (uri != null) {
+                        shareOn(packageName, message + "\n" + deepLink, uri)
+                    } else {
+                        showToast("Something went wrong", Toast.LENGTH_LONG)
+                    }
                 }
             })
             .build()

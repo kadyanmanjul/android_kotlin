@@ -8,16 +8,13 @@ import android.os.SystemClock
 import android.util.Log
 import android.view.View
 import androidx.databinding.ObservableArrayList
-import androidx.databinding.ObservableField
+import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableInt
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
-import com.joshtalks.joshskills.base.constants.FPP
-import com.joshtalks.joshskills.base.constants.FROM_INCOMING_CALL
-import com.joshtalks.joshskills.base.constants.GROUP
-import com.joshtalks.joshskills.base.constants.PEER_TO_PEER
+import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.base.log.Feature
 import com.joshtalks.joshskills.base.log.JoshLog
 import com.joshtalks.joshskills.quizgame.base.GameEventLiveData
@@ -25,17 +22,10 @@ import com.joshtalks.joshskills.ui.call.repository.RepositoryConstants.CONNECTIO
 import com.joshtalks.joshskills.ui.call.repository.WebrtcRepository
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.call_recording.ProcessCallRecordingService
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.models.CallUIState
+import com.joshtalks.joshskills.voip.Utils
+import com.joshtalks.joshskills.voip.constant.*
 import com.joshtalks.joshskills.ui.voip.util.ScreenViewRecorder
 import com.joshtalks.joshskills.voip.*
-import com.joshtalks.joshskills.voip.constant.CALL_CONNECTED_EVENT
-import com.joshtalks.joshskills.voip.constant.CALL_INITIATED_EVENT
-import com.joshtalks.joshskills.voip.constant.CANCEL_INCOMING_TIMER
-import com.joshtalks.joshskills.voip.constant.CLOSE_CALL_SCREEN
-import com.joshtalks.joshskills.voip.constant.HIDE_RECORDING_PERMISSION_DIALOG
-import com.joshtalks.joshskills.voip.constant.RECONNECTING_FAILED
-import com.joshtalks.joshskills.voip.constant.SHOW_RECORDING_PERMISSION_DIALOG
-import com.joshtalks.joshskills.voip.constant.SHOW_RECORDING_REJECTED_DIALOG
-import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.RecordingButtonState
 import com.joshtalks.joshskills.voip.data.ServiceEvents
 import com.joshtalks.joshskills.voip.data.local.PrefManager
@@ -59,7 +49,8 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
     lateinit var source: String
     private val repository = WebrtcRepository(viewModelScope)
     private val mutex = Mutex(false)
-    val callType = ObservableField("")
+    var callType : Category = Category.PEER_TO_PEER
+    var isEnabled = ObservableBoolean(true)
     val callStatus = ObservableInt(getCallStatus())
     var imageList = ObservableArrayList<String>()
     val callData = HashMap<String, Any>()
@@ -74,15 +65,21 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
     var isListening = false
     var isRequestDialogShowed = false
     var timer: CountDownTimer? = null
+    val toastText  = Utils.context?.getRecordingText()?:""
+    var isPermissionGranted: ObservableBoolean = ObservableBoolean(false)
 
     private val connectCallJob by lazy {
         viewModelScope.launch(start = CoroutineStart.LAZY) {
             mutex.withLock {
                 if (PrefManager.getVoipState() == State.IDLE && isConnectionRequestSent.not()) {
-                    Log.d(TAG, " connectCallJob : Inside - $callData")
-                    repository.connectCall(callData)
+                    Log.d(TAG, " connectCallJob : Inside - $callData  $callType")
+                    repository.connectCall(callData,callType)
                     isConnectionRequestSent = true
+                    if(callType==Category.FPP && source == FROM_ACTIVITY){
+                        uiState.currentState = "Ringing..."
+                    }
                 }
+
             }
         }
     }
@@ -223,16 +220,10 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
     fun stopRecording(recordFile: File) {
         viewModelScope.launch(Dispatchers.IO) {
             if (recordFile.absolutePath.isEmpty().not()) {
-
-                val toastText  = Utils.context?.getRecordingText()?:""
-                withContext(Dispatchers.Main) {
-                    Utils.showToast(toastText)
-                }
                 val len = recordFile.length()
                 if (len < 1) {
                     return@launch
                 }
-
                 val currentTime = SystemClock.elapsedRealtime()
                 ProcessCallRecordingService.processSingleCallRecording(context = Utils.context, videoPath = videoRecordFile?.absolutePath?:"", audioPath = recordFile.absolutePath, callId = PrefManager.getAgraCallId().toString(),agoraMentorId = PrefManager.getLocalUserAgoraId().toString(),recordDuration = ((currentTime - uiState.recordTime)/1000).toInt())
                 CallRecordingAnalytics.addAnalytics(
@@ -307,17 +298,26 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                 uiState.recordingButtonState = state.recordingButtonState
                 if (uiState.recordTime != state.recordingStartTime)
                     uiState.recordTime = state.recordingStartTime
+
+                if(voipState!=State.IDLE && voipState != State.SEARCHING) {
+                    uiState.name = state.remoteUserName
+                    uiState.profileImage = state.remoteUserImage ?: ""
+                }
+
                 withContext(Dispatchers.Main) {
                     uiState
                     timer = getTime(state.recordingButtonState)
                     timer?.start()
                 }
-                uiState.name = state.remoteUserName
                 try {
                     uiState.localUserName = Utils.context?.getMentorName()?:""
                     uiState.localUserProfile = Utils.context?.getMentorProfile()?:""
-                }catch (ex:Exception){ }
-                uiState.profileImage = state.remoteUserImage ?: ""
+                }catch (ex:Exception){}
+
+                uiState.gameWord = state.nextGameWord
+                uiState.wordColor = state.nextGameWordColor
+                uiState.isStartGameClicked = state.isStartGameClicked
+                uiState.isNextWordClicked = state.isNextWordClicked
                 uiState.topic = state.topicName
                 uiState.topicImage = state.currentTopicImage
                 uiState.type = state.callType
@@ -327,6 +327,12 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                     FPP -> "Favorite Practice Partner"
                     GROUP -> "Group Call"
                     else -> ""
+                }
+
+                if (state.nextGameWord == "") {
+                    uiState.p2pCallBackgroundColor = R.color.p2p_call_background_color
+                } else {
+                    uiState.p2pCallBackgroundColor = R.color.black
                 }
 
                 when(state.recordingButtonState) {
@@ -349,20 +355,12 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                 }
 
                 if (uiState.isSpeakerOn != state.isSpeakerOn) {
-                    if (state.isSpeakerOn) {
-                        uiState.isSpeakerOn = true
-                    } else {
-                        uiState.isSpeakerOn = false
-                    }
+                    uiState.isSpeakerOn = state.isSpeakerOn
                 }
 
                 if (uiState.isMute != state.isOnMute) {
                     Log.d(TAG, "listenUIState: MUTE -- ${state.isOnMute}")
-                    if (state.isOnMute) {
-                        uiState.isMute = true
-                    } else {
-                        uiState.isMute = false
-                    }
+                    uiState.isMute = state.isOnMute
                 }
             }
         }
@@ -377,12 +375,12 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                     if (recordingButtonState == RecordingButtonState.RECORDING) {
                         if (uiState.recordTime > 0) {
                             recordingStopButtonClickListener()
+                            repository.startCallRecording()
                         }
                     }
                 }
             }
-        } catch (ex: Exception) {
-        }
+        } catch (ex: Exception) {}
         return timer
     }
 
@@ -572,5 +570,46 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
 
     fun cancelRecording(){
         repository.cancelRecordingRequest()
+    }
+    fun startGame(v:View){
+        if (Utils.isInternetAvailable().not()) {
+            Utils.showToast("Seems like you have no internet")
+            return
+        }
+        CallAnalytics.addAnalytics(
+            event = EventName.PLAY_GAME_CLICK,
+            agoraCallId = PrefManager.getAgraCallId().toString(),
+            agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
+        )
+        repository.startGame()
+    }
+
+    fun endGame(v:View){
+        if (Utils.isInternetAvailable().not()) {
+            Utils.showToast("Wait for the internet to reconnect...")
+            return
+        }
+        CallAnalytics.addAnalytics(
+            event = EventName.END_GAME_CLICK,
+            agoraCallId = PrefManager.getAgraCallId().toString(),
+            agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
+        )
+        repository.endGame()
+    }
+
+    fun nextWord(v:View){
+        CallAnalytics.addAnalytics(
+            event = EventName.NEW_WORD_CLICK,
+            agoraCallId = PrefManager.getAgraCallId().toString(),
+            agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
+        )
+        if (Utils.isInternetAvailable().not()) {
+            Utils.showToast("Seems like you have no internet")
+            return
+        }
+        repository.nextGameWord()
+        viewModelScope.launch(Dispatchers.Main) {
+            Utils.showToast(toastText)
+        }
     }
 }

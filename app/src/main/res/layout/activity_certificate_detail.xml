@@ -56,29 +56,18 @@
                     <androidx.appcompat.widget.AppCompatTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
                         android:layout_marginTop="@dimen/_8sdp"
                         android:text="@string/certificate_d_header"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
-                        android:textColor="@color/black" />
+                        android:textColor="@color/certificate_details_txt_view" />
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
                         android:layout_marginTop="@dimen/_14sdp"
                         android:text="@string/full_name"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
-                        android:textColor="@color/black" />
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_marginTop="@dimen/_3sdp"
-                        android:text="@string/as_per_aadhar_card_for_certificate"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
-                        android:textColor="@color/a3a3a3" />
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Certi_Details_Bold"
+                        android:textColor="@color/certificate_details_txt_view" />
 
                     <androidx.appcompat.widget.AppCompatEditText
                         android:id="@+id/et_name"
@@ -106,20 +95,10 @@
                     <androidx.appcompat.widget.AppCompatTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
                         android:layout_marginTop="@dimen/_14sdp"
                         android:text="@string/certi_date_of_birth"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
-                        android:textColor="@color/black" />
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_marginTop="@dimen/_3sdp"
-                        android:text="@string/as_per_aadhar_card_for_certificate"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
-                        android:textColor="@color/a3a3a3" />
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Certi_Details_Bold"
+                        android:textColor="@color/certificate_details_txt_view" />
 
                     <androidx.appcompat.widget.AppCompatEditText
                         android:id="@+id/et_dob"
@@ -145,11 +124,10 @@
                     <androidx.appcompat.widget.AppCompatTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
                         android:layout_marginTop="@dimen/_14sdp"
                         android:text="@string/mother_s_name"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
-                        android:textColor="@color/black" />
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Certi_Details_Bold"
+                        android:textColor="@color/certificate_details_txt_view" />
 
 
                     <androidx.appcompat.widget.AppCompatEditText
@@ -176,11 +154,10 @@
                     <androidx.appcompat.widget.AppCompatTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
                         android:layout_marginTop="@dimen/_14sdp"
                         android:text="@string/father_s_name"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
-                        android:textColor="@color/black" />
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Certi_Details_Bold"
+                        android:textColor="@color/certificate_details_txt_view" />
 
 
                     <androidx.appcompat.widget.AppCompatEditText
@@ -210,8 +187,8 @@
                         android:layout_centerVertical="true"
                         android:layout_marginTop="@dimen/_14sdp"
                         android:text="@string/mobile_number"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
-                        android:textColor="@color/black" />
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Certi_Details_Bold"
+                        android:textColor="@color/certificate_details_txt_view" />
 
 
                     <com.joshtalks.joshskills.core.custom_ui.PrefixEditText
@@ -236,11 +213,10 @@
                     <androidx.appcompat.widget.AppCompatTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
                         android:layout_marginTop="@dimen/_14sdp"
                         android:text="@string/certi_email_address"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
-                        android:textColor="@color/black" />
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Certi_Details_Bold"
+                        android:textColor="@color/certificate_details_txt_view" />
 
 
                     <androidx.appcompat.widget.AppCompatEditText
@@ -260,52 +236,184 @@
 
 
                     <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/tv_po_add"
+                        android:id="@+id/tv_pin_code"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
                         android:layout_marginTop="@dimen/_14sdp"
-                        android:text="@string/postal_address"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
-                        android:textColor="@color/black"
-                        android:visibility="gone"
-                        tools:visibility="visible" />
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/tv_po_sub_add"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_marginTop="@dimen/_3sdp"
-                        android:text="@string/for_sending_the_certificate"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
-                        android:textColor="@color/a3a3a3"
-                        android:visibility="gone"
-                        tools:visibility="visible" />
+                        android:text="@string/pin_code"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Certi_Details_Bold"
+                        android:textColor="@color/certificate_details_txt_view" />
 
                     <androidx.appcompat.widget.AppCompatEditText
-                        android:id="@+id/et_postal"
+                        android:id="@+id/et_pin_code"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/_4sdp"
                         android:background="@drawable/cd_et_bg"
                         android:cursorVisible="true"
-                        android:gravity="top|start"
-                        android:imeOptions="actionDone"
-                        android:inputType="textMultiLine"
-                        android:lines="4"
-                        android:ems="10"
-                        android:overScrollMode="always"
+                        android:imeOptions="actionNext"
+                        android:inputType="number"
+                        android:hint="@string/_6_digits_pin_code"
+                        android:importantForAutofill="no"
                         android:paddingHorizontal="@dimen/_4sdp"
-                        android:paddingVertical="@dimen/_4sdp"
-                        android:scrollbarStyle="insideInset"
-                        android:scrollbars="vertical"
+                        android:paddingVertical="@dimen/_6sdp"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
-                        android:textCursorDrawable="@null"
+                        android:textCursorDrawable="@null"/>
+
+                    <LinearLayout
+                        android:id="@+id/linear_layout_address"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
                         android:visibility="gone"
-                        tools:visibility="visible" />
+                        android:orientation="vertical">
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_14sdp"
+                            android:text="@string/house_number_building_name"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Certi_Details_Bold"
+                            android:textColor="@color/certificate_details_txt_view" />
+
+
+                        <androidx.appcompat.widget.AppCompatEditText
+                            android:id="@+id/et_house_num"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_4sdp"
+                            android:background="@drawable/cd_et_bg"
+                            android:cursorVisible="true"
+                            android:imeOptions="actionNext"
+                            android:importantForAutofill="no"
+                            android:maxLines="1"
+                            android:focusable="true"
+                            android:maxLength="50"
+                            android:paddingHorizontal="@dimen/_4sdp"
+                            android:paddingVertical="@dimen/_6sdp"
+                            android:singleLine="true"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                            android:textCursorDrawable="@null" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_14sdp"
+                            android:text="@string/road_name_area_colony"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Certi_Details_Bold"
+                            android:textColor="@color/certificate_details_txt_view" />
+
+
+                        <androidx.appcompat.widget.AppCompatEditText
+                            android:id="@+id/et_road_name_colony"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_4sdp"
+                            android:background="@drawable/cd_et_bg"
+                            android:cursorVisible="true"
+                            android:imeOptions="actionNext"
+                            android:importantForAutofill="no"
+                            android:maxLines="1"
+                            android:focusable="true"
+                            android:maxLength="50"
+                            android:paddingHorizontal="@dimen/_4sdp"
+                            android:paddingVertical="@dimen/_6sdp"
+                            android:singleLine="true"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                            android:textCursorDrawable="@null" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_14sdp"
+                            android:text="@string/landmark"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Certi_Details_Bold"
+                            android:textColor="@color/certificate_details_txt_view" />
+
+
+                        <androidx.appcompat.widget.AppCompatEditText
+                            android:id="@+id/et_landmark"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_4sdp"
+                            android:background="@drawable/cd_et_bg"
+                            android:cursorVisible="true"
+                            android:imeOptions="actionNext"
+                            android:importantForAutofill="no"
+                            android:maxLines="1"
+                            android:focusable="true"
+                            android:maxLength="50"
+                            android:hint="@string/like_famous_shop_nearby"
+                            android:paddingHorizontal="@dimen/_4sdp"
+                            android:paddingVertical="@dimen/_6sdp"
+                            android:singleLine="true"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                            android:textCursorDrawable="@null" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_14sdp"
+                            android:text="@string/town_city"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Certi_Details_Bold"
+                            android:textColor="@color/certificate_details_txt_view" />
+
+
+                        <androidx.appcompat.widget.AppCompatEditText
+                            android:id="@+id/et_town_or_city"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_4sdp"
+                            android:background="@drawable/cd_et_bg"
+                            android:cursorVisible="true"
+                            android:imeOptions="actionNext"
+                            android:importantForAutofill="no"
+                            android:maxLines="1"
+                            android:focusable="true"
+                            android:maxLength="50"
+                            android:paddingHorizontal="@dimen/_4sdp"
+                            android:paddingVertical="@dimen/_6sdp"
+                            android:singleLine="true"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                            android:textCursorDrawable="@null" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_14sdp"
+                            android:text="@string/state"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Certi_Details_Bold"
+                            android:textColor="@color/certificate_details_txt_view" />
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/input_one"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_4sdp"
+                            android:paddingVertical="-3dp"
+                            android:drawableEnd="@drawable/ic_baseline_keyboard_arrow_down_24"
+                            app:endIconDrawable="@drawable/ic_baseline_keyboard_arrow_down_24"
+                            app:endIconMode="dropdown_menu">
+
+                            <AutoCompleteTextView
+                                setSelectedState="@{}"
+                                setStateAdapter='@{" "}'
+                                android:id="@+id/autoCompleteTextView_first"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:drawableEnd="@drawable/ic_baseline_keyboard_arrow_down_24"
+                                android:inputType="none"
+                                android:paddingVertical="-3dp"
+                                android:textEditSuggestionItemLayout="@layout/dropdown_item"
+                                tools:ignore="LabelFor" />
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+
+                    </LinearLayout>
 
                     <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_submit_details"
                         style="@style/Widget.MaterialComponents.Button"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -320,7 +428,7 @@
                         android:paddingBottom="@dimen/_8sdp"
                         android:text="@string/download_certificate_2"
                         android:textAllCaps="false"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
                         android:textColor="@color/white"
                         app:cornerRadius="@dimen/_8sdp"
                         app:rippleColor="@color/white"

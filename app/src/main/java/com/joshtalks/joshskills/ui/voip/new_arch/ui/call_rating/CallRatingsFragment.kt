@@ -254,7 +254,6 @@ class CallRatingsFragment : BottomSheetDialogFragment() {
             binding.block.setTextColor(Color.WHITE)
         }
         isBlockSelected = true
-
     }
 
     private fun unSelectChange(s: String) {

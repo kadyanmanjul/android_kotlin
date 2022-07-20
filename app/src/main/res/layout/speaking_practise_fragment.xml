@@ -85,6 +85,7 @@
                     android:id="@+id/rating_view"
                     setRatingText="@{vm.userRating}"
                     android:layout_width="wrap_content"
+                    android:onClick="@{handler::openRatingDialog}"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_14sdp"
                     android:background="@drawable/rounded_rectangle_attach"

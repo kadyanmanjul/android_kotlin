@@ -19,15 +19,11 @@ import com.github.mikephil.charting.data.PieEntry
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
-import com.joshtalks.joshskills.core.analytics.MixPanelEvent
-import com.joshtalks.joshskills.core.analytics.MixPanelTracker
-import com.joshtalks.joshskills.core.analytics.ParamKeys
-import com.joshtalks.joshskills.core.custom_ui.decorator.GridSpacingItemDecoration
+import com.joshtalks.joshskills.core.custom_ui.decorator.GridSpacingQuestionsDecoration
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.OpenReportQTypeEventBus
 import com.joshtalks.joshskills.repository.server.certification_exam.CertificateExamReportModel
 import com.joshtalks.joshskills.repository.server.certification_exam.CertificationQuestion
-import com.joshtalks.joshskills.repository.server.certification_exam.CertificationQuestionModel
 import com.joshtalks.joshskills.repository.server.certification_exam.QuestionReportType
 import com.joshtalks.joshskills.repository.server.certification_exam.UserSelectedAnswer
 import com.mindorks.placeholderview.annotations.Click
@@ -36,8 +32,6 @@ import com.mindorks.placeholderview.annotations.Resolve
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.*
-
 
 @SuppressLint("NonConstantResourceId")
 @Layout(R.layout.layout_report_overview_view2)
@@ -91,9 +85,9 @@ class ReportOverviewView2(
                     )
                 }
                 CoroutineScope(Dispatchers.Main).launch {
-                    val layoutManager = GridLayoutManager(context, 8)
+                    val layoutManager = GridLayoutManager(context, 6,RecyclerView.HORIZONTAL,false)
                     questionRecyclerView.addItemDecoration(
-                        GridSpacingItemDecoration(8, Utils.dpToPx(context, 6f), true)
+                        GridSpacingQuestionsDecoration(6, Utils.dpToPx(context, 6f), true)
                     )
                     questionRecyclerView.apply {
                         setHasFixedSize(true)
@@ -104,7 +98,6 @@ class ReportOverviewView2(
                 }
             }
         }
-
     }
 
     private fun getAnswerStatus(certificationQuestion: CertificationQuestion): Boolean? {
@@ -172,7 +165,6 @@ class ReportOverviewView2(
         span.setSpan(RelativeSizeSpan(1.75f), 0, s0.length, 0)
         return span
     }
-
 
     @Click(R.id.ll_correct)
     fun onClickCorrectView() {

@@ -26,10 +26,7 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.airbnb.lottie.LottieCompositionFactory
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.base.constants.FROM_ACTIVITY
-import com.joshtalks.joshskills.base.constants.INTENT_DATA_COURSE_ID
-import com.joshtalks.joshskills.base.constants.INTENT_DATA_TOPIC_ID
-import com.joshtalks.joshskills.base.constants.STARTING_POINT
+import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
@@ -61,6 +58,7 @@ import com.joshtalks.joshskills.ui.voip.favorite.FavoriteListActivity
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.voipLog
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity
+import com.joshtalks.joshskills.voip.constant.Category
 import com.joshtalks.joshskills.voip.constant.State
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -760,8 +758,6 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                     }
                 }
             )
-        }else{
-            showToast(getString(R.string.something_went_wrong))
         }
     }
 
@@ -793,8 +789,6 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                 .setMessage(getString(R.string.network_message))
                 .setPositiveButton("GOT IT")
                 { dialog, _ -> dialog.dismiss() }.show()
-        }else{
-            showToast(getString(R.string.something_went_wrong))
         }
     }
 
@@ -807,8 +801,6 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                 .setMessage(getString(R.string.rating_message))
                 .setPositiveButton("GOT IT")
                 { dialog, _ -> dialog.dismiss() }.show()
-        }else{
-            showToast(getString(R.string.something_went_wrong))
         }
     }
 
@@ -829,11 +821,10 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                 putExtra(INTENT_DATA_COURSE_ID, courseId)
                 putExtra(INTENT_DATA_TOPIC_ID, topicId)
                 putExtra(STARTING_POINT, FROM_ACTIVITY)
+                putExtra(INTENT_DATA_CALL_CATEGORY, Category.PEER_TO_PEER.ordinal)
             }
             voipLog?.log("Course ID --> $courseId   Topic ID --> $topicId")
             startActivity(callIntent)
-        }else{
-            showToast(getString(R.string.something_went_wrong))
         }
     }
 

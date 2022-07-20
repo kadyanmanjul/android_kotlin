@@ -262,8 +262,11 @@
     <string name="name_error_toast">Name cannot be empty!</string>
     <string name="please_enter_valid_number">Please enter valid mobile number </string>
     <string name="enter_valid_email_toast">Please enter valid Email Id</string>
-    <string name="enter_postal_address">Please enter correct Postal Address</string>
-
+    <string name="enter_postal_address">Please enter correct Pin Code</string>
+    <string name="enter_postal_house">Please enter a valid House Number, Buiding Name</string>
+    <string name="enter_postal_road">Please enter a valid Road Name, Area, Colony</string>
+    <string name="enter_postal_town">Please enter a valid Town/City</string>
+    <string name="generating_certificate">Generating Your Certificate</string>
     <string name="missed_call_verify_message"> We make use of missed call verification.\nPlease grant permission to verify</string>
     <string name="otp_verify_message">A 4 digit OTP will be sent via SMS to verify \n your mobile number</string>
     <string name="missed_call_label">Missed Call Verification </string>
@@ -921,7 +924,7 @@
     <string name="ucrop_label_edit_photo">Add photo</string>
     <string name="please_record_answer">Read the following sentences</string>
 
-    <string name="certificate_d_header">Please fill the below details to download your certificate</string>
+    <string name="certificate_d_header">Please fill the below details to get your certificate made and delivered home</string>
     <string name="mname_error_toast">Mother name cannot be empty!</string>
     <string name="fname_error_toast">Father name cannot be empty!</string>
     <string name="certificate_download_success">Congratulations, your certificate has been downloaded</string>
@@ -1272,6 +1275,47 @@
         <item>Yes</item>
         <item>No</item>
     </string-array>
+
+    <string-array name="states_select">
+        <item>Andaman and Nicobar Islands</item>
+        <item>Andhra Pradesh</item>
+        <item>Arunachal Pradesh</item>
+        <item>Assam</item>
+        <item>Bihar</item>
+        <item>Chandigarh</item>
+        <item>Chhattisgarh</item>
+        <item>Dadra and Nagar Haveli</item>
+        <item>Daman and Diu</item>
+        <item>Delhi</item>
+        <item>Goa</item>
+        <item>Gujarat</item>
+        <item>Haryana</item>
+        <item>Himachal Pradesh</item>
+        <item>Jammu and Kashmir</item>
+        <item>Jharkhand</item>
+        <item>Karnataka</item>
+        <item>Kerala</item>
+        <item>Ladakh</item>
+        <item>Lakshadweep</item>
+        <item>Madhya Pradesh</item>
+        <item>Maharashtra</item>
+        <item>Manipur</item>
+        <item>Meghalaya</item>
+        <item>Mizoram</item>
+        <item>Nagaland</item>
+        <item>Odisha</item>
+        <item>Puducherry</item>
+        <item>Punjab</item>
+        <item>Rajasthan</item>
+        <item>Sikkim</item>
+        <item>Tamil Nadu</item>
+        <item>Telangana</item>
+        <item>Tripura</item>
+        <item>Uttar Pradesh</item>
+        <item>Uttarakhand</item>
+        <item>West Bengal</item>
+    </string-array>
+
     <string name="free_trial_popup_100_points_header">Josh skills उन students का परिवार है जो serious हैं अपनी life मे। जो मेहनत करना चाहते है और आगे बढ़ना चाहते हैं। इस course में enroll होने से पहले आपको एक दिन ये course use करना है। ये बिलकुल मुफ्त है।\n  \nमैं देखना चाहता हु की आप serious हैं english सीखने के लिए। आपको आज 100 points कमाने हैं। अगर आप अगले 24 घंटो में 100 points कमा लेते हैं तो आप कल course में admission ले सकते हैं।</string>
     <string name="tooltip_conversation">आपके सहपाठी कौन है आप यहाँ से देख सकते है</string>
     <string name="tooltip_lesson_grammar">आज इस भाग में हम अपने ग्रामर के लेवल का पता लगाएंगे</string>
@@ -1317,4 +1361,21 @@
     <string name="onboarding_course_info2">Beginner to Advanced</string>
     <string name="onboarding_course_info3">English Speaking का माहौल</string>
     <string name="sign_up_profile_occupation_aspiration_text">यह Information आपके Practice partners को दिखाई देगी।</string>
+    <string name="pin_code">PIN code</string>
+    <string name="house_number_building_name">House number, Building name</string>
+    <string name="road_name_area_colony">Road Name, Area, Colony</string>
+    <string name="landmark">Landmark</string>
+    <string name="like_famous_shop_nearby">Like famous shop nearby</string>
+    <string name="town_city">Town/City</string>
+    <string name="state">State</string>
+    <string name="select_state">Select State</string>
+    <string name="_6_digits_pin_code">6 digits PIN Code</string>
+
+    <string name="recording_text"> of the game will get</string>
+    <string name="recording_text_after">Waiting for your partner to start the game</string>
+    <string name="guess_the_word">Guess The Word</string>
+    <string name="describe_your_word_without_saying_it_and_your_partner_will_guess_it">Describe your word without saying it and your partner will guess it</string>
+    <string name="your_word">Your Word</string>
+    <string name="stars">*********</string>
+    <string name="wait_for_your_partner_to_click_next">Wait for your partner to click next</string>
 </resources>

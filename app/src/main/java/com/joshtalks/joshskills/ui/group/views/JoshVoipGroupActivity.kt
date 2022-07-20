@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.ui.group.views
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 
@@ -10,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.afollestad.materialdialogs.MaterialDialog
 
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.constants.ON_BACK_PRESSED
 import com.joshtalks.joshskills.constants.OPEN_GROUP
 import com.joshtalks.joshskills.constants.SHOULD_REFRESH_GROUP_LIST
@@ -18,7 +20,9 @@ import com.joshtalks.joshskills.constants.SHOW_PROGRESS_BAR
 import com.joshtalks.joshskills.constants.DISMISS_PROGRESS_BAR
 import com.joshtalks.joshskills.constants.OPEN_GROUP_REQUEST
 import com.joshtalks.joshskills.constants.REFRESH_GRP_LIST_HIDE_INFO
+import com.joshtalks.joshskills.core.IS_GROUP_FPP_NEW_ARCH_ENABLED
 import com.joshtalks.joshskills.core.PermissionUtils
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.databinding.ActivityJoshVoipGroupctivityBinding
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.group.*
@@ -28,6 +32,8 @@ import com.joshtalks.joshskills.ui.group.model.GroupItemData
 import com.joshtalks.joshskills.ui.group.utils.getMemberCount
 import com.joshtalks.joshskills.ui.group.viewmodels.JoshGroupViewModel
 import com.joshtalks.joshskills.ui.voip.SearchingUserActivity
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity
+import com.joshtalks.joshskills.voip.constant.Category
 
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -159,17 +165,29 @@ class JoshVoipGroupActivity : BaseGroupActivity() {
             return
         }
         GroupAnalytics.push(GroupAnalytics.Event.CALL_PRACTICE_PARTNER, groupItemData?.getUniqueId() ?: "")
-        val intent = SearchingUserActivity.startUserForPractiseOnPhoneActivity(
-            this,
-            courseId = "151",
-            topicId = 5,
-            groupId = groupItemData?.getUniqueId(),
-            isGroupCallCall = true,
-            topicName = "Group Call",
-            favoriteUserCall = false,
-            groupName = groupItemData?.getTitle()
-        )
-        startActivity(intent)
+        if (PrefManager.getIntValue(IS_GROUP_FPP_NEW_ARCH_ENABLED, defValue = 1) == 1) {
+            val callIntent = Intent(applicationContext, VoiceCallActivity::class.java)
+            callIntent.apply {
+                putExtra(STARTING_POINT, FROM_ACTIVITY)
+                putExtra(INTENT_DATA_CALL_CATEGORY, Category.GROUP.ordinal)
+                putExtra(INTENT_DATA_GROUP_ID, groupItemData?.getUniqueId())
+                putExtra(INTENT_DATA_TOPIC_ID, "5")
+                putExtra(INTENT_DATA_GROUP_NAME, groupItemData?.getTitle())
+            }
+            startActivity(callIntent)
+        } else {
+            val intent = SearchingUserActivity.startUserForPractiseOnPhoneActivity(
+                this,
+                courseId = "151",
+                topicId = 5,
+                groupId = groupItemData?.getUniqueId(),
+                isGroupCallCall = true,
+                topicName = "Group Call",
+                favoriteUserCall = false,
+                groupName = groupItemData?.getTitle()
+            )
+            startActivity(intent)
+        }
         finish()
     }
 

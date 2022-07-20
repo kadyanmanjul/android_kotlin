@@ -51,7 +51,6 @@ internal class AgoraEventHandler(val scope: CoroutineScope) : IRtcEngineEventHan
         speakers: Array<out IRtcEngineEventHandler.AudioVolumeInfo>?,
         totalVolume: Int
     ) {
-        Log.d(TAG, "onAudioVolumeIndication: $totalVolume  $speakers")
         emitSpeakers(speakers)
     }
 
@@ -194,7 +193,6 @@ internal class AgoraEventHandler(val scope: CoroutineScope) : IRtcEngineEventHan
     }
 
     private fun emitSpeakers(eventHandler: Array<out AudioVolumeInfo>?){
-        Log.d(TAG, " Emitting Event : $eventHandler")
         scope.launch {
             try{
                 callingEventSpeakers.emit(eventHandler)

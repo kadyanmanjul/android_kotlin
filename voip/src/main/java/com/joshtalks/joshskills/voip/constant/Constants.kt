@@ -17,6 +17,7 @@ const val CANCEL_INCOMING_TIMER = 131
 const val SHOW_RECORDING_PERMISSION_DIALOG = 132
 const val SHOW_RECORDING_REJECTED_DIALOG = 133
 const val HIDE_RECORDING_PERMISSION_DIALOG = 134
+const val GET_FRAGMENT_BITMAP = 135
 
 const val CALL_CONNECT_REQUEST = 115
 const val IPC_CONNECTION_ESTABLISHED = 117
@@ -27,7 +28,6 @@ const val JOINED = 120 // Local User Joined the Channel
 const val CONNECTED = 121 // Remote User Joined the Channel and can Talk
 const val LEAVING = 122 // LeaveChannel Called but haven't left the channel
 const val LEAVING_AND_JOINING = 126 // LeaveChannel Previous Channel and Joining New Channel
-const val GET_FRAGMENT_BITMAP = 127 // LeaveChannel Previous Channel and Joining New Channel
 
 // Content Provider Voip State
 const val CONTENT_VOIP_STATE_AUTHORITY = "content://com.joshtalks.joshskills.voipstate"
@@ -44,6 +44,14 @@ const val CURRENT_PSTN_STATE = "josh_current_pstn_state"
 const val PSTN_STATE_IDLE = "pstn_state_Idle"
 const val PSTN_STATE_ONCALL = "pstn_state_oncall"
 const val PREF_KEY_PSTN_STATE = "pstn_state_pstn_state"
+
+// Incoming Notification Constants
+const val INCOMING_CALL_ID = "call_id"
+const val INCOMING_CALL_CATEGORY = "call_category"
+const val REMOTE_USER_NAME = "remote_user_name"
+const val INCOMING_GROUP_NAME = "group_name"
+const val INCOMING_GROUP_IMAGE = "group_icon"
+
 
 
 
@@ -81,7 +89,13 @@ enum class Event {
     CALL_RECORDING_REJECT,
     CANCEL_RECORDING_REQUEST,
     AGORA_CALL_RECORDED,
-    AGORA_CALL_SPEAKER_VOLUME
+    AGORA_CALL_SPEAKER_VOLUME,
+    START_GAME,
+    END_GAME,
+    NEXT_WORD_REQUEST,
+    NEXT_WORD_RECEIVED,
+    GROUP_INCOMING_CALL,
+    FPP_INCOMING_CALL,
 }
 
 enum class State {
@@ -92,4 +106,10 @@ enum class State {
     CONNECTED,
     RECONNECTING,
     LEAVING,
+}
+
+enum class Category(val category : String) {
+    PEER_TO_PEER("PEER_TO_PEER"),
+    FPP("FPP"),
+    GROUP("GROUP"),
 }
