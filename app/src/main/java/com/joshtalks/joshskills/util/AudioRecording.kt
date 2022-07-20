@@ -21,8 +21,8 @@ class AudioRecording {
             try {
                 recorder = MediaRecorder()
                 recorder?.setAudioChannels(1)
-                recorder?.setAudioSamplingRate(16000)
-                recorder?.setAudioEncodingBitRate(32000)
+                recorder?.setAudioSamplingRate(32000)
+                recorder?.setAudioEncodingBitRate(48000)
                 recorder?.setAudioSource(MediaRecorder.AudioSource.MIC)
                 recorder?.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
                 recorder?.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
