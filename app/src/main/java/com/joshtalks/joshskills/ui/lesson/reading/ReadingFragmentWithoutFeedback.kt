@@ -846,12 +846,9 @@ class ReadingFragmentWithoutFeedback :
                 }
             }
             video = currentLessonQuestion?.videoList?.getOrNull(0)?.video_url
-            if (isDynamicModuleInstalled){
-                showToast("Dynamic module is installed")
-            } else {
-                showToast("Dynamic module isn't installed")
+            if (isDynamicModuleInstalled.not()){
                 video = null
-            }
+             }
             lifecycleScope.launch {
                 lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
                     fetchVideo()

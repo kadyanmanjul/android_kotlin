@@ -76,7 +76,6 @@ abstract class InboxBaseActivity :
         CoroutineScope(Dispatchers.IO).launch {
             isSubscriptionStarted = PrefManager.getBoolValue(IS_SUBSCRIPTION_STARTED)
             isSubscriptionEnd = PrefManager.getBoolValue(IS_SUBSCRIPTION_ENDED).not()
-            PrefManager.put(PREF_IS_CONVERSATION_ROOM_ACTIVE, false)
         }
     }
 

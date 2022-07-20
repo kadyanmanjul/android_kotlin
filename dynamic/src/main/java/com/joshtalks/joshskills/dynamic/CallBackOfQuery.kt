@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.dynamic
 
-import android.media.MediaDrm
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
@@ -37,8 +36,7 @@ class CallBackOfQuery {
     private fun process(query: Array<String>, ffmpegCallBack: FFmpegCallBack) {
         val processHandler = Handler(Looper.getMainLooper())
         Config.enableLogCallback { logMessage ->
-            val logs =
-                MediaDrm.LogMessage(logMessage.executionId, logMessage.level, logMessage.text)
+            val logs = LogMessage(logMessage.executionId, logMessage.level, logMessage.text)
             processHandler.post {
                 ffmpegCallBack.process(logs)
             }
