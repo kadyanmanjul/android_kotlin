@@ -44,11 +44,11 @@ private const val CALL_TIMEOUT = 60L
 private const val WRITE_TIMEOUT = 30L
 private const val READ_TIMEOUT = 30L
 
-class BackgroundService : Service() {
+const val NOTIF_ID = 12301
+const val NOTIF_CHANNEL_ID = "12301"
+const val NOTIF_CHANNEL_NAME = "NOTIFICATION SERVICE"
 
-    val NOTIF_ID = 12301
-    val NOTIF_CHANNEL_ID = "12301"
-    val NOTIF_CHANNEL_NAME = "NOTIFICATION SERVICE"
+class BackgroundService : Service() {
 
     lateinit var apiService: UtilsAPIService
 

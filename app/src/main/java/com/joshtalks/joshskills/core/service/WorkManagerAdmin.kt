@@ -176,9 +176,8 @@ object WorkManagerAdmin {
 
         val workRequest = OneTimeWorkRequestBuilder<BackgroundNotificationWorker>()
             .setConstraints(constraints)
-            .setInitialDelay(1, TimeUnit.MINUTES)
+            .setInitialDelay(30, TimeUnit.MINUTES)
             .addTag(BackgroundNotificationWorker::class.java.name)
-            .setBackoffCriteria(BackoffPolicy.LINEAR, 1, TimeUnit.MINUTES)
             .build()
 
         WorkManager.getInstance(AppObjectController.joshApplication).enqueue(workRequest)

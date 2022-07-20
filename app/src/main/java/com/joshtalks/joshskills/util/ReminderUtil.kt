@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import com.joshtalks.joshskills.core.service.BackgroundService
+import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.ui.reminder.set_reminder.AlarmReceiver
 import java.util.*
 
@@ -90,7 +91,9 @@ class ReminderUtil(val context: Context) {
     }
 
     fun setAlarmNotificationWorker() {
-        if (context.applicationContext != null) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
+            WorkManagerAdmin.setBackgroundNotificationWorker()
+        else if (context.applicationContext != null) {
             val intent = Intent(context.applicationContext, BackgroundService::class.java)
             val pendingIntent =
                 PendingIntent.getService(context.applicationContext, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
