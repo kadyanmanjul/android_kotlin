@@ -200,6 +200,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
 
         val roomRequestId = intent.getStringExtra(ROOM_REQUEST_ID)
 
+        viewModel.roomRequestCount.value=0
          if(!roomRequestId.isNullOrEmpty()){
             RequestBottomSheetFragment.open(roomRequestId, supportFragmentManager)
         } else if (user != null) {
@@ -231,7 +232,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
             checkAndOpenLiveRoom()
         }
 
-        viewModel.readRequestCount()
+
     }
 
     override fun onRestart() {
@@ -332,7 +333,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         )
 
         binding.requestCountNumber.text= callRequestCount.toString()
-        if(callRequestCount>0 && User.getInstance().isSpeaker)
+        if(callRequestCount>0 && User.getInstance().isSpeaker && User.getInstance().isSpeaker)
             binding.requestCountNumber.visibility=View.VISIBLE
         else
             binding.requestCountNumber.visibility=View.GONE
@@ -362,6 +363,8 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         viewModel.isSpeaker.observe(this){
             if(it)
             {
+                viewModel.readRequestCount()
+                setBadgeDrawable(viewModel.roomRequestCount.value!!)
                 binding.recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
                     override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                         super.onScrollStateChanged(recyclerView, newState)
@@ -374,6 +377,8 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                     }
                 })
             }
+            else
+                viewModel.requestChannelEnd()
         }
 
         profileViewModel.openProfile.observe(this){

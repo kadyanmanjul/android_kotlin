@@ -513,52 +513,18 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
         }
     }
 
-    private fun getIntentExtrasFromNotification() {
-//        roomId = PubNubManager.getLiveRoomProperties().roomId
-//        channelTopic = PubNubManager.getLiveRoomProperties().channelTopic
-//        if (isActivityOpenFromNotification && roomId != null) {
-//            vm.joinRoom(
-//                RoomListResponseItem(
-//                    roomId!!,
-//                    null,
-//                    null,
-//                    null,
-//                    null,
-//                    null,
-//                    null,
-//                    null,
-//                    null,
-//                    null,
-//                    null,
-//                    null
-//                )
-//
-//            )
-//        }
-    }
-
     @SuppressLint("UnsafeOptInUsageError")
     private fun setProfileBadgeDrawable(callRequestCount: Int) {
         Timber.tag("profilebadge").d(
             "setBadgeDrawable() called with: raisedHandAudienceSize = $callRequestCount"
         )
-        profileBadgeDrawable.isVisible = callRequestCount > 0
+//        profileBadgeDrawable.isVisible = callRequestCount > 0
 
-        if (User.getInstance().isSpeaker && callRequestCount > 0) {
-
-            profileBadgeDrawable.number = callRequestCount
-            profileBadgeDrawable.horizontalOffset = 20
-            profileBadgeDrawable.verticalOffset = 10
-            binding.userPhotoRoot.setForeground(profileBadgeDrawable)
-            binding.userPhotoRoot.addOnLayoutChangeListener { v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
-
-                BadgeUtils.attachBadgeDrawable(
-                    profileBadgeDrawable,
-                    binding.userPhoto,
-                    binding.userPhotoRoot
-                )
-            }
-        }
+        binding.requestCountNumber.text= callRequestCount.toString()
+        if(callRequestCount>0 && feedViewModel.isSpeaker.value==true )
+            binding.requestCountNumber.visibility=View.VISIBLE
+        else
+            binding.requestCountNumber.visibility=View.GONE
 
     }
 

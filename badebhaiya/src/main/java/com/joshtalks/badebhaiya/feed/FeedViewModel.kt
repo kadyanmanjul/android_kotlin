@@ -145,7 +145,17 @@ class FeedViewModel : ViewModel() {
                 }
                 querySnapshot?.let {
                     viewModelScope.launch {
-                        BbDatastore.updateRoomRequestCount(it.documents.get(0).data?.get("request_count") as Long )
+                        for(i in it.documents) {
+                            if(i.id==User.getInstance().userId) {
+                                Log.i(
+                                    "HELOOBADGE",
+                                    "readRequestCount: ${i.data?.get("request_count")}"
+                                )
+                                BbDatastore.updateRoomRequestCount(i.data?.get("request_count") as Long)
+                                return@launch
+                            }
+                            else BbDatastore.updateRoomRequestCount(0)
+                        }
                     }
                 }
             }

@@ -5,6 +5,7 @@
 
     <data>
 
+        <import type="android.view.View" />
         <variable
             name="handler"
             type="com.joshtalks.badebhaiya.liveroom.LiveRoomFragment" />
@@ -12,6 +13,9 @@
         <variable
             name="viewModel"
             type="com.joshtalks.badebhaiya.liveroom.viewmodel.LiveRoomViewModel" />
+        <variable
+            name="feedViewModel"
+            type="com.joshtalks.badebhaiya.feed.FeedViewModel" />
     </data>
 
     <com.joshtalks.badebhaiya.custom_ui.SingleViewTouchableMotionLayout
@@ -60,6 +64,25 @@
                 app:layout_constraintStart_toEndOf="@id/down_arrow"
                 app:layout_constraintTop_toTopOf="@id/down_arrow" />
 
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/request_count_number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_marginVertical="@dimen/_12sdp"
+                android:layout_marginHorizontal="@dimen/_12sdp"
+                android:background="@drawable/request_count_badge"
+                android:elevation="@dimen/_5sdp"
+                android:gravity="right"
+                android:paddingHorizontal="@dimen/_7sdp"
+                android:paddingVertical="@dimen/_3sdp"
+                android:textAppearance="@style/BB_Typography_Nunito_Bold"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_8sdp"
+                android:visibility="@{feedViewModel.isSpeaker ? View.VISIBLE : View.GONE}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="39" />
             <FrameLayout
                 android:id="@+id/userPhotoRoot"
                 android:layout_width="wrap_content"

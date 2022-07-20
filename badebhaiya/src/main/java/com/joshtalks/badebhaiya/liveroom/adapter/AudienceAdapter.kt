@@ -57,13 +57,14 @@ class AudienceAdapter(
                         bgColor = R.color.conversation_room_gray
                     )
                 }
+//                if (isModerator && model.isHandRaised) {
+//                    raisedHands.visibility = View.VISIBLE
+//                } else {
+//                    raisedHands.visibility = View.GONE
+//                }
+
                 if(handRaisedList.contains(model))
                     raisedHands.visibility=View.VISIBLE
-                if (isModerator && model.isHandRaised) {
-                    raisedHands.visibility = View.VISIBLE
-                } else {
-                    raisedHands.visibility = View.GONE
-                }
 
                 if (model.isSpeaker == true && !model.isMicOn) {
                     volumeIcon.visibility = View.VISIBLE

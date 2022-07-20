@@ -99,7 +99,7 @@
             android:textAppearance="@style/BB_Typography_Nunito_Bold"
             android:textColor="@color/white"
             android:textSize="@dimen/_10sdp"
-            android:visibility="gone"
+            android:visibility="@{(viewModel.isBadeBhaiyaSpeaker &amp;&amp; viewModel.isSelfProfile) ? View.VISIBLE : View.GONE}"
             app:layout_constraintBottom_toTopOf="@+id/btnFollow"
             app:layout_constraintEnd_toEndOf="@+id/callRequestsBtnRoot"
             tools:text="39"
