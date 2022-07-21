@@ -166,6 +166,16 @@ class ReportOverviewView2(
         return span
     }
 
+    @Click(R.id.imgBtnLeft)
+    fun onClickImgBtnLeft(){
+        questionRecyclerView.scrollToPosition(0)
+    }
+
+    @Click(R.id.imgBtnRight)
+    fun onClickImgBtnRight(){
+        questionRecyclerView.adapter?.itemCount?.let { questionRecyclerView.scrollToPosition(it-1) }
+    }
+
     @Click(R.id.ll_correct)
     fun onClickCorrectView() {
         RxBus2.publish(OpenReportQTypeEventBus(QuestionReportType.RIGHT))

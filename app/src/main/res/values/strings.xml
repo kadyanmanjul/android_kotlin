@@ -1380,4 +1380,6 @@
     <string name="wait_for_your_partner_to_click_next">Wait for your partner to click next</string>
     <string name="dynamic_feature_title">dynamic</string>
     <string name="video_error">Sorry unable to process your video please retry after some time</string>
+    <string name="image_button_to_move_left">Image button to move left</string>
+    <string name="image_button_to_move_right">Image button to move right</string>
 </resources>
