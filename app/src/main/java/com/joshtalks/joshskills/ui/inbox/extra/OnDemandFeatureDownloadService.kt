@@ -65,8 +65,8 @@ class OnDemandFeatureDownloadService : Service() {
             hideNotification()
         } else {
             manager?.deferredInstall(listOf(getString(R.string.dynamic_feature_title)))
-                ?.addOnSuccessListener { }
-                ?.addOnFailureListener { }
+                ?.addOnSuccessListener {hideNotification() }
+                ?.addOnFailureListener {hideNotification() }
         }
     }
 
@@ -81,9 +81,9 @@ class OnDemandFeatureDownloadService : Service() {
                 .build()
 
             manager?.startInstall(request)
-                ?.addOnCompleteListener { }
-                ?.addOnSuccessListener { }
-                ?.addOnFailureListener { }
+                ?.addOnCompleteListener{ hideNotification() }
+                ?.addOnSuccessListener { hideNotification() }
+                ?.addOnFailureListener { hideNotification() }
         }
     }
 
