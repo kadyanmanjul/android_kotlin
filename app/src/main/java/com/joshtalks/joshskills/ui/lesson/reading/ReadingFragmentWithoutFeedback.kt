@@ -315,6 +315,7 @@ class ReadingFragmentWithoutFeedback :
                 } else {
                     binding.mergedVideo.scaleY = 1f / scaleX
                 }
+                mediaPlayer.isLooping = false
             } catch (ex: Exception) {
                 showToast(getString(R.string.something_went_wrong))
                 ex.printStackTrace()

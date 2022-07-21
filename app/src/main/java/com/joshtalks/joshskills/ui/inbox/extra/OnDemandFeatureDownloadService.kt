@@ -7,31 +7,50 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.IBinder
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import com.google.android.play.core.splitinstall.SplitInstallHelper
 import com.google.android.play.core.splitinstall.SplitInstallManager
 import com.google.android.play.core.splitinstall.SplitInstallManagerFactory
 import com.google.android.play.core.splitinstall.SplitInstallRequest
 import com.google.android.play.core.splitinstall.SplitInstallStateUpdatedListener
 import com.google.android.play.core.splitinstall.model.SplitInstallSessionStatus
+import com.google.android.play.core.tasks.OnSuccessListener
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.repository.local.model.NotificationChannelNames
 
 
 const val CHANNEL_ID = "VIDEO_AUDIO_PROCESSING"
 const val NOTIFICATION_ID = 1681
+const val TAG = "OnDemandFeatureDownloadService"
 
 class OnDemandFeatureDownloadService : Service() {
     private var mNotificationManager: NotificationManager? = null
     private var manager: SplitInstallManager? = null
+    private var sessionId: Int? = null
+
     private val listener = SplitInstallStateUpdatedListener { state ->
-        when (state.status()) {
-            SplitInstallSessionStatus.REQUIRES_USER_CONFIRMATION -> {
-                startIntentSender(state.resolutionIntent()?.intentSender, null, 0, 0, 0)
-            }
-            SplitInstallSessionStatus.INSTALLING, SplitInstallSessionStatus.DOWNLOADING -> {}
-            else -> {
-                hideNotification()
+        if (state.sessionId() == sessionId) {
+            when (state.status()) {
+                SplitInstallSessionStatus.REQUIRES_USER_CONFIRMATION -> {
+                    startIntentSender(state.resolutionIntent()?.intentSender, null, 0, 0, 0)
+                }
+                SplitInstallSessionStatus.INSTALLING, SplitInstallSessionStatus.DOWNLOADING -> {
+
+                }
+                SplitInstallSessionStatus.INSTALLED -> {
+                    SplitInstallHelper.loadLibrary(this, "avutil")
+                    SplitInstallHelper.loadLibrary(this, "swscale")
+                    SplitInstallHelper.loadLibrary(this, "swresample")
+                    SplitInstallHelper.loadLibrary(this, "avcodec")
+                    SplitInstallHelper.loadLibrary(this, "avformat")
+                    SplitInstallHelper.loadLibrary(this, "avfilter")
+                    SplitInstallHelper.loadLibrary(this, "avdevice")
+                }
+                else -> {
+                    hideNotification()
+                }
             }
         }
     }
@@ -65,8 +84,11 @@ class OnDemandFeatureDownloadService : Service() {
             hideNotification()
         } else {
             manager?.deferredInstall(listOf(getString(R.string.dynamic_feature_title)))
-                ?.addOnSuccessListener {hideNotification() }
-                ?.addOnFailureListener {hideNotification() }
+                ?.addOnSuccessListener {
+                    OnSuccessListener { result: Int ->
+                        sessionId = result
+                    } }
+                ?.addOnFailureListener { e-> Log.e(TAG, "startDownloadLibraryInBackground: ",e ) }
         }
     }
 
@@ -81,9 +103,9 @@ class OnDemandFeatureDownloadService : Service() {
                 .build()
 
             manager?.startInstall(request)
-                ?.addOnCompleteListener{ hideNotification() }
-                ?.addOnSuccessListener { hideNotification() }
-                ?.addOnFailureListener { hideNotification() }
+                ?.addOnSuccessListener { result: Int ->
+                    sessionId = result }
+                ?.addOnFailureListener { e-> Log.e(TAG, "startDownloadLibraryInForeground: ",e ) }
         }
     }
 
@@ -113,9 +135,12 @@ class OnDemandFeatureDownloadService : Service() {
     }
 
     private fun hideNotification() {
-        NotificationManagerCompat.from(this).cancel(NOTIFICATION_ID)
-        stopForeground(true)
-        manager?.unregisterListener(listener)
+        try {
+            NotificationManagerCompat.from(this).cancel(NOTIFICATION_ID)
+            stopForeground(true)
+            manager?.unregisterListener(listener)        } catch (ex:Exception){
+            Log.e(TAG, "hideNotification: ", ex)
+        }
     }
 
     companion object {
