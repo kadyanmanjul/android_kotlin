@@ -102,7 +102,6 @@ class FppFavoriteAdapter : RecyclerView.Adapter<FppFavoriteAdapter.FavoriteItemV
                 }
 
                 fppMessIcon.setOnSingleClickListener {
-                    Log.i("TAG", "bind mihir: $favoriteCaller")
                     itemClick?.invoke(favoriteCaller, SEND_MESSAGE_FPP, position)
                 }
 

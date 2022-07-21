@@ -132,7 +132,7 @@
                 android:layout_height="@dimen/_46sdp"
                 android:layout_centerInParent="true"
                 android:foreground="?android:attr/selectableItemBackground"
-                android:padding="@dimen/_14sdp"
+                android:padding="@dimen/_15sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/fpp_call_icon"
                 app:layout_constraintTop_toTopOf="parent"
@@ -152,6 +152,15 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_phone_icon"
                 tools:visibility="visible" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:background="@color/gray_e6"
+                android:layout_marginRight="@dimen/_16sdp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/fpp_call_icon"
+                app:layout_constraintStart_toStartOf="@+id/title_container" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </com.google.android.material.card.MaterialCardView>
