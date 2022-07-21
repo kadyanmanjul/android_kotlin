@@ -196,7 +196,7 @@ interface CommonNetworkService {
     suspend fun getExamReports(@Query("certificateexam_id") id: Int): List<CertificateExamReportModel>
 
     @GET("$DIR/certificateexam/user_details")
-    suspend fun getCertificateUserDetails(): CertificationUserDetail?
+    suspend fun getCertificateUserDetails(): Response<CertificationUserDetail?>
 
     @GET("http://www.postalpincode.in/api/pincode/{pin}")
     suspend fun getInfoFromPinCode(@Path("pin")pin:Int): PostalDetails

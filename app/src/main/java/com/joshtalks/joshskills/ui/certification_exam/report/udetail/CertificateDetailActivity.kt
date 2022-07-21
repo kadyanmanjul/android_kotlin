@@ -227,7 +227,9 @@ class CertificateDetailActivity : BaseActivity(), FileDownloadCallback {
                     binding.etName.setText(it.fullName)
                     binding.etName.requestFocus()
                     binding.etName.setSelection(it.fullName?.length ?: 0)
-                    it.pinCode?.let { it1 -> binding.etPinCode.setText(it1.toString()) }
+                    if(it.pinCode.toString().length == 6 ){
+                        binding.etPinCode.setText(it.toString())
+                    }
                     binding.etHouseNum.setText(it.houseNumber)
                     binding.etRoadNameColony.setText(it.roadName)
                     binding.etLandmark.setText(it.landmark)

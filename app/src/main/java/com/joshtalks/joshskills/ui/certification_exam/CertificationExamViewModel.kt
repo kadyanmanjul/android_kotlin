@@ -183,7 +183,9 @@ class CertificationExamViewModel(application: Application) : AndroidViewModel(ap
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val resp = AppObjectController.commonNetworkService.getCertificateUserDetails()
-                cUserDetails.emit(resp)
+                if (resp.isSuccessful){
+                    cUserDetails.emit(resp.body())
+                }
             } catch (ex: Throwable) {
                 ex.showAppropriateMsg()
                 apiStatus.postValue(ApiCallStatus.FAILED)
