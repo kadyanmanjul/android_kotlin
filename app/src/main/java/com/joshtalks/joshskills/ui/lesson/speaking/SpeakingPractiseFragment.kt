@@ -83,6 +83,7 @@ const val COMPLETED = "CO"
 const val ATTEMPTED = "AT"
 const val UPGRADED_USER = "NFT"
 const val MOVE_TO_PAYMENT_PAGE = 0
+const val START_P2P_CALL = 1
 
 class SpeakingPractiseFragment : CoreJoshFragment() {
 
@@ -196,8 +197,30 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         )
     }
 
-    private fun addObservers() {
+    private fun     addObservers() {
+        Log.d(TAG, "addObservers: ${viewModel.ISFREEMIUMACTIVE}")
         // com.joshtalks.joshskills.repository.local.model
+        if (viewModel.ISFREEMIUMACTIVE) {
+            binding.callExpertTeacher.visibility = View.VISIBLE
+            binding.callFemalePracticePartner.visibility = View.VISIBLE
+            binding.callHigherLevelSpeaker.visibility = View.VISIBLE
+            binding.numberOfCallsAvailableTextView.visibility = View.VISIBLE
+            binding.callsAvailableTextView.visibility = View.VISIBLE
+            if (PrefManager.getBoolValue(IS_COURSE_BOUGHT)) {
+                binding.lockIcon.visibility = View.GONE
+                binding.lockIcon2.visibility = View.GONE
+                binding.lockIcon3.visibility = View.GONE
+            }
+        } else {
+            binding.callExpertTeacher.visibility = View.GONE
+            binding.callFemalePracticePartner.visibility = View.GONE
+            binding.callHigherLevelSpeaker.visibility = View.GONE
+            binding.numberOfCallsAvailableTextView.visibility = View.GONE
+            binding.callsAvailableTextView.visibility = View.GONE
+            binding.callsAvailableIcInfoRed.visibility = View.GONE
+            binding.callsAvailableIcInfo.visibility = View.GONE
+            binding.numberOfDaysLeftTextView.visibility = View.GONE
+        }
         if (User.getInstance().gender == "F") {
             binding.callFemalePracticePartner.visibility = View.VISIBLE
         } else {
@@ -235,40 +258,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             courseId = it
         }
         binding.btnStartTrialText.setOnSingleClickListener {
-            viewModel.postGoal(GoalKeys.CALL_PP_CLICKED.NAME, CampaignKeys.FREEMIUM_COURSE.NAME)
-            if (PrefManager.getBoolValue(IS_LOGIN_VIA_TRUECALLER))
-                viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
-            MixPanelTracker.publishEvent(MixPanelEvent.CALL_PRACTICE_PARTNER)
-                .addParam(ParamKeys.LESSON_ID, lessonID)
-                .addParam(ParamKeys.LESSON_NUMBER, lessonNo)
-                .addParam(ParamKeys.VIA, "speaking screen")
-                .push()
-            if (PrefManager.getIntValue(IS_VOIP_NEW_ARCH_ENABLED, defValue = 1) == 1) {
-                val state = getVoipState()
-                Log.d(TAG, " Start Call Button - Voip State $state")
-                if (state == State.IDLE && WebRtcService.isCallOnGoing.value == false) {
-                    if (checkPstnState() == PSTNState.Idle) {
-                        if (Utils.isInternetAvailable().not()) {
-                            showToast("Seems like you have no internet")
-                            return@setOnSingleClickListener
-                        }
-                        if (viewModel.speakingTopicLiveData.value?.leftCallsData?.calls_left!! > 0) {
-                            startPractise(isNewArch = true)
-                        } else {
-                            Toast.makeText(requireActivity(), "No calls left", Toast.LENGTH_SHORT).show()
-                        }
-                    } else {
-                        showToast("Cannot make this call while on another call")
-                    }
-                } else
-                    showToast("Wait for last call to get disconnected")
-            } else {
-                viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
-                if (getVoipState() == State.IDLE && WebRtcService.isCallOnGoing.value == false)
-                    startPractise()
-                else
-                    showToast("Wait for last call to get disconnected")
-            }
+            callPracticePartner()
         }
 
         binding.btnGroupCall.setOnClickListener {
@@ -368,22 +358,25 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                     }
 
                     binding.tvTodayTopic.text = response.topicName
-                    binding.numberOfCallsAvailableTextView.text = response.leftCallsData.calls_left.toString()
-                    binding.numberOfCallsAvailableTextView.paintFlags =
-                        binding.numberOfCallsAvailableTextView.paintFlags or Paint.UNDERLINE_TEXT_FLAG
 
-                    if (response.leftCallsData.calls_left == 0) {
-                        viewModel.postGoal(GoalKeys.CALLS_LIMIT_REACHED.NAME, CampaignKeys.FREEMIUM_COURSE.NAME)
-                        binding.numberOfDaysLeftTextView.text =
-                            "Calls will be added in ${response.leftCallsData.days_left} days"
-                        binding.numberOfCallsAvailableTextView.setTextColor(resources.getColor(R.color.red))
-                        binding.callsAvailableTextView.setTextColor(resources.getColor(R.color.red))
-                        binding.callsAvailableIcInfo.visibility = View.INVISIBLE
-                        binding.callsAvailableIcInfoRed.visibility = View.VISIBLE
-                    } else {
-                        binding.numberOfDaysLeftTextView.text = ""
-                        binding.callsAvailableIcInfo.visibility = View.VISIBLE
-                        binding.callsAvailableIcInfoRed.visibility = View.INVISIBLE
+                    if (viewModel.ISFREEMIUMACTIVE) {
+                        binding.numberOfCallsAvailableTextView.text = response.leftCallsData.calls_left.toString()
+                        binding.numberOfCallsAvailableTextView.paintFlags =
+                            binding.numberOfCallsAvailableTextView.paintFlags or Paint.UNDERLINE_TEXT_FLAG
+
+                        if (response.leftCallsData.calls_left == 0) {
+                            viewModel.postGoal(GoalKeys.CALLS_LIMIT_REACHED.NAME, CampaignKeys.FREEMIUM_COURSE.NAME)
+                            binding.numberOfDaysLeftTextView.text =
+                                "Calls will be added in ${response.leftCallsData.days_left} days"
+                            binding.numberOfCallsAvailableTextView.setTextColor(resources.getColor(R.color.red))
+                            binding.callsAvailableTextView.setTextColor(resources.getColor(R.color.red))
+                            binding.callsAvailableIcInfo.visibility = View.INVISIBLE
+                            binding.callsAvailableIcInfoRed.visibility = View.VISIBLE
+                        } else {
+                            binding.numberOfDaysLeftTextView.text = ""
+                            binding.callsAvailableIcInfo.visibility = View.VISIBLE
+                            binding.callsAvailableIcInfoRed.visibility = View.INVISIBLE
+                        }
                     }
 
                     if (!isTwentyMinFtuCallActive || response.callDurationStatus == UPGRADED_USER) {
@@ -619,9 +612,49 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                             FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID
                         )
                     )
+                START_P2P_CALL -> {
+                    callPracticePartner()
+                }
             }
         }
         initDemoViews(lessonNo)
+    }
+
+    private fun callPracticePartner() {
+        viewModel.postGoal(GoalKeys.CALL_PP_CLICKED.NAME, CampaignKeys.FREEMIUM_COURSE.NAME)
+        if (PrefManager.getBoolValue(IS_LOGIN_VIA_TRUECALLER))
+            viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
+        MixPanelTracker.publishEvent(MixPanelEvent.CALL_PRACTICE_PARTNER)
+            .addParam(ParamKeys.LESSON_ID, lessonID)
+            .addParam(ParamKeys.LESSON_NUMBER, lessonNo)
+            .addParam(ParamKeys.VIA, "speaking screen")
+            .push()
+        if (PrefManager.getIntValue(IS_VOIP_NEW_ARCH_ENABLED, defValue = 1) == 1) {
+            val state = getVoipState()
+            Log.d(TAG, " Start Call Button - Voip State $state")
+            if (state == State.IDLE && WebRtcService.isCallOnGoing.value == false) {
+                if (checkPstnState() == PSTNState.Idle) {
+                    if (Utils.isInternetAvailable().not()) {
+                        showToast("Seems like you have no internet")
+                        return
+                    }
+                    if (viewModel.speakingTopicLiveData.value?.leftCallsData?.calls_left!! > 0) {
+                        startPractise(isNewArch = true)
+                    } else {
+                        Toast.makeText(requireActivity(), "No calls left", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    showToast("Cannot make this call while on another call")
+                }
+            } else
+                showToast("Wait for last call to get disconnected")
+        } else {
+            viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
+            if (getVoipState() == State.IDLE && WebRtcService.isCallOnGoing.value == false)
+                startPractise()
+            else
+                showToast("Wait for last call to get disconnected")
+        }
     }
 
     private fun postSpeakingScreenSeenGoal() {

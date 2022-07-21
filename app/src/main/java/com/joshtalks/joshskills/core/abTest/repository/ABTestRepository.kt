@@ -48,7 +48,10 @@ class ABTestRepository {
             if (apiResponse.isSuccessful && apiResponse.body() != null) {
                 putABTestData(apiResponse.body()!!)
                 for (i in apiResponse.body()!!) {
+                    Log.d(TAG, "updateAllCampaigns:freemium Boolean " + data[VariantKeys.FREEMIUM_ENABLED.name])
+                    Log.d(TAG, "updateAllCampaigns: is campaign active" + i.isCampaignActive + i.campaignKey)
                     if (i.isCampaignActive)
+                        Log.d(TAG, "updateAllCampaigns: kasera madarchoz")
                         prop.put(i.campaignKey, i.variantKey)
                     if (i.campaignKey == "A2_C1") {
                         if (i.isCampaignActive) {
@@ -60,6 +63,8 @@ class ABTestRepository {
                         }
                     }
                 }
+            } else {
+                Log.d(TAG, "updateAllCampaigns: else")
             }
 
             val exp = "experiment_started"

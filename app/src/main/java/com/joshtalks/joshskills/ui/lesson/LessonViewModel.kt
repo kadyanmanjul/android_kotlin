@@ -25,6 +25,7 @@ import com.joshtalks.joshskills.constants.PERMISSION_FROM_READING_GRANTED
 import com.joshtalks.joshskills.constants.SHARE_VIDEO
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.AppObjectController.Companion.appDatabase
+import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
@@ -52,6 +53,7 @@ import com.joshtalks.joshskills.repository.server.introduction.DemoOnboardingDat
 import com.joshtalks.joshskills.repository.server.voip.SpeakingTopic
 import com.joshtalks.joshskills.repository.service.NetworkRequestHelper
 import com.joshtalks.joshskills.ui.lesson.speaking.MOVE_TO_PAYMENT_PAGE
+import com.joshtalks.joshskills.ui.lesson.speaking.START_P2P_CALL
 import com.joshtalks.joshskills.ui.lesson.speaking.spf_models.UserRating
 import com.joshtalks.joshskills.ui.lesson.speaking.spf_models.VideoPopupItem
 import com.joshtalks.joshskills.ui.referral.WHATSAPP_PACKAGE_STRING
@@ -107,6 +109,8 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     val howToSpeakLiveData: MutableLiveData<Boolean> = MutableLiveData()
     val introVideoCompleteLiveData: MutableLiveData<Boolean> = MutableLiveData()
     val practicePartnerCallDurationLiveData: MutableLiveData<Long> = MutableLiveData()
+    var ISFREEMIUMACTIVE : Boolean = false
+
     var isInternetSpeedGood = ObservableInt(2)
     var userRating = ObservableField<UserRating>()
     val voipState by lazy {
@@ -128,6 +132,13 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
 
     init {
         getRating()
+        setFreemiumActiveOrNot()
+    }
+
+    private fun setFreemiumActiveOrNot() {
+        abTestRepository.apply {
+            ISFREEMIUMACTIVE = isVariantActive(VariantKeys.FREEMIUM_ENABLED)
+        }
     }
 
     fun getVideoData() {
@@ -187,15 +198,27 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     fun onCallExpertTeacherButtonClicked(v: View) {
-        event.postValue(Message().apply { what = MOVE_TO_PAYMENT_PAGE })
+        if (PrefManager.getBoolValue(IS_COURSE_BOUGHT)) {
+            event.postValue(Message().apply { what = START_P2P_CALL })
+        } else {
+            event.postValue(Message().apply { what = MOVE_TO_PAYMENT_PAGE })
+        }
     }
 
     fun onCallFemalePracticePartnerButtonClicked(v: View) {
-        event.postValue(Message().apply { what = MOVE_TO_PAYMENT_PAGE })
+        if (PrefManager.getBoolValue(IS_COURSE_BOUGHT)) {
+            event.postValue(Message().apply { what = START_P2P_CALL })
+        } else {
+            event.postValue(Message().apply { what = MOVE_TO_PAYMENT_PAGE })
+        }
     }
 
     fun onCallHigherLevelSpeakerButtonClicked(v: View) {
-        event.postValue(Message().apply { what = MOVE_TO_PAYMENT_PAGE })
+        if (PrefManager.getBoolValue(IS_COURSE_BOUGHT)) {
+            event.postValue(Message().apply { what = START_P2P_CALL })
+        } else {
+            event.postValue(Message().apply { what = MOVE_TO_PAYMENT_PAGE })
+        }
     }
 
     private suspend fun getLessonFromDB(lessonId: Int): LessonModel? {

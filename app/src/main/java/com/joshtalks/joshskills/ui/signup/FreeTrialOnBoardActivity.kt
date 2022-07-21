@@ -51,7 +51,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         ViewModelProvider(this).get(FreeTrialOnBoardViewModel::class.java)
     }
     private var languageActive = false
-    private var eftActive = false
+    private var isFreemiumCourseeftActive = false
     private var is100PointsActive = false
     private var increaseCoursePrice = false
 
@@ -379,7 +379,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
     fun initABTest() {
         ABTestRepository().apply {
             languageActive = isVariantActive(VariantKeys.NEW_LANGUAGE_ENABLED)
-            eftActive = isVariantActive(VariantKeys.EFT_ENABLED)
+            isFreemiumCourseeftActive = isVariantActive(VariantKeys.EFT_ENABLED)
             increaseCoursePrice = isVariantActive(VariantKeys.ICP_ENABLED)
             is100PointsActive = isVariantActive(VariantKeys.POINTS_HUNDRED_ENABLED)
         }

@@ -121,6 +121,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
     private val event = EventLiveData
     private lateinit var binding: LessonActivityBinding
     private val courseId = PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID)
+    private var ISFREEMIUMACTIVE = false
 
     private val viewModel: LessonViewModel by lazy {
         ViewModelProvider(this).get(LessonViewModel::class.java)
