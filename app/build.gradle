@@ -2,8 +2,8 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
-apply plugin: 'com.google.firebase.crashlytics'
 apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.firebase.crashlytics'
 
 if (!project.hasProperty("devBuild")) {
     apply plugin: 'com.google.firebase.firebase-perf'
@@ -11,7 +11,7 @@ if (!project.hasProperty("devBuild")) {
 //-PdevBuild --warning-mode=all --stacktrace
 def majorVersion = 5
 def minorVersion = 1
-def patchVersion = 34
+def patchVersion = 36
 
 android {
     compileSdkVersion 31
@@ -98,7 +98,8 @@ android {
             versionNameSuffix "_Debug"
             debuggable true
             signingConfig signingConfigs.debug
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources false
             resValue("string", "branch_id", "key_test_anIJDPvxqLaamLdPJyO6AhpmuvgaD8Un")
             resValue("bool", "branch_test", "true")
             resValue("string", "truecaller_key", "P31uP46c15762366b41fdba957b16b9a7c620")
@@ -110,7 +111,7 @@ android {
             resValue("bool", "branch_test", "false")
             resValue("string", "truecaller_key", "KQRWJ8cb0afe64bd6449daf31962c9009e763")
             debuggable false
-            minifyEnabled false
+            minifyEnabled true
             shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
