@@ -8,7 +8,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.GoalKeys
+import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
@@ -160,7 +162,7 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
                     AppAnalytics.updateUser()
                     analyzeUserProfile()
                     if (isUserExist.not()) {
-                        liveEvent.postValue(Message().apply { what = USER_CREATED_SUCCESSFULLy })
+                        liveEvent.postValue(Message().apply { what = USER_CREATED_SUCCESSFULLY })
                         postGoal(GoalKeys.REGISTRATION_COMPLETE)
                     }
                     return@launch

@@ -120,6 +120,7 @@ open class JoshButton : MaterialButton {
             )
         }
         super.setRippleColorResource(attr.getResourceId(R.styleable.JoshButton_rippleColor, DEFAULT_RIPPLE_COLOR))
+        super.setStateListAnimator(null)
         attr.recycle()
     }
 }

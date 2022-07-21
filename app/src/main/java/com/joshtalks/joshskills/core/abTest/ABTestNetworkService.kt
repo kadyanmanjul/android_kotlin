@@ -18,4 +18,7 @@ interface ABTestNetworkService {
 
     @POST("$DIR/ab_test/track_conversion/")
     suspend fun postGoalData(@Body params: Map<String, String>): Response<Void>
+
+    @POST("$DIR/ab_test/update_variant/")
+    suspend fun updateVariant(@Body params: Map<String, String>): Response<Any>
 }

@@ -14,6 +14,7 @@ import com.joshtalks.joshskills.base.constants.CALLING_SERVICE_ACTION
 import com.joshtalks.joshskills.base.constants.SERVICE_BROADCAST_KEY
 import com.joshtalks.joshskills.base.constants.START_SERVICE
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
@@ -439,7 +440,16 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
             try {
                 apiStatus.postValue(ApiCallStatus.START)
                 val isFreemiumActive = abTestRepository.isVariantActive(VariantKeys.FREEMIUM_ENABLED) &&
-                        PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID
+                        testId == HINDI_TO_ENGLISH_TEST_ID
+                if (testId != HINDI_TO_ENGLISH_TEST_ID &&
+                    abTestRepository.isVariantActive(VariantKeys.FREEMIUM_ENABLED)
+                ) {
+                    updateVariant(
+                        removeVariant = VariantKeys.FREEMIUM_ENABLED,
+                        newVariant = VariantKeys.FREEMIUM_DISABLED,
+                        campaignName = CampaignKeys.FREEMIUM_COURSE
+                    )
+                }
                 val resp =
                     AppObjectController.commonNetworkService.enrollFreeTrialMentorWithCourse(
                         mapOf(
@@ -513,6 +523,12 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
     fun postGoal(goal: String) {
         viewModelScope.launch {
             abTestRepository.postGoal(goal)
+        }
+    }
+
+    fun updateVariant(removeVariant: VariantKeys, newVariant: VariantKeys, campaignName: CampaignKeys) {
+        viewModelScope.launch {
+            abTestRepository.updateVariant(removeVariant, newVariant, campaignName)
         }
     }
 }

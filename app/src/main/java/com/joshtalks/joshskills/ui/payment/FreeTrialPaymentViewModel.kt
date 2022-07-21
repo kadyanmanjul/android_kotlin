@@ -15,6 +15,7 @@ import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.FreeTrialPaymentResponse
 import com.joshtalks.joshskills.repository.server.FreemiumPaymentResponse
 import com.joshtalks.joshskills.repository.server.OrderDetailResponse
@@ -176,6 +177,7 @@ class FreeTrialPaymentViewModel(application: Application) : AndroidViewModel(app
             val data = HashMap<String, Any>()
             data["test_id"] = testId
             data["coupon"] = couponCode
+            data["gender"]  = User.getInstance().gender?: EMPTY
             try {
                 val response = AppObjectController.signUpNetworkService.getFreemiumPaymentData(data)
                 if (response.isSuccessful) {

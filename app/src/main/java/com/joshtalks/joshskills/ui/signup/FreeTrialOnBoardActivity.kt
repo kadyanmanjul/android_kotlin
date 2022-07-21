@@ -6,7 +6,6 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
@@ -22,6 +21,7 @@ import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIA
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIAL_POPUP_TITLE_TEXT
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIAL_POPUP_YES_BUTTON_TEXT
 import com.joshtalks.joshskills.core.Utils.getLangCodeFromlangTestId
+import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
 import com.joshtalks.joshskills.core.analytics.*
@@ -42,7 +42,7 @@ import java.util.*
 
 const val SHOW_SIGN_UP_FRAGMENT = "SHOW_SIGN_UP_FRAGMENT"
 const val HINDI_TO_ENGLISH_TEST_ID = "784"
-const val USER_CREATED_SUCCESSFULLy = 1000
+const val USER_CREATED_SUCCESSFULLY = 1002
 
 class FreeTrialOnBoardActivity : CoreJoshActivity() {
 
@@ -54,7 +54,6 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
     private var eftActive = false
     private var is100PointsActive = false
     private var increaseCoursePrice = false
-    private var isFreemiumCourse = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -104,7 +103,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         viewModel.liveEvent.observe(this) {
             when (it.what) {
                 IS_USER_EXIST -> moveToInboxScreen()
-                USER_CREATED_SUCCESSFULLy -> openProfileDetailFragment()
+                USER_CREATED_SUCCESSFULLY -> openProfileDetailFragment()
             }
         }
         initTrueCallerUI()
@@ -129,7 +128,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
                 PrefManager.put(IS_PAYMENT_DONE, false)
             } else if (languageActive)
                 openChooseLanguageFragment()
-            else if (isFreemiumCourse)
+            else if (viewModel.abTestRepository.isVariantActive(VariantKeys.FREEMIUM_ENABLED))
                 signUp()
             else if (is100PointsActive)
                 showStartTrialPopup(language, true)
@@ -156,9 +155,9 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
                 else -> return@Observer
             }
         })
-        viewModel.progressBarStatus.observe(this, {
+        viewModel.progressBarStatus.observe(this) {
             showProgressBar()
-        })
+        }
     }
 
     fun signUp() {
@@ -219,8 +218,9 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
 
         dialogView.findViewById<MaterialTextView>(R.id.yes).setOnClickListener {
             PrefManager.put(USER_LOCALE, language.testId)
-            if (language.testId != HINDI_TO_ENGLISH_TEST_ID)
+            if (language.testId != HINDI_TO_ENGLISH_TEST_ID) {
                 requestWorkerForChangeLanguage(getLangCodeFromlangTestId(language.testId), canCreateActivity = false)
+            }
             MixPanelTracker.publishEvent(MixPanelEvent.JI_HAAN).push()
             if (Mentor.getInstance().getId().isNotEmpty()) {
                 viewModel.saveImpression(IMPRESSION_START_TRIAL_YES)
@@ -314,7 +314,10 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
     }
 
     private fun openProfileDetailFragment(forceOpen: Boolean = false) {
-        if (isFreemiumCourse && forceOpen.not()) {
+        if (PrefManager.getStringValue(FREE_TRIAL_TEST_ID) == HINDI_TO_ENGLISH_TEST_ID &&
+            viewModel.abTestRepository.isVariantActive(VariantKeys.FREEMIUM_ENABLED) &&
+            forceOpen.not()
+        ) {
             SignUpActivity.start(
                 context = this,
                 testId = HINDI_TO_ENGLISH_TEST_ID,
@@ -379,7 +382,6 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
             eftActive = isVariantActive(VariantKeys.EFT_ENABLED)
             increaseCoursePrice = isVariantActive(VariantKeys.ICP_ENABLED)
             is100PointsActive = isVariantActive(VariantKeys.POINTS_HUNDRED_ENABLED)
-            isFreemiumCourse = isVariantActive(VariantKeys.FREEMIUM_ENABLED)
         }
     }
 

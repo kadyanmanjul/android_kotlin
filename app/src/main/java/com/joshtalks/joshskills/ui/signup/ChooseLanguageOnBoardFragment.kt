@@ -9,7 +9,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
+import com.joshtalks.joshskills.core.FREE_TRIAL_TEST_ID
 import com.joshtalks.joshskills.core.LANGUAGE_SELECTION_SCREEN_OPENED
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.abTest.GoalKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
@@ -91,6 +93,7 @@ class ChooseLanguageOnBoardFragment : BaseFragment() {
 
 
     fun onLanguageSelected(language: ChooseLanguages) {
+        PrefManager.put(FREE_TRIAL_TEST_ID, language.testId)
         if (language.testId == HINDI_TO_ENGLISH_TEST_ID) {
             viewModel.postGoal(GoalKeys.HINDI_LANG_SELECTED)
         }

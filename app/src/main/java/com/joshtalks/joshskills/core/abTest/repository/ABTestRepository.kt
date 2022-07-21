@@ -118,4 +118,25 @@ class ABTestRepository {
             }
         }
     }
+
+    suspend fun updateVariant(removeVariant: VariantKeys? = null, newVariant: VariantKeys, campaignName: CampaignKeys) {
+        try {
+            val response = apiService.updateVariant(
+                mapOf(
+                    "variant_key" to newVariant.NAME,
+                    "campaign_key" to campaignName.NAME
+                )
+            )
+            if (response.isSuccessful) {
+                data.toMutableMap().also { map ->
+                    removeVariant?.let { map.remove(it.NAME) }
+                    map[newVariant.NAME] = true
+                    putABTestData(map)
+                }
+
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
 }
