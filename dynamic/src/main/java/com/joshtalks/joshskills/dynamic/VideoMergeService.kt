@@ -330,7 +330,6 @@ class VideoMergeService : Service() {
                 TAG,
                 "mergeVideo() called with: executionId = $executionId, returnCode = $returnCode"
             )
-            hideNotification(false)
             EventLiveData.value = Message().apply {
                 what = VIDEO_AUDIO_MERGED_PATH
                 obj = output
