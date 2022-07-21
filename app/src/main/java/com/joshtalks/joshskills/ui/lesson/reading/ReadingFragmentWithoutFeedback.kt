@@ -22,7 +22,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.os.SystemClock
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -78,7 +77,10 @@ import com.joshtalks.joshskills.core.LESSON_COMPLETE_SNACKBAR_TEXT_STRING
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.READING_SHARED_WHATSAPP
+import com.joshtalks.joshskills.core.RECORD_READING_VIDEO
+import com.joshtalks.joshskills.core.SUBMIT_READING_VIDEO
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.VIDEO_PLAYED_RP
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
@@ -1444,8 +1446,11 @@ class ReadingFragmentWithoutFeedback :
 
                                 filePath = AppDirectory.getAudioSentFile(null).absolutePath
                                 AppDirectory.copy(it.absolutePath, filePath!!)
-                                if (isAdded && videoDownPath !=null) {
-                                    startService(videoDownPath!!,filePath!!,)
+                                if (isAdded) {
+                                    if (video!=null)
+                                    viewModel.saveReadingPracticeImpression(RECORD_READING_VIDEO,lessonID.toString())
+                                    if (videoDownPath !=null)
+                                    startService(videoDownPath!!,filePath!!)
                                 }
                                 audioAttachmentInit()
                                 MixPanelTracker.publishEvent(MixPanelEvent.READING_RECORD)
@@ -1498,6 +1503,12 @@ class ReadingFragmentWithoutFeedback :
     }
 
     fun playVideo() {
+        if (video.isNullOrEmpty().not()) {
+            viewModel.saveReadingPracticeImpression(
+                VIDEO_PLAYED_RP,
+                lessonID.toString()
+            )
+        }
         binding.playBtn.visibility = INVISIBLE
         binding.mergedVideo.start()
     }
@@ -1732,6 +1743,12 @@ class ReadingFragmentWithoutFeedback :
                             disableSubmitButton()
                         }
                         // practiceViewModel.submitPractise(chatModel, requestEngage, engageType)
+                        if (video.isNullOrEmpty().not()) {
+                            viewModel.saveReadingPracticeImpression(
+                                SUBMIT_READING_VIDEO,
+                                lessonID.toString()
+                            )
+                        }
                         viewModel.getPointsForVocabAndReading(currentLessonQuestion!!.id)
                         viewModel.addTaskToService(requestEngage, PendingTask.READING_PRACTICE_OLD)
                         //TODO : Jugaad ko hataana hai
