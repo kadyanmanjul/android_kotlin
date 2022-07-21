@@ -4,6 +4,7 @@ import android.animation.ValueAnimator
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.database.CursorIndexOutOfBoundsException
 import android.graphics.Color
 import android.graphics.Outline
 import android.graphics.PorterDuff
@@ -236,8 +237,12 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        if (getVoipState() == State.IDLE && WebRtcService.isCallOnGoing.value == false)
-            viewModel.getButtonVisibility()
+        try {
+            if (getVoipState() == State.IDLE && WebRtcService.isCallOnGoing.value == false)
+                viewModel.getButtonVisibility()
+        }catch (ex:Exception){
+            ex.printStackTrace()
+        }
         binding = DataBindingUtil.setContentView(
             this,
             R.layout.lesson_activity

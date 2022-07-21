@@ -16,8 +16,11 @@ import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.databinding.FragmentChooseLanguageOnboardBinding
+import com.joshtalks.joshskills.quizgame.util.UpdateReceiver
 import com.joshtalks.joshskills.repository.server.ChooseLanguages
+import com.joshtalks.joshskills.ui.assessment.view.Stub
 import com.joshtalks.joshskills.ui.signup.adapters.ChooseLanguageAdapter
+import com.joshtalks.joshskills.ui.special_practice.utils.ErrorView
 
 class ChooseLanguageOnBoardFragment: BaseFragment() {
     private lateinit var binding: FragmentChooseLanguageOnboardBinding
@@ -29,6 +32,8 @@ class ChooseLanguageOnBoardFragment: BaseFragment() {
     val viewModel by lazy {
         ViewModelProvider(requireActivity()).get(FreeTrialOnBoardViewModel::class.java)
     }
+
+    private var errorView: Stub<ErrorView>? = null
 
     companion object {
         fun newInstance() = ChooseLanguageOnBoardFragment()
@@ -60,16 +65,35 @@ class ChooseLanguageOnBoardFragment: BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         addObservers()
         viewModel.saveImpression(LANGUAGE_SELECTION_SCREEN_OPENED)
-        if (Utils.isInternetAvailable().not()) {
-            binding.noInternetContainer.visibility = View.VISIBLE
-        } else {
-            binding.noInternetContainer.visibility = View.GONE
+        errorView = Stub(view.findViewById(R.id.error_view))
+
+//        if (Utils.isInternetAvailable().not()) {
+//            binding.noInternetContainer.visibility = View.VISIBLE
+//        } else {
+//            binding.noInternetContainer.visibility = View.GONE
+//            viewModel.getAvailableLanguages()
+//        }
+        if (UpdateReceiver.isNetworkAvailable()) {
             viewModel.getAvailableLanguages()
+            errorView?.resolved()?.let {
+                errorView!!.get().onSuccess()
+            }
+        } else {
+            errorView?.resolved().let {
+                errorView?.get()?.onFailure(object : ErrorView.ErrorCallback {
+                    override fun onRetryButtonClicked() {
+
+                    }
+                })
+            }
         }
     }
 
     private fun addObservers() {
         viewModel.availableLanguages.observe(viewLifecycleOwner) {
+            errorView?.resolved()?.let {
+                errorView!!.get().onSuccess()
+            }
             if (it.isNullOrEmpty().not()) {
                 languageAdapter.setData(it)
             }

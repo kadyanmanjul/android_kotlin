@@ -934,7 +934,7 @@ object Utils {
                 bitmap = BitmapFactory.decodeStream(input)
                 return BitmapDrawable(Resources.getSystem(), bitmap)
             }
-        } catch (e: Error) {
+        } catch (e: Exception) {
             Timber.e(e)
             return AppCompatResources.getDrawable(context,R.drawable.ic_file_error)
         }

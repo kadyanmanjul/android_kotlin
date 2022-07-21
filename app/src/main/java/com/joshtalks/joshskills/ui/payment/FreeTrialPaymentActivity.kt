@@ -37,11 +37,13 @@ import com.joshtalks.joshskills.repository.local.eventbus.PromoCodeSubmitEventBu
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.OrderDetailResponse
 import com.joshtalks.joshskills.track.CONVERSATION_ID
+import com.joshtalks.joshskills.ui.assessment.view.Stub
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.inbox.COURSE_EXPLORER_CODE
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
 import com.joshtalks.joshskills.ui.referral.EnterReferralCodeFragment
+import com.joshtalks.joshskills.ui.special_practice.utils.ErrorView
 import com.joshtalks.joshskills.ui.startcourse.StartCourseActivity
 import com.joshtalks.joshskills.ui.voip.CallForceDisconnect
 import com.joshtalks.joshskills.ui.voip.IS_DEMO_P2P
@@ -79,6 +81,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
     private val viewModel: FreeTrialPaymentViewModel by lazy {
         ViewModelProvider(this).get(FreeTrialPaymentViewModel::class.java)
     }
+    private var errorView: Stub<ErrorView>? = null
     private var razorpayOrderId = EMPTY
     var testId = FREE_TRIAL_PAYMENT_TEST_ID
     var index = 1
@@ -134,7 +137,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         binding.handler = this
         binding.lifecycleOwner = this
         window.statusBarColor = ContextCompat.getColor(this, R.color.black)
-
+        errorView = Stub(findViewById(R.id.error_view))
         if (intent.hasExtra(PaymentSummaryActivity.TEST_ID_PAYMENT)) {
             testId = if (PrefManager.getStringValue(FREE_TRIAL_TEST_ID).isEmpty().not()) {
                 Utils.getLangPaymentTestIdFromTestId(PrefManager.getStringValue(FREE_TRIAL_TEST_ID))
@@ -756,7 +759,13 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             binding.cardsContainer.visibility = View.INVISIBLE
             binding.syllabusLayout.visibility = View.INVISIBLE
             binding.toolbar.visibility = View.VISIBLE
-            binding.noInternet.visibility = View.VISIBLE
+            errorView?.resolved().let {
+                errorView?.get()?.onFailure(object : ErrorView.ErrorCallback {
+                    override fun onRetryButtonClicked() {
+
+                    }
+                })
+            }
             binding.parentContainer.setBackgroundColor(Color.WHITE)
             binding.syllabusLayout.english_syllabus_pdf.visibility = View.INVISIBLE
         }
