@@ -13,12 +13,31 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
-import com.joshtalks.joshskills.constants.*
+import com.joshtalks.joshskills.constants.CANCEL_BUTTON_CLICK
+import com.joshtalks.joshskills.constants.CLOSE_FULL_READING_FRAGMENT
+import com.joshtalks.joshskills.constants.CLOSE_VIDEO_VIEW
+import com.joshtalks.joshskills.constants.OPEN_READING_SHARING_FULLSCREEN
 import com.joshtalks.joshskills.constants.PERMISSION_FROM_READING
 import com.joshtalks.joshskills.constants.PERMISSION_FROM_READING_GRANTED
+import com.joshtalks.joshskills.constants.SEND_OUTPUT_FILE
 import com.joshtalks.joshskills.constants.SHARE_VIDEO
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.constants.SHOW_AUDIO_ONLY
+import com.joshtalks.joshskills.constants.SHOW_VIDEO_VIEW
+import com.joshtalks.joshskills.constants.SUBMIT_BUTTON_CLICK
+import com.joshtalks.joshskills.core.ApiCallStatus
+import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.AppObjectController.Companion.appDatabase
+import com.joshtalks.joshskills.core.ConnectionDetails
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.Event
+import com.joshtalks.joshskills.core.IS_A2_C1_RETENTION_ENABLED
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.RATING_OBJECT
+import com.joshtalks.joshskills.core.RATING_TIMESTAMP
+import com.joshtalks.joshskills.core.Speed
+import com.joshtalks.joshskills.core.TAG
+import com.joshtalks.joshskills.core.THRESHOLD_SPEED_IN_KBPS
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
 import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
@@ -30,7 +49,18 @@ import com.joshtalks.joshskills.core.custom_ui.recorder.OnAudioRecordListener
 import com.joshtalks.joshskills.core.custom_ui.recorder.RecordingItem
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.io.LastSyncPrefManager
-import com.joshtalks.joshskills.repository.local.entity.*
+import com.joshtalks.joshskills.core.showToast
+import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
+import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
+import com.joshtalks.joshskills.repository.local.entity.LESSON_STATUS
+import com.joshtalks.joshskills.repository.local.entity.LessonMaterialType
+import com.joshtalks.joshskills.repository.local.entity.LessonModel
+import com.joshtalks.joshskills.repository.local.entity.LessonQuestion
+import com.joshtalks.joshskills.repository.local.entity.PendingTask
+import com.joshtalks.joshskills.repository.local.entity.PendingTaskModel
+import com.joshtalks.joshskills.repository.local.entity.PracticeEngagement
+import com.joshtalks.joshskills.repository.local.entity.PracticeFeedback2
+import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
 import com.joshtalks.joshskills.repository.local.entity.practise.PointsListResponse
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
@@ -53,12 +83,14 @@ import com.joshtalks.joshskills.util.AudioRecording
 import com.joshtalks.joshskills.util.DeepLinkUtil
 import com.joshtalks.joshskills.util.FileUploadService
 import com.joshtalks.joshskills.util.showAppropriateMsg
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.MutableSharedFlow
-import timber.log.Timber
 import java.io.File
-import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import timber.log.Timber
 
 
 class LessonViewModel(application: Application) : AndroidViewModel(application) {
@@ -121,6 +153,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     val speakingABtestLiveData = MutableLiveData<ABTestCampaignData?>()
 
     val repository: ABTestRepository by lazy { ABTestRepository() }
+    val isVideoMuxFailed: Boolean = false
 
     init{
         getRating()
@@ -1053,7 +1086,16 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     fun showVideoView(){
-        message.what = SHOW_VIDEO_VIEW
+        if (isVideoMuxFailed){
+            showAudioView()
+        } else {
+            message.what = SHOW_VIDEO_VIEW
+            singleLiveEvent.value = message
+        }
+    }
+
+    fun showAudioView(){
+        message.what = SHOW_AUDIO_ONLY
         singleLiveEvent.value = message
     }
 

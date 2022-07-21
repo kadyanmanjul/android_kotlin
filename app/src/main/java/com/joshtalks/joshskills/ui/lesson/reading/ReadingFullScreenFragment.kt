@@ -11,6 +11,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
 import com.joshtalks.joshskills.constants.CLOSE_VIDEO_VIEW
 import com.joshtalks.joshskills.constants.SEND_OUTPUT_FILE
+import com.joshtalks.joshskills.constants.VIDEO_AUDIO_MUX_FAILED
 import com.joshtalks.joshskills.databinding.FragmentReadingFullScreenBinding
 import com.joshtalks.joshskills.ui.lesson.LessonViewModel
 
@@ -69,6 +70,10 @@ class ReadingFullScreenFragment : BaseFragment() {
                     binding.submitAnswerBtn.visibility = View.VISIBLE
                     binding.ivBack.visibility = View.VISIBLE
                     binding.ivClose.visibility = View.VISIBLE
+                }
+                VIDEO_AUDIO_MUX_FAILED -> {
+                    viewModel.closeCurrentFragment()
+                    binding.mergedVideo.stopPlayback()
                 }
                 CLOSE_VIDEO_VIEW -> {
                     binding.mergedVideo.stopPlayback()

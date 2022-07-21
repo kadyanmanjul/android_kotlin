@@ -22,6 +22,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.os.SystemClock
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -64,6 +65,7 @@ import com.joshtalks.joshskills.constants.SHARE_VIDEO
 import com.joshtalks.joshskills.constants.SHOW_VIDEO_VIEW
 import com.joshtalks.joshskills.constants.SUBMIT_BUTTON_CLICK
 import com.joshtalks.joshskills.constants.VIDEO_AUDIO_MERGED_PATH
+import com.joshtalks.joshskills.constants.VIDEO_AUDIO_MUX_FAILED
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshFragment
 import com.joshtalks.joshskills.core.EMPTY
@@ -358,6 +360,15 @@ class ReadingFragmentWithoutFeedback :
                 }
                 INCREASE_AUDIO_VOLUME -> {
 
+                }
+                VIDEO_AUDIO_MUX_FAILED -> {
+                    video = null
+                    binding.progressDialog.visibility = GONE
+                    binding.videoLayout.visibility = GONE
+                    binding.mergedVideo.stopPlayback()
+                    audioAttachmentInit()
+                    binding.info.visibility = GONE
+                    showToast(getString(R.string.video_error))
                 }
             }
         }
@@ -1005,8 +1016,8 @@ class ReadingFragmentWithoutFeedback :
                 download()
             }
         }
-        if (video.isNullOrEmpty()) {
-            binding.info.visibility = GONE
+        video?.let {
+            binding.info.visibility = VISIBLE
         }
     }
 
@@ -1145,7 +1156,7 @@ class ReadingFragmentWithoutFeedback :
         binding.submitAnswerBtn.visibility = GONE
         // binding.improveAnswerBtn.visibility = VISIBLE
         binding.continueBtn.visibility = VISIBLE
-        if (currentLessonQuestion?.videoList?.getOrNull(0)?.video_url.isNullOrEmpty().not()) {
+        if (video.isNullOrEmpty().not()) {
             binding.ivClose.visibility = GONE
             binding.btnWhatsapp.visibility = VISIBLE
             binding.btnWhatsapp.setOnClickListener {

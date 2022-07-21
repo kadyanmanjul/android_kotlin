@@ -441,6 +441,8 @@
                     android:backgroundTint="#ECF4FD"
                     android:layout_marginTop="@dimen/_10sdp"
                     android:elevation="2dp"
+                    android:visibility="gone"
+                    tools:visibility="visible"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/practise_info_layout"
                     app:layout_constraintBottom_toTopOf="@+id/practise_submit_layout">

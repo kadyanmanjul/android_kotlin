@@ -31,6 +31,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.constants.INCREASE_AUDIO_VOLUME
 import com.joshtalks.joshskills.constants.VIDEO_AUDIO_MERGED_PATH
+import com.joshtalks.joshskills.constants.VIDEO_AUDIO_MUX_FAILED
 import com.joshtalks.joshskills.repository.local.model.NotificationChannelNames
 import java.io.File
 import java.io.FileOutputStream
@@ -100,8 +101,13 @@ class VideoMergeService : Service() {
         startForeground(NOTIFICATION_ID, lNotificationBuilder.build())
     }
 
-    private fun hideNotification() {
-        Log.d(TAG, "hideNotification() called")
+    private fun hideNotification(isSuccess :Boolean = false) {
+        if (isSuccess.not()){
+            EventLiveData.value = Message().apply {
+                what = VIDEO_AUDIO_MUX_FAILED
+                Log.d(TAG, "hideNotification() called")
+            }
+        }
         NotificationManagerCompat.from(this).cancel(NOTIFICATION_ID)
         stopForeground(true)
     }
@@ -111,24 +117,28 @@ class VideoMergeService : Service() {
         audioPath: String
     ) {
         CoroutineScope(Dispatchers.IO).launch {
-            if (isActive) {
-                var outputFile: String? = ""
-                if (Build.VERSION.SDK_INT >= 29) {
-                    outputFile = saveVideoQ(this@VideoMergeService, videoDownPath)
-                } else {
-                    outputFile = getVideoFilePath()
-                }
-                increaseAudioVolume(audioPath)
-                if (outputFile != null) {
-                    val extractedPath = extractAudioFromVideo(videoDownPath)
-                    mergeAudioWithAudio(
-                        audioPath,
-                        extractedPath, videoDownPath, outputFile
-                    )
+            try {
+                if (isActive) {
+                    var outputFile: String? = ""
+                    if (Build.VERSION.SDK_INT >= 29) {
+                        outputFile = saveVideoQ(this@VideoMergeService, videoDownPath)
+                    } else {
+                        outputFile = getVideoFilePath()
+                    }
+                    increaseAudioVolume(audioPath)
+                    if (outputFile != null) {
+                        val extractedPath = extractAudioFromVideo(videoDownPath)
+                        mergeAudioWithAudio(
+                            audioPath,
+                            extractedPath, videoDownPath, outputFile
+                        )
+                    } else{
+                        hideNotification()
+                    }
                 } else{
                     hideNotification()
                 }
-            } else{
+            }catch (ex:Exception){
                 hideNotification()
             }
         }
@@ -320,10 +330,11 @@ class VideoMergeService : Service() {
                 TAG,
                 "mergeVideo() called with: executionId = $executionId, returnCode = $returnCode"
             )
+            hideNotification(false)
             EventLiveData.value = Message().apply {
                 what = VIDEO_AUDIO_MERGED_PATH
                 obj = output
-                hideNotification()
+                hideNotification(true)
             }
         }
     }
