@@ -197,8 +197,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         )
     }
 
-    private fun     addObservers() {
-        Log.d(TAG, "addObservers: ${viewModel.ISFREEMIUMACTIVE}")
+    private fun addObservers() {
         // com.joshtalks.joshskills.repository.local.model
         if (viewModel.ISFREEMIUMACTIVE) {
             binding.callExpertTeacher.visibility = View.VISIBLE
