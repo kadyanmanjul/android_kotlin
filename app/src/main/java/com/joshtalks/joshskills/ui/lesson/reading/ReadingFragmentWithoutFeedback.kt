@@ -369,7 +369,7 @@ class ReadingFragmentWithoutFeedback :
                     binding.progressDialog.visibility = GONE
                     binding.videoLayout.visibility = GONE
                     binding.mergedVideo.stopPlayback()
-                    audioAttachmentInit()
+                    audioAttachmentInit(videoDownPath)
                     binding.info.visibility = GONE
                     showToast(getString(R.string.video_error))
                 }
@@ -413,7 +413,10 @@ class ReadingFragmentWithoutFeedback :
         pauseAllAudioAndUpdateViews()
     }
 
-    private fun getPermissionAndDownloadVideo(url: String) {
+    private fun getPermissionAndDownloadVideo(url: String?) {
+        if (url==null){
+            return
+        }
         PermissionUtils.storageReadAndWritePermission(requireContext(),
             object : MultiplePermissionsListener {
                 override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
@@ -888,7 +891,6 @@ class ReadingFragmentWithoutFeedback :
                         if (this.practiceEngagement?.get(0)?.localPath.isNullOrEmpty()) {
                             scope.launch {
                                 if (AppObjectController.appDatabase.chatDao()
-                                        .getDownloadedVideoStatus(currentLessonQuestion!!.questionId) != null && AppObjectController.appDatabase.chatDao()
                                         .getDownloadedVideoStatus(currentLessonQuestion!!.questionId)
                                 ) {
                                     val submittedVideoPath =
@@ -1317,10 +1319,10 @@ class ReadingFragmentWithoutFeedback :
         }
     }
 
-    private fun audioAttachmentInit() {
+    private fun audioAttachmentInit(videoDownPath: String?) {
         showPracticeSubmitLayout()
         binding.practiseSubmitLayout.visibility = VISIBLE
-        if (video.isNullOrEmpty().not()) {
+        if (video.isNullOrEmpty().not() && videoDownPath!=null) {
             observeNetwork()
             addVideoView()
             viewModel.showVideoOnFullScreen()
@@ -1457,7 +1459,7 @@ class ReadingFragmentWithoutFeedback :
                                         }
                                     }
                                 }
-                                audioAttachmentInit()
+                                audioAttachmentInit(videoDownPath)
                                 MixPanelTracker.publishEvent(MixPanelEvent.READING_RECORD)
                                     .addParam(ParamKeys.LESSON_ID, lessonID)
                                     .addParam(ParamKeys.RECORD_DURATION, timeDifference)
@@ -1874,21 +1876,6 @@ class ReadingFragmentWithoutFeedback :
                     }
                 }
         )
-    }
-
-    private fun extractAudioFromVideo(filePath: String): String? {
-        try {
-            val cls = Class.forName("com.joshtalks.joshskills.dynamic.MuxerUtils")
-            cls.declaredMethods.forEach {
-                if (it.name == "extractAudioFromVideo") {
-                    it.isAccessible = true
-                    return it.invoke(cls.newInstance(), filePath) as String?
-                }
-            }
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-        }
-        return null
     }
 
     private fun startService(

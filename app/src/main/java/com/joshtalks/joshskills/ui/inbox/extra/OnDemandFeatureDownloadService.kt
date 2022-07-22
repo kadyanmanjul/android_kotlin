@@ -10,20 +10,23 @@ import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import com.google.android.play.core.splitinstall.SplitInstallException
 import com.google.android.play.core.splitinstall.SplitInstallHelper
 import com.google.android.play.core.splitinstall.SplitInstallManager
 import com.google.android.play.core.splitinstall.SplitInstallManagerFactory
 import com.google.android.play.core.splitinstall.SplitInstallRequest
 import com.google.android.play.core.splitinstall.SplitInstallStateUpdatedListener
+import com.google.android.play.core.splitinstall.model.SplitInstallErrorCode
 import com.google.android.play.core.splitinstall.model.SplitInstallSessionStatus
 import com.google.android.play.core.tasks.OnSuccessListener
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.model.NotificationChannelNames
 
 
 const val CHANNEL_ID = "VIDEO_AUDIO_PROCESSING"
 const val NOTIFICATION_ID = 1681
-const val TAG = "OnDemandFeatureDownloadService"
+const val TAG = "OnDemandService"
 
 class OnDemandFeatureDownloadService : Service() {
     private var mNotificationManager: NotificationManager? = null
@@ -36,19 +39,23 @@ class OnDemandFeatureDownloadService : Service() {
                 SplitInstallSessionStatus.REQUIRES_USER_CONFIRMATION -> {
                     startIntentSender(state.resolutionIntent()?.intentSender, null, 0, 0, 0)
                 }
-                SplitInstallSessionStatus.INSTALLING, SplitInstallSessionStatus.DOWNLOADING -> {
-
+                SplitInstallSessionStatus.UNKNOWN, SplitInstallSessionStatus.FAILED, SplitInstallSessionStatus.CANCELED -> {
+                    hideNotification()
                 }
                 SplitInstallSessionStatus.INSTALLED -> {
-                    SplitInstallHelper.loadLibrary(this, "avutil")
-                    SplitInstallHelper.loadLibrary(this, "swscale")
-                    SplitInstallHelper.loadLibrary(this, "swresample")
-                    SplitInstallHelper.loadLibrary(this, "avcodec")
-                    SplitInstallHelper.loadLibrary(this, "avformat")
-                    SplitInstallHelper.loadLibrary(this, "avfilter")
-                    SplitInstallHelper.loadLibrary(this, "avdevice")
-                }
-                else -> {
+                    try {
+                        SplitInstallHelper.loadLibrary(this, "avutil")
+                        SplitInstallHelper.loadLibrary(this, "swscale")
+                        SplitInstallHelper.loadLibrary(this, "swresample")
+                        SplitInstallHelper.loadLibrary(this, "avcodec")
+                        SplitInstallHelper.loadLibrary(this, "avformat")
+                        SplitInstallHelper.loadLibrary(this, "avfilter")
+                        SplitInstallHelper.loadLibrary(this, "avdevice")
+                    } catch (ex:UnsatisfiedLinkError){
+                        ex.printStackTrace()
+                    } catch (ex:Exception){
+                        ex.printStackTrace()
+                    }
                     hideNotification()
                 }
             }
@@ -86,9 +93,17 @@ class OnDemandFeatureDownloadService : Service() {
             manager?.deferredInstall(listOf(getString(R.string.dynamic_feature_title)))
                 ?.addOnSuccessListener {
                     OnSuccessListener { result: Int ->
-                        sessionId = result
-                    } }
-                ?.addOnFailureListener { e-> Log.e(TAG, "startDownloadLibraryInBackground: ",e ) }
+                        sessionId = result } }
+                ?.addOnFailureListener {
+                    it.printStackTrace()
+                    when(it){
+                        is SplitInstallException -> {
+                            if (it.errorCode == SplitInstallErrorCode.NETWORK_ERROR ){
+                                showToast(getString(R.string.progress_network_text))
+                            }
+                        }
+                    }
+                }
         }
     }
 
@@ -105,7 +120,16 @@ class OnDemandFeatureDownloadService : Service() {
             manager?.startInstall(request)
                 ?.addOnSuccessListener { result: Int ->
                     sessionId = result }
-                ?.addOnFailureListener { e-> Log.e(TAG, "startDownloadLibraryInForeground: ",e ) }
+                ?.addOnFailureListener {
+                    it.printStackTrace()
+                    when(it){
+                        is SplitInstallException -> {
+                            if (it.errorCode == SplitInstallErrorCode.NETWORK_ERROR ){
+                                showToast(getString(R.string.progress_network_text))
+                            }
+                        }
+                    }
+                }
         }
     }
 

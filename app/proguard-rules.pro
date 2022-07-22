@@ -24,5 +24,6 @@
 -keep class chirpconnect.** { *; }
 -keep class javax.annotation.** { *; }
 -keep class com.joshtalks.joshskills.dynamic.** { *; }
+-keep class com.arthenica.mobileffmpeg.** { *; }
 -dontwarn javax.annotation.**
 -dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
