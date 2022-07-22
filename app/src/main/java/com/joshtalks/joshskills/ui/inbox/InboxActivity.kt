@@ -293,11 +293,9 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
             courseListSet.addAll(temp)
             lifecycleScope.launch(Dispatchers.Main) {
                 inboxAdapter.addItems(temp)
-                val inboxEntityBought = temp.filter { it.isCapsuleCourse }.getOrNull(0)
-                Log.e(TAG, "addCourseInRecyclerView: $inboxEntityBought  ${inboxEntityBought?.isCourseBought?.not()} ${inboxEntityBought != null && inboxEntityBought.isCourseBought.not()}")
-                 if (inboxEntityBought != null && inboxEntityBought.isCourseBought.not()) {
-                    val isFreemiumActive = viewModel.abTestRepository.isVariantActive(VariantKeys.FREEMIUM_ENABLED)
-                    if(isFreemiumActive) {
+                val inboxEntityBought = temp.filter { it.isCapsuleCourse && it.isCourseBought }.getOrNull(0)
+                 if (inboxEntityBought == null) {
+                    if(viewModel.abTestRepository.isVariantActive(VariantKeys.FREEMIUM_ENABLED)) {
                         findMoreLayout.findViewById<MaterialTextView>(R.id.find_more).visibility =
                             View.GONE
                         findMoreLayout.findViewById<MaterialTextView>(R.id.find_more_new).visibility =

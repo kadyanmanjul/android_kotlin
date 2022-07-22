@@ -211,7 +211,9 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
         binding.placeHolderView.builder.setHasFixedSize(true)
             .setLayoutManager(linearLayoutManager)
         if (PrefManager.getStringValue(CURRENT_COURSE_ID) != DEFAULT_COURSE_ID ||
-            (PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID && isFreemiumActive.not())
+            PrefManager.getBoolValue(IS_COURSE_BOUGHT) ||
+            (PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID &&
+                    isFreemiumActive.not())
         ) {
             binding.placeHolderView.addOnScrollListener(object :
                 RecyclerView.OnScrollListener() {

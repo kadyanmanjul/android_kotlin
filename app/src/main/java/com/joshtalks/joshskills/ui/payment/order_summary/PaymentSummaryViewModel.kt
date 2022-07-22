@@ -22,6 +22,7 @@ import com.joshtalks.joshskills.core.REMAINING_TRIAL_DAYS
 import com.joshtalks.joshskills.core.SHOW_COURSE_DETAIL_TOOLTIP
 import com.joshtalks.joshskills.core.SUBSCRIPTION_TEST_ID
 import com.joshtalks.joshskills.core.USER_UNIQUE_ID
+import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
@@ -288,11 +289,12 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
             try {
                 viewState?.postValue(ViewState.PROCESSING)
                 val data = CreateOrderResponse(
-                    testId,
-                    PrefManager.getStringValue(USER_UNIQUE_ID),
-                    mobileNumber,
-                    getEncryptedText(),
-                    null
+                    testId = testId,
+                    gaid = PrefManager.getStringValue(USER_UNIQUE_ID),
+                    mobile = mobileNumber,
+                    encryptedText = getEncryptedText(),
+                    mentorId = null,
+                    isFreemium = abTestRepository.isVariantActive(VariantKeys.FREEMIUM_ENABLED)
                 )
                 if (Mentor.getInstance().getId().isNotEmpty()) {
                     data.mentorId = Mentor.getInstance().getId()

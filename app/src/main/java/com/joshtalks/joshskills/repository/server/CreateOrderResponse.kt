@@ -12,5 +12,7 @@ class CreateOrderResponse(
     @SerializedName("encrypted_text")
     val encryptedText: String,
     @SerializedName("mentor_id")
-    var mentorId: String?
+    var mentorId: String?,
+    @SerializedName("is_freemium")
+    val isFreemium: Boolean = false,
 )

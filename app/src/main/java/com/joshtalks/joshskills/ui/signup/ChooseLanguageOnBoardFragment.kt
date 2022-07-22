@@ -93,8 +93,8 @@ class ChooseLanguageOnBoardFragment : BaseFragment() {
 
 
     fun onLanguageSelected(language: ChooseLanguages) {
-        PrefManager.put(FREE_TRIAL_TEST_ID, language.testId)
         if (language.testId == HINDI_TO_ENGLISH_TEST_ID) {
+            PrefManager.put(FREE_TRIAL_TEST_ID, HINDI_TO_ENGLISH_TEST_ID)
             viewModel.postGoal(GoalKeys.HINDI_LANG_SELECTED)
         }
         if (isFreemiumActive && language.testId == HINDI_TO_ENGLISH_TEST_ID) {
