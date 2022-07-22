@@ -126,6 +126,10 @@ class SignUpProfileForFreeTrialFragment : BaseSignUpFragment() {
     }
 
     fun submitProfile() {
+        if (Utils.isInternetAvailable().not()){
+            showToast(getString(R.string.internet_not_available_msz))
+            return
+        }
         handleOnBackPressed(true)
         activity?.let { hideKeyboard(it, binding.nameEditText) }
         if (binding.nameEditText.text.isNullOrEmpty()) {
