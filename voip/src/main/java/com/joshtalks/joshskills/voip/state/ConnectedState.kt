@@ -206,6 +206,10 @@ class ConnectedState(val context: CallContext) : VoipState {
                                     address = context.channelData.getPartnerMentorId()
                                 )
                                 context.sendMessageToServer(userAction)
+                            }else{
+                                val uiState = context.currentUiState.copy(recordingButtonState = RecordingButtonState.SENTREQUEST)
+                                context.updateUIState(uiState = uiState)
+                                context.sendEventToUI(event)
                             }
                             val uiState = context.currentUiState.copy(isStartGameClicked = false, isNextWordClicked = false, nextGameWord = "")
                             context.updateUIState(uiState = uiState)

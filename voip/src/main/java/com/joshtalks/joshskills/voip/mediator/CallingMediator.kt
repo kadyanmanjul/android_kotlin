@@ -529,9 +529,6 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                                 data = ActionDirection.LOCAL
                             )
                             stateChannel.send(envelope)
-
-                            val envelopeEndGame = Envelope(Event.STOP_GAME_RECORDING, data = ActionDirection.LOCAL)
-                            stateChannel.send(envelopeEndGame)
                         }
                         // Remote User Disconnected
                         ServerConstants.DISCONNECTED -> {
