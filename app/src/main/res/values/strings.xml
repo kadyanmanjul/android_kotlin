@@ -1338,5 +1338,8 @@
     <string name="_14_calls_available"><u> Calls Left</u></string>
     <string name="_14"><u>14</u></string>
     <string name="start_now_for_free">Start Now For Free</string>
+    <string name="select_batch_timing">Select Batch Timing</string>
+    <string name="let_us_know_email">"These live classes happen over google meet.  Let us know the email id you will be using to attend the classes "</string>
+    <string name="your_email_id">Your Email ID</string>
 
 </resources>

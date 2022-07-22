@@ -329,7 +329,7 @@ class ConversationActivity :
             if (count < 4 && count != 0){
                 if(inboxEntity.formSubmitted.not() && inboxEntity.courseId == DEFAULT_COURSE_ID){
                     showCohortToolTipAB()
-                }else if (inboxEntity.formSubmitted){
+                }else if (inboxEntity.formSubmitted && PrefManager.getBoolValue(HAS_SEEN_LEADERBOARD_TOOLTIP, defValue = false)){
                     showLeaderBoardSpotlight()
                 }
             }else if(count==0){
