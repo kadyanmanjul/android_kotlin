@@ -102,10 +102,10 @@ class VideoMergeService : Service() {
     }
 
     private fun hideNotification(isSuccess :Boolean = false) {
+        Log.d(TAG, "hideNotification() called $isSuccess")
         if (isSuccess.not()){
             EventLiveData.value = Message().apply {
                 what = VIDEO_AUDIO_MUX_FAILED
-                Log.d(TAG, "hideNotification() called")
             }
         }
         NotificationManagerCompat.from(this).cancel(NOTIFICATION_ID)

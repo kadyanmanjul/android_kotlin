@@ -22,6 +22,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.os.SystemClock
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -41,10 +42,8 @@ import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.core.view.get
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -142,8 +141,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseDrawable
 import timber.log.Timber
@@ -306,6 +307,11 @@ class ReadingFragmentWithoutFeedback :
         binding.rootView.layoutTransition?.setAnimateParentHierarchy(false)
         binding.lifecycleOwner = this
         binding.handler = this
+        return binding.rootView
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         scaleAnimation = AnimationUtils.loadAnimation(requireContext(), R.anim.scale)
         addObserver()
         // showTooltip()
@@ -336,11 +342,6 @@ class ReadingFragmentWithoutFeedback :
             binding.playBtn.visibility = VISIBLE
         }
         binding.videoLayout.clipToOutline = true
-        return binding.rootView
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         if (PrefManager.hasKey(HAS_SEEN_READING_PLAY_ANIMATION).not() || PrefManager.getBoolValue(
                 HAS_SEEN_READING_PLAY_ANIMATION
             ).not()
@@ -862,12 +863,9 @@ class ReadingFragmentWithoutFeedback :
             video = currentLessonQuestion?.videoList?.getOrNull(0)?.video_url
             if (isDynamicModuleInstalled.not()){
                 video = null
+             }else{
+                 fetchVideo()
              }
-            lifecycleScope.launch {
-                lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                    fetchVideo()
-                }
-            }
             currentLessonQuestion?.run {
 
                 appAnalytics = AppAnalytics.create(AnalyticsEvent.PRACTICE_SCREEN.NAME)
@@ -1004,6 +1002,7 @@ class ReadingFragmentWithoutFeedback :
 
     private fun fetchVideo() {
         if (video.isNullOrEmpty().not()) {
+            binding.info.visibility = VISIBLE
             scope.launch {
                 AppObjectController.appDatabase.chatDao().insertReadingVideoDownloadedPath(
                     ReadingVideo(currentLessonQuestion!!.questionId, " ", false)
@@ -1013,13 +1012,11 @@ class ReadingFragmentWithoutFeedback :
                 scope.launch {
                     videoDownPath = AppObjectController.appDatabase.chatDao()
                         .getCompressedVideo(currentLessonQuestion!!.questionId)
+                    Log.d(TAG, "fetchVideo() called from db ${videoDownPath}")
                 }
             } else {
                 download()
             }
-        }
-        video?.let {
-            binding.info.visibility = VISIBLE
         }
     }
 
@@ -1035,6 +1032,7 @@ class ReadingFragmentWithoutFeedback :
         currentLessonQuestion?.videoList?.let {
             if (it.isNotEmpty()) {
                 scope.launch { mutex.lock() }
+                Log.d(TAG, "fetchVideo from downloadVideos ${videoDownPath}")
                 DownloadUtils.downloadFile(
                     it[0].video_url!!,
                     AppDirectory.docsReceivedFile(it[0].video_url!!).absolutePath,
@@ -1446,11 +1444,18 @@ class ReadingFragmentWithoutFeedback :
 
                                 filePath = AppDirectory.getAudioSentFile(null).absolutePath
                                 AppDirectory.copy(it.absolutePath, filePath!!)
-                                if (isAdded) {
-                                    if (video!=null)
-                                    viewModel.saveReadingPracticeImpression(RECORD_READING_VIDEO,lessonID.toString())
-                                    if (videoDownPath !=null)
-                                    startService(videoDownPath!!,filePath!!)
+                                muxerJob = scope.launch {
+                                    if (isActive) {
+                                        mutex.withLock {
+                                            Log.d(TAG, "audioRecordTouchListener() called isAdded: $isAdded video: $video videoDownPath: $videoDownPath")
+                                            if (isAdded) {
+                                                if (video!=null && activity != null)
+                                                    viewModel.saveReadingPracticeImpression(RECORD_READING_VIDEO,lessonID.toString())
+                                                if (videoDownPath !=null)
+                                                    startService(videoDownPath!!,filePath!!)
+                                            }
+                                        }
+                                    }
                                 }
                                 audioAttachmentInit()
                                 MixPanelTracker.publishEvent(MixPanelEvent.READING_RECORD)
@@ -1891,6 +1896,10 @@ class ReadingFragmentWithoutFeedback :
         audioPath: String
     ) {
         try {
+            Log.d(
+                TAG,
+                "startService() called with: videoDownPath = $videoDownPath, audioPath = $audioPath"
+            )
             val cls = Class.forName("com.joshtalks.joshskills.dynamic.VideoMergeService")
             Intent().setClassName(BuildConfig.APPLICATION_ID,cls.name).also {
                 it.putExtra("VIDEO_PATH",videoDownPath)
