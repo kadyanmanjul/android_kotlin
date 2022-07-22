@@ -228,39 +228,46 @@ class CertificateShareFragment : CoreJoshFragment() {
             showToast(getString(R.string.something_went_wrong))
             return
         }
-        PermissionUtils.storageReadAndWritePermission(requireContext(), object : MultiplePermissionsListener {
-            override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
-                report?.areAllPermissionsGranted()?.let { flag ->
-                    if (flag) {
-                        val downloadManager: DownloadManager = getSystemService(requireContext(), DOWNLOAD_SERVICE) as DownloadManager
+        if (isAdded && activity!=null) {
+            PermissionUtils.storageReadAndWritePermission(requireContext(), object : MultiplePermissionsListener {
+                override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                    try {
+                        report?.areAllPermissionsGranted()?.let { flag ->
+                            if (flag) {
+                                val downloadManager: DownloadManager =
+                                    getSystemService(requireContext(), DOWNLOAD_SERVICE) as DownloadManager
 
-                        val downloadUri = Uri.parse(url)
+                                val downloadUri = Uri.parse(url)
 
-                        val request = DownloadManager.Request(downloadUri)
-                        val fileName = "${User.getInstance().firstName}.jpeg"
-                        request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
-                            .setMimeType("image/jpeg")
-                            .setTitle("${User.getInstance().firstName}.jpeg")
-                            .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-                            .setDestinationInExternalPublicDir(
-                                Environment.DIRECTORY_DOWNLOADS, fileName
-                            )
-                        downloadId = downloadManager.enqueue(request)
-                        return
-                    }
-                    if (report.isAnyPermissionPermanentlyDenied) {
-                        showToast("Permission denied", Toast.LENGTH_LONG)
+                                val request = DownloadManager.Request(downloadUri)
+                                val fileName = "${User.getInstance().firstName}.jpeg"
+                                request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
+                                    .setMimeType("image/jpeg")
+                                    .setTitle("${User.getInstance().firstName}.jpeg")
+                                    .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+                                    .setDestinationInExternalPublicDir(
+                                        Environment.DIRECTORY_DOWNLOADS, fileName
+                                    )
+                                downloadId = downloadManager.enqueue(request)
+                                return
+                            }
+                            if (report.isAnyPermissionPermanentlyDenied) {
+                                showToast("Permission denied", Toast.LENGTH_LONG)
+                            }
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
                     }
                 }
-            }
 
-            override fun onPermissionRationaleShouldBeShown(
-                permissions: MutableList<PermissionRequest>?,
-                token: PermissionToken?
-            ) {
-                token?.continuePermissionRequest()
-            }
-        })
+                override fun onPermissionRationaleShouldBeShown(
+                    permissions: MutableList<PermissionRequest>?,
+                    token: PermissionToken?
+                ) {
+                    token?.continuePermissionRequest()
+                }
+            })
+        }
 
     }
 
