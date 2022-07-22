@@ -423,6 +423,7 @@ class AppObjectController {
                         PrefManager.put(SPEED_TEST_FILE_URL, resp.speedTestFile ?: "https://s3.ap-south-1.amazonaws.com/www.static.skills.com/speed_test.jpg")
                         PrefManager.put(THRESHOLD_SPEED_IN_KBPS, resp.thresholdSpeed ?: 128)
                         PrefManager.put(SPEED_TEST_FILE_SIZE, resp.testFileSize ?: 100)
+                        PrefManager.put(IS_GAME_ON, resp.isGameOn ?: 1)
                     } catch (ex: Exception) {
                         when (ex) {
                             is HttpException -> {

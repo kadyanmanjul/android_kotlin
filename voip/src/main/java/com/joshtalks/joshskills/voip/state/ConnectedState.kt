@@ -311,28 +311,30 @@ class ConnectedState(val context: CallContext) : VoipState {
 //                                )
 ////                                context.sendMessageToServer(userAction)
                             } else {
-                                when (context.currentUiState.recordingButtonState) {
-                                    RecordingButtonState.IDLE -> {
-                                        val uiState =
-                                            context.currentUiState.copy(recordingButtonState = RecordingButtonState.GOTREQUEST)
-                                        context.updateUIState(uiState = uiState)
-                                        context.sendEventToUI(event)
-                                    }
-                                    RecordingButtonState.SENTREQUEST -> {
-                                        Log.d(TAG, "observe: conflict")
-                                        val startTime = SystemClock.elapsedRealtime()
-                                        val uiState = context.currentUiState.copy(
-                                            recordingButtonState = RecordingButtonState.RECORDING,
-                                            recordingStartTime = startTime
-                                        )
-                                        context.updateUIState(uiState = uiState)
+                                if(context.currentUiState.isStartGameClicked) {
+                                    when (context.currentUiState.recordingButtonState) {
+                                        RecordingButtonState.IDLE -> {
+                                            val uiState =
+                                                context.currentUiState.copy(recordingButtonState = RecordingButtonState.GOTREQUEST)
+                                            context.updateUIState(uiState = uiState)
+                                            context.sendEventToUI(event)
+                                        }
+                                        RecordingButtonState.SENTREQUEST -> {
+                                            Log.d(TAG, "observe: conflict")
+                                            val startTime = SystemClock.elapsedRealtime()
+                                            val uiState = context.currentUiState.copy(
+                                                recordingButtonState = RecordingButtonState.RECORDING,
+                                                recordingStartTime = startTime
+                                            )
+                                            context.updateUIState(uiState = uiState)
 //                                        val userAction = UserAction(
 //                                            ServerConstants.CALL_RECORDING_ACCEPT,
 //                                            context.channelData.getChannel(),
 //                                            address = context.channelData.getPartnerMentorId()
 //                                        )
-                                        context.startRecording()
+                                            context.startRecording()
 //                                        context.sendMessageToServer(userAction)
+                                        }
                                     }
                                 }
                             }
@@ -351,10 +353,13 @@ class ConnectedState(val context: CallContext) : VoipState {
                                 context.stopRecording()
 //                                context.sendMessageToServer(userAction)
                             } else {
-                                val uiState =
-                                    context.currentUiState.copy(recordingButtonState = RecordingButtonState.IDLE)
-                                context.updateUIState(uiState = uiState)
-                                context.sendEventToUI(event)
+                                if (context.currentUiState.recordingButtonState == RecordingButtonState.RECORDING) {
+                                    val uiState =
+                                        context.currentUiState.copy(recordingButtonState = RecordingButtonState.IDLE)
+                                    context.updateUIState(uiState = uiState)
+                                    context.stopRecording()
+                                    context.sendEventToUI(event)
+                                }
                             }
                         }
                         CALL_RECORDING_ACCEPT -> {
@@ -374,20 +379,16 @@ class ConnectedState(val context: CallContext) : VoipState {
                                 context.startRecording()
                                 context.sendMessageToServer(userAction)
                             } else {
-//                                if (context.currentUiState.recordingButtonState.equals(
-//                                        RecordingButtonState.SENTREQUEST
-//                                )) {
-//
-//                                } else {
-//                                    Log.d(TAG, "observe: conflict accept and cancel")
-//                                }
-                                val startTime = SystemClock.elapsedRealtime()
-                                val uiState = context.currentUiState.copy(
-                                    recordingButtonState = RecordingButtonState.RECORDING,
-                                    recordingStartTime = startTime,
-                                )
-                                context.updateUIState(uiState = uiState)
-                                context.sendEventToUI(event)
+                                Log.d(TAG, "observe: conflict 2 ${context.currentUiState.isStartGameClicked}")
+                                if(context.currentUiState.isStartGameClicked) {
+                                  val startTime = SystemClock.elapsedRealtime()
+                                  val uiState = context.currentUiState.copy(
+                                      recordingButtonState = RecordingButtonState.RECORDING,
+                                      recordingStartTime = startTime,
+                                  )
+                                  context.updateUIState(uiState = uiState)
+                                  context.sendEventToUI(event)
+                              }
                             }
                         }
                         CALL_RECORDING_REJECT -> {
@@ -427,6 +428,22 @@ class ConnectedState(val context: CallContext) : VoipState {
                                 context.updateUIState(uiState = uiState)
                                 context.sendEventToUI(event)
                             }
+                        }
+                        START_GAME_RECORDING->{
+                            if(context.currentUiState.isStartGameClicked) {
+                                val startTime = SystemClock.elapsedRealtime()
+                                val uiState = context.currentUiState.copy(
+                                    recordingButtonState = RecordingButtonState.RECORDING,
+                                    recordingStartTime = startTime
+                                )
+                                context.updateUIState(uiState = uiState)
+                                context.startRecording()
+                            }
+                        }
+                        STOP_GAME_RECORDING ->{
+                            val uiState = context.currentUiState.copy(recordingButtonState = RecordingButtonState.SENTREQUEST)
+                                context.updateUIState(uiState = uiState)
+                                context.sendEventToUI(event)
                         }
                         else -> {
                             val msg = "In $TAG but received ${event.type} event don't know how to process"

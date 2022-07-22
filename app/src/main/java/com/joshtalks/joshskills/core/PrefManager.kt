@@ -182,6 +182,9 @@ const val NOTIFICATION_LAST_TIME_STATUS = "NOTIFICATION_LAST_TIME_STATUS"
 const val IS_CUSTOM_RATING_AND_REVIEW_DIALOG_SHOWN = "IS_CUSTOM_RATING_AND_REVIEW_DIALOG_SHOWN"
 const val ONE_WEEK_TIME_STAMP = "ONE_WEEK_TIME_STAMP" // Google in app review
 const val IS_CUSTOM_RATING_AND_REVIEW_DIALOG_SHOWN_BILKUL = "IS_CUSTOM_RATING_AND_REVIEW_DIALOG_SHOWN_BILKUL"
+const val IS_GAME_ON = "IS_GAME_ON"
+const val P2P_CALL_COUNT = "P2P_CALL_COUNT"
+
 
 object PrefManager {
 
@@ -354,6 +357,18 @@ object PrefManager {
         return gson.fromJson(json, UserRating::class.java)
     }
 
+    fun getCallCount(): Int {
+        return getIntValue(P2P_CALL_COUNT,defValue = 0)
+    }
+
+    fun increaseCallCount() {
+        val callCount = getCallCount()
+        if(callCount==3){
+            put(P2P_CALL_COUNT,0)
+        }else{
+            put(P2P_CALL_COUNT,callCount+1)
+        }
+    }
 
     fun getClientToken(): String {
         return BuildConfig.CLIENT_TOKEN

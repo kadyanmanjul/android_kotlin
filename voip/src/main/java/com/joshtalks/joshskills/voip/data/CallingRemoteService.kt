@@ -315,6 +315,7 @@ class CallingRemoteService : Service() {
 
     fun disconnectCall() {
         notification.idle(getNotificationData())
+        mediator.userAction(Action.STOP_RECORDING)
         mediator.userAction(Action.DISCONNECT)
     }
 

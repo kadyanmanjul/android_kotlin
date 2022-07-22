@@ -130,8 +130,10 @@
             app:layout_constraintBottom_toTopOf="@+id/bottom_card_view"
             app:layout_constraintEnd_toEndOf="parent"
             android:id="@+id/play_game_group"
+            android:visibility="@{(vm.uiState.startTime &gt;= 0 &amp;&amp; vm.source != ConstantsKt.FROM_INCOMING_CALL) &amp;&amp; vm.isGameEnabled()  ? View.VISIBLE : View.GONE}"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/call_time1">
+            app:layout_constraintTop_toBottomOf="@+id/call_time1"
+            tools:visibility ="gone">
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/gues_game_text"
@@ -444,7 +446,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="@{vm.uiState.startTime &lt;= 0 &amp;&amp; vm.source == ConstantsKt.FROM_INCOMING_CALL ? View.INVISIBLE : View.VISIBLE }"
-            app:constraint_referenced_ids="occupation_future_goals,play_game_group"
+            app:constraint_referenced_ids="occupation_future_goals"
             tools:visibility="visible" />
 
         <androidx.constraintlayout.widget.Guideline

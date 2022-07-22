@@ -96,6 +96,8 @@ enum class Event {
     NEXT_WORD_RECEIVED,
     GROUP_INCOMING_CALL,
     FPP_INCOMING_CALL,
+    START_GAME_RECORDING,
+    STOP_GAME_RECORDING
 }
 
 enum class State {

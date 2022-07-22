@@ -13,4 +13,6 @@ data class VoipStatusResponse(
     val testFileSize: Int?,
     @SerializedName("fpp_group_status")
     val groupFppStatus: Int?,
+    @SerializedName("is_game_enabled")
+    val isGameOn: Int?,
 )

@@ -239,16 +239,16 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                         stateChannel.send(envelope)
                     }
                     UserAction.START_RECORDING -> {
-                        val envelope = Envelope(Event.START_RECORDING, data = ActionDirection.LOCAL)
+                        val envelope = Envelope(Event.START_GAME_RECORDING, data = ActionDirection.LOCAL)
                         stateChannel.send(envelope)
                     }
                     UserAction.STOP_RECORDING -> {
-                        val envelope = Envelope(Event.STOP_RECORDING, data = ActionDirection.SERVER)
+                        val envelope = Envelope(Event.STOP_GAME_RECORDING, data = ActionDirection.LOCAL)
                         stateChannel.send(envelope)
                     }
                     UserAction.RECORDING_REQUEST_ACCEPTED -> {
-                        val envelope = Envelope(Event.CALL_RECORDING_ACCEPT, data = ActionDirection.SERVER)
-                        stateChannel.send(envelope)
+//                        val envelope = Envelope(Event.CALL_RECORDING_ACCEPT, data = ActionDirection.SERVER)
+//                        stateChannel.send(envelope)
                     }
                     UserAction.RECORDING_REQUEST_REJECTED -> {
                         val envelope = Envelope(Event.CALL_RECORDING_REJECT, data = ActionDirection.SERVER)
@@ -259,7 +259,8 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                         stateChannel.send(envelope)
                     }
                     UserAction.NEXT_WORD_REQUEST -> {
-                        val envelopeEndGame = Envelope(Event.STOP_RECORDING, data = ActionDirection.LOCAL)
+
+                        val envelopeEndGame = Envelope(Event.STOP_GAME_RECORDING, data = ActionDirection.LOCAL)
                         stateChannel.send(envelopeEndGame)
                         val envelope = Envelope(Event.NEXT_WORD_REQUEST, data = ActionDirection.SERVER)
                         stateChannel.send(envelope)
@@ -269,7 +270,9 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                         stateChannel.send(envelope)
                     }
                     UserAction.END_GAME -> {
-                        val envelopeEndGame = Envelope(Event.STOP_RECORDING, data = ActionDirection.LOCAL)
+                        Log.d(TAG, " GAME observe:  UserAction.END_GAME")
+
+                        val envelopeEndGame = Envelope(Event.STOP_GAME_RECORDING, data = ActionDirection.LOCAL)
                         stateChannel.send(envelopeEndGame)
                         val envelope = Envelope(Event.END_GAME, data = ActionDirection.SERVER)
                         stateChannel.send(envelope)
@@ -510,7 +513,9 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                             stateChannel.send(envelope)
                         }
                         ServerConstants.NEXT_WORD_RECEIVED ->{
-                            val envelopeStartRecording = Envelope(Event.CALL_RECORDING_ACCEPT, data = ActionDirection.LOCAL)
+                            Log.d(TAG, " GAME observe: START GAME RECORDING  ServerConstants NEXT_WORD_RECEIVED")
+
+                            val envelopeStartRecording = Envelope(Event.START_GAME_RECORDING, data = ActionDirection.LOCAL)
                             stateChannel.send(envelopeStartRecording)
                             val incomingWorData = IncomingGameNextWord(word = event.getWord(), color = event.getWordColor())
                             val envelope = Envelope(
@@ -520,6 +525,10 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                             stateChannel.send(envelope)
                         }
                         ServerConstants.END_GAME ->{
+                            Log.d(TAG, " GAME observe: START GAME RECORDING ServerConstants  END_GAME")
+                            val envelopeEndGame = Envelope(Event.STOP_GAME_RECORDING, data = ActionDirection.LOCAL)
+                            stateChannel.send(envelopeEndGame)
+
                             val envelope = Envelope(
                                 Event.END_GAME,
                                 data = ActionDirection.LOCAL

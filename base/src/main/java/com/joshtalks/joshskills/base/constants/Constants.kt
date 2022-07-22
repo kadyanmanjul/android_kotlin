@@ -47,6 +47,8 @@ const val NOTIFICATION_DATA = "/notification_data"
 const val MENTOR_NAME = "/mentor_name"
 const val MENTOR_PROFILE = "/mentor_profile"
 const val RECORDING_TEXT = "/recording_text"
+const val GAME_FLAG = "/game_flag"
+
 
 
 // Content Values
@@ -113,6 +115,7 @@ const val VIDEO_COLUMN = "VIDEO_COLUMN"
 const val MENTOR_NAME_COLUMN = "MENTOR_NAME"
 const val MENTOR_PROFILE_COLUMN = "MENTOR_PROFILE"
 const val RECORDING_TEXT_COLUMN = "RECORDING_TEXT_COLUMN"
+const val GAME_TEXT_COLUMN = "GAME_TEXT_COLUMN"
 const val COURSE_ID_COLUMN = "COURSE_ID"
 const val FREE_TRIAL_OR_COURSE_BOUGHT_COLUMN = "FREE_TRIAL_OR_COURSE_BOUGHT_COLUMN"
 

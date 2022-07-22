@@ -127,6 +127,11 @@ class JoshContentProvider : ContentProvider() {
                 }
                 return cursor
             }
+            GAME_FLAG->{
+                val cursor = MatrixCursor(arrayOf(GAME_TEXT_COLUMN))
+                cursor.addRow(arrayOf(PrefManager.getIntValue(IS_GAME_ON, defValue = 1).toString()))
+                return cursor
+            }
             NOTIFICATION_DATA -> {
                 val cursor =
                     MatrixCursor(arrayOf(NOTIFICATION_TITLE_COLUMN, NOTIFICATION_SUBTITLE_COLUMN,

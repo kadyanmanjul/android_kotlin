@@ -130,7 +130,7 @@ class CallUIState : BaseObservable() {
         }
 
     @get:Bindable
-    var recordingButtonState: RecordingButtonState = RecordingButtonState.IDLE
+    var recordingButtonState: RecordingButtonState = RecordingButtonState.SENTREQUEST
         set(value) {
             field = value
             notifyPropertyChanged(BR.recordingButtonState)

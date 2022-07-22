@@ -5,6 +5,7 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.databinding.DataBindingUtil
@@ -21,6 +22,7 @@ import com.joshtalks.joshskills.base.constants.INTENT_DATA_INCOMING_CALL_ID
 import com.joshtalks.joshskills.base.constants.INTENT_DATA_TOPIC_ID
 import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.IS_GAME_ON
 import com.joshtalks.joshskills.core.PermissionUtils.callingPermissionPermanentlyDeniedDialog
 import com.joshtalks.joshskills.core.PermissionUtils.isCallingPermissionEnabled
 import com.joshtalks.joshskills.databinding.ActivityVoiceCallBinding
@@ -224,8 +226,7 @@ class VoiceCallActivity : BaseActivity() {
             Log.i(TAG, "initViewState: event -> ${it.what}")
             when (it.what) {
                 SHOW_RECORDING_PERMISSION_DIALOG -> {
-                    vm.recordingStartedUIChanges()
-                    vm.acceptCallRecording(this@VoiceCallActivity.window.decorView)
+                    vm.startAudioVideoRecording(this@VoiceCallActivity.window.decorView)
                 }
                 SHOW_RECORDING_REJECTED_DIALOG -> showRecordingRejectedDialog()
                 HIDE_RECORDING_PERMISSION_DIALOG -> {
@@ -345,7 +346,8 @@ class VoiceCallActivity : BaseActivity() {
             super.onBackPressed()
             if (vm.uiState.recordingButtonState == RecordingButtonState.SENTREQUEST)
                 vm.cancelRecording()
-            vm.recordingStopButtonClickListener()
+            val v = View(this)
+            vm.endGame(v)
             vm.backPress()
         }
     }

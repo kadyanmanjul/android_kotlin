@@ -292,6 +292,22 @@ fun Context.getRecordingText(): String {
     return textData
 }
 
+fun Context.getGameFlag(): String {
+    val recordingCursor = contentResolver.query(
+        Uri.parse(CONTENT_URI + GAME_FLAG),
+        null,
+        null,
+        null,
+        null
+    )
+
+    recordingCursor?.moveToFirst()
+    val textData = recordingCursor.getStringData(GAME_TEXT_COLUMN)
+    recordingCursor?.close()
+    return textData
+}
+
+
 //fun Context.updateIncomingCallDetails() {
 //    voipLog?.log("QUERY")
 //    val values = ContentValues(2).apply {

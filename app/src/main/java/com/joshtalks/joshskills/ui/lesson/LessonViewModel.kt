@@ -1008,7 +1008,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
 
     fun getRating()  {
         val currentTime = Date().time
-        if(ifRatingFromApi(currentTime)) {
+        if(PrefManager.getCallCount()>=3) {
             viewModelScope.launch(Dispatchers.IO)
             {
                 try {
@@ -1017,6 +1017,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
                         userRating.set(response.body())
                         PrefManager.putPrefObject(RATING_OBJECT, response.body() as UserRating)
                         PrefManager.put(RATING_TIMESTAMP, currentTime)
+                        PrefManager.increaseCallCount()
                     }
                 } catch (ex: Throwable) {
                     apiStatus.postValue(ApiCallStatus.FAILED)
