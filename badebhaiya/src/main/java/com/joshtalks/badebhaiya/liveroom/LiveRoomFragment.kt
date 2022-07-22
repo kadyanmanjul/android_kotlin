@@ -132,10 +132,8 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
         super.onCreate(savedInstanceState)
         var mBundle: Bundle? = Bundle()
         mBundle = this.arguments
-        Log.i("LIFECYCLE", "onCreate: ")
         from = mBundle?.getString("source").toString()
         isSpeaker= mBundle?.getBoolean("isSpeaker") == true
-        Log.i("LIVEROOMSOURCE", "onCreate: from:-$from")
         feedViewModel.isRoomCreated.value=false
         //audienceAdapter?.audienceList?.add(me)
         attachBackPressedDispatcher()
@@ -234,14 +232,12 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
 
             audienceAdapter?.submitList(list)
 //            audienceAdapter?.updateFullList(list)
-            Log.i("AUDIENCE", "addViewModelObserver: ${it}")
             PubNubManager.getLiveRoomProperties().let {
                 if (it.isModerator){
                     val int = vm.getRaisedHandAudienceSize()
                     setBadgeDrawable(int)
                 }
             }
-            Log.i("HELLOTESTER", "addViewModelObserver: $it")
             binding.audienceCount.text= "("+it?.size+")"
 
         })
@@ -395,7 +391,6 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
     }
 
      fun expandLiveRoom() {
-         Log.i("YASHEN", "expandLiveRoom: ")
         binding.liveRoomRootView.transitionToStart()
     }
 
@@ -625,7 +620,6 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
             Log.d("ABC2", "Data class called with data message: ${it.what} bundle : ${it.data}")
             when (it.what) {
                 OPEN_ROOM ->{
-                    Log.i("YASHENDRA", "addObserver: ")
                     it.data?.let {
                         it.getParcelable<ConversationRoomResponse>(ROOM_DETAILS)?.let { room ->
                             val liveRoomProperties = StartingLiveRoomProperties.createFromRoom(
@@ -648,7 +642,6 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
 
     private fun refreshAudienceAdapter(handRaisedList: List<LiveRoomUser>?) {
         val list = handRaisedList?.filter { it.isSpeaker==false && it.isHandRaised }
-        Log.i("Prepare", "refreshAudienceAdapter: ")
         list?.let {
             audienceAdapter?.updateFullList(it.distinctBy { it.userId })
         }
@@ -1226,7 +1219,6 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
     fun openRaisedHandsBottomSheet() {
         val raisedHandList =
             vm.getAudienceList().filter { it.isSpeaker == false && it.isHandRaised }
-        Log.i("Prepare", "open: ${raisedHandList.size}")
         val bottomSheet =
             RaisedHandsBottomSheet.newInstance(
                 roomId ?: 0, PubNubManager.getLiveRoomProperties().agoraUid, PubNubManager.moderatorName, PubNubManager.getLiveRoomProperties().channelName,
@@ -1312,7 +1304,6 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
 
     override fun onStart() {
         super.onStart()
-        Log.i("LIFECYCLE", "onStart: ")
         requireActivity().bindService(
             Intent(requireActivity(), ConvoWebRtcService::class.java),
             myConnection,
@@ -1322,21 +1313,18 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
 
     override fun onPause() {
         super.onPause()
-        Log.i("LIFECYCLE", "onPause: ")
         compositeDisposable.clear()
         PubNubManager.pauseRoomDataCollection()
     }
 
     override fun onStop() {
         super.onStop()
-        Log.i("LIFECYCLE", "onStop: ")
         compositeDisposable.clear()
         requireActivity().unbindService(myConnection)
     }
 
     override fun onResume() {
         super.onResume()
-        Log.i("LIFECYCLE", "onResume: ")
         compositeDisposable.clear()
         observeNetwork()
         PubNubManager.collectPubNubEvents()
@@ -1354,10 +1342,8 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
                 // Live is already minimized ask if user wants to quit live room.
                 if(from=="Profile")
                 {
-                    Log.i("LIVEROOMSOURCE", "handleBackPress: set value $from")
                     feedViewModel.isBackPressed.value=true
                     from="None"
-                    Log.i("LIVEROOMSOURCE", "handleBackPress: set value ${feedViewModel.isBackPressed.value}")
                 }
                 else
                 {
@@ -1398,7 +1384,6 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
         feedViewModel.readRequestCount()
         vm.deflate.value=false
         vm.unSubscribePubNub()
-        Log.i("LIFECYCLE", "onDestroy: ")
         vm.pubNubState.value=PubNubState.ENDED
         feedViewModel.pubNubState=PubNubState.ENDED
         binding.notificationBar.destroyMediaPlayer()
@@ -1430,7 +1415,6 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
             if (liveRoomViewModel.pubNubState.value == PubNubState.STARTED){
                 showToast("Please Leave Current Room")
             } else {
-                Log.i("LIVEROOMSOURCE", "launch: $from")
                 val frag=activity.supportFragmentManager.findFragmentById(R.id.liveRoomRootView)
                 if(frag==null) {
 

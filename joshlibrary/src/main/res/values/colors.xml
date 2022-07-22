@@ -13,5 +13,6 @@
     <color name="lighter_grey">#E2E4E9</color>
     <color name="green">#20BA70</color>
     <color name="transparent">#00000000</color>
+    <color name="leave">#EB5A5C</color>
 
 </resources>
