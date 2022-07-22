@@ -17,7 +17,7 @@ android {
     compileSdkVersion 31
     defaultConfig {
         applicationId "com.joshtalks.joshskills"
-        minSdkVersion 24
+        minSdkVersion 21
         targetSdkVersion 30
         versionCode majorVersion * 10000 + minorVersion * 100 + patchVersion
         versionName "${majorVersion}.${minorVersion}.${patchVersion}"
