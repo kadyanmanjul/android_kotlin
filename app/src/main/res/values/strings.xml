@@ -1338,5 +1338,14 @@
     <string name="_14_calls_available"><u> Calls Left</u></string>
     <string name="_14"><u>14</u></string>
     <string name="start_now_for_free">Start Now For Free</string>
+    <string name="calls_will_be_added_in_3_days">Calls will be added in 3 days</string>
+    <string name="_4_calls_left">4 calls left</string>
+    <string name="call_your_friend">Call your friend</string>
+    <string name="call_teacher">Call Teacher</string>
+    <string name="call_female_practice_partner">Call Female Practice Partner</string>
+    <string name="_4_ngrammar_vocabulary_reading_n_speaking">हर पाठ में 4 भाग होते हैं\nGrammar, Vocabulary, Reading\nऔर Speaking</string>
+    <string name="_1_of_3">1 of 3</string>
+    <string name="_aage_badhe">आगे बढ़े</string>
+    <string name="call_practice_partner_2">Call Practice Partner</string>
 
 </resources>
