@@ -13,9 +13,7 @@ import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
-import android.media.AudioAttributes
-import android.media.AudioFocusRequest
-import android.media.AudioManager
+import android.media.*
 import android.net.NetworkInfo
 import android.net.Uri
 import android.os.Build
@@ -23,15 +21,8 @@ import android.os.Bundle
 import android.os.Environment
 import android.os.SystemClock
 import android.util.Log
-import android.view.Gravity
-import android.view.LayoutInflater
-import android.view.MotionEvent
-import android.view.View
-import android.view.View.GONE
-import android.view.View.INVISIBLE
-import android.view.View.VISIBLE
-import android.view.ViewGroup
-import android.view.WindowManager
+import android.view.*
+import android.view.View.*
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.SeekBar
@@ -42,8 +33,10 @@ import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.core.view.get
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -51,62 +44,21 @@ import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
 import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.Player
 import com.google.android.material.snackbar.Snackbar
-import com.google.android.play.core.splitinstall.SplitInstallManager
-import com.google.android.play.core.splitinstall.SplitInstallManagerFactory
-import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
-import com.joshtalks.joshskills.constants.CANCEL_BUTTON_CLICK
-import com.joshtalks.joshskills.constants.INCREASE_AUDIO_VOLUME
-import com.joshtalks.joshskills.constants.PERMISSION_FROM_READING_GRANTED
-import com.joshtalks.joshskills.constants.SHARE_VIDEO
-import com.joshtalks.joshskills.constants.SHOW_VIDEO_VIEW
-import com.joshtalks.joshskills.constants.SUBMIT_BUTTON_CLICK
-import com.joshtalks.joshskills.constants.VIDEO_AUDIO_MERGED_PATH
-import com.joshtalks.joshskills.constants.VIDEO_AUDIO_MUX_FAILED
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.CoreJoshFragment
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
-import com.joshtalks.joshskills.core.HAS_SEEN_READING_HAND_TOOLTIP
-import com.joshtalks.joshskills.core.HAS_SEEN_READING_PLAY_ANIMATION
-import com.joshtalks.joshskills.core.HAS_SEEN_READING_TOOLTIP
-import com.joshtalks.joshskills.core.IS_A2_C1_RETENTION_ENABLED
-import com.joshtalks.joshskills.core.LESSON_COMPLETE_SNACKBAR_TEXT_STRING
-import com.joshtalks.joshskills.core.PermissionUtils
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.READING_SHARED_WHATSAPP
-import com.joshtalks.joshskills.core.RECORD_READING_VIDEO
-import com.joshtalks.joshskills.core.SUBMIT_READING_VIDEO
-import com.joshtalks.joshskills.core.Utils
-import com.joshtalks.joshskills.core.VIDEO_PLAYED_RP
-import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
-import com.joshtalks.joshskills.core.analytics.AppAnalytics
-import com.joshtalks.joshskills.core.analytics.MixPanelEvent
-import com.joshtalks.joshskills.core.analytics.MixPanelTracker
-import com.joshtalks.joshskills.core.analytics.ParamKeys
+import com.joshtalks.joshskills.base.getVideoFilePath
+import com.joshtalks.joshskills.base.saveVideoQ
+import com.joshtalks.joshskills.constants.*
+import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.analytics.*
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
 import com.joshtalks.joshskills.core.extension.setImageAndFitCenter
 import com.joshtalks.joshskills.core.io.AppDirectory
-import com.joshtalks.joshskills.core.isCallOngoing
 import com.joshtalks.joshskills.core.service.DownloadUtils
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.core.videotranscoder.enforceSingleScrollDirection
 import com.joshtalks.joshskills.databinding.ReadingPracticeFragmentWithoutFeedbackBinding
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.entity.AudioType
-import com.joshtalks.joshskills.repository.local.entity.CHAT_TYPE
-import com.joshtalks.joshskills.repository.local.entity.CompressedVideo
-import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
-import com.joshtalks.joshskills.repository.local.entity.EXPECTED_ENGAGE_TYPE
-import com.joshtalks.joshskills.repository.local.entity.LessonMaterialType
-import com.joshtalks.joshskills.repository.local.entity.LessonQuestion
-import com.joshtalks.joshskills.repository.local.entity.PendingTask
-import com.joshtalks.joshskills.repository.local.entity.PracticeEngagement
-import com.joshtalks.joshskills.repository.local.entity.PracticeEngagementWrapper
-import com.joshtalks.joshskills.repository.local.entity.PracticeFeedback2
-import com.joshtalks.joshskills.repository.local.entity.QUESTION_STATUS
-import com.joshtalks.joshskills.repository.local.entity.ReadingVideo
+import com.joshtalks.joshskills.repository.local.entity.*
 import com.joshtalks.joshskills.repository.local.eventbus.RemovePracticeAudioEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.SnackBarEvent
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -135,8 +87,6 @@ import com.tonyodev.fetch2core.DownloadBlock
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import java.io.File
-import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -148,6 +98,12 @@ import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseDrawable
 import timber.log.Timber
+import java.io.File
+import java.io.IOException
+import java.lang.Runnable
+import java.lang.ref.WeakReference
+import java.nio.ByteBuffer
+import java.util.concurrent.TimeUnit
 
 private const val TAG = "ReadingFragmentWithoutFeedback"
 
@@ -174,7 +130,7 @@ class ReadingFragmentWithoutFeedback :
     var lessonActivityListener: LessonActivityListener? = null
     private var video: String? = null
     private var videoDownPath: String? = null
-    private var outputFile: String? = null
+    private var outputFile: String = EMPTY
     private var downloadID: Long = -1
     lateinit var fileName: String
     private var fileDir: String = EMPTY
@@ -183,8 +139,7 @@ class ReadingFragmentWithoutFeedback :
     private var muxerJob: Job? = null
     private var internetAvailableFlag: Boolean = true
     private val praticAudioAdapter: PracticeAudioAdapter by lazy { PracticeAudioAdapter(context) }
-    private var linearLayoutManager: LinearLayoutManager? = null
-    private var splitManager: SplitInstallManager? = null
+    private var linearLayoutManager: LinearLayoutManager?= null
     private var onDownloadCompleteListener = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             val id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
@@ -288,7 +243,6 @@ class ReadingFragmentWithoutFeedback :
         super.onCreate(savedInstanceState)
         totalTimeSpend = System.currentTimeMillis()
         linearLayoutManager = LinearLayoutManager(requireActivity())
-        splitManager = SplitInstallManagerFactory.create(requireActivity())
     }
 
     override fun onCreateView(
@@ -307,11 +261,6 @@ class ReadingFragmentWithoutFeedback :
         binding.rootView.layoutTransition?.setAnimateParentHierarchy(false)
         binding.lifecycleOwner = this
         binding.handler = this
-        return binding.rootView
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         scaleAnimation = AnimationUtils.loadAnimation(requireContext(), R.anim.scale)
         addObserver()
         // showTooltip()
@@ -325,8 +274,7 @@ class ReadingFragmentWithoutFeedback :
                 } else {
                     binding.mergedVideo.scaleY = 1f / scaleX
                 }
-                mediaPlayer.isLooping = false
-            } catch (ex: Exception) {
+            }catch (ex:Exception){
                 showToast(getString(R.string.something_went_wrong))
                 ex.printStackTrace()
             }
@@ -342,6 +290,11 @@ class ReadingFragmentWithoutFeedback :
             binding.playBtn.visibility = VISIBLE
         }
         binding.videoLayout.clipToOutline = true
+        return binding.rootView
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         if (PrefManager.hasKey(HAS_SEEN_READING_PLAY_ANIMATION).not() || PrefManager.getBoolValue(
                 HAS_SEEN_READING_PLAY_ANIMATION
             ).not()
@@ -355,24 +308,6 @@ class ReadingFragmentWithoutFeedback :
                 SUBMIT_BUTTON_CLICK -> submitPractise()
                 CANCEL_BUTTON_CLICK -> closeRecordedView()
                 SHOW_VIDEO_VIEW -> binding.practiseSubmitLayout.visibility = VISIBLE
-                VIDEO_AUDIO_MERGED_PATH -> {
-                    binding.progressDialog.visibility = GONE
-                    outputFile = it.obj as String
-                    outputFile?.let { file -> viewModel.sendOutputToFullScreen(file) }
-                    binding.mergedVideo.setVideoPath(outputFile)
-                }
-                INCREASE_AUDIO_VOLUME -> {
-
-                }
-                VIDEO_AUDIO_MUX_FAILED -> {
-                    video = null
-                    binding.progressDialog.visibility = GONE
-                    binding.videoLayout.visibility = GONE
-                    binding.mergedVideo.stopPlayback()
-                    audioAttachmentInit()
-                    binding.info.visibility = GONE
-                    showToast(getString(R.string.video_error))
-                }
             }
         }
     }
@@ -818,7 +753,7 @@ class ReadingFragmentWithoutFeedback :
         lifecycleScope.launch(Dispatchers.IO) {
             if (isAdded && activity != null) {
                 val thumbnailDrawable: Drawable? =
-                    Utils.getDrawableFromUrl(requireContext(), thumbnailUrl)
+                    Utils.getDrawableFromUrl(requireContext(),thumbnailUrl)
                 if (thumbnailDrawable != null) {
                     AppObjectController.uiHandler.post {
                         binding.videoPlayer.useArtwork = true
@@ -828,7 +763,7 @@ class ReadingFragmentWithoutFeedback :
 //                    imgArtwork.visibility = View.VISIBLE
                     }
                 }
-            } else {
+            }else{
                 showToast(getString(R.string.something_went_wrong))
             }
         }
@@ -854,18 +789,12 @@ class ReadingFragmentWithoutFeedback :
             viewLifecycleOwner
         ) {
             currentLessonQuestion = it.filter { it.chatType == CHAT_TYPE.RP }.getOrNull(0)
-            var isDynamicModuleInstalled = false
-            splitManager?.installedModules?.forEach { module->
-                if(module.equals(getString(R.string.dynamic_feature_title))){
-                    isDynamicModuleInstalled = true
+            video = currentLessonQuestion?.videoList?.getOrNull(0)?.video_url
+            lifecycleScope.launch {
+                lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                    fetchVideo()
                 }
             }
-            video = currentLessonQuestion?.videoList?.getOrNull(0)?.video_url
-            if (isDynamicModuleInstalled.not()){
-                video = null
-             }else{
-                 fetchVideo()
-             }
             currentLessonQuestion?.run {
 
                 appAnalytics = AppAnalytics.create(AnalyticsEvent.PRACTICE_SCREEN.NAME)
@@ -907,10 +836,7 @@ class ReadingFragmentWithoutFeedback :
                             binding.mergedVideo.setVideoPath(this.practiceEngagement?.get(0)?.localPath)
                         }
                         binding.btnWhatsapp.setOnClickListener {
-                            viewModel.saveReadingPracticeImpression(
-                                READING_SHARED_WHATSAPP,
-                                lessonID.toString()
-                            )
+                            viewModel.saveReadingPracticeImpression(READING_SHARED_WHATSAPP,lessonID.toString())
                             scope.launch {
                                 if (currentLessonQuestion?.practiceEngagement?.get(0)?.localPath.isNullOrEmpty()
                                         .not()
@@ -1002,7 +928,6 @@ class ReadingFragmentWithoutFeedback :
 
     private fun fetchVideo() {
         if (video.isNullOrEmpty().not()) {
-            binding.info.visibility = VISIBLE
             scope.launch {
                 AppObjectController.appDatabase.chatDao().insertReadingVideoDownloadedPath(
                     ReadingVideo(currentLessonQuestion!!.questionId, " ", false)
@@ -1012,11 +937,13 @@ class ReadingFragmentWithoutFeedback :
                 scope.launch {
                     videoDownPath = AppObjectController.appDatabase.chatDao()
                         .getCompressedVideo(currentLessonQuestion!!.questionId)
-                    Log.d(TAG, "fetchVideo() called from db ${videoDownPath}")
                 }
             } else {
                 download()
             }
+        }
+        if(video.isNullOrEmpty()) {
+            binding.info.visibility = GONE
         }
     }
 
@@ -1032,7 +959,6 @@ class ReadingFragmentWithoutFeedback :
         currentLessonQuestion?.videoList?.let {
             if (it.isNotEmpty()) {
                 scope.launch { mutex.lock() }
-                Log.d(TAG, "fetchVideo from downloadVideos ${videoDownPath}")
                 DownloadUtils.downloadFile(
                     it[0].video_url!!,
                     AppDirectory.docsReceivedFile(it[0].video_url!!).absolutePath,
@@ -1156,15 +1082,12 @@ class ReadingFragmentWithoutFeedback :
         binding.submitAnswerBtn.visibility = GONE
         // binding.improveAnswerBtn.visibility = VISIBLE
         binding.continueBtn.visibility = VISIBLE
-        if (video.isNullOrEmpty().not()) {
+        if (currentLessonQuestion?.videoList?.getOrNull(0)?.video_url.isNullOrEmpty().not()) {
             binding.ivClose.visibility = GONE
             binding.btnWhatsapp.visibility = VISIBLE
             binding.btnWhatsapp.setOnClickListener {
-                outputFile?.let { file -> viewModel.shareVideoForAudio(file) }
-                viewModel.saveReadingPracticeImpression(
-                    READING_SHARED_WHATSAPP,
-                    lessonID.toString()
-                )
+                viewModel.shareVideoForAudio(outputFile)
+                viewModel.saveReadingPracticeImpression(READING_SHARED_WHATSAPP,lessonID.toString())
             }
         }
 
@@ -1347,7 +1270,7 @@ class ReadingFragmentWithoutFeedback :
     }
 
     private fun recordPermission() {
-        if (isAdded && activity != null) {
+        if (isAdded && activity!=null) {
             PermissionUtils.audioRecordStorageReadAndWritePermission(
                 requireActivity(),
                 object : MultiplePermissionsListener {
@@ -1377,7 +1300,7 @@ class ReadingFragmentWithoutFeedback :
                     }
                 }
             )
-        } else {
+        }else{
             showToast(getString(R.string.something_went_wrong))
         }
     }
@@ -1387,7 +1310,7 @@ class ReadingFragmentWithoutFeedback :
         binding.recordTransparentContainer.setOnTouchListener { _, event ->
             if (isAdded && activity != null) {
                 if (isCallOngoing() || requireActivity().getVoipState() != State.IDLE) {
-                return@setOnTouchListener false
+                    return@setOnTouchListener false
                 }
                 if (PermissionUtils.isAudioAndStoragePermissionEnable(requireContext()).not()) {
                     recordPermission()
@@ -1435,28 +1358,25 @@ class ReadingFragmentWithoutFeedback :
                             startTime
                         )
                     if (timeDifference > 1) {
-                        if (Utils.isInternetAvailable()) {
+                        if(Utils.isInternetAvailable()){
                             viewModel.recordFile?.let {
                                 isAudioRecordDone = true
 //                            Log.e("Ayaaz","${currentLessonQuestion?.videoList?.get(0)?.video_url}")
 //                            if(!currentLessonQuestion?.videoList?.get(0)?.video_url.isNullOrEmpty())
 //                            viewModel.showVideoOnFullScreen()
+                                if (File(outputFile).exists()) {
+                                    File(outputFile).delete()
+                                }
+                                if (Build.VERSION.SDK_INT >= 29) {
+                                    if (isAdded) {
+                                        outputFile = saveVideoQ(requireContext(), videoDownPath ?: EMPTY) ?: EMPTY
+                                    }
+                                } else {
+                                    outputFile = getVideoFilePath()
+                                }
 
                                 filePath = AppDirectory.getAudioSentFile(null).absolutePath
                                 AppDirectory.copy(it.absolutePath, filePath!!)
-                                muxerJob = scope.launch {
-                                    if (isActive) {
-                                        mutex.withLock {
-                                            Log.d(TAG, "audioRecordTouchListener() called isAdded: $isAdded video: $video videoDownPath: $videoDownPath")
-                                            if (isAdded) {
-                                                if (video!=null && activity != null)
-                                                    viewModel.saveReadingPracticeImpression(RECORD_READING_VIDEO,lessonID.toString())
-                                                if (videoDownPath !=null)
-                                                    startService(videoDownPath!!,filePath!!)
-                                            }
-                                        }
-                                    }
-                                }
                                 audioAttachmentInit()
                                 MixPanelTracker.publishEvent(MixPanelEvent.READING_RECORD)
                                     .addParam(ParamKeys.LESSON_ID, lessonID)
@@ -1479,9 +1399,24 @@ class ReadingFragmentWithoutFeedback :
                                     )
                                     showRecordHintAnimation()
                                 }
+
+                                muxerJob = scope.launch {
+                                    if (isActive) {
+                                        mutex.withLock {
+                                            audioVideoMuxer()
+                                            if (isAdded && activity != null) {
+                                                requireActivity().runOnUiThread {
+                                                    binding.progressDialog.visibility = GONE
+                                                    viewModel.sendOutputToFullScreen(outputFile)
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
                                 binding.playBtn.visibility = VISIBLE
                             }
-                        } else {
+                        }
+                        else{
                             showToast(getString(R.string.internet_not_available_msz))
                         }
                     }
@@ -1489,6 +1424,87 @@ class ReadingFragmentWithoutFeedback :
             }
             true
         }
+    }
+
+    fun audioVideoMuxer() {
+        try {
+            val videoExtractor: MediaExtractor = MediaExtractor()
+            val audioExtractor: MediaExtractor = MediaExtractor()
+            audioExtractor.setDataSource(filePath!!)
+            audioExtractor.selectTrack(0)
+            val audioFormat: MediaFormat = audioExtractor.getTrackFormat(0)
+            videoDownPath?.let { videoExtractor.setDataSource(it) }
+            videoExtractor.selectTrack(0)
+            val videoFormat: MediaFormat = videoExtractor.getTrackFormat(0)
+
+            val muxer: MediaMuxer = MediaMuxer(
+                outputFile,
+                MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4
+            )
+
+            val videoTrack = muxer.addTrack(videoFormat)
+            val audioTrack = muxer.addTrack(audioFormat)
+
+            var sawEOS = false
+            var frameCount = 0
+            val offset = 100
+            val sampleSize = 256 * 1024
+            val videoBuf: ByteBuffer = ByteBuffer.allocate(sampleSize)
+            val audioBuf: ByteBuffer = ByteBuffer.allocate(sampleSize)
+            val videoBufferInfo: MediaCodec.BufferInfo = MediaCodec.BufferInfo()
+            val audioBufferInfo: MediaCodec.BufferInfo = MediaCodec.BufferInfo()
+
+            videoExtractor.seekTo(0, MediaExtractor.SEEK_TO_CLOSEST_SYNC)
+            audioExtractor.seekTo(0, MediaExtractor.SEEK_TO_CLOSEST_SYNC)
+
+            muxer.start()
+            while (!sawEOS) {
+                videoBufferInfo.offset = offset
+                videoBufferInfo.size = videoExtractor.readSampleData(videoBuf, offset)
+
+                if (videoBufferInfo.size < 0 || audioBufferInfo.size < 0) {
+                    sawEOS = true
+                    videoBufferInfo.size = 0
+
+                } else {
+                    videoBufferInfo.presentationTimeUs = videoExtractor.getSampleTime()
+                    videoBufferInfo.flags = MediaCodec.BUFFER_FLAG_SYNC_FRAME
+                    muxer.writeSampleData(videoTrack, videoBuf, videoBufferInfo)
+                    videoExtractor.advance()
+
+                    frameCount++
+                }
+            }
+
+            var sawEOS2 = false
+            var frameCount2 = 0
+            while (!sawEOS2) {
+                frameCount2++
+
+                audioBufferInfo.offset = offset
+                audioBufferInfo.size = audioExtractor.readSampleData(audioBuf, offset)
+
+                if (videoBufferInfo.size < 0 || audioBufferInfo.size < 0) {
+                    sawEOS2 = true
+                    audioBufferInfo.size = 0
+                } else {
+                    audioBufferInfo.presentationTimeUs = audioExtractor.getSampleTime()
+                    audioBufferInfo.flags = MediaCodec.BUFFER_FLAG_SYNC_FRAME;
+                    muxer.writeSampleData(audioTrack, audioBuf, audioBufferInfo)
+                    audioExtractor.advance()
+                }
+            }
+
+            muxer.stop()
+            muxer.release()
+            binding.mergedVideo.setVideoPath(outputFile)
+
+        } catch (e: IOException) {
+            Timber.e(e)
+        } catch (e: Exception) {
+            Timber.e(e)
+        }
+
     }
 
     fun inviteFriends(waIntent: Intent) {
@@ -1508,16 +1524,9 @@ class ReadingFragmentWithoutFeedback :
     }
 
     fun playVideo() {
-        if (video.isNullOrEmpty().not()) {
-            viewModel.saveReadingPracticeImpression(
-                VIDEO_PLAYED_RP,
-                lessonID.toString()
-            )
-        }
         binding.playBtn.visibility = INVISIBLE
         binding.mergedVideo.start()
     }
-
     private fun gainAudioFocus() {
         val mAudioManager =
             context?.getSystemService(Context.AUDIO_SERVICE) as AudioManager?
@@ -1682,7 +1691,7 @@ class ReadingFragmentWithoutFeedback :
     }
 
     fun submitPractise() {
-        if (Utils.isInternetAvailable()) {
+        if(Utils.isInternetAvailable()) {
             MixPanelTracker.publishEvent(MixPanelEvent.READING_SUBMIT)
                 .addParam(ParamKeys.LESSON_ID, lessonID)
                 .push()
@@ -1748,12 +1757,6 @@ class ReadingFragmentWithoutFeedback :
                             disableSubmitButton()
                         }
                         // practiceViewModel.submitPractise(chatModel, requestEngage, engageType)
-                        if (video.isNullOrEmpty().not()) {
-                            viewModel.saveReadingPracticeImpression(
-                                SUBMIT_READING_VIDEO,
-                                lessonID.toString()
-                            )
-                        }
                         viewModel.getPointsForVocabAndReading(currentLessonQuestion!!.id)
                         viewModel.addTaskToService(requestEngage, PendingTask.READING_PRACTICE_OLD)
                         //TODO : Jugaad ko hataana hai
@@ -1767,7 +1770,8 @@ class ReadingFragmentWithoutFeedback :
                     }
                 }
             }
-        } else {
+        }
+        else{
             showToast(getString(R.string.internet_not_available_msz))
         }
     }
@@ -1875,40 +1879,4 @@ class ReadingFragmentWithoutFeedback :
                 }
         )
     }
-
-    private fun extractAudioFromVideo(filePath: String): String? {
-        try {
-            val cls = Class.forName("com.joshtalks.joshskills.dynamic.MuxerUtils")
-            cls.declaredMethods.forEach {
-                if (it.name == "extractAudioFromVideo") {
-                    it.isAccessible = true
-                    return it.invoke(cls.newInstance(), filePath) as String?
-                }
-            }
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-        }
-        return null
-    }
-
-    private fun startService(
-        videoDownPath: String,
-        audioPath: String
-    ) {
-        try {
-            Log.d(
-                TAG,
-                "startService() called with: videoDownPath = $videoDownPath, audioPath = $audioPath"
-            )
-            val cls = Class.forName("com.joshtalks.joshskills.dynamic.VideoMergeService")
-            Intent().setClassName(BuildConfig.APPLICATION_ID,cls.name).also {
-                it.putExtra("VIDEO_PATH",videoDownPath)
-                it.putExtra("AUDIO_PATH",audioPath)
-                ContextCompat.startForegroundService(requireActivity(),it)
-            }
-        } catch (e:Exception){
-            e.printStackTrace()
-        }
-    }
-
 }

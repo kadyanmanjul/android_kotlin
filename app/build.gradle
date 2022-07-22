@@ -56,7 +56,6 @@ android {
 
         renderscriptTargetApi 25
         renderscriptSupportModeEnabled true
-        ndk.abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86' ,'x86_64'
     }
 
     buildFeatures {
@@ -227,7 +226,7 @@ android {
             jniLibs.srcDirs = ['src/main/jniLibs']
         }
     }
-    dynamicFeatures = [':dynamic']
+    //dynamicFeatures = [':dynamic']
 }
 
 dependencies {
