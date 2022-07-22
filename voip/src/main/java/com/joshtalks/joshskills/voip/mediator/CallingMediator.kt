@@ -270,8 +270,6 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                         stateChannel.send(envelope)
                     }
                     UserAction.END_GAME -> {
-                        Log.d(TAG, " GAME observe:  UserAction.END_GAME")
-
                         val envelopeEndGame = Envelope(Event.STOP_GAME_RECORDING, data = ActionDirection.LOCAL)
                         stateChannel.send(envelopeEndGame)
                         val envelope = Envelope(Event.END_GAME, data = ActionDirection.SERVER)
@@ -526,14 +524,14 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
                         }
                         ServerConstants.END_GAME ->{
                             Log.d(TAG, " GAME observe: START GAME RECORDING ServerConstants  END_GAME")
-                            val envelopeEndGame = Envelope(Event.STOP_GAME_RECORDING, data = ActionDirection.LOCAL)
-                            stateChannel.send(envelopeEndGame)
-
                             val envelope = Envelope(
                                 Event.END_GAME,
                                 data = ActionDirection.LOCAL
                             )
                             stateChannel.send(envelope)
+
+                            val envelopeEndGame = Envelope(Event.STOP_GAME_RECORDING, data = ActionDirection.LOCAL)
+                            stateChannel.send(envelopeEndGame)
                         }
                         // Remote User Disconnected
                         ServerConstants.DISCONNECTED -> {
