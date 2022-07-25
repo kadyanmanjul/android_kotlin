@@ -9,9 +9,6 @@
             name="handler"
             type="com.joshtalks.badebhaiya.mediaPlayer.RecordedRoomFragment" />
 
-        <variable
-            name="viewModel"
-            type="com.joshtalks.badebhaiya.mediaPlayer.RecordedRoomViewModel" />
     </data>
 
     <com.joshtalks.badebhaiya.custom_ui.SingleViewTouchableMotionLayout
@@ -102,22 +99,6 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             android:visibility="visible" />
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/play"
-            android:layout_width="@dimen/_55sdp"
-            android:layout_height="@dimen/_55sdp"
-            android:layout_marginStart="@dimen/_130sdp"
-            android:layout_marginBottom="@dimen/_100sdp"
-            android:background="@drawable/state_background"
-            android:drawableStart="@drawable/ic_play"
-            android:backgroundTint="@color/da_grey"
-            android:drawablePadding="@dimen/_10sdp"
-            android:elevation="@dimen/_15sdp"
-            android:padding="@dimen/_13sdp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            android:visibility="gone" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/forward"

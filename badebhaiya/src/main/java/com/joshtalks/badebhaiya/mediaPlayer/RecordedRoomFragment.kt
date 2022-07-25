@@ -39,6 +39,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.viewModels
 import coil.compose.AsyncImage
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.joshtalks.badebhaiya.R
@@ -53,6 +54,7 @@ import com.joshtalks.badebhaiya.notifications.FirebaseNotificationService
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.utils.DEFAULT_NAME
 import com.joshtalks.badebhaiya.utils.setUserImageRectOrInitials
+import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.android.synthetic.main.fragment_record_room.*
 import kotlinx.android.synthetic.main.fragment_record_room.view.*
@@ -62,6 +64,7 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
+@AndroidEntryPoint
 class RecordedRoomFragment : Fragment() {
 
     companion object {
@@ -75,30 +78,30 @@ class RecordedRoomFragment : Fragment() {
         }
     }
 
-    private var mediaPlayer : MediaPlayer?=null
+//    private var mediaPlayer : MediaPlayer?=null
     private lateinit var recordingUrl:String
 
     lateinit var notificationManager: NotificationManager
 
-    private lateinit var viewModel: RecordedRoomViewModel
+    private val viewModel: RecordedRoomViewModel by viewModels()
     lateinit var binding: FragmentRecordRoomBinding
 
-    private val load by lazy {
-        CoroutineScope(Dispatchers.IO).launch{
-            mediaPlayer = MediaPlayer().apply {
-                setAudioAttributes(
-                    AudioAttributes.Builder()
-                        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                        .setUsage(AudioAttributes.USAGE_MEDIA)
-                        .build()
-                )
-            }
-            kotlin.runCatching {
-                mediaPlayer?.setDataSource(recordingUrl)
-                mediaPlayer?.prepare()
-            }
-        }
-    }
+//    private val load by lazy {
+//        CoroutineScope(Dispatchers.IO).launch{
+//            mediaPlayer = MediaPlayer().apply {
+//                setAudioAttributes(
+//                    AudioAttributes.Builder()
+//                        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+//                        .setUsage(AudioAttributes.USAGE_MEDIA)
+//                        .build()
+//                )
+//            }
+//            kotlin.runCatching {
+//                mediaPlayer?.setDataSource(recordingUrl)
+//                mediaPlayer?.prepare()
+//            }
+//        }
+//    }
 
     private val notificationChannelId="MediaOne"
     private var notificationChannelName = NotificationChannelNames.DEFAULT.type
@@ -107,7 +110,8 @@ class RecordedRoomFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding= DataBindingUtil.setContentView(requireActivity(), R.layout.fragment_record_room)
+
+        binding= FragmentRecordRoomBinding.inflate(inflater, container, false)
         clickListener()
 
         recordingUrl="https://s3.ap-south-1.amazonaws.com/www.staging.static.joshtalks.com/extra/conversationRooms/3076/e0e79c479247abebc6149f8918b57d02_c3ec44fa-7515-424f-bd02-d49dbaaf816a.m3u8"
@@ -124,9 +128,9 @@ class RecordedRoomFragment : Fragment() {
             )
         }
 
-        load.invokeOnCompletion {
-            binding.totalTime.text=convert(mediaPlayer!!.duration)
-        }
+//        load.invokeOnCompletion {
+//            binding.totalTime.text=convert(mediaPlayer!!.duration)
+//        }
         binding.userPhoto.apply {
             clipToOutline = true
             setUserImageRectOrInitials(
@@ -141,7 +145,7 @@ class RecordedRoomFragment : Fragment() {
         }
         trackRecordRoomState()
 
-        createChannel()
+//        createChannel()
         activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 activity?.run {
@@ -154,10 +158,10 @@ class RecordedRoomFragment : Fragment() {
 
         binding.seekbar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
             override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
-                if(p2 && load.isCompleted){
-                    mediaPlayer!!.seekTo(p1)
-                }
-                seekbar.getThumb().setAlpha(255)
+//                if(p2 && load.isCompleted){
+//                    mediaPlayer!!.seekTo(p1)
+//                }
+//                seekbar.getThumb().setAlpha(255)
             }
 
             override fun onStartTrackingTouch(p0: SeekBar?) {
@@ -181,7 +185,7 @@ class RecordedRoomFragment : Fragment() {
             "Bade"
         )
         val throu=MediaData(dummy,"https://s3.ap-south-1.amazonaws.com/www.staging.static.joshtalks.com/extra/conversationRooms/3076/e0e79c479247abebc6149f8918b57d02_c3ec44fa-7515-424f-bd02-d49dbaaf816a.m3u8","wvw","Rooom Name")
-        MediaNotification().mediaNotification(activity!!,throu)
+//        MediaNotification().mediaNotification(requireActivity(),throu)
 
         return inflater.inflate(R.layout.fragment_record_room, container, false)
 //        return ComposeView(requireContext()).apply {
@@ -213,9 +217,9 @@ class RecordedRoomFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        if(!load.isCompleted){
-            load
-        }
+//        if(!load.isCompleted){
+//            load
+//        }
 
     }
 
@@ -223,31 +227,31 @@ class RecordedRoomFragment : Fragment() {
 //         state = false
 //        binding.imgPlay.setImageResource(R.drawable.ic_baseline_pause_24)
 //        binding.progressBar.visibility = View.VISIBLE // to show loading till the prepare() is ready
-        load.invokeOnCompletion {// wait for prepare() to be ready
-            mediaPlayer?.start()
-//            runOnUiThread { // to update UI on the main thread
-//                binding.progressBar.visibility = View.GONE
-                binding.seekbar.progress = mediaPlayer?.currentPosition!!
-                binding.seekbar.max = mediaPlayer!!.duration
-                val handler = Handler(Looper.getMainLooper())
-                handler.postDelayed(object : Runnable { // to update the values of seekbar and curr time continually
-                    override fun run() {
-                        try {
-                            binding.seekbar.progress = mediaPlayer!!.currentPosition
-                            binding.currentTime.text = convert(binding.seekbar.progress)
-                            binding.totalTime.text=convert(mediaPlayer!!.duration)
-                            handler.postDelayed(this, 1000)
-                            if (mediaPlayer!!.isPlaying){
-                                binding.pause.setImageResource(R.drawable.ic_pause_icon)
-//                                state = true
-                            }
-                        } catch (e: Exception) {
-                            e.printStackTrace()
-                        }
-                    }
-                }, 0)
-//            }
-        }
+//        load.invokeOnCompletion {// wait for prepare() to be ready
+//            mediaPlayer?.start()
+////            runOnUiThread { // to update UI on the main thread
+////                binding.progressBar.visibility = View.GONE
+//                binding.seekbar.progress = mediaPlayer?.currentPosition!!
+//                binding.seekbar.max = mediaPlayer!!.duration
+//                val handler = Handler(Looper.getMainLooper())
+//                handler.postDelayed(object : Runnable { // to update the values of seekbar and curr time continually
+//                    override fun run() {
+//                        try {
+//                            binding.seekbar.progress = mediaPlayer!!.currentPosition
+//                            binding.currentTime.text = convert(binding.seekbar.progress)
+//                            binding.totalTime.text=convert(mediaPlayer!!.duration)
+//                            handler.postDelayed(this, 1000)
+//                            if (mediaPlayer!!.isPlaying){
+//                                binding.pause.setImageResource(R.drawable.ic_pause_icon)
+////                                state = true
+//                            }
+//                        } catch (e: Exception) {
+//                            e.printStackTrace()
+//                        }
+//                    }
+//                }, 0)
+////            }
+//        }
 
     }
 
@@ -324,13 +328,15 @@ class RecordedRoomFragment : Fragment() {
             }
 
             pause.setOnClickListener {
-                if(mediaPlayer?.isPlaying == true){
-                    mediaPlayer?.pause()
-                    binding.pause.setImageResource(R.drawable.ic_play)
-                }
-                else {
-                    play()
-                }
+
+                viewModel.playOrToggleSong()
+//                if(mediaPlayer?.isPlaying == true){
+//                    mediaPlayer?.pause()
+//                    binding.pause.setImageResource(R.drawable.ic_play)
+//                }
+//                else {
+//                    play()
+//                }
             }
 
 //            buttonContainer.setOnClickListener{
@@ -339,22 +345,22 @@ class RecordedRoomFragment : Fragment() {
 //            }
 
             backward.setOnClickListener {
-                if (load.isCompleted){
-                    val newTime = mediaPlayer!!.currentPosition - 15000
-                    if (newTime>0){
-                        mediaPlayer!!.seekTo(newTime)
-                    }else{
-                        mediaPlayer!!.seekTo(0)
-                    }
-                }
+//                if (load.isCompleted){
+//                    val newTime = mediaPlayer!!.currentPosition - 15000
+//                    if (newTime>0){
+//                        mediaPlayer!!.seekTo(newTime)
+//                    }else{
+//                        mediaPlayer!!.seekTo(0)
+//                    }
+//                }
             }
             forward.setOnClickListener {
-                if (load.isCompleted){
-                    val newTime = mediaPlayer!!.currentPosition + 15000
-                    if (newTime<mediaPlayer!!.duration){
-                        mediaPlayer!!.seekTo(newTime)
-                    }
-                }
+//                if (load.isCompleted){
+//                    val newTime = mediaPlayer!!.currentPosition + 15000
+//                    if (newTime<mediaPlayer!!.duration){
+//                        mediaPlayer!!.seekTo(newTime)
+//                    }
+//                }
             }
 
             buttonContainer.setOnClickListener{
@@ -363,123 +369,52 @@ class RecordedRoomFragment : Fragment() {
 
             leaveEndRoomBtn.setOnClickListener { expandLiveRoom() }
 
-            playbackSpeed.setOnClickListener {
-               if(playbackSpeed.text.toString()=="1x")
-               {
-                   playbackSpeed.text="1.25x"
-                   val params=mediaPlayer?.playbackParams
-                   params?.speed=1.25f
-               }
-                else if(playbackSpeed.text.toString()=="1.25x")
-                {
-                    playbackSpeed.text="1.5x"
-                    val params=mediaPlayer?.playbackParams
-                    params?.speed=1.5f
-                }
-                else if(playbackSpeed.text.toString()=="1.5x")
-                {
-                    playbackSpeed.text="1.75x"
-                    val params=mediaPlayer?.playbackParams
-                    params?.speed=1.75f
-                }
-                else if(playbackSpeed.text.toString()=="1.75x")
-                {
-                    playbackSpeed.text="2x"
-                    val params=mediaPlayer?.playbackParams
-                    params?.speed=2f
-                }
-                else
-               {
-                   playbackSpeed.text="1x"
-                   val params=mediaPlayer?.playbackParams
-                   params?.speed=1f
-               }
-            }
+//            playbackSpeed.setOnClickListener {
+//               if(playbackSpeed.text.toString()=="1x")
+//               {
+//                   playbackSpeed.text="1.25x"
+//                   val params=mediaPlayer?.playbackParams
+//                   params?.speed=1.25f
+//               }
+//                else if(playbackSpeed.text.toString()=="1.25x")
+//                {
+//                    playbackSpeed.text="1.5x"
+//                    val params=mediaPlayer?.playbackParams
+//                    params?.speed=1.5f
+//                }
+//                else if(playbackSpeed.text.toString()=="1.5x")
+//                {
+//                    playbackSpeed.text="1.75x"
+//                    val params=mediaPlayer?.playbackParams
+//                    params?.speed=1.75f
+//                }
+//                else if(playbackSpeed.text.toString()=="1.75x")
+//                {
+//                    playbackSpeed.text="2x"
+//                    val params=mediaPlayer?.playbackParams
+//                    params?.speed=2f
+//                }
+//                else
+//               {
+//                   playbackSpeed.text="1x"
+//                   val params=mediaPlayer?.playbackParams
+//                   params?.speed=1f
+//               }
+//            }
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        mediaPlayer?.pause()
-        mediaPlayer?.release()
-        mediaPlayer=null
+//        mediaPlayer?.pause()
+//        mediaPlayer?.release()
+//        mediaPlayer=null
     }
 
-
-    @Composable
-    fun SetupView() {
-        Timber.d("ELEMENT COMPOSABLE CREATED")
-        Box {
-            Column() {
-                Row{
-                    Image(
-                        painter = painterResource(R.drawable.ic_hallway_down_arrow),
-                        contentDescription = "downKey",
-                        Modifier
-                            .size(65.dp)
-                            .padding(20.dp),
-                    )
-                    Text(
-                        text = "All rooms",
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(20.dp),
-                        fontWeight = FontWeight.Bold,
-                        fontFamily =  NunitoSansFont,
-                        fontSize = 16.sp
-                    )
-                }
-                Spacer(modifier = Modifier.padding(10.dp))
-
-                Box(
-                    Modifier
-                ) {
-                    Column(
-                        Modifier
-                            .clip(
-                                RoundedCornerShape(
-                                    dimensionResource(id = R.dimen._30sdp),
-                                    dimensionResource(id = R.dimen._30sdp),
-                                    0.dp,
-                                    0.dp
-                                )
-                            )
-                            .background(Color.White)
-                            .fillMaxSize()
-                    ) {
-
-                        AsyncImage(
-                            model = "https://imageio.forbes.com/specials-images/imageserve/61688aa1d4a8658c3f4d8640/Antonio-Juliano/0x0.jpg?format=jpg&width=960",
-                            modifier = Modifier
-                                .size(382.dp)
-                                .padding(40.dp)
-                                .clip(RoundedCornerShape(dimensionResource(id = R.dimen._8sdp))),
-                            contentDescription = "Fan Profile Picture",
-                            contentScale = ContentScale.Crop
-                        )
-
-                        Spacer(modifier = Modifier.padding(20.dp))
-                        Image(
-                            painter = painterResource(R.drawable.ic_pause),
-                            contentDescription = "downKey",
-                            Modifier
-                                .size(65.dp)
-                                .padding(10.dp),
-                        )
-
-
-                    }
-                }
-            }
-        }
-
-
-
-    }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(RecordedRoomViewModel::class.java)
+//        viewModel = ViewModelProvider(this).get(RecordedRoomViewModel::class.java)
         addObserver()
         // TODO: Use the ViewModel
     }
