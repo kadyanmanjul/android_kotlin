@@ -27,36 +27,12 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/container"
+        setCallBackground='@{!vm.uiState.gameWord.equals("") &amp;&amp; vm.uiState.startGameClicked  ? true : false}'
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#0D5CB8"
         android:fitsSystemWindows="true"
-        android:orientation="vertical">
-
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/topic_viewpager"
-            setViewPagerAdapter="@{vm.uiState.topicImage}"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_margin="@dimen/_10sdp"
-            android:padding="@dimen/_5sdp"
-            app:layout_constraintBottom_toTopOf="@+id/bottom_card_view"
-            app:layout_constraintEnd_toStartOf="@+id/guideline5"
-            app:layout_constraintStart_toStartOf="@+id/guideline4"
-            app:layout_constraintTop_toBottomOf="@+id/topic_header" />
-
-        <androidx.appcompat.widget.AppCompatImageButton
-            android:id="@+id/next_topic_btn"
-            android:layout_width="@dimen/_30sdp"
-            android:layout_height="@dimen/_30sdp"
-            android:layout_margin="@dimen/_10sdp"
-            android:background="@drawable/circle2"
-            android:backgroundTint="@color/topic_btn_blue"
-            android:onClick="@{vm::getNewTopicImage}"
-            android:rotation="180"
-            app:layout_constraintBottom_toBottomOf="@+id/topic_viewpager"
-            app:layout_constraintEnd_toEndOf="@+id/topic_viewpager"
-            app:srcCompat="@drawable/ic_arrow_back" />
+        android:orientation="vertical"
+        tools:background="@color/p2p_call_background_color">
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tv_group_name"
@@ -82,7 +58,6 @@
             android:id="@+id/caller_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/_5sdp"
             android:gravity="center"
             android:text='@{vm.uiState.startTime &lt;= 0 ? "" :  vm.uiState.name}'
             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Normal"
@@ -93,6 +68,7 @@
             app:layout_constraintStart_toStartOf="@+id/guideline4"
             app:layout_constraintTop_toBottomOf="@id/c_image"
             app:layout_constraintVertical_bias="0.113"
+            android:layout_marginBottom="@dimen/_5sdp"
             tools:ignore="MissingPrefix"
             tools:text="User Name" />
 
@@ -105,18 +81,17 @@
             android:gravity="center"
             android:lines="2"
             android:text="@{vm.uiState.occupation}"
-            android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
             android:textColor="@color/white"
             android:textSize="@dimen/_14ssp"
+            android:textAlignment="center"
             android:visibility='@{vm.uiState.occupation.equals("")  ? View.GONE : View.VISIBLE}'
+            app:layout_constraintTop_toBottomOf="@+id/caller_name"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/caller_name"
             tools:ignore="MissingPrefix"
-            tools:text="Engineer, Dream - IAS Officer"
-            tools:visibility="gone" />
-
+            tools:visibility="gone"
+            tools:text="Engineer, Dream - IAS Officer" />
         <TextView
             android:id="@+id/call_time"
             android:layout_width="wrap_content"
@@ -143,64 +118,116 @@
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
             android:textColor="@color/white"
             android:visibility='@{vm.uiState.currentState.equals("Timer") ? View.VISIBLE : View.INVISIBLE}'
-            app:layout_constraintBottom_toTopOf="@id/record_call_cardview"
             app:layout_constraintEnd_toStartOf="@+id/guideline5"
             app:layout_constraintStart_toStartOf="@+id/guideline4"
             app:layout_constraintTop_toBottomOf="@id/occupation_future_goals"
             tools:ignore="MissingPrefix" />
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/record_call_cardview"
+
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="7.81dp"
-            android:layout_marginBottom="7.81dp"
-            android:visibility="gone"
-            app:cardCornerRadius="93dp"
-            app:layout_constraintBottom_toTopOf="@id/topic_header"
-            app:layout_constraintEnd_toEndOf="@+id/call_time1"
-            app:layout_constraintStart_toStartOf="@+id/call_time1"
-            app:layout_constraintTop_toBottomOf="@id/call_time1"
-            tools:visibility="gone">
+            app:layout_constraintBottom_toTopOf="@+id/bottom_card_view"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:id="@+id/play_game_group"
+            android:visibility="@{(vm.uiState.startTime &gt;= 0 &amp;&amp; vm.source != ConstantsKt.FROM_INCOMING_CALL) &amp;&amp; vm.isGameEnabled()  ? View.VISIBLE : View.GONE}"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/call_time1"
+            tools:visibility ="gone">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/black"
-                android:orientation="horizontal"
-                android:padding="10dp">
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/gues_game_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:lineSpacingMultiplier="1.5"
+                android:maxLines="1"
+                android:text="Guess The Word"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_16sdp"
+                android:textStyle="bold"
+                android:visibility="visible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="MissingPrefix" />
 
-                <ImageView
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
-                    android:src="@drawable/circle2" />
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/play_game_btn"
+                setPlayBtnBackground="@{vm.uiState.startGameClicked}"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_40sdp"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/ic_gradient_rect"
+                android:gravity="center"
+                android:onClick="@{vm::startGame}"
+                android:padding="@dimen/_12sdp"
+                android:text="PLAY GAME"
+                android:textAllCaps="true"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_12ssp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/gues_game_text" />
 
-                <TextView
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_13sdp"
+                android:gravity="center"
+                android:paddingHorizontal="@dimen/_68sdp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/play_game_btn">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/before_record_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="7.65dp"
-                    android:layout_marginRight="7.65dp"
-                    android:text="@{vm.uiState.recordCrdViewTxt}"
-                    android:textColor="@color/white"
-                    android:textSize="12sp"
-                    tools:text="Waiting for your partner to accept" />
-
-                <Chronometer
-                    android:id="@+id/call_time2"
-                    startTimer="@{vm.uiState.recordTime}"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:background="@drawable/ic_black_border_rectangle"
+                    android:drawableLeft="@drawable/ic_red_filled_circle"
+                    android:drawablePadding="@dimen/_4sdp"
                     android:gravity="center"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+                    android:lineSpacingMultiplier="1.5"
+                    android:paddingHorizontal="@dimen/_8sdp"
+                    android:text="Recording"
                     android:textColor="@color/white"
-                    android:textSize="12sp"
-                    android:visibility='@{vm.uiState.recordingButtonState == RecordingButtonState.RECORDING ? View.VISIBLE : View.GONE}'
+                    android:textSize="@dimen/_10sdp"
+                    android:visibility="@{vm.uiState.startGameClicked == true ? View.GONE : View.VISIBLE}"
+                    tools:ignore="MissingPrefix" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/before_record_text_right"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/before_record_text"
+                    android:gravity="center"
+                    android:lineSpacingMultiplier="1.5"
+                    android:text="@{vm.uiState.startGameClicked == false ? @string/recording_text : @string/recording_text_after}"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_10sdp"
+                    android:visibility="@{vm.uiState.startGameClicked == true ? View.GONE : View.VISIBLE}"
                     tools:ignore="MissingPrefix"
-                    tools:visibility="gone" />
+                    tools:text=" of the game will get" />
 
-            </LinearLayout>
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/before_record_text_below"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/before_record_text_right"
+                    android:gravity="center"
+                    android:lineSpacingMultiplier="1.5"
+                    android:paddingTop="@dimen/_2sdp"
+                    android:text='@{vm.uiState.startGameClicked == false ? " saved in your gallery" : "Waiting for your partner to start the game"}'
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_10sdp"
+                    android:visibility="visible"
+                    tools:ignore="MissingPrefix" />
+            </RelativeLayout>
 
-        </androidx.cardview.widget.CardView>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.Barrier
             android:id="@+id/barrier"
@@ -226,35 +253,21 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.026" />
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/topic_header"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/_16sdp"
-            android:gravity="center"
-            android:text="Discussion Topic"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Bold"
-            android:textColor="@color/white"
-            android:textStyle="bold"
-            android:visibility="visible"
-            app:layout_constraintEnd_toStartOf="@+id/guideline5"
-            app:layout_constraintStart_toStartOf="@+id/guideline4"
-            app:layout_constraintTop_toBottomOf="@+id/record_call_cardview" />
-
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/bottom_card_view"
             style="@style/CustomCardViewStyleNoBottomCorner"
-            setBottomCardBackground="@{vm.uiState.recordingButtonState != RecordingButtonState.RECORDING  ? false : true}"
+            setBottomCardBackground='@{!vm.uiState.gameWord.equals("") &amp;&amp; vm.uiState.startGameClicked ? true : false}'
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            tools:backgroundTint="@color/bottom_sheet_color">
+            tools:backgroundTint="@color/p2p_call_background_color">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:paddingBottom="@dimen/_10sdp">
 
                 <androidx.appcompat.widget.AppCompatImageButton
                     android:id="@+id/btn_action"
@@ -301,15 +314,14 @@
                     android:focusable="true"
                     android:onClick="@{vm::recordCall}"
                     android:padding="@dimen/_14sdp"
-                    android:visibility="@{(vm.uiState.isRecordingEnabled &amp;&amp; ((vm.uiState.recordButtonPressedTwoTimes &lt; 2))) || (vm.uiState.recordingButtonState == RecordingButtonState.RECORDING) ? View.VISIBLE : View.GONE }"
+                    android:visibility="gone"
                     app:imageResource="@{vm.uiState.recordBtnImg}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/btn_speaker"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    tools:src="@drawable/ic_rec_mic"
-                    tools:visibility="visible" />
+                    tools:src="@drawable/ic_rec_mic" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/text_record_call"
@@ -321,14 +333,13 @@
                     android:text="@{vm.uiState.recordBtnTxt}"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                     android:textColor="@color/white"
-                    android:visibility="@{(vm.uiState.isRecordingEnabled &amp;&amp; ((vm.uiState.recordButtonPressedTwoTimes &lt; 2))) || (vm.uiState.recordingButtonState == RecordingButtonState.RECORDING) ? View.VISIBLE : View.GONE }"
+                    android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="@+id/btn_record_call"
                     app:layout_constraintStart_toStartOf="@+id/btn_record_call"
                     app:layout_constraintTop_toBottomOf="@+id/btn_record_call"
                     tools:ignore="MissingPrefix"
-                    tools:text="Record"
-                    tools:visibility="visible" />
+                    tools:text="Record" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/txt_speaker"
@@ -400,8 +411,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.43"
-            tools:visibility="gone">
+            tools:visibility="gone"
+            app:layout_constraintVertical_bias="0.43">
 
             <com.google.android.material.progressindicator.CircularProgressIndicator
                 android:id="@+id/incoming_progress"
@@ -435,7 +446,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="@{vm.uiState.startTime &lt;= 0 &amp;&amp; vm.source == ConstantsKt.FROM_INCOMING_CALL ? View.INVISIBLE : View.VISIBLE }"
-            app:constraint_referenced_ids="topic_header, c_image, topic_viewpager, occupation_future_goals, next_topic_btn"
+            app:constraint_referenced_ids="occupation_future_goals"
             tools:visibility="visible" />
 
         <androidx.constraintlayout.widget.Guideline
@@ -454,22 +465,25 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/recording_ui"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:background="@color/black_quiz"
-            android:visibility="@{vm.uiState.recordingButtonState == RecordingButtonState.RECORDING  ? View.VISIBLE : View.GONE}"
+            android:visibility='@{vm.uiState.startGameClicked &amp;&amp; !vm.uiState.gameWord.equals("")  ? View.VISIBLE : View.GONE}'
+            app:layout_constraintBottom_toTopOf="@id/bottom_card_view"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            tools:visibility="visible">
+            android:elevation="1dp"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="gone">
 
             <LinearLayout
                 android:id="@+id/photo_frames_layout"
                 android:layout_width="0dp"
-                android:layout_height="@dimen/_300sdp"
+                android:layout_height="0dp"
                 android:baselineAligned="false"
-                android:gravity="center_vertical"
                 android:weightSum="2"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginBottom="@dimen/_40sdp"
+                app:layout_constraintBottom_toTopOf="@id/wrapper_game_card"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
@@ -484,8 +498,8 @@
                         setBackgroundForLocalUser="@{vm.uiState.startTime &lt;= 0 ? null : vm.uiState.localUserProfile}"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:scaleType="fitXY"
                         android:alpha="0.4"
+                        android:scaleType="fitXY"
                         android:src="@drawable/local_user_default_image" />
 
                     <FrameLayout
@@ -535,8 +549,8 @@
                         setBackgroundForRemoteUser="@{vm.uiState.startTime &lt;= 0 ? null : vm.uiState.profileImage}"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:scaleType="fitXY"
                         android:alpha="0.4"
+                        android:scaleType="fitXY"
                         android:src="@drawable/remote_user_image" />
 
                     <FrameLayout
@@ -580,14 +594,280 @@
 
             </LinearLayout>
 
+            <TextView
+                android:id="@+id/call_time3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@{vm.uiState.currentState}"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+                android:textColor="@color/white"
+                android:visibility='@{vm.uiState.gameWord != "" &amp;&amp; vm.uiState.startGameClicked &amp;&amp; !vm.uiState.currentState.equals("Timer") ? View.VISIBLE : View.GONE}'
+                app:layout_constraintBottom_toTopOf="@+id/wrapper_game_card"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/photo_frames_layout"
+                tools:ignore="MissingPrefix"
+                tools:text="" />
+
+            <Chronometer
+                android:id="@+id/call_time2"
+                startTimer="@{vm.uiState.startTime}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/_9sdp"
+                android:gravity="center"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_12ssp"
+                android:visibility='@{vm.uiState.gameWord != "" &amp;&amp; vm.uiState.startGameClicked &amp;&amp; vm.uiState.currentState.equals("Timer")  ? View.VISIBLE : View.GONE}'
+                app:layout_constraintBottom_toTopOf="@+id/wrapper_game_card"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/photo_frames_layout"
+                tools:ignore="MissingPrefix" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/wrapper_game_card"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/_5sdp"
+                app:layout_constraintBottom_toBottomOf="@+id/recording_ui"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/game_card"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/_16sdp"
+                    android:layout_marginVertical="@dimen/_5sdp"
+                    app:cardCornerRadius="@dimen/_5sdp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/record_call_game_card_view">
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/guess_the_word_text_view"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerHorizontal="true"
+                            android:layout_marginTop="@dimen/_14sdp"
+                            android:fontFamily="@font/open_sans"
+                            android:text="@string/guess_the_word"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/_16ssp"
+                            android:textStyle="bold"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/text_view_below_guess_the_word"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/guess_the_word_text_view"
+                            android:layout_marginTop="@dimen/_4sdp"
+                            android:fontFamily="@font/open_sans"
+                            android:paddingHorizontal="@dimen/_40sdp"
+                            android:gravity="center"
+                            android:text="@string/describe_your_word_without_saying_it_and_your_partner_will_guess_it"
+                            android:textAlignment="center"
+                            android:textColor="@color/purple_txt_color_p2p_game"
+                            android:textStyle="bold"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/guess_the_word_text_view" />
+
+                        <LinearLayout
+                            android:id="@+id/guess_the_word_linear_layout_p2p"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/text_view_below_guess_the_word"
+                            android:layout_centerHorizontal="true"
+                            android:layout_marginTop="@dimen/_14sdp"
+                            android:orientation="horizontal"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/text_view_below_guess_the_word"
+                            tools:layout_editor_absoluteY="255dp">
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical">
+
+                                <androidx.appcompat.widget.AppCompatTextView
+                                    android:id="@+id/text_view_your_word"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:text="@string/your_word"
+                                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Semi_Bold"
+                                    android:textColor="@color/white"
+                                    android:textSize="@dimen/_12ssp" />
+
+                                <androidx.appcompat.widget.AppCompatTextView
+                                    android:id="@+id/text_view_word_user_has_to_guess"
+                                    setColor="@{vm.uiState.wordColor}"
+                                    setWord="@{vm.uiState.gameWord}"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/open_sans"
+                                    android:textAlignment="center"
+                                    android:layout_gravity="center_horizontal"
+                                    android:textColor="@color/p2p_your_word_color_yellow"
+                                    android:textSize="@dimen/_14ssp"
+                                    android:textStyle="bold"
+                                    tools:text="SNAPCHAT" />
+
+                            </LinearLayout>
+
+                            <View
+                                android:layout_width="@dimen/_1sdp"
+                                android:layout_height="@dimen/_29sdp"
+                                android:layout_gravity="center_vertical"
+                                android:layout_marginLeft="@dimen/_22sdp"
+                                android:background="@android:color/darker_gray"
+                                android:backgroundTint="@color/white" />
+
+                            <LinearLayout
+                                android:id="@+id/linear_2"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="@dimen/_24sdp"
+                                android:orientation="vertical">
+
+                                <androidx.appcompat.widget.AppCompatTextView
+                                    android:id="@+id/text_view_your_word_2"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:text='@{String.format("%s %s",vm.uiState.name.concat("&apos;s"),"word")}'
+                                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Semi_Bold"
+                                    android:textColor="@color/white"
+                                    android:textSize="@dimen/_12ssp"
+                                    tools:text="Harsh" />
+
+                                <androidx.appcompat.widget.AppCompatTextView
+                                    android:id="@+id/text_view_word_user_has_to_guess_2"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_horizontal"
+                                    android:text="@string/stars"
+                                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Semi_Bold"
+                                    android:textColor="@color/white"
+                                    android:textSize="@dimen/_14ssp" />
+
+                            </LinearLayout>
+
+
+                        </LinearLayout>
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/constraintLayout3"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/guess_the_word_linear_layout_p2p"
+                            android:layout_marginTop="@dimen/_14sdp"
+                            android:orientation="horizontal"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/guess_the_word_linear_layout_p2p">
+
+                            <androidx.constraintlayout.widget.ConstraintLayout
+                                android:id="@+id/linearLayout3"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toStartOf="@+id/materialButton6"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent">
+
+                                <com.google.android.material.button.MaterialButton
+                                    android:id="@+id/materialButton3"
+                                    nextWordBtn="@{vm.uiState.nextWordClicked}"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_vertical"
+                                    android:layout_marginLeft="@dimen/_12sdp"
+                                    android:layout_marginRight="12dp"
+                                    android:layout_marginBottom="@dimen/_24sdp"
+                                    android:backgroundTint="@color/white"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    android:fontFamily="@font/open_sans_semibold"
+                                    android:onClick="@{vm::nextWord}"
+                                    android:paddingVertical="9dp"
+                                    android:stateListAnimator="@null"
+                                    android:text="Next Word"
+                                    android:textAllCaps="false"
+                                    android:textColor="@color/p2p_game_dark_purple"
+                                    android:textStyle="bold"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent" />
+
+                                <androidx.appcompat.widget.AppCompatTextView
+                                    android:id="@+id/next_word_wait_text"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_horizontal"
+                                    android:fontFamily="@font/open_sans"
+                                    android:text="@string/wait_for_your_partner_to_click_next"
+                                    android:textColor="@color/white"
+                                    android:textSize="@dimen/_9sdp"
+                                    android:visibility="@{vm.uiState.nextWordClicked ? View.VISIBLE : View.GONE}"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toBottomOf="@+id/materialButton3" />
+
+                            </androidx.constraintlayout.widget.ConstraintLayout>
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/materialButton6"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginRight="@dimen/_12sdp"
+                                android:backgroundTint="@color/p2p_game_dark_purple"
+                                android:fontFamily="@font/open_sans_semibold"
+                                android:onClick="@{vm::endGame}"
+                                android:paddingVertical="9dp"
+                                android:stateListAnimator="@null"
+                                android:text="End Game"
+                                android:textAllCaps="false"
+                                android:textColor="@color/p2p_game_call_recording_grey"
+                                android:textStyle="bold"
+                                app:cornerRadius="@dimen/_6sdp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintVertical_bias="0.0"
+                                app:strokeColor="@color/p2p_game_call_recording_grey"
+                                app:strokeWidth="@dimen/_1sdp" />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </androidx.cardview.widget.CardView>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
             <ImageView
                 android:id="@+id/progress_bar_anim"
+                loadGif="@{vm.uiState.startTime &lt;= 0 ? null : `https://s3.ap-south-1.amazonaws.com/www.static.skills.com/animation.gif`}"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:elevation="@dimen/_10sdp"
                 android:rotation="90"
                 android:visibility="visible"
-                loadGif="@{vm.uiState.startTime &lt;= 0 ? null : `https://s3.ap-south-1.amazonaws.com/www.static.skills.com/animation.gif`}"
                 app:layout_constraintBottom_toBottomOf="@+id/photo_frames_layout"
                 app:layout_constraintEnd_toEndOf="@+id/photo_frames_layout"
                 app:layout_constraintStart_toStartOf="@+id/photo_frames_layout"

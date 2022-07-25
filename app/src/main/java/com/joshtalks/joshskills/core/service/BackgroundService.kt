@@ -10,17 +10,14 @@ import android.content.Intent
 import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.gson.*
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.HeaderInterceptor
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.SERVER_TIME_OFFSET
-import com.joshtalks.joshskills.core.StatusCodeInterceptor
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.firestore.NotificationAnalytics
 import com.joshtalks.joshskills.core.firestore.NotificationAnalyticsRequest
-import com.joshtalks.joshskills.core.getStethoInterceptor
 import com.joshtalks.joshskills.core.notification.NotificationUtils
 import com.joshtalks.joshskills.repository.local.AppDatabase
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -28,6 +25,7 @@ import com.joshtalks.joshskills.repository.local.model.NotificationObject
 import com.joshtalks.joshskills.repository.service.UtilsAPIService
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.util.ReminderUtil
+import com.joshtalks.joshskills.util.showAppropriateMsg
 import java.lang.reflect.Type
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CoroutineScope
@@ -46,11 +44,11 @@ private const val CALL_TIMEOUT = 60L
 private const val WRITE_TIMEOUT = 30L
 private const val READ_TIMEOUT = 30L
 
-class BackgroundService : Service() {
+const val NOTIF_ID = 12301
+const val NOTIF_CHANNEL_ID = "12301"
+const val NOTIF_CHANNEL_NAME = "NOTIFICATION SERVICE"
 
-    private val NOTIF_ID = 12301
-    private val NOTIF_CHANNEL_ID = "12301"
-    private val NOTIF_CHANNEL_NAME = "NOTIFICATION SERVICE"
+class BackgroundService : Service() {
 
     lateinit var apiService: UtilsAPIService
 
@@ -75,16 +73,21 @@ class BackgroundService : Service() {
             .create()
     }
 
+    override fun onCreate() {
+        super.onCreate()
+        showNotification()
+    }
+
     override fun onBind(intent: Intent): IBinder? {
         return null
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        startForeground()
         initRetrofit()
+        ReminderUtil(this).deleteNotificationAlarms()
+        ReminderUtil(this).setAlarmNotificationWorker()
         pushAnalyticsToServer()
         fetchMissedNotifications()
-        ReminderUtil(this).setAlarmNotificationWorker()
         return START_STICKY
     }
 
@@ -131,23 +134,29 @@ class BackgroundService : Service() {
                     }
                 }
             } catch (e: Exception) {
-                e.printStackTrace()
+                e.showAppropriateMsg()
+                try {
+                    FirebaseCrashlytics.getInstance().recordException(e)
+                } catch (ex: Exception) {
+                    ex.printStackTrace()
+                }
             }
             stopForeground(true)
             stopSelf()
         }
     }
 
-    private fun startForeground() {
+    private fun showNotification() {
         val notificationIntent = Intent(this, InboxActivity::class.java)
 
         val pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0)
 
-        startForeground(BackgroundService().NOTIF_ID, buildNotification(pendingIntent))
+        startForeground(NOTIF_ID, buildNotification(pendingIntent))
     }
 
     private fun buildNotification(pendingIntent: PendingIntent): Notification {
-        val notificationBuilder = NotificationCompat.Builder(this, BackgroundService().NOTIF_CHANNEL_ID)
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationBuilder = NotificationCompat.Builder(this, NOTIF_CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_status_bar_notification)
                 .setOngoing(true)
                 .setAutoCancel(false)
@@ -159,9 +168,6 @@ class BackgroundService : Service() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             notificationBuilder.priority = NotificationManager.IMPORTANCE_LOW
         }
-
-        val notificationManager =
-            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val notificationChannel = NotificationChannel(
@@ -209,7 +215,12 @@ class BackgroundService : Service() {
                     }
                 }
             } catch (e: Exception) {
-                e.printStackTrace()
+                e.showAppropriateMsg()
+                try {
+                    FirebaseCrashlytics.getInstance().recordException(e)
+                } catch (ex: Exception) {
+                    ex.printStackTrace()
+                }
             }
         }
     }

@@ -196,6 +196,7 @@
                 <data
                     android:host="joshskills.app.com"
                     android:scheme="https" />
+                <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
@@ -223,7 +224,7 @@
             android:theme="@style/AppNoBarTheme" />
         <activity
             android:name=".ui.voip.new_arch.ui.views.IncomingNotificationActivity"
-            android:launchMode="singleTask"
+            android:launchMode="singleTop"
             android:showForAllUsers="true"
             android:showWhenLocked="true"
             android:turnScreenOn="true"
@@ -324,18 +325,6 @@
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/app_name" />
         <activity
-            android:name="com.facebook.CustomTabActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data android:scheme="@string/fb_login_protocol_scheme" />
-            </intent-filter>
-        </activity>
-        <activity
             android:name=".ui.signup.SignUpActivity"
             android:alwaysRetainTaskState="true"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
@@ -349,7 +338,8 @@
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.explore.CourseExploreActivity"
-            android:theme="@style/AppNoBarTheme">
+            android:theme="@style/AppNoBarTheme"
+            android:exported="true">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.explore.CourseExploreActivity" />
@@ -892,6 +882,10 @@
             android:name=".ui.voip.new_arch.ui.call_recording.ProcessCallRecordingService"
             android:enabled="true"
             android:exported="false" />
+<!--        <service-->
+<!--            android:name=".ui.inbox.extra.OnDemandFeatureDownloadService"-->
+<!--            android:enabled="true"-->
+<!--            android:exported="false" />-->
 
     </application>
     <queries>

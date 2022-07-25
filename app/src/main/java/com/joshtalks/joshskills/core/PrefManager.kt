@@ -138,6 +138,7 @@ const val PAID_COURSE_TEST_ID = "PAID_COURSE_TEST_ID"
 const val IS_FREE_TRIAL_CAMPAIGN_ACTIVE = "is_free_trial_campaign_active"
 const val IS_EFT_VARIENT_ENABLED = "is_eft_varient_enabled"
 const val IS_VOIP_NEW_ARCH_ENABLED = "is_voip_new_arch_enabled"
+const val IS_GROUP_FPP_NEW_ARCH_ENABLED = "is_fpp_group_new_arch_enabled"
 const val THRESHOLD_SPEED_IN_KBPS = "threshold_speed_in_kbps"
 const val SPEED_TEST_FILE_URL = "speed_test_file_url"
 const val SPEED_TEST_FILE_SIZE = "speed_test_file_size"
@@ -172,6 +173,12 @@ const val SPECIFIC_ONBOARDING = "SPECIFIC_ONBOARDING"
 const val IS_FIRST_TIME_FLOW_CERTI = "IS_FIRST_TIME_FLOW_CERTI"
 const val NOTIFICATION_STATUS_COUNT = "NOTIFICATION_STATUS_COUNT"
 const val NOTIFICATION_LAST_TIME_STATUS = "NOTIFICATION_LAST_TIME_STATUS"
+const val IS_CUSTOM_RATING_AND_REVIEW_DIALOG_SHOWN = "IS_CUSTOM_RATING_AND_REVIEW_DIALOG_SHOWN"
+const val ONE_WEEK_TIME_STAMP = "ONE_WEEK_TIME_STAMP" // Google in app review
+const val IS_CUSTOM_RATING_AND_REVIEW_DIALOG_SHOWN_BILKUL = "IS_CUSTOM_RATING_AND_REVIEW_DIALOG_SHOWN_BILKUL"
+const val IS_GAME_ON = "IS_GAME_ON"
+const val P2P_CALL_COUNT = "P2P_CALL_COUNT"
+
 
 object PrefManager {
 
@@ -344,6 +351,18 @@ object PrefManager {
         return gson.fromJson(json, UserRating::class.java)
     }
 
+    fun getCallCount(): Int {
+        return getIntValue(P2P_CALL_COUNT,defValue = 0)
+    }
+
+    fun increaseCallCount() {
+        val callCount = getCallCount()
+        if(callCount==3){
+            put(P2P_CALL_COUNT,0)
+        }else{
+            put(P2P_CALL_COUNT,callCount+1)
+        }
+    }
 
     fun getClientToken(): String {
         return BuildConfig.CLIENT_TOKEN

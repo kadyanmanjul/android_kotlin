@@ -185,6 +185,15 @@ internal class NotificationGenerator {
         NotificationManagerCompat.from(context!!).notify(notificationBuiltObj.id, notificationBuiltObj.notificationBuilder.build())
     }
 
+    fun searching(notificationBuiltObj: NotificationBuiltObj) {
+        notificationBuiltObj.notificationBuilder.setContentTitle("Connecting to Practice Partner")
+        notificationBuiltObj.notificationBuilder.setContentText("Connecting...")
+        notificationBuiltObj.notificationBuilder.setSilent(true)
+        notificationBuiltObj.notificationBuilder.setContentIntent(null)
+        notificationBuiltObj.notificationBuilder.setOnlyAlertOnce(true)
+        NotificationManagerCompat.from(context!!).notify(notificationBuiltObj.id, notificationBuiltObj.notificationBuilder.build())
+    }
+
     @SuppressLint("RestrictedApi")
     fun idle(notificationBuiltObj: NotificationBuiltObj, notificationData: Data) {
         notificationBuiltObj.notificationBuilder.setContentTitle(notificationData.title)

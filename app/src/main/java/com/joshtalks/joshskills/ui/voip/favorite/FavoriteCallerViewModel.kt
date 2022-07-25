@@ -1,29 +1,20 @@
 package com.joshtalks.joshskills.ui.voip.favorite
 
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.databinding.ObservableBoolean
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.base.BaseViewModel
-import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.Utils.isInternetAvailable
-import com.joshtalks.joshskills.core.checkPstnState
 import com.joshtalks.joshskills.core.pstn_states.PSTNState
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.entity.practise.FavoriteCaller
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.ui.fpp.constants.FAV_CLICK_ON_CALL
-import com.joshtalks.joshskills.ui.fpp.constants.FAV_CLICK_ON_PROFILE
-import com.joshtalks.joshskills.ui.fpp.constants.FAV_LIST_SCREEN_BACK_PRESSED
-import com.joshtalks.joshskills.ui.fpp.constants.FAV_USER_LONG_PRESS_CLICK
-import com.joshtalks.joshskills.ui.fpp.constants.OPEN_CALL_SCREEN
-import com.joshtalks.joshskills.ui.fpp.constants.OPEN_RECENT_SCREEN
-import com.joshtalks.joshskills.ui.fpp.constants.FINISH_ACTION_MODE
-import com.joshtalks.joshskills.ui.fpp.constants.SET_TEXT_ON_ENABLE_ACTION_MODE
-import com.joshtalks.joshskills.ui.fpp.constants.ENABLE_ACTION_MODE
+import com.joshtalks.joshskills.ui.fpp.constants.*
 import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.joshtalks.joshskills.ui.voip.favorite.adapter.FppFavoriteAdapter
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
@@ -44,6 +35,8 @@ class FavoriteCallerViewModel : BaseViewModel() {
     val isEmptyCardShow = ObservableBoolean(false)
     val dispatcher: CoroutineDispatcher by lazy { Dispatchers.Main }
     val deleteRecords: MutableSet<FavoriteCaller> = mutableSetOf()
+    var selectedUser: FavoriteCaller? = null
+
 
     fun getFavorites() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -113,11 +106,15 @@ class FavoriteCallerViewModel : BaseViewModel() {
                 if (list.isEmpty()) {
                     return@launch
                 }
-                val requestParams: HashMap<String, List<Int>> = HashMap()
-                requestParams["mentor_ids"] = list
-                val response = favoriteCallerRepository.removeUserFormFppLit(requestParams)
-                if (response.isSuccessful) {
-                    favoriteCallerDao.removeFromFavorite(list)
+                if (Utils.isInternetAvailable()){
+                    val requestParams: HashMap<String, List<Int>> = HashMap()
+                    requestParams["mentor_ids"] = list
+                    val response = favoriteCallerRepository.removeUserFormFppLit(requestParams)
+                    if (response.isSuccessful) {
+                        favoriteCallerDao.removeFromFavorite(list)
+                    }
+                }else{
+                    showToast("No Internet Connection")
                 }
             } catch (ex: Exception) {
                 ex.printStackTrace()
@@ -193,7 +190,15 @@ class FavoriteCallerViewModel : BaseViewModel() {
             return
         }
         if (WebRtcService.isCallOnGoing.value == false && AppObjectController.joshApplication.getVoipState() == State.IDLE) {
-            getCallOnGoing(favoriteCaller.mentorId, favoriteCaller.id)
+            Log.d("naa", "clickOnPhoneCall: ${favoriteCaller.mentorId}")
+            selectedUser = favoriteCaller
+            if (PrefManager.getIntValue(IS_GROUP_FPP_NEW_ARCH_ENABLED, defValue = 1) == 1) {
+                message.what = START_FPP_CALL
+                singleLiveEvent.value = message
+            }else{
+                getCallOnGoing(favoriteCaller.mentorId, favoriteCaller.id)
+            }
+
         } else {
             showToast(
                 "You can't place a new call while you're already in a call.",

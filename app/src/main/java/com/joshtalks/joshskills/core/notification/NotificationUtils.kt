@@ -9,6 +9,7 @@ import android.content.Intent
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
+import android.util.Log
 import android.os.Bundle
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
@@ -20,6 +21,7 @@ import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_INCOMING_CALL
 import com.joshtalks.joshskills.core.API_TOKEN
 import com.joshtalks.joshskills.core.ARG_PLACEHOLDER_URL
 import com.joshtalks.joshskills.core.AppObjectController
@@ -80,6 +82,8 @@ import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.joshtalks.joshskills.ui.voip.analytics.VoipAnalytics
 import com.joshtalks.joshskills.ui.voip.favorite.FavoriteListActivity
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
+import com.joshtalks.joshskills.voip.constant.*
+import com.joshtalks.joshskills.voip.data.CallingRemoteService
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.CallRecordingShare
 import com.joshtalks.joshskills.voip.constant.State
 import java.lang.reflect.Type
@@ -535,6 +539,50 @@ class NotificationUtils(val context: Context) {
                 }
                 return intent
             }
+            NotificationAction.ACTION_P2P_INCOMING_CALL -> {
+                try {
+                    val jsonObj = JSONObject(actionData ?: EMPTY)
+                    val callContext = context
+                    val remoteServiceIntent = Intent(callContext, CallingRemoteService::class.java)
+                remoteServiceIntent.putExtra(INCOMING_CALL_ID, jsonObj.getString(INCOMING_CALL_ID))
+                remoteServiceIntent.putExtra(INCOMING_CALL_CATEGORY,jsonObj.getString(INCOMING_CALL_CATEGORY))
+                remoteServiceIntent.action = SERVICE_ACTION_INCOMING_CALL
+                com.joshtalks.joshskills.voip.Utils.context?.startService(remoteServiceIntent)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+                return null
+            }
+            NotificationAction.ACTION_FPP_INCOMING_CALL -> {
+                try {
+                    val jsonObj = JSONObject(actionData ?: EMPTY)
+                    val callContext = context
+                    val remoteServiceIntent = Intent(callContext, CallingRemoteService::class.java)
+                    remoteServiceIntent.putExtra(INCOMING_CALL_ID, jsonObj.getString(INCOMING_CALL_ID))
+                    remoteServiceIntent.putExtra(INCOMING_CALL_CATEGORY, jsonObj.getString(INCOMING_CALL_CATEGORY))
+                    remoteServiceIntent.putExtra(REMOTE_USER_NAME, jsonObj.getString(REMOTE_USER_NAME))
+                    remoteServiceIntent.action = SERVICE_ACTION_INCOMING_CALL
+                    callContext.startService(remoteServiceIntent)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+                return null
+            }
+            NotificationAction.ACTION_GROUP_INCOMING_CALL -> {
+                try {
+                    val jsonObj = JSONObject(actionData ?: EMPTY)
+                    val callContext = context
+                    val remoteServiceIntent = Intent(callContext, CallingRemoteService::class.java)
+                    remoteServiceIntent.putExtra(INCOMING_CALL_ID, jsonObj.getString(INCOMING_CALL_ID))
+                    remoteServiceIntent.putExtra(INCOMING_CALL_CATEGORY, jsonObj.getString(INCOMING_CALL_CATEGORY))
+                    remoteServiceIntent.putExtra(INCOMING_GROUP_NAME, jsonObj.getString(INCOMING_GROUP_NAME))
+                    remoteServiceIntent.putExtra(INCOMING_GROUP_IMAGE, jsonObj.getString(INCOMING_GROUP_IMAGE))
+                    remoteServiceIntent.action = SERVICE_ACTION_INCOMING_CALL
+                    callContext.startService(remoteServiceIntent)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+                return null            }
             NotificationAction.CALL_RECORDING_NOTIFICATION -> {
                if (notificationObject.extraData.isNullOrBlank()){
                    return null

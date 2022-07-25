@@ -8,9 +8,19 @@ import androidx.lifecycle.lifecycleScope
 import com.facebook.share.internal.ShareConstants
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.play.core.review.ReviewManagerFactory
+import com.google.android.play.core.splitinstall.SplitInstallManagerFactory
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.ARG_PLACEHOLDER_URL
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.COURSE_ID
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
+import com.joshtalks.joshskills.core.IN_APP_REVIEW_COUNT
+import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_ENDED
+import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_STARTED
+import com.joshtalks.joshskills.core.PermissionUtils
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.WebRtcMiddlewareActivity
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
@@ -28,14 +38,12 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import kotlinx.android.synthetic.main.activity_inbox.*
-import kotlinx.android.synthetic.main.find_more_layout.*
+import java.lang.ref.WeakReference
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import java.lang.ref.WeakReference
 
 abstract class InboxBaseActivity :
     WebRtcMiddlewareActivity(),
@@ -54,11 +62,12 @@ abstract class InboxBaseActivity :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         activityRef = WeakReference(this)
-        addObserver()
+       // addObserver()
         lifecycleScope.launch(Dispatchers.IO) {
             versionResponse = VersionResponse.getInstance()
         }
         AppObjectController.isSettingUpdate = false
+        //defferInstallOnDemandModule()
     }
 
     override fun onStart() {
@@ -69,45 +78,52 @@ abstract class InboxBaseActivity :
         }
     }
 
-    private fun addObserver() {
-        lifecycleScope.launchWhenResumed {
-            viewModel.overAllWatchTime.collectLatest {
-                lifecycleScope.launch(Dispatchers.IO) {
-                    var reviewCount = PrefManager.getIntValue(IN_APP_REVIEW_COUNT)
-                    val reviewFrequency =
-                        AppObjectController.getFirebaseRemoteConfig()
-                            .getLong(FirebaseRemoteConfigKey.MINIMUM_TIME_TO_SHOW_REVIEW)
-                    when (reviewCount) {
-                        0 -> if (it > reviewFrequency) {
-                            showInAppReview()
-                            PrefManager.put(IN_APP_REVIEW_COUNT, ++reviewCount)
-                        }
-                        1 -> if (it > reviewFrequency * 2) {
-                            PrefManager.put(IN_APP_REVIEW_COUNT, ++reviewCount)
-                            showInAppReview()
-                        }
-                        2 -> if (it > reviewFrequency * 3) {
-                            PrefManager.put(IN_APP_REVIEW_COUNT, ++reviewCount)
-                            showInAppReview()
-                        }
-                    }
-                }
-            }
-        }
-    }
+//    private fun addObserver() {
+//        lifecycleScope.launchWhenResumed {
+//            viewModel.overAllWatchTime.collectLatest {
+//                lifecycleScope.launch(Dispatchers.IO) {
+//                    var reviewCount = PrefManager.getIntValue(IN_APP_REVIEW_COUNT)
+//                    val reviewFrequency =
+//                        AppObjectController.getFirebaseRemoteConfig()
+//                            .getLong(FirebaseRemoteConfigKey.MINIMUM_TIME_TO_SHOW_REVIEW)
+//                    when (reviewCount) {
+//                        0 -> if (it > reviewFrequency) {
+//                            showInAppReview()
+//                            PrefManager.put(IN_APP_REVIEW_COUNT, ++reviewCount)
+//                        }
+//                        1 -> if (it > reviewFrequency * 2) {
+//                            PrefManager.put(IN_APP_REVIEW_COUNT, ++reviewCount)
+//                            showInAppReview()
+//                        }
+//                        2 -> if (it > reviewFrequency * 3) {
+//                            PrefManager.put(IN_APP_REVIEW_COUNT, ++reviewCount)
+//                            showInAppReview()
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//    }
 
-    private fun showInAppReview() {
-        val manager = ReviewManagerFactory.create(applicationContext)
-        manager.requestReviewFlow().addOnCompleteListener { request ->
-            if (request.isSuccessful) {
-                val reviewInfo = request.result
-                manager.launchReviewFlow(this, reviewInfo).addOnCompleteListener { result ->
-                    println("result = [${result.isSuccessful}]")
-                    result.exception?.printStackTrace()
-                }
-            }
-        }
-    }
+//    private fun defferInstallOnDemandModule() {
+//        val manager = SplitInstallManagerFactory.create(this)
+//        if(manager.installedModules.contains(getString(R.string.dynamic_feature_title)) == false){
+//            OnDemandFeatureDownloadService.startOnDemandFeatureDownloadService(this, true)
+//        }
+//    }
+
+    //    private fun showInAppReview() {
+//        val manager = ReviewManagerFactory.create(applicationContext)
+//        manager.requestReviewFlow().addOnCompleteListener { request ->
+//            if (request.isSuccessful) {
+//                val reviewInfo = request.result
+//                manager.launchReviewFlow(this, reviewInfo).addOnCompleteListener { result ->
+//                    println("result = [${result.isSuccessful}]")
+//                    result.exception?.printStackTrace()
+//                }
+//            }
+//        }
+//    }
 
     protected fun initNewUserTip() {
         lifecycleScope.launchWhenStarted {

@@ -81,7 +81,7 @@ class GroupSearchViewModel : BaseViewModel() {
 
     private fun setQueryListener() {
         viewModelScope.launch {
-            query.debounce(300)
+            query.debounce(500)
                 .distinctUntilChanged()
                 .flowOn(Dispatchers.Main)
                 .collect {

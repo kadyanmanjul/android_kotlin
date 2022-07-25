@@ -9,20 +9,13 @@ import com.joshtalks.joshskills.voip.communication.model.ChannelData
 import com.joshtalks.joshskills.voip.communication.model.NetworkAction
 import com.joshtalks.joshskills.voip.communication.model.Timeout
 import com.joshtalks.joshskills.voip.communication.model.UserAction
+import com.joshtalks.joshskills.voip.constant.Category
 import com.joshtalks.joshskills.voip.constant.Event
-import com.joshtalks.joshskills.voip.constant.Event.RECEIVED_CHANNEL_DATA
-import com.joshtalks.joshskills.voip.constant.Event.REMOTE_USER_DISCONNECTED_AGORA
-import com.joshtalks.joshskills.voip.constant.Event.REMOTE_USER_DISCONNECTED_MESSAGE
-import com.joshtalks.joshskills.voip.constant.Event.REMOTE_USER_DISCONNECTED_USER_LEFT
-import com.joshtalks.joshskills.voip.constant.Event.SYNC_UI_STATE
-import com.joshtalks.joshskills.voip.constant.Event.TOPIC_IMAGE_RECEIVED
+import com.joshtalks.joshskills.voip.constant.Event.*
 import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.UIState
 import com.joshtalks.joshskills.voip.data.local.PrefManager
-import com.joshtalks.joshskills.voip.mediator.CallDirection
-import com.joshtalks.joshskills.voip.mediator.Calling
-import com.joshtalks.joshskills.voip.mediator.PER_USER_TIMEOUT_IN_MILLIS
-import com.joshtalks.joshskills.voip.mediator.PeerToPeerCalling
+import com.joshtalks.joshskills.voip.mediator.*
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.EventName
 import java.net.SocketTimeoutException
@@ -72,7 +65,21 @@ class SearchingState(val context: CallContext) : VoipState {
             }
         }
     }
-    private val calling by lazy<Calling> { PeerToPeerCalling() }
+    private val favTimeoutTimer by lazy {
+        scope.launch(start = CoroutineStart.LAZY) {
+            try {
+                ensureActive()
+                delay(FAV_USER_TIMEOUT_IN_MILLIS)
+                disconnectNoUserFound()
+                cleanUpState()
+            } catch (e: Exception) {
+                if (e is CancellationException)
+                    throw e
+                e.printStackTrace()
+            }
+        }
+    }
+
     private val apiCallJob by lazy {
         scope.launch(start = CoroutineStart.LAZY) {
             try {
@@ -83,8 +90,8 @@ class SearchingState(val context: CallContext) : VoipState {
                     agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
                 )
                 if (context.isRetrying) {
-                    context.request[INTENT_DATA_PREVIOUS_CALL_ID] =
-                        context.channelData.getCallingId()
+
+                    context.request[INTENT_DATA_PREVIOUS_CALL_ID]= context.channelData.getCallingId()
                     CallAnalytics.addAnalytics(
                         event = EventName.NEXT_CHANNEL_REQUESTED,
                         agoraCallId = context.channelData.getCallingId().toString(),
@@ -92,7 +99,7 @@ class SearchingState(val context: CallContext) : VoipState {
                         extra = TAG
                     )
                 }
-                calling.onPreCallConnect(context.request, context.direction)
+                context.getCallCategory().onPreCallConnect(context.request, context.direction)
                 ensureActive()
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -129,8 +136,10 @@ class SearchingState(val context: CallContext) : VoipState {
          5. Cancel timeout timer  (Just to make sure if last timer didn't canceled)
          6. Checking is Incoming Call
          7. If its outgoing Call then start timeout timer*/
-        if (context.direction == CallDirection.OUTGOING)
+        if (context.direction == CallDirection.OUTGOING && context.callType != Category.FPP)
             timeoutTimer.start()
+        else if(context.callType == Category.FPP)
+            favTimeoutTimer.start()
         apiCallJob.start()
     }
 
@@ -179,8 +188,12 @@ class SearchingState(val context: CallContext) : VoipState {
     }
 
     private fun sendDataToServer() {
-        if (context.direction == CallDirection.OUTGOING)
-            timeoutTimer.cancel()
+        if (context.direction == CallDirection.OUTGOING) {
+            if(context.callType == Category.FPP)
+            favTimeoutTimer.cancel()
+            else
+                timeoutTimer.cancel()
+        }
         val networkAction = NetworkAction(
             channelName = "",
             uid = 0,
@@ -226,8 +239,12 @@ class SearchingState(val context: CallContext) : VoipState {
                                 isRecordingEnabled = context.channelData.isCallRecordingEnabled()
                             )
                             context.updateUIState(uiState)
-                            if (context.direction == CallDirection.OUTGOING)
-                                timeoutTimer.cancel()
+                            if (context.direction == CallDirection.OUTGOING) {
+                                if(context.callType == Category.FPP)
+                                favTimeoutTimer.cancel()
+                                else
+                                    timeoutTimer.cancel()
+                            }
                             ensureActive()
                             PrefManager.setVoipState(State.JOINING)
                             context.state = JoiningState(context)
@@ -237,7 +254,7 @@ class SearchingState(val context: CallContext) : VoipState {
                         TOPIC_IMAGE_RECEIVED, SYNC_UI_STATE, REMOTE_USER_DISCONNECTED_MESSAGE,
                         REMOTE_USER_DISCONNECTED_AGORA, REMOTE_USER_DISCONNECTED_USER_LEFT,
                         Event.START_RECORDING, Event.STOP_RECORDING, Event.CALL_RECORDING_ACCEPT,
-                        Event.CALL_RECORDING_REJECT, Event.CANCEL_RECORDING_REQUEST  -> {
+                        Event.CALL_RECORDING_REJECT, Event.CANCEL_RECORDING_REQUEST,START_GAME,END_GAME,NEXT_WORD_RECEIVED,NEXT_WORD_REQUEST  -> {
 
                             val msg =
                                 "Ignoring : In $TAG but received ${event.type} expected $RECEIVED_CHANNEL_DATA"

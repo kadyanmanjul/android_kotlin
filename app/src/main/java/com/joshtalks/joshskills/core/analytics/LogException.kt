@@ -7,21 +7,28 @@ import timber.log.Timber
 object LogException {
 
     fun catchException(throwable: Throwable) {
-        if (BuildConfig.DEBUG) {
-            Timber.e(throwable)
-            throwable.printStackTrace()
+        try {
+            if (BuildConfig.DEBUG) {
+                Timber.e(throwable)
+                throwable.printStackTrace()
+            }
+            //  NewRelic.recordHandledException(throwable as Exception)
+            FirebaseCrashlytics.getInstance().recordException(throwable)
+        }catch (ex:Exception){
+
         }
-      //  NewRelic.recordHandledException(throwable as Exception)
-        FirebaseCrashlytics.getInstance().recordException(throwable)
     }
 
     fun catchError(tag: ErrorTag, error: String) {
-        if (BuildConfig.DEBUG) {
-           //return
-        }
-        // NewRelic.recordCustomEvent(tag.name, mutableMapOf())
-        FirebaseCrashlytics.getInstance().log("(" + tag.NAME + ") - " + error)
+        try {
+            if (BuildConfig.DEBUG) {
+                //return
+            }
+            // NewRelic.recordCustomEvent(tag.name, mutableMapOf())
+            FirebaseCrashlytics.getInstance().log("(" + tag.NAME + ") - " + error)
+        }catch (ex:Exception){
 
+        }
     }
 }
 

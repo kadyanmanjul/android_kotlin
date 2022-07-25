@@ -26,10 +26,7 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.airbnb.lottie.LottieCompositionFactory
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.base.constants.FROM_ACTIVITY
-import com.joshtalks.joshskills.base.constants.INTENT_DATA_COURSE_ID
-import com.joshtalks.joshskills.base.constants.INTENT_DATA_TOPIC_ID
-import com.joshtalks.joshskills.base.constants.STARTING_POINT
+import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
@@ -61,6 +58,7 @@ import com.joshtalks.joshskills.ui.voip.favorite.FavoriteListActivity
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.voipLog
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity
+import com.joshtalks.joshskills.voip.constant.Category
 import com.joshtalks.joshskills.voip.constant.State
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -175,8 +173,14 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         //checkForVoipState()
     }
 
-    private fun getVoipState(): State {
-        return requireActivity().getVoipState()
+    private fun getVoipState(): State? {
+        try {
+            return requireActivity().getVoipState()
+        }catch (ex:java.lang.Exception){
+            showToast("Please retry again later")
+            ex.printStackTrace()
+        }
+        return null
     }
 
     override fun onStop() {
@@ -235,6 +239,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                 .addParam(ParamKeys.LESSON_NUMBER, lessonNo)
                 .addParam(ParamKeys.VIA, "speaking screen")
                 .push()
+
             if (PrefManager.getIntValue(IS_VOIP_NEW_ARCH_ENABLED, defValue = 1) == 1) {
                 val state = getVoipState()
                 Log.d(TAG, " Start Call Button - Voip State $state")
@@ -701,62 +706,66 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
     private fun startPractise(
         favoriteUserCall: Boolean = false,
         isNewUserCall: Boolean = false,
-        isNewArch: Boolean = false,
+        isNewArch: Boolean = true,
     ) {
         PrefManager.put(CALL_BTN_CLICKED, true)
-        if (PermissionUtils.isCallingPermissionEnabled(requireContext())) {
-            if (isNewArch) {
-                startPracticeCall()
-                return
-            } else {
-                startPractiseSearchScreen(
-                    favoriteUserCall = favoriteUserCall,
-                    isNewUserCall = isNewUserCall
-                )
-                return
-            }
+        if (isAdded && activity != null) {
+            if (PermissionUtils.isCallingPermissionEnabled(requireContext())) {
+                if (isNewArch) {
+                    startPracticeCall()
+                    return
+                } else {
+                    startPractiseSearchScreen(
+                        favoriteUserCall = favoriteUserCall,
+                        isNewUserCall = isNewUserCall
+                    )
+                    return
+                }
 
+            }
         }
-        PermissionUtils.callingFeaturePermission(
-            requireActivity(),
-            object : MultiplePermissionsListener {
-                override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
-                    report?.areAllPermissionsGranted()?.let { flag ->
-                        if (report.isAnyPermissionPermanentlyDenied) {
-                            PermissionUtils.callingPermissionPermanentlyDeniedDialog(
-                                requireActivity(),
-                                message = R.string.call_start_permission_message
-                            )
-                            return
-                        }
-                        if (flag) {
-                            if (isNewArch) {
-                                startPracticeCall()
-                                return
-                            } else {
-                                startPractiseSearchScreen(
-                                    favoriteUserCall = favoriteUserCall,
-                                    isNewUserCall = isNewUserCall
+        if (isAdded && activity != null) {
+            PermissionUtils.callingFeaturePermission(
+                requireActivity(),
+                object : MultiplePermissionsListener {
+                    override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                        report?.areAllPermissionsGranted()?.let { flag ->
+                            if (report.isAnyPermissionPermanentlyDenied) {
+                                PermissionUtils.callingPermissionPermanentlyDeniedDialog(
+                                    requireActivity(),
+                                    message = R.string.call_start_permission_message
                                 )
                                 return
                             }
-                        } else {
-                            MaterialDialog(requireActivity()).show {
-                                message(R.string.call_start_permission_message)
-                                positiveButton(R.string.ok)
+                            if (flag) {
+                                if (isNewArch) {
+                                    startPracticeCall()
+                                    return
+                                } else {
+                                    startPractiseSearchScreen(
+                                        favoriteUserCall = favoriteUserCall,
+                                        isNewUserCall = isNewUserCall
+                                    )
+                                    return
+                                }
+                            } else {
+                                MaterialDialog(requireActivity()).show {
+                                    message(R.string.call_start_permission_message)
+                                    positiveButton(R.string.ok)
+                                }
                             }
                         }
                     }
-                }
 
-                override fun onPermissionRationaleShouldBeShown(
-                    permissions: MutableList<PermissionRequest>?,
-                    token: PermissionToken?,
-                ) {
-                    token?.continuePermissionRequest()
+                    override fun onPermissionRationaleShouldBeShown(
+                        permissions: MutableList<PermissionRequest>?,
+                        token: PermissionToken?,
+                    ) {
+                        token?.continuePermissionRequest()
+                    }
                 }
-            }
-        )
+            )
+        }
     }
 
     private fun startPractiseSearchScreen(
@@ -781,21 +790,25 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
     }
 
     fun openNetworkDialog(v:View){
-        val dialog = AlertDialog.Builder(context)
-        dialog
-            .setMessage(getString(R.string.network_message))
-            .setPositiveButton("GOT IT")
-            { dialog, _ -> dialog.dismiss() }.show()
+        if (isAdded && activity != null) {
+            val dialog = AlertDialog.Builder(context)
+            dialog
+                .setMessage(getString(R.string.network_message))
+                .setPositiveButton("GOT IT")
+                { dialog, _ -> dialog.dismiss() }.show()
+        }
     }
 
     fun openRatingDialog(v:View){
-        val rating=7
-        val dialog = AlertDialog.Builder(context)
-        dialog
-            .setTitle(getString(R.string.rating_title,rating.toString()))
-            .setMessage(getString(R.string.rating_message))
-            .setPositiveButton("GOT IT")
-            { dialog, _ -> dialog.dismiss() }.show()
+        if (isAdded && activity != null) {
+            val rating = 7
+            val dialog = AlertDialog.Builder(context)
+            dialog
+                .setTitle(getString(R.string.rating_title, rating.toString()))
+                .setMessage(getString(R.string.rating_message))
+                .setPositiveButton("GOT IT")
+                { dialog, _ -> dialog.dismiss() }.show()
+        }
     }
 
     fun animateButton() {
@@ -809,14 +822,20 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
     }
 
     private fun startPracticeCall() {
-        val callIntent = Intent(requireContext(), VoiceCallActivity::class.java)
-        callIntent.apply {
-            putExtra(INTENT_DATA_COURSE_ID, courseId)
-            putExtra(INTENT_DATA_TOPIC_ID, topicId)
-            putExtra(STARTING_POINT, FROM_ACTIVITY)
+        if (isAdded && activity!=null) {
+            PrefManager.increaseCallCount()
+            if(PrefManager.getCallCount()==3)
+                viewModel.getRating()
+
+            val callIntent = Intent(requireActivity(), VoiceCallActivity::class.java)
+            callIntent.apply {
+                putExtra(INTENT_DATA_COURSE_ID, courseId)
+                putExtra(INTENT_DATA_TOPIC_ID, topicId)
+                putExtra(STARTING_POINT, FROM_ACTIVITY)
+                putExtra(INTENT_DATA_CALL_CATEGORY, Category.PEER_TO_PEER.ordinal)
+            }
+             startActivity(callIntent)
         }
-        voipLog?.log("Course ID --> $courseId   Topic ID --> $topicId")
-        startActivity(callIntent)
     }
 
     fun showSeniorStudentScreen() {

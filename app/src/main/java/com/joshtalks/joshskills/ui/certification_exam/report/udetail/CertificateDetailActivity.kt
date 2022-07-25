@@ -212,7 +212,7 @@ class CertificateDetailActivity : BaseActivity(), FileDownloadCallback {
         lifecycleScope.launchWhenCreated {
             viewModel.certificateUrl.collectLatest {
                 dismissProgressDialog()
-                openCertificateShareFragment(it)
+                openCertificateShareFragment(it?: EMPTY)
             }
         }
 
@@ -227,7 +227,9 @@ class CertificateDetailActivity : BaseActivity(), FileDownloadCallback {
                     binding.etName.setText(it.fullName)
                     binding.etName.requestFocus()
                     binding.etName.setSelection(it.fullName?.length ?: 0)
-                    it.pinCode?.let { it1 -> binding.etPinCode.setText(it1.toString()) }
+                    if(it.pinCode.toString().length == 6 ){
+                        binding.etPinCode.setText(it.toString())
+                    }
                     binding.etHouseNum.setText(it.houseNumber)
                     binding.etRoadNameColony.setText(it.roadName)
                     binding.etLandmark.setText(it.landmark)
@@ -451,14 +453,21 @@ class CertificateDetailActivity : BaseActivity(), FileDownloadCallback {
             }
         }
     }
-
-    private fun openCertificateShareFragment(url: String) {
-        supportFragmentManager.commit {
-            setReorderingAllowed(true)
-            val fragment = viewModel.certificateExamId?.let { CertificateShareFragment.newInstance(url, certificateExamId = it) }
-            if (fragment != null) {
-                replace(R.id.container_frame, fragment, CERTIFICATE_SHARE_FRAGMENT)
+    private fun openCertificateShareFragment(url: String?) {
+        try {
+            if (url.isNullOrEmpty()){
+                showToast(getString(R.string.something_went_wrong))
+                return
             }
+            supportFragmentManager.commit {
+                setReorderingAllowed(true)
+                val fragment = viewModel.certificateExamId?.let { CertificateShareFragment.newInstance(url?: EMPTY, certificateExamId = it) }
+                if (fragment != null) {
+                    replace(R.id.container_frame, fragment, CERTIFICATE_SHARE_FRAGMENT)
+                }
+            }
+        }catch (ex:Exception){
+            ex.printStackTrace()
         }
     }
 

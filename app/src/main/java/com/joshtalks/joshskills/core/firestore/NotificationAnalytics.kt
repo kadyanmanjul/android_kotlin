@@ -1,18 +1,20 @@
 package com.joshtalks.joshskills.core.firestore
 
 import android.content.Context
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.gson.reflect.TypeToken
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.SERVER_TIME_OFFSET
+import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.notification.NotificationUtils
 import com.joshtalks.joshskills.core.notification.model.NotificationEvent
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.NotificationObject
+import com.joshtalks.joshskills.util.showAppropriateMsg
 import retrofit2.HttpException
 import timber.log.Timber
 import java.lang.reflect.Type
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 
 private const val TAG = "NotificationAnalytics"
 
@@ -22,29 +24,34 @@ class NotificationAnalytics {
     }
 
     suspend fun addAnalytics(notificationId: String, mEvent: Action, channel: Channel?): Boolean {
-        Timber.tag(TAG).d("addAnalytics() called with: notificationId = $notificationId, mEvent = $mEvent, channel = $channel")
-        var result = true
-        var event = mEvent
-        var platformChannel = channel?.action?: EMPTY
-        val notification = getNotification(notificationId)
-        if (notification != null && notification.isNotEmpty()) {
-            if (event == Action.DISCARDED || event == Action.CLICKED) {
-                notification.filter { it.action == Action.RECEIVED.action }[0].platform?.let {
-                    platformChannel = it
+        try {
+            Timber.tag(TAG).d("addAnalytics() called with: notificationId = $notificationId, mEvent = $mEvent, channel = $channel")
+            var result = true
+            var event = mEvent
+            var platformChannel = channel?.action?: EMPTY
+            val notification = getNotification(notificationId)
+            if (notification != null && notification.isNotEmpty()) {
+                if (event == Action.DISCARDED || event == Action.CLICKED) {
+                    notification.filter { it.action == Action.RECEIVED.action }[0].platform?.let {
+                        platformChannel = it
+                    }
+                } else if (event == Action.RECEIVED) {
+                    event = Action.APP_DISCARDED
                 }
-            } else if (event == Action.RECEIVED) {
-                event = Action.APP_DISCARDED
+                result = false
             }
-            result = false
+            val notificationEvent = NotificationEvent(
+                action = event.action,
+                time_stamp = System.currentTimeMillis(),
+                platform = platformChannel,
+                id = notificationId
+            )
+            pushAnalytics(notificationEvent)
+            return result
+        }catch (ex:Exception){
+            ex.printStackTrace()
+            return false
         }
-        val notificationEvent = NotificationEvent(
-            action = event.action,
-            time_stamp = System.currentTimeMillis(),
-            platform = platformChannel,
-            id = notificationId
-        )
-        pushAnalytics(notificationEvent)
-        return result
     }
 
     suspend fun addAnalytics(notificationId: String, mEvent: Action, channel: String) {
@@ -95,7 +102,12 @@ class NotificationAnalytics {
             }
             return true
         } catch (ex: Exception) {
-            ex.printStackTrace()
+            ex.showAppropriateMsg()
+            try {
+                FirebaseCrashlytics.getInstance().recordException(ex)
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
             return false
         }
     }
@@ -122,7 +134,12 @@ class NotificationAnalytics {
                 }
             }
         } catch (e: Exception) {
-            e.printStackTrace()
+            e.showAppropriateMsg()
+            try {
+                FirebaseCrashlytics.getInstance().recordException(e)
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
         }
     }
 

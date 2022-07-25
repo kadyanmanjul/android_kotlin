@@ -16,7 +16,13 @@ data class Message(
 	private val timeToken: Long? = null,
 
 	@field:SerializedName("msg_data")
-     private val msgData: String? = null
+     private val msgData: String? = null,
+
+	@field:SerializedName("word")
+     private val word: String? = null,
+
+     @field:SerializedName("color")
+	private val wordColor: String? = null,
 
 ) : MessageData {
 
@@ -27,6 +33,8 @@ data class Message(
 				type = map?.get("type")?.toString()?.toInt(),
 				timeToken = map?.get("timetoken")?.toString()?.toLong(),
 				msgData = map?.get("msg_data")?.toString(),
+				word = map?.get("word")?.toString(),
+				wordColor = map?.get("color")?.toString(),
 				)
 		}
 	}
@@ -45,5 +53,13 @@ data class Message(
 
 	override fun getMsgData(): String {
 		return msgData ?: ""
+	}
+
+	override fun getWord(): String {
+		return word ?: ""
+	}
+
+	override fun getWordColor(): String {
+		return wordColor ?: ""
 	}
 }

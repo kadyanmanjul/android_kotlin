@@ -404,9 +404,11 @@ class AppObjectController {
                     try {
                         val resp = p2pNetworkService.getVoipNewArchFlag()
                         PrefManager.put(IS_VOIP_NEW_ARCH_ENABLED, resp.status ?: 1)
+                        PrefManager.put(IS_GROUP_FPP_NEW_ARCH_ENABLED, resp.groupFppStatus ?: 1)
                         PrefManager.put(SPEED_TEST_FILE_URL, resp.speedTestFile ?: "https://s3.ap-south-1.amazonaws.com/www.static.skills.com/speed_test.jpg")
                         PrefManager.put(THRESHOLD_SPEED_IN_KBPS, resp.thresholdSpeed ?: 128)
                         PrefManager.put(SPEED_TEST_FILE_SIZE, resp.testFileSize ?: 100)
+                        PrefManager.put(IS_GAME_ON, resp.isGameOn ?: 1)
                     } catch (ex: Exception) {
                         when (ex) {
                             is HttpException -> {
@@ -416,7 +418,11 @@ class AppObjectController {
                                 showToast(joshApplication.getString(R.string.internet_not_available_msz))
                             }
                             else -> {
-                                FirebaseCrashlytics.getInstance().recordException(ex)
+                                try {
+                                    FirebaseCrashlytics.getInstance().recordException(ex)
+                                }catch (ex:Exception){
+                                    ex.printStackTrace()
+                                }
                             }
                         }
                     }

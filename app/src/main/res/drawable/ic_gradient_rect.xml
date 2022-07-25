@@ -1,0 +1,12 @@
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+  <solid android:color="@color/button_color" />
+  <corners android:radius="@dimen/_320sdp"/>
+  <gradient
+      android:angle="270"
+      android:endColor="#FFB742FF"
+      android:startColor="#FFD28AFF" />
+</shape>
+
+<!--<item android:offset="0" android:color="#FFD28AFF"/>-->
+<!--<item android:offset="1" android:color="#FFB742FF"/>-->

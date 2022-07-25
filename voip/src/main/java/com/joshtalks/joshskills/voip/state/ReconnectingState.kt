@@ -3,14 +3,17 @@ package com.joshtalks.joshskills.voip.state
 import android.util.Log
 import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.communication.constants.ServerConstants
+import com.joshtalks.joshskills.voip.communication.model.IncomingGameNextWord
 import com.joshtalks.joshskills.voip.communication.model.NetworkAction
 import com.joshtalks.joshskills.voip.communication.model.UI
 import com.joshtalks.joshskills.voip.communication.model.UserAction
+import com.joshtalks.joshskills.voip.constant.Event
 import com.joshtalks.joshskills.voip.constant.Event.*
 import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.RecordingButtonState
 import com.joshtalks.joshskills.voip.data.local.PrefManager
 import com.joshtalks.joshskills.voip.inSeconds
+import com.joshtalks.joshskills.voip.mediator.ActionDirection
 import com.joshtalks.joshskills.voip.showToast
 import com.joshtalks.joshskills.voip.updateLastCallDetails
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
@@ -229,6 +232,49 @@ class ReconnectingState(val context: CallContext) : VoipState {
                                 address = Utils.uuid ?: ""
                             )
                             context.sendMessageToServer(userAction)
+                        }
+                        START_GAME -> {
+                            ensureActive()
+                            val userAction = UserAction(
+                                ServerConstants.START_GAME,
+                                context.channelData.getChannel(),
+                                address = Utils.uuid ?: ""
+                            )
+                            val uiState = context.currentUiState.copy(isStartGameClicked = true)
+                            context.updateUIState(uiState = uiState)
+                            context.sendMessageToServer(userAction)
+                        }
+                        END_GAME -> {
+                            ensureActive()
+                            if(event.data == ActionDirection.SERVER) {
+                                val userAction = UserAction(
+                                    ServerConstants.END_GAME,
+                                    context.channelData.getChannel(),
+                                    address = context.channelData.getPartnerMentorId()
+                                )
+                                context.sendMessageToServer(userAction)
+                            }
+                            val uiState = context.currentUiState.copy(isStartGameClicked = false, isNextWordClicked = false, nextGameWord = "")
+                            context.updateUIState(uiState = uiState)
+                        }
+                        NEXT_WORD_REQUEST -> {
+                            ensureActive()
+                            val userAction = UserAction(
+                                ServerConstants.NEXT_WORD_REQUEST,
+                                context.channelData.getChannel(),
+                                address = Utils.uuid ?: ""
+                            )
+                            context.sendMessageToServer(userAction)
+
+                            val uiState = context.currentUiState.copy(isNextWordClicked = true)
+                            context.updateUIState(uiState = uiState)
+                        }
+                        NEXT_WORD_RECEIVED -> {
+                            ensureActive()
+                            val incomingWord= event.data as IncomingGameNextWord
+                            val uiState = context.currentUiState.copy(nextGameWord = incomingWord.word, nextGameWordColor = incomingWord.color, isNextWordClicked = false)
+                            context.updateUIState(uiState = uiState)
+
                         }
                         REMOTE_USER_DISCONNECTED_AGORA -> {
                             Log.d(TAG, "observe: disconnect event ${event.type}")

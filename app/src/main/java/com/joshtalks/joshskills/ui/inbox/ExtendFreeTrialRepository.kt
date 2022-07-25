@@ -1,6 +1,8 @@
 package com.joshtalks.joshskills.ui.inbox
 
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import kotlinx.coroutines.delay
@@ -16,15 +18,20 @@ class ExtendFreeTrialRepository {
 
     suspend fun getCourseData(): List<InboxEntity>? {
         try {
-            val courseListResponse =
-                apiService.getRegisteredCourses()
-            if (courseListResponse.isEmpty()) {
-                return emptyList()
-            }
-            dbService.courseDao().insertRegisterCourses(courseListResponse)
-                .let {
-                    return dbService.courseDao().getRegisterCourseMinimal()
+            if (Utils.isInternetAvailable()) {
+                val courseListResponse =
+                    apiService.getRegisteredCourses()
+                if (courseListResponse.isEmpty()) {
+                    return emptyList()
                 }
+                dbService.courseDao().insertRegisterCourses(courseListResponse)
+                    .let {
+                        return dbService.courseDao().getRegisterCourseMinimal()
+                    }
+            } else {
+                showToast("No internet connection")
+                return null
+            }
         } catch (ex: Exception) {
             ex.printStackTrace()
             return null

@@ -836,7 +836,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         val jsonData = JSONObject()
         jsonData.put(ParamKeys.TEST_ID.name, viewModel.getPaymentTestId())
         jsonData.put(ParamKeys.COURSE_PRICE.name, viewModel.getCourseActualAmount())
-        Singular.eventJSON(SingularEvent.INITIATED_PAYMENT.name, jsonData)
+        Singular.customRevenue(SingularEvent.INITIATED_PAYMENT.name, jsonData)
 
         if(!loginStartFreeTrial) {
             MixPanelTracker.publishEvent(MixPanelEvent.PAYMENT_STARTED)
@@ -926,7 +926,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             jsonData.put(ParamKeys.COURSE_PRICE.name, viewModel.getCourseActualAmount())
             jsonData.put(ParamKeys.IS_COUPON_APPLIED.name, viewModel.responsePaymentSummary.value?.couponDetails?.isPromoCode)
             jsonData.put(ParamKeys.AMOUNT_PAID.name, viewModel.getCourseDiscountedAmount())
-            Singular.eventJSON(SingularEvent.PAYMENT_FAILED.name, jsonData)
+            Singular.customRevenue(SingularEvent.PAYMENT_FAILED.name, jsonData)
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -1003,11 +1003,15 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                 .addParam(ParamKeys.IS_100_POINTS_OBTAINED_IN_FREE_TRIAL, is100PointsObtained)
                 .push()
 
-            val json = JSONObject()
-            json.put(ParamKeys.TEST_ID.name, viewModel.getPaymentTestId())
-            json.put(ParamKeys.AMOUNT_PAID.name, viewModel.getCourseDiscountedAmount())
-            json.put(ParamKeys.IS_COUPON_APPLIED.name, viewModel.responsePaymentSummary.value?.couponDetails?.isPromoCode)
-            Singular.customRevenue(SingularEvent.PAYMENT_SUCCESSFUL.name, json)
+            Singular.customRevenue(
+                SingularEvent.PAYMENT_SUCCESSFUL.name,
+                "INR",
+                viewModel.getCourseDiscountedAmount(),
+                mapOf(
+                    Pair(ParamKeys.TEST_ID.name, viewModel.getPaymentTestId()),
+                    Pair(ParamKeys.IS_COUPON_APPLIED.name, viewModel.responsePaymentSummary.value?.couponDetails?.isPromoCode),
+                )
+            )
         } catch (e: Exception) {
             e.printStackTrace()
         }

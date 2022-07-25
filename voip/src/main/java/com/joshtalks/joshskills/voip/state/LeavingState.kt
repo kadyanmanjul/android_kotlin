@@ -26,6 +26,7 @@ class LeavingState(val context: CallContext) : VoipState {
             agoraMentorId = context.channelData.getAgoraUid().toString()
         )
         observe()
+        context.enableSpeaker(false)
     }
 
     override fun onError(reason: String) {

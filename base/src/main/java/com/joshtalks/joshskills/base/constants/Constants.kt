@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.base.constants
 
 const val DIR = "api/skill/v1"
+const val DIR_FPP_GROUP = "api/p2p"
 
 const val KEY_AUTHORIZATION = "Authorization"
 const val KEY_APP_VERSION_CODE = "app-version-code"
@@ -12,14 +13,22 @@ const val KEY_APP_ACCEPT_LANGUAGE = "Accept-Language"
 const val INTENT_DATA_API_HEADER = "josh_intent_data_api_header"
 const val INTENT_DATA_MENTOR_ID = "josh_intent_data_mentor_id"
 const val INTENT_DATA_TOPIC_ID = "josh_intent_data_topic_id"
+const val INTENT_DATA_CALL_CATEGORY = "josh_intent_data_call_category"
 const val INTENT_DATA_COURSE_ID = "josh_intent_data_course_id"
 const val INTENT_DATA_PREVIOUS_CALL_ID = "josh_intent_data_previous_call_id"
 const val INTENT_DATA_CONNECT_CALL = "josh_intent_data_connect_call"
 const val INTENT_DATA_INCOMING_CALL_ID = "josh_intent_data_incoming_call_id"
+const val INTENT_DATA_FPP_MENTOR_ID = "josh_intent_fpp_mentor_id"
+const val INTENT_DATA_FPP_NAME = "josh_intent_fpp_name"
+const val INTENT_DATA_FPP_IMAGE = "josh_intent_fpp_image"
+const val INTENT_DATA_GROUP_ID = "josh_intent_group_id"
+const val INTENT_DATA_GROUP_NAME =  "josh_intent_group_name"
+
+
 
 // Service Action
 const val SERVICE_ACTION_STOP_SERVICE = "josh_service_action_stop_service"
-const val SERVICE_ACTION_MAIN_PROCESS_IN_BACKGROUND = "josh_service_action_main_process_in_background"
+const val SERVICE_ACTION_INCOMING_CALL = "josh_service_action_incoming_call"
 const val SERVICE_ACTION_DISCONNECT_CALL = "josh_service_action_disconnect_call"
 const val SERVICE_ACTION_INCOMING_CALL_DECLINE = "josh_service_action_incoming_call_decline"
 const val SERVICE_ACTION_INCOMING_CALL_HIDE = "josh_service_action_incoming_call_hide"
@@ -31,13 +40,15 @@ const val START_CALL_TIME_URI = "/start_call_time"
 const val CALL_DISCONNECTED_URI = "/call_disconnect"
 const val API_HEADER = "/api_header"
 const val MENTOR_ID = "/mentor_id"
-const val IS_COURSE_BOUGHT_OR_FREE_TRIAL = "/is_course_bought_or_free_trial"
 const val COURSE_ID = "/course_id"
 const val RECORD_VIDEO_URI = "/video_url"
+const val IS_COURSE_BOUGHT_OR_FREE_TRIAL = "/is_course_bought_or_free_trial"
 const val NOTIFICATION_DATA = "/notification_data"
 const val MENTOR_NAME = "/mentor_name"
 const val MENTOR_PROFILE = "/mentor_profile"
 const val RECORDING_TEXT = "/recording_text"
+const val GAME_FLAG = "/game_flag"
+
 
 
 // Content Values
@@ -89,6 +100,7 @@ const val PREF_KEY_INCOMING_CALL_TYPE = "josh_recent_incoming_call_type"
 const val PEER_TO_PEER = 1
 const val FPP = 2
 const val GROUP = 3
+const val P2P_GAME = 4
 
 // Call Direction
 const val INCOMING = 1
@@ -103,6 +115,7 @@ const val VIDEO_COLUMN = "VIDEO_COLUMN"
 const val MENTOR_NAME_COLUMN = "MENTOR_NAME"
 const val MENTOR_PROFILE_COLUMN = "MENTOR_PROFILE"
 const val RECORDING_TEXT_COLUMN = "RECORDING_TEXT_COLUMN"
+const val GAME_TEXT_COLUMN = "GAME_TEXT_COLUMN"
 const val COURSE_ID_COLUMN = "COURSE_ID"
 const val FREE_TRIAL_OR_COURSE_BOUGHT_COLUMN = "FREE_TRIAL_OR_COURSE_BOUGHT_COLUMN"
 

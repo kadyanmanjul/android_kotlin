@@ -1,7 +1,6 @@
 package com.joshtalks.joshskills.base
 
 import android.os.Bundle
-import android.os.Message
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import javax.inject.Inject

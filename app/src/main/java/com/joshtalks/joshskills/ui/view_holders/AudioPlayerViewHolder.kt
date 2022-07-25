@@ -289,7 +289,11 @@ class AudioPlayerViewHolder(
 
                 }
             } catch (ex: Exception) {
-                FirebaseCrashlytics.getInstance().recordException(ex)
+                try {
+                    FirebaseCrashlytics.getInstance().recordException(ex)
+                }catch (ex:Exception){
+                    ex.printStackTrace()
+                }
                 ex.printStackTrace()
             }
         }

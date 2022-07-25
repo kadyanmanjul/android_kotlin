@@ -24,7 +24,9 @@ import com.joshtalks.joshskills.ui.special_practice.viewmodel.SpecialPracticeVie
 import java.io.File
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
+import java.util.Random
 
 
 fun doesVideoHaveAudio(path: String): Boolean {
@@ -140,7 +142,7 @@ fun getRecordingFileName(): String {
 }
 
 @RequiresApi(api = Build.VERSION_CODES.Q)
-fun saveVideoQ(ctx: Context,specialPracticeViewModel: SpecialPracticeViewModel): String? {
+fun saveVideoFromPracticeModelQ(ctx: Context, specialPracticeViewModel: SpecialPracticeViewModel): String? {
     try {
         val valuesVideos = ContentValues()
         val videoFileName = "SpecialVideo_" + System.currentTimeMillis() + ".mp4"

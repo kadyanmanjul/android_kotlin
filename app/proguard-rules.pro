@@ -23,5 +23,6 @@
 -keep class io.agora.**{ *; }
 -keep class chirpconnect.** { *; }
 -keep class javax.annotation.** { *; }
+-keep class com.joshtalks.joshskills.dynamic.** { *; }
 -dontwarn javax.annotation.**
 -dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement

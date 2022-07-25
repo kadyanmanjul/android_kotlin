@@ -22,6 +22,9 @@ sealed class CallType{
 
 class CallUIState : BaseObservable() {
 
+   companion object{
+       private var isGameStarted = false
+   }
     @get:Bindable
     var profileImage : String = ""
     set(value) {
@@ -127,7 +130,7 @@ class CallUIState : BaseObservable() {
         }
 
     @get:Bindable
-    var recordingButtonState: RecordingButtonState = RecordingButtonState.IDLE
+    var recordingButtonState: RecordingButtonState = RecordingButtonState.SENTREQUEST
         set(value) {
             field = value
             notifyPropertyChanged(BR.recordingButtonState)
@@ -167,6 +170,37 @@ class CallUIState : BaseObservable() {
         field = value
         notifyPropertyChanged(BR.topicImage)
     }
+
+    @get:Bindable
+    var gameWord:String = ""
+        set(value) {
+            if(isGameStarted) {
+                field = value
+                notifyPropertyChanged(BR.gameWord)
+            }
+        }
+
+    @get:Bindable
+    var wordColor:String = ""
+        set(value) {
+            field = value
+            notifyPropertyChanged(BR.wordColor)
+        }
+
+    @get:Bindable
+    var isNextWordClicked:Boolean = false
+        set(value) {
+            field = value
+            notifyPropertyChanged(BR.nextWordClicked)
+        }
+
+    @get:Bindable
+    var isStartGameClicked:Boolean = false
+        set(value) {
+            field = value
+            isGameStarted = field
+            notifyPropertyChanged(BR.startGameClicked)
+        }
 
     @get:Bindable
     var occupation:String = ""
@@ -215,5 +249,12 @@ class CallUIState : BaseObservable() {
         set(value) {
             field = value
             notifyPropertyChanged(BR.callerSpeaking)
+        }
+
+    @get:Bindable
+    var p2pCallBackgroundColor : Int = R.color.p2p_call_background_color
+        set(value) {
+            field = value
+            notifyPropertyChanged(BR.p2pCallBackgroundColor)
         }
 }

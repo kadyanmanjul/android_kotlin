@@ -4,6 +4,7 @@ import android.os.SystemClock
 import android.util.Log
 import com.joshtalks.joshskills.voip.communication.model.ChannelData
 import com.joshtalks.joshskills.voip.communication.model.OutgoingData
+import com.joshtalks.joshskills.voip.constant.Category
 import com.joshtalks.joshskills.voip.constant.Event
 import com.joshtalks.joshskills.voip.data.UIState
 import com.joshtalks.joshskills.voip.mediator.CallDirection
@@ -20,7 +21,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-data class CallContext(val callType: Int, val direction : CallDirection, val request: HashMap<String, Any>, private val mediator: CallingMediator)  {
+data class CallContext(val callType: Category, val direction : CallDirection, val request: HashMap<String, Any>, private val mediator: CallingMediator)  {
     private val TAG = "CallContext"
 
     var state : VoipState = IdleState(this)
@@ -56,6 +57,8 @@ data class CallContext(val callType: Int, val direction : CallDirection, val req
         Log.d(TAG, "disconnect Call From Webrtc - - ${state}")
         mediator.disconnectCallFromWebrtc()
     }
+
+    fun getCallCategory() = mediator.calling
 
     fun updateUIState(uiState: UIState) {
         Log.d(TAG, "Updating UI (Current - ${state}) state $uiState ")

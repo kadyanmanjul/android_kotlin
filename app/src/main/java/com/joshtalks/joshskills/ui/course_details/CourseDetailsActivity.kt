@@ -257,12 +257,12 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
 
     private fun subscribeLiveData() {
         viewModel.courseDetailsLiveData.observe(this, { data ->
-            if(data.totalPoints > 100){
+            if(data.totalPoints?:0 > 100){
                 isPointsScoredMoreThanEqualTo100 = true
             }
 
             if(is100PointsActive && testId == ENGLISH_COURSE_TEST_ID ) {
-                expiredTime = data.expiredDate.time
+                expiredTime = data?.expiredDate?.time?:0L
                 if (isPointsScoredMoreThanEqualTo100  || expiredTime <= System.currentTimeMillis()) {
                     binding.btnStartCourse.isEnabled = true
                     binding.btnStartCourse.alpha = 1f

@@ -14,13 +14,24 @@ import android.content.Intent.ACTION_VIEW
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.content.res.Resources
-import android.graphics.*
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.Point
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffXfermode
+import android.graphics.Rect
+import android.graphics.Typeface
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.PictureDrawable
 import android.graphics.drawable.VectorDrawable
-import android.media.*
+import android.media.AudioManager
 import android.media.AudioManager.STREAM_MUSIC
+import android.media.MediaMetadataRetriever
+import android.media.MediaPlayer
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.Uri
@@ -34,12 +45,20 @@ import android.text.format.DateUtils
 import android.util.DisplayMetrics
 import android.util.Log
 import android.util.TypedValue
-import android.view.*
+import android.view.Display
+import android.view.Gravity
+import android.view.View
+import android.view.ViewGroup
+import android.view.WindowManager
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
 import android.view.inputmethod.InputMethodManager
-import android.widget.*
+import android.widget.FrameLayout
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.ColorRes
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.browser.customtabs.CustomTabsIntent
@@ -83,11 +102,11 @@ import io.michaelrocks.libphonenumber.android.PhoneNumberUtil
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import jp.wasabeef.glide.transformations.RoundedCornersTransformation
-import kotlinx.coroutines.*
-import okhttp3.RequestBody.Companion.toRequestBody
-import timber.log.Timber
-import java.io.*
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+import java.io.InputStream
+import java.io.OutputStream
 import java.net.HttpURLConnection
 import java.net.InetSocketAddress
 import java.net.Socket
@@ -96,12 +115,22 @@ import java.nio.charset.Charset
 import java.text.DateFormat
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
+import java.util.Random
 import java.util.concurrent.TimeUnit
 import java.util.regex.Pattern
+import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 import kotlin.math.ceil
 import kotlin.math.pow
 import kotlin.math.roundToInt
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
+import okhttp3.RequestBody.Companion.toRequestBody
+import timber.log.Timber
 
 private val CHAT_TIME_FORMATTER = SimpleDateFormat("hh:mm aa")
 private val DD_MMM = SimpleDateFormat("dd-MMM hh:mm aa")
@@ -172,6 +201,9 @@ const val FREE_TRIAL_DEFAULT_TEST_ID = "784"
 const val LANGUAGE_SELECTION_SCREEN_OPENED = "LANGUAGE_SELECTION_SCREEN_OPENED"
 const val TC_BOTTOMSHEET_SHOWED = "TC_BOTTOMSHEET_SHOWED"
 const val READING_SHARED_WHATSAPP = "READING_SHARED_WHATSAPP"
+const val VIDEO_PLAYED_RP = "VIDEO_PLAYED_RP"
+const val RECORD_READING_VIDEO = "RECORD_READING_VIDEO"
+const val SUBMIT_READING_VIDEO = "SUBMIT_READING_VIDEO"
 
 object Utils {
 
@@ -889,18 +921,21 @@ object Utils {
         return outputFormat.format(date)
     }
 
-    fun getDrawableFromUrl(url: String?): Drawable? {
-        return try {
-            val bitmap: Bitmap
-            val connection: HttpURLConnection = URL(url).openConnection() as HttpURLConnection
-            connection.connect()
-            val input: InputStream = connection.inputStream
-            bitmap = BitmapFactory.decodeStream(input)
-            BitmapDrawable(Resources.getSystem(), bitmap)
-        } catch (ex: Exception) {
-            Timber.e(ex)
-            null
+    fun getDrawableFromUrl(context: Context,url: String?): Drawable? {
+        try {
+            if (isInternetAvailable()) {
+                val bitmap: Bitmap
+                val connection: HttpURLConnection = URL(url).openConnection() as HttpURLConnection
+                connection.connect()
+                val input: InputStream = connection.inputStream
+                bitmap = BitmapFactory.decodeStream(input)
+                return BitmapDrawable(Resources.getSystem(), bitmap)
+            }
+        } catch (e: Exception) {
+            Timber.e(e)
+            return AppCompatResources.getDrawable(context,R.drawable.ic_file_error)
         }
+        return null
     }
 }
 
@@ -1128,23 +1163,27 @@ fun ImageView.setUserInitial(
     dpToPx: Int = 16,
     @ColorRes background: Int = R.color.button_color,
 ) {
-    val font = Typeface.createFromAsset(
-        AppObjectController.joshApplication.assets,
-        "fonts/OpenSans-SemiBold.ttf"
-    )
-    val drawable: TextDrawable = TextDrawable.builder()
-        .beginConfig()
-        .textColor(ContextCompat.getColor(AppObjectController.joshApplication, R.color.white))
-        .useFont(font)
-        .fontSize(Utils.dpToPx(dpToPx))
-        .toUpperCase()
-        .endConfig()
-        .buildRound(
-            getUserNameInShort(userName),
-            ContextCompat.getColor(AppObjectController.joshApplication, background)
+    try {
+        val font = Typeface.createFromAsset(
+            AppObjectController.joshApplication.assets,
+            "fonts/OpenSans-SemiBold.ttf"
         )
-    this.background = drawable
-    this.setImageDrawable(drawable)
+        val drawable: TextDrawable = TextDrawable.builder()
+            .beginConfig()
+            .textColor(ContextCompat.getColor(AppObjectController.joshApplication, R.color.white))
+            .useFont(font)
+            .fontSize(Utils.dpToPx(dpToPx))
+            .toUpperCase()
+            .endConfig()
+            .buildRound(
+                getUserNameInShort(userName),
+                ContextCompat.getColor(AppObjectController.joshApplication, background)
+            )
+        this.background = drawable
+        this.setImageDrawable(drawable)
+    }catch (ex:Exception){
+        ex.printStackTrace()
+    }
 }
 
 fun ImageView.setUserInitial(
@@ -1153,23 +1192,27 @@ fun ImageView.setUserInitial(
     background: Int = R.color.white,
     txtColor: Int = R.color.button_color
 ) {
-    val font = Typeface.createFromAsset(
-        AppObjectController.joshApplication.assets,
-        "fonts/OpenSans-SemiBold.ttf"
-    )
-    val drawable: TextDrawable = TextDrawable.builder()
-        .beginConfig()
-        .textColor(txtColor)
-        .useFont(font)
-        .fontSize(Utils.dpToPx(dpToPx))
-        .toUpperCase()
-        .endConfig()
-        .buildRound(
-            getUserNameInShort(userName),
-            ContextCompat.getColor(AppObjectController.joshApplication, background)
+    try {
+        val font = Typeface.createFromAsset(
+            AppObjectController.joshApplication.assets,
+            "fonts/OpenSans-SemiBold.ttf"
         )
-    this.background = drawable
-    this.setImageDrawable(drawable)
+        val drawable: TextDrawable = TextDrawable.builder()
+            .beginConfig()
+            .textColor(txtColor)
+            .useFont(font)
+            .fontSize(Utils.dpToPx(dpToPx))
+            .toUpperCase()
+            .endConfig()
+            .buildRound(
+                getUserNameInShort(userName),
+                ContextCompat.getColor(AppObjectController.joshApplication, background)
+            )
+        this.background = drawable
+        this.setImageDrawable(drawable)
+    }catch (ex:Exception){
+        ex.printStackTrace()
+    }
 }
 
 fun ImageView.setUserInitialInRect(
@@ -1179,24 +1222,28 @@ fun ImageView.setUserInitialInRect(
     textColor: Int = R.color.white,
     bgColor: Int = R.color.button_color
 ) {
-    val font = Typeface.createFromAsset(
-        AppObjectController.joshApplication.assets,
-        "fonts/OpenSans-SemiBold.ttf"
-    )
-    val drawable: TextDrawable = TextDrawable.builder()
-        .beginConfig()
-        .textColor(ContextCompat.getColor(AppObjectController.joshApplication, textColor))
-        .useFont(font)
-        .fontSize(Utils.dpToPx(dpToPx))
-        .toUpperCase()
-        .endConfig()
-        .buildRoundRect(
-            getUserNameInShort(userName),
-            ContextCompat.getColor(AppObjectController.joshApplication, bgColor),
-            radius
+    try {
+        val font = Typeface.createFromAsset(
+            AppObjectController.joshApplication.assets,
+            "fonts/OpenSans-SemiBold.ttf"
         )
-    this.background = drawable
-    this.setImageDrawable(drawable)
+        val drawable: TextDrawable = TextDrawable.builder()
+            .beginConfig()
+            .textColor(ContextCompat.getColor(AppObjectController.joshApplication, textColor))
+            .useFont(font)
+            .fontSize(Utils.dpToPx(dpToPx))
+            .toUpperCase()
+            .endConfig()
+            .buildRoundRect(
+                getUserNameInShort(userName),
+                ContextCompat.getColor(AppObjectController.joshApplication, bgColor),
+                radius
+            )
+        this.background = drawable
+        this.setImageDrawable(drawable)
+    }catch (ex:Exception){
+        ex.printStackTrace()
+    }
 }
 
 fun ImageView.setUserImageOrInitials(

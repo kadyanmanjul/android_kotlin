@@ -14,7 +14,6 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.setUserImageOrInitials
-import com.joshtalks.joshskills.repository.local.entity.practise.FavoriteCaller
 import com.joshtalks.joshskills.ui.fpp.model.RecentCall
 import com.joshtalks.joshskills.ui.view_holders.ROUND_CORNER
 import jp.wasabeef.glide.transformations.CropTransformation
@@ -65,7 +64,27 @@ object RecentBindingAdapter {
     @JvmStatic
     fun recentCallImage(imageView: ImageView, caller: RecentCall?) {
         caller?.let {
-            imageView.setUserImageOrInitials(it.photoUrl, it.firstName?:"", isRound = true)
+            try {
+                imageView.setUserImageOrInitials(it.photoUrl, it.firstName?:"", isRound = true)
+            }catch (e:Exception){
+                imageView.setImageResource(R.drawable.ic_call_placeholder)
+                e.printStackTrace()
+            }
         } ?: imageView.setImageResource(R.drawable.ic_call_placeholder)
+    }
+
+    @BindingAdapter(value = ["chatScreenBackground"], requireAll = false)
+    @JvmStatic
+    fun chatScreenBackground(imageView: ImageView, image: Int) {
+        try {
+            if (image==0) {
+                imageView.setBackgroundResource(R.color.chat_bg_color)
+            } else {
+                imageView.setImageResource(image)
+            }
+        }catch (e:Exception){
+            imageView.setBackgroundResource(R.color.chat_bg_color)
+            e.printStackTrace()
+        }
     }
 }

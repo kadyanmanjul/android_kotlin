@@ -18,6 +18,9 @@ import androidx.recyclerview.widget.RecyclerView
 
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseViewModel
+import com.joshtalks.joshskills.base.constants.INTENT_DATA_FPP_IMAGE
+import com.joshtalks.joshskills.base.constants.INTENT_DATA_FPP_MENTOR_ID
+import com.joshtalks.joshskills.base.constants.INTENT_DATA_FPP_NAME
 import com.joshtalks.joshskills.constants.*
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
@@ -150,6 +153,11 @@ class GroupChatViewModel : BaseViewModel() {
             putString(GROUPS_ID, groupId)
             putString(GROUPS_TITLE, groupHeader.get())
             putString(GROUP_TYPE, groupType.get())
+            putString(GROUP_TYPE, groupType.get())
+//            for FPP
+            putString(INTENT_DATA_FPP_IMAGE,imageUrl.get())
+            putString(INTENT_DATA_FPP_NAME,groupHeader.get())
+
             if (groupId == DM_CHAT)
                 putInt(AGORA_UID, agoraId)
         }
@@ -609,16 +617,26 @@ class GroupChatViewModel : BaseViewModel() {
     }
 
     fun removeFpp(uId: Int) {
-        try {
-            viewModelScope.launch(Dispatchers.IO) {
-                repository.removeUserFormFppLit(uId)
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                if (Utils.isInternetAvailable()) {
+                    repository.removeUserFormFppLit(uId)
+                    withContext(Dispatchers.Main) {
+                        message.what = REMOVE_GROUP_AND_CLOSE
+                        message.obj = groupId
+                        singleLiveEvent.value = message
+                        repository.startChatEventListener()
+                    }
+                } else {
+                    withContext(Dispatchers.Main) {
+                        showToast("No Internet Connection")
+                    }
+                }
+            } catch (ex: Exception) {
                 withContext(Dispatchers.Main) {
-                    message.what = REMOVE_GROUP_AND_CLOSE
-                    message.obj = groupId
-                    singleLiveEvent.value = message
-                    repository.startChatEventListener()
+                    showToast("Error removing user from FPP")
                 }
             }
-        } catch (ex: Exception) { }
+        }
     }
 }

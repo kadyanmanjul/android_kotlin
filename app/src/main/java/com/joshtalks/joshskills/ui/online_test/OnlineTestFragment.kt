@@ -318,12 +318,16 @@ class OnlineTestFragment :
     private fun onPlayAudio(
         audioObject: AudioType
     ) {
-        audioManager?.playerListener = this
-        audioManager?.play(
-            audioObject.audio_url,
-            playbackSpeed = AppObjectController.getFirebaseRemoteConfig()
-                .getDouble(FirebaseRemoteConfigKey.GRAMMAR_CHOICE_PLAYBACK_SPEED).toFloat()
-        )
+        try {
+            audioManager?.playerListener = this
+            audioManager?.play(
+                audioObject.audio_url,
+                playbackSpeed = AppObjectController.getFirebaseRemoteConfig()
+                    .getDouble(FirebaseRemoteConfigKey.GRAMMAR_CHOICE_PLAYBACK_SPEED).toFloat()
+            )
+        }catch (ex:Exception){
+            ex.printStackTrace()
+        }
     }
 
     override fun toggleSubmitButton(isEnabled: Boolean) {
@@ -461,37 +465,41 @@ class OnlineTestFragment :
     }
 
     private fun askStoragePermission(choiceList: List<Choice>) {
-        PermissionUtils.storageReadAndWritePermission(
-            requireContext(),
-            object : MultiplePermissionsListener {
-                override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
-                    report?.areAllPermissionsGranted()?.let { flag ->
-                        if (flag) {
-                            viewModel.downloadAudioFileForNewGrammar(choiceList)
+        if (isAdded && activity != null) {
+            PermissionUtils.storageReadAndWritePermission(
+                requireActivity(),
+                object : MultiplePermissionsListener {
+                    override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                        report?.areAllPermissionsGranted()?.let { flag ->
+                            if (flag) {
+                                viewModel.downloadAudioFileForNewGrammar(choiceList)
+                                return
+                            }
+                            if (report.isAnyPermissionPermanentlyDenied) {
+                                PermissionUtils.permissionPermanentlyDeniedDialog(requireActivity())
+                                //errorDismiss()
+                                return
+                            }
                             return
                         }
-                        if (report.isAnyPermissionPermanentlyDenied) {
+                        report?.isAnyPermissionPermanentlyDenied?.let {
                             PermissionUtils.permissionPermanentlyDeniedDialog(requireActivity())
                             //errorDismiss()
                             return
                         }
-                        return
                     }
-                    report?.isAnyPermissionPermanentlyDenied?.let {
-                        PermissionUtils.permissionPermanentlyDeniedDialog(requireActivity())
-                        //errorDismiss()
-                        return
-                    }
-                }
 
-                override fun onPermissionRationaleShouldBeShown(
-                    permissions: MutableList<PermissionRequest>?,
-                    token: PermissionToken?
-                ) {
-                    token?.continuePermissionRequest()
+                    override fun onPermissionRationaleShouldBeShown(
+                        permissions: MutableList<PermissionRequest>?,
+                        token: PermissionToken?
+                    ) {
+                        token?.continuePermissionRequest()
+                    }
                 }
-            }
-        )
+            )
+        }else{
+            showToast(getString(R.string.something_went_wrong))
+        }
     }
 
     override fun onScrollChanged() {

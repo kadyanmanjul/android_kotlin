@@ -166,13 +166,16 @@ interface CommonNetworkService {
     suspend fun getExamReports(@Query("certificateexam_id") id: Int): List<CertificateExamReportModel>
 
     @GET("$DIR/certificateexam/user_details")
-    suspend fun getCertificateUserDetails(): CertificationUserDetail?
+    suspend fun getCertificateUserDetails(): Response<CertificationUserDetail?>
+
+    @GET("http://www.postalpincode.in/api/pincode/{pin}")
+    suspend fun getInfoFromPinCode(@Path("pin")pin:Int): PostalDetails
 
     @GET("http://www.postalpincode.in/api/pincode/{pin}")
     suspend fun getInfoFromPinCode(@Path("pin")pin:Int): PostalDetails
 
     @POST("$DIR/certificateexam/user_details")
-    suspend fun submitUserDetailForCertificate(@Body certificationUserDetail: CertificationUserDetail): Map<String, String>
+    suspend fun submitUserDetailForCertificate(@Body certificationUserDetail: CertificationUserDetail): Map<String, String>?
 
     @GET("$DIR/group/user_profile_v2/{mentor_id}/")
     suspend fun getUserProfileData(

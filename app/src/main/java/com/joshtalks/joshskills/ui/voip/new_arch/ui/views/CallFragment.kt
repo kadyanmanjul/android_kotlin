@@ -100,7 +100,6 @@ class   CallFragment : BaseFragment() , SensorEventListener {
     }
     override fun initViewBinding() {
         callBinding.vm = vm
-        callBinding.callFragment = this
         if(vm.source == FROM_INCOMING_CALL && PrefManager.getVoipState() != State.CONNECTED) {
             startIncomingTimer()
         }
@@ -223,10 +222,7 @@ class   CallFragment : BaseFragment() , SensorEventListener {
         setCurrentCallState()
     }
 
-    fun changeTopicImage(v:View){
-        if (callBinding.topicViewpager.currentItem < callBinding.topicViewpager.adapter!!.itemCount)
-            callBinding.topicViewpager.currentItem = callBinding.topicViewpager.currentItem + 1
-    }
+
 
     private fun setCurrentCallState() {
         if(isFragmentRestarted) {

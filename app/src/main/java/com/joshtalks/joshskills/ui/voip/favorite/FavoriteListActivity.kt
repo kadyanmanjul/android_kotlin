@@ -8,8 +8,8 @@ import androidx.appcompat.view.ActionMode
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.IS_COURSE_BOUGHT
 import com.joshtalks.joshskills.databinding.FavoriteListActivityBinding
 import com.joshtalks.joshskills.track.CONVERSATION_ID
 import com.joshtalks.joshskills.ui.fpp.BaseFppActivity
@@ -17,6 +17,8 @@ import com.joshtalks.joshskills.ui.fpp.RecentCallActivity
 import com.joshtalks.joshskills.ui.fpp.constants.*
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
 import com.joshtalks.joshskills.ui.voip.WebRtcActivity
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity
+import com.joshtalks.joshskills.voip.constant.Category
 
 class FavoriteListActivity : BaseFppActivity() {
 
@@ -85,6 +87,20 @@ class FavoriteListActivity : BaseFppActivity() {
                 }
                 OPEN_RECENT_SCREEN -> openRecentScreen()
                 ENABLE_ACTION_MODE -> enableMode()
+//                TODO : To refactor to FPP
+                START_FPP_CALL->
+                {
+                    val callIntent = Intent(applicationContext, VoiceCallActivity::class.java)
+                    callIntent.apply {
+                        putExtra(STARTING_POINT, FROM_ACTIVITY)
+                        putExtra(INTENT_DATA_CALL_CATEGORY, Category.FPP.ordinal)
+                        putExtra(INTENT_DATA_FPP_MENTOR_ID, viewModel.selectedUser?.mentorId)
+                        putExtra(INTENT_DATA_FPP_NAME, viewModel.selectedUser?.name)
+                        putExtra(INTENT_DATA_FPP_IMAGE, viewModel.selectedUser?.image)
+
+                    }
+                startActivity(callIntent)
+                }
                 SET_TEXT_ON_ENABLE_ACTION_MODE -> {
                     if (it.obj != null) {
                         setTextOnActionMode(it.obj.toString())
@@ -100,10 +116,14 @@ class FavoriteListActivity : BaseFppActivity() {
     }
 
     private fun popBackStack() {
-        if (supportFragmentManager.backStackEntryCount>0) {
-            supportFragmentManager.popBackStack()
-        } else {
-            onBackPressed()
+        try {
+            if (supportFragmentManager.backStackEntryCount>0) {
+                supportFragmentManager.popBackStack()
+            } else {
+                onBackPressed()
+            }
+        }catch (ex:Exception){
+            ex.printStackTrace()
         }
     }
 

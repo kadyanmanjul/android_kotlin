@@ -60,6 +60,7 @@ import com.joshtalks.joshskills.ui.launch.LauncherActivity
 import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.ui.voip.NotificationId.Companion.LOCAL_NOTIFICATION_CHANNEL
+import com.joshtalks.joshskills.util.ReminderUtil
 import com.yariksoffice.lingver.Lingver
 import io.branch.referral.Branch
 import java.util.Date
@@ -426,21 +427,61 @@ class NPAQuestionViaEventWorker(
     }
 }
 
-class BackgroundNotificationWorker(context: Context, workerParams: WorkerParameters) :
+class BackgroundNotificationWorker(val context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
 
     override suspend fun doWork(): Result {
         return try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-                applicationContext.startForegroundService(Intent(applicationContext, BackgroundService::class.java))
-            else
-                applicationContext.startService(Intent(applicationContext, BackgroundService::class.java))
-
+            buildNotification()
+            ReminderUtil(context).setAlarmNotificationWorker()
+            NotificationAnalytics().fetchMissedNotification(context)
+            NotificationAnalytics().pushToServer()
+            removeNotification()
             Result.success()
         } catch (e: Exception) {
             e.printStackTrace()
             Result.failure()
         }
+    }
+
+    private fun buildNotification() {
+        val notificationIntent = Intent(context, InboxActivity::class.java)
+        val pendingIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0)
+        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+        val notificationBuilder = NotificationCompat.Builder(context, NOTIF_CHANNEL_ID)
+            .setSmallIcon(R.drawable.ic_status_bar_notification)
+            .setOngoing(true)
+            .setAutoCancel(false)
+            .setContentTitle(context.getString(R.string.app_name))
+            .setContentText("Fetching all your notifications!")
+            .setContentIntent(pendingIntent)
+            .setDefaults(Notification.FLAG_ONGOING_EVENT)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            notificationBuilder.priority = NotificationManager.IMPORTANCE_LOW
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val notificationChannel = NotificationChannel(
+                NOTIF_CHANNEL_ID,
+                NOTIF_CHANNEL_NAME,
+                NotificationManager.IMPORTANCE_LOW
+            )
+
+            notificationBuilder.setChannelId(NOTIF_CHANNEL_ID)
+            notificationManager.createNotificationChannel(notificationChannel)
+        }
+
+        val notification = notificationBuilder.build()
+        notification.flags = Notification.FLAG_NO_CLEAR
+
+        notificationManager.notify(NOTIF_ID, notification)
+    }
+
+    private fun removeNotification() {
+        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.cancel(NOTIF_ID)
     }
 }
 

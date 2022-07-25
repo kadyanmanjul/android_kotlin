@@ -27,7 +27,11 @@ object BranchIOAnalytics {
                 branchEvent.setCurrency(CurrencyType.INR)
                 branchEvent.logEvent(AppObjectController.joshApplication)
             } catch (ex: Exception) {
-                FirebaseCrashlytics.getInstance().recordException(ex)
+                try {
+                    FirebaseCrashlytics.getInstance().recordException(ex)
+                }catch (ex: Exception) {
+                    ex.printStackTrace()
+                }
                 ex.printStackTrace()
             }
         }

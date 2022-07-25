@@ -6,6 +6,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
+import android.util.Log
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
@@ -13,9 +14,9 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.github.dhaval2404.imagepicker.ImagePicker
 
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.constants.*
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.PermissionUtils
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.analytics.ParamKeys
@@ -37,6 +38,8 @@ import com.joshtalks.joshskills.ui.voip.SearchingUserActivity
 import com.joshtalks.joshskills.ui.voip.WebRtcActivity
 import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity
+import com.joshtalks.joshskills.voip.constant.Category
 import com.joshtalks.joshskills.voip.constant.State
 
 import com.karumi.dexter.MultiplePermissionsReport
@@ -111,7 +114,7 @@ class JoshGroupActivity : BaseGroupActivity() {
     private fun startGroupCall(data: Bundle) {
         if (PermissionUtils.isCallingPermissionEnabled(this)) {
             if (data.get(GROUP_TYPE) == DM_CHAT)
-                openFppCallScreen(vm.agoraId)
+                openFppCallScreen(vm.agoraId,data)
             else
                 openCallingActivity(data)
             return
@@ -130,7 +133,7 @@ class JoshGroupActivity : BaseGroupActivity() {
                         }
                         if (flag) {
                             if (data.get(GROUP_TYPE) == DM_CHAT)
-                                openFppCallScreen(vm.agoraId)
+                                openFppCallScreen(vm.agoraId,data)
                             else
                                 openCallingActivity(data)
                             return
@@ -159,33 +162,59 @@ class JoshGroupActivity : BaseGroupActivity() {
                 GroupAnalytics.Event.CALL_PRACTICE_PARTNER_FROM_GROUP,
                 bundle.getString(GROUPS_ID) ?: ""
             )
-            val intent = SearchingUserActivity.startUserForPractiseOnPhoneActivity(
-                this,
-                courseId = "151",
-                topicId = 5,
-                groupId = bundle.getString(GROUPS_ID),
-                isGroupCallCall = true,
-                topicName = "Group Call",
-                groupName = bundle.getString(GROUPS_TITLE),
-                favoriteUserCall = false
-            )
-            startActivity(intent)
+
+            if (PrefManager.getIntValue(IS_GROUP_FPP_NEW_ARCH_ENABLED, defValue = 1) == 1) {
+                val callIntent = Intent(applicationContext, VoiceCallActivity::class.java)
+                callIntent.apply {
+                    putExtra(STARTING_POINT, FROM_ACTIVITY)
+                    putExtra(INTENT_DATA_CALL_CATEGORY, Category.GROUP.ordinal)
+                    putExtra(INTENT_DATA_GROUP_ID,bundle.getString(GROUPS_ID))
+                    putExtra(INTENT_DATA_TOPIC_ID,"5")
+                    putExtra(INTENT_DATA_GROUP_NAME,bundle.getString(GROUPS_TITLE))
+                }
+                startActivity(callIntent)
+            }else{
+                val intent = SearchingUserActivity.startUserForPractiseOnPhoneActivity(
+                    this,
+                    courseId = "151",
+                    topicId = 5,
+                    groupId = bundle.getString(GROUPS_ID),
+                    isGroupCallCall = true,
+                    topicName = "Group Call",
+                    groupName = bundle.getString(GROUPS_TITLE),
+                    favoriteUserCall = false
+                )
+                startActivity(intent)
+            }
+
         }else{
             showToast("Wait for last call to get disconnected")
         }
     }
 
-    private fun openFppCallScreen(uid: Int) {
-        if (WebRtcService.isCallOnGoing.value == false && getVoipState() == State.IDLE){
-            val intent =
-                WebRtcActivity.getFavMissedCallbackIntent(uid, this).apply {
-                    addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                }
-            startActivity(intent)
-        }else{
-            showToast("You are already on a call")
-        }
+    private fun openFppCallScreen(uid: Int,data:Bundle) {
+            if (WebRtcService.isCallOnGoing.value == false && getVoipState() == State.IDLE) {
+                if (PrefManager.getIntValue(IS_GROUP_FPP_NEW_ARCH_ENABLED, defValue = 1) == 1) {
+                    val callIntent = Intent(applicationContext, VoiceCallActivity::class.java)
+                    callIntent.apply {
+                        putExtra(STARTING_POINT, FROM_ACTIVITY)
+                        putExtra(INTENT_DATA_CALL_CATEGORY, Category.FPP.ordinal)
+                        putExtra(INTENT_DATA_FPP_MENTOR_ID, vm.mentorId)
+                        putExtra(INTENT_DATA_FPP_NAME, data.getString(INTENT_DATA_FPP_NAME))
+                        putExtra(INTENT_DATA_FPP_IMAGE, data.getString(INTENT_DATA_FPP_IMAGE))
+                        startActivity(callIntent)
+                    }
+                }else {
+                val intent =
+                    WebRtcActivity.getFavMissedCallbackIntent(uid, this).apply {
+                        addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    }
+                startActivity(intent)
+            }
+        }else {
+                showToast("You are already on a call")
+            }
     }
 
     private fun openGroupListFragment() {
@@ -360,15 +389,15 @@ class JoshGroupActivity : BaseGroupActivity() {
     }
 
     private fun popBackStack() {
-        MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
-        if (supportFragmentManager.backStackEntryCount > 1) {
-            try {
+        try {
+            MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
+            if (supportFragmentManager.backStackEntryCount > 1)
                 supportFragmentManager.popBackStackImmediate()
-            } catch ( ex:Exception){
-                ex.printStackTrace()
-            }
-        } else
-            this.onBackPressed()
+            else
+                this.onBackPressed()
+        }catch (ex:Exception){
+            ex.printStackTrace()
+        }
     }
 
     private fun openImageChooser() {

@@ -505,15 +505,17 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
     private fun setVideoThumbnail(thumbnailUrl: String?) {
         lifecycleScope.launch(Dispatchers.IO) {
             try {
-                val thumbnailDrawable: Drawable? =
-                    Utils.getDrawableFromUrl(thumbnailUrl)
-                if (thumbnailDrawable != null) {
-                    AppObjectController.uiHandler.post {
-                        binding.videoPlayer.useArtwork = true
-                        binding.videoPlayer.defaultArtwork = thumbnailDrawable
+                if (isAdded && activity != null) {
+                    val thumbnailDrawable: Drawable? =
+                        Utils.getDrawableFromUrl(requireContext(), thumbnailUrl)
+                    if (thumbnailDrawable != null) {
+                        AppObjectController.uiHandler.post {
+                            binding.videoPlayer.useArtwork = true
+                            binding.videoPlayer.defaultArtwork = thumbnailDrawable
 //                    val imgArtwork: ImageView = binding.videoPlayer.findViewById(R.id.exo_artwork) as ImageView
 //                    imgArtwork.setImageDrawable(thumbnailDrawable)
 //                    imgArtwork.visibility = View.VISIBLE
+                        }
                     }
                 }
             } catch (e: java.lang.Exception) {
@@ -718,52 +720,56 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
     }
 
     fun onQuestionSubmit() {
-        if (binding.quizRadioGroup.tag is Int) {
-            val question = assessmentQuestions[currentQuizQuestion]
-            question.question.isAttempted = true
-            question.question.status =
-                evaluateQuestionStatus((binding.quizRadioGroup.tag as Int) == binding.quizRadioGroup.checkedRadioButtonId)
+        try {
+            if (binding.quizRadioGroup.tag is Int) {
+                val question = assessmentQuestions[currentQuizQuestion]
+                question.question.isAttempted = true
+                question.question.status =
+                    evaluateQuestionStatus((binding.quizRadioGroup.tag as Int) == binding.quizRadioGroup.checkedRadioButtonId)
 
-            val selectedChoice = question.choiceList[
-                    binding.quizRadioGroup.indexOfChild(
-                        binding.root.findViewById(binding.quizRadioGroup.checkedRadioButtonId)
-                    )
-            ]
-            selectedChoice.isSelectedByUser = true
-            selectedChoice.userSelectedOrder = selectedChoice.sortOrder
+                val selectedChoice = question.choiceList[
+                        binding.quizRadioGroup.indexOfChild(
+                            binding.root.findViewById(binding.quizRadioGroup.checkedRadioButtonId)
+                        )
+                ]
+                selectedChoice.isSelectedByUser = true
+                selectedChoice.userSelectedOrder = selectedChoice.sortOrder
 
-            viewModel.saveAssessmentQuestion(question)
-            val correctQuestionList = ArrayList<Int>()
-            assessmentQuestions.forEach { questionWithRelation ->
-                if (questionWithRelation.question.isAttempted && questionWithRelation.question.status == QuestionStatus.CORRECT) {
-                    correctQuestionList.add(questionWithRelation.question.remoteId)
+                viewModel.saveAssessmentQuestion(question)
+                val correctQuestionList = ArrayList<Int>()
+                assessmentQuestions.forEach { questionWithRelation ->
+                    if (questionWithRelation.question.isAttempted && questionWithRelation.question.status == QuestionStatus.CORRECT) {
+                        correctQuestionList.add(questionWithRelation.question.remoteId)
+                    }
                 }
+                if (currentQuizQuestion == assessmentQuestions.size - 1)
+                    lessonActivityListener?.onQuestionStatusUpdate(
+                        QUESTION_STATUS.AT,
+                        quizQuestion?.id,
+                        quizCorrectQuestionIds = correctQuestionList
+                    )
+                viewModel.saveQuizToServer(assessmentQuestions[currentQuizQuestion].question.assessmentId)
+                binding.quizRadioGroup.findViewById<RadioButton>(binding.quizRadioGroup.tag as Int)
+                    .setBackgroundResource(R.drawable.rb_correct_rect_bg)
+
+                if (binding.quizRadioGroup.tag as Int == binding.quizRadioGroup.checkedRadioButtonId) {
+                    correctAns++
+                }
+
+                updateQuiz(question)
+                binding.continueBtn.visibility = View.VISIBLE
+                binding.showExplanationBtn.visibility = View.VISIBLE
+                requestFocus(binding.showExplanationBtn)
+
+                MixPanelTracker.publishEvent(MixPanelEvent.GRAMMAR_QUIZ_SUBMIT)
+                    .addParam(ParamKeys.LESSON_ID, lessonID)
+                    .addParam(ParamKeys.QUESTION_ID, selectedChoice.questionId)
+                    .addParam(ParamKeys.ANSWER_SELECTED, selectedChoice.text)
+                    .addParam(ParamKeys.IS_CORRECT_ANSWER, question.question.status.toString())
+                    .push()
             }
-            if (currentQuizQuestion == assessmentQuestions.size - 1)
-                lessonActivityListener?.onQuestionStatusUpdate(
-                    QUESTION_STATUS.AT,
-                    quizQuestion?.id,
-                    quizCorrectQuestionIds = correctQuestionList
-                )
-            viewModel.saveQuizToServer(assessmentQuestions[currentQuizQuestion].question.assessmentId)
-            binding.quizRadioGroup.findViewById<RadioButton>(binding.quizRadioGroup.tag as Int)
-                .setBackgroundResource(R.drawable.rb_correct_rect_bg)
-
-            if (binding.quizRadioGroup.tag as Int == binding.quizRadioGroup.checkedRadioButtonId) {
-                correctAns++
-            }
-
-            updateQuiz(question)
-            binding.continueBtn.visibility = View.VISIBLE
-            binding.showExplanationBtn.visibility = View.VISIBLE
-            requestFocus(binding.showExplanationBtn)
-
-            MixPanelTracker.publishEvent(MixPanelEvent.GRAMMAR_QUIZ_SUBMIT)
-                .addParam(ParamKeys.LESSON_ID, lessonID)
-                .addParam(ParamKeys.QUESTION_ID, selectedChoice.questionId)
-                .addParam(ParamKeys.ANSWER_SELECTED, selectedChoice.text)
-                .addParam(ParamKeys.IS_CORRECT_ANSWER, question.question.status.toString())
-                .push()
+        }catch (ex:Exception) {
+            ex.printStackTrace()
         }
     }
 
@@ -954,17 +960,25 @@ class GrammarFragment : CoreJoshFragment(), ViewTreeObserver.OnScrollChangedList
     }
 
     fun showNextQuestion() {
-        MixPanelTracker.publishEvent(MixPanelEvent.GRAMMAR_QUIZ_NEXT_QUESTION)
-            .addParam(ParamKeys.LESSON_ID, lessonID)
-            .push()
-        updateQuiz(assessmentQuestions[++currentQuizQuestion])
+        try {
+            MixPanelTracker.publishEvent(MixPanelEvent.GRAMMAR_QUIZ_NEXT_QUESTION)
+                .addParam(ParamKeys.LESSON_ID, lessonID)
+                .push()
+            updateQuiz(assessmentQuestions[++currentQuizQuestion])
+        }catch (ex: Exception) {
+            ex.printStackTrace()
+        }
     }
 
     fun showPreviousQuestion() {
-        MixPanelTracker.publishEvent(MixPanelEvent.GRAMMAR_QUIZ_PREVIOUS_QUESTION)
-            .addParam(ParamKeys.LESSON_ID, lessonID)
-            .push()
-        updateQuiz(assessmentQuestions[--currentQuizQuestion])
+        try {
+            MixPanelTracker.publishEvent(MixPanelEvent.GRAMMAR_QUIZ_PREVIOUS_QUESTION)
+                .addParam(ParamKeys.LESSON_ID, lessonID)
+                .push()
+            updateQuiz(assessmentQuestions[--currentQuizQuestion])
+        }catch (ex: Exception) {
+            ex.printStackTrace()
+        }
     }
 
     fun onClickPdfContainer() {

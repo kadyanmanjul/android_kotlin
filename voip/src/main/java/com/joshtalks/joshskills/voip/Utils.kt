@@ -6,6 +6,10 @@ import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.database.Cursor
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Typeface
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.Uri
@@ -19,6 +23,7 @@ import com.joshtalks.joshskills.base.log.Feature
 import com.joshtalks.joshskills.base.log.JoshLog
 import com.joshtalks.joshskills.base.model.ApiHeader
 import com.joshtalks.joshskills.base.model.NotificationData
+import com.joshtalks.joshskills.voip.constant.Category
 import com.joshtalks.joshskills.voip.data.CallingRemoteService
 import com.joshtalks.joshskills.voip.recordinganalytics.CallRecordingAnalytics
 import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
@@ -35,6 +40,8 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import okhttp3.RequestBody.Companion.toRequestBody
+import java.util.*
+import kotlin.NoSuchElementException
 
 // TODO: Must Refactor
 val voipLog = JoshLog.getInstanceIfEnable(Feature.VOIP)
@@ -52,7 +59,7 @@ fun Context.updateLastCallDetails(
     remoteUserImage: String?,
     remotesUserMentorId : String,
     callId: Int,
-    callType: Int,
+    callType: Category,
     remoteUserAgoraId: Int,
     localUserAgoraId: Int,
     channelName: String,
@@ -65,7 +72,7 @@ fun Context.updateLastCallDetails(
         put(REMOTE_USER_IMAGE, remoteUserImage)
         put(REMOTE_USER_AGORA_ID, remoteUserAgoraId)
         put(CALL_ID, callId)
-        put(CALL_TYPE, callType)
+        put(CALL_TYPE, callType.ordinal)
         put(CHANNEL_NAME, channelName)
         put(TOPIC_NAME, topicName)
         put(CURRENT_USER_AGORA_ID, localUserAgoraId)
@@ -76,7 +83,7 @@ fun Context.updateLastCallDetails(
         Uri.parse(CONTENT_URI + CALL_DISCONNECTED_URI),
         values
     )
-    voipLog?.log("Data --> $data")
+    Log.d(TAG, "updateStartCallTime: Data --> $data")
 }
 
 fun Context.updateStartTime(startTime : Long) {
@@ -159,6 +166,20 @@ fun Context.getMentorId(): String {
     val mentorId = mentorIdCursor.getStringData(MENTOR_ID_COLUMN)
     mentorIdCursor?.close()
     return mentorId
+}
+fun Context.getCourseId(): String {
+    val courserIdCursor = contentResolver.query(
+        Uri.parse(CONTENT_URI + COURSE_ID),
+        null,
+        null,
+        null,
+        null
+    )
+
+    courserIdCursor?.moveToFirst()
+    val courseId = courserIdCursor.getStringData(COURSE_ID_COLUMN)
+    courserIdCursor?.close()
+    return courseId
 }
 
 fun Context.isFreeTrialOrCourseBought(): Boolean {
@@ -271,21 +292,22 @@ fun Context.getRecordingText(): String {
     return textData
 }
 
-
-fun Context.getCourseId(): String {
-    val courserIdCursor = contentResolver.query(
-        Uri.parse(CONTENT_URI + COURSE_ID),
+fun Context.getGameFlag(): String {
+    val recordingCursor = contentResolver.query(
+        Uri.parse(CONTENT_URI + GAME_FLAG),
         null,
         null,
         null,
         null
     )
 
-    courserIdCursor?.moveToFirst()
-    val courseId = courserIdCursor.getStringData(COURSE_ID_COLUMN)
-    courserIdCursor?.close()
-    return courseId
+    recordingCursor?.moveToFirst()
+    val textData = recordingCursor.getStringData(GAME_TEXT_COLUMN)
+    recordingCursor?.close()
+    return textData
 }
+
+
 //fun Context.updateIncomingCallDetails() {
 //    voipLog?.log("QUERY")
 //    val values = ContentValues(2).apply {
@@ -305,6 +327,7 @@ fun openCallScreen(): PendingIntent {
     intent.apply {
         setClassName(Utils.context!!.applicationContext, destination)
         flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
+        putExtra(INTENT_DATA_CALL_CATEGORY,Category.PEER_TO_PEER.ordinal)
     }
     return PendingIntent.getActivity(
         Utils.context,
@@ -314,6 +337,52 @@ fun openCallScreen(): PendingIntent {
     )
 }
 
+fun intentOnNotificationTap(): PendingIntent {
+    val destination = "com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity"
+    val intent = Intent()
+    intent.apply {
+        setClassName(Utils.context!!.applicationContext, destination)
+        putExtra(STARTING_POINT, FROM_CALL_BAR)
+        flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
+    }
+    return PendingIntent.getActivity(
+        Utils.context,
+        1102,
+        intent,
+        PendingIntent.FLAG_CANCEL_CURRENT
+    )
+}
+
+fun openFavoriteCallScreen(): PendingIntent {
+    val destination = "com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity"
+    val intent = Intent()
+    intent.apply {
+        setClassName(Utils.context!!.applicationContext, destination)
+        flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
+        putExtra(INTENT_DATA_CALL_CATEGORY,Category.FPP.ordinal)
+    }
+    return PendingIntent.getActivity(
+        Utils.context,
+        1102,
+        intent,
+        PendingIntent.FLAG_CANCEL_CURRENT
+    )
+}
+fun openGroupCallScreen(): PendingIntent {
+    val destination = "com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity"
+    val intent = Intent()
+    intent.apply {
+        setClassName(Utils.context!!.applicationContext, destination)
+        flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
+        putExtra(INTENT_DATA_CALL_CATEGORY,Category.GROUP.ordinal)
+    }
+    return PendingIntent.getActivity(
+        Utils.context,
+        1102,
+        intent,
+        PendingIntent.FLAG_CANCEL_CURRENT
+    )
+}
 fun Context.getHangUpIntent(): PendingIntent {
     val intent = Intent(this, CallingRemoteService::class.java).apply {
         action = SERVICE_ACTION_DISCONNECT_CALL
@@ -345,6 +414,43 @@ fun getDeclineCallIntent(): PendingIntent {
         intent,
         PendingIntent.FLAG_CANCEL_CURRENT
     )
+}
+
+fun getRandomName(): String {
+    val name = "ABCDFGHIJKLMNOPRSTUVZ"
+    val ename = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    return name.random().toString().plus(ename.random().toString())
+}
+
+fun String.textDrawableBitmap(
+    width: Int = 48,
+    height: Int = 48,
+    bgColor: Int = -1
+): Bitmap? {
+    val rnd = Random()
+    val color = if (bgColor == -1)
+        Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256))
+    else
+        bgColor
+
+    val font = Typeface.createFromAsset(
+        Utils.context?.assets,
+        "fonts/OpenSans-SemiBold.ttf"
+    )
+    val drawable = TextDrawable.builder()
+        .beginConfig()
+        .textColor(Color.WHITE)
+        .fontSize(20)
+        .useFont(font)
+        .toUpperCase()
+        .endConfig()
+        .buildRound(this, color)
+
+    val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+    val canvas = Canvas(bitmap)
+    drawable.setBounds(0, 0, canvas.width, canvas.height)
+    drawable.draw(canvas)
+    return bitmap
 }
 
 class Utils {
