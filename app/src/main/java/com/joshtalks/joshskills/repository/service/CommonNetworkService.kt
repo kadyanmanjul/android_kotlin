@@ -171,9 +171,6 @@ interface CommonNetworkService {
     @GET("http://www.postalpincode.in/api/pincode/{pin}")
     suspend fun getInfoFromPinCode(@Path("pin")pin:Int): PostalDetails
 
-    @GET("http://www.postalpincode.in/api/pincode/{pin}")
-    suspend fun getInfoFromPinCode(@Path("pin")pin:Int): PostalDetails
-
     @POST("$DIR/certificateexam/user_details")
     suspend fun submitUserDetailForCertificate(@Body certificationUserDetail: CertificationUserDetail): Map<String, String>?
 

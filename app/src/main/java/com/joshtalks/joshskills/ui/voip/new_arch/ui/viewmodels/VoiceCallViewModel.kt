@@ -300,7 +300,7 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                             what = SHOW_RECORDING_PERMISSION_DIALOG
                         }
                         withContext(Dispatchers.Main) {
-                            recordingLiveEvent.value = msg
+                            singleLiveEvent.value = msg
                         }
                         recordingStartedUIChanges()
                     }

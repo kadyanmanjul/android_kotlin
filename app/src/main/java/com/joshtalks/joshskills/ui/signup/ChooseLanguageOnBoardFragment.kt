@@ -12,11 +12,10 @@ import com.joshtalks.joshskills.base.BaseFragment
 import com.joshtalks.joshskills.core.IS_EFT_VARIENT_ENABLED
 import com.joshtalks.joshskills.core.LANGUAGE_SELECTION_SCREEN_OPENED
 import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.Utils.isInternetAvailable
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.databinding.FragmentChooseLanguageOnboardBinding
-import com.joshtalks.joshskills.quizgame.util.UpdateReceiver
 import com.joshtalks.joshskills.repository.server.ChooseLanguages
 import com.joshtalks.joshskills.ui.assessment.view.Stub
 import com.joshtalks.joshskills.ui.signup.adapters.ChooseLanguageAdapter
@@ -73,7 +72,7 @@ class ChooseLanguageOnBoardFragment: BaseFragment() {
 //            binding.noInternetContainer.visibility = View.GONE
 //            viewModel.getAvailableLanguages()
 //        }
-        if (UpdateReceiver.isNetworkAvailable()) {
+        if (isInternetAvailable()) {
             viewModel.getAvailableLanguages()
             errorView?.resolved()?.let {
                 errorView!!.get().onSuccess()
