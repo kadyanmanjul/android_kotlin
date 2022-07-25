@@ -536,7 +536,7 @@ class AppObjectController {
                             BuildConfig.FRESH_CHAT_APP_ID,
                             BuildConfig.FRESH_CHAT_APP_KEY
                         )
-                    af.aw(joshApplication)?.let {
+                    af.eK()?.let {
                         Freshchat.setImageLoader(
                             it
                         )

@@ -189,7 +189,7 @@ object PrefManager {
 
 
     @SuppressLint("RestrictedApi")
-    private fun getPref(context: Context): SharedPreferences {
+    private fun getPref(context: Context): SharedPreferences? {
         val sharedPreferences = PreferenceManager(context).sharedPreferences
         PreferenceManager(context).sharedPreferencesName = PREF_NAME_COMMON
         return sharedPreferences
@@ -203,13 +203,13 @@ object PrefManager {
     }
 
     fun clear() {
-        prefManagerCommon.edit().clear().apply()
+        prefManagerCommon?.edit()?.clear()?.apply()
     }
 
 
     fun hasKey(key: String, isConsistent: Boolean = false): Boolean {
         return if (isConsistent) prefManagerConsistent.contains(key)
-        else prefManagerCommon.contains(key)
+        else prefManagerCommon?.contains(key)?:false
     }
 
     @JvmStatic
@@ -219,7 +219,7 @@ object PrefManager {
         defValue: Boolean = false
     ): Boolean {
         return if (isConsistent) prefManagerConsistent.getBoolean(key, defValue)
-        else prefManagerCommon.getBoolean(key, defValue)
+        else prefManagerCommon?.getBoolean(key, defValue)?:false
     }
 
     fun getStringValue(
@@ -228,23 +228,23 @@ object PrefManager {
         defaultValue: String = EMPTY
     ): String {
         return if (isConsistent) prefManagerConsistent.getString(key, EMPTY) ?: EMPTY
-        else prefManagerCommon.getString(key, defaultValue) ?: EMPTY
+        else prefManagerCommon?.getString(key, defaultValue) ?: EMPTY
     }
 
     fun getIntValue(key: String, isConsistent: Boolean = false): Int {
         return if (isConsistent) prefManagerConsistent.getInt(key, 0)
-        else prefManagerCommon.getInt(key, 0)
+        else prefManagerCommon?.getInt(key, 0)?:0
 
     }
 
     fun getIntValue(key: String, isConsistent: Boolean = false, defValue: Int): Int {
         return if (isConsistent) prefManagerConsistent.getInt(key, defValue)
-        else prefManagerCommon.getInt(key, defValue)
+        else prefManagerCommon?.getInt(key, defValue)?:0
     }
 
     fun getSetValue(key: String, isConsistent: Boolean = false, defValue: Set<String> = setOf()): Set<String> {
         return if (isConsistent) prefManagerConsistent.getStringSet(key, defValue) ?: defValue
-        else prefManagerCommon.getStringSet(key, defValue) ?: defValue
+        else prefManagerCommon?.getStringSet(key, defValue) ?: defValue
     }
 
     fun appendToSet(
@@ -266,47 +266,47 @@ object PrefManager {
 
     fun getLongValue(key: String, isConsistent: Boolean = false): Long {
         return if (isConsistent) prefManagerConsistent.getLong(key, 0)
-        else prefManagerCommon.getLong(key, 0)
+        else prefManagerCommon?.getLong(key, 0)?:0
     }
 
     private fun getFloatValue(key: String, isConsistent: Boolean = false): Float {
         return if (isConsistent) prefManagerConsistent.getFloat(key, 0F)
-        else prefManagerCommon.getFloat(key, 0F)
+        else prefManagerCommon?.getFloat(key, 0F)?:0F
 
     }
 
     fun put(key: String, value: String, isConsistent: Boolean = false) {
         if (isConsistent) prefManagerConsistent.edit().putString(key, value).apply()
-        else prefManagerCommon.edit().putString(key, value).apply()
+        else prefManagerCommon?.edit()?.putString(key, value)?.apply()
 
     }
 
     fun put(key: String, value: Int, isConsistent: Boolean = false) {
         if (isConsistent) prefManagerConsistent.edit().putInt(key, value).apply()
-        else prefManagerCommon.edit().putInt(key, value).apply()
+        else prefManagerCommon?.edit()?.putInt(key, value)?.apply()
 
     }
 
     fun put(key: String, value: Long, isConsistent: Boolean = false) {
         if (isConsistent) prefManagerConsistent.edit().putLong(key, value).apply()
-        else prefManagerCommon.edit().putLong(key, value).apply()
+        else prefManagerCommon?.edit()?.putLong(key, value)?.apply()
 
     }
 
     fun put(key: String, value: Float, isConsistent: Boolean = false) {
         if (isConsistent) prefManagerConsistent.edit().putFloat(key, value).apply()
-        else prefManagerCommon.edit().putFloat(key, value).apply()
+        else prefManagerCommon?.edit()?.putFloat(key, value)?.apply()
 
     }
 
     fun put(key: String, value: Boolean, isConsistent: Boolean = false) {
         if (isConsistent) prefManagerConsistent.edit().putBoolean(key, value).apply()
-        else prefManagerCommon.edit().putBoolean(key, value).apply()
+        else prefManagerCommon?.edit()?.putBoolean(key, value)?.apply()
     }
 
     fun put(key: String, value: Set<String>, isConsistent: Boolean = false) {
         if (isConsistent) prefManagerConsistent.edit().putStringSet(key, value).apply()
-        else prefManagerCommon.edit().putStringSet(key, value).apply()
+        else prefManagerCommon?.edit()?.putStringSet(key, value)?.apply()
     }
 
     fun putPrefObject(key: String, objects: Any) {
@@ -351,7 +351,7 @@ object PrefManager {
 
     fun logoutUser() {
         sendBroadcast()
-        prefManagerCommon.edit().clear().apply()
+        prefManagerCommon?.edit()?.clear()?.apply()
         LastSyncPrefManager.clear()
         WorkManagerAdmin.instanceIdGenerateWorker()
         WorkManagerAdmin.appInitWorker()
@@ -361,7 +361,7 @@ object PrefManager {
     fun clearUser() {
         sendBroadcast()
         LastSyncPrefManager.clear()
-        prefManagerCommon.edit().clear().apply()
+        prefManagerCommon?.edit()?.clear()?.apply()
         AppDatabase.clearDatabase()
         WorkManagerAdmin.instanceIdGenerateWorker()
         WorkManagerAdmin.appInitWorker()
@@ -376,7 +376,7 @@ object PrefManager {
 
     fun removeKey(key: String, isConsistent: Boolean = false) {
         if (isConsistent) prefManagerConsistent.edit().remove(key).apply()
-        else prefManagerCommon.edit().remove(key).apply()
+        else prefManagerCommon?.edit()?.remove(key)?.apply()
 
     }
 
