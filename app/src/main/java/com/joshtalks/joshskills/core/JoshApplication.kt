@@ -37,6 +37,7 @@ import com.moengage.core.DataCenter
 import com.moengage.core.MoEngage
 import com.moengage.core.config.MiPushConfig
 import com.moengage.core.config.NotificationConfig
+import com.moengage.core.enableAdIdTracking
 import com.vanniktech.emoji.EmojiManager
 import com.vanniktech.emoji.ios.IosEmojiProvider
 import io.branch.referral.Branch
@@ -115,6 +116,7 @@ class JoshApplication :
             .build()
 
         MoEngage.initialiseDefaultInstance(moEngage)
+        enableAdIdTracking(this)
     }
 
     override fun onTerminate() {

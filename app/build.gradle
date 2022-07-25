@@ -458,6 +458,7 @@ dependencies {
     implementation(moengage.core)
     implementation(moengage.pushAmp)
     implementation(moengage.pushAmpPlus)
+    implementation("com.google.android.gms:play-services-ads-identifier:18.0.1")
     implementation group: 'org.slf4j', name: 'slf4j-android', version: '1.7.36'
 
     //singular
