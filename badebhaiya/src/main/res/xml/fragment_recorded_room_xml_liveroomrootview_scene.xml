@@ -11,8 +11,7 @@
             app:dragDirection="dragDown"
             app:touchAnchorId="@id/toolbar"
             />
-
-
+        <OnClick app:targetId="@+id/button_container" />
 
 
     </Transition>
@@ -89,22 +88,6 @@
             />
 
         <Constraint
-            android:id="@+id/play"
-            android:layout_width="@dimen/_50sdp"
-            android:layout_height="@dimen/_50sdp"
-            android:layout_marginStart="@dimen/_130sdp"
-            android:layout_marginBottom="@dimen/_75sdp"
-            android:background="@drawable/state_background"
-            android:elevation="@dimen/_5sdp"
-            android:backgroundTint="@color/da_grey"
-            android:padding="@dimen/_13sdp"
-            android:drawablePadding="@dimen/_7sdp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            android:drawableStart="@drawable/ic_play"
-            />
-
-        <Constraint
             android:id="@+id/forward"
             android:layout_width="@dimen/_40sdp"
             android:layout_height="@dimen/_40sdp"
@@ -161,22 +144,6 @@
             app:layout_constraintStart_toStartOf="parent"
             android:src="@drawable/ic_pause_icon"
             android:visibility="visible"
-            />
-
-        <Constraint
-            android:id="@+id/play"
-            android:layout_width="@dimen/_35sdp"
-            android:layout_height="@dimen/_35sdp"
-            android:layout_marginStart="@dimen/_210sdp"
-            android:layout_marginBottom="@dimen/_20sdp"
-            android:background="@drawable/state_background"
-            android:elevation="@dimen/_5sdp"
-            android:padding="@dimen/_13sdp"
-            android:backgroundTint="@color/da_grey"
-            android:drawablePadding="@dimen/_10sdp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            android:drawableStart="@drawable/ic_play"
             />
 
         <Constraint

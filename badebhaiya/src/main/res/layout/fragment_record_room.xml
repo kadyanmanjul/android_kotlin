@@ -104,22 +104,6 @@
             android:visibility="visible" />
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/play"
-            android:layout_width="@dimen/_55sdp"
-            android:layout_height="@dimen/_55sdp"
-            android:layout_marginStart="@dimen/_130sdp"
-            android:layout_marginBottom="@dimen/_100sdp"
-            android:background="@drawable/state_background"
-            android:drawableStart="@drawable/ic_play"
-            android:backgroundTint="@color/da_grey"
-            android:drawablePadding="@dimen/_10sdp"
-            android:elevation="@dimen/_15sdp"
-            android:padding="@dimen/_13sdp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            android:visibility="gone" />
-
-        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/forward"
             android:layout_width="@dimen/_40sdp"
             android:layout_height="@dimen/_40sdp"
@@ -305,61 +289,24 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     tools:layout_editor_absoluteX="31dp"
-                    tools:layout_editor_absoluteY="0dp">
-
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:id="@+id/notificationRoot"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
-
-
-                        <com.joshtalks.badebhaiya.feed.NotificationView
-                            android:id="@+id/notification_bar"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:visibility="gone"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            tools:visibility="visible" />
-
-
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-                </FrameLayout>
+                    tools:layout_editor_absoluteY="0dp"/>
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.core.widget.NestedScrollView>
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/share_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_206sdp"
-            android:layout_marginBottom="@dimen/_20sdp"
-            android:background="@drawable/rect_round"
-            android:backgroundTint="@color/da_grey"
-            android:drawableStart="@drawable/ic_share_icon"
-            android:maxLines="1"
-            android:fontFamily="@font/nunito_sans_extrabold"
-            android:paddingVertical="@dimen/_4sdp"
-            android:paddingStart="@dimen/_14sdp"
-            android:paddingEnd="@dimen/_12sdp"
-            android:shadowRadius="30"
-            android:text="Share"
-            android:visibility="gone"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7"
-            android:textColor="@color/black"
-            android:textSize="@dimen/_14sdp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
-
+        <View
+            android:id="@+id/bottomControlBackground"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="@color/white"
+            app:layout_constraintTop_toBottomOf="@+id/scrollView" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/button_container"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/_70sdp"
             android:background="@drawable/background_bottomsheet_24dp_corner"
             android:clickable="true"
             android:focusable="true"
-            android:onClick="@{() -> handler.expandLiveRoom()}"
             android:paddingTop="@dimen/_10sdp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -386,7 +333,46 @@
                 android:textSize="@dimen/_14sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/share_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_206sdp"
+            android:layout_marginBottom="@dimen/_20sdp"
+            android:background="@drawable/rect_round"
+            android:backgroundTint="@color/da_grey"
+            android:drawableStart="@drawable/ic_share_icon"
+            android:maxLines="1"
+            android:fontFamily="@font/nunito_sans_extrabold"
+            android:paddingVertical="@dimen/_4sdp"
+            android:paddingStart="@dimen/_14sdp"
+            android:paddingEnd="@dimen/_12sdp"
+            android:shadowRadius="30"
+            android:text="Share"
+            android:visibility="gone"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_14sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/notificationRoot"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+            <com.joshtalks.badebhaiya.feed.NotificationView
+                android:id="@+id/notification_bar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:visibility="visible" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
