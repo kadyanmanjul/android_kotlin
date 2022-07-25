@@ -226,7 +226,6 @@ android {
             jniLibs.srcDirs = ['src/main/jniLibs']
         }
     }
-    //dynamicFeatures = [':dynamic']
 }
 
 dependencies {

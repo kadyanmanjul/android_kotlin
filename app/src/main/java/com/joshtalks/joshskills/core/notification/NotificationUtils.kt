@@ -530,7 +530,7 @@ class NotificationUtils(val context: Context) {
             NotificationAction.EMERGENCY_NOTIFICATION -> {
                 lateinit var intent: Intent
                 if (isValidFullNumber("+91", actionData)) {
-                     intent = Intent(Intent.ACTION_DIAL).apply {
+                    intent = Intent(Intent.ACTION_DIAL).apply {
                         addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     }
                     intent.data = Uri.parse("tel:$actionData")
@@ -544,10 +544,10 @@ class NotificationUtils(val context: Context) {
                     val jsonObj = JSONObject(actionData ?: EMPTY)
                     val callContext = context
                     val remoteServiceIntent = Intent(callContext, CallingRemoteService::class.java)
-                remoteServiceIntent.putExtra(INCOMING_CALL_ID, jsonObj.getString(INCOMING_CALL_ID))
-                remoteServiceIntent.putExtra(INCOMING_CALL_CATEGORY,jsonObj.getString(INCOMING_CALL_CATEGORY))
-                remoteServiceIntent.action = SERVICE_ACTION_INCOMING_CALL
-                com.joshtalks.joshskills.voip.Utils.context?.startService(remoteServiceIntent)
+                    remoteServiceIntent.putExtra(INCOMING_CALL_ID, jsonObj.getString(INCOMING_CALL_ID))
+                    remoteServiceIntent.putExtra(INCOMING_CALL_CATEGORY,jsonObj.getString(INCOMING_CALL_CATEGORY))
+                    remoteServiceIntent.action = SERVICE_ACTION_INCOMING_CALL
+                    com.joshtalks.joshskills.voip.Utils.context?.startService(remoteServiceIntent)
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
@@ -584,9 +584,9 @@ class NotificationUtils(val context: Context) {
                 }
                 return null            }
             NotificationAction.CALL_RECORDING_NOTIFICATION -> {
-               if (notificationObject.extraData.isNullOrBlank()){
-                   return null
-               } else return CallRecordingShare.getActivityIntentForSharableCallRecording(
+                if (notificationObject.extraData.isNullOrBlank()){
+                    return null
+                } else return CallRecordingShare.getActivityIntentForSharableCallRecording(
                     context = context,
                     videoUrl = notificationObject.extraData,
                 )
