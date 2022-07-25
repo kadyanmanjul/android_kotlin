@@ -97,7 +97,7 @@
             android:src="@drawable/ic_play"
             android:drawableEnd="@drawable/ic_pause_icon"
             android:drawablePadding="@dimen/_10sdp"
-            android:elevation="@dimen/_15sdp"
+            android:elevation="@dimen/_5sdp"
             android:padding="@dimen/_13sdp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -114,12 +114,13 @@
             android:paddingStart="@dimen/_10sdp"
             android:paddingEnd="@dimen/_4sdp"
             android:shadowRadius="30"
-            android:layout_marginTop="@dimen/_407sdp"
+            android:layout_marginBottom="@dimen/_5sdp"
             android:layout_marginEnd="@dimen/_57sdp"
             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7"
             android:textColor="@color/black"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintStart_toEndOf="@id/pause"
+             android:layout_marginStart="@dimen/_20sdp"
+            app:layout_constraintBottom_toBottomOf="@id/pause"/>
 
 
 
@@ -157,14 +158,14 @@
                     android:id="@+id/room_name"
                     android:layout_width="@dimen/_198sdp"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/_120sdp"
+                    android:layout_marginTop="@dimen/_10sdp"
                     android:fontFamily="@font/nunito_regular"
                     android:text="Guide to Crack UPSC 2023 in One Attempt"
                     android:textColor="@color/black"
                     android:textAlignment="center"
                     android:layout_marginStart="@dimen/_7sdp"
                     android:textSize="@dimen/_16sdp"
-                    app:layout_constraintBottom_toTopOf="@id/seekbar"
+                    app:layout_constraintTop_toBottomOf="@id/profile_pic"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />
 
@@ -205,6 +206,7 @@
                     android:textAlignment="center"
                     android:drawableStart="@drawable/ic_audience"
                     android:layout_marginEnd="@dimen/_48sdp"
+                    android:layout_marginTop="@dimen/_10sdp"
                     />
 
                 <TextView
@@ -218,6 +220,7 @@
                     app:layout_constraintTop_toBottomOf="@id/time_date"
                     app:layout_constraintStart_toStartOf="parent"
                     android:layout_marginStart="@dimen/_30sdp"
+                    android:layout_marginTop="@dimen/_10sdp"
                     />
 
 
@@ -276,12 +279,12 @@
                     android:paddingStart="@dimen/_7sdp"
                     android:paddingEnd="@dimen/_4sdp"
                     android:shadowRadius="30"
-                    android:layout_marginTop="@dimen/_437sdp"
                     android:layout_marginStart="@dimen/_72sdp"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7"
                     android:textColor="@color/black"
                     android:visibility="visible"
-                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginBottom="@dimen/_10sdp"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"/>
 
                 <FrameLayout

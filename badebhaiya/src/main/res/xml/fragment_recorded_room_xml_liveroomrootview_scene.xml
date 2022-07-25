@@ -8,7 +8,7 @@
         app:constraintSetStart="@id/expanded">
 
         <OnSwipe
-            app:dragDirection="dragDown"
+            app:dragDirection="dragUp"
             app:touchAnchorId="@id/toolbar"
             />
         <OnClick app:targetId="@+id/button_container" />
@@ -98,12 +98,12 @@
             android:paddingStart="@dimen/_10sdp"
             android:paddingEnd="@dimen/_4sdp"
             android:shadowRadius="30"
-            android:layout_marginTop="@dimen/_487sdp"
-            android:layout_marginEnd="@dimen/_63sdp"
+            android:layout_marginBottom="@dimen/_6sdp"
             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7"
             android:textColor="@color/black"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginStart="@dimen/_15sdp"
+            app:layout_constraintStart_toEndOf="@id/pause"
+            app:layout_constraintBottom_toBottomOf="@id/pause"
             />
 
 
@@ -136,7 +136,7 @@
             android:layout_marginStart="@dimen/_210sdp"
             android:layout_marginBottom="@dimen/_20sdp"
             android:background="@drawable/state_background"
-            android:elevation="@dimen/_5sdp"
+            android:elevation="@dimen/_2sdp"
             android:padding="@dimen/_13sdp"
             android:drawablePadding="@dimen/_10sdp"
             android:backgroundTint="@color/da_grey"
@@ -161,8 +161,9 @@
             android:layout_marginEnd="@dimen/_17sdp"
             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7"
             android:textColor="@color/black"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginStart="@dimen/_7sdp"
+            app:layout_constraintStart_toEndOf="@id/pause"
+            app:layout_constraintBottom_toBottomOf="@id/pause"
             />
 
         <Constraint

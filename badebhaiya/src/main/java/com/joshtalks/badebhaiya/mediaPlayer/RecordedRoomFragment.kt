@@ -300,12 +300,12 @@ private fun finishFragment(){
 
     fun collapseLiveRoom(){
         binding.liveRoomRootView.transitionToEnd()
-        viewModel.lvRoomState.value = LiveRoomState.COLLAPSED
+//        viewModel.lvRoomState.value = LiveRoomState.COLLAPSED
     }
 
     fun expandLiveRoom() {
         binding.liveRoomRootView.transitionToStart()
-        viewModel.lvRoomState.value=LiveRoomState.EXPANDED
+//        viewModel.lvRoomState.value=LiveRoomState.EXPANDED
     }
 
 
