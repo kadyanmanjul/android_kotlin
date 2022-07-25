@@ -591,36 +591,36 @@ class GenerateRestoreIdWorker(context: Context, workerParams: WorkerParameters) 
     }
 }
 
-class UserActiveWorker(context: Context, workerParams: WorkerParameters) :
-    CoroutineWorker(context, workerParams) {
-    override suspend fun doWork(): Result {
-        try {
-            val instanceId = when {
-                PrefManager.hasKey(INSTANCE_ID, true) -> {
-                    PrefManager.getStringValue(INSTANCE_ID, true)
-                }
-                PrefManager.hasKey(INSTANCE_ID, false) -> {
-                    PrefManager.getStringValue(INSTANCE_ID, false)
-                }
-                else -> {
-                    null
-                }
-            }
-            val response = AppObjectController.signUpNetworkService.userActive(
-                Mentor.getInstance().getId(),
-                mapOf("instance_id" to instanceId, "device_id" to Utils.getDeviceId())
-            )
-
-            if (response.isSuccessful && response.body()?.isLatestLoginDevice == false) {
-                Mentor.deleteUserCredentials(true)
-                Mentor.deleteUserData()
-            }
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-        }
-        return Result.success()
-    }
-}
+//class UserActiveWorker(context: Context, workerParams: WorkerParameters) :
+//    CoroutineWorker(context, workerParams) {
+//    override suspend fun doWork(): Result {
+//        try {
+//            val instanceId = when {
+//                PrefManager.hasKey(INSTANCE_ID, true) -> {
+//                    PrefManager.getStringValue(INSTANCE_ID, true)
+//                }
+//                PrefManager.hasKey(INSTANCE_ID, false) -> {
+//                    PrefManager.getStringValue(INSTANCE_ID, false)
+//                }
+//                else -> {
+//                    null
+//                }
+//            }
+//            val response = AppObjectController.signUpNetworkService.userActive(
+//                Mentor.getInstance().getId(),
+//                mapOf("instance_id" to instanceId, "device_id" to Utils.getDeviceId())
+//            )
+//
+//            if (response.isSuccessful && response.body()?.isLatestLoginDevice == false) {
+//                Mentor.deleteUserCredentials(true)
+//                Mentor.deleteUserData()
+//            }
+//        } catch (ex: Exception) {
+//            ex.printStackTrace()
+//        }
+//        return Result.success()
+//    }
+//}
 
 class MergeMentorWithGAIDWorker(context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {

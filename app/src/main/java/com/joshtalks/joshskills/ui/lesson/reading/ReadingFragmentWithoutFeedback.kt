@@ -1168,25 +1168,25 @@ class ReadingFragmentWithoutFeedback :
     }
 
     private fun initRV() {
-        val divider = DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL)
-        divider.setDrawable(
-            ColorDrawable(
-                ContextCompat.getColor(
-                    requireContext(),
-                    R.color.seek_bar_background
+        try {
+            val divider = DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL)
+            divider.setDrawable(
+                ColorDrawable(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.seek_bar_background
+                    )
                 )
             )
-        )
-        try {
             linearLayoutManager?.isSmoothScrollbarEnabled = true
             binding.audioListRv.layoutManager = linearLayoutManager
+            binding.audioListRv.setHasFixedSize(true)
+            binding.audioListRv.addItemDecoration(divider)
+            binding.audioListRv.enforceSingleScrollDirection()
+            binding.audioListRv.adapter = praticAudioAdapter
         } catch (ex: Exception) {
             ex.printStackTrace()
         }
-        binding.audioListRv.setHasFixedSize(true)
-        binding.audioListRv.addItemDecoration(divider)
-        binding.audioListRv.enforceSingleScrollDirection()
-        binding.audioListRv.adapter = praticAudioAdapter
     }
 
     private fun addAudioListRV(practiceEngagement: List<PracticeEngagement>?) {
@@ -1282,12 +1282,16 @@ class ReadingFragmentWithoutFeedback :
                                 audioRecordTouchListener()
                                 return
                             }
-                            if (report.isAnyPermissionPermanentlyDenied) {
-                                PermissionUtils.permissionPermanentlyDeniedDialog(
-                                    requireActivity(),
-                                    R.string.record_permission_message
-                                )
-                                return
+                            if (isAdded && activity!=null) {
+                                if (report.isAnyPermissionPermanentlyDenied) {
+                                    PermissionUtils.permissionPermanentlyDeniedDialog(
+                                        requireActivity(),
+                                        R.string.record_permission_message
+                                    )
+                                    return
+                                }
+                            }else{
+                                showToast(getString(R.string.something_went_wrong))
                             }
                         }
                     }

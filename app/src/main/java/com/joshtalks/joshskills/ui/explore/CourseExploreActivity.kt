@@ -6,16 +6,12 @@ import android.os.Bundle
 import android.view.View
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewModelScope
 import com.afollestad.materialdialogs.MaterialDialog
 import com.google.android.material.tabs.TabLayoutMediator
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
-import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
-import com.joshtalks.joshskills.core.analytics.AppAnalytics
-import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
-import com.joshtalks.joshskills.core.analytics.MixPanelEvent
-import com.joshtalks.joshskills.core.analytics.MixPanelTracker
-import com.joshtalks.joshskills.core.analytics.ParamKeys
+import com.joshtalks.joshskills.core.analytics.*
 import com.joshtalks.joshskills.databinding.ActivityCourseExploreBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
@@ -93,6 +89,8 @@ class CourseExploreActivity : CoreJoshActivity() {
         }
         initView()
         loadCourses()
+        if (PrefManager.getBoolValue(USER_ACTIVE_API_HIT_OR_NOT).not())
+            userActiveStatus()
         //  registerUserGAID()
     }
 
@@ -380,5 +378,34 @@ class CourseExploreActivity : CoreJoshActivity() {
         val resultIntent = Intent()
         setResult(Activity.RESULT_CANCELED, resultIntent)
         this.finish()
+    }
+    fun userActiveStatus() {
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                val instanceId = when {
+                    PrefManager.hasKey(INSTANCE_ID, true) -> {
+                        PrefManager.getStringValue(INSTANCE_ID, true)
+                    }
+                    PrefManager.hasKey(INSTANCE_ID, false) -> {
+                        PrefManager.getStringValue(INSTANCE_ID, false)
+                    }
+                    else -> {
+                        null
+                    }
+                }
+                val response = AppObjectController.signUpNetworkService.userActive(
+                    Mentor.getInstance().getId(),
+                    mapOf("instance_id" to instanceId, "device_id" to Utils.getDeviceId())
+                )
+
+                if (response.isSuccessful && response.body()?.isLatestLoginDevice == false) {
+                    Mentor.deleteUserCredentials(true)
+                    Mentor.deleteUserData()
+                    PrefManager.put(USER_ACTIVE_API_HIT_OR_NOT,true)
+                }
+            } catch (ex: Exception) {
+                LogException.catchException(ex)
+            }
+        }
     }
 }

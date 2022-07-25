@@ -80,7 +80,7 @@ object WorkManagerAdmin {
     fun requiredTaskInLandingPage() {
         WorkManager.getInstance(AppObjectController.joshApplication)
             .beginWith(OneTimeWorkRequestBuilder<WorkerInLandingScreen>().build())
-            .then(OneTimeWorkRequestBuilder<UserActiveWorker>().build())
+//            .then(OneTimeWorkRequestBuilder<UserActiveWorker>().build())
             .then(
                 mutableListOf(
                     OneTimeWorkRequestBuilder<SyncEngageVideo>().build(),

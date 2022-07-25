@@ -731,11 +731,15 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                     override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                         report?.areAllPermissionsGranted()?.let { flag ->
                             if (report.isAnyPermissionPermanentlyDenied) {
-                                PermissionUtils.callingPermissionPermanentlyDeniedDialog(
-                                    requireActivity(),
-                                    message = R.string.call_start_permission_message
-                                )
-                                return
+                                if (isAdded && activity!=null) {
+                                    PermissionUtils.callingPermissionPermanentlyDeniedDialog(
+                                        requireActivity(),
+                                        message = R.string.call_start_permission_message
+                                    )
+                                    return
+                                }else{
+                                    showToast(getString(R.string.something_went_wrong))
+                                }
                             }
                             if (flag) {
                                 if (isNewArch) {
@@ -774,17 +778,21 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
     ) {
         viewModel.speakingTopicLiveData.value?.run {
             if (isCallOngoing(R.string.call_engage_initiate_call_message).not()) {
-                openCallActivity.launch(
-                    SearchingUserActivity.startUserForPractiseOnPhoneActivity(
-                        requireActivity(),
-                        courseId = courseId,
-                        topicId = id,
-                        topicName = topicName,
-                        favoriteUserCall = favoriteUserCall,
-                        isNewUserCall = isNewUserCall,
-                        conversationId = getConversationId()
+                if (isAdded && activity!=null) {
+                    openCallActivity.launch(
+                        SearchingUserActivity.startUserForPractiseOnPhoneActivity(
+                            requireActivity(),
+                            courseId = courseId,
+                            topicId = id,
+                            topicName = topicName,
+                            favoriteUserCall = favoriteUserCall,
+                            isNewUserCall = isNewUserCall,
+                            conversationId = getConversationId()
+                        )
                     )
-                )
+                }else{
+                    showToast(getString(R.string.something_went_wrong))
+                }
             }
         }
     }
