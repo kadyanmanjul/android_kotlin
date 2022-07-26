@@ -7,8 +7,8 @@ import androidx.work.WorkManager
 
 class JoshWorkManagerInitializer : Initializer<WorkManager> {
     override fun create(context: Context): WorkManager {
-        val configuration = Configuration.Builder().build()
-        WorkManager.initialize(context, configuration)
+//        val configuration = Configuration.Builder().build()
+//        WorkManager.initialize(context, configuration)
         return WorkManager.getInstance(context)
     }
 

@@ -261,9 +261,9 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-service:2.5.0'
     implementation 'androidx.lifecycle:lifecycle-process:2.5.0'
 
-    implementation 'androidx.work:work-runtime-ktx:2.5.0'
-    implementation 'androidx.work:work-rxjava2:2.5.0'
-    implementation 'androidx.work:work-runtime:2.5.0'
+    implementation 'androidx.work:work-runtime-ktx:2.7.1'
+    implementation 'androidx.work:work-rxjava2:2.7.1'
+    implementation 'androidx.work:work-runtime:2.7.1'
     implementation "androidx.concurrent:concurrent-futures-ktx:1.1.0"
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.5.0'
@@ -313,7 +313,7 @@ dependencies {
     implementation 'com.firebaseui:firebase-ui-firestore:7.1.1'
 
 
-    implementation 'com.google.android.gms:play-services-ads:20.4.0'
+    implementation 'com.google.android.gms:play-services-ads:21.1.0'
     implementation 'com.google.android.gms:play-services-auth:20.2.0'
     implementation 'com.google.android.gms:play-services-base:18.1.0'
     implementation 'com.google.android.libraries.places:places:2.6.0'
