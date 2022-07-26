@@ -75,8 +75,38 @@ data class RoomListResponseItem(
 enum class ConversationRoomType() {
     LIVE,
     NOT_SCHEDULED,
-    SCHEDULED;
+    SCHEDULED,
+    RECORDED;
 }
+
+data class RecordedResponseList(
+    @SerializedName("recorded_data")
+    val recordings:List<RecordedResponse>
+)
+
+data class RecordedResponse(
+    @SerializedName("room")
+    val recordList:RecordedRoomItem,
+    @SerializedName("recording_file")
+    val url:String,
+    var conversationRoomType: ConversationRoomType? = null
+)
+
+data class RecordedRoomItem(
+    @SerializedName("id")
+    val roomId: Int,
+    @SerializedName("started_by")
+    val startedBy: Int?,
+    @SerializedName("topic")
+    val topic: String?,
+    @SerializedName("start_time")
+    var startTime: Long?,
+    @SerializedName("ended")
+    val endTime: String?,
+    @SerializedName("speakers_data")
+    val speakersData: SpeakerData?,
+    var conversationRoomType: ConversationRoomType? = ConversationRoomType.RECORDED
+)
 
 @Parcelize
 data class SpeakerData(

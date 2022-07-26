@@ -65,4 +65,8 @@ interface ConversationRoomNetworkService {
     @Body roomId: Records
     ): Deferred<AmazonPolicyResponse>
 
+
+    @GET("$DIR/conversation_room/record_room/")
+    suspend fun getRecordsList(): Response<RecordedResponseList>
+
 }

@@ -15,6 +15,7 @@ import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.core.*
 import com.joshtalks.badebhaiya.datastore.BbDatastore
 import com.joshtalks.badebhaiya.feed.adapter.FeedAdapter
+import com.joshtalks.badebhaiya.feed.adapter.RecordAdapter
 import com.joshtalks.badebhaiya.feed.model.*
 import com.joshtalks.badebhaiya.impressions.Impression
 import com.joshtalks.badebhaiya.impressions.Records
@@ -71,6 +72,7 @@ class FeedViewModel : ViewModel() {
     var isBackPressed = MutableLiveData(false)
     val searchResponse = MutableLiveData<SearchRoomsResponseList>()
     val feedAdapter = FeedAdapter()
+    val recordAdapter = RecordAdapter()
     var message = Message()
     var profileUuid:String?=null
     lateinit var roomData: RoomListResponseItem
@@ -426,6 +428,33 @@ class FeedViewModel : ViewModel() {
                 ex.printStackTrace()
             } finally {
                 isLoading.set(false)
+            }
+        }
+
+        viewModelScope.launch {
+            try{
+                val res=repository.getRecordsList()
+                if(res.isSuccessful){
+                    res.body()?.let {
+                        val recordList= mutableListOf<RecordedResponse>()
+                        if(it.recordings.isNullOrEmpty().not())
+                        {
+                            recordList.addAll(it.recordings!!.map { recordListResponseItem ->
+                                recordListResponseItem.conversationRoomType =
+                                    ConversationRoomType.RECORDED
+                                recordListResponseItem
+                            })
+                        }
+                        if (recordList.isNullOrEmpty().not()) {
+                            isRoomsAvailable.set(true)
+
+                            recordAdapter.submitList(recordList)
+                        }
+
+                    }
+                }
+            }catch(ex:Exception){
+
             }
         }
     }

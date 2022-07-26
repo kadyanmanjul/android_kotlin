@@ -15,6 +15,8 @@ class ConversationRoomRepository {
     suspend fun getRoomList() =
         service.getRoomList()
 
+    suspend fun getRecordsList()=service.getRecordsList()
+
     suspend fun createRoom(conversationRoomRequest: ConversationRoomRequest) =
         service.createRoom(conversationRoomRequest)
 
