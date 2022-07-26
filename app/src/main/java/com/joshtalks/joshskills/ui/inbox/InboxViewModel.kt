@@ -30,7 +30,6 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
     val apiCallStatusLiveData: MutableLiveData<ApiCallStatus> = MutableLiveData()
     val userData: MutableLiveData<UserProfileResponse> = MutableLiveData()
     val groupIdLiveData: MutableLiveData<String> = MutableLiveData()
-    var increaseCoursePriceABtestLiveData = MutableLiveData<ABTestCampaignData?>()
 
     private val _overAllWatchTime = MutableSharedFlow<Long>(replay = 0)
     val overAllWatchTime: SharedFlow<Long>
@@ -44,23 +43,13 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
     val registerCourseLocalData: SharedFlow<List<InboxEntity>>
         get() = _registerCourseLocalData
 
-    val extendFreeTrialAbTestLiveData = MutableLiveData<ABTestCampaignData?>()
-
-    val repository: ABTestRepository by lazy { ABTestRepository() }
-    fun getEFTCampaignData(campaign: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            repository.getCampaignData(campaign)?.let { campaign ->
-                extendFreeTrialAbTestLiveData.postValue(campaign)
-            }
-            getRegisterCourses()
-        }
-    }
+    val abTestRepository: ABTestRepository by lazy { ABTestRepository() }
 
     fun getA2C1CampaignData(campaign: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 if (Utils.isInternetAvailable()) {
-                    repository.getCampaignData(campaign)?.let { campaign ->
+                    abTestRepository.getCampaignData(campaign)?.let { campaign ->
                         PrefManager.put(
                             IS_A2_C1_RETENTION_ENABLED,
                             (campaign.variantKey == VariantKeys.A2_C1_RETENTION.name) && campaign.variableMap?.isEnabled == true
@@ -80,29 +69,6 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
                 }
             }catch (ex:Exception){
                 ex.printStackTrace()
-            }
-        }
-    }
-
-    fun getICPABTest(campaign: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                if (Utils.isInternetAvailable()) {
-                    repository.getCampaignData(campaign)?.let { campaign ->
-                        increaseCoursePriceABtestLiveData.postValue(campaign)
-                    } ?: run {
-                        AppObjectController.abTestNetworkService.getCampaignData(campaign)
-                            .let { response ->
-                                increaseCoursePriceABtestLiveData.postValue(response.body())
-
-                            }
-                    }
-                }else{
-                    showToast("No internet connection")
-                }
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-                increaseCoursePriceABtestLiveData.postValue(null)
             }
         }
     }

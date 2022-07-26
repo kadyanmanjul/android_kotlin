@@ -23,8 +23,8 @@ import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIA
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIAL_POPUP_TITLE_TEXT
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIAL_POPUP_YES_BUTTON_TEXT
 import com.joshtalks.joshskills.core.Utils.getLangCodeFromlangTestId
-import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
+import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
 import com.joshtalks.joshskills.core.analytics.*
 import com.joshtalks.joshskills.databinding.ActivityFreeTrialOnBoardBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -42,6 +42,8 @@ import java.util.*
 
 const val SHOW_SIGN_UP_FRAGMENT = "SHOW_SIGN_UP_FRAGMENT"
 const val HINDI_TO_ENGLISH_TEST_ID = "784"
+const val ENGLISH_FOR_GOVERNMENT_EXAM_TEST_ID = "1906"
+const val USER_CREATED_SUCCESSFULLY = 1002
 
 class FreeTrialOnBoardActivity : CoreJoshActivity() {
 
@@ -100,9 +102,10 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
 
     override fun onStart() {
         super.onStart()
-        liveEvent.observe(this) {
+        viewModel.liveEvent.observe(this) {
             when (it.what) {
                 IS_USER_EXIST -> moveToInboxScreen()
+                USER_CREATED_SUCCESSFULLY -> openProfileDetailFragment()
             }
         }
         initTrueCallerUI()
@@ -121,10 +124,8 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
                 signUp(v)
             else if (languageActive)
                 openChooseLanguageFragment()
-            else if (is100PointsActive)
-                showStartTrialPopup(language, true)
             else
-                showStartTrialPopup(language, false)
+                showStartTrialPopup(language.testId)
         }
     }
 
@@ -146,32 +147,8 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
                 else -> return@Observer
             }
         })
-        viewModel.progressBarStatus.observe(this, {
+        viewModel.progressBarStatus.observe(this) {
             showProgressBar()
-        })
-        viewModel.newLanguageABtestLiveData.observe(this) { abTestCampaignData ->
-            abTestCampaignData?.let { map ->
-                languageActive =
-                    (map.variantKey == VariantKeys.NEW_LANGUAGE_ENABLED.NAME) && map.variableMap?.isEnabled == true
-            }
-        }
-        viewModel.eftABtestLiveData.observe(this) { abTestCampaignData ->
-            abTestCampaignData?.let { map ->
-                eftActive = (map.variantKey == VariantKeys.EFT_ENABLED.NAME) && map.variableMap?.isEnabled == true
-                PrefManager.put(IS_EFT_VARIENT_ENABLED, eftActive)
-            }
-        }
-        viewModel.points100ABtestLiveData.observe(this) { map ->
-            is100PointsActive =
-                (map?.variantKey == VariantKeys.POINTS_HUNDRED_ENABLED.NAME) && map.variableMap?.isEnabled == true
-        }
-
-        viewModel.increaseCoursePriceABtestLiveData.observe(this) { abTestCampaignData ->
-            abTestCampaignData?.let { map ->
-                increaseCoursePrice =
-                    (map.variantKey == VariantKeys.ICP_ENABLED.NAME) && map.variableMap?.isEnabled == true
-                PrefManager.put(INCREASE_COURSE_PRICE_ABTEST, increaseCoursePrice)
-            }
         }
     }
 
@@ -191,11 +168,11 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         }
     }
 
-    fun showStartTrialPopup(language: ChooseLanguages, is100PointsActive: Boolean) {
+    fun showStartTrialPopup(testId: String) {
         MixPanelTracker.publishEvent(MixPanelEvent.START_NOW).push()
         viewModel.saveImpression(IMPRESSION_START_FREE_TRIAL)
         PrefManager.put(ONBOARDING_STAGE, OnBoardingStage.START_NOW_CLICKED.value)
-        PrefManager.put(FREE_TRIAL_TEST_ID, language.testId)
+        PrefManager.put(FREE_TRIAL_TEST_ID, testId)
         layout.btnStartTrial.pauseAnimation()
         val dialogBuilder: AlertDialog.Builder = AlertDialog.Builder(this)
         val inflater = this.layoutInflater
@@ -209,32 +186,33 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         alertDialog.window?.setLayout(width.toInt(), height)
         alertDialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-        if (is100PointsActive && language.testId == HINDI_TO_ENGLISH_TEST_ID) {
+        if (is100PointsActive && testId == HINDI_TO_ENGLISH_TEST_ID) {
             dialogView.findViewById<TextView>(R.id.e_g_motivat).text =
                 getString(R.string.free_trial_popup_100_points_header)
                     .replace("\\n", "\n")
         } else {
             dialogView.findViewById<TextView>(R.id.e_g_motivat).text =
-                if (PrefManager.getBoolValue(INCREASE_COURSE_PRICE_ABTEST) && language.testId == HINDI_TO_ENGLISH_TEST_ID) {
+                if (viewModel.abTestRepository.isVariantActive(VariantKeys.ICP_ENABLED) && testId == HINDI_TO_ENGLISH_TEST_ID) {
                     getString(R.string.free_trial_popup_for_icp)
                 } else {
                     AppObjectController.getFirebaseRemoteConfig()
-                        .getString(FREE_TRIAL_POPUP_BODY_TEXT + language.testId)
+                        .getString(FREE_TRIAL_POPUP_BODY_TEXT + testId)
                         .replace("\\n", "\n")
                 }
         }
         dialogView.findViewById<TextView>(R.id.add_a_topic).text =
             AppObjectController.getFirebaseRemoteConfig()
-                .getString(FREE_TRIAL_POPUP_TITLE_TEXT + language.testId)
+                .getString(FREE_TRIAL_POPUP_TITLE_TEXT + testId)
 
         dialogView.findViewById<TextView>(R.id.yes).text =
             AppObjectController.getFirebaseRemoteConfig()
-                .getString(FREE_TRIAL_POPUP_YES_BUTTON_TEXT + language.testId)
+                .getString(FREE_TRIAL_POPUP_YES_BUTTON_TEXT + testId)
 
         dialogView.findViewById<MaterialTextView>(R.id.yes).setOnClickListener {
-            PrefManager.put(USER_LOCALE, language.testId)
-            if (language.testId != HINDI_TO_ENGLISH_TEST_ID)
-                requestWorkerForChangeLanguage(getLangCodeFromlangTestId(language.testId), canCreateActivity = false)
+            PrefManager.put(USER_LOCALE, testId)
+            if (testId != HINDI_TO_ENGLISH_TEST_ID && testId != ENGLISH_FOR_GOVERNMENT_EXAM_TEST_ID) {
+                requestWorkerForChangeLanguage(getLangCodeFromlangTestId(testId), canCreateActivity = false)
+            }
             MixPanelTracker.publishEvent(MixPanelEvent.JI_HAAN).push()
             if (Mentor.getInstance().getId().isNotEmpty()) {
                 viewModel.saveImpression(IMPRESSION_START_TRIAL_YES)
@@ -305,11 +283,11 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
             user.phoneNumber = trueProfile.phoneNumber
             user.email = trueProfile.email
             user.gender = trueProfile.gender
+            user.isVerified = true
             User.update(user)
             viewModel.userName = trueProfile.firstName
-            viewModel.verifyUserViaTrueCaller(trueProfile)
             viewModel.isVerified = true
-            openProfileDetailFragment()
+            viewModel.verifyUserViaTrueCaller(trueProfile)
         }
     }
 
@@ -378,10 +356,25 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         }
     }
 
+    fun openGoalFragment() {
+        supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+        supportFragmentManager.commit(true) {
+            addToBackStack(null)
+            replace(
+                R.id.container,
+                ChooseGoalOnBoardFragment.newInstance(),
+                ChooseGoalOnBoardFragment::class.java.name
+            )
+        }
+    }
+
     fun initABTest() {
-        viewModel.getNewLanguageABTest(CampaignKeys.NEW_LANGUAGE.name)
-        viewModel.get100PCampaignData(CampaignKeys.HUNDRED_POINTS.NAME, CampaignKeys.EXTEND_FREE_TRIAL.name)
-        viewModel.getICPABTest(CampaignKeys.INCREASE_COURSE_PRICE.name)
+        ABTestRepository().apply {
+            languageActive = isVariantActive(VariantKeys.NEW_LANGUAGE_ENABLED)
+            eftActive = isVariantActive(VariantKeys.EFT_ENABLED)
+            increaseCoursePrice = isVariantActive(VariantKeys.ICP_ENABLED)
+            is100PointsActive = isVariantActive(VariantKeys.POINTS_HUNDRED_ENABLED)
+        }
     }
 
     companion object {

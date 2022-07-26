@@ -34,39 +34,11 @@ class FreeTrialPaymentViewModel(application: Application) : AndroidViewModel(app
     var orderDetailsLiveData = MutableLiveData<OrderDetailResponse>()
     var isProcessing = MutableLiveData<Boolean>()
     val mentorPaymentStatus: MutableLiveData<Boolean> = MutableLiveData()
-
-    val points100ABtestLiveData = MutableLiveData<ABTestCampaignData?>()
-    val syllabusABtestLiveData = MutableLiveData<ABTestCampaignData?>()
-    val abtestNewLayoutLiveData = MutableLiveData<ABTestCampaignData?>()
-
-    val repository: ABTestRepository by lazy { ABTestRepository() }
-    fun getAllCampaigns(testId : String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            repository.getAllCampaigns()?.let { list ->
-                for (data in list) {
-                    when (data.campaignKey) {
-                        CampaignKeys.BUY_LAYOUT_CHANGED.name ->
-                            abtestNewLayoutLiveData.postValue(data)
-                        CampaignKeys.HUNDRED_POINTS.NAME ->
-                            points100ABtestLiveData.postValue(data)
-                        CampaignKeys.ENGLISH_SYLLABUS_DOWNLOAD.name ->
-                            syllabusABtestLiveData.postValue(data)
-                    }
-                }
-            }
-            try {
-                getPaymentDetails(Integer.parseInt(testId))
-            }
-            catch (ex:Exception){
-                ex.printStackTrace()
-            }
-
-        }
-    }
+    val abTestRepository: ABTestRepository by lazy { ABTestRepository() }
 
     fun postGoal(goal: String, campaign: String?) {
         viewModelScope.launch(Dispatchers.IO) {
-            repository.postGoal(goal)
+            abTestRepository.postGoal(goal)
             if (campaign != null) {
                 val data = ABTestRepository().getCampaignData(campaign)
                 data?.let {

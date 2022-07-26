@@ -65,7 +65,7 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
     var isSubscriptionTipUsed = false
     var mTestId = EMPTY
 
-    val repository: ABTestRepository by lazy { ABTestRepository() }
+    val abTestRepository: ABTestRepository by lazy { ABTestRepository() }
 
     val hasRegisteredMobileNumber by lazy {
         (User.getInstance().phoneNumber.isNullOrEmpty().not() || PrefManager.getStringValue(
@@ -394,7 +394,7 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
 
     fun postGoal(goal: String, campaign: String?) {
         viewModelScope.launch(Dispatchers.IO) {
-            repository.postGoal(goal)
+            abTestRepository.postGoal(goal)
             if (campaign != null) {
                 val data = ABTestRepository().getCampaignData(campaign)
                 data?.let {

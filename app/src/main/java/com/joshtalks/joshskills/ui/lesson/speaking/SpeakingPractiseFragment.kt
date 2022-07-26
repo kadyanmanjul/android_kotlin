@@ -96,12 +96,12 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
     private var mCurrentLevel = 0
     private var mClipDrawable: ClipDrawable? = null
     private var beforeAnimation: GradientDrawable? = null
-    private var isIntroVideoEnabled = false
     private var lessonNo = 0
     private var beforeTwoMinTalked = -1
     private var afterTwoMinTalked = -1
     private val twoMinutes: Int = 2
-    private var isTwentyMinFtuCallActive = PrefManager.getBoolValue(IS_TWENTY_MIN_CALL_ENABLED)
+    private var isTwentyMinFtuCallActive = false
+    private var isIntroVideoEnabled = false
     private var lessonID = -1
 
     private var openCallActivity: ActivityResultLauncher<Intent> = registerForActivityResult(
@@ -120,15 +120,6 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             "कोर्स का सबसे मज़ेदार हिस्सा।",
             "यहाँ हम एक प्रैक्टिस पार्टनर के साथ निडर होकर इंग्लिश बोलने का अभ्यास करेंगे"
         )
-    }
-
-    fun onReceiveABTestData(abTestCampaignData: ABTestCampaignData?) {
-        abTestCampaignData?.let { map ->
-            isIntroVideoEnabled =
-                (map.variantKey == VariantKeys.SIV_ENABLED.name) && map.variableMap?.isEnabled == true
-        }
-        initDemoViews(lessonNo)
-
     }
 
     override fun onAttach(context: Context) {
@@ -202,6 +193,10 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
     }
 
     private fun addObservers() {
+        viewModel.abTestRepository.apply {
+            isTwentyMinFtuCallActive = viewModel.abTestRepository.isVariantActive(VariantKeys.TWENTY_MIN_ENABLED)
+            isIntroVideoEnabled = viewModel.abTestRepository.isVariantActive(VariantKeys.SIV_ENABLED)
+        }
         viewModel.lessonId.observe(viewLifecycleOwner) {
             lessonID = it
         }
@@ -568,7 +563,6 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         viewModel.lessonLiveData.observe(viewLifecycleOwner) {
             try {
                 lessonNo = it?.lessonNo ?: 0
-                viewModel.getSpeakingABTestCampaign(CampaignKeys.SPEAKING_INTRODUCTION_VIDEO.name)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -579,9 +573,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                 binding.btnCallDemo.visibility = View.GONE
             }
         }
-        viewModel.speakingABtestLiveData.observe(requireActivity()) {
-            onReceiveABTestData(it)
-        }
+        initDemoViews(lessonNo)
     }
 
     private fun postSpeakingScreenSeenGoal() {

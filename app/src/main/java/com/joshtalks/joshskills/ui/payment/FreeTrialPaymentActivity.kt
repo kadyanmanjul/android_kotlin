@@ -162,6 +162,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             }
         }
         initABTest()
+        viewModel.getPaymentDetails(Integer.parseInt(testId))
         setObservers()
         logNewPaymentPageOpened()
         dynamicCardCreation()
@@ -169,19 +170,23 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         Singular.event(SingularEvent.OPENED_FREE_TRIAL_PAYMENT.name, testId)
     }
 
-    private fun dynamicCardCreation(){
+    private fun dynamicCardCreation() {
         val inflater: LayoutInflater =
             getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
         englishCard = inflater.inflate(R.layout.price_card, null, true)
-        subscriptionCard= inflater.inflate(R.layout.price_card, null, true)
+        subscriptionCard = inflater.inflate(R.layout.price_card, null, true)
         binding.cardsContainer.addView(englishCard)
         binding.cardsContainer.addView(subscriptionCard)
     }
 
     private fun initABTest() {
-        viewModel.getAllCampaigns(testId)
-        if(PrefManager.getBoolValue(INCREASE_COURSE_PRICE_CAMPAIGN_ACTIVE)) {
-            viewModel.postGoal("ICP_BUY_PAGE_SEEN",CampaignKeys.INCREASE_COURSE_PRICE.name)
+        viewModel.abTestRepository.apply {
+            isSyllabusActive = isVariantActive(VariantKeys.ESD_ENABLED)
+            isNewFlowActive = isVariantActive(VariantKeys.BUY_LAYOUT_ENABLED)
+            is100PointsActive = isVariantActive(VariantKeys.POINTS_HUNDRED_ENABLED)
+        }
+        if (viewModel.abTestRepository.isVariantActive(VariantKeys.ICP_ENABLED)) {
+            viewModel.postGoal("ICP_BUY_PAGE_SEEN", CampaignKeys.INCREASE_COURSE_PRICE.name)
         }
     }
 
@@ -723,34 +728,15 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             }
         }
 
-        viewModel.points100ABtestLiveData.observe(this) { abTestCampaignData ->
-            abTestCampaignData?.let { map ->
-                is100PointsActive =
-                    (map.variantKey == VariantKeys.POINTS_HUNDRED_ENABLED.NAME) && map.variableMap?.isEnabled == true
-            }
+        if (isNewFlowActive) {
+            subscriptionCard.iv_minimise.visibility = View.VISIBLE
+            englishCard.iv_expand.visibility = View.VISIBLE
+            subscriptionCard.see_course_list_new.visibility = View.VISIBLE
+            binding.seeCourseList.visibility = View.GONE
         }
+        if (!isNewFlowActive && isSyllabusActive) binding.syllabusLayout.visibility = View.VISIBLE
 
-        viewModel.syllabusABtestLiveData.observe(this) { abTestCampaignData ->
-            abTestCampaignData?.let { map ->
-                isSyllabusActive =
-                    (map.variantKey == VariantKeys.ESD_ENABLED.name) && map.variableMap?.isEnabled == true
-            }
-        }
-
-        viewModel.abtestNewLayoutLiveData.observe(this) { abTestCampaignData ->
-            abTestCampaignData?.let { map ->
-                isNewFlowActive =
-                    (map.variantKey == VariantKeys.BUY_LAYOUT_ENABLED.name) && map.variableMap?.isEnabled == true
-            }
-            if(isNewFlowActive){
-                subscriptionCard.iv_minimise.visibility = View.VISIBLE
-                englishCard.iv_expand.visibility = View.VISIBLE
-                subscriptionCard.see_course_list_new.visibility = View.VISIBLE
-                binding.seeCourseList.visibility = View.GONE
-            }
-            if(!isNewFlowActive && isSyllabusActive) binding.syllabusLayout.visibility = View.VISIBLE
-        }
-        if(!isNetworkAvailable()){
+        if (!isNetworkAvailable()) {
             binding.freeTrialTimer.visibility = View.INVISIBLE
             binding.applyCoupon.visibility = View.INVISIBLE
             binding.txtLabelHeading.visibility = View.INVISIBLE
@@ -771,7 +757,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         }
     }
 
-    private fun createTextViewsDynamically() : AppCompatTextView{
+    private fun createTextViewsDynamically(): AppCompatTextView {
         val textView = AppCompatTextView(this)
         val drawable = ContextCompat.getDrawable(this, R.drawable.ic_blue_tick_round)
         textView.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null)
@@ -934,13 +920,12 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
     @Synchronized
     override fun onPaymentSuccess(razorpayPaymentId: String) {
         Singular.event(SingularEvent.PAYMENT_SUCCESS_EVENT.name)
-        if(viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.testId == FREE_TRIAL_PAYMENT_TEST_ID) {
-            if(PrefManager.getBoolValue(INCREASE_COURSE_PRICE_CAMPAIGN_ACTIVE))
-            viewModel.postGoal("ICP_COURSE_BOUGHT",CampaignKeys.INCREASE_COURSE_PRICE.name)
-        }
-        else if(viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.testId == SUBSCRIPTION_TEST_ID) {
-            if(PrefManager.getBoolValue(INCREASE_COURSE_PRICE_CAMPAIGN_ACTIVE))
-                viewModel.postGoal("ICP_SUBSCRIPTION_BOUGHT",CampaignKeys.INCREASE_COURSE_PRICE.name)
+        if (viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.testId == FREE_TRIAL_PAYMENT_TEST_ID) {
+            if (viewModel.abTestRepository.isVariantActive(VariantKeys.ICP_ENABLED))
+                viewModel.postGoal("ICP_COURSE_BOUGHT", CampaignKeys.INCREASE_COURSE_PRICE.name)
+        } else if (viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.testId == SUBSCRIPTION_TEST_ID) {
+            if (viewModel.abTestRepository.isVariantActive(VariantKeys.ICP_ENABLED))
+                viewModel.postGoal("ICP_SUBSCRIPTION_BOUGHT", CampaignKeys.INCREASE_COURSE_PRICE.name)
         }
 
         val obj = JSONObject()

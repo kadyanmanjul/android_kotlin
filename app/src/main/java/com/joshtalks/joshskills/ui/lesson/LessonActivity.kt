@@ -72,7 +72,6 @@ import com.joshtalks.joshskills.core.IS_COURSE_BOUGHT
 import com.joshtalks.joshskills.core.IS_FREE_TRIAL
 import com.joshtalks.joshskills.core.IS_PROFILE_FEATURE_ACTIVE
 import com.joshtalks.joshskills.core.IS_SPEAKING_SCREEN_CLICKED
-import com.joshtalks.joshskills.core.IS_TWENTY_MIN_CALL_ENABLED
 import com.joshtalks.joshskills.core.LAST_SEEN_VIDEO_ID
 import com.joshtalks.joshskills.core.LESSON_COMPLETED_FOR_NOTIFICATION
 import com.joshtalks.joshskills.core.LESSON_COMPLETE_SNACKBAR_TEXT_STRING
@@ -289,13 +288,8 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         titleView = findViewById(R.id.text_message_title)
 
         setObservers()
-        viewModel.getWhatsappRemarketingCampaign(CampaignKeys.WHATSAPP_REMARKETING.name)
         viewModel.getLesson(lessonId)
-        viewModel.getTwentyMinFtuCallCampaignData(
-            CampaignKeys.TWENTY_MIN_TARGET.NAME,
-            lessonId,
-            isDemo
-        )
+        viewModel.getQuestions(lessonId, isDemo)
 
         val helpIv: ImageView = findViewById(R.id.iv_help)
         helpIv.visibility = View.GONE
@@ -390,6 +384,10 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
     }
 
     private fun setObservers() {
+        viewModel.abTestRepository.apply {
+            isWhatsappRemarketingActive = isVariantActive(VariantKeys.WR_ENABLED)
+            isTwentyMinFtuCallActive = isVariantActive(VariantKeys.TWENTY_MIN_ENABLED)
+        }
         viewModel.apiStatus.observe(this) {
             when (it) {
                 START -> {
@@ -748,20 +746,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                 }
             }
         }
-        viewModel.whatsappRemarketingLiveData.observe(this) { abTestCampaignData ->
-            abTestCampaignData?.let { map ->
-                isWhatsappRemarketingActive =
-                    (map.variantKey == VariantKeys.WR_ENABLED.NAME) && map.variableMap?.isEnabled == true
-            }
-        }
 
-        viewModel.twentyMinCallFtuAbTestLiveData.observe(this) { abTestCampaignData ->
-            abTestCampaignData?.let { map ->
-                isTwentyMinFtuCallActive =
-                    (map.variantKey == VariantKeys.TWENTY_MIN_ENABLED.NAME) && map.variableMap?.isEnabled == true
-                PrefManager.put(IS_TWENTY_MIN_CALL_ENABLED, isTwentyMinFtuCallActive)
-            }
-        }
         videoEvent.observe(this) { event ->
             event.getContentIfNotHandledOrReturnNull()?.let {
                 binding.apply {
@@ -1418,11 +1403,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         intent?.let {
             val lessonId = if (intent.hasExtra(LESSON_ID)) intent.getIntExtra(LESSON_ID, 0) else 0
             viewModel.getLesson(lessonId)
-            viewModel.getTwentyMinFtuCallCampaignData(
-                CampaignKeys.TWENTY_MIN_TARGET.NAME,
-                lessonId,
-                isDemo
-            )
+            viewModel.getQuestions(lessonId, isDemo)
         }
     }
 

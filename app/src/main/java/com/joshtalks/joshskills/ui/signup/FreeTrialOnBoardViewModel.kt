@@ -2,12 +2,14 @@ package com.joshtalks.joshskills.ui.signup
 
 import android.app.Application
 import android.os.Message
+import androidx.databinding.ObservableBoolean
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
+import com.joshtalks.joshskills.core.abTest.GoalKeys
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
@@ -16,6 +18,7 @@ import com.joshtalks.joshskills.repository.local.model.FCMResponse
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.ChooseLanguages
+import com.joshtalks.joshskills.repository.server.GoalSelectionResponse
 import com.joshtalks.joshskills.repository.server.TrueCallerLoginRequest
 import com.joshtalks.joshskills.repository.server.signup.LoginResponse
 import com.joshtalks.joshskills.ui.activity_feed.utils.IS_USER_EXIST
@@ -36,69 +39,13 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
     val verificationStatus: MutableLiveData<VerificationStatus> = MutableLiveData()
     val apiStatus: MutableLiveData<ApiCallStatus> = MutableLiveData()
     val availableLanguages: MutableLiveData<List<ChooseLanguages>> = MutableLiveData()
+    val availableGoals: MutableLiveData<List<GoalSelectionResponse>> = MutableLiveData()
     val liveEvent = EventLiveData
     var userName: String? = null
     var isVerified: Boolean = false
     var isUserExist: Boolean = false
-    val points100ABtestLiveData = MutableLiveData<ABTestCampaignData?>()
-    val eftABtestLiveData = MutableLiveData<ABTestCampaignData?>()
-    var newLanguageABtestLiveData = MutableLiveData<ABTestCampaignData?>()
-    var increaseCoursePriceABtestLiveData = MutableLiveData<ABTestCampaignData?>()
-
-    val repository: ABTestRepository by lazy { ABTestRepository() }
-    fun get100PCampaignData(campaign: String, campaignEft: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                repository.getCampaignData(campaignEft)?.let { campaign ->
-                    eftABtestLiveData.postValue(campaign)
-                }
-                val response = repository.getCampaignData(campaign)
-                if (response != null) {
-                    points100ABtestLiveData.postValue(response)
-                } else {
-                    points100ABtestLiveData.postValue(null)
-                }
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-                points100ABtestLiveData.postValue(null)
-            }
-        }
-    }
-
-    fun getNewLanguageABTest(campaign: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                repository.getCampaignData(campaign)?.let { campaign ->
-                    newLanguageABtestLiveData.postValue(campaign)
-                } ?: run {
-                    AppObjectController.abTestNetworkService.getCampaignData(campaign).let { response ->
-                        newLanguageABtestLiveData.postValue(response.body())
-                    }
-                }
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-                newLanguageABtestLiveData.postValue(null)
-            }
-        }
-    }
-
-    fun getICPABTest(campaign: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                repository.getCampaignData(campaign)?.let { campaign ->
-                    increaseCoursePriceABtestLiveData.postValue(campaign)
-                } ?: run {
-                    AppObjectController.abTestNetworkService.getCampaignData(campaign).let { response ->
-                        increaseCoursePriceABtestLiveData.postValue(response.body())
-
-                    }
-                }
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-                increaseCoursePriceABtestLiveData.postValue(null)
-            }
-        }
-    }
+    val isLanguageFragment = ObservableBoolean(false)
+    val abTestRepository by lazy { ABTestRepository() }
 
     fun saveImpression(eventName: String) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -153,11 +100,13 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
                         )
                         updateFromLoginResponse(this)
                     }
+                } else {
+                    signUpStatus.postValue(SignUpStepStatus.ERROR)
                 }
             } catch (ex: Throwable) {
                 ex.showAppropriateMsg()
+                signUpStatus.postValue(SignUpStepStatus.ERROR)
             }
-            signUpStatus.postValue(SignUpStepStatus.ERROR)
         }
     }
 
@@ -216,12 +165,17 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
                     }
                     AppAnalytics.updateUser()
                     analyzeUserProfile()
+                    if (isUserExist.not()) {
+                        liveEvent.postValue(Message().apply { what = USER_CREATED_SUCCESSFULLY })
+                    }
                     return@launch
+                } else {
+                    signUpStatus.postValue(SignUpStepStatus.ERROR)
                 }
             } catch (ex: Throwable) {
+                signUpStatus.postValue(SignUpStepStatus.ERROR)
                 ex.showAppropriateMsg()
             }
-            signUpStatus.postValue(SignUpStepStatus.ERROR)
         }
     }
 
@@ -242,6 +196,24 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
             } catch (ex: Throwable) {
                 ex.showAppropriateMsg()
             }
+        }
+    }
+
+    fun getAvailableGoals() {
+        viewModelScope.launch {
+            try {
+                val response = service.getAvailableGoals()
+                if (response.isSuccessful && response.code() in 200..203)
+                    availableGoals.value = response.body()
+            } catch (ex: Throwable) {
+                ex.showAppropriateMsg()
+            }
+        }
+    }
+
+    fun postGoal(goal: GoalKeys) {
+        viewModelScope.launch {
+            abTestRepository.postGoal(goal.NAME)
         }
     }
 }

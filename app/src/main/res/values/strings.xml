@@ -1134,10 +1134,15 @@
     <string name="start_learning_english">start learning English</string>
     <string name="course_restart_success">Course Restarted Successfully</string>
     <string name="course_restart_fail">Course Can Not Restart</string>
-    <string name="my_formatted_text">
+    <string name="language_text">
         <font color="@android:color/black">I want to</font>
         <font color="#107BE5">speak english confidently</font>
-        <font color="@android:color/black">from ...</font>
+        <font color="@android:color/black">from …</font>
+    </string>
+    <string name="goal_text" translatable="false">
+        <font color="@android:color/black">I want to</font>
+        <font color="#107BE5">learn English</font>
+        <font color="@android:color/black">because I want to …</font>
     </string>
     <string name="buy_now">Buy now</string>
     <string name="your_free_trial_has_ended">Your Free Trial has ended</string>
