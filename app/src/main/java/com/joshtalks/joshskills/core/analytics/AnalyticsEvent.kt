@@ -1,7 +1,7 @@
 package com.joshtalks.joshskills.core.analytics
 
 enum class AnalyticsEvent(val NAME: String) {
-    //Common
+    //Commonx
     APP_INSTALL("App Install V3"),
     APP_INSTALL_BY_REFERRAL("Install By Referral V3"),
     APP_VERSION_CODE("App version V3"),

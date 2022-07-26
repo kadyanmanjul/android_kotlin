@@ -19,7 +19,6 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/josh_skill_img"
             android:layout_width="@dimen/_35sdp"
             android:layout_height="@dimen/_35sdp"
             android:background="?attr/selectableItemBackgroundBorderless"
@@ -28,7 +27,6 @@
     </FrameLayout>
 
     <View
-        android:id="@+id/view_triangle"
         android:layout_width="@dimen/_6sdp"
         android:layout_height="@dimen/_10sdp"
         android:background="@drawable/triangle"

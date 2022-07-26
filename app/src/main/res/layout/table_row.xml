@@ -11,7 +11,6 @@
     app:layout_constraintWidth_percent="0.67">-->
 
 <TableRow xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/row"
     android:layout_width="0dp"
     android:layout_height="wrap_content">
 

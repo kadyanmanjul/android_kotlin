@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Josh Skills</string>
-    <string name="welcome_josh_skill_new">স্বাগত</string>
     <string name="next">Next</string>
     <string name="finish">শেষ করা</string>
     <string name="ok">OK</string>
 
     <string name="cancel">Cancel</string>
-    <string name="download">Download</string>
     <string name="downloading_certificate">আপনার সার্টিফিকেট ডাউনলোড করা হচ্ছে</string>
     <string name="downloading_complete">ডাউনলোড সম্পন্ন হয়েছে</string>
     <string name="not_now">Not Now</string>
@@ -23,14 +21,11 @@
     <string name="record_permission_message">ভয়েস মেসেজ রেকর্ড করতে, Josh Skills কে আপনার মাইক্রোফোন এবং আপনার ডিভাইসের ফটো, মিডিয়া এবং ফাইল অ্যাক্সেস করার অনুমতি দিন। সেটিংস &gt; অনুমতিতে যান, মাইক্রোফোন ও স্টোরেজ চালু করুন।</string>
     <string name="camera_permission_message">ফটো এবং ভিডিও ক্যাপচার করতে, Josh Skills কে আপনার ক্যামেরা এবং আপনার ডিভাইসের ফটো, মিডিয়া এবং ফাইল অ্যাক্সেস করার অনুমতি দিন।</string>
     <string name="type_message_hint">মেসেজ টাইপ করুন</string>
-    <string name="splash_sub_string_english">জীবনে এগিয়ে যাও, জোশ এর সাথে! </string>
     <string name="open">OPEN</string>
     <string name="submit">Submit</string>
-    <string name="track_number">ট্র্যাক</string>
     <string name="play_button_description">প্লে বোতাম</string>
     <string name="continue_label">চালিয়ে যান</string>
     <string name="message_size_limit">মেসেজ এর সাইজ সীমা অতিক্রম করেছে৷</string>
-    <string name="media_not_found_message">দুঃখিত, এই মিডিয়া ফাইলটি আপনার ইন্টার্নাল স্টোরেজ এ উপস্থিত নেই৷ আপনি কি এটা ডাউনলোড করতে পারেন?</string>
     <string name="pdf_desc">%s পেজ পিডিএফ </string>
     <string name="restart">Restart</string>
     <string name="logout_message">আপনি লগ আউট করতে চান?</string>
@@ -43,13 +38,7 @@
     <string name="explorer_courses">Explore Courses</string>
 
     <string name="start_course">Start Course</string>
-    <string name="paid">পেমেন্ট সম্পূর্ণ করুন</string>
-    <string name="transaction_status">Your Transaction status:</string>
-    <string name="course_payment_label">কোর্স এর পেমেন্ট</string>
     <string name="done">সম্পন্ন হল</string>
-    <string name="course_started_label">কোর্স শুরু হয়েছে</string>
-    <string name="in_progress_label">প্রোগ্রেস হচ্ছে </string>
-    <string name="payment_process_info">আপনার অ্যাডমিশন এর প্রক্রিয়া সম্পূর্ণ করতে এবং আমাদের ক্লাস শুরু করতে সাধারণত 2-3 মিনিট সময় লাগে।</string>
     <string name="find_more_courses">Find More Courses</string>
     <string name="internet_not_available_msz">দেখে মনে হচ্ছে আপনার ইন্টারনেট খুব ধীর বা উপলব্ধ নয়।</string>
     <string name="plz_wait">অনুগ্রহ করে অপেক্ষা করুন</string>
@@ -63,10 +52,7 @@
     <string name="send_otp">OTP পাঠান</string>
     <string name="or">OR</string>
     <string name="no_new_message_arrive">কোনো নতুন ক্লাস নেই</string>
-    <string name="new_message_arrive">নতুন ক্লাস ডাউনলোড করা হয়েছে</string>
     <string name="something_went_wrong">oops! কিছু ভুল হয়েছে</string>
-    <string name="click_to_start_course">কোর্সটি শুরু করতে ক্লিক করুন</string>
-    <string name="thank_you">ধন্যবাদ</string>
     <string name="time_ago_now">কয়েক মুহূর্ত আগে</string>
     <string name="time_ago_full_minute">%1$d মিনিট আগে</string>
     <string name="time_ago_full_minutes">%1$d মিনিট আগে</string>
@@ -77,13 +63,10 @@
     <string name="time_ago_full_months">%1$d মাস আগে</string>
     <string name="email_address">ইমেইল ঠিকানা</string>
     <string name="attach_image">ছবি জগকরুন</string>
-    <string name="amount">Amount</string>
 
 
-    <string name="status">Status</string>
     <string name="practice">অনুশীলন করা</string>
     <string name="complaint_message">আমাদের সংযোগ করার জন্য আপনাকে ধন্যবাদ। আপনার অনুরোধ টিকিটের বিরুদ্ধে নিবন্ধিত করা হয়েছে। আমাদের দল, 24-72 ঘন্টার মধ্যে আপনার সাথে যোগাযোগ করবে।</string>
-    <string name="payment_process_success">আপনার পেমেন্ট সফলভাবে করা হয়েছে!</string>
     <string name="status_with_colon">Status : </string>
     <string name="submit_answer">উত্তর সাবমিট করো</string>
     <string name="improve_answer">উত্তর টি কে উন্নত করুন </string>
@@ -110,13 +93,9 @@
     <string name="answer_not_submitted">উত্তর জমা দেওয়া হয়নি</string>
     <string name="answer_submitted">প্র্যাক্টিস সফলভাবে জমা দেওয়া হয়েছে</string>
     <string name="use_tip">টিপ ব্যবহার করুন</string>
-    <string name="record_answer_label">আপনার উত্তর রেকর্ড করুন</string>
     <string name="type_answer_label">তোমার উত্তর টাইপ করুন </string>
     <string name="upload_answer_label">আপনার উত্তর আপলোড করুন</string>
     <string name="find_more_course_hint_ftime">হ্যালো %s, আপনি যদি এই কোর্সের মাধ্যমে আরও কিছু শিখতে চান তাহলে প্রথম 3 দিনের মধ্যে প্রতিটি কোর্সে 50% ছাড় পাবেন।</string>
-    <string name="buy_course_offer_tooltip">আপনি যে পরবর্তী কোর্সটি কিনবেন তাতে একটি %s ছাড় রয়েছে, যা 3 দিনের জন্য বৈধ।</string>
-    <string name="first_time_user_hint">আপনি এখানে ক্লিক করে আপনার কোর্স সম্পর্কিত সমস্ত ভিডিও ক্লাস পাবেন</string>
-    <string name="certificate_tooltip_hint">"এই কোর্সের পাঠ এবং অনুশীলনের %s সমাপ্তির পরে আপনি একটি ডিজিটাল সার্টিফিকেট পাবেন।"</string>
     <string name="course_overview">Course Overview</string>
 
     <string name="submit_practise_msz">জমা দেওয়ার আগে আপনার টাস্ক সম্পূর্ণ করুন</string>
@@ -145,13 +124,11 @@
     <string name="permission_dialog_description"><![CDATA[Jodi apni course tike niye serious thaken, ar <b>Lesson</b> er reminder ar <b>Practice partner</b> er calls miss korte chan na, tahole <br><br> <b>Settings</b> e giye <b>Auto Start ON</b> Korun]]></string>
     <string name="serious_student_ho">আপনি কি একজন Serious Student?</string>
     <string name="allow">"অনুমতি দিন"</string>
-    <string name="do_not_ask_again">"আর জিজ্ঞাসা করবেন না"</string>
     <string name="try_again">আবার চেষ্টা করুন </string>
     <string name="chat_option">চ্যাট এবং পে </string>
     <string name="title">উফ! পেমেন্ট ব্যর্থ হয়েছে.</string>
     <string name="trx_id">ট্রান্জাক্শন আইডি: %s</string>
     <string name="reason">কারণ: %s</string>
-    <string name="wohoo">উহু!</string>
     <string name="starting_title">তুমি পেরেছো!</string>
     <string name="starting_info">%s কোর্সে স্বাগতম</string>
     <string name="starting_info_2">আপনার %s সফলভাবে কোর্সে নথিভুক্ত হয়েছে।</string>
@@ -200,19 +177,16 @@
     <string name="female">Female</string>
     <string name="male">Male</string>
     <string name="other">Other</string>
-    <string name="have_a_referral_code">আপনার কি রেফারেল কোড আছে?</string>
     <string name="enter_referral_code">রেফারেল কোড লিখুন</string>
     <string name="wrong_coupon">কুপন কোড ভুল</string>
     <string name="referral_success_info">আপনাকে আপনার বন্ধু %s দ্বারা রেফার করা হয়েছে</string>
     <string name="referral_success_info2">এবং আপনি আপনার প্রথম কোর্সে ₹ 50 ছাড় পাবেন।</string>
-    <string name="page_number">"Page %s / %s"</string>
     <string name="close">"বন্ধ কর "</string>
     <string name="show_details">Show Details</string>
     <string name="coupon_applied_free_course">কুপন প্রয়োগ করা হয়েছে! আপনি বিনামূল্যে এই কোর্স পেয়েছেন. এখন রেজিস্টার করুন</string>
     <string name="select_courses">"কোর্স বেছে নিন"</string>
     <string name="start_learning">"শেখা শুরু করুন "</string>
     <string name="upgrade">Upgrade</string>
-    <string name="add_more_courses">"আরো কোর্স যোগ করুন"</string>
     <string name="apply_coupon">"কুপন প্রয়োগ করুন"</string>
     <string name="enter_promo_code">"প্রোমো কোড লিখুন"</string>
     <string name="select_course">"কোর্স বেছে নিন"</string>
@@ -226,7 +200,6 @@
     <string name="well_done">"খুব সুন্দর"</string>
     <string name="test_summary">এখানে আপনার পরীক্ষার রেজাল্ট </string>
     <string name="test_summary_title">Test Summary</string>
-    <string name="test_report_title">Test Report</string>
     <string name="attempted">প্রচেষ্টা করা</string>
     <string name="not_attempted">"চেষ্টা না করা"</string>
     <string name="right">"ঠিক"</string>
@@ -243,10 +216,8 @@
     <string name="reset">রিসেট</string>
     <string name="submitted_recording">"জমা করা রেকর্ডিং"</string>
     <string name="submit_record_msz">আপনি কি এই রেকর্ডিং জমা দিতে চান?</string>
-    <string name="courses_in_other_languages">অন্যান্য ভাষায় কোর্স:</string>
     <string name="select_character">প্রথমে আপনার চরিত্র চয়ন করুন</string>
     <string name="unlock_class_text">"পরবর্তী ক্লাস আনলক করুন"</string>
-    <string name="loading_new_classess">নতুন ক্লাস লোড হচ্ছে</string>
     <string name="start_now">"এখুনি শুরু করুন"</string>
     <string name="get_started">"শুরু"</string>
     <string name="already_a_subscriber">আগের থেকেই সাবস্ক্রাইব করেছেন?</string>
@@ -257,20 +228,9 @@
     <string name="subscription_heading">"সাবস্ক্রিপশন সহ ভারত প্রথম"</string>
     <string name="start_7_day_trial">"৭ দিনের ফ্রি ট্রায়াল শুরু করুন"</string>
     <string name="start_free_course">"এখনই বিনামূল্যে কোর্স শুরু করুন"</string>
-    <string name="start_subscription">"1 বছরের সাবস্ক্রিপশন শুরু করুন"</string>
-    <string name="enjoy_free_trial">আপনার বিনামূল্যে ট্রায়াল উপভোগ করুন!</string>
-    <string name="convert">এখন আপগ্রেড করুন </string>
     <string name="trial_ended">আপনার 2 দিনের ট্রায়াল শেষ! মজা পেলেন? \nএখনই এই কোর্সটি অ্যাক্সেস করুন।</string>
-    <string name="unlock_all_courses">"সমস্ত কোর্স আনলক করুন"</string>
     <string name="get_one_year_pass">সমস্ত কোর্সের জন্য একটি অ্যাক্সেস পাস পান</string>
     <string name="free_trial_ended">"ফ্রি ট্রায়াল শেষ"</string>
-    <string name="free_trial_last_day">বিনামূল্যে সাবস্ক্রিপশনের শেষ দিন</string>
-    <string name="free_trial_enjoy">বিনামূল্যে ট্রায়াল উপভোগ করুন!</string>
-    <string name="trial_heading">যেকোনো কোর্সে ভর্তি হন এবং বিনামূল্যে শিখুন</string>
-    <string name="trial_heading_main">"প্রথম 7 দিন বিনামূল্যে"</string>
-    <string name="trial_feature_1">সম্পূর্ণ প্যাশন অভিজ্ঞতা আনলক করুন</string>
-    <string name="trial_feature_2">600 টির বেশি ক্লাস নিয়ে কখনই বিরক্ত হবেন না</string>
-    <string name="trial_feature_3">কুইজ এবং পরীক্ষা দিয়ে অনুপ্রাণিত থাকুন</string>
     <string name="me">"আমাকে "</string>
     <string name="add_this">Add This</string>
     <string name="delete_media_title">"ক্লিয়ার কোর্স মিডিয়া"</string>
@@ -288,7 +248,6 @@
     <string name="dismiss">"খারিজ"</string>
     <string name="class_reminder">"ক্লাস রিমাইন্ডার"</string>
     <string name="alarms_deleted">"অ্যালার্ম মুছে ফেলা হয়েছে"</string>
-    <string name="start_learning_now">এখন শেখা শুরু করুন</string>
     <string name="resend">"আবার পাঠাও"</string>
     <string name="total_interests_selected">"মোট নির্বাচিত সুদ"</string>
     <string name="click_to_start_the_course">"কোর্স শুরু করুন" এ ক্লিক করুন</string>
@@ -299,11 +258,6 @@
     <string name="stop">"বন্ধ কর "</string>
     <string name="practice_with_partner">"একজন অংশীদারের সাথে প্র্যাক্টিস করুন"</string>
     <string name="rules_promise">আমি উপরের নিয়মগুলি মেনে চলার প্রতিশ্রুতি দিচ্ছি</string>
-    <string name="searching_user_title">আপনার 70% শিক্ষার্থী দিনে 25 মিনিটের বেশি ইংরেজিতে কথা বলে।</string>
-    <string name="mediator_screen_title">"শিখতে সবচেয়ে গুরুত্বপূর্ণ জিনিস শুরু করা হয়"</string>
-    <string name="find_pp_label">"আমরা আপনার জন্য আপনার প্র্যাক্টিস পার্টনার খুঁজছি"</string>
-    <string name="topic_for_pp">আপনি এই বিষয়ে আপনার প্র্যাক্টিস পার্টনার এর সাথে কথা বলতে পারেন</string>
-    <string name="call_permission_message">%s-এর সাথে এই কলের উত্তর দিতে, আপনার মাইক্রোফোনে Josh Skills-কে অ্যাক্সেস দিন।</string>
     <string name="call_permission_permanent_message">%s-এর সাথে এই কলের উত্তর দিতে, Josh Skills কে আপনার মাইক্রোফোনে অ্যাক্সেস দিন। সেটিংস &amp;gt; অনুমতিতে আলতো চাপুন এবং মাইক্রোফোন চালু করুন।</string>
     <string name="time_ago_full_seconds">"%1$d সেকেন্ড আগে"</string>
     <string name="inbox_header">Josh Skills</string>
@@ -336,14 +290,12 @@
     <string name="hi_i_am">হ্যালো! আমি</string>
     <string name="about_teacher_title">"শিক্ষক সম্পর্কে"</string>
     <string name="joined">Joined</string>
-    <string name="choose_character">"আপনার চরিত্র চয়ন করুন"</string>
     <string name="conversation_practice">কথোপকথন প্র্যাক্টিস </string>
     <string name="usb_connected_message">আপনার ডিভাইস পিসির সাথে সংযুক্ত। ভিডিওটি চালানোর জন্য অনুগ্রহ করে USB ডেটা সংযোগ বিচ্ছিন্ন করুন৷</string>
     <string name="select_your_character">"প্রথমে আপনার চরিত্র চয়ন করুন"</string>
     <string name="ok_got_it_lbl">ঠিক আছে বুঝেছি</string>
     <string name="start_practise">"অভ্যাস শুরু করুন"</string>
     <string name="practise_intro_sub">কিভাবে এই প্র্যাক্টিস সম্পূর্ণ করবে?</string>
-    <string name="select_partner">প্রথমে আপনার সঙ্গী নির্বাচন করুন</string>
     <string name="hint_name_field">তোমার নাম?</string>
     <string name="hint_email_field">উদাহরণ abc@xyz.com</string>
     <string name="hint_date_field">উদাহরণ 01 জানুয়ারী 1990</string>
@@ -366,7 +318,6 @@
     <string name="start_course_free">Start my Courses For Free</string>
     <string name="buy_pass">সমস্ত কোর্স এর অ্যাক্সেস পাস কিনুন</string>
     <string name="hint_text_btn">&lt;u&gt;সমস্ত কোর্স অ্যাক্সেস পাস কিনুন&lt;/u&gt;<u>सभी कोर्स एक्सेस पास खरीदें </u></string>
-    <string name="free_trial_completed">বিনামূল্যে ট্রায়াল সম্পূর্ণ!</string>
     <string name="rate_us">আমাদের ব্যাপারে আপনার মতামত দিন</string>
     <string name="short_seconds">সেকেন্ড</string>
     <string name="time_ago_yesterday_at">গতকাল %1$s</string>
@@ -375,16 +326,12 @@
     <string name="download_quality">ডাউনলোড কোয়ালিটি</string>
     <string name="pending">বিবেচনার মধ্যে</string>
     <string name="submitted">অনুরোধ</string>
-    <string name="call_ended">"সংযোগ বিচ্ছিন্ন "</string>
-    <string name="connecting">যোগ করুন</string>
     <string name="ringing">Ringing </string>
-    <string name="voice_call">ভয়েস কল</string>
     <string name="practise_tip_1">শিক্ষার্থীদের সাথে ইংরেজিতে কথা বলার অভ্যাস করুন</string>
     <string name="practise_tip_2">সীমাহীন অনুশীলন করুন তবে শুধুমাত্র ইংরেজিতে</string>
     <string name="practise_tip_3">আপনার সঙ্গীকে সম্মান করুন এবং অনুগ্রহ করে অশ্লীল ভাষা ব্যবহার করবেন না</string>
     <string name="select_country">দেশ নির্বাচন করুন</string>
     <string name="next_class">পরবর্তী ক্লাস</string>
-    <string name="pp_label">অনুশীলন সঙ্গী নির্বাচিত! কল শুরু</string>
     <string name="enter_country">দেশের নাম লিখুন </string>
     <string name="no_result_found">কোন ফলাফল পাওয়া যায়নি</string>
     <string name="correct_answer_label">আপনার উত্তর সঠিক</string>
@@ -405,7 +352,6 @@
     <string name="c_practise_tab_2">কুইজ</string>
     <string name="c_practise_tab_3">প্র্যাক্টিস করা</string>
     <string name="c_practise_tab_4">রেকর্ড</string>
-    <string name="user">ব্যবহারকারী</string>
     <string name="next_class_started">পরবর্তী ক্লাস শুরু হয়</string>
     <string name="whatsApp_not_installed">হোয়াটসঅ্যাপ ইনস্টল করা নেই</string>
     <string name="invalid_coupon_code">অকার্যকর কুপন কোড. আবার চেষ্টা কর</string>
@@ -423,10 +369,7 @@
     <string name="lessons">Lessons</string>
     <string name="exam">Certification Exam</string>
     <string name="congratulations">অভিনন্দন</string>
-    <string name="grammer_completions_message">ব্রিলিয়ান্ট!!! আপনি ব্যাকরণ অংশ সম্পূর্ণ করেছেন</string>
-    <string name="today_reading_practise">Today\'s Reading Practice</string>
 
-    <string name="unlock_next_lesson">পরবর্তী পাঠ আনলক করুন</string>
     <string name="lesson_completed">পাঠ সমাপ্ত</string>
     <string name="redo_quiz">পুনরায় করা</string>
     <string name="quiz_completed">কুইজ সম্পন্ন!!</string>
@@ -439,14 +382,11 @@
     <string name="completed">সম্পন্ন</string>
     <string name="profile_photo">প্রোফাইল ছবি</string>
     <string name="age">Age:</string>
-    <string name="joined_on">Joined on:</string>
     <string name="batch">Batch:</string>
     <string name="highlights">Highlights</string>
     <string name="points">Points</string>
-    <string name="regular">নিয়মিত ক্রিয়া</string>
     <string name="awards">Awards</string>
     <string name="see_all">অধিক তথ্য</string>
-    <string name="view_profile">প্রোফাইল দেখুন</string>
     <string name="with">with </string>
     <string name="lesson_no">"Lesson %1$d"</string>
 
@@ -456,17 +396,13 @@
     <string name="exam_info">%1$d প্রশ্ন - %2$d মিনিট - %3$d মার্কস</string>
     <string name="you_can_only_attempt_the_certification_exam">আপনি শুধুমাত্র পাঠ %1$d পরে সার্টিফিকেশন পরীক্ষা চেষ্টা করতে পারেন</string>
     <string name="did_not_answer_message">আমরা কোনো ব্যবহারকারী খুঁজে পাইনি, আবার চেষ্টা করুন.</string>
-    <string name="last_seen">Last Seen %1$s</string>
     <string name="rank">Rank</string>
     <string name="how_to_pronounce">How to pronounce:</string>
     <string name="auto_logout_message">"আপনি এই ফোন থেকে লগ আউট হয়েছেন কারণ আপনি অন্য ফোন থেকে লগ ইন করেছেন।"</string>
     <string name="we_will_get_new_lesson_here_everyday">हमें यहां हर रोज एक नया पाठ मिलेगा</string>
     <string name="call_engage_record_message">আপনি কল করার সময় অনুশীলন রেকর্ড করতে পারবেন না</string>
     <string name="call_engage_initiate_call_message">আপনি যখন কলে আছেন তখন নতুন কল শুরু করতে পারবেন না</string>
-    <string name="unmute">UnMute</string>
     <string name="mute">Mute</string>
-    <string name="raised">Raised</string>
-    <string name="unraised">UnRaised</string>
     <string name="restart_course_message">আপনি কি কোর্স টি আবার শুরু করতে চান?(আপনার Earn করা Points আপনার কাছেই থাকবে।কিন্তু কোর্স Lesson 1 থেকে আবার start হবে)</string>
     <string name="mehnat_prompt">এরকম ভাবেই পরিশ্রম করতে থাকুন </string>
     <string name="extend_free_trial_subheading">আমরা দেখলাম যে আপনি Lesson 1 পুরো করেন নি।এই App টি শুধু Serious  Students দের জন্য যারা ইংলিশ শিখতে চায়।</string>

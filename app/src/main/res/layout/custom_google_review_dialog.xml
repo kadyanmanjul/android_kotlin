@@ -22,7 +22,6 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
-            android:id="@+id/imageView11"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_dialog_box_review_stars"
@@ -32,7 +31,6 @@
             app:layout_constraintTop_toTopOf="@+id/imageView10" />
 
         <TextView
-            android:id="@+id/textView18"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:fontFamily="@font/open_sans"

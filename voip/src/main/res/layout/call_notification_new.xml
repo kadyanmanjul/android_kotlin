@@ -19,7 +19,6 @@
         tools:src="#0f0" />
 
     <ImageView
-        android:id="@+id/icon"
         android:layout_width="16dip"
         android:layout_height="16dip"
         android:layout_alignRight="@+id/photo"
@@ -29,7 +28,6 @@
         android:src="@drawable/ic_status_bar_notification" />
 
     <LinearLayout
-        android:id="@+id/text_wrap"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/photo"
@@ -66,7 +64,6 @@
             android:textSize="14dip" />
 
         <TextView
-            android:id="@+id/subtitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ellipsize="end"
@@ -79,7 +76,6 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/buttons"
         android:layout_width="match_parent"
         android:layout_height="48.3dip"
         android:layout_alignParentBottom="true"

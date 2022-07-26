@@ -92,7 +92,6 @@
             app:srcCompat="@drawable/ic_lesson_green_tick" />
 
         <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/view16"
             android:layout_width="@dimen/_12sdp"
             android:layout_height="@dimen/_12sdp"
             android:layout_marginStart="@dimen/_4sdp"

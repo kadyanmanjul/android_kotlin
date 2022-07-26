@@ -11,7 +11,6 @@
     tools:background="@drawable/bg_wood">
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/txt_count_award"
         android:layout_width="@dimen/_25sdp"
         android:layout_height="@dimen/_25sdp"
         android:background="@drawable/ic_ticker"

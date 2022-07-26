@@ -93,8 +93,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.constraintlayout.widget.Barrier
-                android:id="@+id/icons_top_barier"
-                android:layout_width="wrap_content"
+            android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:barrierDirection="top"
                 app:constraint_referenced_ids="icon1,icon2,icon3,icon4" />

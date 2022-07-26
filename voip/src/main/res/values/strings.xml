@@ -2,7 +2,6 @@
 <resources>
     <!--    Notification Module-->
     <string name="channel_name_calls">Josh Calling Channel</string>
-    <string name="channel__calls_description">Calls Notification</string>
     <string name="CHANNEL_ID_CALLS">com.joshtalks.skills.high</string>
     <string name="channel_name_normal">others</string>
     <string name="channel_calls_description">For Incoming Calls Notification</string>
@@ -11,10 +10,6 @@
     <string name="favorite_p2p_title">Favorite Practice Partner Calling</string>
 
     <string name="CHANNEL_ID_OTHERS">com.joshtalks.skills.low</string>
-    <string name="notification_title">Notification Title</string>
-    <string name="notification_content" >Notification Content</string>
-    <string name="accept_call">Accept</string>
-    <string name="reject_call">Reject</string>
 
     <string name="hang_up">Hang Up</string>
     <string name="decline">Decline</string>

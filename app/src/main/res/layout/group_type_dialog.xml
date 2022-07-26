@@ -32,7 +32,6 @@
             tools:layout_editor_absoluteX="13dp" />
 
         <RadioGroup
-            android:id="@+id/radioGroup"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginEnd="@dimen/_12sdp"
@@ -53,7 +52,6 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <RadioButton
-                android:id="@+id/closed_group_radio"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"

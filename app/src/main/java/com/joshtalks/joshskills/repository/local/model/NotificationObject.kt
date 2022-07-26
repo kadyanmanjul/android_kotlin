@@ -216,12 +216,3 @@ enum class NotificationAction(val type: String) {
     @SerializedName("call_recording_notification")
     CALL_RECORDING_NOTIFICATION("call_recording_notification"),
 }
-
-enum class NotificationChannelNames(val type: String) {
-    CLASSES("Classes"),
-    P2P("Voice Calling"),
-    UPDATES("Updates"),
-    GROUP_CHATS("Group Chats"),
-    OTHERS("Others"),
-    DEFAULT("JoshTalksDefault"),
-}
