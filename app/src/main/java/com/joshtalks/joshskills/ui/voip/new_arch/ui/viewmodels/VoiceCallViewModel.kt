@@ -336,7 +336,7 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
     fun getTime(recordingButtonState: RecordingButtonState): Job? {
         try {
             timer = CoroutineScope(Dispatchers.IO).launch {
-                delay(60000)
+                delay(180000)
                 if (recordingButtonState == RecordingButtonState.RECORDING) {
                     if (uiState.recordTime > 0) {
                         repository.stopCallRecording()
