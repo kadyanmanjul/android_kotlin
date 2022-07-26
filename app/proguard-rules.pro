@@ -23,7 +23,6 @@
 -keep class io.agora.**{ *; }
 -keep class chirpconnect.** { *; }
 -keep class javax.annotation.** { *; }
--keep class com.joshtalks.joshskills.dynamic.** { *; }
 -keep class com.joshtalks.joshskills.** { *; }
 -keep class com.pubnub.api.** { *; }
 -dontwarn javax.annotation.**

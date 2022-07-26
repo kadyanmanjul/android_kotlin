@@ -227,6 +227,9 @@ android {
             jniLibs.srcDirs = ['src/main/jniLibs']
         }
     }
+    aaptOptions {
+        cruncherEnabled = false
+    }
 }
 
 dependencies {
