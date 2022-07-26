@@ -18,7 +18,6 @@ import com.joshtalks.joshskills.voip.constant.Event
 import com.joshtalks.joshskills.voip.constant.PSTN_STATE_IDLE
 import com.joshtalks.joshskills.voip.constant.State
 import com.joshtalks.joshskills.voip.data.ServiceEvents
-import com.joshtalks.joshskills.voip.communication.model.*
 import com.joshtalks.joshskills.voip.constant.*
 import com.joshtalks.joshskills.voip.data.UIState
 import com.joshtalks.joshskills.voip.data.local.PrefManager
@@ -160,7 +159,9 @@ class CallingMediator(val scope: CoroutineScope) : CallServiceMediator {
     override fun hideIncomingCall() {
         scope.launch {
             try {
-                incomingCallNotificationHandler.removeNotification()
+                if (this@CallingMediator::incomingCallNotificationHandler.isInitialized) {
+                    incomingCallNotificationHandler.removeNotification()
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
                 if (e is CancellationException)
