@@ -13,3 +13,10 @@ data class Impression(
     @SerializedName("event_name")
     val event_name: String,
 )
+
+data class Records(
+    @SerializedName("room")
+    val roomId: Int,
+    @SerializedName("recording_file")
+    val file: String,
+)

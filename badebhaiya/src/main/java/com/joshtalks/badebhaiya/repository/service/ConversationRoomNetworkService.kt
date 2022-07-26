@@ -2,6 +2,7 @@ package com.joshtalks.badebhaiya.repository.service
 
 import com.joshtalks.badebhaiya.feed.model.*
 import com.joshtalks.badebhaiya.impressions.Impression
+import com.joshtalks.badebhaiya.impressions.Records
 import com.joshtalks.badebhaiya.liveroom.heartbeat.Heartbeat
 import com.joshtalks.badebhaiya.profile.request.ReminderRequest
 import com.joshtalks.badebhaiya.profile.request.DeleteReminderRequest
@@ -9,11 +10,10 @@ import com.joshtalks.badebhaiya.repository.model.ApiResponse
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomRequest
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomResponse
 import com.joshtalks.badebhaiya.repository.model.PubNubExceptionRequest
+import com.joshtalks.badebhaiya.repository.server.AmazonPolicyResponse
+import kotlinx.coroutines.Deferred
 import retrofit2.Response
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.Query
+import retrofit2.http.*
 
 interface ConversationRoomNetworkService {
 
@@ -59,5 +59,10 @@ interface ConversationRoomNetworkService {
 
     @POST("$DIR/conversation_room/live_room_users/")
     suspend fun triggerHeartbeat(@Body body: Heartbeat):Response<Void>
+
+    @POST("$DIR/conversation_room/record_room/")
+    suspend fun requestUploadRoomRecording(
+    @Body roomId: Records
+    ): Deferred<AmazonPolicyResponse>
 
 }

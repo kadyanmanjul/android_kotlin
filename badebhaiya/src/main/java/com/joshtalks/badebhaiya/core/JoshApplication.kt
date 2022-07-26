@@ -3,6 +3,7 @@ package com.joshtalks.badebhaiya.core
 import android.app.Application
 import androidx.lifecycle.*
 import androidx.multidex.MultiDexApplication
+import com.joshtalks.badebhaiya.utils.Utils
 import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
 
@@ -18,6 +19,7 @@ class JoshApplication: MultiDexApplication(), LifecycleObserver {
         super.onCreate()
         AppObjectController.init(this)
         ProcessLifecycleOwner.get().getLifecycle().addObserver(lifecycleEventObserver)
+        Utils.initUtils(this)
     }
 
     private val lifecycleEventObserver = LifecycleEventObserver { source, event ->

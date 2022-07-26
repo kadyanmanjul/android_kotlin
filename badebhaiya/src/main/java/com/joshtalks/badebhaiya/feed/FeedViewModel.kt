@@ -1,13 +1,8 @@
 package com.joshtalks.badebhaiya.feed
 
-import android.graphics.Insets.add
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.os.Message
 import android.util.Log
-import androidx.collection.ArraySet
-import androidx.compose.runtime.mutableStateListOf
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.lifecycle.*
@@ -22,32 +17,35 @@ import com.joshtalks.badebhaiya.datastore.BbDatastore
 import com.joshtalks.badebhaiya.feed.adapter.FeedAdapter
 import com.joshtalks.badebhaiya.feed.model.*
 import com.joshtalks.badebhaiya.impressions.Impression
+import com.joshtalks.badebhaiya.impressions.Records
 import com.joshtalks.badebhaiya.liveroom.*
 import com.joshtalks.badebhaiya.liveroom.bottomsheet.CreateRoom
 import com.joshtalks.badebhaiya.liveroom.model.StartingLiveRoomProperties
-import com.joshtalks.badebhaiya.profile.ProfileViewModel
 import com.joshtalks.badebhaiya.profile.request.ReminderRequest
 import com.joshtalks.badebhaiya.pubnub.PubNubData
 import com.joshtalks.badebhaiya.pubnub.PubNubEventsManager
 import com.joshtalks.badebhaiya.pubnub.PubNubManager
 import com.joshtalks.badebhaiya.pubnub.PubNubState
-import com.joshtalks.badebhaiya.pubnub.fallback.FallbackManager
 import com.joshtalks.badebhaiya.repository.BBRepository
 import com.joshtalks.badebhaiya.repository.CommonRepository
 import com.joshtalks.badebhaiya.repository.ConversationRoomRepository
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomRequest
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomResponse
 import com.joshtalks.badebhaiya.repository.model.User
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
+import com.joshtalks.badebhaiya.repository.server.AmazonPolicyResponse
+import com.joshtalks.badebhaiya.repository.service.RetrofitInstance
+import com.joshtalks.badebhaiya.utils.Utils
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
 import retrofit2.Response
 import timber.log.Timber
+import java.io.File
 import java.net.SocketTimeoutException
-import java.util.concurrent.TimeoutException
 
 const val ROOM_ITEM = "room_item"
 const val USER_ID = "user_id"
@@ -246,6 +244,44 @@ class FeedViewModel : ViewModel() {
                 isRoomCreated.value = false
             }
         }
+    }
+
+    fun uploadCompressedMedia(mediaPath: String) {
+        viewModelScope.launch {
+            try {
+                val obj = mutableMapOf("media_path" to File(mediaPath).name)
+                val responseObj =
+                    CommonRepository().requestUploadMediaAsync(obj).await()
+                val statusCode: Int = uploadOnS3Server(responseObj, mediaPath)
+                if (statusCode in 200..210) {
+                    val url = responseObj.url.plus(File.separator).plus(responseObj.fields["key"])
+                    repository.requestUploadRoomRecording(Records(1,url))
+                }
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
+        }
+    }
+
+    private suspend fun uploadOnS3Server(responseObj: AmazonPolicyResponse, mediaPath: String): Int {
+        return viewModelScope.async(Dispatchers.IO) {
+            val parameters = emptyMap<String, RequestBody>().toMutableMap()
+            for (entry in responseObj.fields) {
+                parameters[entry.key] = Utils.createPartFromString(entry.value)
+            }
+            val requestFile = File(mediaPath).asRequestBody("*".toMediaTypeOrNull())
+            val body = MultipartBody.Part.createFormData(
+                "file",
+                responseObj.fields["key"],
+                requestFile
+            )
+            val responseUpload = RetrofitInstance.mediaDUNetworkService.uploadMediaAsync(
+                responseObj.url,
+                parameters,
+                body
+            ).execute()
+            return@async responseUpload.code()
+        }.await()
     }
 
 

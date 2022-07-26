@@ -614,6 +614,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
             mBoundService = myBinder.getService()
             mServiceBound = true
             mBoundService?.addListener(callbackOld)
+            mBoundService?.onStartRecording()
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
@@ -1333,8 +1334,10 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
                 mBoundService?.leaveRoom(roomId, roomQuestionId)
             }
         }
+        mBoundService?.onStopRecording()
         feedViewModel.readRequestCount()
         vm.deflate.value=false
+        feedViewModel.uploadCompressedMedia(PrefManager.getLastRecordingPath())
         vm.unSubscribePubNub()
         Log.i("LIFECYCLE", "onDestroy: ")
         vm.pubNubState.value=PubNubState.ENDED
