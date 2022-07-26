@@ -323,6 +323,7 @@
                 android:layout_marginBottom="@dimen/_20sdp"
                 android:background="@drawable/rect_round"
                 android:backgroundTint="@color/da_grey"
+                android:onClick="@{() -> handler.endFragment()}"
                 android:drawableStart="@drawable/ic_victory_emoji"
                 android:drawablePadding="@dimen/_8sdp"
                 android:fontFamily="@font/nunito_sans_extrabold"

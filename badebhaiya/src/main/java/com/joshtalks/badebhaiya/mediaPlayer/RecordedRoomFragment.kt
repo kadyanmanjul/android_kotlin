@@ -4,6 +4,7 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
+import android.graphics.drawable.ColorDrawable
 import android.media.AudioAttributes
 import android.media.MediaPlayer
 import android.os.Build
@@ -19,7 +20,9 @@ import android.view.ViewGroup
 import android.widget.SeekBar
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.addCallback
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -218,11 +221,8 @@ class RecordedRoomFragment : Fragment() {
                 }
                 else
                 {
-                    mediaPlayer?.pause()
-                    mediaPlayer?.release()
                     mediaPlayer=null
                     activity?.supportFragmentManager?.popBackStack()
-                    collapseLiveRoom()
 //                        finishFragment()
 //                        return
                     }
@@ -233,6 +233,7 @@ class RecordedRoomFragment : Fragment() {
 
     private fun createChannel() {
 //        TODO("Not yet implemented")
+        viewModel.lvRoomState.value  = LiveRoomState.EXPANDED
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
             val notificationChannel=NotificationChannel(MediaNotification().CHANNEL_ID, "BadeBHaiyaTrial",NotificationManager.IMPORTANCE_HIGH)
@@ -284,12 +285,17 @@ class RecordedRoomFragment : Fragment() {
 
     }
 
-private fun finishFragment(){
+ fun finishFragment(){
     if (isAdded){
         Timber.d("finishFragment: ")
         requireActivity().supportFragmentManager.popBackStack()
     }
 }
+
+    fun endFragment(){
+        mediaPlayer=null
+        activity?.supportFragmentManager?.popBackStack()
+    }
 
     fun convert(duration:Int): String { // to convert mill sec to minutes and seconds
         return String.format("%02d:%02d",TimeUnit.MILLISECONDS.toMinutes(duration.toLong()),
@@ -300,7 +306,7 @@ private fun finishFragment(){
 
     fun collapseLiveRoom(){
         binding.liveRoomRootView.transitionToEnd()
-//        viewModel.lvRoomState.value = LiveRoomState.COLLAPSED
+        viewModel.lvRoomState.value = LiveRoomState.COLLAPSED
     }
 
     fun expandLiveRoom() {
@@ -359,11 +365,6 @@ private fun finishFragment(){
 
     private fun clickListener() {
         viewModel.lvRoomState.value=LiveRoomState.EXPANDED
-
-        binding.leaveEndRoomBtn.setOnClickListener {
-//                expandLiveRoom()
-            viewModel.lvRoomState.value=LiveRoomState.EXPANDED
-        }
         binding.buttonContainer.setOnClickListener{
             showToast("button container")
 //                expandLiveRoom()
@@ -372,10 +373,6 @@ private fun finishFragment(){
         }
 
         binding.apply {
-
-            downArrow.setOnClickListener{
-                collapseLiveRoom()
-            }
 
             pause.setOnClickListener {
 
