@@ -9,6 +9,10 @@
             name="handler"
             type="com.joshtalks.badebhaiya.mediaPlayer.RecordedRoomFragment" />
 
+        <variable
+            name="recordedViewModel"
+            type="com.joshtalks.badebhaiya.mediaPlayer.RecordedRoomViewModel" />
+
     </data>
 
     <com.joshtalks.badebhaiya.custom_ui.SingleViewTouchableMotionLayout
@@ -92,7 +96,6 @@
             android:layout_marginBottom="@dimen/_100sdp"
             android:background="@drawable/state_background"
             android:src="@drawable/ic_play"
-            android:drawableEnd="@drawable/ic_pause_icon"
             android:drawablePadding="@dimen/_10sdp"
             android:elevation="@dimen/_15sdp"
             android:padding="@dimen/_13sdp"
@@ -109,6 +112,7 @@
             android:drawableLeft="@drawable/ic_forward_icon"
             android:paddingVertical="@dimen/_4sdp"
             android:paddingStart="@dimen/_10sdp"
+            android:onClick="@{() -> recordedViewModel.forward()}"
             android:paddingEnd="@dimen/_4sdp"
             android:shadowRadius="30"
             android:layout_marginTop="@dimen/_407sdp"
@@ -273,6 +277,7 @@
                     android:paddingStart="@dimen/_7sdp"
                     android:paddingEnd="@dimen/_4sdp"
                     android:shadowRadius="30"
+                    android:onClick="@{() -> recordedViewModel.backward()}"
                     android:layout_marginTop="@dimen/_437sdp"
                     android:layout_marginStart="@dimen/_72sdp"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7"

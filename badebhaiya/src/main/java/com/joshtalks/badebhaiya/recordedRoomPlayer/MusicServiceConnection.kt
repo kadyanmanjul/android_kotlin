@@ -11,6 +11,10 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -29,6 +33,8 @@ class MusicServiceConnection @Inject constructor(
 
     private val _curPlayingSong = MutableLiveData<MediaMetadataCompat?>()
     val curPlayingSong: LiveData<MediaMetadataCompat?> = _curPlayingSong
+
+    val playBackSpeed = MutableSharedFlow<Float>()
 
     lateinit var mediaController: MediaControllerCompat
 
@@ -110,6 +116,12 @@ class MusicServiceConnection @Inject constructor(
 
         override fun onSessionDestroyed() {
             mediaBrowserConnectionCallback.onConnectionSuspended()
+        }
+    }
+
+    fun setPlaybackSpeed(speed: Float){
+        CoroutineScope(Dispatchers.IO).launch {
+            playBackSpeed.emit(speed)
         }
     }
 }

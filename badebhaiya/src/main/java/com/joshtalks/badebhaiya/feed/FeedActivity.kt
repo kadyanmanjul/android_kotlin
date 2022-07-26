@@ -434,7 +434,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                                 room,
                                 it.getString(TOPIC)!!
                             )
-                            RecordedRoomFragment.open(this)
+                            RecordedRoomFragment.open(this, "feed")
 //                            LiveRoomFragment.launch(this, liveRoomProperties, liveRoomViewModel, viewModel.source,false)
                         }
                     }

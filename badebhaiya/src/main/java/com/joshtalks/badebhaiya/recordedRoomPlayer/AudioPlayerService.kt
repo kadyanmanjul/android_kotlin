@@ -20,6 +20,7 @@ import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -29,6 +30,7 @@ class AudioPlayerService: MediaBrowserServiceCompat() {
         private const val SERVICE_TAG = "MusicService"
         const val MEDIA_ROOT_ID = "root_id"
         const val NETWORK_ERROR = "NETWORK_ERROR"
+        const val UPDATE_PLAYER_POSITION_INTERVAL = 100L
 
 
         var curSongDuration = 0L
@@ -55,6 +57,9 @@ class AudioPlayerService: MediaBrowserServiceCompat() {
 
     @Inject
     lateinit var exoPlayer: ExoPlayer
+
+    @Inject
+    lateinit var musicServiceConnection: MusicServiceConnection
 
     private val serviceJob = Job()
     private val serviceScope = CoroutineScope(Dispatchers.Main + serviceJob)
@@ -108,13 +113,26 @@ class AudioPlayerService: MediaBrowserServiceCompat() {
         musicPlayerEventListener = MusicPlayerEventListener(this)
         exoPlayer.addListener(musicPlayerEventListener)
         musicNotificationManager.showNotification(exoPlayer)
+        collectData()
 
+    }
+
+    private fun collectData() {
+        serviceScope.launch {
+            musicServiceConnection.playBackSpeed.collectLatest {
+                changePlaybackSpeed(it)
+            }
+        }
     }
 
     private inner class MusicQueueNavigator : TimelineQueueNavigator(mediaSession) {
         override fun getMediaDescription(player: Player, windowIndex: Int): MediaDescriptionCompat {
             return actualSong.description
         }
+    }
+
+    fun changePlaybackSpeed(speed: Float){
+        exoPlayer.setPlaybackSpeed(speed)
     }
 
 
