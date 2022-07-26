@@ -107,9 +107,6 @@ class RecordedRoomFragment : Fragment() {
             )
         }
 
-//        load.invokeOnCompletion {
-//            binding.totalTime.text=convert(mediaPlayer!!.duration)
-//        }
         binding.userPhoto.apply {
             clipToOutline = true
             setUserImageRectOrInitials(
@@ -268,9 +265,12 @@ class RecordedRoomFragment : Fragment() {
     fun addObserver() {
 
         viewModel.curSongDuration.observe(viewLifecycleOwner) {
-            binding.seekbar.max = it.toInt()
-            val sec = DateTimeUtils.millisToTime(it)
-            binding.totalTime.text = sec
+            if (it > 0){
+                binding.seekbar.max = it.toInt()
+                val sec = DateTimeUtils.millisToTime(it)
+                Timber.tag("totaltime").d("TOTAL TIME IS => $sec")
+                binding.totalTime.text = sec
+            }
         }
 
         viewModel.curPlayerPosition.observe(viewLifecycleOwner) {
@@ -321,30 +321,6 @@ class RecordedRoomFragment : Fragment() {
 
                 viewModel.playOrToggleSong()
             }
-
-            backward.setOnClickListener {
-//                if (load.isCompleted){
-//                    val newTime = mediaPlayer!!.currentPosition - 15000
-//                    if (newTime>0){
-//                        mediaPlayer!!.seekTo(newTime)
-//                    }else{
-//                        mediaPlayer!!.seekTo(0)
-//                    }
-//                }
-            }
-            forward.setOnClickListener {
-//                if (load.isCompleted){
-//                    val newTime = mediaPlayer!!.currentPosition + 15000
-//                    if (newTime<mediaPlayer!!.duration){
-//                        mediaPlayer!!.seekTo(newTime)
-//                    }
-//                }
-            }
-
-//            buttonContainer.setOnClickListener{
-//                showToast("button Container")
-//            }
-
 
             playbackSpeed.setOnClickListener {
                 when {

@@ -8,6 +8,7 @@ import com.google.android.exoplayer2.audio.AudioAttributes
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
 import com.google.android.exoplayer2.util.Util
+import com.joshtalks.badebhaiya.mediaPlayer.RecordedRoomViewModel
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -34,7 +35,7 @@ object ServiceModule {
     @ServiceScoped
     @Provides
     fun provideAudioAttributes() = AudioAttributes.Builder()
-        .setContentType(2)
+        .setContentType(1)
         .setUsage(USAGE_MEDIA)
         .build()
 
@@ -43,7 +44,10 @@ object ServiceModule {
     fun provideExoPlayer(
         @ApplicationContext context: Context,
         audioAttributes: AudioAttributes
-    ) = ExoPlayer.Builder(context).build().apply {
+    ) = ExoPlayer.Builder(context)
+        .setSeekForwardIncrementMs(RecordedRoomViewModel.FORWARD_BACKWARD_TIME)
+        .setSeekBackIncrementMs(RecordedRoomViewModel.FORWARD_BACKWARD_TIME)
+        .build().apply {
         setAudioAttributes(audioAttributes, true)
         setHandleAudioBecomingNoisy(true)
     }

@@ -25,7 +25,7 @@ class RecordedRoomViewModel @Inject constructor(
 //    val mediaItems: LiveData<Resource<List<Song>>> = _mediaItems
 
     companion object {
-        const val FORWARD_BACKWARD_TIME = 15000
+        const val FORWARD_BACKWARD_TIME = 15000L
     }
 
     val isConnected = musicServiceConnection.isConnected
@@ -108,10 +108,7 @@ class RecordedRoomViewModel @Inject constructor(
     }
 
     fun increaseSpeed(speed: Float){
-        Timber.tag("speedincrease").d("SPEED INCREASE TO => $speed")
         musicServiceConnection.setPlaybackSpeed(speed)
-//        exoPlayer.setPlaybackSpeed(speed)
-//        musicServiceConnection.transportControls.setPlaybackSpeed(10f)
     }
 
     fun playOrToggleSong() {

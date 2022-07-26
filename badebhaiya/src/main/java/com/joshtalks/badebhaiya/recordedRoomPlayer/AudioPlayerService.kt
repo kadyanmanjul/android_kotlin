@@ -41,7 +41,7 @@ class AudioPlayerService: MediaBrowserServiceCompat() {
              .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, "12345")
              .putString(MediaMetadataCompat.METADATA_KEY_TITLE, "test")
              .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_TITLE, "test")
-             .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON_URI, "https://www.smartpassiveincome.com/wp-content/uploads/2021/12/Learn-How-to-Podcast.png")
+             .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON_URI, "https://media.istockphoto.com/vectors/music-note-icon-vector-illustration-vector-id1175435360?k=20&m=1175435360&s=612x612&w=0&h=1yoTgUwobvdFlNxUQtB7_NnWOUD83XOMZHvxUzkOJJs=")
              .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI, "https://s3.ap-south-1.amazonaws.com/www.static.skills.com/30_Dec_4.22_pm_pledge.mp3")
              .putString(MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI, "https://www.smartpassiveincome.com/wp-content/uploads/2021/12/Learn-How-to-Podcast.png")
              .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE, "test")
