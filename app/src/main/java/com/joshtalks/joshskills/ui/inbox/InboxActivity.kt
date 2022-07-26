@@ -511,8 +511,8 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
     }
 
     override fun onBackPressed() {
-        super.onBackPressed()
         applicationClosed()
+        super.onBackPressed()
     }
 
     private fun applicationClosed() {
@@ -520,6 +520,6 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
             action = CALLING_SERVICE_ACTION
             putExtra(SERVICE_BROADCAST_KEY, STOP_SERVICE)
         }
-        LocalBroadcastManager.getInstance(this@InboxActivity).sendBroadcast(broadcastIntent)
+        LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(broadcastIntent)
     }
 }
