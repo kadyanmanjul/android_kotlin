@@ -308,7 +308,7 @@ class ConvoWebRtcService : Service() {
                             isRoomEnded = false
                             conversationRoomChannelName = null
                             rtcEngine?.leaveChannel()
-                            RtcEngine.destroy()
+//                            RtcEngine.destroy()
                             //joshAudioManager?.endCommunication()
                         }
                     } catch (ex: Exception) {
@@ -657,7 +657,7 @@ class ConvoWebRtcService : Service() {
         }
         Log.d(TAG, "onDestroy: isRoomCreatedByUser : $isRoomCreatedByUser ")
         rtcEngine?.leaveChannel()
-        RtcEngine.destroy()
+//        RtcEngine.destroy()
         retryInitLibrary = 0
         isEngineInitialized = false
         joshAudioManager?.quitEverything()
@@ -677,7 +677,7 @@ class ConvoWebRtcService : Service() {
         }
         Utils.context?.getTempFileForCallRecording()?.let { file->
             recordFile = file
-            rtcEngine?.startAudioRecording(AudioRecordingConfiguration(file.absolutePath,3,0,48000,7))
+            rtcEngine?.startAudioRecording(AudioRecordingConfiguration(file.absolutePath,3,0,48000,2))
         }
     }
 
