@@ -332,6 +332,9 @@ class LauncherActivity : CoreJoshActivity(), Branch.BranchReferralInitListener {
                 }
                 if (jsonParams.has(DeepLinkData.REDIRECT_TO.key)) {
                     this.jsonParams = jsonParams
+                    if(jsonParams.getString(DeepLinkData.REDIRECT_TO.key) == DeepLinkRedirect.LOGIN.key){
+                        PrefManager.put(LOGIN_ONBOARDING, true)
+                    }
                     viewModel.saveDeepLinkImpression(
                         deepLink = (
                                 if (jsonParams.has(DeepLinkData.REFERRING_LINK.key))

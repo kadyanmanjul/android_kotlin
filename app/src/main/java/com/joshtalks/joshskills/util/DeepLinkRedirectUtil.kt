@@ -271,7 +271,8 @@ enum class DeepLinkRedirect(val key: String) {
     COURSE_DETAILS("course_details"),
     CUSTOMER_SUPPORT_ACTIVITY("customer_support_activity"),
     LESSON_ACTIVITY("lesson_activity"),
-    ONBOARDING("onboarding");
+    ONBOARDING("onboarding"),
+    LOGIN("login");
 
     companion object {
         fun getDeepLinkAction(key: String): DeepLinkRedirect? {

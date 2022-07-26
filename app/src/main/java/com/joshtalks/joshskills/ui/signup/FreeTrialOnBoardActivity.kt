@@ -64,6 +64,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         )
         layout.handler = this
         layout.lifecycleOwner = this
+        layout.isLogin = PrefManager.getBoolValue(LOGIN_ONBOARDING, defValue = false)
         if (intent.getBooleanExtra(SHOW_SIGN_UP_FRAGMENT, false) &&
             Mentor.getInstance().getId().isNotEmpty()
         ) {
@@ -73,7 +74,6 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         initOnboardingCourse()
         addViewModelObservers()
         PrefManager.put(ONBOARDING_STAGE, OnBoardingStage.APP_INSTALLED.value)
-        addListeners()
     }
 
     private fun initOnboardingCourse() {
@@ -114,11 +114,11 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         hideProgressBar()
     }
 
-    private fun addListeners() {
+    fun startTrial(v: View) {
         val language = ChooseLanguages(HINDI_TO_ENGLISH_TEST_ID, "Hindi (हिन्दी)")
         btnStartTrial.setOnClickListener {
             if (PrefManager.hasKey(SPECIFIC_ONBOARDING, isConsistent = true))
-                signUp()
+                signUp(v)
             else if (languageActive)
                 openChooseLanguageFragment()
             else if (is100PointsActive)
@@ -175,7 +175,7 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
         }
     }
 
-    fun signUp() {
+    fun signUp(v: View) {
         MixPanelTracker.publishEvent(MixPanelEvent.LOGIN).push()
         lifecycleScope.launch(Dispatchers.IO) {
             AppAnalytics.create(AnalyticsEvent.LOGIN_INITIATED.NAME)
