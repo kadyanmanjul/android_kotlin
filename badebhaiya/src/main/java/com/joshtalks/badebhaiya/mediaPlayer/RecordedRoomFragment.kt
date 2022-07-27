@@ -44,9 +44,6 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class RecordedRoomFragment : Fragment() {
 
-    @Inject
-    lateinit var musicServiceConnection: MusicServiceConnection
-
     companion object {
         const val TAG = "RecordedRoomFragment"
         const val ROOM_DATA = "room_data"
@@ -235,6 +232,9 @@ class RecordedRoomFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        Timber.tag("roomdestroy").d("RECORDED ROOM ONDESTROY")
+
+        viewModel.destroyPlayer()
         Timber.tag("audioservice").d("RECORDED FRAGMENT IS ON DESTROY")
 
     }

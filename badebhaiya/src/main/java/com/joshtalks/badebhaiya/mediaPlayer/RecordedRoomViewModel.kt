@@ -143,8 +143,14 @@ class RecordedRoomViewModel @Inject constructor(
 //        }
     }
 
+    fun destroyPlayer(){
+        Timber.tag("roomdestroy").d("RECORDED ROOM DESTROY PLAYER CALLED")
+        musicServiceConnection.unsubscribe(MEDIA_ROOT_ID, object : MediaBrowserCompat.SubscriptionCallback() {})
+    }
+
     override fun onCleared() {
         super.onCleared()
+        Timber.tag("roomdestroy").d("RECORDED ROOM ONCLEARED")
         musicServiceConnection.unsubscribe(MEDIA_ROOT_ID, object : MediaBrowserCompat.SubscriptionCallback() {})
     }
 }
