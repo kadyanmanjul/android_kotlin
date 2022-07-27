@@ -352,46 +352,47 @@ class RecordedRoomFragment : Fragment() {
             viewModel.lvRoomState.value = LiveRoomState.EXPANDED
         }
         binding.buttonContainer.setOnClickListener {
-        viewModel.lvRoomState.value=LiveRoomState.EXPANDED
-        binding.buttonContainer.setOnClickListener{
-            showToast("button container")
-//                expandLiveRoom()
             viewModel.lvRoomState.value = LiveRoomState.EXPANDED
+            binding.buttonContainer.setOnClickListener {
+                showToast("button container")
+//                expandLiveRoom()
+                viewModel.lvRoomState.value = LiveRoomState.EXPANDED
 
-        }
-
-        binding.apply {
-
-            downArrow.setOnClickListener {
-                collapseLiveRoom()
             }
 
-            pause.setOnClickListener {
+            binding.apply {
 
-                viewModel.playOrToggleSong()
-            }
+                downArrow.setOnClickListener {
+                    collapseLiveRoom()
+                }
 
-            playbackSpeed.setOnClickListener {
-                when {
-                    playbackSpeed.text.toString()=="1x" -> {
-                        playbackSpeed.text="1.25x"
-                        viewModel.increaseSpeed(1.25f)
-                    }
-                    playbackSpeed.text.toString()=="1.25x" -> {
-                        playbackSpeed.text="1.5x"
-                        viewModel.increaseSpeed(1.5f)
-                    }
-                    playbackSpeed.text.toString()=="1.5x" -> {
-                        playbackSpeed.text="1.75x"
-                        viewModel.increaseSpeed(1.75f)
-                    }
-                    playbackSpeed.text.toString()=="1.75x" -> {
-                        playbackSpeed.text="2x"
-                        viewModel.increaseSpeed(2f)
-                    }
-                    else -> {
-                        playbackSpeed.text="1x"
-                        viewModel.increaseSpeed(1f)
+                pause.setOnClickListener {
+
+                    viewModel.playOrToggleSong()
+                }
+
+                playbackSpeed.setOnClickListener {
+                    when {
+                        playbackSpeed.text.toString() == "1x" -> {
+                            playbackSpeed.text = "1.25x"
+                            viewModel.increaseSpeed(1.25f)
+                        }
+                        playbackSpeed.text.toString() == "1.25x" -> {
+                            playbackSpeed.text = "1.5x"
+                            viewModel.increaseSpeed(1.5f)
+                        }
+                        playbackSpeed.text.toString() == "1.5x" -> {
+                            playbackSpeed.text = "1.75x"
+                            viewModel.increaseSpeed(1.75f)
+                        }
+                        playbackSpeed.text.toString() == "1.75x" -> {
+                            playbackSpeed.text = "2x"
+                            viewModel.increaseSpeed(2f)
+                        }
+                        else -> {
+                            playbackSpeed.text = "1x"
+                            viewModel.increaseSpeed(1f)
+                        }
                     }
                 }
             }
