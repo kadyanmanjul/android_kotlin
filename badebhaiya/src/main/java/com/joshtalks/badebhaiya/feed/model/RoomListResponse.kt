@@ -81,7 +81,7 @@ enum class ConversationRoomType() {
 
 data class RecordedResponseList(
     @SerializedName("recorded_data")
-    val recordings:List<RecordedResponse>
+    val recordings:List<RoomListResponseItem>
 )
 
 data class RecordedResponse(
@@ -105,7 +105,6 @@ data class RecordedRoomItem(
     val endTime: String?,
     @SerializedName("speakers_data")
     val speakersData: SpeakerData?,
-    var conversationRoomType: ConversationRoomType? = ConversationRoomType.RECORDED
 )
 
 @Parcelize

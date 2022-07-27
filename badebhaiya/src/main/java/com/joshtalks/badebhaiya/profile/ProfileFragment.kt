@@ -588,6 +588,10 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         takePermissions(room.roomId.toString(), room.topic.toString(), room.speakersData?.userId)
     }
 
+    override fun playRoom(room: RoomListResponseItem, view: View) {
+        TODO("Not yet implemented")
+    }
+
     private fun takePermissions(room: String? = null, roomTopic: String, moderatorId: String?) {
         if (PermissionUtils.isCallingPermissionWithoutLocationEnabled(requireContext())) {
             if (room != null) {

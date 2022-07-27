@@ -15,7 +15,6 @@ import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.core.*
 import com.joshtalks.badebhaiya.datastore.BbDatastore
 import com.joshtalks.badebhaiya.feed.adapter.FeedAdapter
-import com.joshtalks.badebhaiya.feed.adapter.RecordAdapter
 import com.joshtalks.badebhaiya.feed.model.*
 import com.joshtalks.badebhaiya.impressions.Impression
 import com.joshtalks.badebhaiya.impressions.Records
@@ -72,7 +71,6 @@ class FeedViewModel : ViewModel() {
     var isBackPressed = MutableLiveData(false)
     val searchResponse = MutableLiveData<SearchRoomsResponseList>()
     val feedAdapter = FeedAdapter()
-    val recordAdapter = RecordAdapter()
     var message = Message()
     var profileUuid:String?=null
     lateinit var roomData: RoomListResponseItem
@@ -91,6 +89,7 @@ class FeedViewModel : ViewModel() {
     val roomRequestCount = MutableLiveData<Int>()
     private var requestChannel: ListenerRegistration? = null
     private val jobs = mutableListOf<Job>()
+    lateinit var currentRoom:ConversationRoomResponse
 
 
 
@@ -224,6 +223,7 @@ class FeedViewModel : ViewModel() {
                     )
                     if (response.isSuccessful) {
                         if (response.body() != null) {
+                            currentRoom=response.body()!!
                             if (response.code() == 200) {
                                 showToast("Room created successfully")
                                 callback?.onRoomCreated(response.body()!!, topic)
@@ -257,7 +257,7 @@ class FeedViewModel : ViewModel() {
                 val statusCode: Int = uploadOnS3Server(responseObj, mediaPath)
                 if (statusCode in 200..210) {
                     val url = responseObj.url.plus(File.separator).plus(responseObj.fields["key"])
-                    repository.requestUploadRoomRecording(Records(1,url))
+                    repository.requestUploadRoomRecording(Records(currentRoom.roomId,url))
                 }
             } catch (ex: Exception) {
                 ex.printStackTrace()
@@ -315,6 +315,7 @@ class FeedViewModel : ViewModel() {
                 roomtopic = topic
                 if (response.isSuccessful) {
                     if (response.body() != null) {
+                        currentRoom=response.body()!!
 //                        if (moderatorId == User.getInstance().userId) {
 //                            isModerator = true
 //                            PubNubEventsManager.sendModeratorStatus(true, moderatorId.toString())
@@ -379,6 +380,7 @@ class FeedViewModel : ViewModel() {
     }
 
     fun getRooms() {
+        val list = mutableListOf<RoomListResponseItem>()
         viewModelScope.launch {
             try {
                 isLoading.set(true)
@@ -389,7 +391,7 @@ class FeedViewModel : ViewModel() {
                     res.body()?.let {
                         isSpeaker.value=it.isSpeaker
                         User.getInstance().isSpeaker=it.isSpeaker!!
-                        val list = mutableListOf<RoomListResponseItem>()
+
                         if (it.liveRoomList.isNullOrEmpty().not())
                             list.addAll(it.liveRoomList!!.map { roomListResponseItem ->
                                 roomListResponseItem.conversationRoomType =
@@ -436,19 +438,18 @@ class FeedViewModel : ViewModel() {
                 val res=repository.getRecordsList()
                 if(res.isSuccessful){
                     res.body()?.let {
-                        val recordList= mutableListOf<RecordedResponse>()
+//                        val recordList= mutableListOf<RoomListResponseItem>()
                         if(it.recordings.isNullOrEmpty().not())
                         {
-                            recordList.addAll(it.recordings!!.map { recordListResponseItem ->
+                            list.addAll(it.recordings.map { recordListResponseItem ->
                                 recordListResponseItem.conversationRoomType =
                                     ConversationRoomType.RECORDED
                                 recordListResponseItem
                             })
                         }
-                        if (recordList.isNullOrEmpty().not()) {
+                        if (list.isNullOrEmpty().not()) {
                             isRoomsAvailable.set(true)
-
-                            recordAdapter.submitList(recordList)
+                            feedAdapter.submitList(list)
                         }
 
                     }

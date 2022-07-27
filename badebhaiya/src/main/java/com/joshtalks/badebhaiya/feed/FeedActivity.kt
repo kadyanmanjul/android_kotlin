@@ -561,6 +561,9 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         takePermissions(room.roomId.toString(), room.topic,moderatorId)
     }
 
+    override fun playRoom(room: RoomListResponseItem, view: View) {
+    }
+
     private fun takePermissions(
         roomId: String? = null,
         roomTopic: String? = null,
