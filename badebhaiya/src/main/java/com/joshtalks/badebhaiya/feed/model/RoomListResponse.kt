@@ -46,6 +46,8 @@ data class RoomListResponseItem(
     var isScheduled: Boolean?,
     @SerializedName("speakers_data")
     val speakersData: SpeakerData?,
+    @SerializedName("room_recordings")
+    val recordings:  List<RecordedResponse>?,
     @SerializedName("current_time")
     var currentTime: Long = 0,
     @SerializedName("previous_room_id")
@@ -83,14 +85,11 @@ data class RecordedResponseList(
     @SerializedName("recorded_data")
     val recordings:List<RoomListResponseItem>
 )
-
+@Parcelize
 data class RecordedResponse(
-    @SerializedName("room")
-    val recordList:RecordedRoomItem,
     @SerializedName("recording_file")
-    val url:String,
-    var conversationRoomType: ConversationRoomType? = null
-)
+    val url:String
+):Parcelable
 
 data class RecordedRoomItem(
     @SerializedName("id")

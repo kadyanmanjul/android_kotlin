@@ -20,7 +20,6 @@ import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.badge.BadgeDrawable
-import com.google.android.material.badge.BadgeUtils
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.joshtalks.badebhaiya.R
@@ -446,8 +445,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                                 room,
                                 it.getString(TOPIC)!!
                             )
-                            RecordedRoomFragment.open(this, "feed")
-//                            LiveRoomFragment.launch(this, liveRoomProperties, liveRoomViewModel, viewModel.source,false)
+                            LiveRoomFragment.launch(this, liveRoomProperties, liveRoomViewModel, viewModel.source,false)
                         }
                     }
                 }
@@ -550,6 +548,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
     }
 
     override fun playRoom(room: RoomListResponseItem, view: View) {
+        RecordedRoomFragment.open(this,"Feed", room.recordings?.get(0)?.url)
     }
 
     private fun takePermissions(
