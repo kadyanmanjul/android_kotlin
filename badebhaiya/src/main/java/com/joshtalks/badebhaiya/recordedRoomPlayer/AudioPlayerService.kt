@@ -18,6 +18,7 @@ import com.google.android.exoplayer2.ext.mediasession.TimelineQueueNavigator
 import com.google.android.exoplayer2.source.ConcatenatingMediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
+import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
@@ -49,9 +50,19 @@ class AudioPlayerService: MediaBrowserServiceCompat() {
              .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_DESCRIPTION, "test")
              .build()!!
 
-//        fun setActualAudio(){
-//            actualSong =
-//        }
+        fun setAudio(recordedRoom: RoomListResponseItem){
+            actualSong = MediaMetadataCompat.Builder()
+                .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, recordedRoom.speakersData?.fullName)
+                .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, recordedRoom.roomId.toString())
+                .putString(MediaMetadataCompat.METADATA_KEY_TITLE, recordedRoom.topic)
+                .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_TITLE, recordedRoom.topic)
+                .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON_URI, recordedRoom.speakersData?.photoUrl)
+                .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI, recordedRoom.recordings!![0].url)
+                .putString(MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI, recordedRoom.speakersData?.photoUrl)
+                .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE, recordedRoom.speakersData?.fullName)
+                .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_DESCRIPTION, recordedRoom.topic)
+                .build()!!
+        }
 
     }
 

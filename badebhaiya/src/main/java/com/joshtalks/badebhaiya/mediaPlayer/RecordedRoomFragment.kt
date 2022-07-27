@@ -56,6 +56,9 @@ class RecordedRoomFragment : Fragment() {
 
             val foundFragment = activity.supportFragmentManager.findFragmentByTag(TAG)
 
+            room?.let {
+                AudioPlayerService.setAudio(it)
+            }
 //            activity.stopService(Intent(activity.applicationContext, AudioPlayerService::class.java))
 
             foundFragment?.let {
