@@ -60,9 +60,11 @@ class ImageDialogFragment : DialogFragment() {
         binding.timeTv.visibility = View.GONE
         binding.description.text = description
         println("imageulf $imageUrl")
-        Glide.with(requireContext())
-            .load(imageUrl)
-            .into(binding.courseIv)
+        if (isValidContextForGlide(requireContext())) {
+            Glide.with(requireContext())
+                .load(imageUrl)
+                .into(binding.courseIv)
+        }
     }
 
     fun cancel() {

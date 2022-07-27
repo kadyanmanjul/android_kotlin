@@ -19,6 +19,7 @@ import com.joshtalks.joshskills.constants.SAVE_GROUP_INFO
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.analytics.ParamKeys
+import com.joshtalks.joshskills.core.isValidContextForGlide
 import com.joshtalks.joshskills.databinding.FragmentNewGroupBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.group.constants.*
@@ -57,9 +58,11 @@ class NewGroupFragment : BaseFragment() {
                     imagePath = it.obj as? String
                     vm.isImageChanged = true
                     imagePath?.let {
-                        Glide.with(this)
-                            .load(Uri.fromFile(File(imagePath)))
-                            .into(binding.imgGroup)
+                        if (isValidContextForGlide(this.requireContext())){
+                            Glide.with(this)
+                                .load(Uri.fromFile(File(imagePath)))
+                                .into(binding.imgGroup)
+                        }
                     }
                 }
                 CREATE_GROUP_VALIDATION -> {

@@ -22,6 +22,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
 import com.joshtalks.joshskills.base.constants.*
+import com.joshtalks.joshskills.core.isValidContextForGlide
 import com.joshtalks.joshskills.databinding.FragmentFppCallBinding
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.VoiceCallViewModel
 import com.joshtalks.joshskills.voip.audiocontroller.AudioController
@@ -91,10 +92,12 @@ class FppCallFragment : BaseFragment() , SensorEventListener {
             Log.d(TAG, "setCallData: $name  $image")
             callBinding.callerName.text = name ?: "User Name"
             if (!image.isNullOrEmpty())
-                Glide.with(this)
-                    .load(image)
-                    .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
-                    .into(callBinding.cImage)
+                if (isValidContextForGlide(requireContext())) {
+                    Glide.with(this)
+                        .load(image)
+                        .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                        .into(callBinding.cImage)
+                }
             else
                 Glide.with(this)
                     .load(R.drawable.ic_call_placeholder)

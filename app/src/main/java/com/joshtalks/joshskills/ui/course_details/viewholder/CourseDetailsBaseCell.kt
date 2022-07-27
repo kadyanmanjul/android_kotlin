@@ -8,6 +8,7 @@ import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.target.Target
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.isValidContextForGlide
 import com.joshtalks.joshskills.repository.server.course_detail.CardType
 
 abstract class CourseDetailsBaseCell(
@@ -18,24 +19,28 @@ abstract class CourseDetailsBaseCell(
     fun getAppContext() = AppObjectController.joshApplication
 
     fun setDefaultImageView(iv: ImageView, url: String) {
-        Glide.with(getAppContext())
-            .load(url)
-            .override(Target.SIZE_ORIGINAL)
-            .optionalTransform(
-                WebpDrawable::class.java,
-                WebpDrawableTransformation(CircleCrop())
-            )
-            .into(iv)
+        if (isValidContextForGlide(getAppContext())) {
+            Glide.with(getAppContext())
+                .load(url)
+                .override(Target.SIZE_ORIGINAL)
+                .optionalTransform(
+                    WebpDrawable::class.java,
+                    WebpDrawableTransformation(CircleCrop())
+                )
+                .into(iv)
+        }
     }
 
     fun setCircleImageInView(imgView: AppCompatImageView, url: String) {
-        Glide.with(getAppContext())
-            .load(url)
-            .override(Target.SIZE_ORIGINAL)
-            .optionalTransform(
-                WebpDrawable::class.java,
-                WebpDrawableTransformation(CircleCrop())
-            )
-            .into(imgView)
+        if (isValidContextForGlide(getAppContext())) {
+            Glide.with(getAppContext())
+                .load(url)
+                .override(Target.SIZE_ORIGINAL)
+                .optionalTransform(
+                    WebpDrawable::class.java,
+                    WebpDrawableTransformation(CircleCrop())
+                )
+                .into(imgView)
+        }
     }
 }

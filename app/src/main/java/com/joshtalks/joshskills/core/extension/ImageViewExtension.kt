@@ -24,6 +24,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.custom_ui.ShimmerImageView
+import com.joshtalks.joshskills.core.isValidContextForGlide
 import com.joshtalks.joshskills.ui.view_holders.ROUND_CORNER
 import jp.wasabeef.glide.transformations.CropTransformation
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
@@ -37,13 +38,15 @@ fun ImageView.setImageWithPlaceholder(
     placeholderImage: Int = R.drawable.ic_josh_course,
     context: Context = AppObjectController.joshApplication
 ) {
-    Glide.with(context)
-        .load(url)
-        .apply(RequestOptions().placeholder(placeholderImage).error(placeholderImage))
-        .override(Target.SIZE_ORIGINAL)
-        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-        .skipMemoryCache(false)
-        .into(this)
+    if (isValidContextForGlide(context)) {
+        Glide.with(context)
+            .load(url)
+            .apply(RequestOptions().placeholder(placeholderImage).error(placeholderImage))
+            .override(Target.SIZE_ORIGINAL)
+            .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+            .skipMemoryCache(false)
+            .into(this)
+    }
 }
 
 
@@ -51,23 +54,27 @@ fun ImageView.setResourceImageDefault(
     resource: Int,
     context: Context = AppObjectController.joshApplication
 ) {
-    Glide.with(context)
-        .load(resource)
-        .override(Target.SIZE_ORIGINAL)
-        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-        .skipMemoryCache(false)
-        .into(this)
+    if (isValidContextForGlide(context)) {
+        Glide.with(context)
+            .load(resource)
+            .override(Target.SIZE_ORIGINAL)
+            .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+            .skipMemoryCache(false)
+            .into(this)
+    }
 }
 
 fun ImageView.setImageFromUrl(url: String, context: Context = AppObjectController.joshApplication) {
-    Glide.with(context)
-        .load(url)
-        .optionalTransform(
-            WebpDrawable::class.java,
-            WebpDrawableTransformation(CircleCrop())
-        )
-        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-        .into(this)
+    if (isValidContextForGlide(context)) {
+        Glide.with(context)
+            .load(url)
+            .optionalTransform(
+                WebpDrawable::class.java,
+                WebpDrawableTransformation(CircleCrop())
+            )
+            .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+            .into(this)
+    }
 }
 
 fun ShimmerImageView.setImageViewPH(
@@ -94,45 +101,47 @@ fun ShimmerImageView.setImageViewPH(
             .format(DecodeFormat.PREFER_RGB_565)
             .disallowHardwareConfig().dontAnimate().encodeQuality(75)
     }
-    Glide.with(context)
-        .load(url)
-        .override(
-            (AppObjectController.screenWidth * .8).toInt(),
-            (AppObjectController.screenHeight * .5).toInt()
-        )
-        //.override(Target.SIZE_ORIGINAL)
-        .optionalTransform(
-            WebpDrawable::class.java,
-            WebpDrawableTransformation(CircleCrop())
-        )
-        .apply(
-            requestOptions
-        )
-        .thumbnail(0.05f)
-        .diskCacheStrategy(DiskCacheStrategy.ALL)
-        //  .skipMemoryCache(false)
-        .listener(object : RequestListener<Drawable> {
-            override fun onLoadFailed(
-                e: GlideException?,
-                model: Any?,
-                target: Target<Drawable>?,
-                isFirstResource: Boolean
-            ): Boolean {
-                return false
-            }
+    if (isValidContextForGlide(context)) {
+        Glide.with(context)
+            .load(url)
+            .override(
+                (AppObjectController.screenWidth * .8).toInt(),
+                (AppObjectController.screenHeight * .5).toInt()
+            )
+            //.override(Target.SIZE_ORIGINAL)
+            .optionalTransform(
+                WebpDrawable::class.java,
+                WebpDrawableTransformation(CircleCrop())
+            )
+            .apply(
+                requestOptions
+            )
+            .thumbnail(0.05f)
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
+            //  .skipMemoryCache(false)
+            .listener(object : RequestListener<Drawable> {
+                override fun onLoadFailed(
+                    e: GlideException?,
+                    model: Any?,
+                    target: Target<Drawable>?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    return false
+                }
 
-            override fun onResourceReady(
-                resource: Drawable?,
-                model: Any?,
-                target: Target<Drawable>?,
-                dataSource: DataSource?,
-                isFirstResource: Boolean
-            ): Boolean {
-                callback?.run()
-                return false
-            }
-        })
-        .into(this)
+                override fun onResourceReady(
+                    resource: Drawable?,
+                    model: Any?,
+                    target: Target<Drawable>?,
+                    dataSource: DataSource?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    callback?.run()
+                    return false
+                }
+            })
+            .into(this)
+    }
 }
 
 fun getCropWithRoundTransformation(imageWidth: Int, imageHeight: Int): MultiTransformation<Bitmap> {
@@ -186,32 +195,36 @@ fun AppCompatImageView.setImageInLessonView(
     }*/
 
     val multi = MultiTransformation(RoundedCornersTransformation(Utils.dpToPx(16), 0))
-    Glide.with(context)
-        .load(url)
-        .override(Target.SIZE_ORIGINAL)
-        .optionalTransform(
-            WebpDrawable::class.java,
-            WebpDrawableTransformation(CircleCrop())
-        )
-        .apply(RequestOptions.bitmapTransform(multi))
-        .into(this)
+    if (isValidContextForGlide(context)) {
+        Glide.with(context)
+            .load(url)
+            .override(Target.SIZE_ORIGINAL)
+            .optionalTransform(
+                WebpDrawable::class.java,
+                WebpDrawableTransformation(CircleCrop())
+            )
+            .apply(RequestOptions.bitmapTransform(multi))
+            .into(this)
+    }
 
     val requestOptions = RequestOptions().placeholder(placeholderImage)
             .format(DecodeFormat.PREFER_RGB_565)
             .disallowHardwareConfig().dontAnimate().encodeQuality(75)
-    Glide.with(context)
-        .load(url)
-        .override(Target.SIZE_ORIGINAL)
-        .optionalTransform(
-            WebpDrawable::class.java,
-            WebpDrawableTransformation(CircleCrop())
-        )
-        .apply(
-            requestOptions
-        )
-        //.fitCenter()
-        .diskCacheStrategy(DiskCacheStrategy.ALL)
-        .into(this)
+    if (isValidContextForGlide(context)) {
+        Glide.with(context)
+            .load(url)
+            .override(Target.SIZE_ORIGINAL)
+            .optionalTransform(
+                WebpDrawable::class.java,
+                WebpDrawableTransformation(CircleCrop())
+            )
+            .apply(
+                requestOptions
+            )
+            //.fitCenter()
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
+            .into(this)
+    }
 }
 
 
@@ -226,20 +239,22 @@ fun AppCompatImageView.setRoundImageInOnbaordingView(
     val requestOptions = RequestOptions().placeholder(placeholderImage)
             .format(DecodeFormat.PREFER_RGB_565)
             .disallowHardwareConfig().dontAnimate().encodeQuality(75)
-    Glide.with(context)
-        .load(url)
-        .override(Target.SIZE_ORIGINAL)
-        .optionalTransform(
-            WebpDrawable::class.java,
-            WebpDrawableTransformation(CircleCrop())
-        )
-        .apply(
-            requestOptions
-        )
-        .apply(RequestOptions.bitmapTransform(multi))
-        //.fitCenter()
-        .diskCacheStrategy(DiskCacheStrategy.ALL)
-        .into(this)
+    if (isValidContextForGlide(context)) {
+        Glide.with(context)
+            .load(url)
+            .override(Target.SIZE_ORIGINAL)
+            .optionalTransform(
+                WebpDrawable::class.java,
+                WebpDrawableTransformation(CircleCrop())
+            )
+            .apply(
+                requestOptions
+            )
+            .apply(RequestOptions.bitmapTransform(multi))
+            //.fitCenter()
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
+            .into(this)
+    }
 }
 
 fun ImageView.setImageAndFitCenter(
@@ -270,42 +285,44 @@ fun ImageView.setImageAndFitCenter(
             .error(shimmerDrawable)
             .format(DecodeFormat.PREFER_RGB_565)
             .disallowHardwareConfig().dontAnimate().encodeQuality(75)
-    Glide.with(context ?: AppObjectController.joshApplication)
-        .load(url)
-        .override(Target.SIZE_ORIGINAL)
-        .optionalTransform(
-            WebpDrawable::class.java,
-            WebpDrawableTransformation(CircleCrop())
-        )
-        .apply(
-            requestOptions
-        )
-        .listener(
-            object : RequestListener<Drawable> {
-                override fun onLoadFailed(
-                    e: GlideException?,
-                    model: Any?,
-                    target: Target<Drawable>?,
-                    isFirstResource: Boolean
-                ): Boolean {
-                    return false
+    if (isValidContextForGlide(context)) {
+        Glide.with(context ?: AppObjectController.joshApplication)
+            .load(url)
+            .override(Target.SIZE_ORIGINAL)
+            .optionalTransform(
+                WebpDrawable::class.java,
+                WebpDrawableTransformation(CircleCrop())
+            )
+            .apply(
+                requestOptions
+            )
+            .listener(
+                object : RequestListener<Drawable> {
+                    override fun onLoadFailed(
+                        e: GlideException?,
+                        model: Any?,
+                        target: Target<Drawable>?,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        return false
+
+                    }
+
+                    override fun onResourceReady(
+                        resource: Drawable?,
+                        model: Any?,
+                        target: Target<Drawable>?,
+                        dataSource: DataSource?,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        return false
+                    }
 
                 }
-
-                override fun onResourceReady(
-                    resource: Drawable?,
-                    model: Any?,
-                    target: Target<Drawable>?,
-                    dataSource: DataSource?,
-                    isFirstResource: Boolean
-                ): Boolean {
-                    return false
-                }
-
-            }
-        )
-        //.fitCenter()
-        .diskCacheStrategy(DiskCacheStrategy.ALL)
-        .into(this)
+            )
+            //.fitCenter()
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
+            .into(this)
+    }
 }
 

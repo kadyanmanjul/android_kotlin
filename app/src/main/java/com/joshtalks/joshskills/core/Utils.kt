@@ -14,16 +14,7 @@ import android.content.Intent.ACTION_VIEW
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.content.res.Resources
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.Point
-import android.graphics.PorterDuff
-import android.graphics.PorterDuffXfermode
-import android.graphics.Rect
-import android.graphics.Typeface
+import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.PictureDrawable
@@ -45,20 +36,12 @@ import android.text.format.DateUtils
 import android.util.DisplayMetrics
 import android.util.Log
 import android.util.TypedValue
-import android.view.Display
-import android.view.Gravity
-import android.view.View
-import android.view.ViewGroup
-import android.view.WindowManager
+import android.view.*
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
 import android.view.inputmethod.InputMethodManager
-import android.widget.FrameLayout
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.annotation.ColorRes
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.browser.customtabs.CustomTabsIntent
@@ -102,11 +85,14 @@ import io.michaelrocks.libphonenumber.android.PhoneNumberUtil
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
-import java.io.InputStream
-import java.io.OutputStream
+import jp.wasabeef.glide.transformations.RoundedCornersTransformation
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
+import okhttp3.RequestBody.Companion.toRequestBody
+import timber.log.Timber
+import java.io.*
 import java.net.HttpURLConnection
 import java.net.InetSocketAddress
 import java.net.Socket
@@ -115,22 +101,12 @@ import java.nio.charset.Charset
 import java.text.DateFormat
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Date
-import java.util.Locale
-import java.util.Random
+import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.regex.Pattern
-import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 import kotlin.math.ceil
 import kotlin.math.pow
 import kotlin.math.roundToInt
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
-import okhttp3.RequestBody.Companion.toRequestBody
-import timber.log.Timber
 
 private val CHAT_TIME_FORMATTER = SimpleDateFormat("hh:mm aa")
 private val DD_MMM = SimpleDateFormat("dd-MMM hh:mm aa")
@@ -906,11 +882,14 @@ object Utils {
     }
 
     fun setImage(imageView: ImageView, url: String?) {
-        url?.let {
-            Glide.with(AppObjectController.joshApplication)
-                .load(url)
-                .fitCenter()
-                .into(imageView)
+        val context = AppObjectController.joshApplication
+        if (isValidContextForGlide(context)) {
+            url?.let {
+                Glide.with(context)
+                    .load(url)
+                    .fitCenter()
+                    .into(imageView)
+            }
         }
     }
 
@@ -1098,15 +1077,17 @@ fun ImageView.setImage(url: String, context: Context = AppObjectController.joshA
         .error(R.drawable.ic_call_placeholder)
         .format(DecodeFormat.PREFER_RGB_565)
         .disallowHardwareConfig().dontAnimate().encodeQuality(75)
-    Glide.with(context)
-        .load(url)
-        .optionalTransform(
-            WebpDrawable::class.java,
-            WebpDrawableTransformation(CircleCrop())
-        )
-        .apply(requestOptions)
-        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-        .into(this)
+    if (isValidContextForGlide(context)) {
+        Glide.with(context)
+            .load(url)
+            .optionalTransform(
+                WebpDrawable::class.java,
+                WebpDrawableTransformation(CircleCrop())
+            )
+            .apply(requestOptions)
+            .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+            .into(this)
+    }
 }
 
 fun CircleImageView.setImage(url: String, context: Context = AppObjectController.joshApplication) {
@@ -1114,31 +1095,35 @@ fun CircleImageView.setImage(url: String, context: Context = AppObjectController
         .error(R.drawable.group_default_icon)
         .format(DecodeFormat.PREFER_RGB_565)
         .disallowHardwareConfig().dontAnimate().encodeQuality(75)
-    Glide.with(context)
-        .load(url)
-        .optionalTransform(
-            WebpDrawable::class.java,
-            WebpDrawableTransformation(CircleCrop())
-        )
-        .apply(requestOptions)
-        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-        .into(this)
+    if (isValidContextForGlide(context)) {
+        Glide.with(context)
+            .load(url)
+            .optionalTransform(
+                WebpDrawable::class.java,
+                WebpDrawableTransformation(CircleCrop())
+            )
+            .apply(requestOptions)
+            .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+            .into(this)
+    }
 }
 
 fun ImageView.setPreviousProfileImage(url: String, context: Context = AppObjectController.joshApplication,loader: LottieAnimationView) {
     val requestOptions = RequestOptions()
         .format(DecodeFormat.PREFER_RGB_565)
         .disallowHardwareConfig().dontAnimate().encodeQuality(75)
-    Glide.with(context)
-        .load(url)
-        .addListener(imageLoadingListener(loader))
-        .optionalTransform(
-            WebpDrawable::class.java,
-            WebpDrawableTransformation(CircleCrop())
-        )
-        .apply(requestOptions)
-        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-        .into(this)
+    if (isValidContextForGlide(context)) {
+        Glide.with(context)
+            .load(url)
+            .addListener(imageLoadingListener(loader))
+            .optionalTransform(
+                WebpDrawable::class.java,
+                WebpDrawableTransformation(CircleCrop())
+            )
+            .apply(requestOptions)
+            .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+            .into(this)
+    }
 }
 
 fun imageLoadingListener(pendingImage: LottieAnimationView): RequestListener<Drawable?>? {
@@ -1339,15 +1324,17 @@ fun ImageView.setRoundImage(
             RoundedCornersTransformation.CornerType.ALL
         )
     )
-    Glide.with(context)
-        .load(url)
-        .override(Target.SIZE_ORIGINAL)
-        .optionalTransform(
-            WebpDrawable::class.java,
-            WebpDrawableTransformation(CircleCrop())
-        )
-        .apply(RequestOptions.bitmapTransform(multi))
-        .into(this)
+    if (isValidContextForGlide(context)) {
+        Glide.with(context)
+            .load(url)
+            .override(Target.SIZE_ORIGINAL)
+            .optionalTransform(
+                WebpDrawable::class.java,
+                WebpDrawableTransformation(CircleCrop())
+            )
+            .apply(RequestOptions.bitmapTransform(multi))
+            .into(this)
+    }
 }
 
 fun TextView.textColorSet(colorCode: Int) {
@@ -1706,3 +1693,16 @@ fun getDefaultCountryIso(context: Context): String {
   }
 
 fun getFeatureLockedText(courseId: String, name: String = EMPTY) = "$name ${AppObjectController.getFirebaseRemoteConfig().getString(FREE_TRIAL_ENDED_FEATURE_LOCKED.plus(courseId))}"
+
+fun isValidContextForGlide(context: Context?): Boolean {
+    if (context == null) {
+        return false
+    }
+    if (context is Activity) {
+        val activityLocal = context
+        if (activityLocal.isDestroyed || activityLocal.isFinishing) {
+            return false
+        }
+    }
+    return true
+}
