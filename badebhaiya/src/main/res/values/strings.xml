@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">BadeBhaiya</string>
     <string name="follow">Follow</string>
-    <string name="request">Request Call</string>
+    <string name="request">Request Room</string>
     <string name="following">Following</string>
     <string name="set_reminder">Set reminder</string>
     <string name="reminder_on">Reminder set</string>
@@ -96,7 +96,7 @@
     <string name="no_raised_hand_text">No one has their hand raised yet</string>
     <string name="bb_following"><![CDATA[\<b>%s</b> following\]]></string>
     <string name="bb_followers"><![CDATA[\<b>%s fans</b>\]]></string>
-    <string name="bb_calls"><![CDATA[\<b>%s calls</b>\]]></string>
+    <string name="bb_calls"><![CDATA[\<b>%s rooms</b>\]]></string>
     <string name="welcome_in_string">🎉 Welcome in!</string>
     <string name="bb_tagline">Connect with your Favorite Josh Talks Speakers</string>
     <string name="unable_to_load">Unable to load, Please try again</string>
@@ -127,7 +127,7 @@
     <string name="sure_i_ll_rejoin">SURE, I\'LL REJOIN</string>
     <string name="end_call">END CALL</string>
     <string name="you_can_also_rejoin_your_previous_call_instead_of_starting_a_new_one">You can also rejoin your previous call instead of starting a new one.</string>
-    <string name="call_requests">Call Requests</string>
+    <string name="call_requests">Room Requests</string>
     <string name="please_leave_current_room">Please Leave Current Room</string>
     <string name="no_call_request">You do not have any call requests yet</string>
 
