@@ -42,7 +42,7 @@ class MusicServiceConnection @Inject constructor(
 
     private val mediaBrowserConnectionCallback = MediaBrowserConnectionCallback(context)
 
-    private var mediaBrowser = MediaBrowserCompat(
+    private var mediaBrowser: MediaBrowserCompat? = MediaBrowserCompat(
         context,
         ComponentName(
             context,
@@ -50,22 +50,12 @@ class MusicServiceConnection @Inject constructor(
         ),
         mediaBrowserConnectionCallback,
         null
-    ).apply { connect() }
+    )
 
     val transportControls: MediaControllerCompat.TransportControls
         get() = mediaController.transportControls
 
     fun subscribe(parentId: String, callback: MediaBrowserCompat.SubscriptionCallback) {
-        mediaBrowser.subscribe(parentId, callback)
-    }
-
-    fun unsubscribe(parentId: String, callback: MediaBrowserCompat.SubscriptionCallback) {
-        mediaBrowser.unsubscribe(parentId, callback)
-    }
-
-    fun startNewService(){
-        Timber.tag("audioservice").d("NEW SERVICE HAS BEEN SET")
-
         mediaBrowser = MediaBrowserCompat(
             context,
             ComponentName(
@@ -74,7 +64,18 @@ class MusicServiceConnection @Inject constructor(
             ),
             mediaBrowserConnectionCallback,
             null
-        ).apply { connect() }
+        )
+        mediaBrowser?.connect()
+        mediaBrowser?.subscribe(parentId, callback)
+    }
+
+    fun unsubscribe(parentId: String, callback: MediaBrowserCompat.SubscriptionCallback) {
+        mediaBrowser?.unsubscribe(parentId, callback)
+    }
+
+    fun endPlayer(){
+        mediaBrowser?.disconnect()
+        mediaBrowser = null
     }
 
     private inner class MediaBrowserConnectionCallback(
@@ -83,7 +84,7 @@ class MusicServiceConnection @Inject constructor(
 
         override fun onConnected() {
             Log.d("MusicServiceConnection", "CONNECTED")
-            mediaController = MediaControllerCompat(context, mediaBrowser.sessionToken).apply {
+            mediaController = MediaControllerCompat(context, mediaBrowser!!.sessionToken).apply {
                 registerCallback(MediaContollerCallback())
             }
             _isConnected.postValue(Event(Resource.success(true)))

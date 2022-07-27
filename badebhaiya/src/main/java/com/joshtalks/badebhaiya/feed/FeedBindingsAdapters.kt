@@ -121,7 +121,6 @@ fun setConversationRoomCardActionButton(
             view.backgroundTintList =
                 ColorStateList.valueOf(view.context.resources.getColor(R.color.reminder_on_button_color))
             view.setOnSingleClickListener() {
-                showToast("Hello")
                 callback?.playRoom(roomListResponseItem, view)
             }
         }

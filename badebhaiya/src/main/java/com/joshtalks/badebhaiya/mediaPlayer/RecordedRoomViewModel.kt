@@ -14,6 +14,8 @@ import com.joshtalks.badebhaiya.liveroom.LiveRoomState
 import com.joshtalks.badebhaiya.recordedRoomPlayer.*
 import com.joshtalks.badebhaiya.recordedRoomPlayer.AudioPlayerService.Companion.MEDIA_ROOT_ID
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -53,6 +55,9 @@ class RecordedRoomViewModel @Inject constructor(
         collectLoadingState()
 
 //        _mediaItems.postValue(Resource.loading(null))
+    }
+
+     fun initPlayer(){
         musicServiceConnection.subscribe(MEDIA_ROOT_ID, object : MediaBrowserCompat.SubscriptionCallback() {
             override fun onChildrenLoaded(
                 parentId: String,
@@ -71,6 +76,7 @@ class RecordedRoomViewModel @Inject constructor(
 //                _mediaItems.postValue(Resource.success(items))
             }
         })
+
     }
 
     private fun collectLoadingState() {
@@ -145,7 +151,14 @@ class RecordedRoomViewModel @Inject constructor(
 
     fun destroyPlayer(){
         Timber.tag("roomdestroy").d("RECORDED ROOM DESTROY PLAYER CALLED")
-        musicServiceConnection.unsubscribe(MEDIA_ROOT_ID, object : MediaBrowserCompat.SubscriptionCallback() {})
+        musicServiceConnection.endPlayer()
+
+//        musicServiceConnection.unsubscribe(MEDIA_ROOT_ID, object : MediaBrowserCompat.SubscriptionCallback() {})
+
+//        musicServiceConnection.transportControls.pre
+        CoroutineScope(Dispatchers.Main).launch {
+            PlayerData.endPlayer.emit(true)
+        }
     }
 
     override fun onCleared() {

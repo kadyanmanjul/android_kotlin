@@ -6,4 +6,8 @@ object PlayerData {
 
     val isLoading = MutableSharedFlow<Boolean>()
 
+    val endPlayer = MutableSharedFlow<Boolean>()
+
+    val initPlayer = MutableSharedFlow<Boolean>()
+
 }

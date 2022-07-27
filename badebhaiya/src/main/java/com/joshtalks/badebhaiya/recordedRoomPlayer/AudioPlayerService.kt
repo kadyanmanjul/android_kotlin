@@ -123,6 +123,7 @@ class AudioPlayerService : MediaBrowserServiceCompat() {
         super.onCreate()
         Timber.tag("audioservice").d("AUDIO SERVICE IS ON CREATE")
 
+        Timber.tag("roomdestroy").d("RECORDED ROOM SERVICE ONCREATE CALLED")
 
         val activityIntent = packageManager?.getLaunchIntentForPackage(packageName)?.let {
             PendingIntent.getActivity(this, 0, it, 0)
@@ -168,6 +169,64 @@ class AudioPlayerService : MediaBrowserServiceCompat() {
                 changePlaybackSpeed(it)
             }
         }
+
+        serviceScope.launch {
+            PlayerData.endPlayer.collectLatest {
+                if (it){
+                    Timber.tag("roomdestroy").d("RECORDED ROOM SERVICE DESTROY CALLED")
+//                    exoPlayer.stop()
+//                    initPlayer()
+                    stopForeground(true)
+                    stopSelf()
+//                    onDestroy()
+
+                }
+            }
+        }
+
+        serviceScope.launch {
+            PlayerData.initPlayer.collectLatest {
+                if (it){
+//                    initPlayer()
+                }
+            }
+        }
+    }
+
+
+    private fun initPlayer(){
+        val activityIntent = packageManager?.getLaunchIntentForPackage(packageName)?.let {
+            PendingIntent.getActivity(this, 0, it, 0)
+        }
+
+        mediaSession = MediaSessionCompat(this, SERVICE_TAG).apply {
+            setSessionActivity(activityIntent)
+            isActive = true
+        }
+
+        musicNotificationManager = MusicNotificationManager(
+            this,
+            mediaSession.sessionToken,
+            MusicPlayerNotificationListener(this)
+        ) {
+            curSongDuration = exoPlayer.duration
+        }
+
+        val musicPlaybackPreparer = MusicPlaybackPreparer() {
+            curPlayingSong = it
+            preparePlayer(
+                true
+            )
+        }
+
+        mediaSessionConnector = MediaSessionConnector(mediaSession)
+        mediaSessionConnector.setPlaybackPreparer(musicPlaybackPreparer)
+        mediaSessionConnector.setQueueNavigator(MusicQueueNavigator())
+        mediaSessionConnector.setPlayer(exoPlayer)
+
+        musicPlayerEventListener = MusicPlayerEventListener(this, serviceScope)
+        exoPlayer.addListener(musicPlayerEventListener)
+        musicNotificationManager.showNotification(exoPlayer)
     }
 
     private inner class MusicQueueNavigator : TimelineQueueNavigator(mediaSession) {

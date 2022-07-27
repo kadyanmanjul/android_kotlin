@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.google.android.exoplayer2.ExoPlayer
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.core.EMPTY
@@ -29,12 +30,17 @@ import com.joshtalks.badebhaiya.feed.model.SpeakerData
 import com.joshtalks.badebhaiya.liveroom.LiveRoomState
 import com.joshtalks.badebhaiya.recordedRoomPlayer.AudioPlayerService
 import com.joshtalks.badebhaiya.recordedRoomPlayer.MusicServiceConnection
+import com.joshtalks.badebhaiya.recordedRoomPlayer.PlayerData
 import com.joshtalks.badebhaiya.recordedRoomPlayer.isPlaying
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.utils.DEFAULT_NAME
 import com.joshtalks.badebhaiya.utils.datetimeutils.DateTimeUtils
 import com.joshtalks.badebhaiya.utils.setUserImageRectOrInitials
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*
@@ -53,13 +59,15 @@ class RecordedRoomFragment : Fragment() {
 
             val foundFragment = activity.supportFragmentManager.findFragmentByTag(TAG)
 
-            room?.let {
-                AudioPlayerService.setAudio(it)
-            }
+            AudioPlayerService.setAudio(room!!)
+
 //            activity.stopService(Intent(activity.applicationContext, AudioPlayerService::class.java))
 
             foundFragment?.let {
                 activity.supportFragmentManager.beginTransaction().remove(it).commit()
+//                CoroutineScope(Dispatchers.Main).launch {
+//                    PlayerData.initPlayer.emit(true)
+//                }
             }
 
             val fragment = RecordedRoomFragment() // replace your custom fragment class
@@ -121,6 +129,10 @@ class RecordedRoomFragment : Fragment() {
         roomData = mBundle?.getParcelable(ROOM_DATA)
         clickListener()
         attachBackPressedDispatcher()
+        lifecycleScope.launch {
+            delay(500)
+            viewModel.initPlayer()
+        }
         Log.i("RECORDS", "onCreateView: $url")
         binding.profilePic.apply {
             clipToOutline = true
