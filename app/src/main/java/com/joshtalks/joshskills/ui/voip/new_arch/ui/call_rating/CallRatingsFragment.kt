@@ -451,12 +451,14 @@ class CallRatingsFragment : BottomSheetDialogFragment() {
             dialog.window?.attributes?.windowAnimations = R.style.DialogAnimation
             dialog.show()
             dialog.findViewById<Button>(R.id.btnNahi).setOnClickListener {
+                vm.saveImpression(IMPRESSION_NAHI_REVIEW)
                 isRatingSubmittedCount = PrefManager.getIntValue(IS_CUSTOM_RATING_AND_REVIEW_DIALOG_SHOWN)
                 isRatingSubmittedCount += 1
                 PrefManager.put(IS_CUSTOM_RATING_AND_REVIEW_DIALOG_SHOWN, isRatingSubmittedCount)
                 dialog.dismiss()
             }
             dialog.findViewById<Button>(R.id.btnHaBilkul).setOnClickListener {
+                vm.saveImpression(IMPRESSION_HA_BILKUL_REVIEW)
                 isRatingSubmittedCountBilkul = PrefManager.getIntValue(IS_CUSTOM_RATING_AND_REVIEW_DIALOG_SHOWN_BILKUL)
                 isRatingSubmittedCountBilkul += 1
                 PrefManager.put(IS_CUSTOM_RATING_AND_REVIEW_DIALOG_SHOWN_BILKUL, isRatingSubmittedCountBilkul)

@@ -268,7 +268,7 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun userActiveStatus() {
+    fun userOnlineStatusSync() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val instanceId = when {
@@ -290,7 +290,6 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
                 if (response.isSuccessful && response.body()?.isLatestLoginDevice == false) {
                     Mentor.deleteUserCredentials(true)
                     Mentor.deleteUserData()
-                    PrefManager.put(USER_ACTIVE_API_HIT_OR_NOT,true)
                 }
             } catch (ex: Exception) {
                 LogException.catchException(ex)
