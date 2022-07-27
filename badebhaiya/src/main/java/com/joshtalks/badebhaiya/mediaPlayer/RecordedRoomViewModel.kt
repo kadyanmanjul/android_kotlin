@@ -25,8 +25,6 @@ import javax.inject.Inject
 class RecordedRoomViewModel @Inject constructor(
     private val musicServiceConnection: MusicServiceConnection,
 ) : ViewModel() {
-//    private val _mediaItems = MutableLiveData<Resource<List<Song>>>()
-//    val mediaItems: LiveData<Resource<List<Song>>> = _mediaItems
 
     companion object {
         const val FORWARD_BACKWARD_TIME = 15000L
@@ -36,8 +34,6 @@ class RecordedRoomViewModel @Inject constructor(
     val networkError = musicServiceConnection.networkError
     val curPlayingSong = musicServiceConnection.curPlayingSong
     val playbackState = musicServiceConnection.playbackState
-
-    val loadingState = MutableLiveData<MediaLoadingState>()
 
     private val _curSongDuration = MutableLiveData<Long>()
     val curSongDuration: LiveData<Long> = _curSongDuration
