@@ -121,37 +121,6 @@ class FavoriteCallerViewModel : BaseViewModel() {
         }
     }
 
-    fun getCallOnGoing(toMentorId: String, uid: Int) {
-        if (isInternetAvailable()) {
-            viewModelScope.launch(Dispatchers.IO) {
-                try {
-                    val map: HashMap<String, String> = HashMap()
-                    map["from_mentor_id"] = Mentor.getInstance().getId()
-                    map["to_mentor_id"] = toMentorId
-                    val response = favoriteCallerRepository.userIsCallOrNot(map)
-                    if (response.isSuccessful) {
-                        if (response.code() == 200) {
-                            withContext(dispatcher) {
-                                message.what = OPEN_CALL_SCREEN
-                                message.obj = uid
-                                singleLiveEvent.value = message
-                            }
-                        } else {
-                            showToast("Partner is on another call", Toast.LENGTH_LONG)
-                        }
-                    }
-                    if (response.code() == 400){
-                        showToast("Partner is on another call", Toast.LENGTH_LONG)
-                    }
-                } catch (ex: Throwable) {
-                    ex.printStackTrace()
-                }
-            }
-        }else{
-            showToast("Seems like your Internet is too slow or not available.")
-        }
-    }
-
     fun onBackPress(view: View) {
         MixPanelTracker.publishEvent(MixPanelEvent.BACK).push()
         message.what = FAV_LIST_SCREEN_BACK_PRESSED

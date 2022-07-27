@@ -102,12 +102,6 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
     private var isIntroVideoEnabled = false
     private var lessonID = -1
 
-    private var openCallActivity: ActivityResultLauncher<Intent> = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) {
-    }
-
-
     private val viewModel: LessonViewModel by lazy {
         ViewModelProvider(requireActivity()).get(LessonViewModel::class.java)
     }
@@ -141,7 +135,6 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         binding.markAsCorrect.isVisible = BuildConfig.DEBUG
         return binding.rootView
     }
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -179,14 +172,11 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             RxBus2.listen(DBInsertion::class.java)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
-                .subscribe(
-                    {
-                        viewModel.isFavoriteCallerExist()
-                    },
-                    {
-                        it.printStackTrace()
-                    }
-                )
+                .subscribe({
+                    viewModel.isFavoriteCallerExist()
+                }, {
+                    it.printStackTrace()
+                })
         )
     }
 
@@ -216,9 +206,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                 }
             }
         }
-        viewModel.courseId.observe(
-            viewLifecycleOwner
-        ) {
+        viewModel.courseId.observe(viewLifecycleOwner) {
             courseId = it
         }
         binding.btnStartTrialText.setOnSingleClickListener {
@@ -303,9 +291,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             )
         }
 
-        viewModel.speakingTopicLiveData.observe(
-            viewLifecycleOwner
-        ) { response ->
+        viewModel.speakingTopicLiveData.observe(viewLifecycleOwner) { response ->
             binding.progressView.visibility = GONE
             if (response == null) {
                 showToast(AppObjectController.joshApplication.getString(R.string.generic_message_for_error))

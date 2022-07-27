@@ -10,9 +10,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
 import com.joshtalks.joshskills.core.ApiCallStatus.*
+import com.joshtalks.joshskills.core.Utils.isInternetAvailable
 import com.joshtalks.joshskills.core.abTest.GoalKeys
 import com.joshtalks.joshskills.databinding.FragmentChooseLanguageOnboardBinding
-import com.joshtalks.joshskills.quizgame.util.UpdateReceiver
 import com.joshtalks.joshskills.repository.server.GoalSelectionResponse
 import com.joshtalks.joshskills.ui.assessment.view.Stub
 import com.joshtalks.joshskills.ui.signup.adapters.ChooseGoalAdapter
@@ -58,7 +58,7 @@ class ChooseGoalOnBoardFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         addObservers()
         errorView = Stub(view.findViewById(R.id.error_view))
-        if (UpdateReceiver.isNetworkAvailable()) {
+        if (isInternetAvailable()) {
             viewModel.getAvailableCourseGoals()
             errorView?.resolved()?.let {
                 errorView!!.get().onSuccess()
