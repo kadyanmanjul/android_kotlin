@@ -12,7 +12,6 @@ import androidx.media.MediaBrowserServiceCompat
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
 import com.google.android.exoplayer2.ext.mediasession.TimelineQueueNavigator
 import com.google.android.exoplayer2.source.ConcatenatingMediaSource
@@ -26,7 +25,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class AudioPlayerService: MediaBrowserServiceCompat() {
+class AudioPlayerService : MediaBrowserServiceCompat() {
 
     companion object {
         private const val SERVICE_TAG = "MusicService"
@@ -36,36 +35,65 @@ class AudioPlayerService: MediaBrowserServiceCompat() {
 
 
         var curSongDuration = 0L
-                private set
+            private set
 
-         var actualSong = MediaMetadataCompat.Builder()
-             .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, "test")
-             .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, "12345")
-             .putString(MediaMetadataCompat.METADATA_KEY_TITLE, "test")
-             .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_TITLE, "test")
-             .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON_URI, "https://media.istockphoto.com/vectors/music-note-icon-vector-illustration-vector-id1175435360?k=20&m=1175435360&s=612x612&w=0&h=1yoTgUwobvdFlNxUQtB7_NnWOUD83XOMZHvxUzkOJJs=")
-             .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI, "https://s3.ap-south-1.amazonaws.com/www.static.skills.com/bb-app/Abhijit_Chavda-_Aliens_ISRO_Aur_C_(getmp3.pro).mp3")
-             .putString(MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI, "https://www.smartpassiveincome.com/wp-content/uploads/2021/12/Learn-How-to-Podcast.png")
-             .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE, "test")
-             .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_DESCRIPTION, "test")
-             .build()!!
+        var playingRoomId: Int? = 0
 
-        fun setAudio(recordedRoom: RoomListResponseItem){
+        var actualSong = MediaMetadataCompat.Builder()
+            .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, "test")
+            .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, "12345")
+            .putString(MediaMetadataCompat.METADATA_KEY_TITLE, "test")
+            .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_TITLE, "test")
+            .putString(
+                MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON_URI,
+                "https://media.istockphoto.com/vectors/music-note-icon-vector-illustration-vector-id1175435360?k=20&m=1175435360&s=612x612&w=0&h=1yoTgUwobvdFlNxUQtB7_NnWOUD83XOMZHvxUzkOJJs="
+            )
+            .putString(
+                MediaMetadataCompat.METADATA_KEY_MEDIA_URI,
+                "https://s3.ap-south-1.amazonaws.com/www.static.skills.com/bb-app/Abhijit_Chavda-_Aliens_ISRO_Aur_C_(getmp3.pro).mp3"
+            )
+            .putString(
+                MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI,
+                "https://www.smartpassiveincome.com/wp-content/uploads/2021/12/Learn-How-to-Podcast.png"
+            )
+            .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE, "test")
+            .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_DESCRIPTION, "test")
+            .build()!!
+
+        fun setAudio(recordedRoom: RoomListResponseItem) {
+            playingRoomId = recordedRoom.roomId
             actualSong = MediaMetadataCompat.Builder()
-                .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, recordedRoom.speakersData?.fullName)
-                .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, recordedRoom.roomId.toString())
+                .putString(
+                    MediaMetadataCompat.METADATA_KEY_ARTIST,
+                    recordedRoom.speakersData?.fullName
+                )
+                .putString(
+                    MediaMetadataCompat.METADATA_KEY_MEDIA_ID,
+                    recordedRoom.roomId.toString()
+                )
                 .putString(MediaMetadataCompat.METADATA_KEY_TITLE, recordedRoom.topic)
                 .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_TITLE, recordedRoom.topic)
-                .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON_URI, recordedRoom.speakersData?.photoUrl)
-                .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI, recordedRoom.recordings!![0].url)
-                .putString(MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI, recordedRoom.speakersData?.photoUrl)
-                .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE, recordedRoom.speakersData?.fullName)
+                .putString(
+                    MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON_URI,
+                    recordedRoom.speakersData?.photoUrl
+                )
+                .putString(
+                    MediaMetadataCompat.METADATA_KEY_MEDIA_URI,
+                    recordedRoom.recordings!![0].url
+                )
+                .putString(
+                    MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI,
+                    recordedRoom.speakersData?.photoUrl
+                )
+                .putString(
+                    MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE,
+                    recordedRoom.speakersData?.fullName
+                )
                 .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_DESCRIPTION, recordedRoom.topic)
                 .build()!!
         }
 
     }
-
 
 
     @Inject
@@ -148,7 +176,7 @@ class AudioPlayerService: MediaBrowserServiceCompat() {
         }
     }
 
-    fun changePlaybackSpeed(speed: Float){
+    fun changePlaybackSpeed(speed: Float) {
         exoPlayer.setPlaybackSpeed(speed)
     }
 
@@ -160,21 +188,25 @@ class AudioPlayerService: MediaBrowserServiceCompat() {
 //        exoPlayer.prepare(asMediaSource(dataSourceFactory))
         exoPlayer.setMediaSource(asMediaSource(dataSourceFactory))
         exoPlayer.prepare()
-        exoPlayer.seekTo( 0L)
+        exoPlayer.seekTo(0L)
         exoPlayer.playWhenReady = playNow
     }
 
     fun asMediaSource(dataSourceFactory: DefaultDataSourceFactory): ConcatenatingMediaSource {
         val concatenatingMediaSource = ConcatenatingMediaSource()
 
-            val mediaSource = ProgressiveMediaSource.Factory(dataSourceFactory)
-                .createMediaSource(MediaItem.fromUri(actualSong.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI).toUri()))
-            concatenatingMediaSource.addMediaSource(mediaSource)
+        val mediaSource = ProgressiveMediaSource.Factory(dataSourceFactory)
+            .createMediaSource(
+                MediaItem.fromUri(
+                    actualSong.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI).toUri()
+                )
+            )
+        concatenatingMediaSource.addMediaSource(mediaSource)
 
         return concatenatingMediaSource
     }
 
-    fun asMediaItems(): MutableList<MediaBrowserCompat.MediaItem>{
+    fun asMediaItems(): MutableList<MediaBrowserCompat.MediaItem> {
         val desc = MediaDescriptionCompat.Builder()
             .setMediaUri(actualSong.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI).toUri())
             .setTitle(actualSong.description.title)
@@ -182,7 +214,12 @@ class AudioPlayerService: MediaBrowserServiceCompat() {
             .setMediaId(actualSong.description.mediaId)
             .setIconUri(actualSong.description.iconUri)
             .build()
-        return mutableListOf(MediaBrowserCompat.MediaItem(desc, MediaBrowserCompat.MediaItem.FLAG_PLAYABLE))
+        return mutableListOf(
+            MediaBrowserCompat.MediaItem(
+                desc,
+                MediaBrowserCompat.MediaItem.FLAG_PLAYABLE
+            )
+        )
     }
 
     override fun onTaskRemoved(rootIntent: Intent?) {
@@ -210,27 +247,27 @@ class AudioPlayerService: MediaBrowserServiceCompat() {
         parentId: String,
         result: Result<MutableList<MediaBrowserCompat.MediaItem>>
     ) {
-        when(parentId) {
+        when (parentId) {
             MEDIA_ROOT_ID -> {
 //                val resultsSent = firebaseMusicSource.whenReady { isInitialized ->
 //                    if(isInitialized) {
-                        result.sendResult(asMediaItems())
-                        if(!isPlayerInitialized
+                result.sendResult(asMediaItems())
+                if (!isPlayerInitialized
 //                            && firebaseMusicSource.songs.isNotEmpty()
-                        ) {
-                            preparePlayer(true)
-                            isPlayerInitialized = true
-                        }
-                    }
+                ) {
+                    preparePlayer(true)
+                    isPlayerInitialized = true
+                }
+            }
 //            else {
 //                        mediaSession.sendSessionEvent("NETWORK_ERROR", null)
 //                        result.sendResult(null)
 //                    }
-                }
+        }
 //                if(!resultsSent) {
 //                    result.detach()
 //                }
-            }
+    }
 //        }
 //    }
 }
