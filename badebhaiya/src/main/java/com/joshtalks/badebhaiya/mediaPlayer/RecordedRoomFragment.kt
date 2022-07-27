@@ -2,6 +2,7 @@ package com.joshtalks.badebhaiya.mediaPlayer
 
 import android.annotation.SuppressLint
 import android.app.NotificationManager
+import android.content.Intent
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.util.Log
@@ -24,6 +25,8 @@ import com.joshtalks.badebhaiya.databinding.FragmentRecordRoomBinding
 import com.joshtalks.badebhaiya.feed.FeedViewModel
 import com.joshtalks.badebhaiya.feed.model.SpeakerData
 import com.joshtalks.badebhaiya.liveroom.LiveRoomState
+import com.joshtalks.badebhaiya.recordedRoomPlayer.AudioPlayerService
+import com.joshtalks.badebhaiya.recordedRoomPlayer.MusicServiceConnection
 import com.joshtalks.badebhaiya.recordedRoomPlayer.isPlaying
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.utils.DEFAULT_NAME
@@ -39,19 +42,34 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class RecordedRoomFragment : Fragment() {
 
+    @Inject
+    lateinit var musicServiceConnection: MusicServiceConnection
+
     companion object {
+        const val TAG = "RecordedRoomFragment"
         fun newInstance() = RecordedRoomFragment()
         fun open(activity: AppCompatActivity, from: String) {
+
+            val foundFragment = activity.supportFragmentManager.findFragmentByTag(TAG)
+
+//            activity.stopService(Intent(activity.applicationContext, AudioPlayerService::class.java))
+
+            foundFragment?.let {
+                activity.supportFragmentManager.beginTransaction().remove(it).commit()
+            }
+
             val fragment = RecordedRoomFragment() // replace your custom fragment class
             val bundle = Bundle()
             bundle.putString("source", from) // use as per your need
             fragment.arguments = bundle
 
+
+
             activity
                 .supportFragmentManager
                 .beginTransaction()
-                .add(R.id.feedRoot, fragment)
-                .addToBackStack(null)
+                .add(R.id.feedRoot, fragment, TAG)
+                .addToBackStack(TAG)
                 .commit()
         }
     }
@@ -59,7 +77,6 @@ class RecordedRoomFragment : Fragment() {
     //    private var mediaPlayer : MediaPlayer?=null
     private var from: String = EMPTY
 //    private var mediaPlayer: MediaPlayer? = null
-    private lateinit var recordingUrl: String
     private var shouldUpdateSeekbar = true
 
 //    @Inject
@@ -73,6 +90,7 @@ class RecordedRoomFragment : Fragment() {
         ViewModelProvider(requireActivity())[FeedViewModel::class.java]
     }
 
+
     lateinit var binding: FragmentRecordRoomBinding
 
     private val notificationChannelId = "MediaOne"
@@ -82,6 +100,7 @@ class RecordedRoomFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        Timber.tag("audioservice").d("RECORDED FRAGMENT IS ON CREATE")
 //        binding= DataBindingUtil.setContentView(requireActivity(), R.layout.fragment_record_room)
         binding = FragmentRecordRoomBinding.inflate(inflater, container, false)
         binding.recordedViewModel = viewModel
@@ -92,8 +111,6 @@ class RecordedRoomFragment : Fragment() {
         from = mBundle?.getString("source").toString()
         clickListener()
         attachBackPressedDispatcher()
-        recordingUrl =
-            "https://s3.ap-south-1.amazonaws.com/www.staging.static.joshtalks.com/extra/conversationRooms/3076/e0e79c479247abebc6149f8918b57d02_c3ec44fa-7515-424f-bd02-d49dbaaf816a.m3u8"
         binding.profilePic.apply {
             clipToOutline = true
             setUserImageRectOrInitials(
@@ -152,23 +169,6 @@ class RecordedRoomFragment : Fragment() {
 
         })
 
-        val dummy = SpeakerData(
-            123,
-            "wvasdbfvbrevfeb",
-            "Yami",
-            "https://imageio.forbes.com/specials-images/imageserve/61688aa1d4a8658c3f4d8640/Antonio-Juliano/0x0.jpg?format=jpg&width=960",
-            "qwerfdsvb",
-            "Bade Bhaiya",
-            "Bade"
-        )
-        val throu = MediaData(
-            dummy,
-            "https://s3.ap-south-1.amazonaws.com/www.staging.static.joshtalks.com/extra/conversationRooms/3076/e0e79c479247abebc6149f8918b57d02_c3ec44fa-7515-424f-bd02-d49dbaaf816a.m3u8",
-            "wvw",
-            "Rooom Name"
-        )
-//        MediaNotification().mediaNotification(requireActivity(),throu)
-
         return binding.root
     }
 
@@ -213,6 +213,12 @@ class RecordedRoomFragment : Fragment() {
             TimeUnit.MILLISECONDS.toSeconds(duration.toLong()) -
                     TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(duration.toLong()))
         )
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        Timber.tag("audioservice").d("RECORDED FRAGMENT IS ON DESTROY")
+
     }
 
     fun collapseLiveRoom() {

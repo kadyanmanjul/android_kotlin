@@ -2,16 +2,20 @@ package com.joshtalks.badebhaiya.mediaPlayer
 
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaMetadataCompat
+import androidx.databinding.Observable
+import androidx.databinding.ObservableBoolean
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.exoplayer2.ExoPlayer
+import com.google.android.exoplayer2.Player
 import com.joshtalks.badebhaiya.liveroom.LiveRoomState
 import com.joshtalks.badebhaiya.recordedRoomPlayer.*
 import com.joshtalks.badebhaiya.recordedRoomPlayer.AudioPlayerService.Companion.MEDIA_ROOT_ID
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -33,11 +37,15 @@ class RecordedRoomViewModel @Inject constructor(
     val curPlayingSong = musicServiceConnection.curPlayingSong
     val playbackState = musicServiceConnection.playbackState
 
+    val loadingState = MutableLiveData<MediaLoadingState>()
+
     private val _curSongDuration = MutableLiveData<Long>()
     val curSongDuration: LiveData<Long> = _curSongDuration
 
     private val _curPlayerPosition = MutableLiveData<Long>()
     val curPlayerPosition: LiveData<Long> = _curPlayerPosition
+
+    val isLoading = ObservableBoolean(true)
 
 
     var lvRoomState= MutableLiveData<LiveRoomState>()
@@ -45,6 +53,8 @@ class RecordedRoomViewModel @Inject constructor(
     init {
 
         updateCurrentPlayerPosition()
+
+        collectLoadingState()
 
 //        _mediaItems.postValue(Resource.loading(null))
         musicServiceConnection.subscribe(MEDIA_ROOT_ID, object : MediaBrowserCompat.SubscriptionCallback() {
@@ -67,7 +77,13 @@ class RecordedRoomViewModel @Inject constructor(
         })
     }
 
-
+    private fun collectLoadingState() {
+        viewModelScope.launch {
+            PlayerData.isLoading.collectLatest {
+                isLoading.set(it)
+            }
+        }
+    }
 
 
     private fun updateCurrentPlayerPosition() {
@@ -81,14 +97,6 @@ class RecordedRoomViewModel @Inject constructor(
                 delay(AudioPlayerService.UPDATE_PLAYER_POSITION_INTERVAL)
             }
         }
-    }
-
-    fun skipToNextSong() {
-        musicServiceConnection.transportControls.skipToNext()
-    }
-
-    fun skipToPreviousSong() {
-        musicServiceConnection.transportControls.skipToPrevious()
     }
 
     fun seekTo(pos: Long) {

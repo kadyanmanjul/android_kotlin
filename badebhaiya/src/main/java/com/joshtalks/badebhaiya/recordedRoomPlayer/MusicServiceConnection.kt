@@ -15,6 +15,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -36,11 +37,12 @@ class MusicServiceConnection @Inject constructor(
 
     val playBackSpeed = MutableSharedFlow<Float>()
 
+
     lateinit var mediaController: MediaControllerCompat
 
     private val mediaBrowserConnectionCallback = MediaBrowserConnectionCallback(context)
 
-    private val mediaBrowser = MediaBrowserCompat(
+    private var mediaBrowser = MediaBrowserCompat(
         context,
         ComponentName(
             context,
@@ -59,6 +61,20 @@ class MusicServiceConnection @Inject constructor(
 
     fun unsubscribe(parentId: String, callback: MediaBrowserCompat.SubscriptionCallback) {
         mediaBrowser.unsubscribe(parentId, callback)
+    }
+
+    fun startNewService(){
+        Timber.tag("audioservice").d("NEW SERVICE HAS BEEN SET")
+
+        mediaBrowser = MediaBrowserCompat(
+            context,
+            ComponentName(
+                context,
+                AudioPlayerService::class.java
+            ),
+            mediaBrowserConnectionCallback,
+            null
+        ).apply { connect() }
     }
 
     private inner class MediaBrowserConnectionCallback(

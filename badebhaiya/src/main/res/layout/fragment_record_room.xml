@@ -13,6 +13,8 @@
             name="recordedViewModel"
             type="com.joshtalks.badebhaiya.mediaPlayer.RecordedRoomViewModel" />
 
+        <import type="android.view.View"/>
+
     </data>
 
     <com.joshtalks.badebhaiya.custom_ui.SingleViewTouchableMotionLayout
@@ -113,7 +115,7 @@
             android:paddingVertical="@dimen/_4sdp"
             android:paddingStart="@dimen/_10sdp"
             android:onClick="@{() -> recordedViewModel.forward()}"
-            android:paddingEnd="@dimen/_4sdp"
+            android:includeFontPadding="false"
             android:shadowRadius="30"
             android:layout_marginBottom="@dimen/_5sdp"
             android:layout_marginEnd="@dimen/_57sdp"
@@ -379,6 +381,16 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:visibility="visible" />
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:visibility="@{recordedViewModel.isLoading ? View.VISIBLE : View.GONE}"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
