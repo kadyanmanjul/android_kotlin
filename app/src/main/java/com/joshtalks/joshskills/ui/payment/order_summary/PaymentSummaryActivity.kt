@@ -942,6 +942,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
 
     @Synchronized
     override fun onPaymentSuccess(razorpayPaymentId: String) {
+        Singular.event(SingularEvent.PAYMENT_SUCCESS_EVENT.name)
         if(viewModel.getPaymentTestId() == ENGLISH_COURSE_TEST_ID) {
             PrefManager.getBoolValue(INCREASE_COURSE_PRICE_CAMPAIGN_ACTIVE)
             viewModel.postGoal("ICP_COURSE_BOUGHT",CampaignKeys.INCREASE_COURSE_PRICE.name)
@@ -1010,6 +1011,8 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                 mapOf(
                     Pair(ParamKeys.TEST_ID.name, viewModel.getPaymentTestId()),
                     Pair(ParamKeys.IS_COUPON_APPLIED.name, viewModel.responsePaymentSummary.value?.couponDetails?.isPromoCode),
+                    Pair(ParamKeys.PAYMENT_ID.name, razorpayPaymentId),
+                    Pair(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
                 )
             )
         } catch (e: Exception) {
@@ -1042,27 +1045,6 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             bundle.putString(FirebaseAnalytics.Param.CURRENCY, CurrencyType.INR.name)
             AppObjectController.firebaseAnalytics.logEvent(FirebaseAnalytics.Event.PURCHASE, bundle)
 
-            /* try {
-                 val params = Bundle().apply {
-                     putString(
-                         AppEventsConstants.EVENT_PARAM_CONTENT_ID,
-                         viewModel.getPaymentTestId()
-                     )
-                     putString(
-                         AppEventsConstants.EVENT_PARAM_SUCCESS,
-                         AppEventsConstants.EVENT_PARAM_VALUE_YES
-                     )
-                     putString(AppEventsConstants.EVENT_PARAM_CURRENCY, CurrencyType.INR.name)
-                 }
-                 AppEventsLogger.newLogger(this).logPurchase(
-                     viewModel.getCourseDiscountedAmount().toBigDecimal(),
-                     Currency.getInstance(viewModel.getCurrency().trim()),
-                     params
-                 )
-             } catch (ex: Exception) {
-                 ex.printStackTrace()
-                 FirebaseCrashlytics.getInstance().recordException(ex)
-             }*/
             val extras: HashMap<String, String> = HashMap()
             extras["test_id"] = viewModel.getPaymentTestId()
             extras["payment_id"] = razorpayPaymentId

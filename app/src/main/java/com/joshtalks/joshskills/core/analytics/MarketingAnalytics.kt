@@ -159,7 +159,7 @@ object MarketingAnalytics {
             .push()
     }
 
-    fun coursePurchased(amount : BigDecimal) {
+    fun coursePurchased(amount : BigDecimal, logFacebook: Boolean = false) {
         val context = AppObjectController.joshApplication
         val params = Bundle().apply {
             putString(AppEventsConstants.EVENT_PARAM_CURRENCY, CurrencyType.INR.name)
@@ -173,14 +173,15 @@ object MarketingAnalytics {
         }
 
         // Facebook Event
-        AppEventsLogger.activateApp(context)
-        val facebookEventLogger = AppEventsLogger.newLogger(context)
-
-        facebookEventLogger.logPurchase(
-            amount,
-            Currency.getInstance(CurrencyType.INR.name),
-            params
-        )
+        if (logFacebook) {
+            AppEventsLogger.activateApp(context)
+            val facebookEventLogger = AppEventsLogger.newLogger(context)
+            facebookEventLogger.logPurchase(
+                amount,
+                Currency.getInstance(CurrencyType.INR.name),
+                params
+            )
+        }
 
         // Branch Events
         BranchEvent(BRANCH_STANDARD_EVENT.PURCHASE)

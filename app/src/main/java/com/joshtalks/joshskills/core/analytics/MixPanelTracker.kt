@@ -497,7 +497,9 @@ enum class ParamKeys(val value: String) {
     VIDEO_ID("video id"),
     SELECTED_LANGUAGE("selected language"),
     SCREEN_NAME("screen name"),
-    IS_100_POINTS_OBTAINED_IN_FREE_TRIAL("is 100 points obtained in free trial")
+    IS_100_POINTS_OBTAINED_IN_FREE_TRIAL("is 100 points obtained in free trial"),
+    PAYMENT_ID("payment_id"),
+    DEVICE_ID("device_id")
 }
 
 interface Event {

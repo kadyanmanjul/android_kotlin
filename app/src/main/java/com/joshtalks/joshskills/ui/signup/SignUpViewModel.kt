@@ -32,6 +32,7 @@ import com.joshtalks.joshskills.repository.server.signup.LoginResponse
 import com.joshtalks.joshskills.repository.server.signup.RequestSocialSignUp
 import com.joshtalks.joshskills.repository.server.signup.RequestUserVerification
 import com.joshtalks.joshskills.util.showAppropriateMsg
+import com.singular.sdk.Singular
 import com.truecaller.android.sdk.TrueProfile
 import com.userexperior.UserExperior
 import java.util.*
@@ -235,6 +236,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
             Mentor.getInstance().updateUser(user)
             UserExperior.setUserIdentifier(Mentor.getInstance().getId())
             AppAnalytics.updateUser()
+            Singular.setCustomUserId(Mentor.getInstance().getId())
             fetchMentor()
 //            WorkManagerAdmin.userActiveStatusWorker(true)
             WorkManagerAdmin.requiredTaskAfterLoginComplete()

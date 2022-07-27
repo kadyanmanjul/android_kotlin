@@ -893,7 +893,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                     }
                     // isBackPressDisabled = true
                     razorpayOrderId.verifyPayment()
-                    MarketingAnalytics.coursePurchased(BigDecimal(viewModel.orderDetailsLiveData.value?.amount ?: 0.0))
+                    MarketingAnalytics.coursePurchased(BigDecimal(viewModel.orderDetailsLiveData.value?.amount ?: 0.0), true)
                     //viewModel.updateSubscriptionStatus()
 
                     uiHandler.post {
@@ -933,6 +933,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
 
     @Synchronized
     override fun onPaymentSuccess(razorpayPaymentId: String) {
+        Singular.event(SingularEvent.PAYMENT_SUCCESS_EVENT.name)
         if(viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.testId == FREE_TRIAL_PAYMENT_TEST_ID) {
             if(PrefManager.getBoolValue(INCREASE_COURSE_PRICE_CAMPAIGN_ACTIVE))
             viewModel.postGoal("ICP_COURSE_BOUGHT",CampaignKeys.INCREASE_COURSE_PRICE.name)
@@ -1003,7 +1004,9 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                 viewModel.orderDetailsLiveData.value?.amount ?: 0.0,
                 mapOf(
                     Pair(ParamKeys.TEST_ID.name, viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.testId),
-                    Pair(ParamKeys.IS_COUPON_APPLIED.name, viewModel.paymentDetailsLiveData.value?.couponDetails?.isPromoCode)
+                    Pair(ParamKeys.IS_COUPON_APPLIED.name, viewModel.paymentDetailsLiveData.value?.couponDetails?.isPromoCode),
+                    Pair(ParamKeys.PAYMENT_ID.name, razorpayPaymentId),
+                    Pair(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
                 )
             )
         } catch (e: Exception) {
