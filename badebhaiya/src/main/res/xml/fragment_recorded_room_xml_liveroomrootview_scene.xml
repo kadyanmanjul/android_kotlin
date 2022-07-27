@@ -12,6 +12,7 @@
             app:touchAnchorId="@id/toolbar"
             />
         <OnClick app:targetId="@+id/button_container" />
+        <OnClick app:targetId="@+id/down_arrow" />
 
 
     </Transition>

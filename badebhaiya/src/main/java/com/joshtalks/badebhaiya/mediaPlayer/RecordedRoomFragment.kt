@@ -3,6 +3,9 @@ package com.joshtalks.badebhaiya.mediaPlayer
 import android.annotation.SuppressLint
 import android.app.NotificationManager
 import android.content.Intent
+import android.content.Context
+import android.graphics.drawable.ColorDrawable
+import android.media.AudioAttributes
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.util.Log
@@ -12,11 +15,35 @@ import android.view.ViewGroup
 import android.widget.SeekBar
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.addCallback
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.exoplayer2.ExoPlayer
+import androidx.appcompat.widget.AppCompatTextView
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.constraintlayout.motion.widget.MotionLayout
+import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getSystemService
+import androidx.databinding.DataBindingUtil
+import coil.compose.AsyncImage
+import com.google.firebase.messaging.FirebaseMessagingService
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.core.EMPTY
 import com.joshtalks.badebhaiya.core.NotificationChannelNames
@@ -186,17 +213,19 @@ class RecordedRoomFragment : Fragment() {
 
     private fun handleBackPress(onBackPressedCallback: OnBackPressedCallback) {
         Log.i("KHOLO", "handleBackPress: ${viewModel.lvRoomState.value}")
-        if (viewModel.lvRoomState.value == LiveRoomState.EXPANDED) {
+        if (viewModel.lvRoomState.value  == LiveRoomState.EXPANDED){
             // Minimise live room.
             collapseLiveRoom()
         } else {
             // Live is already minimized ask if user wants to quit live room.
-            if (from == "Profile") {
-                feedViewModel.isBackPressed.value = true
-                from = "None"
-            } else {
+            if(from=="Profile")
+            {
+                feedViewModel.isBackPressed.value=true
+                from="None"
+            }
+            else
+            {
                 activity?.supportFragmentManager?.popBackStack()
-                collapseLiveRoom()
 //                        finishFragment()
 //                        return
             }
@@ -206,11 +235,16 @@ class RecordedRoomFragment : Fragment() {
     }
 
 
-    private fun finishFragment() {
-        if (isAdded) {
-            Timber.d("finishFragment: ")
-            requireActivity().supportFragmentManager.popBackStack()
-        }
+
+ fun finishFragment(){
+    if (isAdded){
+        Timber.d("finishFragment: ")
+        requireActivity().supportFragmentManager.popBackStack()
+    }
+}
+
+    fun endFragment(){
+        activity?.supportFragmentManager?.popBackStack()
     }
 
     fun convert(duration: Int): String { // to convert mill sec to minutes and seconds
@@ -229,7 +263,7 @@ class RecordedRoomFragment : Fragment() {
 
     fun collapseLiveRoom() {
         binding.liveRoomRootView.transitionToEnd()
-//        viewModel.lvRoomState.value = LiveRoomState.COLLAPSED
+        viewModel.lvRoomState.value = LiveRoomState.COLLAPSED
     }
 
     fun expandLiveRoom() {
@@ -318,6 +352,9 @@ class RecordedRoomFragment : Fragment() {
             viewModel.lvRoomState.value = LiveRoomState.EXPANDED
         }
         binding.buttonContainer.setOnClickListener {
+        viewModel.lvRoomState.value=LiveRoomState.EXPANDED
+        binding.buttonContainer.setOnClickListener{
+            showToast("button container")
 //                expandLiveRoom()
             viewModel.lvRoomState.value = LiveRoomState.EXPANDED
 
