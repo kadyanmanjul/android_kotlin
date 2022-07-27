@@ -6,6 +6,7 @@ import android.os.Message
 import android.os.SystemClock
 import android.util.Log
 import android.view.View
+import androidx.databinding.Observable
 import androidx.databinding.ObservableArrayList
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableInt
@@ -88,6 +89,13 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
     init {
         isGameEnabled.set(Utils.context?.getGameFlag() == "1")
         listenRepositoryEvents()
+       uiState.addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
+            override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
+                if(propertyId==47) {
+                    Log.d(TAG, "onPropertyChanged: $sender  $propertyId")
+                }
+            }
+        })
     }
 
     fun listenRepositoryEvents() {
@@ -234,103 +242,51 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
         viewModelScope.launch(Dispatchers.IO) {
             repository.observeUserDetails()?.collect { state ->
                 Log.d(TAG, "listenUIState: $state")
-                val voipState = PrefManager.getVoipState()
-                Log.d(TAG, "listenUIState: State --> $voipState")
-                if (uiState.startTime != state.startTime)
-                    uiState.startTime = state.startTime
-                uiState.isRecordingEnabled = state.isRecordingEnabled
-                uiState.isCallerSpeaking = state.isCallerSpeaking
-                uiState.isCalleeSpeaking = state.isCalleeSpeaking
-                uiState.recordButtonPressedTwoTimes = state.recordingButtonNooftimesclicked
-                // TODO remove this logic from here ( issues: fix when state is REQUESTED we have to show dialog even when other user come back from background )
-                if (state.recordingButtonState == RecordingButtonState.GOTREQUEST
-                    && uiState.recordingButtonState != RecordingButtonState.GOTREQUEST
-                    && uiState.recordBtnTxt.equals("Record")) {
-                    val msg = Message.obtain().apply {
-                        what = SHOW_RECORDING_PERMISSION_DIALOG
-                    }
-                    withContext(Dispatchers.Main) {
-                        recordingLiveEvent.value = msg
-                    }
-                }
-                if (uiState.recordTime != state.recordingStartTime)
-                    uiState.recordTime = state.recordingStartTime
-
-                if(voipState!=State.IDLE && voipState != State.SEARCHING) {
-                    uiState.name = state.remoteUserName
-                    uiState.profileImage = state.remoteUserImage ?: ""
-                }
-                try {
-                    uiState.localUserName = Utils.context?.getMentorName()?:""
-                    uiState.localUserProfile = Utils.context?.getMentorProfile()?:""
-                }catch (ex:Exception){}
-
-                uiState.gameWord = state.nextGameWord
-                uiState.wordColor = state.nextGameWordColor
-                uiState.isStartGameClicked = state.isStartGameClicked
-                uiState.isNextWordClicked = state.isNextWordClicked
-                uiState.topic = state.topicName
-                uiState.topicImage = state.currentTopicImage
-                uiState.type = state.callType
-                uiState.occupation = getOccupationText(state.aspiration, state.occupation)
-                uiState.title = when (state.callType) {
-                    PEER_TO_PEER -> "Practice with Partner"
-                    FPP -> "Favorite Practice Partner"
-                    GROUP -> "Group Call"
-                    else -> ""
-                }
-
-                if (state.nextGameWord == "") {
-                    uiState.p2pCallBackgroundColor = R.color.p2p_call_background_color
-                } else {
-                    uiState.p2pCallBackgroundColor = R.color.black
-                }
-                uiState.recordingButtonState = state.recordingButtonState
-
-                when(state.recordingButtonState) {
-                    RecordingButtonState.SENTREQUEST -> {
-                        Log.d(TAG, "GAME observe: SENTREQUEST ")
-                            cancelRecordingTimer()
-                            if (state.isStartGameClicked) {
-                                recordingStopButtonClickListener()
-                            }
-                    }
-                    RecordingButtonState.RECORDING -> {
-                        Log.d(TAG, "GAME observe: RECORDING ")
-                        startRecordingTimer(uiState.recordingButtonState)
-                        val msg = Message.obtain().apply {
-                            what = SHOW_RECORDING_PERMISSION_DIALOG
-                        }
-                        withContext(Dispatchers.Main) {
-                            recordingLiveEvent.value = msg
-                        }
-                        recordingStartedUIChanges()
-                    }
-                }
-
-                if (state.isReconnecting) {
-                    uiState.currentState = "Reconnecting"
-                } else if (state.isOnHold) {
-                    uiState.currentState = "Call on Hold"
-                    voipLog?.log("HOLD")
-                } else if (state.isRemoteUserMuted) {
-                    uiState.currentState = "User Muted the Call"
-                    voipLog?.log("Mute")
-                } else {
-                    if (voipState == State.CONNECTED || voipState == State.RECONNECTING)
-                        uiState.currentState = "Timer"
-                }
-
-                if (uiState.isSpeakerOn != state.isSpeakerOn) {
-                    uiState.isSpeakerOn = state.isSpeakerOn
-                }
-
-                if (uiState.isMute != state.isOnMute) {
-                    Log.d(TAG, "listenUIState: MUTE -- ${state.isOnMute}")
-                    uiState.isMute = state.isOnMute
-                }
+                uiState.updateUiState(state)
+                processAfterUIUpdate(state.isReconnecting)
             }
         }
+    }
+
+    private fun processAfterUIUpdate(reconnecting: Boolean) {
+
+        val voipState = PrefManager.getVoipState()
+
+        when(uiState.recordingButtonState) {
+            RecordingButtonState.SENTREQUEST -> {
+                cancelRecordingTimer()
+                if (uiState.isStartGameClicked) {
+                    recordingStopButtonClickListener()
+                }
+            }
+            RecordingButtonState.RECORDING -> {
+                startRecordingTimer(this.uiState.recordingButtonState)
+                val msg = Message.obtain().apply {
+                    what = SHOW_RECORDING_PERMISSION_DIALOG
+                }
+                viewModelScope.launch(Dispatchers.Main) {
+                    recordingLiveEvent.value = msg
+                }
+
+                recordingStartedUIChanges()
+            }
+            else -> {}
+        }
+
+        if (reconnecting) {
+            this.uiState.currentState = "Reconnecting"
+        } else if (uiState.isOnHold) {
+            this.uiState.currentState = "Call on Hold"
+        } else if (uiState.isRemoteUserMuted) {
+            this.uiState.currentState = "User Muted the Call"
+        } else {
+            if (voipState == State.CONNECTED || voipState == State.RECONNECTING) {
+                Log.d(TAG, "listenUIState: $")
+
+                this.uiState.currentState = "Timer"
+            }
+        }
+
     }
 
     fun getTime(recordingButtonState: RecordingButtonState): Job? {
@@ -346,21 +302,6 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
             }
         } catch (ex: Exception) {}
         return timer
-    }
-
-    private fun getOccupationText(aspiration: String, occupation: String): String {
-        if (!checkIfNullOrEmpty(occupation) && !checkIfNullOrEmpty(aspiration)) {
-            return "$occupation, Dream - $aspiration"
-        } else if (checkIfNullOrEmpty(occupation) && !checkIfNullOrEmpty(aspiration)) {
-            return "Dream - $aspiration"
-        } else if (!checkIfNullOrEmpty(occupation) && checkIfNullOrEmpty(aspiration)) {
-            return occupation
-        }
-        return ""
-    }
-
-    private fun checkIfNullOrEmpty(word: String): Boolean {
-        return word == "" || word == "null"
     }
 
     private fun getCallStatus(): Int {
@@ -398,6 +339,8 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
     fun switchSpeaker(v: View) {
         Log.d(TAG, "switchSpeaker")
         val isOnSpeaker = uiState.isSpeakerOn
+        uiState.test=true
+
         uiState.isSpeakerOn = isOnSpeaker.not()
         if (isOnSpeaker) {
             CallAnalytics.addAnalytics(
@@ -474,6 +417,7 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
     fun switchMic(v: View) {
         Log.d(TAG, "switchMic")
         val isOnMute = uiState.isMute
+        uiState.test=false
         uiState.isMute = isOnMute.not()
         if (isOnMute) {
             CallAnalytics.addAnalytics(
