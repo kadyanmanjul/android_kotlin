@@ -20,7 +20,6 @@ import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.badge.BadgeDrawable
-import com.google.android.material.badge.BadgeUtils
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.joshtalks.badebhaiya.R
@@ -187,6 +186,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
 
         val roomRequestId = intent.getStringExtra(ROOM_REQUEST_ID)
 
+        viewModel.roomRequestCount.value=0
          if(!roomRequestId.isNullOrEmpty()){
             RequestBottomSheetFragment.open(roomRequestId, supportFragmentManager)
         } else if (user != null) {
@@ -218,7 +218,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
             checkAndOpenLiveRoom()
         }
 
-        viewModel.readRequestCount()
+
     }
 
     override fun onRestart() {
@@ -318,24 +318,29 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
             "setBadgeDrawable() called with: raisedHandAudienceSize = $callRequestCount"
         )
 
-        badgeDrawable.isVisible = callRequestCount > 0
-
-        if (User.getInstance().isSpeaker && callRequestCount > 0) {
-
-            badgeDrawable.number = callRequestCount
-
-            badgeDrawable.horizontalOffset = 20
-            badgeDrawable.verticalOffset = 10
-            binding.profileIvRoot.setForeground(badgeDrawable)
-            binding.profileIvRoot.addOnLayoutChangeListener { v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
-
-                BadgeUtils.attachBadgeDrawable(
-                    badgeDrawable,
-                    binding.profileIv,
-                    binding.profileIvRoot
-                )
-            }
-        }
+        binding.requestCountNumber.text= callRequestCount.toString()
+        if(callRequestCount>0 && User.getInstance().isSpeaker && viewModel.isSpeaker.value==true)
+            binding.requestCountNumber.visibility=View.VISIBLE
+        else
+            binding.requestCountNumber.visibility=View.GONE
+//        badgeDrawable.isVisible = callRequestCount > 0
+//
+//        if (User.getInstance().isSpeaker && callRequestCount > 0) {
+//
+//            badgeDrawable.number = callRequestCount
+//
+//            badgeDrawable.horizontalOffset = 20
+//            badgeDrawable.verticalOffset = 10
+//            binding.profileIvRoot.setForeground(badgeDrawable)
+//            binding.profileIvRoot.addOnLayoutChangeListener { v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
+//
+//                BadgeUtils.attachBadgeDrawable(
+//                    badgeDrawable,
+//                    binding.profileIv,
+//                    binding.profileIvRoot
+//                )
+//            }
+//        }
 
     }
 
@@ -344,6 +349,8 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         viewModel.isSpeaker.observe(this){
             if(it)
             {
+                viewModel.readRequestCount()
+                setBadgeDrawable(viewModel.roomRequestCount.value!!)
                 binding.recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
                     override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                         super.onScrollStateChanged(recyclerView, newState)
@@ -355,6 +362,10 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                         }
                     }
                 })
+            }
+            else {
+                viewModel.requestChannelEnd()
+                viewModel.roomRequestCount.value=0
             }
         }
 
@@ -434,8 +445,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                                 room,
                                 it.getString(TOPIC)!!
                             )
-                            RecordedRoomFragment.open(this, "feed")
-//                            LiveRoomFragment.launch(this, liveRoomProperties, liveRoomViewModel, viewModel.source,false)
+                            LiveRoomFragment.launch(this, liveRoomProperties, liveRoomViewModel, viewModel.source,false)
                         }
                     }
                 }
@@ -537,6 +547,10 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
         takePermissions(room.roomId.toString(), room.topic,moderatorId)
     }
 
+    override fun playRoom(room: RoomListResponseItem, view: View) {
+        RecordedRoomFragment.open(this,"Feed", room.recordings?.get(0)?.url)
+    }
+
     private fun takePermissions(
         roomId: String? = null,
         roomTopic: String? = null,
@@ -631,7 +645,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
 
     override fun setReminder(room: RoomListResponseItem, view: View) {
 //        profileViewModel.sendEvent(Impression("FEED_SCREEN","CLICKED_SET_REMINDER"))
-        showPopup(room.roomId,User.getInstance().userId)
+//        showPopup(room.roomId,User.getInstance().userId)
         Timber.d("ROOM KA STARTING TIME => ${room.currentTime}")
 
         notificationScheduler.scheduleNotificationAsListener(this, room)

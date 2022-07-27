@@ -18,7 +18,7 @@
         android:paddingHorizontal="@dimen/_30sdp"
         android:layout_marginTop="@dimen/_7sdp"
         android:gravity="center"
-        android:text="Aap Iss Josh Speaker Se Kyun Baat Karna Chahte Hain? "
+        android:text="Aap Merese Josh BB App Par Kyun Baat Karna Chahte Hain?  "
         android:textAppearance="@style/BB_Typography_Nunito_Sans_Bold"
         android:textSize="@dimen/_14ssp"
         android:textColor="#1E1D1B"

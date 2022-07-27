@@ -115,6 +115,16 @@ fun setConversationRoomCardActionButton(
             }
             roomListResponseItem.startTime?.let { it1 -> setTimer(it1,view,roomListResponseItem,adapter,viewHolder,callback) }
         }
+        RECORDED -> {
+            view.text = view.context.getString(R.string.play_now)
+            view.setTextColor(ColorStateList.valueOf(view.context.resources.getColor(R.color.white)))
+            view.backgroundTintList =
+                ColorStateList.valueOf(view.context.resources.getColor(R.color.reminder_on_button_color))
+            view.setOnSingleClickListener() {
+                showToast("Hello")
+                callback?.playRoom(roomListResponseItem, view)
+            }
+        }
 
     }
 }

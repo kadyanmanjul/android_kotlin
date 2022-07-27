@@ -214,24 +214,10 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
 
     private fun addViewModelObserver() {
         vm.audienceList.observe(this, androidx.lifecycle.Observer {
-//            val meList = it.toMutableList()
-//                meList.add(me)
             val list = it.toList()
-//            val list = it.sortedBy { it.sortOrder }
             Timber.tag("LiveRoomAudience").d("AUDIENCE LIST IS => $list")
-//            val duplicateList = mutableListOf<LiveRoomUser>()
-//            for (i in 1..100){
-//                val duplicateUser = list[0]
-//                duplicateUser.userId = System.currentTimeMillis().toString()
-//                duplicateList.add(
-//                    duplicateUser
-//                )
-//            }
-
-
-
             audienceAdapter?.submitList(list)
-//            audienceAdapter?.updateFullList(list)
+            Log.i("AUDIENCE", "addViewModelObserver: ${it}")
             PubNubManager.getLiveRoomProperties().let {
                 if (it.isModerator){
                     val int = vm.getRaisedHandAudienceSize()
@@ -508,52 +494,18 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
         }
     }
 
-    private fun getIntentExtrasFromNotification() {
-//        roomId = PubNubManager.getLiveRoomProperties().roomId
-//        channelTopic = PubNubManager.getLiveRoomProperties().channelTopic
-//        if (isActivityOpenFromNotification && roomId != null) {
-//            vm.joinRoom(
-//                RoomListResponseItem(
-//                    roomId!!,
-//                    null,
-//                    null,
-//                    null,
-//                    null,
-//                    null,
-//                    null,
-//                    null,
-//                    null,
-//                    null,
-//                    null,
-//                    null
-//                )
-//
-//            )
-//        }
-    }
-
     @SuppressLint("UnsafeOptInUsageError")
     private fun setProfileBadgeDrawable(callRequestCount: Int) {
         Timber.tag("profilebadge").d(
             "setBadgeDrawable() called with: raisedHandAudienceSize = $callRequestCount"
         )
-        profileBadgeDrawable.isVisible = callRequestCount > 0
+//        profileBadgeDrawable.isVisible = callRequestCount > 0
 
-        if (User.getInstance().isSpeaker && callRequestCount > 0) {
-
-            profileBadgeDrawable.number = callRequestCount
-            profileBadgeDrawable.horizontalOffset = 20
-            profileBadgeDrawable.verticalOffset = 10
-            binding.userPhotoRoot.setForeground(profileBadgeDrawable)
-            binding.userPhotoRoot.addOnLayoutChangeListener { v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
-
-                BadgeUtils.attachBadgeDrawable(
-                    profileBadgeDrawable,
-                    binding.userPhoto,
-                    binding.userPhotoRoot
-                )
-            }
-        }
+        binding.requestCountNumber.text= callRequestCount.toString()
+        if(callRequestCount>0 && feedViewModel.isSpeaker.value==true )
+            binding.requestCountNumber.visibility=View.VISIBLE
+        else
+            binding.requestCountNumber.visibility=View.GONE
 
     }
 
@@ -669,6 +621,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
             mBoundService = myBinder.getService()
             mServiceBound = true
             mBoundService?.addListener(callbackOld)
+            mBoundService?.onStartRecording()
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
@@ -1381,8 +1334,10 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
                 mBoundService?.leaveRoom(roomId, roomQuestionId)
             }
         }
+        mBoundService?.onStopRecording()
         feedViewModel.readRequestCount()
         vm.deflate.value=false
+        feedViewModel.uploadCompressedMedia(PrefManager.getLastRecordingPath())
         vm.unSubscribePubNub()
         vm.pubNubState.value=PubNubState.ENDED
         feedViewModel.pubNubState=PubNubState.ENDED

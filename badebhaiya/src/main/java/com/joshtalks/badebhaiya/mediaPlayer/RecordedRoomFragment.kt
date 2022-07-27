@@ -23,6 +23,7 @@ import com.joshtalks.badebhaiya.core.NotificationChannelNames
 import com.joshtalks.badebhaiya.core.showToast
 import com.joshtalks.badebhaiya.databinding.FragmentRecordRoomBinding
 import com.joshtalks.badebhaiya.feed.FeedViewModel
+import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
 import com.joshtalks.badebhaiya.feed.model.SpeakerData
 import com.joshtalks.badebhaiya.liveroom.LiveRoomState
 import com.joshtalks.badebhaiya.recordedRoomPlayer.AudioPlayerService
@@ -48,7 +49,7 @@ class RecordedRoomFragment : Fragment() {
     companion object {
         const val TAG = "RecordedRoomFragment"
         fun newInstance() = RecordedRoomFragment()
-        fun open(activity: AppCompatActivity, from: String) {
+        fun open(activity: AppCompatActivity, from: String, url: String?) {
 
             val foundFragment = activity.supportFragmentManager.findFragmentByTag(TAG)
 
@@ -61,6 +62,7 @@ class RecordedRoomFragment : Fragment() {
             val fragment = RecordedRoomFragment() // replace your custom fragment class
             val bundle = Bundle()
             bundle.putString("source", from) // use as per your need
+            bundle.putString("url",url)
             fragment.arguments = bundle
 
 
@@ -76,6 +78,8 @@ class RecordedRoomFragment : Fragment() {
 
     //    private var mediaPlayer : MediaPlayer?=null
     private var from: String = EMPTY
+    private var url: String = EMPTY
+    //
 //    private var mediaPlayer: MediaPlayer? = null
     private var shouldUpdateSeekbar = true
 
@@ -109,8 +113,10 @@ class RecordedRoomFragment : Fragment() {
         var mBundle: Bundle? = Bundle()
         mBundle = this.arguments
         from = mBundle?.getString("source").toString()
+        url = mBundle?.getString("url").toString()
         clickListener()
         attachBackPressedDispatcher()
+        Log.i("RECORDS", "onCreateView: $url")
         binding.profilePic.apply {
             clipToOutline = true
             setUserImageRectOrInitials(

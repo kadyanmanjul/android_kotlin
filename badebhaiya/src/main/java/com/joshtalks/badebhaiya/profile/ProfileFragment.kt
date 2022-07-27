@@ -176,7 +176,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         )
 
         binding.requestCountNumber.text= callRequestCount.toString()
-        if(callRequestCount>0 && userId==User.getInstance().userId)
+        if(feedViewModel.isSpeaker.value==true && callRequestCount>0 && userId==User.getInstance().userId )
         binding.requestCountNumber.visibility=View.VISIBLE
         else
             binding.requestCountNumber.visibility=View.GONE
@@ -243,7 +243,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
                         if (!it.isEmpty()) {
                             binding.tvProfileBio.text = it
                             binding.tvProfileBio.setTextAppearance(R.style.BB_Typography_Nunito_Sans_Semi_Bold)
-                            binding.tvProfileBio.textSize = 18f
+                            binding.tvProfileBio.textSize = 16f
                             binding.divider.updateLayoutParams<ConstraintLayout.LayoutParams> {
                                 topToBottom = binding.tvProfileBio.id
                             }
@@ -449,7 +449,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
                 else {
                     tvProfileBio.text = profileResponse.bioText
                     tvProfileBio.setTextAppearance(R.style.BB_Typography_Nunito_Sans_Semi_Bold)
-                    tvProfileBio.textSize=18f
+                    tvProfileBio.textSize=16f
                         divider.updateLayoutParams<ConstraintLayout.LayoutParams> {
                             topToBottom = tvProfileBio.id
                         }
@@ -586,6 +586,10 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
     override fun joinRoom(room: RoomListResponseItem, view: View) {
         feedViewModel.source="Profile"
         takePermissions(room.roomId.toString(), room.topic.toString(), room.speakersData?.userId)
+    }
+
+    override fun playRoom(room: RoomListResponseItem, view: View) {
+        TODO("Not yet implemented")
     }
 
     private fun takePermissions(room: String? = null, roomTopic: String, moderatorId: String?) {

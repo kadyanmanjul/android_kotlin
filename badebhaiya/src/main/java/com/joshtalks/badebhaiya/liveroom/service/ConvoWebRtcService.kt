@@ -30,16 +30,20 @@ import com.joshtalks.badebhaiya.pubnub.PubNubManager
 import com.joshtalks.badebhaiya.repository.ConversationRoomRepository
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomRequest
 import com.joshtalks.badebhaiya.repository.model.User
+import com.joshtalks.badebhaiya.utils.Utils
+import com.joshtalks.badebhaiya.utils.Utils.getTempFileForCallRecording
 import io.agora.rtc.*
 import io.agora.rtc.Constants.*
 import io.agora.rtc.IRtcEngineEventHandler
 import io.agora.rtc.RtcEngine
+import io.agora.rtc.audio.AudioRecordingConfiguration
 import io.agora.rtc.models.ChannelMediaOptions
 import io.agora.rtc.models.ClientRoleOptions
 import java.lang.ref.WeakReference
 import java.util.concurrent.ExecutorService
 import kotlinx.coroutines.*
 import timber.log.Timber
+import java.io.File
 
 const val ROOM_RTC_USER_UID_KEY = "room_user_uid"
 const val ROOM_RTC_MODERATOR_UID_KEY = "room_moderator_uid"
@@ -57,6 +61,7 @@ class ConvoWebRtcService : Service() {
 
     protected var joshAudioManager: WebRtcAudioManager? = null
     protected var mNotificationManager: NotificationManager? = null
+    private var recordFile : File? = null
 
     private val TAG = "ABCService"
     private val mBinder: IBinder = MyBinder()
@@ -303,7 +308,7 @@ class ConvoWebRtcService : Service() {
                             isRoomEnded = false
                             conversationRoomChannelName = null
                             rtcEngine?.leaveChannel()
-                            RtcEngine.destroy()
+//                            RtcEngine.destroy()
                             //joshAudioManager?.endCommunication()
                         }
                     } catch (ex: Exception) {
@@ -652,7 +657,7 @@ class ConvoWebRtcService : Service() {
         }
         Log.d(TAG, "onDestroy: isRoomCreatedByUser : $isRoomCreatedByUser ")
         rtcEngine?.leaveChannel()
-        RtcEngine.destroy()
+//        RtcEngine.destroy()
         retryInitLibrary = 0
         isEngineInitialized = false
         joshAudioManager?.quitEverything()
@@ -664,6 +669,30 @@ class ConvoWebRtcService : Service() {
         executor.shutdown()
         Log.d(TAG, "onDestroy() called")
         super.onDestroy()
+    }
+
+    fun onStartRecording() {
+        if (recordFile!=null){
+            return
+        }
+        Utils.context?.getTempFileForCallRecording()?.let { file->
+            recordFile = file
+            rtcEngine?.startAudioRecording(AudioRecordingConfiguration(file.absolutePath,3,0,48000,2))
+        }
+    }
+
+    fun onStopRecording() {
+        recordFile?.absolutePath?.let {
+            rtcEngine?.stopAudioRecording()
+                    PrefManager.saveLastRecordingPath(recordFile!!.absolutePath)
+            CoroutineScope(Dispatchers.IO).launch {
+                try {
+                    } catch (e : Exception) {
+                    e.printStackTrace()
+                }
+            }
+            recordFile = null
+        }
     }
 
     private fun showNotification(notification: Notification, notificationId: Int) {

@@ -46,6 +46,8 @@ data class RoomListResponseItem(
     var isScheduled: Boolean?,
     @SerializedName("speakers_data")
     val speakersData: SpeakerData?,
+    @SerializedName("room_recordings")
+    val recordings:  List<RecordedResponse>?,
     @SerializedName("current_time")
     var currentTime: Long = 0,
     @SerializedName("previous_room_id")
@@ -75,8 +77,34 @@ data class RoomListResponseItem(
 enum class ConversationRoomType() {
     LIVE,
     NOT_SCHEDULED,
-    SCHEDULED;
+    SCHEDULED,
+    RECORDED;
 }
+
+data class RecordedResponseList(
+    @SerializedName("recorded_data")
+    val recordings:List<RoomListResponseItem>
+)
+@Parcelize
+data class RecordedResponse(
+    @SerializedName("recording_file")
+    val url:String
+):Parcelable
+
+data class RecordedRoomItem(
+    @SerializedName("id")
+    val roomId: Int,
+    @SerializedName("started_by")
+    val startedBy: Int?,
+    @SerializedName("topic")
+    val topic: String?,
+    @SerializedName("start_time")
+    var startTime: Long?,
+    @SerializedName("ended")
+    val endTime: String?,
+    @SerializedName("speakers_data")
+    val speakersData: SpeakerData?,
+)
 
 @Parcelize
 data class SpeakerData(

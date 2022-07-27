@@ -3,6 +3,7 @@ package com.joshtalks.badebhaiya.core
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
+import android.util.Log
 import androidx.preference.PreferenceManager
 import com.joshtalks.badebhaiya.core.workers.WorkManagerAdmin
 const val API_TOKEN = "api_token"
@@ -13,6 +14,7 @@ const val IS_NEW_USER = "is_new_user"
 const val PREF_IS_CONVERSATION_ROOM_ACTIVE = "is_conversation_room_active"
 const val IS_CONVERSATION_ROOM_ACTIVE_FOR_USER = "is_conversation_room_active_for_user"
 const val IS_TC_INSTALLED = "is_tc_installed"
+const val ROOM_RECORDING = "josh_pref_key_agora_room_recording"
 
 
 object PrefManager {
@@ -133,6 +135,16 @@ object PrefManager {
     fun removeKey(key: String, isConsistent: Boolean = false) {
         if (isConsistent) prefManagerConsistent.edit().remove(key).apply()
         else prefManagerCommon.edit().remove(key).apply()
+    }
+
+    fun saveLastRecordingPath(path: String) {
+        val editor = prefManagerCommon.edit()
+        editor.putString(ROOM_RECORDING, path)
+        editor.commit()
+    }
+
+    fun getLastRecordingPath(): String {
+        return prefManagerCommon.getString(ROOM_RECORDING, "").toString()
     }
 
     fun getLastSyncTime(key: String): Pair<String, String> {

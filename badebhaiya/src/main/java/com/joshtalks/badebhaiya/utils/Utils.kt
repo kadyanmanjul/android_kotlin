@@ -121,6 +121,10 @@ const val IMPRESSION_OPEN_FREE_TRIAL_SCREEN = "OPEN_FREE_TRIAL_SCREEN"
 //}
 
 object Utils {
+    var context : Application? = null
+    fun initUtils(application: Application ) {
+        this.context = application
+    }
 
     fun formatToShort(number: Int?): String {
 
@@ -202,6 +206,10 @@ object Utils {
 
     fun getMessageTimeInHours(date: Date): String {
         return CHAT_TIME_FORMATTER.format(date.time).lowercase(Locale.getDefault())
+    }
+
+    fun Context.getTempFileForCallRecording(): File? {
+        return File.createTempFile("record", ".wav", this.cacheDir)
     }
 
     private fun isYesterday(d: Date): Boolean {
@@ -311,6 +319,8 @@ object Utils {
     fun dpToPx(dp: Int): Int {
         return (dp * Resources.getSystem().displayMetrics.density).toInt()
     }
+
+
 
     fun pxToDp(px: Int): Int {
         return (px / Resources.getSystem().displayMetrics.density).toInt()
@@ -1336,3 +1346,5 @@ fun Exception.showAppropriateMsg(application: Application = AppObjectController.
         }
     }
 }
+
+

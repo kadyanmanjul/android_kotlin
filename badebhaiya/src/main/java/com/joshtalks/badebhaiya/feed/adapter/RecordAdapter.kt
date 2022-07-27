@@ -19,11 +19,10 @@ import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.core.models.PendingPilotEvent
 import com.joshtalks.badebhaiya.core.setOnSingleClickListener
 import com.joshtalks.badebhaiya.core.showToast
+import com.joshtalks.badebhaiya.databinding.LiRecordRoomEventBinding
 import com.joshtalks.badebhaiya.databinding.LiRoomEventBinding
 import com.joshtalks.badebhaiya.feed.FeedActivity
-import com.joshtalks.badebhaiya.feed.model.ConversationRoomType
-import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
-import com.joshtalks.badebhaiya.feed.model.SpeakerData
+import com.joshtalks.badebhaiya.feed.model.*
 import com.joshtalks.badebhaiya.liveroom.service.ConvoWebRtcService
 import com.joshtalks.badebhaiya.liveroom.service.ConvoWebRtcService.Companion.roomQuestionId
 import com.joshtalks.badebhaiya.repository.model.User
@@ -36,27 +35,27 @@ import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*
 
-class FeedAdapter(private val fromProfile: Boolean = false, private val coroutineScope: CoroutineScope? = null) :
-    ListAdapter<RoomListResponseItem, FeedAdapter.FeedViewHolder>(DIFF_CALLBACK) {
+class RecordAdapter(private val fromProfile: Boolean = false, private val coroutineScope: CoroutineScope? = null) :
+    ListAdapter<RecordedResponse, RecordAdapter.FeedViewHolder>(DIFF_CALLBACK) {
 
-    companion object DIFF_CALLBACK : DiffUtil.ItemCallback<RoomListResponseItem>() {
+    companion object DIFF_CALLBACK : DiffUtil.ItemCallback<RecordedResponse>() {
         override fun areItemsTheSame(
-            oldItem: RoomListResponseItem,
-            newItem: RoomListResponseItem
+            oldItem: RecordedResponse,
+            newItem: RecordedResponse
         ): Boolean {
-            return oldItem.roomId == newItem.roomId
+            return oldItem.recordList.roomId == newItem.recordList.roomId
         }
 
         override fun areContentsTheSame(
-            oldItem: RoomListResponseItem,
-            newItem: RoomListResponseItem
+            oldItem: RecordedResponse,
+            newItem: RecordedResponse
         ): Boolean {
             return oldItem == newItem
         }
     }
     var speaker: SpeakerData?=null
 
-    fun addScheduleRoom(newScheduledRoom: RoomListResponseItem) {
+    fun addScheduleRoom(newScheduledRoom: RecordedResponse) {
         newScheduledRoom.conversationRoomType = ConversationRoomType.SCHEDULED
         val previousList = currentList.toMutableList()
         previousList.add(newScheduledRoom)
@@ -69,14 +68,14 @@ class FeedAdapter(private val fromProfile: Boolean = false, private val coroutin
         submitList(previousList.toList())
     }
 
-    var callback: ConversationRoomItemCallback? = null
+    var callback: RecordedRoomItemCallback? = null
 
-    inner class FeedViewHolder(private val item: LiRoomEventBinding) :
+    inner class FeedViewHolder(private val item: LiRecordRoomEventBinding) :
         RecyclerView.ViewHolder(item.root) {
         @OptIn(InternalCoroutinesApi::class)
-        fun onBind(room: RoomListResponseItem) {
+        fun onBind(room: RecordedRoomItem) {
             item.roomData = room
-            item.adapter = this@FeedAdapter
+            item.adapter = this@RecordAdapter
             item.viewHolder = this
             val name = room.speakersData?.shortName
             val date = Utils.getMessageTime((room.startTime ?: 0L), false, DateTimeStyle.LONG)
@@ -146,12 +145,12 @@ class FeedAdapter(private val fromProfile: Boolean = false, private val coroutin
         }
     }
 
-    fun setListener(callback: ConversationRoomItemCallback) {
+    fun setListener(callback: RecordedRoomItemCallback) {
         this.callback = callback
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FeedViewHolder {
-        val view = DataBindingUtil.inflate<LiRoomEventBinding>(
+        val view = DataBindingUtil.inflate<LiRecordRoomEventBinding>(
             LayoutInflater.from(parent.context),
             R.layout.li_room_event,
             parent,
@@ -161,15 +160,14 @@ class FeedAdapter(private val fromProfile: Boolean = false, private val coroutin
     }
 
     override fun onBindViewHolder(holder: FeedViewHolder, position: Int) {
-        holder.onBind(getItem(position))
+        holder.onBind(getItem(position).recordList)
     }
 
-    interface ConversationRoomItemCallback {
+    interface RecordedRoomItemCallback {
         fun joinRoom(room: RoomListResponseItem, view: View)
-        fun playRoom(room: RoomListResponseItem, view: View)
         fun setReminder(room: RoomListResponseItem, view: View)
         //fun deleteReminder(room: RoomListResponseItem,view: View)
         fun viewProfile(profile: String?, deeplink:Boolean)
-        fun viewRoom(room: RoomListResponseItem, view: View,deeplink: Boolean)
+        fun viewRoom(room: RecordedRoomItem, view: View,deeplink: Boolean)
     }
 }

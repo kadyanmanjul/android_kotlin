@@ -74,6 +74,7 @@ class LauncherActivity : AppCompatActivity(), Branch.BranchReferralInitListener 
     override fun onStart() {
         super.onStart()
         if (Utils.isInternetAvailable()) {
+            WorkManagerAdmin.requiredTaskAfterLoginComplete()
             Branch.sessionBuilder(this)
                 .withCallback(this)
                 .withData(this.intent?.data)
