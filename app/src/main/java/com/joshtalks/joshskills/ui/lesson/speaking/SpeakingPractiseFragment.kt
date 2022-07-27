@@ -732,31 +732,6 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         }
     }
 
-    private fun startPractiseSearchScreen(
-        favoriteUserCall: Boolean = false,
-        isNewUserCall: Boolean = false,
-    ) {
-        viewModel.speakingTopicLiveData.value?.run {
-            if (isCallOngoing(R.string.call_engage_initiate_call_message).not()) {
-                if (isAdded && activity!=null) {
-                    openCallActivity.launch(
-                        SearchingUserActivity.startUserForPractiseOnPhoneActivity(
-                            requireActivity(),
-                            courseId = courseId,
-                            topicId = id,
-                            topicName = topicName,
-                            favoriteUserCall = favoriteUserCall,
-                            isNewUserCall = isNewUserCall,
-                            conversationId = getConversationId()
-                        )
-                    )
-                }else{
-                    showToast(getString(R.string.something_went_wrong))
-                }
-            }
-        }
-    }
-
     fun openNetworkDialog(v: View) {
         if (isAdded && activity != null) {
             val dialog = AlertDialog.Builder(context)
