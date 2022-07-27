@@ -102,7 +102,7 @@ android {
             resValue("string", "truecaller_key", "P31uP46c15762366b41fdba957b16b9a7c620")
             ext.enableCrashlytics = true
             minifyEnabled true
-            //shrinkResources true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         release {
@@ -111,7 +111,7 @@ android {
             resValue("string", "truecaller_key", "KQRWJ8cb0afe64bd6449daf31962c9009e763")
             debuggable false
             minifyEnabled true
-           // shrinkResources false
+            shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
         }
