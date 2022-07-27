@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8"?>
+<MotionScene xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <Transition
+        app:constraintSetEnd="@id/collapsed"
+        app:constraintSetStart="@id/expanded">
+
+        <OnSwipe
+            app:dragDirection="dragUp"
+            app:touchAnchorId="@id/toolbar"
+            />
+        <OnClick app:targetId="@+id/button_container" />
+
+
+    </Transition>
+
+    <ConstraintSet android:id="@+id/expanded">
+
+        <Constraint
+            android:id="@+id/share_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_206sdp"
+            android:layout_marginBottom="@dimen/_20sdp"
+            android:background="@drawable/rect_round"
+            android:backgroundTint="@color/da_grey"
+            android:drawableStart="@drawable/ic_share_icon"
+            android:drawablePadding="@dimen/_8sdp"
+            android:fontFamily="@font/nunito_sans_extrabold"
+            android:paddingVertical="@dimen/_4sdp"
+            android:paddingStart="@dimen/_14sdp"
+            android:paddingEnd="@dimen/_12sdp"
+            android:shadowRadius="30"
+            android:maxLines="1"
+            android:visibility="gone"
+            android:text="Share"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_14sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            />
+
+        <Constraint
+            android:id="@+id/scene_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/base_app_color"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Constraint
+            android:id="@+id/scrollView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:fillViewport="true"
+            android:nestedScrollingEnabled="false"
+            app:layout_constraintBottom_toTopOf="@id/button_container"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/toolbar"
+            app:layout_constraintVertical_bias="0"/>
+        <Constraint
+            android:layout_height="match_parent"
+            app:layout_editor_absoluteX="1dp"
+            android:layout_width="match_parent"
+            android:id="@+id/notificationRoot" />
+
+
+
+        <Constraint
+            android:id="@+id/pause"
+            android:layout_width="@dimen/_50sdp"
+            android:layout_height="@dimen/_50sdp"
+            android:layout_marginStart="@dimen/_130sdp"
+            android:layout_marginBottom="@dimen/_75sdp"
+            android:background="@drawable/state_background"
+            android:elevation="@dimen/_5sdp"
+            android:padding="@dimen/_13sdp"
+            android:backgroundTint="@color/da_grey"
+            android:drawablePadding="@dimen/_7sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:src="@drawable/ic_pause_icon"
+            android:visibility="visible"
+            />
+
+        <Constraint
+            android:id="@+id/forward"
+            android:layout_width="@dimen/_40sdp"
+            android:layout_height="@dimen/_40sdp"
+            android:background="@drawable/rect_round"
+            android:backgroundTint="@color/da_grey"
+            android:drawableLeft="@drawable/ic_forward_icon"
+            android:paddingVertical="@dimen/_4sdp"
+            android:paddingStart="@dimen/_10sdp"
+            android:paddingEnd="@dimen/_4sdp"
+            android:shadowRadius="30"
+            android:layout_marginBottom="@dimen/_6sdp"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7"
+            android:textColor="@color/black"
+            android:layout_marginStart="@dimen/_15sdp"
+            app:layout_constraintStart_toEndOf="@id/pause"
+            app:layout_constraintBottom_toBottomOf="@id/pause"
+            />
+
+
+    </ConstraintSet>
+
+    <ConstraintSet android:id="@+id/collapsed">
+
+        <Constraint
+            android:id="@+id/share_btn"
+            android:layout_width="@dimen/_35sdp"
+            android:layout_height="@dimen/_35sdp"
+            android:layout_marginStart="@dimen/_170sdp"
+            android:layout_marginBottom="@dimen/_20sdp"
+            android:background="@drawable/rect_round"
+            android:backgroundTint="@color/da_grey"
+            android:drawableLeft="@drawable/ic_share_icon"
+            android:drawablePadding="@dimen/_2sdp"
+            android:shadowRadius="30"
+            android:visibility="gone"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7"
+            android:textColor="@color/black"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            />
+
+        <Constraint
+            android:id="@+id/pause"
+            android:layout_width="@dimen/_35sdp"
+            android:layout_height="@dimen/_35sdp"
+            android:layout_marginStart="@dimen/_210sdp"
+            android:layout_marginBottom="@dimen/_20sdp"
+            android:background="@drawable/state_background"
+            android:elevation="@dimen/_2sdp"
+            android:padding="@dimen/_13sdp"
+            android:drawablePadding="@dimen/_10sdp"
+            android:backgroundTint="@color/da_grey"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:src="@drawable/ic_pause_icon"
+            android:visibility="visible"
+            />
+
+        <Constraint
+            android:id="@+id/forward"
+            android:layout_width="@dimen/_35sdp"
+            android:layout_height="@dimen/_35sdp"
+            android:background="@drawable/rect_round"
+            android:backgroundTint="@color/da_grey"
+            android:drawableLeft="@drawable/ic_forward_icon"
+            android:paddingVertical="@dimen/_4sdp"
+            android:paddingStart="@dimen/_10sdp"
+            android:paddingEnd="@dimen/_4sdp"
+            android:shadowRadius="30"
+            android:layout_marginTop="@dimen/_553sdp"
+            android:layout_marginEnd="@dimen/_17sdp"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7"
+            android:textColor="@color/black"
+            android:layout_marginStart="@dimen/_7sdp"
+            app:layout_constraintStart_toEndOf="@id/pause"
+            app:layout_constraintBottom_toBottomOf="@id/pause"
+            />
+
+        <Constraint
+            android:id="@id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/base_app_color"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <Constraint
+            android:id="@+id/scrollView"
+            android:layout_width="match_parent"
+            android:layout_height="-1dp"
+            android:fillViewport="true"
+            android:nestedScrollingEnabled="false"
+            app:layout_constraintBottom_toTopOf="@id/button_container"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/toolbar"
+            app:layout_constraintVertical_bias="0"/>
+
+        <Constraint
+            android:id="@+id/bottomControlBackground"
+            android:layout_width="match_parent"
+            android:layout_height="-1dp" />
+    </ConstraintSet>
+</MotionScene>

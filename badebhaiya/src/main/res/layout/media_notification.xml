@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:padding="10dp"
+    android:background="#3991CD"
+    android:gravity="start" >
+
+
+
+
+    <ImageView
+        android:id="@+id/profile_pic"
+        android:layout_width="@dimen/_58sdp"
+        android:background="@color/black"
+        android:layout_height="@dimen/_58sdp"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:scaleType="centerCrop"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:shapeAppearanceOverlay="@style/roundedCornersImageView_8dp" />
+
+
+    <ImageView
+        android:id="@+id/notibackward"
+        android:layout_width="@dimen/_20sdp"
+        android:layout_height="@dimen/_20sdp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="@dimen/_40sdp"
+        android:layout_toRightOf="@id/profile_pic"
+        android:src="@drawable/ic_backward_icon" />
+
+    <ImageView
+        android:id="@+id/notiforward"
+        android:layout_width="@dimen/_20sdp"
+        android:layout_height="@dimen/_20sdp"
+        android:layout_marginStart="170dp"
+        android:layout_marginTop="@dimen/_40sdp"
+        android:layout_toRightOf="@id/notibackward"
+        android:src="@drawable/ic_forward_icon" />
+
+    <TextView android:id="@+id/notiftitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Room Name"
+        android:textSize="@dimen/_14sdp"
+        android:layout_marginTop="@dimen/_7sdp"
+        android:layout_marginStart="@dimen/_7sdp"
+        android:layout_toRightOf="@id/notibackward" />
+    <TextView android:id="@+id/notiftext"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Moderator Name"
+        android:textSize="@dimen/_12sdp"
+        android:layout_marginStart="@dimen/_7sdp"
+        android:layout_toRightOf="@id/notibackward"
+        android:layout_below="@id/notiftitle" />
+</RelativeLayout>

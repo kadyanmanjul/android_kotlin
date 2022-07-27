@@ -1,8 +1,6 @@
 package com.joshtalks.badebhaiya.feed
 
 import android.annotation.SuppressLint
-import android.app.AlarmManager
-import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
@@ -13,22 +11,18 @@ import android.os.Message
 import android.util.Log
 import android.view.View
 import android.view.Window
-import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.widget.addTextChangedListener
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.badge.BadgeDrawable
 import com.google.android.material.badge.BadgeUtils
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.messaging.FirebaseMessaging
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.SearchFragment
 import com.joshtalks.badebhaiya.core.EMPTY
@@ -37,7 +31,6 @@ import com.joshtalks.badebhaiya.core.models.FormResponse
 import com.joshtalks.badebhaiya.core.showToast
 import com.joshtalks.badebhaiya.databinding.ActivityFeedBinding
 import com.joshtalks.badebhaiya.databinding.WhyRoomBinding
-import com.joshtalks.badebhaiya.datastore.BbDatastore
 import com.joshtalks.badebhaiya.feed.adapter.FeedAdapter
 import com.joshtalks.badebhaiya.feed.joinPreviousRoom.PreviousRoomDialog
 import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
@@ -47,24 +40,19 @@ import com.joshtalks.badebhaiya.liveroom.bottomsheet.CreateRoom
 import com.joshtalks.badebhaiya.liveroom.model.StartingLiveRoomProperties
 import com.joshtalks.badebhaiya.liveroom.service.ConvoWebRtcService
 import com.joshtalks.badebhaiya.liveroom.viewmodel.LiveRoomViewModel
+import com.joshtalks.badebhaiya.mediaPlayer.RecordedRoomFragment
 import com.joshtalks.badebhaiya.notifications.NotificationScheduler
 import com.joshtalks.badebhaiya.profile.ProfileFragment
 import com.joshtalks.badebhaiya.profile.ProfileViewModel
-import com.joshtalks.badebhaiya.profile.request.DeleteReminderRequest
 import com.joshtalks.badebhaiya.profile.request.ReminderRequest
 import com.joshtalks.badebhaiya.pubnub.PubNubManager
 import com.joshtalks.badebhaiya.pubnub.PubNubState
 import com.joshtalks.badebhaiya.repository.CommonRepository
-import com.joshtalks.badebhaiya.repository.ConversationRoomRepository
-import com.joshtalks.badebhaiya.repository.PubNubExceptionRepository
 import com.joshtalks.badebhaiya.repository.model.ConversationRoomResponse
 import com.joshtalks.badebhaiya.repository.model.User
 import com.joshtalks.badebhaiya.showCallRequests.RequestBottomSheetFragment
-import com.joshtalks.badebhaiya.signup.PeopleToFollowActivity
-import com.joshtalks.badebhaiya.signup.fragments.PeopleToFollowFragment
 import com.joshtalks.badebhaiya.utils.SingleDataManager
 import com.joshtalks.badebhaiya.utils.setImage
-import com.joshtalks.badebhaiya.utils.urlToBitmap
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionDeniedResponse
@@ -78,7 +66,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
-import kotlin.random.Random
 
 @AndroidEntryPoint
 class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallback, CreateRoom.CreateRoomCallback {
@@ -459,7 +446,8 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
                                 room,
                                 it.getString(TOPIC)!!
                             )
-                            LiveRoomFragment.launch(this, liveRoomProperties, liveRoomViewModel, viewModel.source,false)
+                            RecordedRoomFragment.open(this, "feed")
+//                            LiveRoomFragment.launch(this, liveRoomProperties, liveRoomViewModel, viewModel.source,false)
                         }
                     }
                 }

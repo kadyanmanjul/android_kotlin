@@ -32,9 +32,6 @@
         android:theme="@style/AppTheme"
         tools:replace="android:allowBackup">
         <activity
-            android:name=".showCallRequests.CallRequestsListFragment"
-            android:exported="false" />
-        <activity
             android:name=".signup.PeopleToFollowActivity"
             android:exported="false"
             android:label="@string/title_activity_people_to_follow"
@@ -132,6 +129,12 @@
             android:foregroundServiceType="phoneCall"
             android:permission="android.permission.BIND_JOB_SERVICE"
             android:stopWithTask="true" />
+
+        <service android:name=".recordedRoomPlayer.AudioPlayerService">
+            <intent-filter>
+                <action android:name="android.media.browse.MediaBrowserService" />
+            </intent-filter>
+        </service>
         <service
             android:name=".notifications.FirebaseNotificationService"
             android:directBootAware="true"
