@@ -31,8 +31,6 @@ import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.core.IMPRESSION_REFER_VIA_INBOX_ICON
 import com.joshtalks.joshskills.core.IMPRESSION_REFER_VIA_INBOX_MENU
 import com.joshtalks.joshskills.core.INBOX_SCREEN_VISIT_COUNT
-import com.joshtalks.joshskills.core.INCREASE_COURSE_PRICE_ABTEST
-import com.joshtalks.joshskills.core.IS_EFT_VARIENT_ENABLED
 import com.joshtalks.joshskills.core.IS_FREE_TRIAL
 import com.joshtalks.joshskills.core.IS_FREE_TRIAL_CAMPAIGN_ACTIVE
 import com.joshtalks.joshskills.core.MOENGAGE_USER_CREATED
@@ -65,10 +63,8 @@ import com.joshtalks.joshskills.ui.payment.FreeTrialPaymentActivity
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.referral.ReferralViewModel
 import com.joshtalks.joshskills.ui.settings.SettingsActivity
-import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.joshtalks.joshskills.util.FileUploadService
 import com.moengage.core.analytics.MoEAnalyticsHelper
-import io.agora.rtc.RtcEngine
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.activity_inbox.recycler_view_inbox
 import kotlinx.android.synthetic.main.find_more_layout.buy_english_course
@@ -110,6 +106,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
 
     override fun onCreate(savedInstanceState: Bundle?) {
         WorkManagerAdmin.requiredTaskInLandingPage()
+        viewModel.userOnlineStatusSync()
         FileUploadService.uploadAllPendingTasks(AppObjectController.joshApplication)
         AppAnalytics.create(AnalyticsEvent.INBOX_SCREEN.NAME).push()
         super.onCreate(savedInstanceState)
@@ -124,8 +121,6 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
     }
 
     private fun initABTest() {
-        viewModel.getEFTCampaignData(CampaignKeys.EXTEND_FREE_TRIAL.name)
-        viewModel.getICPABTest(CampaignKeys.INCREASE_COURSE_PRICE.name)
         viewModel.getA2C1CampaignData(CampaignKeys.A2_C1.name)
     }
 
@@ -287,20 +282,6 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
             }
         }
 
-        viewModel.extendFreeTrialAbTestLiveData.observe(this) { abTestCampaignData ->
-            abTestCampaignData?.let { map ->
-                isExtendFreeTrialActive =
-                    (map.variantKey == VariantKeys.EFT_ENABLED.name) && map.variableMap?.isEnabled == true
-                PrefManager.put(IS_EFT_VARIENT_ENABLED, isExtendFreeTrialActive)
-            }
-        }
-
-        viewModel.increaseCoursePriceABtestLiveData.observe(this) { abTestCampaignData ->
-            abTestCampaignData?.let { map ->
-                increaseCoursePrice = (map.variantKey == VariantKeys.ICP_ENABLED.NAME) && map.variableMap?.isEnabled == true
-                PrefManager.put(INCREASE_COURSE_PRICE_ABTEST, increaseCoursePrice)
-            }
-        }
     }
 
     private fun addCourseInRecyclerView(items: List<InboxEntity>) {
@@ -400,6 +381,7 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
         Runtime.getRuntime().gc()
         initABTest()
         initMoEngage()
+        viewModel.getRegisterCourses()
         viewModel.getProfileData(Mentor.getInstance().getId())
     }
 
@@ -473,16 +455,13 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
 
     override fun onDestroy() {
         super.onDestroy()
-        if (WebRtcService.isCallOnGoing.value == false) {
-            RtcEngine.destroy()
-        }
         inAppUpdateManager = null
         inAppUpdateManager?.onDestroy()
     }
 
     override fun onClick(inboxEntity: InboxEntity) {
         PrefManager.put(ONBOARDING_STAGE, OnBoardingStage.COURSE_OPENED.value)
-        val check = PrefManager.getBoolValue(IS_EFT_VARIENT_ENABLED)
+        val check = viewModel.abTestRepository.isVariantActive(VariantKeys.EFT_ENABLED)
         if (check && inboxEntity.isFreeTrialExtendable) {
             PrefManager.put(IS_FREE_TRIAL_CAMPAIGN_ACTIVE, true)
             ExtendFreeTrialActivity.startExtendFreeTrialActivity(this, inboxEntity)
@@ -510,8 +489,8 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
     }
 
     override fun onBackPressed() {
-        super.onBackPressed()
         applicationClosed()
+        super.onBackPressed()
     }
 
     private fun applicationClosed() {
@@ -519,6 +498,6 @@ class InboxActivity : InboxBaseActivity(), LifecycleObserver, OnOpenCourseListen
             action = CALLING_SERVICE_ACTION
             putExtra(SERVICE_BROADCAST_KEY, STOP_SERVICE)
         }
-        LocalBroadcastManager.getInstance(this@InboxActivity).sendBroadcast(broadcastIntent)
+        LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(broadcastIntent)
     }
 }

@@ -8,7 +8,7 @@ import android.provider.Settings
 import android.view.View
 import android.widget.TextView
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.WebRtcMiddlewareActivity
+import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.ui.extra.CustomPermissionDialogFragment
@@ -16,7 +16,7 @@ import com.joshtalks.joshskills.ui.extra.NOTIFICATION_POPUP
 import com.joshtalks.joshskills.ui.settings.fragments.SettingsFragment
 import kotlinx.android.synthetic.main.base_toolbar.*
 
-class SettingsActivity : WebRtcMiddlewareActivity() {
+class SettingsActivity : CoreJoshActivity() {
 
     lateinit var titleView: TextView
     override fun onCreate(savedInstanceState: Bundle?) {

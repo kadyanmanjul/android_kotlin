@@ -217,7 +217,7 @@ class RecordAndFeedbackFragment : Fragment(), OnAudioRecordListener {
 
     private fun setUpAudioRecordTouchListener() {
         binding.imgRecordButton.setOnClickListener {
-            if (isCallOngoing() || requireActivity().getVoipState()!=State.IDLE) {
+            if (isCallOngoing()) {
                 return@setOnClickListener
             }
             if (practiceViewModel.isRecordingStarted()) {

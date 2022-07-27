@@ -147,40 +147,12 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
     fun isD2pIntroVideoComplete(event: Boolean) = introVideoCompleteLiveData.postValue(event)
     fun isHowToSpeakClicked(event: Boolean) = howToSpeakLiveData.postValue(event)
     fun showHideSpeakingFragmentCallButtons(event: Int) = callBtnHideShowLiveData.postValue(event)
-    val whatsappRemarketingLiveData = MutableLiveData<ABTestCampaignData?>()
-    val twentyMinCallFtuAbTestLiveData = MutableLiveData<ABTestCampaignData?>()
-    val speakingABtestLiveData = MutableLiveData<ABTestCampaignData?>()
 
-    val repository: ABTestRepository by lazy { ABTestRepository() }
+    val abTestRepository: ABTestRepository by lazy { ABTestRepository() }
     val isVideoMuxFailed: Boolean = false
 
     init{
         getRating()
-    }
-
-    fun getWhatsappRemarketingCampaign(campaign: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            repository.getCampaignData(campaign)?.let { campaign ->
-                whatsappRemarketingLiveData.postValue(campaign)
-            }
-        }
-    }
-
-    fun getSpeakingABTestCampaign(campaign: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            repository.getCampaignData(campaign)?.let { campaign ->
-                speakingABtestLiveData.postValue(campaign)
-            }
-        }
-    }
-
-    fun getTwentyMinFtuCallCampaignData(campaign: String, lessonId: Int, isDemo: Boolean = false) {
-        viewModelScope.launch(Dispatchers.IO) {
-            repository.getCampaignData(campaign)?.let { campaign ->
-                twentyMinCallFtuAbTestLiveData.postValue(campaign)
-            }
-            getQuestions(lessonId, isDemo)
-        }
     }
 
     fun getVideoData() {
@@ -937,7 +909,7 @@ class LessonViewModel(application: Application) : AndroidViewModel(application) 
 
     fun postGoal(goal: String, campaign: String?) {
         viewModelScope.launch(Dispatchers.IO) {
-            repository.postGoal(goal)
+            abTestRepository.postGoal(goal)
             if (campaign != null) {
                 val data = ABTestRepository().getCampaignData(campaign)
                 data?.let {

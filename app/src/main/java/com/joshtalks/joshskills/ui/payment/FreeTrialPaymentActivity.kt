@@ -45,9 +45,6 @@ import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
 import com.joshtalks.joshskills.ui.referral.EnterReferralCodeFragment
 import com.joshtalks.joshskills.ui.special_practice.utils.ErrorView
 import com.joshtalks.joshskills.ui.startcourse.StartCourseActivity
-import com.joshtalks.joshskills.ui.voip.CallForceDisconnect
-import com.joshtalks.joshskills.ui.voip.IS_DEMO_P2P
-import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -95,23 +92,24 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
     private var isNewFlowActive = false
     private var isSyllabusActive = false
     private var is100PointsActive = false
-    private var currentTime : Long = 0L
+    private var currentTime: Long = 0L
 
     lateinit var englishCard: View
     lateinit var subscriptionCard: View
 
-    private var pdfUrl : String?= null
+    private var pdfUrl: String? = null
     private var downloadID: Long = -1
     private var isEnglishCardTapped = false
-    lateinit var fileName : String
+    lateinit var fileName: String
     var isPointsScoredMoreThanEqualTo100 = false
-    var totalPointsScored :Int? = null
+    var totalPointsScored: Int? = null
 
     private var onDownloadCompleteListener = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             val id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
             if (downloadID == id) {
-                val fileDir = Environment.getExternalStoragePublicDirectory( Environment.DIRECTORY_DOWNLOADS)?.absolutePath + File.separator + fileName
+                val fileDir =
+                    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)?.absolutePath + File.separator + fileName
                 PdfViewerActivity.startPdfActivity(
                     context = this@FreeTrialPaymentActivity,
                     pdfId = "788900765",
@@ -149,12 +147,11 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             expiredTime = intent.getLongExtra(EXPIRED_TIME, -1)
         }
         if (intent.hasExtra(IS_FAKE_CALL)) {
-            forceDisconnectCall()
             val nameArr = User.getInstance().firstName?.split(" ")
             val firstName = if (nameArr != null) nameArr[0] else EMPTY
             showToast(getString(R.string.feature_locked, firstName), Toast.LENGTH_LONG)
         }
-        if (testId.isBlank()){
+        if (testId.isBlank()) {
             testId = if (PrefManager.getStringValue(FREE_TRIAL_TEST_ID).isEmpty().not()) {
                 Utils.getLangPaymentTestIdFromTestId(PrefManager.getStringValue(FREE_TRIAL_TEST_ID))
             } else {
@@ -162,6 +159,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             }
         }
         initABTest()
+        viewModel.getPaymentDetails(Integer.parseInt(testId))
         setObservers()
         logNewPaymentPageOpened()
         dynamicCardCreation()
@@ -169,31 +167,24 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         Singular.event(SingularEvent.OPENED_FREE_TRIAL_PAYMENT.name, testId)
     }
 
-    private fun dynamicCardCreation(){
+    private fun dynamicCardCreation() {
         val inflater: LayoutInflater =
             getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
         englishCard = inflater.inflate(R.layout.price_card, null, true)
-        subscriptionCard= inflater.inflate(R.layout.price_card, null, true)
+        subscriptionCard = inflater.inflate(R.layout.price_card, null, true)
         binding.cardsContainer.addView(englishCard)
         binding.cardsContainer.addView(subscriptionCard)
     }
 
     private fun initABTest() {
-        viewModel.getAllCampaigns(testId)
-        if(PrefManager.getBoolValue(INCREASE_COURSE_PRICE_CAMPAIGN_ACTIVE)) {
-            viewModel.postGoal("ICP_BUY_PAGE_SEEN",CampaignKeys.INCREASE_COURSE_PRICE.name)
+        viewModel.abTestRepository.apply {
+            isSyllabusActive = isVariantActive(VariantKeys.ESD_ENABLED)
+            isNewFlowActive = isVariantActive(VariantKeys.BUY_LAYOUT_ENABLED)
+            is100PointsActive = isVariantActive(VariantKeys.POINTS_HUNDRED_ENABLED)
         }
-    }
-
-    private fun forceDisconnectCall() {
-        val serviceIntent = Intent(
-            this,
-            WebRtcService::class.java
-        ).apply {
-            action = CallForceDisconnect().action
-            putExtra(IS_FAKE_CALL, true)
+        if (viewModel.abTestRepository.isVariantActive(VariantKeys.ICP_ENABLED)) {
+            viewModel.postGoal("ICP_BUY_PAGE_SEEN", CampaignKeys.INCREASE_COURSE_PRICE.name)
         }
-        serviceIntent.startServiceForWebrtc()
     }
 
     override fun onBackPressed() {
@@ -251,29 +242,35 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         englishCard.syllabus_layout_new.english_syllabus_pdf.setOnClickListener {
             try {
                 MixPanelTracker.publishEvent(MixPanelEvent.DOWNLOAD_SYLLABUS)
-                    .addParam(ParamKeys.TEST_ID,viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.testId)
-                    .addParam(ParamKeys.COURSE_PRICE,viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.discount)
-                    .addParam(ParamKeys.COURSE_NAME,viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.courseName)
+                    .addParam(ParamKeys.TEST_ID, viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.testId)
+                    .addParam(
+                        ParamKeys.COURSE_PRICE,
+                        viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.discount
+                    )
+                    .addParam(
+                        ParamKeys.COURSE_NAME,
+                        viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.courseName
+                    )
                     .push()
-            }catch (e: Exception){
+            } catch (e: Exception) {
                 e.printStackTrace()
             }
             if (isNetworkAvailable()) {
                 startPdfDownload()
-            }else{
+            } else {
                 showToast(getString(R.string.internet_not_available_msz))
             }
         }
 
         binding.syllabusLayout.english_syllabus_pdf.setOnClickListener {
             MixPanelTracker.publishEvent(MixPanelEvent.DOWNLOAD_SYLLABUS)
-                .addParam(ParamKeys.TEST_ID,viewModel.paymentDetailsLiveData.value?.courseData?.get(0)?.testId)
-                .addParam(ParamKeys.COURSE_PRICE,viewModel.paymentDetailsLiveData.value?.courseData?.get(0)?.discount)
-                .addParam(ParamKeys.COURSE_NAME,viewModel.paymentDetailsLiveData.value?.courseData?.get(0)?.courseName)
+                .addParam(ParamKeys.TEST_ID, viewModel.paymentDetailsLiveData.value?.courseData?.get(0)?.testId)
+                .addParam(ParamKeys.COURSE_PRICE, viewModel.paymentDetailsLiveData.value?.courseData?.get(0)?.discount)
+                .addParam(ParamKeys.COURSE_NAME, viewModel.paymentDetailsLiveData.value?.courseData?.get(0)?.courseName)
                 .push()
             if (isNetworkAvailable()) {
                 startPdfDownload()
-            }else{
+            } else {
                 showToast(getString(R.string.internet_not_available_msz))
             }
         }
@@ -282,32 +279,42 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             try {
                 MixPanelTracker.publishEvent(MixPanelEvent.APPLY_COUPON_CLICKED)
                     .addParam(ParamKeys.TEST_ID, viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.testId)
-                    .addParam(ParamKeys.COURSE_PRICE, viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.discount)
-                    .addParam(ParamKeys.COURSE_NAME, viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.courseName)
-                    .addParam(ParamKeys.COURSE_ID, PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID))
+                    .addParam(
+                        ParamKeys.COURSE_PRICE,
+                        viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.discount
+                    )
+                    .addParam(
+                        ParamKeys.COURSE_NAME,
+                        viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.courseName
+                    )
+                    .addParam(
+                        ParamKeys.COURSE_ID,
+                        PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID)
+                    )
                     .push()
                 viewModel.saveImpression(IMPRESSION_CLICKED_APPLY_COUPON)
                 val bottomSheetFragment = EnterReferralCodeFragment.newInstance(true)
                 bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
-            }catch (ex:Exception){
+            } catch (ex: Exception) {
                 ex.printStackTrace()
             }
         }
     }
 
-    private fun enableBuyCourseButton(){
+    private fun enableBuyCourseButton() {
         binding.materialTextView.isEnabled = true
         binding.materialTextView.alpha = 1f
     }
-    private fun startPdfDownload(){
-        if(pdfUrl.isNullOrBlank().not()) {
+
+    private fun startPdfDownload() {
+        if (pdfUrl.isNullOrBlank().not()) {
             pdfUrl?.let { getPermissionAndDownloadSyllabus(it) }
-        }else{
+        } else {
             showToast("Something Went wrong")
         }
     }
 
-    private fun performActionOntapped(card : View){
+    private fun performActionOntapped(card: View) {
         card.iv_minimise.visibility = View.GONE
         card.course_info.visibility = View.GONE
         card.iv_expand.visibility = View.VISIBLE
@@ -317,19 +324,26 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
 
         try {
             MixPanelTracker.publishEvent(MixPanelEvent.BUY_PAGE_COURSE_INFO_COLLAPSE)
-                .addParam(ParamKeys.TEST_ID,viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.testId)
-                .addParam(ParamKeys.COURSE_PRICE,viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.discount)
-                .addParam(ParamKeys.COURSE_NAME,viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.courseName)
+                .addParam(ParamKeys.TEST_ID, viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.testId)
+                .addParam(
+                    ParamKeys.COURSE_PRICE,
+                    viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.discount
+                )
+                .addParam(
+                    ParamKeys.COURSE_NAME,
+                    viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.courseName
+                )
                 .push()
-        }catch (ex:Exception){
+        } catch (ex: Exception) {
             ex.printStackTrace()
         }
     }
 
-    private fun performActionOnEnglishTapped(){
+    private fun performActionOnEnglishTapped() {
         try {
             index = 0
-            subscriptionCard.card.background = ContextCompat.getDrawable(this, R.drawable.white_rectangle_with_grey_stroke)
+            subscriptionCard.card.background =
+                ContextCompat.getDrawable(this, R.drawable.white_rectangle_with_grey_stroke)
 
             binding.txtLabelHeading.text = headingText.get(index)
             binding.materialTextView.text = buttonText.get(index)
@@ -338,14 +352,15 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             ex.printStackTrace()
         }
 
-        if(isNewFlowActive) {
-            englishCard.card.background = ContextCompat.getDrawable(this, R.drawable.white_rectangle_with_blue_bound_stroke)
-            if(isSyllabusActive) englishCard.syllabus_layout_new.visibility = View.VISIBLE
-        }
-        else englishCard.card.background = ContextCompat.getDrawable(this, R.drawable.blue_rectangle_with_blue_bound_stroke)
+        if (isNewFlowActive) {
+            englishCard.card.background =
+                ContextCompat.getDrawable(this, R.drawable.white_rectangle_with_blue_bound_stroke)
+            if (isSyllabusActive) englishCard.syllabus_layout_new.visibility = View.VISIBLE
+        } else englishCard.card.background =
+            ContextCompat.getDrawable(this, R.drawable.blue_rectangle_with_blue_bound_stroke)
 
-        if(is100PointsActive){
-            if(!isPointsScoredMoreThanEqualTo100 && !PrefManager.getBoolValue(IS_FREE_TRIAL_ENDED)) {
+        if (is100PointsActive) {
+            if (!isPointsScoredMoreThanEqualTo100 && !PrefManager.getBoolValue(IS_FREE_TRIAL_ENDED)) {
                 binding.materialTextView.isEnabled = false
                 binding.materialTextView.alpha = .5f
                 binding.materialTextView.text = getString(R.string.achieve_100_points_to_buy)
@@ -353,7 +368,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         }
 
 
-        if(englishCard.iv_expand.visibility == View.VISIBLE){
+        if (englishCard.iv_expand.visibility == View.VISIBLE) {
             subscriptionCard.iv_expand.visibility = View.VISIBLE
             subscriptionCard.iv_minimise.visibility = View.GONE
             subscriptionCard.course_info.visibility = View.GONE
@@ -364,20 +379,26 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
 
             try {
                 MixPanelTracker.publishEvent(MixPanelEvent.BUY_PAGE_COURSE_INFO_EXPAND)
-                    .addParam(ParamKeys.TEST_ID,viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.testId)
-                    .addParam(ParamKeys.COURSE_PRICE,viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.discount)
-                    .addParam(ParamKeys.COURSE_NAME,viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.courseName)
+                    .addParam(ParamKeys.TEST_ID, viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.testId)
+                    .addParam(
+                        ParamKeys.COURSE_PRICE,
+                        viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.discount
+                    )
+                    .addParam(
+                        ParamKeys.COURSE_NAME,
+                        viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.courseName
+                    )
                     .push()
-            }catch (ex: Exception) {
+            } catch (ex: Exception) {
                 ex.printStackTrace()
             }
-        }else if(englishCard.iv_minimise.visibility == View.VISIBLE) performActionOntapped(englishCard)
+        } else if (englishCard.iv_minimise.visibility == View.VISIBLE) performActionOntapped(englishCard)
 
         binding.seeCourseList.visibility = View.GONE
         subscriptionCard.see_course_list_new.visibility = View.GONE
     }
 
-    private fun performActionOnSubscriptionTapped(){
+    private fun performActionOnSubscriptionTapped() {
         englishCard.syllabus_layout_new.visibility = View.GONE
         try {
             index = 1
@@ -391,10 +412,12 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             ex.printStackTrace()
         }
 
-        if(isNewFlowActive)  subscriptionCard.card.background = ContextCompat.getDrawable(this, R.drawable.white_rectangle_with_blue_bound_stroke)
-        else subscriptionCard.card.background = ContextCompat.getDrawable(this, R.drawable.blue_rectangle_with_blue_bound_stroke)
+        if (isNewFlowActive) subscriptionCard.card.background =
+            ContextCompat.getDrawable(this, R.drawable.white_rectangle_with_blue_bound_stroke)
+        else subscriptionCard.card.background =
+            ContextCompat.getDrawable(this, R.drawable.blue_rectangle_with_blue_bound_stroke)
 
-        if(subscriptionCard.iv_expand.visibility == View.VISIBLE ){
+        if (subscriptionCard.iv_expand.visibility == View.VISIBLE) {
             englishCard.course_info.visibility = View.GONE
             englishCard.iv_minimise.visibility = View.GONE
             englishCard.iv_expand.visibility = View.VISIBLE
@@ -407,17 +430,23 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
 
             try {
                 MixPanelTracker.publishEvent(MixPanelEvent.BUY_PAGE_COURSE_INFO_EXPAND)
-                    .addParam(ParamKeys.TEST_ID,viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.testId)
-                    .addParam(ParamKeys.COURSE_PRICE,viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.discount)
-                    .addParam(ParamKeys.COURSE_NAME,viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.courseName)
+                    .addParam(ParamKeys.TEST_ID, viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.testId)
+                    .addParam(
+                        ParamKeys.COURSE_PRICE,
+                        viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.discount
+                    )
+                    .addParam(
+                        ParamKeys.COURSE_NAME,
+                        viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.courseName
+                    )
                     .push()
-            }catch (ex:Exception){
+            } catch (ex: Exception) {
                 ex.printStackTrace()
             }
-        }else if(subscriptionCard.iv_minimise.visibility == View.VISIBLE) performActionOntapped(subscriptionCard)
+        } else if (subscriptionCard.iv_minimise.visibility == View.VISIBLE) performActionOntapped(subscriptionCard)
     }
 
-    private fun openCourseExplorerActivity(){
+    private fun openCourseExplorerActivity() {
         CourseExploreActivity.startCourseExploreActivity(
             this,
             COURSE_EXPLORER_CODE,
@@ -577,7 +606,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                     val data2 = it.getOrNull(1)
                     if (data2 == null) {
                         index = 0
-                           subscriptionCard.visibility = View.GONE
+                        subscriptionCard.visibility = View.GONE
                     } else {
                         subscriptionCard.card.performClick()
                         data2.buttonText?.let { it1 -> buttonText.add(it1) }
@@ -615,10 +644,10 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                     }
                 }
 
-                if(isNewFlowActive){
+                if (isNewFlowActive) {
                     it.combinedMessage?.get(0)?.let { list ->
                         for (i in list.indices) {
-                            val englishTextView : AppCompatTextView = createTextViewsDynamically()
+                            val englishTextView: AppCompatTextView = createTextViewsDynamically()
                             englishTextView.text = list[i]
                             englishCard.course_info.addView(englishTextView)
                         }
@@ -627,32 +656,33 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                     it.combinedMessage?.get(1)?.let { list ->
                         subscriptionCard.course_info.visibility = View.VISIBLE
                         for (i in list.indices) {
-                            val subscriptionTextView : AppCompatTextView = createTextViewsDynamically()
+                            val subscriptionTextView: AppCompatTextView = createTextViewsDynamically()
                             subscriptionTextView.text = list[i]
                             subscriptionCard.course_info.addView(subscriptionTextView)
                         }
                     }
-                    subscriptionCard.card.background = ContextCompat.getDrawable(this, R.drawable.white_rectangle_with_blue_bound_stroke)
+                    subscriptionCard.card.background =
+                        ContextCompat.getDrawable(this, R.drawable.white_rectangle_with_blue_bound_stroke)
                     englishCard.card.elevation = resources.getDimension(R.dimen._6sdp)
                     subscriptionCard.card.elevation = resources.getDimension(R.dimen._6sdp)
 
-                }else {
+                } else {
                     binding.oldViewCourseInfo.visibility = View.VISIBLE
-                      binding.seeCourseList.visibility = View.VISIBLE
-                    if(PrefManager.getStringValue(CURRENT_COURSE_ID) != DEFAULT_COURSE_ID)
+                    binding.seeCourseList.visibility = View.VISIBLE
+                    if (PrefManager.getStringValue(CURRENT_COURSE_ID) != DEFAULT_COURSE_ID)
                         binding.seeCourseList.visibility = View.GONE
                     it.subHeadings?.let { list ->
                         for (i in list.indices) {
-                            val infoTextView : AppCompatTextView = createTextViewsDynamically()
+                            val infoTextView: AppCompatTextView = createTextViewsDynamically()
                             infoTextView.text = list[i]
                             binding.oldViewCourseInfo.addView(infoTextView)
                         }
                     }
-                      subscriptionCard.card.background =
-                          ContextCompat.getDrawable(
-                              this,
-                              R.drawable.blue_rectangle_with_blue_bound_stroke
-                          )
+                    subscriptionCard.card.background =
+                        ContextCompat.getDrawable(
+                            this,
+                            R.drawable.blue_rectangle_with_blue_bound_stroke
+                        )
                 }
 
                 englishCard.card.background =
@@ -675,13 +705,28 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                         true -> {
                             try {
                                 MixPanelTracker.publishEvent(MixPanelEvent.COUPON_APPLIED)
-                                    .addParam(ParamKeys.TEST_ID,viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.testId)
-                                    .addParam(ParamKeys.COURSE_PRICE,viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.actualAmount)
-                                    .addParam(ParamKeys.DISCOUNTED_AMOUNT,viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.discount)
-                                    .addParam(ParamKeys.COURSE_NAME,viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.courseName)
-                                    .addParam(ParamKeys.COURSE_ID,PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID))
+                                    .addParam(
+                                        ParamKeys.TEST_ID,
+                                        viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.testId
+                                    )
+                                    .addParam(
+                                        ParamKeys.COURSE_PRICE,
+                                        viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.actualAmount
+                                    )
+                                    .addParam(
+                                        ParamKeys.DISCOUNTED_AMOUNT,
+                                        viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.discount
+                                    )
+                                    .addParam(
+                                        ParamKeys.COURSE_NAME,
+                                        viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.courseName
+                                    )
+                                    .addParam(
+                                        ParamKeys.COURSE_ID,
+                                        PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID)
+                                    )
                                     .push()
-                            }catch (ex:Exception){
+                            } catch (ex: Exception) {
                                 ex.printStackTrace()
                             }
 
@@ -695,7 +740,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                         }
                         false -> {
                             MixPanelTracker.publishEvent(MixPanelEvent.APPLY_COUPON_FAILED)
-                                .addParam(ParamKeys.TEST_ID,testId)
+                                .addParam(ParamKeys.TEST_ID, testId)
                                 .push()
                             showToast(getString(R.string.invalid_coupon_code))
                         }
@@ -723,34 +768,15 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             }
         }
 
-        viewModel.points100ABtestLiveData.observe(this) { abTestCampaignData ->
-            abTestCampaignData?.let { map ->
-                is100PointsActive =
-                    (map.variantKey == VariantKeys.POINTS_HUNDRED_ENABLED.NAME) && map.variableMap?.isEnabled == true
-            }
+        if (isNewFlowActive) {
+            subscriptionCard.iv_minimise.visibility = View.VISIBLE
+            englishCard.iv_expand.visibility = View.VISIBLE
+            subscriptionCard.see_course_list_new.visibility = View.VISIBLE
+            binding.seeCourseList.visibility = View.GONE
         }
+        if (!isNewFlowActive && isSyllabusActive) binding.syllabusLayout.visibility = View.VISIBLE
 
-        viewModel.syllabusABtestLiveData.observe(this) { abTestCampaignData ->
-            abTestCampaignData?.let { map ->
-                isSyllabusActive =
-                    (map.variantKey == VariantKeys.ESD_ENABLED.name) && map.variableMap?.isEnabled == true
-            }
-        }
-
-        viewModel.abtestNewLayoutLiveData.observe(this) { abTestCampaignData ->
-            abTestCampaignData?.let { map ->
-                isNewFlowActive =
-                    (map.variantKey == VariantKeys.BUY_LAYOUT_ENABLED.name) && map.variableMap?.isEnabled == true
-            }
-            if(isNewFlowActive){
-                subscriptionCard.iv_minimise.visibility = View.VISIBLE
-                englishCard.iv_expand.visibility = View.VISIBLE
-                subscriptionCard.see_course_list_new.visibility = View.VISIBLE
-                binding.seeCourseList.visibility = View.GONE
-            }
-            if(!isNewFlowActive && isSyllabusActive) binding.syllabusLayout.visibility = View.VISIBLE
-        }
-        if(!isNetworkAvailable()){
+        if (!isNetworkAvailable()) {
             binding.freeTrialTimer.visibility = View.INVISIBLE
             binding.applyCoupon.visibility = View.INVISIBLE
             binding.txtLabelHeading.visibility = View.INVISIBLE
@@ -771,7 +797,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         }
     }
 
-    private fun createTextViewsDynamically() : AppCompatTextView{
+    private fun createTextViewsDynamically(): AppCompatTextView {
         val textView = AppCompatTextView(this)
         val drawable = ContextCompat.getDrawable(this, R.drawable.ic_blue_tick_round)
         textView.setCompoundDrawablesWithIntrinsicBounds(drawable, null, null, null)
@@ -834,7 +860,9 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             phoneNumber = "+919999999999"
         }
 
-        if(PrefManager.getStringValue(CURRENT_COURSE_ID) != DEFAULT_COURSE_ID)
+        if (PrefManager.getStringValue(CURRENT_COURSE_ID) != DEFAULT_COURSE_ID &&
+            PrefManager.getStringValue(CURRENT_COURSE_ID) != ENG_GOVT_EXAM_COURSE_ID
+        )
             index = 0
         try {
             viewModel.getOrderDetails(
@@ -842,24 +870,36 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                 phoneNumber,
                 viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.encryptedText ?: EMPTY
             )
-        }catch (ex:Exception){
+        } catch (ex: Exception) {
             ex.showAppropriateMsg()
         }
 
         try {
             MixPanelTracker.publishEvent(MixPanelEvent.PAYMENT_STARTED)
-                .addParam(ParamKeys.AMOUNT_PAID,viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.discount)
-                .addParam(ParamKeys.TEST_ID,viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.testId)
-                .addParam(ParamKeys.COURSE_NAME,viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.courseName)
-                .addParam(ParamKeys.IS_COUPON_APPLIED,viewModel.paymentDetailsLiveData.value?.couponDetails?.isPromoCode)
-                .addParam(ParamKeys.COURSE_ID,PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID))
+                .addParam(
+                    ParamKeys.AMOUNT_PAID,
+                    viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.discount
+                )
+                .addParam(ParamKeys.TEST_ID, viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.testId)
+                .addParam(
+                    ParamKeys.COURSE_NAME,
+                    viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.courseName
+                )
+                .addParam(
+                    ParamKeys.IS_COUPON_APPLIED,
+                    viewModel.paymentDetailsLiveData.value?.couponDetails?.isPromoCode
+                )
+                .addParam(ParamKeys.COURSE_ID, PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID))
                 .push()
 
             val jsonData = JSONObject()
             jsonData.put(ParamKeys.TEST_ID.name, viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.testId)
-            jsonData.put(ParamKeys.COURSE_PRICE.name, viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.discount)
+            jsonData.put(
+                ParamKeys.COURSE_PRICE.name,
+                viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.discount
+            )
             Singular.customRevenue(SingularEvent.INITIATED_PAYMENT.name, jsonData)
-        }catch (ex:Exception){
+        } catch (ex: Exception) {
             ex.printStackTrace()
         }
     }
@@ -882,9 +922,6 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         viewModel.mentorPaymentStatus.observe(this) {
             when (it) {
                 true -> {
-                    if (PrefManager.getBoolValue(IS_DEMO_P2P, defValue = false)) {
-                        PrefManager.put(IS_DEMO_P2P, false)
-                    }
                     val freeTrialTestId =
                         Utils.getLangPaymentTestIdFromTestId(PrefManager.getStringValue(FREE_TRIAL_TEST_ID))
                     if (testId == freeTrialTestId) {
@@ -893,7 +930,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                     }
                     // isBackPressDisabled = true
                     razorpayOrderId.verifyPayment()
-                    MarketingAnalytics.coursePurchased(BigDecimal(viewModel.orderDetailsLiveData.value?.amount ?: 0.0))
+                    MarketingAnalytics.coursePurchased(BigDecimal(viewModel.orderDetailsLiveData.value?.amount ?: 0.0), true)
                     //viewModel.updateSubscriptionStatus()
 
                     uiHandler.post {
@@ -914,17 +951,32 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         }
         try {
             MixPanelTracker.publishEvent(MixPanelEvent.PAYMENT_FAILED)
-                .addParam(ParamKeys.AMOUNT_PAID, viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.discount)
+                .addParam(
+                    ParamKeys.AMOUNT_PAID,
+                    viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.discount
+                )
                 .addParam(ParamKeys.TEST_ID, viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.testId)
-                .addParam(ParamKeys.COURSE_NAME, viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.courseName)
-                .addParam(ParamKeys.IS_COUPON_APPLIED, viewModel.paymentDetailsLiveData.value?.couponDetails?.isPromoCode)
+                .addParam(
+                    ParamKeys.COURSE_NAME,
+                    viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.courseName
+                )
+                .addParam(
+                    ParamKeys.IS_COUPON_APPLIED,
+                    viewModel.paymentDetailsLiveData.value?.couponDetails?.isPromoCode
+                )
                 .addParam(ParamKeys.COURSE_ID, PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID))
                 .push()
 
             val jsonData = JSONObject()
             jsonData.put(ParamKeys.TEST_ID.name, viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.testId)
-            jsonData.put(ParamKeys.AMOUNT_PAID.name, viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.discount)
-            jsonData.put(ParamKeys.IS_COUPON_APPLIED.name, viewModel.paymentDetailsLiveData.value?.couponDetails?.isPromoCode)
+            jsonData.put(
+                ParamKeys.AMOUNT_PAID.name,
+                viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.discount
+            )
+            jsonData.put(
+                ParamKeys.IS_COUPON_APPLIED.name,
+                viewModel.paymentDetailsLiveData.value?.couponDetails?.isPromoCode
+            )
             Singular.customRevenue(SingularEvent.PAYMENT_FAILED.name, jsonData)
         } catch (e: Exception) {
             e.printStackTrace()
@@ -933,18 +985,18 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
 
     @Synchronized
     override fun onPaymentSuccess(razorpayPaymentId: String) {
-        if(viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.testId == FREE_TRIAL_PAYMENT_TEST_ID) {
-            if(PrefManager.getBoolValue(INCREASE_COURSE_PRICE_CAMPAIGN_ACTIVE))
-            viewModel.postGoal("ICP_COURSE_BOUGHT",CampaignKeys.INCREASE_COURSE_PRICE.name)
-        }
-        else if(viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.testId == SUBSCRIPTION_TEST_ID) {
-            if(PrefManager.getBoolValue(INCREASE_COURSE_PRICE_CAMPAIGN_ACTIVE))
-                viewModel.postGoal("ICP_SUBSCRIPTION_BOUGHT",CampaignKeys.INCREASE_COURSE_PRICE.name)
+        Singular.event(SingularEvent.PAYMENT_SUCCESS_EVENT.name)
+        if (viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.testId == FREE_TRIAL_PAYMENT_TEST_ID) {
+            if (viewModel.abTestRepository.isVariantActive(VariantKeys.ICP_ENABLED))
+                viewModel.postGoal("ICP_COURSE_BOUGHT", CampaignKeys.INCREASE_COURSE_PRICE.name)
+        } else if (viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.testId == SUBSCRIPTION_TEST_ID) {
+            if (viewModel.abTestRepository.isVariantActive(VariantKeys.ICP_ENABLED))
+                viewModel.postGoal("ICP_SUBSCRIPTION_BOUGHT", CampaignKeys.INCREASE_COURSE_PRICE.name)
         }
 
         val obj = JSONObject()
-        obj.put("is paid",true)
-        obj.put("is 100 points obtained in free trial",isPointsScoredMoreThanEqualTo100)
+        obj.put("is paid", true)
+        obj.put("is 100 points obtained in free trial", isPointsScoredMoreThanEqualTo100)
         MixPanelTracker.mixPanel.identify(PrefManager.getStringValue(USER_UNIQUE_ID))
         MixPanelTracker.mixPanel.people.identify(PrefManager.getStringValue(USER_UNIQUE_ID))
         MixPanelTracker.mixPanel.people.set(obj)
@@ -955,9 +1007,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         } else {
             viewModel.saveImpression(IMPRESSION_PAY_FULL_FEES)
         }
-        if (PrefManager.getBoolValue(IS_DEMO_P2P, defValue = false)) {
-            PrefManager.put(IS_DEMO_P2P, false)
-        }
+        viewModel.postGoal(GoalKeys.PAYMENT_COMPLETE.NAME, CampaignKeys.ENGLISH_FOR_GOVT_EXAM.NAME)
         val freeTrialTestId = if (PrefManager.getStringValue(FREE_TRIAL_TEST_ID).isEmpty().not()) {
             Utils.getLangPaymentTestIdFromTestId(PrefManager.getStringValue(FREE_TRIAL_TEST_ID))
         } else {
@@ -968,13 +1018,13 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
             PrefManager.put(IS_COURSE_BOUGHT, true)
             PrefManager.removeKey(IS_FREE_TRIAL_ENDED)
 
-            if(isEnglishCardTapped && PrefManager.getBoolValue(IS_ENGLISH_SYLLABUS_PDF_OPENED)){
+            if (isEnglishCardTapped && PrefManager.getBoolValue(IS_ENGLISH_SYLLABUS_PDF_OPENED)) {
                 viewModel.saveImpression(SYLLABUS_OPENED_AND_ENGLISH_COURSE_BOUGHT)
                 viewModel.postGoal(GoalKeys.ESD_COURSE_BOUGHT.name, CampaignKeys.ENGLISH_SYLLABUS_DOWNLOAD.name)
 
             }
 
-            if(isEnglishCardTapped && isPointsScoredMoreThanEqualTo100 && is100PointsActive){
+            if (isEnglishCardTapped && isPointsScoredMoreThanEqualTo100 && is100PointsActive) {
                 viewModel.saveImpression(POINTS_100_OBTAINED_ENGLISH_COURSE_BOUGHT)
                 viewModel.postGoal(GoalKeys.HUNDRED_POINTS_COURSE_BOUGHT.NAME, CampaignKeys.HUNDRED_POINTS.NAME)
             }
@@ -989,11 +1039,20 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         //viewModel.updateSubscriptionStatus()
         try {
             MixPanelTracker.publishEvent(MixPanelEvent.PAYMENT_SUCCESS)
-                .addParam(ParamKeys.AMOUNT_PAID, viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.discount)
+                .addParam(
+                    ParamKeys.AMOUNT_PAID,
+                    viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.discount
+                )
                 .addParam(ParamKeys.TEST_ID, viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.testId)
-                .addParam(ParamKeys.COURSE_NAME, viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.courseName)
+                .addParam(
+                    ParamKeys.COURSE_NAME,
+                    viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.courseName
+                )
                 .addParam(ParamKeys.COURSE_ID, PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID))
-                .addParam(ParamKeys.IS_COUPON_APPLIED, viewModel.paymentDetailsLiveData.value?.couponDetails?.isPromoCode)
+                .addParam(
+                    ParamKeys.IS_COUPON_APPLIED,
+                    viewModel.paymentDetailsLiveData.value?.couponDetails?.isPromoCode
+                )
                 .addParam(ParamKeys.IS_100_POINTS_OBTAINED_IN_FREE_TRIAL, isPointsScoredMoreThanEqualTo100)
                 .push()
 
@@ -1003,7 +1062,9 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                 viewModel.orderDetailsLiveData.value?.amount ?: 0.0,
                 mapOf(
                     Pair(ParamKeys.TEST_ID.name, viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.testId),
-                    Pair(ParamKeys.IS_COUPON_APPLIED.name, viewModel.paymentDetailsLiveData.value?.couponDetails?.isPromoCode)
+                    Pair(ParamKeys.IS_COUPON_APPLIED.name, viewModel.paymentDetailsLiveData.value?.couponDetails?.isPromoCode),
+                    Pair(ParamKeys.PAYMENT_ID.name, razorpayPaymentId),
+                    Pair(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
                 )
             )
         } catch (e: Exception) {
@@ -1046,7 +1107,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
     }
 
     private fun navigateToStartCourseActivity() {
-        if(PrefManager.getStringValue(CURRENT_COURSE_ID) != DEFAULT_COURSE_ID)
+        if (PrefManager.getStringValue(CURRENT_COURSE_ID) != DEFAULT_COURSE_ID)
             index = 0
         try {
             StartCourseActivity.openStartCourseActivity(
@@ -1059,7 +1120,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
                 viewModel.paymentDetailsLiveData.value?.courseData?.get(index)?.discount ?: EMPTY
             )
             this.finish()
-        }catch (ex:Exception){
+        } catch (ex: Exception) {
             showToast(getString(R.string.something_went_wrong))
             ex.printStackTrace()
         }

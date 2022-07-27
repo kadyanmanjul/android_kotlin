@@ -5,9 +5,9 @@ import android.os.Bundle
 import android.widget.Toast
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.EventLiveData
-import com.joshtalks.joshskills.core.WebRtcMiddlewareActivity
+import com.joshtalks.joshskills.core.CoreJoshActivity
 
-abstract class BaseFppActivity : WebRtcMiddlewareActivity() {
+abstract class BaseFppActivity : CoreJoshActivity() {
     protected var event = EventLiveData
 
     var progressDialog: ProgressDialog? = null

@@ -73,7 +73,7 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class LeaderBoardViewPagerActivity : WebRtcMiddlewareActivity(), ViewBitmap {
+class LeaderBoardViewPagerActivity : CoreJoshActivity(), ViewBitmap {
     private val TAG = "LeaderBoardViewPagerAct"
     lateinit var binding: ActivityLeaderboardViewPagerBinding
     private val viewModel by lazy { ViewModelProvider(this).get(LeaderBoardViewModel::class.java) }

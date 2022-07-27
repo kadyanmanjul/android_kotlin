@@ -261,9 +261,28 @@ class ReadingFragmentWithoutFeedback :
         binding.rootView.layoutTransition?.setAnimateParentHierarchy(false)
         binding.lifecycleOwner = this
         binding.handler = this
+        return binding.rootView
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         scaleAnimation = AnimationUtils.loadAnimation(requireContext(), R.anim.scale)
         addObserver()
-        // showTooltip()
+        if (PrefManager.hasKey(HAS_SEEN_READING_PLAY_ANIMATION).not() || PrefManager.getBoolValue(
+                HAS_SEEN_READING_PLAY_ANIMATION
+            ).not()
+        ) {
+            binding.playInfoHint.visibility = VISIBLE
+        }
+        events.observe(this) {
+            when (it.what) {
+                PERMISSION_FROM_READING_GRANTED -> download()
+                SHARE_VIDEO -> inviteFriends(it.obj as Intent)
+                SUBMIT_BUTTON_CLICK -> submitPractise()
+                CANCEL_BUTTON_CLICK -> closeRecordedView()
+                SHOW_VIDEO_VIEW -> binding.practiseSubmitLayout.visibility = VISIBLE
+            }
+        }
         binding.mergedVideo.setOnPreparedListener { mediaPlayer ->
             try {
                 val videoRatio = mediaPlayer.videoWidth / mediaPlayer.videoHeight.toFloat()
@@ -290,26 +309,6 @@ class ReadingFragmentWithoutFeedback :
             binding.playBtn.visibility = VISIBLE
         }
         binding.videoLayout.clipToOutline = true
-        return binding.rootView
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        if (PrefManager.hasKey(HAS_SEEN_READING_PLAY_ANIMATION).not() || PrefManager.getBoolValue(
-                HAS_SEEN_READING_PLAY_ANIMATION
-            ).not()
-        ) {
-            binding.playInfoHint.visibility = VISIBLE
-        }
-        events.observe(this) {
-            when (it.what) {
-                PERMISSION_FROM_READING_GRANTED -> download()
-                SHARE_VIDEO -> inviteFriends(it.obj as Intent)
-                SUBMIT_BUTTON_CLICK -> submitPractise()
-                CANCEL_BUTTON_CLICK -> closeRecordedView()
-                SHOW_VIDEO_VIEW -> binding.practiseSubmitLayout.visibility = VISIBLE
-            }
-        }
     }
 
     override fun onResume() {
@@ -1168,25 +1167,25 @@ class ReadingFragmentWithoutFeedback :
     }
 
     private fun initRV() {
-        val divider = DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL)
-        divider.setDrawable(
-            ColorDrawable(
-                ContextCompat.getColor(
-                    requireContext(),
-                    R.color.seek_bar_background
+        try {
+            val divider = DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL)
+            divider.setDrawable(
+                ColorDrawable(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.seek_bar_background
+                    )
                 )
             )
-        )
-        try {
             linearLayoutManager?.isSmoothScrollbarEnabled = true
             binding.audioListRv.layoutManager = linearLayoutManager
+            binding.audioListRv.setHasFixedSize(true)
+            binding.audioListRv.addItemDecoration(divider)
+            binding.audioListRv.enforceSingleScrollDirection()
+            binding.audioListRv.adapter = praticAudioAdapter
         } catch (ex: Exception) {
             ex.printStackTrace()
         }
-        binding.audioListRv.setHasFixedSize(true)
-        binding.audioListRv.addItemDecoration(divider)
-        binding.audioListRv.enforceSingleScrollDirection()
-        binding.audioListRv.adapter = praticAudioAdapter
     }
 
     private fun addAudioListRV(practiceEngagement: List<PracticeEngagement>?) {
@@ -1282,12 +1281,16 @@ class ReadingFragmentWithoutFeedback :
                                 audioRecordTouchListener()
                                 return
                             }
-                            if (report.isAnyPermissionPermanentlyDenied) {
-                                PermissionUtils.permissionPermanentlyDeniedDialog(
-                                    requireActivity(),
-                                    R.string.record_permission_message
-                                )
-                                return
+                            if (isAdded && activity!=null) {
+                                if (report.isAnyPermissionPermanentlyDenied) {
+                                    PermissionUtils.permissionPermanentlyDeniedDialog(
+                                        requireActivity(),
+                                        R.string.record_permission_message
+                                    )
+                                    return
+                                }
+                            }else{
+                                showToast(getString(R.string.something_went_wrong))
                             }
                         }
                     }
@@ -1309,7 +1312,7 @@ class ReadingFragmentWithoutFeedback :
     private fun audioRecordTouchListener() {
         binding.recordTransparentContainer.setOnTouchListener { _, event ->
             if (isAdded && activity != null) {
-                if (isCallOngoing() || requireActivity().getVoipState() != State.IDLE) {
+                if (isCallOngoing()) {
                     return@setOnTouchListener false
                 }
                 if (PermissionUtils.isAudioAndStoragePermissionEnable(requireContext()).not()) {

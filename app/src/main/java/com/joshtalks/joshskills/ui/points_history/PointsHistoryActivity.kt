@@ -23,7 +23,7 @@ import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.WebRtcMiddlewareActivity
+import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.CURRENT_COURSE_ID
 import com.joshtalks.joshskills.core.DEFAULT_COURSE_ID
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
@@ -51,7 +51,7 @@ import kotlinx.coroutines.withContext
 const val MENTOR_ID = "mentor_id"
 private const val TAG = "PointsHistoryActivity"
 
-class PointsHistoryActivity : WebRtcMiddlewareActivity() {
+class PointsHistoryActivity : CoreJoshActivity() {
     private val viewModel: PointsViewModel by lazy {
         ViewModelProvider(this).get(PointsViewModel::class.java)
     }

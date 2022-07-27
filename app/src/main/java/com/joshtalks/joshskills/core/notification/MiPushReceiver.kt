@@ -3,9 +3,8 @@ package com.joshtalks.joshskills.core.notification
 import android.content.Context
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.firestore.FirestoreDB
-import com.joshtalks.joshskills.repository.local.model.ShortNotificationObject
-import com.joshtalks.joshskills.ui.voip.analytics.VoipAnalytics
+import com.joshtalks.joshskills.core.firestore.NotificationAnalytics
+import com.joshtalks.joshskills.repository.local.model.NotificationObject
 import com.moengage.core.LogLevel
 import com.moengage.core.internal.logger.Logger
 import com.moengage.mi.MoEMiPushHelper
@@ -15,9 +14,12 @@ import com.xiaomi.mipush.sdk.MiPushClient
 import com.xiaomi.mipush.sdk.MiPushCommandMessage
 import com.xiaomi.mipush.sdk.MiPushMessage
 import com.xiaomi.mipush.sdk.PushMessageReceiver
-import java.lang.reflect.Type
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.json.JSONObject
 import timber.log.Timber
+import java.lang.reflect.Type
 
 class MiPushReceiver : PushMessageReceiver() {
     private val tag = "MiPushReceiver"
@@ -103,9 +105,9 @@ class MiPushReceiver : PushMessageReceiver() {
             if (context == null || miPushMessage == null) return
             val remoteData = JSONObject(miPushMessage.content)
             val map = mutableMapOf<String, String>()
-            map["nType"] = remoteData.getString("nType")
+            //TODO : add other attributes (IMP)
             map["id"] = remoteData["id"].toString()
-            processRemoteMessage(context, map)
+            //TODO: uncomment this line - processRemoteMessage(context, map)
             logNotificationReceived(context, miPushMessage)
         } catch (e: Exception) {
             Logger.print(LogLevel.ERROR, e) { "$tag onNotificationMessageArrived() : " }
@@ -114,22 +116,22 @@ class MiPushReceiver : PushMessageReceiver() {
 
     private fun processRemoteMessage(context: Context, remoteData: MutableMap<String, String>) {
         Timber.tag(tag).e("5 : $remoteData")
-        if (remoteData.containsKey("nType")) {
-            val notificationTypeToken: Type = object : TypeToken<ShortNotificationObject>() {}.type
-            val shortNc: ShortNotificationObject = AppObjectController.gsonMapper.fromJson(
-                AppObjectController.gsonMapper.toJson(remoteData),
-                notificationTypeToken
-            )
+        val notificationTypeToken: Type = object : TypeToken<NotificationObject>() {}.type
+        val nc: NotificationObject = AppObjectController.gsonMapper.fromJson(
+            AppObjectController.gsonMapper.toJson(remoteData),
+            notificationTypeToken
+        )
+        nc.contentTitle = remoteData["title"]
+        nc.contentText = remoteData["body"]
 
-            FirestoreDB.getNotification {
-                val nc = it.toNotificationObject(shortNc.id)
-                if (remoteData["nType"] == "CR") {
-                    nc.actionData?.let {
-                        VoipAnalytics.pushIncomingCallAnalytics(it)
-                    }
-                }
+        CoroutineScope(Dispatchers.IO).launch {
+            val isFirstTimeNotification = NotificationAnalytics().addAnalytics(
+                notificationId = nc.id.toString(),
+                mEvent = NotificationAnalytics.Action.RECEIVED,
+                channel = NotificationAnalytics.Channel.MOENGAGE
+            )
+            if (isFirstTimeNotification)
                 NotificationUtils(context).sendNotification(nc)
-            }
         }
     }
 }

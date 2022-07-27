@@ -4,7 +4,6 @@ import android.animation.ValueAnimator
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.database.CursorIndexOutOfBoundsException
 import android.graphics.Color
 import android.graphics.Outline
 import android.graphics.PorterDuff
@@ -48,54 +47,16 @@ import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.constants.CLOSE_FULL_READING_FRAGMENT
 import com.joshtalks.joshskills.constants.OPEN_READING_SHARING_FULLSCREEN
 import com.joshtalks.joshskills.constants.PERMISSION_FROM_READING
-import com.joshtalks.joshskills.core.ApiCallStatus.FAILED
-import com.joshtalks.joshskills.core.ApiCallStatus.START
-import com.joshtalks.joshskills.core.ApiCallStatus.SUCCESS
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.CALL_BUTTON_CLICKED_FROM_NEW_SCREEN
-import com.joshtalks.joshskills.core.CURRENT_COURSE_ID
-import com.joshtalks.joshskills.core.DEFAULT_COURSE_ID
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.Event
-import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
-import com.joshtalks.joshskills.core.HAS_SEEN_LESSON_SPOTLIGHT
-import com.joshtalks.joshskills.core.HAS_SEEN_QUIZ_VIDEO_TOOLTIP
-import com.joshtalks.joshskills.core.HAS_SEEN_SPEAKING_SPOTLIGHT
-import com.joshtalks.joshskills.core.IMPRESSION_OPEN_GRAMMAR_SCREEN
-import com.joshtalks.joshskills.core.IMPRESSION_OPEN_READING_SCREEN
-import com.joshtalks.joshskills.core.IMPRESSION_OPEN_SPEAKING_SCREEN
-import com.joshtalks.joshskills.core.IMPRESSION_OPEN_VOCABULARY_SCREEN
-import com.joshtalks.joshskills.core.INTRO_VIDEO_STARTED_PLAYING
-import com.joshtalks.joshskills.core.IS_A2_C1_RETENTION_ENABLED
-import com.joshtalks.joshskills.core.IS_CALL_BTN_CLICKED_FROM_NEW_SCREEN
-import com.joshtalks.joshskills.core.IS_COURSE_BOUGHT
-import com.joshtalks.joshskills.core.IS_FREE_TRIAL
-import com.joshtalks.joshskills.core.IS_PROFILE_FEATURE_ACTIVE
-import com.joshtalks.joshskills.core.IS_SPEAKING_SCREEN_CLICKED
-import com.joshtalks.joshskills.core.IS_TWENTY_MIN_CALL_ENABLED
-import com.joshtalks.joshskills.core.LAST_SEEN_VIDEO_ID
-import com.joshtalks.joshskills.core.LESSON_COMPLETED_FOR_NOTIFICATION
-import com.joshtalks.joshskills.core.LESSON_COMPLETE_SNACKBAR_TEXT_STRING
-import com.joshtalks.joshskills.core.LESSON_NUMBER
-import com.joshtalks.joshskills.core.LESSON_TWO_OPENED
-import com.joshtalks.joshskills.core.LESSON__CHAT_ID
-import com.joshtalks.joshskills.core.ONLINE_TEST_LIST_OF_COMPLETED_RULES
-import com.joshtalks.joshskills.core.ONLINE_TEST_LIST_OF_TOTAL_RULES
-import com.joshtalks.joshskills.core.PermissionUtils
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.REMOVE_TOOLTIP_FOR_TWENTY_MIN_CALL
-import com.joshtalks.joshskills.core.SPEAKING_TAB_CLICKED_FOR_FIRST_TIME
-import com.joshtalks.joshskills.core.TIME_SPENT_ON_INTRO_VIDEO
-import com.joshtalks.joshskills.core.WebRtcMiddlewareActivity
+import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.ApiCallStatus.*
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
+import com.joshtalks.joshskills.core.abTest.GoalKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
 import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.core.analytics.ParamKeys
 import com.joshtalks.joshskills.core.extension.translationAnimationNew
-import com.joshtalks.joshskills.core.playSnackbarSound
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.core.videotranscoder.enforceSingleScrollDirection
 import com.joshtalks.joshskills.core.videotranscoder.recyclerView
 import com.joshtalks.joshskills.databinding.LessonActivityBinding
@@ -127,7 +88,6 @@ import com.joshtalks.joshskills.ui.tooltip.JoshTooltip
 import com.joshtalks.joshskills.ui.video_player.IS_BATCH_CHANGED
 import com.joshtalks.joshskills.ui.video_player.LAST_LESSON_INTERVAL
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
-import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
 import com.joshtalks.joshskills.voip.constant.State
 import com.karumi.dexter.MultiplePermissionsReport
@@ -137,7 +97,7 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.lesson_activity.container_reading
+import kotlinx.android.synthetic.main.lesson_activity.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -153,7 +113,7 @@ const val INTRO_VIDEO_ID = "-1"
 private const val TAG = "LessonActivity"
 private val STORAGE_READING_REQUEST_CODE = 3457
 
-class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, GrammarAnimation {
+class LessonActivity : CoreJoshActivity(), LessonActivityListener, GrammarAnimation {
     private val event = EventLiveData
     private lateinit var binding: LessonActivityBinding
     private val courseId = PrefManager.getStringValue(CURRENT_COURSE_ID, false, DEFAULT_COURSE_ID)
@@ -234,9 +194,9 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         super.onCreate(savedInstanceState)
 
         try {
-            if (getVoipState() == State.IDLE && WebRtcService.isCallOnGoing.value == false)
+            if (getVoipState() == State.IDLE)
                 viewModel.getButtonVisibility()
-        }catch (ex:Exception){
+        } catch (ex: Exception) {
             ex.printStackTrace()
         }
         binding = DataBindingUtil.setContentView(
@@ -285,13 +245,8 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         titleView = findViewById(R.id.text_message_title)
 
         setObservers()
-        viewModel.getWhatsappRemarketingCampaign(CampaignKeys.WHATSAPP_REMARKETING.name)
         viewModel.getLesson(lessonId)
-        viewModel.getTwentyMinFtuCallCampaignData(
-            CampaignKeys.TWENTY_MIN_TARGET.NAME,
-            lessonId,
-            isDemo
-        )
+        viewModel.getQuestions(lessonId, isDemo)
 
         val helpIv: ImageView = findViewById(R.id.iv_help)
         helpIv.visibility = View.GONE
@@ -386,6 +341,10 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
     }
 
     private fun setObservers() {
+        viewModel.abTestRepository.apply {
+            isWhatsappRemarketingActive = isVariantActive(VariantKeys.WR_ENABLED)
+            isTwentyMinFtuCallActive = isVariantActive(VariantKeys.TWENTY_MIN_ENABLED)
+        }
         viewModel.apiStatus.observe(this) {
             when (it) {
                 START -> {
@@ -419,6 +378,10 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                 .addParam(ParamKeys.LESSON_ID, getLessonId)
                 .addParam(ParamKeys.LESSON_NUMBER, lessonNumber)
                 .push()
+            viewModel.postGoal(GoalKeys.GRAMMAR_SECTION_OPENED.NAME, CampaignKeys.ENGLISH_FOR_GOVT_EXAM.NAME)
+            if(lessonNumber == 1) {
+                viewModel.postGoal(GoalKeys.LESSON1_OPENED.NAME, CampaignKeys.ENGLISH_FOR_GOVT_EXAM.NAME)
+            }
 
             if (lessonIsNewGrammar) {
 
@@ -725,20 +688,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                 }
             }
         }
-        viewModel.whatsappRemarketingLiveData.observe(this) { abTestCampaignData ->
-            abTestCampaignData?.let { map ->
-                isWhatsappRemarketingActive =
-                    (map.variantKey == VariantKeys.WR_ENABLED.NAME) && map.variableMap?.isEnabled == true
-            }
-        }
 
-        viewModel.twentyMinCallFtuAbTestLiveData.observe(this) { abTestCampaignData ->
-            abTestCampaignData?.let { map ->
-                isTwentyMinFtuCallActive =
-                    (map.variantKey == VariantKeys.TWENTY_MIN_ENABLED.NAME) && map.variableMap?.isEnabled == true
-                PrefManager.put(IS_TWENTY_MIN_CALL_ENABLED, isTwentyMinFtuCallActive)
-            }
-        }
         videoEvent.observe(this) { event ->
             event.getContentIfNotHandledOrReturnNull()?.let {
                 binding.apply {
@@ -1267,6 +1217,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                     tab.view.background =
                         ContextCompat.getDrawable(this, R.drawable.vocabulary_tab_bg)
                     viewModel.saveImpression(IMPRESSION_OPEN_VOCABULARY_SCREEN)
+                    viewModel.postGoal(GoalKeys.VOCABULARY_SECTION_OPENED.NAME, CampaignKeys.ENGLISH_FOR_GOVT_EXAM.NAME)
                     MixPanelTracker.publishEvent(MixPanelEvent.VOCABULARY_OPENED)
                         .addParam(ParamKeys.LESSON_ID, getLessonId)
                         .addParam(ParamKeys.LESSON_NUMBER, lessonNumber)
@@ -1275,6 +1226,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                 READING_POSITION - isTranslationDisabled -> {
                     tab.view.background = ContextCompat.getDrawable(this, R.drawable.reading_tab_bg)
                     viewModel.saveImpression(IMPRESSION_OPEN_READING_SCREEN)
+                    viewModel.postGoal(GoalKeys.READING_SECTION_OPENED.NAME, CampaignKeys.ENGLISH_FOR_GOVT_EXAM.NAME)
                     MixPanelTracker.publishEvent(MixPanelEvent.READING_OPENED)
                         .addParam(ParamKeys.LESSON_ID, getLessonId)
                         .addParam(ParamKeys.LESSON_NUMBER, lessonNumber)
@@ -1285,6 +1237,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
                         ContextCompat.getDrawable(this, R.drawable.speaking_tab_bg)
                     viewModel.saveImpression(IMPRESSION_OPEN_SPEAKING_SCREEN)
                     PrefManager.put(IS_SPEAKING_SCREEN_CLICKED, true)
+                    viewModel.postGoal(GoalKeys.SPEAKING_SECTION_OPENED.NAME, CampaignKeys.ENGLISH_FOR_GOVT_EXAM.NAME)
                     MixPanelTracker.publishEvent(MixPanelEvent.SPEAKING_OPENED)
                         .addParam(ParamKeys.LESSON_ID, getLessonId)
                         .addParam(ParamKeys.LESSON_NUMBER, lessonNumber)
@@ -1358,11 +1311,7 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         intent?.let {
             val lessonId = if (intent.hasExtra(LESSON_ID)) intent.getIntExtra(LESSON_ID, 0) else 0
             viewModel.getLesson(lessonId)
-            viewModel.getTwentyMinFtuCallCampaignData(
-                CampaignKeys.TWENTY_MIN_TARGET.NAME,
-                lessonId,
-                isDemo
-            )
+            viewModel.getQuestions(lessonId, isDemo)
         }
     }
 
@@ -1606,7 +1555,6 @@ class LessonActivity : WebRtcMiddlewareActivity(), LessonActivityListener, Gramm
         )
     }
     private fun closeReadingFullScreen(){
-        Log.e("Ayaaz","close reading fun")
         supportFragmentManager.popBackStackImmediate()
         container_reading.visibility = View.GONE
     }

@@ -101,6 +101,7 @@ data class FirestoreNewNotificationObject(
         it.deeplink = deeplink
         it.extraData = extraData
         it.action = when (action) {
+            NotificationAction.JOIN_CONVERSATION_ROOM.type -> NotificationAction.JOIN_CONVERSATION_ROOM
             NotificationAction.INCOMING_CALL_NOTIFICATION.type -> NotificationAction.INCOMING_CALL_NOTIFICATION
             NotificationAction.CALL_DISCONNECT_NOTIFICATION.type -> NotificationAction.CALL_DISCONNECT_NOTIFICATION
             NotificationAction.CALL_FORCE_CONNECT_NOTIFICATION.type -> NotificationAction.CALL_FORCE_CONNECT_NOTIFICATION

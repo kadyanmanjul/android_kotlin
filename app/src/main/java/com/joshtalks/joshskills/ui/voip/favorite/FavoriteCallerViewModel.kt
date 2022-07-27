@@ -15,7 +15,6 @@ import com.joshtalks.joshskills.core.analytics.MixPanelTracker
 import com.joshtalks.joshskills.repository.local.entity.practise.FavoriteCaller
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.fpp.constants.*
-import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.joshtalks.joshskills.ui.voip.favorite.adapter.FppFavoriteAdapter
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
 import com.joshtalks.joshskills.voip.constant.State
@@ -189,16 +188,11 @@ class FavoriteCallerViewModel : BaseViewModel() {
             )
             return
         }
-        if (WebRtcService.isCallOnGoing.value == false && AppObjectController.joshApplication.getVoipState() == State.IDLE) {
+        if (AppObjectController.joshApplication.getVoipState() == State.IDLE) {
             Log.d("naa", "clickOnPhoneCall: ${favoriteCaller.mentorId}")
             selectedUser = favoriteCaller
-            if (PrefManager.getIntValue(IS_GROUP_FPP_NEW_ARCH_ENABLED, defValue = 1) == 1) {
-                message.what = START_FPP_CALL
-                singleLiveEvent.value = message
-            }else{
-                getCallOnGoing(favoriteCaller.mentorId, favoriteCaller.id)
-            }
-
+            message.what = START_FPP_CALL
+            singleLiveEvent.value = message
         } else {
             showToast(
                 "You can't place a new call while you're already in a call.",

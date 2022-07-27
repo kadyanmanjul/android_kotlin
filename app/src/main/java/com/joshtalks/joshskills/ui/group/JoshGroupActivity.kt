@@ -6,7 +6,6 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
-import android.util.Log
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
@@ -34,9 +33,6 @@ import com.joshtalks.joshskills.ui.group.viewmodels.JoshGroupViewModel
 import com.joshtalks.joshskills.ui.userprofile.fragments.UserPicChooserFragment
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
 import com.joshtalks.joshskills.ui.userprofile.fragments.MENTOR_ID
-import com.joshtalks.joshskills.ui.voip.SearchingUserActivity
-import com.joshtalks.joshskills.ui.voip.WebRtcActivity
-import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity
 import com.joshtalks.joshskills.voip.constant.Category
@@ -157,64 +153,37 @@ class JoshGroupActivity : BaseGroupActivity() {
     }
 
     fun openCallingActivity(bundle: Bundle) {
-        if (WebRtcService.isCallOnGoing.value == false && getVoipState() == State.IDLE) {
-            GroupAnalytics.push(
-                GroupAnalytics.Event.CALL_PRACTICE_PARTNER_FROM_GROUP,
-                bundle.getString(GROUPS_ID) ?: ""
-            )
+        if (getVoipState() == State.IDLE) {
+            GroupAnalytics.push(GroupAnalytics.Event.CALL_PRACTICE_PARTNER_FROM_GROUP, bundle.getString(GROUPS_ID) ?: "")
 
-            if (PrefManager.getIntValue(IS_GROUP_FPP_NEW_ARCH_ENABLED, defValue = 1) == 1) {
-                val callIntent = Intent(applicationContext, VoiceCallActivity::class.java)
-                callIntent.apply {
-                    putExtra(STARTING_POINT, FROM_ACTIVITY)
-                    putExtra(INTENT_DATA_CALL_CATEGORY, Category.GROUP.ordinal)
-                    putExtra(INTENT_DATA_GROUP_ID,bundle.getString(GROUPS_ID))
-                    putExtra(INTENT_DATA_TOPIC_ID,"5")
-                    putExtra(INTENT_DATA_GROUP_NAME,bundle.getString(GROUPS_TITLE))
-                }
-                startActivity(callIntent)
-            }else{
-                val intent = SearchingUserActivity.startUserForPractiseOnPhoneActivity(
-                    this,
-                    courseId = "151",
-                    topicId = 5,
-                    groupId = bundle.getString(GROUPS_ID),
-                    isGroupCallCall = true,
-                    topicName = "Group Call",
-                    groupName = bundle.getString(GROUPS_TITLE),
-                    favoriteUserCall = false
-                )
-                startActivity(intent)
+            val callIntent = Intent(applicationContext, VoiceCallActivity::class.java)
+            callIntent.apply {
+                putExtra(STARTING_POINT, FROM_ACTIVITY)
+                putExtra(INTENT_DATA_CALL_CATEGORY, Category.GROUP.ordinal)
+                putExtra(INTENT_DATA_GROUP_ID, bundle.getString(GROUPS_ID))
+                putExtra(INTENT_DATA_TOPIC_ID, "5")
+                putExtra(INTENT_DATA_GROUP_NAME, bundle.getString(GROUPS_TITLE))
             }
-
-        }else{
+            startActivity(callIntent)
+        } else {
             showToast("Wait for last call to get disconnected")
         }
     }
 
-    private fun openFppCallScreen(uid: Int,data:Bundle) {
-            if (WebRtcService.isCallOnGoing.value == false && getVoipState() == State.IDLE) {
-                if (PrefManager.getIntValue(IS_GROUP_FPP_NEW_ARCH_ENABLED, defValue = 1) == 1) {
-                    val callIntent = Intent(applicationContext, VoiceCallActivity::class.java)
-                    callIntent.apply {
-                        putExtra(STARTING_POINT, FROM_ACTIVITY)
-                        putExtra(INTENT_DATA_CALL_CATEGORY, Category.FPP.ordinal)
-                        putExtra(INTENT_DATA_FPP_MENTOR_ID, vm.mentorId)
-                        putExtra(INTENT_DATA_FPP_NAME, data.getString(INTENT_DATA_FPP_NAME))
-                        putExtra(INTENT_DATA_FPP_IMAGE, data.getString(INTENT_DATA_FPP_IMAGE))
-                        startActivity(callIntent)
-                    }
-                }else {
-                val intent =
-                    WebRtcActivity.getFavMissedCallbackIntent(uid, this).apply {
-                        addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    }
-                startActivity(intent)
+    private fun openFppCallScreen(uid: Int, data: Bundle) {
+        if (getVoipState() == State.IDLE) {
+            val callIntent = Intent(applicationContext, VoiceCallActivity::class.java)
+            callIntent.apply {
+                putExtra(STARTING_POINT, FROM_ACTIVITY)
+                putExtra(INTENT_DATA_CALL_CATEGORY, Category.FPP.ordinal)
+                putExtra(INTENT_DATA_FPP_MENTOR_ID, vm.mentorId)
+                putExtra(INTENT_DATA_FPP_NAME, data.getString(INTENT_DATA_FPP_NAME))
+                putExtra(INTENT_DATA_FPP_IMAGE, data.getString(INTENT_DATA_FPP_IMAGE))
+                startActivity(callIntent)
             }
-        }else {
-                showToast("You are already on a call")
-            }
+        } else {
+            showToast("You are already on a call")
+        }
     }
 
     private fun openGroupListFragment() {

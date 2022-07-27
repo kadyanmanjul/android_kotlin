@@ -14,6 +14,8 @@ import com.joshtalks.joshskills.base.constants.CALLING_SERVICE_ACTION
 import com.joshtalks.joshskills.base.constants.SERVICE_BROADCAST_KEY
 import com.joshtalks.joshskills.base.constants.START_SERVICE
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.abTest.GoalKeys
+import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
@@ -32,6 +34,7 @@ import com.joshtalks.joshskills.repository.server.signup.LoginResponse
 import com.joshtalks.joshskills.repository.server.signup.RequestSocialSignUp
 import com.joshtalks.joshskills.repository.server.signup.RequestUserVerification
 import com.joshtalks.joshskills.util.showAppropriateMsg
+import com.singular.sdk.Singular
 import com.truecaller.android.sdk.TrueProfile
 import com.userexperior.UserExperior
 import java.util.*
@@ -58,6 +61,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
     var countryCode = String()
     var loginViaStatus: LoginViaStatus? = null
     val service = AppObjectController.signUpNetworkService
+    val abTestRepository by lazy { ABTestRepository() }
 
     fun signUpUsingSocial(
         loginViaStatus: LoginViaStatus,
@@ -235,9 +239,11 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
             Mentor.getInstance().updateUser(user)
             UserExperior.setUserIdentifier(Mentor.getInstance().getId())
             AppAnalytics.updateUser()
+            Singular.setCustomUserId(Mentor.getInstance().getId())
             fetchMentor()
 //            WorkManagerAdmin.userActiveStatusWorker(true)
             WorkManagerAdmin.requiredTaskAfterLoginComplete()
+            ABTestRepository().updateAllCampaigns()
             val isCourseBought = PrefManager.getBoolValue(IS_COURSE_BOUGHT,false)
             val courseExpiryTime =
                 PrefManager.getLongValue(com.joshtalks.joshskills.core.COURSE_EXPIRY_TIME_IN_MS)
@@ -493,6 +499,12 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                 apiStatus.postValue(ApiCallStatus.FAILED)
                 Timber.e(ex)
             }
+        }
+    }
+
+    fun postGoal(goalKeys: GoalKeys) {
+        viewModelScope.launch {
+            abTestRepository.postGoal(goalKeys.NAME)
         }
     }
 }

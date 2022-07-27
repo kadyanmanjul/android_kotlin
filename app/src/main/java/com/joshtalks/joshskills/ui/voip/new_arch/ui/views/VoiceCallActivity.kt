@@ -3,11 +3,13 @@ package com.joshtalks.joshskills.ui.voip.new_arch.ui.views
 import android.Manifest
 import android.app.AlertDialog
 import android.content.Intent
+import android.graphics.drawable.ColorDrawable
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
 import androidx.lifecycle.ViewModelProvider
@@ -174,6 +176,11 @@ class VoiceCallActivity : BaseActivity() {
         startCallingScreen()
     }
 
+    override fun onResume() {
+        supportActionBar?.hide()
+        super.onResume()
+    }
+
     private fun startCallingScreen() {
         when (vm.callType) {
             Category.PEER_TO_PEER -> {
@@ -212,6 +219,15 @@ class VoiceCallActivity : BaseActivity() {
                     }
                 }
                 CLOSE_CALL_SCREEN -> finishAndRemoveTask()
+                CHANGE_APP_THEME_T0_BLACK->{
+                    window.statusBarColor  = ContextCompat.getColor(this,R.color.black_quiz)
+                }
+                CHANGE_APP_THEME_T0_BLUE->{
+                    window.statusBarColor  = ContextCompat.getColor(this,R.color.colorPrimaryDark)
+                }
+                SHOW_RECORDING_PERMISSION_DIALOG -> {
+                    vm.startAudioVideoRecording(this@VoiceCallActivity.window.decorView)
+                }
                 SHOW_RECORDING_PERMISSION_DIALOG -> vm.startAudioVideoRecording(this@VoiceCallActivity.window.decorView)
                 SHOW_RECORDING_REJECTED_DIALOG -> showRecordingRejectedDialog()
                 HIDE_RECORDING_PERMISSION_DIALOG -> {

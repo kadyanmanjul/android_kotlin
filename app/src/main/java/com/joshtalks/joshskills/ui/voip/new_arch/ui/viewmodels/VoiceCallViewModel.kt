@@ -318,6 +318,23 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                     if (voipState == State.CONNECTED || voipState == State.RECONNECTING)
                         uiState.currentState = "Timer"
                 }
+                if(state.isStartGameClicked && !state.nextGameWord.equals("")){
+                    val msg = Message.obtain().apply {
+                        what = CHANGE_APP_THEME_T0_BLACK
+                    }
+                    withContext(Dispatchers.Main) {
+                        singleLiveEvent.value = msg
+                    }
+                }
+
+                if(!state.isStartGameClicked || state.nextGameWord.equals("")){
+                    val msg = Message.obtain().apply {
+                        what = CHANGE_APP_THEME_T0_BLUE
+                    }
+                    withContext(Dispatchers.Main) {
+                        singleLiveEvent.value = msg
+                    }
+                }
 
                 if (uiState.isSpeakerOn != state.isSpeakerOn) {
                     uiState.isSpeakerOn = state.isSpeakerOn
@@ -334,7 +351,7 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
     fun getTime(recordingButtonState: RecordingButtonState): Job? {
         try {
             timer = CoroutineScope(Dispatchers.IO).launch {
-                delay(60000)
+                delay(180000)
                 if (recordingButtonState == RecordingButtonState.RECORDING) {
                     if (uiState.recordTime > 0) {
                         repository.stopCallRecording()

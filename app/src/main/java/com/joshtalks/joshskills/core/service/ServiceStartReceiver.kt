@@ -3,31 +3,27 @@ package com.joshtalks.joshskills.core.service
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import com.joshtalks.joshskills.core.LAST_TIME_WORK_MANAGER_START
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.repository.local.AppDatabase
-import com.joshtalks.joshskills.repository.local.entity.BroadCastEvent
-import com.joshtalks.joshskills.repository.local.model.Mentor
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import timber.log.Timber
+import android.os.Build
+import androidx.work.Data
+import androidx.work.OneTimeWorkRequest
+import androidx.work.WorkManager
+import com.joshtalks.joshskills.base.BROADCAST_EVENT_NAME
+import com.joshtalks.joshskills.base.BroadcastHandlerWorker
+import com.joshtalks.joshskills.base.SAVE_BROADCAST_EVENT
 
 class ServiceStartReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         try {
-            if (System.currentTimeMillis() - PrefManager.getLongValue(LAST_TIME_WORK_MANAGER_START) >= 30 * 60 * 1000L) {
-                PrefManager.put(LAST_TIME_WORK_MANAGER_START, System.currentTimeMillis())
-                CoroutineScope(Dispatchers.IO).launch {
-                    Timber.tag("ReceiverCheck").e("${intent.action} : ${intent.dataString}")
-
-                    AppDatabase.getDatabase(context)?.broadcastDao()?.insertBroadcastEvent(
-                        BroadCastEvent(
-                            Mentor.getInstance().getId(),
-                            intent.action
-                        )
-                    )
-                }
+            if (Build.VERSION.SDK_INT < 31) {
+                val serviceIntent = Intent(context, BroadcastReceiver::class.java)
+                serviceIntent.action = SAVE_BROADCAST_EVENT
+                context.startService(serviceIntent)
+            } else {
+                val broadcastWork = OneTimeWorkRequest.Builder(BroadcastHandlerWorker::class.java)
+                val data = Data.Builder()
+                data.putString(BROADCAST_EVENT_NAME, intent.action)
+                broadcastWork.setInputData(data.build())
+                WorkManager.getInstance(context).enqueue(broadcastWork.build())
             }
         } catch (ex: Throwable) {
             ex.printStackTrace()

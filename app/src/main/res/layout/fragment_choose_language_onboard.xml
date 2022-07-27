@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:wheel="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
         <data>
@@ -77,7 +78,7 @@
         </LinearLayout>
 
         <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/text_view_name"
+            android:id="@+id/title"
             style="@style/Normal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -85,7 +86,7 @@
             android:gravity="center"
             android:maxLines="2"
             android:layout_marginTop="@dimen/_32sdp"
-            android:text="@string/my_formatted_text"
+            android:text="@{handler.isLanguageFragment ? @string/language_text : @string/goal_text}"
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
             android:textColor="@color/black"
@@ -106,7 +107,9 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             android:layout_marginTop="@dimen/_22sdp"
-            app:layout_constraintTop_toBottomOf="@id/text_view_name" />
+            app:layout_constraintTop_toBottomOf="@id/title" />
+
+
 
         <ViewStub
             android:id="@+id/error_view"
@@ -118,6 +121,27 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
+
+        <FrameLayout
+            android:id="@+id/progress"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toBottomOf="@id/linearLayout"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:background="@color/transparent_black"
+            tools:visibility="visible">
+
+            <com.pnikosis.materialishprogress.ProgressWheel
+                android:id="@+id/progress_bar"
+                android:layout_width="@dimen/_82sdp"
+                android:layout_height="@dimen/_82sdp"
+                android:layout_gravity="center"
+                wheel:matProg_barColor="@color/button_color"
+                wheel:matProg_fillRadius="true"
+                wheel:matProg_linearProgress="false"
+                wheel:matProg_progressIndeterminate="true" />
+
+        </FrameLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

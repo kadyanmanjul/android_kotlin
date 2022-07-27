@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <defaults>
     <entry>
-        <key>CERTIFICATE_SHARE_TEXT_WHATSAPP</key>
-        <value>I have Completed the Josh Skills Spoken English Certification Exam!\nYou can also Download the app from
-            :
-        </value>
+        <key>FREE_TRIAL_ENTER_NAME_TEXT_1906</key>
+        <value>आपके टीचर और सहपाठी आपको इस नाम से पुकारेंगे</value>
     </entry>
     <entry>
         <key>FFCOURSE_CARD_CLICK_MSG</key>
@@ -255,6 +253,10 @@
         </value>
     </entry>
     <entry>
+        <key>FREE_TRIAL_POPUP_TITLE_TEXT_1906</key>
+        <value>ज़रूरी जानकारी</value>
+    </entry>
+    <entry>
         <key>COURSE_MAX_OFFER_PER</key>
         <value>50%</value>
     </entry>
@@ -269,6 +271,12 @@
     <entry>
         <key>TOOLTIP_SEARCH_ANYONE_1209</key>
         <value>ഇവിടെ നിന്നും നമുക്ക് നമ്മുടെ സുഹൃത്തുക്കളെ അല്ലെങ്കിൽ ബാക്കിയുള്ള students-നെ SEARCH ചെയ്യാവുന്നതാണ്
+        </value>
+    </entry>
+    <entry>
+        <key>FREE_TRIAL_POPUP_BODY_TEXT_1906</key>
+        <value>यह एक 90 दिन का course है और try करने के बाद आप चाहे तो इसे ₹999 में खरीद सकते है। \n
+            क्या आप Spoken English Course - हिंदी को 1 दिन के लिए बिलकुल मुफ्त में try करना चाहते है ?
         </value>
     </entry>
     <entry>
@@ -839,8 +847,16 @@
         <value>మీ ఉపాధ్యాయులు మరియు సహవిద్యార్థులు మిమ్మల్ని ఈ పేరుతో పిలుస్తారు</value>
     </entry>
     <entry>
+        <key>FREE_TRIAL_PAYMENT_TEST_ID_60</key>
+        <value>1877</value>
+    </entry>
+    <entry>
         <key>FREE_TRIAL_PAYMENT_TEST_ID_1880</key>
         <value>1884</value>
+    </entry>
+    <entry>
+        <key>FREE_TRIAL_PAYMENT_TEST_ID_1906</key>
+        <value>1907</value>
     </entry>
     <entry>
         <key>SUBSCRIPTION_BB_TEXT</key>
@@ -1126,6 +1142,10 @@
         <value>Add your profile photo</value>
     </entry>
     <entry>
+        <key>FREEMIUM_COURSE_PRICE</key>
+        <value>1499.00</value>
+    </entry>
+    <entry>
         <key>FREE_TRIAL_POPUP_HUNDRED_POINTS_TEXT_1897</key>
         <value>Josh Skill sఅనేది వారి జీవితంలో serious studentకుటుంబం. కష్టపడి ముందుకు సాగాలని కోరుకునే వారు. ఈ కోర్సులో
             నమోదు చేసుకునే ముందు, మీరు ఒక రోజు ఈ కోర్సును ఉపయోగించాలి. ఇది పూర్తిగా ఉచితం.మీరు ఇంగ్లీషు నేర్చుకోవడం పట్ల
@@ -1352,6 +1372,10 @@
         <value>40102</value>
     </entry>
     <entry>
+        <key>FREE_TRIAL_POPUP_YES_BUTTON_TEXT_1906</key>
+        <value>जी हाँ</value>
+    </entry>
+    <entry>
         <key>P2P_CALL_SHARE_TEXT_151</key>
         <value>मैं English सीख रहा हूँ ,जहाँ enviroment मिलता है बेझिझक नए लोगों से बात करने का !तुम भी सीख सकते हो.
         </value>
@@ -1499,6 +1523,12 @@
     <entry>
         <key>GRAMMAR_CONTINUE_BUTTON_TEXT_1209</key>
         <value>തുടർന്നു ചെയുക</value>
+    </entry>
+    <entry>
+        <key>CERTIFICATE_SHARE_TEXT_WHATSAPP</key>
+        <value>I have Completed the Josh Skills Spoken English Certification Exam!\nYou can also Download the app from
+            :
+        </value>
     </entry>
     <entry>
         <key>course_details</key>

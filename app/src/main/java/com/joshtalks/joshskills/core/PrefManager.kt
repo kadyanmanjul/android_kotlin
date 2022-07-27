@@ -134,15 +134,13 @@ const val IS_ENGLISH_SYLLABUS_PDF_OPENED = "is_english_syllabus_pdf_opened"
 const val IS_FREE_TRIAL_ENDED = "is_free_trial_ended"
 const val CURRENT_COURSE_ID = "course_id"
 const val DEFAULT_COURSE_ID = "151"
+const val ENG_GOVT_EXAM_COURSE_ID = "1213"
 const val PAID_COURSE_TEST_ID = "PAID_COURSE_TEST_ID"
 const val IS_FREE_TRIAL_CAMPAIGN_ACTIVE = "is_free_trial_campaign_active"
 const val IS_EFT_VARIENT_ENABLED = "is_eft_varient_enabled"
-const val IS_VOIP_NEW_ARCH_ENABLED = "is_voip_new_arch_enabled"
-const val IS_GROUP_FPP_NEW_ARCH_ENABLED = "is_fpp_group_new_arch_enabled"
 const val THRESHOLD_SPEED_IN_KBPS = "threshold_speed_in_kbps"
 const val SPEED_TEST_FILE_URL = "speed_test_file_url"
 const val SPEED_TEST_FILE_SIZE = "speed_test_file_size"
-const val IS_TWENTY_MIN_CALL_ENABLED = "is_twenty_min_call_enabled"
 const val REMOVE_TOOLTIP_FOR_TWENTY_MIN_CALL = "remove_toolpit_for_twenty_min_call"
 const val TWENTY_MIN_CALL_GOAL_POSTED = "twenty_min_call_goal_posted"
 const val SPEAKING_SCREEN_SEEN_GOAL_POSTED = "speaking_screen_seen_goal_posted"
@@ -160,8 +158,6 @@ const val GROUP_CHAT_CHECK_TIMES = "GROUP_CHAT_CHECK_TIMES"
 const val GROUP_SUBSCRIBE_TIME = "GROUP_SUBSCRIBE_TIME"
 
 const val MOENGAGE_USER_CREATED = "MOENGAGE_USER_CREATED"
-const val INCREASE_COURSE_PRICE_ABTEST = "INCREASE_COURSE_PRICE_ABTEST"
-const val INCREASE_COURSE_PRICE_CAMPAIGN_ACTIVE = "INCREASE_COURSE_PRICE_CAMPAIGN_ACTIVE"
 const val IS_FIRST_TIME_CERTIFICATE = "IS_FIRST_TIME_CERTIFICATE"
 const val IS_CERTIFICATE_GENERATED_BEGINNER = "IS_CERTIFICATE_GENERATED_BEGINNER"
 const val IS_CERTIFICATE_GENERATED_INTERMEDIATE = "IS_CERTIFICATE_GENERATED_INTERMEDIATE"
@@ -170,6 +166,7 @@ const val IS_EXAM_POINTS_PROMPT = "IS_EXAM_POINTS_PROMPT"
 const val RATING_TIMESTAMP = "RATING_TIMESTAMP"
 const val RATING_OBJECT = "RATING_OBJECT"
 const val SPECIFIC_ONBOARDING = "SPECIFIC_ONBOARDING"
+const val LOGIN_ONBOARDING = "LOGIN_ONBOARDING"
 const val IS_FIRST_TIME_FLOW_CERTI = "IS_FIRST_TIME_FLOW_CERTI"
 const val NOTIFICATION_STATUS_COUNT = "NOTIFICATION_STATUS_COUNT"
 const val NOTIFICATION_LAST_TIME_STATUS = "NOTIFICATION_LAST_TIME_STATUS"
@@ -178,7 +175,7 @@ const val ONE_WEEK_TIME_STAMP = "ONE_WEEK_TIME_STAMP" // Google in app review
 const val IS_CUSTOM_RATING_AND_REVIEW_DIALOG_SHOWN_BILKUL = "IS_CUSTOM_RATING_AND_REVIEW_DIALOG_SHOWN_BILKUL"
 const val IS_GAME_ON = "IS_GAME_ON"
 const val P2P_CALL_COUNT = "P2P_CALL_COUNT"
-
+const val AB_TEST_DATA = "AB_TEST_DATA"
 
 object PrefManager {
 
@@ -374,7 +371,7 @@ object PrefManager {
         LastSyncPrefManager.clear()
         WorkManagerAdmin.instanceIdGenerateWorker()
         WorkManagerAdmin.appInitWorker()
-        WorkManagerAdmin.appStartWorker(true)
+        WorkManagerAdmin.appStartWorker()
     }
 
     fun clearUser() {
@@ -384,7 +381,7 @@ object PrefManager {
         AppDatabase.clearDatabase()
         WorkManagerAdmin.instanceIdGenerateWorker()
         WorkManagerAdmin.appInitWorker()
-        WorkManagerAdmin.appStartWorker(true)
+        WorkManagerAdmin.appStartWorker()
     }
 
     fun clearDatabase() {

@@ -776,10 +776,18 @@
     <string name="start_learning_english" translatable="false">start learning English</string>
     <string name="course_restart_success" translatable="false">Course Restarted Successfully</string>
     <string name="course_restart_fail" translatable="false">Course Can Not Restart</string>
-    <string name="my_formatted_text" translatable="false">
+    <string name="help_learning">You have helped 4 people start learning English</string>
+    <string name="free_trial_dialog_ji_haan_text">Josh skills उन students का परिवार है जो serious हैं अपनी life मे। जो मेहनत करना चाहते है और आगे बढ़ना चाहते हैं। इस course में enroll होने से पहले आपको एक दिन ये course use करना है। ये बिलकुल मुफ्त है।\\n  \\nमैं देखना चाहता हु की आप serious हैं english सीखने के लिए। आपको आज 100 points कमाने हैं। अगर आप अगले 24 घंटो में 100 points कमा लेते हैं तो आप कल course में admission ले सकते हैं।</string>
+    <string name="achieve_100_points_first">Achieve 100 points first</string>
+    <string name="language_text" translatable="false">
         <font color="@android:color/black">I want to</font>
         <font color="#107BE5">speak english confidently</font>
-        <font color="@android:color/black">from ...</font>
+        <font color="@android:color/black">from …</font>
+    </string>
+    <string name="goal_text" translatable="false">
+        <font color="@android:color/black">I want to</font>
+        <font color="#107BE5">learn English</font>
+        <font color="@android:color/black">because I want to …</font>
     </string>
     <string name="buy_now" translatable="false">Buy now</string>
     <string name="your_free_trial_has_ended" translatable="false">Your Free Trial has ended</string>
@@ -1000,8 +1008,10 @@
     <string name="recording_text_after" translatable="false">Waiting for your partner to start the game</string>
     <string name="guess_the_word" translatable="false">Guess The Word</string>
     <string name="describe_your_word_without_saying_it_and_your_partner_will_guess_it" translatable="false">Describe your word without saying it and your partner will guess it</string>
-    <string name="your_word" translatable="false">Your Word</string>
+    <string name="your_word">My Word</string>
     <string name="stars" translatable="false">*********</string>
+    <string name="dynamic_feature_title">dynamic</string>
+    <string name="video_error">Sorry unable to process your video please retry after some time</string>
     <string name="wait_for_your_partner_to_click_next" translatable="false">Wait for your partner to click next</string>
     <string name="image_button_to_move_left" translatable="false">Image button to move left</string>
     <string name="image_button_to_move_right" translatable="false">Image button to move right</string>

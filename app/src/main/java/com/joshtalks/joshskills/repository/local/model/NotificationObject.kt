@@ -144,30 +144,6 @@ enum class NotificationAction(val type: String) {
     @SerializedName("award_declare_notification")
     AWARD_DECLARE("award_declare_notification"),
 
-    @SerializedName("call_receive_notification")
-    INCOMING_CALL_NOTIFICATION("call_receive_notification"),
-
-    @SerializedName("call_disconnect_notification")
-    CALL_DISCONNECT_NOTIFICATION("call_disconnect_notification"),
-
-    @SerializedName("call_force_receive_notification")
-    CALL_FORCE_CONNECT_NOTIFICATION("call_force_receive_notification"),
-
-    @SerializedName("call_force_disconnect_notification")
-    CALL_FORCE_DISCONNECT_NOTIFICATION("call_force_disconnect_notification"),
-
-    @SerializedName("no_user_found_notification")
-    CALL_NO_USER_FOUND_NOTIFICATION("no_user_found_notification"),
-
-    @SerializedName("call_onhold_notification")
-    CALL_ON_HOLD_NOTIFICATION("call_onhold_notification"),
-
-    @SerializedName("call_resume_notification")
-    CALL_RESUME_NOTIFICATION("call_resume_notification"),
-
-    @SerializedName("call_connected_notification")
-    CALL_CONNECTED_NOTIFICATION("call_connected_notification"),
-
     @SerializedName("GROUP_CHAT_MESSAGE_NOTIFICATION")
     GROUP_CHAT_MESSAGE_NOTIFICATION("GROUP_CHAT_MESSAGE_NOTIFICATION"),
 
@@ -185,9 +161,6 @@ enum class NotificationAction(val type: String) {
 
     @SerializedName("OPEN_FREE_TRIAL_SCREEN")
     ACTION_OPEN_FREE_TRIAL_SCREEN("OPEN_FREE_TRIAL_SCREEN"),
-
-    @SerializedName("CALL_DECLINE_NOTIFICATION")
-    CALL_DECLINE_NOTIFICATION("CALL_DECLINE_NOTIFICATION"),
 
     @SerializedName("open_groups")
     ACTION_OPEN_GROUPS("open_groups"),

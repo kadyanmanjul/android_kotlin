@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import android.widget.ImageView
 
 import androidx.appcompat.widget.AppCompatEditText
 import androidx.appcompat.widget.AppCompatImageView
@@ -173,4 +174,18 @@ fun setOnSearch(view: AppCompatEditText, query: MutableStateFlow<String>) {
 @BindingAdapter("textColor")
 fun JoshTextView.setTextColor(value: String) {
     this.setTextColor(Color.parseColor(value))
+}
+
+@BindingAdapter(value = ["groupChatScreenBackground"], requireAll = false)
+fun groupChatScreenBackground(chatBg: View, image: Int) {
+    try {
+        if (image==0) {
+            chatBg.setBackgroundResource(R.color.chat_bg_color)
+        } else {
+            chatBg.setBackgroundResource(image)
+        }
+    }catch (e:Exception){
+        chatBg.setBackgroundResource(R.color.chat_bg_color)
+        e.printStackTrace()
+    }
 }

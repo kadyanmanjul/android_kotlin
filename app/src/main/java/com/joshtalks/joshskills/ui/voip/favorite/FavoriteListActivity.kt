@@ -16,7 +16,6 @@ import com.joshtalks.joshskills.ui.fpp.BaseFppActivity
 import com.joshtalks.joshskills.ui.fpp.RecentCallActivity
 import com.joshtalks.joshskills.ui.fpp.constants.*
 import com.joshtalks.joshskills.ui.userprofile.UserProfileActivity
-import com.joshtalks.joshskills.ui.voip.WebRtcActivity
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity
 import com.joshtalks.joshskills.voip.constant.Category
 
@@ -79,11 +78,6 @@ class FavoriteListActivity : BaseFppActivity() {
                 FAV_CLICK_ON_PROFILE ->{
                     if (it.obj != null)
                         openProfileScreen(it.obj.toString(), it.arg1)
-                }
-                OPEN_CALL_SCREEN ->{
-                    if (it.obj != null) {
-                        callScreenOpen(it.obj as Int)
-                    }
                 }
                 OPEN_RECENT_SCREEN -> openRecentScreen()
                 ENABLE_ACTION_MODE -> enableMode()
@@ -168,14 +162,5 @@ class FavoriteListActivity : BaseFppActivity() {
                 activity.startActivity(it)
             }
         }
-    }
-
-    private fun callScreenOpen(uid: Int) {
-        val intent =
-            WebRtcActivity.getFavMissedCallbackIntent(uid, this).apply {
-                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            }
-        startActivity(intent)
     }
 }

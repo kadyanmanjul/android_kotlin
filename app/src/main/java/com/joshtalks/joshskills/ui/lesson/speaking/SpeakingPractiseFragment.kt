@@ -3,7 +3,6 @@ package com.joshtalks.joshskills.ui.lesson.speaking
 import android.animation.TimeAnimator
 import android.app.AlertDialog
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Paint
 import android.graphics.drawable.ClipDrawable
@@ -28,7 +27,6 @@ import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.core.*
-import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.GoalKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
@@ -52,11 +50,8 @@ import com.joshtalks.joshskills.ui.lesson.LessonSpotlightState
 import com.joshtalks.joshskills.ui.lesson.LessonViewModel
 import com.joshtalks.joshskills.ui.lesson.SPEAKING_POSITION
 import com.joshtalks.joshskills.ui.senior_student.SeniorStudentActivity
-import com.joshtalks.joshskills.ui.voip.SearchingUserActivity
-import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.joshtalks.joshskills.ui.voip.favorite.FavoriteListActivity
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
-import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.voipLog
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity
 import com.joshtalks.joshskills.voip.constant.Category
 import com.joshtalks.joshskills.voip.constant.State
@@ -96,12 +91,15 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
     private var mCurrentLevel = 0
     private var mClipDrawable: ClipDrawable? = null
     private var beforeAnimation: GradientDrawable? = null
-    private var isIntroVideoEnabled = false
     private var lessonNo = 0
     private var beforeTwoMinTalked = -1
     private var afterTwoMinTalked = -1
     private val twoMinutes: Int = 2
-    private var isTwentyMinFtuCallActive = PrefManager.getBoolValue(IS_TWENTY_MIN_CALL_ENABLED)
+    private val fiveMinutes: Int = 5
+    private val tenMinutes: Int = 10
+    private val twentyMinutes: Int = 20
+    private var isTwentyMinFtuCallActive = false
+    private var isIntroVideoEnabled = false
     private var lessonID = -1
 
     private var openCallActivity: ActivityResultLauncher<Intent> = registerForActivityResult(
@@ -120,15 +118,6 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
             "कोर्स का सबसे मज़ेदार हिस्सा।",
             "यहाँ हम एक प्रैक्टिस पार्टनर के साथ निडर होकर इंग्लिश बोलने का अभ्यास करेंगे"
         )
-    }
-
-    fun onReceiveABTestData(abTestCampaignData: ABTestCampaignData?) {
-        abTestCampaignData?.let { map ->
-            isIntroVideoEnabled =
-                (map.variantKey == VariantKeys.SIV_ENABLED.name) && map.variableMap?.isEnabled == true
-        }
-        initDemoViews(lessonNo)
-
     }
 
     override fun onAttach(context: Context) {
@@ -150,9 +139,6 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         binding.vm = viewModel
         binding.rootView.layoutTransition?.setAnimateParentHierarchy(false)
         binding.markAsCorrect.isVisible = BuildConfig.DEBUG
-        if (PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID)
-            binding.imgRecentCallsHistory.visibility = VISIBLE
-        // showTooltip()
         return binding.rootView
     }
 
@@ -176,7 +162,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
     private fun getVoipState(): State? {
         try {
             return requireActivity().getVoipState()
-        }catch (ex:java.lang.Exception){
+        } catch (ex: java.lang.Exception) {
             showToast("Please retry again later")
             ex.printStackTrace()
         }
@@ -205,6 +191,10 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
     }
 
     private fun addObservers() {
+        viewModel.abTestRepository.apply {
+            isTwentyMinFtuCallActive = isVariantActive(VariantKeys.TWENTY_MIN_ENABLED)
+            isIntroVideoEnabled = isVariantActive(VariantKeys.SIV_ENABLED)
+        }
         viewModel.lessonId.observe(viewLifecycleOwner) {
             lessonID = it
         }
@@ -239,35 +229,27 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                 .addParam(ParamKeys.LESSON_NUMBER, lessonNo)
                 .addParam(ParamKeys.VIA, "speaking screen")
                 .push()
-
-            if (PrefManager.getIntValue(IS_VOIP_NEW_ARCH_ENABLED, defValue = 1) == 1) {
-                val state = getVoipState()
-                Log.d(TAG, " Start Call Button - Voip State $state")
-                if (state == State.IDLE && WebRtcService.isCallOnGoing.value == false) {
-                    if (checkPstnState() == PSTNState.Idle) {
-                        if (Utils.isInternetAvailable().not()) {
-                            showToast("Seems like you have no internet")
-                            return@setOnSingleClickListener
-                        }
-                        startPractise(isNewArch = true)
-                    } else {
-                        showToast("Cannot make this call while on another call")
+            viewModel.postGoal(GoalKeys.CALL_PP_CLICKED.NAME, CampaignKeys.ENGLISH_FOR_GOVT_EXAM.NAME)
+            val state = getVoipState()
+            Log.d(TAG, " Start Call Button - Voip State $state")
+            if (state == State.IDLE) {
+                if (checkPstnState() == PSTNState.Idle) {
+                    if (Utils.isInternetAvailable().not()) {
+                        showToast("Seems like you have no internet")
+                        return@setOnSingleClickListener
                     }
-                } else
-                    showToast("Wait for last call to get disconnected")
-            } else {
-                viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
-                if (getVoipState() == State.IDLE && WebRtcService.isCallOnGoing.value == false)
                     startPractise()
-                else
-                    showToast("Wait for last call to get disconnected")
-            }
+                } else {
+                    showToast("Cannot make this call while on another call")
+                }
+            } else
+                showToast("Wait for last call to get disconnected")
         }
 
         binding.btnGroupCall.setOnClickListener {
             if (PrefManager.getBoolValue(IS_LOGIN_VIA_TRUECALLER))
                 viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
-            if (getVoipState() == State.IDLE && WebRtcService.isCallOnGoing.value == false) {
+            if (getVoipState() == State.IDLE) {
                 val intent = Intent(requireActivity(), JoshVoipGroupActivity::class.java).apply {
                     putExtra(CONVERSATION_ID, getConversationId())
                 }
@@ -282,28 +264,20 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         }
 
         viewModel.speakingSpotlightClickLiveData.observe(viewLifecycleOwner) {
-            if (PrefManager.getIntValue(IS_VOIP_NEW_ARCH_ENABLED, defValue = 1) == 1) {
-                val state = getVoipState()
-                Log.d(TAG, " Start Call Button - Voip State $state")
-                if (state == State.IDLE && WebRtcService.isCallOnGoing.value == false) {
-                    if (checkPstnState() == PSTNState.Idle) {
-                        if (Utils.isInternetAvailable().not()) {
-                            showToast("Seems like you have no internet")
-                            return@observe
-                        }
-                        startPractise(isNewArch = true)
-                    } else {
-                        showToast("Cannot make this call while on another call")
+            val state = getVoipState()
+            Log.d(TAG, " Start Call Button - Voip State $state")
+            if (state == State.IDLE) {
+                if (checkPstnState() == PSTNState.Idle) {
+                    if (Utils.isInternetAvailable().not()) {
+                        showToast("Seems like you have no internet")
+                        return@observe
                     }
-                } else
-                    showToast("Wait for last call to get disconnected")
-            } else {
-                viewModel.saveTrueCallerImpression(IMPRESSION_TRUECALLER_P2P)
-                if (getVoipState() == State.IDLE && WebRtcService.isCallOnGoing.value == false)
                     startPractise()
-                else
-                    showToast("Wait for last call to get disconnected")
-            }
+                } else {
+                    showToast("Cannot make this call while on another call")
+                }
+            } else
+                showToast("Wait for last call to get disconnected")
         }
 
         binding.btnContinue.setOnClickListener {
@@ -343,7 +317,14 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                     } else if (response.alreadyTalked >= twoMinutes) {
                         beforeTwoMinTalked = afterTwoMinTalked
                         afterTwoMinTalked = 1
+                        viewModel.postGoal(GoalKeys.CALL_2MIN_COMPLETE.NAME, CampaignKeys.ENGLISH_FOR_GOVT_EXAM.NAME)
                     }
+                    if (response.alreadyTalked >= fiveMinutes)
+                        viewModel.postGoal(GoalKeys.CALL_5MIN_COMPLETE.NAME, CampaignKeys.ENGLISH_FOR_GOVT_EXAM.NAME)
+                    if (response.alreadyTalked >= tenMinutes)
+                        viewModel.postGoal(GoalKeys.CALL_10MIN_COMPLETE.NAME, CampaignKeys.ENGLISH_FOR_GOVT_EXAM.NAME)
+                    if (response.alreadyTalked >= twentyMinutes)
+                        viewModel.postGoal(GoalKeys.CALL_20MIN_COMPLETE.NAME, CampaignKeys.ENGLISH_FOR_GOVT_EXAM.NAME)
 
                     if (beforeTwoMinTalked == 0 && afterTwoMinTalked == 1 && topicId != null && topicId == LESSON_ONE_TOPIC_ID && PrefManager.getBoolValue(
                             IS_FREE_TRIAL_CAMPAIGN_ACTIVE
@@ -524,7 +505,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                 .addParam(ParamKeys.LESSON_ID, lessonID)
                 .addParam(ParamKeys.LESSON_NUMBER, lessonNo)
                 .push()
-            if (getVoipState() == State.IDLE && WebRtcService.isCallOnGoing.value == false)
+            if (getVoipState() == State.IDLE)
                 startPractise(favoriteUserCall = false, isNewUserCall = true)
             else
                 showToast("Wait for last call to get disconnected")
@@ -571,7 +552,6 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         viewModel.lessonLiveData.observe(viewLifecycleOwner) {
             try {
                 lessonNo = it?.lessonNo ?: 0
-                viewModel.getSpeakingABTestCampaign(CampaignKeys.SPEAKING_INTRODUCTION_VIDEO.name)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -582,9 +562,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                 binding.btnCallDemo.visibility = View.GONE
             }
         }
-        viewModel.speakingABtestLiveData.observe(requireActivity()) {
-            onReceiveABTestData(it)
-        }
+        initDemoViews(lessonNo)
     }
 
     private fun postSpeakingScreenSeenGoal() {
@@ -706,22 +684,12 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
     private fun startPractise(
         favoriteUserCall: Boolean = false,
         isNewUserCall: Boolean = false,
-        isNewArch: Boolean = true,
     ) {
         PrefManager.put(CALL_BTN_CLICKED, true)
         if (isAdded && activity != null) {
             if (PermissionUtils.isCallingPermissionEnabled(requireContext())) {
-                if (isNewArch) {
-                    startPracticeCall()
-                    return
-                } else {
-                    startPractiseSearchScreen(
-                        favoriteUserCall = favoriteUserCall,
-                        isNewUserCall = isNewUserCall
-                    )
-                    return
-                }
-
+                startPracticeCall()
+                return
             }
         }
         if (isAdded && activity != null) {
@@ -731,23 +699,19 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                     override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                         report?.areAllPermissionsGranted()?.let { flag ->
                             if (report.isAnyPermissionPermanentlyDenied) {
-                                PermissionUtils.callingPermissionPermanentlyDeniedDialog(
-                                    requireActivity(),
-                                    message = R.string.call_start_permission_message
-                                )
-                                return
-                            }
-                            if (flag) {
-                                if (isNewArch) {
-                                    startPracticeCall()
-                                    return
-                                } else {
-                                    startPractiseSearchScreen(
-                                        favoriteUserCall = favoriteUserCall,
-                                        isNewUserCall = isNewUserCall
+                                if (isAdded && activity!=null) {
+                                    PermissionUtils.callingPermissionPermanentlyDeniedDialog(
+                                        requireActivity(),
+                                        message = R.string.call_start_permission_message
                                     )
                                     return
+                                }else{
+                                    showToast(getString(R.string.something_went_wrong))
                                 }
+                            }
+                            if (flag) {
+                                startPracticeCall()
+                                return
                             } else {
                                 MaterialDialog(requireActivity()).show {
                                     message(R.string.call_start_permission_message)
@@ -768,28 +732,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         }
     }
 
-    private fun startPractiseSearchScreen(
-        favoriteUserCall: Boolean = false,
-        isNewUserCall: Boolean = false,
-    ) {
-        viewModel.speakingTopicLiveData.value?.run {
-            if (isCallOngoing(R.string.call_engage_initiate_call_message).not()) {
-                openCallActivity.launch(
-                    SearchingUserActivity.startUserForPractiseOnPhoneActivity(
-                        requireActivity(),
-                        courseId = courseId,
-                        topicId = id,
-                        topicName = topicName,
-                        favoriteUserCall = favoriteUserCall,
-                        isNewUserCall = isNewUserCall,
-                        conversationId = getConversationId()
-                    )
-                )
-            }
-        }
-    }
-
-    fun openNetworkDialog(v:View){
+    fun openNetworkDialog(v: View) {
         if (isAdded && activity != null) {
             val dialog = AlertDialog.Builder(context)
             dialog
@@ -799,7 +742,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         }
     }
 
-    fun openRatingDialog(v:View){
+    fun openRatingDialog(v: View) {
         if (isAdded && activity != null) {
             val rating = 7
             val dialog = AlertDialog.Builder(context)
@@ -822,9 +765,9 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
     }
 
     private fun startPracticeCall() {
-        if (isAdded && activity!=null) {
+        if (isAdded && activity != null) {
             PrefManager.increaseCallCount()
-            if(PrefManager.getCallCount()==3)
+            if (PrefManager.getCallCount() == 3)
                 viewModel.getRating()
 
             val callIntent = Intent(requireActivity(), VoiceCallActivity::class.java)
@@ -834,7 +777,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                 putExtra(STARTING_POINT, FROM_ACTIVITY)
                 putExtra(INTENT_DATA_CALL_CATEGORY, Category.PEER_TO_PEER.ordinal)
             }
-             startActivity(callIntent)
+            startActivity(callIntent)
         }
     }
 

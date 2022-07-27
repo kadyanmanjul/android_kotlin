@@ -208,8 +208,9 @@ class LauncherActivity : CoreJoshActivity(), Branch.BranchReferralInitListener {
     }
 
     private fun startNextActivity() {
+        WorkManagerAdmin.appStartWorker()
         lifecycleScope.launch {
-            WorkManagerAdmin.appStartWorker()
+            viewModel.updateABTestCampaigns()
             AppObjectController.uiHandler.removeCallbacksAndMessages(null)
             if (testId.isNullOrEmpty().not()) {
                 navigateToCourseDetailsScreen()
@@ -262,7 +263,6 @@ class LauncherActivity : CoreJoshActivity(), Branch.BranchReferralInitListener {
                 }
             }
             isUserProfileNotComplete() -> Intent(this@LauncherActivity, SignUpActivity::class.java)
-            containsFavUserCallBackUrl() -> getWebRtcActivityIntent()
             jsonParams != null -> if (DeepLinkRedirectUtil.getIntent(
                     this@LauncherActivity,
                     jsonParams!!,
@@ -331,6 +331,9 @@ class LauncherActivity : CoreJoshActivity(), Branch.BranchReferralInitListener {
                 }
                 if (jsonParams.has(DeepLinkData.REDIRECT_TO.key)) {
                     this.jsonParams = jsonParams
+                    if(jsonParams.getString(DeepLinkData.REDIRECT_TO.key) == DeepLinkRedirect.LOGIN.key){
+                        PrefManager.put(LOGIN_ONBOARDING, true)
+                    }
                     viewModel.saveDeepLinkImpression(
                         deepLink = (
                                 if (jsonParams.has(DeepLinkData.REFERRING_LINK.key))

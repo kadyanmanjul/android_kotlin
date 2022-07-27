@@ -2,7 +2,6 @@ package com.joshtalks.joshskills.ui.group.analytics.data.local
 
 import androidx.annotation.Nullable
 import androidx.room.*
-import com.joshtalks.joshskills.ui.voip.analytics.data.local.VoipAnalyticsEntity
 
 @Dao
 interface GroupsAnalyticsDao {

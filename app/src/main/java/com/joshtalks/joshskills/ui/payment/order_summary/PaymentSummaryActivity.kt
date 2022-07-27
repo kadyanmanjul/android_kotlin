@@ -48,6 +48,7 @@ import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIA
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.PAYMENT_SUMMARY_CTA_LABEL_FREE
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.GoalKeys
+import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.core.analytics.*
 import com.joshtalks.joshskills.databinding.ActivityPaymentSummaryBinding
 import com.joshtalks.joshskills.messaging.RxBus2
@@ -66,7 +67,6 @@ import com.joshtalks.joshskills.ui.referral.EnterReferralCodeFragment
 import com.joshtalks.joshskills.ui.signup.FLOW_FROM
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.ui.startcourse.StartCourseActivity
-import com.joshtalks.joshskills.ui.voip.IS_DEMO_P2P
 import com.razorpay.Checkout
 import com.razorpay.PaymentResultListener
 import com.singular.sdk.Singular
@@ -489,7 +489,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         }
 
         if(binding.materialButton.text != AppObjectController.getFirebaseRemoteConfig().getString(FREE_TRIAL_PAYMENT_BTN_TXT)) {
-            if(PrefManager.getBoolValue(INCREASE_COURSE_PRICE_CAMPAIGN_ACTIVE)) {
+            if(viewModel.abTestRepository.isVariantActive(VariantKeys.ICP_ENABLED)) {
                 viewModel.postGoal("ICP_BUY_PAGE_SEEN",CampaignKeys.INCREASE_COURSE_PRICE.name)
             }
         }
@@ -868,7 +868,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                 .getString(FirebaseRemoteConfigKey.FREE_TRIAL_POPUP_HUNDRED_POINTS_TEXT + testId)
                 .replace("\\n", "\n")
         }else{
-            popUpText =   if(PrefManager.getBoolValue(INCREASE_COURSE_PRICE_ABTEST) && testId == ENGLISH_FREE_TRIAL_1D_TEST_ID){
+            popUpText =   if(viewModel.abTestRepository.isVariantActive(VariantKeys.ICP_ENABLED) && testId == ENGLISH_FREE_TRIAL_1D_TEST_ID){
                 getString(R.string.free_trial_popup_for_icp)
             }
             else {
@@ -942,12 +942,11 @@ class PaymentSummaryActivity : CoreJoshActivity(),
 
     @Synchronized
     override fun onPaymentSuccess(razorpayPaymentId: String) {
+        Singular.event(SingularEvent.PAYMENT_SUCCESS_EVENT.name)
         if(viewModel.getPaymentTestId() == ENGLISH_COURSE_TEST_ID) {
-            PrefManager.getBoolValue(INCREASE_COURSE_PRICE_CAMPAIGN_ACTIVE)
             viewModel.postGoal("ICP_COURSE_BOUGHT",CampaignKeys.INCREASE_COURSE_PRICE.name)
         }
         else if(viewModel.getPaymentTestId() == SUBSCRIPTION_TEST_ID) {
-            PrefManager.getBoolValue(INCREASE_COURSE_PRICE_CAMPAIGN_ACTIVE)
             viewModel.postGoal("ICP_SUBSCRIPTION_BOUGHT",CampaignKeys.INCREASE_COURSE_PRICE.name)
         }
 
@@ -959,9 +958,6 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         MixPanelTracker.mixPanel.people.set(obj)
         MixPanelTracker.mixPanel.registerSuperProperties(obj)
 
-        if (PrefManager.getBoolValue(IS_DEMO_P2P, defValue = false)) {
-            PrefManager.put(IS_DEMO_P2P, false)
-        }
         val freeTrialTestId = AppObjectController.getFirebaseRemoteConfig()
             .getString(FirebaseRemoteConfigKey.FREE_TRIAL_PAYMENT_TEST_ID)
         if (testId == freeTrialTestId) {
@@ -1010,6 +1006,8 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                 mapOf(
                     Pair(ParamKeys.TEST_ID.name, viewModel.getPaymentTestId()),
                     Pair(ParamKeys.IS_COUPON_APPLIED.name, viewModel.responsePaymentSummary.value?.couponDetails?.isPromoCode),
+                    Pair(ParamKeys.PAYMENT_ID.name, razorpayPaymentId),
+                    Pair(ParamKeys.DEVICE_ID.name, Utils.getDeviceId())
                 )
             )
         } catch (e: Exception) {
@@ -1042,27 +1040,6 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             bundle.putString(FirebaseAnalytics.Param.CURRENCY, CurrencyType.INR.name)
             AppObjectController.firebaseAnalytics.logEvent(FirebaseAnalytics.Event.PURCHASE, bundle)
 
-            /* try {
-                 val params = Bundle().apply {
-                     putString(
-                         AppEventsConstants.EVENT_PARAM_CONTENT_ID,
-                         viewModel.getPaymentTestId()
-                     )
-                     putString(
-                         AppEventsConstants.EVENT_PARAM_SUCCESS,
-                         AppEventsConstants.EVENT_PARAM_VALUE_YES
-                     )
-                     putString(AppEventsConstants.EVENT_PARAM_CURRENCY, CurrencyType.INR.name)
-                 }
-                 AppEventsLogger.newLogger(this).logPurchase(
-                     viewModel.getCourseDiscountedAmount().toBigDecimal(),
-                     Currency.getInstance(viewModel.getCurrency().trim()),
-                     params
-                 )
-             } catch (ex: Exception) {
-                 ex.printStackTrace()
-                 FirebaseCrashlytics.getInstance().recordException(ex)
-             }*/
             val extras: HashMap<String, String> = HashMap()
             extras["test_id"] = viewModel.getPaymentTestId()
             extras["payment_id"] = razorpayPaymentId
