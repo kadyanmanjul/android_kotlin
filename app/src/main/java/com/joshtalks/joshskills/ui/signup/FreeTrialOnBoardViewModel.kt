@@ -199,7 +199,7 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
         }
     }
 
-    fun getAvailableGoals() {
+    fun getAvailableCourseGoals() {
         viewModelScope.launch {
             try {
                 val response = service.getAvailableGoals()

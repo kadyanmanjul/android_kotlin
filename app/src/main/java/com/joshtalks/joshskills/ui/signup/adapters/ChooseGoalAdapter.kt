@@ -19,7 +19,7 @@ class ChooseGoalAdapter : RecyclerView.Adapter<ChooseGoalAdapter.ChooseLanguageI
     }
 
     private val differ = AsyncListDiffer(this, diffUtil)
-    private var onLanguageItemClick: ((GoalSelectionResponse) -> Unit)? = null
+    private var onGoalItemClick: ((GoalSelectionResponse) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChooseLanguageItemViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -28,8 +28,8 @@ class ChooseGoalAdapter : RecyclerView.Adapter<ChooseGoalAdapter.ChooseLanguageI
     }
 
     override fun onBindViewHolder(holder: ChooseLanguageItemViewHolder, position: Int) {
-        val language = differ.currentList[position]
-        holder.bind(language)
+        val goal = differ.currentList[position]
+        holder.bind(goal)
     }
 
     override fun getItemCount(): Int = differ.currentList.size
@@ -44,16 +44,16 @@ class ChooseGoalAdapter : RecyclerView.Adapter<ChooseGoalAdapter.ChooseLanguageI
             with(binding) {
                 tvLanguage.text = selectedGoal.goal
                 container.setOnClickListener {
-                    onLanguageItemClick?.invoke(selectedGoal)
+                    onGoalItemClick?.invoke(selectedGoal)
                 }
                 tvLanguage.setOnClickListener {
-                    onLanguageItemClick?.invoke(selectedGoal)
+                    onGoalItemClick?.invoke(selectedGoal)
                 }
             }
         }
     }
 
     fun setGoalItemClickListener(listener: (GoalSelectionResponse) -> Unit) {
-        onLanguageItemClick = listener
+        onGoalItemClick = listener
     }
 }

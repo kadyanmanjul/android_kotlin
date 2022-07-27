@@ -30,10 +30,9 @@ class ABTestRepository {
                 putABTestData(apiResponse.body()!!)
                 database.insertCampaigns(apiResponse.body()!!)
                 for (i in apiResponse.body()!!) {
-                    if (i.isCampaignActive)
+                    if (i.isCampaignActive) {
                         prop.put(i.campaignKey, i.variantKey)
-                    if (i.campaignKey == "A2_C1") {
-                        if (i.isCampaignActive) {
+                        if (i.campaignKey == "A2_C1") {
                             prop.put("A2_C1", i.variantKey)
                             PrefManager.put(
                                 IS_A2_C1_RETENTION_ENABLED,

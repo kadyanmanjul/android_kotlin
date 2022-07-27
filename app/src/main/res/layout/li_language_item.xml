@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:card_view="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView2"
@@ -10,7 +10,7 @@
         android:padding="@dimen/_4sdp"
         android:layout_marginBottom="@dimen/_20sdp"
         app:cardCornerRadius="@dimen/_8sdp"
-        card_view:cardElevation="0dp">
+        tools:cardElevation="0dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/container"
@@ -38,7 +38,7 @@
                 android:textColorHint="@color/language_item_bg"
                 android:textCursorDrawable="@drawable/cursor_drawable"
                 android:textSize="@dimen/_14ssp"
-                card_view:text="Find a new or a better job"
+                tools:text="Find a new or a better job"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

@@ -14,6 +14,7 @@ import com.joshtalks.joshskills.base.constants.CALLING_SERVICE_ACTION
 import com.joshtalks.joshskills.base.constants.SERVICE_BROADCAST_KEY
 import com.joshtalks.joshskills.base.constants.START_SERVICE
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.abTest.GoalKeys
 import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
@@ -60,6 +61,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
     var countryCode = String()
     var loginViaStatus: LoginViaStatus? = null
     val service = AppObjectController.signUpNetworkService
+    val abTestRepository by lazy { ABTestRepository() }
 
     fun signUpUsingSocial(
         loginViaStatus: LoginViaStatus,
@@ -497,6 +499,12 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                 apiStatus.postValue(ApiCallStatus.FAILED)
                 Timber.e(ex)
             }
+        }
+    }
+
+    fun postGoal(goalKeys: GoalKeys) {
+        viewModelScope.launch {
+            abTestRepository.postGoal(goalKeys.NAME)
         }
     }
 }

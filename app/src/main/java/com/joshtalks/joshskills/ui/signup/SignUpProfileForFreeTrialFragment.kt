@@ -16,6 +16,7 @@ import com.github.razir.progressbutton.showProgress
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.FREE_TRIAL_ENTER_NAME_TEXT
+import com.joshtalks.joshskills.core.abTest.GoalKeys
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.MixPanelEvent
@@ -169,6 +170,7 @@ class SignUpProfileForFreeTrialFragment : BaseSignUpFragment() {
 
         viewModel.completingProfile(requestMap, isUserVerified)
         PrefManager.put(ONBOARDING_STAGE, OnBoardingStage.NAME_ENTERED.value)
+        viewModel.postGoal(GoalKeys.NAME_SUBMITTED)
     }
 
     private fun moveToInboxScreen() {

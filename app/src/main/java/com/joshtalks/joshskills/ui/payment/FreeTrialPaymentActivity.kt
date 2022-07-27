@@ -1025,6 +1025,7 @@ class FreeTrialPaymentActivity : CoreJoshActivity(),
         } else {
             viewModel.saveImpression(IMPRESSION_PAY_FULL_FEES)
         }
+        viewModel.postGoal(GoalKeys.PAYMENT_COMPLETE.NAME, CampaignKeys.ENGLISH_FOR_GOVT_EXAM.NAME)
         if (PrefManager.getBoolValue(IS_DEMO_P2P, defValue = false)) {
             PrefManager.put(IS_DEMO_P2P, false)
         }

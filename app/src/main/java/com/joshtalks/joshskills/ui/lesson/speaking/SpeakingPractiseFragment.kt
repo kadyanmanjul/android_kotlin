@@ -3,7 +3,6 @@ package com.joshtalks.joshskills.ui.lesson.speaking
 import android.animation.TimeAnimator
 import android.app.AlertDialog
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Paint
 import android.graphics.drawable.ClipDrawable
@@ -28,7 +27,6 @@ import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.constants.*
 import com.joshtalks.joshskills.core.*
-import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
 import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.GoalKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
@@ -56,7 +54,6 @@ import com.joshtalks.joshskills.ui.voip.SearchingUserActivity
 import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.joshtalks.joshskills.ui.voip.favorite.FavoriteListActivity
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.getVoipState
-import com.joshtalks.joshskills.ui.voip.new_arch.ui.viewmodels.voipLog
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.views.VoiceCallActivity
 import com.joshtalks.joshskills.voip.constant.Category
 import com.joshtalks.joshskills.voip.constant.State
@@ -100,6 +97,9 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
     private var beforeTwoMinTalked = -1
     private var afterTwoMinTalked = -1
     private val twoMinutes: Int = 2
+    private val fiveMinutes: Int = 5
+    private val tenMinutes: Int = 10
+    private val twentyMinutes: Int = 20
     private var isTwentyMinFtuCallActive = false
     private var isIntroVideoEnabled = false
     private var lessonID = -1
@@ -164,7 +164,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
     private fun getVoipState(): State? {
         try {
             return requireActivity().getVoipState()
-        }catch (ex:java.lang.Exception){
+        } catch (ex: java.lang.Exception) {
             showToast("Please retry again later")
             ex.printStackTrace()
         }
@@ -194,8 +194,8 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
 
     private fun addObservers() {
         viewModel.abTestRepository.apply {
-            isTwentyMinFtuCallActive = viewModel.abTestRepository.isVariantActive(VariantKeys.TWENTY_MIN_ENABLED)
-            isIntroVideoEnabled = viewModel.abTestRepository.isVariantActive(VariantKeys.SIV_ENABLED)
+            isTwentyMinFtuCallActive = isVariantActive(VariantKeys.TWENTY_MIN_ENABLED)
+            isIntroVideoEnabled = isVariantActive(VariantKeys.SIV_ENABLED)
         }
         viewModel.lessonId.observe(viewLifecycleOwner) {
             lessonID = it
@@ -231,7 +231,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                 .addParam(ParamKeys.LESSON_NUMBER, lessonNo)
                 .addParam(ParamKeys.VIA, "speaking screen")
                 .push()
-
+            viewModel.postGoal(GoalKeys.CALL_PP_CLICKED.NAME, CampaignKeys.ENGLISH_FOR_GOVT_EXAM.NAME)
             if (PrefManager.getIntValue(IS_VOIP_NEW_ARCH_ENABLED, defValue = 1) == 1) {
                 val state = getVoipState()
                 Log.d(TAG, " Start Call Button - Voip State $state")
@@ -335,7 +335,14 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                     } else if (response.alreadyTalked >= twoMinutes) {
                         beforeTwoMinTalked = afterTwoMinTalked
                         afterTwoMinTalked = 1
+                        viewModel.postGoal(GoalKeys.CALL_2MIN_COMPLETE.NAME, CampaignKeys.ENGLISH_FOR_GOVT_EXAM.NAME)
                     }
+                    if (response.alreadyTalked >= fiveMinutes)
+                        viewModel.postGoal(GoalKeys.CALL_5MIN_COMPLETE.NAME, CampaignKeys.ENGLISH_FOR_GOVT_EXAM.NAME)
+                    if (response.alreadyTalked >= tenMinutes)
+                        viewModel.postGoal(GoalKeys.CALL_10MIN_COMPLETE.NAME, CampaignKeys.ENGLISH_FOR_GOVT_EXAM.NAME)
+                    if (response.alreadyTalked >= twentyMinutes)
+                        viewModel.postGoal(GoalKeys.CALL_20MIN_COMPLETE.NAME, CampaignKeys.ENGLISH_FOR_GOVT_EXAM.NAME)
 
                     if (beforeTwoMinTalked == 0 && afterTwoMinTalked == 1 && topicId != null && topicId == LESSON_ONE_TOPIC_ID && PrefManager.getBoolValue(
                             IS_FREE_TRIAL_CAMPAIGN_ACTIVE
@@ -786,7 +793,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         }
     }
 
-    fun openNetworkDialog(v:View){
+    fun openNetworkDialog(v: View) {
         if (isAdded && activity != null) {
             val dialog = AlertDialog.Builder(context)
             dialog
@@ -796,7 +803,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
         }
     }
 
-    fun openRatingDialog(v:View){
+    fun openRatingDialog(v: View) {
         if (isAdded && activity != null) {
             val rating = 7
             val dialog = AlertDialog.Builder(context)
@@ -819,9 +826,9 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
     }
 
     private fun startPracticeCall() {
-        if (isAdded && activity!=null) {
+        if (isAdded && activity != null) {
             PrefManager.increaseCallCount()
-            if(PrefManager.getCallCount()==3)
+            if (PrefManager.getCallCount() == 3)
                 viewModel.getRating()
 
             val callIntent = Intent(requireActivity(), VoiceCallActivity::class.java)
@@ -831,7 +838,7 @@ class SpeakingPractiseFragment : CoreJoshFragment() {
                 putExtra(STARTING_POINT, FROM_ACTIVITY)
                 putExtra(INTENT_DATA_CALL_CATEGORY, Category.PEER_TO_PEER.ordinal)
             }
-             startActivity(callIntent)
+            startActivity(callIntent)
         }
     }
 

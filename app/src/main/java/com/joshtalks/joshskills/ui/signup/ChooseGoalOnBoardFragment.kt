@@ -9,7 +9,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
-import com.joshtalks.joshskills.core.abTest.VariantKeys
+import com.joshtalks.joshskills.core.ApiCallStatus.*
+import com.joshtalks.joshskills.core.abTest.GoalKeys
 import com.joshtalks.joshskills.databinding.FragmentChooseLanguageOnboardBinding
 import com.joshtalks.joshskills.quizgame.util.UpdateReceiver
 import com.joshtalks.joshskills.repository.server.GoalSelectionResponse
@@ -20,8 +21,6 @@ import com.joshtalks.joshskills.ui.special_practice.utils.ErrorView
 class ChooseGoalOnBoardFragment : BaseFragment() {
     private lateinit var binding: FragmentChooseLanguageOnboardBinding
     private var goalAdapter = ChooseGoalAdapter()
-    private var is100PointsActive = false
-    private var eftActive = false
     private var errorView: Stub<ErrorView>? = null
 
     val viewModel by lazy {
@@ -60,7 +59,7 @@ class ChooseGoalOnBoardFragment : BaseFragment() {
         addObservers()
         errorView = Stub(view.findViewById(R.id.error_view))
         if (UpdateReceiver.isNetworkAvailable()) {
-            viewModel.getAvailableGoals()
+            viewModel.getAvailableCourseGoals()
             errorView?.resolved()?.let {
                 errorView!!.get().onSuccess()
             }
@@ -68,7 +67,7 @@ class ChooseGoalOnBoardFragment : BaseFragment() {
             errorView?.resolved().let {
                 errorView?.get()?.onFailure(object : ErrorView.ErrorCallback {
                     override fun onRetryButtonClicked() {
-                        viewModel.getAvailableGoals()
+                        viewModel.getAvailableCourseGoals()
                     }
                 })
             }
@@ -76,10 +75,6 @@ class ChooseGoalOnBoardFragment : BaseFragment() {
     }
 
     private fun addObservers() {
-        viewModel.abTestRepository.apply {
-            eftActive = isVariantActive(VariantKeys.EFT_ENABLED)
-            is100PointsActive = isVariantActive(VariantKeys.POINTS_HUNDRED_ENABLED)
-        }
         viewModel.availableGoals.observe(viewLifecycleOwner) {
             errorView?.resolved()?.let {
                 errorView!!.get().onSuccess()
@@ -101,7 +96,16 @@ class ChooseGoalOnBoardFragment : BaseFragment() {
 
 
     fun onGoalSelected(goalSelectionResponse: GoalSelectionResponse) {
-        (requireActivity() as FreeTrialOnBoardActivity).showStartTrialPopup(goalSelectionResponse.testId ?: HINDI_TO_ENGLISH_TEST_ID)
+        if (goalSelectionResponse.testId != null) {
+            viewModel.postGoal(GoalKeys.GOVT_EXAMS_SELECTED)
+        }
+        try {
+            (requireActivity() as FreeTrialOnBoardActivity).showStartTrialPopup(
+                goalSelectionResponse.testId ?: HINDI_TO_ENGLISH_TEST_ID
+            )
+        } catch (e: Exception) {
+            showToast(getString(R.string.something_went_wrong))
+        }
     }
 
     fun onBackPressed() {
