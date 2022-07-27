@@ -37,7 +37,7 @@ class AudioPlayerService: MediaBrowserServiceCompat() {
         var curSongDuration = 0L
                 private set
 
-         val actualSong = MediaMetadataCompat.Builder()
+         var actualSong = MediaMetadataCompat.Builder()
              .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, "test")
              .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, "12345")
              .putString(MediaMetadataCompat.METADATA_KEY_TITLE, "test")
@@ -48,6 +48,10 @@ class AudioPlayerService: MediaBrowserServiceCompat() {
              .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE, "test")
              .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_DESCRIPTION, "test")
              .build()!!
+
+//        fun setActualAudio(){
+//            actualSong =
+//        }
 
     }
 

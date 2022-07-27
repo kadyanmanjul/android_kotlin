@@ -548,7 +548,7 @@ class FeedActivity : AppCompatActivity(), FeedAdapter.ConversationRoomItemCallba
     }
 
     override fun playRoom(room: RoomListResponseItem, view: View) {
-        RecordedRoomFragment.open(this,"Feed", room.recordings?.get(0)?.url)
+        RecordedRoomFragment.open(this,"Feed", room)
     }
 
     private fun takePermissions(

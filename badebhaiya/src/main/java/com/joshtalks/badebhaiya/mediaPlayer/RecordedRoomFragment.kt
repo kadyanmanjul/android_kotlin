@@ -23,6 +23,7 @@ import com.joshtalks.badebhaiya.core.NotificationChannelNames
 import com.joshtalks.badebhaiya.core.showToast
 import com.joshtalks.badebhaiya.databinding.FragmentRecordRoomBinding
 import com.joshtalks.badebhaiya.feed.FeedViewModel
+import com.joshtalks.badebhaiya.feed.model.Room
 import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
 import com.joshtalks.badebhaiya.feed.model.SpeakerData
 import com.joshtalks.badebhaiya.liveroom.LiveRoomState
@@ -48,8 +49,10 @@ class RecordedRoomFragment : Fragment() {
 
     companion object {
         const val TAG = "RecordedRoomFragment"
+        const val ROOM_DATA = "room_data"
+
         fun newInstance() = RecordedRoomFragment()
-        fun open(activity: AppCompatActivity, from: String, url: String?) {
+        fun open(activity: AppCompatActivity, from: String, room: RoomListResponseItem?) {
 
             val foundFragment = activity.supportFragmentManager.findFragmentByTag(TAG)
 
@@ -62,7 +65,7 @@ class RecordedRoomFragment : Fragment() {
             val fragment = RecordedRoomFragment() // replace your custom fragment class
             val bundle = Bundle()
             bundle.putString("source", from) // use as per your need
-            bundle.putString("url",url)
+            bundle.putParcelable(ROOM_DATA,room)
             fragment.arguments = bundle
 
 
@@ -79,6 +82,7 @@ class RecordedRoomFragment : Fragment() {
     //    private var mediaPlayer : MediaPlayer?=null
     private var from: String = EMPTY
     private var url: String = EMPTY
+     var roomData: RoomListResponseItem? = null
     //
 //    private var mediaPlayer: MediaPlayer? = null
     private var shouldUpdateSeekbar = true
@@ -108,20 +112,21 @@ class RecordedRoomFragment : Fragment() {
 //        binding= DataBindingUtil.setContentView(requireActivity(), R.layout.fragment_record_room)
         binding = FragmentRecordRoomBinding.inflate(inflater, container, false)
         binding.recordedViewModel = viewModel
+        binding.handler = this
 //        viewModel = ViewModelProvider(this).get(RecordedRoomViewModel::class.java)
 
         var mBundle: Bundle? = Bundle()
         mBundle = this.arguments
         from = mBundle?.getString("source").toString()
-        url = mBundle?.getString("url").toString()
+        roomData = mBundle?.getParcelable(ROOM_DATA)
         clickListener()
         attachBackPressedDispatcher()
         Log.i("RECORDS", "onCreateView: $url")
         binding.profilePic.apply {
             clipToOutline = true
             setUserImageRectOrInitials(
-                "https://s3.ap-south-1.amazonaws.com/www.static.skills.com/bb-app//3c137648-af9b-418f-998c-33e76dab09f3.webp",
-                "AKHAND" ?: DEFAULT_NAME,
+                roomData?.speakersData?.photoUrl,
+                roomData?.speakersData?.shortName ?: DEFAULT_NAME,
                 202,
                 true,
                 16,
@@ -129,6 +134,10 @@ class RecordedRoomFragment : Fragment() {
                 bgColor = R.color.conversation_room_gray
             )
         }
+
+        Timber.tag("usercount").d("USERS COUNT => ${roomData?.users_count}")
+
+        Timber.tag("audiostarttime").d("AUDIO START TIME DATA => ${roomData?.displayStartDateTime()}")
 
         binding.userPhoto.apply {
             clipToOutline = true

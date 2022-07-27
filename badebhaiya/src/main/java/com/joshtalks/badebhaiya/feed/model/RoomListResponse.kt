@@ -4,7 +4,13 @@ import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.badebhaiya.core.EMPTY
 import com.joshtalks.badebhaiya.utils.UniqueList
+import com.joshtalks.badebhaiya.utils.Utils
+import com.joshtalks.badebhaiya.utils.datetimeutils.DateTimeStyle
+import com.joshtalks.badebhaiya.utils.datetimeutils.DateTimeUtils
 import kotlinx.android.parcel.Parcelize
+import timber.log.Timber
+import java.util.*
+import kotlin.collections.ArrayList
 
 data class RoomListResponse(
     @SerializedName("live_room")
@@ -55,7 +61,9 @@ data class RoomListResponseItem(
     @SerializedName("previous_room_topic")
     val previousRoomTopic: String,
     var conversationRoomQuestionId: Int? = null,
-    var conversationRoomType: ConversationRoomType? = null
+    var conversationRoomType: ConversationRoomType? = null,
+    @SerializedName("users_count")
+    var users_count: Int? = null
 ) : Parcelable {
     val startTimeDate: Long = startTime ?: 0
         /*get() {
@@ -72,6 +80,23 @@ data class RoomListResponseItem(
                 0
             }
         }*/
+
+    fun getStartDate(): String{
+//        DateTimeUtils.date
+        val date = Utils.getMessageTime((startTime ?: 0L), false, DateTimeStyle.LONG)
+        Timber.tag("audiostarttime").d("START DATE IS => $startTime AND FORMATTED DATE => $date")
+        return date
+    }
+
+    fun getStartTime(): String {
+        val time = Utils.getMessageTimeInHours(Date(startTime ?: 0))
+        Timber.tag("audiostarttime").d("START TIME IS => $startTime AND FORMATTED TIME => $time")
+        return time
+    }
+
+    fun displayStartDateTime() : String {
+        return "${getStartDate()} at ${getStartTime()}"
+    }
 }
 
 enum class ConversationRoomType() {
