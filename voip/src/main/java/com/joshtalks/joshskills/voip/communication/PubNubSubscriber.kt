@@ -1,5 +1,7 @@
 package com.joshtalks.joshskills.voip.communication
 
+import android.os.Build
+import android.os.Build.VERSION.SDK_INT
 import android.util.Log
 import com.google.gson.Gson
 import com.joshtalks.joshskills.voip.Utils
@@ -26,11 +28,9 @@ import com.pubnub.api.models.consumer.pubsub.PNPresenceEventResult
 import com.pubnub.api.models.consumer.pubsub.PNSignalResult
 import com.pubnub.api.models.consumer.pubsub.files.PNFileEventResult
 import com.pubnub.api.models.consumer.pubsub.message_actions.PNMessageActionResult
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.launch
 
 private const val TAG = "PubNubSubscriber"
 internal class PubNubSubscriber(val scope: CoroutineScope) : SubscribeCallback() {
@@ -50,7 +50,9 @@ internal class PubNubSubscriber(val scope: CoroutineScope) : SubscribeCallback()
     fun observeChannelState() : SharedFlow<PubnubState> {
         return stateFlow
     }
-// 19897969509
+
+    var reconectJob : Job? = null
+    // 19897969509
     override fun message(pubnub: PubNub, pnMessageResult: PNMessageResult) {
         scope.launch {
             try {
@@ -84,6 +86,7 @@ internal class PubNubSubscriber(val scope: CoroutineScope) : SubscribeCallback()
         when(status.category) {
             PNConnectedCategory -> {
                 try{
+                    reconectJob?.cancel()
                     scope.launch {
                         val lastMessageTime = PrefManager.getLatestPubnubMessageTime()
                         //Log.d(TAG, "status: Last Msg Time -> $lastMessageTime")
@@ -101,17 +104,37 @@ internal class PubNubSubscriber(val scope: CoroutineScope) : SubscribeCallback()
                 }
             }
             PNReconnectedCategory -> {
+                reconectJob?.cancel()
                 sendEvent(PubnubState.RECONNECTED)
             }
             PNUnexpectedDisconnectCategory -> {
                 // internet got lost
                 //Log.d(TAG, "status: PNUnexpectedDisconnectCategory")
-                pubnub.reconnect();
+                if (SDK_INT <= Build.VERSION_CODES.O) {
+                    if(reconectJob == null || reconectJob?.isCompleted == true) {
+                        reconectJob = scope.launch {
+                            if(isActive)
+                                pubnub.retry()
+                        }
+                    }
+                }
+                else {
+                    pubnub.reconnect()
+                }
             }
             PNTimeoutCategory -> {
                 //reconnect when ready
                 //Log.d(TAG, "status: PNTimeoutCategory")
-                pubnub.reconnect();
+                if (SDK_INT <= Build.VERSION_CODES.O) {
+                    if (reconectJob == null || reconectJob?.isActive == false) {
+                        reconectJob = scope.launch {
+                            if (isActive)
+                                pubnub.retry()
+                        }
+                    }
+                }else{
+                    pubnub.reconnect()
+                }
             }
         }
     }
@@ -142,4 +165,11 @@ internal class PubNubSubscriber(val scope: CoroutineScope) : SubscribeCallback()
     override fun messageAction(pubnub: PubNub, pnMessageActionResult: PNMessageActionResult) {}
 
     override fun file(pubnub: PubNub, pnFileEventResult: PNFileEventResult) {}
+
+    private suspend fun PubNub.retry() {
+        while (true) {
+            reconnect()
+            delay(5000)
+        }
+    }
 }
