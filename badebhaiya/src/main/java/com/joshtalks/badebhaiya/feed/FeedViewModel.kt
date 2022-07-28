@@ -93,6 +93,7 @@ class FeedViewModel : ViewModel() {
     private val jobs = mutableListOf<Job>()
     lateinit var currentRoom:ConversationRoomResponse
     val finishLiveRoom = MutableSharedFlow<Boolean>()
+    val expandRecordedRoom = MutableLiveData<LiveRoomState>()
 
 
 

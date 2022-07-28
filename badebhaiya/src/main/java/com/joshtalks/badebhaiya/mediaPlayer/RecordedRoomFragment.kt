@@ -54,7 +54,18 @@ class RecordedRoomFragment : Fragment() {
         fun open(activity: AppCompatActivity, from: String, room: RoomListResponseItem?, feedViewModel: FeedViewModel? = null) {
 //            LiveRoomFragment.removeIfFound(activity)
 
+
+
             MainScope().launch {
+                AudioPlayerService.playingRoomId?.let {
+                    if (it == room!!.roomId){
+                        feedViewModel?.let { feedVm ->
+                            feedVm.expandRecordedRoom.postValue(LiveRoomState.EXPANDED)
+                            return@launch
+                        }
+                    }
+                }
+
                 feedViewModel?.let {
                     it.finishLiveRoom.emit(true)
                 }
@@ -322,6 +333,15 @@ class RecordedRoomFragment : Fragment() {
     }
 
     fun addObserver() {
+
+        feedViewModel.expandRecordedRoom.observe(viewLifecycleOwner){ roomState ->
+            roomState?.let {
+                when(it){
+                    LiveRoomState.EXPANDED -> expandLiveRoom()
+                    LiveRoomState.COLLAPSED -> {}
+                }
+            }
+        }
 
         viewModel.curSongDuration.observe(viewLifecycleOwner) {
             if (it > 0){
