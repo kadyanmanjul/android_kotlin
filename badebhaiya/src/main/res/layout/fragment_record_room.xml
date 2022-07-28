@@ -18,7 +18,7 @@
     </data>
 
     <com.joshtalks.badebhaiya.custom_ui.SingleViewTouchableMotionLayout
-        android:id="@+id/liveRoomRootView"
+        android:id="@+id/recordedRoomRootView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/transparent"

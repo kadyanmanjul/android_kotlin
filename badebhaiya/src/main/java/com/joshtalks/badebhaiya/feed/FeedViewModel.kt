@@ -37,6 +37,7 @@ import com.joshtalks.badebhaiya.repository.service.RetrofitInstance
 import com.joshtalks.badebhaiya.utils.Utils
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -90,6 +91,7 @@ class FeedViewModel : ViewModel() {
     private var requestChannel: ListenerRegistration? = null
     private val jobs = mutableListOf<Job>()
     lateinit var currentRoom:ConversationRoomResponse
+    val finishLiveRoom = MutableSharedFlow<Boolean>()
 
 
 

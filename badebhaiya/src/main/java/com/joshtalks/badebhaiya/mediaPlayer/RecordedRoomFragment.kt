@@ -27,6 +27,7 @@ import com.joshtalks.badebhaiya.feed.FeedViewModel
 import com.joshtalks.badebhaiya.feed.model.Room
 import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
 import com.joshtalks.badebhaiya.feed.model.SpeakerData
+import com.joshtalks.badebhaiya.liveroom.LiveRoomFragment
 import com.joshtalks.badebhaiya.liveroom.LiveRoomState
 import com.joshtalks.badebhaiya.recordedRoomPlayer.AudioPlayerService
 import com.joshtalks.badebhaiya.recordedRoomPlayer.MusicServiceConnection
@@ -37,10 +38,7 @@ import com.joshtalks.badebhaiya.utils.DEFAULT_NAME
 import com.joshtalks.badebhaiya.utils.datetimeutils.DateTimeUtils
 import com.joshtalks.badebhaiya.utils.setUserImageRectOrInitials
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*
@@ -55,35 +53,55 @@ class RecordedRoomFragment : Fragment() {
         const val ROOM_DATA = "room_data"
 
         fun newInstance() = RecordedRoomFragment()
-        fun open(activity: AppCompatActivity, from: String, room: RoomListResponseItem?) {
+        fun open(activity: AppCompatActivity, from: String, room: RoomListResponseItem?, feedViewModel: FeedViewModel? = null) {
+//            LiveRoomFragment.removeIfFound(activity)
 
-            val foundFragment = activity.supportFragmentManager.findFragmentByTag(TAG)
+            MainScope().launch {
+                feedViewModel?.let {
+                    it.finishLiveRoom.emit(true)
+                }
 
-            AudioPlayerService.setAudio(room!!)
+                val liveRoomFragment = activity.supportFragmentManager.findFragmentByTag(LiveRoomFragment.TAG)
+
+                val foundFragment = activity.supportFragmentManager.findFragmentByTag(TAG)
+
+                AudioPlayerService.setAudio(room!!)
+
+                if (liveRoomFragment != null)
+                    delay(500)
 
 //            activity.stopService(Intent(activity.applicationContext, AudioPlayerService::class.java))
 
-            foundFragment?.let {
-                activity.supportFragmentManager.beginTransaction().remove(it).commit()
+                foundFragment?.let {
+                    activity.supportFragmentManager.beginTransaction().remove(it).commit()
 //                CoroutineScope(Dispatchers.Main).launch {
 //                    PlayerData.initPlayer.emit(true)
 //                }
+                }
+
+                val fragment = RecordedRoomFragment() // replace your custom fragment class
+                val bundle = Bundle()
+                bundle.putString("source", from) // use as per your need
+                bundle.putParcelable(ROOM_DATA,room)
+                fragment.arguments = bundle
+
+
+
+                activity
+                    .supportFragmentManager
+                    .beginTransaction()
+//                .replace(R.id.feedRoot, fragment, TAG)
+                    .add(R.id.feedRoot, fragment, TAG)
+                    .addToBackStack(TAG)
+                    .commit()
             }
+        }
 
-            val fragment = RecordedRoomFragment() // replace your custom fragment class
-            val bundle = Bundle()
-            bundle.putString("source", from) // use as per your need
-            bundle.putParcelable(ROOM_DATA,room)
-            fragment.arguments = bundle
-
-
-
-            activity
-                .supportFragmentManager
-                .beginTransaction()
-                .add(R.id.feedRoot, fragment, TAG)
-                .addToBackStack(TAG)
-                .commit()
+        fun removeIfFound(activity: AppCompatActivity){
+            val foundFragment = activity.supportFragmentManager.findFragmentByTag(TAG)
+            foundFragment?.let {
+                activity.supportFragmentManager.beginTransaction().remove(it).commit()
+            }
         }
     }
 
@@ -123,6 +141,7 @@ class RecordedRoomFragment : Fragment() {
         binding.handler = this
 //        viewModel = ViewModelProvider(this).get(RecordedRoomViewModel::class.java)
 
+//        feedViewModel.finishLiveRoom.postValue(true)
         var mBundle: Bundle? = Bundle()
         mBundle = this.arguments
         from = mBundle?.getString("source").toString()
@@ -252,12 +271,12 @@ class RecordedRoomFragment : Fragment() {
     }
 
     fun collapseLiveRoom() {
-        binding.liveRoomRootView.transitionToEnd()
+        binding.recordedRoomRootView.transitionToEnd()
 //        viewModel.lvRoomState.value = LiveRoomState.COLLAPSED
     }
 
     fun expandLiveRoom() {
-        binding.liveRoomRootView.transitionToStart()
+        binding.recordedRoomRootView.transitionToStart()
 //        viewModel.lvRoomState.value=LiveRoomState.EXPANDED
     }
 
@@ -388,6 +407,7 @@ class RecordedRoomFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         addObserver()
     }
 

@@ -52,6 +52,7 @@ import com.joshtalks.badebhaiya.liveroom.model.StartingLiveRoomProperties
 import com.joshtalks.badebhaiya.liveroom.service.ConversationRoomCallback
 import com.joshtalks.badebhaiya.liveroom.service.ConvoWebRtcService
 import com.joshtalks.badebhaiya.liveroom.viewmodel.*
+import com.joshtalks.badebhaiya.mediaPlayer.RecordedRoomFragment
 import com.joshtalks.badebhaiya.network.NetworkManager
 import com.joshtalks.badebhaiya.notifications.HeadsUpNotificationService
 import com.joshtalks.badebhaiya.profile.ProfileFragment
@@ -75,6 +76,7 @@ import kotlinx.android.synthetic.main.li_audience_item.view.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -568,6 +570,16 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
 
     }
     fun addObserver(){
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED){
+                feedViewModel.finishLiveRoom.collectLatest {
+                    if (it){
+                        finishFragment()
+                    }
+                }
+            }
+        }
+
         profileViewModel.singleLiveEvent.observe(viewLifecycleOwner) {
             Log.d("ABC2", "Data class called with data message: ${it.what} bundle : ${it.data}")
             when (it.what) {
@@ -1325,6 +1337,8 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
     }
 
     override fun onDestroy() {
+        Timber.tag("removingfrag").d("ONDESTROY CALLED LIVE ROOM FRAGMENT")
+
         backPressCallback?.isEnabled = false
         if ((isBackPressed.or(isExitApiFired)).not()) {
             if (PubNubManager.getLiveRoomProperties().isRoomCreatedByUser) {
@@ -1359,6 +1373,13 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
         const val TOPIC_NAME = "topic_name"
         const val TAG = "live_room"
 
+        fun removeIfFound(activity: AppCompatActivity){
+            val frag=activity.supportFragmentManager.findFragmentByTag(TAG)
+            frag?.let {
+                Timber.tag("removingfrag").d("REMOVED LIVE ROOM FRAGMENT")
+                activity.supportFragmentManager.beginTransaction().remove(it).commitNow()
+            }
+        }
 
         fun launch(
             activity: AppCompatActivity,
@@ -1367,6 +1388,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
             from:String,
             isSpeaker:Boolean
         ) {
+            RecordedRoomFragment.removeIfFound(activity)
             if (liveRoomViewModel.pubNubState.value == PubNubState.STARTED){
                 showToast("Please Leave Current Room")
             } else {
@@ -1388,7 +1410,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
                     activity
                         .supportFragmentManager
                         .beginTransaction()
-                        .replace(R.id.feedRoot, fragment)
+                        .replace(R.id.feedRoot, fragment, TAG)
                         .addToBackStack(null)
                         .commit()
                 }
