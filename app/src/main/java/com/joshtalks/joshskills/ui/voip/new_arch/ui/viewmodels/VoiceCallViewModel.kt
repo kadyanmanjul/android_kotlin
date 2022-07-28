@@ -339,7 +339,6 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
     fun switchSpeaker(v: View) {
         Log.d(TAG, "switchSpeaker")
         val isOnSpeaker = uiState.isSpeakerOn
-        uiState.test=true
 
         uiState.isSpeakerOn = isOnSpeaker.not()
         if (isOnSpeaker) {
@@ -417,7 +416,6 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
     fun switchMic(v: View) {
         Log.d(TAG, "switchMic")
         val isOnMute = uiState.isMute
-        uiState.test=false
         uiState.isMute = isOnMute.not()
         if (isOnMute) {
             CallAnalytics.addAnalytics(

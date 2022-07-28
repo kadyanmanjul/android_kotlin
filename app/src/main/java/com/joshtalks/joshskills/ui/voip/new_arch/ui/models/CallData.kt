@@ -39,251 +39,276 @@ class CallUIState : BaseObservable() {
     @get:Bindable
     var profileImage: String = ""
         set(value) {
+            val oldValue = field
             field = value
-            updateState(field, value, BR.profileImage)
+            updateState(oldValue, value, BR.profileImage)
         }
 
     @get:Bindable
     var currentState: String = "Connecting..."
         set(value) {
+            val oldValue = field
             field = value
-            updateState(field, value, BR.currentState)
+            updateState(oldValue, value, BR.currentState)
         }
 
     @get:Bindable
     var recordingCurrentState: String = "Waiting for your partner to accept"
         set(value) {
+            val oldValue = field
             field = value
-            updateState(field, value, BR.recordingCurrentState)
+            updateState(oldValue, value, BR.recordingCurrentState)
         }
 
     @get:Bindable
     var name: String = ""
         set(value) {
+            val oldValue = field
             field = value
-            updateState(field, value, BR.name)
+            updateState(oldValue, value, BR.name)
         }
 
     @get:Bindable
     var topic: String = ""
         set(value) {
+            val oldValue = field
             field = value
-            updateState(field, value, BR.topic)
+            updateState(oldValue, value, BR.topic)
         }
 
     @get:Bindable
     var type: Int = 0
         set(value) {
+            val oldValue = field
             field = value
-            updateState(field, value, BR.type)
+            updateState(oldValue, value, BR.type)
         }
 
     @get:Bindable
     var title: String = ""
         set(value) {
+            val oldValue = field
             field = value
-            updateState(field, value, BR.title)
+            updateState(oldValue, value, BR.title)
         }
 
     @get:Bindable
     var visibleCrdView: Boolean = false
         set(value) {
+            val oldValue = field
             field = value
-            updateState(field, value, BR.visibleCrdView)
+            updateState(oldValue, value, BR.visibleCrdView)
         }
 
     @get:Bindable
     var startTime: Long = 0L
         set(value) {
+            val oldValue = field
             field = value
-            updateState(field, value, BR.startTime)
+            updateState(oldValue, value, BR.startTime)
         }
 
     @get:Bindable
     var recordTime: Long = 0L
         set(value) {
+            val oldValue = field
             field = value
-            updateState(field, value, BR.recordTime)
+            updateState(oldValue, value, BR.recordTime)
         }
 
     @get:Bindable
     var recordBtnImg: Int = R.drawable.call_fragment_record
         set(value) {
+            val oldValue = field
             field = value
-            updateState(field, value, BR.recordBtnImg)
+            updateState(oldValue, value, BR.recordBtnImg)
         }
 
     @get:Bindable
     var recordCrdViewTxt: String = "Waiting for your partner to accept"
         set(value) {
+            val oldValue = field
             field = value
-            updateState(field, value, BR.recordCrdViewTxt)
+            updateState(oldValue, value, BR.recordCrdViewTxt)
         }
 
     @get:Bindable
     var recordBtnTxt: String = "Record"
         set(value) {
+            val oldValue = field
             field = value
-            updateState(field, value, BR.recordBtnTxt)
+            updateState(oldValue, value, BR.recordBtnTxt)
         }
 
     @get:Bindable
     var isMute: Boolean = false
         set(value) {
-            Log.d("naman", "$field:$value ")
+            val oldValue = field
             field = value
-            updateState(field, value, BR.mute)
+            updateState(oldValue, value, BR.mute)
         }
 
-    @get:Bindable
-    var test: Boolean = false
-        set(value) {
-            field = value
-            updateState(field, value, BR.test)
-        }
 
     @get:Bindable
     var isRecordingEnabled: Boolean = false
         set(value) {
+            val oldValue = field
             field = value
-            updateState(field, value, BR.recordingEnabled)
+            updateState(oldValue, value, BR.recordingEnabled)
         }
 
     @get:Bindable
     var recordingButtonState: RecordingButtonState = RecordingButtonState.SENTREQUEST
         set(value) {
+            val oldValue = field
             field = value
-            updateState(field, value, BR.recordingButtonState)
+            updateState(oldValue, value, BR.recordingButtonState)
         }
 
     @get:Bindable
     var recordingStartTime: Long = 0L
         set(value) {
+            val oldValue = field
             field = value
-            updateState(field, value, BR.recordingStartTime)
+            updateState(oldValue, value, BR.recordingStartTime)
         }
 
     @get:Bindable
     var isSpeakerOn: Boolean = false
         set(value) {
+            val oldValue = field
             field = value
-            updateState(field, value, BR.speakerOn)
+            updateState(oldValue, value, BR.speakerOn)
         }
 
     @get:Bindable
     var isOnHold: Boolean = false
         set(value) {
+            val oldValue = field
             field = value
-            updateState(field, value, BR.onHold)
+            updateState(oldValue, value, BR.onHold)
         }
 
     @get:Bindable
     var isRemoteUserMuted: Boolean = false
         set(value) {
+            val oldValue = field
             field = value
-            updateState(field, value, BR.remoteUserMuted)
+            updateState(oldValue, value, BR.remoteUserMuted)
         }
 
     @get:Bindable
     var topicImage: String = ""
         set(value) {
+            val oldValue = field
             field = value
-            updateState(field, value, BR.topicImage)
+            updateState(oldValue, value, BR.topicImage)
         }
 
     @get:Bindable
     var gameWord: String = ""
         set(value) {
             if (isGameStarted) {
+                val oldValue = field
                 field = value
-                updateState(field, value, BR.gameWord)
+                updateState(oldValue, value, BR.gameWord)
             }
         }
 
     @get:Bindable
     var wordColor: String = ""
         set(value) {
+            val oldValue = field
             field = value
-            updateState(field, value, BR.wordColor)
+            updateState(oldValue, value, BR.wordColor)
         }
 
     @get:Bindable
     var isNextWordClicked: Boolean = false
         set(value) {
+            val oldValue = field
             field = value
-            updateState(field, value, BR.nextWordClicked)
+            updateState(oldValue, value, BR.nextWordClicked)
         }
 
     @get:Bindable
     var isStartGameClicked: Boolean = false
         set(value) {
+            val oldValue = field
             field = value
-            field = value
-            updateState(field, value, BR.startGameClicked)
+            isGameStarted = value
+            updateState(oldValue, value, BR.startGameClicked)
         }
 
     @get:Bindable
     var occupation: String = ""
         set(value) {
+            val oldValue = field
             field = value
-            updateState(field, value, BR.occupation)
+            updateState(oldValue, value, BR.occupation)
         }
 
     @get:Bindable
     var aspiration: String = ""
         set(value) {
+            val oldValue = field
             field = value
-            updateState(field, value, BR.aspiration)
+            updateState(oldValue, value, BR.aspiration)
         }
 
     @get:Bindable
     var localUserName: String = ""
         set(value) {
+            val oldValue = field
             field = value
-            updateState(field, value, BR.localUserName)
+            updateState(oldValue, value, BR.localUserName)
         }
 
     @get:Bindable
     var localUserProfile: String = ""
         set(value) {
+            val oldValue = field
             field = value
-            updateState(field, value, BR.localUserProfile)
+            updateState(oldValue, value, BR.localUserProfile)
         }
 
     @get:Bindable
     var isCalleeSpeaking: Boolean = false
         set(value) {
+            val oldValue = field
             field = value
-            updateState(field, value, BR.calleeSpeaking)
+            updateState(oldValue, value, BR.calleeSpeaking)
         }
 
     @get:Bindable
     var isCallerSpeaking: Boolean = false
         set(value) {
+            val oldValue = field
             field = value
-            updateState(field, value, BR.callerSpeaking)
+            updateState(oldValue, value, BR.callerSpeaking)
         }
 
     @get:Bindable
     var recordButtonPressedTwoTimes: Int = 0
         set(value) {
+            val oldValue = field
             field = value
-            updateState(field, value, BR.recordButtonPressedTwoTimes)
+            updateState(oldValue, value, BR.recordButtonPressedTwoTimes)
         }
 
     @get:Bindable
     var p2pCallBackgroundColor: Int = R.color.p2p_call_background_color
         set(value) {
+            val oldValue = field
             field = value
-            updateState(field, value, BR.p2pCallBackgroundColor)
+            updateState(oldValue, value, BR.p2pCallBackgroundColor)
         }
 
     private fun updateState(field: Any, value: Any, fieldId: Int) {
-        if (field == value) {
+        if (field != value) {
             notifyPropertyChanged(fieldId)
         }
     }
-
 
     fun updateUiState(state: UIState) {
         val voipState = PrefManager.getVoipState()
@@ -300,8 +325,6 @@ class CallUIState : BaseObservable() {
 
         this.aspiration = state.aspiration
 
-        this.occupation = state.occupation
-
         this.isSpeakerOn = state.isSpeakerOn
 
         this.isRemoteUserMuted = state.isRemoteUserMuted
@@ -316,11 +339,11 @@ class CallUIState : BaseObservable() {
 
         this.isCallerSpeaking = state.isCallerSpeaking
 
+        this.isStartGameClicked = state.isStartGameClicked
+
         this.gameWord = state.nextGameWord
 
         this.wordColor = state.nextGameWordColor
-
-        this.isStartGameClicked = state.isStartGameClicked
 
         this.isNextWordClicked = state.isNextWordClicked
 
@@ -334,6 +357,7 @@ class CallUIState : BaseObservable() {
 
         this.isMute = state.isOnMute
 
+        Log.d("naman mahendra", "${this.isStartGameClicked}:${this.gameWord != ""} ")
 
         if(state.occupation!=this.occupation)
         this.occupation = getOccupationText(state.aspiration, state.occupation)
