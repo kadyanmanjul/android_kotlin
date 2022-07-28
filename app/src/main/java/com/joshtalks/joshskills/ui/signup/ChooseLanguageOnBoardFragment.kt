@@ -9,10 +9,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
+import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.LANGUAGE_SELECTION_SCREEN_OPENED
-import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.Utils.isInternetAvailable
-import com.joshtalks.joshskills.core.abTest.CampaignKeys
 import com.joshtalks.joshskills.core.abTest.GoalKeys
 import com.joshtalks.joshskills.core.abTest.VariantKeys
 import com.joshtalks.joshskills.databinding.FragmentChooseLanguageOnboardBinding
@@ -79,6 +78,7 @@ class ChooseLanguageOnBoardFragment : BaseFragment() {
                 errorView!!.get().onSuccess()
             }
         } else {
+            binding.progress.visibility = View.GONE
             errorView?.resolved().let {
                 errorView?.get()?.onFailure(object : ErrorView.ErrorCallback {
                     override fun onRetryButtonClicked() {
@@ -96,6 +96,27 @@ class ChooseLanguageOnBoardFragment : BaseFragment() {
             }
             if (it.isNullOrEmpty().not()) {
                 languageAdapter.setData(it)
+            }
+        }
+        viewModel.apiStatus.observe(viewLifecycleOwner) {
+            when (it) {
+                ApiCallStatus.START -> binding.progress.visibility = View.VISIBLE
+                ApiCallStatus.SUCCESS -> {
+                    binding.progress.visibility = View.GONE
+                    errorView?.resolved()?.let {
+                        errorView!!.get().onSuccess()
+                    }
+                }
+                ApiCallStatus.FAILED -> {
+                    errorView?.resolved().let {
+                        errorView?.get()?.onFailure(object : ErrorView.ErrorCallback {
+                            override fun onRetryButtonClicked() {
+                                viewModel.getAvailableLanguages()
+                            }
+                        })
+                    }
+                }
+                else -> {}
             }
         }
         viewModel.abTestRepository.apply {

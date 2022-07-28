@@ -8,8 +8,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.base.EventLiveData
 import com.joshtalks.joshskills.core.*
-import com.joshtalks.joshskills.core.abTest.ABTestCampaignData
 import com.joshtalks.joshskills.core.abTest.GoalKeys
+import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
@@ -22,7 +22,6 @@ import com.joshtalks.joshskills.repository.server.GoalSelectionResponse
 import com.joshtalks.joshskills.repository.server.TrueCallerLoginRequest
 import com.joshtalks.joshskills.repository.server.signup.LoginResponse
 import com.joshtalks.joshskills.ui.activity_feed.utils.IS_USER_EXIST
-import com.joshtalks.joshskills.core.abTest.repository.ABTestRepository
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import com.singular.sdk.Singular
 import com.truecaller.android.sdk.TrueProfile
@@ -190,10 +189,16 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
     fun getAvailableLanguages() {
         viewModelScope.launch {
             try {
+                apiStatus.postValue(ApiCallStatus.START)
                 val response = service.getAvailableLanguageCourses()
-                if (response.isSuccessful && response.code() in 200..203)
+                if (response.isSuccessful && response.code() in 200..203) {
                     availableLanguages.value = response.body()
+                    apiStatus.postValue(ApiCallStatus.SUCCESS)
+                } else {
+                    apiStatus.postValue(ApiCallStatus.FAILED)
+                }
             } catch (ex: Throwable) {
+                apiStatus.postValue(ApiCallStatus.FAILED)
                 ex.showAppropriateMsg()
             }
         }
@@ -202,10 +207,16 @@ class FreeTrialOnBoardViewModel(application: Application) : AndroidViewModel(app
     fun getAvailableCourseGoals() {
         viewModelScope.launch {
             try {
+                apiStatus.postValue(ApiCallStatus.START)
                 val response = service.getAvailableGoals()
-                if (response.isSuccessful && response.code() in 200..203)
+                if (response.isSuccessful && response.code() in 200..203) {
                     availableGoals.value = response.body()
+                    apiStatus.postValue(ApiCallStatus.SUCCESS)
+                } else {
+                    apiStatus.postValue(ApiCallStatus.FAILED)
+                }
             } catch (ex: Throwable) {
+                apiStatus.postValue(ApiCallStatus.FAILED)
                 ex.showAppropriateMsg()
             }
         }

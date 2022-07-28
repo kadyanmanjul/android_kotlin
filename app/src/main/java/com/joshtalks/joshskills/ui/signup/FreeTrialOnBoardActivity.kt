@@ -6,7 +6,6 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
@@ -35,7 +34,6 @@ import com.joshtalks.joshskills.repository.server.onboarding.SpecificOnboardingC
 import com.joshtalks.joshskills.ui.activity_feed.utils.IS_USER_EXIST
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.truecaller.android.sdk.*
-import kotlinx.android.synthetic.main.activity_free_trial_on_board.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.*
@@ -119,14 +117,12 @@ class FreeTrialOnBoardActivity : CoreJoshActivity() {
 
     fun startTrial(v: View) {
         val language = ChooseLanguages(HINDI_TO_ENGLISH_TEST_ID, "Hindi (हिन्दी)")
-        btnStartTrial.setOnClickListener {
-            if (PrefManager.hasKey(SPECIFIC_ONBOARDING, isConsistent = true))
-                signUp(v)
-            else if (languageActive)
-                openChooseLanguageFragment()
-            else
-                showStartTrialPopup(language.testId)
-        }
+        if (PrefManager.hasKey(SPECIFIC_ONBOARDING, isConsistent = true))
+            signUp(v)
+        else if (languageActive)
+            openChooseLanguageFragment()
+        else
+            showStartTrialPopup(language.testId)
     }
 
     private fun addViewModelObservers() {

@@ -9,7 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.base.BaseFragment
-import com.joshtalks.joshskills.core.ApiCallStatus.*
+import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.Utils.isInternetAvailable
 import com.joshtalks.joshskills.core.abTest.GoalKeys
 import com.joshtalks.joshskills.databinding.FragmentChooseLanguageOnboardBinding
@@ -64,6 +64,7 @@ class ChooseGoalOnBoardFragment : BaseFragment() {
                 errorView!!.get().onSuccess()
             }
         } else {
+            binding.progress.visibility = View.GONE
             errorView?.resolved().let {
                 errorView?.get()?.onFailure(object : ErrorView.ErrorCallback {
                     override fun onRetryButtonClicked() {
@@ -81,6 +82,28 @@ class ChooseGoalOnBoardFragment : BaseFragment() {
             }
             if (it.isNullOrEmpty().not()) {
                 goalAdapter.setData(it)
+            }
+        }
+        viewModel.apiStatus.observe(viewLifecycleOwner) {
+            when (it) {
+                ApiCallStatus.START -> binding.progress.visibility = View.VISIBLE
+                ApiCallStatus.SUCCESS -> {
+                    binding.progress.visibility = View.GONE
+                    errorView?.resolved()?.let {
+                        errorView!!.get().onSuccess()
+                    }
+                }
+                ApiCallStatus.FAILED -> {
+                    binding.progress.visibility = View.GONE
+                    errorView?.resolved().let {
+                        errorView?.get()?.onFailure(object : ErrorView.ErrorCallback {
+                            override fun onRetryButtonClicked() {
+                                viewModel.getAvailableCourseGoals()
+                            }
+                        })
+                    }
+                }
+                else -> {}
             }
         }
     }
