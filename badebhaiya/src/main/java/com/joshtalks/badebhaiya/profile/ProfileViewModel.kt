@@ -34,10 +34,6 @@ class ProfileViewModel : ViewModel() {
     var profileUrl=""
     val repository = BBRepository()
     val userProfileData = MutableLiveData<ProfileResponse>()
-
-    val convoRepo = ConversationRoomRepository()
-    val closeFansList = ObservableBoolean(false)
-
     val userFullName = ObservableField<String>()
     val isBioTextAvailable = ObservableBoolean(false)
     val speakerProfileRoomsAdapter = FeedAdapter(fromProfile = true, coroutineScope = viewModelScope)
@@ -171,6 +167,12 @@ class ProfileViewModel : ViewModel() {
                             list.addAll(it.liveRoomList!!.map { roomListResponseItem ->
                                 roomListResponseItem.conversationRoomType =
                                     ConversationRoomType.LIVE
+                                roomListResponseItem
+                            })
+                        if (it.recordedRooms.isNullOrEmpty().not())
+                            list.addAll(it.recordedRooms!!.map { roomListResponseItem ->
+                                roomListResponseItem.conversationRoomType =
+                                    ConversationRoomType.RECORDED
                                 roomListResponseItem
                             })
                         if (it.scheduledRoomList.isNullOrEmpty().not())

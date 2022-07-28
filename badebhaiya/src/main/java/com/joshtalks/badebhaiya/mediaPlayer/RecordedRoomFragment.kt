@@ -2,8 +2,6 @@ package com.joshtalks.badebhaiya.mediaPlayer
 
 import android.annotation.SuppressLint
 import android.app.NotificationManager
-import android.content.Intent
-import android.media.MediaPlayer
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -13,6 +11,7 @@ import android.widget.SeekBar
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
@@ -38,10 +37,9 @@ import com.joshtalks.badebhaiya.utils.DEFAULT_NAME
 import com.joshtalks.badebhaiya.utils.datetimeutils.DateTimeUtils
 import com.joshtalks.badebhaiya.utils.setUserImageRectOrInitials
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.fragment_record_room.view.*
 import kotlinx.coroutines.*
 import timber.log.Timber
-import java.text.SimpleDateFormat
-import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -141,7 +139,6 @@ class RecordedRoomFragment : Fragment() {
         binding.handler = this
 //        viewModel = ViewModelProvider(this).get(RecordedRoomViewModel::class.java)
 
-//        feedViewModel.finishLiveRoom.postValue(true)
         var mBundle: Bundle? = Bundle()
         mBundle = this.arguments
         from = mBundle?.getString("source").toString()
@@ -226,17 +223,19 @@ class RecordedRoomFragment : Fragment() {
 
     private fun handleBackPress(onBackPressedCallback: OnBackPressedCallback) {
         Log.i("KHOLO", "handleBackPress: ${viewModel.lvRoomState.value}")
-        if (viewModel.lvRoomState.value == LiveRoomState.EXPANDED) {
+        if (viewModel.lvRoomState.value  == LiveRoomState.EXPANDED){
             // Minimise live room.
             collapseLiveRoom()
         } else {
             // Live is already minimized ask if user wants to quit live room.
-            if (from == "Profile") {
-                feedViewModel.isBackPressed.value = true
-                from = "None"
-            } else {
+            if(from=="Profile")
+            {
+                feedViewModel.isBackPressed.value=true
+                from="None"
+            }
+            else
+            {
                 activity?.supportFragmentManager?.popBackStack()
-                collapseLiveRoom()
 //                        finishFragment()
 //                        return
             }
@@ -246,11 +245,16 @@ class RecordedRoomFragment : Fragment() {
     }
 
 
-    private fun finishFragment() {
-        if (isAdded) {
-            Timber.d("finishFragment: ")
-            requireActivity().supportFragmentManager.popBackStack()
-        }
+
+ fun finishFragment(){
+    if (isAdded){
+        Timber.d("finishFragment: ")
+        requireActivity().supportFragmentManager.popBackStack()
+    }
+}
+
+    fun endFragment(){
+        activity?.supportFragmentManager?.popBackStack()
     }
 
     fun convert(duration: Int): String { // to convert mill sec to minutes and seconds
@@ -272,7 +276,7 @@ class RecordedRoomFragment : Fragment() {
 
     fun collapseLiveRoom() {
         binding.recordedRoomRootView.transitionToEnd()
-//        viewModel.lvRoomState.value = LiveRoomState.COLLAPSED
+        viewModel.lvRoomState.value = LiveRoomState.COLLAPSED
     }
 
     fun expandLiveRoom() {
@@ -282,39 +286,39 @@ class RecordedRoomFragment : Fragment() {
 
 
     private fun trackRecordRoomState() {
-//        binding.liveRoomRootView.addTransitionListener(object : MotionLayout.TransitionListener{
-//            override fun onTransitionStarted(
-//                motionLayout: MotionLayout?,
-//                startId: Int,
-//                endId: Int
-//            ) {
-//            }
-//
-//            override fun onTransitionChange(
-//                motionLayout: MotionLayout?,
-//                startId: Int,
-//                endId: Int,
-//                progress: Float
-//            ) {
-//            }
-//
-//            override fun onTransitionCompleted(motionLayout: MotionLayout?, currentId: Int) {
-//                if (currentId == R.id.collapsed){
-//                    viewModel.lvRoomState.value = LiveRoomState.COLLAPSED
-//                } else {
-//                    viewModel.lvRoomState.value = LiveRoomState.EXPANDED
-//                }
-//            }
-//
-//            override fun onTransitionTrigger(
-//                motionLayout: MotionLayout?,
-//                triggerId: Int,
-//                positive: Boolean,
-//                progress: Float
-//            ) {
-//            }
-//
-//        })
+        binding.recordedRoomRootView.addTransitionListener(object : MotionLayout.TransitionListener{
+            override fun onTransitionStarted(
+                motionLayout: MotionLayout?,
+                startId: Int,
+                endId: Int
+            ) {
+            }
+
+            override fun onTransitionChange(
+                motionLayout: MotionLayout?,
+                startId: Int,
+                endId: Int,
+                progress: Float
+            ) {
+            }
+
+            override fun onTransitionCompleted(motionLayout: MotionLayout?, currentId: Int) {
+                if (currentId == R.id.collapsed){
+                    viewModel.lvRoomState.value = LiveRoomState.COLLAPSED
+                } else {
+                    viewModel.lvRoomState.value = LiveRoomState.EXPANDED
+                }
+            }
+
+            override fun onTransitionTrigger(
+                motionLayout: MotionLayout?,
+                triggerId: Int,
+                positive: Boolean,
+                progress: Float
+            ) {
+            }
+
+        })
     }
 
     fun addObserver() {
@@ -358,12 +362,7 @@ class RecordedRoomFragment : Fragment() {
 
         binding.leaveEndRoomBtn.setOnClickListener {
 //                expandLiveRoom()
-            viewModel.lvRoomState.value = LiveRoomState.EXPANDED
-        }
-        binding.buttonContainer.setOnClickListener {
-//                expandLiveRoom()
-            viewModel.lvRoomState.value = LiveRoomState.EXPANDED
-
+            activity?.supportFragmentManager?.popBackStack()
         }
 
         binding.apply {
@@ -379,24 +378,24 @@ class RecordedRoomFragment : Fragment() {
 
             playbackSpeed.setOnClickListener {
                 when {
-                    playbackSpeed.text.toString()=="1x" -> {
-                        playbackSpeed.text="1.25x"
+                    playbackSpeed.text.toString() == "1x" -> {
+                        playbackSpeed.text = "1.25x"
                         viewModel.increaseSpeed(1.25f)
                     }
-                    playbackSpeed.text.toString()=="1.25x" -> {
-                        playbackSpeed.text="1.5x"
+                    playbackSpeed.text.toString() == "1.25x" -> {
+                        playbackSpeed.text = "1.5x"
                         viewModel.increaseSpeed(1.5f)
                     }
-                    playbackSpeed.text.toString()=="1.5x" -> {
-                        playbackSpeed.text="1.75x"
+                    playbackSpeed.text.toString() == "1.5x" -> {
+                        playbackSpeed.text = "1.75x"
                         viewModel.increaseSpeed(1.75f)
                     }
-                    playbackSpeed.text.toString()=="1.75x" -> {
-                        playbackSpeed.text="2x"
+                    playbackSpeed.text.toString() == "1.75x" -> {
+                        playbackSpeed.text = "2x"
                         viewModel.increaseSpeed(2f)
                     }
                     else -> {
-                        playbackSpeed.text="1x"
+                        playbackSpeed.text = "1x"
                         viewModel.increaseSpeed(1f)
                     }
                 }
@@ -407,7 +406,6 @@ class RecordedRoomFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         addObserver()
     }
 

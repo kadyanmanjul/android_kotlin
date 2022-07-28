@@ -112,15 +112,14 @@
             android:background="@drawable/rect_round"
             android:backgroundTint="@color/da_grey"
             android:drawableLeft="@drawable/ic_forward_icon"
-            android:paddingVertical="@dimen/_4sdp"
-            android:paddingStart="@dimen/_10sdp"
+            android:paddingStart="@dimen/_8sdp"
             android:onClick="@{() -> recordedViewModel.forward()}"
-            android:includeFontPadding="false"
+            android:includeFontPadding="true"
             android:shadowRadius="30"
+            android:drawablePadding="@dimen/_17sdp"
             android:layout_marginBottom="@dimen/_5sdp"
             android:layout_marginEnd="@dimen/_57sdp"
             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7"
-            android:textColor="@color/black"
             app:layout_constraintStart_toEndOf="@id/pause"
              android:layout_marginStart="@dimen/_20sdp"
             app:layout_constraintBottom_toBottomOf="@id/pause"/>
@@ -283,10 +282,7 @@
                     android:background="@drawable/rect_round"
                     android:backgroundTint="@color/da_grey"
                     android:drawableLeft="@drawable/ic_backward_icon"
-                    android:drawablePadding="@dimen/_7sdp"
-                    android:paddingVertical="@dimen/_4sdp"
-                    android:paddingStart="@dimen/_7sdp"
-                    android:paddingEnd="@dimen/_4sdp"
+                    android:paddingStart="@dimen/_9sdp"
                     android:shadowRadius="30"
                     android:onClick="@{() -> recordedViewModel.backward()}"
                     android:layout_marginTop="@dimen/_437sdp"
@@ -313,6 +309,27 @@
             android:layout_height="0dp"
             android:background="@color/white"
             app:layout_constraintTop_toBottomOf="@+id/scrollView" />
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/leave_end_room_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_16sdp"
+            android:layout_marginBottom="@dimen/_20sdp"
+            android:background="@drawable/rect_round"
+            android:backgroundTint="@color/da_grey"
+            android:drawableStart="@drawable/ic_victory_emoji"
+            android:drawablePadding="@dimen/_8sdp"
+            android:fontFamily="@font/nunito_sans_extrabold"
+            android:paddingVertical="@dimen/_4sdp"
+            android:paddingStart="@dimen/_14sdp"
+            android:paddingEnd="@dimen/_12sdp"
+            android:shadowRadius="30"
+            android:text="Leave quietly"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7"
+            android:textColor="#EB5A5C"
+            android:textSize="@dimen/_14sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/button_container"
@@ -326,27 +343,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
 
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/leave_end_room_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_16sdp"
-                android:layout_marginBottom="@dimen/_20sdp"
-                android:background="@drawable/rect_round"
-                android:backgroundTint="@color/da_grey"
-                android:drawableStart="@drawable/ic_victory_emoji"
-                android:drawablePadding="@dimen/_8sdp"
-                android:fontFamily="@font/nunito_sans_extrabold"
-                android:paddingVertical="@dimen/_4sdp"
-                android:paddingStart="@dimen/_14sdp"
-                android:paddingEnd="@dimen/_12sdp"
-                android:shadowRadius="30"
-                android:text="Leave quietly"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7"
-                android:textColor="#EB5A5C"
-                android:textSize="@dimen/_14sdp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.appcompat.widget.AppCompatButton

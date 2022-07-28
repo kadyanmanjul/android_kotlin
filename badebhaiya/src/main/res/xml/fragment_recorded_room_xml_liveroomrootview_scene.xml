@@ -12,6 +12,7 @@
             app:touchAnchorId="@id/toolbar"
             />
         <OnClick app:targetId="@+id/button_container" />
+        <OnClick app:targetId="@+id/down_arrow" />
 
 
     </Transition>
@@ -156,6 +157,7 @@
             android:paddingVertical="@dimen/_4sdp"
             android:paddingStart="@dimen/_10sdp"
             android:paddingEnd="@dimen/_4sdp"
+            android:drawablePadding="@dimen/_17sdp"
             android:shadowRadius="30"
             android:layout_marginTop="@dimen/_553sdp"
             android:layout_marginEnd="@dimen/_17sdp"

@@ -48,6 +48,7 @@ import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
 import com.joshtalks.badebhaiya.impressions.Impression
 import com.joshtalks.badebhaiya.liveroom.bottomsheet.EnterBioBottomSheet
 import com.joshtalks.badebhaiya.liveroom.viewmodel.LiveRoomViewModel
+import com.joshtalks.badebhaiya.mediaPlayer.RecordedRoomFragment
 import com.joshtalks.badebhaiya.notifications.NotificationScheduler
 import com.joshtalks.badebhaiya.profile.request.ReminderRequest
 import com.joshtalks.badebhaiya.profile.response.ProfileResponse
@@ -491,24 +492,24 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
 
 
         viewModel.updateFollowStatus(userId ?: (User.getInstance().userId),isFromBBPage,isFromDeeplink)
-        if(viewModel.speakerFollowed.value == true)
-            viewModel.userProfileData.value?.let {
-                signUpViewModel.unfollowSpeaker()
-                viewModel.sendEvent(Impression("PROFILE_SCREEN","CLICKED_UNFOLLOW"))
-                speakerUnfollowedUIChanges()
-                binding.tvFollowers.text =HtmlCompat.fromHtml(getString(R.string.bb_followers,
-                    ("<big>"+it.followersCount.minus(1)?:0).toString()+"</big>"),
-                    HtmlCompat.FROM_HTML_MODE_LEGACY)
-            }
-        else
-            viewModel.userProfileData.value?.let {
-                signUpViewModel.followSpeaker()
-//                viewModel.sendEvent(Impression("PROFILE_SCREEN","CLICKED_FOLLOW"))
-                speakerFollowedUIChanges()
-                binding.tvFollowers.text =HtmlCompat.fromHtml(getString(R.string.bb_followers,
-                    ("<big>"+it.followersCount.plus(1)?:0).toString()+"</big>"),
-                    HtmlCompat.FROM_HTML_MODE_LEGACY)
-            }
+//        if(viewModel.speakerFollowed.value == true)
+//            viewModel.userProfileData.value?.let {
+//                signUpViewModel.unfollowSpeaker()
+//                viewModel.sendEvent(Impression("PROFILE_SCREEN","CLICKED_UNFOLLOW"))
+//                speakerUnfollowedUIChanges()
+//                binding.tvFollowers.text =HtmlCompat.fromHtml(getString(R.string.bb_followers,
+//                    ("<big>"+it.followersCount.minus(1)?:0).toString()+"</big>"),
+//                    HtmlCompat.FROM_HTML_MODE_LEGACY)
+//            }
+//        else
+//            viewModel.userProfileData.value?.let {
+//                signUpViewModel.followSpeaker()
+////                viewModel.sendEvent(Impression("PROFILE_SCREEN","CLICKED_FOLLOW"))
+//                speakerFollowedUIChanges()
+//                binding.tvFollowers.text =HtmlCompat.fromHtml(getString(R.string.bb_followers,
+//                    ("<big>"+it.followersCount.plus(1)?:0).toString()+"</big>"),
+//                    HtmlCompat.FROM_HTML_MODE_LEGACY)
+//            }
         viewModel.getProfileForUser(userId ?: (User.getInstance().userId), source)
     }
 
@@ -589,7 +590,8 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
     }
 
     override fun playRoom(room: RoomListResponseItem, view: View) {
-        TODO("Not yet implemented")
+        feedViewModel.source="Profile"
+        RecordedRoomFragment.open(activity as AppCompatActivity,"Profile", room.recordings?.get(0)?.url)
     }
 
     private fun takePermissions(room: String? = null, roomTopic: String, moderatorId: String?) {
