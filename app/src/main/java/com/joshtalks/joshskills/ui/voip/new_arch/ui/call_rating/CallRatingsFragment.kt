@@ -170,10 +170,7 @@ class CallRatingsFragment : BottomSheetDialogFragment() {
                     isBlockSelected = false
                     submitAutomatically(checkedId, group, myAnim)
                 } else {
-                    if (vm.ifDialogShow == 1 && PrefManager.getBoolValue(IS_COURSE_BOUGHT) && PrefManager.getStringValue(
-                            CURRENT_COURSE_ID
-                        ) == DEFAULT_COURSE_ID
-                    ) {
+                    if (vm.ifDialogShow == 1 && PrefManager.getBoolValue(IS_COURSE_BOUGHT)) {
                         if (prevSelectedRating in 0..6)
                             unSelectChange("fpp")
                         block.text = resources.getText(R.string.send_fpp_text)
@@ -241,10 +238,7 @@ class CallRatingsFragment : BottomSheetDialogFragment() {
     }
 
     private fun selectChange(s: String) {
-        if (s == "fpp" && vm.ifDialogShow == 1 && PrefManager.getBoolValue(IS_COURSE_BOUGHT) && PrefManager.getStringValue(
-                CURRENT_COURSE_ID
-            ) == DEFAULT_COURSE_ID
-        ) {
+        if (s == "fpp" && vm.ifDialogShow == 1 && PrefManager.getBoolValue(IS_COURSE_BOUGHT)) {
             binding.block.background = AppCompatResources.getDrawable(requireContext(), R.drawable.block_button_round_stroke_blue)
             binding.block.setTextColor(resources.getColor(R.color.colorPrimary))
         } else {
