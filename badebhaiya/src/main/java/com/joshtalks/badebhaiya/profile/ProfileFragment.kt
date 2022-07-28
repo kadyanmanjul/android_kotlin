@@ -591,7 +591,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
 
     override fun playRoom(room: RoomListResponseItem, view: View) {
         feedViewModel.source="Profile"
-        RecordedRoomFragment.open(activity as AppCompatActivity,"Profile", room.recordings?.get(0)?.url)
+        RecordedRoomFragment.open(activity as AppCompatActivity,"Profile", room)
     }
 
     private fun takePermissions(room: String? = null, roomTopic: String, moderatorId: String?) {
