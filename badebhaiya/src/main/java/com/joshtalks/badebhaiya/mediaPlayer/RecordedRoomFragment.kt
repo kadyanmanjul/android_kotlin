@@ -2,11 +2,6 @@ package com.joshtalks.badebhaiya.mediaPlayer
 
 import android.annotation.SuppressLint
 import android.app.NotificationManager
-import android.content.Intent
-import android.content.Context
-import android.graphics.drawable.ColorDrawable
-import android.media.AudioAttributes
-import android.media.MediaPlayer
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -15,45 +10,19 @@ import android.view.ViewGroup
 import android.widget.SeekBar
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.addCallback
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.exoplayer2.ExoPlayer
-import androidx.appcompat.widget.AppCompatTextView
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.constraintlayout.motion.widget.MotionLayout
-import androidx.core.app.NotificationCompat
-import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.getSystemService
-import androidx.databinding.DataBindingUtil
-import coil.compose.AsyncImage
-import com.google.firebase.messaging.FirebaseMessagingService
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.core.EMPTY
 import com.joshtalks.badebhaiya.core.NotificationChannelNames
 import com.joshtalks.badebhaiya.core.showToast
 import com.joshtalks.badebhaiya.databinding.FragmentRecordRoomBinding
 import com.joshtalks.badebhaiya.feed.FeedViewModel
-import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
-import com.joshtalks.badebhaiya.feed.model.SpeakerData
 import com.joshtalks.badebhaiya.liveroom.LiveRoomState
-import com.joshtalks.badebhaiya.recordedRoomPlayer.AudioPlayerService
 import com.joshtalks.badebhaiya.recordedRoomPlayer.MusicServiceConnection
 import com.joshtalks.badebhaiya.recordedRoomPlayer.isPlaying
 import com.joshtalks.badebhaiya.repository.model.User
@@ -61,9 +30,8 @@ import com.joshtalks.badebhaiya.utils.DEFAULT_NAME
 import com.joshtalks.badebhaiya.utils.datetimeutils.DateTimeUtils
 import com.joshtalks.badebhaiya.utils.setUserImageRectOrInitials
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.fragment_record_room.view.*
 import timber.log.Timber
-import java.text.SimpleDateFormat
-import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -273,39 +241,39 @@ class RecordedRoomFragment : Fragment() {
 
 
     private fun trackRecordRoomState() {
-//        binding.liveRoomRootView.addTransitionListener(object : MotionLayout.TransitionListener{
-//            override fun onTransitionStarted(
-//                motionLayout: MotionLayout?,
-//                startId: Int,
-//                endId: Int
-//            ) {
-//            }
-//
-//            override fun onTransitionChange(
-//                motionLayout: MotionLayout?,
-//                startId: Int,
-//                endId: Int,
-//                progress: Float
-//            ) {
-//            }
-//
-//            override fun onTransitionCompleted(motionLayout: MotionLayout?, currentId: Int) {
-//                if (currentId == R.id.collapsed){
-//                    viewModel.lvRoomState.value = LiveRoomState.COLLAPSED
-//                } else {
-//                    viewModel.lvRoomState.value = LiveRoomState.EXPANDED
-//                }
-//            }
-//
-//            override fun onTransitionTrigger(
-//                motionLayout: MotionLayout?,
-//                triggerId: Int,
-//                positive: Boolean,
-//                progress: Float
-//            ) {
-//            }
-//
-//        })
+        binding.liveRoomRootView.addTransitionListener(object : MotionLayout.TransitionListener{
+            override fun onTransitionStarted(
+                motionLayout: MotionLayout?,
+                startId: Int,
+                endId: Int
+            ) {
+            }
+
+            override fun onTransitionChange(
+                motionLayout: MotionLayout?,
+                startId: Int,
+                endId: Int,
+                progress: Float
+            ) {
+            }
+
+            override fun onTransitionCompleted(motionLayout: MotionLayout?, currentId: Int) {
+                if (currentId == R.id.collapsed){
+                    viewModel.lvRoomState.value = LiveRoomState.COLLAPSED
+                } else {
+                    viewModel.lvRoomState.value = LiveRoomState.EXPANDED
+                }
+            }
+
+            override fun onTransitionTrigger(
+                motionLayout: MotionLayout?,
+                triggerId: Int,
+                positive: Boolean,
+                progress: Float
+            ) {
+            }
+
+        })
     }
 
     fun addObserver() {
@@ -349,50 +317,41 @@ class RecordedRoomFragment : Fragment() {
 
         binding.leaveEndRoomBtn.setOnClickListener {
 //                expandLiveRoom()
-            viewModel.lvRoomState.value = LiveRoomState.EXPANDED
+            activity?.supportFragmentManager?.popBackStack()
         }
-        binding.buttonContainer.setOnClickListener {
-            viewModel.lvRoomState.value = LiveRoomState.EXPANDED
-            binding.buttonContainer.setOnClickListener {
-                showToast("button container")
-//                expandLiveRoom()
-                viewModel.lvRoomState.value = LiveRoomState.EXPANDED
 
+        binding.apply {
+
+            downArrow.setOnClickListener {
+                collapseLiveRoom()
             }
 
-            binding.apply {
+            pause.setOnClickListener {
 
-                downArrow.setOnClickListener {
-                    collapseLiveRoom()
-                }
+                viewModel.playOrToggleSong()
+            }
 
-                pause.setOnClickListener {
-
-                    viewModel.playOrToggleSong()
-                }
-
-                playbackSpeed.setOnClickListener {
-                    when {
-                        playbackSpeed.text.toString() == "1x" -> {
-                            playbackSpeed.text = "1.25x"
-                            viewModel.increaseSpeed(1.25f)
-                        }
-                        playbackSpeed.text.toString() == "1.25x" -> {
-                            playbackSpeed.text = "1.5x"
-                            viewModel.increaseSpeed(1.5f)
-                        }
-                        playbackSpeed.text.toString() == "1.5x" -> {
-                            playbackSpeed.text = "1.75x"
-                            viewModel.increaseSpeed(1.75f)
-                        }
-                        playbackSpeed.text.toString() == "1.75x" -> {
-                            playbackSpeed.text = "2x"
-                            viewModel.increaseSpeed(2f)
-                        }
-                        else -> {
-                            playbackSpeed.text = "1x"
-                            viewModel.increaseSpeed(1f)
-                        }
+            playbackSpeed.setOnClickListener {
+                when {
+                    playbackSpeed.text.toString() == "1x" -> {
+                        playbackSpeed.text = "1.25x"
+                        viewModel.increaseSpeed(1.25f)
+                    }
+                    playbackSpeed.text.toString() == "1.25x" -> {
+                        playbackSpeed.text = "1.5x"
+                        viewModel.increaseSpeed(1.5f)
+                    }
+                    playbackSpeed.text.toString() == "1.5x" -> {
+                        playbackSpeed.text = "1.75x"
+                        viewModel.increaseSpeed(1.75f)
+                    }
+                    playbackSpeed.text.toString() == "1.75x" -> {
+                        playbackSpeed.text = "2x"
+                        viewModel.increaseSpeed(2f)
+                    }
+                    else -> {
+                        playbackSpeed.text = "1x"
+                        viewModel.increaseSpeed(1f)
                     }
                 }
             }

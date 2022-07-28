@@ -117,11 +117,10 @@ fun setConversationRoomCardActionButton(
         }
         RECORDED -> {
             view.text = view.context.getString(R.string.play_now)
-            view.setTextColor(ColorStateList.valueOf(view.context.resources.getColor(R.color.white)))
+            view.setTextColor(ColorStateList.valueOf(view.context.resources.getColor(R.color.black)))
             view.backgroundTintList =
-                ColorStateList.valueOf(view.context.resources.getColor(R.color.reminder_on_button_color))
+                ColorStateList.valueOf(view.context.resources.getColor(R.color.record_play_button_color))
             view.setOnSingleClickListener() {
-                showToast("Hello")
                 callback?.playRoom(roomListResponseItem, view)
             }
         }

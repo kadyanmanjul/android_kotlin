@@ -45,6 +45,7 @@ import okhttp3.RequestBody.Companion.asRequestBody
 import retrofit2.Response
 import timber.log.Timber
 import java.io.File
+import kotlinx.coroutines.async
 import java.net.SocketTimeoutException
 
 const val ROOM_ITEM = "room_item"
@@ -249,7 +250,7 @@ class FeedViewModel : ViewModel() {
     }
 
     fun uploadCompressedMedia(mediaPath: String) {
-        viewModelScope.launch {
+        CoroutineScope(Dispatchers.IO).launch {
             try {
                 val obj = mutableMapOf("media_path" to File(mediaPath).name)
                 val responseObj =
@@ -266,7 +267,7 @@ class FeedViewModel : ViewModel() {
     }
 
     private suspend fun uploadOnS3Server(responseObj: AmazonPolicyResponse, mediaPath: String): Int {
-        return viewModelScope.async(Dispatchers.IO) {
+        return GlobalScope.async(Dispatchers.IO) {
             val parameters = emptyMap<String, RequestBody>().toMutableMap()
             for (entry in responseObj.fields) {
                 parameters[entry.key] = Utils.createPartFromString(entry.value)
@@ -431,8 +432,13 @@ class FeedViewModel : ViewModel() {
             } finally {
                 isLoading.set(false)
             }
+            getRecordRooms(list)
         }
 
+
+    }
+
+    fun getRecordRooms(list: MutableList<RoomListResponseItem>) {
         viewModelScope.launch {
             try{
                 val res=repository.getRecordsList()

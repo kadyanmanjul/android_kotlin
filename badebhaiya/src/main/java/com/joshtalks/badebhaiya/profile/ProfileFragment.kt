@@ -48,6 +48,7 @@ import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
 import com.joshtalks.badebhaiya.impressions.Impression
 import com.joshtalks.badebhaiya.liveroom.bottomsheet.EnterBioBottomSheet
 import com.joshtalks.badebhaiya.liveroom.viewmodel.LiveRoomViewModel
+import com.joshtalks.badebhaiya.mediaPlayer.RecordedRoomFragment
 import com.joshtalks.badebhaiya.notifications.NotificationScheduler
 import com.joshtalks.badebhaiya.profile.request.ReminderRequest
 import com.joshtalks.badebhaiya.profile.response.ProfileResponse
@@ -589,7 +590,8 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
     }
 
     override fun playRoom(room: RoomListResponseItem, view: View) {
-        TODO("Not yet implemented")
+        feedViewModel.source="Profile"
+        RecordedRoomFragment.open(activity as AppCompatActivity,"Profile", room.recordings?.get(0)?.url)
     }
 
     private fun takePermissions(room: String? = null, roomTopic: String, moderatorId: String?) {
