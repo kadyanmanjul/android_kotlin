@@ -20,6 +20,7 @@ import com.joshtalks.joshskills.ui.call.repository.RepositoryConstants.CONNECTIO
 import com.joshtalks.joshskills.ui.call.repository.WebrtcRepository
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.call_recording.ProcessCallRecordingService
 import com.joshtalks.joshskills.ui.voip.new_arch.ui.models.CallUIState
+import com.joshtalks.joshskills.ui.voip.new_arch.ui.utils.ifEnoughMemorySize
 import com.joshtalks.joshskills.voip.Utils
 import com.joshtalks.joshskills.voip.constant.*
 import com.joshtalks.joshskills.ui.voip.util.ScreenViewRecorder
@@ -290,19 +291,22 @@ class VoiceCallViewModel(val applicationContext: Application) : AndroidViewModel
                         Log.d(TAG, "GAME observe: SENTREQUEST ")
                             cancelRecordingTimer()
                             if (state.isStartGameClicked) {
+                                if(applicationContext.ifEnoughMemorySize())
                                 recordingStopButtonClickListener()
                             }
                     }
                     RecordingButtonState.RECORDING -> {
                         Log.d(TAG, "GAME observe: RECORDING ")
-                        startRecordingTimer(uiState.recordingButtonState)
-                        val msg = Message.obtain().apply {
-                            what = SHOW_RECORDING_PERMISSION_DIALOG
+                        if (applicationContext.ifEnoughMemorySize()) {
+                            startRecordingTimer(uiState.recordingButtonState)
+                            val msg = Message.obtain().apply {
+                                what = SHOW_RECORDING_PERMISSION_DIALOG
+                            }
+                            withContext(Dispatchers.Main) {
+                                singleLiveEvent.value = msg
+                            }
+                            recordingStartedUIChanges()
                         }
-                        withContext(Dispatchers.Main) {
-                            singleLiveEvent.value = msg
-                        }
-                        recordingStartedUIChanges()
                     }
                 }
 

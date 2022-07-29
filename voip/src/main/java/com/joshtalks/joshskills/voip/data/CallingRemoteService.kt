@@ -122,6 +122,21 @@ class CallingRemoteService : Service() {
                 stopSelf()
                 return START_NOT_STICKY
             }
+            ANALYTICS_EVENT ->{
+                if(intent.extras?.getString("event","").equals("notification")){
+                    CallAnalytics.addAnalytics(
+                        event = EventName.CALL_RECORDING_NOTIFICATION_CLICKED,
+                        agoraCallId = PrefManager.getAgraCallId().toString(),
+                        agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
+                    )
+                }else{
+                    CallAnalytics.addAnalytics(
+                        event = EventName.RECORDING_SHARE_BUTTON_CLICKED,
+                        agoraCallId = PrefManager.getAgraCallId().toString(),
+                        agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
+                    )
+                }
+            }
             SERVICE_ACTION_DISCONNECT_CALL -> {
                 CallAnalytics.addAnalytics(
                     event = EventName.DISCONNECTED_BY_HANG_UP,

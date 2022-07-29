@@ -79,9 +79,7 @@ class ProcessCallRecordingService : Service() {
                                 startProcessingAudioVideoMixing(InputFiles(callId, agoraMentorId, videoPath, audioPath,duration = duration))
                             }
                     }
-                    UPLOAD_ALL_CALL_RECORDING -> {
-
-                    }
+                    UPLOAD_ALL_CALL_RECORDING -> {}
                 }
             }
         } catch (ex: java.lang.Exception) {
@@ -162,15 +160,15 @@ class ProcessCallRecordingService : Service() {
         CoroutineScope(Dispatchers.IO).launch(Dispatchers.IO) {
             try {
                 val requestEngage = inputFiles
-                if (inputFiles?.outputFile?.absolutePath?.isNullOrEmpty()?.not() == true) {
+                if (inputFiles.audioPath?.isEmpty()?.not() == true) {
                     val obj = mapOf(
-                        "media_path" to inputFiles.outputFile!!.name,
+                        "media_path" to (File(inputFiles.audioPath)).name,
                     )
                     val responseObj =
                         AppObjectController.chatNetworkService.requestUploadMediaAsync(obj)
                             .await()
                     val statusCode: Int =
-                        uploadOnS3Server(responseObj, inputFiles.outputFile!!.absolutePath)
+                        uploadOnS3Server(responseObj, inputFiles.audioPath)
                     if (statusCode in 200..210) {
                         val url =
                             responseObj.url.plus(File.separator).plus(responseObj.fields["key"])
@@ -210,9 +208,7 @@ class ProcessCallRecordingService : Service() {
         }
     }
 
-    private suspend fun handleRetry(pendingTaskModel: InputFiles) {
-
-    }
+    private suspend fun handleRetry(pendingTaskModel: InputFiles) {}
 
     private suspend fun uploadOnS3Server(
         responseObj: AmazonPolicyResponse,

@@ -164,6 +164,7 @@ class NotificationUtils(val context: Context) {
                         .setContentText(notificationObject.contentText)
                         .setContentIntent(pendingIntent)
                         .setStyle(style)
+                        .setPriority(NotificationCompat.PRIORITY_HIGH)
                         .setWhen(System.currentTimeMillis())
                         .setDefaults(Notification.DEFAULT_ALL)
                         .setColor(
@@ -174,7 +175,7 @@ class NotificationUtils(val context: Context) {
                         )
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    notificationBuilder.priority = NotificationManager.IMPORTANCE_DEFAULT
+                    notificationBuilder.priority = NotificationManager.IMPORTANCE_HIGH
                 }
 
                 val dismissIntent =

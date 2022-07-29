@@ -14,6 +14,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.base.constants.ANALYTICS_EVENT
+import com.joshtalks.joshskills.base.constants.SERVICE_ACTION_INCOMING_CALL
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.showToast
@@ -26,9 +28,8 @@ import com.joshtalks.joshskills.ui.special_practice.utils.WHATSAPP_PACKAGE_STRIN
 import com.joshtalks.joshskills.ui.video_player.VIDEO_URL
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 import com.joshtalks.joshskills.util.DeepLinkUtil
-import com.joshtalks.joshskills.voip.data.local.PrefManager
-import com.joshtalks.joshskills.voip.voipanalytics.CallAnalytics
-import com.joshtalks.joshskills.voip.voipanalytics.EventName
+import com.joshtalks.joshskills.voip.data.CallingRemoteService
+
 
 class CallRecordingShare : AppCompatActivity() {
     private val binding by lazy<ActivityCallRecordingShareBinding> {
@@ -57,19 +58,19 @@ class CallRecordingShare : AppCompatActivity() {
         binding.executePendingBindings()
         getIntentExtra()
         binding.materialCardView.setOnClickListener {
-            CallAnalytics.addAnalytics(
-                event = EventName.RECORDING_SHARE_BUTTON_CLICKED,
-                agoraCallId = PrefManager.getAgraCallId().toString(),
-                agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
-            )
+            addAnalytics("share_btn_click")
             getDeepLinkAndInviteFriends(videoUrl)
         }
-        CallAnalytics.addAnalytics(
-            event = EventName.CALL_RECORDING_NOTIFICATION_CLICKED,
-            agoraCallId = PrefManager.getAgraCallId().toString(),
-            agoraMentorId = PrefManager.getLocalUserAgoraId().toString()
-        )
+       addAnalytics("notification")
         playRecordedVideo()
+
+    }
+
+    fun addAnalytics(event : String){
+        val remoteServiceIntent = Intent(this, CallingRemoteService::class.java)
+        remoteServiceIntent.putExtra("event",event)
+        remoteServiceIntent.action = ANALYTICS_EVENT
+        this.startService(remoteServiceIntent)
     }
 
     fun playRecordedVideo() {

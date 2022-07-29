@@ -32,6 +32,7 @@ const val SERVICE_ACTION_INCOMING_CALL = "josh_service_action_incoming_call"
 const val SERVICE_ACTION_DISCONNECT_CALL = "josh_service_action_disconnect_call"
 const val SERVICE_ACTION_INCOMING_CALL_DECLINE = "josh_service_action_incoming_call_decline"
 const val SERVICE_ACTION_INCOMING_CALL_HIDE = "josh_service_action_incoming_call_hide"
+const val ANALYTICS_EVENT="analytics_event"
 
 
 // Content Provider UI
