@@ -22,7 +22,9 @@ import com.joshtalks.badebhaiya.core.NotificationChannelNames
 import com.joshtalks.badebhaiya.core.showToast
 import com.joshtalks.badebhaiya.databinding.FragmentRecordRoomBinding
 import com.joshtalks.badebhaiya.feed.FeedViewModel
+import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
 import com.joshtalks.badebhaiya.liveroom.LiveRoomState
+import com.joshtalks.badebhaiya.profile.ProfileFragment
 import com.joshtalks.badebhaiya.recordedRoomPlayer.MusicServiceConnection
 import com.joshtalks.badebhaiya.recordedRoomPlayer.isPlaying
 import com.joshtalks.badebhaiya.repository.model.User
@@ -44,7 +46,7 @@ class RecordedRoomFragment : Fragment() {
     companion object {
         const val TAG = "RecordedRoomFragment"
         fun newInstance() = RecordedRoomFragment()
-        fun open(activity: AppCompatActivity, from: String, url: String?) {
+        fun open(activity: AppCompatActivity, from: String, room: RoomListResponseItem) {
 
             val foundFragment = activity.supportFragmentManager.findFragmentByTag(TAG)
 
@@ -57,7 +59,8 @@ class RecordedRoomFragment : Fragment() {
             val fragment = RecordedRoomFragment() // replace your custom fragment class
             val bundle = Bundle()
             bundle.putString("source", from) // use as per your need
-            bundle.putString("url",url)
+            bundle.putString("url",room.recordings?.get(0)?.url)
+            bundle.putString("userId", room.speakersData?.userId)
             fragment.arguments = bundle
 
 
@@ -74,6 +77,7 @@ class RecordedRoomFragment : Fragment() {
     //    private var mediaPlayer : MediaPlayer?=null
     private var from: String = EMPTY
     private var url: String = EMPTY
+    private var userId: String = EMPTY
     //
 //    private var mediaPlayer: MediaPlayer? = null
     private var shouldUpdateSeekbar = true
@@ -109,6 +113,7 @@ class RecordedRoomFragment : Fragment() {
         mBundle = this.arguments
         from = mBundle?.getString("source").toString()
         url = mBundle?.getString("url").toString()
+        userId=mBundle?.getString("userId").toString()
         clickListener()
         attachBackPressedDispatcher()
         Log.i("RECORDS", "onCreateView: $url")
@@ -321,6 +326,24 @@ class RecordedRoomFragment : Fragment() {
         }
 
         binding.apply {
+            shareBtn.setOnClickListener {
+                showToast("Feature yet to be added")
+            }
+
+            profilePic.setOnClickListener {
+                collapseLiveRoom()
+                itemClick(userId)
+            }
+
+            roomName.setOnClickListener {
+                collapseLiveRoom()
+                itemClick(userId)
+            }
+
+            moderatorName.setOnClickListener {
+                collapseLiveRoom()
+                itemClick(userId)
+            }
 
             downArrow.setOnClickListener {
                 collapseLiveRoom()
@@ -368,6 +391,17 @@ class RecordedRoomFragment : Fragment() {
         val sec = DateTimeUtils.millisToTime(ms)
         binding.currentTime.text = sec
         Timber.tag("audiotime").d("STARTING TIME IS => ${sec}")
+    }
+    fun itemClick(userId: String) {
+        val nextFrag = ProfileFragment()
+        val bundle = Bundle()
+        bundle.putString("user", userId) // use as per your need
+        bundle.putString("source","RECORD_PLAYER")
+        nextFrag.arguments = bundle
+        activity?.supportFragmentManager?.beginTransaction()
+            ?.replace(R.id.root_view, nextFrag, "findThisFragment")
+            //?.addToBackStack(null)
+            ?.commit()
     }
 
 }

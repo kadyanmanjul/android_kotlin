@@ -39,7 +39,6 @@ import com.joshtalks.badebhaiya.core.base.BaseFragment
 import com.joshtalks.badebhaiya.databinding.FragmentLiveRoomBinding
 import com.joshtalks.badebhaiya.feed.*
 import com.joshtalks.badebhaiya.feed.model.LiveRoomUser
-import com.joshtalks.badebhaiya.feed.model.RoomListResponseItem
 import com.joshtalks.badebhaiya.liveroom.adapter.AudienceAdapter
 import com.joshtalks.badebhaiya.liveroom.adapter.SpeakerAdapter
 import com.joshtalks.badebhaiya.liveroom.bottomsheet.ConversationRoomBottomSheet
@@ -77,6 +76,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.io.File
 
 
 @AndroidEntryPoint
@@ -1337,7 +1337,7 @@ class LiveRoomFragment : BaseFragment<FragmentLiveRoomBinding, LiveRoomViewModel
         mBoundService?.onStopRecording()
         feedViewModel.readRequestCount()
         vm.deflate.value=false
-        feedViewModel.uploadCompressedMedia(PrefManager.getLastRecordingPath())
+        feedViewModel.uploadCompressedMedia(File(PrefManager.getLastRecordingPath()))
         vm.unSubscribePubNub()
         vm.pubNubState.value=PubNubState.ENDED
         feedViewModel.pubNubState=PubNubState.ENDED

@@ -118,9 +118,9 @@ class RetrofitInstance {
 
         val mediaDUNetworkService by lazy {
             val mediaOkhttpBuilder = OkHttpClient().newBuilder()
-            mediaOkhttpBuilder.connectTimeout(45, TimeUnit.SECONDS)
-                .writeTimeout(45, TimeUnit.SECONDS)
-                .readTimeout(45, TimeUnit.SECONDS)
+            mediaOkhttpBuilder.connectTimeout(320L, TimeUnit.SECONDS)
+                .writeTimeout(320L, TimeUnit.SECONDS)
+                .readTimeout(320L, TimeUnit.SECONDS)
                 .followRedirects(true)
             //                .addInterceptor(StatusCodeInterceptor())
 

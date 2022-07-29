@@ -8,7 +8,6 @@ import android.graphics.drawable.ColorDrawable
 import android.net.NetworkInfo
 import android.os.Bundle
 import android.util.Log
-import android.view.*
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,9 +27,6 @@ import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
-import com.google.android.material.badge.BadgeDrawable
-import com.google.android.material.badge.BadgeDrawable.*
-import com.google.android.material.badge.BadgeUtils
 import com.joshtalks.badebhaiya.R
 import com.joshtalks.badebhaiya.core.*
 import com.joshtalks.badebhaiya.core.USER_ID
@@ -401,7 +397,10 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
                 if (it.profilePicUrl.isNullOrEmpty().not()) Utils.setImage(ivProfilePic, it.profilePicUrl.toString())
                 else
                     Utils.setImage(ivProfilePic, it.firstName.toString())
-               binding.ivProfilePic.setUserImageOrInitials(it.profilePicUrl,it.firstName.get(0),30)
+                it.firstName?.let { it1 ->
+                    binding.ivProfilePic.setUserImageOrInitials(it.profilePicUrl,
+                        it1.get(0),30)
+                }
                 tvUserName.text = getString(R.string.full_name_concatenated, it.firstName, it.lastName)
             }
         }
@@ -438,7 +437,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
 
     private fun handleSpeakerProfile(profileResponse: ProfileResponse) {
         binding.apply {
-            if (profileResponse.isSpeaker) {
+            if (profileResponse.isSpeaker == true) {
                 if(profileResponse.bioText.isNullOrEmpty() )
                 {
                     tvProfileBio.visibility=View.GONE
@@ -462,7 +461,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
                 tvFollowers.text = HtmlCompat.fromHtml(getString(R.string.bb_followers, "<big>"+profileResponse.followersCount.toString()+"</big>"),
                     HtmlCompat.FROM_HTML_MODE_LEGACY)
                 tvFollowers.textSize=17f
-                if (profileResponse.isSpeakerFollowed) {
+                if (profileResponse.isSpeakerFollowed == true) {
                     speakerFollowedUIChanges()
                 }
                 else
@@ -491,7 +490,7 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
         }
 
 
-        viewModel.updateFollowStatus(userId ?: (User.getInstance().userId),isFromBBPage,isFromDeeplink)
+        viewModel.updateFollowStatus(userId ?: (User.getInstance().userId),isFromBBPage,isFromDeeplink,source)
 //        if(viewModel.speakerFollowed.value == true)
 //            viewModel.userProfileData.value?.let {
 //                signUpViewModel.unfollowSpeaker()
@@ -591,7 +590,8 @@ class ProfileFragment: Fragment(), Call, FeedAdapter.ConversationRoomItemCallbac
 
     override fun playRoom(room: RoomListResponseItem, view: View) {
         feedViewModel.source="Profile"
-        RecordedRoomFragment.open(activity as AppCompatActivity,"Profile", room.recordings?.get(0)?.url)
+        viewModel.sendEvent(Impression("PROFILE_SCREEN","CLICKED_REPLAY"))
+        RecordedRoomFragment.open(activity as AppCompatActivity,"Profile", room)
     }
 
     private fun takePermissions(room: String? = null, roomTopic: String, moderatorId: String?) {
