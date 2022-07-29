@@ -1340,7 +1340,7 @@ class ConversationActivity :
     }
 
     private fun showFavtMenuOption(showMenu: Boolean) {
-        if (showMenu && PrefManager.getStringValue(CURRENT_COURSE_ID) == DEFAULT_COURSE_ID) {
+        if (showMenu && inboxEntity.isCourseBought) {
             conversationBinding.toolbar.menu.findItem(R.id.menu_favorite_list).isVisible = true
             conversationBinding.toolbar.menu.findItem(R.id.menu_favorite_list).isEnabled = true
         } else {

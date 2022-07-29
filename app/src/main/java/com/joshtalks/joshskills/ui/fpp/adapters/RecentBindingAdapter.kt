@@ -82,7 +82,10 @@ object RecentBindingAdapter {
             } else {
                 imageView.setImageResource(image)
             }
-        }catch (e:Exception){
+        } catch (e: Exception) {
+            imageView.setBackgroundResource(R.color.chat_bg_color)
+            e.printStackTrace()
+        } catch (e: OutOfMemoryError) {
             imageView.setBackgroundResource(R.color.chat_bg_color)
             e.printStackTrace()
         }

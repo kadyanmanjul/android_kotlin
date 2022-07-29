@@ -114,7 +114,7 @@
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
             android:textColor="@color/white"
             android:visibility='@{!vm.uiState.currentState.equals("Timer") ? View.VISIBLE : View.INVISIBLE}'
-            app:layout_constraintBottom_toTopOf="@id/record_call_cardview"
+            app:layout_constraintBottom_toTopOf="@id/topic_header"
             app:layout_constraintEnd_toStartOf="@+id/guideline5"
             app:layout_constraintStart_toStartOf="@+id/guideline4"
             app:layout_constraintTop_toBottomOf="@id/occupation_future_goals"
@@ -131,64 +131,11 @@
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
             android:textColor="@color/white"
             android:visibility='@{vm.uiState.currentState.equals("Timer") ? View.VISIBLE : View.INVISIBLE}'
-            app:layout_constraintBottom_toTopOf="@id/record_call_cardview"
+            app:layout_constraintBottom_toTopOf="@id/topic_header"
             app:layout_constraintEnd_toStartOf="@+id/guideline5"
             app:layout_constraintStart_toStartOf="@+id/guideline4"
             app:layout_constraintTop_toBottomOf="@id/occupation_future_goals"
             tools:ignore="MissingPrefix" />
-
-        <androidx.cardview.widget.CardView
-            android:id="@+id/record_call_cardview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:cardCornerRadius="93dp"
-            android:layout_marginTop="7.81dp"
-            android:layout_marginBottom="7.81dp"
-            android:visibility="@{vm.uiState.recordingButtonState != RecordingButtonState.IDLE  ? View.VISIBLE : View.INVISIBLE}"
-            app:layout_constraintEnd_toEndOf="@+id/call_time1"
-            app:layout_constraintStart_toStartOf="@+id/call_time1"
-            app:layout_constraintTop_toBottomOf="@id/call_time1"
-            app:layout_constraintBottom_toTopOf="@id/topic_header"
-            >
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/black"
-                android:orientation="horizontal"
-                android:padding="10dp">
-
-                <ImageView
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
-                    android:src="@drawable/circle2" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="7.65dp"
-                    android:layout_marginRight="7.65dp"
-                    android:text="@{vm.uiState.recordCrdViewTxt}"
-                    tools:text="Waiting for your partner to accept"
-                    android:textColor="@color/white"
-                    android:textSize="12sp" />
-
-                <Chronometer
-                    android:id="@+id/call_time2"
-                    startTimer="@{vm.uiState.recordTime}"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="12sp"
-                    android:gravity="center"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
-                    android:textColor="@color/white"
-                    tools:visibility="gone"
-                    android:visibility='@{vm.uiState.recordingButtonState == RecordingButtonState.RECORDING ? View.VISIBLE : View.GONE}'
-                    tools:ignore="MissingPrefix" />
-
-            </LinearLayout>
-
-        </androidx.cardview.widget.CardView>
 
         <androidx.constraintlayout.widget.Barrier
             android:id="@+id/barrier"
@@ -227,7 +174,7 @@
             android:visibility="visible"
             app:layout_constraintEnd_toStartOf="@+id/guideline5"
             app:layout_constraintStart_toStartOf="@+id/guideline4"
-            app:layout_constraintTop_toBottomOf="@+id/record_call_cardview" />
+            app:layout_constraintTop_toBottomOf="@+id/call_time1" />
 
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"

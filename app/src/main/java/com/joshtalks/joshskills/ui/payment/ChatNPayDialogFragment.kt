@@ -38,7 +38,7 @@ class ChatNPayDialogFragment : BottomSheetDialogFragment() {
     }
 
     private fun setListeners() {
-        binding.chatPay.setOnClickListener { openWhatsapp() }
+        binding.chatPay.setOnClickListener { openFreshChat() }
         binding.close.setOnClickListener { dismissAndCloseActivity() }
     }
 
@@ -47,7 +47,7 @@ class ChatNPayDialogFragment : BottomSheetDialogFragment() {
         activity?.finish()
     }
 
-    private fun openWhatsapp() {
+    private fun openFreshChat() {
         try {
             AppAnalytics.create(AnalyticsEvent.HELP_CHAT.NAME)
                 .addBasicParam()

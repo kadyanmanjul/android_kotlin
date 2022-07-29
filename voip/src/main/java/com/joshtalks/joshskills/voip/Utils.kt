@@ -154,6 +154,7 @@ private fun Cursor?.getStringData(columnName : String) : String {
 }
 
 fun Context.getMentorId(): String {
+    var mentorId = ""
     val mentorIdCursor = contentResolver.query(
         Uri.parse(CONTENT_URI + MENTOR_ID),
         null,
@@ -163,11 +164,17 @@ fun Context.getMentorId(): String {
     )
 
     mentorIdCursor?.moveToFirst()
-    val mentorId = mentorIdCursor.getStringData(MENTOR_ID_COLUMN)
-    mentorIdCursor?.close()
+    try {
+        mentorId = mentorIdCursor.getStringData(MENTOR_ID_COLUMN)
+        mentorIdCursor?.close()
+    } catch (ex: Exception) {
+        ex.printStackTrace()
+        return ""
+    }
     return mentorId
 }
 fun Context.getCourseId(): String {
+    var courseId = "151"
     val courserIdCursor = contentResolver.query(
         Uri.parse(CONTENT_URI + COURSE_ID),
         null,
@@ -177,12 +184,18 @@ fun Context.getCourseId(): String {
     )
 
     courserIdCursor?.moveToFirst()
-    val courseId = courserIdCursor.getStringData(COURSE_ID_COLUMN)
-    courserIdCursor?.close()
+    try {
+        courseId = courserIdCursor.getStringData(COURSE_ID_COLUMN)
+        courserIdCursor?.close()
+    }catch (ex:Exception){
+        ex.printStackTrace()
+        return "151"
+    }
     return courseId
 }
 
 fun Context.isFreeTrialOrCourseBought(): Boolean {
+    var isFreeTrialOrCourseBought = "false"
     val trialIdCursor = contentResolver.query(
         Uri.parse(CONTENT_URI + IS_COURSE_BOUGHT_OR_FREE_TRIAL),
         null,
@@ -191,12 +204,18 @@ fun Context.isFreeTrialOrCourseBought(): Boolean {
         null
     )
     trialIdCursor?.moveToFirst()
-    val isFreeTrialOrCourseBought = trialIdCursor.getStringData(FREE_TRIAL_OR_COURSE_BOUGHT_COLUMN)
-    trialIdCursor?.close()
+    try {
+        isFreeTrialOrCourseBought = trialIdCursor.getStringData(FREE_TRIAL_OR_COURSE_BOUGHT_COLUMN)
+        trialIdCursor?.close()
+    }catch (ex:Exception){
+        ex.printStackTrace()
+        return false
+    }
     return isFreeTrialOrCourseBought=="true"
 }
 
 fun Context.getVideoUrl():String{
+    var audioUrlId = ""
     val videoUrl = contentResolver.query(
         Uri.parse(CONTENT_URI + RECORD_VIDEO_URI),
         null,
@@ -205,12 +224,18 @@ fun Context.getVideoUrl():String{
         null
     )
     videoUrl?.moveToFirst()
-    val audioUrlId = videoUrl.getStringData(VIDEO_COLUMN)
-    videoUrl?.close()
+    try {
+        audioUrlId = videoUrl.getStringData(VIDEO_COLUMN)
+        videoUrl?.close()
+    }catch (ex:Exception){
+        ex.printStackTrace()
+        return ""
+    }
     return audioUrlId
 }
 
 fun Context.getMentorName(): String {
+    var mentorName = ""
     val mentorNameCursor = contentResolver.query(
         Uri.parse(CONTENT_URI + MENTOR_NAME),
         null,
@@ -220,12 +245,18 @@ fun Context.getMentorName(): String {
     )
 
     mentorNameCursor?.moveToFirst()
-    val mentorName = mentorNameCursor.getStringData(MENTOR_NAME_COLUMN)
-    mentorNameCursor?.close()
+    try {
+        mentorName = mentorNameCursor.getStringData(MENTOR_NAME_COLUMN)
+        mentorNameCursor?.close()
+    } catch (ex: Exception) {
+        ex.printStackTrace()
+        return ""
+    }
     return mentorName
 }
 
 fun Context.getMentorProfile(): String {
+    var mentorProfile = ""
     val mentorProfileCursor = contentResolver.query(
         Uri.parse(CONTENT_URI + MENTOR_PROFILE),
         null,
@@ -235,8 +266,13 @@ fun Context.getMentorProfile(): String {
     )
 
     mentorProfileCursor?.moveToFirst()
-    val mentorProfile = mentorProfileCursor.getStringData(MENTOR_PROFILE_COLUMN)
-    mentorProfileCursor?.close()
+    try {
+        mentorProfile = mentorProfileCursor.getStringData(MENTOR_PROFILE_COLUMN)
+        mentorProfileCursor?.close()
+    }catch (ex: Exception) {
+        ex.printStackTrace()
+        return ""
+    }
     return mentorProfile
 }
 
@@ -278,6 +314,7 @@ fun Context.getServiceNotificationIntent(data: NotificationData): PendingIntent 
 }
 
 fun Context.getRecordingText(): String {
+    var textData = ""
     val recordingCursor = contentResolver.query(
         Uri.parse(CONTENT_URI + RECORDING_TEXT),
         null,
@@ -287,12 +324,18 @@ fun Context.getRecordingText(): String {
     )
 
     recordingCursor?.moveToFirst()
-    val textData = recordingCursor.getStringData(RECORDING_TEXT_COLUMN)
-    recordingCursor?.close()
+    try {
+        textData = recordingCursor.getStringData(RECORDING_TEXT_COLUMN)
+        recordingCursor?.close()
+    }catch (ex:Exception){
+        ex.printStackTrace()
+        return ""
+    }
     return textData
 }
 
 fun Context.getGameFlag(): String {
+    var textData = "1"
     val recordingCursor = contentResolver.query(
         Uri.parse(CONTENT_URI + GAME_FLAG),
         null,
@@ -302,8 +345,13 @@ fun Context.getGameFlag(): String {
     )
 
     recordingCursor?.moveToFirst()
-    val textData = recordingCursor.getStringData(GAME_TEXT_COLUMN)
-    recordingCursor?.close()
+    try {
+        textData = recordingCursor.getStringData(GAME_TEXT_COLUMN)
+        recordingCursor?.close()
+    }catch (ex:Exception){
+        ex.printStackTrace()
+        return "1"
+    }
     return textData
 }
 

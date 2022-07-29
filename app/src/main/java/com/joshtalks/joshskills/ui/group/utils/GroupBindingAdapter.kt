@@ -187,5 +187,8 @@ fun groupChatScreenBackground(chatBg: View, image: Int) {
     }catch (e:Exception){
         chatBg.setBackgroundResource(R.color.chat_bg_color)
         e.printStackTrace()
+    } catch (e: OutOfMemoryError) {
+        chatBg.setBackgroundResource(R.color.chat_bg_color)
+        e.printStackTrace()
     }
 }
